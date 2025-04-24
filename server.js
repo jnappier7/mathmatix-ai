@@ -1,4 +1,4 @@
-// MATHMATIX AI — OpenAI version with full system prompt & error-proofing
+// MATHMATIX AI — OpenAI version with HTTPS redirect & system prompt
 
 require("dotenv").config({ path: __dirname + "/.env" });
 
@@ -14,7 +14,15 @@ const multer = require("multer");
 const { OpenAI } = require("openai");
 
 const app = express();
-const port = process.env.PORT || 3000; // ✅ Required for Render
+const port = process.env.PORT || 3000;
+
+// ✅ Force HTTPS redirect when deployed on Render
+app.use((req, res, next) => {
+  if (req.headers["x-forwarded-proto"] !== "https") {
+    return res.redirect("https://" + req.headers.host + req.url);
+  }
+  next();
+});
 
 app.use(express.static(__dirname));
 app.use(cors());
@@ -105,7 +113,7 @@ app.post("/chat", async (req, res) => {
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4", // Or "gpt-3.5-turbo" if needed
+      model: "gpt-4",
       messages: [
         { role: "system", content: systemInstructions },
         ...chatHistory.map(m => ({ role: m.role, content: m.content })),
