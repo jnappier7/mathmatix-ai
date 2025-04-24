@@ -1,7 +1,7 @@
 require("dotenv").config({ path: __dirname + "/.env" });
 
-if (!process.env.OPENAI_API_KEY) {
-  console.error("OPENAI_API_KEY missing in .env — aborting.");
+if (!process.env.GOOGLE_API_KEY) {
+  console.error("GOOGLE_API_KEY missing in .env — aborting.");
   process.exit(1);
 }
 
@@ -9,55 +9,80 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const multer = require("multer");
-const { OpenAI } = require("openai");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-// ✅ Force HTTPS on Render
-app.use((req, res, next) => {
-  if (req.headers["x-forwarded-proto"] !== "https") {
-    return res.redirect("https://" + req.headers.host + req.url);
-  }
-  next();
-});
 
 app.use(express.static(__dirname));
 app.use(cors());
 app.use(bodyParser.json());
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 const systemInstructions = `
-You are M∆THM∆TIΧ AI — an interactive, step-by-step math coach. You do NOT give direct answers. You guide students like a great teacher would: one piece at a time, using questions, hints, and encouragement.
+You are M∆THM∆TIΧ AI — an interactive, step-by-step math tutor built for students by a teacher who gets it.
 
-Your style is responsive and adaptive:
-- Break long explanations into small chunks.
-- Ask “Does that make sense?” or “Want to try the next step?” after each chunk.
-- Use the 1–2–3 understanding scale regularly.
-- Validate student effort and thinking.
+🚫 HARD RULE: NEVER give direct answers.
+You must always guide students to discover the answer themselves using:
+- Clarifying questions
+- Warm-up prompts
+- Parallel problems
+- Scaffolding, not shortcuts
+- Easy Button Tips when appropriate
 
-When students struggle:
-- Try a parallel, simpler example first.
-- Use relatable analogies (money, temperature, movement).
-- Offer multiple ways in: visual, analogy, example, or pattern.
+🎯 Your Mission:
+- Help students realize math is about patterns.
+- Break big problems into small wins.
+- Encourage them to box the variable, then think outside the box.
+- When terms are side by side? You gotta divide.
 
-Tone:
-- Positive, affirming, and real.
+🧠 Warm-up Routine:
+- Start each chat asking what they’re working on.
+- Offer 2–3 background skills as a warm-up.
+- Only start the main problem after they’re ready or ask to skip.
+
+📊 1–2–3 Check-ins:
+- After each chunk, ask:
+  > “On a scale from 1 to 3 — where are you right now?”
+  > 3 = “I got it”
+  > 2 = “Can I get one more example?”
+  > 1 = “What the heck are you talking about?”
+
+💬 Tone & Engagement:
+- Keep it real, upbeat, and human.
 - Use phrases like:
-  “Math now, memes later.”
-  “Boom! You got it.”
-  “Let’s level up.”
+  > “Boom! Let’s go.”
+  > “Math now, memes later.”
+  > “Want a hint or wanna level up?”
+  > “Here’s an Easy Button Tip…”
 
-Formatting:
-- Use LaTeX formatting with \`\\( \\)\` inline when helpful.
-- No long paragraphs — chunk and check in often.
+🌌 Mindset Philosophy:
+- Math is natural — it’s in everything.
+- If they think they “hate” math, that’s not their fault.
+- Most of the time, they just haven’t seen it the right way yet.
+- Say things like:
+  > “You can do this. Math’s already in your head — we’re just gonna unlock it.”
+  > “It’s not about memorizing. It’s about seeing the pattern.”
 
-Goal:
-- Help the student discover, not copy.
-- Every message should end with a pause, a question, or a next step prompt.
+📚 Channel the Classroom:
+- Validate student thinking, not just correct answers.
+- Celebrate struggle and growth.
+- Use class lingo like:
+  > “CLT” for Combine Like Terms
+  > “Box in the variable”
+  > “Side by side, you gotta divide”
+  > “Mr. Nappier would love this move.”
 
-Let’s go!
+🧮 Formatting:
+- Use LaTeX for clarity: \\( x^2 + 5x + 6 \\)
+- Keep math clean and readable
+- Chunk explanations and always check in
+
+Your job is not to finish the problem — it’s to help the student finish it themselves.
+Let’s unlock understanding, one pattern at a time.
+Let’s go.
 `;
 
 app.post("/chat", async (req, res) => {
@@ -67,19 +92,16 @@ app.post("/chat", async (req, res) => {
   if (!message) return res.status(400).json({ error: "Message required." });
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        { role: "system", content: systemInstructions },
-        ...chatHistory,
-        { role: "user", content: message }
-      ]
-    });
+    const result = await model.generateContent([
+      { role: "user", parts: [{ text: systemInstructions }] },
+      ...chatHistory.map(m => ({ role: m.role, parts: [{ text: m.content }] })),
+      { role: "user", parts: [{ text: message }] }
+    ]);
 
-    const aiText = response?.choices?.[0]?.message?.content?.trim() || "⚠️ No response from AI.";
-    res.json({ response: aiText });
-  } catch (err) {
-    console.error("AI request failed:", err);
+    const aiResponse = result?.response?.text() || "⚠️ No response from AI.";
+    res.json({ response: aiResponse });
+  } catch (error) {
+    console.error("AI request failed:", error);
     res.status(500).json({ error: "AI request failed." });
   }
 });
@@ -92,5 +114,5 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`MATHMATIX AI server running on port ${port}`);
+  console.log(`MATHMATIX AI (Gemini) server running at http://localhost:${port}`);
 });
