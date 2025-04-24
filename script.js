@@ -6,13 +6,23 @@ let chatHistory = [];
 
 chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const userMessage = chatInput.value.trim();
   if (!userMessage) return;
 
-  addMessageToChat("You", userMessage);
-  chatInput.value = "";
+  chatInput.value = ""; // ✅ Clear the input box immediately
+
+  // Create and show user message bubble
+  const userBubble = createBubble("You", userMessage, "user");
+  chatWindow.appendChild(userBubble);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
 
   chatHistory.push({ role: "user", content: userMessage });
+
+  // Create and show AI placeholder
+  const aiBubble = createBubble("M∆THM∆TIΧ AI", "Thinking...", "ai");
+  chatWindow.appendChild(aiBubble);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
 
   try {
     const res = await fetch("/chat", {
@@ -25,21 +35,19 @@ chatForm.addEventListener("submit", async (e) => {
     });
 
     const data = await res.json();
-    const aiMessage = data.response || "⚠️ No response.";
+    const aiResponse = data.response || "⚠️ No response from the AI.";
 
-    chatHistory.push({ role: "assistant", content: aiMessage });
-
-    addMessageToChat("M∆THM∆TIΧ AI", aiMessage);
-  } catch (error) {
-    console.error("Error:", error);
-    addMessageToChat("M∆THM∆TIΧ AI", "⚠️ There was an error processing your message.");
+    chatHistory.push({ role: "assistant", content: aiResponse });
+    aiBubble.innerHTML = `<strong>M∆THM∆TIΧ AI:</strong> ${aiResponse}`;
+  } catch (err) {
+    console.error("AI request failed:", err);
+    aiBubble.innerHTML = `<strong>M∆THM∆TIΧ AI:</strong> ⚠️ There was a problem reaching the server.`;
   }
 });
 
-function addMessageToChat(sender, text) {
-  const messageEl = document.createElement("div");
-  messageEl.className = "message";
-  messageEl.innerHTML = `<strong>${sender}:</strong> ${text}`;
-  chatWindow.appendChild(messageEl);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
+function createBubble(sender, text, role) {
+  const bubble = document.createElement("div");
+  bubble.classList.add("message", role);
+  bubble.innerHTML = `<strong>${sender}:</strong> ${text}`;
+  return bubble;
 }
