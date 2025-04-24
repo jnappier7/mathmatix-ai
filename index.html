@@ -5,36 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- MathJax for rendering LaTeX -->
-  <script id="MathJax-script" async
-    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-  </script>
-
-  <!-- MathLive -->
-  <script type="module" src="https://unpkg.com/mathlive"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>M∆THM∆TIΧ AI</h1>
 
-    <div id="chat-box"></div>
+  <div id="chat-window"></div>
 
-    <div id="input-area">
-      <textarea id="text-input" placeholder="Type your message or math question..."></textarea>
-      <button id="insert-equation-btn">➕ Insert Equation</button>
-      <button id="send-btn">Send</button>
-    </div>
-
-    <!-- MathLive Popup Modal -->
-    <div id="equation-modal" class="hidden">
-      <math-field id="math-editor" virtual-keyboard-mode="onfocus" virtual-keyboard-theme="material" style="font-size: 1.3rem;"></math-field>
-      <div id="equation-modal-buttons">
-        <button id="insert-math">Insert</button>
-        <button id="cancel-math">Cancel</button>
-      </div>
-    </div>
-  </div>
+  <form id="chat-form">
+    <input
+      type="text"
+      id="chat-input"
+      autocomplete="off"
+      placeholder="Type your question here..."
+      required
+    />
+    <button type="submit">Send</button>
+  </form>
 
   <script src="script.js"></script>
 </body>
