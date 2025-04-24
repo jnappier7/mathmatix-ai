@@ -5,8 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
+
+  <!-- ✅ Enable LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
+
 <body>
+
+  <header style="text-align: center; padding: 1rem; font-size: 1.5rem; font-weight: bold; color: teal;">
+    M∆THM∆TIΧ AI
+  </header>
 
   <div id="chat-window"></div>
 
