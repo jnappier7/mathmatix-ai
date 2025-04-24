@@ -98,7 +98,7 @@ app.post("/chat", async (req, res) => {
       { role: "user", parts: [{ text: message }] }
     ]);
 
-    const aiResponse = result?.response?.text() || "⚠️ No response from AI.";
+    const aiResponse = await result.response.text();
     res.json({ response: aiResponse });
   } catch (error) {
     console.error("AI request failed:", error);
