@@ -14,7 +14,7 @@ const multer = require("multer");
 const { OpenAI } = require("openai");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // ✅ Required for Render
 
 app.use(express.static(__dirname));
 app.use(cors());
@@ -105,15 +105,13 @@ app.post("/chat", async (req, res) => {
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4", // or "gpt-3.5-turbo"
+      model: "gpt-4", // Or "gpt-3.5-turbo" if needed
       messages: [
         { role: "system", content: systemInstructions },
         ...chatHistory.map(m => ({ role: m.role, content: m.content })),
         { role: "user", content: message }
       ]
     });
-
-    console.log("OpenAI response object:", JSON.stringify(response, null, 2));
 
     const aiText = response?.choices?.[0]?.message?.content?.trim() || "⚠️ No response from AI.";
 
@@ -135,5 +133,5 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`MATHMATIX AI server running at http://localhost:${port}`);
+  console.log(`MATHMATIX AI server running on port ${port}`);
 });
