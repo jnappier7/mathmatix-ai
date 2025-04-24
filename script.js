@@ -1,73 +1,45 @@
-const chatBox = document.getElementById("chat-box");
-const sendBtn = document.getElementById("send-btn");
-const textInput = document.getElementById("text-input");
+const chatForm = document.getElementById("chat-form");
+const chatInput = document.getElementById("chat-input");
+const chatWindow = document.getElementById("chat-window");
 
-const insertEquationBtn = document.getElementById("insert-equation-btn");
-const equationModal = document.getElementById("equation-modal");
-const mathEditor = document.getElementById("math-editor");
-const insertMathBtn = document.getElementById("insert-math");
-const cancelMathBtn = document.getElementById("cancel-math");
+let chatHistory = [];
 
-function appendMessage(content, sender) {
-  const msg = document.createElement("div");
-  msg.className = `message ${sender}`;
+chatForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const userMessage = chatInput.value.trim();
+  if (!userMessage) return;
 
-  // If it's LaTeX, wrap in MathJax syntax
-  const isMath = /\\|[\^]|frac|sqrt|int|sum/.test(content.trim());
-  const formatted = isMath && !content.includes(" ")
-    ? `\\(${content}\\)`
-    : content;
+  addMessageToChat("You", userMessage);
+  chatInput.value = "";
 
-  msg.innerHTML = formatted;
-  chatBox.appendChild(msg);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  chatHistory.push({ role: "user", content: userMessage });
 
-  if (window.MathJax) {
-    MathJax.typesetPromise([msg]);
+  try {
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: userMessage,
+        history: chatHistory
+      })
+    });
+
+    const data = await res.json();
+    const aiMessage = data.response || "⚠️ No response.";
+
+    chatHistory.push({ role: "assistant", content: aiMessage });
+
+    addMessageToChat("M∆THM∆TIΧ AI", aiMessage);
+  } catch (error) {
+    console.error("Error:", error);
+    addMessageToChat("M∆THM∆TIΧ AI", "⚠️ There was an error processing your message.");
   }
+});
+
+function addMessageToChat(sender, text) {
+  const messageEl = document.createElement("div");
+  messageEl.className = "message";
+  messageEl.innerHTML = `<strong>${sender}:</strong> ${text}`;
+  chatWindow.appendChild(messageEl);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
 }
-
-sendBtn.addEventListener("click", async () => {
-  const message = textInput.value.trim();
-  if (!message) return;
-
-  appendMessage(message, "user");
-
-  const response = await fetch("/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message })
-  });
-
-  const data = await response.json();
-  appendMessage(data.response, "ai");
-  textInput.value = "";
-});
-
-// Insert Equation toggle
-insertEquationBtn.addEventListener("click", () => {
-  equationModal.classList.remove("hidden");
-  mathEditor.focus();
-});
-
-// Insert equation into text area
-insertMathBtn.addEventListener("click", () => {
-  const latex = mathEditor.getValue();
-  textInput.value += ` ${latex} `;
-  equationModal.classList.add("hidden");
-  mathEditor.setValue("");
-});
-
-// Cancel button
-cancelMathBtn.addEventListener("click", () => {
-  equationModal.classList.add("hidden");
-  mathEditor.setValue("");
-});
-
-// Enter key to send
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Enter" && !event.shiftKey && document.activeElement === textInput) {
-    event.preventDefault();
-    sendBtn.click();
-  }
-});
