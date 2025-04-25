@@ -11,37 +11,34 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Gemini setup
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
+// Chat route
 app.post('/chat', async (req, res) => {
   const { message, history } = req.body;
 
   try {
-    // Convert history and message into Gemini-compatible structure
     const contents = [
       ...(history || []).map((msg) => ({
-        parts: [{ text: msg }],
+        parts: [msg], // ✅ Gemini wants plain strings
       })),
-      { parts: [{ text: message }] }
+      {
+        parts: [message] // ✅ Plain string, not { text: message }
+      }
     ];
 
     const result = await model.generateContent({ contents });
 
-    console.log("Gemini Result:", JSON.stringify(result, null, 2));
+    console.log("Gemini Response:", JSON.stringify(result, null, 2));
 
     let aiResponse = "⚠️ No response from AI.";
 
     if (
-      result &&
-      result.response &&
-      result.response.candidates &&
-      result.response.candidates.length > 0 &&
-      result.response.candidates[0].content &&
-      result.response.candidates[0].content.parts &&
-      result.response.candidates[0].content.parts.length > 0
+      result?.response?.candidates?.[0]?.content?.parts?.[0]
     ) {
-      aiResponse = result.response.candidates[0].content.parts[0].text;
+      aiResponse = result.response.candidates[0].content.parts[0];
     }
 
     res.json({ response: aiResponse });
