@@ -19,10 +19,10 @@ app.use(express.static(path.join(__dirname, "public")));
 // Base URL for Gemini v1 API
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro-002:generateContent";
 
-// /chat route for AI conversation
+// /chat route
 app.post("/chat", async (req, res) => {
   try {
-    const { systemInstructions, chatHistory, message } = req.body;
+    const { systemInstructions = "You are a helpful math tutor.", chatHistory = [], message } = req.body;
 
     const parts = [
       { text: systemInstructions },
@@ -73,7 +73,7 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-// Health Check
+// Health Check route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
