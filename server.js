@@ -3,15 +3,23 @@
 import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-// Base URL for Gemini v1 API (now with CORRECT MODEL)
+// Serve static frontend files from /public
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "public")));
+
+// Base URL for Gemini v1 API
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro-002:generateContent";
 
+// /chat route for AI conversation
 app.post("/chat", async (req, res) => {
   try {
     const { systemInstructions, chatHistory, message } = req.body;
@@ -65,9 +73,9 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-// Health Check Route
+// Health Check
 app.get("/", (req, res) => {
-  res.send("M∆THM∆TIΧ AI Server Running 🚀");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Start server
