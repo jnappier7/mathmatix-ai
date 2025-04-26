@@ -11,7 +11,7 @@
   <!-- Link to CSS -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- Load MathJax for rendering math -->
+  <!-- Load MathJax -->
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
@@ -20,6 +20,14 @@
   <div class="branding">
     <h1 class="title">M∆THM∆TIΧ AI</h1>
     <p class="slogan">UNLOCK THE PATTERN. LEARN FOR LIFE.</p>
+  </div>
+
+  <button id="debug-toggle" title="Debug Settings">⚙️</button>
+
+  <div id="debug-panel" class="debug-panel">
+    <h3>Edit System Instructions</h3>
+    <textarea id="system-instructions-text" rows="8"></textarea>
+    <button id="update-instructions">Update</button>
   </div>
 
   <div class="chat-container">
@@ -34,7 +42,6 @@
     <button id="send-button">Send</button>
   </div>
 
-  <!-- Link to JavaScript -->
   <script src="script.js"></script>
 </body>
 </html>

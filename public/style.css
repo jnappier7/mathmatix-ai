@@ -1,6 +1,5 @@
 /* style.css */
 
-/* Base Styles */
 body {
   font-family: 'Poppins', sans-serif;
   background: #f4f4f4;
@@ -12,7 +11,6 @@ body {
   align-items: center;
 }
 
-/* Branding Area */
 .branding {
   text-align: center;
   margin: 30px 0 10px 0;
@@ -31,7 +29,57 @@ body {
   margin-top: 8px;
 }
 
-/* Chat Area */
+/* Debug gear button */
+#debug-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Debug panel */
+.debug-panel {
+  display: none;
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  width: 300px;
+  z-index: 10;
+}
+
+.debug-panel h3 {
+  margin-top: 0;
+}
+
+#system-instructions-text {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  resize: vertical;
+}
+
+#update-instructions {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #00aaff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+}
+
+/* Chat UI (same as before) */
 .chat-container {
   position: relative;
   width: 100%;
@@ -44,6 +92,7 @@ body {
   box-shadow: 0 8px 20px rgba(0,0,0,0.12);
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
 }
 
 #chat-container-inner {
@@ -54,7 +103,6 @@ body {
   z-index: 2;
 }
 
-/* Watermark Logo */
 .watermark {
   position: absolute;
   top: 50%;
@@ -66,7 +114,6 @@ body {
   z-index: 1;
 }
 
-/* Messages */
 .message {
   max-width: 80%;
   padding: 15px 20px;
@@ -91,7 +138,6 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* Input Area */
 .input-area {
   width: 100%;
   max-width: 700px;
@@ -127,7 +173,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Scrollbar customizations */
 .chat-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -137,7 +182,7 @@ body {
   border-radius: 6px;
 }
 
-/* Responsive for mobile */
+/* Responsive */
 @media (max-width: 768px) {
   .chat-container, .input-area {
     max-width: 90%;
