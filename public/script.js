@@ -3,10 +3,20 @@ let systemInstructions = "You are M∆THM∆TIΧ AI — a real math coach. Focus
 const chatContainer = document.getElementById("chat-container-inner");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
-const debugToggle = document.getElementById("debug-toggle");
-const debugPanel = document.getElementById("debug-panel");
-const updateInstructionsBtn = document.getElementById("update-instructions");
-const instructionsTextArea = document.getElementById("system-instructions-text");
+
+// Tool Buttons
+const insertEquationBtn = document.getElementById("insert-equation-btn");
+const calculatorBtn = document.getElementById("calculator-btn");
+const scratchpadBtn = document.getElementById("scratchpad-btn");
+const uploadBtn = document.getElementById("upload-btn");
+
+// Floating Panels
+const insertEquationPanel = document.getElementById("insert-equation-panel");
+const calculatorPanel = document.getElementById("calculator-panel");
+const scratchpadPanel = document.getElementById("scratchpad-panel");
+const uploadPanel = document.getElementById("upload-panel");
+
+const allPanels = [insertEquationPanel, calculatorPanel, scratchpadPanel, uploadPanel];
 
 // Auto-wrap math
 function autoWrapMath(message) {
@@ -17,7 +27,7 @@ function autoWrapMath(message) {
   });
 }
 
-// Message bubble
+// Message Bubble
 function createMessageBubble(message, sender = "user") {
   const bubble = document.createElement("div");
   bubble.classList.add("message", sender);
@@ -25,7 +35,7 @@ function createMessageBubble(message, sender = "user") {
   return bubble;
 }
 
-// Send message
+// Send Message
 async function sendMessage() {
   const message = userInput.value.trim();
   if (message === "") return;
@@ -62,19 +72,20 @@ async function sendMessage() {
   }
 }
 
-// Toggle debug panel
-debugToggle.addEventListener("click", () => {
-  debugPanel.style.display = debugPanel.style.display === "block" ? "none" : "block";
-  instructionsTextArea.value = systemInstructions;
-});
+// Toggle Panels
+function togglePanel(panel) {
+  allPanels.forEach(p => {
+    if (p !== panel) p.style.display = "none";
+  });
 
-// Update system instructions
-updateInstructionsBtn.addEventListener("click", () => {
-  systemInstructions = instructionsTextArea.value.trim();
-  debugPanel.style.display = "none";
-});
+  if (panel.style.display === "block") {
+    panel.style.display = "none";
+  } else {
+    panel.style.display = "block";
+  }
+}
 
-// Event listeners
+// Event Listeners
 sendButton.addEventListener("click", sendMessage);
 userInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
@@ -82,3 +93,9 @@ userInput.addEventListener("keydown", (e) => {
     sendMessage();
   }
 });
+
+// Tool Button Events
+insertEquationBtn.addEventListener("click", () => togglePanel(insertEquationPanel));
+calculatorBtn.addEventListener("click", () => togglePanel(calculatorPanel));
+scratchpadBtn.addEventListener("click", () => togglePanel(scratchpadPanel));
+uploadBtn.addEventListener("click", () => togglePanel(uploadPanel));
