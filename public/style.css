@@ -1,30 +1,77 @@
 /* style.css */
 
+/* Base Styles */
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f8f8f8;
+  font-family: 'Poppins', sans-serif;
+  background: #f4f4f4;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
+/* Branding Area */
+.branding {
+  text-align: center;
+  margin: 20px 0 10px 0;
+}
+
+.title {
+  font-weight: 800;
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+}
+
+.slogan {
+  font-weight: 400;
+  font-size: 1rem;
+  color: #555;
+  margin-top: 5px;
+}
+
+/* Chat Area */
 .chat-container {
+  position: relative;
   width: 100%;
   max-width: 600px;
-  height: 80vh;
-  margin: 30px auto;
+  height: 70vh;
+  background: #ffffff;
+  border-radius: 15px;
   padding: 20px;
-  background: white;
-  border-radius: 10px;
   overflow-y: scroll;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
 }
 
+#chat-container-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Watermark Logo */
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.06;
+  max-width: 80%;
+  height: auto;
+  z-index: 1;
+}
+
+/* Messages */
 .message {
-  margin-bottom: 15px;
+  max-width: 80%;
   padding: 10px 15px;
   border-radius: 15px;
-  max-width: 80%;
+  font-size: 1rem;
   word-wrap: break-word;
+  position: relative;
+  z-index: 2;
 }
 
 .user {
@@ -38,32 +85,45 @@ body {
   align-self: flex-start;
 }
 
+/* Input Area */
 .input-area {
   width: 100%;
   max-width: 600px;
-  margin: 10px auto;
+  margin-top: 15px;
   display: flex;
   gap: 10px;
+  padding: 0 10px;
 }
 
 #user-input {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   font-size: 16px;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
 
 #send-button {
-  padding: 10px 20px;
+  padding: 12px 20px;
   background-color: #00aaff;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 #send-button:hover {
   background-color: #008ecc;
+}
+
+/* Scrollbar customizations */
+.chat-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 6px;
 }
