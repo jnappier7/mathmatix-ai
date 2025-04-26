@@ -93,9 +93,18 @@ app.post("/chat", async (req, res) => {
     const { systemInstructions = defaultSystemInstructions, chatHistory = [], message } = req.body;
 
     const parts = [
-      { text: systemInstructions },
-      ...chatHistory.map(m => ({ role: m.role, parts: [{ text: m.content }] })),
-      { role: "user", parts: [{ text: message }] }
+      {
+        role: "user",
+        parts: [{ text: systemInstructions }]
+      },
+      ...chatHistory.map(m => ({
+        role: m.role,
+        parts: [{ text: m.content }]
+      })),
+      {
+        role: "user",
+        parts: [{ text: message }]
+      }
     ];
 
     const payload = { contents: parts };
