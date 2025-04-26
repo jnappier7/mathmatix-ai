@@ -94,26 +94,17 @@ app.post("/chat", async (req, res) => {
 
     const parts = [
       { text: systemInstructions },
-      ...chatHistory.map(m => ({ text: m.content })),
-      { text: message }
+      ...chatHistory.map(m => ({ role: m.role, parts: [{ text: m.content }] })),
+      { role: "user", parts: [{ text: message }] }
     ];
 
-    const payload = {
-      contents: [
-        {
-          role: "user",
-          parts: parts
-        }
-      ]
-    };
+    const payload = { contents: parts };
 
     const response = await axios.post(
       `${GEMINI_API_URL}?key=${process.env.GOOGLE_API_KEY}`,
       payload,
       {
-        headers: {
-          "Content-Type": "application/json"
-        }
+        headers: { "Content-Type": "application/json" }
       }
     );
 
@@ -146,7 +137,8 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
-
+});
