@@ -1,43 +1,30 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>M∆THM∆TIΧ AI</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ✅ Enable LaTeX rendering -->
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['\\(', '\\)']],
-        displayMath: [['\\[', '\\]']]
-      },
-      svg: { fontCache: 'global' }
-    };
-  </script>
-  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <!-- Link to your CSS -->
+  <link rel="stylesheet" href="../style.css">
+
+  <!-- Load MathJax for rendering LaTeX -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
+  <div id="chat-container" class="chat-container">
+    <!-- Chat messages will appear here -->
+  </div>
 
-  <header style="text-align: center; padding: 1rem; font-size: 1.5rem; font-weight: bold; color: teal;">
-    M∆THM∆TIΧ AI
-  </header>
+  <div class="input-area">
+    <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" />
+    <button id="send-button">Send</button>
+  </div>
 
-  <div id="chat-window"></div>
-
-  <form id="chat-form">
-    <input
-      type="text"
-      id="chat-input"
-      autocomplete="off"
-      placeholder="Type your question here..."
-      required
-    />
-    <button type="submit">Send</button>
-  </form>
-
-  <script src="script.js"></script>
+  <!-- Link to your JavaScript -->
+  <script src="../script.js"></script>
 </body>
 </html>
