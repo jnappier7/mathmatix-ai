@@ -36,7 +36,7 @@ async function sendMessage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        systemInstructions: "",
+        systemInstructions: "You are M∆THM∆TIΧ AI — a real math coach. Focus on unlocking patterns, coaching one step at a time, and NEVER giving full answers directly.",
         chatHistory: [],
         message: message
       })
