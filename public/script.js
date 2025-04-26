@@ -1,22 +1,6 @@
-let systemInstructions = "You are M∆THM∆TIΧ AI — a real math coach. Focus on unlocking patterns, coaching one step at a time, and NEVER giving full answers directly.";
-
 const chatContainer = document.getElementById("chat-container-inner");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
-
-// Tool Buttons
-const insertEquationBtn = document.getElementById("insert-equation-btn");
-const calculatorBtn = document.getElementById("calculator-btn");
-const scratchpadBtn = document.getElementById("scratchpad-btn");
-const uploadBtn = document.getElementById("upload-btn");
-
-// Floating Panels
-const insertEquationPanel = document.getElementById("insert-equation-panel");
-const calculatorPanel = document.getElementById("calculator-panel");
-const scratchpadPanel = document.getElementById("scratchpad-panel");
-const uploadPanel = document.getElementById("upload-panel");
-
-const allPanels = [insertEquationPanel, calculatorPanel, scratchpadPanel, uploadPanel];
 
 // Auto-wrap math
 function autoWrapMath(message) {
@@ -48,11 +32,7 @@ async function sendMessage() {
     const response = await fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        systemInstructions: systemInstructions,
-        chatHistory: [],
-        message: message
-      })
+      body: JSON.stringify({ message }) // ONLY sending message now
     });
 
     const data = await response.json();
@@ -72,19 +52,6 @@ async function sendMessage() {
   }
 }
 
-// Toggle Panels
-function togglePanel(panel) {
-  allPanels.forEach(p => {
-    if (p !== panel) p.style.display = "none";
-  });
-
-  if (panel.style.display === "block") {
-    panel.style.display = "none";
-  } else {
-    panel.style.display = "block";
-  }
-}
-
 // Event Listeners
 sendButton.addEventListener("click", sendMessage);
 userInput.addEventListener("keydown", (e) => {
@@ -93,9 +60,3 @@ userInput.addEventListener("keydown", (e) => {
     sendMessage();
   }
 });
-
-// Tool Button Events
-insertEquationBtn.addEventListener("click", () => togglePanel(insertEquationPanel));
-calculatorBtn.addEventListener("click", () => togglePanel(calculatorPanel));
-scratchpadBtn.addEventListener("click", () => togglePanel(scratchpadPanel));
-uploadBtn.addEventListener("click", () => togglePanel(uploadPanel));
