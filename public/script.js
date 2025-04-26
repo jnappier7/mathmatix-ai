@@ -1,53 +1,72 @@
-const chatForm = document.getElementById("chat-form");
-const chatInput = document.getElementById("chat-input");
-const chatWindow = document.getElementById("chat-window");
+// script.js
 
-let chatHistory = [];
+const chatContainer = document.getElementById("chat-container");
+const userInput = document.getElementById("user-input");
+const sendButton = document.getElementById("send-button");
 
-chatForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// Auto-wrap math-looking expressions
+function autoWrapMath(message) {
+  const mathPattern = /([^\n]*[=+\-^][^\n]*)/g; // Roughly match lines containing math
+  return message.replace(mathPattern, (match) => {
+    if (match.length > 150) return match; // Don't accidentally wrap full paragraphs
+    return `\\(${match.trim()}\\)`;
+  });
+}
 
-  const userMessage = chatInput.value.trim();
-  if (!userMessage) return;
+// Create chat bubble
+function createMessageBubble(message, sender = "user") {
+  const bubble = document.createElement("div");
+  bubble.classList.add("message", sender);
+  bubble.innerHTML = message;
+  return bubble;
+}
 
-  chatInput.value = ""; // ✅ Clear the input box immediately
+// Send user message and receive AI response
+async function sendMessage() {
+  const message = userInput.value.trim();
+  if (message === "") return;
 
-  // Create and show user message bubble
-  const userBubble = createBubble("You", userMessage, "user");
-  chatWindow.appendChild(userBubble);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
-
-  chatHistory.push({ role: "user", content: userMessage });
-
-  // Create and show AI placeholder
-  const aiBubble = createBubble("M∆THM∆TIΧ AI", "Thinking...", "ai");
-  chatWindow.appendChild(aiBubble);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
+  // Display user message
+  chatContainer.appendChild(createMessageBubble(message, "user"));
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  userInput.value = "";
 
   try {
-    const res = await fetch("/chat", {
+    const response = await fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: userMessage,
-        history: chatHistory
+        systemInstructions: "",
+        chatHistory: [],
+        message: message
       })
     });
 
-    const data = await res.json();
-    const aiResponse = data.response || "⚠️ No response from the AI.";
+    const data = await response.json();
+    if (data.response) {
+      const aiMessage = autoWrapMath(data.response);
+      chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
+      chatContainer.scrollTop = chatContainer.scrollHeight;
 
-    chatHistory.push({ role: "assistant", content: aiResponse });
-    aiBubble.innerHTML = `<strong>M∆THM∆TIΧ AI:</strong> ${aiResponse}`;
-  } catch (err) {
-    console.error("AI request failed:", err);
-    aiBubble.innerHTML = `<strong>M∆THM∆TIΧ AI:</strong> ⚠️ There was a problem reaching the server.`;
+      // Re-render LaTeX math
+      if (window.MathJax) {
+        MathJax.typesetPromise();
+      }
+    } else {
+      console.error("Empty response from AI");
+    }
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+}
+
+// Send on button click
+sendButton.addEventListener("click", sendMessage);
+
+// Send on Enter key
+userInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    sendMessage();
   }
 });
-
-function createBubble(sender, text, role) {
-  const bubble = document.createElement("div");
-  bubble.classList.add("message", role);
-  bubble.innerHTML = `<strong>${sender}:</strong> ${text}`;
-  return bubble;
-}
