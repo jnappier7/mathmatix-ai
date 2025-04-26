@@ -6,6 +6,7 @@ body {
   background: #f4f4f4;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,39 +15,41 @@ body {
 /* Branding Area */
 .branding {
   text-align: center;
-  margin: 20px 0 10px 0;
+  margin: 30px 0 10px 0;
 }
 
 .title {
   font-weight: 800;
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   letter-spacing: 2px;
 }
 
 .slogan {
   font-weight: 400;
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: #555;
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 /* Chat Area */
 .chat-container {
   position: relative;
   width: 100%;
-  max-width: 600px;
-  height: 70vh;
+  max-width: 700px;
+  height: 75vh;
   background: #ffffff;
-  border-radius: 15px;
-  padding: 20px;
+  border-radius: 20px;
+  padding: 25px;
   overflow-y: scroll;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
 }
 
 #chat-container-inner {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
   position: relative;
   z-index: 2;
 }
@@ -57,7 +60,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0.06;
+  opacity: 0.05;
   max-width: 80%;
   height: auto;
   z-index: 1;
@@ -66,30 +69,34 @@ body {
 /* Messages */
 .message {
   max-width: 80%;
-  padding: 10px 15px;
-  border-radius: 15px;
-  font-size: 1rem;
+  padding: 15px 20px;
+  border-radius: 20px;
+  font-size: 1.1rem;
   word-wrap: break-word;
   position: relative;
   z-index: 2;
+  line-height: 1.5;
 }
 
 .user {
   background-color: #d1e7dd;
   align-self: flex-end;
   margin-left: auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .ai {
   background-color: #f1f0f0;
   align-self: flex-start;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 /* Input Area */
 .input-area {
   width: 100%;
-  max-width: 600px;
-  margin-top: 15px;
+  max-width: 700px;
+  margin-top: 20px;
+  margin-bottom: 30px;
   display: flex;
   gap: 10px;
   padding: 0 10px;
@@ -97,33 +104,50 @@ body {
 
 #user-input {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
   font-size: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid #ccc;
 }
 
 #send-button {
-  padding: 12px 20px;
+  padding: 14px 24px;
   background-color: #00aaff;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 #send-button:hover {
   background-color: #008ecc;
+  transform: translateY(-2px);
 }
 
 /* Scrollbar customizations */
 .chat-container::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .chat-container::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 6px;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .chat-container, .input-area {
+    max-width: 90%;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .slogan {
+    font-size: 1rem;
+  }
 }
