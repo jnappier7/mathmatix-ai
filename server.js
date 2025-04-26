@@ -1,57 +1,77 @@
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-require('dotenv').config();
+// server.js
+
+import express from "express";
+import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// Gemini setup
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+// Base URL for Gemini v1 API (now with CORRECT MODEL)
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro-002:generateContent";
 
-// Chat route
-app.post('/chat', async (req, res) => {
-  const { message, history } = req.body;
-
+app.post("/chat", async (req, res) => {
   try {
-    const contents = [
-      ...(history || []).map((msg) => ({
-        parts: [msg], // ✅ Gemini wants plain strings
-      })),
-      {
-        parts: [message] // ✅ Plain string, not { text: message }
-      }
+    const { systemInstructions, chatHistory, message } = req.body;
+
+    const parts = [
+      { text: systemInstructions },
+      ...chatHistory.map(m => ({ text: m.content })),
+      { text: message }
     ];
 
-    const result = await model.generateContent({ contents });
+    const payload = {
+      contents: [
+        {
+          role: "user",
+          parts: parts
+        }
+      ]
+    };
 
-    console.log("Gemini Response:", JSON.stringify(result, null, 2));
+    const response = await axios.post(
+      `${GEMINI_API_URL}?key=${process.env.GOOGLE_API_KEY}`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
+    const candidates = response.data.candidates;
     let aiResponse = "⚠️ No response from AI.";
 
-    if (
-      result?.response?.candidates?.[0]?.content?.parts?.[0]
-    ) {
-      aiResponse = result.response.candidates[0].content.parts[0];
+    if (candidates && candidates.length > 0 &&
+        candidates[0].content?.parts?.length > 0) {
+      aiResponse = candidates[0].content.parts[0].text;
     }
 
     res.json({ response: aiResponse });
+
   } catch (error) {
-    console.error("❌ Error from Gemini:", error);
-    res.status(500).json({ error: "Gemini failed to respond." });
+    console.error("🔥 Full Error Object:");
+    console.error(error);
+    if (error.response) {
+      console.error("🔥 Gemini Response Error Data:");
+      console.error(error.response.data);
+    } else {
+      console.error("🔥 Standard Error Message:");
+      console.error(error.message);
+    }
+    res.status(500).json({ error: "Failed to get response from AI." });
   }
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Health Check Route
+app.get("/", (req, res) => {
+  res.send("M∆THM∆TIΧ AI Server Running 🚀");
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
