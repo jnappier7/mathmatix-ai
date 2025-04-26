@@ -1,176 +1,121 @@
-/* Global Settings */
+/* style.css FINAL for FLOAT BAR setup */
+
 body {
   margin: 0;
   padding: 0;
-  background: #f4f4f4;
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: #f0f4f8;
 }
 
-.chat-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 1200px;
-  height: 90vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Floating Tool Buttons */
-.tool-buttons {
-  position: absolute;
-  top: 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  z-index: 3;
-}
-
-.left-buttons {
-  left: 20px;
-}
-
-.right-buttons {
-  right: 20px;
-}
-
-.tool-buttons button {
-  background: white;
-  border: 2px solid #000;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-}
-
-.tool-buttons button:hover {
-  background: #ddd;
-  transform: translateY(-2px);
-}
-
-/* Chat Container */
-.chat-container {
-  position: relative;
-  width: 700px;
-  height: 100%;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  z-index: 1;
-}
-
-#chat-container-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 80px;
-}
-
-/* Watermark */
-.watermark {
+#background-watermark {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 80%;
-  opacity: 0.03;
   transform: translate(-50%, -50%);
+  opacity: 0.08;
+  z-index: 1;
   pointer-events: none;
-  z-index: 0;
 }
 
-/* Floating Panels */
-.floating-panel {
-  position: absolute;
-  top: 150px;
-  background: white;
-  border: 2px solid #000;
-  border-radius: 12px;
-  padding: 20px;
-  width: 300px;
-  display: none;
-  z-index: 5;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+#background-watermark img {
+  width: 600px;
+  max-width: 80vw;
 }
 
-#insert-equation-panel {
-  left: 80px;
-}
-
-#calculator-panel {
-  left: 80px;
-}
-
-#scratchpad-panel {
-  right: 80px;
-}
-
-#upload-panel {
-  right: 80px;
-}
-
-/* Chat Input */
-.input-area {
-  position: absolute;
-  bottom: 20px;
-  width: 700px;
+#chat-container {
+  position: relative;
   display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+#chat-container-inner {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#input-area {
+  display: flex;
+  align-items: center;
   gap: 10px;
-  padding: 0 10px;
 }
 
 #user-input {
-  flex: 1;
-  padding: 14px;
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 25px;
   border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 #send-button {
-  padding: 14px 24px;
-  background-color: #00aaff;
+  padding: 10px 20px;
+  background-color: #0078D7;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 25px;
+  font-size: 16px;
   cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s, transform 0.2s;
 }
 
 #send-button:hover {
-  background-color: #008ecc;
-  transform: translateY(-2px);
+  background-color: #005fa3;
 }
 
-/* Scrollbar */
-.chat-container::-webkit-scrollbar {
-  width: 8px;
+.message {
+  max-width: 70%;
+  margin: 10px 0;
+  padding: 12px 18px;
+  border-radius: 20px;
+  word-wrap: break-word;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
-.chat-container::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 6px;
+.user {
+  background-color: #DCF8C6;
+  align-self: flex-end;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .chat-container, .input-area {
-    width: 90%;
-  }
-  .input-area {
-    bottom: 10px;
-  }
+.ai {
+  background-color: #E8EAF6;
+  align-self: flex-start;
+}
+
+#floating-toolbar {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 5;
+}
+
+.tool-button {
+  width: 50px;
+  height: 50px;
+  background: #0078D7;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.tool-button:hover {
+  background: #005fa3;
+  transform: scale(1.1);
 }
