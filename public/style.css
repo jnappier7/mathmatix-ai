@@ -1,4 +1,4 @@
-/* style.css FINAL - Math Bubbles + Slide-In Animations */
+/* style.css — FINAL CLEAN VERSION for M∆THM∆TIΧ AI */
 
 body {
   margin: 0;
@@ -11,7 +11,7 @@ body {
   flex-direction: column;
 }
 
-/* Logo */
+/* Logo header */
 #logo-header {
   width: 100%;
   text-align: center;
@@ -64,7 +64,7 @@ body {
   box-sizing: border-box;
 }
 
-/* Input and send */
+/* Input box */
 #user-input {
   flex-grow: 1;
   padding: 10px;
@@ -73,6 +73,7 @@ body {
   font-size: 16px;
 }
 
+/* Send button */
 #send-button {
   padding: 10px 20px;
   background-color: #0078D7;
@@ -101,14 +102,14 @@ body {
   display: inline-block;
 }
 
-/* Math special messages */
+/* Math messages */
 .math-message {
   text-align: center;
   font-size: 20px;
   line-height: 1.6;
 }
 
-/* User message */
+/* User messages */
 .user {
   background-color: #DCF8C6;
   align-self: flex-end;
@@ -116,7 +117,7 @@ body {
   animation: slideInRight 0.3s ease-out;
 }
 
-/* AI message */
+/* AI messages */
 .ai {
   background-color: #E8EAF6;
   align-self: flex-start;
@@ -124,7 +125,7 @@ body {
   animation: slideInLeft 0.3s ease-out;
 }
 
-/* Typing */
+/* Typing animation */
 .typing {
   font-style: italic;
   color: #666;
@@ -180,4 +181,12 @@ body {
 .tool-button:hover {
   background: #005fa3;
   transform: scale(1.1);
+}
+
+/* MathJax block styling */
+.mjx-chtml {
+  display: block;
+  text-align: center;
+  font-size: 1.5em;
+  margin: 10px 0;
 }
