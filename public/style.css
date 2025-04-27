@@ -1,4 +1,4 @@
-/* style.css FINAL for FLOAT BAR setup */
+/* style.css FINAL FIXED for Float Bar and Logo Visibility */
 
 body {
   margin: 0;
@@ -14,7 +14,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0.08;
+  opacity: 0.15; /* boosted opacity */
   z-index: 1;
   pointer-events: none;
 }
@@ -32,6 +32,7 @@ body {
   padding: 20px;
   box-sizing: border-box;
   z-index: 2;
+  padding-bottom: 140px; /* extra padding to make space for toolbar */
 }
 
 #chat-container-inner {
@@ -39,7 +40,7 @@ body {
   overflow-y: auto;
   margin-bottom: 10px;
   padding: 10px;
-  background: white;
+  background: rgba(255, 255, 255, 0.85); /* semi-transparent background */
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }

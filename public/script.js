@@ -1,14 +1,12 @@
-// script.js FINAL CLEAN for M∆THM∆TIΧ AI
+// script.js FINAL FIXED
 
 const chatContainer = document.getElementById("chat-container-inner");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 
-// Auto-wrap math expressions
+// Auto-wrap math expressions (fixed regex)
 function autoWrapMath(message) {
-  const mathPattern = /([^
-]*[=+\-^][^
-]*)/g;
+  const mathPattern = /([^\n]*[=+\-^][^\n]*)/g;
   return message.replace(mathPattern, (match) => {
     if (match.length > 150) return match;
     return `\\(${match.trim()}\\)`;
@@ -36,7 +34,7 @@ async function sendMessage() {
     const response = await fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }) // ONLY sending user message now
+      body: JSON.stringify({ message })
     });
 
     const data = await response.json();
