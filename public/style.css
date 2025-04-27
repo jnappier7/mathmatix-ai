@@ -23,7 +23,7 @@ body {
   object-fit: contain;
 }
 
-/* Chat container FIXED */
+/* Chat container */
 #chat-container {
   flex-grow: 1;
   display: flex;
@@ -36,23 +36,25 @@ body {
   overflow: hidden;
 }
 
-/* Chat area (scrollable) */
+/* Chat window */
 #chat-container-inner {
-  width: 90%;
-  max-width: 800px; /* WIDER NOW */
-  height: 65vh; /* About 2/3 of the screen */
+  width: 95%;
+  max-width: 1000px; /* MADE IT WIDER! */
+  height: 65vh;
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  margin-bottom: 10px; /* Add breathing room above input */
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Input area FIXED */
+/* Input area */
 #input-area {
-  width: 90%;
-  max-width: 800px;
+  width: 95%;
+  max-width: 1000px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -60,6 +62,7 @@ body {
   box-sizing: border-box;
 }
 
+/* Input box and send button */
 #user-input {
   flex-grow: 1;
   padding: 10px;
@@ -85,22 +88,26 @@ body {
 /* Chat bubbles */
 .message {
   max-width: 70%;
-  margin: 10px 0;
+  margin: 10px;
   padding: 12px 18px;
   border-radius: 20px;
   word-wrap: break-word;
   font-size: 16px;
   line-height: 1.4;
+  display: inline-block;
 }
 
+/* DIFFERENTIATE USER and AI MESSAGES */
 .user {
   background-color: #DCF8C6;
-  align-self: flex-end;
+  align-self: flex-end; /* Move USER bubbles to the right */
+  text-align: right;
 }
 
 .ai {
   background-color: #E8EAF6;
-  align-self: flex-start;
+  align-self: flex-start; /* Move AI bubbles to the left */
+  text-align: left;
 }
 
 .typing {
