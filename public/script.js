@@ -1,10 +1,12 @@
-// script.js FINAL FIXED with Typing Animation + Correct Message Sending
+// script.js FINAL with Correct Chat Format + Typing Animation
 
 const chatContainer = document.getElementById("chat-container-inner");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 
-// Auto-wrap math expressions (fixed regex)
+let chatHistory = []; // NEW: Store conversation history
+
+// Auto-wrap math expressions
 function autoWrapMath(message) {
   const mathPattern = /([^\n]*[=+\-^][^\n]*)/g;
   return message.replace(mathPattern, (match) => {
@@ -27,10 +29,11 @@ async function sendMessage() {
   if (message === "") return;
 
   chatContainer.appendChild(createMessageBubble(message, "user"));
+  chatHistory.push({ role: "user", content: message }); // Store user message
   chatContainer.scrollTop = chatContainer.scrollHeight;
   userInput.value = "";
 
-  // Add Typing Indicator
+  // Typing bubble
   const typingBubble = createMessageBubble("Mathmatix AI is thinking...", "ai");
   typingBubble.classList.add("typing");
   chatContainer.appendChild(typingBubble);
@@ -41,18 +44,18 @@ async function sendMessage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        messages: [
-          { role: "user", content: message }
-        ]
+        chatHistory: chatHistory,
+        message: message
       })
     });
 
     const data = await response.json();
-    chatContainer.removeChild(typingBubble); // Remove Typing Indicator
+    chatContainer.removeChild(typingBubble); // Remove typing bubble
 
     if (data.response) {
       const aiMessage = autoWrapMath(data.response);
       chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
+      chatHistory.push({ role: "model", content: data.response }); // Store AI reply
       chatContainer.scrollTop = chatContainer.scrollHeight;
 
       if (window.MathJax) {
@@ -63,11 +66,11 @@ async function sendMessage() {
     }
   } catch (error) {
     console.error("Error sending message:", error);
-    chatContainer.removeChild(typingBubble); // Remove Typing Indicator on error
+    chatContainer.removeChild(typingBubble);
   }
 }
 
-// Event listeners for send
+// Event listeners
 sendButton.addEventListener("click", sendMessage);
 userInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
