@@ -1,17 +1,21 @@
+// script.js FINAL CLEAN for M∆THM∆TIΧ AI
+
 const chatContainer = document.getElementById("chat-container-inner");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 
-// Auto-wrap math
+// Auto-wrap math expressions
 function autoWrapMath(message) {
-  const mathPattern = /([^\n]*[=+\-^][^\n]*)/g;
+  const mathPattern = /([^
+]*[=+\-^][^
+]*)/g;
   return message.replace(mathPattern, (match) => {
     if (match.length > 150) return match;
     return `\\(${match.trim()}\\)`;
   });
 }
 
-// Message Bubble
+// Create a message bubble
 function createMessageBubble(message, sender = "user") {
   const bubble = document.createElement("div");
   bubble.classList.add("message", sender);
@@ -19,7 +23,7 @@ function createMessageBubble(message, sender = "user") {
   return bubble;
 }
 
-// Send Message
+// Send message function
 async function sendMessage() {
   const message = userInput.value.trim();
   if (message === "") return;
@@ -32,7 +36,7 @@ async function sendMessage() {
     const response = await fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }) // ONLY sending message now
+      body: JSON.stringify({ message }) // ONLY sending user message now
     });
 
     const data = await response.json();
@@ -52,7 +56,7 @@ async function sendMessage() {
   }
 }
 
-// Event Listeners
+// Event listeners for send
 sendButton.addEventListener("click", sendMessage);
 userInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
