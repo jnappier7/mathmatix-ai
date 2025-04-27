@@ -1,10 +1,10 @@
-// script.js FINAL with Correct Chat Format + Typing Animation
+// script.js FINAL - Math Detection + Typing Animation + Clean Sending
 
 const chatContainer = document.getElementById("chat-container-inner");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 
-let chatHistory = []; // NEW: Store conversation history
+let chatHistory = []; // Store conversation history
 
 // Auto-wrap math expressions
 function autoWrapMath(message) {
@@ -19,6 +19,12 @@ function autoWrapMath(message) {
 function createMessageBubble(message, sender = "user") {
   const bubble = document.createElement("div");
   bubble.classList.add("message", sender);
+
+  // NEW: Check if message contains LaTeX delimiters
+  if (message.includes("\\(") || message.includes("\\[")) {
+    bubble.classList.add("math-message");
+  }
+
   bubble.innerHTML = message;
   return bubble;
 }
@@ -29,11 +35,10 @@ async function sendMessage() {
   if (message === "") return;
 
   chatContainer.appendChild(createMessageBubble(message, "user"));
-  chatHistory.push({ role: "user", content: message }); // Store user message
+  chatHistory.push({ role: "user", content: message });
   chatContainer.scrollTop = chatContainer.scrollHeight;
   userInput.value = "";
 
-  // Typing bubble
   const typingBubble = createMessageBubble("Mathmatix AI is thinking...", "ai");
   typingBubble.classList.add("typing");
   chatContainer.appendChild(typingBubble);
@@ -50,12 +55,12 @@ async function sendMessage() {
     });
 
     const data = await response.json();
-    chatContainer.removeChild(typingBubble); // Remove typing bubble
+    chatContainer.removeChild(typingBubble);
 
     if (data.response) {
       const aiMessage = autoWrapMath(data.response);
       chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
-      chatHistory.push({ role: "model", content: data.response }); // Store AI reply
+      chatHistory.push({ role: "model", content: data.response });
       chatContainer.scrollTop = chatContainer.scrollHeight;
 
       if (window.MathJax) {

@@ -1,3 +1,5 @@
+/* style.css FINAL - Math Bubbles + Slide-In Animations */
+
 body {
   margin: 0;
   padding: 0;
@@ -9,7 +11,7 @@ body {
   flex-direction: column;
 }
 
-/* Logo header */
+/* Logo */
 #logo-header {
   width: 100%;
   text-align: center;
@@ -39,7 +41,7 @@ body {
 /* Chat window */
 #chat-container-inner {
   width: 95%;
-  max-width: 1000px; /* MADE IT WIDER! */
+  max-width: 1000px;
   height: 65vh;
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.9);
@@ -62,7 +64,7 @@ body {
   box-sizing: border-box;
 }
 
-/* Input box and send button */
+/* Input and send */
 #user-input {
   flex-grow: 1;
   padding: 10px;
@@ -91,34 +93,70 @@ body {
   margin: 10px;
   padding: 12px 18px;
   border-radius: 20px;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: normal;
   font-size: 16px;
   line-height: 1.4;
   display: inline-block;
 }
 
-/* DIFFERENTIATE USER and AI MESSAGES */
+/* Math special messages */
+.math-message {
+  text-align: center;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+/* User message */
 .user {
   background-color: #DCF8C6;
-  align-self: flex-end; /* Move USER bubbles to the right */
+  align-self: flex-end;
   text-align: right;
+  animation: slideInRight 0.3s ease-out;
 }
 
+/* AI message */
 .ai {
   background-color: #E8EAF6;
-  align-self: flex-start; /* Move AI bubbles to the left */
+  align-self: flex-start;
   text-align: left;
+  animation: slideInLeft 0.3s ease-out;
 }
 
+/* Typing */
 .typing {
   font-style: italic;
   color: #666;
 }
 
+/* Slide-in animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 /* Floating toolbar */
 #floating-toolbar {
   position: fixed;
-  bottom: 140px; /* Above input area */
+  bottom: 140px;
   right: 20px;
   display: flex;
   flex-direction: column;
