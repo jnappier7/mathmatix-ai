@@ -1,4 +1,4 @@
-// script.js FINAL FIXED
+// script.js FINAL FIXED with Typing Animation + Correct Message Sending
 
 const chatContainer = document.getElementById("chat-container-inner");
 const userInput = document.getElementById("user-input");
@@ -30,14 +30,26 @@ async function sendMessage() {
   chatContainer.scrollTop = chatContainer.scrollHeight;
   userInput.value = "";
 
+  // Add Typing Indicator
+  const typingBubble = createMessageBubble("Mathmatix AI is thinking...", "ai");
+  typingBubble.classList.add("typing");
+  chatContainer.appendChild(typingBubble);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
   try {
     const response = await fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({
+        messages: [
+          { role: "user", content: message }
+        ]
+      })
     });
 
     const data = await response.json();
+    chatContainer.removeChild(typingBubble); // Remove Typing Indicator
+
     if (data.response) {
       const aiMessage = autoWrapMath(data.response);
       chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
@@ -51,6 +63,7 @@ async function sendMessage() {
     }
   } catch (error) {
     console.error("Error sending message:", error);
+    chatContainer.removeChild(typingBubble); // Remove Typing Indicator on error
   }
 }
 
