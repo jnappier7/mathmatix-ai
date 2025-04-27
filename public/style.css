@@ -1,4 +1,4 @@
-/* style.css FINAL FIXED with Logo + Faint Math Equations Background */
+/* FINAL CLEAN FIX - New Logo and Toolbar Layout */
 
 body {
   margin: 0;
@@ -7,30 +7,31 @@ body {
   height: 100vh;
   overflow: hidden;
   background: #f0f4f8;
-}
-
-#background-watermark {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.30;
-  z-index: 0;
-  pointer-events: none;
-  background-image: 
-    url('MathMatix AI Logo.png'),
-    url('https://i.imgur.com/1u6W2Xc.png'); /* Transparent math wallpaper */
-  background-size: 600px, cover;
-  background-repeat: no-repeat, repeat;
-  background-position: center, center;
-  filter: blur(1px) brightness(1.1);
-}
-
-#chat-container {
-  position: relative;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+}
+
+/* Logo header at the top */
+#logo-header {
+  width: 100%;
+  text-align: center;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 3;
+}
+
+#logo-header img {
+  height: 60px;
+  object-fit: contain;
+}
+
+/* Chat container */
+#chat-container {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
   z-index: 2;
@@ -47,6 +48,7 @@ body {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+/* Input area */
 #input-area {
   display: flex;
   align-items: center;
@@ -75,6 +77,7 @@ body {
   background-color: #005fa3;
 }
 
+/* Chat bubbles */
 .message {
   max-width: 70%;
   margin: 10px 0;
@@ -95,15 +98,15 @@ body {
   align-self: flex-start;
 }
 
-/* Typing animation style */
 .typing {
   font-style: italic;
   color: #666;
 }
 
+/* Floating toolbar - moved up */
 #floating-toolbar {
   position: fixed;
-  bottom: 20px;
+  bottom: 100px; /* Moved higher to clear Send button */
   right: 20px;
   display: flex;
   flex-direction: column;
