@@ -15,14 +15,17 @@ body {
 #logo-header {
   width: 100%;
   text-align: center;
-  background: white;
-  padding: 20px 0;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background: transparent; /* no more white background */
+  padding: 0;
+  margin: 0;
+  position: relative; /* allow controlled flow */
+  z-index: 2;
 }
 
 #logo-header img {
-  height: 240px;
+  height: 550px; /* or even 550px if you want it even bigger */
   object-fit: contain;
+  margin-top: 10px; /* tiny breathing space */
 }
 
 /* Chat container */
