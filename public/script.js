@@ -1,4 +1,4 @@
-// script.js FINAL - Math Detection + Typing Animation + Clean Sending
+// script.js — FINAL CLEAN VERSION for M∆THM∆TIΧ AI
 
 const chatContainer = document.getElementById("chat-container-inner");
 const userInput = document.getElementById("user-input");
@@ -20,7 +20,7 @@ function createMessageBubble(message, sender = "user") {
   const bubble = document.createElement("div");
   bubble.classList.add("message", sender);
 
-  // NEW: Check if message contains LaTeX delimiters
+  // Check if message contains LaTeX delimiters
   if (message.includes("\\(") || message.includes("\\[")) {
     bubble.classList.add("math-message");
   }
