@@ -19,7 +19,7 @@ body {
 }
 
 #logo-header img {
-  height: 500px; /* Good strong size */
+  height: 200px; /* Good strong size */
   object-fit: contain;
 }
 
