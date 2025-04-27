@@ -19,41 +19,44 @@ body {
 }
 
 #logo-header img {
-  height: 200px; /* Good strong size */
+  height: 200px;
   object-fit: contain;
 }
 
-/* Chat container with fixed height */
+/* Chat container FIXED */
 #chat-container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center chat on wide screens */
+  align-items: center;
   justify-content: flex-start;
   padding: 0;
   box-sizing: border-box;
   z-index: 2;
+  overflow: hidden;
 }
 
+/* Chat area (scrollable) */
 #chat-container-inner {
-  width: 100%;
-  max-width: 600px; /* Simulate phone screen width */
-  height: 75vh; /* 75% of the visible screen height */
+  width: 90%;
+  max-width: 800px; /* WIDER NOW */
+  height: 65vh; /* About 2/3 of the screen */
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin-bottom: 10px; /* Add breathing room above input */
 }
 
-/* Input area */
+/* Input area FIXED */
 #input-area {
-  width: 100%;
-  max-width: 600px;
+  width: 90%;
+  max-width: 800px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px;
+  padding: 10px 0;
   box-sizing: border-box;
 }
 
@@ -92,12 +95,12 @@ body {
 
 .user {
   background-color: #DCF8C6;
-  align-self: flex-end; /* USER bubbles float to right */
+  align-self: flex-end;
 }
 
 .ai {
   background-color: #E8EAF6;
-  align-self: flex-start; /* AI bubbles float to left */
+  align-self: flex-start;
 }
 
 .typing {
@@ -108,7 +111,7 @@ body {
 /* Floating toolbar */
 #floating-toolbar {
   position: fixed;
-  bottom: 120px; /* Above send button now */
+  bottom: 140px; /* Above input area */
   right: 20px;
   display: flex;
   flex-direction: column;
