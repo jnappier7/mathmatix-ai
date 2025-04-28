@@ -41,10 +41,10 @@ app.post('/chat', async (req, res) => {
     };
 
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GOOGLE_API_KEY}`,
-      payload,
-      { headers: { 'Content-Type': 'application/json' } }
-    );
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+  payload,
+  { headers: { 'Content-Type': 'application/json' } }
+);
 
     const aiText = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "No AI response.";
     res.json({ response: aiText });
