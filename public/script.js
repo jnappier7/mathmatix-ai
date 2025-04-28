@@ -1,162 +1,72 @@
-// script.js — UPGRADED FINAL VERSION for M∆THM∆TIΧ AI (with MathLive)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>M∆THM∆TIΧ AI</title>
 
-// --- Basic Chat Setup ---
+  <!-- MathLive -->
+  <script src="https://unpkg.com/mathlive"></script>
 
-const chatContainer = document.getElementById("chat-container-inner");
-const userInput = document.getElementById("user-input");
-const sendButton = document.getElementById("send-button");
+  <!-- MathJax -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-let chatHistory = []; // Store conversation history
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// Auto-wrap math expressions for display
-function autoWrapMath(message) {
-  const mathPattern = /([^\n]*[=+\-^][^\n]*)/g;
-  return message.replace(mathPattern, (match) => {
-    if (match.length > 150) return match;
-    return `\\(${match.trim()}\\)`;
-  });
-}
+  <div id="logo-header">
+    <img src="MathMatix AI Logo.png" alt="Mathmatix AI Logo">
+  </div>
 
-// Create a message bubble
-function createMessageBubble(message, sender = "user") {
-  const bubble = document.createElement("div");
-  bubble.classList.add("message", sender);
+  <div id="chat-container">
+    <div id="chat-container-inner"></div>
+    <div id="input-area">
+      <input type="text" id="user-input" placeholder="Type your message...">
+      <button id="send-button">Send</button>
+    </div>
+  </div>
 
-  // Check if message contains LaTeX delimiters
-  if (message.includes("\\(") || message.includes("\\[")) {
-    bubble.classList.add("math-message");
-  }
+  <!-- Upload Dropzone -->
+  <div id="dropzone" class="hidden">
+    <div id="dropzone-content">
+      📄 Drop your file here
+    </div>
+  </div>
 
-  bubble.innerHTML = message;
-  return bubble;
-}
+  <!-- Floating Toolbar -->
+  <div id="floating-toolbar">
+    <button id="equation-button" class="tool-button" title="Insert Equation">➕</button>
+    <button id="calculator-button" class="tool-button" title="Calculator">🧮</button>
+    <button id="scratchpad-button" class="tool-button" title="Scratchpad">✏️</button>
+    <button id="upload-button" class="tool-button" title="Upload File">📁</button>
+  </div>
 
-// Send message function
-async function sendMessage() {
-  const message = userInput.value.trim();
-  if (message === "") return;
+  <!-- Calculator Popup -->
+  <div id="calculator-popup" class="popup hidden">
+    <div class="popup-header">
+      <span>Calculator</span>
+      <button id="close-calculator" class="close-btn">✖️</button>
+    </div>
+    <iframe src="https://www.desmos.com/fourfunction" frameborder="0" style="width:100%; height:400px;"></iframe>
+  </div>
 
-  chatContainer.appendChild(createMessageBubble(message, "user"));
-  chatHistory.push({ role: "user", content: message });
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-  userInput.value = "";
+  <!-- Sketch Pad Popup -->
+  <div id="sketchpad-popup" class="popup hidden">
+    <div class="popup-header">
+      <span>Sketch Pad</span>
+      <button id="close-sketchpad" class="close-btn">✖️</button>
+    </div>
+    <canvas id="sketch-canvas" width="500" height="400" style="border:1px solid #ccc; background:white;"></canvas>
+    <div style="margin-top:10px;">
+      <button id="clear-sketch" style="margin-right:10px;">Clear</button>
+    </div>
+  </div>
 
-  const typingBubble = createMessageBubble("Mathmatix AI is thinking...", "ai");
-  typingBubble.classList.add("typing");
-  chatContainer.appendChild(typingBubble);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  <!-- Scripts -->
+  <script src="script.js"></script>
 
-  try {
-    const response = await fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chatHistory: chatHistory,
-        message: message
-      })
-    });
-
-    const data = await response.json();
-    chatContainer.removeChild(typingBubble);
-
-    if (data.response) {
-      const aiMessage = autoWrapMath(data.response);
-      chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
-      chatHistory.push({ role: "model", content: data.response });
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-
-      if (window.MathJax) {
-        MathJax.typesetPromise();
-      }
-    }
-
-    // If images are returned, display them
-    if (data.images && Array.isArray(data.images)) {
-      data.images.forEach(imgSrc => {
-        const img = document.createElement("img");
-        img.src = imgSrc;
-        img.alt = "Generated Image";
-        img.classList.add("ai-generated-image");
-        chatContainer.appendChild(img);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      });
-    }
-
-  } catch (error) {
-    console.error("Error sending message:", error);
-    chatContainer.removeChild(typingBubble);
-  }
-}
-
-// --- Event listeners ---
-
-sendButton.addEventListener("click", sendMessage);
-
-userInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-// --- MATHLIVE Floating Insert Equation Box ---
-
-// Create floating MathLive input
-const mathFieldContainer = document.createElement('div');
-mathFieldContainer.id = 'mathFieldContainer';
-mathFieldContainer.style.display = 'none';
-mathFieldContainer.style.position = 'fixed';
-mathFieldContainer.style.bottom = '80px'; // Float above text input
-mathFieldContainer.style.left = '50%';
-mathFieldContainer.style.transform = 'translateX(-50%)';
-mathFieldContainer.style.background = 'white';
-mathFieldContainer.style.border = '2px solid teal';
-mathFieldContainer.style.padding = '10px';
-mathFieldContainer.style.borderRadius = '12px';
-mathFieldContainer.style.boxShadow = '0px 4px 12px rgba(0,0,0,0.2)';
-mathFieldContainer.style.zIndex = '9999';
-
-// Create the MathLive field
-const mathField = document.createElement('math-field');
-mathField.id = 'mathInput';
-mathField.style.width = '300px';
-mathField.style.fontSize = '22px';
-mathField.style.minHeight = '50px';
-mathFieldContainer.appendChild(mathField);
-
-// Submit and Cancel buttons
-const submitButton = document.createElement('button');
-submitButton.innerText = 'Submit';
-submitButton.style.marginTop = '8px';
-submitButton.onclick = submitEquation;
-mathFieldContainer.appendChild(submitButton);
-
-const cancelButton = document.createElement('button');
-cancelButton.innerText = 'Cancel';
-cancelButton.style.marginTop = '8px';
-cancelButton.style.marginLeft = '10px';
-cancelButton.onclick = () => {
-  mathFieldContainer.style.display = 'none';
-};
-mathFieldContainer.appendChild(cancelButton);
-
-// Attach the floating box to body
-document.body.appendChild(mathFieldContainer);
-
-// Insert Equation Button Handler
-const insertEquationBtn = document.getElementById('equation-button');
-insertEquationBtn.addEventListener('click', () => {
-  mathFieldContainer.style.display = 'block';
-  mathField.focus();
-});
-
-// Submit Equation Handler
-function submitEquation() {
-  const latex = mathField.value;
-  if (latex.trim() !== '') {
-    userInput.value = `\\(${latex}\\)`; // Insert into user input box
-    mathField.value = ''; // Clear MathLive field
-    mathFieldContainer.style.display = 'none';
-    userInput.focus();
-  }
-}
+</body>
+</html>
