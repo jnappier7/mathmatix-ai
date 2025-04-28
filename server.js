@@ -1,4 +1,4 @@
-// server.js — FINAL CLEAN VERSION for M∆THM∆TIΧ AI (Text + Image Hybrid)
+// server.js — UPGRADED for M∆THM∆TIΧ AI (Gemini 2.0 Flash + Image Hybrid)
 
 import express from 'express';
 import dotenv from 'dotenv';
@@ -37,17 +37,35 @@ app.post('/chat', async (req, res) => {
         { role: "user", parts: [{ text: systemInstructions }] },
         ...chatHistory.map(m => ({ role: m.role, parts: [{ text: m.content }] })),
         { role: "user", parts: [{ text: message }] },
-      ]
+      ],
+      generationConfig: {
+        responseModalities: ["TEXT", "IMAGE"]
+      }
     };
 
     const response = await axios.post(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${process.env.GOOGLE_API_KEY}`,
-  payload,
-  { headers: { 'Content-Type': 'application/json' } }
-);
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+      payload,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
 
-    const aiText = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "No AI response.";
-    res.json({ response: aiText });
+    const parts = response.data.candidates?.[0]?.content?.parts || [];
+
+    let finalResponse = "";
+    let images = [];
+
+    for (const part of parts) {
+      if (part.text) {
+        finalResponse += part.text + "\n";
+      } else if (part.inlineData) {
+        images.push(`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`);
+      }
+    }
+
+    res.json({ 
+      response: finalResponse.trim() || "No AI text response.", 
+      images: images
+    });
 
   } catch (error) {
     console.error('Error chatting with Gemini:', error.response?.data || error.message);
@@ -55,7 +73,7 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-// --- SEARCH IMAGE ROUTE ---
+// --- SEARCH IMAGE ROUTE (Google Search Images API, separate from Gemini) ---
 
 app.post('/searchImage', async (req, res) => {
   try {
