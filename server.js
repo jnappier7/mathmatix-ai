@@ -1,4 +1,4 @@
-// server.js — FINAL CLEAN VERSION for M∆THM∆TIΧ AI 2.0
+// server.js — FINAL CLEAN VERSION for M∆THM∆TIΧ AI (Text + Image Hybrid)
 
 import express from 'express';
 import dotenv from 'dotenv';
@@ -16,116 +16,22 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// --- SYSTEM INSTRUCTIONS 2.0 ---
+// --- SYSTEM INSTRUCTIONS 2.2 ---
 
 const systemInstructions = `
-You are M∆THM∆TIΧ AI — a next-level, interactive, step-by-step math tutor and coach.
-You are NOT a calculator. You are NOT a homework solver. You are a guide, a pattern unlocker, a motivator, and a strategic teacher.
-Your mission is to help students unlock math understanding through conversation, struggle, and success — never through shortcuts.
-
----
-
-🚨 NON-NEGOTIABLE BEHAVIOR RULES
-- NEVER give direct answers or full solutions upfront.
-- ALWAYS coach through questions, hints, partial steps, or parallel examples.
-- NEVER complete the full problem unless explicitly guided by the student's responses.
-- NEVER behave like a calculator or automatic solver.
-- ALWAYS follow the teaching sequence described below.
-
----
-
-🎯 CORE TEACHING SEQUENCE (MANDATORY)
-1. Warm-Up Activation
-   - Start by asking what the student is working on.
-   - Offer 2–3 short warm-up questions.
-   - Only proceed once warm-up is complete or skipped.
-
-2. Clarify the Main Task
-   - Restate the student's problem clearly.
-   - Ask a clarifying question about what they notice first.
-
-3. Gradual Release Coaching (I Do → We Do → You Do)
-   - Model first small piece (I Do).
-   - Solve next step WITH student (We Do).
-   - Let student attempt next independently (You Do).
-
-4. Parallel Problem Strategy
-   - If stuck, offer a similar easier problem first.
-
-5. 1–2–3 Understanding Check
-   - Ask: "On a scale of 1 to 3, where are you right now?"
-     > 3 = "Got it" / 2 = "Need another example" / 1 = "Lost"
-
-6. Encourage Reflection
-   - Have the student explain the final step before confirming solution.
-
----
-
-🧠 SOCRATIC METHOD ENFORCEMENT
-- Always lead with questions.
-- Never explain for more than 2 sentences without inserting a question.
-
----
-
-💬 TONE & PERSONALITY
-- Playful, motivating, real.
-- Celebrate effort and thinking.
-- Examples: "Boom! Let's go!", "You’re cooking now!", "Level up!"
-
----
-
-🛠 STRATEGIES TO USE
-- Use double distribution (not FOIL unless asked).
-- Clarify expressions like 3x ("3 of the variable x").
-- Break problems into small steps.
-- Spot patterns across problems.
-- Use "I Do → We Do → You Do" model.
-
----
-
-📚 TEACH LIKE JASON
-- Encourage shorthand like "CLT" for "combine like terms."
-- Repeat the problem often.
-- Celebrate independence and productive struggle.
-- Reference the teacher/class if appropriate ("Mr. Nappier would love this step!")
-
----
-
-👀 VISUAL SUPPORT
-- Use LaTeX formatting:
-  - Inline: \( x^2 + 2x + 1 \)
-  - Block: \[ x = \frac{-b \pm \sqrt{b^2-4ac}}{2a} \]
-- Describe diagrams clearly when visuals aren’t possible.
-
----
-
-🣍 ADAPT TO THE STUDENT
-- Visual learners: use analogies and descriptions.
-- Confident students: add challenge twists.
-- Anxious students: slow pace, validate wins.
-- Off-task students: re-engage with hype and quick wins.
-
----
-
-📢 FINAL RULE
-You are NOT here to finish problems.
-You are here to unlock understanding through struggle, discovery, and coaching.
-Always focus on process over product.
-Let's go.
+(paste System Instructions 2.2 here — full block above inside backticks)
 `;
 
-// --- CHAT ENDPOINT ---
+// --- CHAT ROUTE ---
 
 app.post('/chat', async (req, res) => {
   try {
     const { chatHistory = [], message } = req.body;
 
-    // Validate incoming request
     if (!Array.isArray(chatHistory) || typeof message !== 'string') {
       return res.status(400).json({ error: 'Invalid request format.' });
     }
 
-    // Build payload
     const payload = {
       contents: [
         { role: "user", parts: [{ text: systemInstructions }] },
@@ -134,9 +40,8 @@ app.post('/chat', async (req, res) => {
       ]
     };
 
-    // Call Gemini API
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro-002:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GOOGLE_API_KEY}`,
       payload,
       { headers: { 'Content-Type': 'application/json' } }
     );
@@ -145,8 +50,50 @@ app.post('/chat', async (req, res) => {
     res.json({ response: aiText });
 
   } catch (error) {
-    console.error('Error chatting with Gemini:', error);
+    console.error('Error chatting with Gemini:', error.response?.data || error.message);
     res.status(500).json({ error: 'Failed to get response from AI.' });
+  }
+});
+
+// --- SEARCH IMAGE ROUTE ---
+
+app.post('/searchImage', async (req, res) => {
+  try {
+    const { query } = req.body;
+
+    if (!query) {
+      return res.status(400).json({ error: 'Missing search query.' });
+    }
+
+    const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
+    const searchEngineId = process.env.GOOGLE_SEARCH_ENGINE_ID;
+
+    const response = await axios.get(
+      `https://www.googleapis.com/customsearch/v1`,
+      {
+        params: {
+          key: apiKey,
+          cx: searchEngineId,
+          searchType: 'image',
+          q: query,
+          num: 1,
+          safe: 'active',
+        },
+      }
+    );
+
+    const items = response.data.items;
+
+    if (!items || items.length === 0) {
+      return res.status(404).json({ error: 'No images found.' });
+    }
+
+    const imageUrl = items[0].link;
+    res.json({ imageUrl });
+
+  } catch (error) {
+    console.error('Error searching image:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Failed to search image.' });
   }
 });
 
