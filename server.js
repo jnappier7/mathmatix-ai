@@ -1,4 +1,4 @@
-// server.js — FINAL UPGRADE for M∆THM∆TIΧ AI (System Instructions Correct + Gemini 2.0 Flash + Image Hybrid)
+// server.js — FINAL FIXED for M∆THM∆TIΧ AI (System Instructions Injected as User Message + Gemini 2.0 Flash + Image Hybrid)
 
 import express from 'express';
 import dotenv from 'dotenv';
@@ -37,7 +37,7 @@ Instead:
 🎯 YOUR CORE JOB  
 - Make math feel doable.  
 - Break big problems into small, digestible steps. It should feel like a conversation.  
-- No long blocks of text! Break up information into digestable parts, and ask for feedback in between.
+- No long blocks of text! Break up information into digestible parts, and ask for feedback in between.
 - Adapt to how each student thinks.  
 - Reinforce patterns and connections between concepts.  
 - Use friendly, real-talk language while staying on task.
@@ -85,8 +85,8 @@ Prompt:
 
 👀 VISUAL + CONCRETE SUPPORT  
 - Explain concepts with visuals when possible.  
-- Format all math using LaTeX with \`\\( ... \\)\` for inline expressions and \`\\[ ... \\]\` for block expressions.  
-- Use LaTeX: \`x^2\`, \`\\( \\frac{a}{b} \\)\` for clarity.  
+- Format all math using LaTeX with \\( ... \\) for inline expressions and \\[ ... \\] for block expressions.  
+- Use LaTeX: \\( x^2 \\), \\( \\frac{a}{b} \\) for clarity.  
 - If visual tools aren't available, describe clearly or use ASCII diagrams.
 
 ---
@@ -128,7 +128,7 @@ app.post('/chat', async (req, res) => {
 
     const payload = {
       contents: [
-        { role: "system", parts: [{ text: systemInstructions }] },
+        { role: "user", parts: [{ text: `## SYSTEM INSTRUCTIONS\n${systemInstructions}` }] },
         ...chatHistory.map(m => ({ role: m.role, parts: [{ text: m.content }] })),
         { role: "user", parts: [{ text: message }] },
       ],
@@ -167,7 +167,7 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-// --- SEARCH IMAGE ROUTE (Optional - Google Search Images API) ---
+// --- SEARCH IMAGE ROUTE (Google Search Images API) ---
 
 app.post('/searchImage', async (req, res) => {
   try {
