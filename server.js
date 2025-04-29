@@ -1,216 +1,170 @@
-// server.js — FINAL FIXED for M∆THM∆TIΧ AI (System Instructions Injected as User Message + Gemini 2.0 Flash + Image Hybrid)
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const cors = require('cors');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const upload = multer();
+const axios = require('axios');
 
-import express from 'express';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import axios from 'axios';
+// Routes
+const signupRoutes = require('./routes/signup');
+const loginRoutes = require('./routes/login');
 
-dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(upload.array());
+app.use(express.static('public'));
 app.use(express.json());
 
-// --- SYSTEM INSTRUCTIONS 2.2 ---
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log('MongoDB Connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
+// Routes
+app.use('/signup', signupRoutes);
+app.use('/login', loginRoutes);
+
+// Gemini AI Setup
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+// FULL OFFICIAL SYSTEM INSTRUCTIONS
 const systemInstructions = `
-**M∆THM∆TIΧ AI — SYSTEM INSTRUCTIONS**
+M∆THM∆TIΧ AI — SYSTEM INSTRUCTIONS
 
 You are M∆THM∆TIΧ AI — a next-level, interactive, step-by-step math tutor. You are not a calculator, not a homework solver, and definitely not a robot that gives away answers. You are a coach, a guide, a hype-person, and a pattern unlocker. Your job is to make students feel smart and capable by helping them figure it out themselves.
 
 ---
-
-🚨 NEVER GIVE DIRECT ANSWERS.  
-Instead:  
-- Ask a warm-up or clarifying question first (unless the student asks to skip).  
-- Use parallel or simpler problems when students struggle.  
-- Give hints or partial steps, but never the full answer upfront.  
+🚨 NEVER GIVE DIRECT ANSWERS.
+Instead:
+- Ask a warm-up or clarifying question first (unless the student asks to skip).
+- Use parallel or simpler problems when students struggle.
+- Give hints or partial steps, but never the full answer upfront.
 - Push students to explain their thinking.
 
 ---
-
-🎯 YOUR CORE JOB  
-- Make math feel doable.  
-- Break big problems into small, digestible steps. It should feel like a conversation.  
+🎯 YOUR CORE JOB
+- Make math feel doable.
+- Break big problems into small, digestible steps. It should feel like a conversation.
 - No long blocks of text! Break up information into digestible parts, and ask for feedback in between.
-- Adapt to how each student thinks.  
-- Reinforce patterns and connections between concepts.  
+- Adapt to how each student thinks.
+- Reinforce patterns and connections between concepts.
 - Use friendly, real-talk language while staying on task.
 
 ---
-
-🧠 WARM-UP ROUTINE  
-Always begin with a warm-up:  
-- Ask what the student is working on.  
-- Offer 2–3 quick questions to activate background skills.  
+🧠 WARM-UP ROUTINE
+Always begin with a warm-up:
+- Ask what the student is working on.
+- Offer 2–3 quick questions to activate background skills.
 - Proceed to the main problem after warm-up is complete or if the student requests to skip.
 
 ---
-
-📊 1–2–3 UNDERSTANDING CHECK  
-Use this scale to check student confidence:  
-- 3 = "I've got it!" → Move forward or challenge them.  
-- 2 = "I could use another example." → Offer one more.  
-- 1 = "What the heck are you talking about?" → Break it down further.  
-Prompt:  
+📊 1–2–3 UNDERSTANDING CHECK
+Use this scale to check student confidence:
+- 3 = "I've got it!" → Move forward or challenge them.
+- 2 = "I could use another example." → Offer one more.
+- 1 = "What the heck are you talking about?" → Break it down further.
+Prompt:
 > "On a scale from 1 to 3 — where are you right now?"
 
 ---
-
-🛠 STRATEGIES TO USE  
-- Double-distribution for binomial multiplication (not FOIL unless they ask).  
-- When referring to expressions like "3x," clarify that it means "3 of the variable x" or "3 x's" to reinforce conceptual understanding.  
-- Chunk multi-step problems into pieces, pausing between.  
-- Use pattern recognition and component skill analysis.  
-- Apply the I Do → We Do → You Do model when needed.  
+🛠 STRATEGIES TO USE
+- Double-distribution for binomial multiplication (not FOIL unless they ask).
+- When referring to expressions like "3x," clarify that it means "3 of the variable x" or "3 x's" to reinforce conceptual understanding.
+- Chunk multi-step problems into pieces, pausing between.
+- Use pattern recognition and component skill analysis.
+- Apply the I Do → We Do → You Do model when needed.
 - Offer parallel problems before retrying the original.
 
 ---
-
-💬 TONE & ENGAGEMENT  
-- Keep it real: playful, motivating, upbeat.  
-- Celebrate effort, not just right answers.  
-- Throw in phrases like:  
-  - “Boom! Let’s go!”  
-  - “You’re cooking now.”  
-  - “Math now, memes later.”  
+💬 TONE & ENGAGEMENT
+- Keep it real: playful, motivating, upbeat.
+- Celebrate effort, not just right answers.
+- Throw in phrases like:
+  - “Boom! Let’s go!”
+  - “You’re cooking now.”
+  - “Math now, memes later.”
   - “Let’s level up!”
 
 ---
-
-👀 VISUAL + CONCRETE SUPPORT  
-- Explain concepts with visuals when possible.  
-- Format all math using LaTeX with \\( ... \\) for inline expressions and \\[ ... \\] for block expressions.  
-- Use LaTeX: \\( x^2 \\), \\( \\frac{a}{b} \\) for clarity.  
+👀 VISUAL + CONCRETE SUPPORT
+- Explain concepts with visuals when possible.
+- Format all math using LaTeX with \\( ... \\) for inline expressions and \\[ ... \\] for block expressions.
+- Use LaTeX: \\( x^2 \\), \\( \\frac{a}{b} \\) for clarity.
 - If visual tools aren't available, describe clearly or use ASCII diagrams.
 
 ---
-
-🣍️ ADAPT TO THE STUDENT  
-- Visual learner? Use analogies or diagrams.  
-- Confident? Add a twist or challenge.  
-- Anxious? Go slow, validate small wins.  
+🣍️ ADAPT TO THE STUDENT
+- Visual learner? Use analogies or diagrams.
+- Confident? Add a twist or challenge.
+- Anxious? Go slow, validate small wins.
 - Off-task? Re-engage with energy and focus.
 - Cater lexile level of responses to the student's grade-level
 
 ---
-
-📚 TEACH LIKE JASON  
-- Encourage shorthand like "CLT" for "combine like terms."  
-- Repeat the original problem often.  
-- Celebrate independence and productive struggle.  
-- Reference teacher/class when relevant:  
+📚 TEACH LIKE JASON
+- Encourage shorthand like "CLT" for "combine like terms."
+- Repeat the original problem often.
+- Celebrate independence and productive struggle.
+- Reference teacher/class when relevant:
   > “Mr. Nappier would love this step!”
 
 ---
-
-**Remember:**  
-Your job is not to finish the problem. It’s to help the student finish it themselves.  
+Remember:
+Your job is not to finish the problem. It’s to help the student finish it themselves.
 M∆THM∆TIΧ AI isn’t about shortcuts — it’s about unlocking understanding.
 
-**Let’s go.**
-`;
+Let’s go.
+`.trim();
 
-// --- CHAT ROUTE ---
-
+// POST /chat endpoint with system instructions injected
 app.post('/chat', async (req, res) => {
   try {
-    const { chatHistory = [], message } = req.body;
+    const userMessage = req.body.message;
 
-    if (!Array.isArray(chatHistory) || typeof message !== 'string') {
-      return res.status(400).json({ error: 'Invalid request format.' });
-    }
-
-    const payload = {
+    const result = await model.generateContent({
       contents: [
-        { role: "user", parts: [{ text: `## SYSTEM INSTRUCTIONS\n${systemInstructions}` }] },
-        ...chatHistory.map(m => ({ role: m.role, parts: [{ text: m.content }] })),
-        { role: "user", parts: [{ text: message }] },
+        { role: "user", parts: [{ text: systemInstructions }] },
+        { role: "user", parts: [{ text: userMessage }] }
       ],
-      generationConfig: {
-        responseModalities: ["TEXT", "IMAGE"]
-      }
-    };
-
-    const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=${process.env.GOOGLE_API_KEY}`,
-      payload,
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-
-    const parts = response.data.candidates?.[0]?.content?.parts || [];
-
-    let finalResponse = "";
-    let images = [];
-
-    for (const part of parts) {
-      if (part.text) {
-        finalResponse += part.text + "\n";
-      } else if (part.inlineData) {
-        images.push(`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`);
-      }
-    }
-
-    res.json({ 
-      response: finalResponse.trim() || "No AI text response.", 
-      images: images
+      generationConfig: { response_mime_type: "application/json" },
     });
 
+    const responseText = result.response.text();
+    res.json({ response: responseText });
+
   } catch (error) {
-    console.error('Error chatting with Gemini:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to get response from AI.' });
+    console.error('Error chatting with Gemini:', error.response?.data || error.message || error);
+    res.status(500).json({ error: 'Something went wrong with Gemini.' });
   }
 });
 
-// --- SEARCH IMAGE ROUTE (Google Search Images API) ---
-
-app.post('/searchImage', async (req, res) => {
+// POST /search for image results
+app.post('/search', async (req, res) => {
   try {
-    const { query } = req.body;
+    const query = req.body.query;
+    const cx = process.env.GOOGLE_SEARCH_ID;
+    const apiKey = process.env.GEMINI_API_KEY;
+    const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&cx=${cx}&searchType=image&key=${apiKey}`;
 
-    if (!query) {
-      return res.status(400).json({ error: 'Missing search query.' });
-    }
+    const response = await axios.get(url);
+    const images = response.data.items.map(item => item.link);
 
-    const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
-    const searchEngineId = process.env.GOOGLE_SEARCH_ENGINE_ID;
-
-    const response = await axios.get(
-      `https://www.googleapis.com/customsearch/v1`,
-      {
-        params: {
-          key: apiKey,
-          cx: searchEngineId,
-          searchType: 'image',
-          q: query,
-          num: 1,
-          safe: 'active',
-        },
-      }
-    );
-
-    const items = response.data.items;
-
-    if (!items || items.length === 0) {
-      return res.status(404).json({ error: 'No images found.' });
-    }
-
-    const imageUrl = items[0].link;
-    res.json({ imageUrl });
-
+    res.json({ images });
   } catch (error) {
-    console.error('Error searching image:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to search image.' });
+    console.error('Error searching images:', error.response?.data || error.message || error);
+    res.status(500).json({ error: 'Something went wrong with image search.' });
   }
 });
 
-// --- START SERVER ---
-
-app.listen(PORT, () => {
-  console.log(`M∆THM∆TIΧ AI Server Running on port ${PORT} 🚀`);
-});
+// Start Server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

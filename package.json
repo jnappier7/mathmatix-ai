@@ -9,10 +9,13 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
     "axios": "^1.9.0",
+    "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.14.0",
     "multer": "^1.4.4",
     "openai": "^4.95.1"
   }
