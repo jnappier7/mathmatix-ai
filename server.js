@@ -9,7 +9,6 @@ const multer = require('multer');
 const upload = multer();
 const axios = require('axios');
 
-// Routes
 const signupRoutes = require('./routes/signup');
 const loginRoutes = require('./routes/login');
 
@@ -21,14 +20,14 @@ app.use(upload.array());
 app.use(express.static('public'));
 app.use(express.json());
 
-// MongoDB connection
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('MongoDB Connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Routes
+// Register Routes
 app.use('/signup', signupRoutes);
 app.use('/login', loginRoutes);
 
@@ -36,7 +35,6 @@ app.use('/login', loginRoutes);
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-// FULL OFFICIAL SYSTEM INSTRUCTIONS
 const systemInstructions = `
 M∆THM∆TIΧ AI — SYSTEM INSTRUCTIONS
 
@@ -125,7 +123,6 @@ M∆THM∆TIΧ AI isn’t about shortcuts — it’s about unlocking understandi
 Let’s go.
 `.trim();
 
-// POST /chat endpoint with system instructions injected
 app.post('/chat', async (req, res) => {
   try {
     const userMessage = req.body.message;
@@ -147,7 +144,7 @@ app.post('/chat', async (req, res) => {
   }
 });
 
-// POST /search for image results
+// Google Image Search
 app.post('/search', async (req, res) => {
   try {
     const query = req.body.query;
@@ -157,8 +154,8 @@ app.post('/search', async (req, res) => {
 
     const response = await axios.get(url);
     const images = response.data.items.map(item => item.link);
-
     res.json({ images });
+
   } catch (error) {
     console.error('Error searching images:', error.response?.data || error.message || error);
     res.status(500).json({ error: 'Something went wrong with image search.' });
