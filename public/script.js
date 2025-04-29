@@ -20,7 +20,6 @@ function createMessageBubble(message, sender = "user", isImage = false) {
   const bubble = document.createElement("div");
   bubble.classList.add("message", sender);
 
-  // Align based on sender
   if (sender === "user") {
     bubble.style.alignSelf = "flex-end";
   } else {
@@ -225,36 +224,64 @@ closeSketchpad.addEventListener('click', () => {
   sketchpadPopup.classList.add('hidden');
 });
 
-// --- Sketchpad Drawing Logic ---
+// --- Sketchpad Drawing Logic (fixed!) ---
 const sketchCanvas = document.getElementById('sketch-canvas');
 const clearSketch = document.getElementById('clear-sketch');
 const ctx = sketchCanvas.getContext('2d');
 let drawing = false;
 
-sketchCanvas.addEventListener('mousedown', startDraw);
-sketchCanvas.addEventListener('mousemove', draw);
-sketchCanvas.addEventListener('mouseup', endDraw);
-sketchCanvas.addEventListener('mouseout', endDraw);
-sketchCanvas.addEventListener('touchstart', (e) => startDraw(e.touches[0]));
-sketchCanvas.addEventListener('touchmove', (e) => {
-  e.preventDefault();
-  draw(e.touches[0]);
-});
-sketchCanvas.addEventListener('touchend', endDraw);
+function getCanvasCoordinates(e) {
+  const rect = sketchCanvas.getBoundingClientRect();
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+}
 
-function startDraw(e) {
+sketchCanvas.addEventListener('mousedown', (e) => {
+  drawing = true;
+  const pos = getCanvasCoordinates(e);
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+});
+
+sketchCanvas.addEventListener('mousemove', (e) => {
+  if (!drawing) return;
+  const pos = getCanvasCoordinates(e);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
+});
+
+sketchCanvas.addEventListener('mouseup', () => {
+  drawing = false;
+});
+
+sketchCanvas.addEventListener('mouseout', () => {
+  drawing = false;
+});
+
+// Touch support
+sketchCanvas.addEventListener('touchstart', (e) => {
+  const touch = e.touches[0];
+  const pos = getCanvasCoordinates(touch);
   drawing = true;
   ctx.beginPath();
-  ctx.moveTo(e.clientX - sketchCanvas.offsetLeft, e.clientY - sketchCanvas.offsetTop);
-}
-function draw(e) {
+  ctx.moveTo(pos.x, pos.y);
+});
+
+sketchCanvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
   if (!drawing) return;
-  ctx.lineTo(e.clientX - sketchCanvas.offsetLeft, e.clientY - sketchCanvas.offsetTop);
+  const touch = e.touches[0];
+  const pos = getCanvasCoordinates(touch);
+  ctx.lineTo(pos.x, pos.y);
   ctx.stroke();
-}
-function endDraw() {
+});
+
+sketchCanvas.addEventListener('touchend', () => {
   drawing = false;
-}
+});
+
 clearSketch.addEventListener('click', () => {
   ctx.clearRect(0, 0, sketchCanvas.width, sketchCanvas.height);
 });
