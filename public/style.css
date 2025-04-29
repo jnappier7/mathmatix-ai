@@ -12,11 +12,10 @@ body {
 /* Logo */
 #logo-header {
   text-align: center;
-  padding: 10px;
 }
 
 #logo-header img {
-  max-width: 600px;
+  max-width: 400px;
   height: auto;
 }
 
@@ -32,7 +31,7 @@ body {
   flex-direction: column;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  height: calc(100vh - 160px); /* Full fit minus logo and input */
+  height: calc(100vh - 160px); /* Adjusted for logo and input area */
 }
 
 #chat-container-inner {
@@ -80,12 +79,10 @@ body {
 
 .user {
   background: #d0f0fd;
-  align-self: flex-end;
 }
 
 .ai {
   background: #eeeeee;
-  align-self: flex-start;
 }
 
 /* Arrival Animation */
