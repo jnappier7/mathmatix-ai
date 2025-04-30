@@ -1,0 +1,45 @@
+<!-- public/upload.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Math Problem</title>
+</head>
+<body>
+  <h2>Upload a Worksheet or Image</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <h3>Extracted Text:</h3>
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const file = document.getElementById('fileInput').files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      document.getElementById('output').textContent = data.text || 'No text found.';
+      
+      // Optional: send the extracted text to Gemini
+      const aiRes = await fetch('/api/ask-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: data.text })
+      });
+
+      const aiData = await aiRes.json();
+      document.getElementById('output').textContent += '\n\nAI Response:\n' + aiData.response;
+    });
+  </script>
+</body>
+</html>
