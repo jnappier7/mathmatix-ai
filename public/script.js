@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     chatContainer.scrollTop = chatContainer.scrollHeight;
     userInput.value = "";
 
-    const thinkingBubble = createMessageBubble("Mathmatix AI is thinking...", "ai");
+    const thinkingBubble = createMessageBubble("M∆THM∆TIΧ AI is thinking...", "ai");
     chatContainer.appendChild(thinkingBubble);
 
     try {
