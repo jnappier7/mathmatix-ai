@@ -24,4 +24,3 @@ document.getElementById("login-form").addEventListener("submit", async function 
     alert("Something went wrong while logging in.");
   }
 });
-// JavaScript Document
