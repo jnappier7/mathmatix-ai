@@ -1,17 +1,29 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  // === Personalized Greeting ===
+  // === Personalized AI Welcome Bubble ===
   const user = JSON.parse(localStorage.getItem("mathmatixUser"));
   if (user) {
-    const greeting = document.getElementById("welcome-message");
+    const container = document.getElementById("chat-container-inner");
+    const bubble = document.createElement("div");
+    bubble.classList.add("message", "ai");
 
-    if (greeting) {
-      greeting.innerHTML = `
-        <h2>Hey ${user.name}! 👋</h2>
-        <p>You’re a <strong>${user.learningStyle.toLowerCase()}</strong> learner who prefers a <strong>${user.tonePreference.toLowerCase()}</strong> vibe.</p>
-        <p>Let’s make this session 🔥</p>
-      `;
-    }
+    const name = user.name || "friend";
+    const learner = user.learningStyle?.toLowerCase();
+    const tone = user.tonePreference?.toLowerCase();
+
+    let intro = `Hey ${name}! 👋`;
+    let learnerLine = learner
+      ? `Let’s make math make sense, ${learner === 'kinesthetic' ? 'hands-on' : 'your way'}.`
+      : `Let’s dive in.`;
+
+    let toneLine = "";
+    if (tone === "chill") toneLine = "No pressure. Just good vibes. 😎";
+    else if (tone === "motivational") toneLine = "We’re gonna crush this. Let’s gooo! 💪";
+    else if (tone === "serious") toneLine = "Locked in. Let’s get right to it. 🎯";
+
+    bubble.innerText = `${intro}\n\n${learnerLine}\n${toneLine}`;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
   }
 
   // --- Basic Chat Logic ---
@@ -300,4 +312,4 @@ document.addEventListener("DOMContentLoaded", function () {
     ctx.clearRect(0, 0, sketchCanvas.width, sketchCanvas.height);
   });
 
-}); // End DOMContentLoaded
+});
