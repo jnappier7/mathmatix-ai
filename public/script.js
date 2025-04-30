@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-
   // === Personalized AI Welcome Bubble ===
   const user = JSON.parse(localStorage.getItem("mathmatixUser"));
   if (user) {
@@ -11,46 +10,35 @@ document.addEventListener("DOMContentLoaded", function () {
     const learner = user.learningStyle?.toLowerCase();
     const tone = user.tonePreference?.toLowerCase();
 
-    let intro = `Hey ${name}! 👋`;
+    let intro = `Hey ${name}! ?`;
     let learnerLine = learner
-      ? `Let’s make math make sense, ${learner === 'kinesthetic' ? 'hands-on' : 'your way'}.`
-      : `Let’s dive in.`;
+      ? `Let�s make math make sense, ${learner === 'kinesthetic' ? 'hands-on' : 'your way'}.`
+      : `Let�s dive in.`;
 
     let toneLine = "";
-    if (tone === "chill") toneLine = "No pressure. Just good vibes. 😎";
-    else if (tone === "motivational") toneLine = "We’re gonna crush this. Let’s gooo! 💪";
-    else if (tone === "serious") toneLine = "Locked in. Let’s get right to it. 🎯";
+    if (tone === "chill") toneLine = "No pressure. Just good vibes. ?";
+    else if (tone === "motivational") toneLine = "We�re gonna crush this. Let�s gooo! ?";
+    else if (tone === "serious") toneLine = "Locked in. Let�s get right to it. ?";
 
     bubble.innerText = `${intro}\n\n${learnerLine}\n${toneLine}`;
     container.appendChild(bubble);
     container.scrollTop = container.scrollHeight;
   }
 
-  // --- Basic Chat Logic ---
   const chatContainer = document.getElementById("chat-container-inner");
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
-
   let chatHistory = [];
 
   function autoWrapMath(message) {
-    const mathTriggerPattern = /^[\d\s\+\-\*\/\=\^\(\)xXyYzZaAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ]+$/;
-    if (mathTriggerPattern.test(message.trim())) {
-      return `\\(${message.trim()}\\)`;
-    } else {
-      return message;
-    }
+    const mathPattern = /^[\d\s+\-*/=^()xXyY]+$/;
+    return mathPattern.test(message.trim()) ? `\\(${message.trim()}\\)` : message;
   }
 
   function createMessageBubble(message, sender = "user", isImage = false) {
     const bubble = document.createElement("div");
     bubble.classList.add("message", sender);
-
-    if (sender === "user") {
-      bubble.style.alignSelf = "flex-end";
-    } else {
-      bubble.style.alignSelf = "flex-start";
-    }
+    bubble.style.alignSelf = sender === "user" ? "flex-end" : "flex-start";
 
     if (isImage) {
       const img = document.createElement("img");
@@ -70,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function sendMessage() {
     const message = userInput.value.trim();
-    if (message === "") return;
+    if (!message) return;
 
     chatContainer.appendChild(createMessageBubble(message, "user"));
     chatHistory.push({ role: "user", content: message });
@@ -79,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const typingBubble = createMessageBubble("Mathmatix AI is thinking...", "ai");
     chatContainer.appendChild(typingBubble);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
 
     try {
       const response = await fetch("/chat", {
@@ -96,26 +83,21 @@ document.addEventListener("DOMContentLoaded", function () {
         chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
         chatHistory.push({ role: "model", content: data.response });
         chatContainer.scrollTop = chatContainer.scrollHeight;
-
-        if (window.MathJax) {
-          MathJax.typesetPromise();
-        }
+        if (window.MathJax) MathJax.typesetPromise();
       }
 
-      if (data.images && Array.isArray(data.images)) {
+      if (Array.isArray(data.images)) {
         data.images.forEach(imgSrc => {
           chatContainer.appendChild(createMessageBubble(imgSrc, "ai", true));
           chatContainer.scrollTop = chatContainer.scrollHeight;
         });
       }
-
     } catch (error) {
       console.error("Error sending message:", error);
       chatContainer.removeChild(typingBubble);
     }
   }
 
-  // --- Send Button ---
   sendButton.addEventListener("click", sendMessage);
   userInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -124,62 +106,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // --- MathLive Insert Equation ---
+  // === Insert Equation Button ===
   const insertEquationBtn = document.getElementById('equation-button');
   const mathFieldContainer = document.createElement('div');
   mathFieldContainer.id = 'mathFieldContainer';
-  mathFieldContainer.style.display = 'none';
-  mathFieldContainer.style.position = 'fixed';
-  mathFieldContainer.style.bottom = '80px';
-  mathFieldContainer.style.left = '50%';
-  mathFieldContainer.style.transform = 'translateX(-50%)';
-  mathFieldContainer.style.background = 'white';
-  mathFieldContainer.style.border = '2px solid teal';
-  mathFieldContainer.style.padding = '10px';
-  mathFieldContainer.style.borderRadius = '12px';
-  mathFieldContainer.style.boxShadow = '0px 4px 12px rgba(0,0,0,0.2)';
-  mathFieldContainer.style.zIndex = '9999';
-
+  mathFieldContainer.style = "display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:white;border:2px solid teal;padding:10px;border-radius:12px;box-shadow:0px 4px 12px rgba(0,0,0,0.2);z-index:9999;";
+  
   const mathField = document.createElement('math-field');
   mathField.id = 'mathInput';
-  mathField.style.width = '300px';
-  mathField.style.fontSize = '22px';
-  mathField.style.minHeight = '50px';
+  mathField.style = "width:300px;font-size:22px;min-height:50px;";
   mathFieldContainer.appendChild(mathField);
 
   const submitButton = document.createElement('button');
   submitButton.innerText = 'Submit';
   submitButton.style.marginTop = '8px';
-  submitButton.onclick = submitEquation;
-  mathFieldContainer.appendChild(submitButton);
-
-  const cancelButton = document.createElement('button');
-  cancelButton.innerText = 'Cancel';
-  cancelButton.style.marginTop = '8px';
-  cancelButton.style.marginLeft = '10px';
-  cancelButton.onclick = () => {
-    mathFieldContainer.style.display = 'none';
-  };
-  mathFieldContainer.appendChild(cancelButton);
-
-  document.body.appendChild(mathFieldContainer);
-
-  insertEquationBtn.addEventListener('click', () => {
-    mathFieldContainer.style.display = 'block';
-    mathField.focus();
-  });
-
-  function submitEquation() {
+  submitButton.onclick = () => {
     const latex = mathField.value;
-    if (latex.trim() !== '') {
+    if (latex.trim()) {
       userInput.value = `\\(${latex}\\)`;
       mathField.value = '';
       mathFieldContainer.style.display = 'none';
       userInput.focus();
     }
-  }
+  };
+  mathFieldContainer.appendChild(submitButton);
 
-  // --- Drag and Drop Upload ---
+  const cancelButton = document.createElement('button');
+  cancelButton.innerText = 'Cancel';
+  cancelButton.style.margin = '8px 0 0 10px';
+  cancelButton.onclick = () => mathFieldContainer.style.display = 'none';
+  mathFieldContainer.appendChild(cancelButton);
+
+  document.body.appendChild(mathFieldContainer);
+  insertEquationBtn.addEventListener('click', () => {
+    mathFieldContainer.style.display = 'block';
+    mathField.focus();
+  });
+
+  // === File Upload Integration (Floating button + Drag-n-Drop) ===
   const dropzone = document.getElementById('dropzone');
   const uploadButton = document.getElementById('upload-button');
 
@@ -194,9 +158,8 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener('drop', (e) => {
     e.preventDefault();
     dropzone.classList.remove('active');
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleFileUpload(files[0]);
+    if (e.dataTransfer.files.length > 0) {
+      handleFileUpload(e.dataTransfer.files[0]);
     }
   });
   uploadButton.addEventListener('click', () => {
@@ -204,15 +167,16 @@ document.addEventListener("DOMContentLoaded", function () {
     fileInput.type = 'file';
     fileInput.accept = '.png,.jpg,.jpeg,.pdf';
     fileInput.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        handleFileUpload(file);
-      }
+      if (e.target.files[0]) handleFileUpload(e.target.files[0]);
     };
     fileInput.click();
   });
 
-  function handleFileUpload(file) {
+  // === OCR + Gemini Upload Flow ===
+  async function handleFileUpload(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = function (e) {
@@ -221,95 +185,36 @@ document.addEventListener("DOMContentLoaded", function () {
       };
       reader.readAsDataURL(file);
     } else {
-      const msg = document.createElement('div');
-      msg.innerText = `📄 Uploaded file: ${file.name}`;
-      chatContainer.appendChild(createMessageBubble(msg.innerText, "user"));
+      chatContainer.appendChild(createMessageBubble(`? Uploaded file: ${file.name}`, "user"));
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
+
+    const thinking = createMessageBubble("Extracting text and analyzing...", "ai");
+    chatContainer.appendChild(thinking);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    try {
+      const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
+      const uploadData = await uploadRes.json();
+
+      const aiRes = await fetch('/api/ask-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: uploadData.text })
+      });
+
+      const aiData = await aiRes.json();
+      chatContainer.removeChild(thinking);
+
+      const aiMessage = autoWrapMath(aiData.response);
+      chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      if (window.MathJax) MathJax.typesetPromise();
+
+    } catch (err) {
+      console.error("OCR/AI Error:", err);
+      chatContainer.removeChild(thinking);
+      chatContainer.appendChild(createMessageBubble("?? Something went wrong processing that file.", "ai"));
+    }
   }
-
-  // --- Calculator and Sketch Pad Popups ---
-  const calculatorBtn = document.getElementById('calculator-button');
-  const sketchPadBtn = document.getElementById('scratchpad-button');
-  const closeCalculator = document.getElementById('close-calculator');
-  const closeSketchpad = document.getElementById('close-sketchpad');
-
-  const calculatorPopup = document.getElementById('calculator-popup');
-  const sketchpadPopup = document.getElementById('sketchpad-popup');
-
-  calculatorBtn.addEventListener('click', () => {
-    calculatorPopup.classList.remove('hidden');
-  });
-  sketchPadBtn.addEventListener('click', () => {
-    sketchpadPopup.classList.remove('hidden');
-  });
-  closeCalculator.addEventListener('click', () => {
-    calculatorPopup.classList.add('hidden');
-  });
-  closeSketchpad.addEventListener('click', () => {
-    sketchpadPopup.classList.add('hidden');
-  });
-
-  // --- Sketchpad Drawing Logic ---
-  const sketchCanvas = document.getElementById('sketch-canvas');
-  const clearSketch = document.getElementById('clear-sketch');
-  const ctx = sketchCanvas.getContext('2d');
-  let drawing = false;
-
-  function getCanvasCoordinates(e) {
-    const rect = sketchCanvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    };
-  }
-
-  sketchCanvas.addEventListener('mousedown', (e) => {
-    drawing = true;
-    const pos = getCanvasCoordinates(e);
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-  });
-
-  sketchCanvas.addEventListener('mousemove', (e) => {
-    if (!drawing) return;
-    const pos = getCanvasCoordinates(e);
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-  });
-
-  sketchCanvas.addEventListener('mouseup', () => {
-    drawing = false;
-  });
-
-  sketchCanvas.addEventListener('mouseout', () => {
-    drawing = false;
-  });
-
-  // Touch support
-  sketchCanvas.addEventListener('touchstart', (e) => {
-    const touch = e.touches[0];
-    const pos = getCanvasCoordinates(touch);
-    drawing = true;
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-  });
-
-  sketchCanvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    if (!drawing) return;
-    const touch = e.touches[0];
-    const pos = getCanvasCoordinates(touch);
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-  });
-
-  sketchCanvas.addEventListener('touchend', () => {
-    drawing = false;
-  });
-
-  clearSketch.addEventListener('click', () => {
-    ctx.clearRect(0, 0, sketchCanvas.width, sketchCanvas.height);
-  });
-
 });

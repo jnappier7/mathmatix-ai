@@ -1,4 +1,3 @@
-<!-- public/upload.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,8 +27,10 @@
       });
 
       const data = await res.json();
-      document.getElementById('output').textContent = data.text || 'No text found.';
-      
+      const output = document.getElementById('output');
+      output.textContent = '';  // clear previous
+      output.textContent += 'Extracted Text:\n' + (data.text?.toString() || 'No text found.');
+
       // Optional: send the extracted text to Gemini
       const aiRes = await fetch('/api/ask-ai', {
         method: 'POST',
@@ -38,7 +39,7 @@
       });
 
       const aiData = await aiRes.json();
-      document.getElementById('output').textContent += '\n\nAI Response:\n' + aiData.response;
+      output.textContent += '\n\nAI Response:\n' + aiData.response;
     });
   </script>
 </body>
