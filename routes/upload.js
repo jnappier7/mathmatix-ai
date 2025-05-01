@@ -19,12 +19,21 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const fileBuffer = req.file.buffer;
-    const base64 = fileBuffer.toString('base64');
+    // Block PDF files
+    if (req.file.mimetype === 'application/pdf') {
+      return res.status(400).json({
+        error: "📄 PDFs aren’t supported yet. Please upload a clear image or screenshot instead."
+      });
+    }
 
+    // Convert buffer to base64
+    const base64 = req.file.buffer.toString('base64');
+
+    // Extract text from image
     const extractedText = await extractTextFromImageOrPDF(base64);
     const prompt = extractedText?.trim() || "Help me understand this math problem.";
 
+    // Send to Gemini
     const result = await model.generateContent({
       contents: [
         { role: "user", parts: [{ text: systemInstructions }] },
@@ -38,14 +47,14 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       const parsed = JSON.parse(responseText);
       responseText = parsed.response || parsed.responseText || responseText;
     } catch {
-      // Not JSON? Leave it as is
+      // Leave raw if not JSON
     }
 
     res.send(responseText);
 
   } catch (err) {
     console.error("Upload OCR/Gemini error:", err);
-    res.status(500).json({ error: 'Failed to generate response from AI' });
+    res.status(500).json({ error: '⚠️ Something went wrong processing that file.' });
   }
 });
 
