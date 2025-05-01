@@ -126,3 +126,33 @@ document.addEventListener("DOMContentLoaded", async function () {
     chatContainer.scrollTop = chatContainer.scrollHeight;
   }
 });
+window.addEventListener("beforeunload", async () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("mathmatixUser"));
+    if (!user?._id || chatHistory.length < 2) return;
+
+    const summaryPrompt = `Summarize this tutoring session as if you're writing a quick note for a real math teacher. Focus on what the student struggled with, what they improved at, and any next steps. Here's the conversation: \n\n${chatHistory.map(m => `${m.role}: ${m.content}`).join('\n')}`;
+
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: summaryPrompt, chatHistory: [] })  // isolated summary prompt
+    });
+
+    const summary = await res.text();
+
+    await fetch("/memory/save-memory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user._id,
+        messages: chatHistory,
+        summary
+      })
+    });
+
+    console.log("✅ Session saved to memory");
+  } catch (err) {
+    console.warn("❌ Failed to save session:", err);
+  }
+});
