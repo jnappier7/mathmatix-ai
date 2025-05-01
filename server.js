@@ -81,22 +81,26 @@ You’re not just a tutor. You’re M∆THM∆TIΧ.
 app.post('/chat', async (req, res) => {
   try {
     const userMessage = req.body.message;
+    const history = req.body.chatHistory || [];
 
-    const result = await model.generateContent({
-      contents: [
-        { role: "user", parts: [{ text: systemInstructions }] },
-        { role: "user", parts: [{ text: userMessage }] }
-      ]
-    });
+    const contents = [
+      { role: "user", parts: [{ text: systemInstructions }] },
+      ...history.map(turn => ({
+        role: turn.role,
+        parts: [{ text: turn.content }]
+      })),
+      { role: "user", parts: [{ text: userMessage }] }
+    ];
+
+    const result = await model.generateContent({ contents });
 
     let responseText = result.response.text();
 
-    // If Gemini returns stringified JSON, parse it
     try {
       const parsed = JSON.parse(responseText);
       responseText = parsed.response || parsed.responseText || responseText;
     } catch (e) {
-      // not JSON — proceed normally
+      // not JSON — proceed as-is
     }
 
     res.send(responseText);
