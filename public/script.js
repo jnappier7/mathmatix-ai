@@ -180,7 +180,7 @@ if (scratchpadButton && sketchpadPopup) {
 }
 
     // ✏️ Fix scratchpad alignment
-    const canvas = document.getElementById(""sketch-canvas"");
+    const canvas = document.getElementById("sketch-canvas");
     const ctx = canvas?.getContext("2d");
     let isDrawing = false;
 
