@@ -106,30 +106,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 🔧 Button rebinds (match IDs from chat.html)
     const equationButton = document.getElementById("equation-button");
-    const calculatorButton = document.getElementById("calculator-button");
-    const scratchpadButton = document.getElementById("scratchpad-button");
-    const calculatorPopup = document.getElementById("calculator-popup");
-    const sketchpadPopup = document.getElementById("sketchpad-popup");
+const calculatorButton = document.getElementById("calculator-button");
+const scratchpadButton = document.getElementById("scratchpad-button");
+const calculatorPopup = document.getElementById("calculator-popup");
+const sketchpadPopup = document.getElementById("sketchpad-popup");
 
-    if (equationButton) {
-      equationButton.addEventListener("click", () => {
-        if (window.mathVirtualKeyboard) {
-          window.mathVirtualKeyboard.show();
-        }
-      });
+// ➕ Equation button (if using keyboard show)
+if (equationButton) {
+  equationButton.addEventListener("click", () => {
+    if (window.mathVirtualKeyboard) {
+      window.mathVirtualKeyboard.show();
     }
+  });
+}
 
-    if (calculatorButton && calculatorPopup) {
-      calculatorButton.addEventListener("click", () => {
-        calculatorPopup.style.display = calculatorPopup.style.display === "block" ? "none" : "block";
-      });
-    }
+// 🧮 Calculator toggle
+if (calculatorButton && calculatorPopup) {
+  calculatorButton.addEventListener("click", () => {
+    const visibleCalc = window.getComputedStyle(calculatorPopup).display === "block";
+    calculatorPopup.style.display = visibleCalc ? "none" : "block";
+  });
+}
 
-    if (scratchpadButton && sketchpadPopup) {
-      scratchpadButton.addEventListener("click", () => {
-        sketchpadPopup.style.display = sketchpadPopup.style.display === "block" ? "none" : "block";
-      });
-    }
+// ✏️ Scratchpad toggle
+if (scratchpadButton && sketchpadPopup) {
+  scratchpadButton.addEventListener("click", () => {
+    const visibleSketch = window.getComputedStyle(sketchpadPopup).display === "block";
+    sketchpadPopup.style.display = visibleSketch ? "none" : "block";
+  });
+}
 
     // ✏️ Fix scratchpad alignment
     const canvas = document.getElementById("scratchpad-canvas");
