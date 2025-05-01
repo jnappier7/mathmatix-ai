@@ -51,14 +51,14 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify({ chatHistory, message })
       });
 
-      const data = await response.json();
+      const text = await response.text();
       chatContainer.removeChild(thinkingBubble);
 
-      const aiMessage = data.response
-        ? autoWrapMath(data.response)
+      const aiMessage = text
+        ? autoWrapMath(text)
         : "⚠️ AI didn't return a response. Try again.";
       chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
-      chatHistory.push({ role: "model", content: data.response || "" });
+      chatHistory.push({ role: "model", content: text || "" });
       chatContainer.scrollTop = chatContainer.scrollHeight;
 
       if (window.MathJax) MathJax.typesetPromise();
@@ -120,11 +120,11 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify({ prompt: uploadData.text })
       });
 
-      const aiData = await aiRes.json();
+      const aiText = await aiRes.text();
       chatContainer.removeChild(thinkingBubble);
 
-      const aiMessage = aiData.response
-        ? autoWrapMath(aiData.response)
+      const aiMessage = aiText
+        ? autoWrapMath(aiText)
         : "⚠️ AI didn't return a response. Try again.";
       chatContainer.appendChild(createMessageBubble(aiMessage, "ai"));
       chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -137,7 +137,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Show intro message if user exists
   if (user) {
     const bubble = document.createElement("div");
     bubble.classList.add("message", "ai");

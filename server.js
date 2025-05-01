@@ -84,7 +84,7 @@ app.post('/chat', async (req, res) => {
     });
 
     const responseText = result.response.text();
-    res.json({ response: responseText });
+    res.send({ responseText });
 
   } catch (error) {
     console.error('Error chatting with Gemini:', error.response?.data || error.message || error);
