@@ -5,6 +5,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const userInput = document.getElementById("user-input");
     const sendButton = document.getElementById("send-button");
     const uploadButton = document.getElementById("upload-button");
+	// 🎤 VOICE INPUT SETUP
+const micButton = document.getElementById("mic-button");
+let recognition;
+
+if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  micButton.addEventListener("click", () => {
+    recognition.start();
+    micButton.innerText = "🎙️";
+  });
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    userInput.value = transcript;
+
+const handsFree = document.getElementById("handsfree-toggle");
+if (handsFree?.checked) {
+  sendMessage();
+}
+
+    micButton.innerText = "🎤";
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Speech recognition error:", event.error);
+    micButton.innerText = "🎤";
+  };
+
+  recognition.onend = () => {
+    micButton.innerText = "🎤";
+  };
+} else {
+  console.warn("Speech recognition not supported in this browser.");
+  if (micButton) {
+    micButton.disabled = true;
+    micButton.title = "Speech recognition not supported";
+  }
+}
     let chatHistory = [];
 
     if (user?._id) {
@@ -137,7 +180,7 @@ if (scratchpadButton && sketchpadPopup) {
 }
 
     // ✏️ Fix scratchpad alignment
-    const canvas = document.getElementById("scratchpad-canvas");
+    const canvas = document.getElementById(""sketch-canvas"");
     const ctx = canvas?.getContext("2d");
     let isDrawing = false;
 
