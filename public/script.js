@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadButton = document.getElementById("upload-button");
     let chatHistory = [];
 
-    // 🧠 Load memory if user is logged in
     if (user?._id) {
       try {
         const res = await fetch(`/memory/load-memory/${user._id}`);
@@ -105,28 +104,63 @@ document.addEventListener("DOMContentLoaded", () => {
       fileInput.click();
     });
 
-    const mathButton = document.getElementById("math-button");
-    if (mathButton) {
-      mathButton.addEventListener("click", () => {
+    // 🔧 Button rebinds (match IDs from chat.html)
+    const equationButton = document.getElementById("equation-button");
+    const calculatorButton = document.getElementById("calculator-button");
+    const scratchpadButton = document.getElementById("scratchpad-button");
+    const calculatorPopup = document.getElementById("calculator-popup");
+    const sketchpadPopup = document.getElementById("sketchpad-popup");
+
+    if (equationButton) {
+      equationButton.addEventListener("click", () => {
         if (window.mathVirtualKeyboard) {
           window.mathVirtualKeyboard.show();
         }
       });
     }
 
-    const scratchButton = document.getElementById("scratch-button");
-    const scratchPad = document.getElementById("scratchpad");
-    if (scratchButton && scratchPad) {
-      scratchButton.addEventListener("click", () => {
-        scratchPad.style.display = scratchPad.style.display === "block" ? "none" : "block";
+    if (calculatorButton && calculatorPopup) {
+      calculatorButton.addEventListener("click", () => {
+        calculatorPopup.style.display = calculatorPopup.style.display === "block" ? "none" : "block";
       });
     }
 
-    const calcButton = document.getElementById("calc-button");
-    const calc = document.getElementById("calculator");
-    if (calcButton && calc) {
-      calcButton.addEventListener("click", () => {
-        calc.style.display = calc.style.display === "block" ? "none" : "block";
+    if (scratchpadButton && sketchpadPopup) {
+      scratchpadButton.addEventListener("click", () => {
+        sketchpadPopup.style.display = sketchpadPopup.style.display === "block" ? "none" : "block";
+      });
+    }
+
+    // ✏️ Fix scratchpad alignment
+    const canvas = document.getElementById("scratchpad-canvas");
+    const ctx = canvas?.getContext("2d");
+    let isDrawing = false;
+
+    if (canvas && ctx) {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      canvas.addEventListener("mousedown", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        isDrawing = true;
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (isDrawing) {
+          const rect = canvas.getBoundingClientRect();
+          ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+          ctx.stroke();
+        }
+      });
+
+      canvas.addEventListener("mouseup", () => {
+        isDrawing = false;
+      });
+
+      canvas.addEventListener("mouseleave", () => {
+        isDrawing = false;
       });
     }
 
