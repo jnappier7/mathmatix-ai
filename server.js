@@ -33,6 +33,8 @@ app.use('/api', uploadRoutes);  // handles /api/upload and /api/ask-ai
 // Gemini Setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const memoryRoutes = require('./routes/memory');
+app.use('/memory', memoryRoutes);
 
 const systemInstructions = `
 M∆THM∆TIΧ AI — SYSTEM INSTRUCTIONS

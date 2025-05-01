@@ -1,10 +1,24 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const user = JSON.parse(localStorage.getItem("mathmatixUser"));
   const chatContainer = document.getElementById("chat-container-inner");
   const userInput = document.getElementById("user-input");
   const sendButton = document.getElementById("send-button");
   const uploadButton = document.getElementById("upload-button");
   let chatHistory = [];
+
+  // 🧠 Load memory if user is logged in
+  if (user?._id) {
+    try {
+      const res = await fetch(`/memory/load-memory/${user._id}`);
+      const data = await res.json();
+      if (data.memory?.messages?.length > 0) {
+        chatHistory = [...data.memory.messages];
+        chatContainer.appendChild(createMessageBubble("🧠 Loaded your last tutoring session. Let’s pick up where we left off!", "ai"));
+      }
+    } catch (err) {
+      console.warn("⚠️ Failed to load memory:", err);
+    }
+  }
 
   function autoWrapMath(message) {
     const mathPattern = /^[\d\s+\-*/=^()xXyY]+$/;
