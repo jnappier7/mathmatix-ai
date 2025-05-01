@@ -1,57 +1,50 @@
 const express = require('express');
-const router = express.Router();
-const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
-const { extractTextFromImageOrPDF } = require('./ocr');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { extractTextFromImageOrPDF } = require('./ocr');
+
+const router = express.Router();
+const upload = multer();
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-// Multer storage config
-const storage = multer.diskStorage({
-  destination: 'uploads/',
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
+const systemInstructions = `
+You are M∆THM∆TIΧ AI — a step-by-step interactive math tutor. Guide students through the problem, asking what they know and offering hints. Do not give the answer right away. Use emojis, boxed steps, and wrap math in \\( \\). Stay encouraging and positive, even if they are stuck.
+`.trim();
 
-const upload = multer({ storage });
-
-// === Route: Upload a file and run OCR ===
 router.post('/upload', upload.single('file'), async (req, res) => {
   try {
-    const filePath = req.file.path;
-    const extractedText = await extractTextFromImageOrPDF(filePath);
-
-    if (!extractedText.trim()) {
-      return res.status(400).json({ text: "", error: "No text found in uploaded file." });
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    res.json({ text: extractedText });
-  } catch (err) {
-    console.error('Upload OCR error:', err);
-    res.status(500).json({ error: 'Failed to process uploaded file.' });
-  }
-});
+    const fileBuffer = req.file.buffer;
+    const base64 = fileBuffer.toString('base64');
 
-// === Route: Send extracted text to Gemini ===
-router.post('/ask-ai', async (req, res) => {
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-    const prompt = req.body.prompt;
+    const extractedText = await extractTextFromImageOrPDF(base64);
+    const prompt = extractedText?.trim() || "Help me understand this math problem.";
 
     const result = await model.generateContent({
       contents: [
-        {
-          role: "user",
-          parts: [{ text: prompt }]
-        }
+        { role: "user", parts: [{ text: systemInstructions }] },
+        { role: "user", parts: [{ text: prompt }] }
       ]
     });
 
-    const response = result.response.text();
-    res.json({ response });
+    let responseText = result.response.text();
+
+    try {
+      const parsed = JSON.parse(responseText);
+      responseText = parsed.response || parsed.responseText || responseText;
+    } catch {
+      // Not JSON? Leave it as is
+    }
+
+    res.send(responseText);
 
   } catch (err) {
-    console.error('Gemini error:', err);
+    console.error("Upload OCR/Gemini error:", err);
     res.status(500).json({ error: 'Failed to generate response from AI' });
   }
 });
