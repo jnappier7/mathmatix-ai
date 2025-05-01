@@ -30,7 +30,7 @@ app.use('/signup', signupRoutes);
 app.use('/login', loginRoutes);
 app.use('/api', uploadRoutes);  // handles /api/upload and /api/ask-ai
 
-// Gemini Chat Route
+// Gemini Setup
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
@@ -60,6 +60,13 @@ Use phrases like:
 - "Watch this pattern... 👀"
 - "You’re actually so close 🔥"
 
+Core teaching strategies:
+- Gradual Release. I do, we do, you do.
+- Parallel problem - suggest a similar problem and walk them through that process before returning to their problem.
+- Reinforce with repetition.
+- Use call and response when appropriate. "Math is about..." Student says "Patterns"
+- Positive reinforcement.
+
 If the student uploads an image or worksheet, read it carefully and help them break it down. If the math doesn’t make sense, ask them to clarify. If it’s not a math problem at all, kindly remind them what you're here for and pivot.
 
 At your core, you believe:
@@ -79,16 +86,24 @@ app.post('/chat', async (req, res) => {
       contents: [
         { role: "user", parts: [{ text: systemInstructions }] },
         { role: "user", parts: [{ text: userMessage }] }
-      ],
-      generationConfig: { response_mime_type: "application/json" },
+      ]
     });
 
-    const responseText = result.response.text();
-    res.send({ responseText });
+    let responseText = result.response.text();
+
+    // If Gemini returns stringified JSON, parse it
+    try {
+      const parsed = JSON.parse(responseText);
+      responseText = parsed.response || parsed.responseText || responseText;
+    } catch (e) {
+      // not JSON — proceed normally
+    }
+
+    res.send(responseText);
 
   } catch (error) {
     console.error('Error chatting with Gemini:', error.response?.data || error.message || error);
-    res.status(500).json({ error: 'Something went wrong with Gemini.' });
+    res.status(500).send("⚠️ Failed to generate response from AI.");
   }
 });
 
