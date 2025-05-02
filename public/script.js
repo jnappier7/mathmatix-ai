@@ -25,12 +25,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function sendMessage() {
-      const message = userInput.value.trim();
-      if (!message) return;
-      chatContainer.appendChild(createMessageBubble(message, "user"));
-      chatHistory.push({ role: "user", content: message });
-      userInput.value = "";
-    }
+  const message = userInput.value.trim();
+  if (!message) return;
+
+  const userBubble = createMessageBubble(message, "user");
+  chatContainer.appendChild(userBubble);
+  chatHistory.push({ role: "user", content: message });
+  userInput.value = "";
+
+  const thinkingBubble = createMessageBubble("M∆THM∆TIΧ is thinking...", "ai");
+  chatContainer.appendChild(thinkingBubble);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, chatHistory })
+    });
+
+    const result = await response.text();
+
+    thinkingBubble.remove();
+    const aiBubble = createMessageBubble(result, "ai");
+    chatContainer.appendChild(aiBubble);
+    chatHistory.push({ role: "model", content: result });
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } catch (err) {
+    console.error("Error fetching chat:", err);
+    thinkingBubble.remove();
+    chatContainer.appendChild(createMessageBubble("⚠️ Something went wrong. Try again.", "ai"));
+  }
+}
+
 
     sendButton.addEventListener("click", sendMessage);
     userInput.addEventListener("keydown", (e) => {
@@ -144,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       micButton.addEventListener("click", () => {
         recognition.start();
-        micButton.innerText = "🎙️";
+        micButton.innerText = "ðŸŽ™ï¸";
       });
 
       recognition.onresult = (event) => {
@@ -156,16 +183,16 @@ document.addEventListener("DOMContentLoaded", () => {
           sendMessage();
         }
 
-        micButton.innerText = "🎤";
+        micButton.innerText = "ðŸŽ¤";
       };
 
       recognition.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
-        micButton.innerText = "🎤";
+        micButton.innerText = "ðŸŽ¤";
       };
 
       recognition.onend = () => {
-        micButton.innerText = "🎤";
+        micButton.innerText = "ðŸŽ¤";
       };
     } else {
       micButton.disabled = true;
