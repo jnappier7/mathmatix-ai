@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const data = await res.json();
           if (data.text) {
-            chatContainer.appendChild(createMessageBubble("📝 OCR Text:
+            chatContainer.appendChild(createMessageBubble(`📝 OCR Text:\n${data.text}`, "user"));
 " + data.text, "user"));
             chatHistory.push({ role: "user", content: data.text });
           }
