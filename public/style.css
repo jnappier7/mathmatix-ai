@@ -1,61 +1,99 @@
 
-/* Layout and chat container */
-#chat-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
 }
 
-#chat-container-inner {
+#chat-card {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#logo {
+  text-align: center;
+  padding: 16px;
+  background-color: #003366;
+}
+
+#logo img {
+  max-width: 200px;
+  height: auto;
+}
+
+#chat-container {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
+  height: 500px;
 }
 
-/* Input area */
+#chat-container-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 #input-area {
   display: flex;
   align-items: center;
-  padding: 12px;
   gap: 8px;
-  border-top: 1px solid #ccc;
+  padding: 12px;
+  border-top: 1px solid #ddd;
+  background: #fafafa;
 }
 
-/* Buttons */
+#user-input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
 button {
   padding: 8px 12px;
+  font-size: 16px;
   border: none;
   background-color: #0066cc;
   color: white;
-  cursor: pointer;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 button:hover {
-  background-color: #005bb5;
+  background-color: #004a99;
 }
 
-input[type="text"] {
-  flex: 1;
-  padding: 8px;
-  font-size: 16px;
-}
-
-/* Popups */
-.popup {
+#action-buttons {
   position: fixed;
-  bottom: 80px;
-  right: 20px;
-  width: 320px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  z-index: 9999;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  display: none;
+  top: 50%;
+  left: 20px;
+  display: flex;
   flex-direction: column;
   gap: 10px;
+  transform: translateY(-50%);
+}
+
+.popup {
+  position: fixed;
+  bottom: 70px;
+  right: 30px;
+  width: 350px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
 }
 
 .popup-header {
@@ -63,29 +101,28 @@ input[type="text"] {
   justify-content: space-between;
   align-items: center;
   font-weight: bold;
+  padding-bottom: 8px;
 }
 
 .close-button {
+  font-size: 18px;
   background: none;
   border: none;
-  font-size: 18px;
   cursor: pointer;
   color: #666;
 }
 
-/* Equation field */
 math-field {
-  width: 100%;
   min-height: 50px;
-  font-size: 18px;
   padding: 6px;
   border: 1px solid #ccc;
+  font-size: 18px;
   border-radius: 4px;
+  width: 100%;
 }
 
-/* Canvas */
-#sketch-canvas {
-  border: 1px solid #999;
+canvas#sketch-canvas {
+  border: 1px solid #aaa;
   width: 100%;
-  height: auto;
+  height: 300px;
 }

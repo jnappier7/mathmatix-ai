@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // File upload handling
+    // File upload
     uploadButton?.addEventListener("click", () => {
       const fileInput = document.createElement("input");
       fileInput.type = "file";
@@ -57,9 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
       fileInput.click();
     });
 
-    // Sketchpad logic
+    // Scratchpad
     const sketchpadPopup = document.getElementById("sketchpad-popup");
-    const sketchBtn = document.querySelector('[title="Sketchpad"]');
+    const sketchBtn = document.getElementById("scratchpad-button");
     const closeSketch = document.getElementById("close-scratchpad");
     const canvas = document.getElementById("sketch-canvas");
     const ctx = canvas?.getContext("2d");
@@ -97,9 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas?.addEventListener("mouseup", () => drawing = false);
     canvas?.addEventListener("mouseleave", () => drawing = false);
 
-    // Equation tool logic
+    // Equation editor
     const equationPopup = document.getElementById("equation-popup");
-    const equationBtn = document.querySelector('[title="Insert Equation"]');
+    const equationBtn = document.getElementById("equation-button");
     const mathInput = document.getElementById("math-input");
     const insertEquationBtn = document.getElementById("insert-equation-btn");
     const closeEquation = document.getElementById("close-equation");
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Calculator
-    const calculatorBtn = document.querySelector('[title="Calculator"]');
+    const calculatorBtn = document.getElementById("calculator-button");
     const calculatorPopup = document.getElementById("calculator-popup");
     const closeCalc = document.getElementById("close-calculator");
 
@@ -132,5 +132,44 @@ document.addEventListener("DOMContentLoaded", () => {
     closeCalc?.addEventListener("click", () => {
       calculatorPopup.style.display = "none";
     });
+
+    // Voice input
+    let recognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      micButton.addEventListener("click", () => {
+        recognition.start();
+        micButton.innerText = "🎙️";
+      });
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        userInput.value = transcript;
+
+        const handsFree = document.getElementById("handsfree-toggle");
+        if (handsFree?.checked) {
+          sendMessage();
+        }
+
+        micButton.innerText = "🎤";
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        micButton.innerText = "🎤";
+      };
+
+      recognition.onend = () => {
+        micButton.innerText = "🎤";
+      };
+    } else {
+      micButton.disabled = true;
+      micButton.title = "Speech recognition not supported";
+    }
   })();
 });
