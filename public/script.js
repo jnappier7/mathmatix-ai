@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   (async function initialize() {
     const userInput = document.getElementById("user-input");
@@ -6,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const micButton = document.getElementById("mic-button");
     const chatContainer = document.getElementById("chat-container-inner");
     const uploadButton = document.getElementById("upload-button");
+    const userId = localStorage.getItem("userId") || "";
     let chatHistory = [];
 
     function createMessageBubble(message, sender = "ai", isImage = false) {
@@ -25,42 +25,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function sendMessage() {
-  const message = userInput.value.trim();
-  if (!message) return;
+      const message = userInput.value.trim();
+      if (!message) return;
 
-  const userBubble = createMessageBubble(message, "user");
-  chatContainer.appendChild(userBubble);
-  chatHistory.push({ role: "user", content: message });
-  userInput.value = "";
+      const userBubble = createMessageBubble(message, "user");
+      chatContainer.appendChild(userBubble);
+      chatHistory.push({ role: "user", content: message });
+      userInput.value = "";
 
-  const thinkingBubble = createMessageBubble("M∆THM∆TIΧ is thinking...", "ai");
-  chatContainer.appendChild(thinkingBubble);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+      const thinkingBubble = createMessageBubble("M∆THM∆TIΧ is thinking...", "ai");
+      chatContainer.appendChild(thinkingBubble);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
 
-  try {
-    const response = await fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, chatHistory })
-    });
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message, chatHistory, userId })
+        });
 
-    const result = await response.text();
+        const result = await response.text();
 
-    thinkingBubble.remove();
-    const aiBubble = createMessageBubble(result, "ai");
-    chatContainer.appendChild(aiBubble);
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        MathJax.typesetPromise();
+        thinkingBubble.remove();
+        const aiBubble = createMessageBubble(result, "ai");
+        chatContainer.appendChild(aiBubble);
+        if (window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise();
+        chatHistory.push({ role: "model", content: result });
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      } catch (err) {
+        console.error("Error fetching chat:", err);
+        thinkingBubble.remove();
+        chatContainer.appendChild(createMessageBubble("⚠️ Something went wrong. Try again.", "ai"));
       }
-    chatHistory.push({ role: "model", content: result });
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  } catch (err) {
-    console.error("Error fetching chat:", err);
-    thinkingBubble.remove();
-    chatContainer.appendChild(createMessageBubble("⚠️ Something went wrong. Try again.", "ai"));
-  }
-}
-
+    }
 
     sendButton.addEventListener("click", sendMessage);
     userInput.addEventListener("keydown", (e) => {
@@ -70,64 +67,36 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // File upload
     uploadButton?.addEventListener("click", () => {
       const fileInput = document.createElement("input");
       fileInput.type = "file";
       fileInput.accept = ".png,.jpg,.jpeg,.pdf";
-      fileInput.onchange = (e) => {
+      fileInput.onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = () => {
+
+        reader.onload = async () => {
+          const base64Data = reader.result.split(',')[1];
           chatContainer.appendChild(createMessageBubble(reader.result, "user", true));
+
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: base64Data })
+          });
+
+          const data = await res.json();
+          if (data.text) {
+            chatContainer.appendChild(createMessageBubble(data.text, "user"));
+            chatHistory.push({ role: "user", content: data.text });
+          }
         };
         reader.readAsDataURL(file);
       };
       fileInput.click();
     });
 
-    // Scratchpad
-    const sketchpadPopup = document.getElementById("sketchpad-popup");
-    const sketchBtn = document.getElementById("scratchpad-button");
-    const closeSketch = document.getElementById("close-scratchpad");
-    const canvas = document.getElementById("sketch-canvas");
-    const ctx = canvas?.getContext("2d");
-    const insertSketch = document.getElementById("insert-sketch-btn");
-    let drawing = false;
-
-    sketchBtn?.addEventListener("click", () => {
-      sketchpadPopup.style.display = "flex";
-    });
-
-    closeSketch?.addEventListener("click", () => {
-      sketchpadPopup.style.display = "none";
-    });
-
-    insertSketch?.addEventListener("click", () => {
-      const imageData = canvas.toDataURL("image/png");
-      chatContainer.appendChild(createMessageBubble(imageData, "user", true));
-      sketchpadPopup.style.display = "none";
-    });
-
-    canvas?.addEventListener("mousedown", (e) => {
-      const rect = canvas.getBoundingClientRect();
-      ctx.beginPath();
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-      drawing = true;
-    });
-
-    canvas?.addEventListener("mousemove", (e) => {
-      if (!drawing) return;
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      ctx.stroke();
-    });
-
-    canvas?.addEventListener("mouseup", () => drawing = false);
-    canvas?.addEventListener("mouseleave", () => drawing = false);
-
-    // Equation editor
     const equationPopup = document.getElementById("equation-popup");
     const equationBtn = document.getElementById("equation-button");
     const mathInput = document.getElementById("math-input");
@@ -140,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     insertEquationBtn?.addEventListener("click", () => {
       if (mathInput?.value) {
-        chatContainer.appendChild(createMessageBubble(mathInput.value, "user"));
+        userInput.value += ` ${mathInput.value} `;
         equationPopup.style.display = "none";
         mathInput.value = "";
       }
@@ -149,92 +118,5 @@ document.addEventListener("DOMContentLoaded", () => {
     closeEquation?.addEventListener("click", () => {
       equationPopup.style.display = "none";
     });
-
-    // Calculator
-    const calculatorBtn = document.getElementById("calculator-button");
-    const calculatorPopup = document.getElementById("calculator-popup");
-    const closeCalc = document.getElementById("close-calculator");
-
-    calculatorBtn?.addEventListener("click", () => {
-      calculatorPopup.style.display = "flex";
-    });
-
-    closeCalc?.addEventListener("click", () => {
-      calculatorPopup.style.display = "none";
-    });
-
-    // Voice input
-    let recognition;
-    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
-      recognition.lang = "en-US";
-      recognition.continuous = false;
-      recognition.interimResults = false;
-
-      micButton.addEventListener("click", () => {
-        recognition.start();
-        micButton.innerText = "🎙️";
-      });
-
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        userInput.value = transcript;
-
-        const handsFree = document.getElementById("handsfree-toggle");
-        if (handsFree?.checked) {
-          sendMessage();
-        }
-
-        micButton.innerText = "🎤";
-      };
-
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        micButton.innerText = "🎤";
-      };
-
-      recognition.onend = () => {
-        micButton.innerText = "🎤";
-      };
-    } else {
-      micButton.disabled = true;
-      micButton.title = "Speech recognition not supported";
-    }
-  
-    function makeDraggable(popupId) {
-      const popup = document.getElementById(popupId);
-      const header = popup?.querySelector(".popup-header");
-
-      if (!popup || !header) return;
-
-      let offsetX = 0, offsetY = 0, isDragging = false;
-
-      header.style.cursor = "move";
-
-      header.addEventListener("mousedown", (e) => {
-        isDragging = true;
-        offsetX = e.clientX - popup.offsetLeft;
-        offsetY = e.clientY - popup.offsetTop;
-        popup.style.position = "absolute";
-        popup.style.zIndex = 9999;
-      });
-
-      document.addEventListener("mousemove", (e) => {
-        if (isDragging) {
-          popup.style.left = `${e.clientX - offsetX}px`;
-          popup.style.top = `${e.clientY - offsetY}px`;
-        }
-      });
-
-      document.addEventListener("mouseup", () => {
-        isDragging = false;
-      });
-    }
-
-    makeDraggable("calculator-popup");
-    makeDraggable("sketchpad-popup");
-    makeDraggable("equation-popup");
-
   })();
 });
