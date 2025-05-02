@@ -74,27 +74,44 @@ document.addEventListener("DOMContentLoaded", () => {
       fileInput.onchange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
         const reader = new FileReader();
 
         reader.onload = async () => {
-          const base64Data = reader.result.split(',')[1];
-          chatContainer.appendChild(createMessageBubble(reader.result, "user", true));
+          // Show the uploaded image/PDF preview in chat
+          if (file.type.startsWith("image/")) {
+            chatContainer.appendChild(createMessageBubble(reader.result, "user", true));
+          } else {
+            chatContainer.appendChild(createMessageBubble("📎 Uploaded PDF: " + file.name, "user"));
+          }
+
+          const formData = new FormData();
+          formData.append("file", file);  // must match multer field name
 
           const res = await fetch("/api/upload", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ image: base64Data })
+            body: formData
           });
 
           const data = await res.json();
           if (data.text) {
-            chatContainer.appendChild(createMessageBubble(data.text, "user"));
+            chatContainer.appendChild(createMessageBubble("📝 OCR Text:
+" + data.text, "user"));
             chatHistory.push({ role: "user", content: data.text });
           }
+
+          if (data.feedback) {
+            const feedbackBubble = createMessageBubble(data.feedback, "ai");
+            chatContainer.appendChild(feedbackBubble);
+            chatHistory.push({ role: "model", content: data.feedback });
+            if (window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise();
+          }
         };
+
         reader.readAsDataURL(file);
       };
       fileInput.click();
+    });
     });
 
     const equationPopup = document.getElementById("equation-popup");
