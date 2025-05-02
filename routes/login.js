@@ -19,6 +19,7 @@ router.post('/', async (req, res) => {
     res.status(200).json({
       message: 'Login successful!',
       user: {
+        _id: user._id, // ✅ added userId for session memory
         username: user.username,
         name: user.name,
         gradeLevel: user.gradeLevel,

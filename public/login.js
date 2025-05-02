@@ -15,6 +15,9 @@ document.getElementById("login-form").addEventListener("submit", async function 
 
     if (res.ok) {
       localStorage.setItem("mathmatixUser", JSON.stringify(data.user));
+      localStorage.setItem("userId", data.user._id); // ✅ now saved to use in chat.js
+      localStorage.setItem("name", data.user.name);
+      localStorage.setItem("tone", data.user.tonePreference);
       window.location.href = "/chat.html";
     } else {
       alert(data.message || "Invalid username or password.");
