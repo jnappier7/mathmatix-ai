@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const vision = require('@google-cloud/vision');
@@ -7,7 +6,6 @@ const { extractTextFromImageOrPDF } = require('../ocr');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0" });
-const client = new vision.ImageAnnotatorClient();
 
 router.post('/upload', async (req, res) => {
   try {
@@ -21,10 +19,10 @@ router.post('/upload', async (req, res) => {
 
     if (!text) return res.json({ text: "⚠️ No text found in image." });
 
-    const prompt = \`
+    const prompt = `
 You are a math tutor reviewing a student's handwritten homework. Here are the extracted problems and student work:
 
-\${text}
+${text}
 
 Go through each problem, and for each one:
 - Confirm whether the solution appears correct or not.
@@ -32,7 +30,7 @@ Go through each problem, and for each one:
 - Be conversational, natural, and supportive. Don’t grade. Don’t use formal teacher tone.
 
 Respond directly to the student in your voice as M∆THM∆TIΧ AI.
-\`;
+`;
 
     const aiResponse = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }]
