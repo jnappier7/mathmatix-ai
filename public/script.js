@@ -118,5 +118,56 @@ document.addEventListener("DOMContentLoaded", () => {
     closeEquation?.addEventListener("click", () => {
       equationPopup.style.display = "none";
     });
+
+
+    // Tool Button Event Listeners
+    const calculatorPopup = document.getElementById("calculator-popup");
+    const calculatorBtn = document.getElementById("calculator-button");
+    const closeCalculator = document.getElementById("close-calculator");
+
+    calculatorBtn?.addEventListener("click", () => {
+      calculatorPopup.style.display = "flex";
+    });
+    closeCalculator?.addEventListener("click", () => {
+      calculatorPopup.style.display = "none";
+    });
+
+    const scratchpadPopup = document.getElementById("sketchpad-popup");
+    const scratchpadBtn = document.getElementById("scratchpad-button");
+    const closeScratchpad = document.getElementById("close-scratchpad");
+
+    scratchpadBtn?.addEventListener("click", () => {
+      scratchpadPopup.style.display = "flex";
+    });
+    closeScratchpad?.addEventListener("click", () => {
+      scratchpadPopup.style.display = "none";
+    });
+
+    // Drag functionality
+    document.querySelectorAll(".popup").forEach(popup => {
+      const header = popup.querySelector(".popup-header");
+      if (!header) return;
+
+      let offsetX = 0, offsetY = 0, isDragging = false;
+
+      header.style.cursor = "move";
+      header.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        offsetX = e.clientX - popup.getBoundingClientRect().left;
+        offsetY = e.clientY - popup.getBoundingClientRect().top;
+        popup.style.position = "absolute";
+        popup.style.zIndex = "9999";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        popup.style.left = `${e.clientX - offsetX}px`;
+        popup.style.top = `${e.clientY - offsetY}px`;
+      });
+
+      document.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+    });
   })();
 });
