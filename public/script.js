@@ -57,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
         thinkingBubble.remove();
         chatContainer.appendChild(createMessageBubble("⚠️ Something went wrong. Try again.", "ai"));
       }
-    }
 
     sendButton.addEventListener("click", sendMessage);
     userInput.addEventListener("keydown", (e) => {
@@ -96,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const data = await res.json();
           if (data.text) {
             chatContainer.appendChild(createMessageBubble(`📝 OCR Text:\n${data.text}`, "user"));
-" + data.text, "user"));
             chatHistory.push({ role: "user", content: data.text });
           }
 
@@ -111,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
         reader.readAsDataURL(file);
       };
       fileInput.click();
-    });
     });
 
     const equationPopup = document.getElementById("equation-popup");
@@ -135,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
     closeEquation?.addEventListener("click", () => {
       equationPopup.style.display = "none";
     });
-
 
     // Tool Button Event Listeners
     const calculatorPopup = document.getElementById("calculator-popup");
@@ -185,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.addEventListener("mouseup", () => {
         isDragging = false;
       });
-    });
   })();
 });
 
@@ -237,4 +232,3 @@ document.querySelectorAll(".popup").forEach(popup => {
   document.addEventListener("mouseup", () => {
     isDragging = false;
   });
-});
