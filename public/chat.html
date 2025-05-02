@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mathmatix AI</title>
+  <title>M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css"/>
   <script defer src="script.js"></script>
   <script src="https://unpkg.com/mathlive"></script>
@@ -20,20 +20,25 @@
     </div>
 
     <div id="input-area">
-      <input type="text" id="user-input" placeholder="Type your message..." />
-      <button id="send-button">Send</button>
-      <button id="mic-button" title="Speak your question">🎤</button>
-      <button id="upload-button" title="Upload file or image">📎</button>
-      <label style="margin-left: 10px;">
-        <input type="checkbox" id="handsfree-toggle" />
-        Hands-Free Mode
-      </label>
-    </div>
+      <div class="input-row">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button id="send-button">Send</button>
+        <button id="mic-button" title="Speak your question">🎙️</button>
+        <button id="upload-button" title="Upload file or image">📎</button>
+      </div>
 
-    <div id="action-buttons">
-      <button id="calculator-button" title="Calculator">🧮</button>
-      <button id="scratchpad-button" title="Sketchpad">✏️</button>
-      <button id="equation-button" title="Insert Equation">➕</button>
+      <div class="tool-row">
+        <button id="calculator-button" title="Calculator">🧮</button>
+        <button id="scratchpad-button" title="Sketchpad">✏️</button>
+        <button id="equation-button" title="Insert Equation">π</button>
+      </div>
+
+      <div class="handsfree-row">
+        <label>
+          <input type="checkbox" id="handsfree-toggle" />
+          Hands-Free Mode
+        </label>
+      </div>
     </div>
   </div>
 
