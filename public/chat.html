@@ -1,241 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>M∆THM∆TIΧ AI - Chat</title>
 
-  <!-- MathLive -->
-  <script src="https://unpkg.com/mathlive"></script>
+<!-- Chat Container -->
+<div id="chat-container">
+  <div id="chat-container-inner"></div>
 
-  <!-- MathJax -->
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #logo-header {
-      margin: 20px;
-    }
-
-    #logo-header img {
-      max-width: 300px;
-      height: auto;
-    }
-
-    #chat-container {
-      width: 100%;
-      max-width: 800px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      height: 80vh;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #chat-container-inner {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .message {
-      padding: 10px 15px;
-      margin: 10px;
-      border-radius: 16px;
-      max-width: 75%;
-      line-height: 1.5;
-      white-space: pre-wrap;
-    }
-
-    .user-message {
-      background: #e0f7fa;
-      align-self: flex-end;
-      text-align: right;
-    }
-
-    .bot-message {
-      background: #f0f0f0;
-      align-self: flex-start;
-      text-align: left;
-    }
-
-    #input-area {
-      display: flex;
-      padding: 15px;
-      border-top: 1px solid #ddd;
-      background: #fff;
-	  <button id="mic-button" title="Speak your question" style="margin-left: 8px;">🎤</button>
-
-    }
-
-    #user-input {
-      flex-grow: 1;
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
-    #send-button {
-      margin-left: 10px;
-      padding: 10px 20px;
-      background: teal;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #floating-toolbar {
-      position: fixed;
-      bottom: 100px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 100;
-    }
-
-    .tool-button {
-      background: white;
-      border: 2px solid teal;
-      color: teal;
-      padding: 10px;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-    .popup {
-      position: fixed;
-      bottom: 120px;
-      right: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      z-index: 200;
-    }
-
-    .popup-header {
-      padding: 10px;
-      background: teal;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
-    #dropzone.hidden,
-    .popup.hidden {
-      display: none;
-    }
-
-    #dropzone {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    #dropzone-content {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      font-size: 1.2rem;
-      color: #333;
-    }
-  </style>
-</head>
-<body>
-  <!-- Logo -->
-  <div id="logo-header">
-    <img src="MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
+  <div id="input-area">
+    <input type="text" id="user-input" placeholder="Type your message..." />
+    <button id="send-button">Send</button>
+    <button id="mic-button" title="Speak your question" style="margin-left: 8px;">🎤</button>
+    <label style="margin-left: 10px;">
+      <input type="checkbox" id="handsfree-toggle" />
+      Hands-Free Mode
+    </label>
   </div>
-
-  <!-- Chat Container -->
-  <div id="chat-container">
-    <div id="chat-container-inner"></div>
-
-    <div id="input-area">
-  <input type="text" id="user-input" placeholder="Type your message..." />
-  <button id="send-button">Send</button>
-  <button id="mic-button" title="Speak your question" style="margin-left: 8px;">🎤</button>
-	<label style="margin-left: 10px;">
-  <input type="checkbox" id="handsfree-toggle" />
-  Hands-Free Mode
-</label>
-
 </div>
 
-  <!-- Upload Dropzone -->
-  <div id="dropzone" class="hidden">
-    <div id="dropzone-content">📄 Drop your file here</div>
+<!-- Equation Popup -->
+<div id="equation-popup" class="popup">
+  <div class="popup-header">
+    <span>Insert Equation</span>
+    <button id="close-equation" class="close-button">✖</button>
   </div>
+  <math-field id="math-input"></math-field>
+  <button id="insert-equation-btn">Insert</button>
+</div>
 
-  <!-- Floating Toolbar -->
-  <div id="floating-toolbar">
-    <button id="equation-button" class="tool-button" title="Insert Equation">➕</button>
-    <button id="calculator-button" class="tool-button" title="Calculator">🧮</button>
-    <button id="scratchpad-button" class="tool-button" title="Sketchpad">✏️</button>
-    <button id="upload-button" class="tool-button" title="Upload File">📁</button>
+<!-- Calculator Popup -->
+<div id="calculator-popup" class="popup">
+  <div class="popup-header">
+    <span>Calculator</span>
+    <button id="close-calculator" class="close-button">✖</button>
   </div>
+  <iframe src="https://www.desmos.com/scientific" width="100%" height="300" style="border: none;"></iframe>
+</div>
 
-  <!-- Calculator Popup -->
-  <div id="calculator-popup" class="popup hidden">
-    <div class="popup-header">
-      <span>Calculator</span>
-      <button id="close-calculator" class="close-btn">✖️</button>
-    </div>
-    <iframe src="https://www.desmos.com/fourfunction" frameborder="0" style="width:100%; height:400px;"></iframe>
+<!-- Scratchpad Popup -->
+<div id="sketchpad-popup" class="popup">
+  <div class="popup-header">
+    <span>Scratchpad</span>
+    <button id="close-scratchpad" class="close-button">✖</button>
   </div>
-
-  <!-- Sketch Pad Popup -->
-  <div id="sketchpad-popup" class="popup hidden">
-    <div class="popup-header">
-      <span>Sketch Pad</span>
-      <button id="close-sketchpad" class="close-btn">✖️</button>
-    </div>
-    <canvas id="sketch-canvas" width="500" height="400"></canvas>
-    <div style="margin:10px;">
-      <button id="clear-sketch">Clear</button>
-    </div>
-  </div>
-
-  <!-- Main Script -->
-  <script src="script.js"></script>
-</body>
-</html>
+  <canvas id="sketch-canvas" width="500" height="300" style="border:1px solid #000;"></canvas>
+  <button id="insert-sketch-btn">Insert Drawing</button>
+</div>
