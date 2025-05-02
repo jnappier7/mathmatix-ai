@@ -49,6 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
     thinkingBubble.remove();
     const aiBubble = createMessageBubble(result, "ai");
     chatContainer.appendChild(aiBubble);
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
     chatHistory.push({ role: "model", content: result });
     chatContainer.scrollTop = chatContainer.scrollHeight;
   } catch (err) {
@@ -171,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       micButton.addEventListener("click", () => {
         recognition.start();
-        micButton.innerText = "ðŸŽ™ï¸";
+        micButton.innerText = "🎙️";
       });
 
       recognition.onresult = (event) => {
@@ -183,20 +186,55 @@ document.addEventListener("DOMContentLoaded", () => {
           sendMessage();
         }
 
-        micButton.innerText = "ðŸŽ¤";
+        micButton.innerText = "🎤";
       };
 
       recognition.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
-        micButton.innerText = "ðŸŽ¤";
+        micButton.innerText = "🎤";
       };
 
       recognition.onend = () => {
-        micButton.innerText = "ðŸŽ¤";
+        micButton.innerText = "🎤";
       };
     } else {
       micButton.disabled = true;
       micButton.title = "Speech recognition not supported";
     }
+  
+    function makeDraggable(popupId) {
+      const popup = document.getElementById(popupId);
+      const header = popup?.querySelector(".popup-header");
+
+      if (!popup || !header) return;
+
+      let offsetX = 0, offsetY = 0, isDragging = false;
+
+      header.style.cursor = "move";
+
+      header.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        offsetX = e.clientX - popup.offsetLeft;
+        offsetY = e.clientY - popup.offsetTop;
+        popup.style.position = "absolute";
+        popup.style.zIndex = 9999;
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+          popup.style.left = `${e.clientX - offsetX}px`;
+          popup.style.top = `${e.clientY - offsetY}px`;
+        }
+      });
+
+      document.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+    }
+
+    makeDraggable("calculator-popup");
+    makeDraggable("sketchpad-popup");
+    makeDraggable("equation-popup");
+
   })();
 });
