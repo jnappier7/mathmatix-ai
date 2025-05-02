@@ -1,4 +1,7 @@
 const express = require('express');
+const multer = require('multer');
+const upload = multer();
+
 const router = express.Router();
 const vision = require('@google-cloud/vision');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -7,7 +10,7 @@ const { extractTextFromImageOrPDF } = require('../ocr');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0" });
 
-router.post('/upload', async (req, res) => {
+router.post('/upload', upload.single('file'), async (req, res) => {
   try {
     if (!req.file || !req.file.buffer) {
       return res.status(400).json({ error: "No file uploaded." });
