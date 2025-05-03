@@ -1,8 +1,9 @@
 /**
  * M∆THM∆TIΧ AI – Main Client Script
- * Version: 5.4
+ * Version: 5.5
  * Date: 2025-05-03
- * ✅ Fully functional – All popups draggable, UI buttons fixed, no logic lost
+ * ✅ Popup drag fixed
+ * ✅ Mic + hands-free speech-to-text restored
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -12,11 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendButton = document.getElementById("send-button");
   const micButton = document.getElementById("mic-button");
   const uploadButton = document.getElementById("upload-button");
+  const handsfreeToggle = document.getElementById("handsfree-toggle");
   const chatContainer = document.getElementById("chat-container-inner");
   const userId = localStorage.getItem("userId") || "";
   let chatHistory = [];
 
-  // 🧱 Helper: Create message bubble
+  // 🧱 Create message bubble
   function createMessageBubble(message, sender = "ai", isImage = false) {
     const bubble = document.createElement("div");
     bubble.classList.add("message", sender);
@@ -33,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return bubble;
   }
 
-  // 💬 Main send message logic
+  // 💬 Send message
   async function sendMessage() {
     const message = userInput.value.trim();
     if (!message) return;
@@ -73,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 📎 Upload image or PDF
+  // 📎 Upload logic
   uploadButton?.addEventListener("click", () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -123,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fileInput.click();
   });
 
-  // π Equation tool
+  // π Equation popup
   const equationPopup = document.getElementById("equation-popup");
   const equationBtn = document.getElementById("equation-button");
   const mathInput = document.getElementById("math-input");
@@ -146,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     equationPopup.style.display = "none";
   });
 
-  // 🧮 Calculator tool
+  // 🧮 Calculator
   const calculatorPopup = document.getElementById("calculator-popup");
   const calculatorBtn = document.getElementById("calculator-button");
   const closeCalculator = document.getElementById("close-calculator");
@@ -159,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     calculatorPopup.style.display = "none";
   });
 
-  // ✏️ Sketchpad tool
+  // ✏️ Sketchpad
   const scratchpadPopup = document.getElementById("sketchpad-popup");
   const scratchpadBtn = document.getElementById("scratchpad-button");
   const closeScratchpad = document.getElementById("close-scratchpad");
@@ -172,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     scratchpadPopup.style.display = "none";
   });
 
-  // ✅ Send on click or Enter
+  // ⏎ Enter to send
   sendButton.addEventListener("click", sendMessage);
   userInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -181,7 +183,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 🖱️ Drag popup logic (fixed version)
+  // 🎙️ Speech-to-Text Mic Support
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+
+    micButton?.addEventListener("click", () => {
+      recognition.start();
+      micButton.textContent = "🎙️ Listening...";
+    });
+
+    recognition.addEventListener("result", (event) => {
+      const transcript = event.results[0][0].transcript;
+      userInput.value = transcript;
+    });
+
+    recognition.addEventListener("end", () => {
+      micButton.textContent = "🎙️";
+      if (handsfreeToggle?.checked && userInput.value.trim() !== "") {
+        sendMessage();
+      }
+    });
+
+    recognition.addEventListener("error", (err) => {
+      console.error("Speech recognition error:", err);
+      micButton.textContent = "🎙️";
+    });
+  } else {
+    console.warn("Speech recognition not supported.");
+    micButton?.setAttribute("disabled", true);
+    micButton?.setAttribute("title", "Speech-to-text not supported in this browser");
+  }
+
+  // 🖱️ Drag popup fix
   document.querySelectorAll(".popup").forEach((popup) => {
     const header = popup.querySelector(".popup-header");
     if (!header) return;
