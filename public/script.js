@@ -1,185 +1,207 @@
 /**
- * M∆THM∆TIΧ Verified Script
- * Version: 5.2
- * Date: 2025-05-02
- * Status: ✅ Fully Audited — No extra IIFEs, syntax errors, or nested DOMContentLoaded blocks
+ * M∆THM∆TIΧ Verified Script (FIXED)
+ * Version: 5.3
+ * Date: 2025-05-03
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  (async function initialize() {
-    console.log("✅ M∆THM∆TIΧ Initialized");
-    const userInput = document.getElementById("user-input");
-    const sendButton = document.getElementById("send-button");
-    const micButton = document.getElementById("mic-button");
-    const chatContainer = document.getElementById("chat-container-inner");
-    const uploadButton = document.getElementById("upload-button");
-    const userId = localStorage.getItem("userId") || "";
-    let chatHistory = [];
+  console.log("✅ M∆THM∆TIΧ Initialized");
 
-    function createMessageBubble(message, sender = "ai", isImage = false) {
-      const bubble = document.createElement("div");
-      bubble.classList.add("message", sender);
-      if (isImage) {
-        const img = document.createElement("img");
-        img.src = message;
-        img.alt = "Uploaded Image";
-        img.style.maxWidth = "300px";
-        img.style.borderRadius = "8px";
-        bubble.appendChild(img);
-      } else {
-        bubble.textContent = message;
-      }
-      return bubble;
+  const userInput = document.getElementById("user-input");
+  const sendButton = document.getElementById("send-button");
+  const micButton = document.getElementById("mic-button");
+  const uploadButton = document.getElementById("upload-button");
+  const chatContainer = document.getElementById("chat-container-inner");
+  const userId = localStorage.getItem("userId") || "";
+  let chatHistory = [];
+
+  // --- Utility ---
+  function createMessageBubble(message, sender = "ai", isImage = false) {
+    const bubble = document.createElement("div");
+    bubble.classList.add("message", sender);
+    if (isImage) {
+      const img = document.createElement("img");
+      img.src = message;
+      img.alt = "Uploaded Image";
+      img.style.maxWidth = "300px";
+      img.style.borderRadius = "8px";
+      bubble.appendChild(img);
+    } else {
+      bubble.textContent = message;
     }
+    return bubble;
+  }
 
-    async function sendMessage() {
-      const message = userInput.value.trim();
-      if (!message) return;
+  // --- Send Message to AI ---
+  async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
 
-      const userBubble = createMessageBubble(message, "user");
-      chatContainer.appendChild(userBubble);
-      chatHistory.push({ role: "user", content: message }); // closes DOMContentLoaded
-      userInput.value = "";
+    const userBubble = createMessageBubble(message, "user");
+    chatContainer.appendChild(userBubble);
+    chatHistory.push({ role: "user", content: message });
+    userInput.value = "";
 
-      const thinkingBubble = createMessageBubble("M∆THM∆TIΧ is thinking...", "ai");
-      chatContainer.appendChild(thinkingBubble);
+    const thinkingBubble = createMessageBubble("M∆THM∆TIΧ is thinking...", "ai");
+    chatContainer.appendChild(thinkingBubble);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    try {
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, chatHistory, userId })
+      });
+
+      const result = await response.text();
+      thinkingBubble.remove();
+      const aiBubble = createMessageBubble(result, "ai");
+      chatContainer.appendChild(aiBubble);
+      chatHistory.push({ role: "model", content: result });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        await MathJax.typesetPromise();
+      }
+
       chatContainer.scrollTop = chatContainer.scrollHeight;
+    } catch (err) {
+      console.error("Error fetching chat:", err);
+      thinkingBubble.remove();
+      chatContainer.appendChild(createMessageBubble("⚠️ Something went wrong. Try again.", "ai"));
+    }
+  }
 
-      try {
-        const response = await fetch("/chat", {
+  // --- Upload File ---
+  uploadButton?.addEventListener("click", () => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".png,.jpg,.jpeg,.pdf";
+
+    fileInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        if (file.type.startsWith("image/")) {
+          chatContainer.appendChild(createMessageBubble(reader.result, "user", true));
+        } else {
+          chatContainer.appendChild(createMessageBubble(`📎 Uploaded PDF: ${file.name}`, "user"));
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/upload", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message, chatHistory, userId })
+          body: formData
+        });
 
-        const result = await response.text();
+        const data = await res.json();
 
-        thinkingBubble.remove();
-        const aiBubble = createMessageBubble(result, "ai");
-        chatContainer.appendChild(aiBubble);
-        if (window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise();
-        chatHistory.push({ role: "model", content: result }); // closes DOMContentLoaded
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      } catch (err) {
-        console.error("Error fetching chat:", err);
-        thinkingBubble.remove();
-        chatContainer.appendChild(createMessageBubble("⚠️ Something went wrong. Try again.", "ai"));
-      }
+        if (data.text) {
+          chatContainer.appendChild(createMessageBubble(`📝 OCR Text:\n${data.text}`, "user"));
+          chatHistory.push({ role: "user", content: data.text });
+        }
 
-      }
+        if (data.feedback) {
+          chatContainer.appendChild(createMessageBubble(data.feedback, "ai"));
+          chatHistory.push({ role: "model", content: data.feedback });
 
-sendButton.addEventListener("click", sendMessage);
-    userInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        sendMessage();
-      }
-
-    uploadButton?.addEventListener("click", () => {
-      const fileInput = document.createElement("input");
-      fileInput.type = "file";
-      fileInput.accept = ".png,.jpg,.jpeg,.pdf";
-      fileInput.onchange = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-
-        reader.onload = async () => {
-          // Show the uploaded image/PDF preview in chat
-          if (file.type.startsWith("image/")) {
-            chatContainer.appendChild(createMessageBubble(reader.result, "user", true));
-          } else {
-            chatContainer.appendChild(createMessageBubble("📎 Uploaded PDF: " + file.name, "user"));
+          if (window.MathJax && window.MathJax.typesetPromise) {
+            await MathJax.typesetPromise();
           }
-
-          const formData = new FormData();
-          formData.append("file", file);  // must match multer field name
-
-          const res = await fetch("/api/upload", {
-            method: "POST",
-            body: formData
-
-          const data = await res.json();
-          if (data.text) {
-            chatContainer.appendChild(createMessageBubble(`📝 OCR Text:\n${data.text}`, "user"));
-            chatHistory.push({ role: "user", content: data.text }); // closes DOMContentLoaded
-          }
-
-          if (data.feedback) {
-            const feedbackBubble = createMessageBubble(data.feedback, "ai");
-            chatContainer.appendChild(feedbackBubble);
-            chatHistory.push({ role: "model", content: data.feedback });
-            if (window.MathJax && window.MathJax.typesetPromise) MathJax.typesetPromise();
-          }
-        };
-
-        reader.readAsDataURL(file);
+        }
       };
-      fileInput.click();
 
-    const equationPopup = document.getElementById("equation-popup");
-    const equationBtn = document.getElementById("equation-button");
-    const mathInput = document.getElementById("math-input");
-    const insertEquationBtn = document.getElementById("insert-equation-btn");
-    const closeEquation = document.getElementById("close-equation");
+      reader.readAsDataURL(file);
+    };
 
-    equationBtn?.addEventListener("click", () => {
-      equationPopup.style.display = "flex";
+    fileInput.click();
+  });
 
-    insertEquationBtn?.addEventListener("click", () => {
-      if (mathInput?.value) {
-        userInput.value += ` ${mathInput.value} `;
-        equationPopup.style.display = "none";
-        mathInput.value = "";
-      }
+  // --- Equation Popup ---
+  const equationPopup = document.getElementById("equation-popup");
+  const equationBtn = document.getElementById("equation-button");
+  const mathInput = document.getElementById("math-input");
+  const insertEquationBtn = document.getElementById("insert-equation-btn");
+  const closeEquation = document.getElementById("close-equation");
 
-    closeEquation?.addEventListener("click", () => {
+  equationBtn?.addEventListener("click", () => {
+    equationPopup.style.display = "flex";
+  });
+
+  insertEquationBtn?.addEventListener("click", () => {
+    if (mathInput?.value) {
+      userInput.value += ` ${mathInput.value} `;
       equationPopup.style.display = "none";
+      mathInput.value = "";
+    }
+  });
 
-    // Tool Button Event Listeners
-    const calculatorPopup = document.getElementById("calculator-popup");
-    const calculatorBtn = document.getElementById("calculator-button");
-    const closeCalculator = document.getElementById("close-calculator");
+  closeEquation?.addEventListener("click", () => {
+    equationPopup.style.display = "none";
+  });
 
-    calculatorBtn?.addEventListener("click", () => {
-      calculatorPopup.style.display = "flex";
-    closeCalculator?.addEventListener("click", () => {
-      calculatorPopup.style.display = "none";
+  // --- Calculator ---
+  const calculatorPopup = document.getElementById("calculator-popup");
+  const calculatorBtn = document.getElementById("calculator-button");
+  const closeCalculator = document.getElementById("close-calculator");
 
-    const scratchpadPopup = document.getElementById("sketchpad-popup");
-    const scratchpadBtn = document.getElementById("scratchpad-button");
-    const closeScratchpad = document.getElementById("close-scratchpad");
+  calculatorBtn?.addEventListener("click", () => {
+    calculatorPopup.style.display = "flex";
+  });
 
-    scratchpadBtn?.addEventListener("click", () => {
-      scratchpadPopup.style.display = "flex";
-    closeScratchpad?.addEventListener("click", () => {
-      scratchpadPopup.style.display = "none";
+  closeCalculator?.addEventListener("click", () => {
+    calculatorPopup.style.display = "none";
+  });
 
-    // Drag functionality
+  // --- Sketchpad ---
+  const scratchpadPopup = document.getElementById("sketchpad-popup");
+  const scratchpadBtn = document.getElementById("scratchpad-button");
+  const closeScratchpad = document.getElementById("close-scratchpad");
 
-    // Drag functionality
-    document.querySelectorAll(".popup").forEach(popup => {
-      const header = popup.querySelector(".popup-header");
-      if (!header) return;
+  scratchpadBtn?.addEventListener("click", () => {
+    scratchpadPopup.style.display = "flex";
+  });
 
-      let offsetX = 0, offsetY = 0, isDragging = false;
+  closeScratchpad?.addEventListener("click", () => {
+    scratchpadPopup.style.display = "none";
+  });
 
-      header.style.cursor = "move";
-      header.addEventListener("mousedown", (e) => {
-        isDragging = true;
-        offsetX = e.clientX - popup.getBoundingClientRect().left;
-        offsetY = e.clientY - popup.getBoundingClientRect().top;
-        popup.style.position = "absolute";
-        popup.style.zIndex = "9999";
+  // --- Send Button & Enter Key ---
+  sendButton.addEventListener("click", sendMessage);
+  userInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
 
-      document.addEventListener("mousemove", (e) => {
-        if (!isDragging) return;
-        popup.style.left = `${e.clientX - offsetX}px`;
-        popup.style.top = `${e.clientY - offsetY}px`;
+  // Dragging for popups (optional — still included)
+  document.querySelectorAll(".popup").forEach((popup) => {
+    const header = popup.querySelector(".popup-header");
+    if (!header) return;
 
-      document.addEventListener("mouseup", () => {
-        isDragging = false;
+    let offsetX = 0, offsetY = 0, isDragging = false;
 
-  }); // closes DOMContentLoaded
-})();  // closes and immediately invokes async IIFE
-}); // closes DOMContentLoaded
+    header.style.cursor = "move";
+    header.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - popup.getBoundingClientRect().left;
+      offsetY = e.clientY - popup.getBoundingClientRect().top;
+      popup.style.position = "absolute";
+      popup.style.zIndex = "9999";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      popup.style.left = `${e.clientX - offsetX}px`;
+      popup.style.top = `${e.clientY - offsetY}px`;
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+  });
+});
