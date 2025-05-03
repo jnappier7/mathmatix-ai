@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   (async function initialize() {
+    console.log("✅ M∆THM∆TIΧ Initialized");
     const userInput = document.getElementById("user-input");
     const sendButton = document.getElementById("send-button");
     const micButton = document.getElementById("mic-button");
@@ -159,28 +160,8 @@ sendButton.addEventListener("click", sendMessage);
     });
 
     // Drag functionality
-    document.querySelectorAll(".popup").forEach(popup => {
-      const header = popup.querySelector(".popup-header");
-      if (!header) return;
+    
+    });
 
-      let offsetX = 0, offsetY = 0, isDragging = false;
-
-      header.style.cursor = "move";
-      header.addEventListener("mousedown", (e) => {
-        isDragging = true;
-        offsetX = e.clientX - popup.getBoundingClientRect().left;
-        offsetY = e.clientY - popup.getBoundingClientRect().top;
-        popup.style.position = "absolute";
-        popup.style.zIndex = "9999";
-      });
-
-      document.addEventListener("mousemove", (e) => {
-        if (!isDragging) return;
-        popup.style.left = `${e.clientX - offsetX}px`;
-        popup.style.top = `${e.clientY - offsetY}px`;
-      });
-
-      document.addEventListener("mouseup", () => {
-        isDragging = false;
-      });
-  })();
+  }); // Closes DOMContentLoaded
+})();  // Closes and invokes the async IIFE
