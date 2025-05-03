@@ -190,3 +190,4 @@ sendButton.addEventListener("click", sendMessage);
 
   }); // closes DOMContentLoaded
 })();  // closes and immediately invokes async IIFE
+});
