@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const path = require("path");
+app.use(express.static(path.join(__dirname, "public")));
 
 const signupRoutes = require('./routes/signup');
 const loginRoutes = require('./routes/login');
