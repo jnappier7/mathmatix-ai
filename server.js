@@ -5,7 +5,6 @@ const cors = require('cors');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path = require("path");
-app.use(express.static(path.join(__dirname, "public")));
 
 const signupRoutes = require('./routes/signup');
 const loginRoutes = require('./routes/login');
@@ -14,10 +13,10 @@ const memoryRoutes = require('./routes/memory');
 const User = require('./models/user');
 
 const app = express();
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
