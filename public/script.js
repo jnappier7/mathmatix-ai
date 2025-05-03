@@ -1,7 +1,8 @@
 /**
- * M∆THM∆TIΧ Verified Script (FIXED)
- * Version: 5.3
+ * M∆THM∆TIΧ AI – Main Client Script
+ * Version: 5.4
  * Date: 2025-05-03
+ * ✅ Fully functional – All popups draggable, UI buttons fixed, no logic lost
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userId = localStorage.getItem("userId") || "";
   let chatHistory = [];
 
-  // --- Utility ---
+  // 🧱 Helper: Create message bubble
   function createMessageBubble(message, sender = "ai", isImage = false) {
     const bubble = document.createElement("div");
     bubble.classList.add("message", sender);
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return bubble;
   }
 
-  // --- Send Message to AI ---
+  // 💬 Main send message logic
   async function sendMessage() {
     const message = userInput.value.trim();
     if (!message) return;
@@ -55,11 +56,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const result = await response.text();
       thinkingBubble.remove();
+
       const aiBubble = createMessageBubble(result, "ai");
       chatContainer.appendChild(aiBubble);
       chatHistory.push({ role: "model", content: result });
 
-      if (window.MathJax && window.MathJax.typesetPromise) {
+      if (window.MathJax?.typesetPromise) {
         await MathJax.typesetPromise();
       }
 
@@ -71,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- Upload File ---
+  // 📎 Upload image or PDF
   uploadButton?.addEventListener("click", () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -82,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!file) return;
 
       const reader = new FileReader();
+
       reader.onload = async () => {
         if (file.type.startsWith("image/")) {
           chatContainer.appendChild(createMessageBubble(reader.result, "user", true));
@@ -108,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
           chatContainer.appendChild(createMessageBubble(data.feedback, "ai"));
           chatHistory.push({ role: "model", content: data.feedback });
 
-          if (window.MathJax && window.MathJax.typesetPromise) {
+          if (window.MathJax?.typesetPromise) {
             await MathJax.typesetPromise();
           }
         }
@@ -120,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fileInput.click();
   });
 
-  // --- Equation Popup ---
+  // π Equation tool
   const equationPopup = document.getElementById("equation-popup");
   const equationBtn = document.getElementById("equation-button");
   const mathInput = document.getElementById("math-input");
@@ -143,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     equationPopup.style.display = "none";
   });
 
-  // --- Calculator ---
+  // 🧮 Calculator tool
   const calculatorPopup = document.getElementById("calculator-popup");
   const calculatorBtn = document.getElementById("calculator-button");
   const closeCalculator = document.getElementById("close-calculator");
@@ -156,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     calculatorPopup.style.display = "none";
   });
 
-  // --- Sketchpad ---
+  // ✏️ Sketchpad tool
   const scratchpadPopup = document.getElementById("sketchpad-popup");
   const scratchpadBtn = document.getElementById("scratchpad-button");
   const closeScratchpad = document.getElementById("close-scratchpad");
@@ -169,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
     scratchpadPopup.style.display = "none";
   });
 
-  // --- Send Button & Enter Key ---
+  // ✅ Send on click or Enter
   sendButton.addEventListener("click", sendMessage);
   userInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -178,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Dragging for popups (optional — still included)
+  // 🖱️ Drag popup logic (fixed version)
   document.querySelectorAll(".popup").forEach((popup) => {
     const header = popup.querySelector(".popup-header");
     if (!header) return;
@@ -188,10 +191,18 @@ document.addEventListener("DOMContentLoaded", () => {
     header.style.cursor = "move";
     header.addEventListener("mousedown", (e) => {
       isDragging = true;
-      offsetX = e.clientX - popup.getBoundingClientRect().left;
-      offsetY = e.clientY - popup.getBoundingClientRect().top;
-      popup.style.position = "absolute";
+      const rect = popup.getBoundingClientRect();
+
+      popup.style.position = "fixed";
+      popup.style.left = `${rect.left}px`;
+      popup.style.top = `${rect.top}px`;
+      popup.style.right = "auto";
+      popup.style.bottom = "auto";
+      popup.style.margin = "0";
       popup.style.zIndex = "9999";
+
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
     });
 
     document.addEventListener("mousemove", (e) => {
