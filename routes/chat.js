@@ -1,5 +1,4 @@
-
-// routes/chat.js — Handles tutoring + memory-aware session support
+// routes/chat.js — Chat route using Gemini 1.5 Flash with full memory + tutor prompt
 
 const express = require("express");
 const router = express.Router();
@@ -8,7 +7,7 @@ const User = require("../models/User");
 const saveSummary = require("./memory");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const baseModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const SESSION_TRACKER = {};
 
@@ -18,11 +17,10 @@ router.post("/", async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send({ text: "User not found." });
 
-    // Load memory
     const { name, grade, tone, learningStyle, interests, conversations } = user;
     const lastSummary = conversations?.slice(-1)[0]?.summary || "";
 
-    let systemPrompt = `
+    const systemMessage = `
 You are M∆THM∆TIΧ, an AI math tutor built to help students think through problems interactively.
 - Ask guiding questions before giving answers.
 - Emphasize pattern recognition.
@@ -37,24 +35,20 @@ Student info:
 - Learning Style: ${learningStyle}
 - Interests: ${interests}
 
-${lastSummary ? `Here is a summary of your last session:
-${lastSummary}` : ""}
+${lastSummary ? `Here is a summary of your last session:\n${lastSummary}` : ""}
 `;
 
-    const chatHistory = SESSION_TRACKER[userId] || [];
-    chatHistory.push({ role: "user", parts: [{ text: message }] });
-
-    const result = await model.generateContent({
-      contents: [
-        { role: "system", parts: [{ text: systemPrompt }] },
-        ...chatHistory,
+    const chat = baseModel.startChat({
+      history: SESSION_TRACKER[userId] || [
+        { role: "user", parts: [{ text: systemMessage }] },
       ],
     });
 
+    const result = await chat.sendMessage(message);
     const text = result.response.text().trim();
-    chatHistory.push({ role: "model", parts: [{ text }] });
 
-    SESSION_TRACKER[userId] = chatHistory;
+    const newHistory = chat.getHistory();
+    SESSION_TRACKER[userId] = newHistory;
 
     res.send({ text });
 
@@ -64,7 +58,6 @@ ${lastSummary}` : ""}
   }
 });
 
-// Generate a session summary (e.g. on unload or timeout)
 router.post("/end-session", async (req, res) => {
   const { userId } = req.body;
   if (!SESSION_TRACKER[userId]) return res.send({ message: "No session to summarize." });
@@ -72,14 +65,11 @@ router.post("/end-session", async (req, res) => {
   const history = SESSION_TRACKER[userId];
   try {
     const summaryPrompt = "Summarize this math tutoring session in 2-3 sentences for a tutor record.";
-    const summaryModel = await model.generateContent({
-      contents: [
-        { role: "system", parts: [{ text: summaryPrompt }] },
-        ...history,
-      ],
-    });
 
-    const summary = summaryModel.response.text().trim();
+    const chat = baseModel.startChat({ history });
+    const summaryResult = await chat.sendMessage(summaryPrompt);
+    const summary = summaryResult.response.text().trim();
+
     await saveSummary(userId, summary);
     delete SESSION_TRACKER[userId];
 

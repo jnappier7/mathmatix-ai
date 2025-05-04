@@ -19,28 +19,55 @@
     <div id="logo">
       <img src="MathMatix AI Logo.png" alt="Mathmatix Logo" />
     </div>
+
     <div id="chat-container">
       <div id="chat-container-inner"></div>
     </div>
+
     <div id="input-area">
       <div class="input-row">
         <input type="text" id="user-input" placeholder="Type your message..." />
         <button id="send-button">Send</button>
         <button id="mic-button" title="Speak your question">🎙️</button>
-        <button id="upload-button" title="Upload file or image">📎</button>
-        <!-- ✅ Hidden file input for triggering uploads -->
-        <input type="file" id="file-upload" style="display: none;" />
+        <button id="file-upload" title="Upload file or image">📎</button>
+        <input type="file" id="file-input" style="display: none;" />
       </div>
+
       <div class="tool-row">
-        <button title="Calculator">🧮</button>
-        <button title="Sketchpad">✏️</button>
-        <button title="Equation Editor">π</button>
+        <button id="calc-button" title="Calculator">🧮</button>
+        <button id="draw-button" title="Sketchpad">✏️</button>
+        <button id="pi-button" title="Equation Editor">π</button>
       </div>
+
       <div class="handsfree-row">
-        Hands-Free Mode
+        <span id="handsfree-label">Hands-Free Mode: OFF</span>
+        <button id="handsfree-toggle" title="Toggle hands-free mode">🟢</button>
       </div>
     </div>
+
+    <!-- Popups (Optional to Include) -->
+    <div id="calculator-popup" class="popup" style="display: none;">
+      <div class="popup-header">
+        Calculator <button class="close-button">❌</button>
+      </div>
+      <!-- Calculator UI goes here -->
+    </div>
+
+    <div id="sketchpad-popup" class="popup" style="display: none;">
+      <div class="popup-header">
+        Sketchpad <button class="close-button">❌</button>
+      </div>
+      <!-- Sketchpad canvas goes here -->
+    </div>
+
+    <div id="equation-popup" class="popup" style="display: none;">
+      <div class="popup-header">
+        Equation Editor <button class="close-button">❌</button>
+      </div>
+      <!-- MathLive or input box goes here -->
+    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
