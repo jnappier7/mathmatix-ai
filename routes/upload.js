@@ -4,14 +4,11 @@ const multer = require("multer");
 const router = express.Router();
 const upload = multer();
 
-const extractTextFromImageOrPDF = require("../ocr");
+const recognizeMathpix = require("../ocr"); // ✅ Correct Mathpix import
+
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Supports image generation
-// ✅ Correctly import Mathpix OCR function
-const recognizeMathpix = require("../ocr");
-
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Image + text supported
 
 router.post("/", upload.single("file"), async (req, res) => {
   try {
@@ -23,7 +20,7 @@ router.post("/", upload.single("file"), async (req, res) => {
     }
 
     const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
-	const extractedText = await recognizeMathpix(base64);
+    const extractedText = await recognizeMathpix(base64);
 
     console.log("📃 OCR Extracted Text:", extractedText || "[No text found]");
 
@@ -50,7 +47,6 @@ A student uploaded this worksheet. Review the math, explain it with positivity, 
 "Let me show you what that looks like."
 
 If the student says yes or asks for a picture, we will generate an image.
-
 
 Here’s the extracted text:
 ${extractedText}
