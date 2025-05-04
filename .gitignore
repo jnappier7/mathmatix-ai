@@ -1,6 +1,4 @@
-node_modules/
+node_modules/\n.env\n.DS_Store\npackage-lock 2.json
+
 .env
-.DS_Store
-*.log
 routes/vision-key.json
-uploads/
