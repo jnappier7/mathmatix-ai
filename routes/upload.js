@@ -47,6 +47,7 @@ ${extractedText}
     });
 
     const responseText = result.response.text();
+	console.log("🤖 Gemini reply to OCR:", responseText);
     res.send(responseText);
   } catch (err) {
     console.error("🛑 Upload error:", err.message || err);
