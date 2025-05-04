@@ -45,26 +45,50 @@
       </div>
     </div>
 
-    <!-- Popups (Optional to Include) -->
+    <!-- 🧮 Calculator -->
     <div id="calculator-popup" class="popup" style="display: none;">
       <div class="popup-header">
         Calculator <button class="close-button">❌</button>
       </div>
-      <!-- Calculator UI goes here -->
+      <div class="popup-body">
+        <input type="text" id="calc-display" readonly />
+        <div id="calc-buttons">
+          <button>7</button><button>8</button><button>9</button><button>/</button>
+          <button>4</button><button>5</button><button>6</button><button>*</button>
+          <button>1</button><button>2</button><button>3</button><button>-</button>
+          <button>0</button><button>.</button><button>=</button><button>+</button>
+          <button id="calc-clear">C</button>
+        </div>
+      </div>
     </div>
 
+    <!-- ✍️ Sketchpad -->
     <div id="sketchpad-popup" class="popup" style="display: none;">
       <div class="popup-header">
         Sketchpad <button class="close-button">❌</button>
       </div>
-      <!-- Sketchpad canvas goes here -->
+      <div class="popup-body">
+        <canvas id="sketchpad" width="400" height="300"></canvas>
+        <div class="sketch-tools">
+          <label>Color:</label>
+          <input type="color" id="color-picker" value="#000000" />
+          <button id="clear-sketch">Clear</button>
+          <button id="submit-sketch">Submit</button>
+        </div>
+      </div>
     </div>
 
+    <!-- π Equation Editor -->
     <div id="equation-popup" class="popup" style="display: none;">
       <div class="popup-header">
         Equation Editor <button class="close-button">❌</button>
       </div>
-      <!-- MathLive or input box goes here -->
+      <div class="popup-body">
+        <label for="latex-input">Type LaTeX equation:</label>
+        <input type="text" id="latex-input" placeholder="e.g. x^2 + y^2 = r^2" />
+        <button id="insert-equation">Insert</button>
+        <div id="render-preview" style="margin-top: 1rem;"></div>
+      </div>
     </div>
   </div>
 

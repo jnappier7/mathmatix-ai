@@ -134,3 +134,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+// ✅ Drag Functionality for Popups
+function dragPopup(popupId) {
+  const popup = document.getElementById(popupId);
+  const header = popup.querySelector(".popup-header");
+
+  let offsetX = 0;
+  let offsetY = 0;
+  let isDragging = false;
+
+  header.style.cursor = "grab";
+
+  header.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - popup.getBoundingClientRect().left;
+    offsetY = e.clientY - popup.getBoundingClientRect().top;
+    popup.style.position = "absolute";
+    popup.style.zIndex = "9999";
+    header.style.cursor = "grabbing";
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    const left = e.clientX - offsetX;
+    const top = e.clientY - offsetY;
+    popup.style.left = `${left}px`;
+    popup.style.top = `${top}px`;
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    header.style.cursor = "grab";
+  });
+}
+
+// ✅ Apply to all popups
+dragPopup("calculator-popup");
+dragPopup("sketchpad-popup");
+dragPopup("equation-popup");
