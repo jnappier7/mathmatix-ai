@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { SYSTEM_PROMPT } = require("../server");
+const { SYSTEM_PROMPT } = require("../utils/prompt");
 const User = require("../models/User");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -17,7 +17,6 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Missing message or user name." });
     }
 
-    // Build the full context-aware prompt
     const prompt = `
 ${SYSTEM_PROMPT}
 

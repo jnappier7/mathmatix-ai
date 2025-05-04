@@ -6,7 +6,7 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const vision = require("@google-cloud/vision");
-const { SYSTEM_PROMPT } = require("../server");
+const { SYSTEM_PROMPT } = require("../utils/prompt");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -16,7 +16,6 @@ const client = new vision.ImageAnnotatorClient({
   keyFilename: path.join(__dirname, "../routes/vision-key.json")
 });
 
-// Multer file config
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
