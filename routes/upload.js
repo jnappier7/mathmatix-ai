@@ -1,4 +1,4 @@
-// routes/upload.js — image/PDF upload route with OCR and AI feedback
+// routes/upload.js — Upload route with OCR + Gemini response + image generation support
 const express = require("express");
 const multer = require("multer");
 const router = express.Router();
@@ -8,7 +8,7 @@ const extractTextFromImageOrPDF = require("../ocr");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // ✅ Correct model ID for 2.0 Flash in API
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Supports image generation
 
 router.post("/", upload.single("file"), async (req, res) => {
   try {
@@ -22,20 +22,32 @@ router.post("/", upload.single("file"), async (req, res) => {
     const extractedText = await extractTextFromImageOrPDF(req.file.buffer);
     console.log("📃 OCR Extracted Text:", extractedText || "[No text found]");
 
-    if (!extractedText) {
+    if (!extractedText.trim()) {
       return res.send("⚠️ No text found in image.");
     }
 
     const prompt = `
-A student uploaded this file. Review the extracted math and respond as M∆THM∆TIΧ AI.
+A student uploaded this worksheet. Review the math, explain it with positivity, and provide a visual if possible.
 
 ✅ DO NOT give the final answer.
-✅ Ask what the student notices or already tried.
-✅ Give one hint at a time.
-✅ Use LaTeX formatting in \\( \\).
-✅ Encourage growth mindset and stay upbeat.
+✅ Ask the student what they notice.
+✅ Give only one hint at a time.
+✅ Include a LaTeX math expression in \\( \\) where appropriate.
+✅ If a visual diagram would help, generate and include an image.
+✅ Use visuals ONLY when they directly enhance understanding.
+✅ ALWAYS include a visual when:
+  - A graph is referenced or requested
+  - The concept is spatial (e.g. shapes, volume, surface area)
+  - A visual representation helps explain abstract concepts (e.g. combining like terms, factoring, transformations)
 
-Extracted content:
+🖼️ When generating a visual, end your message with a note like:
+"Would you like me to draw this for you?" or
+"Let me show you what that looks like."
+
+If the student says yes or asks for a picture, we will generate an image.
+
+
+Here’s the extracted text:
 ${extractedText}
     `.trim();
 
@@ -43,9 +55,23 @@ ${extractedText}
       contents: [{ role: "user", parts: [{ text: prompt }] }]
     });
 
-    const responseText = result.response.text();
-    console.log("🤖 Gemini reply to OCR:", responseText);
-    res.send(responseText);
+    const parts = result.response.parts || [];
+    const textPart = parts.find(p => p.text)?.text || "";
+    const imagePart = parts.find(p => p.inlineData?.data);
+
+    if (imagePart) {
+      res.json({
+        type: "image",
+        image: imagePart.inlineData.data,
+        mimeType: imagePart.inlineData.mimeType,
+        text: textPart
+      });
+    } else {
+      res.json({
+        type: "text",
+        text: textPart
+      });
+    }
   } catch (err) {
     console.error("🛑 Upload error:", err.message || err);
     res.status(500).send("⚠️ Upload failed.");

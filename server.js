@@ -31,13 +31,17 @@ const uploadRoute = require("./routes/upload");
 const loginRoute = require("./routes/login");
 const signupRoute = require("./routes/signup");
 const memoryRoute = require("./routes/memory");
-const chatRoute = require("./routes/chat"); // NEW!
+const chatRoute = require("./routes/chat"); 
+const imageRoute = require("./routes/image");//
+
 
 app.use("/upload", uploadRoute);
 app.use("/login", loginRoute);
 app.use("/signup", signupRoute);
 app.use("/save-summary", memoryRoute);
-app.use("/chat", chatRoute); // NEW!
+app.use("/chat", chatRoute); 
+app.use("/image", imageRoute);//
+
 
 // ✅ Serve index.html as default
 app.get("/", (req, res) => {
