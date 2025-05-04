@@ -9,6 +9,9 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Supports image generation
+// ✅ Correctly import Mathpix OCR function
+const recognizeMathpix = require("../ocr");
+
 
 router.post("/", upload.single("file"), async (req, res) => {
   try {
@@ -19,7 +22,9 @@ router.post("/", upload.single("file"), async (req, res) => {
       return res.status(400).send("⚠️ Unsupported file type. Upload a PNG, JPG, or PDF.");
     }
 
-    const extractedText = await extractTextFromImageOrPDF(req.file.buffer);
+    const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+	const extractedText = await recognizeMathpix(base64);
+
     console.log("📃 OCR Extracted Text:", extractedText || "[No text found]");
 
     if (!extractedText.trim()) {

@@ -1,42 +1,28 @@
-// ocr.js – Mathpix-powered OCR for Mathmatix AI
+// ocr.js — Mathpix OCR for extracting math + text from image or PDF
+
 const axios = require("axios");
 
-const MATHPIX_APP_ID = process.env.MATHPIX_APP_ID;
-const MATHPIX_APP_KEY = process.env.MATHPIX_APP_KEY;
-
-if (!MATHPIX_APP_ID || !MATHPIX_APP_KEY) {
-  throw new Error("Missing Mathpix API credentials in .env");
-}
-
-const recognizeMathpix = async (base64Image) => {
-  const headers = {
-    "app_id": MATHPIX_APP_ID,
-    "app_key": MATHPIX_APP_KEY,
-    "Content-Type": "application/json"
-  };
-
-  const body = {
-    src: base64Image,
-    formats: ["text", "latex_styled"],
-    data_options: {
-      include_asciimath: false,
-      include_latex: true,
-      include_text: true
-    }
-  };
-
+module.exports = async function (base64) {
   try {
-    const res = await axios.post("https://api.mathpix.com/v3/text", body, { headers });
+    const res = await axios.post(
+      "https://api.mathpix.com/v3/text",
+      {
+        src: base64,
+        formats: ["text"],
+        ocr: ["math", "text"]
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          app_id: process.env.MATHPIX_APP_ID,
+          app_key: process.env.MATHPIX_APP_KEY
+        }
+      }
+    );
 
-    const text = res.data.text || "";
-    const latex = res.data.latex_styled || "";
-
-    const combined = `${text}\n\nLaTeX:\n${latex}`;
-    return combined.trim() || "⚠️ No recognizable math or text found.";
+    return res.data.text || "";
   } catch (err) {
-    console.error("Mathpix OCR error:", err?.response?.data || err.message);
-    return "⚠️ OCR failed. Check API or file format.";
+    console.error("🛑 Mathpix OCR error:", err?.response?.data || err.message);
+    return "";
   }
 };
-
-module.exports = recognizeMathpix;
