@@ -1,10 +1,11 @@
-// routes/upload.js — Upload route with OCR + Gemini response + image generation support
+// routes/upload.js — Upload route with Mathpix OCR + Gemini response + image generation support
+
 const express = require("express");
 const multer = require("multer");
 const router = express.Router();
 const upload = multer();
 
-const recognizeMathpix = require("../ocr"); // ✅ Correct Mathpix import
+const recognizeMathpix = require("../ocr");
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -12,11 +13,19 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Image 
 
 router.post("/", upload.single("file"), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).send("❌ No file uploaded.");
+    if (!req.file) {
+      return res.json({
+        type: "text",
+        text: "❌ No file uploaded."
+      });
+    }
 
     const allowedTypes = ["image/png", "image/jpeg", "application/pdf"];
     if (!allowedTypes.includes(req.file.mimetype)) {
-      return res.status(400).send("⚠️ Unsupported file type. Upload a PNG, JPG, or PDF.");
+      return res.json({
+        type: "text",
+        text: "⚠️ Unsupported file type. Upload a PNG, JPG, or PDF."
+      });
     }
 
     const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
@@ -25,7 +34,10 @@ router.post("/", upload.single("file"), async (req, res) => {
     console.log("📃 OCR Extracted Text:", extractedText || "[No text found]");
 
     if (!extractedText.trim()) {
-      return res.send("⚠️ No text found in image.");
+      return res.json({
+        type: "text",
+        text: "⚠️ No text found in image."
+      });
     }
 
     const prompt = `
@@ -45,8 +57,6 @@ A student uploaded this worksheet. Review the math, explain it with positivity, 
 🖼️ When generating a visual, end your message with a note like:
 "Would you like me to draw this for you?" or
 "Let me show you what that looks like."
-
-If the student says yes or asks for a picture, we will generate an image.
 
 Here’s the extracted text:
 ${extractedText}
@@ -73,9 +83,13 @@ ${extractedText}
         text: textPart
       });
     }
+
   } catch (err) {
     console.error("🛑 Upload error:", err.message || err);
-    res.status(500).send("⚠️ Upload failed.");
+    res.status(500).json({
+      type: "text",
+      text: "⚠️ Upload failed. Please try again later."
+    });
   }
 });
 
