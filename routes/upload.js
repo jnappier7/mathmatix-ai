@@ -1,20 +1,18 @@
-// routes/upload.js — Handles image/PDF upload and OCR-based tutoring
+// routes/upload.js — Handles image/PDF upload and OCR-based tutoring using Mathpix
 
 const express = require("express");
 const multer = require("multer");
+const axios = require("axios");
 const router = express.Router();
-const fs = require("fs");
-const path = require("path");
-const vision = require("@google-cloud/vision");
 const { SYSTEM_PROMPT } = require("../utils/prompt");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const client = new vision.ImageAnnotatorClient({
-  keyFilename: path.join(__dirname, "../routes/vision-key.json")
-});
+// Mathpix credentials from .env
+const mathpixAppId = process.env.MATHPIX_APP_ID;
+const mathpixAppKey = process.env.MATHPIX_API_KEY;
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -28,11 +26,34 @@ router.post("/", upload.single("file"), async (req, res) => {
       return res.status(400).json({ error: "No file uploaded." });
     }
 
-    const [result] = await client.documentTextDetection({ image: { content: file.buffer } });
-    const fullText = result.fullTextAnnotation ? result.fullTextAnnotation.text : "";
+    // Convert file buffer to base64
+    const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
-    if (!fullText.trim()) {
-      return res.status(400).json({ error: "No readable text found in image." });
+    // Mathpix OCR Request
+    const mathpixResponse = await axios.post(
+      "https://api.mathpix.com/v3/text",
+      {
+        src: base64Image,
+        formats: ["text", "latex_styled"],
+        data_options: {
+          include_asciimath: false,
+          include_latex: true,
+          include_text: true
+        }
+      },
+      {
+        headers: {
+          "app_id": mathpixAppId,
+          "app_key": mathpixAppKey,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const fullText = mathpixResponse.data?.text?.trim() || "";
+
+    if (!fullText) {
+      return res.status(400).json({ error: "No readable math found in image." });
     }
 
     const prompt = `
