@@ -1,12 +1,11 @@
-// routes/upload.js — image/PDF upload route with OCR and AI feedback
+// routes/upload.js — Upload route with Mathpix OCR + Gemini response
 const express = require("express");
 const multer = require("multer");
+const axios = require("axios");
 const router = express.Router();
 const upload = multer();
 
-const extractTextFromImageOrPDF = require("../ocr");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0" });
 
@@ -14,18 +13,35 @@ router.post("/", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).send("❌ No file uploaded.");
 
-    // ✅ Validate allowed file types
     const allowedTypes = ["image/png", "image/jpeg", "application/pdf"];
     if (!allowedTypes.includes(req.file.mimetype)) {
       return res.status(400).send("⚠️ Unsupported file type. Upload a PNG, JPG, or PDF.");
     }
 
-    // ✅ Extract text using raw buffer
-    const extractedText = await extractTextFromImageOrPDF(req.file.buffer);
+    const mathpixRes = await axios.post(
+      "https://api.mathpix.com/v3/text",
+      {
+        src: `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
+        formats: ["text", "data", "latex_styled"],
+        data_options: {
+          include_asciimath: false,
+          include_latex: true,
+        },
+        ocr: ["math", "text"],
+      },
+      {
+        headers: {
+          app_id: process.env.MATHPIX_APP_ID,
+          app_key: process.env.MATHPIX_APP_KEY,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    console.log("📃 OCR Extracted Text:", extractedText || "[No text found]");
+    const extractedText = mathpixRes.data.text || mathpixRes.data.latex_styled || "";
+    console.log("📃 Mathpix OCR:", extractedText || "[No text found]");
 
-    if (!extractedText) {
+    if (!extractedText.trim()) {
       return res.send("⚠️ No text found in image.");
     }
 
@@ -47,7 +63,7 @@ ${extractedText}
     });
 
     const responseText = result.response.text();
-	console.log("🤖 Gemini reply to OCR:", responseText);
+    console.log("🤖 Gemini reply to OCR:", responseText);
     res.send(responseText);
   } catch (err) {
     console.error("🛑 Upload error:", err.message || err);
