@@ -1,8 +1,8 @@
-// public/script.js — FINAL VERSION (May 2025)
+// public/script.js � FINAL VERSION (May 2025)
 // Handles frontend interactivity, chat, uploads, OCR, MathJax, tools, and voice input
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ M∆THM∆TIΧ Initialized");
+  console.log("? M?THM?TI? Initialized");
 
   const userId = localStorage.getItem("userId");
   const chatContainer = document.getElementById("chat-container-inner");
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.MathJax) MathJax.typesetPromise([message]);
   };
 
-  // 📤 Chat Submit
+  // ? Chat Submit
   sendBtn.addEventListener("click", () => {
     const msg = input.value.trim();
     if (!msg) return;
@@ -31,27 +31,58 @@ document.addEventListener("DOMContentLoaded", () => {
     appendMessage(msg, "user");
     input.value = "";
 
+    const userId = localStorage.getItem("userId");
+    const name = localStorage.getItem("name");
+    const tone = localStorage.getItem("tone");
+    const learningStyle = localStorage.getItem("learningStyle");
+    let interests = localStorage.getItem("interests");
+
+    if (interests) {
+      try {
+        interests = JSON.parse(interests);
+      } catch (e) {
+        console.error("Error parsing interests from localStorage", e);
+        interests = []; // Or handle the error appropriately
+      }
+    } else {
+      interests = [];
+    }
+
+    console.log("Data being sent to /chat:", JSON.stringify({ userId, message: msg, name, tone, learningStyle, interests }));
+
     fetch("/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, message: msg }),
+      body: JSON.stringify({ userId, message: msg, name, tone, learningStyle, interests }),
     })
-      .then((res) => res.json())
-      .then((data) => appendMessage(data.text))
+      .then((res) => {
+        if (!res.ok) {
+          return res.status(500).json({ error: "Server error" });
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Data received from /chat:", data);
+        if (data && data.text) {
+          appendMessage(data.text, "ai");
+        } else {
+          appendMessage("?? Something went wrong with the response.", "ai");
+        }
+      })
       .catch((err) => {
-        console.error("❌ Chat error:", err);
-        appendMessage("⚠️ Something went wrong.");
+        console.error("? Chat error:", err);
+        appendMessage("?? Something went wrong.", "ai");
       });
   });
 
-  // 📎 Upload
+  // ? Upload
   uploadBtn.addEventListener("click", () => fileInput.click());
 
   fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
     if (!file) return;
 
-    appendMessage(`📎 Uploaded ${file.name}`, "user");
+    appendMessage(`? Uploaded ${file.name}`, "user");
 
     const formData = new FormData();
     formData.append("file", file);
@@ -64,18 +95,18 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((res) => res.text())
       .then((text) => appendMessage(text))
       .catch((err) => {
-        console.error("❌ Upload error:", err);
-        appendMessage("⚠️ Upload failed. Please try again.");
+        console.error("? Upload error:", err);
+        appendMessage("?? Upload failed. Please try again.");
       });
   });
 
-  // 🧠 Auto end session
+  // ? Auto end session
   window.addEventListener("beforeunload", () => {
     if (!userId) return;
     navigator.sendBeacon("/chat/end-session", JSON.stringify({ userId }));
   });
 
-  // 🎙️ Voice Input + Hands-Free
+  // ?? Voice Input + Hands-Free
   let recognizing = false;
   let recognition;
   let handsFreeEnabled = false;
@@ -93,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     recognition.onerror = function (event) {
-      console.error("🎙️ Speech recognition error", event);
+      console.error("?? Speech recognition error", event);
     };
 
     micBtn.addEventListener("click", () => {
@@ -115,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
       : "Hands-Free Mode: OFF";
   });
 
-  // 🧮 Tools — Popups
+  // ? Tools � Popups
   document.getElementById("calc-button").addEventListener("click", () => {
     document.getElementById("calculator-popup").style.display = "flex";
   });
@@ -135,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// ✅ Drag Functionality for Popups
+// ? Drag Functionality for Popups
 function dragPopup(popupId) {
   const popup = document.getElementById(popupId);
   const header = popup.querySelector(".popup-header");
@@ -169,7 +200,7 @@ function dragPopup(popupId) {
   });
 }
 
-// ✅ Apply to all popups
+// ? Apply to all popups
 dragPopup("calculator-popup");
 dragPopup("sketchpad-popup");
 dragPopup("equation-popup");

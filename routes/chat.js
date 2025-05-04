@@ -1,5 +1,3 @@
-// routes/chat.js — Handles direct user messages to M∆THM∆TIΧ
-
 const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
@@ -12,6 +10,8 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 router.post("/", async (req, res) => {
   try {
     const { message, name, tone, learningStyle, interests } = req.body;
+
+    console.log("Received data in /chat:", req.body);
 
     if (!message || !name) {
       return res.status(400).json({ error: "Missing message or user name." });
@@ -29,16 +29,21 @@ Student Info:
 Student says: "${message}"
 `;
 
+    console.log("Prompt being sent to Gemini:", prompt);
+
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
     const text = result.response.text().trim();
+
+    console.log("Response from Gemini:", text);
+
     return res.json({ text });
 
   } catch (err) {
     console.error("❌ Chat error:", err);
-    return res.status(500).json({ error: "Something went wrong during chat." });
+    return res.status(500).json({ error: "Something went wrong during chat.", message: err.message });
   }
 });
 
