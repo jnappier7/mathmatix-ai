@@ -1,50 +1,56 @@
-const express = require('express');
-const multer = require('multer');
+// routes/upload.js — image/PDF upload route with OCR and AI feedback
+const express = require("express");
+const multer = require("multer");
+const router = express.Router();
 const upload = multer();
 
-const router = express.Router();
-const vision = require('@google-cloud/vision');
+const extractTextFromImageOrPDF = require("../ocr");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { extractTextFromImageOrPDF } = require('../ocr');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0" });
 
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post("/", upload.single("file"), async (req, res) => {
   try {
-    if (!req.file || !req.file.buffer) {
-      return res.status(400).json({ error: "No file uploaded." });
+    if (!req.file) return res.status(400).send("❌ No file uploaded.");
+
+    // ✅ Validate allowed file types
+    const allowedTypes = ["image/png", "image/jpeg", "application/pdf"];
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      return res.status(400).send("⚠️ Unsupported file type. Upload a PNG, JPG, or PDF.");
     }
 
-    const base64Image = req.file.buffer.toString("base64");
-    const extractedText = await extractTextFromImageOrPDF(base64Image);
-    const text = extractedText.trim();
+    // ✅ Extract text using raw buffer
+    const extractedText = await extractTextFromImageOrPDF(req.file.buffer);
 
-    if (!text) return res.json({ text: "⚠️ No text found in image." });
+    console.log("📃 OCR Extracted Text:", extractedText || "[No text found]");
+
+    if (!extractedText) {
+      return res.send("⚠️ No text found in image.");
+    }
 
     const prompt = `
-You are a math tutor reviewing a student's handwritten homework. Here are the extracted problems and student work:
+A student uploaded this file. Review the extracted math and respond as M∆THM∆TIΧ AI.
 
-${text}
+✅ DO NOT give the final answer.
+✅ Ask what the student notices or already tried.
+✅ Give one hint at a time.
+✅ Use LaTeX formatting in \\( \\).
+✅ Encourage growth mindset and stay upbeat.
 
-Go through each problem, and for each one:
-- Confirm whether the solution appears correct or not.
-- If incorrect or unclear, gently ask to walk through it together.
-- Be conversational, natural, and supportive. Don’t grade. Don’t use formal teacher tone.
+Extracted content:
+${extractedText}
+    `.trim();
 
-Respond directly to the student in your voice as M∆THM∆TIΧ AI.
-`;
-
-    const aiResponse = await model.generateContent({
+    const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }]
     });
 
-    const feedback = aiResponse.response.text();
-    res.json({ text, feedback });
-
+    const responseText = result.response.text();
+    res.send(responseText);
   } catch (err) {
-    console.error("Upload Error:", err);
-    res.status(500).json({ error: "Failed to process file." });
+    console.error("🛑 Upload error:", err.message || err);
+    res.status(500).send("⚠️ Upload failed.");
   }
 });
 
