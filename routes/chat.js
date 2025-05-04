@@ -38,9 +38,15 @@ Student info:
 ${lastSummary ? `Here is a summary of your last session:\n${lastSummary}` : ""}
 `;
 
+    // ✅ Always use iterable chat history
+    const priorHistory = Array.isArray(SESSION_TRACKER[userId])
+      ? SESSION_TRACKER[userId]
+      : [];
+
     const chat = baseModel.startChat({
-      history: SESSION_TRACKER[userId] || [
+      history: [
         { role: "user", parts: [{ text: systemMessage }] },
+        ...priorHistory,
       ],
     });
 
@@ -54,7 +60,7 @@ ${lastSummary ? `Here is a summary of your last session:\n${lastSummary}` : ""}
 
   } catch (err) {
     console.error("❌ Chat error:", err);
-    res.status(500).send({ text: "⚠️ Something went wrong during the chat." });
+    res.status(500).send({ text: `⚠️ Server Error: ${err.message}` });
   }
 });
 
@@ -66,7 +72,10 @@ router.post("/end-session", async (req, res) => {
   try {
     const summaryPrompt = "Summarize this math tutoring session in 2-3 sentences for a tutor record.";
 
-    const chat = baseModel.startChat({ history });
+    const chat = baseModel.startChat({
+      history: Array.isArray(history) ? history : [],
+    });
+
     const summaryResult = await chat.sendMessage(summaryPrompt);
     const summary = summaryResult.response.text().trim();
 
