@@ -1,13 +1,14 @@
-// routes/upload.js — Upload route with Mathpix OCR + Gemini response
+// routes/upload.js — image/PDF upload route with OCR and AI feedback
 const express = require("express");
 const multer = require("multer");
-const axios = require("axios");
 const router = express.Router();
 const upload = multer();
 
+const extractTextFromImageOrPDF = require("../ocr");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // ✅ Correct model ID for 2.0 Flash in API
 
 router.post("/", upload.single("file"), async (req, res) => {
   try {
@@ -18,30 +19,10 @@ router.post("/", upload.single("file"), async (req, res) => {
       return res.status(400).send("⚠️ Unsupported file type. Upload a PNG, JPG, or PDF.");
     }
 
-    const mathpixRes = await axios.post(
-      "https://api.mathpix.com/v3/text",
-      {
-        src: `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
-        formats: ["text", "data", "latex_styled"],
-        data_options: {
-          include_asciimath: false,
-          include_latex: true,
-        },
-        ocr: ["math", "text"],
-      },
-      {
-        headers: {
-          app_id: process.env.MATHPIX_APP_ID,
-          app_key: process.env.MATHPIX_APP_KEY,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const extractedText = await extractTextFromImageOrPDF(req.file.buffer);
+    console.log("📃 OCR Extracted Text:", extractedText || "[No text found]");
 
-    const extractedText = mathpixRes.data.text || mathpixRes.data.latex_styled || "";
-    console.log("📃 Mathpix OCR:", extractedText || "[No text found]");
-
-    if (!extractedText.trim()) {
+    if (!extractedText) {
       return res.send("⚠️ No text found in image.");
     }
 
