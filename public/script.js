@@ -1,126 +1,84 @@
-// script.js — M∆THM∆TIΧ AI frontend logic with visual support
+// public/script.js — Handles frontend interactivity + chat upload
+
 console.log("✅ M∆THM∆TIΧ Initialized");
 
+const userId = localStorage.getItem("userId");
 const chatContainer = document.getElementById("chat-container-inner");
-const userInput = document.getElementById("user-input");
-const sendButton = document.getElementById("send-button");
-const micButton = document.getElementById("mic-button");
-const uploadButton = document.getElementById("upload-button");
-const uploadInput = document.getElementById("file-upload");
+const input = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-button");
+const uploadBtn = document.getElementById("file-upload");
+const fileInput = document.getElementById("file-input");
 
-// ✅ Add message, render MathJax, scroll
-function addMessageToChat(role, text) {
+const appendMessage = (text, sender = "ai") => {
   const message = document.createElement("div");
-  message.classList.add("message", role);
-  message.innerHTML = text;
-  chatContainer.appendChild(message);
-
-  if (window.MathJax) {
-    MathJax.typesetPromise([message]).then(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    });
-  } else {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  }
-}
-
-// ✅ Show AI-generated image
-function addImageToChat(base64, alt = "Generated Image") {
-  const message = document.createElement("div");
-  message.classList.add("message", "ai");
-
-  const img = document.createElement("img");
-  img.src = base64.startsWith("http") ? base64 : `data:image/png;base64,${base64}`;
-  img.alt = alt;
-  img.style.maxWidth = "100%";
-  img.style.borderRadius = "10px";
-  img.style.marginTop = "8px";
-
-  message.appendChild(img);
+  message.classList.add("message", sender);
+  message.innerText = text;
   chatContainer.appendChild(message);
   chatContainer.scrollTop = chatContainer.scrollHeight;
-}
+};
 
-// ✅ Send user message to AI (with smart image detection)
-async function sendMessage() {
-  const message = userInput.value.trim();
-  if (!message) return;
+sendBtn.addEventListener("click", () => {
+  const msg = input.value.trim();
+  if (!msg) return;
+  appendMessage(msg, "user");
+  input.value = "";
 
-  addMessageToChat("user", message);
-  userInput.value = "";
-
-  // 🧠 Send message to Gemini
-  const res = await fetch("/chat", {
+  fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message })
-  });
-
-  const text = await res.text();
-  addMessageToChat("ai", text);
-
-  // 🔍 Smart detection of AI visual prompts
-  const lower = text.toLowerCase();
-  const offersVisual =
-    lower.includes("let me show you") ||
-    lower.includes("want me to draw") ||
-    lower.includes("would you like a diagram") ||
-    lower.includes("here’s what that looks like") ||
-    lower.includes("let me illustrate");
-
-  if (offersVisual) {
-    const imagePrompt = `Create a math visual to support this explanation: "${message}"`;
-
-    const imgRes = await fetch("/image", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: imagePrompt })
+    body: JSON.stringify({ userId, message: msg }),
+  })
+    .then((res) => res.json())
+    .then((data) => appendMessage(data.text))
+    .catch((err) => {
+      console.error("Chat error:", err);
+      appendMessage("⚠️ Something went wrong.");
     });
+});
 
-    const { imageUrl } = await imgRes.json();
-    if (imageUrl) addImageToChat(imageUrl, "Visual Aid");
-  }
-}
+uploadBtn.addEventListener("click", () => fileInput.click());
 
-// ✅ Handle file upload
-async function handleFileUpload(event) {
-  const file = event.target.files[0];
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
   if (!file) return;
 
-  addMessageToChat("user", `📎 Uploaded ${file.name}`);
+  appendMessage(`📎 Uploaded ${file.name}`, "user");
 
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("userId", userId);
 
-  try {
-    const res = await fetch("/upload", {
-      method: "POST",
-      body: formData
+  fetch("/upload", {
+    method: "POST",
+    body: formData,
+  })
+    .then((res) => res.text())
+    .then((text) => appendMessage(text))
+    .catch((err) => {
+      console.error("Upload error:", err);
+      appendMessage("⚠️ Upload failed. Please try again.");
     });
+});
 
-    if (!res.ok) {
-      addMessageToChat("ai", "⚠️ Upload failed. Please try again.");
-      return;
-    }
+// Auto-end session on page unload
+window.addEventListener("beforeunload", () => {
+  if (!userId) return;
+  navigator.sendBeacon("/chat/end-session", JSON.stringify({ userId }));
+});
 
-    const result = await res.json();
-
-    // Text response
-    if (result.text) addMessageToChat("ai", result.text);
-
-    // Image response (from Gemini OCR logic)
-    if (result.image) {
-      const base64 = `data:${result.mimeType};base64,${result.image}`;
-      addImageToChat(base64);
-    }
-  } catch (err) {
-    console.error("Upload error:", err);
-    addMessageToChat("ai", "⚠️ Upload failed. Please try again.");
-  }
-}
-
-// ✅ Mic / speech-to-text
+// 🎙️ Microphone + Hands-Free Mode
+let recognizing = false;
 let recognition;
+
+const micBtn = document.getElementById("mic-button");
+let handsFreeEnabled = false;
+document.getElementById("handsfree-toggle").addEventListener("click", () => {
+  handsFreeEnabled = !handsFreeEnabled;
+  document.getElementById("handsfree-label").innerText = handsFreeEnabled
+    ? "Hands-Free Mode: ON"
+    : "Hands-Free Mode: OFF";
+});
+
 if ("webkitSpeechRecognition" in window) {
   recognition = new webkitSpeechRecognition();
   recognition.continuous = false;
@@ -129,25 +87,39 @@ if ("webkitSpeechRecognition" in window) {
 
   recognition.onresult = function (event) {
     const transcript = event.results[0][0].transcript;
-    userInput.value = transcript;
-    sendMessage();
+    input.value = transcript;
+    if (handsFreeEnabled) sendBtn.click();
   };
 
-  recognition.onerror = function () {
-    addMessageToChat("ai", "⚠️ Voice input error.");
+  recognition.onerror = function (event) {
+    console.error("Speech recognition error", event);
   };
 
-  micButton.addEventListener("click", () => recognition.start());
+  micBtn.addEventListener("click", () => {
+    if (recognizing) {
+      recognition.stop();
+      micBtn.classList.remove("active");
+    } else {
+      recognition.start();
+      micBtn.classList.add("active");
+    }
+    recognizing = !recognizing;
+  });
 }
 
-// ✅ Trigger file upload via 📎
-uploadButton.addEventListener("click", () => {
-  uploadInput.click();
+// 🧮 Calculator, ✏️ Sketchpad, π Equation Editor popups
+document.getElementById("calc-button").addEventListener("click", () => {
+  document.getElementById("calculator-popup").style.display = "flex";
+});
+document.getElementById("draw-button").addEventListener("click", () => {
+  document.getElementById("sketchpad-popup").style.display = "flex";
+});
+document.getElementById("pi-button").addEventListener("click", () => {
+  document.getElementById("equation-popup").style.display = "flex";
 });
 
-// ✅ Event listeners
-sendButton.addEventListener("click", sendMessage);
-userInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage();
+document.querySelectorAll(".close-button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    btn.closest(".popup").style.display = "none";
+  });
 });
-uploadInput.addEventListener("change", handleFileUpload);
