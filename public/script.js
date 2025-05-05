@@ -24,6 +24,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.MathJax) MathJax.typesetPromise([message]);
   };
 
+  // ✅ Fix: Enable send on Enter (but allow Shift+Enter for newline)
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+
   const appendImage = (url, alt = "Visual Example") => {
     const message = document.createElement("div");
     message.classList.add("message", "ai");

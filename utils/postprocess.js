@@ -14,3 +14,4 @@ module.exports = {
   extractGraphTag,
   extractImagePrompt
 };
+// JavaScript Document
