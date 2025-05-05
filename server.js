@@ -159,6 +159,8 @@ const signupRoute = require("./routes/signup");
 const memoryRoute = require("./routes/memory");
 const chatRoute = require("./routes/chat");
 const imageRoute = require("./routes/image");
+const imageSearchRoute = require("./routes/image-search");
+
 
 app.use("/upload", uploadRoute);
 app.use("/login", loginRoute);
@@ -166,6 +168,8 @@ app.use("/signup", signupRoute);
 app.use("/save-summary", memoryRoute);
 app.use("/chat", chatRoute);
 app.use("/image", imageRoute);
+app.use("/image-search", imageSearchRoute);
+
 
 // ✅ Serve index.html as default
 app.get("/", (req, res) => {
