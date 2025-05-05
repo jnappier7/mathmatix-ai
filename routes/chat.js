@@ -43,15 +43,16 @@ Student info:
 ${lastSummary ? `Here is a summary of your last session:\n${lastSummary}` : ""}
 `;
 
+    // Set up initial message history if new user
     if (!SESSION_TRACKER[userId]) {
       SESSION_TRACKER[userId] = [
         { role: "user", parts: [{ text: systemMessage }] }
       ];
     }
 
-    const chat = baseModel.startChat({
-      history: SESSION_TRACKER[userId],
-    });
+    const existingHistory = SESSION_TRACKER[userId];
+
+    const chat = baseModel.startChat({ history: existingHistory });
 
     const result = await chat.sendMessage(message);
     const text = result.response.text().trim();
