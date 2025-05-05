@@ -1,3 +1,4 @@
+<!-- chat.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script defer src="script.js"></script>
 </head>
 <body>
@@ -18,6 +17,7 @@
       <textarea id="user-input" placeholder="Type your message..."></textarea>
       <button id="send-button">Send</button>
 
+      <!-- Inline Tools -->
       <div id="tools-left">
         <button id="pi-button" title="Insert Equation">&#x03C0;</button>
       </div>
@@ -29,7 +29,7 @@
         <button id="file-upload" title="Upload File">
           <img src="clip-icon.png" alt="Attach" />
         </button>
-        <input type="file" id="file-input" style="display: none;" />
+        <input type="file" id="file-input" />
       </div>
     </div>
 
