@@ -1,97 +1,55 @@
+<!-- chat.html (Cleaned Up) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- ✅ MathJax for LaTeX rendering -->
-  <script>
-    window.MathJax = {
-      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
-      svg: { fontCache: 'global' }
-    };
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <div id="chat-card">
-    <div id="logo">
-      <img src="MathMatix AI Logo.png" alt="Mathmatix Logo" />
-    </div>
+  <div id="chat-container">
+    <img id="logo" src="MathMatix AI Logo.png" alt="Mathmatix Logo" />
+    <div id="chat-container-inner"></div>
 
-    <div id="chat-container">
-      <div id="chat-container-inner"></div>
-    </div>
+    <div id="input-container">
+      <textarea id="user-input" placeholder="Type your message..."></textarea>
+      <button id="send-button">Send</button>
 
-    <div id="input-area">
-      <div class="input-row">
-        <input type="text" id="user-input" placeholder="Type your message..." />
-        <button id="send-button">Send</button>
-        <button id="mic-button" title="Speak your question">🎙️</button>
-        <button id="file-upload" title="Upload file or image">📎</button>
+      <!-- Inline Tools -->
+      <div id="tools-left">
+        <!-- Removed calculator and sketchpad buttons -->
+        <button id="pi-button" title="Insert Equation">&#x03C0;</button>
+      </div>
+
+      <div id="tools-right">
+        <button id="mic-button" title="Voice Input">
+          <img src="mic-icon.png" alt="Mic" />
+        </button>
+        <button id="file-upload" title="Upload File">
+          <img src="clip-icon.png" alt="Attach" />
+        </button>
         <input type="file" id="file-input" style="display: none;" />
       </div>
-
-      <div class="tool-row">
-        <button id="calc-button" title="Calculator">🧮</button>
-        <button id="draw-button" title="Sketchpad">✏️</button>
-        <button id="pi-button" title="Equation Editor">π</button>
-      </div>
-
-      <div class="handsfree-row">
-        <span id="handsfree-label">Hands-Free Mode: OFF</span>
-        <button id="handsfree-toggle" title="Toggle hands-free mode">🟢</button>
-      </div>
     </div>
 
-    <!-- 🧮 Calculator -->
-    <div id="calculator-popup" class="popup" style="display: none;">
-      <div class="popup-header">
-        Calculator <button class="close-button">❌</button>
-      </div>
-      <div class="popup-body">
-        <input type="text" id="calc-display" readonly />
-        <div id="calc-buttons">
-          <button>7</button><button>8</button><button>9</button><button>/</button>
-          <button>4</button><button>5</button><button>6</button><button>*</button>
-          <button>1</button><button>2</button><button>3</button><button>-</button>
-          <button>0</button><button>.</button><button>=</button><button>+</button>
-          <button id="calc-clear">C</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ✍️ Sketchpad -->
-    <div id="sketchpad-popup" class="popup" style="display: none;">
-      <div class="popup-header">
-        Sketchpad <button class="close-button">❌</button>
-      </div>
-      <div class="popup-body">
-        <canvas id="sketchpad" width="400" height="300"></canvas>
-        <div class="sketch-tools">
-          <label>Color:</label>
-          <input type="color" id="color-picker" value="#000000" />
-          <button id="clear-sketch">Clear</button>
-          <button id="submit-sketch">Submit</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- π Equation Editor -->
-    <div id="equation-popup" class="popup" style="display: none;">
-      <div class="popup-header">
-        Equation Editor <button class="close-button">❌</button>
-      </div>
-      <div class="popup-body">
-        <label for="latex-input">Type LaTeX equation:</label>
-        <input type="text" id="latex-input" placeholder="e.g. x^2 + y^2 = r^2" />
-        <button id="insert-equation">Insert</button>
-        <div id="render-preview" style="margin-top: 1rem;"></div>
-      </div>
+    <div id="handsfree-toggle-wrapper">
+      <span id="handsfree-label">Hands-Free Mode: OFF</span>
+      <button id="handsfree-toggle" class="green"></button>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Equation Editor Popup -->
+  <div id="equation-popup" class="popup">
+    <div class="popup-header">
+      <span>Equation Editor</span>
+      <span class="close-button">❌</span>
+    </div>
+    <label>Type LaTeX equation:
+      <input type="text" id="latex-input" placeholder="e.g. x^2 + y^2 = r^2" />
+    </label>
+    <button id="insert-latex">Insert</button>
+  </div>
 </body>
 </html>
