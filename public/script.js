@@ -1,4 +1,4 @@
-// public/script.js — With Parabola Image Trigger (May 2025)
+// public/script.js — FINAL VERSION with Google Image, DALL·E, and GeoGebra Graph Embeds
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📡 M∆THM∆TIΧ Initialized");
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.MathJax) MathJax.typesetPromise([message]);
   };
 
-  const appendImage = (url, alt = "AI-generated image") => {
+  const appendImage = (url, alt = "Visual Example") => {
     const message = document.createElement("div");
     message.classList.add("message", "ai");
     const img = document.createElement("img");
@@ -37,6 +37,62 @@ document.addEventListener("DOMContentLoaded", () => {
     chatContainer.scrollTop = chatContainer.scrollHeight;
   };
 
+  const appendGeoGebraGraph = (equation) => {
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.geogebra.org/calculator?embed=true&ggbScript=${encodeURIComponent("Graph: " + equation)}`;
+    iframe.style.width = "100%";
+    iframe.style.maxWidth = "500px";
+    iframe.style.height = "400px";
+    iframe.style.border = "none";
+    iframe.style.borderRadius = "12px";
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message", "ai");
+    wrapper.appendChild(iframe);
+    chatContainer.appendChild(wrapper);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  };
+
+  const triggerImageSearchIfNeeded = (aiText) => {
+    const learningStyle = localStorage.getItem("learningStyle");
+    if (learningStyle?.toLowerCase() !== "visual") return;
+
+    const triggers = [
+      "golden ratio",
+      "spiral in nature",
+      "sunflower pattern",
+      "fibonacci",
+      "tessellation",
+      "real-world example",
+      "pinecone",
+      "math in nature"
+    ];
+
+    const foundTrigger = triggers.find(trigger =>
+      aiText.toLowerCase().includes(trigger)
+    );
+
+    if (!foundTrigger) return;
+
+    fetch(`/image-search?query=${encodeURIComponent(foundTrigger)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.imageUrl) {
+          appendImage(data.imageUrl, `Visual of ${foundTrigger}`);
+        }
+      })
+      .catch((err) => {
+        console.error("🔍 Image search failed:", err);
+      });
+  };
+
+  const checkForGraphEmbed = (text) => {
+    const match = text.match(/\[GRAPH: (.+?)\]/i);
+    if (match && match[1]) {
+      const equation = match[1];
+      appendGeoGebraGraph(equation);
+    }
+  };
+
   sendBtn.addEventListener("click", () => {
     const msg = input.value.trim();
     if (!msg) return;
@@ -44,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
     appendMessage(msg, "user");
     input.value = "";
 
-    // 🌟 Check for user saying "yes" after drawing offer
+    // 🌟 Check for DALL·E drawing trigger
     if (lastMessageAskedForDrawing && /^yes|sure|absolutely|please|do it$/i.test(msg)) {
       lastMessageAskedForDrawing = false;
       fetch("/image", {
@@ -98,6 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (data?.text) {
           appendMessage(data.text, "ai");
           lastMessageAskedForDrawing = /want me to draw this for you\?/i.test(data.text);
+          triggerImageSearchIfNeeded(data.text);
+          checkForGraphEmbed(data.text);
         } else {
           appendMessage("🤖 Something went wrong with the response.", "ai");
         }
@@ -108,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // 📎 Upload
   uploadBtn.addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
@@ -188,6 +245,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+dragPopup("calculator-popup");
+dragPopup("sketchpad-popup");
+dragPopup("equation-popup");
+
 function dragPopup(popupId) {
   const popup = document.getElementById(popupId);
   const header = popup.querySelector(".popup-header");
@@ -213,7 +274,3 @@ function dragPopup(popupId) {
     header.style.cursor = "grab";
   });
 }
-
-dragPopup("calculator-popup");
-dragPopup("sketchpad-popup");
-dragPopup("equation-popup");
