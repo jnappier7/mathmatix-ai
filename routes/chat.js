@@ -5,7 +5,7 @@ const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const User = require("../models/User");
 const saveSummary = require("./memory");
-const systemPrompt = require("../utils/prompt");
+const generateSystemPrompt = require("../utils/prompt");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const baseModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -18,15 +18,13 @@ router.post("/", async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).send({ text: "⚠️ User not found." });
 
-    const { name, learningStyle, interests, conversations } = user;
-    const firstName = name?.split(" ")[0] || "student";
-    const lastSummary = conversations?.slice(-1)[0]?.summary || "";
+    const promptText = generateSystemPrompt(user);
 
-    const promptText = systemPrompt(firstName, learningStyle, interests, lastSummary);
+    const history = SESSION_TRACKER[userId] || [
+      { role: "user", parts: [{ text: promptText }] }
+    ];
 
-    const chat = baseModel.startChat({
-      history: SESSION_TRACKER[userId] || [{ role: "user", parts: [{ text: promptText }] }],
-    });
+    const chat = baseModel.startChat({ history });
 
     const result = await chat.sendMessage(message);
     const text = result.response.text().trim();
