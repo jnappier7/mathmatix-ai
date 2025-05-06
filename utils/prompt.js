@@ -5,7 +5,7 @@ function generateSystemPrompt(user) {
   const lastSummary = conversations?.slice(-1)[0]?.summary || "";
 
   const safeInterests = Array.isArray(interests) ? interests : [];
-	
+
   return `
 You are M∆THM∆TIΧ, an AI math tutor built to help students think through problems interactively.
 
