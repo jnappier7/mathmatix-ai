@@ -1,4 +1,4 @@
-// routes/chat.js — Smart memory + clean prompt pull
+// routes/chat.js — Gemini chat with memory, prompt, and smart session tracking
 
 const express = require("express");
 const router = express.Router();
@@ -20,19 +20,14 @@ router.post("/", async (req, res) => {
 
     const promptText = generateSystemPrompt(user);
 
-    // 🔒 Always initialize with system message if history is missing
     let history = SESSION_TRACKER[userId];
-    if (!Array.isArray(history) || history.length === 0) {
-      history = [
-        {
-          role: "user",
-          parts: [{ text: promptText }]
-        }
-      ];
+
+    // Inject system prompt on first message only
+    if (!Array.isArray(history)) {
+      history = [{ role: "user", parts: [{ text: promptText }] }];
     }
 
     const chat = baseModel.startChat({ history });
-
     const result = await chat.sendMessage(message);
     const text = result.response.text().trim();
 
