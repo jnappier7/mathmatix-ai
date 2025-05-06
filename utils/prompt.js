@@ -4,6 +4,8 @@ function generateSystemPrompt(user) {
   const { name, grade, tone, learningStyle, interests, conversations } = user;
   const lastSummary = conversations?.slice(-1)[0]?.summary || "";
 
+  const safeInterests = Array.isArray(interests) ? interests : [];
+	
   return `
 You are M∆THM∆TIΧ, an AI math tutor built to help students think through problems interactively.
 
@@ -42,7 +44,7 @@ You are M∆THM∆TIΧ, an AI math tutor built to help students think through pr
 - Grade Level: ${grade}
 - Tone Preference: ${tone}
 - Learning Style: ${learningStyle}
-- Interests: ${interests.join(", ")}
+- Interests: ${safeInterests.join(", ")}
 
 ${lastSummary ? `📘 Summary of Last Session:\n${lastSummary}` : ""}
 `;
