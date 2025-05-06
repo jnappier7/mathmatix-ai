@@ -1,4 +1,4 @@
-// routes/chat.js — Safe startChat with memory + prompt
+// routes/chat.js — Smart memory + clean prompt pull
 
 const express = require("express");
 const router = express.Router();
@@ -20,18 +20,23 @@ router.post("/", async (req, res) => {
 
     const promptText = generateSystemPrompt(user);
 
-    // 🔒 Ensure history is always a valid array
-    const priorHistory = SESSION_TRACKER[userId];
-    const history = Array.isArray(priorHistory)
-      ? priorHistory
-      : [{ role: "user", parts: [{ text: promptText }] }];
+    // 🔒 Always initialize with system message if history is missing
+    let history = SESSION_TRACKER[userId];
+    if (!Array.isArray(history) || history.length === 0) {
+      history = [
+        {
+          role: "system",
+          parts: [{ text: promptText }]
+        }
+      ];
+    }
 
     const chat = baseModel.startChat({ history });
 
     const result = await chat.sendMessage(message);
     const text = result.response.text().trim();
 
-    const updatedHistory = chat.getHistory?.(); // added safety here
+    const updatedHistory = chat.getHistory?.();
     if (Array.isArray(updatedHistory)) {
       SESSION_TRACKER[userId] = updatedHistory;
     }
