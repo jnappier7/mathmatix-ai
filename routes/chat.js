@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     if (!Array.isArray(history) || history.length === 0) {
       history = [
         {
-          role: "system",
+          role: "user",
           parts: [{ text: promptText }]
         }
       ];
