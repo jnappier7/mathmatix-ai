@@ -33,7 +33,7 @@ if (process.env.MONGO_URI) {
 const uploadRoute = require("./routes/upload");
 const loginRoute = require("./routes/login");
 const signupRoute = require("./routes/signup");
-const memoryRoute = require("./routes/memory");
+const memoryRoute = require("./routes/memory").router;
 const chatRoute = require("./routes/chat");
 const imageRoute = require("./routes/image");
 const imageSearchRoute = require("./routes/image-search");

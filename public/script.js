@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userId = localStorage.getItem("userId");
   const chatContainer = document.getElementById("chat-container-inner");
   const input = document.getElementById("user-input");
-  const sendBtn = document.getElementById("send-button");
+ const sendBtn = document.getElementById("send-button");
   const uploadBtn = document.getElementById("file-upload");
   const fileInput = document.getElementById("file-input");
   const micBtn = document.getElementById("mic-button");
@@ -16,6 +16,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let handsFreeEnabled = false;
   let lastMessageAskedForDrawing = false;
+
+  // 📘 Recall and display last session summary
+  (async function fetchPreviousSummary() {
+    if (!userId) return;
+
+    try {
+      const res = await fetch("/save-summary/recall", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ useId })
+      });
+
+      const data = await res.json();
+      if (data?.summary) {
+        appendMessage(`📘 Welcom back! Last time you worked on:\n\n"${data.summary}"\n\nWant to continue or start something new?`);
+      }
+    } catch (err) {
+      console.warn("⚠️ Could not fetch last session summary:", err);
+    }
+  })();
 
   const appendMessage = (text, sender = "ai") => {
     const message = document.createElement("div");

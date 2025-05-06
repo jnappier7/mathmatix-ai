@@ -28,8 +28,16 @@ router.post("/", async (req, res) => {
     }
 
     const chat = baseModel.startChat({ history });
+
+    // 🧠 Track user message in temporary session log
+    user.messageLog = user.messageLog || [];
+    user.messageLog.push({ role: "user", content: message });
+
     const result = await chat.sendMessage(message);
     const text = result.response.text().trim();
+
+    // 🧠 Track model reply in session log
+    user.messageLog.push({ role: "model", content: text });
 
     const updatedHistory = chat.getHistory?.();
     if (Array.isArray(updatedHistory)) {
