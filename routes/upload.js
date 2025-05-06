@@ -1,67 +1,74 @@
+// routes/upload.js — Handles file upload + Mathpix OCR + Gemini response
+
 const express = require("express");
-const router = express.Router();
 const multer = require("multer");
 const axios = require("axios");
-const FormData = require("form-data");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const router = express.Router();
 const { SYSTEM_PROMPT } = require("../utils/prompt");
-const { extractGraphTag, extractImagePrompt } = require("../utils/postprocess");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const upload = multer();
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/", upload.single("file"), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded." });
-    }
+    const file = req.file;
+    if (!file) return res.status(400).json({ error: "No file uploaded." });
 
-    const base64Image = req.file.buffer.toString("base64");
+    const { name, tone, learningStyle, interests } = req.body;
 
-    const mathpixResponse = await axios.post(
+    const base64 = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+
+    // 📤 Mathpix OCR
+    const mathpixRes = await axios.post(
       "https://api.mathpix.com/v3/text",
       {
-        src: `data:${req.file.mimetype};base64,${base64Image}`,
-        formats: ["text", "data"],
+        src: base64,
+        formats: ["text", "latex_styled"],
         data_options: {
-          include_asciimath: true,
           include_latex: true,
-        },
+          include_text: true
+        }
       },
       {
         headers: {
           "Content-Type": "application/json",
           app_id: process.env.MATHPIX_APP_ID,
-          app_key: process.env.MATHPIX_APP_KEY,
-        },
+          app_key: process.env.MATHPIX_APP_KEY
+        }
       }
     );
 
-    if (!mathpixResponse?.data?.text) {
-      throw new Error("Mathpix returned no usable text.");
-    }
+    const extracted = (mathpixRes.data?.text || "").trim();
+    if (!extracted) return res.status(400).json({ error: "Mathpix returned no usable text." });
 
-    const extractedText = mathpixResponse.data.text.trim();
-    console.log("🧠 OCR Extracted Text:", extractedText);
+    // 🧠 Gemini Prompt
+    const prompt = `
+${SYSTEM_PROMPT}
 
-    const fullPrompt = `${SYSTEM_PROMPT}\n\nJason uploaded handwritten work. Help evaluate and guide them.\n\nProblem: ${extractedText}`;
+Student Info:
+- Name: ${name || "N/A"}
+- Tone: ${tone || "Default"}
+- Learning Style: ${learningStyle || "N/A"}
+- Interests: ${interests || "N/A"}
+
+Here's the extracted math text:
+"""
+${extracted}
+"""
+
+Give brief feedback. Ask guiding questions. Don't solve the entire problem.
+`;
 
     const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: fullPrompt }] }],
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
     });
 
-    const aiReply = result?.response?.text()?.trim();
+    const reply = result?.response?.text()?.trim() || "🤖 No feedback generated.";
+    return res.json({ text: reply, extracted });
 
-    if (!aiReply) {
-      return res.status(500).json({ error: "Gemini returned no response." });
-    }
-
-    const graph = extractGraphTag(aiReply);
-    const imagePrompt = extractImagePrompt(aiReply);
-
-    return res.json({ text: aiReply, graph, imagePrompt });
   } catch (err) {
     console.error("❌ Upload error:", err?.response?.data || err.message || err);
     return res.status(500).json({ error: "Something went wrong during upload processing." });

@@ -1,5 +1,3 @@
-// script.js — Full version with popups draggable, voice input, file upload, equation input, message alignment, animation, and scroll
-
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📡 M∆THM∆TIΧ Initialized");
 
@@ -7,21 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatContainer = document.getElementById("chat-container-inner");
   const input = document.getElementById("user-input");
   const sendBtn = document.getElementById("send-button");
-  const uploadBtn = document.getElementById("file-upload");
   const fileInput = document.getElementById("file-input");
   const micBtn = document.getElementById("mic-button");
-  const handsFreeToggle = document.getElementById("handsfree-toggle");
-  const handsFreeLabel = document.getElementById("handsfree-label");
+  const thinking = document.getElementById("thinking-indicator");
 
-  const equationBtn = document.getElementById("pi-button");
-  const equationPopup = document.getElementById("equation-popup");
-  const insertBtn = document.getElementById("insert-latex");
-  const latexInput = document.getElementById("latex-input");
-
-  let thinkingTimeout;
-  let recognition;
-  let handsFreeEnabled = false;
-
+  // 💬 Append chat message
   const appendMessage = (text, sender = "ai") => {
     const message = document.createElement("div");
     message.classList.add("message", sender);
@@ -31,44 +19,61 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.MathJax) MathJax.typesetPromise([message]);
   };
 
-  const showThinking = () => {
-    const thinking = document.createElement("div");
-    thinking.classList.add("message", "ai");
-    thinking.innerText = "M∆THM∆TIΧ is thinking...";
-    thinking.id = "thinking-msg";
-    chatContainer.appendChild(thinking);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  };
-
-  const removeThinking = () => {
-    const thinking = document.getElementById("thinking-msg");
-    if (thinking) thinking.remove();
-  };
-
+  // 📤 Send message
   const sendMessage = async () => {
     const message = input.value.trim();
     if (!message) return;
+
     appendMessage(message, "user");
     input.value = "";
-    showThinking();
+    thinking.style.display = "flex";
 
     try {
       const res = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, message })
+        body: JSON.stringify({ userId, message }),
       });
+
       const data = await res.json();
-      removeThinking();
-      appendMessage(data.text || "⚠️ No response.");
+      thinking.style.display = "none";
+
+      if (data.text) appendMessage(data.text, "ai");
+      else appendMessage("⚠️ No response from AI.", "ai");
     } catch (err) {
-      removeThinking();
-      appendMessage("⚠️ Error: Could not connect to server.");
+      thinking.style.display = "none";
+      appendMessage("⚠️ Error talking to the AI.", "ai");
       console.error("❌ Chat error:", err);
     }
   };
 
-  sendBtn.addEventListener("click", sendMessage);
+  // 🎤 Voice Input
+  if ("webkitSpeechRecognition" in window) {
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = "en-US";
+
+    micBtn.addEventListener("click", () => {
+      recognition.start();
+      micBtn.disabled = true;
+    });
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      input.value = transcript;
+      sendMessage();
+    };
+
+    recognition.onerror = () => {
+      micBtn.disabled = false;
+    };
+
+    recognition.onend = () => {
+      micBtn.disabled = false;
+    };
+  }
+
+  // 🧠 Enter to send
   input.addEventListener("keypress", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -76,88 +81,79 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  uploadBtn.addEventListener("click", () => fileInput.click());
-  fileInput.addEventListener("change", async () => {
-    const file = fileInput.files[0];
+  sendBtn.addEventListener("click", sendMessage);
+
+  // 📎 File Upload
+  fileInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
     formData.append("file", file);
-    appendMessage(`📎 Uploaded ${file.name}`, "user");
-    showThinking();
+    formData.append("userId", userId);
+
+    appendMessage("📎 Uploading file and extracting math...", "user");
+    thinking.style.display = "flex";
 
     try {
       const res = await fetch("/upload", {
         method: "POST",
         body: formData,
       });
+
       const data = await res.json();
-      removeThinking();
-      appendMessage(data.text || "⚠️ No response from upload.");
+      thinking.style.display = "none";
+
+      if (data.text) appendMessage(data.text, "ai");
+      else appendMessage("⚠️ Could not extract math from file.", "ai");
     } catch (err) {
-      removeThinking();
-      appendMessage("⚠️ Upload error.");
+      thinking.style.display = "none";
+      appendMessage("⚠️ Upload failed.", "ai");
       console.error("❌ Upload error:", err);
     }
   });
 
-  equationBtn.addEventListener("click", () => equationPopup.style.display = "block");
-  insertBtn.addEventListener("click", () => {
-    const latex = latexInput.value.trim();
-    if (latex) input.value += ` $${latex}$ `;
-    equationPopup.style.display = "none";
-    latexInput.value = "";
+  // 🟩 Drag-and-Drop Upload
+  const dropzone = document.getElementById("dropzone");
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.classList.add("highlight");
   });
 
-  document.querySelectorAll(".close-button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      btn.closest(".popup").style.display = "none";
-    });
+  dropzone.addEventListener("dragleave", () => {
+    dropzone.classList.remove("highlight");
   });
 
-  if ("webkitSpeechRecognition" in window) {
-    recognition = new webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("highlight");
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      input.value = transcript;
-      if (handsFreeEnabled) sendMessage();
-    };
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
 
-    recognition.onerror = (event) => console.error("🎙️ Speech error:", event);
-  }
-
-  micBtn.addEventListener("click", () => {
-    if (recognition) recognition.start();
+    fileInput.files = e.dataTransfer.files;
+    fileInput.dispatchEvent(new Event("change"));
   });
 
-  handsFreeToggle.addEventListener("click", () => {
-    handsFreeEnabled = !handsFreeEnabled;
-    handsFreeLabel.textContent = `Hands-Free Mode: ${handsFreeEnabled ? "ON" : "OFF"}`;
+  // 🧮 Insert LaTeX Equation
+  const equationBtn = document.getElementById("pi-button");
+  const popup = document.getElementById("equation-popup");
+  const closeBtn = popup.querySelector(".close-button");
+
+  equationBtn.addEventListener("click", () => {
+    popup.style.display = "block";
   });
 
-  // ✅ Make popups draggable
-  document.querySelectorAll(".popup").forEach(popup => {
-    const header = popup.querySelector(".popup-header");
-    let offsetX, offsetY, isDragging = false;
+  closeBtn.addEventListener("click", () => {
+    popup.style.display = "none";
+  });
 
-    header.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      offsetX = e.clientX - popup.offsetLeft;
-      offsetY = e.clientY - popup.offsetTop;
-      popup.style.position = "absolute";
-      popup.style.zIndex = 1000;
-    });
-
-    document.addEventListener("mousemove", (e) => {
-      if (isDragging) {
-        popup.style.left = `${e.clientX - offsetX}px`;
-        popup.style.top = `${e.clientY - offsetY}px`;
-      }
-    });
-
-    document.addEventListener("mouseup", () => isDragging = false);
+  document.getElementById("insert-latex").addEventListener("click", () => {
+    const latex = document.getElementById("latex-input").value.trim();
+    if (latex) {
+      input.value += ` $${latex}$ `;
+    }
+    popup.style.display = "none";
+    input.focus();
   });
 });
