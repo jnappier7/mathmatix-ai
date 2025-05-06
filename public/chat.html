@@ -1,4 +1,4 @@
-<!-- chat.html -->
+<!-- chat.html (alternating alignment, full dropzone, thinking animation, updated icons) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,46 +9,54 @@
   <script defer src="script.js"></script>
 </head>
 <body>
-  <div id="chat-container">
-    <img id="logo" src="MathMatix AI Logo.png" alt="Mathmatix Logo" />
-    <div id="chat-container-inner"></div>
+  <div id="dropzone" class="fullscreen-dropzone">
+    <div id="chat-container">
+      <img id="logo" src="MathMatix AI Logo.png" alt="Mathmatix Logo" />
+      <div id="chat-container-inner"></div>
 
-    <div id="input-container">
-      <textarea id="user-input" placeholder="Type your message..."></textarea>
-      <button id="send-button">Send</button>
-
-      <!-- Inline Tools -->
-      <div id="tools-left">
-        <button id="pi-button" title="Insert Equation">&#x03C0;</button>
+      <!-- Thinking animation -->
+      <div id="thinking-indicator" style="display: none;">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="thinking-text">Mathmatix is thinking...</span>
       </div>
 
-      <div id="tools-right">
-        <button id="mic-button" title="Voice Input">
-          <img src="mic-icon.png" alt="Mic" />
-        </button>
-        <button id="file-upload" title="Upload File">
-          <img src="clip-icon.png" alt="Attach" />
-        </button>
-        <input type="file" id="file-input" />
+      <div id="input-container">
+        <textarea id="user-input" placeholder="Type your message..."></textarea>
+        <button id="send-button">Send</button>
+
+        <!-- Inline Tools -->
+        <div id="tools-left">
+          <button id="pi-button" title="Insert Equation">&#x03C0;</button>
+        </div>
+
+        <div id="tools-right">
+          <button id="mic-button" title="Voice Input">
+            <img src="https://cdn-icons-png.flaticon.com/512/727/727245.png" alt="Mic" />
+          </button>
+          <button id="file-upload" title="Upload File">
+            <img src="https://cdn-icons-png.flaticon.com/512/724/724933.png" alt="Attach" />
+          </button>
+          <input type="file" id="file-input" style="display: none;" />
+        </div>
+      </div>
+
+      <div id="handsfree-toggle-wrapper">
+        <span id="handsfree-label">Hands-Free Mode: OFF</span>
+        <button id="handsfree-toggle" class="green"></button>
       </div>
     </div>
 
-    <div id="handsfree-toggle-wrapper">
-      <span id="handsfree-label">Hands-Free Mode: OFF</span>
-      <button id="handsfree-toggle" class="green"></button>
+    <!-- Equation Editor Popup -->
+    <div id="equation-popup" class="popup">
+      <div class="popup-header">
+        <span>Equation Editor</span>
+        <span class="close-button">❌</span>
+      </div>
+      <label>Type LaTeX equation:
+        <input type="text" id="latex-input" placeholder="e.g. x^2 + y^2 = r^2" />
+      </label>
+      <button id="insert-latex">Insert</button>
     </div>
-  </div>
-
-  <!-- Equation Editor Popup -->
-  <div id="equation-popup" class="popup">
-    <div class="popup-header">
-      <span>Equation Editor</span>
-      <span class="close-button">❌</span>
-    </div>
-    <label>Type LaTeX equation:
-      <input type="text" id="latex-input" placeholder="e.g. x^2 + y^2 = r^2" />
-    </label>
-    <button id="insert-latex">Insert</button>
   </div>
 </body>
 </html>
