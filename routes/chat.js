@@ -1,4 +1,4 @@
-// routes/chat.js — Smart memory + clean prompt pull
+// routes/chat.js — Safe startChat with memory + prompt
 
 const express = require("express");
 const router = express.Router();
@@ -20,16 +20,21 @@ router.post("/", async (req, res) => {
 
     const promptText = generateSystemPrompt(user);
 
-    const history = SESSION_TRACKER[userId] || [
-      { role: "user", parts: [{ text: promptText }] }
-    ];
+    // 🔒 Ensure history is always a valid array
+    const priorHistory = SESSION_TRACKER[userId];
+    const history = Array.isArray(priorHistory)
+      ? priorHistory
+      : [{ role: "user", parts: [{ text: promptText }] }];
 
     const chat = baseModel.startChat({ history });
 
     const result = await chat.sendMessage(message);
     const text = result.response.text().trim();
 
-    SESSION_TRACKER[userId] = chat.getHistory();
+    const updatedHistory = chat.getHistory?.(); // added safety here
+    if (Array.isArray(updatedHistory)) {
+      SESSION_TRACKER[userId] = updatedHistory;
+    }
 
     res.send({ text });
   } catch (err) {
@@ -40,10 +45,14 @@ router.post("/", async (req, res) => {
 
 router.post("/end-session", async (req, res) => {
   const { userId } = req.body;
-  if (!SESSION_TRACKER[userId]) return res.send({ message: "No session to summarize." });
+  const history = SESSION_TRACKER[userId];
+
+  if (!Array.isArray(history)) {
+    return res.send({ message: "No session to summarize." });
+  }
 
   try {
-    const chat = baseModel.startChat({ history: SESSION_TRACKER[userId] });
+    const chat = baseModel.startChat({ history });
     const summaryResult = await chat.sendMessage("Summarize this tutoring session.");
     const summary = summaryResult.response.text().trim();
 
