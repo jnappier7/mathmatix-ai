@@ -18,19 +18,15 @@ router.post("/", upload.single("file"), async (req, res) => {
     if (!file) return res.status(400).json({ error: "No file uploaded." });
 
     const { name, tone, learningStyle, interests } = req.body;
-
     const base64 = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
-    // 📤 Mathpix OCR
-    const mathpixRes = await axios.post(
+    // 🔍 OCR via Mathpix
+    const ocrRes = await axios.post(
       "https://api.mathpix.com/v3/text",
       {
         src: base64,
         formats: ["text", "latex_styled"],
-        data_options: {
-          include_latex: true,
-          include_text: true
-        }
+        data_options: { include_latex: true, include_text: true }
       },
       {
         headers: {
@@ -41,10 +37,10 @@ router.post("/", upload.single("file"), async (req, res) => {
       }
     );
 
-    const extracted = (mathpixRes.data?.text || "").trim();
+    const extracted = (ocrRes.data?.text || "").trim();
     if (!extracted) return res.status(400).json({ error: "Mathpix returned no usable text." });
 
-    // 🧠 Gemini Prompt
+    // 🤖 AI Response
     const prompt = `
 ${SYSTEM_PROMPT}
 
@@ -59,7 +55,7 @@ Here's the extracted math text:
 ${extracted}
 """
 
-Give brief feedback. Ask guiding questions. Don't solve the entire problem.
+Give brief feedback. Ask guiding questions. Don’t solve the entire problem.
 `;
 
     const result = await model.generateContent({

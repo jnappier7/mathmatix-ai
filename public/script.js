@@ -1,3 +1,5 @@
+// script.js — Updated for Mathpix OCR Upload with User Info Injection and Confirmation
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📡 M∆THM∆TIΧ Initialized");
 
@@ -5,11 +7,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatContainer = document.getElementById("chat-container-inner");
   const input = document.getElementById("user-input");
   const sendBtn = document.getElementById("send-button");
+  const uploadBtn = document.getElementById("file-upload");
   const fileInput = document.getElementById("file-input");
   const micBtn = document.getElementById("mic-button");
-  const thinking = document.getElementById("thinking-indicator");
+  const handsFreeToggle = document.getElementById("handsfree-toggle");
+  const handsFreeLabel = document.getElementById("handsfree-label");
+  const thinkingIndicator = document.getElementById("thinking-indicator");
 
-  // 💬 Append chat message
+  let handsFreeEnabled = false;
+  let lastMessageAskedForDrawing = false;
+
   const appendMessage = (text, sender = "ai") => {
     const message = document.createElement("div");
     message.classList.add("message", sender);
@@ -19,141 +26,110 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.MathJax) MathJax.typesetPromise([message]);
   };
 
-  // 📤 Send message
-  const sendMessage = async () => {
+  const appendImage = (url, alt = "Visual Example") => {
+    const message = document.createElement("div");
+    message.classList.add("message", "ai");
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = alt;
+    img.style.maxWidth = "300px";
+    img.style.borderRadius = "12px";
+    message.appendChild(img);
+    chatContainer.appendChild(message);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  };
+
+  const toggleThinking = (show) => {
+    thinkingIndicator.style.display = show ? "flex" : "none";
+  };
+
+  // ✅ Enable send on Enter
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+
+  sendBtn.addEventListener("click", async () => {
     const message = input.value.trim();
     if (!message) return;
 
     appendMessage(message, "user");
     input.value = "";
-    thinking.style.display = "flex";
+    toggleThinking(true);
 
     try {
       const res = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, message }),
+        body: JSON.stringify({ userId, message })
       });
 
       const data = await res.json();
-      thinking.style.display = "none";
+      toggleThinking(false);
+      appendMessage(data.text || "⚠️ No response from tutor.");
 
-      if (data.text) appendMessage(data.text, "ai");
-      else appendMessage("⚠️ No response from AI.", "ai");
     } catch (err) {
-      thinking.style.display = "none";
-      appendMessage("⚠️ Error talking to the AI.", "ai");
+      toggleThinking(false);
       console.error("❌ Chat error:", err);
-    }
-  };
-
-  // 🎤 Voice Input
-  if ("webkitSpeechRecognition" in window) {
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = false;
-    recognition.lang = "en-US";
-
-    micBtn.addEventListener("click", () => {
-      recognition.start();
-      micBtn.disabled = true;
-    });
-
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      input.value = transcript;
-      sendMessage();
-    };
-
-    recognition.onerror = () => {
-      micBtn.disabled = false;
-    };
-
-    recognition.onend = () => {
-      micBtn.disabled = false;
-    };
-  }
-
-  // 🧠 Enter to send
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+      appendMessage("⚠️ AI error. Please try again.");
     }
   });
 
-  sendBtn.addEventListener("click", sendMessage);
-
-  // 📎 File Upload
   fileInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    appendMessage("📎 Uploading file for review...", "user");
+    toggleThinking(true);
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("userId", userId);
-
-    appendMessage("📎 Uploading file and extracting math...", "user");
-    thinking.style.display = "flex";
+    formData.append("name", localStorage.getItem("name") || "Unknown");
+    formData.append("tone", localStorage.getItem("tonePreference") || "Motivational");
+    formData.append("learningStyle", localStorage.getItem("learningStyle") || "Visual");
+    formData.append("interests", localStorage.getItem("interests") || "");
 
     try {
-      const res = await fetch("/upload", {
-        method: "POST",
-        body: formData,
-      });
-
+      const res = await fetch("/upload", { method: "POST", body: formData });
       const data = await res.json();
-      thinking.style.display = "none";
-
-      if (data.text) appendMessage(data.text, "ai");
-      else appendMessage("⚠️ Could not extract math from file.", "ai");
+      toggleThinking(false);
+      appendMessage(data.text || "⚠️ No response from file.");
     } catch (err) {
-      thinking.style.display = "none";
-      appendMessage("⚠️ Upload failed.", "ai");
+      toggleThinking(false);
       console.error("❌ Upload error:", err);
+      appendMessage("⚠️ Upload failed. Please try again.");
     }
   });
 
-  // 🟩 Drag-and-Drop Upload
-  const dropzone = document.getElementById("dropzone");
-  dropzone.addEventListener("dragover", (e) => {
+  uploadBtn.addEventListener("click", () => fileInput.click());
+
+  // Hands-Free Mode Toggle
+  handsFreeToggle.addEventListener("click", () => {
+    handsFreeEnabled = !handsFreeEnabled;
+    handsFreeLabel.textContent = `Hands-Free Mode: ${handsFreeEnabled ? "ON" : "OFF"}`;
+    handsFreeToggle.classList.toggle("green", handsFreeEnabled);
+  });
+
+  // Drag-and-drop full screen upload
+  document.body.addEventListener("dragover", (e) => {
     e.preventDefault();
-    dropzone.classList.add("highlight");
+    document.getElementById("dropzone").classList.add("dragover");
   });
 
-  dropzone.addEventListener("dragleave", () => {
-    dropzone.classList.remove("highlight");
+  document.body.addEventListener("dragleave", (e) => {
+    document.getElementById("dropzone").classList.remove("dragover");
   });
 
-  dropzone.addEventListener("drop", (e) => {
+  document.body.addEventListener("drop", (e) => {
     e.preventDefault();
-    dropzone.classList.remove("highlight");
-
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-
-    fileInput.files = e.dataTransfer.files;
-    fileInput.dispatchEvent(new Event("change"));
-  });
-
-  // 🧮 Insert LaTeX Equation
-  const equationBtn = document.getElementById("pi-button");
-  const popup = document.getElementById("equation-popup");
-  const closeBtn = popup.querySelector(".close-button");
-
-  equationBtn.addEventListener("click", () => {
-    popup.style.display = "block";
-  });
-
-  closeBtn.addEventListener("click", () => {
-    popup.style.display = "none";
-  });
-
-  document.getElementById("insert-latex").addEventListener("click", () => {
-    const latex = document.getElementById("latex-input").value.trim();
-    if (latex) {
-      input.value += ` $${latex}$ `;
+    document.getElementById("dropzone").classList.remove("dragover");
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) {
+      fileInput.files = e.dataTransfer.files;
+      fileInput.dispatchEvent(new Event("change"));
     }
-    popup.style.display = "none";
-    input.focus();
   });
 });

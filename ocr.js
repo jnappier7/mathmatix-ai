@@ -8,8 +8,11 @@ module.exports = async function (base64) {
       "https://api.mathpix.com/v3/text",
       {
         src: base64,
-        formats: ["text"],
-        ocr: ["math", "text"]
+        formats: ["text", "latex_styled"],
+        data_options: {
+          include_latex: true,
+          include_text: true
+        }
       },
       {
         headers: {
@@ -20,7 +23,7 @@ module.exports = async function (base64) {
       }
     );
 
-    return res.data.text || "";
+    return res.data.text?.trim() || "";
   } catch (err) {
     console.error("🛑 Mathpix OCR error:", err?.response?.data || err.message);
     return "";
