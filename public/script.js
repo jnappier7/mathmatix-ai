@@ -1,4 +1,4 @@
-// script.js — Updated with summary recall and session-end hook
+// script.js — Updated with summary recall, session-end hook, and math keyboard integration
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📡 M∆THM∆TIΧ Initialized");
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("/save-summary/recall", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }) // ✅ typo fixed here
+        body: JSON.stringify({ userId })
       });
 
       const data = await res.json();
@@ -89,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       toggleThinking(false);
       appendMessage(data.text || "⚠️ No response from tutor.");
-
     } catch (err) {
       toggleThinking(false);
       console.error("❌ Chat error:", err);
@@ -166,4 +165,23 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn("⚠️ Failed to end session on unload:", err);
     }
   });
-});
+
+  // ✅ Math Keyboard Logic
+  const equationBtn = document.getElementById("pi-button");
+  const popup = document.getElementById("equation-popup");
+  const mathEditor = document.getElementById("math-editor");
+  const latexInsert = document.getElementById("insert-latex");
+  const latexCancel = document.getElementById("cancel-latex");
+  const latexClose = document.getElementById("close-equation-popup");
+  const preview = document.getElementById("equation-preview");
+
+  equationBtn.addEventListener("click", () => {
+    popup.style.display = "block";
+    mathEditor.focus();
+  });
+
+  latexInsert.addEventListener("click", () => {
+    const latex = mathEditor.getValue();
+    input.value += ` \\(${latex}\\) `;
+    popup.style.display = "none";
+    mathEditor.set
