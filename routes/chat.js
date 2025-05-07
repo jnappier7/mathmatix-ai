@@ -1,4 +1,4 @@
-// routes/chat.js — Gemini chat with memory, prompt, and smart session tracking
+// routes/chat.js — Gemini chat with persistent memory & smart session tracking
 
 const express = require("express");
 const router = express.Router();
@@ -10,7 +10,7 @@ const generateSystemPrompt = require("../utils/prompt");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const baseModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const SESSION_TRACKER = {};
+const SESSION_TRACKER = {}; // Stores persistent chat + message logs
 
 router.post("/", async (req, res) => {
   try {
@@ -20,29 +20,27 @@ router.post("/", async (req, res) => {
 
     const promptText = generateSystemPrompt(user);
 
-    let history = SESSION_TRACKER[userId];
-
-    // Inject system prompt on first message only
-    if (!Array.isArray(history)) {
-      history = [{ role: "user", parts: [{ text: promptText }] }];
+    // 🧠 If no active session, start new one with system prompt
+    if (!SESSION_TRACKER[userId]) {
+      const history = [{ role: "user", parts: [{ text: promptText }] }];
+      const chat = baseModel.startChat({ history });
+      SESSION_TRACKER[userId] = {
+        chat,
+        messageLog: []
+      };
     }
 
-    const chat = baseModel.startChat({ history });
+    const session = SESSION_TRACKER[userId];
+    const chat = session.chat;
 
-    // 🧠 Track user message in temporary session log
-    user.messageLog = user.messageLog || [];
-    user.messageLog.push({ role: "user", content: message });
+    // Track user message
+    session.messageLog.push({ role: "user", content: message });
 
     const result = await chat.sendMessage(message);
     const text = result.response.text().trim();
 
-    // 🧠 Track model reply in session log
-    user.messageLog.push({ role: "model", content: text });
-
-    const updatedHistory = chat.getHistory?.();
-    if (Array.isArray(updatedHistory)) {
-      SESSION_TRACKER[userId] = updatedHistory;
-    }
+    // Track model response
+    session.messageLog.push({ role: "model", content: text });
 
     res.send({ text });
   } catch (err) {
@@ -53,16 +51,19 @@ router.post("/", async (req, res) => {
 
 router.post("/end-session", async (req, res) => {
   const { userId } = req.body;
-  const history = SESSION_TRACKER[userId];
+  const session = SESSION_TRACKER[userId];
 
-  if (!Array.isArray(history)) {
+  if (!session || !session.messageLog?.length) {
     return res.send({ message: "No session to summarize." });
   }
 
   try {
-    const chat = baseModel.startChat({ history });
-    const summaryResult = await chat.sendMessage("Summarize this tutoring session.");
+    const summaryResult = await session.chat.sendMessage("Summarize this tutoring session.");
     const summary = summaryResult.response.text().trim();
+
+    // 🧠 Temporarily attach message log to user for summary save
+    const user = await User.findById(userId);
+    user.messageLog = session.messageLog;
 
     await saveSummary(userId, summary);
     delete SESSION_TRACKER[userId];

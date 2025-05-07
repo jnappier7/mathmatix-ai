@@ -1,4 +1,4 @@
-// script.js — Updated for Mathpix OCR Upload with User Info Injection and Confirmation
+// script.js — Updated with summary recall and session-end hook
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📡 M∆THM∆TIΧ Initialized");
@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const userId = localStorage.getItem("userId");
   const chatContainer = document.getElementById("chat-container-inner");
   const input = document.getElementById("user-input");
- const sendBtn = document.getElementById("send-button");
+  const sendBtn = document.getElementById("send-button");
   const uploadBtn = document.getElementById("file-upload");
   const fileInput = document.getElementById("file-input");
   const micBtn = document.getElementById("mic-button");
@@ -25,12 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("/save-summary/recall", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ useId })
+        body: JSON.stringify({ userId }) // ✅ typo fixed here
       });
 
       const data = await res.json();
       if (data?.summary) {
-        appendMessage(`📘 Welcom back! Last time you worked on:\n\n"${data.summary}"\n\nWant to continue or start something new?`);
+        appendMessage(`📘 Welcome back! Last time you worked on:\n\n"${data.summary}"\n\nWant to continue or start something new?`);
       }
     } catch (err) {
       console.warn("⚠️ Could not fetch last session summary:", err);
@@ -150,6 +150,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (droppedFile) {
       fileInput.files = e.dataTransfer.files;
       fileInput.dispatchEvent(new Event("change"));
+    }
+  });
+
+  // ✅ End session on unload
+  window.addEventListener("beforeunload", async () => {
+    if (!userId) return;
+    try {
+      await fetch("/chat/end-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId })
+      });
+    } catch (err) {
+      console.warn("⚠️ Failed to end session on unload:", err);
     }
   });
 });
