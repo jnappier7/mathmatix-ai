@@ -8,9 +8,28 @@ const saveSummary = require("./memory");
 const generateSystemPrompt = require("../utils/prompt");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const baseModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const proModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 const SESSION_TRACKER = {}; // Stores persistent chat + message logs
+
+async function sendWithFallback(chat, message) {
+  try {
+    const result = await chat.sendMessage(message);
+    return { response: result.response.text().trim(), modelUsed: "flash" };
+  } catch (err) {
+    console.warn("⚠️ Flash model failed, retrying with Gemini Pro...");
+    console.warn(err.message || err);
+    try {
+      const altChat = proModel.startChat({ history: chat._history || [] });
+      const result = await altChat.sendMessage(message);
+      return { response: result.response.text().trim(), modelUsed: "pro" };
+    } catch (fallbackErr) {
+      console.error("❌ Fallback model failed as well.");
+      throw fallbackErr;
+    }
+  }
+}
 
 router.post("/", async (req, res) => {
   try {
@@ -23,10 +42,11 @@ router.post("/", async (req, res) => {
     // 🧠 If no active session, start new one with system prompt
     if (!SESSION_TRACKER[userId]) {
       const history = [{ role: "user", parts: [{ text: promptText }] }];
-      const chat = baseModel.startChat({ history });
+      const chat = flashModel.startChat({ history });
       SESSION_TRACKER[userId] = {
         chat,
-        messageLog: []
+        messageLog: [],
+        modelUsed: "flash"
       };
     }
 
@@ -36,13 +56,13 @@ router.post("/", async (req, res) => {
     // Track user message
     session.messageLog.push({ role: "user", content: message });
 
-    const result = await chat.sendMessage(message);
-    const text = result.response.text().trim();
+    const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
-    // Track model response
+    // Update session state
     session.messageLog.push({ role: "model", content: text });
+    session.modelUsed = modelUsed;
 
-    res.send({ text });
+    res.send({ text, modelUsed });
   } catch (err) {
     console.error("❌ Chat error:", err);
     res.status(500).send({ text: "⚠️ Server error during chat." });
@@ -61,7 +81,6 @@ router.post("/end-session", async (req, res) => {
     const summaryResult = await session.chat.sendMessage("Summarize this tutoring session.");
     const summary = summaryResult.response.text().trim();
 
-    // 🧠 Temporarily attach message log to user for summary save
     const user = await User.findById(userId);
     user.messageLog = session.messageLog;
 
