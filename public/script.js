@@ -142,15 +142,40 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dropzone").classList.remove("dragover");
   });
 
-  document.body.addEventListener("drop", (e) => {
-    e.preventDefault();
-    document.getElementById("dropzone").classList.remove("dragover");
-    const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      fileInput.files = e.dataTransfer.files;
-      fileInput.dispatchEvent(new Event("change"));
-    }
-  });
+  document.body.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  document.getElementById("dropzone").classList.remove("dragover");
+
+  const droppedFile = e.dataTransfer.files[0];
+  if (!droppedFile) return;
+
+  appendMessage("📎 Uploading file for review...", "user");
+  toggleThinking(true);
+
+  const formData = new FormData();
+  formData.append("file", droppedFile);
+  formData.append("userId", userId);
+  formData.append("name", localStorage.getItem("name") || "Unknown");
+  formData.append("tone", localStorage.getItem("tonePreference") || "Motivational");
+  formData.append("learningStyle", localStorage.getItem("learningStyle") || "Visual");
+  formData.append("interests", localStorage.getItem("interests") || "");
+
+  try {
+    const res = await fetch("/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    toggleThinking(false);
+    appendMessage(data.text || "⚠️ No response from file.");
+  } catch (err) {
+    toggleThinking(false);
+    console.error("❌ Upload error:", err);
+    appendMessage("⚠️ Upload failed. Please try again.");
+  }
+});
+
 
   // ✅ End session on unload
   window.addEventListener("beforeunload", async () => {
