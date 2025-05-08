@@ -4,8 +4,9 @@
   "description": "Interactive AI math tutor",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
-  },
+  "start": "node server.js",
+  "postinstall": "puppeteer install"
+}
   "dependencies": {
     "@google/generative-ai": "^0.3.0",
     "axios": "^1.6.7",
