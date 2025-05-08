@@ -11,7 +11,6 @@ module.exports = async function (base64) {
         formats: ["text", "latex_styled"],
         data_options: {
           include_latex: true,
-          include_text: true
         }
       },
       {
