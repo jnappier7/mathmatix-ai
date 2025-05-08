@@ -23,14 +23,17 @@ module.exports = async function (base64) {
       }
     );
 
+    // ✅ Log raw response
+    console.log("📤 Mathpix raw response:", res.data);
+
     return (
-  res.data.latex_styled?.trim() ||
-  res.data.text?.trim() ||
-  ""
-);
+      res.data.latex_styled?.trim() ||
+      res.data.text?.trim() ||
+      ""
+    );
 
   } catch (err) {
-    console.error("🛑 Mathpix OCR error:", err?.response?.data || err.message);
+    console.error("🛠️ Mathpix OCR error:", err?.response?.data || err.message);
     return "";
   }
 };
