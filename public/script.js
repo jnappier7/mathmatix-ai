@@ -205,4 +205,35 @@ document.addEventListener("DOMContentLoaded", () => {
     preview.innerHTML = `\\[${latex}\\]`;
     if (window.MathJax) MathJax.typesetPromise([preview]);
   });
+  // ✅ Speech-to-Text (Mic Button)
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    micBtn.addEventListener("click", () => {
+      recognition.start();
+      micBtn.classList.add("listening");
+    });
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      input.value = transcript;
+      micBtn.classList.remove("listening");
+    };
+
+    recognition.onerror = (event) => {
+      console.error("🎤 Speech recognition error:", event.error);
+      micBtn.classList.remove("listening");
+    };
+
+    recognition.onend = () => {
+      micBtn.classList.remove("listening");
+    };
+  } else {
+    console.warn("🎤 Speech recognition not supported in this browser.");
+  }
 });
