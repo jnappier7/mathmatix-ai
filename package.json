@@ -4,7 +4,7 @@
   "description": "Interactive AI math tutor",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.3.0",
