@@ -11,9 +11,11 @@ module.exports = async function pdfToImageBase64(pdfBuffer) {
   fs.writeFileSync(tmpFile, pdfBuffer);
 
   const browser = await puppeteer.launch({
-    headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
+  headless: true,
+  executablePath: puppeteer.executablePath(),
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
+
 
   try {
     const page = await browser.newPage();
