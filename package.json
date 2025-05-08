@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
   "start": "node server.js",
-  "postinstall": "puppeteer install"
+  "postinstall": "npx puppeteer install"
 },
   "dependencies": {
     "@google/generative-ai": "^0.3.0",
