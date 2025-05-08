@@ -124,7 +124,8 @@ body {
   padding: 6px;
 }
 
-#tools-right img {
+#tools-right img,
+#tools-left img {
   height: 24px;
   width: 24px;
 }
@@ -227,4 +228,28 @@ body {
     right: 10px;
     width: 90%;
   }
+}
+
+.math-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+math-field {
+  width: 100%;
+  font-size: 1.2rem;
+  min-height: 60px;
+}
+
+#tools-left button:hover,
+#tools-right button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+#tools-left img,
+#tools-right img {
+  height: 24px;
+  width: 24px;
 }

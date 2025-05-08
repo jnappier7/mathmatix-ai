@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ✅ Math Keyboard Logic
-  const equationBtn = document.getElementById("pi-button");
+  const equationBtn = document.getElementById("equation-button");
   const popup = document.getElementById("equation-popup");
   const mathEditor = document.getElementById("math-editor");
   const latexInsert = document.getElementById("insert-latex");
@@ -184,4 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const latex = mathEditor.getValue();
     input.value += ` \\(${latex}\\) `;
     popup.style.display = "none";
-    mathEditor.set
+    mathEditor.setValue("");
+  preview.innerHTML = "";
+});

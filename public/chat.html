@@ -26,7 +26,10 @@
 
         <!-- Inline Tools -->
         <div id="tools-left">
-          <button id="pi-button" title="Insert Equation">&#x03C0;</button>
+          <button id="equation-button" title="Insert Equation">
+  			<img src="equation-icon.png" alt="Insert Equation" />
+			</button>
+
         </div>
 
         <div id="tools-right">
@@ -46,17 +49,28 @@
       </div>
     </div>
 
-    <!-- Equation Editor Popup -->
-    <div id="equation-popup" class="popup">
-      <div class="popup-header">
-        <span>Equation Editor</span>
-        <span class="close-button">❌</span>
-      </div>
-      <label>Type LaTeX equation:
-        <input type="text" id="latex-input" placeholder="e.g. x^2 + y^2 = r^2" />
-      </label>
-      <button id="insert-latex">Insert</button>
-    </div>
+   <!-- MathLive Equation Editor Popup -->
+	<div id="equation-popup" class="popup">
+  		<div class="popup-header">
+    <span>Equation Editor</span>
+    <span id="close-equation-popup" class="close-button">❌</span>
+  		</div>
+
+  	<math-field id="math-editor" virtual-keyboard-mode="onfocus" smart-mode></math-field>
+
+  	<div class="math-controls">
+    <button id="insert-latex">Insert</button>
+    <button id="cancel-latex">Cancel</button>
+ 	 </div>
+
+ 	 <div id="equation-preview" style="margin-top: 12px; text-align: center;"></div>
+	</div>
+
   </div>
+	<!-- MathLive + MathJax -->
+<script src="https://unpkg.com/mathlive"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 </body>
 </html>
