@@ -180,10 +180,29 @@ document.addEventListener("DOMContentLoaded", () => {
     mathEditor.focus();
   });
 
-  latexInsert.addEventListener("click", () => {
+   latexInsert.addEventListener("click", () => {
     const latex = mathEditor.getValue();
     input.value += ` \\(${latex}\\) `;
     popup.style.display = "none";
     mathEditor.setValue("");
-  preview.innerHTML = "";
+    preview.innerHTML = "";
+  });
+
+  latexCancel?.addEventListener("click", () => {
+    popup.style.display = "none";
+    mathEditor.setValue("");
+    preview.innerHTML = "";
+  });
+
+  latexClose?.addEventListener("click", () => {
+    popup.style.display = "none";
+    mathEditor.setValue("");
+    preview.innerHTML = "";
+  });
+
+  mathEditor.addEventListener("input", () => {
+    const latex = mathEditor.getValue();
+    preview.innerHTML = `\\[${latex}\\]`;
+    if (window.MathJax) MathJax.typesetPromise([preview]);
+  });
 });
