@@ -6,6 +6,7 @@ const axios = require("axios");
 const router = express.Router();
 const { SYSTEM_PROMPT } = require("../utils/prompt");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const ocr = require("../utils/ocr"); // ⬅️ Modular OCR now used
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -21,23 +22,7 @@ router.post("/", upload.single("file"), async (req, res) => {
     const base64 = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
     // 🔍 OCR via Mathpix
-    const ocrRes = await axios.post(
-      "https://api.mathpix.com/v3/text",
-      {
-        src: base64,
-        formats: ["text", "latex_styled"],
-        data_options: { include_latex: true, include_text: true }
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          app_id: process.env.MATHPIX_APP_ID,
-          app_key: process.env.MATHPIX_APP_KEY
-        }
-      }
-    );
-
-    const extracted = (ocrRes.data?.text || "").trim();
+    const extracted = await ocr(base64);
     if (!extracted) return res.status(400).json({ error: "Mathpix returned no usable text." });
 
     // 🤖 AI Response

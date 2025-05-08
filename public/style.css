@@ -253,3 +253,8 @@ math-field {
   height: 24px;
   width: 24px;
 }
+
+#mic-button.listening {
+  background-color: #ffeb3b;
+  border-radius: 8px;
+}

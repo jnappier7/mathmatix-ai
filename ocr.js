@@ -23,7 +23,12 @@ module.exports = async function (base64) {
       }
     );
 
-    return res.data.text?.trim() || "";
+    return (
+  res.data.latex_styled?.trim() ||
+  res.data.text?.trim() ||
+  ""
+);
+
   } catch (err) {
     console.error("🛑 Mathpix OCR error:", err?.response?.data || err.message);
     return "";
