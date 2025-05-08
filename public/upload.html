@@ -29,17 +29,9 @@
       const data = await res.json();
       const output = document.getElementById('output');
       output.textContent = '';  // clear previous
-      output.textContent += 'Extracted Text:\n' + (data.text?.toString() || 'No text found.');
 
-      // Optional: send the extracted text to Gemini
-      const aiRes = await fetch('/api/ask-ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: data.text })
-      });
-
-      const aiData = await aiRes.json();
-      output.textContent += '\n\nAI Response:\n' + aiData.response;
+      output.textContent += 'Extracted Text:\n' + (data.extracted?.toString() || 'No text found.');
+      output.textContent += '\n\nAI Response:\n' + (data.text || 'No feedback returned.');
     });
   </script>
 </body>
