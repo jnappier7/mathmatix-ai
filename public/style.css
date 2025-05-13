@@ -108,6 +108,39 @@ body {
   background-color: #17a085;
 }
 
+.oauth-big-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.95rem;
+  padding: 12px 20px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.oauth-big-btn:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.teal-oauth-btn {
+  background-color: teal !important;
+  color: white !important;
+  border: none !important;
+}
+
+.teal-oauth-btn:hover {
+  background-color: #0d9488 !important;
+}
+
 /* Tool buttons */
 #tools-left,
 #tools-right {

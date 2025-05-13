@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sign Up | M∆THM∆TIΧ AI</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/style.css" />
+  <script defer src="signup.js"></script>
   <style>
     body {
       background: #f5f5f5;
@@ -125,7 +126,25 @@
     </div>
 
     <h1>Welcome to M∆THM∆TIΧ AI</h1>
-    <p class="subtitle">Let's get you set up.</p>
+    <p class="subtitle">Let’s get you set up.</p>
+
+    <div style="text-align: center; margin-bottom: 25px;">
+  <p><strong>Or sign up with:</strong></p>
+
+  <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; max-width: 300px; margin: auto;">
+		<a href="/auth/google" class="oauth-big-btn teal-oauth-btn">
+	  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
+           alt="Google" style="width: 22px; margin-right: 12px;" />
+      Sign up with Google
+    </a>
+
+    <a href="/auth/microsoft" class="oauth-big-btn teal-oauth-btn">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+           alt="Microsoft" style="width: 22px; margin-right: 12px;" />
+      Sign up with Microsoft
+    </a>
+  </div>
+</div>
 
     <form id="signup-form">
       <label for="username">Username</label>
@@ -156,14 +175,6 @@
         <option value="College">College</option>
       </select>
 
-      <div id="advanced-math-question" class="hidden">
-        <label>Are you taking Algebra, Geometry, or a higher math class?</label>
-        <div class="radio-group">
-          <label><input type="radio" name="advancedMath" value="yes" /> Yes</label>
-          <label><input type="radio" name="advancedMath" value="no" /> No</label>
-        </div>
-      </div>
-
       <div id="math-course-section" class="hidden">
         <label for="mathCourse">Which math course?</label>
         <select id="mathCourse">
@@ -182,9 +193,9 @@
       <label for="learningStyle">How do you learn best?</label>
       <select id="learningStyle" required>
         <option value="">Choose one</option>
-        <option value="Visual">Visual (I like diagrams, charts, seeing it)</option>
-        <option value="Auditory">Auditory (I like hearing it explained)</option>
-        <option value="Kinesthetic">Kinesthetic (I learn by doing hands-on)</option>
+        <option value="Visual">Visual</option>
+        <option value="Auditory">Auditory</option>
+        <option value="Kinesthetic">Kinesthetic</option>
       </select>
 
       <label for="tonePreference">What’s your vibe?</label>
@@ -208,10 +219,8 @@
         <label><input type="checkbox" value="Dance" /> Dance</label>
       </div>
 
-      <button type="submit" class="submit-btn">Let’s Do This</button>
+      <button type="submit" class="submit-btn">Create Account</button>
     </form>
   </div>
-
-  <script src="signup.js"></script>
 </body>
 </html>
