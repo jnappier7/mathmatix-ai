@@ -13,21 +13,19 @@ const sessionSchema = new mongoose.Schema({
   summary: String
 }, { _id: false });
 
-const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  passwordHash: { type: String, required: true },
-  name: { type: String, required: true },
-  gradeLevel: { type: String, required: true },
+const userSchema = new mongoose.Schema({
+  username: { type: String, unique: true, sparse: true },
+  passwordHash: { type: String },
+  gradeLevel: { type: String },
+  email: { type: String, unique: true, sparse: true },
+  googleId: { type: String },
+  microsoftId: { type: String },
+  name: { type: String },
   mathCourse: { type: String },
-  learningStyle: { type: String },
   tonePreference: { type: String },
-  interests: [{ type: String }],
-  createdAt: { type: Date, default: Date.now },
-  lastLogin: { type: Date },
-
-  // 🧠 Added fields for memory
-  conversations: [sessionSchema],
-  lastSeen: Date
+  learningStyle: { type: String },
+  interests: [String],
+  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);
