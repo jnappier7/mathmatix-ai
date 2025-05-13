@@ -81,6 +81,20 @@ app.get("/auth/microsoft/callback",
   }
 );
 
+ app.get("/auth/whoami", (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "User session not found" });
+  }
+
+  res.json({
+    userId: req.user._id,
+    name: req.user.name,
+    tone: req.user.tonePreference,
+    learningStyle: req.user.learningStyle,
+    interests: req.user.interests || []
+  });
+});
+
 // ✅ Logout Route
 app.get("/logout", (req, res) => {
   req.logout(() => {
