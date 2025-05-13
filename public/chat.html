@@ -1,4 +1,4 @@
-<!-- chat.html (alternating alignment, full dropzone, thinking animation, updated icons) -->
+<!-- chat.html (with logout button) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +8,16 @@
   <link rel="stylesheet" href="style.css" />
   <script defer src="script.js"></script>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-
 </head>
 <body>
   <div id="dropzone" class="fullscreen-dropzone">
     <div id="chat-container">
+
+      <!-- 🔓 Logout Button -->
+      <div id="top-bar">
+        <button id="logoutBtn" class="btn logout">Log Out</button>
+      </div>
+
       <img id="logo" src="MathMatix AI Logo.png" alt="Mathmatix Logo" />
       <div id="chat-container-inner"></div>
 
@@ -29,9 +34,8 @@
         <!-- Inline Tools -->
         <div id="tools-left">
           <button id="equation-button" title="Insert Equation">
-  			<img src="equation-icon.png" alt="Insert Equation" />
-			</button>
-
+            <img src="equation-icon.png" alt="Insert Equation" />
+          </button>
         </div>
 
         <div id="tools-right">
@@ -51,33 +55,26 @@
       </div>
     </div>
 
-	  <div id="voice-toggle" class="toggle">AI Voice</div>
-		<span id="voice-label">AI Voice: OFF</span>
-	    <button id="voice-toggle" class="green"></button>
-      </div>
+
+  <!-- MathLive Equation Editor Popup -->
+  <div id="equation-popup" class="popup">
+    <div class="popup-header">
+      <span>Equation Editor</span>
+      <span id="close-equation-popup" class="close-button">❌</span>
     </div>
 
-   <!-- MathLive Equation Editor Popup -->
-	<div id="equation-popup" class="popup">
-  		<div class="popup-header">
-    <span>Equation Editor</span>
-    <span id="close-equation-popup" class="close-button">❌</span>
-  		</div>
+    <math-field id="math-editor" virtual-keyboard-mode="onfocus" smart-mode></math-field>
 
-  	<math-field id="math-editor" virtual-keyboard-mode="onfocus" smart-mode></math-field>
+    <div class="math-controls">
+      <button id="insert-latex">Insert</button>
+      <button id="cancel-latex">Cancel</button>
+    </div>
 
-  	<div class="math-controls">
-    <button id="insert-latex">Insert</button>
-    <button id="cancel-latex">Cancel</button>
- 	 </div>
-
- 	 <div id="equation-preview" style="margin-top: 12px; text-align: center;"></div>
-	</div>
-
+    <div id="equation-preview" style="margin-top: 12px; text-align: center;"></div>
   </div>
-	<!-- MathLive + MathJax -->
-<script src="https://unpkg.com/mathlive"></script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+  <!-- MathLive + MathJax -->
+  <script src="https://unpkg.com/mathlive"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </body>
 </html>

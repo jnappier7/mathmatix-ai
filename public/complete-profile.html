@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Complete Profile | M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .profile-container {
+      background: white;
+      border-radius: 10px;
+      padding: 30px 40px;
+      width: 95%;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo-header img {
+      max-width: 260px;
+      height: auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+      color: #1e293b;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .radio-group,
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .radio-group label,
+    .checkbox-group label {
+      font-weight: normal;
+      color: #334155;
+    }
+
+    .submit-btn {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      background: teal;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background: #0d9488;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <div class="logo-header">
+      <img src="MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
+    </div>
+
+    <h1>Complete Your Profile</h1>
+    <p class="subtitle">Just a few more details to personalize your experience.</p>
+
+    <form id="profile-form">
+      <label for="name">First Name</label>
+      <input type="text" id="name" required />
+
+      <label for="grade">Grade Level</label>
+      <select id="grade" required>
+        <option value="">Select your grade</option>
+        <option value="K">Kindergarten</option>
+        <option value="1">1st Grade</option>
+        <option value="2">2nd Grade</option>
+        <option value="3">3rd Grade</option>
+        <option value="4">4th Grade</option>
+        <option value="5">5th Grade</option>
+        <option value="6">6th Grade</option>
+        <option value="7">7th Grade</option>
+        <option value="8">8th Grade</option>
+        <option value="9">9th Grade</option>
+        <option value="10">10th Grade</option>
+        <option value="11">11th Grade</option>
+        <option value="12">12th Grade</option>
+        <option value="College">College</option>
+      </select>
+
+      <div id="math-course-section" class="hidden">
+        <label for="mathCourse">Which math course?</label>
+        <select id="mathCourse">
+          <option value="">Select a course</option>
+          <option value="Algebra 1">Algebra 1</option>
+          <option value="Geometry">Geometry</option>
+          <option value="Algebra 2">Algebra 2</option>
+          <option value="Pre-Calculus">Pre-Calculus</option>
+          <option value="Calculus">Calculus</option>
+          <option value="Statistics">Statistics</option>
+          <option value="College Algebra">College Algebra</option>
+          <option value="Discrete Math">Discrete Math</option>
+        </select>
+      </div>
+
+      <label for="learningStyle">How do you learn best?</label>
+      <select id="learningStyle" required>
+        <option value="">Choose one</option>
+        <option value="Visual">Visual (I like diagrams, charts, seeing it)</option>
+        <option value="Auditory">Auditory (I like hearing it explained)</option>
+        <option value="Kinesthetic">Kinesthetic (I learn by doing hands-on)</option>
+      </select>
+
+      <label for="tonePreference">What’s your vibe?</label>
+      <select id="tonePreference" required>
+        <option value="">Choose one</option>
+        <option value="Chill">Chill but serious</option>
+        <option value="Motivational">Hype me up</option>
+        <option value="Serious">Straight to the point</option>
+      </select>
+
+      <label>Pick a few things you’re into:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" value="Football" /> Football</label>
+        <label><input type="checkbox" value="Basketball" /> Basketball</label>
+        <label><input type="checkbox" value="Soccer" /> Soccer</label>
+        <label><input type="checkbox" value="Music" /> Music</label>
+        <label><input type="checkbox" value="Gaming" /> Gaming</label>
+        <label><input type="checkbox" value="Coding" /> Coding</label>
+        <label><input type="checkbox" value="Photography" /> Photography</label>
+        <label><input type="checkbox" value="Art" /> Art</label>
+        <label><input type="checkbox" value="Dance" /> Dance</label>
+      </div>
+
+      <button type="submit" class="submit-btn">Let’s Go!</button>
+    </form>
+  </div>
+
+  <script src="complete-profile.js"></script>
+</body>
+</html>

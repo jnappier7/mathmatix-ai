@@ -1,4 +1,4 @@
-// script.js — Updated with summary recall, session-end hook, and math keyboard integration
+// script.js — Final merged version with logout, session save, math keyboard, uploads, and speech input
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("📡 M∆THM∆TIΧ Initialized");
@@ -13,11 +13,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const handsFreeToggle = document.getElementById("handsfree-toggle");
   const handsFreeLabel = document.getElementById("handsfree-label");
   const thinkingIndicator = document.getElementById("thinking-indicator");
+  const logoutBtn = document.getElementById("logoutBtn");
 
   let handsFreeEnabled = false;
   let lastMessageAskedForDrawing = false;
 
-  // 📘 Recall and display last session summary
+  logoutBtn?.addEventListener("click", async () => {
+  try {
+    if (userId) {
+      await fetch("/chat/end-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId })
+      });
+    }
+
+    await fetch("/logout");
+    localStorage.clear();
+    window.location.href = "/login.html";
+  } catch (err) {
+    console.warn("⚠️ Logout failed:", err);
+    localStorage.clear();
+    window.location.href = "/login.html";
+  }
+});
+
+  // 📘 Recall last session summary
   (async function fetchPreviousSummary() {
     if (!userId) return;
 
@@ -63,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
     thinkingIndicator.style.display = show ? "flex" : "none";
   };
 
-  // ✅ Enable send on Enter
   input.addEventListener("keypress", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -125,59 +145,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   uploadBtn.addEventListener("click", () => fileInput.click());
 
-  // Hands-Free Mode Toggle
   handsFreeToggle.addEventListener("click", () => {
     handsFreeEnabled = !handsFreeEnabled;
     handsFreeLabel.textContent = `Hands-Free Mode: ${handsFreeEnabled ? "ON" : "OFF"}`;
     handsFreeToggle.classList.toggle("green", handsFreeEnabled);
   });
 
-  // Drag-and-drop full screen upload
   document.body.addEventListener("dragover", (e) => {
     e.preventDefault();
     document.getElementById("dropzone").classList.add("dragover");
   });
 
-  document.body.addEventListener("dragleave", (e) => {
+  document.body.addEventListener("dragleave", () => {
     document.getElementById("dropzone").classList.remove("dragover");
   });
 
   document.body.addEventListener("drop", async (e) => {
-  e.preventDefault();
-  document.getElementById("dropzone").classList.remove("dragover");
+    e.preventDefault();
+    document.getElementById("dropzone").classList.remove("dragover");
 
-  const droppedFile = e.dataTransfer.files[0];
-  if (!droppedFile) return;
+    const droppedFile = e.dataTransfer.files[0];
+    if (!droppedFile) return;
 
-  appendMessage("📎 Uploading file for review...", "user");
-  toggleThinking(true);
+    appendMessage("📎 Uploading file for review...", "user");
+    toggleThinking(true);
 
-  const formData = new FormData();
-  formData.append("file", droppedFile);
-  formData.append("userId", userId);
-  formData.append("name", localStorage.getItem("name") || "Unknown");
-  formData.append("tone", localStorage.getItem("tonePreference") || "Motivational");
-  formData.append("learningStyle", localStorage.getItem("learningStyle") || "Visual");
-  formData.append("interests", localStorage.getItem("interests") || "");
+    const formData = new FormData();
+    formData.append("file", droppedFile);
+    formData.append("userId", userId);
+    formData.append("name", localStorage.getItem("name") || "Unknown");
+    formData.append("tone", localStorage.getItem("tonePreference") || "Motivational");
+    formData.append("learningStyle", localStorage.getItem("learningStyle") || "Visual");
+    formData.append("interests", localStorage.getItem("interests") || "");
 
-  try {
-    const res = await fetch("/upload", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch("/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      toggleThinking(false);
+      appendMessage(data.text || "⚠️ No response from file.");
+    } catch (err) {
+      toggleThinking(false);
+      console.error("❌ Upload error:", err);
+      appendMessage("⚠️ Upload failed. Please try again.");
+    }
+  });
 
-    const data = await res.json();
-    toggleThinking(false);
-    appendMessage(data.text || "⚠️ No response from file.");
-  } catch (err) {
-    toggleThinking(false);
-    console.error("❌ Upload error:", err);
-    appendMessage("⚠️ Upload failed. Please try again.");
-  }
-});
-
-
-  // ✅ End session on unload
+  // 🔄 Save summary on unload
   window.addEventListener("beforeunload", async () => {
     if (!userId) return;
     try {
@@ -191,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ✅ Math Keyboard Logic
+  // ➕ MathLive Equation Support
   const equationBtn = document.getElementById("equation-button");
   const popup = document.getElementById("equation-popup");
   const mathEditor = document.getElementById("math-editor");
@@ -205,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mathEditor.focus();
   });
 
-   latexInsert.addEventListener("click", () => {
+  latexInsert.addEventListener("click", () => {
     const latex = mathEditor.getValue();
     input.value += ` \\(${latex}\\) `;
     popup.style.display = "none";
@@ -213,13 +226,13 @@ document.addEventListener("DOMContentLoaded", () => {
     preview.innerHTML = "";
   });
 
-  latexCancel?.addEventListener("click", () => {
+  latexCancel.addEventListener("click", () => {
     popup.style.display = "none";
     mathEditor.setValue("");
     preview.innerHTML = "";
   });
 
-  latexClose?.addEventListener("click", () => {
+  latexClose.addEventListener("click", () => {
     popup.style.display = "none";
     mathEditor.setValue("");
     preview.innerHTML = "";
@@ -230,7 +243,8 @@ document.addEventListener("DOMContentLoaded", () => {
     preview.innerHTML = `\\[${latex}\\]`;
     if (window.MathJax) MathJax.typesetPromise([preview]);
   });
-  // ✅ Speech-to-Text (Mic Button)
+
+  // 🎙️ Speech-to-Text Input
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();

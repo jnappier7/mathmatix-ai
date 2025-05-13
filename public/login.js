@@ -27,3 +27,22 @@ document.getElementById("login-form").addEventListener("submit", async function 
     alert("Something went wrong while logging in.");
   }
 });
+
+document.getElementById("forgot-password").addEventListener("click", async () => {
+  const email = prompt("Enter your email for password reset:");
+  if (!email) return;
+
+  try {
+    const res = await fetch("/api/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    const msg = await res.text();
+    alert(msg);
+  } catch (err) {
+    console.error("Reset error:", err);
+    alert("There was a problem processing your reset. Try again later.");
+  }
+});

@@ -84,6 +84,21 @@
       background: #0d9488;
     }
 
+    .forgot-password {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.95rem;
+    }
+
+    .forgot-password a {
+      color: #0f766e;
+      text-decoration: none;
+    }
+
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 600px) {
       .login-container {
         padding: 20px;
@@ -117,6 +132,24 @@
 
       <button type="submit" class="submit-btn">Log In</button>
     </form>
+	<div style="text-align: center; margin-top: 25px;">
+ 	 <p style="margin-bottom: 10px;">Or sign in with:</p>
+ 	 <a href="/auth/google" title="Sign in with Google">
+   	 <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
+         alt="Google"
+         style="width: 40px; margin-right: 15px; vertical-align: middle; border-radius: 4px;" />
+  </a>
+
+  <a href="/auth/microsoft" title="Sign in with Microsoft">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+         alt="Microsoft"
+         style="width: 40px; vertical-align: middle;" />
+  </a>
+</div>
+
+    <p class="forgot-password">
+      <a href="#" id="forgot-password">Forgot Password?</a>
+    </p>
   </div>
 
   <script src="login.js"></script>

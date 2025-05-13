@@ -1,4 +1,4 @@
-// server.js â€” Main entry point for Mâˆ†THMâˆ†TIÎ§ AI backend
+// server.js — Main entry point for M∆THM∆TIΧ AI backend
 
 require("dotenv").config();
 const express = require("express");
@@ -6,6 +6,12 @@ const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const puppeteer = require("puppeteer");
+const session = require("express-session");
+const passport = require("passport");
+require("./auth/passport-config");
+
+const User = require("./models/User");
+
 puppeteer
   .createBrowserFetcher()
   .download("1108766")
@@ -16,26 +22,95 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const { SYSTEM_PROMPT } = require("./utils/prompt");
 
-
-// âœ… Middleware
+// ✅ Middleware
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// âœ… Serve static files from /public
+// ✅ Static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// âœ… MongoDB connection
+// ✅ MongoDB connection
 if (process.env.MONGO_URI) {
   mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() => console.log("âœ… Connected to MongoDB"))
-  .catch((err) => console.error("âŒ MongoDB connection error:", err));
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 }
 
-// âœ… Routes
+// ✅ Session and Passport setup
+app.use(session({
+  secret: process.env.SESSION_SECRET || "dev-secret",
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// ✅ Google Auth Routes
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+app.get("/auth/google/callback", passport.authenticate("google", {
+  failureRedirect: "/login.html"
+}), async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user && user.tonePreference && user.learningStyle) {
+    return res.redirect("/chat.html");
+  } else {
+    return res.redirect("/complete-profile.html");
+  }
+});
+
+// ✅ Microsoft Auth Routes
+app.get("/auth/microsoft", passport.authenticate("microsoft"));
+
+app.get("/auth/microsoft/callback",
+  passport.authenticate("microsoft", {
+    failureRedirect: "/login.html"
+  }),
+  async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if (user && user.tonePreference && user.learningStyle) {
+      return res.redirect("/chat.html");
+    } else {
+      return res.redirect("/complete-profile.html");
+    }
+  }
+);
+
+// ✅ Logout Route
+app.get("/logout", (req, res) => {
+  req.logout(() => {
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.redirect("/login.html");
+    });
+  });
+});
+
+// ✅ Profile Completion Endpoint
+app.post("/api/complete-profile", async (req, res) => {
+  const { userId, name, gradeLevel, mathCourse, tonePreference, learningStyle, interests } = req.body;
+  try {
+    await User.findByIdAndUpdate(userId, {
+      name,
+      gradeLevel,
+      mathCourse,
+      tonePreference,
+      learningStyle,
+      interests
+    });
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ Profile completion failed:", err);
+    res.status(500).json({ success: false, message: "Could not complete profile." });
+  }
+});
+
+// ✅ Modular Routes
 const uploadRoute = require("./routes/upload");
 const loginRoute = require("./routes/login");
 const signupRoute = require("./routes/signup");
@@ -54,20 +129,19 @@ app.use("/image", imageRoute);
 app.use("/image-search", imageSearchRoute);
 app.use("/speak", speakRoute);
 
-// âœ… Serve index.html as default
+// ✅ Default Route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// âœ… 404 fallback
+// ✅ 404 fallback
 app.use((req, res) => {
-  res.status(404).send("ðŸ” Route not found.");
+  res.status(404).send("🔍 Route not found.");
 });
 
-// âœ… Start server
+// ✅ Start Server
 app.listen(PORT, () => {
-  console.log(`ðŸš€ Mâˆ†THMâˆ†TIÎ§ AI running on http://localhost:${PORT}`);
+  console.log(`🚀 M∆THM∆TIΧ AI running on http://localhost:${PORT}`);
 });
 
-// âœ… Export SYSTEM_PROMPT for use in routes
 module.exports = { app, SYSTEM_PROMPT };
