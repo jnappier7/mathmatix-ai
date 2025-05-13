@@ -1,9 +1,11 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const MicrosoftStrategy = require("passport-microsoft").Strategy;
 const User = require("../models/User");
 
+// ✅ Session handling
 passport.serializeUser((user, done) => {
-  done(null, user.id); // save MongoDB user ID in session
+  done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -15,6 +17,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+// ✅ Google Strategy
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -22,25 +25,21 @@ passport.use(new GoogleStrategy({
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     const existingUser = await User.findOne({ googleId: profile.id });
+    if (existingUser) return done(null, existingUser);
 
-    if (existingUser) {
-      return done(null, existingUser);
-    }
-
-    // Create new user with Google profile info (partial)
-    const newUser = new User({
+    const newUser = await User.create({
       googleId: profile.id,
-      email: profile.emails[0].value,
+      email: profile.emails?.[0]?.value || null,
       name: profile.displayName
     });
 
-    await newUser.save();
-    done(null, newUser);
+    return done(null, newUser);
   } catch (err) {
-    done(err, null);
+    return done(err, null);
   }
-	const MicrosoftStrategy = require("passport-microsoft").Strategy;
+}));
 
+// ✅ Microsoft Strategy
 passport.use(new MicrosoftStrategy({
   clientID: process.env.MICROSOFT_CLIENT_ID,
   clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
@@ -58,8 +57,6 @@ passport.use(new MicrosoftStrategy({
     }
     return done(null, user);
   } catch (err) {
-    done(err, null);
+    return done(err, null);
   }
 }));
-
-
