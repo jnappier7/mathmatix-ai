@@ -90,7 +90,7 @@ router.post("/", async (req, res) => {
   session.history.push({ role: "model", parts: [{ text }] });
 
   res.send({
-    text: visualUrl ? `${text}\n\n🖼️ Here's a visual that might help:\n${visualUrl}` : text,
+    text: visualUrl ? `🖼️ Here's a visual that might help:\n${visualUrl}` : text,
     modelUsed,
   });
 });
