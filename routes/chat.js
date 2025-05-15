@@ -81,18 +81,23 @@ router.post("/", async (req, res) => {
       console.warn("⚠️ Image generation failed:", err.message || err);
     }
   }
+console.log("Generated image URL:", visualUrl);
 
   session.messageLog.push({ role: "model", content: text });
-  if (visualUrl) {
+  if (visualUrl && visualUrl.startsWith("http")) {
     session.messageLog.push({ role: "model", content: `🖼️ Here's a visual that might help:\n${visualUrl}` });
   }
 
   session.history.push({ role: "model", parts: [{ text }] });
 
   res.send({
-    text: visualUrl ? `🖼️ Here's a visual that might help:\n${visualUrl}` : text,
-    modelUsed,
-  });
+  text:
+    visualUrl && visualUrl.startsWith("http")
+      ? `🖼️ Here's a visual that might help:\n${visualUrl}\n\n${text}`
+      : text,
+  modelUsed,
+});
+
 });
 
 module.exports = router;
