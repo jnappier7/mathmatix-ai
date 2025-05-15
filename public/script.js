@@ -1,6 +1,6 @@
 const chatContainer = document.getElementById("chat");
-const input = document.getElementById("input");
-const sendBtn = document.getElementById("send-btn");
+const input = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-button");
 const micBtn = document.getElementById("mic-btn");
 const clearBtn = document.getElementById("clear-btn");
 const handsFreeBtn = document.getElementById("handsfree-btn");
@@ -63,6 +63,7 @@ sendBtn.addEventListener("click", async () => {
   appendMessage(message, "user");
   input.value = "";
   toggleThinking(true);
+});
 
   try {
     const res = await fetch("/chat", {
@@ -83,6 +84,11 @@ sendBtn.addEventListener("click", async () => {
   }
 });
 
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendBtn.click();}
+	  
 clearBtn.addEventListener("click", () => {
   chatContainer.innerHTML = "";
 });
