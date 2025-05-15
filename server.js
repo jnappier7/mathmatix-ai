@@ -52,7 +52,7 @@ app.use(passport.session());
 
 // ✅ Google Auth Routes
 
-  }
+  
 
   res.json({
     userId: req.user._id,
