@@ -1,10 +1,10 @@
-const chatContainer = document.getElementById("chat");
+const chatContainer = document.getElementById("chat-container-inner");
 const input = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-button");
-const micBtn = document.getElementById("mic-btn");
+const micBtn = document.getElementById("mic-button");
 const clearBtn = document.getElementById("clear-btn");
-const handsFreeBtn = document.getElementById("handsfree-btn");
-const insertEquationBtn = document.getElementById("insert-equation-btn");
+const handsFreeBtn = document.getElementById("handsfree-toggle");
+const insertEquationBtn = document.getElementById("equation-button");
 
 let recognition;
 let isRecognizing = false;
@@ -90,16 +90,17 @@ input.addEventListener("keydown", (e) => {
   }
 });
 
-clearBtn.addEventListener("click", () => {
+clearBtn?.addEventListener("click", () => {
   chatContainer.innerHTML = "";
 });
 
-handsFreeBtn.addEventListener("click", () => {
+handsFreeBtn?.addEventListener("click", () => {
   isHandsFreeMode = !isHandsFreeMode;
-  handsFreeBtn.innerText = isHandsFreeMode ? "Hands-Free: ON" : "Hands-Free: OFF";
+  const label = document.getElementById("handsfree-label");
+  if (label) label.innerText = isHandsFreeMode ? "Hands-Free Mode: ON" : "Hands-Free Mode: OFF";
 });
 
-micBtn.addEventListener("click", () => {
+micBtn?.addEventListener("click", () => {
   if (!("webkitSpeechRecognition" in window)) {
     alert("Speech recognition not supported.");
     return;
@@ -139,7 +140,7 @@ micBtn.addEventListener("click", () => {
   }
 });
 
-insertEquationBtn.addEventListener("click", () => {
+insertEquationBtn?.addEventListener("click", () => {
   const inputArea = document.getElementById("user-input");
   const mathField = document.createElement("math-field");
   mathField.setAttribute("virtual-keyboard-mode", "onfocus");
