@@ -63,7 +63,6 @@ sendBtn.addEventListener("click", async () => {
   appendMessage(message, "user");
   input.value = "";
   toggleThinking(true);
-});
 
   try {
     const res = await fetch("/chat", {
@@ -82,13 +81,15 @@ sendBtn.addEventListener("click", async () => {
     console.error("❌ Chat error:", err);
     appendMessage("⚠️ AI error. Please try again.");
   }
-});
+}); // ✅ properly closed async click handler
 
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
-    sendBtn.click();}
-	  
+    sendBtn.click();
+  }
+});
+
 clearBtn.addEventListener("click", () => {
   chatContainer.innerHTML = "";
 });
@@ -139,7 +140,7 @@ micBtn.addEventListener("click", () => {
 });
 
 insertEquationBtn.addEventListener("click", () => {
-  const inputArea = document.getElementById("input");
+  const inputArea = document.getElementById("user-input");
   const mathField = document.createElement("math-field");
   mathField.setAttribute("virtual-keyboard-mode", "onfocus");
   mathField.style.fontSize = "18px";
