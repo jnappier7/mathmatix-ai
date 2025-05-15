@@ -1,7 +1,7 @@
-// script.js — Final merged version with logout, session save, math keyboard, uploads, and speech input
+// script.js â€” Final merged version with logout, session save, math keyboard, uploads, and speech input
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("📡 M∆THM∆TIΧ Initialized");
+  console.log("ðŸ“¡ Mâˆ†THMâˆ†TIÎ§ Initialized");
 
   const userId = localStorage.getItem("userId");
   const chatContainer = document.getElementById("chat-container-inner");
@@ -32,13 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.clear();
     window.location.href = "/login.html";
   } catch (err) {
-    console.warn("⚠️ Logout failed:", err);
+    console.warn("âš ï¸ Logout failed:", err);
     localStorage.clear();
     window.location.href = "/login.html";
   }
 });
 
-  // 📘 Recall last session summary
+  // ðŸ“˜ Recall last session summary
   (async function fetchPreviousSummary() {
     if (!userId) return;
 
@@ -51,10 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await res.json();
       if (data?.summary) {
-        appendMessage(`📘 Welcome back! Last time you worked on:\n\n"${data.summary}"\n\nWant to continue or start something new?`);
+        appendMessage(`ðŸ“˜ Welcome back! Last time you worked on:\n\n"${data.summary}"\n\nWant to continue or start something new?`);
       }
     } catch (err) {
-      console.warn("⚠️ Could not fetch last session summary:", err);
+      console.warn("âš ï¸ Could not fetch last session summary:", err);
     }
   })();
 
@@ -92,35 +92,37 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   sendBtn.addEventListener("click", async () => {
-    const message = input.value.trim();
-    if (!message) return;
+  const message = input.value.trim();
+  if (!message) return;
 
-    appendMessage(message, "user");
-    input.value = "";
-    toggleThinking(true);
+  appendMessage(message, "user");
+  input.value = "";
+  toggleThinking(true);
 
-    try {
-      const res = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, message })
-      });
+  try {
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, message })
+    });
 
-      const data = await res.json();
-      toggleThinking(false);
-      appendMessage(data.text || "⚠️ No response from tutor.");
-    } catch (err) {
-      toggleThinking(false);
-      console.error("❌ Chat error:", err);
-      appendMessage("⚠️ AI error. Please try again.");
-    }
-  });
+    if (!res.ok) throw new Error("Server error: " + res.status);
+
+    const data = await res.json();
+    toggleThinking(false);
+    appendMessage(data.text || "⚠️ No response from tutor.");
+  } catch (err) {
+    toggleThinking(false);
+    console.error("❌ Chat error:", err);
+    appendMessage("⚠️ AI error. Please try again.");
+  }
+});
 
   fileInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    appendMessage("📎 Uploading file for review...", "user");
+    appendMessage("ðŸ“Ž Uploading file for review...", "user");
     toggleThinking(true);
 
     const formData = new FormData();
@@ -135,11 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("/upload", { method: "POST", body: formData });
       const data = await res.json();
       toggleThinking(false);
-      appendMessage(data.text || "⚠️ No response from file.");
+      appendMessage(data.text || "âš ï¸ No response from file.");
     } catch (err) {
       toggleThinking(false);
-      console.error("❌ Upload error:", err);
-      appendMessage("⚠️ Upload failed. Please try again.");
+      console.error("âŒ Upload error:", err);
+      appendMessage("âš ï¸ Upload failed. Please try again.");
     }
   });
 
@@ -167,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const droppedFile = e.dataTransfer.files[0];
     if (!droppedFile) return;
 
-    appendMessage("📎 Uploading file for review...", "user");
+    appendMessage("ðŸ“Ž Uploading file for review...", "user");
     toggleThinking(true);
 
     const formData = new FormData();
@@ -182,15 +184,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("/upload", { method: "POST", body: formData });
       const data = await res.json();
       toggleThinking(false);
-      appendMessage(data.text || "⚠️ No response from file.");
+      appendMessage(data.text || "âš ï¸ No response from file.");
     } catch (err) {
       toggleThinking(false);
-      console.error("❌ Upload error:", err);
-      appendMessage("⚠️ Upload failed. Please try again.");
+      console.error("âŒ Upload error:", err);
+      appendMessage("âš ï¸ Upload failed. Please try again.");
     }
   });
 
-  // 🔄 Save summary on unload
+  // ðŸ”„ Save summary on unload
   window.addEventListener("beforeunload", async () => {
     if (!userId) return;
     try {
@@ -200,11 +202,11 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ userId })
       });
     } catch (err) {
-      console.warn("⚠️ Failed to end session on unload:", err);
+      console.warn("âš ï¸ Failed to end session on unload:", err);
     }
   });
 
-  // ➕ MathLive Equation Support
+  // âž• MathLive Equation Support
   const equationBtn = document.getElementById("equation-button");
   const popup = document.getElementById("equation-popup");
   const mathEditor = document.getElementById("math-editor");
@@ -244,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.MathJax) MathJax.typesetPromise([preview]);
   });
 
-  // 🎙️ Speech-to-Text Input
+  // ðŸŽ™ï¸ Speech-to-Text Input
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
@@ -265,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     recognition.onerror = (event) => {
-      console.error("🎤 Speech recognition error:", event.error);
+      console.error("ðŸŽ¤ Speech recognition error:", event.error);
       micBtn.classList.remove("listening");
     };
 
@@ -273,6 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
       micBtn.classList.remove("listening");
     };
   } else {
-    console.warn("🎤 Speech recognition not supported in this browser.");
+    console.warn("ðŸŽ¤ Speech recognition not supported in this browser.");
   }
 });
