@@ -44,13 +44,19 @@ router.post("/", async (req, res) => {
   };
   SESSION_TRACKER[userId] = session;
 
+  // ✅ Fix: prevent double 'user' entries in Gemini chat history
+  const last = session.history[session.history.length - 1]?.role;
+  if (last !== "model") {
+    session.history.push({ role: "model", parts: [{ text: "..." }] });
+  }
+
   session.history.push({ role: "user", parts: [{ text: message }] });
   session.messageLog.push({ role: "user", content: message });
 
   const chat = flashModel.startChat({ history: session.history });
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
-  // 🔍 Visual trigger for visual learners or requests
+  // 🔍 Auto-visual for visual learners or requests
   let visualUrl = null;
   const isVisual = user.learningStyle?.toLowerCase() === "visual";
   const visualCue = /show|graph|diagram|paraboloid|unit circle|slope field|draw|visual/i.test(message);
@@ -62,9 +68,14 @@ router.post("/", async (req, res) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: message }),
       });
-      const imgData = await imgRes.json();
-      if (imgData?.url) {
-        visualUrl = imgData.url;
+
+      if (imgRes.ok) {
+        const imgData = await imgRes.json();
+        if (imgData?.url) {
+          visualUrl = imgData.url;
+        }
+      } else {
+        console.warn("⚠️ Image fetch failed:", await imgRes.text());
       }
     } catch (err) {
       console.warn("⚠️ Image generation failed:", err.message || err);
