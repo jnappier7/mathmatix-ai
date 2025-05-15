@@ -44,9 +44,8 @@ router.post("/", async (req, res) => {
   };
   SESSION_TRACKER[userId] = session;
 
-  // ✅ Fix: prevent double 'user' entries in Gemini chat history
   const last = session.history[session.history.length - 1]?.role;
-  if (last !== "model") {
+  if (last === "user") {
     session.history.push({ role: "model", parts: [{ text: "..." }] });
   }
 
@@ -56,14 +55,14 @@ router.post("/", async (req, res) => {
   const chat = flashModel.startChat({ history: session.history });
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
-  // 🔍 Auto-visual for visual learners or requests
+  // 🔍 Visual support with fallback
   let visualUrl = null;
   const isVisual = user.learningStyle?.toLowerCase() === "visual";
   const visualCue = /show|graph|diagram|paraboloid|unit circle|slope field|draw|visual/i.test(message);
 
   if (isVisual || visualCue) {
     try {
-      const imgRes = await fetch("/image", {
+      const imgRes = await fetch("http://localhost:10000/image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: message }),
@@ -71,17 +70,28 @@ router.post("/", async (req, res) => {
 
       if (imgRes.ok) {
         const imgData = await imgRes.json();
-        if (imgData?.url) {
+        if (imgData?.url && imgData.url.startsWith("http")) {
           visualUrl = imgData.url;
         }
       } else {
         console.warn("⚠️ Image fetch failed:", await imgRes.text());
       }
+
+      // 🔁 Fallback: Google search if generation failed
+      if (!visualUrl) {
+        const searchRes = await fetch("http://localhost:10000/image-search?query=" + encodeURIComponent(message));
+        if (searchRes.ok) {
+          const searchData = await searchRes.json();
+          if (searchData?.results?.[0]) {
+            visualUrl = searchData.results[0];
+            console.log("✅ Google image search fallback URL:", visualUrl);
+          }
+        }
+      }
     } catch (err) {
-      console.warn("⚠️ Image generation failed:", err.message || err);
+      console.warn("⚠️ Image generation or search failed:", err.message || err);
     }
   }
-console.log("Generated image URL:", visualUrl);
 
   session.messageLog.push({ role: "model", content: text });
   if (visualUrl && visualUrl.startsWith("http")) {
@@ -91,13 +101,11 @@ console.log("Generated image URL:", visualUrl);
   session.history.push({ role: "model", parts: [{ text }] });
 
   res.send({
-  text:
-    visualUrl && visualUrl.startsWith("http")
+    text: visualUrl && visualUrl.startsWith("http")
       ? `🖼️ Here's a visual that might help:\n${visualUrl}\n\n${text}`
       : text,
-  modelUsed,
-});
-
+    modelUsed,
+  });
 });
 
 module.exports = router;
