@@ -9,6 +9,8 @@ const passport = require("passport");
 require("./auth/passport-config");
 
 const User = require("./models/User");
+const chatRoute = require("./routes/chat");
+
 
 puppeteer
   .createBrowserFetcher()
@@ -23,6 +25,7 @@ const { SYSTEM_PROMPT } = require("./utils/prompt");
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+app.use("/chat", chatRoute);
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -87,7 +90,6 @@ const uploadRoute = require("./routes/upload");
 const loginRoute = require("./routes/login");
 const signupRoute = require("./routes/signup");
 const memoryRoute = require("./routes/memory").router;
-const chatRoute = require("./routes/chat");
 const imageRoute = require("./routes/image");
 const imageSearchRoute = require("./routes/image-search");
 const speakRoute = require("./routes/speak");
@@ -96,7 +98,6 @@ app.use("/upload", uploadRoute);
 app.use("/login", loginRoute);
 app.use("/signup", signupRoute);
 app.use("/save-summary", memoryRoute);
-app.use("/chat", chatRoute);
 app.use("/image", imageRoute);
 app.use("/image-search", imageSearchRoute);
 app.use("/speak", speakRoute);
