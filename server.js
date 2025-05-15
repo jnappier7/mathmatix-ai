@@ -51,39 +51,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // ✅ Google Auth Routes
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-app.get("/auth/google/callback", passport.authenticate("google", {
-  failureRedirect: "/login.html"
-}), async (req, res) => {
-  const user = await User.findById(req.user._id);
-  if (user && user.tonePreference && user.learningStyle) {
-    return res.redirect("/chat.html");
-  } else {
-    return res.redirect("/complete-profile.html");
-  }
-});
-
-// ✅ Microsoft Auth Routes
-app.get("/auth/microsoft", passport.authenticate("microsoft"));
-
-app.get("/auth/microsoft/callback",
-  passport.authenticate("microsoft", {
-    failureRedirect: "/login.html"
-  }),
-  async (req, res) => {
-    const user = await User.findById(req.user._id);
-    if (user && user.tonePreference && user.learningStyle) {
-      return res.redirect("/chat.html");
-    } else {
-      return res.redirect("/complete-profile.html");
-    }
-  }
-);
-
- app.get("/auth/whoami", (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ error: "User session not found" });
   }
 
   res.json({

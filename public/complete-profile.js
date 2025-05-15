@@ -3,6 +3,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const gradeSelect = document.getElementById("grade");
   const mathSection = document.getElementById("math-course-section");
 
+	(async function loadSessionUser() {
+  try {
+    const res = await fetch("/auth/whoami");
+    const data = await res.json();
+
+    localStorage.setItem("userId", data.userId);
+    localStorage.setItem("name", data.name || "");
+    localStorage.setItem("tone", data.tone || "");
+    localStorage.setItem("learningStyle", data.learningStyle || "");
+    localStorage.setItem("interests", JSON.stringify(data.interests || []));
+  } catch (err) {
+    console.error("Could not load session user:", err);
+    alert("User session not found. Please log in again.");
+    window.location.href = "/login.html";
+  }
+})();
+
   // Show math section if grade is 9+
   gradeSelect.addEventListener("change", () => {
     const grade = gradeSelect.value;
@@ -11,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       mathSection.classList.add("hidden");
     }
+	  
   });
 
   form.addEventListener("submit", async (e) => {
