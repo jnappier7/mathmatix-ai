@@ -5,7 +5,7 @@ const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const User = require("../models/User");
 const saveSummary = require("./memory");
-const generateSystemPrompt = require("../utils/prompt");
+const { generateSystemPrompt } = require("../utils/prompt");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
