@@ -10,11 +10,7 @@ let recognition;
 let isRecognizing = false;
 let isHandsFreeMode = false;
 
-let userId;
-const storedUserId = localStorage.getItem("userId");
-if (storedUserId) {
-  userId = storedUserId;
-}
+let userId = localStorage.getItem("userId");
 
 const sendBtnText = sendBtn.innerText;
 
@@ -27,7 +23,7 @@ const appendMessage = (text, sender = "ai") => {
   const message = document.createElement("div");
   message.classList.add("message", sender);
 
-  const urlRegex = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|svg))/i;
+  const urlRegex = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|svg))/i;
   const match = text.match(urlRegex);
 
   if (match) {
@@ -39,7 +35,12 @@ const appendMessage = (text, sender = "ai") => {
     img.style.borderRadius = "12px";
     img.style.margin = "10px 0";
 
-    message.innerHTML = `<p>${before.trim()}</p>`;
+    if (before.trim()) {
+      const beforeText = document.createElement("p");
+      beforeText.innerText = before.trim();
+      message.appendChild(beforeText);
+    }
+
     message.appendChild(img);
 
     if (after && after.trim()) {
@@ -81,7 +82,7 @@ sendBtn.addEventListener("click", async () => {
     console.error("❌ Chat error:", err);
     appendMessage("⚠️ AI error. Please try again.");
   }
-}); // ✅ properly closed async click handler
+});
 
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {

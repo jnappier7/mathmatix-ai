@@ -14,7 +14,7 @@ const proModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 const sendWithFallback = async (chat, message) => {
   try {
-    const result = await chat.sendMessage([{ text: message }]); // ✅ Gemini-compliant
+    const result = await chat.sendMessage([{ text: message }]);
     return { response: result.response.text().trim(), modelUsed: "flash" };
   } catch (err1) {
     try {
@@ -33,9 +33,7 @@ const sendWithFallback = async (chat, message) => {
 
 router.post("/", async (req, res) => {
   const { userId, message } = req.body;
-  if (!userId || !message) {
-    return res.status(400).send("Missing userId or message.");
-  }
+  if (!userId || !message) return res.status(400).send("Missing userId or message.");
 
   const user = await User.findById(userId);
   if (!user) return res.status(404).send("User not found.");
@@ -56,12 +54,12 @@ router.post("/", async (req, res) => {
   const chat = flashModel.startChat({ history: session.history });
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
-  // 🔍 Image support
+  // ✅ Smart visual trigger (math-only)
   let visualUrl = null;
-  const isVisual = user.learningStyle?.toLowerCase() === "visual";
-  const visualCue = /show|graph|diagram|paraboloid|unit circle|slope field|draw|visual/i.test(message);
+  const visualCue = /graph|diagram|triangle|table|equation|geometry|parabola|unit circle|plot|slope field/i.test(message);
+  const shouldGenerateVisual = visualCue;
 
-  if (isVisual || visualCue) {
+  if (shouldGenerateVisual) {
     try {
       const imgRes = await fetch("http://localhost:10000/image", {
         method: "POST",
@@ -95,18 +93,13 @@ router.post("/", async (req, res) => {
 
   session.messageLog.push({ role: "model", content: text });
   if (visualUrl) {
-    session.messageLog.push({
-      role: "model",
-      content: `🖼️ Here's a visual that might help:\n${visualUrl}`,
-    });
+    session.messageLog.push({ role: "model", content: visualUrl });
   }
 
   session.history.push({ role: "model", parts: [{ text }] });
 
   res.send({
-    text: visualUrl
-      ? `🖼️ Here's a visual that might help:\n${visualUrl}\n\n${text}`
-      : text,
+    text: visualUrl ? `${visualUrl}\n\n${text}` : text,
     modelUsed,
   });
 });
