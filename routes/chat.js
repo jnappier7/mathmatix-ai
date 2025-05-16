@@ -12,21 +12,44 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 const proModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-async function sendWithFallback(chat, message) {
+const sendWithFallback = async (chat, message) => {
   try {
-    const result = await chat.sendMessage({ role: "user", parts: [{ text: message }] });
-    return { response: result.response.text().trim(), modelUsed: "flash" };
+    const result = await chat.sendMessage({
+      role: "user",
+      parts: [{ text: message }]
+    });
+
+    return {
+      response: result.response.text().trim(),
+      modelUsed: "flash"
+    };
   } catch (err1) {
     try {
-      const fallback = await proModel.startChat({ history: chat.history });
-      const result = await fallback.sendMessage({ role: "user", parts: [{ text: message }]
-      return { response: result.response.text().trim(), modelUsed: "pro" };
+      const fallback = await proModel.startChat({
+        history: chat.history
+      });
+
+      const result = await fallback.sendMessage({
+        role: "user",
+        parts: [{ text: message }]
+      });
+
+      return {
+        response: result.response.text().trim(),
+        modelUsed: "pro"
+      };
     } catch (err2) {
       console.error("❌ Chat error:", err2);
-      return { response: "I'm having trouble right now. Please try again.", modelUsed: null };
+      return {
+        response: "I'm having trouble right now. Please try again.",
+        modelUsed: null
+      };
     }
   }
-}
+};
+
+
+
 
 
 router.post("/", async (req, res) => {
@@ -49,6 +72,7 @@ router.post("/", async (req, res) => {
   if (last === "user") {
    
   session.messageLog.push({ role: "user", content: message });
+}
 
   const chat = flashModel.startChat({ history: session.history });
   const { response: text, modelUsed } = await sendWithFallback(chat);
