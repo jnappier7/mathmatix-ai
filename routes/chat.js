@@ -18,26 +18,15 @@ const sendWithFallback = async (chat, message) => {
       role: "user",
       parts: [{ text: message }]
     });
-
-    return {
-      response: result.response.text().trim(),
-      modelUsed: "flash"
-    };
+    return { response: result.response.text().trim(), modelUsed: "flash" };
   } catch (err1) {
     try {
-      const fallback = await proModel.startChat({
-        history: chat.history
-      });
-
+      const fallback = await proModel.startChat({ history: chat.history });
       const result = await fallback.sendMessage({
         role: "user",
         parts: [{ text: message }]
       });
-
-      return {
-        response: result.response.text().trim(),
-        modelUsed: "pro"
-      };
+      return { response: result.response.text().trim(), modelUsed: "pro" };
     } catch (err2) {
       console.error("❌ Chat error:", err2);
       return {
@@ -47,10 +36,6 @@ const sendWithFallback = async (chat, message) => {
     }
   }
 };
-
-
-
-
 
 router.post("/", async (req, res) => {
   const { userId, message } = req.body;
@@ -70,9 +55,11 @@ router.post("/", async (req, res) => {
 
   const last = session.history[session.history.length - 1]?.role;
   if (last === "user") {
-   
+    session.history.push({ role: "model", parts: [{ text: "..." }] });
+  }
+
+  // do NOT push the message directly to history — handled in sendMessage()
   session.messageLog.push({ role: "user", content: message });
-}
 
   const chat = flashModel.startChat({ history: session.history });
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
@@ -101,7 +88,9 @@ router.post("/", async (req, res) => {
 
       // 🔁 Fallback: Google search if generation failed
       if (!visualUrl) {
-        const searchRes = await fetch("http://localhost:10000/image-search?query=" + encodeURIComponent(message));
+        const searchRes = await fetch(
+          "http://localhost:10000/image-search?query=" + encodeURIComponent(message)
+        );
         if (searchRes.ok) {
           const searchData = await searchRes.json();
           if (searchData?.results?.[0]) {
@@ -117,15 +106,19 @@ router.post("/", async (req, res) => {
 
   session.messageLog.push({ role: "model", content: text });
   if (visualUrl && visualUrl.startsWith("http")) {
-    session.messageLog.push({ role: "model", content: `🖼️ Here's a visual that might help:\n${visualUrl}` });
+    session.messageLog.push({
+      role: "model",
+      content: `🖼️ Here's a visual that might help:\n${visualUrl}`,
+    });
   }
 
   session.history.push({ role: "model", parts: [{ text }] });
 
   res.send({
-    text: visualUrl && visualUrl.startsWith("http")
-      ? `🖼️ Here's a visual that might help:\n${visualUrl}\n\n${text}`
-      : text,
+    text:
+      visualUrl && visualUrl.startsWith("http")
+        ? `🖼️ Here's a visual that might help:\n${visualUrl}\n\n${text}`
+        : text,
     modelUsed,
   });
 });
