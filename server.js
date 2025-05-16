@@ -11,13 +11,6 @@ require("./auth/passport-config");
 const User = require("./models/User");
 const chatRoute = require("./routes/chat");
 
-
-puppeteer
-  .createBrowserFetcher()
-  .download("1108766")
-  .then(() => console.log("✅ Chromium downloaded"))
-  .catch((err) => console.error("❌ Chromium download failed:", err.message));
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 const { SYSTEM_PROMPT } = require("./utils/prompt");
