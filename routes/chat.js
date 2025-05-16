@@ -12,14 +12,14 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 const proModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-async function sendWithFallback(chat, message) {
+async function sendWithFallback(chat) {
   try {
-    const result = await chat.sendMessage(message);
+    const result = await chat.sendMessage(); // no argument
     return { response: result.response.text().trim(), modelUsed: "flash" };
   } catch (err1) {
     try {
       const fallback = await proModel.startChat({ history: chat.history });
-      const result = await fallback.sendMessage(message);
+      const result = await fallback.sendMessage(); // no argument
       return { response: result.response.text().trim(), modelUsed: "pro" };
     } catch (err2) {
       console.error("❌ Chat error:", err2);
@@ -27,6 +27,7 @@ async function sendWithFallback(chat, message) {
     }
   }
 }
+
 
 router.post("/", async (req, res) => {
   const { userId, message } = req.body;
@@ -53,7 +54,7 @@ router.post("/", async (req, res) => {
   session.messageLog.push({ role: "user", content: message });
 
   const chat = flashModel.startChat({ history: session.history });
-  const { response: text, modelUsed } = await sendWithFallback(chat, message);
+  const { response: text, modelUsed } = await sendWithFallback(chat);
 
   // 🔍 Visual support with fallback
   let visualUrl = null;
