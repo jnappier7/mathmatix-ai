@@ -12,14 +12,14 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 const proModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-async function sendWithFallback(chat) {
+async function sendWithFallback(chat, message) {
   try {
-    const result = await chat.sendMessage(); // no argument
+    const result = await chat.sendMessage({ role: "user", parts: [{ text: message }] });
     return { response: result.response.text().trim(), modelUsed: "flash" };
   } catch (err1) {
     try {
       const fallback = await proModel.startChat({ history: chat.history });
-      const result = await fallback.sendMessage(); // no argument
+      const result = await fallback.sendMessage({ role: "user", parts: [{ text: message }] });
       return { response: result.response.text().trim(), modelUsed: "pro" };
     } catch (err2) {
       console.error("❌ Chat error:", err2);
@@ -47,10 +47,7 @@ router.post("/", async (req, res) => {
 
   const last = session.history[session.history.length - 1]?.role;
   if (last === "user") {
-    session.history.push({ role: "model", parts: [{ text: "..." }] });
-  }
-
-  session.history.push({ role: "user", parts: [{ text: message }] });
+   
   session.messageLog.push({ role: "user", content: message });
 
   const chat = flashModel.startChat({ history: session.history });
