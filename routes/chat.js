@@ -19,7 +19,7 @@ async function sendWithFallback(chat, message) {
   } catch (err1) {
     try {
       const fallback = await proModel.startChat({ history: chat.history });
-      const result = await fallback.sendMessage({ role: "user", parts: [{ text: message }] });
+      const result = await fallback.sendMessage({ role: "user", parts: [{ text: message }]
       return { response: result.response.text().trim(), modelUsed: "pro" };
     } catch (err2) {
       console.error("❌ Chat error:", err2);
