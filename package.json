@@ -13,7 +13,7 @@
   "type": "git",
   "url": "https://github.com/jnappier7/mathmatix-ai.git"
 },
-"keywords": ["math", "AI", "tutor", "Gemini", "OCR", "education"]
+"keywords": ["math", "AI", "tutor", "Gemini", "OCR", "education"],
 
   "dependencies": {
     "@google/generative-ai": "^0.3.0",
