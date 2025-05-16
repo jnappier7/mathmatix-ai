@@ -75,7 +75,7 @@ router.post("/", async (req, res) => {
 }
 
   const chat = flashModel.startChat({ history: session.history });
-  const { response: text, modelUsed } = await sendWithFallback(chat);
+  const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
   // 🔍 Visual support with fallback
   let visualUrl = null;
