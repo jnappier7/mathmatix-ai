@@ -25,7 +25,7 @@ const sendWithFallback = async (chat, message) => {
       console.error("❌ Chat error:", err2);
       return {
         response: "I'm having trouble right now. Please try again.",
-        modelUsed: null
+        modelUsed: null,
       };
     }
   }
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
   const chat = flashModel.startChat({ history: session.history });
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
-  // ✅ Smart visual trigger (math-only)
+  // ✅ Visual triggers only on real math cues
   let visualUrl = null;
   const visualCue = /graph|diagram|triangle|table|equation|geometry|parabola|unit circle|plot|slope field/i.test(message);
   const shouldGenerateVisual = visualCue;
@@ -91,26 +91,24 @@ router.post("/", async (req, res) => {
     }
   }
 
-  session.messageLog.push({ role: "model", content: text });
+  if (typeof text === "string" && text.trim()) {
+    session.history.push({ role: "model", parts: [{ text: text.trim() }] });
+    session.messageLog.push({ role: "model", content: text.trim() });
+  } else {
+    session.messageLog.push({
+      role: "model",
+      content: "⚠️ AI returned an invalid or empty response.",
+    });
+  }
+
   if (visualUrl) {
     session.messageLog.push({ role: "model", content: visualUrl });
   }
 
-  if (typeof text === "string" && text.trim()) {
-  session.history.push({ role: "model", parts: [{ text: text.trim() }] });
-  session.messageLog.push({ role: "model", content: text.trim() });
-} else {
-  session.messageLog.push({
-    role: "model",
-    content: "⚠️ AI returned an invalid or empty response.",
-  });
-}
-
   res.send({
-  text: visualUrl ? `${visualUrl}\n\n${text}` : (text || "⚠️ AI response missing."),
-  modelUsed,
-});
-
+    text: visualUrl ? `${visualUrl}\n\n${text || ""}` : text || "⚠️ AI response missing.",
+    modelUsed,
+  });
 });
 
 module.exports = router;
