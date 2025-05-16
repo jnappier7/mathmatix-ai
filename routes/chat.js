@@ -14,18 +14,12 @@ const proModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 const sendWithFallback = async (chat, message) => {
   try {
-    const result = await chat.sendMessage({
-      role: "user",
-      parts: [{ text: message }]
-    });
+    const result = await chat.sendMessage([{ text: message }]); // ✅ Gemini-compliant
     return { response: result.response.text().trim(), modelUsed: "flash" };
   } catch (err1) {
     try {
       const fallback = await proModel.startChat({ history: chat.history });
-      const result = await fallback.sendMessage({
-        role: "user",
-        parts: [{ text: message }]
-      });
+      const result = await fallback.sendMessage([{ text: message }]);
       return { response: result.response.text().trim(), modelUsed: "pro" };
     } catch (err2) {
       console.error("❌ Chat error:", err2);
@@ -39,7 +33,6 @@ const sendWithFallback = async (chat, message) => {
 
 router.post("/", async (req, res) => {
   const { userId, message } = req.body;
-
   if (!userId || !message) {
     return res.status(400).send("Missing userId or message.");
   }
@@ -58,13 +51,12 @@ router.post("/", async (req, res) => {
     session.history.push({ role: "model", parts: [{ text: "..." }] });
   }
 
-  // do NOT push the message directly to history — handled in sendMessage()
   session.messageLog.push({ role: "user", content: message });
 
   const chat = flashModel.startChat({ history: session.history });
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
-  // 🔍 Visual support with fallback
+  // 🔍 Image support
   let visualUrl = null;
   const isVisual = user.learningStyle?.toLowerCase() === "visual";
   const visualCue = /show|graph|diagram|paraboloid|unit circle|slope field|draw|visual/i.test(message);
@@ -79,33 +71,30 @@ router.post("/", async (req, res) => {
 
       if (imgRes.ok) {
         const imgData = await imgRes.json();
-        if (imgData?.url && imgData.url.startsWith("http")) {
-          visualUrl = imgData.url;
+        if (imgData?.imageUrl?.startsWith("http")) {
+          visualUrl = imgData.imageUrl;
         }
       } else {
         console.warn("⚠️ Image fetch failed:", await imgRes.text());
       }
 
-      // 🔁 Fallback: Google search if generation failed
       if (!visualUrl) {
-        const searchRes = await fetch(
-          "http://localhost:10000/image-search?query=" + encodeURIComponent(message)
-        );
+        const searchRes = await fetch("http://localhost:10000/image-search?query=" + encodeURIComponent(message));
         if (searchRes.ok) {
           const searchData = await searchRes.json();
-          if (searchData?.results?.[0]) {
-            visualUrl = searchData.results[0];
-            console.log("✅ Google image search fallback URL:", visualUrl);
+          if (searchData?.imageUrl?.startsWith("http")) {
+            visualUrl = searchData.imageUrl;
+            console.log("✅ Google fallback image:", visualUrl);
           }
         }
       }
     } catch (err) {
-      console.warn("⚠️ Image generation or search failed:", err.message || err);
+      console.warn("⚠️ Image generation/search error:", err.message || err);
     }
   }
 
   session.messageLog.push({ role: "model", content: text });
-  if (visualUrl && visualUrl.startsWith("http")) {
+  if (visualUrl) {
     session.messageLog.push({
       role: "model",
       content: `🖼️ Here's a visual that might help:\n${visualUrl}`,
@@ -115,10 +104,9 @@ router.post("/", async (req, res) => {
   session.history.push({ role: "model", parts: [{ text }] });
 
   res.send({
-    text:
-      visualUrl && visualUrl.startsWith("http")
-        ? `🖼️ Here's a visual that might help:\n${visualUrl}\n\n${text}`
-        : text,
+    text: visualUrl
+      ? `🖼️ Here's a visual that might help:\n${visualUrl}\n\n${text}`
+      : text,
     modelUsed,
   });
 });
