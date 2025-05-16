@@ -96,12 +96,21 @@ router.post("/", async (req, res) => {
     session.messageLog.push({ role: "model", content: visualUrl });
   }
 
-  session.history.push({ role: "model", parts: [{ text }] });
+  if (typeof text === "string" && text.trim()) {
+  session.history.push({ role: "model", parts: [{ text: text.trim() }] });
+  session.messageLog.push({ role: "model", content: text.trim() });
+} else {
+  session.messageLog.push({
+    role: "model",
+    content: "⚠️ AI returned an invalid or empty response.",
+  });
+}
 
   res.send({
-    text: visualUrl ? `${visualUrl}\n\n${text}` : text,
-    modelUsed,
-  });
+  text: visualUrl ? `${visualUrl}\n\n${text}` : (text || "⚠️ AI response missing."),
+  modelUsed,
+});
+
 });
 
 module.exports = router;
