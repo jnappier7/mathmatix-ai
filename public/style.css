@@ -27,7 +27,21 @@ body {
 }
 
 footer {
-  margin-top: 80px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 12px 0;
+  background-color: #111;
+  color: #ccc;
+  font-size: 0.9rem;
+  border-top: 1px solid #333;
+  z-index: 100;
+}
+
+body {
+  margin-bottom: 60px; /* Prevent footer overlap */
 }
 
 /* Chat Container */
