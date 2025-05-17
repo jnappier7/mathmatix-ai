@@ -11,7 +11,6 @@ let isRecognizing = false;
 let isHandsFreeMode = false;
 
 let userId = localStorage.getItem("userId");
-
 const sendBtnText = sendBtn.innerText;
 
 const toggleThinking = (isThinking) => {
@@ -23,37 +22,39 @@ const appendMessage = (text, sender = "ai") => {
   const message = document.createElement("div");
   message.classList.add("message", sender);
 
-  const urlRegex = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|svg))/i;
-  const match = text.match(urlRegex);
+  const urlRegex = /(https?:\/\/[^\s]+)/gi;
+  const imageRegex = /\.(jpg|jpeg|png|gif|webp|svg)$/i;
+  const geoGebraRegex = /^https:\/\/www\.geogebra\.org\/graphing\?equation=/i;
 
-  if (match) {
-    const [before, after] = text.split(match[0]);
-    const img = document.createElement("img");
-    img.src = match[0];
-    img.alt = "Visual example";
-    img.style.maxWidth = "300px";
-    img.style.borderRadius = "12px";
-    img.style.margin = "10px 0";
+  let segments = text.split(urlRegex);
 
-    if (before.trim()) {
-      const beforeText = document.createElement("p");
-      beforeText.innerText = before.trim();
-      message.appendChild(beforeText);
+  segments.forEach((segment) => {
+    if (geoGebraRegex.test(segment)) {
+      const iframe = document.createElement("iframe");
+      iframe.src = segment;
+      iframe.width = "100%";
+      iframe.height = "400px";
+      iframe.style.border = "none";
+      iframe.style.margin = "12px 0";
+      message.appendChild(iframe);
+    } else if (imageRegex.test(segment)) {
+      const img = document.createElement("img");
+      img.src = segment;
+      img.alt = "Visual";
+      img.style.maxWidth = "100%";
+      img.style.borderRadius = "8px";
+      img.style.margin = "10px 0";
+      message.appendChild(img);
+    } else if (segment.trim() !== "") {
+      const p = document.createElement("p");
+      p.textContent = segment.trim();
+      message.appendChild(p);
     }
-
-    message.appendChild(img);
-
-    if (after && after.trim()) {
-      const afterText = document.createElement("p");
-      afterText.innerText = after.trim();
-      message.appendChild(afterText);
-    }
-  } else {
-    message.innerText = text;
-  }
+  });
 
   chatContainer.appendChild(message);
   chatContainer.scrollTop = chatContainer.scrollHeight;
+
   if (window.MathJax) MathJax.typesetPromise([message]);
 };
 
