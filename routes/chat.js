@@ -31,6 +31,23 @@ const sendWithFallback = async (chat, message) => {
   }
 };
 
+const visualIntentCheck = async (prompt, response) => {
+  const visualCheckPrompt = `
+You are Mathmatix AI, a math teacher who only uses visuals when they support understanding. A student said: "${prompt}"
+
+Your response was: "${response}"
+
+Would a visual be helpful here? ONLY respond with:
+- YES
+- NO
+`;
+
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  const check = await model.generateContent(visualCheckPrompt);
+  const result = await check.response.text();
+  return result.trim().toUpperCase().startsWith("YES");
+};
+
 router.post("/", async (req, res) => {
   const { userId, message } = req.body;
   if (!userId || !message) return res.status(400).send("Missing userId or message.");
@@ -54,13 +71,12 @@ router.post("/", async (req, res) => {
   const chat = flashModel.startChat({ history: session.history });
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
-  // ✅ Visual triggers only on real math cues
   let visualUrl = null;
-  const visualCue = /graph|diagram|triangle|table|equation|geometry|parabola|unit circle|plot|slope field/i.test(message);
-  const shouldGenerateVisual = visualCue;
 
-  if (shouldGenerateVisual) {
-    try {
+  try {
+    const shouldUseVisual = await visualIntentCheck(message, text);
+
+    if (shouldUseVisual) {
       const imgRes = await fetch("http://localhost:10000/image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -72,23 +88,20 @@ router.post("/", async (req, res) => {
         if (imgData?.imageUrl?.startsWith("http")) {
           visualUrl = imgData.imageUrl;
         }
-      } else {
-        console.warn("⚠️ Image fetch failed:", await imgRes.text());
       }
 
       if (!visualUrl) {
-        const searchRes = await fetch("http://localhost:10000/image-search?query=" + encodeURIComponent(message));
-        if (searchRes.ok) {
-          const searchData = await searchRes.json();
-          if (searchData?.imageUrl?.startsWith("http")) {
-            visualUrl = searchData.imageUrl;
-            console.log("✅ Google fallback image:", visualUrl);
-          }
+        const fallbackRes = await fetch(
+          "http://localhost:10000/image-search?query=" + encodeURIComponent(message)
+        );
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData?.imageUrl?.startsWith("http")) {
+          visualUrl = fallbackData.imageUrl;
         }
       }
-    } catch (err) {
-      console.warn("⚠️ Image generation/search error:", err.message || err);
     }
+  } catch (err) {
+    console.warn("⚠️ Visual decision or image fetch error:", err.message || err);
   }
 
   if (typeof text === "string" && text.trim()) {
