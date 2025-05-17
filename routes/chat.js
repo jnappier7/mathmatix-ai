@@ -10,42 +10,43 @@ const SESSION_TRACKER = {};
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-const proModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 const sendWithFallback = async (chat, message) => {
   try {
     const result = await chat.sendMessage([{ text: message }]);
     return { response: result.response.text().trim(), modelUsed: "flash" };
-  } catch (err1) {
-    try {
-      const fallback = await proModel.startChat({ history: chat.history });
-      const result = await fallback.sendMessage([{ text: message }]);
-      return { response: result.response.text().trim(), modelUsed: "pro" };
-    } catch (err2) {
-      console.error("❌ Chat error:", err2);
-      return {
-        response: "I'm having trouble right now. Please try again.",
-        modelUsed: null,
-      };
-    }
+  } catch (err) {
+    console.error("❌ Gemini error:", err.message || err);
+    return {
+      response: "⚠️ I'm having trouble responding right now. Please try again.",
+      modelUsed: null,
+    };
   }
 };
 
 const visualIntentCheck = async (prompt, response) => {
   const visualCheckPrompt = `
-You are Mathmatix AI, a math teacher who only uses visuals when they support understanding. A student said: "${prompt}"
+You are Mathmatix AI, a math tutor who uses images only when they help students understand a concept more clearly.
 
-Your response was: "${response}"
+Student asked: "${prompt}"
+You replied: "${response}"
 
-Would a visual be helpful here? ONLY respond with:
+Would showing a relevant visual help teach or clarify this concept?
+
+ONLY respond with:
 - YES
 - NO
 `;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-  const check = await model.generateContent(visualCheckPrompt);
-  const result = await check.response.text();
-  return result.trim().toUpperCase().startsWith("YES");
+  try {
+    const intentModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const check = await intentModel.generateContent(visualCheckPrompt);
+    const decision = await check.response.text();
+    return decision.trim().toUpperCase().startsWith("YES");
+  } catch (err) {
+    console.warn("⚠️ Visual intent check failed:", err.message || err);
+    return false;
+  }
 };
 
 router.post("/", async (req, res) => {
@@ -61,7 +62,7 @@ router.post("/", async (req, res) => {
   };
   SESSION_TRACKER[userId] = session;
 
-  const last = session.history[session.history.length - 1]?.role;
+  const last = session.history.at(-1)?.role;
   if (last === "user") {
     session.history.push({ role: "model", parts: [{ text: "..." }] });
   }
@@ -73,10 +74,8 @@ router.post("/", async (req, res) => {
 
   let visualUrl = null;
 
-  try {
-    const shouldUseVisual = await visualIntentCheck(message, text);
-
-    if (shouldUseVisual) {
+  if (text && await visualIntentCheck(message, text)) {
+    try {
       const imgRes = await fetch("http://localhost:10000/image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -99,13 +98,16 @@ router.post("/", async (req, res) => {
           visualUrl = fallbackData.imageUrl;
         }
       }
+    } catch (err) {
+      console.warn("⚠️ Visual fetch error:", err.message || err);
     }
-  } catch (err) {
-    console.warn("⚠️ Visual decision or image fetch error:", err.message || err);
   }
 
   if (typeof text === "string" && text.trim()) {
-    session.history.push({ role: "model", parts: [{ text: text.trim() }] });
+    const lastRole = session.history.at(-1)?.role;
+    if (lastRole !== "model") {
+      session.history.push({ role: "model", parts: [{ text: text.trim() }] });
+    }
     session.messageLog.push({ role: "model", content: text.trim() });
   } else {
     session.messageLog.push({
