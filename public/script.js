@@ -15,7 +15,7 @@ const sendBtnText = sendBtn.innerText;
 
 const toggleThinking = (isThinking) => {
   sendBtn.disabled = isThinking;
-  sendBtn.innerText = isThinking ? "..." : sendBtnText;
+  sendBtn.innerText = isThinking ? "Mathmatix is thinking..." : sendBtnText;
 };
 
 const appendMessage = (text, sender = "ai") => {
@@ -26,7 +26,7 @@ const appendMessage = (text, sender = "ai") => {
   const imageRegex = /\.(jpg|jpeg|png|gif|webp|svg)$/i;
   const geoGebraRegex = /^https:\/\/www\.geogebra\.org\/graphing\?equation=/i;
 
-  let segments = text.split(urlRegex);
+  const segments = text.split(urlRegex);
 
   segments.forEach((segment) => {
     if (geoGebraRegex.test(segment)) {
@@ -58,7 +58,7 @@ const appendMessage = (text, sender = "ai") => {
   if (window.MathJax) MathJax.typesetPromise([message]);
 };
 
-sendBtn.addEventListener("click", async () => {
+const sendMessage = async () => {
   const message = input.value.trim();
   if (!message) return;
 
@@ -76,14 +76,33 @@ sendBtn.addEventListener("click", async () => {
     if (!res.ok) throw new Error("Server error: " + res.status);
 
     const data = await res.json();
-    toggleThinking(false);
-    appendMessage(data.text || "⚠️ No response from tutor.");
+    const chunks = data.chunks || [];
+    const image = data.image;
+
+    // Sequentially render each chunk with delay
+    const showChunks = async () => {
+      for (let i = 0; i < chunks.length; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        appendMessage(chunks[i], "ai");
+      }
+
+      if (image) {
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        appendMessage(image, "ai");
+      }
+
+      toggleThinking(false);
+    };
+
+    showChunks();
   } catch (err) {
     toggleThinking(false);
     console.error("❌ Chat error:", err);
     appendMessage("⚠️ AI error. Please try again.");
   }
-});
+};
+
+sendBtn.addEventListener("click", sendMessage);
 
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
