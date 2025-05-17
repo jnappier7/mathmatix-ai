@@ -26,12 +26,12 @@ const sendWithFallback = async (chat, message) => {
 
 const visualIntentCheck = async (prompt, response) => {
   const visualCheckPrompt = `
-You are Mathmatix AI, a math tutor who uses images only when they help students understand a concept more clearly.
+You are Mathmatix AI, a math tutor who uses visuals only when they help students understand.
 
 Student asked: "${prompt}"
 You replied: "${response}"
 
-Would showing a relevant visual help teach or clarify this concept?
+Would showing a visual (like a graph or diagram) help teach or clarify this concept?
 
 ONLY respond with:
 - YES
@@ -39,14 +39,19 @@ ONLY respond with:
 `;
 
   try {
-    const intentModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const check = await intentModel.generateContent(visualCheckPrompt);
-    const decision = await check.response.text();
-    return decision.trim().toUpperCase().startsWith("YES");
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const check = await model.generateContent(visualCheckPrompt);
+    const result = await check.response.text();
+    return result.trim().toUpperCase().startsWith("YES");
   } catch (err) {
     console.warn("⚠️ Visual intent check failed:", err.message || err);
     return false;
   }
+};
+
+const extractGraphableEquation = (text) => {
+  const match = text.match(/y\s*=\s*[-+]?[\dx\s\^\/\*\.\+\-\(\)]+/i);
+  return match ? match[0] : null;
 };
 
 router.post("/", async (req, res) => {
@@ -74,7 +79,13 @@ router.post("/", async (req, res) => {
 
   let visualUrl = null;
 
-  if (text && await visualIntentCheck(message, text)) {
+  const equation = extractGraphableEquation(message);
+  const shouldUseVisual = text && await visualIntentCheck(message, text);
+
+  if (equation && shouldUseVisual) {
+    const encoded = encodeURIComponent(equation);
+    visualUrl = `https://www.geogebra.org/graphing?equation=${encoded}`;
+  } else if (shouldUseVisual) {
     try {
       const imgRes = await fetch("http://localhost:10000/image", {
         method: "POST",
