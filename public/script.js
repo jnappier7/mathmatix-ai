@@ -74,31 +74,15 @@ const sendMessage = async () => {
     });
 
     if (!res.ok) throw new Error("Server error: " + res.status);
-
     const data = await res.json();
-    const chunks = data.chunks || [];
-    const image = data.image;
 
-    // Sequentially render each chunk with delay
-    const showChunks = async () => {
-      for (let i = 0; i < chunks.length; i++) {
-        await new Promise((resolve) => setTimeout(resolve, 600));
-        appendMessage(chunks[i], "ai");
-      }
-
-      if (image) {
-        await new Promise((resolve) => setTimeout(resolve, 400));
-        appendMessage(image, "ai");
-      }
-
-      toggleThinking(false);
-    };
-
-    showChunks();
+    if (data.text) appendMessage(data.text, "ai");
+    if (data.image) appendMessage(data.image, "ai");
   } catch (err) {
-    toggleThinking(false);
+    appendMessage("⚠️ AI error. Please try again.", "ai");
     console.error("❌ Chat error:", err);
-    appendMessage("⚠️ AI error. Please try again.");
+  } finally {
+    toggleThinking(false);
   }
 };
 

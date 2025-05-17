@@ -120,9 +120,6 @@ router.post("/", async (req, res) => {
     }
   }
 
-  const chunks = typeof text === "string" && text.trim()
-    ? chunkText(text.trim())
-    : ["⚠️ AI returned an invalid or empty response."];
 
   const lastRole = session.history.at(-1)?.role;
   if (lastRole !== "model" && typeof text === "string" && text.trim()) {
@@ -135,11 +132,11 @@ router.post("/", async (req, res) => {
     session.messageLog.push({ role: "model", content: visualUrl });
   }
 
-  res.send({
-    chunks,
-    image: visualUrl || null,
-    modelUsed,
-  });
+res.send({
+  text: text || "⚠️ AI returned an invalid or empty response.",
+  image: visualUrl || null,
+  modelUsed,
 });
+
 
 module.exports = router;
