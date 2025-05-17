@@ -7,7 +7,6 @@ const User = require("../models/User");
 const { generateSystemPrompt } = require("../utils/prompt");
 
 const SESSION_TRACKER = {};
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -54,6 +53,14 @@ const extractGraphableEquation = (text) => {
   return match ? match[0] : null;
 };
 
+const chunkText = (text) => {
+  const sentences = text
+    .split(/(?<=[.?!])\s+(?=[A-Z])/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return sentences.length > 1 ? sentences : [text];
+};
+
 router.post("/", async (req, res) => {
   const { userId, message } = req.body;
   if (!userId || !message) return res.status(400).send("Missing userId or message.");
@@ -78,7 +85,6 @@ router.post("/", async (req, res) => {
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
   let visualUrl = null;
-
   const equation = extractGraphableEquation(message);
   const shouldUseVisual = text && await visualIntentCheck(message, text);
 
@@ -114,25 +120,24 @@ router.post("/", async (req, res) => {
     }
   }
 
-  if (typeof text === "string" && text.trim()) {
-    const lastRole = session.history.at(-1)?.role;
-    if (lastRole !== "model") {
-      session.history.push({ role: "model", parts: [{ text: text.trim() }] });
-    }
-    session.messageLog.push({ role: "model", content: text.trim() });
-  } else {
-    session.messageLog.push({
-      role: "model",
-      content: "⚠️ AI returned an invalid or empty response.",
-    });
+  const chunks = typeof text === "string" && text.trim()
+    ? chunkText(text.trim())
+    : ["⚠️ AI returned an invalid or empty response."];
+
+  const lastRole = session.history.at(-1)?.role;
+  if (lastRole !== "model" && typeof text === "string" && text.trim()) {
+    session.history.push({ role: "model", parts: [{ text: text.trim() }] });
   }
+
+  session.messageLog.push({ role: "model", content: text });
 
   if (visualUrl) {
     session.messageLog.push({ role: "model", content: visualUrl });
   }
 
   res.send({
-    text: visualUrl ? `${visualUrl}\n\n${text || ""}` : text || "⚠️ AI response missing.",
+    chunks,
+    image: visualUrl || null,
     modelUsed,
   });
 });
