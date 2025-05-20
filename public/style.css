@@ -1,0 +1,297 @@
+/* style.css — Modern, clean, alternating message layout, full dropzone */
+
+/* Basic Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f4f7fa;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Fullscreen drop zone */
+.fullscreen-dropzone {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #fff;
+  overflow: auto;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 12px 0;
+  background-color: #111;
+  color: #ccc;
+  font-size: 0.9rem;
+  border-top: 1px solid #333;
+  z-index: 100;
+}
+
+body {
+  margin-bottom: 60px; /* Prevent footer overlap */
+}
+
+/* Chat Container */
+#chat-container {
+  max-width: 900px;
+  margin: auto;
+  border-radius: 16px;
+  padding: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#logo {
+  display: block;
+  margin: 0 auto 16px;
+  max-width: 220px;
+}
+
+/* Chat Messages */
+#chat-container-inner {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Message bubbles */
+.message {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 20px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.message.user {
+  background-color: #dcf8c6;
+  align-self: flex-end;
+  text-align: right;
+}
+
+.message.ai {
+  background-color: #e8ecf1;
+  align-self: flex-start;
+  text-align: left;
+}
+
+/* Input Area */
+#input-container {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding: 10px 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid #eee;
+}
+
+
+#user-input {
+  flex: 1;
+  min-height: 48px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  resize: vertical;
+}
+
+#send-button {
+  padding: 10px 18px;
+  background-color: #20c997;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#send-button:hover {
+  background-color: #17a085;
+}
+
+
+
+/* Tool buttons */
+#tools-left,
+#tools-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#tools-left button,
+#tools-right button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+#tools-right img,
+#tools-left img {
+  height: 24px;
+  width: 24px;
+}
+
+/* Hidden file input */
+#file-input {
+  display: none;
+}
+
+/* Hands-free toggle */
+#handsfree-toggle-wrapper {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#handsfree-label {
+  font-size: 14px;
+}
+
+#handsfree-toggle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+#handsfree-toggle.green {
+  background-color: #2ecc71;
+}
+
+/* Popup styling */
+.popup {
+  position: fixed;
+  bottom: 60px;
+  right: 40px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: none;
+  min-width: 300px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Thinking animation */
+#thinking-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  background: #fff;
+  padding: 8px 0;
+  position: sticky;
+  bottom: 80px; /* just above the input */
+  z-index: 4;
+}
+
+
+.dot {
+  height: 10px;
+  width: 10px;
+  background-color: #999;
+  border-radius: 50%;
+  animation: blink 1.2s infinite ease-in-out;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+
+.thinking-text {
+  font-size: 14px;
+  color: #666;
+}
+
+@media screen and (max-width: 600px) {
+  #chat-container {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .popup {
+    bottom: 20px;
+    right: 10px;
+    width: 90%;
+  }
+}
+
+.chat-image {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.math-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+math-field {
+  width: 100%;
+  font-size: 1.2rem;
+  min-height: 60px;
+}
+
+#tools-left button:hover,
+#tools-right button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+#tools-left img,
+#tools-right img {
+  height: 24px;
+  width: 24px;
+}
+
+#mic-button.listening {
+  background-color: #ffeb3b;
+  border-radius: 8px;
+}

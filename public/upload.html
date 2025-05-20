@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Math Problem</title>
+</head>
+<body>
+  <h2>Upload a Worksheet or Image</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <h3>Extracted Text:</h3>
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const file = document.getElementById('fileInput').files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      const output = document.getElementById('output');
+      output.textContent = '';  // clear previous
+
+      output.textContent += 'Extracted Text:\n' + (data.extracted?.toString() || 'No text found.');
+      output.textContent += '\n\nAI Response:\n' + (data.text || 'No feedback returned.');
+    });
+  </script>
+</body>
+</html>

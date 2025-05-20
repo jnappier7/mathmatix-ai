@@ -1,0 +1,8 @@
+node_modules/\n.env\n.DS_Store\npackage-lock 2.json
+
+.env
+routes/vision-key.json
+*.dmg
+node_modules/
+.env
+.DS_Store

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+  <div id="dropzone" class="fullscreen-dropzone">
+    <div id="chat-container">
+
+      <!-- 🔓 Logout Button -->
+      <div id="top-bar">
+        <button id="logoutBtn" class="btn logout">Log Out</button>
+      </div>
+
+      <!-- Logo -->
+      <img id="logo" src="MathMatix AI Logo.png" alt="Mathmatix Logo" />
+
+      <!-- Chat messages -->
+      <div id="chat-container-inner"></div>
+
+      <!-- Thinking animation -->
+      <div id="thinking-indicator" style="display: none;">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="thinking-text">Mathmatix is thinking...</span>
+      </div>
+
+      <!-- Input + tools -->
+      <div id="input-container">
+        <textarea id="user-input" placeholder="Type your message..."></textarea>
+        <button id="send-button">Send</button>
+
+        <div id="tools-left">
+          <button id="equation-button" title="Insert Equation">
+            <img src="equation-icon.png" alt="Insert Equation" />
+          </button>
+        </div>
+
+        <div id="tools-right">
+          <button id="mic-button" title="Voice Input">
+            <img src="mic-icon.png" alt="Mic" />
+          </button>
+          <button id="file-upload" title="Upload File">
+            <img src="clip-icon.png" alt="Attach" />
+          </button>
+          <input type="file" id="file-input" />
+        </div>
+      </div>
+
+      <!-- Hands-free toggle -->
+      <div id="handsfree-toggle-wrapper">
+        <span id="handsfree-label">Hands-Free Mode: OFF</span>
+        <button id="handsfree-toggle" class="green"></button>
+      </div>
+
+    </div> <!-- closes #chat-container -->
+  </div> <!-- closes #dropzone -->
+
+  <!-- MathLive Equation Editor Popup -->
+  <div id="equation-popup" class="popup">
+    <div class="popup-header">
+      <span>Equation Editor</span>
+      <span id="close-equation-popup" class="close-button">❌</span>
+    </div>
+
+    <math-field id="math-editor" virtual-keyboard-mode="onfocus" smart-mode></math-field>
+
+    <div class="math-controls">
+      <button id="insert-latex">Insert</button>
+      <button id="cancel-latex">Cancel</button>
+    </div>
+
+    <div id="equation-preview" style="margin-top: 12px; text-align: center;"></div>
+  </div>
+
+  <!-- Math rendering scripts -->
+  <script src="https://unpkg.com/mathlive"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+	<!-- Desmos Graphing Calculator Script -->
+<script src="https://www.desmos.com/api/v1.6/calculator.js?apiKey=default"></script>
+
+  <!-- Footer -->
+  <footer style="text-align:center; margin-top:50px; padding:20px; font-size:0.9rem; color:#64748b;">
+    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
+</body>
+</html>

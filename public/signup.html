@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up | M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script defer src="signup.js"></script>
+  <style>
+    body {
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .signup-container {
+      background: white;
+      border-radius: 10px;
+      padding: 30px 40px;
+      width: 95%;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo-header img {
+      max-width: 260px;
+      height: auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+      color: #1e293b;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .radio-group,
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .radio-group label,
+    .checkbox-group label {
+      font-weight: normal;
+      color: #334155;
+    }
+
+    .submit-btn {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+      background: teal;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background: #0d9488;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .signup-container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .submit-btn {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <div class="logo-header">
+      <img src="MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
+    </div>
+
+    <h1>Welcome to M∆THM∆TIΧ AI</h1>
+    <p class="subtitle">Let’s get you set up.</p>
+
+    <div style="text-align: center; margin-bottom: 25px;">
+  
+
+ 
+</div>
+
+    <form id="signup-form">
+      <label for="username">Username</label>
+      <input type="text" id="username" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" required />
+
+      <label for="name">First Name</label>
+      <input type="text" id="name" required />
+
+      <label for="grade">Grade Level</label>
+      <select id="grade" required>
+        <option value="">Select your grade</option>
+        <option value="K">Kindergarten</option>
+        <option value="1">1st Grade</option>
+        <option value="2">2nd Grade</option>
+        <option value="3">3rd Grade</option>
+        <option value="4">4th Grade</option>
+        <option value="5">5th Grade</option>
+        <option value="6">6th Grade</option>
+        <option value="7">7th Grade</option>
+        <option value="8">8th Grade</option>
+        <option value="9">9th Grade</option>
+        <option value="10">10th Grade</option>
+        <option value="11">11th Grade</option>
+        <option value="12">12th Grade</option>
+        <option value="College">College</option>
+      </select>
+
+      <div id="math-course-section" class="hidden">
+        <label for="mathCourse">Which math course?</label>
+        <select id="mathCourse">
+          <option value="">Select a course</option>
+          <option value="Algebra 1">Algebra 1</option>
+          <option value="Geometry">Geometry</option>
+          <option value="Algebra 2">Algebra 2</option>
+          <option value="Pre-Calculus">Pre-Calculus</option>
+          <option value="Calculus">Calculus</option>
+          <option value="Statistics">Statistics</option>
+          <option value="College Algebra">College Algebra</option>
+          <option value="Discrete Math">Discrete Math</option>
+        </select>
+      </div>
+
+      <label for="learningStyle">How do you learn best?</label>
+      <select id="learningStyle" required>
+        <option value="">Choose one</option>
+        <option value="Visual">Visual</option>
+        <option value="Auditory">Auditory</option>
+        <option value="Kinesthetic">Kinesthetic</option>
+      </select>
+
+      <label for="tonePreference">What’s your vibe?</label>
+      <select id="tonePreference" required>
+        <option value="">Choose one</option>
+        <option value="Chill">Chill but serious</option>
+        <option value="Motivational">Hype me up</option>
+        <option value="Serious">Straight to the point</option>
+      </select>
+
+      <label>Pick a few things you’re into:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" value="Football" /> Football</label>
+        <label><input type="checkbox" value="Basketball" /> Basketball</label>
+        <label><input type="checkbox" value="Soccer" /> Soccer</label>
+        <label><input type="checkbox" value="Music" /> Music</label>
+        <label><input type="checkbox" value="Gaming" /> Gaming</label>
+        <label><input type="checkbox" value="Coding" /> Coding</label>
+        <label><input type="checkbox" value="Photography" /> Photography</label>
+        <label><input type="checkbox" value="Art" /> Art</label>
+        <label><input type="checkbox" value="Dance" /> Dance</label>
+      </div>
+
+      <button type="submit" class="submit-btn">Create Account</button>
+    </form>
+  </div>
+<footer style="text-align:center; margin-top:50px; padding:20px; font-size:0.9rem; color:#64748b;">
+  <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
+  <p>
+    <a href="/privacy.html">Privacy Policy</a> |
+    <a href="/terms.html">Terms of Use</a>
+  </p>
+</footer>
+</body>
+</html>

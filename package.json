@@ -1,0 +1,41 @@
+{
+  "name": "mathmatix-ai",
+  "version": "1.0.0",
+  "description": "Interactive AI math tutor",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+	"dev": "nodemon server.js"
+  },
+	"author": "Jason Nappier",
+"license": "MIT",
+"repository": {
+  "type": "git",
+  "url": "https://github.com/jnappier7/mathmatix-ai.git"
+},
+"keywords": ["math", "AI", "tutor", "Gemini", "OCR", "education"],
+
+  "dependencies": {
+    "@google/generative-ai": "^0.3.0",
+    "axios": "^1.6.7",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "elevenlabs": "^1.58.0",
+    "express": "^4.19.2",
+    "express-session": "^1.18.1",
+    "form-data": "^4.0.0",
+    "mathjax": "^3.2.2",
+    "mongoose": "^8.14.1",
+    "multer": "^1.4.5-lts.1",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-microsoft": "^2.1.0",
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^21.3.8",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
