@@ -1,7 +1,7 @@
 const userId = localStorage.getItem("userId");
 
 // ELEMENTS
-const chat = document.getElementById("chat");
+const chat = document.getElementById("chat-container-inner");
 const input = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-button");
 const clearBtn = document.getElementById("clear-btn");
