@@ -2,40 +2,99 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MATHMATIX AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
-  <script defer src="https://unpkg.com/mathlive"></script>
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen;
+      margin: 0;
+      background-color: #f5f8fb;
+    }
+    .chat-container {
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+    .message {
+      margin: 10px 0;
+      padding: 14px 18px;
+      border-radius: 20px;
+      max-width: 80%;
+      word-wrap: break-word;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+    .ai-message {
+      background: #eef2f5;
+      align-self: flex-start;
+    }
+    .user-message {
+      background: #dcf8c6;
+      align-self: flex-end;
+      text-align: right;
+      margin-left: auto;
+    }
+    .input-row {
+      display: flex;
+      justify-content: center;
+      margin: 30px auto;
+      max-width: 700px;
+      padding: 0 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    button {
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #16a085;
+    }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+      margin-top: 40px;
+      padding-bottom: 20px;
+    }
+    .logo {
+      display: block;
+      margin: 20px auto 0;
+      width: 180px;
+    }
+  </style>
 </head>
 <body>
-  <div id="app">
-    <header>
-      <button id="logoutBtn">Log Out</button>
-      <div class="logo">Mathmatix Logo</div>
-    </header>
 
-    <main id="chat-container">
-      <div id="chat"></div>
-      <div id="thinking" class="thinking">M∆THM∆TIΧ is thinking...</div>
-    </main>
+  <img src="logo.png" alt="Mathmatix Logo" class="logo"/>
 
-    <div id="tool-row">
-      <input type="text" id="user-input" placeholder="Type your message…" autocomplete="off" />
-      <button id="send-button">Send</button>
-      <button id="insert-equation-btn">Insert Equation</button>
-      <button id="mic-btn">Mic</button>
-      <label for="file-input" class="attach-label">📎</label>
-      <input type="file" id="file-input" hidden />
-    </div>
+  <div class="chat-container" id="chat"></div>
 
-    <div id="math-field"></div>
-    <div id="handsfree-toggle">Hands-Free Mode: <span id="handsfree-status">OFF</span></div>
-
-    <footer>
-      <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.<br/>
-      <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
-    </footer>
+  <div class="input-row">
+    <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" />
+    <button id="send-button">Send</button>
+    <button id="insert-equation">Insert Equation</button>
+    <button id="mic-button">Mic</button>
+    <button id="attach-button">📎</button>
   </div>
+
+  <footer>
+    © 2025 M∆THM∆TIΧ AI. All rights reserved.<br />
+    <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Use</a>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
