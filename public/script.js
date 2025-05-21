@@ -54,12 +54,14 @@ async function sendMessage() {
 }
 
 sendBtn.addEventListener("click", sendMessage);
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault(); // ✅ prevent newline
-    sendMessage();
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault(); // prevent newline
+    sendMessage();      // send on plain Enter
   }
+  // Shift + Enter will fall through naturally and insert a newline
 });
+
 
 // Math Equation Insertion
 insertEquationBtn.addEventListener("click", () => {
