@@ -18,11 +18,21 @@ const { SYSTEM_PROMPT } = require("./utils/prompt");
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+// Mount chat + welcome routes
 app.use("/chat", chatRoute);
 app.use("/welcome-message", require("./routes/welcome"));
 
-app.use(express.static(path.join(__dirname, "public")));
+// Session config
+app.use(session({
+  secret: process.env.SESSION_SECRET || "dev-secret",
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
+// MongoDB
 if (process.env.MONGO_URI) {
   mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -32,16 +42,28 @@ if (process.env.MONGO_URI) {
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 }
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || "dev-secret",
-  resave: false,
-  saveUninitialized: false
-}));
+// 🔒 Protect /chat.html from unauthenticated access
+app.use("/chat.html", (req, res, next) => {
+  if (req.isAuthenticated()) {
+    next();
+  } else {
+    res.redirect("/login.html");
+  }
+});
 
-app.use(passport.initialize());
-app.use(passport.session());
+// 🔁 Redirect root based on login status
+app.get("/", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.redirect("/chat.html");
+  } else {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+  }
+});
 
-// ✅ Logout Route
+// Serve static assets
+app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ Logout
 app.get("/logout", (req, res) => {
   req.logout(() => {
     req.session.destroy(() => {
@@ -51,7 +73,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// ✅ Profile Completion Endpoint
+// ✅ Profile completion
 app.post("/api/complete-profile", async (req, res) => {
   const {
     userId,
@@ -96,16 +118,12 @@ app.use("/image", imageRoute);
 app.use("/image-search", imageSearchRoute);
 app.use("/speak", speakRoute);
 
-// ✅ Fallback + Homepage
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
+// Fallback 404
 app.use((req, res) => {
   res.status(404).send("🔍 Route not found.");
 });
 
-// ✅ Start the server
+// Start server
 app.listen(PORT, () => {
   console.log(`🚀 M∆THM∆TIΧ AI running on http://localhost:${PORT}`);
 });
