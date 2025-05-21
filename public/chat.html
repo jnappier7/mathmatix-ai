@@ -2,46 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MATHMATIX AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="mathlive.css" />
+  <script defer src="script.js"></script>
+  <script defer src="https://unpkg.com/mathlive"></script>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <button id="logout-btn">Log Out</button>
-    <h1>Mathmatix Logo</h1>
-  </header>
+  <div id="app">
+    <header>
+      <button id="logoutBtn">Log Out</button>
+      <div class="logo">Mathmatix Logo</div>
+    </header>
 
-  <!-- Chat Container -->
-  <main id="chat-container">
-    <div id="chat-container-inner"></div>
-  </main>
+    <main id="chat-container">
+      <div id="chat"></div>
+      <div id="thinking" class="thinking">M∆THM∆TIΧ is thinking...</div>
+    </main>
 
-  <!-- Input Area -->
-  <section id="input-area">
-    <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" />
-    <button id="send-button">Send</button>
-    <button id="insert-equation-btn">Insert Equation</button>
-    <button id="mic-btn">Mic</button>
-    <button id="clear-btn">Clear</button>
-  </section>
+    <div id="tool-row">
+      <input type="text" id="user-input" placeholder="Type your message…" autocomplete="off" />
+      <button id="send-button">Send</button>
+      <button id="insert-equation-btn">Insert Equation</button>
+      <button id="mic-btn">Mic</button>
+      <label for="file-input" class="attach-label">📎</label>
+      <input type="file" id="file-input" hidden />
+    </div>
 
-  <!-- Hands-Free Toggle -->
-  <section id="handsfree-toggle">
-    <span>Hands-Free Mode: <strong id="handsfree-status">OFF</strong></span>
-  </section>
+    <div id="math-field"></div>
+    <div id="handsfree-toggle">Hands-Free Mode: <span id="handsfree-status">OFF</span></div>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-    <a href="/privacy.html">Privacy Policy</a> |
-    <a href="/terms.html">Terms of Use</a>
-  </footer>
-
-  <!-- Scripts -->
-  <script src="mathlive.min.js"></script>
-  <script src="script.js" defer></script>
+    <footer>
+      <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.<br/>
+      <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+    </footer>
+  </div>
 </body>
 </html>
