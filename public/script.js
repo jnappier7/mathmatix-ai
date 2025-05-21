@@ -1,12 +1,12 @@
 const userId = localStorage.getItem("userId");
-const chat = document.getElementById("chat");
+const chat = document.getElementById("chat-container-inner"); // ✅ matches chat.html
 const input = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-button");
-const clearBtn = document.getElementById("clear-btn");
-const micBtn = document.getElementById("mic-btn");
-const insertEquationBtn = document.getElementById("insert-equation-btn");
-const thinking = document.getElementById("thinking");
-const mathFieldContainer = document.getElementById("math-field");
+// const clearBtn = document.getElementById("clear-btn"); // ❌ not present in HTML
+const micBtn = document.getElementById("mic-button"); // ✅ fixed ID
+const insertEquationBtn = document.getElementById("equation-button"); // ✅ fixed ID
+const thinking = document.getElementById("thinking-indicator"); // ✅ fixed ID
+const mathFieldContainer = document.getElementById("equation-preview"); // ✅ matches popup preview area
 
 // Floating badge toggle
 function showThinking(active) {
@@ -55,7 +55,10 @@ async function sendMessage() {
 
 sendBtn.addEventListener("click", sendMessage);
 input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") sendMessage();
+  if (e.key === "Enter") {
+    e.preventDefault(); // ✅ prevent newline
+    sendMessage();
+  }
 });
 
 // Math Equation Insertion
