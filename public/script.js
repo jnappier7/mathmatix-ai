@@ -61,11 +61,11 @@ const appendMessage = (text, sender = "ai") => {
 };
 
 const sendMessage = async () => {
-  const message = input.value.trim();
+  const message = input.getValue().trim(); // for MathLive compatibility
   if (!message) return;
 
   appendMessage(message, "user");
-  input.value = "";
+  input.setValue("");
   toggleThinking(true);
 
   try {
@@ -152,13 +152,12 @@ micBtn?.addEventListener("click", () => {
 });
 
 insertEquationBtn?.addEventListener("click", () => {
-  const inputArea = document.getElementById("user-input");
-  const mathField = document.createElement("math-field");
-  mathField.setAttribute("virtual-keyboard-mode", "onfocus");
-  mathField.style.fontSize = "18px";
-  mathField.style.marginBottom = "10px";
-  inputArea.parentNode.insertBefore(mathField, inputArea);
-  mathField.focus();
+  input.focus(); // ✅ focuses the main inline math-field,
+input.setValue("\\boxed{}");
+input.focus();
+
+});
+
 
   mathField.addEventListener("change", () => {
     inputArea.value = mathField.value;
