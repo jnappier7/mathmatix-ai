@@ -5,6 +5,8 @@ const micBtn = document.getElementById("mic-button");
 const clearBtn = document.getElementById("clear-btn");
 const handsFreeBtn = document.getElementById("handsfree-toggle");
 const insertEquationBtn = document.getElementById("equation-button");
+const fileInput = document.getElementById("file-input");
+const fileUploadBtn = document.getElementById("file-upload");
 
 let recognition;
 let isRecognizing = false;
@@ -78,9 +80,9 @@ const sendMessage = async () => {
 
     if (data.text) appendMessage(data.text, "ai");
     if (data.image) {
-  const imgHtml = `<img src="${data.image}" alt="Math visual" class="chat-image">`;
-  appendMessage(imgHtml, "ai");
-}
+      const imgHtml = `<img src="${data.image}" alt="Math visual" class="chat-image">`;
+      appendMessage(imgHtml, "ai");
+    }
 
   } catch (err) {
     appendMessage("⚠️ AI error. Please try again.", "ai");
@@ -161,7 +163,92 @@ insertEquationBtn?.addEventListener("click", () => {
   mathField.addEventListener("change", () => {
     inputArea.value = mathField.value;
   });
+});
 
+// 🆕 Upload Handling
+fileUploadBtn?.addEventListener("click", () => fileInput.click());
+
+fileInput?.addEventListener("change", async () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("name", localStorage.getItem("name") || "N/A");
+  formData.append("tone", localStorage.getItem("tone") || "Default");
+  formData.append("learningStyle", localStorage.getItem("learningStyle") || "N/A");
+  formData.append("interests", localStorage.getItem("interests") || "N/A");
+
+  appendMessage("📎 Uploading your file…", "ai");
+
+  try {
+    const res = await fetch("/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (data.extracted) appendMessage(`🧠 I found this on your file:\n\n${data.extracted}`, "ai");
+    if (data.text) appendMessage(data.text, "ai");
+
+  } catch (err) {
+    console.error("❌ Upload error:", err);
+    appendMessage("⚠️ File upload failed. Try again?", "ai");
+  } finally {
+    fileInput.value = ""; // Reset input
+  }
+});
+
+// 🆕 Drag-and-Drop Upload Zone + Ghost Overlay
+const dropzone = document.getElementById("dropzone");
+
+["dragenter", "dragover"].forEach((event) => {
+  window.addEventListener(event, (e) => {
+    e.preventDefault();
+    dropzone.classList.add("drag-active");
+  });
+});
+
+["dragleave", "drop"].forEach((event) => {
+  window.addEventListener(event, (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("drag-active");
+  });
+});
+
+window.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("name", localStorage.getItem("name") || "N/A");
+  formData.append("tone", localStorage.getItem("tone") || "Default");
+  formData.append("learningStyle", localStorage.getItem("learningStyle") || "N/A");
+  formData.append("interests", localStorage.getItem("interests") || "N/A");
+
+  appendMessage("📎 Uploading your file…", "ai");
+
+  try {
+    const res = await fetch("/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (data.extracted) appendMessage(`🧠 I found this on your file:\n\n${data.extracted}`, "ai");
+    if (data.text) appendMessage(data.text, "ai");
+
+  } catch (err) {
+    console.error("❌ Upload error:", err);
+    appendMessage("⚠️ File upload failed. Try again?", "ai");
+  }
+});
+
+// Welcome message fetch
 window.addEventListener("DOMContentLoaded", async () => {
   const userId = localStorage.getItem("userId");
   if (!userId) return;
@@ -174,6 +261,4 @@ window.addEventListener("DOMContentLoaded", async () => {
   } catch (err) {
     console.error("⚠️ Welcome message error:", err.message);
   }
-});
-
 });
