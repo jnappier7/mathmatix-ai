@@ -1,28 +1,25 @@
-// pdf-to-image.js — Render-safe Puppeteer with no hardcoded executablePath
+// utils/pdf-to-image.js — Bulletproof PDF to image conversion using pdf2pic
 
-const puppeteer = require("puppeteer");
+const { fromBuffer } = require("pdf2pic");
 
 module.exports = async function pdfToImageBase64(pdfBuffer) {
   try {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    const convert = fromBuffer(pdfBuffer, {
+      density: 300,
+      format: "png",
+      width: 1240,
+      height: 1754,
     });
 
-    const page = await browser.newPage();
+    const page = await convert(1); // Only first page
+    if (!page || !page.base64) {
+      console.warn("⚠️ PDF conversion failed or returned empty.");
+      return null;
+    }
 
-    const base64PDF = pdfBuffer.toString("base64");
-    const dataURI = `data:application/pdf;base64,${base64PDF}`;
-
-    await page.goto(dataURI, { waitUntil: "networkidle0" });
-
-    const screenshot = await page.screenshot({ encoding: "base64", fullPage: true });
-
-    await browser.close();
-
-    return `data:image/png;base64,${screenshot}`;
+    return `data:image/png;base64,${page.base64}`;
   } catch (err) {
-    console.error("🧨 Puppeteer PDF screenshot failed:", err.message);
+    console.error("🧨 PDF-to-image conversion failed:", err.message);
     return null;
   }
 };
