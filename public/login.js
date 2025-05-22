@@ -11,24 +11,17 @@ document.getElementById("login-form").addEventListener("submit", async function 
       body: JSON.stringify({ username, password })
     });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      alert(err.message || "Invalid username or password.");
-      return;
-    }
-
     const data = await res.json();
 
-    if (!data.user || !data.user._id) {
-      alert("Login failed. No user data returned.");
-      return;
+    if (res.ok) {
+      localStorage.setItem("mathmatixUser", JSON.stringify(data.user));
+      localStorage.setItem("userId", data.user._id); // ✅ now saved to use in chat.js
+      localStorage.setItem("name", data.user.name);
+      localStorage.setItem("tone", data.user.tonePreference);
+      window.location.href = "/chat.html";
+    } else {
+      alert(data.message || "Invalid username or password.");
     }
-
-    localStorage.setItem("mathmatixUser", JSON.stringify(data.user));
-    localStorage.setItem("userId", data.user._id);
-    localStorage.setItem("name", data.user.name);
-    localStorage.setItem("tone", data.user.tonePreference);
-    window.location.href = "/chat.html";
   } catch (err) {
     console.error(err);
     alert("Something went wrong while logging in.");

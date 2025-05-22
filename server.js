@@ -18,21 +18,11 @@ const { SYSTEM_PROMPT } = require("./utils/prompt");
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-
-// Mount chat + welcome routes
 app.use("/chat", chatRoute);
 app.use("/welcome-message", require("./routes/welcome"));
 
-// Session config
-app.use(session({
-  secret: process.env.SESSION_SECRET || "dev-secret",
-  resave: false,
-  saveUninitialized: false
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(express.static(path.join(__dirname, "public")));
 
-// MongoDB
 if (process.env.MONGO_URI) {
   mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -42,28 +32,16 @@ if (process.env.MONGO_URI) {
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 }
 
-// 🔒 Protect /chat.html from unauthenticated access
-app.use("/chat.html", (req, res, next) => {
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    res.redirect("/login.html");
-  }
-});
+app.use(session({
+  secret: process.env.SESSION_SECRET || "dev-secret",
+  resave: false,
+  saveUninitialized: false
+}));
 
-// 🔁 Redirect root based on login status
-app.get("/", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.redirect("/chat.html");
-  } else {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-  }
-});
+app.use(passport.initialize());
+app.use(passport.session());
 
-// Serve static assets
-app.use(express.static(path.join(__dirname, "public")));
-
-// ✅ Logout
+// ✅ Logout Route
 app.get("/logout", (req, res) => {
   req.logout(() => {
     req.session.destroy(() => {
@@ -73,7 +51,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// ✅ Profile completion
+// ✅ Profile Completion Endpoint
 app.post("/api/complete-profile", async (req, res) => {
   const {
     userId,
@@ -118,12 +96,16 @@ app.use("/image", imageRoute);
 app.use("/image-search", imageSearchRoute);
 app.use("/speak", speakRoute);
 
-// Fallback 404
+// ✅ Fallback + Homepage
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 app.use((req, res) => {
   res.status(404).send("🔍 Route not found.");
 });
 
-// Start server
+// ✅ Start the server
 app.listen(PORT, () => {
   console.log(`🚀 M∆THM∆TIΧ AI running on http://localhost:${PORT}`);
 });

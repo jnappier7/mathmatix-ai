@@ -1,69 +1,125 @@
 const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const fetch = require("node-fetch");
 const User = require("../models/User");
-const { getLastSessionSummary } = require("../utils/postprocess");
+const { generateSystemPrompt } = require("../utils/prompt");
 
-const sessionHistory = {}; // in-memory cache
+const SESSION_TRACKER = {};
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-function extractEquation(message) {
-  const match = message.match(/y\s*=\s*[-+*/^x\d\s.]+/i);
-  return match ? match[0] : null;
-}
+const sendWithFallback = async (chat, message) => {
+  try {
+    const result = await chat.sendMessage([{ text: message }]);
+    return { response: result.response.text().trim(), modelUsed: "flash" };
+  } catch (err) {
+    console.error("❌ Gemini error:", err.message || err);
+    return {
+      response: "⚠️ I'm having trouble responding right now. Please try again.",
+      modelUsed: null,
+    };
+  }
+};
 
-function shouldIncludeVisual(message) {
-  return /graph|plot|parabola|line|slope|equation|visual/i.test(message);
-}
+const visualIntentCheck = async (prompt, response) => {
+  const visualCheckPrompt = `
+You are Mathmatix AI, a math tutor who only shows visuals when they support learning.
 
-// SYSTEM INSTRUCTIONS FOR AI TONE & MEMORY FLEX
-const BASE_PROMPT = `
-You are Mathmatix AI, a human-like math tutor. Your role is to help students think critically and discover math patterns. Be conversational, adaptable, and supportive. DO NOT lecture. Use casual, natural language. Never say “I’m just a language model.” Never say “I can’t.”
+Student asked: "${prompt}"
+You replied: "${response}"
 
-Use past session info to jog memory, but let the student choose what to do next. Do NOT continue a session unless the student explicitly asks for it. Your job is to engage, not push.
-
-Use the 1–2–3 scale check only at the end of a concept.
-
-Never generate cartoon images, memes, or photos. If needed, use a desmos:// URL with a math expression for visuals.
+Would a visual (e.g. graph, diagram) help explain this? Reply only YES or NO.
 `;
 
-router.post("/", async (req, res) => {
-  const { message, userId } = req.body;
-  const user = await User.findById(userId).lean();
-  if (!user) return res.status(404).json({ error: "User not found" });
-
-  const memory = sessionHistory[userId] || [];
-  memory.push({ role: "user", parts: [{ text: message }] });
-
-  const equation = extractEquation(message);
-  const shouldVisualize = shouldIncludeVisual(message);
-  let visualUrl = null;
-
-  if (equation && shouldVisualize) {
-    visualUrl = `desmos://${encodeURIComponent(equation.replace(/\s+/g, ""))}`;
-  }
-
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-  const chat = model.startChat({
-    history: [
-      { role: "user", parts: [{ text: BASE_PROMPT }] },
-      ...memory.slice(-10),
-    ],
-    generationConfig: { temperature: 0.7 },
-  });
-
   try {
-    const result = await chat.sendMessage(message);
-    const reply = result.response.text().trim();
-
-    memory.push({ role: "model", parts: [{ text: reply }] });
-    sessionHistory[userId] = memory;
-
-    res.json({ text: reply, image: visualUrl });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const check = await model.generateContent(visualCheckPrompt);
+    const result = await check.response.text();
+    return result.trim().toUpperCase().startsWith("YES");
   } catch (err) {
-    console.error("❌ Chat error:", err.message || err);
-    res.status(500).json({ error: "AI error. Please try again." });
+    console.warn("⚠️ Visual intent check failed:", err.message || err);
+    return false;
   }
+};
+
+const extractGraphableEquation = (text) => {
+  const match = text.match(/y\s*=\s*[-+]?[\dx\s\^\/\*\.\+\-\(\)]+/i);
+  return match ? match[0] : null;
+};
+
+router.post("/", async (req, res) => {
+  const { userId, message } = req.body;
+  if (!userId || !message) return res.status(400).send("Missing userId or message.");
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).send("User not found.");
+
+  const session = SESSION_TRACKER[userId] || {
+    history: [{ role: "user", parts: [{ text: generateSystemPrompt(user) }] }],
+    messageLog: [],
+  };
+  SESSION_TRACKER[userId] = session;
+
+  const last = session.history.at(-1)?.role;
+  if (last === "user") {
+    session.history.push({ role: "model", parts: [{ text: "..." }] });
+  }
+
+  session.messageLog.push({ role: "user", content: message });
+
+  const chat = flashModel.startChat({ history: session.history });
+  const { response: text, modelUsed } = await sendWithFallback(chat, message);
+
+  let visualUrl = null;
+  const equation = extractGraphableEquation(message);
+  const shouldUseVisual = text && await visualIntentCheck(message, text);
+
+  if (equation && shouldUseVisual) {
+  const clean = equation.replace(/\s+/g, "");
+  visualUrl = `desmos://${encodeURIComponent(clean)}`;
+}
+
+
+  const lastRole = session.history.at(-1)?.role;
+  if (lastRole !== "model" && typeof text === "string" && text.trim()) {
+    session.history.push({ role: "model", parts: [{ text: text.trim() }] });
+  }
+
+  session.messageLog.push({ role: "model", content: text });
+  if (visualUrl) session.messageLog.push({ role: "model", content: visualUrl });
+
+  // Optional: Save summary (if summary system is active)
+  try {
+    const summaryPrompt = `
+Summarize this exchange like a math tutor reflecting on what was just covered. 1–2 sentences only.
+Student: ${message}
+Tutor: ${text}
+`;
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const summaryRes = await model.generateContent(summaryPrompt);
+    const sessionSummary = summaryRes.response.text().trim();
+
+    user.conversations = user.conversations || [];
+    user.conversations.push({
+      summary: sessionSummary,
+      messages: session.messageLog.map((m) => ({
+        role: m.role,
+        content: m.content
+      }))
+    });
+
+    await user.save();
+  } catch (err) {
+    console.error("⚠️ Failed to save session summary:", err.message);
+  }
+
+  res.send({
+    text: text || "⚠️ AI returned an invalid or empty response.",
+    image: visualUrl || null,
+    modelUsed,
+  });
 });
 
 module.exports = router;
