@@ -4,8 +4,8 @@
   "description": "Interactive AI math tutor",
   "main": "server.js",
   "scripts": {
-	"start": "node server.js",
-	"dev": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "author": "Jason Nappier",
   "license": "MIT",
@@ -21,6 +21,9 @@
     "OCR",
     "education"
   ],
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@google/generative-ai": "^0.3.0",
     "axios": "^1.6.7",
@@ -39,7 +42,7 @@
     "passport-microsoft": "^2.1.0",
     "pdf-lib": "^1.17.1",
     "pdf2pic": "^3.1.4",
-    "puppeteer": "^21.3.8",
+    "puppeteer": "^24.9.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

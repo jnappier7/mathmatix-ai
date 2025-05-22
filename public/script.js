@@ -152,16 +152,10 @@ micBtn?.addEventListener("click", () => {
 });
 
 insertEquationBtn?.addEventListener("click", () => {
-  input.focus(); // ✅ focuses the main inline math-field,
-input.setValue("\\boxed{}");
-input.focus();
-
+  input.setValue("\\boxed{}");
+  input.focus();
 });
 
-
-  mathField.addEventListener("change", () => {
-    inputArea.value = mathField.value;
-  });
 });
 
 // 🆕 Upload Handling
