@@ -6,7 +6,7 @@
   "scripts": {
 	"start": "node server.js",
 	"dev": "nodemon server.js",
-	"postinstall": "puppeteer install"
+	"postinstall": "node scripts/install-puppeteer.js"
   },
   "author": "Jason Nappier",
   "license": "MIT",
