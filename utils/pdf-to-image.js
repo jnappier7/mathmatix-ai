@@ -4,6 +4,7 @@ const puppeteer = require("puppeteer");
 
 module.exports = async function pdfToImageBase64(pdfBuffer) {
   try {
+	process.env.PUPPETEER_EXECUTABLE_PATH = require("puppeteer").executablePath();
     const browser = await puppeteer.launch({
       headless: "new",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
