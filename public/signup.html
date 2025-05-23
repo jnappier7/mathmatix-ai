@@ -84,6 +84,7 @@
 
     .submit-btn {
       margin-top: 25px;
+      margin-bottom: 60px;
       width: 100%;
       padding: 12px;
       font-size: 1.1rem;
@@ -125,27 +126,33 @@
       <img src="MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
     </div>
 
-    <h1>Welcome to M∆THM∆TIΧ AI</h1>
-    <p class="subtitle">Let’s get you set up.</p>
+	<h1>Let’s make math make sense — for YOU.</h1>
+	<p class="subtitle">Start by telling us how you learn best.</p>
 
-    <div style="text-align: center; margin-bottom: 25px;">
-  
-
- 
-</div>
 
     <form id="signup-form">
       <label for="username">Username</label>
-      <input type="text" id="username" required />
+      <input type="text" id="username" name="username" required />
+		
+	  <label for="email">Email</label>
+	  <input type="email" id="email" name="email" required />
 
       <label for="password">Password</label>
-      <input type="password" id="password" required />
+	  <input type="password" id="password" name="password" required />
+
+	  <label for="confirm-password">Confirm Password</label>
+	  <input type="password" id="confirm-password" name="confirm-password" required />
+
+<small style="color:#64748b; font-size:0.9rem; display:block; margin-top:6px;">
+  Must be at least 8 characters and include one capital letter and one number.
+</small>
+
 
       <label for="name">First Name</label>
-      <input type="text" id="name" required />
+      <input type="text" id="name" name="name" required />
 
       <label for="grade">Grade Level</label>
-      <select id="grade" required>
+      <select id="grade" name="grade" required>
         <option value="">Select your grade</option>
         <option value="K">Kindergarten</option>
         <option value="1">1st Grade</option>
@@ -165,7 +172,7 @@
 
       <div id="math-course-section" class="hidden">
         <label for="mathCourse">Which math course?</label>
-        <select id="mathCourse">
+        <select id="mathCourse" name="mathCourse">
           <option value="">Select a course</option>
           <option value="Algebra 1">Algebra 1</option>
           <option value="Geometry">Geometry</option>
@@ -179,7 +186,7 @@
       </div>
 
       <label for="learningStyle">How do you learn best?</label>
-      <select id="learningStyle" required>
+      <select id="learningStyle" name="learningStyle" required>
         <option value="">Choose one</option>
         <option value="Visual">Visual</option>
         <option value="Auditory">Auditory</option>
@@ -187,7 +194,7 @@
       </select>
 
       <label for="tonePreference">What’s your vibe?</label>
-      <select id="tonePreference" required>
+      <select id="tonePreference" name="tonePreference" required>
         <option value="">Choose one</option>
         <option value="Chill">Chill but serious</option>
         <option value="Motivational">Hype me up</option>
@@ -196,26 +203,27 @@
 
       <label>Pick a few things you’re into:</label>
       <div class="checkbox-group">
-        <label><input type="checkbox" value="Football" /> Football</label>
-        <label><input type="checkbox" value="Basketball" /> Basketball</label>
-        <label><input type="checkbox" value="Soccer" /> Soccer</label>
-        <label><input type="checkbox" value="Music" /> Music</label>
-        <label><input type="checkbox" value="Gaming" /> Gaming</label>
-        <label><input type="checkbox" value="Coding" /> Coding</label>
-        <label><input type="checkbox" value="Photography" /> Photography</label>
-        <label><input type="checkbox" value="Art" /> Art</label>
-        <label><input type="checkbox" value="Dance" /> Dance</label>
+        <label><input type="checkbox" name="interests[]" value="Football" /> Football</label>
+        <label><input type="checkbox" name="interests[]" value="Basketball" /> Basketball</label>
+        <label><input type="checkbox" name="interests[]" value="Soccer" /> Soccer</label>
+        <label><input type="checkbox" name="interests[]" value="Music" /> Music</label>
+        <label><input type="checkbox" name="interests[]" value="Gaming" /> Gaming</label>
+        <label><input type="checkbox" name="interests[]" value="Coding" /> Coding</label>
+        <label><input type="checkbox" name="interests[]" value="Photography" /> Photography</label>
+        <label><input type="checkbox" name="interests[]" value="Art" /> Art</label>
+        <label><input type="checkbox" name="interests[]" value="Dance" /> Dance</label>
       </div>
 
       <button type="submit" class="submit-btn">Create Account</button>
     </form>
   </div>
-<footer style="text-align:center; margin-top:50px; padding:20px; font-size:0.9rem; color:#64748b;">
-  <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-  <p>
-    <a href="/privacy.html">Privacy Policy</a> |
-    <a href="/terms.html">Terms of Use</a>
-  </p>
-</footer>
+
+  <footer style="text-align:center; margin-top:50px; padding:20px; font-size:0.9rem; color:#64748b;">
+    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
 </body>
 </html>

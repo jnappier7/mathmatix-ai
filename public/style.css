@@ -27,8 +27,8 @@ body {
 }
 
 footer {
-  position: fixed;
-  bottom: 0;
+  position: relative;
+  margin-top: 40px;
   left: 0;
   width: 100%;
   text-align: center;
@@ -322,4 +322,8 @@ math-field {
 
 #dropzone {
   transition: background-color 0.3s ease;
+}
+
+button[type="submit"] {
+  margin-bottom: 60px;
 }
