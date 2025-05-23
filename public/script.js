@@ -11,11 +11,13 @@ input.addEventListener("keydown", (e) => {
 
   if (mathTriggers.test(key)) {
     inputMode = "math";
+    input.mathMode = "math"; // 🔥 This is the fix
     input.classList.add("math-mode");
   }
 
   if (key === " " && textTriggers.test(val.trim().split(" ").pop())) {
     inputMode = "text";
+    input.mathMode = "text"; // 🔥 Reset back to normal typing
     input.classList.remove("math-mode");
   }
 });
