@@ -27,18 +27,18 @@ body {
 }
 
 footer {
-  position: relative;
-  margin-top: 40px;
-  left: 0;
   width: 100%;
   text-align: center;
-  padding: 12px 0;
-  background-color: #111;
-  color: #ccc;
+  padding: 20px;
   font-size: 0.9rem;
-  border-top: 1px solid #333;
-  z-index: 100;
+  color: #64748b;
+  background-color: #f9fafb; /* match page bg or set dark if preferred */
+  border-top: 1px solid #e2e8f0;
+  margin-top: 80px;
+  position: relative;
 }
+
+
 
 body {
   margin-bottom: 60px; /* Prevent footer overlap */
@@ -227,6 +227,19 @@ body {
   z-index: 4;
 }
 
+footer {
+  position: relative;
+  margin-top: 60px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 16px 0;
+  background-color: #111;
+  color: #ccc;
+  font-size: 0.9rem;
+  border-top: 1px solid #333;
+  z-index: 100;
+}
 
 .dot {
   height: 10px;
@@ -326,4 +339,87 @@ math-field {
 
 button[type="submit"] {
   margin-bottom: 60px;
+}
+
+/* === Signup Form Styling === */
+.signup-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 30px;
+  padding-bottom: 100px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.logo-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo-header img {
+  max-width: 260px;
+  height: auto;
+}
+
+form label {
+  display: block;
+  margin: 15px 0 5px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.radio-group,
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.radio-group label,
+.checkbox-group label {
+  font-weight: normal;
+  color: #334155;
+}
+
+.submit-btn {
+  margin-top: 25px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1rem;
+  background: teal;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #0d9488;
+}
+
+@media (max-width: 600px) {
+ .signup-container {
+  padding-bottom: 100px;
+}
+
+
+  .submit-btn {
+    font-size: 1rem;
+  }
 }
