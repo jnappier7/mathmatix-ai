@@ -1,5 +1,25 @@
 const chatContainer = document.getElementById("chat-container-inner");
 const input = document.getElementById("user-input");
+let inputMode = "text";
+
+input.addEventListener("keydown", (e) => {
+  const key = e.key;
+  const val = input.getValue();
+
+  const mathTriggers = /^[0-9+\-*/=^√().πe]$/;
+  const textTriggers = /\b(what|how|and|the|is|solve|please)\b/i;
+
+  if (mathTriggers.test(key)) {
+    inputMode = "math";
+    input.classList.add("math-mode");
+  }
+
+  if (key === " " && textTriggers.test(val.trim().split(" ").pop())) {
+    inputMode = "text";
+    input.classList.remove("math-mode");
+  }
+});
+
 const sendBtn = document.getElementById("send-button");
 const micBtn = document.getElementById("mic-button");
 const clearBtn = document.getElementById("clear-btn");
@@ -66,6 +86,8 @@ const sendMessage = async () => {
 
   appendMessage(message, "user");
   input.setValue("");
+  inputMode = "text";
+  input.classList.remove("math-mode");
   toggleThinking(true);
 
   try {
