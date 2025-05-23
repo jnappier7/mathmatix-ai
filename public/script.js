@@ -280,3 +280,31 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.error("⚠️ Welcome message error:", err.message);
   }
 });
+
+document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+  const userId = localStorage.getItem("userId");
+  const lastMessages = JSON.parse(localStorage.getItem("lastMessages") || "[]");
+
+  if (userId && lastMessages.length) {
+    try {
+      const res = await fetch("/memory/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, messages: lastMessages })
+      });
+
+      if (!res.ok) throw new Error("Failed to save session summary");
+      console.log("✅ Session summary saved.");
+    } catch (err) {
+      console.error("❌ Error saving summary:", err);
+    }
+  }
+
+  // Only remove session identifiers, not preferences
+  localStorage.removeItem("userId");
+  localStorage.removeItem("mathmatixUser");
+  localStorage.removeItem("lastMessages");
+
+  // Redirect to login
+  window.location.href = "/login.html";
+});
