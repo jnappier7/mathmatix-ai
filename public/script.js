@@ -156,8 +156,6 @@ insertEquationBtn?.addEventListener("click", () => {
   input.focus();
 });
 
-});
-
 // 🆕 Upload Handling
 fileUploadBtn?.addEventListener("click", () => fileInput.click());
 
