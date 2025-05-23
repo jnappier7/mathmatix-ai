@@ -1,108 +1,133 @@
+/* ===== Base Page Styles ===== */
 body {
-  font-family: 'Poppins', 'Arial', sans-serif;
-  background: #f5f5f5;
+  background-color: #f4f7fa;
+  color: #333;
   margin: 0;
   padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ===== Container ===== */
 .signup-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px 30px 80px; /* bottom padding to prevent footer overlap */
   background: white;
-  padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  width: 90%;
-  max-width: 420px;
-  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* ===== Logo ===== */
 .logo-header {
-  margin-bottom: 10px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .logo-header img {
-  width: 200px;
+  max-width: 260px;
   height: auto;
 }
 
+/* ===== Headings ===== */
 h1 {
-  font-size: 26px;
-  margin: 10px 0;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #111827;
 }
 
 .subtitle {
-  font-size: 16px;
-  margin-bottom: 20px;
-  color: #666;
+  text-align: center;
+  color: #64748b;
+  margin-bottom: 25px;
+  font-size: 1rem;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
+/* ===== Labels & Inputs ===== */
 label {
-  margin-top: 15px;
-  font-weight: 600;
-  font-size: 15px;
-  text-align: left;
+  display: block;
+  margin: 15px 0 5px;
+  font-weight: bold;
+  color: #1e293b;
 }
 
-input, select {
-  margin-top: 5px;
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 1rem;
+  box-sizing: border-box;
 }
 
-.radio-group {
-  display: flex;
-  gap: 15px;
-  margin-top: 8px;
-  font-weight: normal;
-  justify-content: center;
-}
-
-.radio-group label {
-  display: flex;
-  align-items: center;
-  font-weight: normal;
-}
-
+/* ===== Groupings ===== */
+.radio-group,
 .checkbox-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 5px;
-  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
 }
 
+.radio-group label,
 .checkbox-group label {
-  flex: 1 0 45%;
   font-weight: normal;
+  color: #334155;
 }
 
+/* ===== Button ===== */
 .submit-btn {
-  margin-top: 24px;
+  margin-top: 25px;
+  width: 100%;
   padding: 12px;
-  background: #008080;
+  font-size: 1.1rem;
+  background: teal;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 18px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.3s ease;
 }
 
 .submit-btn:hover {
-  background: #006666;
+  background: #0d9488;
 }
 
+/* ===== Footer (matches main site) ===== */
+footer {
+  position: relative;
+  margin-top: 40px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 12px 0;
+  background-color: #111;
+  color: #ccc;
+  font-size: 0.9rem;
+  border-top: 1px solid #333;
+  z-index: 100;
+}
+
+/* ===== Utility ===== */
 .hidden {
   display: none;
+}
+
+/* ===== Responsive Mobile Layout ===== */
+@media (max-width: 600px) {
+  .signup-container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .submit-btn {
+    font-size: 1rem;
+  }
 }
