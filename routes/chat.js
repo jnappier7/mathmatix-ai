@@ -55,20 +55,24 @@ router.post("/", async (req, res) => {
   const user = await User.findById(userId);
   if (!user) return res.status(404).send("User not found.");
 
+  const systemPrompt = generateSystemPrompt(user);
+
   const session = SESSION_TRACKER[userId] || {
-    history: [{ role: "user", parts: [{ text: generateSystemPrompt(user) }] }],
+    history: [],
     messageLog: [],
+    systemPrompt
   };
   SESSION_TRACKER[userId] = session;
 
-  const last = session.history.at(-1)?.role;
-  if (last === "user") {
-    session.history.push({ role: "model", parts: [{ text: "..." }] });
-  }
-
   session.messageLog.push({ role: "user", content: message });
 
-  const chat = flashModel.startChat({ history: session.history });
+  const chat = flashModel.startChat({
+    toolsConfig: {
+      systemInstruction: systemPrompt
+    },
+    history: session.history
+  });
+
   const { response: text, modelUsed } = await sendWithFallback(chat, message);
 
   let visualUrl = null;
@@ -76,20 +80,18 @@ router.post("/", async (req, res) => {
   const shouldUseVisual = text && await visualIntentCheck(message, text);
 
   if (equation && shouldUseVisual) {
-  const clean = equation.replace(/\s+/g, "");
-  visualUrl = `desmos://${encodeURIComponent(clean)}`;
-}
+    const clean = equation.replace(/\s+/g, "");
+    visualUrl = `desmos://${encodeURIComponent(clean)}`;
+  }
 
-
-  const lastRole = session.history.at(-1)?.role;
-  if (lastRole !== "model" && typeof text === "string" && text.trim()) {
+  if (typeof text === "string" && text.trim()) {
+    session.history.push({ role: "user", parts: [{ text: message }] });
     session.history.push({ role: "model", parts: [{ text: text.trim() }] });
   }
 
   session.messageLog.push({ role: "model", content: text });
   if (visualUrl) session.messageLog.push({ role: "model", content: visualUrl });
 
-  // Optional: Save summary (if summary system is active)
   try {
     const summaryPrompt = `
 Summarize this exchange like a math tutor reflecting on what was just covered. 1–2 sentences only.
