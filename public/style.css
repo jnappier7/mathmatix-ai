@@ -425,3 +425,17 @@ form select {
     font-size: 1rem;
   }
 }
+
+.message,
+.message.user,
+.message.ai {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.message {
+  border-radius: 16px;
+  padding: 10px 14px;
+  line-height: 1.45;
+}
