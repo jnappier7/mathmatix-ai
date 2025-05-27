@@ -1,98 +1,69 @@
-const chatContainer = document.getElementById("chat-container-inner");
+const chatLog = document.getElementById("chat-log");
 const input = document.getElementById("user-input");
-let inputMode = "text";
-
-input.addEventListener("keydown", (e) => {
-  const key = e.key;
-  const val = input.getValue();
-
-  const mathTriggers = /^[0-9+\-*/=^√().πe]$/;
-  const textTriggers = /\b(what|how|and|the|is|solve|please)\b/i;
-
-  if (mathTriggers.test(key)) {
-    inputMode = "math";
-    input.mathMode = "math";
-    input.classList.add("math-mode");
-  }
-
-  if (key === " " && textTriggers.test(val.trim().split(" ").pop())) {
-    inputMode = "text";
-    input.mathMode = "text";
-    input.classList.remove("math-mode");
-  }
-});
-
 const sendBtn = document.getElementById("send-button");
 const micBtn = document.getElementById("mic-button");
-const clearBtn = document.getElementById("clear-btn");
-const handsFreeBtn = document.getElementById("handsfree-toggle");
-const insertEquationBtn = document.getElementById("equation-button");
-const fileInput = document.getElementById("file-input");
-const fileUploadBtn = document.getElementById("file-upload");
-
-let recognition;
-let isRecognizing = false;
-let isHandsFreeMode = false;
+const equationPopup = document.getElementById("equation-popup");
+const insertEquationBtn = document.getElementById("insert-equation");
+const mathEditor = document.getElementById("math-editor");
+const insertLatexBtn = document.getElementById("insert-latex");
+const cancelLatexBtn = document.getElementById("cancel-latex");
+const closeEquationPopup = document.getElementById("close-equation-popup");
 
 let userId = localStorage.getItem("userId");
-const sendBtnText = sendBtn.innerText;
+let synth = window.speechSynthesis;
+let thinkingInterval = null;
 
-const toggleThinking = (isThinking) => {
-  sendBtn.disabled = isThinking;
-  sendBtn.innerText = isThinking ? "Mathmatix is thinking..." : sendBtnText;
-};
+function appendMessage(text, role) {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("message", role);
 
-const appendMessage = (text, sender = "ai") => {
-  const message = document.createElement("div");
-  message.classList.add("message", sender);
+  const segments = text.split(/\n{2,}/); // Split on double newlines for paragraphs
+  segments.forEach(segment => {
+    const p = document.createElement("p");
 
-  const urlRegex = /(https?:\/\/[^\s]+)/gi;
-  const imageRegex = /\.(jpg|jpeg|png|gif|webp|svg)$/i;
-  const geoGebraRegex = /^https:\/\/www\.geogebra\.org\/graphing\?equation=/i;
-
-  const segments = text.split(urlRegex);
-
-  segments.forEach((segment) => {
-    if (geoGebraRegex.test(segment)) {
-      const iframe = document.createElement("iframe");
-      iframe.src = segment;
-      iframe.width = "100%";
-      iframe.height = "400px";
-      iframe.style.border = "none";
-      iframe.style.margin = "12px 0";
-      message.appendChild(iframe);
-    } else if (imageRegex.test(segment)) {
-      const img = document.createElement("img");
-      img.src = segment;
-      img.alt = "Visual";
-      img.style.maxWidth = "100%";
-      img.style.borderRadius = "8px";
-      img.style.margin = "10px 0";
-      message.appendChild(img);
-    } else if (segment.trim() !== "") {
-      const p = document.createElement("p");
-      p.textContent = segment.trim();
-      message.appendChild(p);
+    // Check if it contains MathJax inline math
+    if (segment.includes("\\(") || segment.includes("\\[")) {
+      p.innerHTML = segment.trim(); // Let MathJax handle it
+    } else {
+      p.textContent = segment.trim(); // Regular text
     }
+
+    wrapper.appendChild(p);
   });
 
-  chatContainer.appendChild(message);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  chatLog.appendChild(wrapper);
+  chatLog.scrollTop = chatLog.scrollHeight;
 
-  if (window.MathJax) MathJax.typesetPromise([message]);
-};
+  MathJax.typesetPromise([wrapper]); // Trigger render on new content
+}
 
-const sendMessage = async () => {
+function toggleThinking(active) {
+  if (active) {
+    const thinking = document.createElement("div");
+    thinking.classList.add("message", "ai", "thinking");
+    thinking.textContent = "Thinking...";
+    chatLog.appendChild(thinking);
+    chatLog.scrollTop = chatLog.scrollHeight;
+    thinkingInterval = setInterval(() => {
+      if (thinking.textContent.endsWith("...")) {
+        thinking.textContent = "Thinking";
+      } else {
+        thinking.textContent += ".";
+      }
+    }, 500);
+  } else {
+    clearInterval(thinkingInterval);
+    const thinkingMsg = document.querySelector(".message.thinking");
+    if (thinkingMsg) thinkingMsg.remove();
+  }
+}
+
+async function sendMessage() {
   const message = input.getValue().trim();
   if (!message) return;
 
-  const wrappedMessage = `$$${message}$$`;
-  appendMessage(wrappedMessage, "user");
-
+  appendMessage(message, "user");
   input.setValue("");
-  inputMode = "text";
-  input.mathMode = "text";
-  input.classList.remove("math-mode");
   toggleThinking(true);
 
   try {
@@ -103,220 +74,51 @@ const sendMessage = async () => {
     });
 
     if (!res.ok) throw new Error("Server error: " + res.status);
+
     const data = await res.json();
-
-    if (data.text) appendMessage(data.text, "ai");
-
-    if (data.image) {
-      const message = document.createElement("div");
-      message.classList.add("message", "ai");
-
-      const caption = document.createElement("p");
-      caption.textContent = "📷 Here's the visual:";
-      message.appendChild(caption);
-
-      const img = document.createElement("img");
-      img.src = data.image;
-      img.alt = "Math visual";
-      img.className = "chat-image";
-      message.appendChild(img);
-
-      chatContainer.appendChild(message);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-  } catch (err) {
-    appendMessage("⚠️ AI error. Please try again.", "ai");
-    console.error("❌ Chat error:", err);
-  } finally {
     toggleThinking(false);
+    appendMessage(data.text || "⚠️ No response from tutor.");
+  } catch (err) {
+    toggleThinking(false);
+    console.error("❌ Chat error:", err);
+    appendMessage("⚠️ AI error. Please try again.");
   }
-};
+}
 
 sendBtn.addEventListener("click", sendMessage);
 
-input.addEventListener("keydown", (e) => {
+input.element.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
-    sendBtn.click();
-  }
-});
-
-clearBtn?.addEventListener("click", () => {
-  chatContainer.innerHTML = "";
-});
-
-handsFreeBtn?.addEventListener("click", () => {
-  isHandsFreeMode = !isHandsFreeMode;
-  const label = document.getElementById("handsfree-label");
-  if (label) label.innerText = isHandsFreeMode ? "Hands-Free Mode: ON" : "Hands-Free Mode: OFF";
-});
-
-micBtn?.addEventListener("click", () => {
-  if (!("webkitSpeechRecognition" in window)) {
-    alert("Speech recognition not supported.");
-    return;
-  }
-
-  if (!recognition) {
-    recognition = new webkitSpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      input.value = transcript;
-      sendBtn.click();
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error", event);
-      recognition.stop();
-      isRecognizing = false;
-    };
-
-    recognition.onend = () => {
-      isRecognizing = false;
-      if (isHandsFreeMode) recognition.start();
-    };
-  }
-
-  if (isRecognizing) {
-    recognition.stop();
-    isRecognizing = false;
-    micBtn.classList.remove("active");
-  } else {
-    recognition.start();
-    isRecognizing = true;
-    micBtn.classList.add("active");
+    sendMessage();
   }
 });
 
 insertEquationBtn?.addEventListener("click", () => {
-  input.setValue("\\boxed{}");
-  input.focus();
+  equationPopup.style.display = "block";
+  mathEditor.focus();
 });
 
-// 📎 Upload Handling
-fileUploadBtn?.addEventListener("click", () => fileInput.click());
-
-fileInput?.addEventListener("change", async () => {
-  const file = fileInput.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("name", localStorage.getItem("name") || "N/A");
-  formData.append("tone", localStorage.getItem("tone") || "Default");
-  formData.append("learningStyle", localStorage.getItem("learningStyle") || "N/A");
-  formData.append("interests", localStorage.getItem("interests") || "N/A");
-
-  appendMessage("📎 Uploading your file…", "ai");
-
-  try {
-    const res = await fetch("/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (data.extracted) appendMessage(`🧠 I found this on your file:\n\n${data.extracted}`, "ai");
-    if (data.text) appendMessage(data.text, "ai");
-
-  } catch (err) {
-    console.error("❌ Upload error:", err);
-    appendMessage("⚠️ File upload failed. Try again?", "ai");
-  } finally {
-    fileInput.value = "";
+insertLatexBtn?.addEventListener("click", () => {
+  const latex = mathEditor.getValue();
+  if (latex) {
+    const formatted = `\\(${latex}\\)`;
+    const cursorPos = input.selectionStart || input.getValue().length;
+    const currentVal = input.getValue();
+    const updated = currentVal.slice(0, cursorPos) + formatted + currentVal.slice(cursorPos);
+    input.setValue(updated);
+    MathJax.typesetPromise([input]);
   }
+  mathEditor.setValue("");
+  equationPopup.style.display = "none";
 });
 
-// 📎 Drag-and-Drop Upload Zone + Ghost Overlay
-const dropzone = document.getElementById("dropzone");
-
-["dragenter", "dragover"].forEach((event) => {
-  window.addEventListener(event, (e) => {
-    e.preventDefault();
-    dropzone.classList.add("drag-active");
-  });
+cancelLatexBtn?.addEventListener("click", () => {
+  mathEditor.setValue("");
+  equationPopup.style.display = "none";
 });
 
-["dragleave", "drop"].forEach((event) => {
-  window.addEventListener(event, (e) => {
-    e.preventDefault();
-    dropzone.classList.remove("drag-active");
-  });
-});
-
-window.addEventListener("drop", async (e) => {
-  e.preventDefault();
-  const file = e.dataTransfer.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("name", localStorage.getItem("name") || "N/A");
-  formData.append("tone", localStorage.getItem("tone") || "Default");
-  formData.append("learningStyle", localStorage.getItem("learningStyle") || "N/A");
-  formData.append("interests", localStorage.getItem("interests") || "N/A");
-
-  appendMessage("📎 Uploading your file…", "ai");
-
-  try {
-    const res = await fetch("/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (data.extracted) appendMessage(`🧠 I found this on your file:\n\n${data.extracted}`, "ai");
-    if (data.text) appendMessage(data.text, "ai");
-
-  } catch (err) {
-    console.error("❌ Upload error:", err);
-    appendMessage("⚠️ File upload failed. Try again?", "ai");
-  }
-});
-
-// Welcome message fetch
-window.addEventListener("DOMContentLoaded", async () => {
-  const userId = localStorage.getItem("userId");
-  if (!userId) return;
-
-  try {
-    const res = await fetch(`/welcome-message?userId=${userId}`);
-    if (!res.ok) throw new Error("Failed to fetch welcome message");
-    const data = await res.json();
-    if (data.greeting) appendMessage(data.greeting, "ai");
-  } catch (err) {
-    console.error("⚠️ Welcome message error:", err.message);
-  }
-});
-
-document.getElementById("logoutBtn")?.addEventListener("click", async () => {
-  const userId = localStorage.getItem("userId");
-  const lastMessages = JSON.parse(localStorage.getItem("lastMessages") || "[]");
-
-  if (userId && lastMessages.length) {
-    try {
-      const res = await fetch("/memory/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, messages: lastMessages })
-      });
-
-      if (!res.ok) throw new Error("Failed to save session summary");
-      console.log("✅ Session summary saved.");
-    } catch (err) {
-      console.error("❌ Error saving summary:", err);
-    }
-  }
-
-  localStorage.removeItem("userId");
-  localStorage.removeItem("mathmatixUser");
-  localStorage.removeItem("lastMessages");
-
-  window.location.href = "/login.html";
+closeEquationPopup?.addEventListener("click", () => {
+  mathEditor.setValue("");
+  equationPopup.style.display = "none";
 });

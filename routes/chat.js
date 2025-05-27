@@ -1,131 +1,67 @@
 const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const fetch = require("node-fetch");
-const User = require("../models/User");
 const { generateSystemPrompt } = require("../utils/prompt");
+const Memory = require("../models/Memory");
+const User = require("../models/User");
 
-const SESSION_TRACKER = {};
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-const sendWithFallback = async (chat, message) => {
+const flashModel = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  systemInstruction: "placeholder"
+});
+
+const SESSION_TRACKER = {}; // Stores persistent chat + message logs
+
+async function sendWithFallback(chat, message) {
   try {
-    const behaviorReminder = `
-Remember: You are M∆THM∆TIΧ — a step-by-step math tutor. Do NOT give final answers.
-Coach, guide, and question. Never solve the student’s actual problem.
-`;
-
-const result = await chat.sendMessage([
-  { text: behaviorReminder },
-  { text: message }
-]);
-
-    return { response: result.response.text().trim(), modelUsed: "flash" };
+    const result = await chat.sendMessage([{ text: message }]);
+    const text = result.response.text().trim();
+    return { response: text, modelUsed: "flash" };
   } catch (err) {
-    console.error("âŒ Gemini error:", err.message || err);
-    return {
-      response: "âš ï¸ I'm having trouble responding right now. Please try again.",
-      modelUsed: null,
-    };
-  }
-};
+    console.warn("⚠️ Flash model failed, retrying with Gemini Pro...");
 
-const visualIntentCheck = async (prompt, response) => {
-  const visualCheckPrompt = `
-You are Mathmatix AI, a math tutor who only shows visuals when they support learning.
-
-Student asked: "${prompt}"
-You replied: "${response}"
-
-Would a visual (e.g. graph, diagram) help explain this? Reply only YES or NO.
-`;
-
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const check = await model.generateContent(visualCheckPrompt);
-    const result = await check.response.text();
-    return result.trim().toUpperCase().startsWith("YES");
-  } catch (err) {
-    console.warn("âš ï¸ Visual intent check failed:", err.message || err);
-    return false;
-  }
-};
-
-const extractGraphableEquation = (text) => {
-  const match = text.match(/y\s*=\s*[-+]?[\dx\s\^\/\*\.\+\-\(\)]+/i);
-  return match ? match[0] : null;
-};
-
-router.post("/", async (req, res) => {
-  const { userId, message } = req.body;
-  if (!userId || !message) return res.status(400).send("Missing userId or message.");
-
-  const user = await User.findById(userId);
-  if (!user) return res.status(404).send("User not found.");
-	
-// ðŸ§  Check for custom graph trigger (derivative comparison example)
-if (/graph.*derivative/i.test(message)) {
-  try {
-    const graphRes = await fetch("https://mathmatix-graphs.fly.dev/snapshot", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ expressions: ["y=x^2", "y=2x"] }) // Example only
+    const proModel = genAI.getGenerativeModel({
+      model: "gemini-pro"
     });
 
-    const { image } = await graphRes.json();
+    const proChat = proModel.startChat({
+      history: chat.getHistory()
+    });
 
-    // Update memory
-    const systemPrompt = generateSystemPrompt(user);
-    const session = SESSION_TRACKER[userId] || {
-  history: [
-    {
-      role: "system",
-      parts: [
-        {
-          text: systemPrompt
-        }
-      ]
+    try {
+      const result = await proChat.sendMessage([{ text: message }]);
+      const text = result.response.text().trim();
+      return { response: text, modelUsed: "pro" };
+    } catch (err) {
+      console.error("❌ Fallback model failed as well.");
+      return { response: "⚠️ AI error. Please try again.", modelUsed: "error" };
     }
-  ],
-  messageLog: [],
-  systemPrompt
-};
-
-    SESSION_TRACKER[userId] = session;
-
-    const replyText = "Hereâ€™s a visual that shows both a function and its derivative.";
-    session.history.push({ role: "user", parts: [{ text: message }] });
-    session.history.push({ role: "model", parts: [{ text: replyText }] });
-
-    session.messageLog.push({ role: "user", content: message });
-    session.messageLog.push({ role: "model", content: replyText });
-    if (image) session.messageLog.push({ role: "model", content: "[Graph Image]" });
-
-    return res.send({
-      text: replyText,
-      image,
-      modelUsed: "graph-snapshot"
-    });
-  } catch (err) {
-    console.error("âŒ Desmos snapshot error:", err);
-    return res.send({
-      text: "âš ï¸ I tried to generate the graph, but something went wrong.",
-      modelUsed: "graph-snapshot"
-    });
   }
 }
 
+router.post("/", async (req, res) => {
+  const { userId, message } = req.body;
+  const user = await User.findById(userId).lean();
+
   const systemPrompt = generateSystemPrompt(user);
 
-  const session = SESSION_TRACKER[userId] || {
-    history: [],
-    messageLog: [],
-    systemPrompt
-  };
-  SESSION_TRACKER[userId] = session;
-
-  session.messageLog.push({ role: "user", content: message });
+  // 🧠 Create or load session with system prompt in history on first use
+  let session = SESSION_TRACKER[userId];
+  if (!session) {
+    session = {
+      history: [
+        {
+          role: "system",
+          parts: [{ text: systemPrompt }]
+        }
+      ],
+      messageLog: [],
+      systemPrompt
+    };
+    SESSION_TRACKER[userId] = session;
+  }
 
   const chat = flashModel.startChat({
     toolsConfig: {
@@ -134,54 +70,17 @@ if (/graph.*derivative/i.test(message)) {
     history: session.history
   });
 
-  const { response: text, modelUsed } = await sendWithFallback(chat, message);
+  session.messageLog.push({ role: "user", content: message });
 
-  let visualUrl = null;
-  const equation = extractGraphableEquation(message);
-  const shouldUseVisual = text && await visualIntentCheck(message, text);
+  const { response, modelUsed } = await sendWithFallback(chat, message);
 
-  if (equation && shouldUseVisual) {
-    const clean = equation.replace(/\s+/g, "");
-    visualUrl = `desmos://${encodeURIComponent(clean)}`;
-  }
-
-  if (typeof text === "string" && text.trim()) {
-    session.history.push({ role: "user", parts: [{ text: message }] });
-    session.history.push({ role: "model", parts: [{ text: text.trim() }] });
-  }
-
-  session.messageLog.push({ role: "model", content: text });
-  if (visualUrl) session.messageLog.push({ role: "model", content: visualUrl });
-
-  try {
-    const summaryPrompt = `
-Summarize this exchange like a math tutor reflecting on what was just covered. 1â€“2 sentences only.
-Student: ${message}
-Tutor: ${text}
-`;
-
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const summaryRes = await model.generateContent(summaryPrompt);
-    const sessionSummary = summaryRes.response.text().trim();
-
-    user.conversations = user.conversations || [];
-    user.conversations.push({
-      summary: sessionSummary,
-      messages: session.messageLog.map((m) => ({
-        role: m.role,
-        content: m.content
-      }))
-    });
-
-    await user.save();
-  } catch (err) {
-    console.error("âš ï¸ Failed to save session summary:", err.message);
-  }
+  session.history.push({ role: "user", parts: [{ text: message }] });
+  session.history.push({ role: "model", parts: [{ text: response }] });
 
   res.send({
-    text: text || "âš ï¸ AI returned an invalid or empty response.",
-    image: visualUrl || null,
+    text: response,
     modelUsed,
+    image: null
   });
 });
 
