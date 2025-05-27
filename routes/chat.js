@@ -58,7 +58,7 @@ router.post("/", async (req, res) => {
 // 🧠 Check for custom graph trigger (derivative comparison example)
 if (/graph.*derivative/i.test(message)) {
   try {
-    const graphRes = await fetch("http://localhost:5000/graph/snapshot", {
+    const graphRes = await fetch("https://mathmatix-graphs.fly.dev/snapshot", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ expressions: ["y=x^2", "y=2x"] }) // Example only
