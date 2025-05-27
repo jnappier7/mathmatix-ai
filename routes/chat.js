@@ -11,12 +11,21 @@ const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const sendWithFallback = async (chat, message) => {
   try {
-    const result = await chat.sendMessage([{ text: message }]);
+    const behaviorReminder = `
+Remember: You are M∆THM∆TIΧ — a step-by-step math tutor. Do NOT give final answers.
+Coach, guide, and question. Never solve the student’s actual problem.
+`;
+
+const result = await chat.sendMessage([
+  { text: behaviorReminder },
+  { text: message }
+]);
+
     return { response: result.response.text().trim(), modelUsed: "flash" };
   } catch (err) {
-    console.error("❌ Gemini error:", err.message || err);
+    console.error("âŒ Gemini error:", err.message || err);
     return {
-      response: "⚠️ I'm having trouble responding right now. Please try again.",
+      response: "âš ï¸ I'm having trouble responding right now. Please try again.",
       modelUsed: null,
     };
   }
@@ -38,7 +47,7 @@ Would a visual (e.g. graph, diagram) help explain this? Reply only YES or NO.
     const result = await check.response.text();
     return result.trim().toUpperCase().startsWith("YES");
   } catch (err) {
-    console.warn("⚠️ Visual intent check failed:", err.message || err);
+    console.warn("âš ï¸ Visual intent check failed:", err.message || err);
     return false;
   }
 };
@@ -55,7 +64,7 @@ router.post("/", async (req, res) => {
   const user = await User.findById(userId);
   if (!user) return res.status(404).send("User not found.");
 	
-// 🧠 Check for custom graph trigger (derivative comparison example)
+// ðŸ§  Check for custom graph trigger (derivative comparison example)
 if (/graph.*derivative/i.test(message)) {
   try {
     const graphRes = await fetch("https://mathmatix-graphs.fly.dev/snapshot", {
@@ -69,13 +78,23 @@ if (/graph.*derivative/i.test(message)) {
     // Update memory
     const systemPrompt = generateSystemPrompt(user);
     const session = SESSION_TRACKER[userId] || {
-      history: [],
-      messageLog: [],
-      systemPrompt
-    };
+  history: [
+    {
+      role: "system",
+      parts: [
+        {
+          text: systemPrompt
+        }
+      ]
+    }
+  ],
+  messageLog: [],
+  systemPrompt
+};
+
     SESSION_TRACKER[userId] = session;
 
-    const replyText = "Here’s a visual that shows both a function and its derivative.";
+    const replyText = "Hereâ€™s a visual that shows both a function and its derivative.";
     session.history.push({ role: "user", parts: [{ text: message }] });
     session.history.push({ role: "model", parts: [{ text: replyText }] });
 
@@ -89,9 +108,9 @@ if (/graph.*derivative/i.test(message)) {
       modelUsed: "graph-snapshot"
     });
   } catch (err) {
-    console.error("❌ Desmos snapshot error:", err);
+    console.error("âŒ Desmos snapshot error:", err);
     return res.send({
-      text: "⚠️ I tried to generate the graph, but something went wrong.",
+      text: "âš ï¸ I tried to generate the graph, but something went wrong.",
       modelUsed: "graph-snapshot"
     });
   }
@@ -136,7 +155,7 @@ if (/graph.*derivative/i.test(message)) {
 
   try {
     const summaryPrompt = `
-Summarize this exchange like a math tutor reflecting on what was just covered. 1–2 sentences only.
+Summarize this exchange like a math tutor reflecting on what was just covered. 1â€“2 sentences only.
 Student: ${message}
 Tutor: ${text}
 `;
@@ -156,11 +175,11 @@ Tutor: ${text}
 
     await user.save();
   } catch (err) {
-    console.error("⚠️ Failed to save session summary:", err.message);
+    console.error("âš ï¸ Failed to save session summary:", err.message);
   }
 
   res.send({
-    text: text || "⚠️ AI returned an invalid or empty response.",
+    text: text || "âš ï¸ AI returned an invalid or empty response.",
     image: visualUrl || null,
     modelUsed,
   });
