@@ -21,11 +21,15 @@ function appendMessage(text, role) {
   segments.forEach(segment => {
     const p = document.createElement("p");
 
-    // Check if it contains MathJax inline math
-    if (segment.includes("\\(") || segment.includes("\\[")) {
-      p.innerHTML = segment.trim(); // Let MathJax handle it
+    // Render inline LaTeX segments ONLY (e.g., \(...\)) – rest is plain text
+    const inlineMath = /\\\([^\)]+\\\)/g;
+    if (inlineMath.test(segment)) {
+      const html = segment.replace(inlineMath, (match) => {
+        return `<span class="mathjax">${match}</span>`;
+      });
+      p.innerHTML = html;
     } else {
-      p.textContent = segment.trim(); // Regular text
+      p.textContent = segment.trim();
     }
 
     wrapper.appendChild(p);
@@ -34,7 +38,7 @@ function appendMessage(text, role) {
   chatLog.appendChild(wrapper);
   chatLog.scrollTop = chatLog.scrollHeight;
 
-  MathJax.typesetPromise([wrapper]); // Trigger render on new content
+  MathJax.typesetPromise([wrapper]); // Only render math parts
 }
 
 function toggleThinking(active) {
@@ -107,7 +111,6 @@ insertLatexBtn?.addEventListener("click", () => {
     const currentVal = input.getValue();
     const updated = currentVal.slice(0, cursorPos) + formatted + currentVal.slice(cursorPos);
     input.setValue(updated);
-    MathJax.typesetPromise([input]);
   }
   mathEditor.setValue("");
   equationPopup.style.display = "none";
