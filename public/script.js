@@ -106,9 +106,23 @@ const sendMessage = async () => {
     const data = await res.json();
 
     if (data.text) appendMessage(data.text, "ai");
+
     if (data.image) {
-      const imgHtml = `<img src="${data.image}" alt="Math visual" class="chat-image">`;
-      appendMessage(imgHtml, "ai");
+      const message = document.createElement("div");
+      message.classList.add("message", "ai");
+
+      const caption = document.createElement("p");
+      caption.textContent = "📷 Here's the visual:";
+      message.appendChild(caption);
+
+      const img = document.createElement("img");
+      img.src = data.image;
+      img.alt = "Math visual";
+      img.className = "chat-image";
+      message.appendChild(img);
+
+      chatContainer.appendChild(message);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
   } catch (err) {
@@ -183,7 +197,7 @@ insertEquationBtn?.addEventListener("click", () => {
   input.focus();
 });
 
-// 🆕 Upload Handling
+// 📎 Upload Handling
 fileUploadBtn?.addEventListener("click", () => fileInput.click());
 
 fileInput?.addEventListener("change", async () => {
@@ -214,11 +228,11 @@ fileInput?.addEventListener("change", async () => {
     console.error("❌ Upload error:", err);
     appendMessage("⚠️ File upload failed. Try again?", "ai");
   } finally {
-    fileInput.value = ""; // Reset input
+    fileInput.value = "";
   }
 });
 
-// 🆕 Drag-and-Drop Upload Zone + Ghost Overlay
+// 📎 Drag-and-Drop Upload Zone + Ghost Overlay
 const dropzone = document.getElementById("dropzone");
 
 ["dragenter", "dragover"].forEach((event) => {
@@ -300,11 +314,9 @@ document.getElementById("logoutBtn")?.addEventListener("click", async () => {
     }
   }
 
-  // Only remove session identifiers, not preferences
   localStorage.removeItem("userId");
   localStorage.removeItem("mathmatixUser");
   localStorage.removeItem("lastMessages");
 
-  // Redirect to login
   window.location.href = "/login.html";
 });
