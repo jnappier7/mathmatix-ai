@@ -54,6 +54,48 @@ router.post("/", async (req, res) => {
 
   const user = await User.findById(userId);
   if (!user) return res.status(404).send("User not found.");
+	
+// 🧠 Check for custom graph trigger (derivative comparison example)
+if (/graph.*derivative/i.test(message)) {
+  try {
+    const graphRes = await fetch("http://localhost:5000/graph/snapshot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ expressions: ["y=x^2", "y=2x"] }) // Example only
+    });
+
+    const { image } = await graphRes.json();
+
+    // Update memory
+    const systemPrompt = generateSystemPrompt(user);
+    const session = SESSION_TRACKER[userId] || {
+      history: [],
+      messageLog: [],
+      systemPrompt
+    };
+    SESSION_TRACKER[userId] = session;
+
+    const replyText = "Here’s a visual that shows both a function and its derivative.";
+    session.history.push({ role: "user", parts: [{ text: message }] });
+    session.history.push({ role: "model", parts: [{ text: replyText }] });
+
+    session.messageLog.push({ role: "user", content: message });
+    session.messageLog.push({ role: "model", content: replyText });
+    if (image) session.messageLog.push({ role: "model", content: "[Graph Image]" });
+
+    return res.send({
+      text: replyText,
+      image,
+      modelUsed: "graph-snapshot"
+    });
+  } catch (err) {
+    console.error("❌ Desmos snapshot error:", err);
+    return res.send({
+      text: "⚠️ I tried to generate the graph, but something went wrong.",
+      modelUsed: "graph-snapshot"
+    });
+  }
+}
 
   const systemPrompt = generateSystemPrompt(user);
 

@@ -87,6 +87,8 @@ const memoryRoute = require("./routes/memory").router;
 const imageRoute = require("./routes/image");
 const imageSearchRoute = require("./routes/image-search");
 const speakRoute = require("./routes/speak");
+const graphRoute = require("./routes/graph");
+
 
 app.use("/upload", uploadRoute);
 app.use("/login", loginRoute);
@@ -95,6 +97,8 @@ app.use("/save-summary", memoryRoute);
 app.use("/image", imageRoute);
 app.use("/image-search", imageSearchRoute);
 app.use("/speak", speakRoute);
+app.use("/graph", graphRoute);
+
 
 // ✅ Fallback + Homepage
 app.get("/", (req, res) => {
