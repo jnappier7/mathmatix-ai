@@ -13,7 +13,8 @@ const chatRoute = require("./routes/chat");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const { SYSTEM_PROMPT } = require("./utils/prompt");
+const { generateSystemPrompt } = require("./utils/prompt");
+
 
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
@@ -114,4 +115,5 @@ app.listen(PORT, () => {
   console.log(`🚀 M∆THM∆TIΧ AI running on http://localhost:${PORT}`);
 });
 
-module.exports = { app, SYSTEM_PROMPT };
+module.exports = { app };
+
