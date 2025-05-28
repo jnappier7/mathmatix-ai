@@ -1,127 +1,146 @@
-const chatLog = document.getElementById("chat-log");
+console.log("✅ M∆THM∆TIΧ Initialized");
+
+const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-button");
 const micBtn = document.getElementById("mic-button");
-const equationPopup = document.getElementById("equation-popup");
-const insertEquationBtn = document.getElementById("insert-equation");
-const mathEditor = document.getElementById("math-editor");
-const insertLatexBtn = document.getElementById("insert-latex");
-const cancelLatexBtn = document.getElementById("cancel-latex");
-const closeEquationPopup = document.getElementById("close-equation-popup");
+const attachBtn = document.getElementById("attach-button");
+const equationBtn = document.getElementById("equation-button");
+const fileInput = document.getElementById("file-input");
+const mathModal = document.getElementById("math-modal");
+const insertMathBtn = document.getElementById("insert-math-button");
+const closeMathBtn = document.getElementById("close-math-button");
+const mathInput = document.getElementById("math-input");
 
-let userId = localStorage.getItem("userId");
-let synth = window.speechSynthesis;
-let thinkingInterval = null;
+let currentUser = null;
 
-function appendMessage(text, role) {
-  const wrapper = document.createElement("div");
-  wrapper.classList.add("message", role);
-
-  const segments = text.split(/\n{2,}/); // Split on double newlines for paragraphs
-  segments.forEach(segment => {
-    const p = document.createElement("p");
-
-    // Render inline LaTeX segments ONLY (e.g., \(...\)) – rest is plain text
-    const inlineMath = /\\\([^\)]+\\\)/g;
-    if (inlineMath.test(segment)) {
-      const html = segment.replace(inlineMath, (match) => {
-        return `<span class="mathjax">${match}</span>`;
-      });
-      p.innerHTML = html;
-    } else {
-      p.textContent = segment.trim();
-    }
-
-    wrapper.appendChild(p);
+// Load user profile
+fetch("/user")
+  .then((res) => res.json())
+  .then((data) => {
+    currentUser = data;
   });
 
-  chatLog.appendChild(wrapper);
-  chatLog.scrollTop = chatLog.scrollHeight;
+function appendMessage(message, sender = "user") {
+  const bubble = document.createElement("div");
+  bubble.className = `chat-bubble ${sender === "user" ? "user-bubble" : "ai-bubble"}`;
 
-  MathJax.typesetPromise([wrapper]); // Only render math parts
-}
+  // Detect if message contains rendered math (indicated by [MATH]...[/MATH])
+  const mathRegex = /\[MATH\](.*?)\[\/MATH\]/;
+  const match = message.match(mathRegex);
 
-function toggleThinking(active) {
-  if (active) {
-    const thinking = document.createElement("div");
-    thinking.classList.add("message", "ai", "thinking");
-    thinking.textContent = "Thinking...";
-    chatLog.appendChild(thinking);
-    chatLog.scrollTop = chatLog.scrollHeight;
-    thinkingInterval = setInterval(() => {
-      if (thinking.textContent.endsWith("...")) {
-        thinking.textContent = "Thinking";
-      } else {
-        thinking.textContent += ".";
-      }
-    }, 500);
+  if (match) {
+    const before = message.split("[MATH]")[0];
+    const after = message.split("[/MATH]")[1];
+    const math = match[1];
+
+    bubble.innerHTML = `${before}<span class="math-render">\\(${math}\\)</span>${after}`;
+    MathJax.typesetPromise([bubble.querySelector(".math-render")]);
   } else {
-    clearInterval(thinkingInterval);
-    const thinkingMsg = document.querySelector(".message.thinking");
-    if (thinkingMsg) thinkingMsg.remove();
+    bubble.textContent = message;
   }
+
+  chatBox.appendChild(bubble);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-async function sendMessage() {
-  const message = input.getValue().trim();
+// Send message to server
+sendBtn.addEventListener("click", sendMessage);
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+
+function sendMessage() {
+  const message = input.value.trim();
   if (!message) return;
 
   appendMessage(message, "user");
-  input.setValue("");
-  toggleThinking(true);
+  input.value = "";
 
-  try {
-    const res = await fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, message }),
+  fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user: currentUser, message }),
+  })
+    .then((res) => res.json())
+    .then((data) => appendMessage(data.text, "ai"))
+    .catch((err) => {
+      console.error("❌ Chat error:", err);
+      appendMessage("⚠️ AI error. Please try again.", "ai");
     });
-
-    if (!res.ok) throw new Error("Server error: " + res.status);
-
-    const data = await res.json();
-    toggleThinking(false);
-    appendMessage(data.text || "⚠️ No response from tutor.");
-  } catch (err) {
-    toggleThinking(false);
-    console.error("❌ Chat error:", err);
-    appendMessage("⚠️ AI error. Please try again.");
-  }
 }
 
-sendBtn.addEventListener("click", sendMessage);
+// 🎤 Speech-to-text
+let recognition;
+if ("webkitSpeechRecognition" in window) {
+  recognition = new webkitSpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
 
-input.element.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    input.value = transcript;
     sendMessage();
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Speech recognition error:", event.error);
+  };
+
+  micBtn.addEventListener("click", () => recognition.start());
+}
+
+// 📎 File upload
+attachBtn.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  appendMessage(`📎 Uploaded: ${file.name}`, "user");
+
+  fetch("/upload", {
+    method: "POST",
+    body: formData,
+  })
+    .then((res) => res.json())
+    .then((data) => appendMessage(data.text, "ai"))
+    .catch((err) => {
+      console.error("❌ Upload error:", err);
+      appendMessage("⚠️ Upload failed.", "ai");
+    });
+});
+
+// ➗ Equation button popup
+equationBtn.addEventListener("click", () => {
+  mathModal.style.display = "block";
+  mathInput.value = "";
+  mathInput.focus();
+});
+
+// 🧮 Insert equation into message
+insertMathBtn.addEventListener("click", () => {
+  const math = mathInput.value.trim();
+  if (math) {
+    const wrapped = `[MATH]${math}[/MATH]`;
+    input.value += " " + wrapped + " ";
   }
+  mathModal.style.display = "none";
+  mathInput.value = "";
 });
 
-insertEquationBtn?.addEventListener("click", () => {
-  equationPopup.style.display = "block";
-  mathEditor.focus();
+// ❌ Close math editor
+closeMathBtn.addEventListener("click", () => {
+  mathModal.style.display = "none";
+  mathInput.value = "";
 });
 
-insertLatexBtn?.addEventListener("click", () => {
-  const latex = mathEditor.getValue();
-  if (latex) {
-    const formatted = `\\(${latex}\\)`;
-    const cursorPos = input.selectionStart || input.getValue().length;
-    const currentVal = input.getValue();
-    const updated = currentVal.slice(0, cursorPos) + formatted + currentVal.slice(cursorPos);
-    input.setValue(updated);
+// 🧼 Close popup if clicked outside
+window.addEventListener("click", (e) => {
+  if (e.target === mathModal) {
+    mathModal.style.display = "none";
+    mathInput.value = "";
   }
-  mathEditor.setValue("");
-  equationPopup.style.display = "none";
-});
-
-cancelLatexBtn?.addEventListener("click", () => {
-  mathEditor.setValue("");
-  equationPopup.style.display = "none";
-});
-
-closeEquationPopup?.addEventListener("click", () => {
-  mathEditor.setValue("");
-  equationPopup.style.display = "none";
 });
