@@ -1,53 +1,28 @@
 const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { generateSystemPrompt } = require("../utils/prompt");
-const memory = require("../routes/memory");
 const User = require("../models/User");
+const generateSystemPrompt = require("../prompt");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const proModel = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-const flashModel = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-  systemInstruction: "placeholder"
-});
-
-const SESSION_TRACKER = {}; // Stores persistent chat + message logs
-
-async function sendWithFallback(chat, message) {
-  try {
-    const result = await chat.sendMessage([{ text: message }]);
-    const text = result.response.text().trim();
-    return { response: text, modelUsed: "flash" };
-  } catch (err) {
-    console.warn("⚠️ Flash model failed, retrying with Gemini Pro...");
-
-    const proModel = genAI.getGenerativeModel({
-      model: "gemini-pro"
-    });
-
-    const proChat = proModel.startChat({
-      history: chat.getHistory()
-    });
-
-    try {
-      const result = await proChat.sendMessage([{ text: message }]);
-      const text = result.response.text().trim();
-      return { response: text, modelUsed: "pro" };
-    } catch (err) {
-      console.error("❌ Fallback model failed as well.");
-      return { response: "⚠️ AI error. Please try again.", modelUsed: "error" };
-    }
-  }
-}
+const SESSION_TRACKER = {}; // 🧠 Session memory per user
 
 router.post("/", async (req, res) => {
   const { userId, message } = req.body;
+
+  console.log("📨 Received message:", message);
+  console.log("🔍 userId:", userId);
+
   const user = await User.findById(userId).lean();
+  console.log("👤 Loaded user:", user?.name || "❌ Not found");
 
   const systemPrompt = generateSystemPrompt(user);
+  console.log("📜 Prompt injected:", systemPrompt.slice(0, 200) + "...");
 
-  // 🧠 Create or load session with system prompt in history on first use
+  // 🧠 Load or create session
   let session = SESSION_TRACKER[userId];
   if (!session) {
     session = {
@@ -58,25 +33,52 @@ router.post("/", async (req, res) => {
     SESSION_TRACKER[userId] = session;
   }
 
-  const chat = flashModel.startChat({
-    toolsConfig: {
-      systemInstruction: systemPrompt
-    },
-    history: session.history
-  });
-
+  // 🧱 Add user message to session log
   session.messageLog.push({ role: "user", content: message });
 
-  const { response, modelUsed } = await sendWithFallback(chat, message);
+  const history = session.history;
 
-  session.history.push({ role: "user", parts: [{ text: message }] });
-  session.history.push({ role: "model", parts: [{ text: response }] });
+  try {
+    let modelUsed = "gemini-1.5-flash";
 
-  res.send({
-    text: response,
-    modelUsed,
-    image: null
-  });
+    let chat = flashModel.startChat({
+      tools: [],
+      toolsConfig: {
+        systemInstruction: systemPrompt,
+      },
+      history,
+    });
+
+    let result;
+    try {
+      result = await chat.sendMessage(message);
+    } catch (err) {
+      console.warn("⚠️ Flash model failed, retrying with Gemini Pro...");
+      modelUsed = "gemini-pro";
+
+      chat = proModel.startChat({
+        tools: [],
+        toolsConfig: {
+          systemInstruction: systemPrompt,
+        },
+        history,
+      });
+
+      result = await chat.sendMessage(message);
+    }
+
+    const text = result.response.text().trim();
+    console.log("💬 AI response:", text.slice(0, 100) + "...");
+
+    // 🧠 Update session history
+    session.history.push({ role: "user", parts: [{ text: message }] });
+    session.history.push({ role: "model", parts: [{ text }] });
+
+    res.json({ text, modelUsed });
+  } catch (err) {
+    console.error("❌ Gemini error:", err);
+    res.status(500).json({ error: "AI error. Try again." });
+  }
 });
 
 module.exports = router;
