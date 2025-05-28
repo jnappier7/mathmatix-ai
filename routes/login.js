@@ -1,3 +1,8 @@
+const express = require("express");
+const router = express.Router();
+const bcrypt = require("bcrypt");
+const User = require("../models/User");
+
 router.post("/", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -7,7 +12,7 @@ router.post("/", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    req.session.userId = user._id; // ✅ store session
+    req.session.userId = user._id;
 
     user.lastLogin = Date.now();
     await user.save();
@@ -30,3 +35,5 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Login failed" });
   }
 });
+
+module.exports = router;
