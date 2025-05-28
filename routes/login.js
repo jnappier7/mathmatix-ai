@@ -1,42 +1,32 @@
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
-
-router.post('/', async (req, res) => {
-  const { username, password } = req.body;
-
+router.post("/", async (req, res) => {
   try {
+    const { username, password } = req.body;
     const user = await User.findOne({ username });
-    if (!user) return res.status(400).json({ message: 'Invalid username or password.' });
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid username or password.' });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
 
-   user.lastLogin = Date.now();
-await user.save();
+    req.session.userId = user._id; // ✅ store session
 
-req.session.userId = user._id; // ✅ Required for auth-based routes
+    user.lastLogin = Date.now();
+    await user.save();
 
-res.status(200).json({
-  message: 'Login successful!',
-  user: {
-    _id: user._id,
-    username: user.username,
-    name: user.name,
-    gradeLevel: user.gradeLevel,
-    mathCourse: user.mathCourse,
-    learningStyle: user.learningStyle,
-    tonePreference: user.tonePreference,
-    interests: user.interests
-  }
-});
-
+    res.status(200).json({
+      message: "Login successful!",
+      user: {
+        _id: user._id,
+        username: user.username,
+        name: user.name,
+        gradeLevel: user.gradeLevel,
+        mathCourse: user.mathCourse,
+        learningStyle: user.learningStyle,
+        tonePreference: user.tonePreference,
+        interests: user.interests,
+      },
     });
-  } catch (error) {
-    console.error('Login Error:', error);
-    res.status(500).json({ message: 'Error logging in student.' });
+  } catch (err) {
+    console.error("❌ Login error:", err);
+    res.status(500).json({ error: "Login failed" });
   }
 });
-
-module.exports = router;
