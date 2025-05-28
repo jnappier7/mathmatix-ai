@@ -58,7 +58,7 @@ function sendMessage() {
   fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user: currentUser?._id, message }),
+    body: JSON.stringify({ userId: currentUser?._id, message }),
   })
     .then((res) => res.json())
     .then((data) => appendMessage(data.text, "ai"))
