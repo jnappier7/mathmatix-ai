@@ -51,12 +51,7 @@ router.post("/", async (req, res) => {
   let session = SESSION_TRACKER[userId];
   if (!session) {
     session = {
-      history: [
-        {
-          role: "system",
-          parts: [{ text: systemPrompt }]
-        }
-      ],
+      history: [],
       messageLog: [],
       systemPrompt
     };

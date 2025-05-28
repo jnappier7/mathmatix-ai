@@ -25,7 +25,6 @@ function appendMessage(message, sender = "user") {
   const bubble = document.createElement("div");
   bubble.className = `chat-bubble ${sender === "user" ? "user-bubble" : "ai-bubble"}`;
 
-  // Detect if message contains rendered math (indicated by [MATH]...[/MATH])
   const mathRegex = /\[MATH\](.*?)\[\/MATH\]/;
   const match = message.match(mathRegex);
 
@@ -33,7 +32,6 @@ function appendMessage(message, sender = "user") {
     const before = message.split("[MATH]")[0];
     const after = message.split("[/MATH]")[1];
     const math = match[1];
-
     bubble.innerHTML = `${before}<span class="math-render">\\(${math}\\)</span>${after}`;
     MathJax.typesetPromise([bubble.querySelector(".math-render")]);
   } else {
@@ -45,8 +43,8 @@ function appendMessage(message, sender = "user") {
 }
 
 // Send message to server
-sendBtn.addEventListener("click", sendMessage);
-input.addEventListener("keydown", (e) => {
+if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+if (input) input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
@@ -87,55 +85,65 @@ if ("webkitSpeechRecognition" in window) {
     console.error("Speech recognition error:", event.error);
   };
 
-  micBtn.addEventListener("click", () => recognition.start());
+  if (micBtn) micBtn.addEventListener("click", () => recognition.start());
 }
 
 // 📎 File upload
-attachBtn.addEventListener("click", () => fileInput.click());
-fileInput.addEventListener("change", () => {
-  const file = fileInput.files[0];
-  if (!file) return;
+if (attachBtn && fileInput) {
+  attachBtn.addEventListener("click", () => fileInput.click());
+}
+if (fileInput) {
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append("file", file);
+    const formData = new FormData();
+    formData.append("file", file);
 
-  appendMessage(`📎 Uploaded: ${file.name}`, "user");
+    appendMessage(`📎 Uploaded: ${file.name}`, "user");
 
-  fetch("/upload", {
-    method: "POST",
-    body: formData,
-  })
-    .then((res) => res.json())
-    .then((data) => appendMessage(data.text, "ai"))
-    .catch((err) => {
-      console.error("❌ Upload error:", err);
-      appendMessage("⚠️ Upload failed.", "ai");
-    });
-});
+    fetch("/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => appendMessage(data.text, "ai"))
+      .catch((err) => {
+        console.error("❌ Upload error:", err);
+        appendMessage("⚠️ Upload failed.", "ai");
+      });
+  });
+}
 
 // ➗ Equation button popup
-equationBtn.addEventListener("click", () => {
-  mathModal.style.display = "block";
-  mathInput.value = "";
-  mathInput.focus();
-});
+if (equationBtn && mathModal && mathInput) {
+  equationBtn.addEventListener("click", () => {
+    mathModal.style.display = "block";
+    mathInput.value = "";
+    mathInput.focus();
+  });
+}
 
 // 🧮 Insert equation into message
-insertMathBtn.addEventListener("click", () => {
-  const math = mathInput.value.trim();
-  if (math) {
-    const wrapped = `[MATH]${math}[/MATH]`;
-    input.value += " " + wrapped + " ";
-  }
-  mathModal.style.display = "none";
-  mathInput.value = "";
-});
+if (insertMathBtn && mathModal && mathInput) {
+  insertMathBtn.addEventListener("click", () => {
+    const math = mathInput.value.trim();
+    if (math) {
+      const wrapped = `[MATH]${math}[/MATH]`;
+      input.value += " " + wrapped + " ";
+    }
+    mathModal.style.display = "none";
+    mathInput.value = "";
+  });
+}
 
 // ❌ Close math editor
-closeMathBtn.addEventListener("click", () => {
-  mathModal.style.display = "none";
-  mathInput.value = "";
-});
+if (closeMathBtn && mathModal && mathInput) {
+  closeMathBtn.addEventListener("click", () => {
+    mathModal.style.display = "none";
+    mathInput.value = "";
+  });
+}
 
 // 🧼 Close popup if clicked outside
 window.addEventListener("click", (e) => {
@@ -144,3 +152,4 @@ window.addEventListener("click", (e) => {
     mathInput.value = "";
   }
 });
+
