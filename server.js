@@ -30,7 +30,7 @@ if (process.env.MONGO_URI) {
     useUnifiedTopology: true
   })
   .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+  .catch((err) => console.error("âŒ MongoDB connection error:", err));
 }
 
 app.use(session({
@@ -42,7 +42,23 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ✅ Logout Route
+// ✅ GET /user — return logged-in user profile for frontend
+app.get("/user", async (req, res) => {
+  const userId = req.session?.userId;
+
+  if (!userId) return res.status(401).json({ error: "Not logged in" });
+
+  try {
+    const user = await User.findById(userId).lean();
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("❌ Error loading user:", err);
+    res.status(500).json({ error: "Failed to load user" });
+  }
+});
+
+// âœ… Logout Route
 app.get("/logout", (req, res) => {
   req.logout(() => {
     req.session.destroy(() => {
@@ -52,7 +68,7 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// ✅ Profile Completion Endpoint
+// âœ… Profile Completion Endpoint
 app.post("/api/complete-profile", async (req, res) => {
   const {
     userId,
@@ -75,12 +91,12 @@ app.post("/api/complete-profile", async (req, res) => {
     });
     res.json({ success: true });
   } catch (err) {
-    console.error("❌ Profile completion failed:", err);
+    console.error("âŒ Profile completion failed:", err);
     res.status(500).json({ success: false, message: "Could not complete profile." });
   }
 });
 
-// ✅ Modular Routes
+// âœ… Modular Routes
 const uploadRoute = require("./routes/upload");
 const loginRoute = require("./routes/login");
 const signupRoute = require("./routes/signup");
@@ -101,7 +117,7 @@ app.use("/speak", speakRoute);
 app.use("/graph", graphRoute);
 
 
-// ✅ Fallback + Homepage
+// Fallback + Homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
@@ -110,7 +126,7 @@ app.use((req, res) => {
   res.status(404).send("🔍 Route not found.");
 });
 
-// ✅ Start the server
+// âœ… Start the server
 app.listen(PORT, () => {
   console.log(`🚀 M∆THM∆TIΧ AI running on http://localhost:${PORT}`);
 });
