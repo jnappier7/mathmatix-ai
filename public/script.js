@@ -23,7 +23,7 @@ fetch("/user")
 
 function appendMessage(message, sender = "user") {
   const bubble = document.createElement("div");
-  bubble.className = `chat-bubble ${sender === "user" ? "user-bubble" : "ai-bubble"}`;
+  bubble.className = `message ${sender === "user" ? "user" : "ai"}`;
 
   const mathRegex = /\[MATH\](.*?)\[\/MATH\]/;
   const match = message.match(mathRegex);
@@ -58,7 +58,7 @@ function sendMessage() {
   fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ user: currentUser, message }),
+    body: JSON.stringify({ user: currentUser?._id, message }),
   })
     .then((res) => res.json())
     .then((data) => appendMessage(data.text, "ai"))
