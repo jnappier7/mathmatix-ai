@@ -1,11 +1,11 @@
 console.log("✅ M∆THM∆TIΧ Initialized");
 
-const chatBox = document.getElementById("chat-box");
+const chatBox = document.getElementById("chat-container-inner");
 const input = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-button");
 const micBtn = document.getElementById("mic-button");
 const attachBtn = document.getElementById("attach-button");
-const equationBtn = document.getElementById("equation-button");
+const equationBtn = document.getElementById("insert-equation");
 const fileInput = document.getElementById("file-input");
 const mathModal = document.getElementById("math-modal");
 const insertMathBtn = document.getElementById("insert-math-button");
