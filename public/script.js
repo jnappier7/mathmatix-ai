@@ -27,6 +27,18 @@ fetch("/user")
     // If currentUser is null (not logged in), redirect to login page
     if (!currentUser || !currentUser._id) {
         window.location.href = "/login.html"; // Redirects to login page
+    } else {
+        // --- START EDIT: Fetch and display personalized welcome message ---
+        fetch(`/welcome-message?userId=${currentUser._id}`) // Use userId from loaded user
+            .then(response => response.json())
+            .then(welcomeData => {
+                appendMessage(welcomeData.greeting, "ai"); // Append the AI's greeting
+            })
+            .catch(err => {
+                console.error("❌ Error fetching welcome message:", err);
+                appendMessage("Hello! How can I help you today?", "ai"); // Fallback greeting
+            });
+        // --- END EDIT ---
     }
     // --- END EDIT 2 ---
   })
