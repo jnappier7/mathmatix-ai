@@ -1,4 +1,4 @@
-// ocr.js — Mathpix OCR for extracting math + text from image or PDF
+// ocr.js - Mathpix OCR for extracting math + text from image or PDF (rephrased emoji comment)
 
 const axios = require("axios");
 
@@ -22,8 +22,8 @@ module.exports = async function (base64) {
       }
     );
 
-    // ✅ Log raw response
-    console.log("📤 Mathpix raw response:", res.data);
+    // LOG: Mathpix raw response (rephrased emoji comment)
+    console.log("LOG: Mathpix raw response:", res.data);
 
     return (
       res.data.latex_styled?.trim() ||
@@ -32,7 +32,7 @@ module.exports = async function (base64) {
     );
 
   } catch (err) {
-    console.error("🛠️ Mathpix OCR error:", err?.response?.data || err.message);
+    console.error("ERROR: Mathpix OCR error:", err?.response?.data || err.message); // Replaced emoji
     return "";
   }
 };

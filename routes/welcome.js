@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
     const summary = last?.summary?.trim() || "";
 
     const prompt = `
-You're Mathmatix, a warm and engaging AI math tutor. 
+You're Mathmatix, a warm and engaging AI math tutor.
 Write a short, casual, personalized greeting to welcome ${user.name} back.
 
 If this summary is available, include a reference to it naturally:
@@ -36,7 +36,7 @@ Keep it short. One or two sentences. No robotic intros. Just be real and support
 
     res.send({ greeting });
   } catch (err) {
-    console.error("❌ Welcome error:", err.message);
+    console.error("ERROR: Welcome error:", err.message); // Replaced emoji
     res.status(500).send("Failed to generate greeting");
   }
 });

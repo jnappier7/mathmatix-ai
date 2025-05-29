@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("❌ Login error:", err);
+    console.error("ERROR: Login error:", err); // Replaced emoji
     res.status(500).json({ error: "Login failed" });
   }
 });

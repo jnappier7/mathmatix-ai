@@ -37,7 +37,7 @@ router.post("/", async (req, res) => {
     });
     res.send(response.data);
   } catch (err) {
-    console.error("🔊 ElevenLabs TTS error:", err.message);
+    console.error("ERROR: ElevenLabs TTS error:", err.message); // Replaced emoji
     res.status(500).send("Text-to-speech failed.");
   }
 });

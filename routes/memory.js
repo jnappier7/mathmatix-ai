@@ -1,10 +1,10 @@
-// routes/memory.js — Save summary + update user memory + recall last session
+// routes/memory.js - Save summary + update user memory + recall last session
 
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 
-// ✅ Save summary and messages to user document
+// Save summary and messages to user document (rephrased emoji comment)
 async function saveSummary(userId, summary) {
   try {
     const user = await User.findById(userId);
@@ -22,7 +22,7 @@ async function saveSummary(userId, summary) {
     user.conversations.push(conversation);
     user.lastSeen = new Date();
 
-    // 🧹 Clear temporary log after saving
+    // Clear temporary log after saving (rephrased emoji comment)
     delete user.messageLog;
 
     await user.save();
@@ -32,7 +32,7 @@ async function saveSummary(userId, summary) {
   }
 }
 
-// ✅ Recall the most recent summary + last few messages
+// Recall the most recent summary + last few messages (rephrased emoji comment)
 router.post("/recall", async (req, res) => {
   const { userId } = req.body;
 

@@ -1,4 +1,4 @@
-// utils/pdf-to-image.js — PDF to PNG using Puppeteer and PDF.js HTML rendering
+// utils/pdf-to-image.js - PDF to PNG using Puppeteer and PDF.js HTML rendering (rephrased emoji comment)
 
 const puppeteer = require("puppeteer");
 
@@ -7,7 +7,7 @@ module.exports = async function pdfToImageBase64(pdfBuffer) {
 	process.env.PUPPETEER_EXECUTABLE_PATH = require("puppeteer").executablePath();
     const browser = await puppeteer.launch({
       headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"], // Keeping these args for now as per your original code
     });
 
     const page = await browser.newPage();
@@ -33,7 +33,7 @@ module.exports = async function pdfToImageBase64(pdfBuffer) {
 
     return `data:image/png;base64,${screenshot}`;
   } catch (err) {
-    console.error("🧨 PDF render failed:", err.message);
+    console.error("ERROR: PDF render failed:", err.message); // Replaced emoji
     return null;
   }
 };

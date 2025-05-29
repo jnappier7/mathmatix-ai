@@ -6,7 +6,7 @@ const puppeteer = require("puppeteer");
 
 // Util: Load Desmos and take screenshot with expressions
 async function generateGraphImage(expressions) {
-  const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox"] });
+  const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox"] }); // Replaced emoji
   const page = await browser.newPage();
 
   await page.goto("https://www.desmos.com/calculator", { waitUntil: "networkidle2" });
@@ -59,7 +59,7 @@ router.post("/snapshot", async (req, res) => {
     const imageBase64 = await generateGraphImage(expressions);
     res.json({ image: `data:image/png;base64,${imageBase64}` });
   } catch (err) {
-    console.error("❌ Graph image generation error:", err);
+    console.error("ERROR: Graph image generation error:", err); // Replaced emoji
     res.status(500).json({ error: "Graph generation failed" });
   }
 });
