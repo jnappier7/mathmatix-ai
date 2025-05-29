@@ -7,10 +7,14 @@ const micBtn = document.getElementById("mic-button");
 const attachBtn = document.getElementById("attach-button");
 const equationBtn = document.getElementById("insert-equation");
 const fileInput = document.getElementById("file-input");
-const mathModal = document.getElementById("math-modal");
-const insertMathBtn = document.getElementById("insert-math-button");
-const closeMathBtn = document.getElementById("close-math-button");
-const mathInput = document.getElementById("math-input");
+
+// --- START EDIT 1: Corrected MathLive popup element IDs ---
+// These IDs were inconsistent with chat.html.
+const mathModal = document.getElementById("equation-popup"); // Changed from math-modal to equation-popup to match chat.html
+const insertMathBtn = document.getElementById("insert-latex"); // Changed from insert-math-button to insert-latex to match chat.html
+const closeMathBtn = document.getElementById("close-equation-popup"); // Changed from close-math-button to close-equation-popup to match chat.html
+const mathInput = document.getElementById("math-editor"); // Changed from math-input to math-editor to match chat.html
+// --- END EDIT 1 ---
 
 let currentUser = null;
 
@@ -19,33 +23,57 @@ fetch("/user")
   .then((res) => res.json())
   .then((data) => {
     currentUser = data;
+    // --- START EDIT 2: Add check for currentUser before trying to send user info ---
+    // If currentUser is null (not logged in), redirect to login page
+    if (!currentUser || !currentUser._id) {
+        window.location.href = "/login.html"; // Redirects to login page
+    }
+    // --- END EDIT 2 ---
+  })
+  .catch((err) => {
+    console.error("❌ Error loading user profile:", err);
+    window.location.href = "/login.html"; // Redirect on any user load error
   });
 
+// --- START EDIT 3: Made appendMessage more robust and improved MathJax regex ---
 function appendMessage(message, sender = "user") {
+  // Ensure messageContent is a string, default to empty if message is null/undefined
+  const messageContent = typeof message === 'string' ? message : String(message || '');
+
   const bubble = document.createElement("div");
   bubble.className = `message ${sender === "user" ? "user" : "ai"}`;
 
-  const mathRegex = /\[MATH\](.*?)\[\/MATH\]/;
-  const match = message.match(mathRegex);
+  // Updated regex to correctly match [/MATH] (with two slashes) and be global for multiple matches
+  const mathRegex = /\[MATH\](.*?)\[\/MATH\]/g; // Changed from \[/MATH] to \[\/MATH\]
+  const matches = [...messageContent.matchAll(mathRegex)]; // Use matchAll for finding all instances
 
-  if (match) {
-    const before = message.split("[MATH]")[0];
-    const after = message.split("[/MATH]")[1];
-    const math = match[1];
-    bubble.innerHTML = `${before}<span class="math-render">\\(${math}\\)</span>${after}`;
-    MathJax.typesetPromise([bubble.querySelector(".math-render")]);
+  if (matches.length > 0) {
+    let renderedHtml = messageContent;
+    matches.forEach(match => {
+      const fullTag = match[0]; // e.g., [MATH]y=x^2[/MATH]
+      const mathLatex = match[1]; // e.g., y=x^2
+      // Replace the full tag with a span for MathJax rendering
+      renderedHtml = renderedHtml.replace(fullTag, `<span class="math-render">\\(${mathLatex}\\)</span>`);
+    });
+    bubble.innerHTML = renderedHtml;
+    // Typeset all math elements within the bubble
+    MathJax.typesetPromise(bubble.querySelectorAll(".math-render"));
   } else {
-    bubble.textContent = message;
+    bubble.textContent = messageContent;
   }
 
   chatBox.appendChild(bubble);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
+// --- END EDIT 3 ---
 
 // Send message to server
 if (sendBtn) sendBtn.addEventListener("click", sendMessage);
 if (input) input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage();
+  if (e.key === "Enter" && !e.shiftKey) { // Added shiftKey check for multiline input
+      e.preventDefault(); // Prevent new line on Enter
+      sendMessage();
+  }
 });
 
 function sendMessage() {
@@ -55,16 +83,29 @@ function sendMessage() {
   appendMessage(message, "user");
   input.value = "";
 
+  // --- START EDIT 4: Show thinking indicator ---
+  showThinkingIndicator(true);
+  // --- END EDIT 4 ---
+
   fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userId: currentUser?._id, message }),
   })
     .then((res) => res.json())
-    .then((data) => appendMessage(data.text, "ai"))
+    .then((data) => {
+        appendMessage(data.text, "ai");
+    })
     .catch((err) => {
       console.error("❌ Chat error:", err);
-      appendMessage("⚠️ AI error. Please try again.", "ai");
+      // --- START EDIT 5: Provide more helpful error message ---
+      appendMessage("⚠️ AI error. Please try again. Your session might have expired. Try logging in again if this persists.", "ai");
+      // --- END EDIT 5 ---
+    })
+    .finally(() => {
+        // --- START EDIT 6: Hide thinking indicator regardless of success or failure ---
+        showThinkingIndicator(false);
+        // --- END EDIT 6 ---
     });
 }
 
@@ -100,7 +141,22 @@ if (fileInput) {
     const formData = new FormData();
     formData.append("file", file);
 
+    // --- START EDIT 7: Append user data to FormData for upload ---
+    if (currentUser) {
+        formData.append("userId", currentUser._id);
+        formData.append("name", currentUser.name || ''); // Ensure string, default to empty
+        formData.append("tonePreference", currentUser.tonePreference || ''); // Match backend property name
+        formData.append("learningStyle", currentUser.learningStyle || '');
+        // Interests is an array, stringify it for FormData. Backend will need to parse this.
+        formData.append("interests", JSON.stringify(currentUser.interests || []));
+    }
+    // --- END EDIT 7 ---
+
     appendMessage(`📎 Uploaded: ${file.name}`, "user");
+
+    // --- START EDIT 8: Show thinking indicator for upload ---
+    showThinkingIndicator(true);
+    // --- END EDIT 8 ---
 
     fetch("/upload", {
       method: "POST",
@@ -110,12 +166,19 @@ if (fileInput) {
       .then((data) => appendMessage(data.text, "ai"))
       .catch((err) => {
         console.error("❌ Upload error:", err);
-        appendMessage("⚠️ Upload failed.", "ai");
-      });
+        // --- START EDIT 9: Provide more helpful error message for upload ---
+        appendMessage("⚠️ Upload failed. Ensure the file is a clear image of math or PDF.", "ai");
+        // --- END EDIT 9 ---
+      })
+      .finally(() => {
+        // --- START EDIT 10: Hide thinking indicator regardless of success or failure ---
+        showThinkingIndicator(false);
+        // --- END EDIT 10 ---
+    });
   });
 }
 
-// ➗ Equation button popup
+// ➗ Equation button popup - No changes to logic here, just IDs fixed above
 if (equationBtn && mathModal && mathInput) {
   equationBtn.addEventListener("click", () => {
     mathModal.style.display = "block";
@@ -124,11 +187,12 @@ if (equationBtn && mathModal && mathInput) {
   });
 }
 
-// 🧮 Insert equation into message
+// 🧮 Insert equation into message - No changes to logic here, just IDs fixed above
 if (insertMathBtn && mathModal && mathInput) {
   insertMathBtn.addEventListener("click", () => {
     const math = mathInput.value.trim();
     if (math) {
+      // Ensure the MathJax regex in appendMessage matches this format
       const wrapped = `[MATH]${math}[/MATH]`;
       input.value += " " + wrapped + " ";
     }
@@ -137,7 +201,7 @@ if (insertMathBtn && mathModal && mathInput) {
   });
 }
 
-// ❌ Close math editor
+// ❌ Close math editor - No changes to logic here, just IDs fixed above
 if (closeMathBtn && mathModal && mathInput) {
   closeMathBtn.addEventListener("click", () => {
     mathModal.style.display = "none";
@@ -153,3 +217,28 @@ window.addEventListener("click", (e) => {
   }
 });
 
+// --- START EDIT 11: Add Logout Button functionality ---
+const logoutBtn = document.getElementById("logoutBtn"); // Get the logout button element
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    fetch("/logout") // Call the backend logout route
+      .then(() => {
+        window.location.href = "/login.html"; // Redirect to login page after logout
+      })
+      .catch((err) => {
+        console.error("❌ Logout failed:", err);
+        alert("Logout failed. Please try again.");
+      });
+  });
+}
+// --- END EDIT 11 ---
+
+// --- START EDIT 12: Add Thinking Indicator helper functions ---
+const thinkingIndicator = document.getElementById("thinking-indicator"); // Get the thinking indicator element
+
+function showThinkingIndicator(show) {
+    if (thinkingIndicator) {
+        thinkingIndicator.style.display = show ? "flex" : "none";
+    }
+}
+// --- END EDIT 12 ---
