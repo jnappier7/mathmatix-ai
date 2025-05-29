@@ -69,7 +69,7 @@ Here's the extracted math text:
 ${extracted}
 """
 
-Give brief feedback. Ask guiding questions. Donâ€™t solve the entire problem.
+Give brief feedback. Ask guiding questions. Don’t solve the entire problem.
 `;
     // Removed direct "Student Info" section as generateSystemPrompt handles it based on the user object
     // --- END EDIT 4 ---
