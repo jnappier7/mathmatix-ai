@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 if (process.env.MONGO_URI) {
   mongoose.connect(process.env.MONGO_URI) // Removed the options object here
   .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error("â Œ MongoDB connection error:", err));
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 }
 
 app.use(session({
@@ -56,17 +56,17 @@ app.get("/user", async (req, res) => {
   }
 });
 
-// âœ… Logout Route
+// ✅ Logout Route
 app.get("/logout", (req, res) => {
-  req.logout(() => {
+  req.logout(() => { // Using req.logout() with a callback as per Passport.js standards
     req.session.destroy(() => {
-      res.clearCookie("connect.sid");
-      res.redirect("/login.html");
+      res.clearCookie("connect.sid"); // Clear session cookie
+      res.redirect("/login.html"); // Redirect to login page
     });
   });
 });
 
-// âœ… Profile Completion Endpoint
+// ✅ Profile Completion Endpoint
 app.post("/api/complete-profile", async (req, res) => {
   const {
     userId,
@@ -89,12 +89,12 @@ app.post("/api/complete-profile", async (req, res) => {
     });
     res.json({ success: true });
   } catch (err) {
-    console.error("â Œ Profile completion failed:", err);
+    console.error("❌ Profile completion failed:", err);
     res.status(500).json({ success: false, message: "Could not complete profile." });
   }
 });
 
-// âœ… Modular Routes
+// ✅ Modular Routes
 const uploadRoute = require("./routes/upload");
 const loginRoute = require("./routes/login");
 const signupRoute = require("./routes/signup");
@@ -124,7 +124,7 @@ app.use((req, res) => {
   res.status(404).send("🔍 Route not found.");
 });
 
-// âœ… Start the server
+// ✅ Start the server
 app.listen(PORT, () => {
   console.log(`🚀 M∆THM∆TIΧ AI running on http://localhost:${PORT}`);
 });
