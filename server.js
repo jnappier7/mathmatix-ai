@@ -24,13 +24,11 @@ app.use("/welcome-message", require("./routes/welcome"));
 
 app.use(express.static(path.join(__dirname, "public")));
 
+// FIX: Removed deprecated useNewUrlParser and useUnifiedTopology options
 if (process.env.MONGO_URI) {
-  mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  mongoose.connect(process.env.MONGO_URI) // Removed the options object here
   .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error("âŒ MongoDB connection error:", err));
+  .catch((err) => console.error("â Œ MongoDB connection error:", err));
 }
 
 app.use(session({
@@ -91,7 +89,7 @@ app.post("/api/complete-profile", async (req, res) => {
     });
     res.json({ success: true });
   } catch (err) {
-    console.error("âŒ Profile completion failed:", err);
+    console.error("â Œ Profile completion failed:", err);
     res.status(500).json({ success: false, message: "Could not complete profile." });
   }
 });
@@ -132,4 +130,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = { app };
-

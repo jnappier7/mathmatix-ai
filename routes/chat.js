@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const User = require("../models/User");
-const { generateSystemPrompt } = require("../utils/prompt");
+// FIX: Add curly braces for destructuring, as generateSystemPrompt is exported as a property of an object
+const { generateSystemPrompt } = require("../utils/prompt"); 
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
