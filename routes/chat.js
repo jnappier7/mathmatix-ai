@@ -43,12 +43,10 @@ router.post("/", async (req, res) => {
     let modelUsed = "gemini-1.5-flash";
 
     let chat = flashModel.startChat({
-      tools: [],
-      toolsConfig: {
-        systemInstruction: systemPrompt,
-      },
-      history,
-    });
+  history,
+  // Add systemInstruction here, outside of toolsConfig
+  systemInstruction: systemPrompt,
+});
 
     let result;
     try {
@@ -58,12 +56,9 @@ router.post("/", async (req, res) => {
       modelUsed = "gemini-pro";
 
       chat = proModel.startChat({
-        tools: [],
-        toolsConfig: {
-          systemInstruction: systemPrompt,
-        },
-        history,
-      });
+  history,
+  systemInstruction: systemPrompt,
+});
 
       result = await chat.sendMessage(message);
     }
