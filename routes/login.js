@@ -1,3 +1,4 @@
+// login.js (backend route)
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
@@ -12,6 +13,7 @@ router.post("/", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
+    // Assuming you have session middleware set up (e.g., express-session)
     req.session.userId = user._id;
 
     user.lastLogin = Date.now();
@@ -28,10 +30,13 @@ router.post("/", async (req, res) => {
         learningStyle: user.learningStyle,
         tonePreference: user.tonePreference,
         interests: user.interests,
+        // --- ADDED THIS LINE ---
+        role: user.role, // Include the user's role here!
+        // --- END ADDITION ---
       },
     });
   } catch (err) {
-    console.error("ERROR: Login error:", err); // Replaced emoji
+    console.error("ERROR: Login error:", err);
     res.status(500).json({ error: "Login failed" });
   }
 });

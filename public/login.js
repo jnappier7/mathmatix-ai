@@ -1,3 +1,4 @@
+// login.js (frontend script)
 document.getElementById("login-form").addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -15,9 +16,14 @@ document.getElementById("login-form").addEventListener("submit", async function 
 
     if (res.ok) {
       localStorage.setItem("mathmatixUser", JSON.stringify(data.user));
-      localStorage.setItem("userId", data.user._id); // ✅ now saved to use in chat.js
+      localStorage.setItem("userId", data.user._id);
       localStorage.setItem("name", data.user.name);
       localStorage.setItem("tone", data.user.tonePreference);
+      // --- START ADDITION ---
+      localStorage.setItem("userRole", data.user.role); // Save the user's role
+      // --- END ADDITION ---
+      // The redirection will now be handled by script.js, so this line will be overridden.
+      // Keeping it here for now to ensure no immediate breakage if script.js loads after this.
       window.location.href = "/chat.html";
     } else {
       alert(data.message || "Invalid username or password.");
