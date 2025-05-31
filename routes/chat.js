@@ -1,14 +1,15 @@
+// routes/chat.js
 const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const User = require("../models/User");
 const { generateSystemPrompt } = require("../utils/prompt");
 const saveConversation = require("../routes/memory");
-const fetch = require('node-fetch');
+const fetch = require('node-fetch'); // Ensure this is not conflicting if you have a global fetch setup
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const primaryModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-const fallbackModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const fallbackModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // Redundant if not used, but kept for consistency if it serves fallback logic elsewhere
 
 const SESSION_TRACKER = {}; // Session memory per user, now also tracks active time and XP for the current session
 
@@ -36,14 +37,13 @@ async function generateAndSaveSummary(userId, messageLog, studentProfile) {
 }
 
 router.post("/", async (req, res) => {
-    const { userId, message } = req.body; // userId now required
-    const xpPerTurn = 10; // Simple XP gain per turn
-    const msPerMinute = 60 * 1000; // Conversion for active minutes
+    const { userId, message } = req.body;
+    const xpPerTurn = 10;
+    const msPerMinute = 60 * 1000;
 
     console.log("LOG: Received message:", message);
     console.log("LOG: userId:", userId);
 
-    // Fetch non-lean user object for direct modification and saving
     let user;
     try {
         user = await User.findById(userId);
@@ -57,69 +57,80 @@ router.post("/", async (req, res) => {
         return res.status(500).json({ error: "Server error fetching user." });
     }
 
-
     const systemPrompt = generateSystemPrompt(user.toObject());
     console.log("LOG: Prompt injected:", systemPrompt.slice(0, 200) + "...");
 
-    // Load or create session
     let session = SESSION_TRACKER[userId];
     if (!session) {
-        let initialHistory = [];
-        let initialMessageLog = []; // This will remain empty for new sessions' frontend display
+        // This is a new session for the current user (either first login or session expired/ended)
+        let conversationHistoryForAI = [];
+        // The messageLog should be the actual chat shown to the user this session
+        // It starts empty as we are starting a *new* display conversation
+        let currentSessionMessageLog = [];
 
-        // Find the last actual tutoring session summary to provide as initial AI context
-        const tutoringSessions = user.conversations.filter(
-            conv => conv.messages.length > 1 || (conv.messages.length === 1 && conv.messages[0].role === 'user') // Filter out just welcome message sessions
-        ).sort((a, b) => b.date - a.date); // Sort to get the truly last session
+        // Try to retrieve the most recent actual conversation from the database for AI context
+        const actualConversations = user.conversations.filter(
+            conv => conv.messages && conv.messages.length > 1 && conv.summary !== "Initial Welcome Message"
+        ).sort((a, b) => b.date - a.date); // Sort by date descending to get most recent
 
-        if (tutoringSessions.length > 0) {
-            const lastCompletedSession = tutoringSessions[0];
-            if (lastCompletedSession.summary) {
-                // Create a synthetic AI message for the AI's internal history based on the summary
-                // This message is NOT sent to the frontend chat, only for AI's memory.
-                const syntheticSummaryMessage = {
-                    role: 'model',
-                    parts: [{ text: `(Internal AI memory: Last session summary: ${lastCompletedSession.summary})` }]
-                };
-                initialHistory.push(syntheticSummaryMessage);
+        if (actualConversations.length > 0) {
+            const lastActualConversation = actualConversations[0];
+            // Take a limited number of messages from the last actual conversation for AI history
+            // Ensure alternating roles: user, model, user, model
+            const messagesForHistory = lastActualConversation.messages.slice(-6); // e.g., last 3 turns
+            for (const msg of messagesForHistory) {
+                conversationHistoryForAI.push({ role: msg.role, parts: [{ text: msg.content }] });
+            }
+            // If the last message was a user message (e.g. they typed and logged out),
+            // and we're starting a new session, ensure history ends with AI or is empty to avoid 'user can't follow user'.
+            // This is handled by ensuring history is only *previous turns*.
+        } else if (lastActualConversations.length === 0 && user.conversations.length > 0) {
+            // If no full chat history, but there was an "Initial Welcome Message" or a short one,
+            // provide a summary of the *last summary* as context for AI.
+            const lastSummarySession = user.conversations.at(-1); // Get the absolute last session
+            if (lastSummarySession && lastSummarySession.summary && lastSummarySession.summary !== "Initial Welcome Message") {
+                 conversationHistoryForAI.push({
+                     role: 'model', // Treat this as an internal AI thought or a recap by the AI
+                     parts: [{ text: `(Internal AI memory: Last session summary: ${lastSummarySession.summary})` }]
+                 });
             }
         }
 
+
         session = {
-            history: initialHistory, // Now includes internal summary recap if available
-            messageLog: [], // Start messageLog empty for this new session's *frontend display*
+            history: conversationHistoryForAI, // This will be sent to primaryModel.startChat
+            messageLog: currentSessionMessageLog, // This is for displaying current session chat to frontend
             systemPrompt: systemPrompt,
             activeStartTime: Date.now(),
             currentSessionMinutes: 0
         };
         SESSION_TRACKER[userId] = session;
+
     } else {
         session.activeStartTime = Date.now();
     }
 
-    // Add user message to current session log and history
+    // Add current user message to current session's messageLog (for displaying to user later, or saving)
     session.messageLog.push({ role: "user", content: message });
-    session.history.push({ role: "user", parts: [{ text: message }] });
-
-    const history = session.history; // history now includes the internal summary recap + current user message
 
     try {
         let modelUsed = "gemini-1.5-pro";
 
         let chat = primaryModel.startChat({
-            history, // Pass the enriched history to the AI
+            history: session.history, // Pass the history of *previous* turns
             systemInstruction: systemPrompt,
         });
 
-        const result = await chat.sendMessage(message);
+        const result = await chat.sendMessage(message); // Send ONLY the current user message here
 
         const text = result.response.text().trim();
         console.log("LOG: AI response:", text.slice(0, 100) + "...");
 
-        // Update session history for next AI turn
-        session.history.push({ role: "model", parts: [{ text }] });
+        // After successful response, append the current user message and AI's response to the history for *next* turn
+        session.history.push({ role: "user", parts: [{ text: message }] }); // Add current user message
+        session.history.push({ role: "model", parts: [{ text }] });     // Add AI's response
 
-        // Add AI response to current session log
+        // Add AI response to current session's messageLog (for displaying to frontend)
         session.messageLog.push({ role: "model", content: text });
 
         // --- Gamification Logic: Calculate XP and Active Minutes for this turn ---
@@ -134,22 +145,21 @@ router.post("/", async (req, res) => {
         user.weeklyActiveTutoringMinutes += turnMinutes; // Add to weekly minutes
 
         // Basic Level Up Logic (can be expanded)
-        const XP_TO_LEVEL_UP = 100; // Example: 100 XP per level
-        if (user.xp >= (user.level * XP_TO_LEVEL_UP)) { // Check if enough XP for next level
+        const XP_TO_LEVEL_UP = 100;
+        if (user.xp >= (user.level * XP_TO_LEVEL_UP)) {
             user.level += 1;
-            user.xp = 0; // Reset XP for the new level (or keep cumulative XP)
+            user.xp = 0; // Reset XP for the new level
             console.log(`LOG: User ${user.username} leveled up to Level ${user.level}!`);
         }
         // --- End Gamification Logic ---
 
-        // Save user document with updated XP/minutes (but not summary here)
-        // Summary will be saved on logout/tab close
-        await user.save();
+        await user.save(); // Save user document with updated XP/minutes (summary will be saved on logout/tab close)
 
-        res.json({ text, modelUsed, userXp: user.xp, userLevel: user.level }); // Send updated XP/level to frontend
+        res.json({ text, modelUsed, userXp: user.xp, userLevel: user.level });
     } catch (err) {
         console.error("ERROR: Gemini chat error:", err);
-        res.status(500).json({ error: "AI chat error. Try again." });
+        // Provide a user-friendly error message, guiding them to refresh if history is corrupted
+        res.status(500).json({ error: "AI chat error: It seems the conversation history got out of sync. Please refresh the page to restart the session, or try again in a moment." });
     }
 });
 
