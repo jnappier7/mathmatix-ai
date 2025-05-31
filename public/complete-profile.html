@@ -113,11 +113,14 @@
     <p class="subtitle">Just a few more details to personalize your experience.</p>
 
     <form id="profile-form">
-      <label for="name">First Name</label>
-      <input type="text" id="name" required />
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" name="firstName" required />
+
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" name="lastName" required />
 
       <label for="grade">Grade Level</label>
-      <select id="grade" required>
+      <select id="grade" name="grade" required>
         <option value="">Select your grade</option>
         <option value="K">Kindergarten</option>
         <option value="1">1st Grade</option>
@@ -137,7 +140,7 @@
 
       <div id="math-course-section" class="hidden">
         <label for="mathCourse">Which math course?</label>
-        <select id="mathCourse">
+        <select id="mathCourse" name="mathCourse">
           <option value="">Select a course</option>
           <option value="Algebra 1">Algebra 1</option>
           <option value="Geometry">Geometry</option>
@@ -151,7 +154,7 @@
       </div>
 
       <label for="learningStyle">How do you learn best?</label>
-      <select id="learningStyle" required>
+      <select id="learningStyle" name="learningStyle" required>
         <option value="">Choose one</option>
         <option value="Visual">Visual (I like diagrams, charts, seeing it)</option>
         <option value="Auditory">Auditory (I like hearing it explained)</option>
@@ -159,7 +162,7 @@
       </select>
 
       <label for="tonePreference">What’s your vibe?</label>
-      <select id="tonePreference" required>
+      <select id="tonePreference" name="tonePreference" required>
         <option value="">Choose one</option>
         <option value="Chill">Chill but serious</option>
         <option value="Motivational">Hype me up</option>
@@ -168,14 +171,14 @@
 
       <label>Pick a few things you’re into:</label>
       <div class="checkbox-group">
-        <label><input type="checkbox" value="Football" /> Football</label>
-        <label><input type="checkbox" value="Basketball" /> Basketball</label>
-        <label><input type="checkbox" value="Soccer" /> Soccer</label>
-        <label><input type="checkbox" value="Music" /> Music</label>
-        <label><input type="checkbox" value="Gaming" /> Gaming</label>
-        <label><input type="checkbox" value="Coding" /> Coding</label>
-        <label><input type="checkbox" value="Photography" /> Photography</label>
-        <label><input type="checkbox" value="Art" /> Art</label>
+        <label><input type="checkbox" name="interests[]" value="Football" /> Football</label>
+        <label><input type="checkbox" name="interests[]" value="Basketball" /> Basketball</label>
+        <label><input type="checkbox" name="interests[]" value="Soccer" /> Soccer</label>
+        <label><input type="checkbox" name="interests[]" value="Music" /> Music</label>
+        <label><input type="checkbox" name="interests[]" value="Gaming" /> Gaming</label>
+        <label><input type="checkbox" name="interests[]" value="Coding" /> Coding</label>
+        <label><input type="checkbox" name="interests[]" value="Photography" /> Photography</label>
+        <label><input type="checkbox" name="interests[]" value="Art" /> Art</label>
         <label><input type="checkbox" value="Dance" /> Dance</label>
       </div>
 

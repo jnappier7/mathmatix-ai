@@ -119,7 +119,7 @@ body {
   min-height: 48px;
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc; /* Ensure border is defined */
   font-size: 16px;
   resize: vertical;
 }
@@ -193,7 +193,7 @@ body {
 }
 
 /* Popup styling */
-.popup {
+.popup { /* Used for equation-popup */
   position: fixed;
   bottom: 60px;
   right: 40px;
@@ -379,7 +379,7 @@ form select {
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   font-size: 1rem;
-  box-sizing: border-box;
+  box-sizing: border-box; /* Ensures padding doesn't expand width */
 }
 
 .radio-group,
@@ -416,7 +416,7 @@ form select {
 
 @media (max-width: 600px) {
  .signup-container,
- .login-container, {
+ .login-container {
   padding-bottom: 100px;
 }
 
@@ -438,4 +438,185 @@ form select {
   border-radius: 16px;
   padding: 10px 14px;
   line-height: 1.45;
+}
+
+/* NEW: Leaderboard Button Styling (matches send-button) */
+.main-action-btn {
+    display: flex; /* Aligns icon and text */
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+    padding: 10px 18px; /* Matches send-button padding */
+    background-color: #20c997; /* Teal, matches send-button */
+    color: white;
+    border: none;
+    border-radius: 10px; /* Matches send-button border-radius */
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em; /* Standard font size */
+    transition: background-color 0.3s ease;
+}
+
+.main-action-btn:hover {
+    background-color: #17a085; /* Darker teal on hover, matches send-button */
+}
+
+/* Adjust icon size within this new button class */
+.main-action-btn .button-icon {
+    height: 20px; /* Slightly smaller icon for better fit */
+    width: 20px;
+}
+
+/* Leaderboard popup general styling */
+.popup-box { /* Renamed from #leaderboardPopup to a class for consistency */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 28rem; /* Adjust as needed */
+    padding: 1.5rem; /* Adjust as needed */
+    border: 1px solid #d1d5db; /* A light gray border */
+    cursor: move;
+}
+
+/* Leaderboard table styling within popup-box */
+.popup-box table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.popup-box th, .popup-box td {
+    padding: 10px 15px;
+    text-align: left;
+    font-size: 0.9em;
+}
+.popup-box thead {
+    background-color: #3498db; /* A blue */
+    color: white;
+}
+.popup-box tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+.popup-box tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+/* Media query for smaller screens, adjust popup size */
+@media (max-width: 600px) {
+    .popup-box {
+        max-width: 90%;
+        padding: 1rem;
+    }
+    .popup-box table th, .popup-box table td {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Class to control display (used by JS) */
+.hidden {
+    display: none !important;
+}
+
+/* Social Login Separator */
+.social-login-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.social-login-separator hr {
+    flex-grow: 1;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+.social-login-separator .separator-text {
+    padding: 0 10px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Social Login Buttons Container */
+.social-login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between buttons */
+    margin-bottom: 20px;
+}
+
+/* Base Social Button Style */
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.social-btn img {
+    height: 24px;
+    width: 24px;
+}
+
+/* Google Button Specifics */
+.google-btn {
+    background-color: #ffffff;
+    color: #4285F4; /* Google Blue */
+    border-color: #ccc;
+}
+
+.google-btn:hover {
+    background-color: #f2f2f2;
+    border-color: #bbb;
+}
+
+/* Microsoft Button Specifics */
+.microsoft-btn {
+    background-color: #2F2F2F; /* Microsoft Grey */
+    color: white;
+    border-color: #2F2F2F;
+}
+
+.microsoft-btn:hover {
+    background-color: #444444;
+    border-color: #444444;
+}
+
+/* Signup Link below login form */
+.signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.signup-link a {
+    color: #3498db; /* Your link blue */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Adjust the login-container for padding if needed to accommodate new buttons */
+.login-container {
+    /* Existing styles */
+    padding-bottom: 20px; /* Adjust if your existing padding is too high */
 }

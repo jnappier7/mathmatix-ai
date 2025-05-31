@@ -1,44 +1,57 @@
-const express = require("express");
+// routes/welcome.js
+const express = require('express');
 const router = express.Router();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-const User = require("../models/User");
+const User = require('../models/User'); // Import User model
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+router.get('/', async (req, res) => {
+    const userId = req.query.userId;
+    if (!userId) {
+        return res.status(400).json({ error: "User ID is required." });
+    }
 
-router.get("/", async (req, res) => {
-  const { userId } = req.query;
-  if (!userId) return res.status(400).send("Missing userId");
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
 
-  try {
-    const user = await User.findById(userId);
-    if (!user || !user.name) return res.status(404).send("User not found");
+        let greeting;
+        let summaryForWelcome = null;
 
-    const last = user.conversations?.at(-1);
-    const summary = last?.summary?.trim() || "";
+        // Find the last actual tutoring session summary
+        // Filter out sessions that are just "Initial Welcome Message" or have no actual chat messages
+        const tutoringSessions = user.conversations.filter(
+            session => session.summary && session.summary !== "Initial Welcome Message" && session.messages.length > 1
+        ).sort((a, b) => b.date - a.date); // Sort to get the truly last session
 
-    const prompt = `
-You're Mathmatix, a warm and engaging AI math tutor.
-Write a short, casual, personalized greeting to welcome ${user.name} back.
+        if (tutoringSessions.length > 0) {
+            const lastTutoringSession = tutoringSessions[0];
+            summaryForWelcome = lastTutoringSession.summary;
 
-If this summary is available, include a reference to it naturally:
-"${summary}"
+            // Extract main topic for concise welcome
+            // This is a simple heuristic; a more advanced method might parse the summary for key phrases
+            const topicMatch = summaryForWelcome.match(/This tutoring session focused on (.*?)\./);
+            const topic = topicMatch ? topicMatch[1] : "some challenging math concepts";
 
-Examples:
-- "Hey Jason, welcome back! How did it go on that quiz you were studying for last time?"
-- "Yo Jason, last time we tackled some slope problems. Ready to cook again?"
+            greeting = `Hey ${user.firstName || user.username}, great to see you again! Ready to build on that solid foundation we laid with **${topic}** last time?`;
+        } else {
+            greeting = `Hey ${user.firstName || user.username}, welcome aboard! I'm your AI math tutor. What math problem can we tackle first?`;
+        }
 
-Keep it short. One or two sentences. No robotic intros. Just be real and supportive.
-`;
+        // --- NEW LOGIC: We no longer store the welcome message ITSELF in user.conversations as a message
+        // The summary is handled on logout. The welcome message is purely for frontend display and AI context.
+        // We ensure that the last session's summary is used for context when creating the greeting.
+        // The saving of actual conversation messages happens in chat.js
+        // The summary field in user.conversations is populated in server.js/logout or /api/end-session
+        // So, this route only generates the greeting.
+        // --- END NEW LOGIC ---
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(prompt);
-    const greeting = result.response.text().trim();
+        res.json({ greeting: greeting });
 
-    res.send({ greeting });
-  } catch (err) {
-    console.error("ERROR: Welcome error:", err.message); // Replaced emoji
-    res.status(500).send("Failed to generate greeting");
-  }
+    } catch (error) {
+        console.error("ERROR: Error generating welcome message:", error);
+        res.status(500).json({ greeting: "Hello! How can I help you today?", error: "Failed to load personalized welcome." });
+    }
 });
 
 module.exports = router;

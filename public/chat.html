@@ -7,29 +7,37 @@
   <link rel="stylesheet" href="style.css" />
   <script defer src="script.js"></script>
   <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-</head>
+  </head>
 <body>
   <div id="dropzone" class="fullscreen-dropzone">
     <div id="chat-container">
 
-      <!-- 🔓 Logout Button -->
       <div id="top-bar">
         <button id="logoutBtn" class="btn logout">Log Out</button>
       </div>
 
-      <!-- Logo -->
-      <img id="logo" src="MathMatix AI Logo.png" alt="Mathmatix Logo" />
+      <img id="logo" src="/MathMatix AI Logo.png" alt="Mathmatix Logo" />
 
-      <!-- Chat messages -->
+      <div id="student-dashboard-elements">
+          <div id="xp-level-display">
+              <span id="level-badge">Level <span id="current-level">1</span></span>
+              <div id="xp-bar-container">
+                  <div id="xp-progress-bar"></div>
+              </div>
+              <span id="xp-text"><span id="current-xp">0</span> / <span id="xp-needed">100</span> XP</span>
+          </div>
+          <button id="showLeaderboardBtn" class="main-action-btn">
+              <img src="/leaderboard-icon.png" alt="Leaderboard Icon" class="button-icon" />
+              Leaderboard
+          </button>
+      </div>
       <div id="chat-container-inner"></div>
 
-      <!-- Thinking animation -->
       <div id="thinking-indicator" style="display: none;">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
         <span class="thinking-text">Mathmatix is thinking...</span>
       </div>
 
-      <!-- Input + tools -->
       <div id="input-container">
         <textarea id="user-input" placeholder="Type your message here…"></textarea>
         <button id="send-button">Send</button>
@@ -51,16 +59,38 @@
         </div>
       </div>
 
-      <!-- Hands-free toggle -->
       <div id="handsfree-toggle-wrapper">
         <span id="handsfree-label">Hands-Free Mode: OFF</span>
         <button id="handsfree-toggle" class="green"></button>
       </div>
 
-    </div> <!-- closes #chat-container -->
-  </div> <!-- closes #dropzone -->
+    </div>
+  </div>
 
-  <!-- MathLive Equation Editor Popup -->
+  <div id="leaderboardPopup" class="popup-box hidden">
+      <div class="popup-header">
+          <h2>Leaderboard</h2>
+          <span id="closeLeaderboard" class="close-button">❌</span>
+      </div>
+      <div class="overflow-x-auto">
+          <table id="leaderboardTable">
+              <thead>
+                  <tr>
+                      <th>Rank</th>
+                      <th>Student</th>
+                      <th>Level</th>
+                      <th>XP</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td colspan="4" class="text-center py-3 text-gray-500">Loading leaderboard...</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+  </div>
+
   <div id="equation-popup" class="popup">
     <div class="popup-header">
       <span>Equation Editor</span>
@@ -77,11 +107,17 @@
     <div id="equation-preview" style="margin-top: 12px; text-align: center;"></div>
   </div>
 
-  <!-- Math rendering scripts -->
   <script src="https://unpkg.com/mathlive"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script>
+      $(function() {
+          $("#leaderboardPopup").draggable();
+      });
+  </script>
 
-  <!-- Footer -->
   <footer>
     <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
     <p>

@@ -19,14 +19,13 @@ document.getElementById("login-form").addEventListener("submit", async function 
       localStorage.setItem("userId", data.user._id);
       localStorage.setItem("name", data.user.name);
       localStorage.setItem("tone", data.user.tonePreference);
-      // --- START ADDITION ---
       localStorage.setItem("userRole", data.user.role); // Save the user's role
-      // --- END ADDITION ---
-      // The redirection will now be handled by script.js, so this line will be overridden.
-      // Keeping it here for now to ensure no immediate breakage if script.js loads after this.
+      
+      // The backend (server.js/chat.js) will redirect based on role,
+      // but this client-side redirect ensures fallback if backend doesn't redirect explicitly for some reason.
       window.location.href = "/chat.html";
     } else {
-      alert(data.message || "Invalid username or password.");
+      alert(data.message || data.error || "Invalid username or password.");
     }
   } catch (err) {
     console.error(err);
@@ -34,21 +33,49 @@ document.getElementById("login-form").addEventListener("submit", async function 
   }
 });
 
-document.getElementById("forgot-password").addEventListener("click", async () => {
-  const email = prompt("Enter your email for password reset:");
-  if (!email) return;
+// Assuming you have a "Forgot Password" link/button with id="forgot-password" in your HTML
+const forgotPasswordBtn = document.getElementById("forgot-password");
+if (forgotPasswordBtn) { // Check if the element exists
+  forgotPasswordBtn.addEventListener("click", async () => {
+    const email = prompt("Enter your email for password reset:");
+    if (!email) return;
 
-  try {
-    const res = await fetch("/api/reset-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
-    });
+    try {
+      const res = await fetch("/api/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
 
-    const msg = await res.text();
-    alert(msg);
-  } catch (err) {
-    console.error("Reset error:", err);
-    alert("There was a problem processing your reset. Try again later.");
-  }
+      const msg = await res.text();
+      alert(msg);
+    } catch (err) {
+      console.error("Reset error:", err);
+      alert("There was a problem processing your reset. Try again later.");
+    }
+  });
+} else {
+  console.warn("DEBUG: Forgot password button with ID 'forgot-password' not found.");
+}
+
+// --- NEW: Social Login Button Event Listeners (Frontend Redirection) ---
+document.addEventListener('DOMContentLoaded', () => {
+    // These will typically be anchor tags, so clicking them will directly navigate
+    // to the backend Passport routes. No complex fetch logic needed here.
+    const googleLoginBtn = document.querySelector('.google-btn');
+    const microsoftLoginBtn = document.querySelector('.microsoft-btn');
+
+    if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', () => {
+            console.log('Redirecting to Google login...');
+            // The href="/auth/google" on the anchor tag already handles the redirection
+        });
+    }
+
+    if (microsoftLoginBtn) {
+        microsoftLoginBtn.addEventListener('click', () => {
+            console.log('Redirecting to Microsoft login...');
+            // The href="/auth/microsoft" on the anchor tag already handles the redirection
+        });
+    }
 });

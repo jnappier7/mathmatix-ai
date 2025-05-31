@@ -5,15 +5,12 @@ const User = require('../models/User');
 
 // POST /signup
 router.post('/', async (req, res) => {
-  // --- MODIFIED DESTRUCTURING HERE ---
   const { username, password, firstName, lastName, email, gradeLevel, mathCourse, learningStyle, tonePreference, interests } = req.body;
-  // --- END MODIFIED DESTRUCTURING ---
 
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) return res.status(400).json({ message: 'Username already taken.' });
 
-    // Optional: Check if email is already registered
     const existingEmailUser = await User.findOne({ email });
     if (existingEmailUser) return res.status(400).json({ message: 'Email already registered.' });
 
@@ -21,19 +18,19 @@ router.post('/', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      username,
+      username: username.toLowerCase(), // Store username in lowercase
       passwordHash,
-      // --- MODIFIED FIELDS HERE ---
       firstName,
       lastName,
       name: `${firstName} ${lastName}`, // Combine for 'name' field if still used elsewhere
-      email, // Save email
-      // --- END MODIFIED FIELDS ---
+      email: email.toLowerCase(), // Save email in lowercase
       gradeLevel,
       mathCourse,
       learningStyle,
       tonePreference,
-      interests
+      interests,
+      // For new direct signups, profile is considered complete initially
+      needsProfileCompletion: false // Assuming the signup form collects all necessary info
     });
 
     await newUser.save();
