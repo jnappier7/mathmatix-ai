@@ -8,7 +8,8 @@ const messageSchema = new mongoose.Schema({
 const sessionSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   messages: [messageSchema],
-  summary: String
+  summary: String,
+  activeMinutes: { type: Number, default: 0 } // NEW: To log active minutes per session
 }, { _id: false });
 
 const userSchema = new mongoose.Schema({
@@ -18,17 +19,26 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true, sparse: true },
   googleId: { type: String },
   microsoftId: { type: String },
-  name: { type: String },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  name: { type: String, required: false },
   mathCourse: { type: String },
   tonePreference: { type: String },
   learningStyle: { type: String },
   interests: [String],
   createdAt: { type: Date, default: Date.now },
-  conversations: [sessionSchema], // ✅ persistent session summaries
+  conversations: [sessionSchema],
 
-  // 🔒 NEW FIELDS BELOW
+  role: { type: String, default: "student" },
+  teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 
-  role: { type: String, default: "student" }, // "admin", "student", etc.
+  // --- NEW GAMIFICATION FIELDS ---
+  xp: { type: Number, default: 0 }, // Experience Points
+  level: { type: Number, default: 1 }, // Current Level
+  totalActiveTutoringMinutes: { type: Number, default: 0 }, // Lifetime active minutes
+  weeklyActiveTutoringMinutes: { type: Number, default: 0 }, // Active minutes for current week
+  lastWeeklyReset: { type: Date, default: Date.now }, // Timestamp of last weekly reset
+  // --- END NEW GAMIFICATION FIELDS ---
 
   iepPlan: {
     extendedTime: { type: Boolean, default: false },
@@ -39,7 +49,18 @@ const userSchema = new mongoose.Schema({
     reducedDistraction: { type: Boolean, default: false },
     readingLevel: { type: Number, default: null },
     mathAnxiety: { type: Boolean, default: false },
-    preferredScaffolds: [{ type: String }]
+    preferredScaffolds: [{ type: String }],
+    goals: [{
+      description: { type: String, required: true },
+      targetDate: { type: Date },
+      currentProgress: { type: Number, default: 0 },
+      measurementMethod: { type: String },
+      status: { type: String, default: "active" },
+      historicalProgress: [{
+        date: { type: Date, default: Date.now },
+        value: { type: Number }
+      }]
+    }]
   }
 });
 

@@ -1,5 +1,5 @@
 // script.js
-console.log("LOG: M∆THM∆TIΧ Initialized"); // Replaced emoji
+console.log("LOG: M∆THM∆TIΧ Initialized");
 
 const chatBox = document.getElementById("chat-container-inner");
 const input = document.getElementById("user-input");
@@ -9,13 +9,10 @@ const attachBtn = document.getElementById("attach-button");
 const equationBtn = document.getElementById("insert-equation");
 const fileInput = document.getElementById("file-input");
 
-// --- START EDIT 1: Corrected MathLive popup element IDs ---
-// These IDs were inconsistent with chat.html.
 const mathModal = document.getElementById("equation-popup");
 const insertMathBtn = document.getElementById("insert-latex");
 const closeMathBtn = document.getElementById("close-equation-popup");
 const mathInput = document.getElementById("math-editor");
-// --- END EDIT 1 ---
 
 let currentUser = null;
 
@@ -32,9 +29,9 @@ fetch("/user")
         const userRole = localStorage.getItem("userRole"); // Get the role from localStorage
 
         if (userRole === "admin") {
-            window.location.href = "/admin_dashboard.html"; // Will create this next!
+            window.location.href = "/admin_dashboard.html";
         } else if (userRole === "teacher") {
-            window.location.href = "/teacher_dashboard.html"; // Will create this next!
+            window.location.href = "/teacher_dashboard.html";
         } else { // Default to student
             // Original logic for students, now within the 'else' block
             fetch(`/welcome-message?userId=${currentUser._id}`)
@@ -55,7 +52,6 @@ fetch("/user")
     window.location.href = "/login.html"; // Redirect on any user load error
   });
 
-// --- START EDIT 3: Made appendMessage more robust and improved MathJax regex ---
 function appendMessage(message, sender = "user") {
   const messageContent = typeof message === 'string' ? message : String(message || '');
 
@@ -81,9 +77,7 @@ function appendMessage(message, sender = "user") {
   chatBox.appendChild(bubble);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-// --- END EDIT 3 ---
 
-// Send message to server
 if (sendBtn) sendBtn.addEventListener("click", sendMessage);
 if (input) input.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
@@ -99,9 +93,7 @@ function sendMessage() {
   appendMessage(message, "user");
   input.value = "";
 
-  // --- START EDIT 4: Show thinking indicator ---
   showThinkingIndicator(true);
-  // --- END EDIT 4 ---
 
   fetch("/chat", {
     method: "POST",
@@ -114,18 +106,13 @@ function sendMessage() {
     })
     .catch((err) => {
       console.error("ERROR: Chat error:", err);
-      // --- START EDIT 5: Provide more helpful error message ---
       appendMessage("WARNING: AI error. Please try again. Your session might have expired. Try logging in again if this persists.", "ai");
-      // --- END EDIT 5 ---
     })
     .finally(() => {
-        // --- START EDIT 6: Hide thinking indicator regardless of success or failure ---
         showThinkingIndicator(false);
-        // --- END EDIT 6 ---
     });
 }
 
-// Speech-to-text
 let recognition;
 if ("webkitSpeechRecognition" in window) {
   recognition = new webkitSpeechRecognition();
@@ -139,13 +126,12 @@ if ("webkitSpeechRecognition" in window) {
   };
 
   recognition.onerror = (event) => {
-    console.error("Speech recognition error:", event.error);
+    console.error("Speech recognition error:", event);
   };
 
   if (micBtn) micBtn.addEventListener("click", () => recognition.start());
 }
 
-// File upload
 if (attachBtn && fileInput) {
   attachBtn.addEventListener("click", () => fileInput.click());
 }
@@ -157,7 +143,6 @@ if (fileInput) {
     const formData = new FormData();
     formData.append("file", file);
 
-    // --- START EDIT 7: Append user data to FormData for upload ---
     if (currentUser) {
         formData.append("userId", currentUser._id);
         formData.append("name", currentUser.name || '');
@@ -165,13 +150,10 @@ if (fileInput) {
         formData.append("learningStyle", currentUser.learningStyle || '');
         formData.append("interests", JSON.stringify(currentUser.interests || []));
     }
-    // --- END EDIT 7 ---
 
     appendMessage(`Upload: ${file.name}`, "user");
 
-    // --- START EDIT 8: Show thinking indicator for upload ---
     showThinkingIndicator(true);
-    // --- END EDIT 8 ---
 
     fetch("/upload", {
       method: "POST",
@@ -181,19 +163,14 @@ if (fileInput) {
       .then((data) => appendMessage(data.text, "ai"))
       .catch((err) => {
         console.error("ERROR: Upload error:", err);
-        // --- START EDIT 9: Provide more helpful error message for upload ---
         appendMessage("WARNING: Upload failed. Ensure the file is a clear image of math or PDF.", "ai");
-        // --- END EDIT 9 ---
       })
       .finally(() => {
-        // --- START EDIT 10: Hide thinking indicator regardless of success or failure ---
         showThinkingIndicator(false);
-        // --- END EDIT 10 ---
     });
   });
 }
 
-// Equation button popup
 if (equationBtn && mathModal && mathInput) {
   equationBtn.addEventListener("click", () => {
     mathModal.style.display = "block";
@@ -202,7 +179,6 @@ if (equationBtn && mathModal && mathInput) {
   });
 }
 
-// Insert equation into message
 if (insertMathBtn && mathModal && mathInput) {
   insertMathBtn.addEventListener("click", () => {
     const math = mathInput.value.trim();
@@ -215,7 +191,6 @@ if (insertMathBtn && mathModal && mathInput) {
   });
 }
 
-// Close math editor
 if (closeMathBtn && mathModal && mathInput) {
   closeMathBtn.addEventListener("click", () => {
     mathModal.style.display = "none";
@@ -223,7 +198,6 @@ if (closeMathBtn && mathModal && mathInput) {
   });
 }
 
-// Close popup if clicked outside
 window.addEventListener("click", (e) => {
   if (e.target === mathModal) {
     mathModal.style.display = "none";
@@ -231,19 +205,16 @@ window.addEventListener("click", (e) => {
   }
 });
 
-// --- START EDIT 11: Add Logout Button functionality ---
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
+    // Note: The /logout route in server.js now handles summary generation
+    // We don't need to explicitly clear localStorage here before the fetch,
+    // as it will be cleared after successful logout redirect.
     fetch("/logout")
       .then(() => {
-        // Clear local storage on logout for a clean slate
-        localStorage.removeItem("mathmatixUser");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("name");
-        localStorage.removeItem("tone");
-        localStorage.removeItem("userRole"); // Clear the role too!
-        window.location.href = "/login.html";
+        // Redirection handled by server after summary generation
+        window.location.href = "/login.html"; // Ensure final redirect after server handles it
       })
       .catch((err) => {
         console.error("ERROR: Logout failed:", err);
@@ -251,9 +222,7 @@ if (logoutBtn) {
       });
   });
 }
-// --- END EDIT 11 ---
 
-// --- START EDIT 12: Add Thinking Indicator helper functions ---
 const thinkingIndicator = document.getElementById("thinking-indicator");
 
 function showThinkingIndicator(show) {
@@ -261,4 +230,15 @@ function showThinkingIndicator(show) {
         thinkingIndicator.style.display = show ? "flex" : "none";
     }
 }
-// --- END EDIT 12 ---
+
+// --- NEW: Send session end signal on tab close/navigation ---
+window.addEventListener('beforeunload', (event) => {
+    const userId = localStorage.getItem('userId');
+    // Check if user is logged in and on the chat page
+    if (userId && window.location.pathname.includes('/chat.html')) {
+        // Use navigator.sendBeacon for a fire-and-forget request that won't be cancelled on tab close
+        navigator.sendBeacon('/api/end-session', JSON.stringify({ userId: userId }));
+    }
+    // No need to return anything for modern browsers or sendBeacon.
+});
+// --- END NEW ---

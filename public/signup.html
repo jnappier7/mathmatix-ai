@@ -7,8 +7,7 @@
   <link rel="stylesheet" href="style.css" />
   <script defer src="signup.js"></script>
   <style>
-    
-
+    /* These styles are likely redundant if already in style.css, but ensure they apply if not */
     .signup-container {
       background: white;
       border-radius: 10px;
@@ -51,12 +50,14 @@
 
     input[type="text"],
     input[type="password"],
+    input[type="email"], /* Added email input type */
     select {
       width: 100%;
       padding: 10px;
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       font-size: 1rem;
+      box-sizing: border-box; /* Ensures padding doesn't expand width */
     }
 
     .radio-group,
@@ -124,7 +125,7 @@
     <form id="signup-form">
       <label for="username">Username</label>
       <input type="text" id="username" name="username" required />
-		
+
 	  <label for="email">Email</label>
 	  <input type="email" id="email" name="email" required />
 
@@ -138,10 +139,11 @@
   Must be at least 8 characters and include one capital letter and one number.
 </small>
 
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" name="firstName" required />
 
-      <label for="name">First Name</label>
-      <input type="text" id="name" name="name" required />
-
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" name="lastName" required />
       <label for="grade">Grade Level</label>
       <select id="grade" name="grade" required>
         <option value="">Select your grade</option>

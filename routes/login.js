@@ -13,7 +13,6 @@ router.post("/", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Assuming you have session middleware set up (e.g., express-session)
     req.session.userId = user._id;
 
     user.lastLogin = Date.now();
