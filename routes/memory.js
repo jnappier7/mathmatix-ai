@@ -5,7 +5,8 @@ const router = express.Router();
 const User = require("../models/User");
 
 // Renamed function for clarity
-async function saveConversation(userId, summary) {
+// MODIFIED: saveConversation now expects messageLog as an argument
+async function saveConversation(userId, summary, messageLog) { // Added messageLog parameter
   try {
     const user = await User.findById(userId); // Fetch user document (non-lean)
     if (!user) {
@@ -15,18 +16,19 @@ async function saveConversation(userId, summary) {
     const conversation = {
       summary: summary, // Use the summary passed as argument
       date: new Date(),
-      messages: user.messageLog || [] // messageLog is attached to user document in chat.js
+      messages: messageLog || [] // Use the passed messageLog, fallback to empty array
     };
 
     user.conversations = user.conversations || [];
     user.conversations.push(conversation);
     user.lastSeen = new Date();
 
-    delete user.messageLog; // Clear temporary messageLog after saving
+    // No need to delete user.messageLog here as it's not part of the user document
 
     await user.save();
+    console.log(`LOG: Conversation summary saved for user ${userId} in DB.`);
   } catch (error) {
-    console.error("Error saving conversation summary:", error);
+    console.error("ERROR: Error saving conversation summary to DB:", error);
     throw error;
   }
 }
@@ -49,7 +51,7 @@ router.post("/recall", async (req, res) => {
       messages: last.messages?.slice(-5) || [] // Last 5 messages
     });
   } catch (err) {
-    console.error("Error fetching summary:", err);
+    console.error("ERROR: Error fetching summary:", err);
     res.status(500).send({ summary: null, messages: [] });
   }
 });

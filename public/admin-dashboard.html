@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="admin-page-wrapper">
+    <header class="admin-header">
+      <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
+      <h1>Admin Dashboard</h1>
+    </header>
+
+    <div class="admin-main-content">
+      <div class="admin-widget-sidebar">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">System Status</div>
+          <p>Database: <span style="color: green; font-weight: bold;">Online</span></p>
+          <p>AI Service: <span style="color: green; font-weight: bold;">Operational</span></p>
+          <p>Last Sync: Just now</p>
+        </div>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">Top Students</div>
+          <p>1. Alice (Level 10)</p>
+          <p>2. Bob (Level 9)</p>
+          <p>3. Charlie (Level 8)</p>
+        </div>
+      </div>
+
+      <div class="admin-central-content">
+        <div class="dashboard-panel controls">
+          <div class="dashboard-panel-header">Teacher Assignment</div>
+          <div class="form-group">
+            <label for="teacherSelect">Assign selected students to:</label>
+            <select id="teacherSelect"></select>
+          </div>
+          <button id="assignButton" class="submit-btn">Assign</button>
+        </div>
+
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">Student List</div>
+          <div class="form-group">
+            <input type="text" id="studentSearch" placeholder="Search students..." />
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="user-table">
+              <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Current Teacher</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody">
+                <tr><td><input type="checkbox"></td><td>John Doe</td><td>john@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>Jane Smith</td><td>jane@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Emily White</td><td>emily@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>David Brown</td><td>david@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Sarah Green</td><td>sarah@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>Chris Black</td><td>chris@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Olivia Blue</td><td>olivia@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>Daniel Grey</td><td>daniel@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Mia Red</td><td>mia@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>Ethan Yellow</td><td>ethan@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Ava Orange</td><td>ava@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>Liam Purple</td><td>liam@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Sophia Pink</td><td>sophia@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>Noah Gold</td><td>noah@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Isabella Silver</td><td>isabella@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>James Bronze</td><td>james@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Charlotte Platinum</td><td>charlotte@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>Benjamin Copper</td><td>benjamin@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+                <tr><td><input type="checkbox"></td><td>Amelia Steel</td><td>amelia@example.com</td><td>Student</td><td>Ms. Smith</td></tr>
+                <tr><td><input type="checkbox"></td><td>Lucas Titanium</td><td>lucas@example.com</td><td>Student</td><td>Mr. Johnson</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-widget-sidebar">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">User Summaries Access</div>
+          <p>Quickly view detailed student and parent profiles.</p>
+          <button class="main-action-btn">View All Summaries</button>
+        </div>
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">Quick Reports</div>
+          <p>Generate usage and performance reports.</p>
+          <button class="main-action-btn">Generate Report</button>
+        </div>
+      </div>
+    </div> </div> <footer>
+    <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
+
+  <div id="studentDetailModal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close-button" id="closeModalButton">&times;</button>
+      <h2 id="modalStudentName">Student Profile</h2>
+
+      <div class="modal-section">
+        <h3>General Information</h3>
+        <form id="studentProfileForm">
+          <input type="hidden" id="modalStudentId">
+          <div class="modal-form-group">
+            <label for="modalFirstName">First Name:</label>
+            <input type="text" id="modalFirstName" name="firstName">
+          </div>
+          <div class="modal-form-group">
+            <label for="modalLastName">Last Name:</label>
+            <input type="text" id="modalLastName" name="lastName">
+          </div>
+          <div class="modal-form-group">
+            <label for="modalUsername">Username:</label>
+            <input type="text" id="modalUsername" name="username" readonly>
+          </div>
+          <div class="modal-form-group">
+            <label for="modalEmail">Email:</label>
+            <input type="email" id="modalEmail" name="email">
+          </div>
+          <div class="modal-form-group">
+            <label for="modalGradeLevel">Grade Level:</label>
+            <input type="text" id="modalGradeLevel" name="gradeLevel" placeholder="e.g., 8th Grade">
+          </div>
+          <div class="modal-form-group">
+            <label for="modalMathCourse">Math Course:</label>
+            <input type="text" id="modalMathCourse" name="mathCourse" placeholder="e.g., Algebra I">
+          </div>
+          <div class="modal-form-group">
+            <label for="modalTonePreference">Tone Preference:</label>
+            <input type="text" id="modalTonePreference" name="tonePreference" placeholder="e.g., Friendly, Direct">
+          </div>
+          <div class="modal-form-group">
+            <label for="modalLearningStyle">Learning Style:</label>
+            <input type="text" id="modalLearningStyle" name="learningStyle" placeholder="e.g., Visual, Auditory">
+          </div>
+          <div class="modal-form-group">
+            <label for="modalInterests">Interests (comma-separated):</label>
+            <input type="text" id="modalInterests" name="interests" placeholder="e.g., sports, music, art">
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-section">
+        <h3>IEP Plan Accommodations</h3>
+        <form id="studentIepForm">
+          <div class="modal-form-group checkbox-group">
+            <label><input type="checkbox" id="iepExtendedTime" name="extendedTime"> Extended Time</label>
+            <label><input type="checkbox" id="iepSimplifiedInstructions" name="simplifiedInstructions"> Simplified Instructions</label>
+            <label><input type="checkbox" id="iepFrequentCheckIns" name="frequentCheckIns"> Frequent Check-ins</label>
+            <label><input type="checkbox" id="iepVisualSupport" name="visualSupport"> Visual Support</label>
+            <label><input type="checkbox" id="iepChunking" name="chunking"> Chunking Information</label>
+            <label><input type="checkbox" id="iepReducedDistraction" name="reducedDistraction"> Reduced Distraction</label>
+          </div>
+          <div class="modal-form-group">
+            <label for="iepReadingLevel">Reading Level (Grade):</label>
+            <input type="number" id="iepReadingLevel" name="readingLevel" min="0" max="12" step="0.5">
+          </div>
+          <div class="modal-form-group checkbox-group">
+            <label><input type="checkbox" id="iepMathAnxiety" name="mathAnxiety"> Math Anxiety</label>
+          </div>
+          <div class="modal-form-group">
+            <label for="iepPreferredScaffolds">Preferred Scaffolds (comma-separated):</label>
+            <input type="text" id="iepPreferredScaffolds" name="preferredScaffolds" placeholder="e.g., step-by-step, examples">
+          </div>
+          <div class="modal-form-group" id="iepGoalsDisplay">
+            <label>IEP Goals:</label>
+            <div id="iepGoalsList"></div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-section">
+        <h3>Usage Statistics</h3>
+        <div class="info-display-group"><strong>Total Tutoring Minutes:</strong> <span id="totalActiveTutoringMinutes"></span></div>
+        <div class="info-display-group"><strong>Weekly Tutoring Minutes:</strong> <span id="weeklyActiveTutoringMinutes"></span></div>
+        <div class="info-display-group"><strong>XP:</strong> <span id="xpDisplay"></span></div>
+        <div class="info-display-group"><strong>Level:</strong> <span id="levelDisplay"></span></div>
+        <div class="info-display-group"><strong>Last Login:</strong> <span id="lastLoginDisplay"></span></div>
+        <div class="info-display-group"><strong>Account Created:</strong> <span id="createdAtDisplay"></span></div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Recent Conversation Summaries</h3>
+        <div id="conversationSummariesList" class="conversation-list">
+          </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="save-button" id="saveChangesButton">Save Changes</button>
+        <button class="cancel-button" id="cancelButton">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/admin-dashboard.js"></script>
+</body>
+</html>

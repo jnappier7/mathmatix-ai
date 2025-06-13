@@ -23,7 +23,7 @@ module.exports = async function pdfToImageBase64(pdfBuffer) {
     }, dataURI);
 
     // Wait for PDF to render visually
-    await page.waitForSelector("#viewer .page[data-loaded='true']", { timeout: 10000 });
+    await page.waitForSelector("#viewer .page[data-loaded='true']", { timeout: 30000 });
 
     // Screenshot first page
     const clip = await page.$("#viewer .page[data-page-number='1']");

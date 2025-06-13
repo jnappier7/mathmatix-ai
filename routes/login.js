@@ -1,68 +1,58 @@
-// routes/login.js (backend route)
+// routes/login.js - REVISED
+
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const passport = require("passport"); // Import passport
-const LocalStrategy = require("passport-local").Strategy; // Import LocalStrategy
+const passport = require("passport");
 const User = require("../models/User");
 
-// Configure Passport Local Strategy for username/password login
-// This part is defined ONCE in passport-config.js. We need to remove this here.
-// Passport strategies should be defined in passport-config.js and then used via passport.authenticate()
-
 router.post("/", (req, res, next) => {
-  // Use Passport's authenticate middleware for the 'local' strategy
+  console.log("[/login Route] POST request received.");
+
+  // Use Passport's custom callback to gain full control over the response
   passport.authenticate('local', (err, user, info) => {
+    // Case 1: A catastrophic error occurred (e.g., database connection issue)
     if (err) {
-      console.error("ERROR: Passport authentication error:", err);
-      return res.status(500).json({ error: "Authentication failed due to server error." });
-    }
-    if (!user) {
-      // Authentication failed (e.g., incorrect username/password)
-      return res.status(401).json({ error: info.message || "Invalid credentials" });
+      console.error("[/login Route] Passport authentication error:", err);
+      return res.status(500).json({ success: false, message: "Server error during authentication." });
     }
 
-    // Authentication successful, establish session via Passport's req.logIn()
-    req.logIn(user, async (loginErr) => { // req.logIn is added by Passport
+    // Case 2: Authentication failed (user not found or password incorrect)
+    if (!user) {
+      console.log("[/login Route] Authentication failed:", info.message);
+      // 'info.message' comes from the LocalStrategy 'done' function
+      return res.status(401).json({ success: false, message: info.message || "Invalid credentials." });
+    }
+
+    // Case 3: Authentication succeeded, now log the user in
+    req.logIn(user, async (loginErr) => {
       if (loginErr) {
-        console.error("ERROR: req.logIn error:", loginErr);
-        return res.status(500).json({ error: "Login failed during session establishment." });
+        console.error("[/login Route] req.logIn error:", loginErr);
+        return res.status(500).json({ success: false, message: "Server error during session creation." });
       }
 
-      // Update lastLogin and save user
+      // Login and session are now established. Update lastLogin.
       user.lastLogin = Date.now();
       await user.save();
 
-      // Check if user needs profile completion
+      // Determine the correct redirect URL
+      let redirectUrl = '/chat.html'; // Default
       if (user.needsProfileCompletion) {
-          console.log("Login successful, but user needs profile completion. Redirecting to /complete-profile.html");
-          return res.status(200).json({
-              message: "Login successful! Please complete your profile.",
-              user: { _id: user._id, needsProfileCompletion: true },
-              redirect: '/complete-profile.html' // Indicate redirection
-          });
+        redirectUrl = '/complete-profile.html';
+      } else if (user.role === 'teacher') {
+        redirectUrl = '/teacher-dashboard.html';
+      } else if (user.role === 'admin') {
+        redirectUrl = '/admin-dashboard.html';
+      } else if (user.role === 'parent') {
+        redirectUrl = '/parent-dashboard.html';
+      } else if (user.role === 'student' && !user.selectedTutorId) {
+        redirectUrl = '/pick-tutor.html';
       }
-
-      // If profile is complete, proceed to chat.html
-      res.status(200).json({
-        message: "Login successful!",
-        user: {
-          _id: user._id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          name: user.name,
-          gradeLevel: user.gradeLevel,
-          mathCourse: user.mathCourse,
-          learningStyle: user.learningStyle,
-          tonePreference: user.tonePreference,
-          interests: user.interests,
-          role: user.role,
-        },
-        redirect: '/chat.html' // Indicate redirection
-      });
+      
+      console.log(`[/login Route] Login successful for ${user.username}. Sending redirect to: ${redirectUrl}`);
+      // Send the final success response
+      return res.json({ success: true, message: "Login successful!", redirect: redirectUrl });
     });
-  })(req, res, next); // Call the middleware
+  })(req, res, next); // This invokes the middleware
 });
 
 module.exports = router;
