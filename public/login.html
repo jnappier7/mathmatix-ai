@@ -2,50 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login | M∆THM∆TIΧ AI</title>
-  <link rel="stylesheet" href="/style.css" />
-  <script defer src="login.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; flex-direction: column; padding: 30px 20px;">
+  <div class="login-page-wrapper">
     <div class="login-container">
-
       <div class="logo-header">
-        <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
+        <img src="/MathMatix AI Logo.png" alt="Mathmatix Logo" />
       </div>
+      <h1>Welcome Back!</h1>
+      <p class="subtitle">Log in to continue your learning journey.</p>
+      <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required autocomplete="username" />
 
-      <h1>Welcome back</h1>
-      <p class="subtitle">Log in to continue your math journey.</p>
+        <div class="password-label-row">
+          <label for="password">Password:</label>
+          <a href="/forgot-password.html">Forgot Password?</a>
+        </div>
+        <input type="password" id="password" name="password" required autocomplete="current-password" />
 
-      <form id="login-form">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required />
-
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required />
-
-        <button type="submit" class="submit-btn">Log In</button>
+        <button type="submit" class="submit-btn">Login</button>
       </form>
 
+      <div id="login-message" class="error-message" style="display: none; text-align: center; margin-top: 10px; color: red;"></div>
+
       <div class="social-login-separator">
-        <hr><span class="separator-text">OR</span><hr>
+        <span>OR</span>
       </div>
 
       <div class="social-login-buttons">
         <a href="/auth/google" class="social-btn google-btn">
-          <img src="/google-icon.png" alt="Google icon"> Login with Google
+          <img src="google-icon.png" alt="Google Icon" />
+          Login with Google
         </a>
         <a href="/auth/microsoft" class="social-btn microsoft-btn">
-          <img src="/microsoft-icon.png" alt="Microsoft icon"> Login with Microsoft
+          <img src="microsoft-icon.png" alt="Microsoft Icon" />
+          Login with Microsoft
         </a>
       </div>
 
       <p class="signup-link">
-        Don't have an account? <a href="/signup.html">Sign Up here</a>
+        Don't have an account? <a href="/signup.html">Create an account</a>
       </p>
-
     </div>
   </div>
 
@@ -56,5 +57,52 @@
       <a href="/terms.html">Terms of Use</a>
     </p>
   </footer>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginMessage = document.getElementById('login-message');
+
+    loginForm.addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(loginForm);
+      const data = Object.fromEntries(formData.entries());
+
+      loginMessage.style.display = 'none';
+
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          // --- THIS HEADER IS THE FIX ---
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          // --- END FIX ---
+          body: JSON.stringify(data),
+          credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          if (result.redirect) {
+            // Redirect immediately on success
+            window.location.href = result.redirect;
+          } else {
+            // Fallback just in case
+            window.location.href = '/chat.html';
+          }
+        } else {
+          loginMessage.textContent = result.message || 'Login failed. Please check your username and password.';
+          loginMessage.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Login Error:', error);
+        // This is where the original error was being caught because the response was HTML
+        loginMessage.textContent = 'Login failed. Please check your credentials or try again later.';
+        loginMessage.style.display = 'block';
+      }
+    });
+  </script>
 </body>
 </html>

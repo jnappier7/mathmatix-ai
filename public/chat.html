@@ -3,127 +3,194 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>M∆THM∆TIΧ AI</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  </head>
+  <title>M∆THM∆TIΧ AI Chat</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.1/lottie.min.js"></script>
+  <script defer src="https://unpkg.com/mathlive"></script>
+  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+        svg: { fontCache: 'global' },
+        options: { ignoreHtmlClass: 'tex2jax_ignore', processHtmlClass: 'tex2jax_process' },
+        loader: { load: ['input/tex', 'output/svg', '[tex]/physics'] },
+        startup: { 
+            ready: () => {
+                console.log("✅ MathJax is fully loaded.");
+                window.isMathJaxReady = true;
+            }
+        }
+    };
+  </script>
+</head>
 <body>
-  <div id="dropzone" class="fullscreen-dropzone">
-    <div id="chat-container">
+  <div id="app-layout-wrapper">
+    <div class="widget-sidebar-left">
+      <div id="leaderboard-content">
+        <div class="popup-header"><h2>Leaderboard</h2></div>
+        <div class="overflow-y-auto">
+          <table id="leaderboardTable">
+            <thead><tr><th>Rank</th><th>Student</th><th>Level</th><th>XP</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="course-cards-container" class="course-card-wrapper"></div>
+    </div>
 
+    <div id="chat-container">
       <div id="top-bar">
         <button id="logoutBtn" class="btn logout">Log Out</button>
       </div>
-
       <img id="logo" src="/MathMatix AI Logo.png" alt="Mathmatix Logo" />
-
-      <div id="student-dashboard-elements">
-          <div id="xp-level-display">
-              <span id="level-badge">Level <span id="current-level">1</span></span>
-              <div id="xp-bar-container">
-                  <div id="xp-progress-bar"></div>
-              </div>
-              <span id="xp-text"><span id="current-xp">0</span> / <span id="xp-needed">100</span> XP</span>
-          </div>
-          <button id="showLeaderboardBtn" class="main-action-btn">
-              <img src="/leaderboard-icon.png" alt="Leaderboard Icon" class="button-icon" />
-              Leaderboard
-          </button>
-      </div>
+      <div id="lesson-header" style="display:none;"></div>
       <div id="chat-container-inner"></div>
-
       <div id="thinking-indicator" style="display: none;">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
         <span class="thinking-text">Mathmatix is thinking...</span>
       </div>
-
       <div id="input-container">
         <textarea id="user-input" placeholder="Type your message here…"></textarea>
         <button id="send-button">Send</button>
-
         <div id="tools-left">
-          <button id="insert-equation" title="Insert Equation">
-            <img src="equation-icon.png" alt="Insert Equation" />
-          </button>
+          <button id="insert-equation" title="Insert Equation"><img src="equation-icon.png" alt="Insert Equation" /></button>
         </div>
-
         <div id="tools-right">
-          <button id="mic-button" title="Voice Input">
-            <img src="mic-icon.png" alt="Mic" />
-          </button>
-          <button id="attach-button" title="Upload File">
-            <img src="clip-icon.png" alt="Attach" />
-          </button>
-          <input type="file" id="file-input" />
+          <button id="mic-button" title="Voice Input"><img src="mic-icon.png" alt="Mic" /></button>
+          <button id="attach-button" title="Upload File"><img src="clip-icon.png" alt="Attach" /></button>
+          <input type="file" id="file-input" style="display:none;" />
         </div>
       </div>
-
       <div id="handsfree-toggle-wrapper">
         <span id="handsfree-label">Hands-Free Mode: OFF</span>
         <button id="handsfree-toggle" class="green"></button>
+        <button id="audio-stop-button" title="Stop Speaking" style="display:none;">🔇</button>
       </div>
-
-    </div>
-  </div>
-
-  <div id="leaderboardPopup" class="popup-box hidden">
-      <div class="popup-header">
-          <h2>Leaderboard</h2>
-          <span id="closeLeaderboard" class="close-button">❌</span>
-      </div>
-      <div class="overflow-x-auto">
-          <table id="leaderboardTable">
-              <thead>
-                  <tr>
-                      <th>Rank</th>
-                      <th>Student</th>
-                      <th>Level</th>
-                      <th>XP</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td colspan="4" class="text-center py-3 text-gray-500">Loading leaderboard...</td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
-  </div>
-
-  <div id="equation-popup" class="popup">
-    <div class="popup-header">
-      <span>Equation Editor</span>
-      <span id="close-equation-popup" class="close-button">❌</span>
     </div>
 
-    <math-field id="math-editor" virtual-keyboard-mode="onfocus" smart-mode></math-field>
-
-    <div class="math-controls">
-      <button id="insert-latex">Insert</button>
-      <button id="cancel-latex">Cancel</button>
+    <div class="widget-sidebar-right">
+      <div id="xp-level-display">
+        <span id="level-badge">Level <span id="current-level">1</span></span>
+        <span id="xp-text"><span id="current-xp">0</span> / <span id="xp-needed">100</span> XP</span>
+      </div>
+      <div id="student-parent-link-display" class="widget-section" style="display: none;">
+         </div>
+      <div id="avatar-container" style="margin-top: 20px;">
+        <div id="student-avatar"></div>
+      </div>
     </div>
-
-    <div id="equation-preview" style="margin-top: 12px; text-align: center;"></div>
   </div>
-
-  <script src="https://unpkg.com/mathlive"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-  <script>
-      $(function() {
-          $("#leaderboardPopup").draggable();
-      });
-  </script>
 
   <footer>
     <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-    <p>
-      <a href="/privacy.html">Privacy Policy</a> |
-      <a href="/terms.html">Terms of Use</a>
-    </p>
+    <p><a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
   </footer>
+
+  <div id="equation-popup" class="popup" style="display:none;">
+    <div class="popup-header">
+      <h2>Insert Equation</h2>
+      <button class="close-button" id="close-equation-popup">&times;</button>
+    </div>
+    <math-field id="math-editor"></math-field>
+    <div class="math-controls">
+      <button id="insert-latex" class="submit-btn">Insert</button>
+    </div>
+  </div>
+
+  <script src="/script.js"></script>
+  <script type="module" src="/js/guidedPath.js"></script>
+
+  <script type="module">
+    import { handleGuidedAnswer, resumeGuidedPath, startGuidedPath } from '/js/guidedPath.js'; 
+    
+    let loadedCourseData = null;
+
+    // The old window.sendChatMessage function is now fully removed.
+    // We will exclusively use window.appendMessage from script.js
+
+    document.getElementById('send-button').addEventListener('click', async () => {
+        const userInput = document.getElementById('user-input').value.trim();
+        if (userInput === '') return;
+        
+        window.appendMessage(userInput, 'user');
+        document.getElementById('user-input').value = ''; 
+
+        const handledByGuidedPath = await handleGuidedAnswer(userInput, loadedCourseData);
+
+        if (!handledByGuidedPath) {
+            // This is free-form chat.
+            window.showThinkingIndicator(true);
+            try {
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId: window.currentUser?._id, message: userInput, role: 'student' }),
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Chat API request failed');
+
+                window.appendMessage(data.text, "ai", data.voiceId);
+                if (data.userXp !== undefined) {
+                    window.updateGamifiedDashboard(data.userXp, data.userLevel, data.specialXpAwarded);
+                }
+                if (data.imageUrl) {
+                    window.appendMessage(`<img src="${data.imageUrl}" class="chat-image">`, "ai");
+                }
+            } catch (err) {
+                console.error("Free-form chat error:", err);
+                window.appendMessage("An error occurred. Please try again.", "ai");
+            } finally {
+                window.showThinkingIndicator(false);
+            }
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const response = await fetch('/resources/ready-for-algebra-1-pathway.json');
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            loadedCourseData = await response.json();
+        } catch (error) {
+            console.error("❌ Error loading course data:", error);
+            if(window.appendMessage) window.appendMessage("Error loading course data. Some features may be unavailable.", "ai");
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+        const courseId = urlParams.get('courseId');
+
+        if (mode === 'guided' && courseId === 'ready-for-algebra-1') {
+            document.getElementById('course-cards-container').style.display = 'none';
+            document.getElementById('lesson-header').style.display = 'block';
+            resumeGuidedPath(courseId, loadedCourseData);
+        } else {
+            renderCourseCard(loadedCourseData);
+            document.getElementById('lesson-header').style.display = 'none';
+        }
+    });
+
+    function renderCourseCard(courseData) {
+        const container = document.getElementById('course-cards-container');
+        if (!container) return; 
+        const course = courseData; 
+        const progressPercent = 0; // This should be fetched from user data later
+        const progressBarHtml = `
+            <div class="progress-circle-container">
+                <div class="progress-circle" style="background: conic-gradient(#4CAF50 ${progressPercent * 3.6}deg, #e0e0e0 ${progressPercent * 3.6}deg);">
+                    <div class="progress-circle-inner">${progressPercent}%</div>
+                </div>
+            </div>`;
+        const card = document.createElement('div');
+        card.className = 'course-card'; 
+        card.innerHTML = `<h3>📘 ${course.track}</h3>${progressBarHtml}<button class="enroll-btn">Enroll / Resume Pathway</button>`;
+        card.querySelector('.enroll-btn').addEventListener('click', () => {
+            container.style.display = 'none';
+            startGuidedPath(course.track.toLowerCase().replace(/ /g, '-'), loadedCourseData);
+        });
+        container.appendChild(card);
+    }
+  </script>
 </body>
 </html>

@@ -20,10 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirm-password").value;
-    // --- START ADDITIONS ---
-    const firstName = document.getElementById("firstName").value; // Get firstName
-    const lastName = document.getElementById("lastName").value;   // Get lastName
-    // --- END ADDITIONS ---
+    const firstName = document.getElementById("firstName").value;
+    const lastName = document.getElementById("lastName").value;
     const gradeLevel = document.getElementById("grade").value;
     const mathCourse = document.getElementById("mathCourse").value;
     const learningStyle = document.getElementById("learningStyle").value;
@@ -46,10 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
       username,
       email,
       password,
-      // --- START ADDITIONS ---
-      firstName, // Include firstName
-      lastName,  // Include lastName
-      // --- END ADDITIONS ---
+      firstName,
+      lastName,
       gradeLevel,
       mathCourse,
       learningStyle,

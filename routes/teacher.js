@@ -1,30 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User'); // Adjust path if your User.js is not in ../models/
+const { isTeacher } = require('../middleware/auth'); // CORRECT: Import the shared isTeacher middleware
 
-// Middleware function to check if the user is authenticated and has the 'teacher' role
-async function isTeacher(req, res, next) {
-  if (req.session && req.session.userId) {
-    try {
-      const user = await User.findById(req.session.userId);
-      if (user && user.role === 'teacher') {
-        next(); // User is a teacher, proceed
-      } else {
-        res.status(403).json({ message: 'Access Denied: You do not have teacher privileges.' });
-      }
-    } catch (err) {
-      console.error("Error checking teacher role during authorization:", err);
-      res.status(500).json({ message: 'Server error during authorization check.' });
-    }
-  } else {
-    res.status(401).json({ message: 'Unauthorized: Please log in to access this resource.' });
-  }
-}
+// REMOVED: The locally defined isTeacher middleware is removed from here.
+// It was redundant and used req.session.userId instead of req.user from Passport.
 
 // Define the GET /api/teacher/students route - fetches students assigned to the logged-in teacher
-router.get('/students', isTeacher, async (req, res) => {
+router.get('/students', isTeacher, async (req, res) => { // Uses the imported isTeacher
   try {
-    const teacherId = req.session.userId;
+    // CORRECT: Use req.user._id populated by Passport, via the imported isTeacher middleware
+    const teacherId = req.user._id;
     // Find students whose teacherId matches the logged-in teacher's ID
     const students = await User.find(
       { role: 'student', teacherId: teacherId },
@@ -38,10 +24,11 @@ router.get('/students', isTeacher, async (req, res) => {
 });
 
 // Define the GET /api/teacher/students/:studentId/iep - fetches a specific student's IEP
-router.get('/students/:studentId/iep', isTeacher, async (req, res) => {
+router.get('/students/:studentId/iep', isTeacher, async (req, res) => { // Uses the imported isTeacher
   try {
     const { studentId } = req.params;
-    const teacherId = req.session.userId;
+    // CORRECT: Use req.user._id populated by Passport, via the imported isTeacher middleware
+    const teacherId = req.user._id;
 
     // Find the student, ensuring they are a student role and assigned to this teacher
     const student = await User.findOne({
@@ -62,10 +49,11 @@ router.get('/students/:studentId/iep', isTeacher, async (req, res) => {
 });
 
 // Define the PUT /api/teacher/students/:studentId/iep - updates a specific student's IEP
-router.put('/students/:studentId/iep', isTeacher, async (req, res) => {
+router.put('/students/:studentId/iep', isTeacher, async (req, res) => { // Uses the imported isTeacher
   try {
     const { studentId } = req.params;
-    const teacherId = req.session.userId;
+    // CORRECT: Use req.user._id populated by Passport, via the imported isTeacher middleware
+    const teacherId = req.user._id;
     const updatedIepPlan = req.body; // The entire updated iepPlan object from the frontend
 
     // Find and update the student's IEP plan, ensuring they are a student role and assigned to this teacher
@@ -87,10 +75,11 @@ router.put('/students/:studentId/iep', isTeacher, async (req, res) => {
 });
 
 // GET a specific assigned student's conversation history (Teacher only)
-router.get('/students/:studentId/conversations', isTeacher, async (req, res) => { // <--- ADDED THIS ROUTE
+router.get('/students/:studentId/conversations', isTeacher, async (req, res) => { // Uses the imported isTeacher
   try {
     const { studentId } = req.params;
-    const teacherId = req.session.userId; // Get the logged-in teacher's ID
+    // CORRECT: Use req.user._id populated by Passport, via the imported isTeacher middleware
+    const teacherId = req.user._id; // Get the logged-in teacher's ID
 
     // Fetch student, ensuring they are a student role AND assigned to this teacher
     const student = await User.findOne({
@@ -108,6 +97,5 @@ router.get('/students/:studentId/conversations', isTeacher, async (req, res) => 
     res.status(500).json({ message: 'Server error fetching conversation data.' });
   }
 });
-
 
 module.exports = router;

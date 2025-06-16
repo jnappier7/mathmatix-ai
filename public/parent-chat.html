@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parent Chat | M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="parent-chat.js"></script>
+</head>
+<body>
+  <div id="app-layout-wrapper">
+    <div id="chat-container">
+      <div id="top-bar">
+        <h1>Parent Chat</h1>
+        <div>
+          <label for="childSelector">Discussing:</label>
+          <select id="childSelector"></select>
+        </div>
+        <button id="logoutBtn" class="btn logout">Log Out</button>
+      </div>
+
+      <div id="chat-container-inner"></div>
+
+      <div id="thinking-indicator" style="display: none;">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="thinking-text">Mathmatix is thinking...</span>
+      </div>
+
+      <div id="input-container">
+        <textarea id="user-input" placeholder="Ask about your child’s learning..."></textarea>
+        <button id="send-button">Send</button>
+      </div>
+    </div>
+
+    <div id="xp-level-display" class="widget-sidebar-right">
+      <p style="font-weight: 600; margin-bottom: 0.5rem;">Parent Mode</p>
+      <p style="font-size: 0.85rem; color: #666;">Chat with Mathmatix about your child's progress, strategies, and support ideas.</p>
+    </div>
+  </div>
+</body>
+</html>
