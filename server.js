@@ -32,7 +32,8 @@ const PORT = process.env.PORT || 5000;
 
 // --- NEW MIDDLEWARE TO PREVENT REDIRECT LOOP ---
 function ensureNotAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
+    // ✅ CORRECTED LINE: Added '&& req.user' to prevent crash on null user
+    if (req.isAuthenticated() && req.user) {
         // If the user is already logged in, redirect them away from the login page.
         let redirectUrl = '/chat.html'; // A safe default
         if (req.user.role === 'student' && !req.user.selectedTutorId) {
@@ -127,7 +128,7 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'em
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login.html' }),
   (req, res) => {
-    let redirectUrl = '/chat.html'; 
+    let redirectUrl = '/chat.html';
     if (req.user.needsProfileCompletion) {
       redirectUrl = '/complete-profile.html';
     } else if (req.user.role === 'teacher') {
