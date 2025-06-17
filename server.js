@@ -1,5 +1,5 @@
 // server.js - FINAL CORRECTED VERSION (with redirect loop fix)
-// --- THIS IS THE CORRECT FILE - VERSION 2025-06-15 ---
+// --- THIS IS THE CORRECT FILE - VERSION 2025-06-17 ---
 console.log("✅✅✅ RUNNING THE LATEST, CORRECTED server.js FILE! ✅✅✅");
 require("dotenv").config();
 const express = require("express");
@@ -27,30 +27,31 @@ const avatarPreviewRoute = require('./routes/avatar-preview');
 // ... other route imports
 
 const app = express();
+app.set('trust proxy', 1); // For Render compatibility
 const PORT = process.env.PORT || 5000;
 
 
-// --- NEW MIDDLEWARE TO PREVENT REDIRECT LOOP ---
+// --- MIDDLEWARE TO PREVENT REDIRECT LOOP ---
 function ensureNotAuthenticated(req, res, next) {
     // ✅ CORRECTED LINE: Added '&& req.user' to prevent crash on null user
     if (req.isAuthenticated() && req.user) {
         // If the user is already logged in, redirect them away from the login page.
         let redirectUrl = '/chat.html'; // A safe default
         if (req.user.role === 'student' && !req.user.selectedTutorId) {
-            redirectUrl = '/pick-tutor.html';
+            redirectUrl = '/pick-tutor.html'; //
         } else if (req.user.role === 'teacher') {
-            redirectUrl = '/teacher-dashboard.html';
+            redirectUrl = '/teacher-dashboard.html'; //
         } else if (req.user.role === 'admin') {
             redirectUrl = '/admin-dashboard.html';
         } else if (req.user.role === 'parent') {
-            redirectUrl = '/parent-dashboard.html';
+            redirectUrl = '/parent-dashboard.html'; //
         }
         return res.redirect(redirectUrl);
     }
     // If they are not authenticated, allow them to proceed to the next handler (which will serve the login page).
     next();
 }
-// --- END NEW MIDDLEWARE ---
+// --- END MIDDLEWARE ---
 
 
 // --- Core Middleware ---
@@ -71,7 +72,7 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("SUCCESS: Connected to MongoDB"))
   .catch((err) => console.error("ERROR: MongoDB connection error:", err));
 
-// --- API & Authentication Routes (MUST COME BEFORE `express.static`) ---
+// --- API & Authentication Routes ---
 app.use("/chat", chatRoute);
 app.use("/login", loginRoute);
 app.use("/signup", signupRoute);
@@ -95,9 +96,9 @@ app.get("/user", isAuthenticated, (req, res) => {
     }
     let redirectUrl = null;
     if (req.user.needsProfileCompletion && req.user.role !== 'admin') {
-        redirectUrl = '/complete-profile.html';
+        redirectUrl = '/complete-profile.html'; //
     } else if (req.user.role === 'student' && !req.user.selectedTutorId) {
-        redirectUrl = '/pick-tutor.html';
+        redirectUrl = '/pick-tutor.html'; //
     }
     return res.json({ user: req.user.toObject(), redirect: redirectUrl });
 });
@@ -128,17 +129,17 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'em
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login.html' }),
   (req, res) => {
-    let redirectUrl = '/chat.html';
+    let redirectUrl = '/chat.html'; //
     if (req.user.needsProfileCompletion) {
-      redirectUrl = '/complete-profile.html';
+      redirectUrl = '/complete-profile.html'; //
     } else if (req.user.role === 'teacher') {
-      redirectUrl = '/teacher-dashboard.html';
+      redirectUrl = '/teacher-dashboard.html'; //
     } else if (req.user.role === 'admin') {
       redirectUrl = '/admin-dashboard.html';
     } else if (req.user.role === 'parent') {
-      redirectUrl = '/parent-dashboard.html';
+      redirectUrl = '/parent-dashboard.html'; //
     } else if (req.user.role === 'student' && !req.user.selectedTutorId) {
-      redirectUrl = '/pick-tutor.html';
+      redirectUrl = '/pick-tutor.html'; //
     }
     res.redirect(redirectUrl);
   }
@@ -148,37 +149,61 @@ app.get('/auth/microsoft', passport.authenticate('microsoft'));
 app.get('/auth/microsoft/callback',
   passport.authenticate('microsoft', { failureRedirect: '/login.html' }),
   (req, res) => {
-    let redirectUrl = '/chat.html';
+    let redirectUrl = '/chat.html'; //
     if (req.user.needsProfileCompletion) {
-      redirectUrl = '/complete-profile.html';
+      redirectUrl = '/complete-profile.html'; //
     } else if (req.user.role === 'teacher') {
-      redirectUrl = '/teacher-dashboard.html';
+      redirectUrl = '/teacher-dashboard.html'; //
     } else if (req.user.role === 'admin') {
       redirectUrl = '/admin-dashboard.html';
     } else if (req.user.role === 'parent') {
-      redirectUrl = '/parent-dashboard.html';
+      redirectUrl = '/parent-dashboard.html'; //
     } else if (req.user.role === 'student' && !req.user.selectedTutorId) {
-      redirectUrl = '/pick-tutor.html';
+      redirectUrl = '/pick-tutor.html'; //
     }
     res.redirect(redirectUrl);
   }
 );
 
 
-// --- STATIC FILE SERVING AND REDIRECT LOOP PREVENTION ---
+// --- STATIC & PROTECTED PAGE SERVING ---
 
-// Apply the new middleware specifically to requests for the login page
-// and explicitly serve the file to break the redirect chain.
+// Apply the `ensureNotAuthenticated` middleware specifically to the login page.
 app.get('/login.html', ensureNotAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Serve all other static files from the 'public' directory
+// --- NEW PROTECTED PAGE ROUTES ---
+// These routes use the `isAuthenticated` middleware to ensure the user is logged in
+// before serving the HTML file. This prevents the redirect loop.
+app.get('/chat.html', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'chat.html'));
+});
+app.get('/complete-profile.html', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'complete-profile.html'));
+});
+app.get('/parent-dashboard.html', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'parent-dashboard.html'));
+});
+app.get('/teacher-dashboard.html', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'teacher-dashboard.html'));
+});
+app.get('/pick-tutor.html', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'pick-tutor.html'));
+});
+app.get('/admin-dashboard.html', isAuthenticated, (req, res) => {
+    // Note: You have not provided an admin-dashboard.html file, but this route
+    // protects it in case you create one, preventing future bugs.
+    res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+});
+
+// Serve all other NON-SENSITIVE static files from the 'public' directory.
+// This will serve files like style.css, script.js, images, etc.
 app.use(express.static(path.join(__dirname, "public")));
-// --- END SECTION ---
 
 
 // --- FINAL CATCH-ALL ROUTE ---
+// This should serve your main landing page for any routes not matched above.
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
