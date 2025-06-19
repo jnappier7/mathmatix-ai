@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'mr-lee',
             name: 'Mr. Lee',
-            voiceId: 'qRv1e4rqeMgBLK8HYZ37',
+            voiceId: 'qRv1e4rqeMgBLK8HYz37',
             image: 'mr-lee.png',
             catchphrase: "Precision and clarity for every math concept.",
             about: "Mr. Lee is dedicated to building strong mathematical understanding. With a calm and methodical approach, he ensures students grasp not just *how* to solve problems, but *why* the methods work. He's excellent at guiding students through logical reasoning and complex problem-solving step-by-step, ensuring a solid foundation in all areas of math.",
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'maya',
             name: 'Maya',
-            voiceId: 'umKoJK6tP1ALJ0oZo1EE',
+            voiceId: 'umKoJK6tP1ALjO0zo1EE',
             image: 'maya.png',
             catchphrase: "Learning math, your way!",
             about: "Maya is a friendly and approachable tutor who understands that everyone learns math differently. She's patient, adapts to individual learning paces, and is fantastic at building confidence in students who might feel intimidated by numbers. She makes sure students feel comfortable asking any question, no matter how small.",
@@ -79,6 +79,17 @@ document.addEventListener('DOMContentLoaded', () => {
             about: "Bob is an engaging and imaginative math tutor who loves to make learning vivid and memorable. He excels at connecting new mathematical information to real-world applications, helping students form a deeper and more lasting understanding of concepts. He makes even abstract math relatable.",
             specialties: "Geometry, Pre-Calculus, creative problem-solving, understanding theoretical math concepts.",
             likes: "He makes every math topic so interesting, and I learn so much more than just the formulas!"
+        },
+		
+		 {
+            id: 'ms-rashida',
+            name: 'Ms. Rasida',
+            voiceId: '03vEurziQfq3V8WZhQvn',
+            image: 'ms-rashida.png',
+            catchphrase: "We don't panic. We pivot! Let's get this math",
+            about: "Ms. Rashida is that rare mix of real talk and real results. She’s been where her students are — confused, overwhelmed, doubting themselves — and she’s mastered the art of helping them climb out of that headspace. Her sessions feel like a pep talk and a strategy session rolled into one. She teaches you how to stop being scared of math and start running it.",
+            specialties: "Overcoming math anxiety, Algebra I & II, word problems with structure, “get it done” test prep, rebuilding math confidence.",
+            likes: "She don’t sugarcoat nothing — but somehow I always feel smarter after we talk. Like I can do this."
         }
     ];
 

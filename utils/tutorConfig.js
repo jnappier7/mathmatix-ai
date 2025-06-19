@@ -57,7 +57,15 @@ const TUTOR_CONFIG = {
     accent: "Midwestern Dad",
     tone: "goofy, dad-jokey"
   },
-  "default": {
+    "ms-rashida": {
+    name: "Ms. Rashida",
+    voiceId: "03vEurziQfq3V8WZhQvn",
+    gender: "female",
+    accent: "Urban American",
+    tone: "Empowering, nurturing"
+  },
+	
+  	"default": {
     name: "M∆THM∆TIΧ AI",
     voiceId: "2eFQnnNM32GDnZkCfkSm",
     gender: "neutral",
