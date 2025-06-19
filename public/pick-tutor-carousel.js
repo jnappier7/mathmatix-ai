@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tutorLikes.textContent = currentTutor.likes;
         selectTutorBtn.textContent = `Select ${currentTutor.name}`;
 
-        playVoiceBtn.onclick = () => playVoice(currentTutor.voiceId, currentTutor.name);
+        playVoiceBtn.onclick = () => playVoice(currentTutor.voiceId, currentTutor.id);
     }
 
     function moveCarousel() {
