@@ -1930,3 +1930,15 @@ form select {
 #lesson-header small {
     color: #555;
 }
+
+.carousel-wrapper {
+  flex: 1;
+  align-items: stretch;
+  max-height: calc(100vh - 200px); /* fits between logo and footer */
+}
+
+.tutor-details, .tutor-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
