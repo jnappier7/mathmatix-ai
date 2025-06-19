@@ -2,28 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pick Your Math Tutor | M∆THM∆TIΧ AI</title>
-  <link rel="stylesheet" href="style.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meet Your Math Tutors!</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .page-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .carousel-wrapper {
+      display: flex;
+      max-width: 1200px;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .tutor-details, .tutor-actions {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .tutor-carousel {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .carousel-track {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .tutor-image {
+      max-width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 1rem;
+      background: #f9f9f9;
+      padding: 1rem;
+    }
+
+    .carousel-button {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--primary);
+    }
+
+    .tutor-actions button {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-play {
+      background-color: var(--green);
+      color: white;
+    }
+
+    .btn-select {
+      background-color: var(--blue);
+      color: white;
+    }
+  </style>
 </head>
 <body>
-  <div class="login-page-wrapper">
-    <div class="tutor-selection-container scrollable-form-wrapper">
-      <div class="logo-header">
-        <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
-      </div>
-      <h1>Meet Your Math Tutors!</h1>
-      <p class="subtitle">Select the tutor who you'd like to learn math with. You can change your tutor anytime!</p>
+  <header class="logo-header">
+    <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" height="60" />
+    <h1>Meet Your Math Tutors!</h1>
+    <p>Select the tutor who you'd like to learn math with. You can change your tutor anytime!</p>
+  </header>
 
-      <div class="carousel-container">
-        <button class="carousel-button prev" aria-label="Previous Tutor"><i class="fas fa-chevron-left"></i></button>
-        <div class="carousel-track-container">
-          <ul class="carousel-track"></ul>
-        </div>
-        <button class="carousel-button next" aria-label="Next Tutor"><i class="fas fa-chevron-right"></i></button>
-      </div>
+  <main class="page-wrapper">
+    <div class="carousel-wrapper">
 
+      <!-- LEFT: Tutor details -->
       <div class="tutor-details">
         <h2 id="tutor-name"></h2>
         <p class="tutor-catchphrase" id="tutor-catchphrase"></p>
@@ -33,11 +119,23 @@
         <p id="tutor-specialties"></p>
         <h3>Why Students Like Me:</h3>
         <p id="tutor-likes"></p>
-        <button id="play-voice-btn" class="voice-button">🔊 Hear My Voice</button>
-        <button id="select-tutor-btn" class="select-button">Select Tutor</button>
       </div>
+
+      <!-- CENTER: Carousel with avatar -->
+      <div class="tutor-carousel">
+        <button class="carousel-button prev" aria-label="Previous Tutor"><i class="fas fa-chevron-left"></i></button>
+        <ul class="carousel-track"></ul>
+        <button class="carousel-button next" aria-label="Next Tutor"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
+      <!-- RIGHT: Voice + Select -->
+      <div class="tutor-actions">
+        <button id="play-voice-btn" class="btn-play">🔊 Hear My Voice</button>
+        <button id="select-tutor-btn" class="btn-select">✅ Select Tutor</button>
+      </div>
+
     </div>
-  </div>
+  </main>
 
   <footer>
     <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
