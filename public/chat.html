@@ -106,26 +106,29 @@
     
     let loadedCourseData = null;
 
-    // The old window.sendChatMessage function is now fully removed.
-    // We will exclusively use window.appendMessage from script.js
-
+    // ✅ PATCHED: Ensure currentUser is loaded before sending message
     document.getElementById('send-button').addEventListener('click', async () => {
         const userInput = document.getElementById('user-input').value.trim();
         if (userInput === '') return;
-        
+
+        if (!window.currentUser?._id) {
+            console.error("❌ currentUser not loaded.");
+            window.appendMessage("User session not initialized. Please reload the page.", "ai");
+            return;
+        }
+
         window.appendMessage(userInput, 'user');
         document.getElementById('user-input').value = ''; 
 
         const handledByGuidedPath = await handleGuidedAnswer(userInput, loadedCourseData);
 
         if (!handledByGuidedPath) {
-            // This is free-form chat.
             window.showThinkingIndicator(true);
             try {
                 const response = await fetch("/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userId: window.currentUser?._id, message: userInput, role: 'student' }),
+                    body: JSON.stringify({ userId: window.currentUser._id, message: userInput, role: 'student' }),
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Chat API request failed');

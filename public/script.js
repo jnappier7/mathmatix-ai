@@ -1,4 +1,4 @@
-// public/script.js - FINAL VERSION (PHASE 3)
+// public/script.js - FINAL VERSION (PHASE 3, PATCHED)
 console.log("LOG: M∆THM∆TIΧ Initialized");
 
 // --- DECLARE ALL CONSTANTS ---
@@ -90,7 +90,7 @@ function stopAudioPlayback() {
     }
 }
 
-// THIS IS THE KEY CHANGE FOR PHASE 3: appendMessage is now a global window function
+// THIS IS THE PATCHED SECTION
 window.appendMessage = function(message, sender = "user", voiceIdToUse = null) {
     const messageContent = String(message || '');
     const bubble = document.createElement("div");
@@ -113,14 +113,16 @@ window.appendMessage = function(message, sender = "user", voiceIdToUse = null) {
         bubble.innerHTML = messageContent.replace(/\n/g, '<br>');
     }
 
-    if (sender === "ai" && textToSpeak.length > 0) {
-        const speakButton = document.createElement("button");
-        speakButton.className = "speak-message-btn";
-        speakButton.innerHTML = "🔊";
-        speakButton.title = "Read aloud";
-        let textToSpeak = bubble.textContent; // Use textContent for a clean version for TTS
-        speakButton.onclick = () => speakText(textToSpeak, voiceIdToUse);
-        bubble.prepend(speakButton);
+    if (sender === "ai") {
+        const textToSpeak = bubble.textContent;
+        if (textToSpeak.length > 0) {
+            const speakButton = document.createElement("button");
+            speakButton.className = "speak-message-btn";
+            speakButton.innerHTML = "🔊";
+            speakButton.title = "Read aloud";
+            speakButton.onclick = () => speakText(textToSpeak, voiceIdToUse);
+            bubble.prepend(speakButton);
+        }
     }
 
     if (chatBox) {
@@ -144,15 +146,14 @@ function updateGamifiedDashboard(userXp, userLevel, specialXpAwarded = 0) {
     else if (specialXpAwarded > 0) triggerXpGainAnimation(specialXpAwarded, true);
 }
 
-function triggerXpGainAnimation(amount, isSpecial = false) { /* ... same as before ... */ }
-function triggerLevelUpAnimation(newLevel) { /* ... same as before ... */ }
-async function fetchAndDisplayLeaderboard() { /* ... same as before ... */ }
+function triggerXpGainAnimation(amount, isSpecial = false) { /* ... */ }
+function triggerLevelUpAnimation(newLevel) { /* ... */ }
+async function fetchAndDisplayLeaderboard() { /* ... */ }
 
 // --- DOMContentLoaded: Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Assign DOM elements to variables
     currentLevelSpan = document.getElementById("current-level");
-    xpProgressBar = document.getElementById("xp-progress-bar"); // Assuming this exists
+    xpProgressBar = document.getElementById("xp-progress-bar");
     currentXpSpan = document.getElementById("current-xp");
     xpNeededSpan = document.getElementById("xp-needed");
     xpLevelDisplay = document.getElementById('xp-level-display');
@@ -160,19 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn = document.getElementById("logoutBtn");
     audioStopBtn = document.getElementById('audio-stop-button');
 
-    // Attach event listeners
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            fetch("/logout", { method: 'GET', credentials: 'include' }) // Use GET for simple logout
+            fetch("/logout", { method: 'GET', credentials: 'include' })
                 .then(() => { window.location.href = "/login.html"; })
                 .catch(err => console.error("Logout failed:", err));
         });
     }
 
-    // The main send button logic is now handled exclusively in chat.html's module script
-    // to prevent conflicts. This script provides the functions it uses.
-    
-    // Other tool button listeners
     if (attachBtn) attachBtn.addEventListener("click", () => fileInput.click());
     if (fileInput) fileInput.addEventListener("change", () => uploadSelectedFile(fileInput.files[0]));
 
@@ -184,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mathModal.style.display = "none";
     });
 
-    // Initial user fetch
+    // Fetch current user and personalized welcome
     fetch("/user", { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
@@ -197,8 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = "/login.html";
             return;
         }
-        
-        // Post-login setup
+
         if (currentUser.role === 'student') {
             fetch(`/welcome-message?userId=${currentUser._id}`, { credentials: 'include' })
                 .then(res => res.json())
@@ -214,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .catch(() => window.location.href = "/login.html");
 
-    // Fetch leaderboard if the element exists on the page
     if (document.getElementById('leaderboardTable')) {
         fetchAndDisplayLeaderboard();
     }
