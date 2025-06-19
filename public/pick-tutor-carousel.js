@@ -185,27 +185,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    async function playVoice(voiceId, name) {
-        try {
-            const res = await fetch("/speak-test", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    text: `Hi! I’m ${name}, and I can’t wait to help you learn math.`,
-                    voiceId
-                })
-            });
-            const blob = await res.blob();
-            const audioUrl = URL.createObjectURL(blob);
-            const audio = new Audio(audioUrl);
-            audio.play();
-        } catch (err) {
-            console.error("Voice playback failed:", err);
-            alert("Could not play voice preview.");
-        }
-    }
+async function playVoice(voiceId, tutorId) {
+    const customPhrases = {
+      "mr-nappier": "Hi, I'm Mr. Nappier, and I believe that once you see the pattern, the problem solves itself.",
+      "mr-lee": "Hello, I’m Mr. Lee. I believe math should be precise, purposeful, and peaceful.",
+      "dr-jones": "Hi, I’m Dr. Jones. I believe every math problem is a puzzle waiting to make you smarter.",
+      "prof-davies": "Good day, I’m Professor Davies. I believe math is less about answers, and more about understanding.",
+      "ms-alex": "Hey y’all, I’m Ms. Alex. I believe math should make sense — and you deserve to feel confident.",
+      "maya": "Hi, I’m Maya. I believe in taking your time, asking questions, and making math feel like it’s yours.",
+      "ms-maria": "Hola, I’m Ms. Maria. I believe math grows best with structure, patience, and a little encouragement.",
+      "bob": "Yo! I’m Bob, and I believe math’s way more fun when it clicks with real life.",
+      "ms-rashida": "Hi, I’m Ms. Rashida. I believe in turning confusion into confidence — one problem at a time."
+    };
 
-    renderTutors();
-    updateTutorDetails(currentIndex);
-    window.addEventListener('load', moveCarousel);
+    const previewText = customPhrases[tutorId] || `Hi! I’m your tutor, and I can’t wait to help you learn math.`;
+
+    try {
+      const res = await fetch("/speak-test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: previewText, voiceId })
+      });
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      audio.play();
+    } catch (err) {
+      console.error("Voice playback failed:", err);
+      alert("Could not play voice preview.");
+    }
+  }
+
+  renderTutors();
+  updateTutorDetails(currentIndex);
+  window.addEventListener('load', moveCarousel);
 });
