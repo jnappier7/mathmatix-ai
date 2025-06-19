@@ -1,5 +1,5 @@
-// server.js - FINAL PATH-CORRECTED VERSION
-console.log("✅✅✅ RUNNING THE LATEST, CORRECTED server.js FILE! 6-17-25_8:11pm ✅✅✅");
+// server.js - FINAL PRODUCTION VERSION w/ AUTO ROUTES + ROLE MIDDLEWARE
+console.log("✅✅✅ RUNNING MATHMATIX.AI SERVER ✅✅✅");
 require("dotenv").config();
 
 // --- 1. IMPORTS ---
@@ -9,22 +9,31 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
-require("./auth/passport-config"); // ✅ CORRECTED PATH
+const MongoStore = require("connect-mongo");
+require("./auth/passport-config");
 
-// --- Route and Middleware Imports ---
-const { isAuthenticated, ensureNotAuthenticated, isAdmin, isTeacher, isParent } = require('./middleware/auth'); // ✅ CORRECTED PATH
-const chatRoute = require("./routes/chat"); // ✅ CORRECTED PATH
-const loginRoute = require("./routes/login"); // ✅ CORRECTED PATH
-const signupRoute = require("./routes/signup"); // ✅ CORRECTED PATH
-// ... include all your other route files with the "./" prefix
+const {
+  isAuthenticated,
+  ensureNotAuthenticated,
+  isAdmin,
+  isTeacher,
+  isParent
+} = require("./middleware/auth");
 
-// --- 2. INITIALIZE APP ---
+const autoMountRoutes = require("./utils/autoRouteLoader");
+
+// --- 2. INIT EXPRESS APP ---
 const app = express();
-app.set('trust proxy', 1); // For Render/proxy compatibility
 const PORT = process.env.PORT || 5000;
+app.set("trust proxy", 1);
+const speakTestRoute = require("./routes/speak-test");
 
-// --- 3. CORE MIDDLEWARE (in correct order) ---
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5000', credentials: true }));
+
+// --- 3. MIDDLEWARE CONFIG ---
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5000",
+  credentials: true
+}));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,54 +41,94 @@ app.use(session({
   secret: process.env.SESSION_SECRET || "dev-secret",
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    collectionName: 'sessions'
+  }),
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === "production",
     sameSite: 'Lax'
   }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use("/speak-test", speakTestRoute);
+
 
 // --- 4. DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("SUCCESS: Connected to MongoDB"))
-  .catch((err) => console.error("ERROR: MongoDB connection error:", err));
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// --- 5. API & DYNAMIC ROUTES ---
-app.use("/login", loginRoute);
-app.use("/signup", signupRoute);
-app.use("/chat", isAuthenticated, chatRoute);
-// ... other API routes
-
-// --- 6. STATIC & PROTECTED PAGE SERVING ---
-
-// UNPROTECTED Pages
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html'))); // ✅ CORRECTED PATH
-app.get('/login.html', ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html'))); // ✅ CORRECTED PATH
-app.get('/signup.html', ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, 'public', 'signup.html'))); // ✅ CORRECTED PATH
-
-// PROTECTED Pages
-app.get('/chat.html', isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, 'public', 'chat.html'))); // ✅ CORRECTED PATH
-app.get('/complete-profile.html', isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, 'public', 'complete-profile.html'))); // ✅ CORRECTED PATH
-app.get('/pick-tutor.html', isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, 'public', 'pick-tutor.html'))); // ✅ CORRECTED PATH
-
-// Role-Specific Pages
-app.get('/parent-dashboard.html', isParent, (req, res) => res.sendFile(path.join(__dirname, 'public', 'parent-dashboard.html'))); // ✅ CORRECTED PATH
-app.get('/teacher-dashboard.html', isTeacher, (req, res) => res.sendFile(path.join(__dirname, 'public', 'teacher-dashboard.html'))); // ✅ CORRECTED PATH
-app.get('/admin-dashboard.html', isAdmin, (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'))); // ✅ CORRECTED PATH
-
-// General static file serving for CSS, JS, images, etc.
-app.use(express.static(path.join(__dirname, 'public'))); // ✅ CORRECTED PATH
-
-// --- 7. FINAL CATCH-ALL ROUTE ---
-app.get('*', (req, res) => {
-  res.status(404).send("404 Not Found"); // It's better to send a 404 status for unknown routes
+// --- 5. AUTOMOUNT ROUTES ---
+autoMountRoutes(app, {
+  skip: ["summary_generator"] // Skip any internal-only APIs
 });
 
-// --- 8. START SERVER ---
+// --- 6. DIRECT ROUTES (outside auto-mount) ---
+app.get("/user", isAuthenticated, (req, res) => {
+  return res.json({ user: req.user.toObject() });
+});
+
+app.get("/logout", (req, res, next) => {
+  req.logout(err => {
+    if (err) return next(err);
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.redirect("/login.html");
+    });
+  });
+});
+
+// --- 7. OAUTH ROUTES ---
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+app.get("/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login.html" }),
+  (req, res) => {
+    let redirectUrl = req.user.selectedTutorId ? "/chat.html" : "/pick-tutor.html";
+    if (req.user.needsProfileCompletion) redirectUrl = "/complete-profile.html";
+    else if (req.user.role === "teacher") redirectUrl = "/teacher-dashboard.html";
+    else if (req.user.role === "admin") redirectUrl = "/admin-dashboard.html";
+    else if (req.user.role === "parent") redirectUrl = "/parent-dashboard.html";
+    res.redirect(redirectUrl);
+  }
+);
+
+app.get("/auth/microsoft", passport.authenticate("microsoft"));
+app.get("/auth/microsoft/callback",
+  passport.authenticate("microsoft", { failureRedirect: "/login.html" }),
+  (req, res) => {
+    let redirectUrl = req.user.selectedTutorId ? "/chat.html" : "/pick-tutor.html";
+    if (req.user.needsProfileCompletion) redirectUrl = "/complete-profile.html";
+    else if (req.user.role === "teacher") redirectUrl = "/teacher-dashboard.html";
+    else if (req.user.role === "admin") redirectUrl = "/admin-dashboard.html";
+    else if (req.user.role === "parent") redirectUrl = "/parent-dashboard.html";
+    res.redirect(redirectUrl);
+  }
+);
+
+// --- 8. STATIC FRONTEND ROUTES ---
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/login.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
+app.get("/signup.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "signup.html")));
+app.get("/chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
+app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
+app.get("/pick-tutor.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-tutor.html")));
+app.get("/parent-dashboard.html", isParent, (req, res) => res.sendFile(path.join(__dirname, "public", "parent-dashboard.html")));
+app.get("/teacher-dashboard.html", isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-dashboard.html")));
+app.get("/admin-dashboard.html", isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-dashboard.html")));
+
+app.use(express.static(path.join(__dirname, "public")));
+
+// --- 9. 404 CATCH-ALL ---
+app.get("*", (req, res) => {
+  res.status(404).send("404: Page Not Found");
+});
+
+// --- 10. START SERVER ---
 app.listen(PORT, () => {
-  console.log(`SERVER: M∆THM∆TIΧ AI running on http://localhost:${PORT}`);
+  console.log(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`);
 });

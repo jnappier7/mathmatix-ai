@@ -1,52 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pick Your Math Tutor | M∆THM∆TIΧ AI</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pick Your Math Tutor | M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
 <body>
-    <div class="login-page-wrapper">
-        <div class="tutor-selection-container scrollable-form-wrapper">
-            <div class="logo-header">
-                <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
-            </div>
-            <h1>Meet Your Math Tutors!</h1>
-            <p class="subtitle">Select the tutor who you'd like to learn math with. You can change your tutor anytime!</p>
+  <div class="login-page-wrapper">
+    <div class="tutor-selection-container scrollable-form-wrapper">
+      <div class="logo-header">
+        <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
+      </div>
+      <h1>Meet Your Math Tutors!</h1>
+      <p class="subtitle">Select the tutor who you'd like to learn math with. You can change your tutor anytime!</p>
 
-            <div class="carousel-container">
-                <button class="carousel-button prev" aria-label="Previous Tutor"><i class="fas fa-chevron-left"></i></button>
-                <div class="carousel-track-container">
-                    <ul class="carousel-track">
-                        </ul>
-                </div>
-                <button class="carousel-button next" aria-label="Next Tutor"><i class="fas fa-chevron-right"></i></button>
-            </div>
-
-            <div class="tutor-details">
-                <h2 id="tutor-name"></h2>
-                <p class="tutor-catchphrase" id="tutor-catchphrase"></p>
-                <h3>About Me:</h3>
-                <p id="tutor-about"></p>
-                <h3>Specializes In:</h3>
-                <p id="tutor-specialties"></p>
-                <h3>Why Students Like Me:</h3>
-                <p id="tutor-likes"></p>
-                <button id="select-tutor-btn" class="select-button">Select Tutor</button>
-            </div>
+      <div class="carousel-container">
+        <button class="carousel-button prev" aria-label="Previous Tutor"><i class="fas fa-chevron-left"></i></button>
+        <div class="carousel-track-container">
+          <ul class="carousel-track"></ul>
         </div>
+        <button class="carousel-button next" aria-label="Next Tutor"><i class="fas fa-chevron-right"></i></button>
+      </div>
+
+      <div class="tutor-details">
+        <h2 id="tutor-name"></h2>
+        <p class="tutor-catchphrase" id="tutor-catchphrase"></p>
+        <h3>About Me:</h3>
+        <p id="tutor-about"></p>
+        <h3>Specializes In:</h3>
+        <p id="tutor-specialties"></p>
+        <h3>Why Students Like Me:</h3>
+        <p id="tutor-likes"></p>
+        <button id="play-voice-btn" class="voice-button">🔊 Hear My Voice</button>
+        <button id="select-tutor-btn" class="select-button">Select Tutor</button>
+      </div>
     </div>
+  </div>
 
-    <footer>
-        <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-        <p>
-            <a href="/privacy.html">Privacy Policy</a> |
-            <a href="/terms.html">Terms of Use</a>
-        </p>
-    </footer>
+  <footer>
+    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p><a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+  </footer>
 
-    <script src="pick-tutor-carousel.js"></script>
+  <script src="pick-tutor-carousel.js" type="module"></script>
 </body>
 </html>

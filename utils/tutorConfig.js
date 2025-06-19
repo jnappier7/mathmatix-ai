@@ -1,17 +1,69 @@
 // utils/tutorConfig.js
-// This file centralizes the mapping of tutor IDs to their names and ElevenLabs Voice IDs.
 
 const TUTOR_CONFIG = {
-    "mr-lee": { name: "Mr. Lee", voiceId: "qRv1e4rqeMgBLK8HYZ37" },
-    "mr-nappier": { name: "Mr. Nappier", voiceId: "2eFQnnNM32GDnZkCfkSm" },
-    "dr-jones": { name: "Dr. Jones", voiceId: "aVR2RUXJY4MTEzzJjPyQ" },
-    "prof-davies": { name: "Prof. Davies", voiceId: "jn34bTImmOgOJU9XfPuy" },
-    "ms-alex": { name: "Ms. Alex", voiceId: "8DzKSPdgEQPaK5vKG0Rs" },
-    "maya": { name: "Maya", voiceId: "umKoJK6tP1ALJ0oZo1EE" },
-    "ms-maria": { name: "Ms. Maria", voiceId: "kcQkGnn0HAT2JRDQ4Ljp" },
-    "bob": { name: "Bob", voiceId: "UgBBYS2sOqTuMpoF3BR0" },
-    // Default fallback if no specific tutor is selected or found. It's important to have a valid ID here.
-    "default": { name: "M∆THM∆TIΧ AI", voiceId: "2eFQnnNM32GDnZkCfkSm" } // Fallback to Mr. Nappier's voice or a generic AI voice
+  "mr-lee": {
+    name: "Mr. Lee",
+    voiceId: "qRv1e4rqeMgBLK8HYZ37",
+    gender: "male",
+    accent: "American",
+    tone: "encouraging"
+  },
+  "mr-nappier": {
+    name: "Mr. Nappier",
+    voiceId: "2eFQnnNM32GDnZkCfkSm",
+    gender: "male",
+    accent: "American",
+    tone: "calm but hype-ready"
+  },
+  "dr-jones": {
+    name: "Dr. Jones",
+    voiceId: "aVR2RUXJY4MTEzzJjPyQ",
+    gender: "male",
+    accent: "British",
+    tone: "logical, slightly cheeky"
+  },
+  "prof-davies": {
+    name: "Prof. Davies",
+    voiceId: "jn34bTImmOgOJU9XfPuy",
+    gender: "male",
+    accent: "Irish",
+    tone: "professorial"
+  },
+  "ms-alex": {
+    name: "Ms. Alex",
+    voiceId: "8DzKSPdgEQPaK5vKG0Rs",
+    gender: "female",
+    accent: "Black American",
+    tone: "friendly, flirty, bold"
+  },
+  "maya": {
+    name: "Maya",
+    voiceId: "umKoJK6tP1ALJ0oZo1EE",
+    gender: "female",
+    accent: "Caribbean-American",
+    tone: "gentle, nurturing"
+  },
+  "ms-maria": {
+    name: "Ms. Maria",
+    voiceId: "kcQkGnn0HAT2JRDQ4Ljp",
+    gender: "female",
+    accent: "Mexican-American",
+    tone: "warm, affirming"
+  },
+  "bob": {
+    name: "Bob",
+    voiceId: "UgBBYS2sOqTuMpoF3BR0",
+    gender: "male",
+    accent: "Midwestern Dad",
+    tone: "goofy, dad-jokey"
+  },
+  "default": {
+    name: "M∆THM∆TIΧ AI",
+    voiceId: "2eFQnnNM32GDnZkCfkSm",
+    gender: "neutral",
+    accent: "American",
+    tone: "adaptive AI"
+  }
 };
 
-module.exports = TUTOR_CONFIG;// JavaScript Document
+module.exports = TUTOR_CONFIG;
