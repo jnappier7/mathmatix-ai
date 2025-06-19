@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		
 		 {
             id: 'ms-rashida',
-            name: 'Ms. Rasida',
+            name: 'Ms. Rashida',
             voiceId: '03vEurziQfq3V8WZhQvn',
             image: 'ms-rashida.png',
             catchphrase: "We don't panic. We pivot! Let's get this math",
