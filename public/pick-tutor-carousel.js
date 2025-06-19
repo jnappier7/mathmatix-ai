@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'dr-jones',
             name: 'Dr. Jones',
-            voiceId: 'aVR2RUXJY4MTEzzJjPyQ',
+            voiceId: 'aVR2rUXJY4MTezzJjPyQ',
             image: 'dr-jones.png',
             catchphrase: "Unlock the logic behind the numbers!",
             about: "Dr. Jones is passionate about critical thinking and loves to encourage students to ask 'why' in math. She brings a thoughtful and encouraging presence to every session, helping students develop strong analytical skills and a deeper appreciation for mathematical principles. She's great at preparing students for advanced topics.",
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'prof-davies',
             name: 'Professor Davies',
-            voiceId: 'jn34bTImmOgOJU9XfPuy',
+            voiceId: 'jn34bTlmmOgOJU9XfPuy',
             image: 'prof-davies.png',
             catchphrase: "Years of wisdom, tailored to your math journey.",
             about: "Professor Davies brings a wealth of teaching experience and a warm demeanor to his math tutoring sessions. He excels at making complex mathematical concepts accessible and relatable, drawing on real-world examples to enhance understanding. He's a true mentor for any student looking to master challenging math.",

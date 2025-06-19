@@ -17,14 +17,14 @@ const TUTOR_CONFIG = {
   },
   "dr-jones": {
     name: "Dr. Jones",
-    voiceId: "aVR2RUXJY4MTEzzJjPyQ",
-    gender: "male",
-    accent: "British",
+    voiceId: "aVR2rUXJY4MTezzJjPyQ", 
+    gender: "female",
+    accent: "American",
     tone: "logical, slightly cheeky"
   },
   "prof-davies": {
     name: "Prof. Davies",
-    voiceId: "jn34bTImmOgOJU9XfPuy",
+    voiceId: "jn34bTlmmOgOJU9XfPuy",
     gender: "male",
     accent: "Irish",
     tone: "professorial"
