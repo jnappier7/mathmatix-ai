@@ -46,9 +46,8 @@ app.use(session({
     collectionName: 'sessions'
   }),
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: false,
     sameSite: 'Lax'
   }
 }));
@@ -112,7 +111,12 @@ app.get("/auth/microsoft/callback",
 
 // --- 8. STATIC FRONTEND ROUTES ---
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
-app.get("/login.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
+app.get("/login.html", ensureNotAuthenticated, (req, res) => {
+  console.log('🔁 Checking session on /login.html');
+  console.log('req.isAuthenticated():', req.isAuthenticated());
+  console.log('req.user:', req.user);
+  res.sendFile(path.join(__dirname, "public", "login.html"));
+});
 app.get("/signup.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "signup.html")));
 app.get("/chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
