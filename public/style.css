@@ -1,187 +1,489 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meet Your Math Tutors!</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <style>
-    :root {
-      --blue: #0066cc;
-      --green: #28a745;
-    }
+/* ---= M∆THM∆TIΧ AI - FINAL MERGED STYLESHEET =--- */
 
-    body {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
+/* --- 1. General & Root Variables --- */
+:root {
+  /* Core Theme Colors */
+  --primary-color: #0066cc; /* Mapped from --blue */
+  --primary-hover: #0056b3;
+  --success-color: #28a745; /* Mapped from --green */
+  --secondary-color: #6c757d;
+  --secondary-hover: #5a6268;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
 
-    .page-wrapper {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-    }
+  /* Background & Surface Colors */
+  --background-color: #f0f2f5;
+  --surface-color: #ffffff;
+  
+  /* Text Colors */
+  --text-color: #333;
+  --text-light: #f8f9fa;
+  --footer-text: #ccc;
+  --footer-bg: #111;
 
-    .carousel-wrapper {
-      display: flex;
-      max-width: 1200px;
-      width: 100%;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
+  /* Borders & Shadows */
+  --border-color: #dee2e6;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
 
-    .tutor-details {
-      flex: 1;
-      padding: 1rem;
-      background-color: #fff;
-      border-radius: 1rem;
-      box-shadow: 0 0 8px rgba(0,0,0,0.08);
-      overflow-y: auto;
-    }
+  /* Typography */
+  --font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-    .tutor-actions {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 1rem;
-      gap: 1rem;
-      flex: 1;
-    }
+/* --- 2. Base & Body Styles --- */
+html {
+  box-sizing: border-box;
+}
 
-    .tutor-carousel {
-      flex: 1;
-      max-width: 320px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
+*, *:before, *:after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
 
-    .carousel-track {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      transition: transform 0.3s ease-in-out;
-      width: 100%;
-    }
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0;
+  display: flex; /* For footer support */
+  flex-direction: column; /* For footer support */
+  min-height: 100vh; /* For footer support */
+}
 
-    .carousel-slide {
-      min-width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  flex: 1; /* For footer support */
+}
 
-    .tutor-image {
-      max-width: 100%;
-      max-height: 300px;
-      object-fit: contain;
-      border-radius: 1rem;
-      background: #f9f9f9;
-      padding: 1rem;
-    }
+/* --- 3. Header & Navigation --- */
+header {
+  background: var(--surface-color);
+  color: var(--text-color);
+  padding: 1rem 2rem;
+  position: sticky; /* Changed from fixed to work with all page layouts */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .carousel-button {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--blue);
-    }
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-decoration: none;
+}
 
-    .tutor-actions button {
-      padding: 0.75rem 1.25rem;
-      font-size: 1rem;
-      min-width: 180px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-    }
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
 
-    .btn-play {
-      background-color: var(--green);
-      color: white;
-    }
+nav a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, color 0.3s;
+}
 
-    .btn-select {
-      background-color: var(--blue);
-      color: white;
-    }
+nav a:hover, .nav-active {
+  background-color: var(--primary-color);
+  color: var(--text-light) !important;
+}
 
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.85rem;
-      background: #111;
-      color: #ccc;
-    }
+/* --- 4. Buttons --- */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+  background-color: var(--secondary-color);
+  color: var(--text-light);
+}
 
-    footer a {
-      color: #ccc;
-      text-decoration: none;
-      margin: 0 0.5rem;
-    }
+.button:hover {
+  transform: translateY(-2px);
+}
 
-    footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <header class="logo-header" style="text-align: center; padding: 1rem 0;">
-    <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" height="60" />
-    <h1 style="margin: 0.5rem 0;">Meet Your Math Tutors!</h1>
-    <p>Select the tutor who you'd like to learn math with. You can change your tutor anytime!</p>
-  </header>
+.button-primary {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+}
 
-  <main class="page-wrapper">
-    <div class="carousel-wrapper">
+.button-primary:hover {
+  background-color: var(--primary-hover);
+}
 
-      <!-- LEFT: Tutor details -->
-      <div class="tutor-details">
-        <h2 id="tutor-name"></h2>
-        <p class="tutor-catchphrase" id="tutor-catchphrase"></p>
-        <h3>About Me:</h3>
-        <p id="tutor-about"></p>
-        <h3>Specializes In:</h3>
-        <p id="tutor-specialties"></p>
-        <h3>Why Students Like Me:</h3>
-        <p id="tutor-likes"></p>
-      </div>
+.button-danger {
+  background-color: var(--danger-color);
+  color: var(--text-light);
+}
 
-      <!-- CENTER: Carousel with avatar -->
-      <div class="tutor-carousel">
-        <button class="carousel-button prev" aria-label="Previous Tutor"><i class="fas fa-chevron-left"></i></button>
-        <ul class="carousel-track"></ul>
-        <button class="carousel-button next" aria-label="Next Tutor"><i class="fas fa-chevron-right"></i></button>
-      </div>
+.button-danger:hover {
+  background-color: #c82333;
+}
 
-      <!-- RIGHT: Voice + Select -->
-      <div class="tutor-actions">
-        <button id="play-voice-btn" class="btn-play">🔊 Hear My Voice</button>
-        <button id="select-tutor-btn" class="btn-select">✅ Select Tutor</button>
-      </div>
+.button-full-width {
+  width: 100%;
+}
 
-    </div>
-  </main>
 
-  <footer>
-    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-    <p><a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
-  </footer>
+/* --- 5. Forms & Authentication --- */
+.form-container {
+  max-width: 450px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: var(--surface-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
 
-  <script src="pick-tutor-carousel.js" type="module"></script>
-</body>
-</html>
+.form-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.oauth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.oauth-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.oauth-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* --- 6. CHAT INTERFACE --- */
+#chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 85px); /* Adjusted for sticky header */
+  max-width: 800px;
+  margin: 1rem auto;
+  background: var(--surface-color);
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius);
+}
+
+.chat-box, #chat-messages {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  padding: 10px 15px;
+  border-radius: 18px;
+  max-width: 75%;
+  line-height: 1.5;
+}
+
+.message.user-message,
+.user-message .message-content {
+  background-color: var(--primary-color);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.message.tutor-message,
+.tutor-message .message-content {
+  background-color: #e9ecef;
+  color: #333;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+#message-form {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+#message-input {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-right: 1rem;
+  font-size: 1rem;
+}
+
+#message-form button {
+  white-space: nowrap;
+}
+
+#loading-indicator {
+    align-self: flex-start;
+    color: #888;
+    font-style: italic;
+    display: none; /* Hidden by default */
+}
+
+.options-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    padding: 5px 0 10px 0;
+}
+
+.option-button {
+    background-color: #e9e9e9;
+    color: #333;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+.option-button:hover {
+    background-color: #dcdcdc;
+}
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
+
+
+/* --- 7. Dashboards (Admin, Teacher, Parent) --- */
+.dashboard-container {
+  display: flex;
+  height: calc(100vh - 70px);
+}
+
+.dashboard-sidebar {
+  width: 250px;
+  background: #343a40;
+  color: var(--text-light);
+  padding: 1rem;
+}
+
+.dashboard-sidebar h2 { text-align: center; margin-bottom: 2rem; }
+.dashboard-sidebar ul { list-style: none; }
+
+.dashboard-sidebar li a {
+    display: block;
+    color: #adb5bd;
+    padding: 1rem;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dashboard-sidebar li a:hover,
+.dashboard-sidebar li a.active {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.dashboard-main { flex-grow: 1; padding: 2rem; overflow-y: auto; }
+.dashboard-header { margin-bottom: 2rem; }
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background: var(--surface-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+.card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+
+/* --- 8. Summary & Speech Controls --- */
+#summary-container { padding: 15px; border-top: 1px solid #eee; background-color: #f9f9f9; }
+#summary-container h3 { margin-bottom: 10px; }
+#summary-text { min-height: 50px; padding: 10px; background-color: #fff; border: 1px solid var(--border-color); border-radius: 4px; }
+#regen-summary-btn { margin-top: 10px; }
+
+#speech-controls { display: flex; gap: 10px; padding: 10px 15px; border-top: 1px solid #eee; align-items: center; }
+#speak-btn, #stop-btn { padding: 8px 12px; }
+
+/* --- 9. Avatar Styles --- */
+.avatar-container { padding: 20px; text-align: center; border: 1px solid var(--border-color); border-radius: 8px; margin: 1rem auto; max-width: 300px; }
+.avatar-preview { width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--primary-color); background-color: #f0f0f0; margin: 0 auto 15px; display: block; object-fit: cover; }
+
+
+/* --- 10. Tutor Selection Page (Carousel) --- */
+.page-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.carousel-wrapper {
+  display: flex;
+  max-width: 1200px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tutor-details {
+  flex: 1;
+  padding: 1rem;
+  background-color: var(--surface-color);
+  border-radius: 1rem;
+  box-shadow: 0 0 8px rgba(0,0,0,0.08);
+  overflow-y: auto;
+}
+
+.tutor-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1rem;
+  gap: 1rem;
+  flex: 1;
+}
+
+.tutor-carousel {
+  flex: 1;
+  max-width: 320px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.carousel-track {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  width: 100%;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tutor-image {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 1rem;
+  background: #f9f9f9;
+  padding: 1rem;
+}
+
+.carousel-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--primary-color);
+  /* Position buttons in the middle vertically */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+.carousel-button.prev { left: -10px; }
+.carousel-button.next { right: -10px; }
+
+.tutor-actions button {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  min-width: 180px;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.btn-play {
+  background-color: var(--success-color);
+}
+
+.btn-select {
+  background-color: var(--primary-color);
+}
+
+/* --- 11. Footer --- */
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+  background: var(--footer-bg);
+  color: var(--footer-text);
+}
+
+footer a {
+  color: var(--footer-text);
+  text-decoration: none;
+  margin: 0 0.5rem;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
