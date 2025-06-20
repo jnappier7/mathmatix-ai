@@ -193,7 +193,7 @@ async function playVoice(voiceId, tutorId) {
       "prof-davies": "Good day, I’m Professor Davies. I believe math is LESS about answers, and MORE about understanding.",
       "ms-alex": "Hey y’all, I’m Ms. Alex. I believe math should make sense — and you deserve to feel confident.",
       "maya": "What's up, I’m Maya. I believe in taking your time, asking questions, and making math feel like it’s yours.",
-      "ms-maria": "Hola, I’m Ms. Maria. I believe math grows best with structure, patience, and a little encouragement.",
+      "ms-maria": "¿Qué pasa?, I’m Ms. Maria. I believe math grows best with structure, patience, and a little encouragement.",
       "bob": "Yo! I’m Bob, and I believe math’s way more fun when it clicks with real life.",
       "ms-rashida": "Hi, I’m Ms. Rashida. I believe in turning CONFUSION into CONFIDENCE — one. problem. at a time."
     };
