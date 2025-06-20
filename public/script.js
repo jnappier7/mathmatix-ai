@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (currentUser.role === 'student') {
-            fetch(`/welcome-message?userId=${currentUser._id}`, { credentials: 'include' })
+            fetch(`/welcome?userId=${currentUser._id}`, { credentials: 'include' })
                 .then(res => res.json())
                 .then(welcomeData => {
                     window.appendMessage(welcomeData.greeting, "ai", welcomeData.voiceId);
