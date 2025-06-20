@@ -187,15 +187,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function playVoice(voiceId, tutorId) {
     const customPhrases = {
-      "mr-nappier": "Hi, I'm Mr. Nappier, and I believe that once you see the pattern, the problem solves itself.",
+      "mr-nappier": "Hi, I'm Mr. Nappier, and I believe that math is about PATTERNS, once you see the patterns, the problems solves themselves.",
       "mr-lee": "Hello, I’m Mr. Lee. I believe math should be precise, purposeful, and peaceful.",
-      "dr-jones": "Hi, I’m Dr. Jones. I believe every math problem is a puzzle waiting to make you smarter.",
-      "prof-davies": "Good day, I’m Professor Davies. I believe math is less about answers, and more about understanding.",
+      "dr-jones": "Hi, I’m Dr. Jones. I believe every math problem is a PUZZLE waiting to make you smarter.",
+      "prof-davies": "Good day, I’m Professor Davies. I believe math is LESS about answers, and MORE about understanding.",
       "ms-alex": "Hey y’all, I’m Ms. Alex. I believe math should make sense — and you deserve to feel confident.",
-      "maya": "Hi, I’m Maya. I believe in taking your time, asking questions, and making math feel like it’s yours.",
+      "maya": "What's up, I’m Maya. I believe in taking your time, asking questions, and making math feel like it’s yours.",
       "ms-maria": "Hola, I’m Ms. Maria. I believe math grows best with structure, patience, and a little encouragement.",
       "bob": "Yo! I’m Bob, and I believe math’s way more fun when it clicks with real life.",
-      "ms-rashida": "Hi, I’m Ms. Rashida. I believe in turning confusion into confidence — one problem at a time."
+      "ms-rashida": "Hi, I’m Ms. Rashida. I believe in turning CONFUSION into CONFIDENCE — one. problem. at a time."
     };
 
     const previewText = customPhrases[tutorId] || `Hi! I’m your tutor, and I can’t wait to help you learn math.`;
