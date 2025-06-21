@@ -1,4 +1,4 @@
-// public/js/guidedPath.js - FINAL VERSION (PHASE 2)
+// public/js/guidedPath.js - FINAL VERSION (PHASE 2 - CORRECTED API PATHS)
 
 let currentCourse = null;
 let currentModuleIndex = 0;
@@ -98,10 +98,11 @@ async function requestDynamicHint(problem, userAnswer, correctAnswer, module) {
     window.showThinkingIndicator(true);
     const hintContext = { problem, userAnswer, correctAnswer, strategies: module.instructionalStrategy.concat(module.scaffold) };
     try {
-        const response = await fetch('/get-scaffolded-hint', {
+        // [FIX] Corrected endpoint to /lesson/get-scaffolded-hint
+        const response = await fetch('/lesson/get-scaffolded-hint', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(hintContext)
+            body: JSON.stringify({ hintContext }) // Hint context is sent nested in body
         });
         if (!response.ok) throw new Error('Network response was not ok.');
         const data = await response.json();
@@ -116,10 +117,11 @@ async function requestDynamicHint(problem, userAnswer, correctAnswer, module) {
 
 // NEW: Abstracted the fetch call for lessons
 async function callLessonAPI(context) {
-    const response = await fetch('/generate-interactive-lesson', {
+    // [FIX] Corrected endpoint to /lesson/generate-interactive-lesson
+    const response = await fetch('/lesson/generate-interactive-lesson', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(context)
+        body: JSON.stringify({ lessonContext: context }) // Lesson context is sent nested in body
     });
     if (!response.ok) throw new Error('Network response was not ok.');
     return await response.json();

@@ -17,17 +17,17 @@ const {
   ensureNotAuthenticated,
   isAdmin,
   isTeacher,
-  isParent
-} = require("./middleware/auth");
+  isParent,
+  handleLogout // [CHANGE] - Import handleLogout from auth.js
+} = require("./middleware/auth"); //
 
-const autoMountRoutes = require("./utils/autoRouteLoader");
+const autoMountRoutes = require("./utils/autoRouteLoader"); // Assuming this utility exists
 
 // --- 2. INIT EXPRESS APP ---
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.set("trust proxy", 1);
-const speakTestRoute = require("./routes/speak-test");
-
+const speakTestRoute = require("./routes/speak-test"); // Assuming this route exists
 
 // --- 3. MIDDLEWARE CONFIG ---
 app.use(cors({
@@ -47,15 +47,15 @@ app.use(session({
   }),
   cookie: {
     httpOnly: true,
-    secure: false,
+    // [CHANGE] - Removed maxAge to make it a session-only cookie
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies (HTTPS) in production
     sameSite: 'Lax'
   }
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/speak-test", speakTestRoute);
-
+app.use("/speak-test", speakTestRoute); // Mount the speak-test route
 
 // --- 4. DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
@@ -63,24 +63,22 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
 // --- 5. AUTOMOUNT ROUTES ---
+// This part assumes you have a 'routes' folder and 'autoRouteLoader.js' utility.
+// Ensure your '/api/chat' and other APIs are handled by this or defined explicitly.
 autoMountRoutes(app, {
   skip: ["summary_generator"] // Skip any internal-only APIs
 });
 
 // --- 6. DIRECT ROUTES (outside auto-mount) ---
 app.get("/user", isAuthenticated, (req, res) => {
+  // Converts Mongoose document to a plain object before sending
+  // This is good practice to prevent sending unintended Mongoose internals
   return res.json({ user: req.user.toObject() });
 });
 
-app.get("/logout", (req, res, next) => {
-  req.logout(err => {
-    if (err) return next(err);
-    req.session.destroy(() => {
-      res.clearCookie("connect.sid");
-      res.redirect("/login.html");
-    });
-  });
-});
+// [CHANGE] - Changed /logout from GET to POST and use handleLogout
+app.post("/logout", handleLogout);
+
 
 // --- 7. OAUTH ROUTES ---
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
@@ -125,6 +123,8 @@ app.get("/parent-dashboard.html", isParent, (req, res) => res.sendFile(path.join
 app.get("/teacher-dashboard.html", isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-dashboard.html")));
 app.get("/admin-dashboard.html", isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-dashboard.html")));
 
+// This line is redundant if all static files are served via explicit routes above,
+// but harmless if some static files (like images, CSS, JS) are not explicitly routed.
 app.use(express.static(path.join(__dirname, "public")));
 
 // --- 9. 404 CATCH-ALL ---

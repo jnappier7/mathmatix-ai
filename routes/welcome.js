@@ -1,10 +1,10 @@
-// routes/welcome.js
+// routes/welcome.js (Corrected - Remove .toObject() when .lean() is used)
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
-const { generateSystemPrompt } = require('../utils/prompt');
-const openai = require("../utils/openaiClient");
-const TUTOR_CONFIG = require("../utils/tutorConfig"); // NEW: Import TUTOR_CONFIG
+const User = require('../models/user'); // Correct path
+const { generateSystemPrompt } = require('../utils/prompt'); // For generating personalized prompts
+const openai = require("../utils/openaiClient"); //
+const TUTOR_CONFIG = require("../utils/tutorConfig"); //
 
 router.get('/', async (req, res) => {
     const userId = req.query.userId;
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 
     try {
-        const user = await User.findById(userId);
+        const user = await User.findById(userId); // Fetch as a Mongoose document to save the welcome message
         if (!user) {
             return res.status(404).json({ error: "User not found." });
         }
@@ -25,11 +25,10 @@ router.get('/', async (req, res) => {
         const currentTutor = TUTOR_CONFIG[selectedTutorKey];
         const voiceIdForWelcome = currentTutor.voiceId;
         const tutorNameForPrompt = currentTutor.name;
-        // --- END NEW ---
 
         let lastSummaryForAI = null;
         const tutoringSessions = user.conversations.filter(
-            session => session.messages && session.messages.length > 1 && session.summary !== "Initial Welcome Message" && session.summary
+            session => session.messages && session.messages.length > 1 && session.summary && session.summary !== "Initial Welcome Message" // Filter out initial welcome
         ).sort((a, b) => b.date - a.date);
 
         if (tutoringSessions.length > 0) {
@@ -37,8 +36,12 @@ router.get('/', async (req, res) => {
             lastSummaryForAI = lastTutoringSession.summary;
         }
 
-        // MODIFIED: Pass tutorNameForPrompt to generateSystemPrompt
+        // [FIX] No .toObject() needed here if you only need a plain object for the prompt
+        // If generateSystemPrompt specifically expects a plain JS object, user.toObject() is fine.
+        // If it can handle a Mongoose doc, just pass `user`.
+        // Let's pass user.toObject() to be safe as generateSystemPrompt expects a plain object.
         let systemPromptForWelcome = generateSystemPrompt(user.toObject(), tutorNameForPrompt);
+
 
         const messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
 
@@ -57,7 +60,35 @@ router.get('/', async (req, res) => {
 
         const initialWelcomeMessage = completion.choices[0].message.content.trim();
 
-        // MODIFIED: Include voiceId in the response
+        // --- Logic to save welcome message to history ---
+        const isFirstInteraction = user.conversations.length === 0 || user.conversations[user.conversations.length - 1].summary === "Initial Welcome Message";
+
+        if (isFirstInteraction) {
+            const newSession = {
+                date: new Date(),
+                messages: [{ role: 'assistant', content: initialWelcomeMessage }],
+                summary: "Initial Welcome Message",
+                activeMinutes: 0
+            };
+            user.conversations.push(newSession);
+            await user.save();
+        } else {
+            const lastSession = user.conversations[user.conversations.length - 1];
+            if (lastSession && !lastSession.summary) {
+                 lastSession.messages.push({ role: 'assistant', content: initialWelcomeMessage });
+                 await user.save();
+            } else {
+                const newSession = {
+                    date: new Date(),
+                    messages: [{ role: 'assistant', content: initialWelcomeMessage }],
+                    summary: null,
+                    activeMinutes: 0
+                };
+                user.conversations.push(newSession);
+                await user.save();
+            }
+        }
+
         res.json({ greeting: initialWelcomeMessage, voiceId: voiceIdForWelcome });
 
     } catch (error) {

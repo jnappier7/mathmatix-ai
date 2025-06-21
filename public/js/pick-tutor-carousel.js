@@ -1,3 +1,4 @@
+// public/js/pick-tutor-carousel.js
 document.addEventListener('DOMContentLoaded', () => {
     const tutors = [
         {
@@ -80,8 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             specialties: "Geometry, Pre-Calculus, creative problem-solving, understanding theoretical math concepts.",
             likes: "He makes every math topic so interesting, and I learn so much more than just the formulas!"
         },
-		
-		 {
+		{
             id: 'ms-rashida',
             name: 'Ms. Rashida',
             voiceId: '03vEurziQfq3V8WZhQvn',
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const slide = document.createElement('li');
             slide.classList.add('carousel-slide');
             const img = document.createElement('img');
-            img.src = `images/${tutor.image}`;
+            img.src = `images/${tutor.image}`; // Ensure 'images/' is the correct relative path from 'public/'
             img.alt = `3D avatar of ${tutor.name}`;
             img.classList.add('tutor-image');
             slide.appendChild(img);
@@ -128,13 +128,18 @@ document.addEventListener('DOMContentLoaded', () => {
         tutorAbout.textContent = currentTutor.about;
         tutorSpecialties.textContent = currentTutor.specialties;
         tutorLikes.textContent = currentTutor.likes;
-        selectTutorBtn.textContent = `Select ${currentTutor.name}`;
+        selectTutorBtn.innerHTML = `✅ Select ${currentTutor.name}`; // Updated to include checkmark icon
 
         playVoiceBtn.onclick = () => playVoice(currentTutor.voiceId, currentTutor.id);
     }
 
     function moveCarousel() {
-        if (carouselTrack.children.length === 0) return;
+        if (carouselTrack.children.length === 0) {
+            console.warn("Carousel track has no children. Render function might not have completed.");
+            return;
+        }
+        // Ensure initial rendering is complete before calculating width
+        // A short delay might help if images are still loading
         const slideWidth = carouselTrack.children[0].getBoundingClientRect().width;
         carouselTrack.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
         updateTutorDetails(currentIndex);
@@ -152,7 +157,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectTutorBtn.addEventListener('click', async () => {
         const selectedTutor = tutors[currentIndex];
-        const userId = localStorage.getItem("userId");
+        let userId = null;
+        try {
+            const userRes = await fetch('/user', { credentials: 'include' });
+            if (!userRes.ok) {
+                throw new Error('User not authenticated.');
+            }
+            const userData = await userRes.json();
+            userId = userData.user._id;
+        } catch (error) {
+            console.error("Error fetching user ID:", error);
+            alert("User session not found. Please log in again.");
+            window.location.href = "/login.html";
+            return;
+        }
+
         if (!userId) {
             alert("User not logged in. Please log in.");
             window.location.href = "/login.html";
@@ -160,7 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch("/chat/select-tutor", {
+            // [FIX] Removed /api/ prefix from the endpoint
+            const response = await fetch(`/user/select-tutor`, { // Changed from /api/user/select-tutor to /user/select-tutor
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -171,11 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const result = await response.json();
-            if (result.success) {
-                localStorage.setItem("selectedTutorId", selectedTutor.id);
-                localStorage.setItem("selectedTutorName", selectedTutor.name);
-                alert(`You have selected ${selectedTutor.name}! Redirecting to chat...`);
-                window.location.href = "/chat.html";
+            if (response.ok) { // Check response.ok for success
+                window.location.href = "/chat.html"; // Server should update user.selectedTutorId
             } else {
                 alert("Failed to select tutor: " + (result.message || "Unknown error"));
             }
@@ -185,38 +202,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-async function playVoice(voiceId, tutorId) {
-    const customPhrases = {
-      "mr-nappier": "Hi, I'm Mr. Nappier, and I believe that math is about PATTERNS. Once you see the patterns, math becomes EASY!",
-      "mr-lee": "Hello, I’m Mr. Lee. I believe math should be precise, purposeful, and peaceful.",
-      "dr-jones": "Hi, I’m Dr. Jones. I believe every math problem is a PUZZLE waiting to make you smarter.",
-      "prof-davies": "Good day, I’m Professor Davies. I believe math is LESS about answers, and MORE about understanding.",
-      "ms-alex": "Hey y’all, I’m Ms. Alex. I believe math should make sense — and you deserve to feel confident.",
-      "maya": "What's up, I’m Maya. I believe in taking your time, asking questions, and making math feel like it’s yours.",
-      "ms-maria": "¿Qué pasa?, I’m Ms. Maria. I believe math grows best with structure, patience, and a little encouragement.",
-      "bob": "Yo! I’m Bob, and I believe math’s way more fun when it clicks with real life.",
-      "ms-rashida": "Hey, I’m Ms. Rashida. I believe that math hits different when you add a lil’ flava — I don’t do boring.”
-    };
+    async function playVoice(voiceId, tutorId) {
+        const customPhrases = {
+            "mr-nappier": "Hi, I'm Mr. Nappier, and I believe that math is about PATTERNS. Once you see the patterns, math becomes EASY!",
+            "mr-lee": "Hello, I’m Mr. Lee. I believe math should be precise, purposeful, and peaceful.",
+            "dr-jones": "Hi, I’m Dr. Jones. I believe every math problem is a PUZZLE waiting to make you smarter.",
+            "prof-davies": "Good day, I’m Professor Davies. I believe math is LESS about answers, and MORE about understanding.",
+            "ms-alex": "Hey y’all, I’m Ms. Alex. I believe math should make sense — and you deserve to feel confident.",
+            "maya": "What's up, I’m Maya. I believe in taking your time, asking questions, and making math feel like it’s yours.",
+            "ms-maria": "¿Qué pasa?, I’m Ms. Maria. I believe math grows best with structure, patience, and a little encouragement.",
+            "bob": "Yo! I’m Bob, and I believe math’s way more fun when it clicks with real life.",
+            "ms-rashida": "Hey, I’m Ms. Rashida. I believe that math hits different when you add a lil’ flayva! I don’t do boring."
+        };
 
-    const previewText = customPhrases[tutorId] || `Hi! I’m your tutor, and I can’t wait to help you learn math.`;
+        const previewText = customPhrases[tutorId] || `Hi! I’m your tutor, and I can’t wait to help you learn math.`;
 
-    try {
-      const res = await fetch("/speak-test", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: previewText, voiceId })
-      });
-      const blob = await res.blob();
-      const audioUrl = URL.createObjectURL(blob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-    } catch (err) {
-      console.error("Voice playback failed:", err);
-      alert("Could not play voice preview.");
+        try {
+            const res = await fetch("/speak-test", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: previewText, voiceId })
+            });
+            const blob = await res.blob();
+            const audioUrl = URL.createObjectURL(blob);
+            const audio = new Audio(audioUrl);
+            audio.play();
+        } catch (err) {
+            console.error("Voice playback failed:", err);
+            alert("Could not play voice preview.");
+        }
     }
-  }
 
-  renderTutors();
-  updateTutorDetails(currentIndex);
-  window.addEventListener('load', moveCarousel);
+    renderTutors();
+    updateTutorDetails(currentIndex);
+    // Use setTimeout for moveCarousel to ensure images are loaded and widths are correct
+    window.addEventListener('load', () => setTimeout(moveCarousel, 100));
 });

@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User'); // Assuming User model is in '../models/User.js'
+const User = require('../models/user'); // Assuming User model is in '../models/User.js'
 const { isAdmin } = require('../middleware/auth'); // Assuming auth.js is in middleware directory
 
 // ADMIN ROUTES FOR USERS & ROLES

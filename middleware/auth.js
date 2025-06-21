@@ -1,11 +1,15 @@
 // middleware/auth.js
 
+const passport = require("passport");
+// Assuming User model is available in your project structure relative to this file
+// const User = require("../models/User"); 
+
 /**
  * Checks if a user is logged in and their session data is valid.
  * This is the primary middleware for protecting sensitive pages and API routes.
  */
 function isAuthenticated(req, res, next) {
-    // ✅ IMPROVEMENT: Checks for both authentication status AND the existence of the user object.
+    // Checks for both authentication status AND the existence of the user object.
     if (req.isAuthenticated() && req.user) {
         return next();
     }
@@ -100,6 +104,23 @@ function isAuthorizedForLeaderboard(req, res, next) {
     res.redirect('/login.html');
 }
 
+// --- LOGOUT ROUTE HANDLER ---
+function handleLogout(req, res, next) {
+  req.logout(function(err) {
+    if (err) {
+      return next(err);
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.status(500).send("Could not log out.");
+      }
+      res.clearCookie('connect.sid'); // Clear the session cookie
+      res.status(200).send('Logged out successfully'); // Send a success response
+    });
+  });
+}
+
 // --- EXPORTS ---
 
 module.exports = {
@@ -108,6 +129,7 @@ module.exports = {
     isAdmin,
     isTeacher,
     isParent,
-    isStudent,
-    isAuthorizedForLeaderboard
+    isStudent, // Make sure isStudent is exported if used elsewhere
+    isAuthorizedForLeaderboard,
+    handleLogout // Export the new logout handler
 };

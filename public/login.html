@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
-</head>
+  </head>
 <body>
   <div class="login-page-wrapper">
     <div class="login-container">
@@ -29,8 +29,7 @@
 
       <div id="login-message" class="error-message" style="display: none; text-align: center; margin-top: 10px; color: red;"></div>
 
-      <div class="social-login-separator">
-        <span>OR</span>
+      <div class="or-separator"> <span>OR</span>
       </div>
 
       <div class="social-login-buttons">
@@ -73,11 +72,9 @@
       try {
         const response = await fetch('/login', {
           method: 'POST',
-          // --- THIS HEADER IS THE FIX ---
           headers: {
             'Content-Type': 'application/json'
           },
-          // --- END FIX ---
           body: JSON.stringify(data),
           credentials: 'include'
         });
@@ -86,10 +83,8 @@
 
         if (response.ok && result.success) {
           if (result.redirect) {
-            // Redirect immediately on success
             window.location.href = result.redirect;
           } else {
-            // Fallback just in case
             window.location.href = '/chat.html';
           }
         } else {
@@ -98,7 +93,6 @@
         }
       } catch (error) {
         console.error('Login Error:', error);
-        // This is where the original error was being caught because the response was HTML
         loginMessage.textContent = 'Login failed. Please check your credentials or try again later.';
         loginMessage.style.display = 'block';
       }

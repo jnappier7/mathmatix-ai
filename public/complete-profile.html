@@ -7,41 +7,11 @@
   <link rel="stylesheet" href="style.css" />
   </head>
 <body>
-	<!-- LOGOUT BUTTON -->
-<div style="text-align: right; padding: 10px;">
-  <button id="logoutBtn" style="background-color: #e11d48; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">
-    Logout
-  </button>
-</div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', async () => {
-        try {
-          const res = await fetch('/logout', {
-            method: 'POST',
-            credentials: 'include'
-          });
-          if (res.ok) {
-            window.location.href = '/login.html';
-          } else {
-            alert('Logout failed.');
-          }
-        } catch (err) {
-          console.error('Logout error:', err);
-          alert('An error occurred while logging out.');
-        }
-      });
-    }
-  });
-</script>
-
   <div class="login-page-wrapper">
     <div class="profile-container scrollable-form-wrapper">
       <div class="logo-header">
         <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
+        <button id="logoutBtn" class="logout-button">Logout</button>
       </div>
 
       <h1>Complete Your Profile</h1>
@@ -162,6 +132,6 @@
     </p>
   </footer>
 
-  <script src="complete-profile.js"></script>
+  <script src="/js/logout.js"></script> <script src="complete-profile.js"></script>
 </body>
 </html>

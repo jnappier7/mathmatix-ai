@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User'); // Adjust path if your User.js is not in ../models/
+const User = require('../models/user'); // Adjust path if your user.js is not in ../models/
 const { isTeacher } = require('../middleware/auth'); // CORRECT: Import the shared isTeacher middleware
 
 // REMOVED: The locally defined isTeacher middleware is removed from here.

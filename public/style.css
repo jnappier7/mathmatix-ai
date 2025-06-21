@@ -1,5 +1,5 @@
 @charset "UTF-8";
-/* style.css — FINAL MERGED VERSION */
+/* style.css — FINAL COMPREHENSIVE & ORGANIZED VERSION with ALL FIXES */
 
 /* --- 1. Root Variables & Basic Reset --- */
 
@@ -7,17 +7,43 @@
     /* Sizing & Layout */
     --header-height: 100px;
     --footer-height: 60px;
-    --admin-page-wrapper-padding: 40px;
-    --dashboard-panel-padding: 40px;
+    --page-horizontal-padding: 20px;
+    --section-gap: 20px;
+
+    /* Dashboard Specific Sizing */
+    --dashboard-panel-padding: 20px;
     --dashboard-panel-header-height: 40px;
     --dashboard-panel-header-margin-bottom: 15px;
-    --main-content-gap: 20px;
-    --controls-panel-height: 100px;
-    --search-input-height: 50px;
+    --sidebar-width: 250px;
+    --chat-min-width: 400px;
 
-    /* Colors from Tutor Carousel */
-    --blue: #0066cc;
-    --green: #28a745;
+    /* Colors */
+    --primary-teal: #008080;
+    --dark-teal: #0d9488;
+    --accent-green: #20c997;
+    --dark-accent-green: #17a085;
+    --primary-blue: #0066cc;
+    --soft-blue: #e6f7ff;
+    --dark-blue: #0056b3;
+    --red-alert: #e11d48;
+    --dark-red-alert: #be123c;
+    --light-gray: #f4f7fa;
+    --mid-gray: #eee;
+    --dark-gray: #333;
+    --white: #ffffff;
+    --black: #000000;
+
+    /* Text Colors */
+    --text-primary: #333;
+    --text-secondary: #555;
+    --text-light: #ccc;
+    --text-dark: #2c3e50;
+    --text-green: #004d40;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 25px rgba(0,0,0,0.25);
 }
 
 * {
@@ -32,32 +58,155 @@ html {
 }
 
 body {
-    display: flex; /* For sticky footer layout */
-    flex-direction: column; /* For sticky footer layout */
-    min-height: 100vh; /* For sticky footer layout */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     margin: 0;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7fa; /* Light background */
-    color: #333;
+    background-color: var(--light-gray);
+    color: var(--text-primary);
+    min-width: 320px;
 }
 
 
-/* --- 2. Footer --- */
+/* --- 2. Typography & General Elements --- */
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-dark);
+    margin-bottom: 0.5em;
+}
+
+p {
+    line-height: 1.6;
+    margin-bottom: 1em;
+}
+
+a {
+    color: var(--primary-teal);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    padding: 0.75em 1.25em;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+/* Common form elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 5px;
+}
+
+/* --- 3. Header & Logout Button (Consistent Across Pages) --- */
+
+/* Base header styles */
+.admin-header, .logo-header, #chat-container #top-bar {
+    display: flex;
+    align-items: center;
+    padding: 15px var(--page-horizontal-padding);
+    background-color: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--section-gap);
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto var(--section-gap);
+    overflow: visible; /* Ensure content is not clipped */
+    min-height: 80px; /* Ensure enough height for the logo itself */
+    justify-content: center; /* Center content horizontally within the header */
+    flex-wrap: wrap; /* Allow content to wrap on smaller screens if it gets too wide */
+}
+
+/* Specific styling for the logo within headers */
+.admin-header img, .logo-header img {
+    max-width: 180px;
+    margin-right: 20px;
+    flex-shrink: 0;
+    height: auto; /* Ensure height scales proportionally */
+    max-height: 100px; /* Example max height to prevent it from becoming too large */
+}
+
+/* Smaller logo for chat top bar */
+#chat-container #top-bar #logo {
+    max-width: 120px;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+/* Header titles */
+.admin-header h1, .logo-header h1 {
+    font-size: 2em;
+    color: var(--text-dark);
+    margin: 0;
+    flex-grow: 1;
+}
+.logo-header p {
+    font-size: 1em;
+    color: var(--text-secondary);
+    margin-left: 20px;
+    flex-grow: 1;
+}
+
+/* Standardized Logout Button */
+.logout-button {
+    background-color: var(--dark-gray);
+    color: var(--white);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.logout-button:hover {
+    background-color: #555;
+    transform: translateY(-1px);
+}
+
+
+/* --- 4. Footer --- */
 footer {
     width: 100%;
-    position: fixed; /* Fixed position */
-    bottom: 0; /* At the bottom of the viewport */
-    left: 0; /* Spans full width */
+    flex-shrink: 0;
+    height: var(--footer-height);
     padding: 1rem;
-    background-color: #111;
-    color: #ccc;
+    background-color: var(--black);
+    color: var(--text-light);
     font-size: 0.85rem;
     text-align: center;
     border-top: 1px solid #333;
     box-sizing: border-box;
-    z-index: 1000;
-    flex-shrink: 0;
-    height: var(--footer-height);
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -69,7 +218,7 @@ footer p {
 }
 
 footer a {
-  color: #ccc;
+  color: var(--text-light);
   text-decoration: none;
   margin: 0 0.5rem;
 }
@@ -79,251 +228,160 @@ footer a:hover {
 }
 
 
-/* --- 3. Chat Page Layout & Widgets --- */
+/* --- 5. Page Layout Wrappers (Common) --- */
+
+/* Overall wrapper for chat, admin, parent, teacher dashboards */
+#app-layout-wrapper, .admin-page-wrapper, .home-container {
+    display: flex;
+    flex-direction: column; /* Stacks header, then main-content, then (conceptual) footer space */
+    flex: 1; /* Allows it to take all available vertical space in body */
+    align-items: center; /* Centers content horizontally */
+    padding: 0 var(--page-horizontal-padding);
+    max-width: 1400px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Main content area for dashboards with sidebars */
+.admin-main-content {
+    display: flex;
+    width: 100%;
+    gap: var(--section-gap);
+    flex-grow: 1; /* Allows it to fill vertical space */
+    margin-bottom: var(--section-gap);
+    min-width: calc(var(--sidebar-width) * 2 + var(--chat-min-width) + var(--section-gap) * 2);
+    /* [NEW] Explicitly define its height for Flexbox distribution within #app-layout-wrapper */
+    height: 100%;
+}
+
+/* Dashboard Sidebar Widgets (Left/Right) */
+.admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
+    flex: 0 0 var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+    overflow-y: auto; /* Allows scrolling within the sidebar itself */
+    min-width: 0; /* Allows content to shrink beyond its natural size if necessary */
+    /* [NEW] Ensure sidebars fill height */
+    height: 100%;
+}
+
+/* Central Content Area for Dashboards */
+.admin-central-content, #chat-container {
+    flex: 1;
+    min-width: var(--chat-min-width);
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+    /* [NEW] Ensure chat/central content fills height */
+    height: 100%;
+}
+
+/* Dashboard Panel Base Style */
+.dashboard-panel {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    padding: var(--dashboard-panel-padding);
+    width: 100%;
+    /* [NEW] Allow panels to grow to fill space within sidebars/central column */
+    flex-grow: 1;
+}
+
+.dashboard-panel-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: var(--dashboard-panel-header-margin-bottom);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--mid-gray);
+    color: var(--text-dark);
+}
+
+/* Table Specifics */
+.table-scroll-container {
+    overflow-y: auto;
+    max-height: 400px; /* Adjust as needed */
+}
+
+.user-table, #leaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.user-table th, .user-table td,
+#leaderboardTable th, #leaderboardTable td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    text-align: left;
+}
+
+.user-table th, #leaderboardTable th {
+    background-color: rgba(0, 0, 0, 0.05);
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+#leaderboardTable td {
+    color: var(--text-green);
+}
+
+
+/* --- 6. Chat Page Specifics (excluding common layout) --- */
 
 /* Overall application wrapper for chat page */
 #app-layout-wrapper {
-    display: flex;
-    flex-direction: row;
-    height: calc(100vh - var(--footer-height) - 40px);
+    flex-direction: row; /* Main columns for chat layout */
+    align-items: stretch; /* Stretch columns to fill height */
+    height: calc(100vh - var(--footer-height) - 40px); /* Fill available viewport height */
     width: 100%;
     max-width: 1400px;
     margin: 20px auto;
     box-sizing: border-box;
     padding: 0px 20px;
-    gap: 20px;
-    align-items: stretch;
+    gap: var(--section-gap);
+    min-height: 500px; /* Ensure minimum height for the layout */
 }
 
-/* Base styling for fixed side widgets on chat page */
-.widget-sidebar-left,
-.widget-sidebar-right {
-    flex: 0 0 250px;
-    padding: 16px;
-    background-color: #f4f7fa;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-}
-
-/* Central Chat Container */
 #chat-container {
-    flex: 1;
-    min-width: 400px;
-    display: flex;
-    flex-direction: column;
-    padding: 16px;
-    background: #ffffff;
+    padding: var(--dashboard-panel-padding);
+    background: var(--white);
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
     box-sizing: border-box;
     position: relative;
+    height: 100%; /* Fill parent's height */
+    display: flex; /* [NEW] Explicitly make it a flex container */
+    flex-direction: column; /* [NEW] Stack its children vertically */
+    gap: 10px; /* [NEW] Gap between its children */
 }
 
-/* Leaderboard Widget (Left) */
-#leaderboard-content {
-    width: 220px;
-    height: 400px;
-    flex-shrink: 0;
-    background-color: #e0f2f1;
-    color: #004d40;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
+/* Top bar within chat container (containing logo and logout) */
+#chat-container #top-bar {
+    margin-bottom: var(--dashboard-panel-header-margin-bottom);
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin-left: 0;
+    margin-right: 0;
+    max-width: none;
+    flex-shrink: 0; /* [NEW] Prevent top bar from shrinking */
 }
 
-#leaderboard-content .popup-header {
-    margin-bottom: 0;
-    flex-shrink: 0;
-    padding: 8px 10px;
-    background-color: #00796B;
-    font-size: 0.95rem;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-}
-
-#leaderboard-content .popup-header h2 {
-    margin: 0;
-    font-size: 0.95rem;
-}
-
-#leaderboard-content .overflow-y-auto {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 8px 10px;
-}
-
-#leaderboardTable {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.8rem;
-}
-
-#leaderboardTable th, #leaderboardTable td {
-    padding: 5px 4px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    text-align: left;
-    color: #004d40;
-}
-
-#leaderboardTable th {
-    background-color: rgba(0, 0, 0, 0.08);
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
-/* XP/Level Widget (Right) */
-#xp-level-display {
-    width: 220px;
-    height: 80px;
-    flex-shrink: 0;
-    background-color: #e0f2f1;
-    color: #004d40;
-    border-radius: 12px;
-    overflow: hidden;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto;
-}
-
-#xp-level-display #level-badge {
-    flex-grow: 1;
-    background-color: #00796B;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    font-weight: bold;
-}
-
-#xp-level-display #xp-text {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-}
-
-/* Student's Parent Link Code Display */
-#student-parent-link-display {
-    width: 220px;
-    margin: 20px auto 0;
-    background-color: #e0f2f1;
-    color: #004d40;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    padding: 10px;
-    text-align: center;
-}
-
-#student-link-code-value {
-    background-color: #c8e6c9;
-    padding: 8px 15px;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #1b5e20;
-    cursor: copy;
-    margin: 10px 0;
-}
-
-#invite-code-label {
-    font-size: 0.9rem;
-    font-weight: bold;
-}
-
-#invite-code-description {
-    font-size: 0.8rem;
-    margin-top: 5px;
-}
-
-/* Tutor Avatar Styling in Sidebar */
-#avatar-container {
-  height: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  overflow: hidden;
-  margin-top: auto;
-}
-
-#student-avatar img {
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-/* Course Card in Sidebar */
-.course-card-wrapper {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    border: 1px solid #eee;
-    text-align: center;
-}
-.course-card {
-    padding: 15px 5px;
-    border-radius: 8px;
-    background-color: #fff;
-}
-.course-card h3 {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-}
-.course-card p {
-    font-size: 0.8em;
-    margin-bottom: 10px;
-}
-.course-card button {
-    margin: 5px 0;
-    padding: 8px 10px;
-    border-radius: 5px;
-    width: 90%;
-}
-.course-card .enroll-btn { background-color: #4CAF50; color: white; }
-.course-card .chat-btn { background-color: #008CBA; color: white; }
-
-/* Progress Circle */
-.progress-circle-container {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto 10px;
-    position: relative;
-}
-.progress-circle-inner {
-    background-color: white;
-    width: 70%;
-    height: 70%;
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8em;
-    color: #000;
-}
-
-/* --- 4. Chat Interface Internals --- */
+/* Chat messages inner container */
 #chat-container-inner {
-  flex-grow: 1;
-  overflow-y: auto;
+  flex-grow: 1; /* [FIX] Allow it to grow and fill available space */
+  overflow-y: auto; /* [FIX] Enable vertical scrolling when content overflows */
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 100px;
+  border: 1px solid var(--mid-gray);
+  border-radius: 8px;
+  background-color: #fcfcfc;
 }
 
 .message {
@@ -345,13 +403,20 @@ footer a:hover {
   align-self: flex-start;
 }
 
+.chat-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
 #input-container {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--mid-gray);
   padding-top: 10px;
-  flex-shrink: 0;
+  flex-shrink: 0; /* [NEW] Prevent input container from shrinking */
 }
 
 #user-input {
@@ -368,14 +433,35 @@ footer a:hover {
 
 #send-button {
   padding: 10px 18px;
-  background-color: #20c997;
-  color: white;
-  border: none;
+  background-color: var(--accent-green);
+  color: var(--white);
   border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
 }
-#send-button:hover { background-color: #17a085; }
+#send-button:hover { background-color: var(--dark-accent-green); }
+
+/* Input Tools (Mic, Equation, Attach) */
+#tools-left, #tools-right {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+#tools-left button, #tools-right button {
+    background: none;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    line-height: 1;
+}
+#tools-left button img, #tools-right button img {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    display: block;
+}
+#tools-left button:hover, #tools-right button:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
 
 /* Dropzone styling */
 #dropzone.drag-active::before {
@@ -384,7 +470,7 @@ footer a:hover {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  color: var(--white);
   font-size: 2rem;
   font-weight: bold;
   display: flex;
@@ -394,13 +480,15 @@ footer a:hover {
 }
 
 /* Thinking Indicator */
-#thinking-indicator {
+#thinking-indicator, #parent-thinking-indicator {
   display: flex;
   align-items: center;
   gap: 6px;
   justify-content: center;
   padding: 8px 0;
   flex-shrink: 0;
+  font-size: 0.85rem;
+  color: #666;
 }
 .dot {
   height: 10px; width: 10px;
@@ -417,7 +505,7 @@ footer a:hover {
 
 /* Lesson Header in Chat */
 #lesson-header {
-    background-color: #e6f7ff;
+    background-color: var(--soft-blue);
     padding: 10px;
     border-bottom: 1px solid #cceeff;
     margin-bottom: 10px;
@@ -425,49 +513,307 @@ footer a:hover {
     border-radius: 8px;
     flex-shrink: 0;
 }
-#lesson-header h2 { margin: 0; color: #0056b3; }
+#lesson-header h2 { margin: 0; color: var(--dark-blue); }
+
+/* Hands-free toggle */
+#handsfree-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+#handsfree-toggle {
+    width: 50px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #ccc;
+    position: relative;
+    transition: background-color 0.3s;
+    padding: 0;
+}
+#handsfree-toggle::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: white;
+    transition: transform 0.3s;
+}
+#handsfree-toggle.green {
+    background-color: var(--accent-green);
+}
+#handsfree-toggle.green::before {
+    transform: translateX(20px);
+}
+#handsfree-label {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+#audio-stop-button {
+    background-color: var(--red-alert);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 10px;
+    font-size: 1.2rem;
+}
 
 
-/* --- 5. Login, Signup, and Form Pages --- */
+/* Leaderboard Widget (Left Sidebar) */
+#leaderboard-content {
+    background-color: #e0f2f1;
+    color: var(--text-green);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
 
-.login-page-wrapper, .signup-page-wrapper {
+#leaderboard-content .popup-header {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    padding: 8px 10px;
+    background-color: #00796B;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--white);
+    text-align: center;
+}
+
+#leaderboard-content .popup-header h2 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--white);
+}
+
+#leaderboard-content .overflow-y-auto {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 8px 10px;
+}
+
+
+/* XP/Level Widget (Right Sidebar) */
+#xp-level-display {
+    background-color: #e0f2f1;
+    color: var(--text-green);
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+#xp-level-display #level-badge {
+    flex-grow: 1;
+    background-color: #00796B;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+#xp-level-display #xp-text {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+/* Student's Parent Link Code Display */
+#student-parent-link-display {
+    background-color: #e0f2f1;
+    color: var(--text-green);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 10px;
+    text-align: center;
+}
+
+#student-link-code-value {
+    background-color: #c8e6c9;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1b5e20;
+    cursor: copy;
+    margin: 10px 0;
+    display: block;
+}
+
+#invite-code-label {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+#invite-code-description {
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Tutor Avatar Styling in Sidebar */
+#avatar-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+  margin-top: auto;
+  padding-top: 10px;
+  flex-grow: 1;
+}
+
+#student-avatar img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Course Card in Sidebar (Guided Path) */
+.course-card-wrapper {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    text-align: center;
+}
+.course-card {
+    padding: 15px 5px;
+    border-radius: 8px;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+.course-card h3 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+.course-card p {
+    font-size: 0.8em;
+    margin-bottom: 1em;
+}
+.course-card button {
+    margin: 5px 0;
+    padding: 8px 10px;
+    border-radius: 5px;
+    width: 90%;
+}
+.course-card .enroll-btn { background-color: #4CAF50; color: var(--white); }
+.course-card .enroll-btn:hover { background-color: #388E3C; }
+
+
+/* Progress Circle for Course Cards */
+.progress-circle-container {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #e0e0e0;
+}
+.progress-circle-inner {
+    background-color: var(--white);
+    width: 70%;
+    height: 70%;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    color: var(--text-primary);
+}
+
+
+/* --- 7. Login, Signup, and Profile Completion Pages --- */
+
+.login-page-wrapper, .signup-page-wrapper, .profile-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex: 1; /* Takes up space above footer */
+    flex: 1;
     padding: 20px;
+    overflow: hidden;
 }
 
-.login-container, .signup-container {
-  max-width: 500px;
+.login-container, .signup-container, .profile-container {
+  max-width: 600px;
   width: 100%;
   padding: 30px;
-  background: white;
+  background: var(--white);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  max-height: calc(100vh - var(--footer-height) - 40px);
+  overflow-y: auto;
 }
 .login-container { max-width: 400px; }
 
-.logo-header {
-  text-align: center;
-  margin-bottom: 20px;
+/* The logo-header in these pages (login, signup, profile) */
+.login-page-wrapper .logo-header,
+.signup-page-wrapper .logo-header,
+.profile-container .logo-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
 }
-.logo-header img { max-width: 260px; }
+.login-page-wrapper .logo-header img,
+.signup-page-wrapper .logo-header img,
+.profile-container .logo-header img {
+    max-width: 200px;
+    margin-right: 0;
+}
+.login-page-wrapper h1, .signup-page-wrapper h1, .profile-container h1 {
+    text-align: center;
+    margin-top: 0;
+}
+
+.profile-container.scrollable-form-wrapper {
+    max-height: calc(100vh - var(--footer-height) - 40px);
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+
+.subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
 
 form label, .password-label-row label {
   display: block;
   margin: 15px 0 5px;
   font-weight: bold;
-  color: #1e293b;
-}
-
-form input[type="text"], form input[type="email"], form input[type="password"], form select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 1rem;
+  color: var(--text-dark);
 }
 
 .submit-btn {
@@ -475,14 +821,35 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
   width: 100%;
   padding: 12px;
   font-size: 1.1rem;
-  background: teal;
-  color: white;
-  border: none;
+  background: var(--primary-teal);
+  color: var(--white);
   border-radius: 8px;
   font-weight: bold;
-  cursor: pointer;
 }
-.submit-btn:hover { background: #0d9488; }
+.submit-btn:hover { background: var(--dark-teal); }
+
+/* Centering the "OR" text */
+.or-separator {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.or-separator::before,
+.or-separator::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background-color: var(--mid-gray);
+}
+.or-separator span {
+    padding: 0 15px;
+    color: var(--text-secondary);
+    font-weight: bold;
+}
 
 .social-login-buttons {
   display: flex;
@@ -504,19 +871,23 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
   font-size: 0.95rem;
   min-width: 120px;
   flex-grow: 1;
-  color: #333;
-  background-color: white;
+  color: var(--text-primary);
+  background-color: var(--white);
   text-decoration: none;
 }
 .social-btn:hover { background-color: #f0f0f0; }
-.social-btn img { width: 20px; height: 20px; margin-right: 8px; }
+.social-btn img {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
 
 .password-label-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
 }
-.password-label-row a { color: teal; text-decoration: none; font-size: 0.85rem;}
+.password-label-row a { color: var(--primary-teal); text-decoration: none; font-size: 0.85rem;}
 .password-label-row a:hover { text-decoration: underline; }
 
 .signup-link {
@@ -524,11 +895,26 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
     font-size: 0.95rem;
     text-align: center;
 }
-.signup-link a { color: teal; font-weight: bold; text-decoration: none; }
+.signup-link a { color: var(--primary-teal); font-weight: bold; text-decoration: none; }
 .signup-link a:hover { text-decoration: underline; }
 
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+.checkbox-group label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    font-weight: normal;
+    color: var(--text-primary);
+}
 
-/* --- 6. Tutor Selection Carousel Page --- */
+
+/* --- 8. Tutor Selection Carousel Page Specifics --- */
 
 .page-wrapper {
   flex: 1;
@@ -547,15 +933,15 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
   align-items: center;
   gap: 1rem;
   flex: 1;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
 }
 
 .tutor-details {
   flex: 1;
   padding: 1rem;
-  background-color: #fff;
+  background-color: var(--white);
   border-radius: 1rem;
-  box-shadow: 0 0 8px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-md);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -588,6 +974,7 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
   display: flex;
   transition: transform 0.3s ease-in-out;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .carousel-slide {
@@ -609,10 +996,17 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
 .carousel-button {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 2rem;
   cursor: pointer;
-  color: var(--blue);
+  color: var(--primary-blue);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
 }
+.carousel-button.prev { left: 0; }
+.carousel-button.next { right: 0; }
+
 
 .tutor-actions button {
   padding: 0.75rem 1.25rem;
@@ -623,115 +1017,188 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
   cursor: pointer;
 }
 
-.btn-play {
-  background-color: var(--green);
-  color: white;
+/* Font Awesome icon specific sizing for tutor selection buttons */
+.tutor-actions button i {
+  font-size: 1.2rem;
+  margin-right: 8px;
 }
+
+.btn-play {
+  background-color: var(--accent-green);
+  color: var(--white);
+}
+.btn-play:hover { background-color: var(--dark-accent-green); }
 
 .btn-select {
-  background-color: var(--blue);
-  color: white;
+  background-color: var(--primary-blue);
+  color: var(--white);
+}
+.btn-select:hover { background-color: var(--dark-blue); }
+
+/* Font Awesome icon specific sizing for tutor selection buttons and carousel buttons */
+.tutor-actions button i,
+.carousel-button i { /* [CHANGE] Combined for consistency and moved from pick-tutor.html inline style */
+  font-size: 1.2rem;
+  margin-right: 8px; /* Space between icon and text */
+}
+/* Ensure .carousel-button itself also has its desired size, if not set elsewhere */
+.carousel-button {
+    font-size: 2rem; /* [CHANGE] Moved from pick-tutor.html inline style */
 }
 
+/* --- 9. Parent/Teacher Dashboard Specific Styles --- */
 
-/* --- 7. Admin & Parent Dashboards --- */
-.admin-page-wrapper {
+/* Student Card (Teacher Dashboard) */
+.student-card {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    flex: 1;
-    padding: 20px;
-    background-color: #f4f7fa;
-    overflow-y: auto;
+    box-shadow: var(--shadow-sm);
 }
-
-.admin-main-content {
+.student-card strong {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    color: var(--text-dark);
+}
+.student-card p {
+    margin: 0 0 5px 0;
+    color: var(--text-secondary);
+}
+.student-card .card-buttons {
+    margin-top: 10px;
     display: flex;
-    width: 100%;
-    max-width: 1400px;
-    gap: 20px;
-    flex-grow: 1;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.student-card .card-buttons button {
+    padding: 8px 12px;
+    font-size: 0.9em;
 }
 
-.admin-header {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    margin-bottom: 20px;
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
 
-.admin-header img { max-width: 180px; margin-right: 20px; }
-.admin-header h1 { font-size: 2em; color: #2c3e50; margin: 0; }
-
-.dashboard-panel {
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.dashboard-panel-header {
-    font-size: 1.2em;
-    font-weight: bold;
+/* Parent Dashboard Specifics */
+.child-card {
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 15px;
     margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
 }
 
-.admin-central-content {
-    flex-grow: 1;
-    min-width: 400px;
+.child-card .child-header {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.admin-widget-sidebar {
-    width: 250px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.child-card .child-header h2 {
+    margin: 0;
+    font-size: 1.3em;
+    color: var(--primary-blue);
 }
 
-.table-scroll-container {
-    overflow-y: auto;
-    max-height: calc(100vh - 400px); /* Simplified calculation */
-}
-
-.user-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-}
-
-.user-table th, .user-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    text-align: left;
-}
-
-.user-table th {
-    background-color: rgba(0, 0, 0, 0.05);
+.child-card .child-stats {
+    font-size: 0.9em;
+    color: var(--accent-green);
     font-weight: bold;
-    position: sticky;
-    top: 0;
+}
+
+.child-card .child-summary-details {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    border-bottom: 1px dashed var(--mid-gray);
+    padding-bottom: 10px;
+}
+
+.child-card .session-log-container {
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 0.85em;
+}
+
+.child-card .session-entry {
+    margin-bottom: 5px;
+    padding: 5px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+}
+.child-card .session-entry em {
+    color: #666;
+}
+
+/* Parent Chat Widget */
+.parent-chat-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+}
+
+.chat-header-widget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--mid-gray);
+}
+.chat-header-widget select {
+    width: auto;
+    padding: 5px;
+    font-size: 0.9em;
+}
+
+.chat-display-widget {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fefefe;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.chat-display-widget .message-widget {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.9em;
+}
+
+.chat-input-widget {
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--mid-gray);
+}
+.chat-input-widget textarea {
+    flex-grow: 1;
+    min-height: 40px;
+    max-height: 100px;
+    font-size: 0.95em;
+}
+.chat-input-widget .send-button-widget {
+    padding: 8px 15px;
+    font-size: 0.95em;
+    flex-shrink: 0;
 }
 
 
-/* --- 8. Modal Styles (Shared) --- */
+/* --- 10. Modal Styles (Specific Overrides for IEP/Conversation) --- */
+
+/* Ensures the modal overlay shows on top of everything */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 2000;
@@ -745,10 +1212,11 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
     visibility: visible;
 }
 
+/* Modal Content Box */
 .modal-content {
-    background: white;
+    background: var(--white);
     border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--shadow-lg);
     padding: 30px;
     position: relative;
     max-width: 600px;
@@ -759,12 +1227,17 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
     opacity: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
+/* Adjust max-width for IEP/Conversation history if needed */
+#iep-editor-modal .modal-content, #conversation-history-modal .modal-content {
+    max-width: 800px;
+}
 
 .modal-overlay.visible .modal-content {
     transform: translateY(0);
     opacity: 1;
 }
 
+/* Close Button (top-right 'x') */
 .modal-close-button {
     position: absolute;
     top: 15px; right: 15px;
@@ -772,15 +1245,49 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
     border: none;
     font-size: 2em;
     cursor: pointer;
+    color: #aaa;
+    padding: 0 5px;
+}
+.modal-close-button:hover, .modal-close-button:focus {
+    color: var(--black);
+    text-decoration: none;
 }
 
-.modal-actions {
+/* Modal Section Headers */
+.modal-section h3 {
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--mid-gray);
+    padding-bottom: 5px;
+}
+.modal-form-group {
+    margin-bottom: 15px;
+}
+.modal-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.modal-form-group input[type="text"],
+.modal-form-group input[type="email"],
+.modal-form-group input[type="number"],
+.modal-form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
+/* Modal Action Buttons (Save/Cancel) */
+.modal-actions, .form-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--mid-gray);
 }
 
 .save-button, .cancel-button {
@@ -789,23 +1296,145 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
     font-size: 1.1em;
     cursor: pointer;
     font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
-.save-button { background-color: teal; color: white; border: none; }
-.cancel-button { background-color: #f0f0f0; color: #555; border: 1px solid #ccc; }
+.save-button { background-color: var(--primary-teal); color: var(--white); border: none; }
+.save-button:hover { background-color: var(--dark-teal); }
+.cancel-button { background-color: #6c757d; color: var(--white); border: none; }
+.cancel-button:hover { background-color: #5a6268; }
+
+/* Specific IEP Editor Styles */
+#iep-editor-content {
+    padding-top: 10px;
+}
+#iep-editor-content .checkbox-group label {
+    margin-right: 20px;
+}
+#iep-editor-content input[type="number"],
+#iep-editor-content input[type="date"],
+#iep-editor-content input[type="text"],
+#iep-editor-content textarea,
+#iep-editor-content select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+#iep-goals-list {
+    list-style: none;
+    padding: 0;
+}
+.iep-goal-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+.iep-goal-item label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+.iep-goal-item hr {
+    margin: 15px 0;
+    border: 0;
+    border-top: 1px dashed #eee;
+}
+.remove-goal-btn {
+    background-color: var(--red-alert);
+    color: var(--white);
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+    float: right;
+}
+.remove-goal-btn:hover {
+    background-color: var(--dark-red-alert);
+}
+#add-iep-goal-btn {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+#add-iep-goal-btn:hover { background-color: var(--dark-blue); }
 
 
-/* --- 9. Animations --- */
+/* Admin Dashboard Modal Specifics */
+.info-display-group {
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #eee;
+}
+.info-display-group strong {
+    color: var(--text-dark);
+}
+.conversation-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fefefe;
+}
+.conversation-item {
+    padding: 10px;
+    border-bottom: 1px dashed #eee;
+    margin-bottom: 10px;
+}
+.conversation-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+
+/* Conversation Summary Cards (Teacher Dashboard) */
+.conversation-card {
+    background-color: var(--white);
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+}
+.conversation-card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+    font-size: 1.1em;
+}
+.conversation-card p {
+    margin: 0 0 5px 0;
+    font-size: 0.95em;
+    line-height: 1.4;
+    color: var(--text-primary);
+}
+.conversation-card .session-date {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    margin-bottom: 5px;
+}
+
+
+/* --- 11. Animations --- */
 .xp-animation-text, .level-up-animation-text {
     font-weight: bold;
     opacity: 0;
     pointer-events: none;
     z-index: 9999;
     font-size: 1.2rem;
-    position: fixed; /* Use fixed positioning for animations */
+    position: fixed;
 }
 
-.xp-animation-text { color: #20c997; }
+.xp-animation-text { color: var(--accent-green); }
 .xp-animation-text.special-xp { color: #ffeb3b; font-size: 1.4rem; }
 .level-up-animation-text { color: #007bff; font-size: 1.6rem; }
 
@@ -824,13 +1453,20 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
 }
 
 
-/* --- 10. Media Queries & Responsive --- */
-@media screen and (max-width: 1024px) {
+/* --- 12. Media Queries & Responsive Design --- */
+
+@media screen and (max-width: 1200px) {
+    /* Adjustments for larger tablets/smaller desktops */
+    #app-layout-wrapper, .admin-page-wrapper {
+        flex-direction: column;
+        max-width: 90%;
+        padding: 0 15px;
+    }
     .admin-main-content {
         flex-direction: column;
         align-items: center;
     }
-    .admin-widget-sidebar {
+    .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
         width: 100%;
         flex-direction: row;
         flex-wrap: wrap;
@@ -838,14 +1474,77 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
     }
     .admin-central-content {
         width: 100%;
+        min-width: unset;
+    }
+    .carousel-wrapper {
+        flex-direction: column;
+    }
+    .tutor-details, .tutor-actions, .tutor-carousel {
+        width: 100%;
+        max-width: unset;
+        align-items: center;
+        text-align: center;
+    }
+    .tutor-actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+    .tutor-actions button {
+        width: auto;
+        min-width: 150px;
     }
 }
 
+
 @media screen and (max-width: 768px) {
     /* Adjustments for smaller tablets */
+    :root {
+        --page-horizontal-padding: 15px;
+    }
+    .admin-header img, .logo-header img, #chat-container #top-bar #logo {
+        max-width: 150px;
+    }
+    .admin-header h1, .logo-header h1 {
+        font-size: 1.5em;
+    }
+    .logout-button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    .dashboard-panel, .modal-content {
+        padding: 15px;
+    }
+    .modal-content {
+        max-width: 95%;
+    }
+    .social-login-buttons {
+        flex-direction: column;
+    }
+    .social-btn {
+        min-width: unset;
+        width: 100%;
+    }
 }
 
 @media screen and (max-width: 600px) {
+  /* Mobile-first adjustments */
+  :root {
+    --section-gap: 15px;
+  }
+  body {
+      padding-bottom: 0;
+  }
+  footer {
+      position: static;
+      margin-top: 10px;
+      height: auto;
+      padding: 1rem;
+      flex-direction: column;
+  }
+  footer a {
+      margin: 5px 0;
+  }
+
   #app-layout-wrapper {
       flex-direction: column;
       height: auto;
@@ -853,22 +1552,70 @@ form input[type="text"], form input[type="email"], form input[type="password"], 
       margin: 0;
       padding: 10px;
   }
+
+  /* Hide sidebars and avatar on very small screens for focus on chat */
   .widget-sidebar-left, .widget-sidebar-right, #avatar-container {
-      display: none; /* Hide sidebars and avatar on mobile for focus on chat */
+      display: none;
   }
+
   #chat-container {
     min-width: unset;
-  }
-  body {
-      padding-bottom: 0; /* Remove padding since footer is static */
-  }
-  footer {
-      position: static; /* Footer becomes part of the document flow */
-      margin-top: 10px;
-      height: auto;
-      padding: 1rem;
+    padding: 10px;
   }
   .login-page-wrapper, .signup-page-wrapper {
     padding-bottom: 20px;
   }
-}git commit -m "🎯 Scoped tutor layout styles + restored global CSS and refined carousel behavior"
+  .login-container, .signup-container, .profile-container {
+    padding: 20px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .admin-header, .logo-header, #chat-container #top-bar {
+      border-radius: 0;
+      box-shadow: none;
+      padding: 10px;
+      margin-bottom: var(--section-gap);
+  }
+  .admin-header img, .logo-header img {
+      max-width: 120px;
+  }
+  .admin-header h1, .logo-header h1 {
+      font-size: 1.2em;
+  }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+    /* Hide navigational elements */
+    header, footer, .sidebar, #input-container, #thinking-indicator,
+    .logout-button, .carousel-button, .btn-play, .btn-select,
+    .admin-widget-sidebar, .modal-overlay, .submit-btn, .cancel-btn {
+        display: none !important;
+    }
+    /* Make main content flow */
+    #app-layout-wrapper, .admin-main-content, #chat-container, .tutor-details {
+        display: block !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        background-color: white !important;
+    }
+    .message {
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+        margin-bottom: 10px;
+    }
+    .user-table, #leaderboardTable {
+        border: 1px solid #000;
+    }
+    .user-table th, .user-table td, #leaderboardTable th, #leaderboardTable td {
+        border: 1px solid #000;
+        padding: 5px;
+    }
+}

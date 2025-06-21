@@ -5,110 +5,83 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up - M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.25rem;
-      font-weight: 600;
-    }
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    #inviteCodeGroup {
-      display: none;
-    }
-    .signup-container {
-      max-width: 400px;
-      margin: auto;
-      padding: 2rem;
-    }
-    .signup-container h2 {
-      text-align: center;
-    }
-    .signup-container button {
-      margin-top: 1rem;
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-    }
-    .note {
-      font-size: 0.85rem;
-      color: #555;
-      margin-top: 0.5rem;
-    }
-    #signup-message {
-        text-align: center;
-        margin-top: 10px;
-        font-weight: bold;
-        color: green; /* Default to success color */
-    }
-    #signup-message.error {
-        color: red;
-    }
-  </style>
-</head>
+  </head>
 <body>
-  <div class="signup-container">
-    <h2>Create Your Account</h2>
-    <form id="signupForm" method="POST" action="/signup">
-      <div class="form-group">
-        <label for="firstName">First Name:</label>
-        <input type="text" name="firstName" required />
-      </div>
+  <div class="login-page-wrapper">
+    <div class="signup-container">
+      <header class="logo-header">
+        <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" />
+      </header>
+      <h2>Create Your Account</h2>
+      <form id="signupForm" method="POST" action="/signup">
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input type="text" name="firstName" required />
+        </div>
 
-      <div class="form-group">
-        <label for="lastName">Last Name:</label>
-        <input type="text" name="lastName" required />
-      </div>
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input type="text" name="lastName" required />
+        </div>
 
-      <div class="form-group">
-        <label for="email">Email Address:</label>
-        <input type="email" name="email" required />
-      </div>
+        <div class="form-group">
+          <label for="email">Email Address:</label>
+          <input type="email" name="email" required />
+        </div>
 
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="text" name="username" id="username" required />
-      </div>
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" name="password" required />
-      </div>
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" name="username" id="username" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" name="password" required />
+        </div>
 
-      <div class="form-group">
-        <label for="role">I am a:</label>
-        <select name="role" id="role" required>
-          <option value="student" selected>Student</option>
-          <option value="parent">Parent</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="role">I am a:</label>
+          <select name="role" id="role" required>
+            <option value="student" selected>Student</option>
+            <option value="parent">Parent</option>
+          </select>
+        </div>
 
-      <div id="inviteCodeGroup" class="form-group">
-        <label for="inviteCode">Child's Invite Code:</label>
-        <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" />
-        <p class="note">You must enter your child's invite code to create a parent account.</p>
-      </div>
+        <div id="inviteCodeGroup" class="form-group">
+          <label for="inviteCode">Child's Invite Code:</label>
+          <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" />
+          <p class="note">You must enter your child's invite code to create a parent account.</p>
+        </div>
 
-      <button type="submit">Create Account</button>
-    </form>
+        <button type="submit" class="submit-btn">Create Account</button>
+      </form>
 
-    <div id="signup-message" style="display: none;"></div>
+      <div id="signup-message" style="display: none;"></div>
 
-    <p style="text-align: center; margin-top: 1rem;">
-      Already have an account? <a href="/login.html">Log in here</a>
-    </p>
+      <p class="signup-link">
+        Already have an account? <a href="/login.html">Log in here</a>
+      </p>
+    </div>
   </div>
+  <footer>
+    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
 
   <script>
     const roleSelect = document.getElementById("role");
     const inviteCodeGroup = document.getElementById("inviteCodeGroup");
     const signupForm = document.getElementById("signupForm");
     const signupMessage = document.getElementById("signup-message");
+
+    // Initial check on page load
+    if (roleSelect.value === "parent") {
+        inviteCodeGroup.style.display = "block";
+    } else {
+        inviteCodeGroup.style.display = "none";
+    }
 
     roleSelect.addEventListener("change", function () {
       if (this.value === "parent") {
@@ -120,12 +93,12 @@
 
     // Handle form submission with Fetch API
     signupForm.addEventListener("submit", async function (event) {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault();
 
         const formData = new FormData(signupForm);
         const data = Object.fromEntries(formData.entries());
 
-        signupMessage.style.display = 'none'; // Hide previous messages
+        signupMessage.style.display = 'none';
 
         try {
             const response = await fetch('/signup', {
@@ -143,10 +116,9 @@
                 signupMessage.className = 'success';
                 signupMessage.style.display = 'block';
 
-                // --- IMPORTANT REDIRECTION LOGIC: ALL USERS TO COMPLETE-PROFILE ---
                 setTimeout(() => {
                     window.location.href = '/complete-profile.html';
-                }, 1500); // Redirect after a short delay
+                }, 1500);
 
             } else {
                 signupMessage.textContent = result.message || 'An error occurred during signup.';
@@ -160,7 +132,6 @@
             signupMessage.style.display = 'block';
         }
     });
-
   </script>
 </body>
 </html>

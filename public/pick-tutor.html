@@ -6,146 +6,20 @@
   <title>Meet Your Math Tutors!</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      margin: 0;
-    }
-
-    .page-wrapper {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-    }
-
-    .carousel-wrapper {
-      display: flex;
-      max-width: 1200px;
-      width: 100%;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .tutor-details, .tutor-actions {
-      flex: 1;
-      padding: 1rem;
-    }
-
-    .tutor-carousel {
-      flex: 1;
-      max-width: 320px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-	  overflow: hidden;
-    }
-
-    .carousel-track {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      transition: transform 0.3s ease-in-out;
-	  width: 100%;
-    }
-
-    .carousel-slide {
-      min-width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .tutor-image {
-      max-width: 100%;
-      max-height: 300px;
-      object-fit: contain;
-      border-radius: 1rem;
-      background: #f9f9f9;
-      padding: 1rem;
-    }
-
-    .carousel-button {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--primary);
-    }
-
-    .tutor-actions button {
-      width: 100%;
-      margin-bottom: 1rem;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-play {
-      background-color: var(--green);
-      color: white;
-    }
-
-    .btn-select {
-      background-color: var(--blue);
-      color: white;
-    }
-  </style>
-</head>
+  </head>
 <body>
-	
-<!-- LOGOUT BUTTON -->
-<div style="text-align: right; padding: 10px;">
-  <button id="logoutBtn" style="background-color: #e11d48; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">
-    Logout
-  </button>
-</div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', async () => {
-        try {
-          const res = await fetch('/logout', {
-            method: 'POST',
-            credentials: 'include'
-          });
-          if (res.ok) {
-            window.location.href = '/login.html';
-          } else {
-            alert('Logout failed.');
-          }
-        } catch (err) {
-          console.error('Logout error:', err);
-          alert('An error occurred while logging out.');
-        }
-      });
-    }
-  });
-</script>
-
   <header class="logo-header">
     <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" height="60" />
-    <h1>Meet Your Math Tutors!</h1>
-    <p>Select the tutor who you'd like to learn math with. You can change your tutor anytime!</p>
+    <div style="flex-grow: 1; text-align: center;"> <h1>Meet Your Math Tutors!</h1>
+      <p>Select the tutor who you'd like to learn math with. You can change your tutor anytime!</p>
+    </div>
+    <button id="logoutBtn" class="logout-button">Logout</button>
   </header>
 
   <main class="page-wrapper">
     <div class="carousel-wrapper">
 
-      <!-- LEFT: Tutor details -->
-      <div class="tutor-details">
-        <h2 id="tutor-name"></h2>
+      <div class="tutor-details dashboard-panel"> <h2 id="tutor-name"></h2>
         <p class="tutor-catchphrase" id="tutor-catchphrase"></p>
         <h3>About Me:</h3>
         <p id="tutor-about"></p>
@@ -155,16 +29,12 @@
         <p id="tutor-likes"></p>
       </div>
 
-      <!-- CENTER: Carousel with avatar -->
-      <div class="tutor-carousel">
-        <button class="carousel-button prev" aria-label="Previous Tutor"><i class="fas fa-chevron-left"></i></button>
+      <div class="tutor-carousel dashboard-panel"> <button class="carousel-button prev" aria-label="Previous Tutor"><i class="fas fa-chevron-left"></i></button>
         <ul class="carousel-track"></ul>
         <button class="carousel-button next" aria-label="Next Tutor"><i class="fas fa-chevron-right"></i></button>
       </div>
 
-      <!-- RIGHT: Voice + Select -->
-      <div class="tutor-actions">
-        <button id="play-voice-btn" class="btn-play">🔊 Hear My Voice</button>
+      <div class="tutor-actions dashboard-panel"> <button id="play-voice-btn" class="btn-play">🔊 Hear My Voice</button>
         <button id="select-tutor-btn" class="btn-select">✅ Select Tutor</button>
       </div>
 
@@ -176,6 +46,7 @@
     <p><a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
   </footer>
 
-  <script src="pick-tutor-carousel.js" type="module"></script>
+  <script src="/js/logout.js"></script>
+  <script src="/js/pick-tutor-carousel.js" type="module"></script>
 </body>
 </html>

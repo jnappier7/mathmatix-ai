@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const User = require("../models/User");
+const User = require("../models/user");
 
 // Helper to generate a unique short code (reused from parent.js concept)
 function generateUniqueLinkCode() {

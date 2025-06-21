@@ -1,7 +1,7 @@
 // routes/parent.js
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const User = require('../models/user');
 const { isParent, isAuthenticated } = require('../middleware/auth');
 
 // Helper to generate a unique short code

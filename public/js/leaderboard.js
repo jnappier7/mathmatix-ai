@@ -9,12 +9,23 @@ async function fetchAndDisplayLeaderboard() {
 
     try {
         // --- Actual API Call ---
-        // This will now fetch data from your Express backend route: /api/students/leaderboard
-        const response = await fetch('/api/students/leaderboard');
+        // [FIX] Changed the endpoint to /api/leaderboard to match the backend route
+        const response = await fetch('/api/leaderboard', { credentials: 'include' }); // Add credentials to send session cookies
 
         if (!response.ok) {
             // If the response is not OK (e.g., 401, 403, 500 status)
             const errorText = await response.text();
+            // Check for authorization specific errors
+            if (response.status === 401 || response.status === 403) {
+                leaderboardTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-red-500">Not authorized to view leaderboard. Please log in.</td>
+                    </tr>
+                `;
+                // Optionally redirect to login if not authenticated and trying to access sensitive data
+                // window.location.href = '/login.html';
+                return; // Exit the function
+            }
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
@@ -41,7 +52,8 @@ async function fetchAndDisplayLeaderboard() {
             row.className = 'hover:bg-gray-50 transition-colors duration-150'; // Hover effect for rows
             row.innerHTML = `
                 <td class="py-3 px-4 text-sm text-gray-700 font-medium">${rank}</td>
-                <td class="py-3 px-4 text-sm text-gray-700">${student.name}</td> <td class="py-3 px-4 text-sm text-gray-700">${student.level}</td>
+                <td class="py-3 px-4 text-sm text-gray-700">${student.name}</td>
+                <td class="py-3 px-4 text-sm text-gray-700">${student.level}</td>
                 <td class="py-3 px-4 text-sm text-gray-700">${student.xp}</td>
             `;
             leaderboardTableBody.appendChild(row);
