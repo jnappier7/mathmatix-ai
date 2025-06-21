@@ -1,31 +1,52 @@
 // routes/avatar.js
-
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
-// CORRECTED: Import 'isAuthenticated' specifically from the auth middleware object
-const { isAuthenticated } = require('../middleware/auth'); // Ensures user is authenticated
+const User = require('../models/user'); // CORRECTED: Path changed from '../models/User' to '../models/user'
+const { isAuthenticated } = require('../middleware/auth'); // Assuming auth middleware is used
 
-// PATCH /api/avatar
-// Use isAuthenticated middleware to protect this route
-router.patch('/', isAuthenticated, async (req, res) => { // 'isAuthenticated' is the function
-  try {
-    const userId = req.user._id;
-    const { avatar } = req.body;
+// Example route for avatars (assuming functionality like updating avatar parts)
+router.post('/', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { skin, hair, top, bottom, accessory } = req.body;
 
-    if (!avatar || typeof avatar !== 'object') {
-      return res.status(400).json({ error: 'Invalid avatar data.' });
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        user.avatar = {
+            skin: skin || user.avatar.skin,
+            hair: hair || user.avatar.hair,
+            top: top || user.avatar.top,
+            bottom: bottom || user.avatar.bottom,
+            accessory: accessory || user.avatar.accessory
+        };
+        await user.save();
+
+        res.json({ success: true, message: 'Avatar updated successfully!', avatar: user.avatar });
+
+    } catch (error) {
+        console.error('ERROR: Avatar update failed:', error);
+        res.status(500).json({ message: 'Server error updating avatar.' });
     }
-
-    // IMPORTANT: Your User.js schema needs an 'avatar' field to save this data.
-    // If you don't have one, add: avatar: { type: Object, default: {} },
-    // or specify the sub-fields: { skin: String, hair: String, ... }
-    await User.findByIdAndUpdate(userId, { avatar });
-    res.json({ success: true });
-  } catch (err) {
-    console.error('Avatar update error:', err);
-    res.status(500).json({ error: 'Server error while updating avatar.' });
-  }
 });
+
+// Example route to get a user's avatar (e.g., for frontend display)
+router.get('/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId).select('avatar').lean(); // Fetch only avatar field
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+        res.json(user.avatar);
+    } catch (error) {
+        console.error('ERROR: Failed to fetch avatar:', error);
+        res.status(500).json({ message: 'Server error fetching avatar.' });
+    }
+});
+
 
 module.exports = router;
