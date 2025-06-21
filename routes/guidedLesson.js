@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { generateSystemPrompt } = require('../utils/prompt');
-const User = require('../models/User'); 
+const User = require('../models/user'); 
 const { callYourLLMService } = require('../services/aiService'); 
 
 router.use(isAuthenticated, async (req, res, next) => {

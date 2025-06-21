@@ -2,7 +2,7 @@
 
 const passport = require("passport");
 // Assuming User model is available in your project structure relative to this file
-// const User = require("../models/User"); 
+// const User = require("../models/user"); 
 
 /**
  * Checks if a user is logged in and their session data is valid.
