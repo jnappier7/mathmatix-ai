@@ -1,7 +1,7 @@
 // routes/student.js
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const User = require('../models/user');
 const { isAuthenticated } = require('../middleware/auth');
 const crypto = require('crypto'); // Node.js built-in module for cryptography
 
