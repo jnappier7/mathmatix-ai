@@ -1,50 +1,58 @@
-// routes/chat.js (Corrected - Remove .toObject() when .lean() is used)
+// routes/chat.js
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth'); // Auth middleware
-const User = require('../models/user'); // User model
+const User = require('../models/user'); // User model (corrected path)
 const { generateSystemPrompt } = require('../utils/prompt'); // Prompt generation
-const { GoogleGenerativeAI } = require('@google/generative-ai'); // If using Gemini
+const { GoogleGenerativeAI } = require('@google/generative-ai'); // Gemini AI SDK
+const TUTOR_CONFIG = require('../utils/tutorConfig'); // NEW: Import TUTOR_CONFIG
 
-// Initialize your AI model (e.g., Gemini)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); // Or OPENAI_API_KEY if using OpenAI
-const chatModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+// Initialize Gemini AI model
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const chatModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use your preferred Gemini model
 
 router.post('/', isAuthenticated, async (req, res) => {
     const { userId, message, role, childId, chatHistory } = req.body;
 
     try {
-        // Fetch user as a plain JavaScript object because .lean() is used
-        const user = await User.findById(userId).lean();
+        // Fetch user as a Mongoose document (not lean) if you need to save changes later,
+        // or fetch lean for prompt and then findByIdAndUpdate for XP/Level.
+        // For prompt generation, a lean object is fine.
+        const user = await User.findById(userId); // Fetch as full Mongoose document to handle user.save() for XP
+
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
 
-        // [FIX] No .toObject() needed here as user is already lean
-        let studentProfileForPrompt = user; // Default to user's profile
+        let studentProfileForPrompt = user.toObject(); // Use .toObject() for the prompt if 'user' is not lean
         let currentRoleForPrompt = role;
         let childProfileForPrompt = null;
+        let tutorIdToUse = user.selectedTutorId || 'default'; // Default to 'default' tutor
 
-        // If parent is chatting about a child, load child's profile
+        // If parent is chatting about a child, load child's profile and use their tutor
         if (role === 'parent' && childId) {
-            // Fetch child as a plain JavaScript object because .lean() is used
-            const child = await User.findById(childId).lean();
-            if (child && user.children.includes(childId)) { // Verify child belongs to parent
-                // [FIX] No .toObject() needed here as child is already lean
-                childProfileForPrompt = child; // Set child profile
-                studentProfileForPrompt = child; // Use child's profile for the prompt
-                currentRoleForPrompt = 'parent'; // Ensure prompt knows it's a parent query
+            const child = await User.findById(childId).lean(); // Child can be lean if no changes are saved to it directly here
+            if (child && user.children.some(c => c.equals(childId))) { // Verify child belongs to parent
+                childProfileForPrompt = child;
+                studentProfileForPrompt = child; // Use child's profile for the prompt context
+                currentRoleForPrompt = 'parent'; // Indicate parent is asking about child
+                tutorIdToUse = child.selectedTutorId || 'default'; // Use child's selected tutor
             } else {
                 return res.status(403).json({ message: "Forbidden: Child not found or not linked to this parent." });
             }
         }
 
-        // Generate personalized system prompt (passes plain JS object)
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, /* tutorName, */ childProfileForPrompt, currentRoleForPrompt);
+        // Determine the voice ID for the response using TUTOR_CONFIG
+        const currentTutorConfig = TUTOR_CONFIG[tutorIdToUse] || TUTOR_CONFIG['default'];
+        const voiceIdForResponse = currentTutorConfig.voiceId;
+
+        // Generate personalized system prompt
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutorConfig.name, childProfileForPrompt, currentRoleForPrompt);
 
         // Convert chatHistory to AI model's format
+        // Ensure roles are mapped correctly ('assistant' to 'model' for Gemini)
         const formattedHistory = chatHistory.map(msg => ({
-            role: msg.role === 'assistant' ? 'model' : 'user', // Adjust roles for Gemini
+            role: msg.role === 'assistant' ? 'model' : 'user',
             parts: [{ text: msg.content }]
         }));
 
@@ -62,52 +70,40 @@ router.post('/', isAuthenticated, async (req, res) => {
         
         let aiResponseText = result.response.text().trim();
 
-        // Simulate XP awarding (refine this based on actual AI response parsing)
+        // --- XP Awarding Logic (only for students) ---
         let userXpAwarded = 0;
-        let userLevel = user.level; // Use current level from the lean user object
+        let userLevel = user.level; // Start with current user's level
         let specialXpAwarded = null;
 
-        // Example: Extract XP award tag if AI sends it
+        // Extract XP award tag if AI sends it and user is a student
         const xpMatch = aiResponseText.match(/<AWARD_XP:(\d+)>/);
         if (xpMatch && role === 'student') {
             userXpAwarded = parseInt(xpMatch[1]);
             aiResponseText = aiResponseText.replace(/<AWARD_XP:\d+>/, '').trim(); // Remove tag from final text
 
-            // Need to fetch user as a Mongoose document *if* we are saving changes
-            // Or, save changes via findByIdAndUpdate on plain object, but this is less direct
-            // A more robust approach: fetch user without .lean() if changes need to be saved
-            // OR use User.findByIdAndUpdate directly here.
+            user.xp = (user.xp || 0) + userXpAwarded; // Update XP on the Mongoose document
+            const newCalculatedLevel = Math.floor(user.xp / 100) + 1; // Basic level up logic
             
-            // For now, let's assume you'll update XP/level on user via findByIdAndUpdate
-            const updatedUserDoc = await User.findByIdAndUpdate(
-                userId,
-                {
-                    $inc: { xp: userXpAwarded }, // Increment XP
-                    $max: { level: Math.floor((user.xp + userXpAwarded) / 100) + 1 } // Update level if increased
-                },
-                { new: true } // Return the updated document
-            );
-
-            if (updatedUserDoc) {
-                userLevel = updatedUserDoc.level; // Get latest level
-                if (userLevel > user.level) { // Compare with original level
-                    specialXpAwarded = `🎉 Congratulations! You leveled up to Level ${userLevel}!`;
-                }
+            if (newCalculatedLevel > user.level) { // If level increased
+                user.level = newCalculatedLevel; // Update level on the Mongoose document
+                specialXpAwarded = `🎉 Congratulations! You leveled up to Level ${user.level}!`;
             }
+            await user.save(); // Save the updated user document (XP and Level)
+            userLevel = user.level; // Ensure the returned level is the latest
         }
 
-        // Return AI response
+        // Return AI response to frontend
         res.json({
             text: aiResponseText,
-            userXp: user.xp, // Send original XP for initial display
+            userXp: user.xp, // Send updated total XP
             userLevel: userLevel, // Send updated level
             specialXpAwarded: specialXpAwarded,
-            voiceId: "2eFQnnNM32GDnZkCfkSm" // Default voice, or dynamically chosen
+            voiceId: voiceIdForResponse // [FIX] Send the dynamically determined voice ID
         });
 
     } catch (error) {
-        console.error("Error in chat route:", error?.response?.data || error.message || error);
-        res.status(500).json({ message: "Failed to get response from AI." });
+        console.error("ERROR: Chat route failed to get AI response:", error?.response?.data?.text || error.message || error);
+        res.status(500).json({ message: "Failed to get response from AI. Please try again." });
     }
 });
 
