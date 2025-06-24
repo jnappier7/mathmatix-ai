@@ -9,14 +9,22 @@ const bcrypt = require("bcryptjs");
 
 // Session handling
 passport.serializeUser((user, done) => {
+  console.log('LOG: serializeUser called. User ID:', user.id); // Add log
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
+  console.log('LOG: deserializeUser called. User ID:', id); // Add log for ID
   try {
     const user = await User.findById(id);
+    if (user) {
+      console.log('LOG: deserializeUser found user:', user.username, 'Role:', user.role); // Add log if user found
+    } else {
+      console.warn('WARN: deserializeUser could not find user for ID:', id); // Add log if user not found
+    }
     done(null, user);
   } catch (err) {
+    console.error('ERROR: deserializeUser error for ID:', id, 'Error:', err); // Add error log
     done(err, null);
   }
 });
@@ -37,8 +45,10 @@ passport.use(new LocalStrategy(
       if (!isMatch) {
         return done(null, false, { message: 'Incorrect username or password.' });
       }
+      console.log('LOG: LocalStrategy authenticated user:', user.username); // Add log
       return done(null, user);
     } catch (err) {
+      console.error('ERROR: LocalStrategy error:', err); // Add error log
       return done(err);
     }
   }
@@ -53,6 +63,7 @@ passport.use(new GoogleStrategy({
     try {
         let existingUser = await User.findOne({ googleId: profile.id });
         if (existingUser) {
+            console.log('LOG: GoogleStrategy found existing user:', existingUser.username); // Add log
             return done(null, existingUser);
         }
         const newUser = await User.create({
@@ -65,8 +76,10 @@ passport.use(new GoogleStrategy({
             needsProfileCompletion: true,
             role: 'student'
         });
+        console.log('LOG: GoogleStrategy created new user:', newUser.username); // Add log
         return done(null, newUser);
     } catch (err) {
+        console.error('ERROR: GoogleStrategy error:', err); // Add error log
         return done(err, null);
     }
 }));
@@ -81,6 +94,7 @@ passport.use(new MicrosoftStrategy({
     try {
         let user = await User.findOne({ microsoftId: profile.id });
         if (user) {
+            console.log('LOG: MicrosoftStrategy found existing user:', user.username); // Add log
             return done(null, user);
         }
         user = await User.create({
@@ -93,8 +107,10 @@ passport.use(new MicrosoftStrategy({
             needsProfileCompletion: true,
             role: 'student'
         });
+        console.log('LOG: MicrosoftStrategy created new user:', user.username); // Add log
         return done(null, user);
     } catch (err) {
+        console.error('ERROR: MicrosoftStrategy error:', err); // Add error log
         return done(err, null);
     }
 }));

@@ -24,7 +24,7 @@ export async function loadPathwayOverview(currentUser) { // [MODIFIED] Accept cu
 
     window.showThinkingIndicator(true);
     try {
-        const response = await fetch('/ready-for-algebra-1-pathway.json'); // Fetch the main pathway JSON
+        const response = await fetch('/resources/ready-for-algebra-1-pathway.json'); // Fetch the main pathway JSON
         if (!response.ok) throw new Error('Failed to load pathway overview.');
         currentCourse = await response.json();
 
