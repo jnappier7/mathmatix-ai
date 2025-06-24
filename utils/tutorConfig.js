@@ -6,7 +6,7 @@ const TUTOR_CONFIG = {
     voiceId: "qRv1e4rqeMgBLK8HYZ37",
     gender: "male",
     accent: "American",
-    tone: "encouraging"
+    tone: "encouraging and analytical"
   },
   "mr-nappier": {
     name: "Mr. Nappier",
@@ -34,7 +34,7 @@ const TUTOR_CONFIG = {
     voiceId: "8DzKSPdgEQPaK5vKG0Rs",
     gender: "female",
     accent: "Black American",
-    tone: "friendly, flirty, bold"
+    tone: "friendly, bold"
   },
   "maya": {
     name: "Maya",
@@ -62,7 +62,7 @@ const TUTOR_CONFIG = {
     voiceId: "03vEurziQfq3V8WZhQvn",
     gender: "female",
     accent: "Urban American",
-    tone: "Empowering, nurturing"
+    tone: "empowering, nurturing"
   },
 	
   	"default": {
@@ -74,4 +74,8 @@ const TUTOR_CONFIG = {
   }
 };
 
-module.exports = TUTOR_CONFIG;
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = TUTOR_CONFIG; // Node.js
+} else {
+  window.TUTOR_CONFIG = TUTOR_CONFIG; // Browser
+}

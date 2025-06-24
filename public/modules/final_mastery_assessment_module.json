@@ -1,0 +1,17 @@
+{
+  "moduleId": "final_mastery_assessment_module",
+  "title": "Final Mastery Assessment (Placeholder)",
+  "estimatedDuration": 15,
+  "type": "assessment",
+  "description": "This is a placeholder assessment. Full problems and logic to be added.",
+  "passThreshold": 80,
+  "remediationResources": [],
+  "assessmentProblems": [
+    "Placeholder Problem 1?",
+    "Placeholder Problem 2?"
+  ],
+  "answerKeys": {
+    "Placeholder Problem 1?": "Answer1",
+    "Placeholder Problem 2?": "Answer2"
+  }
+}

@@ -58,10 +58,12 @@ html {
 }
 
 body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    margin: 0;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--light-gray);
     color: var(--text-primary);
@@ -156,13 +158,6 @@ input[type="checkbox"] {
     max-height: 100px; /* Example max height to prevent it from becoming too large */
 }
 
-/* Smaller logo for chat top bar */
-#chat-container #top-bar #logo {
-    max-width: 120px;
-    margin-right: 20px;
-    flex-shrink: 0;
-}
-
 /* Header titles */
 .admin-header h1, .logo-header h1 {
     font-size: 2em;
@@ -250,32 +245,31 @@ footer a:hover {
     gap: var(--section-gap);
     flex-grow: 1; /* Allows it to fill vertical space */
     margin-bottom: var(--section-gap);
-    min-width: calc(var(--sidebar-width) * 2 + var(--chat-min-width) + var(--section-gap) * 2);
-    /* [NEW] Explicitly define its height for Flexbox distribution within #app-layout-wrapper */
-    height: 100%;
+    height: 100%; /* Ensure it takes full available height */
+    align-items: stretch; /* Ensure direct children stretch to fill height */
 }
 
 /* Dashboard Sidebar Widgets (Left/Right) */
 .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
-    flex: 0 0 var(--sidebar-width);
+    flex: 0 0 var(--sidebar-width); /* Fixed width, no grow, no shrink */
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
     overflow-y: auto; /* Allows scrolling within the sidebar itself */
-    min-width: 0; /* Allows content to shrink beyond its natural size if necessary */
-    /* [NEW] Ensure sidebars fill height */
-    height: 100%;
+    min-width: var(--sidebar-width); /* Ensure it maintains its intended minimum width */
+    height: 100%; /* Fill parent's height */
+    box-sizing: border-box; /* Include padding/border in width calculation */
 }
 
 /* Central Content Area for Dashboards */
 .admin-central-content, #chat-container {
-    flex: 1;
-    min-width: var(--chat-min-width);
+    flex: 1; /* Allow it to grow and shrink */
+    min-width: 0; /* Allow central content to shrink smaller than its natural size */
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
-    /* [NEW] Ensure chat/central content fills height */
     height: 100%;
+    box-sizing: border-box; /* Include padding/border in width calculation */
 }
 
 /* Dashboard Panel Base Style */
@@ -285,7 +279,7 @@ footer a:hover {
     box-shadow: var(--shadow-md);
     padding: var(--dashboard-panel-padding);
     width: 100%;
-    /* [NEW] Allow panels to grow to fill space within sidebars/central column */
+    /* Allow panels to grow to fill space within sidebars/central column */
     flex-grow: 1;
 }
 
@@ -345,21 +339,88 @@ footer a:hover {
     min-height: 500px; /* Ensure minimum height for the layout */
 }
 
-#chat-container {
-    padding: var(--dashboard-panel-padding);
+/* Wrapper for the central tabbed pane within chat-container */
+#chat-tabs-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Make it fill its parent (#chat-container) */
     background: var(--white);
     border-radius: 16px;
     box-shadow: var(--shadow-md);
+    padding: var(--dashboard-panel-padding); /* Apply padding to the wrapper */
+    box-sizing: border-box;
+    flex: 1; /* Allow it to grow and take space */
+    min-width: 0; /* Ensure the wrapper itself can shrink */
+    overflow: hidden; /* Hide overflowing content if layout breaks unexpectedly */
+}
+
+/* Tab bar styling */
+.tab-bar {
+    display: flex;
+    justify-content: flex-start; /* Align tabs to the left */
+    gap: 10px;
+    margin-bottom: 15px; /* Space between tabs and content */
+    border-bottom: 1px solid var(--mid-gray); /* Subtle separator */
+    padding-bottom: 5px; /* Padding for the separator */
+    flex-shrink: 0; /* Prevent tab bar from shrinking */
+    overflow-x: auto; /* Allow horizontal scrolling if tabs overflow */
+    white-space: nowrap; /* Keep tab buttons on one line */
+}
+
+/* Tab button styling */
+.tab-button {
+    padding: 8px 16px;
+    border: none;
+    background-color: var(--light-gray); /* Inactive tab background */
+    color: var(--text-secondary); /* Inactive tab text color */
+    font-weight: bold;
+    border-radius: 8px 8px 0 0; /* Rounded top corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+/* Active tab button styling */
+.tab-button.active {
+    background-color: var(--accent-green); /* Active tab background */
+    color: var(--white); /* Active tab text color */
+    box-shadow: var(--shadow-sm); /* Subtle shadow for active tab */
+}
+
+.tab-button:hover:not(.active) {
+    background-color: var(--mid-gray); /* Hover effect for inactive tabs */
+    color: var(--text-dark);
+}
+
+/* Tab content pane styling */
+.tab-content {
+    flex-grow: 1; /* Allow content to fill available space */
+    overflow-y: auto; /* Enable scrolling for content within the tab */
+    padding: 10px 0; /* Padding inside the content area */
+    display: none; /* Hidden by default, JS will show active one */
+    box-sizing: border-box;
+}
+
+/* Ensure the chat-container itself only defines the main area, not the tabs */
+#chat-container {
+    height: calc(100vh - var(--header-height) - var(--footer-height)); /* This height should apply to #chat-tabs-wrapper now */
+    padding: 0; /* Remove direct padding here as #chat-tabs-wrapper will handle it */
+    background: none; /* No background/shadow here, handled by #chat-tabs-wrapper */
+    box-shadow: none; /* No background/shadow here, handled by #chat-tabs-wrapper */
     box-sizing: border-box;
     position: relative;
     height: 100%; /* Fill parent's height */
-    display: flex; /* [NEW] Explicitly make it a flex container */
-    flex-direction: column; /* [NEW] Stack its children vertically */
-    gap: 10px; /* [NEW] Gap between its children */
+    display: flex; /* Explicitly make it a flex container */
+    flex-direction: column; /* Stack its children vertically */
+    gap: 0; /* No gap here, as tabs wrapper is direct child */
 }
 
-/* Top bar within chat container (containing logo and logout) */
-#chat-container #top-bar {
+
+/* Top bar within chat container (containing logo and logout) - Now only within chat-pane */
+#chat-pane #top-bar {
+    display: flex; /* Make it a flex container */
+    align-items: center; /* Vertically align items */
+    justify-content: space-between; /* Push logo left, logout button right */
     margin-bottom: var(--dashboard-panel-header-margin-bottom);
     background: none;
     box-shadow: none;
@@ -367,13 +428,32 @@ footer a:hover {
     margin-left: 0;
     margin-right: 0;
     max-width: none;
-    flex-shrink: 0; /* [NEW] Prevent top bar from shrinking */
+    flex-shrink: 0; /* Prevent top bar from shrinking */
+    width: 100%; /* Ensure it takes full width of its parent */
+    box-sizing: border-box;
 }
+
+/* Smaller logo for chat top bar */
+#chat-pane #top-bar #logo { /* Specificity added for this logo */
+    max-width: 120px;
+    margin-right: 20px; /* Adjust spacing as needed */
+    flex-shrink: 0; /* Prevent logo from shrinking */
+    height: auto;
+    display: block; /* Ensure image behaves as a block element */
+}
+
+/* Standardized Logout Button */
+#chat-pane #top-bar .logout-button { /* Specificity added for this button */
+    margin-left: auto; /* Push to the right */
+    flex-shrink: 0; /* Prevent button from shrinking */
+    padding: 8px 15px; /* Adjust padding for better look */
+}
+
 
 /* Chat messages inner container */
 #chat-container-inner {
-  flex-grow: 1; /* [FIX] Allow it to grow and fill available space */
-  overflow-y: auto; /* [FIX] Enable vertical scrolling when content overflows */
+  flex-grow: 1; /* Allow it to grow and fill available space */
+  overflow-y: auto; /* Enable vertical scrolling when content overflows */
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -416,7 +496,7 @@ footer a:hover {
   gap: 8px;
   border-top: 1px solid var(--mid-gray);
   padding-top: 10px;
-  flex-shrink: 0; /* [NEW] Prevent input container from shrinking */
+  flex-shrink: 0; /* Prevent input container from shrinking */
 }
 
 #user-input {
@@ -504,7 +584,7 @@ footer a:hover {
 }
 
 /* Lesson Header in Chat */
-#lesson-header {
+#lessons-pane #lesson-header, #chat-pane #lesson-header {
     background-color: var(--soft-blue);
     padding: 10px;
     border-bottom: 1px solid #cceeff;
@@ -513,7 +593,7 @@ footer a:hover {
     border-radius: 8px;
     flex-shrink: 0;
 }
-#lesson-header h2 { margin: 0; color: var(--dark-blue); }
+#lessons-pane #lesson-header h2, #chat-pane #lesson-header h2 { margin: 0; color: var(--dark-blue); }
 
 /* Hands-free toggle */
 #handsfree-toggle-wrapper {
@@ -667,17 +747,20 @@ footer a:hover {
 
 /* Tutor Avatar Styling in Sidebar */
 #avatar-container {
+  height: 350px; /* Merged: Added fixed height */
+  max-width: 100%; /* Merged: Keep max-width */
   display: flex;
   justify-content: center;
   align-items: flex-end;
   overflow: hidden;
   margin-top: auto;
-  padding-top: 10px;
+  margin-bottom: 1rem; /* Merged: Added margin-bottom */
   flex-grow: 1;
 }
 
-#student-avatar img {
-  max-height: 100%;
+#student-avatar img,
+#avatar-container img { /* Merged: Combined to apply to both or similar contexts */
+  height: 100%; /* Merged: Use height 100% to fill container */
   max-width: 100%;
   object-fit: contain;
 }
@@ -744,13 +827,13 @@ footer a:hover {
 /* --- 7. Login, Signup, and Profile Completion Pages --- */
 
 .login-page-wrapper, .signup-page-wrapper, .profile-container {
+    flex-grow: 1; /* Merged: Added flex-grow */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex: 1;
-    padding: 20px;
-    overflow: hidden;
+    padding: 1rem 20px; /* Merged: Adjusted padding */
+    overflow: auto; /* Merged: Added overflow */
 }
 
 .login-container, .signup-container, .profile-container {
@@ -766,7 +849,7 @@ footer a:hover {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
-  max-height: calc(100vh - var(--footer-height) - 40px);
+  max-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); /* Merged: Fixed height calculation */
   overflow-y: auto;
 }
 .login-container { max-width: 400px; }
@@ -788,20 +871,16 @@ footer a:hover {
 .login-page-wrapper .logo-header img,
 .signup-page-wrapper .logo-header img,
 .profile-container .logo-header img {
-    max-width: 200px;
+    max-width: 180px; /* Merged: Adjusted max-width */
+    max-height: 80px; /* Merged: Added max-height */
+    height: auto; /* Merged: Ensure height scales */
+    object-fit: contain; /* Merged: Added object-fit */
     margin-right: 0;
 }
 .login-page-wrapper h1, .signup-page-wrapper h1, .profile-container h1 {
     text-align: center;
     margin-top: 0;
 }
-
-.profile-container.scrollable-form-wrapper {
-    max-height: calc(100vh - var(--footer-height) - 40px);
-    overflow-y: auto;
-    padding-bottom: 20px;
-}
-
 
 .subtitle {
     text-align: center;
@@ -1037,13 +1116,13 @@ form label, .password-label-row label {
 
 /* Font Awesome icon specific sizing for tutor selection buttons and carousel buttons */
 .tutor-actions button i,
-.carousel-button i { /* [CHANGE] Combined for consistency and moved from pick-tutor.html inline style */
+.carousel-button i { /* Combined for consistency and moved from pick-tutor.html inline style */
   font-size: 1.2rem;
   margin-right: 8px; /* Space between icon and text */
 }
 /* Ensure .carousel-button itself also has its desired size, if not set elsewhere */
 .carousel-button {
-    font-size: 2rem; /* [CHANGE] Moved from pick-tutor.html inline style */
+    font-size: 2rem; /* Moved from pick-tutor.html inline style */
 }
 
 /* --- 9. Parent/Teacher Dashboard Specific Styles --- */
@@ -1523,6 +1602,15 @@ form label, .password-label-row label {
     .social-btn {
         min-width: unset;
         width: 100%;
+    }
+    /* Adjust tab button padding for smaller screens */
+    .tab-button {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    /* Reduce gap for tabs on smaller screens */
+    .tab-bar {
+        gap: 5px;
     }
 }
 

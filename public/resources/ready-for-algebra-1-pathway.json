@@ -1,409 +1,90 @@
 {
   "track": "Ready for Algebra 1",
+  "overview": "Prepares students for algebraic problem solving by strengthening foundational math skills.",
   "modules": [
     {
-      "id": "M1",
+      "moduleId": "number_system",
+      "source": "number_system_module.json",
       "title": "The Number System",
-      "estimatedDuration": 20,
-      "goals": [
-        "Add, subtract, multiply, and divide integers and rational numbers",
-        "Understand absolute value and ordering on the number line"
-      ],
-      "instructionalStrategy": [
-        "Refer to negative and positive units—opposates cancel (e.g., -5 + 2 = -3 using algebra tiles).",
-        "Fractions are ratios: they express one quantity relative to another.",
-        "The division symbol (÷) is literally a fraction bar; the dots represent numerator (top) and denominator (bottom).",
-        "When multiplying or dividing and signs match, result is positive."
-      ],
-      "miniLesson": [
-        "Integers extend whole numbers to include negatives.",
-        "Mastering operations with integers and fractions is essential for algebraic work."
-      ],
-      "starterProblems": [
-        "What is -7 + 5?",
-        "Simplify: (-3) × (-4)",
-        "Calculate: 1/2 + 3/4"
-      ],
-      "scaffold": [
-        "Remember left/right movement on the number line when adding negatives.",
-        "Use butterfly cross-multiplication for fractions before simplifying."
-      ],
-      "nextModuleId": "M2",
-      "answerKeys": {
-        "What is -7 + 5?": "-2",
-        "Simplify: (-3) × (-4)": "12",
-        "Calculate: 1/2 + 3/4": "5/4"
-      }
+      "preview": "Master integers, rational numbers, and operations foundational to algebra."
     },
     {
-      "id": "M2",
+      "moduleId": "exponents_order_of_operations",
+      "source": "exponents_order_of_operations_module.json",
       "title": "Exponents & Order of Operations",
-      "estimatedDuration": 25,
-      "goals": [
-        "Apply GEMS: Grouping symbols, Exponents/roots, Multiplication & division L→R, Subtraction & addition L→R",
-        "Use exponent properties to simplify expressions"
-      ],
-      "instructionalStrategy": [
-        "Use GEMS instead of PEMDAS—process grouping, then exponents/roots, then multiply/divide L→R, then subtract/add L→R.",
-        "Rhyme: 'When you multiply powers and the base is the same, add the exponents and keep the base, that's the game'.",
-        "Rhyme: 'Multiply, divide, they're opposites that's a fact, so if to multiply you add, then to divide you must SUBTRACT'.",
-        "Rhyme: 'When you have a power with a power inside, a power to a power the exponents multiply'."
-      ],
-      "miniLesson": [
-        "Exponents shorthand repeated multiplication; roots are inverse operations.",
-        "GEMS guides correct operation order for clear problem solving."
-      ],
-      "starterProblems": [
-        "Evaluate: 2 + 3 × (4 - 1)^2",
-        "Simplify: (2^2)^3 - 5",
-        "Compute: 3 × (x + 2)^2"
-      ],
-      "scaffold": [
-        "Always simplify inside grouping symbols first.",
-        "Then apply exponents or roots before multiplication or division."
-      ],
-      "nextModuleId": "M3",
-      "answerKeys": {
-        "Evaluate: 2 + 3 × (4 - 1)^2": "29",
-        "Simplify: (2^2)^3 - 5": "59",
-        "Compute: 3 × (x + 2)^2": "3(x + 2)^2"
-      }
+      "preview": "Apply GEMS (Grouping, Exponents, Multiply/Divide, Add/Subtract) and exponent properties."
     },
     {
-      "id": "M3",
+      "moduleId": "variables_expressions",
+      "source": "variables_expressions_module.json",
       "title": "Variables & Expressions",
-      "estimatedDuration": 20,
-      "goals": [
-        "Identify variables and algebraic expressions",
-        "Combine like terms and apply distributive property"
-      ],
-      "instructionalStrategy": [
-        "Combine only like terms—apples with apples, x's with x's. Two apples plus 3 apples made five apples, but two apples plus three bananas was never 5 banapples or appannas. You couldn't simplify them.",
-        "Think of variables as things: 3x means three x's, -2x means two negative x's."
-      ],
-      "miniLesson": [
-        "Variables are symbols representing unknown values.",
-        "Expressions are combinations of variables, numbers, and operations. Simplifying means making them shorter."
-      ],
-      "starterProblems": [
-        "Simplify: 3x + 5x - 2",
-        "Simplify: 4(2y - 1) + 3y",
-        "Combine: -2a + 7 + 5a - 3"
-      ],
-      "scaffold": [
-        "First, identify terms with the same variable. Then combine their coefficients.",
-        "Remember to distribute the number outside the parentheses to *every* term inside."
-      ],
-      "nextModuleId": "C1",
-      "answerKeys": {
-        "Simplify: 3x + 5x - 2": "8x - 2",
-        "Simplify: 4(2y - 1) + 3y": "11y - 4",
-        "Combine: -2a + 7 + 5a - 3": "3a + 4"
-      }
+      "preview": "Identify variables, combine like terms, and apply the distributive property."
     },
     {
-      "id": "C1",
+      "moduleId": "checkpoint_1",
+      "source": "checkpoint_1_module.json",
       "title": "Checkpoint 1",
-      "estimatedDuration": 15,
-      "type": "assessment",
-      "description": "A quick assessment covering The Number System, Exponents, and Variables & Expressions.",
-      "passThreshold": 80,
-      "remediationResources": ["M1", "M2", "M3"],
-      "assessmentProblems": [
-        "Evaluate: -10 + 3",
-        "Simplify: 5 - (-2) * 3",
-        "Calculate: (1/4) + (1/2)",
-        "Evaluate: 5 * (2^2 - 1)",
-        "Simplify: (x^4)^2 / x^3",
-        "Simplify: 7y - 3y + 9",
-        "Expand: 2(5a + 4)",
-        "Combine: 6b - 10 + 2b + 1"
-      ]
+      "preview": "A quick assessment covering Number System, Exponents, and Variables & Expressions."
     },
     {
-      "id": "M4",
+      "moduleId": "one_two_step_equations",
+      "source": "one_two_step_equations_module.json",
       "title": "One- & Two-Step Equations",
-      "estimatedDuration": 25,
-      "goals": [
-        "Use inverse operations to solve linear equations",
-        "Check solutions for accuracy"
-      ],
-      "instructionalStrategy": [
-        "Equations MUST stay EQUAL.",
-        "First, box in the entire variable term then think outside the box to isolate it.",
-        "Opposites make zero (e.g., +7 and -7).",
-        "If they are side by side you need to divide (e.g., 2x means 2 times x, so divide by 2).",
-        "Simplify whenever possible."
-      ],
-      "miniLesson": [
-        "Equations are like balanced scales; whatever you do to one side, you must do to the other.",
-        "Our goal is to isolate the variable, getting it all by itself."
-      ],
-      "starterProblems": [
-        "Solve: 2x + 7 = 13",
-        "Solve: y - 5 = -8",
-        "Solve: x/3 = 4"
-      ],
-      "scaffold": [
-        "To get rid of a number being added, use the opposite operation (subtraction). Remember to keep both sides equal!",
-        "If a number is multiplying your variable, what's the opposite operation?"
-      ],
-      "nextModuleId": "M5",
-      "answerKeys": {
-        "Solve: 2x + 7 = 13": "x=3",
-        "Solve: y - 5 = -8": "y=-3",
-        "Solve: x/3 = 4": "x=12"
-      }
+      "preview": "Use inverse operations to solve linear equations and check solutions."
     },
     {
-      "id": "M5",
+      "moduleId": "ratios_rates_proportions",
+      "source": "ratios_rates_proportions_module.json",
       "title": "Ratios, Rates & Proportions",
-      "estimatedDuration": 20,
-      "goals": [
-        "Compute unit rates and set up proportions",
-        "Solve proportions using cross-multiplication for real-world problems"
-      ],
-      "instructionalStrategy": [
-        "Rhyme: 'Get your ratios set, run a quick check, cross multiply, now solve for x.'",
-        "Fractions are ratios."
-      ],
-      "miniLesson": [
-        "Ratios compare quantities, rates compare quantities with different units, and proportions state two ratios are equal.",
-        "Proportions are powerful for scaling things up or down."
-      ],
-      "starterProblems": [
-        "If 5 miles take 2 hours, how many miles in 7 hours?",
-        "Solve for x: x/6 = 3/4",
-        "A recipe calls for 2 cups of flour for every 3 eggs. If you use 9 eggs, how much flour do you need?"
-      ],
-      "scaffold": [
-        "Make sure your units match across the top and bottom of your ratios.",
-        "Multiply the diagonal terms, then divide by the remaining term to find x."
-      ],
-      "nextModuleId": "M6",
-      "answerKeys": {
-        "If 5 miles take 2 hours, how many miles in 7 hours?": "17.5 miles",
-        "Solve for x: x/6 = 3/4": "x=4.5",
-        "A recipe calls for 2 cups of flour for every 3 eggs. If you use 9 eggs, how much flour do you need?": "6 cups"
-      }
+      "preview": "Compute unit rates and solve proportions for real-world problems."
     },
     {
-      "id": "M6",
+      "moduleId": "percent_rational_conversions",
+      "source": "percent_rational_conversions_module.json",
       "title": "Percent & Rational Conversions",
-      "estimatedDuration": 15,
-      "goals": [
-        "Convert between fractions, decimals, and percents",
-        "Calculate percent of a quantity"
-      ],
-      "instructionalStrategy": [
-        "To change a percent to a decimal, move the decimal place two places to the left.",
-        "Percents are reversible: for example, 48% of 20 is the same as 20% of 48."
-      ],
-      "miniLesson": [
-        "Fractions, decimals, and percents are different ways to represent parts of a whole.",
-        "Being able to convert between them makes solving many problems easier."
-      ],
-      "starterProblems": [
-        "Change 0.375 to a percent.",
-        "What is 20% of 150?",
-        "Convert 75% to a fraction in simplest form."
-      ],
-      "scaffold": [
-        "To go from decimal to percent, multiply by 100 or move the decimal two places right.",
-        "To find 'percent of', change the percent to a decimal and then multiply."
-      ],
-      "nextModuleId": "C2",
-      "answerKeys": {
-        "Change 0.375 to a percent.": "37.5%",
-        "What is 20% of 150?": "30",
-        "Convert 75% to a fraction in simplest form.": "3/4"
-      }
+      "preview": "Convert between fractions, decimals, and percents; calculate percent of a quantity."
     },
     {
-      "id": "C2",
+      "moduleId": "checkpoint_2",
+      "source": "checkpoint_2_module.json",
       "title": "Checkpoint 2",
-      "estimatedDuration": 15,
-      "type": "assessment",
-      "description": "A mixed assessment on equations, proportions, and percent.",
-      "passThreshold": 80,
-      "remediationResources": ["M4", "M5", "M6"],
-      "assessmentProblems": [
-        "Solve: 3x - 4 = 11",
-        "If 10 apples cost $5, how much do 7 apples cost?",
-        "What is 25% of 80?",
-        "Convert 0.6 to a fraction.",
-        "Solve for y: y/5 = 12/20",
-        "If a shirt is $20 and is 15% off, what's the new price?"
-      ]
+      "preview": "A mixed assessment on equations, proportions, and percent."
     },
     {
-      "id": "M7",
+      "moduleId": "coordinate_plane_graphing",
+      "source": "coordinate_plane_graphing_module.json",
       "title": "Coordinate Plane & Graphing",
-      "estimatedDuration": 20,
-      "goals": [
-        "Plot points on a coordinate plane",
-        "Interpret ordered pairs and recognize linear patterns"
-      ],
-      "instructionalStrategy": [
-        "Rhyme: 'When plotting points you've gotta run before you jump. Think of it like directions.'",
-        "The first number (x) tells you how far to run left or right, the second number (y) tells you how high to jump up or down."
-      ],
-      "miniLesson": [
-        "The coordinate plane is a map with x and y axes to locate points.",
-        "Understanding how points relate helps us visualize equations as lines."
-      ],
-      "starterProblems": [
-        "Plot the point (-2, 3) on a coordinate plane.",
-        "What are the coordinates of the origin?",
-        "If a line passes through (1,1) and (3,3), what kind of pattern do you see?"
-      ],
-      "scaffold": [
-        "Start at the origin (0,0). The first number is for horizontal movement (x-axis), the second for vertical (y-axis).",
-        "Think: 'over and then up/down'."
-      ],
-      "nextModuleId": "M8",
-      "answerKeys": {
-        "What are the coordinates of the origin?": "(0,0)"
-      }
+      "preview": "Plot points, interpret ordered pairs, and recognize linear patterns on a graph."
     },
     {
-      "id": "M8",
+      "moduleId": "intro_to_functions",
+      "source": "intro_to_functions_module.json",
       "title": "Intro to Functions",
-      "estimatedDuration": 25,
-      "goals": [
-        "Define functions and complete function tables",
-        "Distinguish between linear and non-linear functions"
-      ],
-      "instructionalStrategy": [
-        "Vending machine analogy: If you press the Coke button, you always get a Coke. If you sometimes get a Root Beer, it's NOT functional.",
-        "You CAN have more than one Coke button, as long as they both ONLY give you Coke (multiple inputs can lead to the same output).",
-        "Function notation f(x) connects directly to evaluating expressions—replace x with your input to see the output."
-      ],
-      "miniLesson": [
-        "A function is a special relationship where every input has exactly one output.",
-        "Think of it as a rule that transforms numbers."
-      ],
-      "starterProblems": [
-        "If f(x) = 2x - 1, find f(3).",
-        "Is this table a function? Input: 1,2,3; Output: 5,6,5",
-        "Identify if y = x^2 is linear or non-linear."
-      ],
-      "scaffold": [
-        "For f(3), substitute '3' wherever you see 'x' in the rule.",
-        "Check if any input has more than one different output."
-      ],
-      "nextModuleId": "M9",
-      "answerKeys": {
-        "If f(x) = 2x - 1, find f(3).": "5",
-        "Is this table a function? Input: 1,2,3; Output: 5,6,5": "Yes",
-        "Identify if y = x^2 is linear or non-linear.": "Non-linear"
-      }
+      "preview": "Define functions, complete function tables, and distinguish linear vs. non-linear."
     },
     {
-      "id": "M9",
+      "moduleId": "slope_intercept_fundamentals",
+      "source": "slope_intercept_fundamentals_module.json",
       "title": "Slope & Intercept Fundamentals",
-      "estimatedDuration": 25,
-      "goals": [
-        "Calculate slope from two points or a graph",
-        "Write and interpret linear equations in y = mx + b form"
-      ],
-      "instructionalStrategy": [
-        "Slope = change in y over change in x. Example: (4,3) to (7,-1). Change in y is -4 (down 4), change in x is 3 (right 3), so slope = -4/3.",
-        "Y-intercept is where the line crosses the 'Y' street (vertical axis)."
-      ],
-      "miniLesson": [
-        "Slope tells us the steepness and direction of a line.",
-        "The y-intercept is where the line crosses the y-axis, indicating the starting value."
-      ],
-      "starterProblems": [
-        "Find the slope between (1, 2) and (4, 8).",
-        "Identify the slope and y-intercept of y = -1/2x + 3.",
-        "Graph the line y = 2x - 1."
-      ],
-      "scaffold": [
-        "Slope is 'rise over run'. Count how many units up/down (y-change) and right/left (x-change).",
-        "In y = mx + b, 'm' is the slope, and 'b' is the y-intercept."
-      ],
-      "nextModuleId": "C3",
-      "answerKeys": {
-        "Find the slope between (1, 2) and (4, 8).": "2",
-        "Identify the slope and y-intercept of y = -1/2x + 3.": "Slope: -1/2, Y-intercept: 3"
-      }
+      "preview": "Calculate slope and interpret linear equations in y = mx + b form."
     },
     {
-      "id": "C3",
+      "moduleId": "checkpoint_3",
+      "source": "checkpoint_3_module.json",
       "title": "Checkpoint 3",
-      "estimatedDuration": 15,
-      "type": "assessment",
-      "description": "A cumulative assessment on graphing, functions, and slope.",
-      "passThreshold": 80,
-      "remediationResources": ["M7", "M8", "M9"],
-      "assessmentProblems": [
-        "Plot the points (0,0), (2,5), (-3,1) on a coordinate plane.",
-        "If f(x) = x^2 + 1, find f(-2).",
-        "Is y = 4x a function?",
-        "Find the slope of the line passing through (-1, 4) and (2, -2).",
-        "Graph the line y = -x + 2.",
-        "What is the y-intercept of the line 3x + y = 5?"
-      ]
+      "preview": "A cumulative assessment on graphing, functions, and slope."
     },
     {
-      "id": "M10",
+      "moduleId": "advanced_prep_topics",
+      "source": "advanced_prep_topics_module.json",
       "title": "Advanced Prep Topics (Optional)",
-      "estimatedDuration": 30,
-      "goals": [
-        "Add, subtract, and multiply simple polynomials",
-        "Simplify radical expressions and solve basic quadratic equations",
-        "Understand simple systems of equations and basic data analysis"
-      ],
-      "instructionalStrategy": [
-        "Use double distribution instead of FOIL: make sure everything in the first group gets distributed to every term in the second group before simplifying.",
-        "Keep FOIL (First, Outer, Inner, Last) in your back pocket as a fallback for binomial multiplication."
-      ],
-      "miniLesson": [
-        "These topics give you a head start on more complex Algebra 1 concepts.",
-        "They build on the foundational skills you've already mastered."
-      ],
-      "starterProblems": [
-        "Simplify: (3x + 2) + (x - 5)",
-        "Expand: (x + 3)(x - 2)",
-        "Solve for x: x^2 = 25"
-      ],
-      "scaffold": [
-        "Combine like terms for addition/subtraction of polynomials.",
-        "Remember to multiply every term by every other term in distribution."
-      ],
-      "nextModuleId": "FA",
-      "answerKeys": {
-        "Simplify: (3x + 2) + (x - 5)": "4x - 3",
-        "Expand: (x + 3)(x - 2)": "x^2 + x - 6",
-        "Solve for x: x^2 = 25": "x=5, x=-5"
-      }
+      "preview": "Introduction to polynomials, radicals, quadratics, and systems of equations."
     },
     {
-      "id": "FA",
+      "moduleId": "final_mastery_assessment",
+      "source": "final_mastery_assessment_module.json",
       "title": "Final Mastery Assessment",
-      "estimatedDuration": 45,
-      "type": "assessment",
-      "description": "A comprehensive assessment covering all 'Ready for Algebra 1' modules.",
-      "passThreshold": 85,
-      "badgeInfo": {
-        "title": "Algebra Ready Master",
-        "imageUrl": "/images/badges/algebra-ready.png",
-        "criteria": "Achieved 85% or higher on the Final Mastery Assessment"
-      },
-      "assessmentProblems": [
-        "Solve: -8 + 3x = 7",
-        "What is 3/5 as a percentage?",
-        "If a car travels 60 miles in 2 hours, how far does it travel in 5 hours?",
-        "Simplify: 2x(x - 3) + 5x",
-        "Evaluate: 4 + (3 - 1)^3 / 2",
-        "Plot the point (4, -2).",
-        "If f(x) = x + 7, find f(0).",
-        "Find the slope between (-3, 1) and (0, 7).",
-        "Solve the system: y = 2x + 1; y = x - 2 (solve by substitution).",
-        "Simplify: (x + 1)(x + 4)."
-      ]
+      "preview": "A comprehensive assessment covering all 'Ready for Algebra 1' modules."
     }
   ]
 }

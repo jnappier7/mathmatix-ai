@@ -1,11 +1,11 @@
-// routes/guidedLesson.js - FINAL VERSION (PHASE 2)
+// routes/guidedLesson.js - FINAL VERSION (PHASE 2 - CORRECTED API PATHS + RETRY LOGIC)
 
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { generateSystemPrompt } = require('../utils/prompt');
-const User = require('../models/user'); 
-const { callYourLLMService } = require('../services/aiService'); 
+const User = require('../models/user');
+const { openai, retryWithExponentialBackoff } = require("../utils/openaiClient"); // [MODIFIED] Import openai and retry utility
 
 router.use(isAuthenticated, async (req, res, next) => {
     try {
@@ -20,18 +20,15 @@ router.use(isAuthenticated, async (req, res, next) => {
 
 router.post('/generate-interactive-lesson', async (req, res) => {
     try {
-        // Now accepts an optional conversationHistory
-        const { title, goals, miniLessonConcepts, instructionalStrategies, conversationHistory } = req.body;
+        const { title, goals, miniLessonConcepts, instructionalStrategies, conversationHistory } = req.body.lessonContext;
         const userProfile = req.userProfile;
         const tutorName = userProfile.selectedTutorId || "M∆THM∆TIΧ AI";
 
         const systemPrompt = generateSystemPrompt(userProfile, tutorName);
-        let taskPrompt;
-        let fullPrompt;
+        let messages = [];
 
         if (!conversationHistory || conversationHistory.length === 0) {
-            // This is the first turn: Create the lesson opener
-            taskPrompt = `
+            const taskPrompt = `
 ### Your Task: The Socratic Lesson Opener ###
 Your task is to start an interactive lesson on '${title}'.
 
@@ -44,11 +41,9 @@ Your response MUST combine both steps into a single, natural opening message tha
 - Key Learning Goals: ${goals.join(', ')}
 - Core Concepts to Weave In: ${miniLessonConcepts.join(', ')}
             `;
-            // For the first turn, we only need the system prompt and the task.
-            fullPrompt = systemPrompt + taskPrompt;
+            messages.push({ role: 'system', content: systemPrompt + taskPrompt });
         } else {
-            // This is a subsequent turn: Continue the dialogue
-            taskPrompt = `
+            const taskPrompt = `
 ### Your Task: Continue the Lesson Dialogue ###
 You are in the middle of a lesson on '${title}'. The conversation so far is provided in the history. Your task is to continue the dialogue naturally based on the student's last response.
 
@@ -56,23 +51,26 @@ You are in the middle of a lesson on '${title}'. The conversation so far is prov
 - Keep your responses conversational and focused on building understanding.
 - **Decision Point:** Once you feel the student has a foundational grasp of the concept from the dialogue, you MUST end your response with the special signal: **<END_LESSON_DIALOGUE />**. This tells the application to move on to the practice problems. Do not add this signal until you are confident the student is ready.
             `;
-            // For subsequent turns, you'd structure the full prompt with history
-            // Note: The structure depends on your LLM's API. This is a common format.
-            const messages = [
-                { role: 'system', content: systemPrompt + taskPrompt },
-                ...conversationHistory // Unpack the history array
-            ];
-            // The call to your LLM service might need adjustment to handle an array of messages
-            // For simplicity, we'll concatenate for this example, but a message array is best practice.
-            fullPrompt = messages.map(m => `${m.role}: ${m.content}`).join('\n');
+            messages.push({ role: 'system', content: systemPrompt + taskPrompt });
+            // [FIX] Correctly concatenate conversationHistory to messages
+            messages = messages.concat(conversationHistory);
         }
 
-        const aiResponseText = await callYourLLMService(fullPrompt, req.user._id);
+        // [MODIFIED] Wrap the OpenAI call with retryWithExponentialBackoff
+        const completion = await retryWithExponentialBackoff(async () => {
+            return await openai.chat.completions.create({
+                model: "gpt-4o",
+                messages: messages, // Use the constructed messages array
+                temperature: 0.7,
+                max_tokens: 500 // Max tokens for lesson parts
+            });
+        });
+
+        const aiResponseText = completion.choices[0].message.content.trim();
 
         let lessonState = 'continue';
         let cleanMessage = aiResponseText;
 
-        // Check for the signal to transition to problems
         if (aiResponseText.includes('<END_LESSON_DIALOGUE />')) {
             lessonState = 'start_assessment';
             cleanMessage = aiResponseText.replace('<END_LESSON_DIALOGUE />', '').trim();
@@ -81,15 +79,14 @@ You are in the middle of a lesson on '${title}'. The conversation so far is prov
         res.json({ aiMessage: cleanMessage, lessonState: lessonState });
 
     } catch (error) {
-        console.error('Error in /generate-interactive-lesson:', error);
+        console.error('Error in /generate-interactive-lesson:', error?.response?.data || error.message || error);
         res.status(500).json({ error: 'Failed to generate lesson. Please try again.' });
     }
 });
 
-// The hint endpoint does not need changes for Phase 2
 router.post('/get-scaffolded-hint', async (req, res) => {
     try {
-        const { problem, userAnswer, correctAnswer, strategies } = req.body;
+        const { problem, userAnswer, correctAnswer, strategies } = req.body.hintContext; // [FIX] Correctly destructure hintContext
         const userProfile = req.userProfile;
         const tutorName = userProfile.selectedTutorId || "M∆THM∆TIΧ AI";
 
@@ -110,11 +107,19 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
 5. Craft a natural, conversational response that builds confidence.
         `;
         
-        const fullPrompt = systemPrompt + taskPrompt;
-        const aiHint = await callYourLLMService(fullPrompt, req.user._id);
-        res.json({ hint: aiHint });
+        // [MODIFIED] Wrap the OpenAI call with retryWithExponentialBackoff
+        const aiHint = await retryWithExponentialBackoff(async () => {
+            return await openai.chat.completions.create({
+                model: "gpt-4o",
+                messages: [{ role: "system", content: systemPrompt + taskPrompt }],
+                temperature: 0.7,
+                max_tokens: 150 // Max tokens for a hint
+            });
+        });
+
+        res.json({ hint: aiHint.choices[0].message.content.trim() });
     } catch (error) {
-        console.error('Error in /get-scaffolded-hint:', error);
+        console.error('Error in /get-scaffolded-hint:', error?.response?.data || error.message || error);
         res.status(500).json({ error: 'Failed to generate hint. Please try again.' });
     }
 });

@@ -1,4 +1,4 @@
-// routes/student.js
+// routes/student.js - MODIFIED (ENSURE JSON RESPONSE CONSISTENCY)
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
@@ -26,17 +26,19 @@ async function generateUniqueCode() {
 router.post('/generate-invite-code', isAuthenticated, async (req, res) => {
     // Ensure the logged-in user is a student
     if (!req.user || req.user.role !== 'student') {
-        return res.status(403).json({ message: 'Forbidden: Only students can generate invite codes.' });
+        return res.status(403).json({ success: false, message: 'Forbidden: Only students can generate invite codes.' }); // [FIXED] Consistent JSON response
     }
 
     try {
         const student = await User.findById(req.user._id);
         if (!student) {
-            return res.status(404).json({ message: 'Student account not found.' });
+            return res.status(404).json({ success: false, message: 'Student account not found.' }); // [FIXED] Consistent JSON response
         }
 
         // Check if an active invite code already exists for this student
         if (student.inviteCode && student.inviteCode.code && student.inviteCode.expiresAt > Date.now()) {
+            console.log(`LOG: Returning existing invite code for student ${student.username}`);
+            // [FIXED] Ensure success: true is always present
             return res.json({ success: true, code: student.inviteCode.code, message: 'An active code already exists.', expiresAt: student.inviteCode.expiresAt });
         }
 
@@ -51,12 +53,13 @@ router.post('/generate-invite-code', isAuthenticated, async (req, res) => {
         };
         await student.save();
 
+        console.log(`LOG: Generated new invite code: ${newInviteCode} for student ${student.username}`);
         res.json({ success: true, code: newInviteCode, expiresAt: expiresAt, message: 'New invite code generated.' });
 
     } catch (err) {
         console.error('ERROR: Failed to generate invite code:', err);
-        res.status(500).json({ message: 'Server error generating invite code.' });
+        res.status(500).json({ success: false, message: 'Server error generating invite code.' }); // [FIXED] Consistent JSON response
     }
 });
 
-module.exports = router;// JavaScript Document
+module.exports = router;

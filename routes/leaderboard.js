@@ -29,7 +29,7 @@ router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
         const leaderboard = await User.find(query)
             .sort({ xp: -1 }) // Sort by XP descending
             .select('firstName lastName level xp') // Select only these fields
-            .limit(20) // Limit to top 20 students (you can adjust this to 10 if preferred)
+            .limit(10) // Limit to top 20 students (you can adjust this to 10 if preferred)
             .lean(); // Use .lean() for faster query results if you don't need Mongoose document methods
 
         // Format names as "First Name Last Initial."

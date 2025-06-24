@@ -1,0 +1,82 @@
+{
+  "moduleId": "number_system",
+  "title": "The Number System: Integers and Rational Numbers",
+  "estimatedDuration": 20,
+  "goals": [
+    "Add, subtract, multiply, and divide integers and rational numbers",
+    "Understand absolute value and ordering on the number line"
+  ],
+  "instructionalStrategy": [
+    "Refer to negative and positive units—opposites cancel (e.g., -5 + 2 = -3 using algebra tiles).",
+    "Fractions are ratios: they express one quantity relative to another.",
+    "The division symbol (÷) is literally a fraction bar; the dots represent numerator (top) and denominator (bottom).",
+    "When multiplying or dividing and signs match, result is positive."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "text": "Welcome to the Number System module! Before we dive into Algebra, it's super important to feel comfortable with all kinds of numbers, especially positive and negative numbers (integers), and fractions (rational numbers). These are the building blocks of everything we'll do in Algebra!",
+      "image": "/images/number_line_intro.png",
+      "initialPrompt": "What do you already know about positive and negative numbers, or what makes them tricky for you?"
+    },
+    {
+      "type": "explanation",
+      "text": "Integers are just whole numbers, but they also include their opposites (negatives) and zero. So, numbers like -3, 0, 5 are all integers. Rational numbers are numbers that can be expressed as a fraction, like 1/2, -3/4, or even 5 (since 5 can be written as 5/1).",
+      "initialPrompt": "Can you give me an example of a number that is an integer but NOT a whole number?"
+    },
+    {
+      "type": "model",
+      "problem": "-7 + 5",
+      "explanation": "Let's think about -7 + 5 using a number line. Start at 0, move 7 steps to the left (for -7). Then, from -7, move 5 steps to the right (for +5). You'll end up at -2.",
+      "image": "/images/number_line_addition.png",
+      "initialPrompt": "How would the problem change if it was -5 + 7 instead?"
+    },
+    {
+      "type": "guided_practice",
+      "problems": [
+        { "question": "What is -4 + 9?", "answer": "5", "hints": ["Think about moving on a number line.", "Are you moving more in the positive or negative direction?"] },
+        { "question": "Calculate: -10 - (-3)", "answer": "-7", "hints": ["Subtracting a negative is the same as adding a positive.", "Rewrite the expression first."] }
+      ],
+      "initialPrompt": "Let's try these problems together. What's your first step for the first problem?"
+    },
+    {
+      "type": "explanation",
+      "text": "When multiplying or dividing integers, remember this simple rule: if the signs are the SAME (both positive or both negative), the answer is POSITIVE. If the signs are DIFFERENT (one positive, one negative), the answer is NEGATIVE. This applies to fractions too!",
+      "initialPrompt": "Can you quickly tell me what -2 multiplied by -3 would be, and why?"
+    },
+    {
+      "type": "independent_practice",
+      "problems": [
+        { "question": "Simplify: (-3) × (-4)", "answer": "12", "hints": ["Look at the signs. Are they the same or different?", "What is 3 times 4?"] },
+        { "question": "Calculate: 18 ÷ -3", "answer": "-6", "hints": ["Consider the signs first.", "What is 18 divided by 3?"] },
+        { "question": "Evaluate: (-2) × 5", "answer": "-10", "hints": ["Are the signs the same or different?", "Two times five is ten, now what about the sign?"] }
+      ],
+      "attemptsRequired": 2
+    },
+    {
+      "type": "explanation",
+      "text": "Fractions are just parts of a whole. When you add or subtract fractions, you need a 'common denominator' (the same bottom number). Think of it like needing to cut a pizza into slices of the same size before you can combine them!",
+      "image": "/images/fraction_denominators.png",
+      "initialPrompt": "Why do you think having a common denominator is so important for adding or subtracting fractions?"
+    },
+    {
+      "type": "guided_practice",
+      "problems": [
+        { "question": "Calculate: 1/2 + 3/4", "answer": "5/4", "hints": ["What's the least common multiple of 2 and 4?", "How do you rewrite 1/2 with a denominator of 4?"] },
+        { "question": "Subtract: 7/8 - 1/4", "answer": "5/8", "hints": ["Find a common denominator.", "Remember to only subtract the numerators after finding a common denominator."] }
+      ],
+      "attemptsRequired": 2
+    }
+  ],
+  "answerKeys": {
+    "What is -7 + 5?": "-2",
+    "Simplify: (-3) × (-4)": "12",
+    "Calculate: 1/2 + 3/4": "5/4",
+    "What is -4 + 9?": "5",
+    "Calculate: -10 - (-3)": "-7",
+    "Calculate: 18 ÷ -3": "-6",
+    "Evaluate: (-2) × 5": "-10",
+    "Subtract: 7/8 - 1/4": "5/8"
+  }
+}
