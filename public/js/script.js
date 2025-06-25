@@ -1,4 +1,4 @@
-// public/js/script.js - FINAL VERSION 6/24/25_14:50(CONSOLIDATED & REFINED - ALL CLIENT-SIDE FIXES)
+// public/js/script.js - FINAL VERSION (COMPREHENSIVE & REFINED - ALL CLIENT-SIDE FIXES)
 console.log("LOG: M∆THM∆TIΧ Initialized");
 
 // --- DECLARE ALL GLOBAL CONSTANTS (DOM Elements) ---
@@ -11,9 +11,9 @@ const attachBtn = document.getElementById("attach-button");
 const equationBtn = document.getElementById("insert-equation");
 const fileInput = document.getElementById("file-input");
 const mathModal = document.getElementById("equation-popup");
-const insertMathBtn = document.getElementById("insert-latex");
-const closeMathBtn = document.getElementById("close-equation-popup");
-const mathEditor = document.getElementById("math-editor");
+const insertMathBtn = document.getElementById("insert-latex"); // This is the 'Insert' button in the popup
+const closeMathBtn = document.getElementById("close-equation-popup"); // This is the 'x' close button in the popup
+const mathEditor = document.getElementById("math-editor"); // The <math-field> element
 const switchTutorModal = document.getElementById("switch-tutor-modal");
 const closeTutorModalBtn = document.getElementById("close-tutor-modal-btn");
 const cancelSwitchTutorBtn = document.getElementById("cancel-switch-tutor");
@@ -44,7 +44,7 @@ const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
 // --- DECLARE ALL GLOBAL LET VARIABLES ---
 // These hold state and might be reassigned
 let currentLevelSpan, currentXpSpan, xpNeededSpan, xpLevelDisplay, thinkingIndicator, logoutBtn, voiceModeToggle, currentAudio = null, isRecognitionActive = false, audioStopBtn;
-let studentParentLinkDisplay, studentLinkCodeValue; // Added these two back to global let declarations
+let studentParentLinkDisplay, studentLinkCodeValue; // These were declared 'let' in the original script.js
 let recognition = null;
 let currentUser = null; // Declare globally and allow reassignment
 let isVoiceModeEnabled = localStorage.getItem('voiceMode') === 'true'; // Consistent naming
@@ -135,25 +135,29 @@ function stopAudioPlayback() {
 // Function to Append Messages to Chat Box
 window.appendMessage = function(message, sender = "user", voiceIdToUse = null) {
     console.log(`LOG: appendMessage called. Sender: ${sender}, Message: ${message.substring(0, Math.min(message.length, 50))}...`);
-    const messageContent = String(message || ''); // Ensure message is a string
+    const messageContent = String(message || '');
     const bubble = document.createElement("div");
     bubble.className = `message ${sender}`;
-    const mathRegex = /\[MATH\](.*?)\[\/MATH\]/g;
-    let processedMessage = messageContent;
+    const mathRegex = /\[MATH\](.*?)\[\/MATH\]/g; // Regex to find your custom tags
 
-    // Handle MathJax rendering
     if (messageContent.match(mathRegex)) {
-        processedMessage = messageContent.replace(/\n/g, '<br>'); // Preserve newlines
-        processedMessage = processedMessage.replace(mathRegex, (match, p1) => p1); // Extract LaTeX content
+        // Replace your custom [MATH] tags with MathJax's inline delimiters \($ and \)$
+        let processedMessage = messageContent.replace(/\n/g, '<br>'); // Preserve newlines
+        processedMessage = processedMessage.replace(mathRegex, '\\($1\\)'); // Replaces [MATH]...[/MATH] with \($...\)
         bubble.innerHTML = processedMessage;
-        if (isMathJaxReady && window.MathJax) {
+
+        // Only attempt to typeset if MathJax library is confirmed loaded and ready
+        if (window.isMathJaxReady && window.MathJax) {
             console.log("LOG: MathJax is ready, typesetting message.");
+            // Typeset the newly added bubble element
             window.MathJax.typesetPromise([bubble]).catch(err => console.error("MathJax typesetting failed:", err));
         } else {
-             console.warn("WARN: MathJax not ready or window.MathJax not available for typesetting.");
+            // If MathJax is not yet ready, it will automatically scan and typeset new content once it becomes ready.
+            console.warn("WARN: MathJax not yet ready for immediate typesetting. Will auto-process when ready.");
         }
     } else {
-        bubble.innerHTML = processedMessage.replace(/\n/g, '<br>');
+        // No math tags, just append as plain HTML, preserving newlines
+        bubble.innerHTML = messageContent.replace(/\n/g, '<br>');
     }
 
     // Add Speak button for AI messages
@@ -249,6 +253,7 @@ function triggerLevelUpAnimation(newLevel) {
     levelAnim.classList.add('level-up-animation-text');
     document.body.appendChild(levelAnim);
 
+    // Position the animation near the XP display
     if (xpLevelDisplay) {
         const rect = xpLevelDisplay.getBoundingClientRect();
         levelAnim.style.left = `${rect.left + rect.width / 2}px`;
@@ -421,20 +426,20 @@ function loadStudentParentLinkCode() {
         .then(data => {
             // Modified logic: Only log an ERROR if data.success is explicitly FALSE.
             // If data.success is true, proceed normally.
-            if (data.success && studentLinkCodeValue) { // [FIXED]
+            if (data.success && studentLinkCodeValue) {
                 studentLinkCodeValue.textContent = data.code;
                 if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'block';
                 console.log("LOG: Parent invite code displayed:", data.code);
-            } else if (!data.success) { // [FIXED] Only enter this block if data.success is false
-                console.error("ERROR: Failed to generate/fetch parent invite code (backend reported failure):", data.message || 'Unknown error'); // [FIXED]
+            } else if (!data.success) {
+                console.error("ERROR: Failed to generate/fetch parent invite code (backend reported failure):", data.message || 'Unknown error');
                 if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
-            } else { // [FIXED] Fallback for unexpected data structure if data.success isn't explicitly true/false
+            } else {
                 console.warn("WARN: Unexpected response structure from parent invite code API:", data);
                 if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
             }
         })
         .catch(error => {
-            console.error("CRITICAL ERROR: Error fetching parent invite code (network/client-side):", error); // Clarified error type
+            console.error("CRITICAL ERROR: Error fetching parent invite code (network/client-side):", error);
             if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
         });
 }
@@ -449,13 +454,13 @@ async function saveUserSettings() {
 
     const updatedSettings = {
         selectedTutorId: tutorSelect ? tutorSelect.value : currentUser.selectedTutorId,
-        voiceTone: toneSelect ? toneSelect.value : currentUser.voiceTone,
+        voiceTone: toneSelect ? toneSelect.value : currentUser.tonePreference, // Corrected to tonePreference
         learningStyle: styleSelect ? styleSelect.value : currentUser.learningStyle,
         isHandsFreeModeEnabled: voiceModeEnabledCheckbox ? voiceModeEnabledCheckbox.checked : isVoiceModeEnabled
     };
 
     try {
-        const response = await fetch('/api/user/settings', { // This endpoint is correct based on server.js
+        const response = await fetch('/api/user/settings', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -463,7 +468,6 @@ async function saveUserSettings() {
             body: JSON.stringify(updatedSettings)
         });
         if (response.ok) {
-            // [FIXED]: Update currentUser with the changes so subsequent calls use fresh data
             currentUser = { ...currentUser, ...updatedSettings }; // Merge updated settings into currentUser
             localStorage.setItem('voiceMode', updatedSettings.isHandsFreeModeEnabled);
             isVoiceModeEnabled = updatedSettings.isHandsFreeModeEnabled;
@@ -506,7 +510,7 @@ function loadUserSettings() {
     console.log("LOG: loadUserSettings called.");
     if (currentUser) {
         if (tutorSelect) tutorSelect.value = currentUser.selectedTutorId || 'default';
-        if (toneSelect) toneSelect.value = currentUser.tonePreference || 'friendly'; // Use tonePreference [FIXED]
+        if (toneSelect) toneSelect.value = currentUser.tonePreference || 'friendly'; // Use tonePreference in User model
         if (styleSelect) styleSelect.value = currentUser.learningStyle || 'step';
         if (voiceModeEnabledCheckbox) voiceModeEnabledCheckbox.checked = isVoiceModeEnabled;
         console.log("LOG: User settings loaded into form.");
@@ -518,7 +522,6 @@ function loadUserSettings() {
 // Load Tutor Avatar Image
 async function loadTutorImage() {
     console.log("LOG: loadTutorImage called.");
-    // avatarContainer is globally defined as a const at the top, so it is available here.
     if (!avatarContainer || !currentUser || !currentUser.selectedTutorId) {
         console.log("LOG: loadTutorImage - Avatar container or current user/tutor ID not available. Clearing avatar.");
         if (avatarContainer) avatarContainer.innerHTML = '';
@@ -553,8 +556,8 @@ async function loadTutorImage() {
 }
 
 
-// [FIXED] Global handleChatMessage function
-window.handleChatMessage = async function(messageText) { // Removed currentUserData param, use global currentUser
+// Global handleChatMessage function
+window.handleChatMessage = async function(messageText) {
     console.log("LOG: handleChatMessage called with:", messageText);
     window.appendMessage(messageText, "user");
     currentChatHistory.push({ role: 'user', content: messageText });
@@ -562,7 +565,7 @@ window.handleChatMessage = async function(messageText) { // Removed currentUserD
     showThinkingIndicator(true);
 
     try {
-        const userId = currentUser ? currentUser._id : null; // Access global currentUser
+        const userId = currentUser ? currentUser._id : null;
         if (!userId) {
             console.error("ERROR: User ID not available for sending message (currentUser is null).");
             window.appendMessage("Error: Please log in to send messages.", "ai");
@@ -571,7 +574,6 @@ window.handleChatMessage = async function(messageText) { // Removed currentUserD
         }
 
         let isGuidedPathAnswer = false;
-        // Pass global currentUser to guidedPath handler
         if (window.guidedPath && window.guidedPath.handleGuidedAnswer) {
             isGuidedPathAnswer = await window.guidedPath.handleGuidedAnswer(messageText, currentUser);
         }
@@ -584,7 +586,7 @@ window.handleChatMessage = async function(messageText) { // Removed currentUserD
                 body: JSON.stringify({
                     userId: userId,
                     message: messageText,
-                    role: currentUser.role, // Access global currentUser
+                    role: currentUser.role,
                     chatHistory: currentChatHistory
                 }),
                 credentials: 'include'
@@ -614,25 +616,21 @@ window.handleChatMessage = async function(messageText) { // Removed currentUserD
 
 // --- DOMContentLoaded: Initial Setup ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("LOG: M∆THM∆TIΧ Initialized"); // Re-added log for clarity on script execution order
+    console.log("LOG: M∆THM∆TIΧ Initialized");
     
     // Assign DOM elements to variables that were declared globally above
     currentLevelSpan = document.getElementById("current-level");
-    // [FIXED] xpProgressBar does not exist on chat.html, so it's commented out
-    // xpProgressBar = document.getElementById("xp-progress-bar"); 
     currentXpSpan = document.getElementById("current-xp");
     xpNeededSpan = document.getElementById("xp-needed");
     xpLevelDisplay = document.getElementById('xp-level-display');
     thinkingIndicator = document.getElementById("thinking-indicator");
-    logoutBtn = document.getElementById("logoutBtn"); // Main logout button
+    logoutBtn = document.getElementById("logoutBtn");
     audioStopBtn = document.getElementById('audio-stop-button');
-    voiceModeToggle = document.getElementById('handsfree-toggle'); // Correct element ID for Hands-Free toggle
+    voiceModeToggle = document.getElementById('handsfree-toggle');
     studentParentLinkDisplay = document.getElementById('student-parent-link-display');
-    studentLinkCodeValue = document.getElementById('student-link-code-value'); // Now this element should exist in chat.html
-    // avatarContainer is now initialized globally (at the top)
+    studentLinkCodeValue = document.getElementById('student-link-code-value');
 
 
-    // [FIXED] Initially disable send button until user data is loaded
     if (sendBtn) sendBtn.disabled = true;
     if (input) input.placeholder = "Loading chat...";
 
@@ -640,24 +638,38 @@ document.addEventListener('DOMContentLoaded', () => {
     if (attachBtn) attachBtn.addEventListener("click", () => fileInput.click());
     if (fileInput) fileInput.addEventListener("change", () => uploadSelectedFile(fileInput.files[0]));
 
+    // --- UPDATED EQUATION BUTTON & MODAL LOGIC ---
     if (equationBtn) equationBtn.addEventListener("click", () => {
-        if (mathModal) mathModal.style.display = "block";
+        if (mathModal) mathModal.classList.add('visible'); // Add 'visible' class
     });
     if (closeMathBtn) closeMathBtn.addEventListener("click", () => {
-        if (mathModal) mathModal.style.display = "none";
+        if (mathModal) {
+            mathModal.classList.remove('visible'); // Remove 'visible' class
+            mathEditor.value = ''; // Clear editor content on close
+        }
     });
     if (insertMathBtn) insertMathBtn.addEventListener("click", () => {
-        const math = mathEditor.value;
-        if (math.trim()) input.value += ` [MATH]${math}[/MATH] `;
-        if (mathModal) mathModal.style.display = "none";
+        // Ensure mathEditor is a MathLive component and has getValue()
+        const math = mathEditor.value; // Use .value for standard HTML inputs, .getValue() for MathLive element
+        // If mathEditor is directly the <math-field> tag, .value should work.
+        // If not, and you're using MathLive's API, it might be mathEditor.getValue()
+
+        if (math.trim()) {
+            input.value += ` [MATH]${math}[/MATH] `;
+        }
+        if (mathModal) {
+            mathModal.classList.remove('visible'); // Remove 'visible' class
+            mathEditor.value = ''; // Clear editor content on insert
+        }
     });
+    // --- END UPDATED EQUATION BUTTON & MODAL LOGIC ---
     
     // Hands-free toggle
     if (voiceModeToggle) {
         voiceModeToggle.addEventListener('click', () => toggleHandsFreeMode(!isVoiceModeEnabled));
-        toggleHandsFreeMode(isVoiceModeEnabled); // Set initial state display
+        toggleHandsFreeMode(isVoiceModeEnabled);
     }
-    if (audioStopBtn) { // [FIXED] Add check for audioStopBtn
+    if (audioStopBtn) {
         audioStopBtn.addEventListener('click', stopAudioPlayback);
     } else {
         console.warn("WARN: audioStopBtn not found. Stop audio functionality will be unavailable.");
@@ -665,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Tab switching logic
-    if (tabButtons && tabButtons.length > 0) { // Check if tabs exist
+    if (tabButtons && tabButtons.length > 0) {
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.dataset.tab;
@@ -680,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tabId === 'lessons-pane') {
                     if (window.guidedPath && currentUser) {
                         console.log("LOG: Loading Pathway Overview in Lessons tab.");
-                        window.guidedPath.loadPathwayOverview(currentUser); 
+                        window.guidedPath.loadPathwayOverview(currentUser);
                     } else {
                         console.warn("WARN: guidedPath.js not loaded or currentUser not available for Lessons tab.");
                     }
@@ -688,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('progress-summary').textContent = 'Loading XP and milestones... (Feature under development)';
                     console.log("LOG: Progress tab activated.");
                 } else if (tabId === 'badges-pane') {
-                    document.getElementById('badge-collection').textContent = 'No badges yet. Letâ€™s earn some! (Feature under development)';
+                    document.getElementById('badge-collection').textContent = 'No badges yet. Let’s earn some! (Feature under development)';
                     console.log("LOG: Badges tab activated.");
                 } else if (tabId === 'settings-pane') {
                     populateTutorOptions();
@@ -708,28 +720,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (exportHistoryBtn) exportHistoryBtn.addEventListener('click', () => {
-        console.log("LOG: Export history button clicked (feature under development).");
+        console.log("LOG: Export chat history (Feature under development).");
         alert('Export chat history (Feature under development)');
     });
     
-    // [FIXED]: Removed `window.location.href` from here to let logout.js handle redirection
+    // REMOVED `window.location.href` to let logout.js handle redirection
     if (logoutSettingsBtn) logoutSettingsBtn.addEventListener('click', () => {
         console.log("LOG: Logout from settings button clicked. Delegating to logout.js.");
         localStorage.removeItem("welcomeShown");
         localStorage.removeItem("voiceMode");
-        // No explicit redirect here, logout.js event listener will be triggered
-        // It's good practice to call the click method to ensure the delegated listener fires
-        // This button now implicitly relies on the logout.js listener attached to .logout-button
     });
 
-    // Logout button in chat pane [FIXED]: Removed `window.location.href` from here
+    // Logout button in chat pane (REMOVED `window.location.href` to let logout.js handle redirection)
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             console.log("LOG: Logout from chat top bar button clicked. Delegating to logout.js.");
             localStorage.removeItem("welcomeShown");
             localStorage.removeItem("voiceMode");
-            // No explicit redirect here, logout.js event listener will be triggered
-            // This button now implicitly relies on the logout.js listener attached to .logout-button
         });
     }
 
@@ -752,17 +759,15 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then(data => {
         currentUser = data.user;
-        window.currentUser = currentUser; // Expose globally for guidedPath.js
-        // [FIXED] Log current user data with properties that should exist
+        window.currentUser = currentUser;
         console.log("LOG: Current user data loaded:", currentUser ? (currentUser.username || currentUser.firstName + ' ' + currentUser.lastName) : 'N/A', 'Role:', currentUser ? currentUser.role : 'N/A');
 
-        // [FIXED] AFTER currentUser is loaded, attach the chat input listeners and enable UI
         if (sendBtn && input) {
-            sendBtn.disabled = false; // Enable send button
-            input.placeholder = "Type your message here..."; // Reset placeholder
+            sendBtn.disabled = false;
+            input.placeholder = "Type your message here...";
             sendBtn.addEventListener('click', () => {
                 if (input.value.trim() !== "") {
-                    window.handleChatMessage(input.value); // Use global currentUser indirectly
+                    window.handleChatMessage(input.value);
                     input.value = "";
                 }
             });
@@ -776,7 +781,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.warn("WARN: Chat input elements (sendBtn, input) not found.");
         }
-        // End of new sendBtn/input listener block
 
         if (!currentUser) { 
             console.warn("WARN: currentUser is null/undefined after fetch /user. Redirecting to login.");
@@ -823,8 +827,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentChatHistory.push({ role: 'assistant', content: "Welcome back! What would you like to work on today?" });
                 }
             }
-            // [FIXED] Pass correct properties to updateGamifiedDashboard
-            window.updateGamifiedDashboard(currentUser.xp, currentUser.level, 0); // Pass 0 for specialXP initially
+            window.updateGamifiedDashboard(currentUser.xp, currentUser.level, 0);
             loadStudentParentLinkCode();
             loadTutorImage();
 
@@ -841,7 +844,6 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.href = "/login.html";
       });
 
-    // Fetch leaderboard if the element exists on the page
     if (document.getElementById('leaderboardTable')) {
         console.log("LOG: Leaderboard table found. Initiating fetch.");
         fetchAndDisplayLeaderboard();
