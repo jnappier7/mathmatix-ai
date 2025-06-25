@@ -1,4 +1,4 @@
-<!DOCTYPE html> //Updated 6/24/25_1501
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -72,11 +72,11 @@
                 <textarea id="user-input" placeholder="Type your message here…"></textarea>
                 <button id="send-button">Send</button>
                 <div id="tools-left">
-                    <button id="insert-equation" title="Insert Equation"><img src="equation-icon.png" alt="Insert Equation" /></button>
+                    <button id="insert-equation" title="Insert Equation"><img src="/equation-icon.png" alt="Insert Equation" /></button>
                 </div>
                 <div id="tools-right">
-                    <button id="mic-button" title="Voice Input"><img src="mic-icon.png" alt="Mic" /></button>
-                    <button id="attach-button" title="Upload File"><img src="clip-icon.png" alt="Attach" /></button>
+                    <button id="mic-button" title="Voice Input"><img src="/mic-icon.png" alt="Mic" /></button>
+                    <button id="attach-button" title="Upload File"><img src="/clip-icon.png" alt="Attach" /></button>
                     <input type="file" id="file-input" style="display:none;" />
                 </div>
             </div>
@@ -101,7 +101,7 @@
 
         <div id="badges-pane" class="tab-content" style="display: none;">
             <h2>🏆 Badges</h2>
-            <div id="badge-collection">No badges yet. Let’s earn some!</div>
+            <div id="badge-collection">No badges yet. Letâ€™s earn some!</div>
             </div>
 
         <div id="settings-pane" class="tab-content" style="display: none;">
@@ -142,8 +142,10 @@
         <span id="xp-text"><span id="current-xp">0</span> / <span id="xp-needed">100</span> XP</span>
       </div>
       <div id="student-parent-link-display" class="widget-section" style="display: none;">
-         </div>
-      <div id="avatar-container" class="clickable-avatar">
+         <p style="margin-bottom: 5px; font-weight: bold;">Your Parent Link Code:</p>
+         <span id="student-link-code-value" style="display: block; background-color: #e6f7ff; padding: 8px; border-radius: 5px; text-align: center; font-size: 1.1em;"></span>
+         <p style="margin-top: 5px; font-size: 0.8em; color: #666;">Share this with your parent to link accounts.</p>
+      </div> <div id="avatar-container" class="clickable-avatar">
         <div id="student-avatar"></div> 
       </div>
     </div>

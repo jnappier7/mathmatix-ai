@@ -1,7 +1,7 @@
 const TUTOR_CONFIG = {
   "mr-lee": {
     name: "Mr. Lee",
-    voiceId: "qRv1e4rqeMgBLK8HYZ37",
+    voiceId: "qRv1e4rqeMgBLK8HYz37",
     gender: "male",
     accent: "American",
     tone: "encouraging and analytical",
@@ -41,7 +41,7 @@ const TUTOR_CONFIG = {
   },
   "maya": {
     name: "Maya",
-    voiceId: "umKoJK6tP1ALJ0oZo1EE",
+    voiceId: "umKoJK6tP1ALjO0zo1EE",
     gender: "female",
     accent: "Caribbean-American",
     tone: "gentle, nurturing",

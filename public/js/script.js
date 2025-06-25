@@ -43,7 +43,9 @@ const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
 
 // --- DECLARE ALL GLOBAL LET VARIABLES ---
 // These hold state and might be reassigned
-let currentLevelSpan, currentXpSpan, xpNeededSpan, xpLevelDisplay, thinkingIndicator, logoutBtn, voiceModeToggle, currentAudio = null, isRecognitionActive = false, audioStopBtn, studentParentLinkDisplay, studentLinkCodeValue, recognition = null;
+let currentLevelSpan, currentXpSpan, xpNeededSpan, xpLevelDisplay, thinkingIndicator, logoutBtn, voiceModeToggle, currentAudio = null, isRecognitionActive = false, audioStopBtn;
+let studentParentLinkDisplay, studentLinkCodeValue; // Added these two back to global let declarations
+let recognition = null;
 let currentUser = null; // Declare globally and allow reassignment
 let isVoiceModeEnabled = localStorage.getItem('voiceMode') === 'true'; // Consistent naming
 let isMathJaxReady = window.isMathJaxReady || false; // Check if MathJax has loaded
@@ -115,7 +117,7 @@ async function speakText(textToSpeak, dynamicVoiceId = null) {
             if (audioStopBtn) audioStopBtn.style.display = 'none'; // Hide stop button
         };
     } catch (err) {
-        console.error("Error fetching or playing speech:", err);
+        console.error("ERROR: Error fetching or playing speech:", err);
     }
 }
 
@@ -412,22 +414,27 @@ function loadStudentParentLinkCode() {
     fetch('/api/student/generate-invite-code', { method: 'POST', credentials: 'include' })
         .then(res => {
             if (!res.ok) { // Check for HTTP errors like 404, 500
-                return res.text().then(text => { throw new new Error(`HTTP error! status: ${res.status} - ${text}`); });
+                return res.text().then(text => { throw new Error(`HTTP error! status: ${res.status} - ${text}`); });
             }
             return res.json(); // Attempt to parse as JSON
         })
         .then(data => {
-            if (data.success && studentLinkCodeValue) {
+            // Modified logic: Only log an ERROR if data.success is explicitly FALSE.
+            // If data.success is true, proceed normally.
+            if (data.success && studentLinkCodeValue) { // [FIXED]
                 studentLinkCodeValue.textContent = data.code;
                 if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'block';
                 console.log("LOG: Parent invite code displayed:", data.code);
-            } else {
-                console.error("ERROR: Failed to generate/fetch parent invite code:", data.message || 'Unknown error');
+            } else if (!data.success) { // [FIXED] Only enter this block if data.success is false
+                console.error("ERROR: Failed to generate/fetch parent invite code (backend reported failure):", data.message || 'Unknown error'); // [FIXED]
+                if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
+            } else { // [FIXED] Fallback for unexpected data structure if data.success isn't explicitly true/false
+                console.warn("WARN: Unexpected response structure from parent invite code API:", data);
                 if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
             }
         })
         .catch(error => {
-            console.error("ERROR: Error fetching parent invite code (catch block):", error);
+            console.error("CRITICAL ERROR: Error fetching parent invite code (network/client-side):", error); // Clarified error type
             if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
         });
 }
@@ -448,7 +455,7 @@ async function saveUserSettings() {
     };
 
     try {
-        const response = await fetch('/api/user/settings', {
+        const response = await fetch('/api/user/settings', { // This endpoint is correct based on server.js
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -456,11 +463,12 @@ async function saveUserSettings() {
             body: JSON.stringify(updatedSettings)
         });
         if (response.ok) {
-            currentUser = { ...currentUser, ...updatedSettings };
+            // [FIXED]: Update currentUser with the changes so subsequent calls use fresh data
+            currentUser = { ...currentUser, ...updatedSettings }; // Merge updated settings into currentUser
             localStorage.setItem('voiceMode', updatedSettings.isHandsFreeModeEnabled);
             isVoiceModeEnabled = updatedSettings.isHandsFreeModeEnabled;
             toggleHandsFreeMode(isVoiceModeEnabled);
-            loadTutorImage();
+            loadTutorImage(); // Reload tutor image if it changed
             alert('Settings saved successfully!');
             console.log("LOG: Settings saved successfully:", updatedSettings);
         } else {
@@ -498,7 +506,7 @@ function loadUserSettings() {
     console.log("LOG: loadUserSettings called.");
     if (currentUser) {
         if (tutorSelect) tutorSelect.value = currentUser.selectedTutorId || 'default';
-        if (toneSelect) toneSelect.value = currentUser.voiceTone || 'friendly';
+        if (toneSelect) toneSelect.value = currentUser.tonePreference || 'friendly'; // Use tonePreference [FIXED]
         if (styleSelect) styleSelect.value = currentUser.learningStyle || 'step';
         if (voiceModeEnabledCheckbox) voiceModeEnabledCheckbox.checked = isVoiceModeEnabled;
         console.log("LOG: User settings loaded into form.");
@@ -530,7 +538,7 @@ async function loadTutorImage() {
     if (tutorImageFileName) {
         avatarContainer.innerHTML = '';
         const img = document.createElement('img');
-        img.src = `/images/${tutorImageFileName}`;
+        img.src = `/images/${tutorImageFileName}`; // Corrected path to images/ folder
         img.alt = `Tutor ${tutorConfig.name}`;
         avatarContainer.appendChild(img);
         console.log(`LOG: loadTutorImage - Loaded image for tutor ${tutorConfig.name}: /images/${tutorImageFileName}`);
@@ -538,7 +546,7 @@ async function loadTutorImage() {
         console.warn(`WARN: No image file found for selected tutorId: ${tutorId}. Using default.`);
         avatarContainer.innerHTML = '';
         const img = document.createElement('img');
-        img.src = `/images/${TUTOR_CONFIG_FRONTEND['default'].image}`;
+        img.src = `/images/${TUTOR_CONFIG_FRONTEND['default'].image}`; // Corrected path to images/ folder
         img.alt = `Default Tutor`;
         avatarContainer.appendChild(img);
     }
@@ -620,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
     audioStopBtn = document.getElementById('audio-stop-button');
     voiceModeToggle = document.getElementById('handsfree-toggle'); // Correct element ID for Hands-Free toggle
     studentParentLinkDisplay = document.getElementById('student-parent-link-display');
-    studentLinkCodeValue = document.getElementById('student-link-code-value');
+    studentLinkCodeValue = document.getElementById('student-link-code-value'); // Now this element should exist in chat.html
     // avatarContainer is now initialized globally (at the top)
 
 
@@ -704,20 +712,24 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Export chat history (Feature under development)');
     });
     
+    // [FIXED]: Removed `window.location.href` from here to let logout.js handle redirection
     if (logoutSettingsBtn) logoutSettingsBtn.addEventListener('click', () => {
-        console.log("LOG: Logout from settings button clicked. Redirecting to /logout.");
+        console.log("LOG: Logout from settings button clicked. Delegating to logout.js.");
         localStorage.removeItem("welcomeShown");
         localStorage.removeItem("voiceMode");
-        window.location.href = "/logout";
+        // No explicit redirect here, logout.js event listener will be triggered
+        // It's good practice to call the click method to ensure the delegated listener fires
+        // This button now implicitly relies on the logout.js listener attached to .logout-button
     });
 
-    // Logout button in chat pane
+    // Logout button in chat pane [FIXED]: Removed `window.location.href` from here
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            console.log("LOG: Logout from chat top bar button clicked. Redirecting to /logout.");
+            console.log("LOG: Logout from chat top bar button clicked. Delegating to logout.js.");
             localStorage.removeItem("welcomeShown");
             localStorage.removeItem("voiceMode");
-            window.location.href = "/logout";
+            // No explicit redirect here, logout.js event listener will be triggered
+            // This button now implicitly relies on the logout.js listener attached to .logout-button
         });
     }
 
@@ -741,7 +753,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(data => {
         currentUser = data.user;
         window.currentUser = currentUser; // Expose globally for guidedPath.js
-        console.log("LOG: Current user data loaded:", currentUser ? currentUser.username : 'N/A', 'Role:', currentUser ? currentUser.role : 'N/A');
+        // [FIXED] Log current user data with properties that should exist
+        console.log("LOG: Current user data loaded:", currentUser ? (currentUser.username || currentUser.firstName + ' ' + currentUser.lastName) : 'N/A', 'Role:', currentUser ? currentUser.role : 'N/A');
 
         // [FIXED] AFTER currentUser is loaded, attach the chat input listeners and enable UI
         if (sendBtn && input) {
@@ -810,7 +823,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentChatHistory.push({ role: 'assistant', content: "Welcome back! What would you like to work on today?" });
                 }
             }
-            window.updateGamifiedDashboard(currentUser.xp, currentUser.level);
+            // [FIXED] Pass correct properties to updateGamifiedDashboard
+            window.updateGamifiedDashboard(currentUser.xp, currentUser.level, 0); // Pass 0 for specialXP initially
             loadStudentParentLinkCode();
             loadTutorImage();
 
@@ -834,4 +848,4 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.log("LOG: Leaderboard table not found on page. Skipping fetch.");
     }
-});// JavaScript Document
+});

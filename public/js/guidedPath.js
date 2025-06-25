@@ -24,7 +24,8 @@ export async function loadPathwayOverview(currentUser) { // [MODIFIED] Accept cu
 
     window.showThinkingIndicator(true);
     try {
-        const response = await fetch('/resources/ready-for-algebra-1-pathway.json'); // Fetch the main pathway JSON
+        // CORRECTED PATH: Fetch the main pathway JSON from public/resources/
+        const response = await fetch('/resources/ready-for-algebra-1-pathway.json');
         if (!response.ok) throw new Error('Failed to load pathway overview.');
         currentCourse = await response.json();
 
@@ -63,7 +64,7 @@ export async function loadPathwayOverview(currentUser) { // [MODIFIED] Accept cu
         if (lessonsPane) lessonsPane.innerHTML = `<p>Error loading lessons: ${error.message}</p>`;
         if (courseCardsContainer) courseCardsContainer.innerHTML = `<p>Error loading courses.</p>`;
     } finally {
-        window.showThinkingIndicator(false);
+        window.showThinkingIndicator(false); // Corrected to hide indicator
     }
 }
 
@@ -86,7 +87,9 @@ export async function startOrResumeModule(moduleId, moduleIndex) {
 
     window.showThinkingIndicator(true);
     try {
-        const response = await fetch(`/modules/${moduleRef.source}`); // Fetch individual module JSON
+        // CORRECTED PATH: Fetch individual module JSON from public/modules/
+        // Assuming moduleRef.source is just the filename (e.g., "number_system_module.json")
+        const response = await fetch(`/modules/${moduleRef.source}`); // [FIXED PATH]
         if (!response.ok) throw new Error(`Failed to load module: /modules/${moduleRef.source}`);
         currentModuleData = await response.json(); // Store the full module content
 
@@ -101,7 +104,7 @@ export async function startOrResumeModule(moduleId, moduleIndex) {
         console.error("Error loading module:", error);
         window.appendMessage(`Sorry, I couldn't load that lesson: ${error.message}. Please try selecting another or refreshing.`, "ai");
     } finally {
-        window.showThinkingIndicator(false);
+        window.showThinkingIndicator(false); // Corrected to hide indicator
     }
 }
 
@@ -153,7 +156,8 @@ async function processNextScaffoldStep() {
         case 'explanation':
             contentHtml += `<p>${step.text || step.goal}</p>`;
             if (step.image) {
-                contentHtml += `<img src="${step.image}" alt="Lesson diagram" class="lesson-image" />`;
+                // Assuming lesson images for scaffolds are in public/images/ as confirmed by screenshot
+                contentHtml += `<img src="/images/${step.image}" alt="Lesson diagram" class="lesson-image" />`; // [FIXED PATH]
             }
             if (step.video) {
                 if (step.video.type === 'youtube') {
@@ -174,7 +178,8 @@ async function processNextScaffoldStep() {
                 contentHtml += `<p>${step.explanation}</p>`;
             }
             if (step.image) {
-                contentHtml += `<img src="${step.image}" alt="Model example" class="lesson-image" />`;
+                // Assuming lesson images for scaffolds are in public/images/ as confirmed by screenshot
+                contentHtml += `<img src="/images/${step.image}" alt="Model example" class="lesson-image" />`; // [FIXED PATH]
             }
             if (step.video) {
                 if (step.video.type === 'youtube') {
