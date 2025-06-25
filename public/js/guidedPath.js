@@ -39,7 +39,7 @@ export async function loadPathwayOverview(currentUser) { // [MODIFIED] Accept cu
                 const completionPercentage = (currentUser && currentUser.completedModules && currentUser.completedModules.includes(module.moduleId)) ? 100 : 0;
                 card.innerHTML = `
                     <div class="progress-circle-container" style="background: conic-gradient(var(--accent-green) ${completionPercentage}%, #e0e0e0 ${completionPercentage}%); margin-bottom: 10px;">
-                        <div class="progress-circle-inner">${completionPercentage}%</div>
+                        <div class="progress-circle-inner">${completionPercentage}%}</div>
                     </div>
                     <h3>${module.title}</h3>
                     <p>${module.preview || module.description || ''}</p>
@@ -89,7 +89,7 @@ export async function startOrResumeModule(moduleId, moduleIndex) {
     try {
         // CORRECTED PATH: Fetch individual module JSON from public/modules/
         // Assuming moduleRef.source is just the filename (e.g., "number_system_module.json")
-        const response = await fetch(`/modules/${moduleRef.source}`); // [FIXED PATH]
+        const response = await fetch(`/modules/${moduleRef.source}`);
         if (!response.ok) throw new Error(`Failed to load module: /modules/${moduleRef.source}`);
         currentModuleData = await response.json(); // Store the full module content
 
@@ -157,7 +157,7 @@ async function processNextScaffoldStep() {
             contentHtml += `<p>${step.text || step.goal}</p>`;
             if (step.image) {
                 // Assuming lesson images for scaffolds are in public/images/ as confirmed by screenshot
-                contentHtml += `<img src="/images/${step.image}" alt="Lesson diagram" class="lesson-image" />`; // [FIXED PATH]
+                contentHtml += `<img src="/images/${step.image}" alt="Lesson diagram" class="lesson-image" />`;
             }
             if (step.video) {
                 if (step.video.type === 'youtube') {
@@ -179,7 +179,7 @@ async function processNextScaffoldStep() {
             }
             if (step.image) {
                 // Assuming lesson images for scaffolds are in public/images/ as confirmed by screenshot
-                contentHtml += `<img src="/images/${step.image}" alt="Model example" class="lesson-image" />`; // [FIXED PATH]
+                contentHtml += `<img src="/images/${step.image}" alt="Model example" class="lesson-image" />`;
             }
             if (step.video) {
                 if (step.video.type === 'youtube') {

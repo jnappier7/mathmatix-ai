@@ -44,13 +44,16 @@ const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
 // --- DECLARE ALL GLOBAL LET VARIABLES ---
 // These hold state and might be reassigned
 let currentLevelSpan, currentXpSpan, xpNeededSpan, xpLevelDisplay, thinkingIndicator, logoutBtn, voiceModeToggle, currentAudio = null, isRecognitionActive = false, audioStopBtn;
-let studentParentLinkDisplay, studentLinkCodeValue; // These were declared 'let' in the original script.js
+let studentParentLinkDisplay, studentLinkCodeValue;
 let recognition = null;
 let currentUser = null; // Declare globally and allow reassignment
 let isVoiceModeEnabled = localStorage.getItem('voiceMode') === 'true'; // Consistent naming
 let isMathJaxReady = window.isMathJaxReady || false; // Check if MathJax has loaded
 let currentChatHistory = []; // Needed for welcome message currentHistory parameter
 const XP_PER_LEVEL = 100; // Define globally for XP calculations
+
+// Define client-side message length limits
+const CLIENT_MAX_MESSAGE_LENGTH = 1800; // A bit less than server to give buffer
 
 
 // --- CORE HELPER FUNCTIONS (Globally Defined - BEFORE DOMContentLoaded) ---
@@ -559,6 +562,13 @@ async function loadTutorImage() {
 // Global handleChatMessage function
 window.handleChatMessage = async function(messageText) {
     console.log("LOG: handleChatMessage called with:", messageText);
+
+    // Client-side message length check BEFORE sending
+    if (messageText.length > CLIENT_MAX_MESSAGE_LENGTH) {
+        window.appendMessage(`Your message is too long. Please shorten it to under ${CLIENT_MAX_MESSAGE_LENGTH} characters.`, "ai");
+        return; // Do not proceed with sending
+    }
+
     window.appendMessage(messageText, "user");
     currentChatHistory.push({ role: 'user', content: messageText });
     
@@ -607,7 +617,12 @@ window.handleChatMessage = async function(messageText) {
         }
     } catch (error) {
         console.error("ERROR: Failed to send message or get AI response:", error);
-        window.appendMessage("Sorry, I'm having trouble connecting right now. Please try again.", "ai");
+        // Display a user-friendly error message, especially if it's from server-side validation
+        if (error.message.includes('too long')) {
+            window.appendMessage("Your message was too long. Please try a shorter message.", "ai");
+        } else {
+            window.appendMessage("Sorry, I'm having trouble connecting right now. Please try again.", "ai");
+        }
     } finally {
         showThinkingIndicator(false);
     }
@@ -632,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     if (sendBtn) sendBtn.disabled = true;
-    if (input) input.placeholder = "Loading chat...";
+    if (input) input.placeholder = "Type your message here...";
 
     // Other tool button listeners
     if (attachBtn) attachBtn.addEventListener("click", () => fileInput.click());
@@ -645,15 +660,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeMathBtn) closeMathBtn.addEventListener("click", () => {
         if (mathModal) {
             mathModal.classList.remove('visible'); // Remove 'visible' class
-            mathEditor.value = ''; // Clear editor content on close
+            mathEditor.value = ''; // Clear editor content on close (MathLive uses .value)
         }
     });
     if (insertMathBtn) insertMathBtn.addEventListener("click", () => {
-        // Ensure mathEditor is a MathLive component and has getValue()
-        const math = mathEditor.value; // Use .value for standard HTML inputs, .getValue() for MathLive element
-        // If mathEditor is directly the <math-field> tag, .value should work.
-        // If not, and you're using MathLive's API, it might be mathEditor.getValue()
-
+        const math = mathEditor.value; // MathLive element uses .value for the LaTeX string
         if (math.trim()) {
             input.value += ` [MATH]${math}[/MATH] `;
         }

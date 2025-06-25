@@ -10,6 +10,7 @@ const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
 const MongoStore = require("connect-mongo");
+const rateLimit = require('express-rate-limit'); // NEW: Import rate-limit
 
 // Import Passport configuration (ensure it runs)
 require("./auth/passport-config");
@@ -26,15 +27,15 @@ const {
 
 // Import route modules
 const autoMountRoutes = require("./utils/autoRouteLoader");
-const speakTestRoute = require("./routes/speak-test");
-const leaderboardRouter = require('./routes/leaderboard'); // [FIXED] Correctly import leaderboard router
-const studentRouter = require('./routes/student');       // [FIXED] Correctly import student router
-const chatRouter = require('./routes/chat');             // [NEW] Import chat router
-const lessonRouter = require('./routes/guidedLesson');   // [NEW] Import guidedLesson router (was named guidedLesson.js)
-const userRouter = require('./routes/user');             // [NEW] Import user settings router (assuming routes/user.js exists for /api/user/settings)
-const loginRouter = require('./routes/login');           // [NEW] Import login router (was login.js)
-const uploadRouter = require('./routes/upload');         // [NEW] Import upload router (assuming routes/upload.js exists)
-const welcomeRouter = require('./routes/welcome');       // [NEW] Import welcome router (was welcome.js)
+const speakTestRoute = require("./routes/speak-test"); // Redundant, but harmless if already there
+const leaderboardRouter = require('./routes/leaderboard');
+const studentRouter = require('./routes/student');
+const chatRouter = require('./routes/chat');
+const lessonRouter = require('./routes/guidedLesson');
+const userRouter = require('./routes/user');
+const loginRouter = require('./routes/login');
+const uploadRouter = require('./routes/upload');
+const welcomeRouter = require('./routes/welcome');
 
 
 // --- 2. INIT EXPRESS APP ---
@@ -74,6 +75,21 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// --- Rate Limiting Configuration ---
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again after 15 minutes.",
+  headers: true, // Send X-RateLimit-Limit, X-RateLimit-Remaining, and Retry-After headers
+});
+
+const aiLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 30, // Limit each IP to 30 requests per 5 minutes for AI calls
+  message: "Too many AI requests from this IP, please try again in 5 minutes.",
+  headers: true,
+});
+
 
 // --- 4. DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
@@ -82,21 +98,28 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 // --- 5. ROUTE MOUNTING ---
+// Apply Rate Limiting to specific routes
+app.use('/api/', apiLimiter); // General API rate limiter
+app.use('/chat', aiLimiter); // Stricter AI limiter for chat
+app.use('/lesson', aiLimiter); // Stricter AI limiter for guided lessons
+app.use('/speak', aiLimiter); // Stricter AI limiter for TTS
+app.use('/upload', aiLimiter); // Stricter AI limiter for uploads that might hit AI/OCR
+
 // Core API Routes (explicitly mounted for clarity and control)
-app.use('/login', loginRouter); // Local login route
-app.use('/speak', require('./routes/speak')); // TTS route
-app.use('/api/leaderboard', leaderboardRouter); // [FIXED] Leaderboard API route
-app.use('/api/student', studentRouter);       // [FIXED] Student API route (for invite codes etc.)
-app.use('/chat', chatRouter);                 // Main chat API route
-app.use('/lesson', lessonRouter);             // Guided lesson API routes
-app.use('/api/user', userRouter);             // User settings/profile API route
-app.use('/upload', uploadRouter);             // File upload route
-app.use('/welcome', welcomeRouter);           // Welcome message API route (using GET, not auto-mounted with POST by default)
+app.use('/login', loginRouter);
+app.use('/speak', require('./routes/speak'));
+app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/student', studentRouter);
+app.use('/chat', chatRouter);
+app.use('/lesson', lessonRouter);
+app.use('/api/user', userRouter);
+app.use('/upload', uploadRouter);
+app.use('/welcome', welcomeRouter);
 
 
 // Auto-mount other routes from the 'routes' directory, skipping specified ones
 autoMountRoutes(app, {
-  skip: ["summary_generator", "leaderboard", "student", "chat", "guidedLesson", "user", "login", "upload", "welcome", "speak"] // [MODIFIED] Skip all explicitly mounted routes
+  skip: ["summary_generator", "leaderboard", "student", "chat", "guidedLesson", "user", "login", "upload", "welcome", "speak"]
 });
 
 // OAuth Routes

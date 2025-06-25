@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     let selectedChild = null; // Stores the currently selected child for chat
     let currentParentId = null; // Store the parent's ID
 
+    // Define client-side message length limits for parent chat
+    const PARENT_CHAT_MAX_MESSAGE_LENGTH = 1800; 
+
     // --- Authenticate and Load Parent User Data ---
     async function loadParentUser() {
         try {
@@ -159,6 +162,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Parent Chat Send Message Logic ---
     if (parentSendButton) {
+        // ADD CLIENT-SIDE INPUT LIMIT LISTENER
+        if (parentUserInput) {
+            parentUserInput.addEventListener('input', () => {
+                if (parentUserInput.value.length > PARENT_CHAT_MAX_MESSAGE_LENGTH) {
+                    parentUserInput.value = parentUserInput.value.substring(0, PARENT_CHAT_MAX_MESSAGE_LENGTH);
+                    console.warn(`WARNING: Parent chat input exceeds ${PARENT_CHAT_MAX_MESSAGE_LENGTH} characters and has been truncated.`);
+                }
+            });
+        }
+
         parentSendButton.addEventListener("click", async () => {
             const message = parentUserInput.value.trim();
             if (!message || !selectedChild || !currentParentId) {
@@ -166,25 +179,37 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
+            // Client-side check before sending to server
+            if (message.length > PARENT_CHAT_MAX_MESSAGE_LENGTH) {
+                 alert(`Your message is too long. Please shorten it to under ${PARENT_CHAT_MAX_MESSAGE_LENGTH} characters.`);
+                 return;
+            }
+
             appendParentMessage("user", message);
             parentUserInput.value = "";
             if (parentThinkingIndicator) parentThinkingIndicator.style.display = "flex";
 
             try {
-                const res = await fetch("/chat", { // Assuming /chat endpoint handles parent messages
+                const res = await fetch("/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: 'include',
                     body: JSON.stringify({
                         userId: currentParentId,
                         message,
-                        role: "parent", // Indicate sender role
-                        childId: selectedChild._id, // Send selected child's ID
+                        role: "parent",
+                        childId: selectedChild._id,
                     })
                 });
 
                 if (!res.ok) {
                     const errorText = await res.text();
+                    // Check for specific backend message length errors
+                    if (errorText.includes('too long')) { // Matches message from chat.js
+                        alert("Your message was too long. Please try a shorter message.");
+                    } else {
+                        alert(`Chat error: ${res.status} - ${errorText}`);
+                    }
                     throw new Error(`Chat error: ${res.status} - ${errorText}`);
                 }
 
@@ -198,12 +223,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
 
-        // Enable sending with Enter key for parent chat
         if (parentUserInput) {
             parentUserInput.addEventListener("keydown", (e) => {
-                if (e.key === "Enter" && !e.shiftKey) { // Enter without Shift
-                    e.preventDefault(); // Prevent new line
-                    parentSendButton.click(); // Trigger send button click
+                if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    parentSendButton.click();
                 }
             });
         }
@@ -274,4 +298,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (parentUser) {
         loadChildren();
     }
-});// JavaScript Document
+});
