@@ -37,6 +37,16 @@
           <label for="password">Password:</label>
           <input type="password" name="password" required />
         </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password:</label>
+          <input type="password" name="confirmPassword" id="confirm-password" required />
+        </div>
+
+        <div class="form-group">
+          <label for="enrollmentCode">Enrollment Code:</label>
+          <input type="text" name="enrollmentCode" id="enrollmentCode" required placeholder="Enter your secret code to sign up" />
+          <p class="note">A valid enrollment code is required to create an account.</p>
+        </div>
 
         <div class="form-group">
           <label for="role">I am a:</label>
@@ -75,6 +85,7 @@
     const inviteCodeGroup = document.getElementById("inviteCodeGroup");
     const signupForm = document.getElementById("signupForm");
     const signupMessage = document.getElementById("signup-message");
+    const confirmPasswordInput = document.getElementById("confirm-password"); // Added for client-side validation
 
     // Initial check on page load
     if (roleSelect.value === "parent") {
@@ -94,6 +105,25 @@
     // Handle form submission with Fetch API
     signupForm.addEventListener("submit", async function (event) {
         event.preventDefault();
+
+        const password = document.getElementById("password").value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (password !== confirmPassword) {
+          signupMessage.textContent = 'Passwords do not match!';
+          signupMessage.className = 'error';
+          signupMessage.style.display = 'block';
+          return;
+        }
+
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(password)) {
+          signupMessage.textContent = 'Password must be at least 8 characters long, include one capital letter, and one number.';
+          signupMessage.className = 'error';
+          signupMessage.style.display = 'block';
+          return;
+        }
+
 
         const formData = new FormData(signupForm);
         const data = Object.fromEntries(formData.entries());
@@ -117,7 +147,7 @@
                 signupMessage.style.display = 'block';
 
                 setTimeout(() => {
-                    window.location.href = '/complete-profile.html';
+                    window.location.href = result.redirect || '/complete-profile.html'; // Use backend redirect hint
                 }, 1500);
 
             } else {

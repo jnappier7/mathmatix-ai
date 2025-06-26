@@ -1,4 +1,4 @@
-// auth/passport-config.js - FINAL CORRECTED VERSION
+// auth/passport-config.js - FINAL CORRECTED VERSION with OAuth Linking
 
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -54,25 +54,52 @@ passport.use(new LocalStrategy(
   }
 ));
 
-// Google Strategy - WITH THE VERIFY CALLBACK RESTORED
+// Google Strategy - WITH THE VERIFY CALLBACK RESTORED AND EMAIL LINKING
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:5000/auth/google/callback"
 }, async (accessToken, refreshToken, profile, done) => {
     try {
+        const userEmail = profile.emails?.[0]?.value;
+
+        // 1. Check if user already exists with this Google ID
         let existingUser = await User.findOne({ googleId: profile.id });
         if (existingUser) {
-            console.log('LOG: GoogleStrategy found existing user:', existingUser.username);
+            console.log('LOG: GoogleStrategy found existing user by Google ID:', existingUser.username);
             return done(null, existingUser);
         }
+
+        // 2. If not found by Google ID, check if user exists with this email (potential for linking)
+        if (userEmail) {
+            existingUser = await User.findOne({ email: userEmail });
+            if (existingUser) {
+                // User exists with this email, so link Google ID to this account
+                if (!existingUser.googleId) { // Prevent overwriting if already linked
+                    existingUser.googleId = profile.id;
+                    await existingUser.save();
+                    console.log('LOG: GoogleStrategy linked existing user by email:', existingUser.username);
+                    return done(null, existingUser);
+                } else {
+                    // This scenario means an existing user with this email also has a googleId,
+                    // but the new Google login's profile.id doesn't match the existing googleId.
+                    // This could be a security risk or a data anomaly. For now, we deny login
+                    // to prevent account hijacking, user should unlink first or contact support.
+                    console.warn('WARN: GoogleStrategy found existing user by email but Google ID mismatch. Denying login to prevent overwriting.');
+                    return done(null, false, { message: 'An account with this email already exists but is linked to a different Google account. Please use that Google account or sign in with your other method.' });
+                }
+            }
+        }
+
+        // 3. If no existing user found by Google ID or email, create a new user
         const newUser = await User.create({
             googleId: profile.id,
-            email: profile.emails?.[0]?.value,
+            email: userEmail,
             firstName: profile.name.givenName,
             lastName: profile.name.familyName,
             name: profile.displayName,
-            username: profile.emails?.[0]?.value.split('@')[0].toLowerCase() + Math.floor(Math.random() * 1000), // Add random numbers to avoid collision
+            // Ensure username is always generated and unique on creation
+            username: userEmail ? userEmail.split('@')[0].toLowerCase() + Math.floor(Math.random() * 1000) : 'google_user_' + profile.id,
             needsProfileCompletion: true,
             role: 'student'
         });
@@ -80,11 +107,15 @@ passport.use(new GoogleStrategy({
         return done(null, newUser);
     } catch (err) {
         console.error('ERROR: GoogleStrategy error:', err);
+        // Specifically check for duplicate email errors here to provide a more specific message
+        if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
+            return done(null, false, { message: 'An account with this email already exists. Please sign in using your existing method or try another email.' });
+        }
         return done(err, null);
     }
 }));
 
-// Microsoft Strategy - WITH THE VERIFY CALLBACK RESTORED
+// Microsoft Strategy - WITH THE VERIFY CALLBACK RESTORED AND EMAIL LINKING
 passport.use(new MicrosoftStrategy({
     clientID: process.env.MICROSOFT_CLIENT_ID,
     clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
@@ -92,25 +123,54 @@ passport.use(new MicrosoftStrategy({
     scope: ['user.read']
 }, async (accessToken, refreshToken, profile, done) => {
     try {
-        let user = await User.findOne({ microsoftId: profile.id });
-        if (user) {
-            console.log('LOG: MicrosoftStrategy found existing user:', user.username);
-            return done(null, user);
+        const userEmail = profile.emails?.[0]?.value;
+
+        // 1. Check if user already exists with this Microsoft ID
+        let existingUser = await User.findOne({ microsoftId: profile.id });
+        if (existingUser) {
+            console.log('LOG: MicrosoftStrategy found existing user by Microsoft ID:', existingUser.username);
+            return done(null, existingUser);
         }
-        user = await User.create({
+
+        // 2. If not found by Microsoft ID, check if user exists with this email (potential for linking)
+        if (userEmail) {
+            existingUser = await User.findOne({ email: userEmail });
+            if (existingUser) {
+                // User exists with this email, so link Microsoft ID to this account
+                if (!existingUser.microsoftId) { // Prevent overwriting if already linked
+                    existingUser.microsoftId = profile.id;
+                    await existingUser.save();
+                    console.log('LOG: MicrosoftStrategy linked existing user by email:', existingUser.username);
+                    return done(null, existingUser);
+                } else {
+                    // Existing user with this email also has a microsoftId, but mismatch.
+                    // Deny login to prevent account hijacking.
+                    console.warn('WARN: MicrosoftStrategy found existing user by email but Microsoft ID mismatch. Denying login to prevent overwriting.');
+                    return done(null, false, { message: 'An account with this email already exists but is linked to a different Microsoft account. Please use that Microsoft account or sign in with your other method.' });
+                }
+            }
+        }
+
+        // 3. If no existing user found by Microsoft ID or email, create a new user
+        const newUser = await User.create({
             microsoftId: profile.id,
-            email: profile.emails?.[0]?.value,
+            email: userEmail,
             firstName: profile.name.givenName,
             lastName: profile.name.familyName,
             name: profile.displayName,
-            username: profile.emails?.[0]?.value.split('@')[0].toLowerCase() + Math.floor(Math.random() * 1000),
+            // Ensure username is always generated and unique on creation
+            username: userEmail ? userEmail.split('@')[0].toLowerCase() + Math.floor(Math.random() * 1000) : 'microsoft_user_' + profile.id,
             needsProfileCompletion: true,
             role: 'student'
         });
-        console.log('LOG: MicrosoftStrategy created new user:', user.username);
-        return done(null, user);
+        console.log('LOG: MicrosoftStrategy created new user:', newUser.username);
+        return done(null, newUser);
     } catch (err) {
         console.error('ERROR: MicrosoftStrategy error:', err);
+        // Specifically check for duplicate email errors here to provide a more specific message
+        if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
+            return done(null, false, { message: 'An account with this email already exists. Please sign in using your existing method or try another email.' });
+        }
         return done(err, null);
     }
 }));

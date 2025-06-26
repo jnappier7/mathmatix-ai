@@ -12,16 +12,27 @@ function generateUniqueLinkCode() {
     for (let i = 0; i < 6; i++) { // Generate a 6-character code
         result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    return result;
+    return `MATH-${result}`; // Prefix for readability
 }
 
-router.post("/", async (req, res) => {
-  const { firstName, lastName, email, username, password, role, inviteCode } = req.body; // 'inviteCode' here refers to the single input field on the signup form
+router.post("/", async (req, res, next) => { // Added 'next' for passport.authenticate
+  const { firstName, lastName, email, username, password, role, inviteCode, enrollmentCode } = req.body; // NEW: Added enrollmentCode
 
   // Basic validation
-  if (!firstName || !lastName || !email || !username || !password || !role) {
-    return res.status(400).json({ message: "All fields are required." });
+  if (!firstName || !lastName || !email || !username || !password || !role || !enrollmentCode) { // NEW: enrollmentCode required
+    return res.status(400).json({ message: "All fields, including Enrollment Code, are required." });
   }
+
+  // --- NEW: Enrollment Code Validation ---
+  const validEnrollmentCodes = process.env.ENROLLMENT_CODES ? process.env.ENROLLMENT_CODES.split(',') : [];
+  // For quick local testing, you can hardcode some codes if .env is not set up yet:
+  // const validEnrollmentCodes = ["TESTCODE123", "MATHMATIX2025"]; 
+
+  if (!validEnrollmentCodes.includes(enrollmentCode)) {
+      return res.status(403).json({ message: "Invalid Enrollment Code. Please check your code and try again." });
+  }
+  // --- END NEW: Enrollment Code Validation ---
+
 
   try {
     // Check if username or email already exists
@@ -40,87 +51,38 @@ router.post("/", async (req, res) => {
       username,
       passwordHash: hashedPassword,
       role,
-      needsProfileCompletion: true, // Default: most new signups need profile completion
+      needsProfileCompletion: true, // New users typically need profile completion
+      // Initialize XP and level for new users
+      xp: 0,
+      level: 1,
+      // Initialize other fields as default
+      conversations: [],
+      iepPlan: {},
+      parentToChildInviteCode: { code: await generateUniqueLinkCode(), expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), childLinked: false }, // Generate student's own invite code
+      studentToParentLinkCode: { parentLinked: false }
     });
 
-    // --- MODIFIED: Handle inviteCode based on role and existence ---
-    if (inviteCode && inviteCode.trim() !== '') {
-        if (role === 'student') {
-            // Student using a parent's invite code (parentToChildInviteCode)
-            const parentUser = await User.findOne({ 'parentToChildInviteCode.code': inviteCode.trim() });
-
-            if (!parentUser) {
-                return res.status(400).json({ message: "Invalid invite code. Please check with your parent or try again." });
-            }
-            if (parentUser.parentToChildInviteCode.childLinked) {
-                return res.status(400).json({ message: "This invite code has already been used by a child." });
-            }
-            if (parentUser.role !== 'parent') {
-                return res.status(400).json({ message: "Invite code is not from a parent account." });
-            }
-            if (parentUser.parentToChildInviteCode.expiresAt < new Date()) {
-                 return res.status(400).json({ message: "Invite code has expired." });
-            }
-
-            // Link student to parent
-            newUser.teacherId = parentUser._id; // Using teacherId as parentId link
-            parentUser.children = parentUser.children || [];
-            parentUser.children.push(newUser._id);
-            parentUser.parentToChildInviteCode.childLinked = true; // Mark code as used on the parent's record
-            await parentUser.save();
-
-            newUser.needsProfileCompletion = false; // Profile complete if linked via code at signup
-            console.log(`LOG: Student ${newUser.username} linked to parent ${parentUser.username} via parent's invite code.`);
-
-        } else if (role === 'parent') {
-            // Parent using a student's link code (studentToParentLinkCode)
-            const studentUser = await User.findOne({ 'studentToParentLinkCode.code': inviteCode.trim() });
-
-            if (!studentUser) {
-                return res.status(400).json({ message: "Invalid student link code. Please check the code." });
-            }
-            if (studentUser.studentToParentLinkCode.parentLinked) {
-                return res.status(400).json({ message: "This student code is already linked to a parent." });
-            }
-            if (studentUser.role !== 'student') {
-                return res.status(400).json({ message: "This code is not from a student account." });
-            }
-
-            // Link parent to student
-            studentUser.teacherId = newUser._id; // Link student's parent ID to new parent's _id
-            newUser.children = newUser.children || [];
-            newUser.children.push(studentUser._id); // Add student's _id to new parent's children array
-            studentUser.studentToParentLinkCode.parentLinked = true; // Mark code as used on the student's record
-            await studentUser.save();
-
-            newUser.needsProfileCompletion = false; // Parent profile complete if linked via code at signup
-            console.log(`LOG: Parent ${newUser.username} linked to student ${studentUser.username} via student's link code.`);
+    // If role is parent and an inviteCode for a child is provided, attempt to link
+    if (role === 'parent' && inviteCode) {
+        const studentToLink = await User.findOne({ 'parentToChildInviteCode.code': inviteCode });
+        if (studentToLink && studentToLink.role === 'student' && !studentToLink.parentToChildInviteCode.childLinked) {
+            newUser.children.push(studentToLink._id); // Link parent to student
+            studentToLink.parentToChildInviteCode.childLinked = true; // Mark student's code as used
+            studentToLink.teacherId = newUser._id; // Assign parent as "teacher" for linking purposes
+            await studentToLink.save();
+            console.log(`LOG: New parent account linked to student ${studentToLink.username}`);
+        } else {
+            return res.status(400).json({ message: "Invalid or already used Child Invite Code." });
         }
     }
 
-    // If it's a student signing up without an invite code (or a teacher/admin), auto-generate a studentToParentLinkCode for them
-    if (role === 'student' && (!inviteCode || inviteCode.trim() === '')) {
-        let newLinkCode;
-        let codeExists = true;
-        while (codeExists) { // Ensure uniqueness
-            newLinkCode = generateUniqueLinkCode();
-            const existingUserWithCode = await User.findOne({ 'studentToParentLinkCode.code': newLinkCode });
-            if (!existingUserWithCode) {
-                codeExists = false;
-            }
-        }
-        newUser.studentToParentLinkCode = { code: newLinkCode, parentLinked: false };
-        console.log(`LOG: New student ${newUser.username} assigned parent link code: ${newLinkCode}`);
-    }
-    // --- END MODIFIED INVITE CODE HANDLING ---
+    await newUser.save();
 
-
-    await newUser.save(); // Save the new user
-
-    // Set up session for the new user (Passport.js req.logIn)
-    req.logIn(newUser, (loginErr) => {
-        if (loginErr) {
-            console.error("ERROR: Signup login error:", loginErr);
+    // After successful signup and user creation, log the user in
+    // This uses Passport's req.logIn to establish a session directly
+    req.logIn(newUser, (err) => {
+        if (err) {
+            console.error("Signup req.logIn error:", err);
             return res.status(500).json({ error: "Failed to establish session after signup." });
         }
 
@@ -134,7 +96,7 @@ router.post("/", async (req, res) => {
         } else if (newUser.role === 'parent') {
             redirectUrl = '/parent-dashboard.html';
         }
-
+        
         console.log(`Signup successful for ${newUser.username}, redirecting to ${redirectUrl}`);
         res.status(201).json({ success: true, message: "Signup successful!", redirect: redirectUrl });
     });
