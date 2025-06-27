@@ -5,7 +5,7 @@
 
 :root {
     /* Sizing & Layout */
-    --header-height: 100px;
+    --header-height: 100px; /* Note: This is used for general headers, not the login page's logo-header */
     --footer-height: 60px;
     --page-horizontal-padding: 20px;
     --section-gap: 20px;
@@ -59,11 +59,10 @@ html {
 
 body {
     margin: 0;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh; /* Changed from height: 100vh to min-height */
+    overflow: auto; /* Changed from hidden to auto to allow page scrolling if needed */
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--light-gray);
     color: var(--text-primary);
@@ -192,7 +191,7 @@ input[type="checkbox"] {
 /* --- 4. Footer --- */
 footer {
     width: 100%;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Ensures footer doesn't shrink when main content grows */
     height: var(--footer-height);
     padding: 1rem;
     background-color: var(--black);
@@ -405,8 +404,8 @@ footer a:hover {
 #chat-container {
     height: calc(100vh - var(--header-height) - var(--footer-height)); /* This height should apply to #chat-tabs-wrapper now */
     padding: 0; /* Remove direct padding here as #chat-tabs-wrapper will handle it */
-    background: none; /* No background/shadow here, handled by #chat-tabs-wrapper */
-    box-shadow: none; /* No background/shadow here, handled by #chat-tabs-wrapper */
+    background: none;
+    box-shadow: none;
     box-sizing: border-box;
     position: relative;
     height: 100%; /* Fill parent's height */
@@ -418,9 +417,9 @@ footer a:hover {
 
 /* Top bar within chat container (containing logo and logout) - Now only within chat-pane */
 #chat-pane #top-bar {
-    display: flex; /* Make it a flex container */
-    align-items: center; /* Vertically align items */
-    justify-content: space-between; /* Push logo left, logout button right */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: var(--dashboard-panel-header-margin-bottom);
     background: none;
     box-shadow: none;
@@ -428,32 +427,32 @@ footer a:hover {
     margin-left: 0;
     margin-right: 0;
     max-width: none;
-    flex-shrink: 0; /* Prevent top bar from shrinking */
-    width: 100%; /* Ensure it takes full width of its parent */
+    flex-shrink: 0;
+    width: 100%;
     box-sizing: border-box;
 }
 
 /* Smaller logo for chat top bar */
-#chat-pane #top-bar #logo { /* Specificity added for this logo */
+#chat-pane #top-bar #logo {
     max-width: 120px;
-    margin-right: 20px; /* Adjust spacing as needed */
-    flex-shrink: 0; /* Prevent logo from shrinking */
+    margin-right: 20px;
+    flex-shrink: 0;
     height: auto;
-    display: block; /* Ensure image behaves as a block element */
+    display: block;
 }
 
 /* Standardized Logout Button */
-#chat-pane #top-bar .logout-button { /* Specificity added for this button */
-    margin-left: auto; /* Push to the right */
-    flex-shrink: 0; /* Prevent button from shrinking */
-    padding: 8px 15px; /* Adjust padding for better look */
+#chat-pane #top-bar .logout-button {
+    margin-left: auto;
+    flex-shrink: 0;
+    padding: 8px 15px;
 }
 
 
 /* Chat messages inner container */
 #chat-container-inner {
-  flex-grow: 1; /* Allow it to grow and fill available space */
-  overflow-y: auto; /* Enable vertical scrolling when content overflows */
+  flex-grow: 1;
+  overflow-y: auto;
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -496,7 +495,7 @@ footer a:hover {
   gap: 8px;
   border-top: 1px solid var(--mid-gray);
   padding-top: 10px;
-  flex-shrink: 0; /* Prevent input container from shrinking */
+  flex-shrink: 0;
 }
 
 #user-input {
@@ -747,20 +746,20 @@ footer a:hover {
 
 /* Tutor Avatar Styling in Sidebar */
 #avatar-container {
-  height: 350px; /* Merged: Added fixed height */
-  max-width: 100%; /* Merged: Keep max-width */
+  height: 350px;
+  max-width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   overflow: hidden;
   margin-top: auto;
-  margin-bottom: 1rem; /* Merged: Added margin-bottom */
+  margin-bottom: 1rem;
   flex-grow: 1;
 }
 
 #student-avatar img,
-#avatar-container img { /* Merged: Combined to apply to both or similar contexts */
-  height: 100%; /* Merged: Use height 100% to fill container */
+#avatar-container img {
+  height: 100%;
   max-width: 100%;
   object-fit: contain;
 }
@@ -827,13 +826,13 @@ footer a:hover {
 /* --- 7. Login, Signup, and Profile Completion Pages --- */
 
 .login-page-wrapper, .signup-page-wrapper, .profile-container {
-    flex-grow: 1; /* Merged: Added flex-grow */
+    flex-grow: 1; /* This will make it take up remaining space between body and footer */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 1rem 20px; /* Merged: Adjusted padding */
-    overflow: auto; /* Merged: Added overflow */
+    padding: 1rem 20px;
+    /* Removed overflow: auto; here as login-container handles its own sizing now */
 }
 
 .login-container, .signup-container, .profile-container {
@@ -848,9 +847,9 @@ footer a:hover {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-grow: 1;
-  max-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); /* Merged: Fixed height calculation */
-  overflow-y: auto;
+  flex-grow: 0; /* Ensures it grows only as much as content, not filling all remaining space */
+  overflow-y: visible; /* Prevents internal scrollbar */
+  min-height: fit-content; /* Ensures it's at least as tall as its content */
 }
 .login-container { max-width: 400px; }
 
@@ -867,14 +866,15 @@ footer a:hover {
     box-shadow: none;
     border-radius: 0;
     padding: 0;
+    flex-shrink: 0;
 }
 .login-page-wrapper .logo-header img,
 .signup-page-wrapper .logo-header img,
 .profile-container .logo-header img {
-    max-width: 180px; /* Merged: Adjusted max-width */
-    max-height: 80px; /* Merged: Added max-height */
-    height: auto; /* Merged: Ensure height scales */
-    object-fit: contain; /* Merged: Added object-fit */
+    max-width: 100%;
+    height: auto;
+    max-height: 100px;
+    object-fit: contain;
     margin-right: 0;
 }
 .login-page-wrapper h1, .signup-page-wrapper h1, .profile-container h1 {
@@ -1116,13 +1116,13 @@ form label, .password-label-row label {
 
 /* Font Awesome icon specific sizing for tutor selection buttons and carousel buttons */
 .tutor-actions button i,
-.carousel-button i { /* Combined for consistency and moved from pick-tutor.html inline style */
+.carousel-button i {
   font-size: 1.2rem;
-  margin-right: 8px; /* Space between icon and text */
+  margin-right: 8px;
 }
 /* Ensure .carousel-button itself also has its desired size, if not set elsewhere */
 .carousel-button {
-    font-size: 2rem; /* Moved from pick-tutor.html inline style */
+    font-size: 2rem;
 }
 
 /* --- 9. Parent/Teacher Dashboard Specific Styles --- */
@@ -1450,7 +1450,6 @@ form label, .password-label-row label {
     margin-bottom: 10px;
     padding: 8px;
     background-color: #f9f9f9;
-    border-radius: 5px;
     border: 1px solid #eee;
 }
 .info-display-group strong {
@@ -1623,7 +1622,7 @@ form label, .password-label-row label {
       padding-bottom: 0;
   }
   footer {
-      position: static;
+      position: static; /* Ensure it's in normal flow */
       margin-top: 10px;
       height: auto;
       padding: 1rem;
@@ -1636,7 +1635,7 @@ form label, .password-label-row label {
   #app-layout-wrapper {
       flex-direction: column;
       height: auto;
-      min-height: 100vh;
+      min-height: 100vh; /* Changed from height: auto to min-height: 100vh */
       margin: 0;
       padding: 10px;
   }
@@ -1657,6 +1656,8 @@ form label, .password-label-row label {
     padding: 20px;
     box-shadow: none;
     border-radius: 0;
+    max-height: none;
+    min-height: unset;
   }
   .admin-header, .logo-header, #chat-container #top-bar {
       border-radius: 0;

@@ -35,7 +35,7 @@ const styleSelect = document.getElementById('style-select');
 const voiceModeEnabledCheckbox = document.getElementById('voice-mode-enabled');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
 const exportHistoryBtn = document.getElementById('export-history-btn');
-const logoutSettingsBtn = document.getElementById('logout-settings-btn');
+// const logoutSettingsBtn = document.getElementById('logout-settings-btn'); // NO LONGER NEEDED HERE
 
 // Leaderboard elements - Declared globally
 const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
@@ -43,7 +43,7 @@ const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
 
 // --- DECLARE ALL GLOBAL LET VARIABLES ---
 // These hold state and might be reassigned
-let currentLevelSpan, currentXpSpan, xpNeededSpan, xpLevelDisplay, thinkingIndicator, logoutBtn, voiceModeToggle, currentAudio = null, isRecognitionActive = false, audioStopBtn;
+let currentLevelSpan, currentXpSpan, xpNeededSpan, xpLevelDisplay, thinkingIndicator, /* logoutBtn, */ voiceModeToggle, currentAudio = null, isRecognitionActive = false, audioStopBtn;
 let studentParentLinkDisplay, studentLinkCodeValue;
 let recognition = null;
 let currentUser = null; // Declare globally and allow reassignment
@@ -343,7 +343,7 @@ function setupSpeechRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
         console.warn("WARN: Speech Recognition not supported in this browser.");
-        if (micBtn) micBtn.style.display = 'none';
+        if (micBtn) micBtn.style.display = 'none'; // Mic button is hidden if not supported
         if (voiceModeToggle) voiceModeToggle.style.display = 'none';
         return;
     }
@@ -471,11 +471,11 @@ async function saveUserSettings() {
             body: JSON.stringify(updatedSettings)
         });
         if (response.ok) {
-            currentUser = { ...currentUser, ...updatedSettings }; // Merge updated settings into currentUser
+            currentUser = { ...currentUser, ...updatedSettings };
             localStorage.setItem('voiceMode', updatedSettings.isHandsFreeModeEnabled);
             isVoiceModeEnabled = updatedSettings.isHandsFreeModeEnabled;
             toggleHandsFreeMode(isVoiceModeEnabled);
-            loadTutorImage(); // Reload tutor image if it changed
+            loadTutorImage();
             alert('Settings saved successfully!');
             console.log("LOG: Settings saved successfully:", updatedSettings);
         } else {
@@ -639,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
     xpNeededSpan = document.getElementById("xp-needed");
     xpLevelDisplay = document.getElementById('xp-level-display');
     thinkingIndicator = document.getElementById("thinking-indicator");
-    logoutBtn = document.getElementById("logoutBtn");
+    // logoutBtn = document.getElementById("logoutBtn"); // REMOVED: Handled by logout.js
     audioStopBtn = document.getElementById('audio-stop-button');
     voiceModeToggle = document.getElementById('handsfree-toggle');
     studentParentLinkDisplay = document.getElementById('student-parent-link-display');
@@ -647,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     if (sendBtn) sendBtn.disabled = true;
-    if (input) input.placeholder = "Type your message here...";
+    if (input) input.placeholder = "Loading chat...";
 
     // Other tool button listeners
     if (attachBtn) attachBtn.addEventListener("click", () => fileInput.click());
@@ -684,6 +684,13 @@ document.addEventListener('DOMContentLoaded', () => {
         audioStopBtn.addEventListener('click', stopAudioPlayback);
     } else {
         console.warn("WARN: audioStopBtn not found. Stop audio functionality will be unavailable.");
+    }
+
+    // NEW: Mic button direct listener (if you want this button to also toggle voice input)
+    if (micBtn) {
+        micBtn.addEventListener('click', () => {
+            toggleHandsFreeMode(!isVoiceModeEnabled); // Toggle hands-free mode
+        });
     }
 
 
@@ -735,21 +742,19 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Export chat history (Feature under development)');
     });
     
-    // REMOVED `window.location.href` to let logout.js handle redirection
-    if (logoutSettingsBtn) logoutSettingsBtn.addEventListener('click', () => {
-        console.log("LOG: Logout from settings button clicked. Delegating to logout.js.");
-        localStorage.removeItem("welcomeShown");
-        localStorage.removeItem("voiceMode");
-    });
-
-    // Logout button in chat pane (REMOVED `window.location.href` to let logout.js handle redirection)
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            console.log("LOG: Logout from chat top bar button clicked. Delegating to logout.js.");
-            localStorage.removeItem("welcomeShown");
-            localStorage.removeItem("voiceMode");
-        });
-    }
+    // REMOVED LOGOUT LISTENERS FROM HERE: Now handled exclusively by logout.js
+    // if (logoutSettingsBtn) logoutSettingsBtn.addEventListener('click', () => {
+    //     console.log("LOG: Logout from settings button clicked. Delegating to logout.js.");
+    //     localStorage.removeItem("welcomeShown");
+    //     localStorage.removeItem("voiceMode");
+    // });
+    // if (logoutBtn) {
+    //     logoutBtn.addEventListener('click', () => {
+    //         console.log("LOG: Logout from chat top bar button clicked. Delegating to logout.js.");
+    //         localStorage.removeItem("welcomeShown");
+    //         localStorage.removeItem("voiceMode");
+    //     });
+    // }
 
     // Initialize speech recognition
     setupSpeechRecognition();
@@ -855,6 +860,7 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.href = "/login.html";
       });
 
+    // Fetch leaderboard if the element exists on the page
     if (document.getElementById('leaderboardTable')) {
         console.log("LOG: Leaderboard table found. Initiating fetch.");
         fetchAndDisplayLeaderboard();
