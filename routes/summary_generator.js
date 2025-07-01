@@ -1,11 +1,13 @@
-const express = require('express'); // <--- ADDED THIS LINE
+// routes/summary_generator.js - UPDATED: Use centralized LLM call, Claude-3 Haiku for summary
+
+const express = require('express');
 const router = express.Router();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { callLLM } = require('../utils/openaiClient'); // Import centralized LLM call
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" }); // Using 1.5 Pro for quality summarization
+// Define model for summarization
+const SUMMARY_MODEL = "claude-3-haiku-20240307"; // Specific Claude model for summarization
 
-// POST /api/generate-summary
+// POST /api/summary (renamed from /api/generate-summary for consistency)
 router.post('/', async (req, res) => {
     const { messageLog, studentProfile } = req.body;
 
@@ -16,14 +18,15 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ message: "studentProfile is required." });
     }
 
-    // Format messageLog for Gemini's history
+    // Prepare messages for the LLM
+    // Claude expects 'user' and 'assistant' roles, and system message as a separate parameter
     const formattedHistory = messageLog.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'model', // Ensure roles are 'user' or 'model'
-        parts: [{ text: msg.content }]
+        role: msg.role === 'user' ? 'user' : 'assistant', // Map to Claude's roles
+        content: msg.content
     }));
 
-    // Construct the prompt for Gemini
-    const summarizationPrompt = `
+    // Construct the prompt for the LLM
+    const summarizationPromptContent = `
     You are an AI assistant tasked with summarizing a tutoring session for a teacher.
     Your goal is to provide a concise, actionable summary of the student's progress and the session's focus, along with suggestions for next steps.
 
@@ -31,7 +34,7 @@ router.post('/', async (req, res) => {
     Name: ${studentProfile.firstName} ${studentProfile.lastName}
     Username: ${studentProfile.username}
     Grade Level: ${studentProfile.gradeLevel}
-    Math Course: ${studentProfile.course || 'N/A'}
+    Math Course: ${studentProfile.mathCourse || 'N/A'}
     Learning Style: ${studentProfile.learningStyle}
     Tone Preference: ${studentProfile.tonePreference}
     ${studentProfile.iepPlan && studentProfile.iepPlan.goals && studentProfile.iepPlan.goals.length > 0 ?
@@ -57,15 +60,16 @@ router.post('/', async (req, res) => {
     `;
 
     try {
-        const result = await model.generateContent({
-            contents: [{ role: "user", parts: [{ text: summarizationPrompt }] }]
+        const completion = await callLLM(SUMMARY_MODEL, formattedHistory, {
+            system: summarizationPromptContent, // System prompt as a dedicated parameter for Claude
+            max_tokens: 500 // Increased max tokens for summary to give Claude more room
         });
 
-        const summaryText = result.response.text().trim();
+        const summaryText = completion.choices[0]?.message?.content?.trim() || "No summary generated.";
         res.json({ summary: summaryText });
 
     } catch (error) {
-        console.error('ERROR: Gemini summarization error:', error?.response?.data || error.message || error);
+        console.error('ERROR: AI summarization error:', error?.message || error);
         res.status(500).json({ message: 'Failed to generate summary.', error: error.message });
     }
 });

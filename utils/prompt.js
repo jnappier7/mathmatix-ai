@@ -1,23 +1,27 @@
-// utils/prompt.js
+// utils/prompt.js - MODIFIED to incorporate IEPs, new AI behaviors, and specific persona
 
-// MODIFIED: Added childProfile and currentRole parameters
 function generateSystemPrompt(userProfile, tutorName = "M∆THM∆TIΧ AI", childProfile = null, currentRole = "student") {
     // Destructure userProfile for easier access
     const {
-        firstName, // User's own first name (parent or student)
+        firstName,
         lastName,
-        gradeLevel, // Student's grade if userProfile is student
-        mathCourse, // Student's math course if userProfile is student
-        tonePreference, // Student's tone preference if userProfile is student
-        learningStyle, // Student's learning style if userProfile is student
-        interests, // Student's interests if userProfile is student
-        iepPlan // Student's IEP if userProfile is student
+        gradeLevel,
+        mathCourse,
+        tonePreference,
+        learningStyle,
+        interests,
+        iepPlan, // Direct access to the IEP plan from the userProfile
+        preferences // Access user preferences for dynamic behaviors
     } = userProfile;
+
+    // Determine specific preference values, with fallbacks
+    const typingDelay = preferences?.typingDelayMs !== undefined ? `${preferences.typingDelayMs / 1000} seconds` : '2 seconds';
+    const typeOnWpm = preferences?.typeOnWpm || '60 words per minute';
 
     let prompt = ``;
 
     if (currentRole === 'student') {
-        // --- STUDENT-SPECIFIC PROMPT ---
+        // --- IDENTITY & CORE PURPOSE ---
         prompt = `
             --- IDENTITY & CORE PURPOSE ---
             YOU ARE: M∆THM∆TIΧ, an interactive AI math tutor. Specifically, you are **${tutorName}**.
@@ -96,15 +100,16 @@ function generateSystemPrompt(userProfile, tutorName = "M∆THM∆TIΧ AI", chil
 
             --- IEP ACCOMMODATIONS & GOALS (PRIORITY for Student) ---
             Always prioritize and integrate these accommodations into your tutoring approach:
-            - Extended Time: ${iepPlan?.extendedTime ? 'Yes (allow ample time for responses, don\'t rush)' : 'No'}
-            - Simplified Instructions: ${iepPlan?.simplifiedInstructions ? 'Yes (break down complex instructions into smaller, simpler steps)' : 'No'}
-            - Frequent Check-ins: ${iepPlan?.frequentCheckIns ? 'Yes (regularly check for understanding, ask "Does that make sense?")' : 'No'}
-            - Visual Support: ${iepPlan?.visualSupport ? 'Yes (suggest using diagrams, graphs, or visual aids where possible)' : 'No'}
-            - Chunking: ${iepPlan?.chunking ? 'Yes (break down problems/concepts into smaller, manageable parts)' : 'No'}
-            - Reduced Distraction: ${iepPlan?.reducedDistraction ? 'Yes (keep responses concise and focused, minimize extraneous details)' : 'No'}
-            - Reading Level: ${iepPlan?.readingLevel ? `Adjust language to around a ${iepPlan.readingLevel}th grade reading level.` : 'Standard'}
-            - Math Anxiety: ${iepPlan?.mathAnxiety ? 'Yes (be especially patient, positive, and reassuring. Emphasize that mistakes are part of learning and celebrate small victories.)' : 'No'}
-            - Preferred Scaffolds: ${iepPlan?.preferredScaffolds && iepPlan.preferredScaffolds.length > 0 ? iepPlan.preferredScaffolds.join(', ') : 'No specific scaffolds'}
+            - Extended Time: ${iepPlan?.accommodations?.extendedTime ? 'Yes (allow ample time for responses, don\'t rush)' : 'No'}
+            - Reduced Distraction Mode: ${iepPlan?.accommodations?.reducedDistraction ? 'Yes (switch to terse, single-idea messages, minimize extraneous details, no emojis/GIFs)' : 'No'}
+            - Calculator Allowed: ${iepPlan?.accommodations?.calculatorAllowed ? 'Yes (explicitly state "feel free to use a calculator here" when appropriate)' : 'No'}
+            - Audio Read-Aloud: ${iepPlan?.accommodations?.audioReadAloud ? 'Yes (suggest using audio playback for word problems)' : 'No'}
+            - Chunked Assignments: ${iepPlan?.accommodations?.chunkedAssignments ? 'Yes (break multi-step problems/concepts into smaller, numbered sub-prompts, wait for each chunk to be answered)' : 'No'}
+            - Breaks As Needed: ${iepPlan?.accommodations?.breaksAsNeeded ? 'Yes (offer short stretch breaks after ~10 mins continuous activity, pause XP decay during idle)' : 'No'}
+            - Digital Multiplication Chart: ${iepPlan?.accommodations?.digitalMultiplicationChart ? 'Yes (suggest using a multiplication chart, hyperlink if possible)' : 'No'}
+            - Large Print / High Contrast: ${iepPlan?.accommodations?.largePrintHighContrast ? 'Yes (adapt verbal descriptions to assume visual aid is high-contrast, don\'t refer to specific colors)' : 'No'}
+            - Math Anxiety Support: ${iepPlan?.accommodations?.mathAnxietySupport ? 'Yes (be especially patient, positive, and reassuring. Emphasize that mistakes are part of learning and celebrate small victories. Before tough problems, state "Let\'s tackle this together—we\'ll go one step at a time." If student is stuck, respond with short reassurance + coping strategy.)' : 'No'}
+            ${iepPlan?.accommodations?.custom && iepPlan.accommodations.custom.length > 0 ? `- Custom Accommodations: ${iepPlan.accommodations.custom.join('; ')}` : ''}
             - Goals: ${iepPlan?.goals && iepPlan.goals.length > 0 ? iepPlan.goals.map(goal => `Goal: "${goal.description}" (Progress: ${goal.currentProgress}%)`).join('; ') : 'No specific goals'}
 
             --- XP AWARDING MECHANISM ---
@@ -153,17 +158,18 @@ function generateSystemPrompt(userProfile, tutorName = "M∆THM∆TIΧ AI", chil
                     ? childProfile.recentSummaries.map(s => `- ${s}`).join('\n')
                     : 'No recent sessions or summaries available yet.'}
             - IEP Plan Accommodations:
-                ${childProfile.iepPlan?.extendedTime ? 'Yes (Extended Time)' : 'No'}
-                ${childProfile.iepPlan?.simplifiedInstructions ? 'Yes (Simplified Instructions)' : 'No'}
-                ${childProfile.iepPlan?.frequentCheckIns ? 'Yes (Frequent Check-ins)' : 'No'}
-                ${childProfile.iepPlan?.visualSupport ? 'Yes (Visual Support)' : 'No'}
-                ${childProfile.iepPlan?.chunking ? 'Yes (Chunking Information)' : 'No'}
-                ${childProfile.iepPlan?.reducedDistraction ? 'Yes (Reduced Distraction)' : 'No'}
-                ${childProfile.iepPlan?.readingLevel ? `Reading Level: ${childProfile.iepPlan.readingLevel}` : 'No specific reading level adjustment'}
-                ${childProfile.iepPlan?.mathAnxiety ? 'Yes (Math Anxiety considerations)' : 'No'}
-                ${childProfile.iepPlan?.preferredScaffolds && childProfile.iepPlan.preferredScaffolds.length > 0 ? `Preferred Scaffolds: ${childProfile.iepPlan.preferredScaffolds.join(', ')}` : 'No specific preferred scaffolds'}
-                ${childProfile.iepPlan?.goals && childProfile.iepPlan.goals.length > 0 ?
-                    `IEP Goals: \n${childProfile.iepPlan.goals.map(goal => `- ${goal.description} (Progress: ${goal.currentProgress}%)`).join('\n')}` : 'No IEP goals provided.'}
+                ${iepPlan?.accommodations?.extendedTime ? 'Yes (Extended Time)' : 'No'}
+                ${iepPlan?.accommodations?.reducedDistraction ? 'Yes (Reduced Distraction)' : 'No'}
+                ${iepPlan?.accommodations?.calculatorAllowed ? 'Yes (Calculator Allowed)' : 'No'}
+                ${iepPlan?.accommodations?.audioReadAloud ? 'Yes (Audio Read-Aloud)' : 'No'}
+                ${iepPlan?.accommodations?.chunkedAssignments ? 'Yes (Chunked Assignments)' : 'No'}
+                ${iepPlan?.accommodations?.breaksAsNeeded ? 'Yes (Breaks As Needed)' : 'No'}
+                ${iepPlan?.accommodations?.digitalMultiplicationChart ? 'Yes (Digital Multiplication Chart)' : 'No'}
+                ${iepPlan?.accommodations?.largePrintHighContrast ? 'Yes (Large Print / High Contrast)' : 'No'}
+                ${iepPlan?.accommodations?.mathAnxietySupport ? 'Yes (Math Anxiety considerations)' : 'No'}
+                ${iepPlan?.accommodations?.custom && iepPlan.accommodations.custom.length > 0 ? `Custom: ${iepPlan.accommodations.custom.join(', ')}` : ''}
+                ${iepPlan?.goals && iepPlan.goals.length > 0 ?
+                    `IEP Goals: \n${iepPlan.goals.map(goal => `- ${goal.description} (Progress: ${goal.currentProgress}%)`).join('\n')}` : 'No IEP goals provided.'}
 
             --- CONVERSATIONAL STYLE & ETIQUETTE (Parent-Facing) ---
             - Maintain a professional, empathetic, and clear tone, consistent with the parent's tone preferences (if available from parent's profile).

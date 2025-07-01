@@ -5,52 +5,70 @@
 
 :root {
     /* Sizing & Layout */
-    --header-height: 100px; /* Note: This is used for general headers, not the login page's logo-header */
-    --footer-height: 60px;
+    --header-height: 80px;
+    --footer-height: 80px; /* Adjusted slightly for more content */
     --page-horizontal-padding: 20px;
-    --section-gap: 20px;
+    --section-gap: 80px; /* Increased for more visual separation */
+    --content-max-width: 1200px; /* Max width for central content */
 
     /* Dashboard Specific Sizing */
     --dashboard-panel-padding: 20px;
     --dashboard-panel-header-height: 40px;
     --dashboard-panel-header-margin-bottom: 15px;
-    --sidebar-width: 250px;
+    --sidebar-width-desktop: 280px; /* Adjusted sidebar width for more content */
     --chat-min-width: 400px;
 
-    /* Colors */
-    --primary-teal: #008080;
-    --dark-teal: #0d9488;
-    --accent-green: #20c997;
-    --dark-accent-green: #17a085;
-    --primary-blue: #0066cc;
-    --soft-blue: #e6f7ff;
-    --dark-blue: #0056b3;
-    --red-alert: #e11d48;
-    --dark-red-alert: #be123c;
-    --light-gray: #f4f7fa;
-    --mid-gray: #eee;
-    --dark-gray: #333;
-    --white: #ffffff;
-    --black: #000000;
+    /* Brand Colors (from utils/brand.js) */
+    --clr-primary-teal: #12B3B3;
+    --clr-accent-hotpink: #FF3B7F;
+    --clr-success-green: #16C86D;
+    --clr-warning-gold: #FFC24B;
+    --clr-error-red: #FF4E4E;
+    --clr-bg-light: #FFFFFF;
+    --clr-bg-dark: #0F1A24;
+    --clr-text: #18202B;
+    --clr-text-dim: #5B6876;
 
-    /* Text Colors */
-    --text-primary: #333;
-    --text-secondary: #555;
-    --text-light: #ccc;
-    --text-dark: #2c3e50;
-    --text-green: #004d40;
+    /* Text Colors (derived from brand colors) */
+    --text-primary: var(--clr-text);
+    --text-secondary: var(--clr-text-dim);
+    --text-light: var(--clr-bg-light);
+    --text-dark: var(--clr-text); /* Used for strong headings */
+    --text-green: var(--clr-success-green);
+    --text-hotpink: var(--clr-accent-hotpink); /* For token counts, badge bursts */
 
-    /* Shadows */
+    /* Shadows (derived from brand rules) */
     --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
     --shadow-lg: 0 8px 25px rgba(0,0,0,0.25);
+    --shadow-card-primary: 0 4px 8px rgba(var(--clr-primary-teal-rgb), 0.2); /* Example for a themed card shadow */
+
+    /* Typography Defaults */
+    --font-family-headlines: "Inter", sans-serif;
+    --font-family-body: "Inter", sans-serif;
+    --font-family-code-math: "ui-monospace", Menlo, Consolas;
+    --font-weight-headlines: 700;
+    --font-weight-body: 400;
+    --brand-base-font-size: 1rem; /* 16px */
+    --brand-h1-font-size: 3em; /* 48px */
+    --brand-h3-font-size: 1.5em; /* 24px */
+
+
+    /* Border Radius */
+    --border-radius-base: 8px; /* General rounded corners */
 }
+
+/* Define RGB values for shadows if needed */
+body {
+    --clr-primary-teal-rgb: 18, 179, 179;
+}
+
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-family-body);
 }
 
 html {
@@ -58,37 +76,45 @@ html {
 }
 
 body {
-    margin: 0;
-    min-height: 100vh; /* Changed from height: 100vh to min-height */
-    overflow: auto; /* Changed from hidden to auto to allow page scrolling if needed */
+    min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scroll due to drawers */
     display: flex;
     flex-direction: column;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--light-gray);
+    font-size: var(--brand-base-font-size);
+    background-color: var(--clr-bg-light);
     color: var(--text-primary);
     min-width: 320px;
+    line-height: 1.6;
 }
 
 
 /* --- 2. Typography & General Elements --- */
 
 h1, h2, h3, h4, h5, h6 {
-    color: var(--text-dark);
+    font-family: var(--font-family-headlines);
+    font-weight: var(--font-weight-headlines);
+    color: var(--clr-text);
     margin-bottom: 0.5em;
+    line-height: 1.2;
 }
+h1 { font-size: var(--brand-h1-font-size); }
+h2 { font-size: 2.2em; }
+h3 { font-size: var(--brand-h3-font-size); }
+h4 { font-size: 1.3em; }
 
 p {
-    line-height: 1.6;
     margin-bottom: 1em;
 }
 
 a {
-    color: var(--primary-teal);
+    color: var(--clr-primary-teal);
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 a:hover {
     text-decoration: underline;
+    color: var(--clr-primary-teal);
 }
 
 button {
@@ -97,13 +123,15 @@ button {
     background: none;
     font-size: 1rem;
     padding: 0.75em 1.25em;
-    border-radius: 8px;
+    border-radius: var(--border-radius-base);
     font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: var(--shadow-sm); /* Default button shadow */
 }
 
 button:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 /* Common form elements */
@@ -116,10 +144,12 @@ textarea,
 select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
+    border: 1px solid var(--clr-text-dim);
+    border-radius: var(--border-radius-base);
     font-size: 1rem;
     box-sizing: border-box;
+    background-color: var(--clr-bg-light);
+    color: var(--clr-text);
 }
 
 input[type="checkbox"] {
@@ -127,84 +157,184 @@ input[type="checkbox"] {
     margin-right: 5px;
 }
 
-/* --- 3. Header & Logout Button (Consistent Across Pages) --- */
+/* --- 3. Global Button Styles --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-weight: var(--font-weight-headlines);
+    border-radius: var(--border-radius-base);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
 
-/* Base header styles */
-.admin-header, .logo-header, #chat-container #top-bar {
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Primary Button (Hot Pink) */
+.btn-primary {
+    background-color: var(--clr-accent-hotpink);
+    color: var(--clr-bg-light);
+}
+.btn-primary:hover {
+    background-color: #e63273; /* Darken manually */
+}
+
+/* Primary Outline Button (Hot Pink Border) */
+.btn-primary-outline {
+    background-color: transparent;
+    color: var(--clr-accent-hotpink);
+    border: 2px solid var(--clr-accent-hotpink);
+    box-shadow: none;
+}
+.btn-primary-outline:hover {
+    background-color: var(--clr-accent-hotpink);
+    color: var(--clr-bg-light);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Secondary Button (Teal) */
+.btn-secondary {
+    background-color: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
+}
+.btn-secondary:hover {
+    background-color: #109a9a; /* Darken manually */
+}
+
+/* Tertiary Button (Gray) */
+.btn-tertiary {
+    background-color: var(--clr-text-dim);
+    color: var(--clr-bg-light);
+}
+.btn-tertiary:hover {
+    background-color: #4a5763; /* Darken manually */
+}
+
+/* Hero specific buttons */
+.btn-hero-primary {
+    background-color: var(--clr-accent-hotpink);
+    color: var(--clr-bg-light);
+    font-size: 1.15rem;
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow-lg);
+}
+.btn-hero-primary:hover {
+    background-color: #e63273;
+}
+
+.btn-hero-secondary {
+    background-color: transparent;
+    color: var(--clr-primary-teal);
+    border: 2px solid var(--clr-primary-teal);
+    font-size: 1.15rem;
+    padding: 1rem 2rem;
+    box-shadow: none;
+}
+.btn-hero-secondary:hover {
+    background-color: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
+}
+
+
+/* --- 4. Card Styles (Reusable) --- */
+.card-style-1 {
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-md);
+    padding: var(--dashboard-panel-padding);
+    border: 1px solid rgba(var(--clr-primary-teal-rgb), 0.1); /* Subtle teal border */
+}
+
+.card-style-1.card-hotpink-border {
+    border: 2px solid var(--clr-accent-hotpink);
+    box-shadow: var(--shadow-lg);
+}
+
+
+/* --- 5. Header & Footer --- */
+.landing-page-body {
     display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.landing-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 15px var(--page-horizontal-padding);
-    background-color: var(--white);
-    border-radius: 16px;
-    box-shadow: var(--shadow-md);
-    margin-bottom: var(--section-gap);
+    background-color: var(--clr-bg-light);
+    box-shadow: var(--shadow-sm);
     flex-shrink: 0;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+/* NEW: Header Logo Container for Centering */
+.header-logo-container {
+    flex-grow: 1; /* Allows logo to take up space */
+    display: flex;
+    justify-content: center; /* Center logo horizontally */
+    align-items: center;
+    padding: 10px 0; /* Add some vertical padding */
+}
+
+/* NEW: Main Logo Styling */
+.main-logo-hero {
+    max-height: 80px; /* Increased size */
+    width: auto;
+    display: block;
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Soft shadow for elegance */
+    transition: all 0.3s ease;
+}
+.main-logo-hero:hover {
+    filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.15));
+}
+
+
+.landing-nav {
+    display: flex;
+    gap: 15px;
+    flex-shrink: 0; /* Prevent nav from shrinking */
+}
+/* Adjust nav spacing for wrapped state */
+.landing-header.wrapped .landing-nav {
+    margin-top: 10px;
     width: 100%;
-    max-width: 1400px;
-    margin: 0 auto var(--section-gap);
-    overflow: visible; /* Ensure content is not clipped */
-    min-height: 80px; /* Ensure enough height for the logo itself */
-    justify-content: center; /* Center content horizontally within the header */
-    flex-wrap: wrap; /* Allow content to wrap on smaller screens if it gets too wide */
-}
-
-/* Specific styling for the logo within headers */
-.admin-header img, .logo-header img {
-    max-width: 180px;
-    margin-right: 20px;
-    flex-shrink: 0;
-    height: auto; /* Ensure height scales proportionally */
-    max-height: 100px; /* Example max height to prevent it from becoming too large */
-}
-
-/* Header titles */
-.admin-header h1, .logo-header h1 {
-    font-size: 2em;
-    color: var(--text-dark);
-    margin: 0;
-    flex-grow: 1;
-}
-.logo-header p {
-    font-size: 1em;
-    color: var(--text-secondary);
-    margin-left: 20px;
-    flex-grow: 1;
-}
-
-/* Standardized Logout Button */
-.logout-button {
-    background-color: var(--dark-gray);
-    color: var(--white);
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-.logout-button:hover {
-    background-color: #555;
-    transform: translateY(-1px);
+    justify-content: center;
 }
 
 
-/* --- 4. Footer --- */
+.landing-main {
+    flex-grow: 1; /* Allows main content to expand and fill space */
+    width: 100%;
+    max-width: var(--content-max-width); /* Constrain max width for content */
+    margin: 0 auto;
+    padding: var(--section-gap) var(--page-horizontal-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+}
+
+
 footer {
     width: 100%;
-    flex-shrink: 0; /* Ensures footer doesn't shrink when main content grows */
+    flex-shrink: 0;
     height: var(--footer-height);
     padding: 1rem;
-    background-color: var(--black);
-    color: var(--text-light);
+    background-color: var(--clr-bg-dark);
+    color: var(--clr-bg-light);
     font-size: 0.85rem;
     text-align: center;
-    border-top: 1px solid #333;
     box-sizing: border-box;
     z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    margin-top: auto; /* Push footer to bottom */
 }
 
 footer p {
@@ -212,7 +342,7 @@ footer p {
 }
 
 footer a {
-  color: var(--text-light);
+  color: var(--clr-bg-light);
   text-decoration: none;
   margin: 0 0.5rem;
 }
@@ -220,14 +350,405 @@ footer a {
 footer a:hover {
   text-decoration: underline;
 }
+.edtech-pledge {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 5px;
+}
 
 
-/* --- 5. Page Layout Wrappers (Common) --- */
+/* --- 6. Landing Page Sections (MODIFIED & NEW) --- */
+.section-title {
+    text-align: center;
+    margin-bottom: var(--section-gap);
+    color: var(--clr-primary-teal);
+    font-size: 2.5em; /* Large section titles */
+    font-weight: var(--font-weight-headlines);
+}
 
-/* Overall wrapper for chat, admin, parent, teacher dashboards */
-#app-layout-wrapper, .admin-page-wrapper, .home-container {
+/* Hero Section */
+.hero-section {
     display: flex;
-    flex-direction: column; /* Stacks header, then main-content, then (conceptual) footer space */
+    flex-direction: column; /* Stack content and image */
+    align-items: center;
+    gap: var(--section-gap);
+    text-align: center;
+    padding: var(--section-gap) 0;
+    background: linear-gradient(135deg, var(--clr-primary-teal) 0%, var(--clr-bg-light) 100%); /* Teal to white gradient */
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--section-gap);
+}
+
+.hero-content {
+    max-width: 800px;
+    padding: 0 var(--page-horizontal-padding);
+}
+
+.hero-tagline {
+    font-size: 3em; /* Larger for impact */
+    color: var(--clr-bg-light); /* White text on teal */
+    margin-bottom: 0.3em;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+.hero-subtagline {
+    font-size: 1.5em; /* Larger */
+    color: var(--clr-bg-light);
+    margin-bottom: 0.8em;
+    opacity: 0.9;
+    font-weight: var(--font-weight-body);
+}
+.hero-equity-blurb {
+    font-size: 1.1em;
+    color: var(--clr-bg-light);
+    margin-bottom: 1.5em;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.hero-image-card {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 8px 15px rgba(var(--clr-primary-teal-rgb), 0.3); /* Teal themed shadow */
+    max-width: 90%;
+}
+.hero-classroom-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-base) - 2px; /* Slightly smaller border radius than card */
+    display: block;
+}
+
+
+/* NEW SECTION: Visual Features (Mimics 3-column dashboard panels) */
+.visual-features-section {
+    text-align: center;
+    padding: var(--section-gap) 0;
+}
+
+.visual-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive 3-column grid */
+    gap: 30px;
+    margin-top: var(--section-gap);
+    justify-content: center;
+}
+
+.visual-feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    min-height: 380px; /* Ensure consistent height for visual balance */
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.visual-feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.visual-feature-image {
+    max-width: 100%;
+    height: 200px; /* Increased fixed height for prominent imagery */
+    object-fit: contain;
+    border-radius: var(--border-radius-base);
+    margin-bottom: 25px;
+    box-shadow: var(--shadow-sm);
+}
+
+.visual-feature-item h3 {
+    color: var(--clr-primary-teal);
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.visual-feature-item p {
+    font-size: 0.95em;
+    color: var(--clr-text-dim);
+    flex-grow: 1;
+}
+
+
+/* Pricing/Equity Section */
+.pricing-equity-section {
+    text-align: center;
+    padding: var(--section-gap) 0;
+}
+.pricing-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: var(--section-gap);
+    justify-content: center;
+}
+.pricing-card {
+    text-align: center;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 280px;
+}
+.pricing-card h3 {
+    color: var(--clr-primary-teal);
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+.pricing-card .price-beta, .pricing-card .price-post-beta {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--clr-accent-hotpink);
+    margin-bottom: 10px;
+}
+.pricing-card .price-post-beta {
+    color: var(--clr-text);
+    font-size: 1.2em;
+}
+.pricing-card .price-contact {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--clr-primary-teal);
+    margin-bottom: 10px;
+}
+.pricing-card .equity-cue {
+    font-size: 0.9em;
+    color: var(--clr-text-dim);
+    margin-bottom: 20px;
+    flex-grow: 1; /* Pushes button to bottom */
+}
+.pricing-equity-section .btn {
+    width: 100%; /* Full width buttons in cards */
+    max-width: 200px;
+}
+.access-grants-note {
+    font-size: 0.9em;
+    margin-top: 30px;
+}
+
+
+/* NEW SECTION: Our Approach (Replaces 'How It Works' stepper) */
+.our-approach-section {
+    padding: var(--section-gap) 0;
+    text-align: center;
+}
+
+.our-approach-section .section-title {
+    margin-bottom: 60px; /* More space below title */
+}
+
+.approach-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px; /* Increased gap */
+    max-width: 900px; /* Keep it a bit narrower than main content */
+    margin: 0 auto;
+}
+
+.approach-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.approach-icon {
+    width: 120px; /* Larger icons */
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.1));
+    transition: transform 0.2s ease;
+}
+.approach-icon:hover {
+    transform: translateY(-5px);
+}
+
+.approach-item h3 {
+    color: var(--clr-primary-teal);
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+.approach-item p {
+    font-size: 0.9em;
+    color: var(--clr-text-dim);
+}
+
+
+/* Feature Grid Section - slight refinement */
+.feature-grid-section {
+    padding: var(--section-gap) 0;
+}
+.feature-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: var(--section-gap);
+    justify-content: center;
+}
+.feature-card {
+    text-align: center;
+    padding: 30px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.feature-card h3 {
+    color: var(--clr-primary-teal);
+    margin-bottom: 10px;
+    font-size: 1.3em;
+}
+.feature-card p {
+    font-size: 0.95em;
+    color: var(--clr-text-dim);
+}
+
+
+/* Social Proof Section */
+.social-proof-section {
+    background-color: var(--clr-primary-teal); /* Teal tinted backdrop */
+    color: var(--clr-bg-light);
+    padding: var(--section-gap);
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+.social-proof-section .section-title {
+    color: var(--clr-bg-light);
+}
+.testimonial-carousel {
+    max-width: 800px;
+    margin: 0 auto 30px;
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+}
+.testimonial-item {
+    font-size: 1.2em;
+    font-style: italic;
+    margin-bottom: 15px;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 0;
+}
+.testimonial-item blockquote {
+    margin: 0;
+}
+.testimonial-author {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: rgba(255,255,255,0.8);
+}
+.school-logos-container {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.school-logos-container p {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+/* .school-logos-container img { max-height: 40px; filter: grayscale(100%) brightness(200%); opacity: 0.7; } */
+
+
+/* FAQ Section */
+.faq-section {
+    padding: var(--section-gap) 0;
+}
+.accordion-container {
+    max-width: 800px;
+    margin: var(--section-gap) auto 0;
+}
+.accordion-item {
+    margin-bottom: 15px;
+    overflow: hidden; /* Hide overflowing content initially */
+}
+.accordion-header {
+    width: 100%;
+    text-align: left;
+    padding: 15px 20px;
+    background-color: var(--clr-bg-light);
+    border: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-sm);
+    color: var(--clr-text);
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+.accordion-header::after {
+    content: '\002B'; /* Plus sign */
+    font-weight: bold;
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+.accordion-header.active::after {
+    transform: rotate(45deg); /* Rotate for 'x' or close icon */
+}
+.accordion-content {
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+    padding: 0 20px;
+    background-color: var(--clr-bg-light);
+    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);
+    box-shadow: var(--shadow-sm);
+}
+.accordion-content p {
+    padding: 15px 0;
+    color: var(--clr-text-dim);
+}
+
+
+/* Final CTA Section */
+.final-cta-section {
+    text-align: center;
+    padding: var(--section-gap) 0;
+    margin-bottom: var(--section-gap);
+    background: linear-gradient(135deg, var(--clr-bg-light) 0%, var(--clr-primary-teal) 100%); /* White to teal gradient */
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-lg);
+    padding: 40px var(--page-horizontal-padding);
+}
+.final-cta-blurb {
+    font-size: 1.2em;
+    color: var(--clr-text);
+    margin-bottom: 30px;
+}
+
+
+/* --- 7. Page Layout Wrappers (Common) --- */
+
+/* General page wrappers for content */
+#app-layout-wrapper, .admin-page-wrapper, .login-page-wrapper, .signup-page-wrapper, .profile-container, .page-wrapper {
+    display: flex;
+    flex-direction: column;
     flex: 1; /* Allows it to take all available vertical space in body */
     align-items: center; /* Centers content horizontally */
     padding: 0 var(--page-horizontal-padding);
@@ -242,43 +763,42 @@ footer a:hover {
     display: flex;
     width: 100%;
     gap: var(--section-gap);
-    flex-grow: 1; /* Allows it to fill vertical space */
+    flex-grow: 1;
     margin-bottom: var(--section-gap);
-    height: 100%; /* Ensure it takes full available height */
-    align-items: stretch; /* Ensure direct children stretch to fill height */
+    height: 100%;
+    align-items: stretch;
 }
 
 /* Dashboard Sidebar Widgets (Left/Right) */
 .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
-    flex: 0 0 var(--sidebar-width); /* Fixed width, no grow, no shrink */
+    flex: 0 0 var(--sidebar-width-desktop);
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
-    overflow-y: auto; /* Allows scrolling within the sidebar itself */
-    min-width: var(--sidebar-width); /* Ensure it maintains its intended minimum width */
-    height: 100%; /* Fill parent's height */
-    box-sizing: border-box; /* Include padding/border in width calculation */
+    overflow-y: auto;
+    min-width: var(--sidebar-width-desktop);
+    height: 100%;
+    box-sizing: border-box;
 }
 
 /* Central Content Area for Dashboards */
 .admin-central-content, #chat-container {
-    flex: 1; /* Allow it to grow and shrink */
-    min-width: 0; /* Allow central content to shrink smaller than its natural size */
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
     height: 100%;
-    box-sizing: border-box; /* Include padding/border in width calculation */
+    box-sizing: border-box;
 }
 
 /* Dashboard Panel Base Style */
 .dashboard-panel {
-    background: var(--white);
-    border-radius: 16px;
+    background: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
     box-shadow: var(--shadow-md);
     padding: var(--dashboard-panel-padding);
     width: 100%;
-    /* Allow panels to grow to fill space within sidebars/central column */
     flex-grow: 1;
 }
 
@@ -287,8 +807,8 @@ footer a:hover {
     font-weight: bold;
     margin-bottom: var(--dashboard-panel-header-margin-bottom);
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--mid-gray);
-    color: var(--text-dark);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--clr-text);
 }
 
 /* Table Specifics */
@@ -318,11 +838,11 @@ footer a:hover {
     z-index: 1;
 }
 #leaderboardTable td {
-    color: var(--text-green);
+    color: var(--clr-success-green);
 }
 
 
-/* --- 6. Chat Page Specifics (excluding common layout) --- */
+/* --- 8. Chat Page Specifics (excluding common layout) --- */
 
 /* Overall application wrapper for chat page */
 #app-layout-wrapper {
@@ -333,90 +853,33 @@ footer a:hover {
     max-width: 1400px;
     margin: 20px auto;
     box-sizing: border-box;
-    padding: 0px 20px;
+    padding: 0px var(--page-horizontal-padding);
     gap: var(--section-gap);
-    min-height: 500px; /* Ensure minimum height for the layout */
+    min-height: 500px;
 }
 
-/* Wrapper for the central tabbed pane within chat-container */
-#chat-tabs-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* Make it fill its parent (#chat-container) */
-    background: var(--white);
-    border-radius: 16px;
-    box-shadow: var(--shadow-md);
-    padding: var(--dashboard-panel-padding); /* Apply padding to the wrapper */
-    box-sizing: border-box;
-    flex: 1; /* Allow it to grow and take space */
-    min-width: 0; /* Ensure the wrapper itself can shrink */
-    overflow: hidden; /* Hide overflowing content if layout breaks unexpectedly */
-}
-
-/* Tab bar styling */
-.tab-bar {
-    display: flex;
-    justify-content: flex-start; /* Align tabs to the left */
-    gap: 10px;
-    margin-bottom: 15px; /* Space between tabs and content */
-    border-bottom: 1px solid var(--mid-gray); /* Subtle separator */
-    padding-bottom: 5px; /* Padding for the separator */
-    flex-shrink: 0; /* Prevent tab bar from shrinking */
-    overflow-x: auto; /* Allow horizontal scrolling if tabs overflow */
-    white-space: nowrap; /* Keep tab buttons on one line */
-}
-
-/* Tab button styling */
-.tab-button {
-    padding: 8px 16px;
-    border: none;
-    background-color: var(--light-gray); /* Inactive tab background */
-    color: var(--text-secondary); /* Inactive tab text color */
-    font-weight: bold;
-    border-radius: 8px 8px 0 0; /* Rounded top corners */
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    flex-shrink: 0; /* Prevent buttons from shrinking */
-}
-
-/* Active tab button styling */
-.tab-button.active {
-    background-color: var(--accent-green); /* Active tab background */
-    color: var(--white); /* Active tab text color */
-    box-shadow: var(--shadow-sm); /* Subtle shadow for active tab */
-}
-
-.tab-button:hover:not(.active) {
-    background-color: var(--mid-gray); /* Hover effect for inactive tabs */
-    color: var(--text-dark);
-}
-
-/* Tab content pane styling */
-.tab-content {
-    flex-grow: 1; /* Allow content to fill available space */
-    overflow-y: auto; /* Enable scrolling for content within the tab */
-    padding: 10px 0; /* Padding inside the content area */
-    display: none; /* Hidden by default, JS will show active one */
-    box-sizing: border-box;
-}
-
-/* Ensure the chat-container itself only defines the main area, not the tabs */
+/* Wrapper for the central chat container - this is now the MAIN chat pane */
 #chat-container {
-    height: calc(100vh - var(--header-height) - var(--footer-height)); /* This height should apply to #chat-tabs-wrapper now */
-    padding: 0; /* Remove direct padding here as #chat-tabs-wrapper will handle it */
-    background: none;
+    height: 100%;
+    padding: 0; /* No padding here as inner elements will handle it */
+    background: none; /* No background on the container itself */
     box-shadow: none;
     box-sizing: border-box;
     position: relative;
-    height: 100%; /* Fill parent's height */
-    display: flex; /* Explicitly make it a flex container */
-    flex-direction: column; /* Stack its children vertically */
-    gap: 0; /* No gap here, as tabs wrapper is direct child */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background-color: var(--clr-bg-light); /* Moved background here */
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-md);
+    padding: var(--dashboard-panel-padding); /* Padding for the inner content */
+    min-width: var(--chat-min-width); /* Ensure minimum width */
 }
 
 
-/* Top bar within chat container (containing logo and logout) - Now only within chat-pane */
-#chat-pane #top-bar {
+/* Top bar within chat container (containing logo and logout) */
+#top-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -430,10 +893,12 @@ footer a:hover {
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
+    border-bottom: 1px solid var(--clr-text-dim);
+    padding-bottom: 10px;
 }
 
 /* Smaller logo for chat top bar */
-#chat-pane #top-bar #logo {
+#top-bar #logo {
     max-width: 120px;
     margin-right: 20px;
     flex-shrink: 0;
@@ -442,15 +907,20 @@ footer a:hover {
 }
 
 /* Standardized Logout Button */
-#chat-pane #top-bar .logout-button {
+#top-bar .logout-button {
     margin-left: auto;
     flex-shrink: 0;
     padding: 8px 15px;
+    background-color: var(--clr-text-dim);
+    color: var(--clr-bg-light);
+}
+#top-bar .logout-button:hover {
+    background-color: #4a5763;
 }
 
 
 /* Chat messages inner container */
-#chat-container-inner {
+#messages {
   flex-grow: 1;
   overflow-y: auto;
   padding: 10px;
@@ -458,8 +928,8 @@ footer a:hover {
   flex-direction: column;
   gap: 10px;
   min-height: 100px;
-  border: 1px solid var(--mid-gray);
-  border-radius: 8px;
+  border: 1px solid var(--clr-text-dim);
+  border-radius: var(--border-radius-base);
   background-color: #fcfcfc;
 }
 
@@ -470,15 +940,16 @@ footer a:hover {
   line-height: 1.5;
   white-space: pre-wrap;
   word-wrap: break-word;
+  font-size: 0.95em;
 }
 
 .message.user {
-  background-color: #dcf8c6;
+  background-color: #dcf8c6; /* Light green */
   align-self: flex-end;
 }
 
 .message.ai {
-  background-color: #e8ecf1;
+  background-color: #e8ecf1; /* Light grey/blue */
   align-self: flex-start;
 }
 
@@ -493,7 +964,7 @@ footer a:hover {
   display: flex;
   align-items: flex-end;
   gap: 8px;
-  border-top: 1px solid var(--mid-gray);
+  border-top: 1px solid var(--clr-text-dim);
   padding-top: 10px;
   flex-shrink: 0;
 }
@@ -504,7 +975,7 @@ footer a:hover {
   max-height: 150px;
   overflow-y: auto;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: var(--border-radius-base);
   border: 1px solid #ccc;
   font-size: 16px;
   resize: vertical;
@@ -512,11 +983,11 @@ footer a:hover {
 
 #send-button {
   padding: 10px 18px;
-  background-color: var(--accent-green);
-  color: var(--white);
-  border-radius: 10px;
+  background-color: var(--clr-primary-teal); /* Changed to primary teal */
+  color: var(--clr-bg-light);
+  border-radius: var(--border-radius-base);
 }
-#send-button:hover { background-color: var(--dark-accent-green); }
+#send-button:hover { background-color: #109a9a; } /* Darker teal */
 
 /* Input Tools (Mic, Equation, Attach) */
 #tools-left, #tools-right {
@@ -530,6 +1001,7 @@ footer a:hover {
     padding: 5px;
     border-radius: 5px;
     line-height: 1;
+    box-shadow: none; /* No shadow on icon buttons */
 }
 #tools-left button img, #tools-right button img {
     width: 24px;
@@ -549,7 +1021,7 @@ footer a:hover {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.6);
-  color: var(--white);
+  color: var(--clr-bg-light);
   font-size: 2rem;
   font-weight: bold;
   display: flex;
@@ -558,132 +1030,91 @@ footer a:hover {
   z-index: 9999;
 }
 
-/* Thinking Indicator */
+/* Thinking Indicator (iMessage style) */
 #thinking-indicator, #parent-thinking-indicator {
-  display: flex;
+  display: none; /* Controlled by JS */
   align-items: center;
+  justify-content: flex-start; /* Aligned left for AI bubble feel */
   gap: 6px;
-  justify-content: center;
-  padding: 8px 0;
+  padding: 8px 16px;
+  margin-left: 5px; /* Indent slightly like a bubble */
+  border-radius: 20px; /* Bubble shape */
+  background-color: #e8ecf1; /* AI bubble background */
   flex-shrink: 0;
-  font-size: 0.85rem;
-  color: #666;
+  font-size: 0.95em;
+  color: var(--clr-text-dim);
+  max-width: 75%;
+  align-self: flex-start; /* Align left */
 }
 .dot {
   height: 10px; width: 10px;
-  background-color: #999;
+  background-color: var(--clr-primary-teal); /* Teal dots */
   border-radius: 50%;
   animation: blink 1.2s infinite ease-in-out;
 }
 .dot:nth-child(2) { animation-delay: 0.2s; }
 .dot:nth-child(3) { animation-delay: 0.4s; }
 @keyframes blink {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1.0); }
+  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+  40% { transform: scale(1.0); opacity: 1; }
 }
 
 /* Lesson Header in Chat */
 #lessons-pane #lesson-header, #chat-pane #lesson-header {
-    background-color: var(--soft-blue);
+    background-color: var(--clr-primary-teal); /* Changed to primary teal */
+    color: var(--clr-bg-light);
     padding: 10px;
     border-bottom: 1px solid #cceeff;
     margin-bottom: 10px;
     text-align: center;
-    border-radius: 8px;
+    border-radius: var(--border-radius-base);
     flex-shrink: 0;
 }
-#lessons-pane #lesson-header h2, #chat-pane #lesson-header h2 { margin: 0; color: var(--dark-blue); }
-
-/* Hands-free toggle */
-#handsfree-toggle-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-#handsfree-toggle {
-    width: 50px;
-    height: 30px;
-    border-radius: 15px;
-    background-color: #ccc;
-    position: relative;
-    transition: background-color 0.3s;
-    padding: 0;
-}
-#handsfree-toggle::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background-color: white;
-    transition: transform 0.3s;
-}
-#handsfree-toggle.green {
-    background-color: var(--accent-green);
-}
-#handsfree-toggle.green::before {
-    transform: translateX(20px);
-}
-#handsfree-label {
-    font-size: 0.9em;
-    color: var(--text-secondary);
-}
-#audio-stop-button {
-    background-color: var(--red-alert);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin-left: 10px;
-    font-size: 1.2rem;
-}
+#lessons-pane #lesson-header h2, #chat-pane #lesson-header h2 { margin: 0; color: var(--clr-bg-light); }
 
 
 /* Leaderboard Widget (Left Sidebar) */
 #leaderboard-content {
-    background-color: #e0f2f1;
-    color: var(--text-green);
-    border-radius: 12px;
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
     overflow: hidden;
     box-shadow: var(--shadow-md);
     flex-grow: 0;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
+    height: auto; /* Allow content to dictate height */
 }
 
 #leaderboard-content .popup-header {
     margin-bottom: 0;
     flex-shrink: 0;
-    padding: 8px 10px;
-    background-color: #00796B;
-    font-size: 0.95rem;
-    font-weight: bold;
-    color: var(--white);
+    padding: 10px 15px;
+    background-color: var(--clr-primary-teal);
+    font-size: 1.1rem;
+    font-weight: var(--font-weight-headlines);
+    color: var(--clr-bg-light);
     text-align: center;
+    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
 }
 
 #leaderboard-content .popup-header h2 {
     margin: 0;
-    font-size: 0.95rem;
-    color: var(--white);
+    font-size: 1.1rem;
+    color: var(--clr-bg-light);
 }
 
 #leaderboard-content .overflow-y-auto {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 8px 10px;
+    padding: 10px 15px;
 }
 
 
 /* XP/Level Widget (Right Sidebar) */
 #xp-level-display {
-    background-color: #e0f2f1;
-    color: var(--text-green);
-    border-radius: 12px;
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
     overflow: hidden;
     text-align: center;
     box-shadow: var(--shadow-md);
@@ -691,57 +1122,48 @@ footer a:hover {
     flex-direction: column;
     flex-grow: 0;
     flex-shrink: 0;
+    padding: 15px;
 }
-
 #xp-level-display #level-badge {
-    flex-grow: 1;
-    background-color: #00796B;
-    color: var(--white);
+    background-color: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: var(--font-weight-headlines);
+    padding: 5px 10px;
+    border-radius: var(--border-radius-base);
+    margin-bottom: 10px;
 }
 
 #xp-level-display #xp-text {
-    flex-grow: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
+    color: var(--clr-text-dim);
 }
 
 /* Student's Parent Link Code Display */
 #student-parent-link-display {
-    background-color: #e0f2f1;
-    color: var(--text-green);
-    border-radius: 12px;
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
     box-shadow: var(--shadow-md);
-    padding: 10px;
+    padding: 15px;
     text-align: center;
 }
 
 #student-link-code-value {
-    background-color: #c8e6c9;
+    background-color: rgba(var(--clr-primary-teal-rgb), 0.1);
     padding: 8px 15px;
-    border-radius: 8px;
+    border-radius: var(--border-radius-base);
     font-size: 1.2rem;
     font-weight: bold;
-    color: #1b5e20;
+    color: var(--clr-primary-teal);
     cursor: copy;
     margin: 10px 0;
     display: block;
-}
-
-#invite-code-label {
-    font-size: 0.9rem;
-    font-weight: bold;
-}
-
-#invite-code-description {
-    font-size: 0.8rem;
-    margin-top: 5px;
 }
 
 /* Tutor Avatar Styling in Sidebar */
@@ -755,28 +1177,41 @@ footer a:hover {
   margin-top: auto;
   margin-bottom: 1rem;
   flex-grow: 1;
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--shadow-md);
 }
 
-#student-avatar img,
-#avatar-container img {
+#student-avatar {
+    width: 100%;
+    height: 100%;
+    display: flex; /* Ensure inner content can be centered */
+    justify-content: center;
+    align-items: center;
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
+    overflow: hidden;
+}
+
+#student-avatar img {
   height: 100%;
   max-width: 100%;
   object-fit: contain;
+  border-radius: var(--border-radius-base);
 }
 
 /* Course Card in Sidebar (Guided Path) */
 .course-card-wrapper {
     margin-top: 15px;
     padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    border: 1px solid #eee;
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
+    border: 1px solid rgba(var(--clr-primary-teal-rgb), 0.1);
     text-align: center;
 }
 .course-card {
     padding: 15px 5px;
-    border-radius: 8px;
-    background-color: var(--white);
+    border-radius: var(--border-radius-base);
+    background-color: var(--clr-bg-light);
     box-shadow: var(--shadow-sm);
 }
 .course-card h3 {
@@ -793,8 +1228,8 @@ footer a:hover {
     border-radius: 5px;
     width: 90%;
 }
-.course-card .enroll-btn { background-color: #4CAF50; color: var(--white); }
-.course-card .enroll-btn:hover { background-color: #388E3C; }
+.course-card .enroll-btn { background-color: var(--clr-success-green); color: var(--clr-bg-light); }
+.course-card .enroll-btn:hover { background-color: #16c86d; }
 
 
 /* Progress Circle for Course Cards */
@@ -810,7 +1245,7 @@ footer a:hover {
     background: #e0e0e0;
 }
 .progress-circle-inner {
-    background-color: var(--white);
+    background-color: var(--clr-bg-light);
     width: 70%;
     height: 70%;
     border-radius: 50%;
@@ -819,37 +1254,36 @@ footer a:hover {
     align-items: center;
     justify-content: center;
     font-size: 0.8em;
-    color: var(--text-primary);
+    color: var(--clr-text);
 }
 
 
-/* --- 7. Login, Signup, and Profile Completion Pages --- */
+/* --- 9. Login, Signup, and Profile Completion Pages --- */
 
 .login-page-wrapper, .signup-page-wrapper, .profile-container {
-    flex-grow: 1; /* This will make it take up remaining space between body and footer */
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 1rem 20px;
-    /* Removed overflow: auto; here as login-container handles its own sizing now */
 }
 
 .login-container, .signup-container, .profile-container {
   max-width: 600px;
   width: 100%;
   padding: 30px;
-  background: var(--white);
-  border-radius: 12px;
+  background: var(--clr-bg-light);
+  border-radius: var(--border-radius-base);
   box-shadow: var(--shadow-md);
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-grow: 0; /* Ensures it grows only as much as content, not filling all remaining space */
-  overflow-y: visible; /* Prevents internal scrollbar */
-  min-height: fit-content; /* Ensures it's at least as tall as its content */
+  flex-grow: 0;
+  overflow-y: visible;
+  min-height: fit-content;
 }
 .login-container { max-width: 400px; }
 
@@ -892,7 +1326,7 @@ form label, .password-label-row label {
   display: block;
   margin: 15px 0 5px;
   font-weight: bold;
-  color: var(--text-dark);
+  color: var(--clr-text);
 }
 
 .submit-btn {
@@ -900,12 +1334,12 @@ form label, .password-label-row label {
   width: 100%;
   padding: 12px;
   font-size: 1.1rem;
-  background: var(--primary-teal);
-  color: var(--white);
-  border-radius: 8px;
+  background: var(--clr-primary-teal);
+  color: var(--clr-bg-light);
+  border-radius: var(--border-radius-base);
   font-weight: bold;
 }
-.submit-btn:hover { background: var(--dark-teal); }
+.submit-btn:hover { background: #109a9a; }
 
 /* Centering the "OR" text */
 .or-separator {
@@ -922,7 +1356,7 @@ form label, .password-label-row label {
     content: '';
     flex-grow: 1;
     height: 1px;
-    background-color: var(--mid-gray);
+    background-color: var(--clr-text-dim);
 }
 .or-separator span {
     padding: 0 15px;
@@ -945,13 +1379,13 @@ form label, .password-label-row label {
   justify-content: center;
   padding: 8px 12px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: var(--border-radius-base);
   font-weight: bold;
   font-size: 0.95rem;
   min-width: 120px;
   flex-grow: 1;
-  color: var(--text-primary);
-  background-color: var(--white);
+  color: var(--clr-text);
+  background-color: var(--clr-bg-light);
   text-decoration: none;
 }
 .social-btn:hover { background-color: #f0f0f0; }
@@ -966,7 +1400,7 @@ form label, .password-label-row label {
   justify-content: space-between;
   align-items: baseline;
 }
-.password-label-row a { color: var(--primary-teal); text-decoration: none; font-size: 0.85rem;}
+.password-label-row a { color: var(--clr-primary-teal); text-decoration: none; font-size: 0.85rem;}
 .password-label-row a:hover { text-decoration: underline; }
 
 .signup-link {
@@ -974,7 +1408,7 @@ form label, .password-label-row label {
     font-size: 0.95rem;
     text-align: center;
 }
-.signup-link a { color: var(--primary-teal); font-weight: bold; text-decoration: none; }
+.signup-link a { color: var(--clr-primary-teal); font-weight: bold; text-decoration: none; }
 .signup-link a:hover { text-decoration: underline; }
 
 .checkbox-group {
@@ -989,149 +1423,155 @@ form label, .password-label-row label {
     align-items: center;
     margin: 0;
     font-weight: normal;
-    color: var(--text-primary);
+    color: var(--clr-text);
 }
 
 
-/* --- 8. Tutor Selection Carousel Page Specifics --- */
+/* --- 10. Tutor Selection Page Specifics (Line-Out/Grid) --- */
 
-.page-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
+.pick-tutor-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--section-gap) var(--page-horizontal-padding);
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
 }
 
-.carousel-wrapper {
-  display: flex;
-  max-width: 1200px;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  flex: 1;
-  max-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px);
+.tutor-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Auto-fit columns */
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 40px;
 }
 
-.tutor-details {
-  flex: 1;
-  padding: 1rem;
-  background-color: var(--white);
-  border-radius: 1rem;
-  box-shadow: var(--shadow-md);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.tutor-card {
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    border: 2px solid transparent; /* Default transparent border */
+    position: relative;
+    overflow: hidden; /* Hide overflowing details initially */
 }
 
-.tutor-actions {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 1rem;
-  gap: 1rem;
-  flex: 1;
+.tutor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--clr-primary-teal); /* Teal border on hover */
 }
 
-.tutor-carousel {
-  flex: 1;
-  max-width: 320px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+.tutor-card.selected {
+    border-color: var(--clr-accent-hotpink); /* Hotpink border when selected */
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
 }
 
-.carousel-track {
-  list-style: none;
-  display: flex;
-  transition: transform 0.3s ease-in-out;
-  width: 100%;
-  flex-shrink: 0;
+.tutor-card-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid var(--clr-primary-teal);
+    box-shadow: var(--shadow-sm);
 }
 
-.carousel-slide {
-  min-width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.tutor-card-name {
+    font-size: 1.4em;
+    font-weight: var(--font-weight-headlines);
+    color: var(--clr-text);
+    margin-bottom: 5px;
 }
 
-.tutor-image {
-  max-width: 100%;
-  max-height: 300px;
-  object-fit: contain;
-  border-radius: 1rem;
-  background: #f9f9f9;
-  padding: 1rem;
+.tutor-card-tagline {
+    font-size: 0.9em;
+    color: var(--clr-text-dim);
+    text-align: center;
+    margin-bottom: 15px;
 }
 
-.carousel-button {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
-  color: var(--primary-blue);
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-}
-.carousel-button.prev { left: 0; }
-.carousel-button.next { right: 0; }
-
-
-.tutor-actions button {
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
-  min-width: 180px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-/* Font Awesome icon specific sizing for tutor selection buttons */
-.tutor-actions button i {
-  font-size: 1.2rem;
-  margin-right: 8px;
+.tutor-card-details-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    padding: 15px;
+    transform: translateY(100%); /* Hidden by default */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+    font-size: 0.85em;
+    color: var(--clr-text-dim);
+    border-top: 1px solid rgba(var(--clr-primary-teal-rgb), 0.2);
+    box-shadow: var(--shadow-sm);
+    box-sizing: border-box; /* Important for padding/width */
+    height: 100%; /* Cover the whole card */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
 }
 
-.btn-play {
-  background-color: var(--accent-green);
-  color: var(--white);
+.tutor-card:hover .tutor-card-details-overlay,
+.tutor-card.details-visible .tutor-card-details-overlay { /* For touch devices */
+    transform: translateY(0%);
+    opacity: 1;
 }
-.btn-play:hover { background-color: var(--dark-accent-green); }
-
-.btn-select {
-  background-color: var(--primary-blue);
-  color: var(--white);
+.tutor-card-details-overlay h4 {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    color: var(--clr-primary-teal);
+    text-align: center;
 }
-.btn-select:hover { background-color: var(--dark-blue); }
-
-/* Font Awesome icon specific sizing for tutor selection buttons and carousel buttons */
-.tutor-actions button i,
-.carousel-button i {
-  font-size: 1.2rem;
-  margin-right: 8px;
-}
-/* Ensure .carousel-button itself also has its desired size, if not set elsewhere */
-.carousel-button {
-    font-size: 2rem;
+.tutor-card-details-overlay p {
+    margin-bottom: 5px;
 }
 
-/* --- 9. Parent/Teacher Dashboard Specific Styles --- */
+
+.tutor-actions-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+.tutor-actions-bar .btn {
+    min-width: 180px;
+}
+.tutor-actions-bar .btn-play {
+    background-color: var(--clr-success-green);
+}
+.tutor-actions-bar .btn-play:hover {
+    background-color: #16c86d; /* Darken manually */
+}
+.tutor-actions-bar .btn-select {
+    background-color: var(--clr-primary-teal);
+}
+.tutor-actions-bar .btn-select:hover {
+    background-color: #109a9a; /* Darken manually */
+}
+
+
+/* --- 11. Parent/Teacher Dashboard Specific Styles --- */
 
 /* Student Card (Teacher Dashboard) */
 .student-card {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    background-color: var(--clr-bg-light);
+    border: 1px solid rgba(var(--clr-primary-teal-rgb), 0.1);
+    border-radius: var(--border-radius-base);
     padding: 15px;
     margin-bottom: 10px;
     display: flex;
@@ -1141,11 +1581,11 @@ form label, .password-label-row label {
 .student-card strong {
     font-size: 1.1em;
     margin-bottom: 5px;
-    color: var(--text-dark);
+    color: var(--clr-text);
 }
 .student-card p {
     margin: 0 0 5px 0;
-    color: var(--text-secondary);
+    color: var(--clr-text-dim);
 }
 .student-card .card-buttons {
     margin-top: 10px;
@@ -1153,7 +1593,7 @@ form label, .password-label-row label {
     flex-wrap: wrap;
     gap: 8px;
 }
-.student-card .card-buttons button {
+.student-card .card-buttons .btn {
     padding: 8px 12px;
     font-size: 0.9em;
 }
@@ -1161,8 +1601,8 @@ form label, .password-label-row label {
 
 /* Parent Dashboard Specifics */
 .child-card {
-    background-color: var(--white);
-    border-radius: 12px;
+    background-color: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
     box-shadow: var(--shadow-md);
     padding: 15px;
     margin-bottom: 15px;
@@ -1178,20 +1618,20 @@ form label, .password-label-row label {
 .child-card .child-header h2 {
     margin: 0;
     font-size: 1.3em;
-    color: var(--primary-blue);
+    color: var(--clr-primary-teal);
 }
 
 .child-card .child-stats {
     font-size: 0.9em;
-    color: var(--accent-green);
+    color: var(--clr-success-green);
     font-weight: bold;
 }
 
 .child-card .child-summary-details {
     font-size: 0.9em;
-    color: var(--text-secondary);
+    color: var(--clr-text-dim);
     margin-bottom: 15px;
-    border-bottom: 1px dashed var(--mid-gray);
+    border-bottom: 1px dashed var(--clr-text-dim);
     padding-bottom: 10px;
 }
 
@@ -1224,7 +1664,7 @@ form label, .password-label-row label {
     align-items: center;
     gap: 10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--mid-gray);
+    border-bottom: 1px solid var(--clr-text-dim);
 }
 .chat-header-widget select {
     width: auto;
@@ -1235,8 +1675,8 @@ form label, .password-label-row label {
 .chat-display-widget {
     flex-grow: 1;
     overflow-y: auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid var(--clr-text-dim);
+    border-radius: var(--border-radius-base);
     padding: 10px;
     background-color: #fefefe;
     display: flex;
@@ -1254,7 +1694,7 @@ form label, .password-label-row label {
     display: flex;
     gap: 10px;
     padding-top: 10px;
-    border-top: 1px solid var(--mid-gray);
+    border-top: 1px solid var(--clr-text-dim);
 }
 .chat-input-widget textarea {
     flex-grow: 1;
@@ -1269,7 +1709,7 @@ form label, .password-label-row label {
 }
 
 
-/* --- 10. Modal Styles (Specific Overrides for IEP/Conversation) --- */
+/* --- 12. Modal Styles (Specific Overrides for IEP/Conversation) --- */
 
 /* Ensures the modal overlay shows on top of everything */
 .modal-overlay {
@@ -1293,8 +1733,8 @@ form label, .password-label-row label {
 
 /* Modal Content Box */
 .modal-content {
-    background: var(--white);
-    border-radius: 12px;
+    background: var(--clr-bg-light);
+    border-radius: var(--border-radius-base);
     box-shadow: var(--shadow-lg);
     padding: 30px;
     position: relative;
@@ -1328,7 +1768,7 @@ form label, .password-label-row label {
     padding: 0 5px;
 }
 .modal-close-button:hover, .modal-close-button:focus {
-    color: var(--black);
+    color: var(--clr-text);
     text-decoration: none;
 }
 
@@ -1336,8 +1776,8 @@ form label, .password-label-row label {
 .modal-section h3 {
     margin-top: 25px;
     margin-bottom: 15px;
-    color: var(--text-dark);
-    border-bottom: 1px solid var(--mid-gray);
+    color: var(--clr-text);
+    border-bottom: 1px solid var(--clr-text-dim);
     padding-bottom: 5px;
 }
 .modal-form-group {
@@ -1366,22 +1806,22 @@ form label, .password-label-row label {
     gap: 15px;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid var(--mid-gray);
+    border-top: 1px solid var(--clr-text-dim);
 }
 
 .save-button, .cancel-button {
     padding: 12px 25px;
-    border-radius: 8px;
+    border-radius: var(--border-radius-base);
     font-size: 1.1em;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
 }
 
-.save-button { background-color: var(--primary-teal); color: var(--white); border: none; }
-.save-button:hover { background-color: var(--dark-teal); }
-.cancel-button { background-color: #6c757d; color: var(--white); border: none; }
-.cancel-button:hover { background-color: #5a6268; }
+.save-button { background-color: var(--clr-primary-teal); color: var(--clr-bg-light); border: none; }
+.save-button:hover { background-color: #109a9a; }
+.cancel-button { background-color: var(--clr-text-dim); color: var(--clr-bg-light); border: none; }
+.cancel-button:hover { background-color: #4a5763; }
 
 /* Specific IEP Editor Styles */
 #iep-editor-content {
@@ -1408,10 +1848,10 @@ form label, .password-label-row label {
 }
 .iep-goal-item {
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: var(--border-radius-base);
     padding: 15px;
     margin-bottom: 15px;
-    background-color: var(--white);
+    background-color: var(--clr-bg-light);
     box-shadow: var(--shadow-sm);
 }
 .iep-goal-item label {
@@ -1425,8 +1865,8 @@ form label, .password-label-row label {
     border-top: 1px dashed #eee;
 }
 .remove-goal-btn {
-    background-color: var(--red-alert);
-    color: var(--white);
+    background-color: var(--clr-error-red);
+    color: var(--clr-bg-light);
     padding: 8px 15px;
     border-radius: 5px;
     font-weight: bold;
@@ -1434,15 +1874,15 @@ form label, .password-label-row label {
     float: right;
 }
 .remove-goal-btn:hover {
-    background-color: var(--dark-red-alert);
+    background-color: #ed4040; /* Darken manually */
 }
 #add-iep-goal-btn {
-    background-color: var(--primary-blue);
-    color: var(--white);
+    background-color: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
     padding: 10px 20px;
     border-radius: 10px;
 }
-#add-iep-goal-btn:hover { background-color: var(--dark-blue); }
+#add-iep-goal-btn:hover { background-color: #109a9a; }
 
 
 /* Admin Dashboard Modal Specifics */
@@ -1453,14 +1893,14 @@ form label, .password-label-row label {
     border: 1px solid #eee;
 }
 .info-display-group strong {
-    color: var(--text-dark);
+    color: var(--clr-text);
 }
 .conversation-list {
     max-height: 200px;
     overflow-y: auto;
     border: 1px solid #eee;
     padding: 10px;
-    border-radius: 8px;
+    border-radius: var(--border-radius-base);
     background-color: #fefefe;
 }
 .conversation-item {
@@ -1476,9 +1916,9 @@ form label, .password-label-row label {
 
 /* Conversation Summary Cards (Teacher Dashboard) */
 .conversation-card {
-    background-color: var(--white);
+    background-color: var(--clr-bg-light);
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: var(--border-radius-base);
     padding: 15px;
     margin-bottom: 10px;
     box-shadow: var(--shadow-sm);
@@ -1486,14 +1926,14 @@ form label, .password-label-row label {
 .conversation-card h4 {
     margin-top: 0;
     margin-bottom: 10px;
-    color: var(--text-dark);
+    color: var(--clr-text);
     font-size: 1.1em;
 }
 .conversation-card p {
     margin: 0 0 5px 0;
     font-size: 0.95em;
     line-height: 1.4;
-    color: var(--text-primary);
+    color: var(--clr-text-dim);
 }
 .conversation-card .session-date {
     font-size: 0.85em;
@@ -1502,7 +1942,7 @@ form label, .password-label-row label {
 }
 
 
-/* --- 11. Animations --- */
+/* --- 13. Animations --- */
 .xp-animation-text, .level-up-animation-text {
     font-weight: bold;
     opacity: 0;
@@ -1512,9 +1952,9 @@ form label, .password-label-row label {
     position: fixed;
 }
 
-.xp-animation-text { color: var(--accent-green); }
-.xp-animation-text.special-xp { color: #ffeb3b; font-size: 1.4rem; }
-.level-up-animation-text { color: #007bff; font-size: 1.6rem; }
+.xp-animation-text { color: var(--clr-success-green); }
+.xp-animation-text.special-xp { color: var(--clr-warning-gold); font-size: 1.4rem; }
+.level-up-animation-text { color: var(--clr-primary-teal); font-size: 1.6rem; }
 
 .animate-xp { animation: xpFlyUpFade 1.5s ease-out forwards; }
 .animate-level-up { animation: levelUpPopFade 2s ease-out forwards; }
@@ -1531,147 +1971,301 @@ form label, .password-label-row label {
 }
 
 
-/* --- 12. Media Queries & Responsive Design --- */
+/* --- 14. Mobile Drawers & Responsiveness --- */
 
-@media screen and (max-width: 1200px) {
+/* Drawers for mobile (hidden by default) */
+.drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 280px; /* Same as sidebar-width-desktop */
+    max-width: 80%; /* Don't cover entire screen on very small devices */
+    overflow-y: auto;
+    background: var(--clr-bg-light);
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.3s ease;
+    z-index: 900; /* Under modal, over main chat */
+    padding: var(--dashboard-panel-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--dashboard-panel-padding);
+    box-sizing: border-box; /* Ensure padding is included in width */
+}
+.drawer.left {
+    left: 0;
+    transform: translateX(-100%);
+    border-right: 1px solid var(--clr-text-dim);
+}
+.drawer.right {
+    right: 0;
+    transform: translateX(100%);
+    border-left: 1px solid var(--clr-text-dim);
+}
+.drawer.open {
+    transform: translateX(0);
+}
+
+/* Drawer Toggles for Mobile */
+.drawer-toggle {
+    display: none; /* Hidden by default on desktop */
+    position: fixed;
+    top: 15px; /* Aligned with header/logo */
+    width: 45px;
+    height: 45px;
+    border: none;
+    background: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
+    font-size: 1.5rem;
+    z-index: 910; /* Above drawers */
+    border-radius: 50%; /* Circular buttons */
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.drawer-toggle:hover {
+    background: #109a9a;
+}
+.drawer-toggle.left {
+    left: 15px;
+}
+.drawer-toggle.right {
+    right: 15px;
+}
+
+
+@media screen and (max-width: 1024px) {
     /* Adjustments for larger tablets/smaller desktops */
-    #app-layout-wrapper, .admin-page-wrapper {
+    :root {
+        --section-gap: 50px; /* Slightly smaller gap */
+        --brand-h1-font-size: 2.5em;
+        --brand-h3-font-size: 1.3em;
+    }
+    h1 { font-size: var(--brand-h1-font-size); }
+    h3 { font-size: var(--brand-h3-font-size); }
+
+    .landing-header, .landing-main {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .hero-tagline {
+        font-size: 2.2em; /* Adjusted for tablet */
+    }
+    .hero-subtagline {
+        font-size: 1.1em; /* Adjusted for tablet */
+    }
+    .pricing-cards-grid,
+    .visual-feature-grid,
+    .approach-grid,
+    .feature-cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px; /* Adjusted gap */
+    }
+    /* Header responsiveness for wrapped state */
+    .landing-header {
         flex-direction: column;
-        max-width: 90%;
-        padding: 0 15px;
+        align-items: center;
+    }
+    .header-logo-container {
+        width: 100%;
+    }
+    .landing-nav {
+        margin-top: 15px;
+    }
+
+    /* Chat layout adjustments */
+    #app-layout-wrapper {
+        flex-direction: column;
+        height: auto; /* Allow content to dictate height */
+        min-height: calc(100vh - var(--footer-height) - 20px); /* Ensure minimum height */
+        padding: 0px 15px;
     }
     .admin-main-content {
         flex-direction: column;
         align-items: center;
+        gap: var(--section-gap);
+        height: auto;
     }
     .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
         width: 100%;
-        flex-direction: row;
+        flex: auto; /* Allow sidebars to take natural width in column layout */
+        flex-direction: row; /* Display sidebars horizontally within the column */
         flex-wrap: wrap;
         justify-content: center;
+        overflow-y: visible; /* No scrolling for sidebars in this layout */
+        min-width: unset; /* Remove fixed min-width */
+        padding: 0; /* Remove padding here, panels will handle it */
+        gap: 20px; /* Gap between panels */
     }
-    .admin-central-content {
+    .admin-central-content, #chat-container {
         width: 100%;
         min-width: unset;
+        flex: auto; /* Allow central content to take natural height */
+        height: auto;
     }
-    .carousel-wrapper {
-        flex-direction: column;
+    .dashboard-panel {
+        flex-grow: 1; /* Allow panels to grow within the row */
     }
-    .tutor-details, .tutor-actions, .tutor-carousel {
-        width: 100%;
-        max-width: unset;
-        align-items: center;
-        text-align: center;
-    }
-    .tutor-actions {
-        flex-direction: row;
-        justify-content: center;
-    }
-    .tutor-actions button {
-        width: auto;
-        min-width: 150px;
+
+    /* Tutor selection */
+    .tutor-selection-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
     }
 }
 
 
-@media screen and (max-width: 768px) {
-    /* Adjustments for smaller tablets */
+@media screen and (max-width: 767px) {
+    /* Adjustments for phones */
     :root {
-        --page-horizontal-padding: 15px;
+        --header-height: 60px;
+        --page-horizontal-padding: 10px;
+        --section-gap: 40px; /* Smaller gap for mobile sections */
+        --brand-h1-font-size: 2em;
+        --brand-h3-font-size: 1.2em;
+        --brand-base-font-size: 0.95rem; /* Slightly smaller base font on mobile */
     }
-    .admin-header img, .logo-header img, #chat-container #top-bar #logo {
-        max-width: 150px;
+    h1 { font-size: var(--brand-h1-font-size); }
+    h2 { font-size: 1.8em; }
+    h3 { font-size: var(--brand-h3-font-size); }
+
+    .landing-header {
+        padding: 10px var(--page-horizontal-padding);
+        border-radius: 0;
+        box-shadow: none;
     }
-    .admin-header h1, .logo-header h1 {
-        font-size: 1.5em;
+    .main-logo-hero {
+        max-height: 60px; /* Smaller logo on mobile */
     }
-    .logout-button {
-        padding: 8px 12px;
+    .landing-nav {
+        gap: 10px;
+    }
+    .btn-primary, .btn-primary-outline, .btn-secondary, .btn-tertiary {
+        padding: 0.6rem 1rem;
         font-size: 0.9rem;
     }
-    .dashboard-panel, .modal-content {
+    .hero-tagline {
+        font-size: 1.8em;
+    }
+    .hero-subtagline {
+        font-size: 1em;
+    }
+    .hero-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .btn-hero-primary, .btn-hero-secondary {
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+    .section-title {
+        font-size: 2em; /* Smaller section titles */
+        margin-bottom: 30px;
+    }
+    /* New visual sections on mobile */
+    .visual-feature-grid,
+    .approach-grid,
+    .pricing-cards-grid,
+    .feature-cards-grid {
+        grid-template-columns: 1fr; /* Single column on phone */
+        gap: 20px;
+    }
+    .visual-feature-item {
+        min-height: auto; /* Allow height to adjust */
+        padding: 20px;
+    }
+    .visual-feature-image {
+        height: 120px; /* Even smaller image height on mobile */
+    }
+    .approach-icon {
+        width: 90px;
+        height: 90px;
+    }
+
+    .testimonial-carousel {
+        font-size: 1em;
+    }
+    .accordion-container {
+        padding: 0 10px;
+    }
+    .accordion-header {
+        font-size: 1em;
+    }
+
+    /* Chat layout mobile */
+    #app-layout-wrapper {
+        padding: 0; /* No padding on mobile wrapper */
+    }
+    .admin-main-content {
+        gap: var(--dashboard-panel-padding); /* Smaller gap for mobile panels */
+    }
+    .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
+        /* These are now hidden and replaced by drawers on small screens */
+        display: none;
+    }
+    .drawer-toggle {
+        display: flex; /* Show drawer toggles on mobile */
+    }
+    #chat-container {
+        padding: 10px; /* Padding for chat container on mobile */
+        min-width: unset;
+        border-radius: 0; /* Full width, no rounded corners */
+        box-shadow: none;
+    }
+    #top-bar {
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+    #top-bar #logo {
+        max-width: 90px;
+    }
+    #top-bar .logout-button {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+    #input-container {
+        padding-top: 5px;
+    }
+    #user-input {
+        min-height: 40px;
+        font-size: 14px;
+    }
+    #send-button {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    .message {
+        font-size: 0.85em;
+        padding: 10px 14px;
+    }
+
+    /* Tutor selection mobile */
+    .tutor-selection-grid {
+        grid-template-columns: 1fr; /* Single column on phone */
+        gap: 20px;
+    }
+    .tutor-card {
         padding: 15px;
     }
-    .modal-content {
-        max-width: 95%;
+    .tutor-card-image {
+        width: 100px;
+        height: 100px;
     }
-    .social-login-buttons {
+    .tutor-card-name {
+        font-size: 1.2em;
+    }
+    .tutor-card-tagline {
+        font-size: 0.9em;
+    }
+    .tutor-actions-bar {
         flex-direction: column;
+        gap: 15px;
     }
-    .social-btn {
-        min-width: unset;
+    .tutor-actions-bar .btn {
         width: 100%;
     }
-    /* Adjust tab button padding for smaller screens */
-    .tab-button {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-    }
-    /* Reduce gap for tabs on smaller screens */
-    .tab-bar {
-        gap: 5px;
-    }
 }
 
-@media screen and (max-width: 600px) {
-  /* Mobile-first adjustments */
-  :root {
-    --section-gap: 15px;
-  }
-  body {
-      padding-bottom: 0;
-  }
-  footer {
-      position: static; /* Ensure it's in normal flow */
-      margin-top: 10px;
-      height: auto;
-      padding: 1rem;
-      flex-direction: column;
-  }
-  footer a {
-      margin: 5px 0;
-  }
-
-  #app-layout-wrapper {
-      flex-direction: column;
-      height: auto;
-      min-height: 100vh; /* Changed from height: auto to min-height: 100vh */
-      margin: 0;
-      padding: 10px;
-  }
-
-  /* Hide sidebars and avatar on very small screens for focus on chat */
-  .widget-sidebar-left, .widget-sidebar-right, #avatar-container {
-      display: none;
-  }
-
-  #chat-container {
-    min-width: unset;
-    padding: 10px;
-  }
-  .login-page-wrapper, .signup-page-wrapper {
-    padding-bottom: 20px;
-  }
-  .login-container, .signup-container, .profile-container {
-    padding: 20px;
-    box-shadow: none;
-    border-radius: 0;
-    max-height: none;
-    min-height: unset;
-  }
-  .admin-header, .logo-header, #chat-container #top-bar {
-      border-radius: 0;
-      box-shadow: none;
-      padding: 10px;
-      margin-bottom: var(--section-gap);
-  }
-  .admin-header img, .logo-header img {
-      max-width: 120px;
-  }
-  .admin-header h1, .logo-header h1 {
-      font-size: 1.2em;
-  }
-}
 
 /* Print Styles */
 @media print {
@@ -1680,13 +2274,18 @@ form label, .password-label-row label {
         color: black !important;
     }
     /* Hide navigational elements */
-    header, footer, .sidebar, #input-container, #thinking-indicator,
-    .logout-button, .carousel-button, .btn-play, .btn-select,
-    .admin-widget-sidebar, .modal-overlay, .submit-btn, .cancel-btn {
+    header, footer, .drawer, .drawer-toggle, #input-container, #thinking-indicator,
+    .logout-button, .btn, .modal-overlay, .submit-btn, .cancel-btn,
+    .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right,
+    .landing-nav, .hero-actions, .pricing-card .btn, .access-grants-note,
+    .testimonial-carousel, .school-logos-container, .accordion-header, .final-cta-section .btn {
         display: none !important;
     }
     /* Make main content flow */
-    #app-layout-wrapper, .admin-main-content, #chat-container, .tutor-details {
+    #app-layout-wrapper, .admin-main-content, #chat-container, .tutor-details,
+    .landing-main, .hero-section, .pricing-equity-section, .how-it-works-section,
+    .feature-grid-section, .social-proof-section, .faq-section, .final-cta-section,
+    .pricing-cards-grid, .stepper-container, .feature-cards-grid, .accordion-container {
         display: block !important;
         width: auto !important;
         max-width: none !important;
@@ -1706,5 +2305,18 @@ form label, .password-label-row label {
     .user-table th, .user-table td, #leaderboardTable th, #leaderboardTable td {
         border: 1px solid #000;
         padding: 5px;
+    }
+    /* Ensure cards and accordions render content */
+    .card-style-1, .accordion-item {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        margin-bottom: 15px !important;
+        padding: 15px !important;
+        border-radius: 0 !important;
+    }
+    .accordion-content {
+        max-height: unset !important; /* Force content to show */
+        display: block !important;
+        padding: 0 10px !important;
     }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -9,189 +9,221 @@
 
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
-  
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script>
-    window.MathJax = {
-        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
-        svg: { fontCache: 'global' },
-        options: { ignoreHtmlClass: 'tex2jax_ignore', processHtmlClass: 'tex2jax_process' },
-        loader: { load: ['input/tex', 'output/svg', '[tex]/physics'] },
-        // [NEW] MathJax font configuration for self-hosted fonts (from MathLive package)
-        chtml: {
-            fontURL: '/vendor/mathlive/fonts' // Assumes MathLive fonts are in public/vendor/mathlive/fonts
-        },
-        startup: { 
-            ready: () => {
-                console.log("✅ MathJax is fully loaded.");
-                window.isMathJaxReady = true;
-            }
-        }
-    };
-  </script>
+
+  <script defer src="/js/mathlive-render.js"></script>
+
+  <script defer src="/js/script.js"></script>
 </head>
 <body>
   <div id="app-layout-wrapper">
-    <div class="admin-main-content">
     <div class="widget-sidebar-left">
-      <div id="leaderboard-content">
-        <div class="popup-header"><h2>Leaderboard</h2></div>
-        <div class="overflow-y-auto">
-          <table id="leaderboardTable">
+      <div id="leaderboard-content" class="dashboard-panel">
+        <div class="dashboard-panel-header"><h2>Leaderboard</h2></div>
+        <div class="table-scroll-container">
+          <table id="leaderboardTable" class="user-table">
             <thead><tr><th>Rank</th><th>Student</th><th>Level</th><th>XP</th></tr></thead>
-            <tbody></tbody>
+            <tbody>
+              <tr><td colspan="4">Loading leaderboard...</td></tr>
+            </tbody>
           </table>
         </div>
       </div>
-      <div id="course-cards-container" class="course-card-wrapper"></div>
+      <div id="course-cards-container" class="course-card-wrapper dashboard-panel">
+        <div class="dashboard-panel-header"><h2>📘 Guided Path Lessons</h2></div>
+        <p class="text-center text-dim">Chat with your tutor to discover your personalized learning path!</p>
+        <div class="course-card">
+            <h3>Algebra Foundations</h3>
+            <p>Master the basics of variables, equations, and inequalities.</p>
+            <div class="progress-circle-container" style="background-image: conic-gradient(var(--clr-primary-teal) 75%, #e0e0e0 0%);">
+                <div class="progress-circle-inner">75%</div>
+            </div>
+            <button class="btn btn-secondary">Resume Lesson</button>
+        </div>
+      </div>
     </div>
 
-    <div id="chat-tabs-wrapper">
-        <div id="mode-tabs" class="tab-bar">
-            <button class="tab-button active" data-tab="chat-pane">💬 Chat</button>
-            <button class="tab-button" data-tab="lessons-pane">📘 Lessons</button>
-            <button class="tab-button" data-tab="progress-pane">📊 Progress</button>
-            <button class="tab-button" data-tab="badges-pane">🏆 Badges</button>
-            <button class="tab-button" data-tab="settings-pane">⚙️ Settings</button>
+    <div id="chat-container">
+      <div id="top-bar">
+        <img id="logo" src="/images/MathMatix_AI_Logo_Main.png" alt="Mathmatix Logo" />
+        <button id="logoutBtn" class="logout-button">Log Out</button>
+      </div>
+
+      <div id="chat-messages-container">
         </div>
 
-        <div id="chat-pane" class="tab-content" style="display: block;">
-            <div id="top-bar">
-                <img id="logo" src="/MathMatix AI Logo.png" alt="Mathmatix Logo" />
-                <button id="logoutBtn" class="logout-button">Log Out</button>
-            </div>
-            <div id="lesson-header" style="display:none;"></div>
-            <div id="chat-container-inner"></div> 
-            <div id="thinking-indicator" style="display: none;">
-                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-                <span class="thinking-text">Mathmatix is thinking...</span>
-            </div>
-            <div id="input-container">
-                <textarea id="user-input" placeholder="Type your message here…"></textarea>
-                <button id="send-button">Send</button>
-                <div id="tools-left">
-                    <button id="insert-equation" title="Insert Equation"><img src="/equation-icon.png" alt="Insert Equation" /></button>
-                </div>
-                <div id="tools-right">
-                    <button id="mic-button" title="Voice Input"><img src="/mic-icon.png" alt="Mic" /></button>
-                    <button id="attach-button" title="Upload File"><img src="/clip-icon.png" alt="Attach" /></button>
-                    <input type="file" id="file-input" style="display:none;" />
-                </div>
-            </div>
-            <div id="handsfree-toggle-wrapper">
-                <span id="handsfree-label">Hands-Free Mode: OFF</span>
-                <button id="handsfree-toggle" class="green"></button>
-                <button id="audio-stop-button" title="Stop Speaking" style="display:none;">🔇</button>
-            </div>
-        </div>
+      <div id="thinking-indicator" style="display: none;">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
 
-        <div id="lessons-pane" class="tab-content" style="display: none;">
-            <h2>📘 Guided Path Lessons</h2>
-            <p>Welcome to your lessons. Select a topic to begin or resume.</p>
-            <div id="lesson-header" style="display: none;"></div>
-            <div id="lesson-content-placeholder">👈 Chat with your tutor to get started, or select a course from the sidebar.</div>
-            </div>
+      <div id="input-container">
+        <button id="insert-equation-btn" title="Insert Equation">∑</button>
+        <textarea id="user-input" placeholder="Type your message here…"></textarea>
+        <input type="file" id="file-input" style="display:none;" />
+        <button id="attach-button" title="Upload File"><img src="/clip-icon.png" alt="Attach" /></button>
+        <button id="mic-button" title="Voice Input"><img src="/mic-icon.png" alt="Mic" /></button>
+        <button id="send-button" class="btn btn-primary">Send</button>
+      </div>
 
-        <div id="progress-pane" class="tab-content" style="display: none;">
-            <h2>📊 Progress</h2>
-            <div id="progress-summary">Loading XP and milestones...</div>
-            </div>
-
-        <div id="badges-pane" class="tab-content" style="display: none;">
-            <h2>🏆 Badges</h2>
-            <div id="badge-collection">No badges yet. Letâ€™s earn some!</div>
-            </div>
-
-        <div id="settings-pane" class="tab-content" style="display: none;">
-            <h2>⚙️ User Settings</h2>
-            <form>
-                <label for="tutor-select">Preferred Tutor:</label>
-                <select id="tutor-select" class="form-control">
-                    </select>
-
-                <label for="tone-select">Voice Tone:</label>
-                <select id="tone-select" class="form-control">
-                    <option value="encouraging">Encouraging</option>
-                    <option value="no-nonsense">No-nonsense</option>
-                    <option value="friendly">Friendly</option>
-                    <option value="professional">Professional</option>
-                    <option value="calm">Calm</option>
-                </select>
-
-                <label for="style-select">Learning Style:</label>
-                <select id="style-select" class="form-control">
-                    <option value="visual">Visual</option>
-                    <option value="verbal">Verbal</option>
-                    <option value="step">Step-by-Step</option>
-                </select>
-
-                <label for="voice-mode-enabled">Enable Voice Input (Hands-Free):</label>
-                <input type="checkbox" id="voice-mode-enabled">
-
-                <button type="submit" class="submit-btn" id="save-settings-btn">Save Settings</button>
-            </form>
-            <p style="margin-top: 20px; text-align: center;"><button id="export-history-btn" class="submit-btn" style="background-color: #6c757d;">Export Chat History</button></p>
-            <p style="margin-top: 10px; text-align: center;"><button id="logout-settings-btn" class="submit-btn logout-button">Log Out</button></p>
-        </div>
+      <div id="handsfree-toggle-wrapper">
+          <span id="handsfree-label">Hands-Free Mode: OFF</span>
+          <button id="handsfree-toggle"></button>
+          <button id="audio-stop-button" title="Stop Speaking" style="display:none;">🔇 Stop Speaking</button>
+      </div>
     </div>
+
     <div class="widget-sidebar-right">
-      <div id="xp-level-display">
+      <div id="xp-level-display" class="dashboard-panel">
         <span id="level-badge">Level <span id="current-level">1</span></span>
         <span id="xp-text"><span id="current-xp">0</span> / <span id="xp-needed">100</span> XP</span>
       </div>
-      <div id="student-parent-link-display" class="widget-section" style="display: none;">
+      <div id="student-parent-link-display" class="dashboard-panel" style="display: none;">
          <p style="margin-bottom: 5px; font-weight: bold;">Your Parent Link Code:</p>
-         <span id="student-link-code-value" style="display: block; background-color: #e6f7ff; padding: 8px; border-radius: 5px; text-align: center; font-size: 1.1em;"></span>
-         <p style="margin-top: 5px; font-size: 0.8em; color: #666;">Share this with your parent to link accounts.</p>
-      </div> <div id="avatar-container" class="clickable-avatar">
-        <div id="student-avatar"></div> 
+         <span id="student-link-code-value" style="display: block; background-color: var(--clr-bg-light); padding: 8px; border-radius: var(--border-radius-base); text-align: center; font-size: 1.1em; border: 1px solid var(--clr-primary-teal); color: var(--clr-primary-teal);"></span>
+         <p style="margin-top: 5px; font-size: 0.8em; color: var(--clr-text-dim);">Share this with your parent to link accounts.</p>
       </div>
-    </div>
+      <div id="avatar-container" class="dashboard-panel">
+        <div id="student-avatar" style="width: 100%; height: 100%;"></div>
+      </div>
+      <div id="settings-panel" class="dashboard-panel">
+          <div class="dashboard-panel-header"><h2>⚙️ Settings</h2></div>
+          <form id="user-settings-form">
+              <label for="tone-select">Voice Tone:</label>
+              <select id="tone-select" class="form-control"></select>
+
+              <label for="style-select">Learning Style:</label>
+              <select id="style-select" class="form-control"></select>
+
+              <label for="voice-mode-enabled">Hands-Free:</label>
+              <input type="checkbox" id="voice-mode-enabled">
+
+              <label for="typing-delay-slider">Typing Delay (ms):</label>
+              <input type="range" id="typing-delay-slider" min="0" max="3000" step="100" value="2000">
+              <span id="typing-delay-value">2000 ms</span>
+
+              <label for="type-on-wpm-slider">Type-on Speed (WPM):</label>
+              <input type="range" id="type-on-wpm-slider" min="10" max="120" step="5" value="60">
+              <span id="type-on-wpm-value">60 WPM</span>
+
+              <button type="submit" class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+          </form>
+          <p style="margin-top: 20px; text-align: center;"><button id="export-history-btn" class="btn btn-tertiary">Export Chat History</button></p>
+      </div>
     </div>
   </div>
 
   <footer>
-    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-    <p><a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+    <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+    <p class="edtech-pledge">Proud member of the EdTech Equity Pledge.</p>
   </footer>
 
-  <div id="equation-popup" class="modal-overlay popup-resizable-draggable"> <div class="modal-content-draggable">
-      <div class="modal-header-draggable" id="math-modal-header">
+  <div id="equation-modal" class="modal-overlay hidden">
+    <div class="modal-content-eq">
+      <div class="modal-header-eq">
         <h2>Insert Equation</h2>
-        <button class="close-button" id="close-equation-popup">&times;</button>
+        <button class="close-button" id="close-equation-modal">&times;</button>
       </div>
-      <math-field id="math-editor"></math-field>
-      <div class="math-controls">
-        <button id="insert-latex" class="submit-btn">Insert</button>
+      <div class="math-palette-grid">
+        <button data-latex="\frac{ }{ }" title="Fraction"><span class="math-display-preview"><sup>□</sup>&frasl;<sub>□</sub></span></button>
+        <button data-latex="x^2" title="Superscript"><span class="math-display-preview">x<sup>□</sup></span></button>
+        <button data-latex="\sqrt{ }" title="Square Root"><span class="math-display-preview">√□</span></button>
+        <button data-latex="x_n" title="Subscript"><span class="math-display-preview">x<sub>□</sub></span></button>
+        <button data-latex="\sum" title="Summation"><span class="math-display-preview">∑</span></button>
+        <button data-latex="\pi" title="Pi"><span class="math-display-preview">π</span></button>
+        <button data-latex="\alpha" title="Alpha"><span class="math-display-preview">α</span></button>
+        <button data-latex="\beta" title="Beta"><span class="math-display-preview">β</span></button>
+        <button data-latex="\theta" title="Theta"><span class="math-display-preview">θ</span></button>
+        <button data-latex="=" title="Equals">=</button>
+        <button data-latex="+" title="Plus">+</button>
+        <button data-latex="-" title="Minus">-</button>
+        <button data-latex="\times" title="Multiply">×</button>
+        <button data-latex="\div" title="Divide">÷</button>
+        <button data-latex="\degree" title="Degree">°</button>
+        <button data-latex="\infty" title="Infinity">∞</button>
+        <button data-latex="\approx" title="Approximately">≈</button>
+        <button data-latex="\ne" title="Not Equal">≠</button>
+        <button data-latex="\le" title="Less than or equal">≤</button>
+        <button data-latex="\ge" title="Greater than or equal">≥</button>
+        <button data-latex="\left( \right)" title="Parentheses">( )</button>
+        <button data-latex="\left[ \right]" title="Brackets">[ ]</button>
+        <button data-latex="\left\{ \right\}" title="Braces">{ }</button>
+        <button data-latex="\lim_{x \to \infty}" title="Limit"><span class="math-display-preview">lim</span></button>
+        <button data-latex="\int" title="Integral"><span class="math-display-preview">∫</span></button>
+        <button data-latex="\vec{v}" title="Vector"><span class="math-display-preview">→v</span></button>
+        <button data-latex="\angle" title="Angle">∠</button>
+        <button data-latex="\triangle" title="Triangle">∆</button>
+        <button data-latex="\emptyset" title="Empty Set">∅</button>
+        <button data-latex="\in" title="Element Of">∈</button>
+        <button data-latex="\forall" title="For All">∀</button>
+        <button data-latex="\exists" title="There Exists">∃</button>
+        <button data-latex="\subset" title="Subset">⊂</button>
+        <button data-latex="\cap" title="Intersection">∩</button>
+        <button data-latex="\cup" title="Union">∪</button>
       </div>
-      <div class="resize-handle top-left" data-handle="tl"></div>
-      <div class="resize-handle top-right" data-handle="tr"></div>
-      <div class="resize-handle bottom-left" data-handle="bl"></div>
-      <div class="resize-handle bottom-right" data-handle="br"></div>
-      <div class="resize-handle top" data-handle="t"></div>
-      <div class="resize-handle bottom" data-handle="b"></div>
-      <div class="resize-handle left" data-handle="l"></div>
-      <div class="resize-handle right" data-handle="r"></div>
+      <math-field id="math-editor" class="math-editor-input"></math-field>
+      <div class="modal-actions-eq">
+        <button id="insert-latex-eq" class="btn btn-primary">Insert</button>
+        <button id="cancel-latex-eq" class="btn btn-tertiary">Cancel</button>
+      </div>
     </div>
   </div>
 
-  <div id="switch-tutor-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <span id="close-tutor-modal-btn" class="modal-close-button">&times;</span>
-      <h2>Choose Your Tutor</h2>
-      <p class="subtitle">Select your preferred AI math coach. Your choice changes their voice and style!</p>
-      <div id="tutor-options-grid">
-        </div>
-      <div class="modal-actions">
-        <button id="cancel-switch-tutor" class="cancel-button">Cancel</button>
+  <div id="adaptive-practice-modal" class="modal-overlay hidden">
+      <div class="modal-content-practice">
+          <div class="modal-header-practice">
+              <h2>Adaptive Practice</h2>
+              <button class="close-button" id="close-practice-modal">&times;</button>
+          </div>
+          <div id="practice-problem-display">
+              <p class="practice-instruction">Solve the following problem:</p>
+              <div class="practice-problem-latex"></div>
+              <input type="text" id="practice-user-answer" placeholder="Your answer here..." />
+              <div id="practice-feedback"></div>
+              <button id="submit-practice-answer" class="btn btn-primary">Submit Answer</button>
+              <button id="get-practice-hint" class="btn btn-secondary">Get Hint</button>
+          </div>
+          <div class="practice-progress">
+              Question <span id="current-question-num">1</span> of <span id="total-questions-num">10</span>
+          </div>
+          <button id="exit-practice" class="btn btn-tertiary">Exit Practice</button>
       </div>
-    </div>
   </div>
 
-  <script src="/js/tutorConfig.js"></script>
-  <script src="/js/script.js"></script>
-  <script type="module" src="/js/guidedPath.js"></script>
-  <script src="/js/logout.js"></script> </body>
+  <div id="badge-toast" class="badge-toast hidden">
+      <div class="toast-content">
+          <img src="" alt="Badge Icon" id="badge-icon">
+          <div class="toast-text">
+              <p>🎉 Badge Unlocked!</p>
+              <p id="badge-name"></p>
+          </div>
+      </div>
+  </div>
+
+  <div id="ui-accommodation-banner" class="accommodation-banner hidden">
+      <p id="accommodation-text"></p>
+      <button id="accommodation-dismiss-btn" class="btn-dismiss-accommodation">&times;</button>
+  </div>
+
+  <div id="chunk-progress-indicator" class="chunk-progress-indicator hidden">
+      Step <span id="current-chunk">1</span> of <span id="total-chunks">5</span>
+  </div>
+
+  <div id="multiplication-chart-overlay" class="modal-overlay hidden">
+      <div class="modal-content-chart">
+          <button class="close-button" id="close-chart-modal">&times;</button>
+          <h2>Digital Multiplication Chart</h2>
+          <div class="multiplication-grid">
+              </div>
+      </div>
+  </div>
+
+  <div id="math-anxiety-overlay" class="math-anxiety-overlay hidden">
+      <div class="breathing-circle"></div>
+      <p>Take a deep breath. You've got this!</p>
+      <button class="btn btn-tertiary" id="dismiss-anxiety-overlay">Dismiss</button>
+  </div>
+
+
+  <script src="/js/logout.js"></script>
+</body>
 </html>

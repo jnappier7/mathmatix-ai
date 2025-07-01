@@ -3,50 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meet Your Math Tutors!</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  </head>
+  <title>Meet Your Math Tutors! | M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0WjTRyT/8dFjF22f+H9z0/L3lYf1kQn5R5z2b/t/1gD+B+A0q/L3V5+A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 <body>
-  <header class="logo-header">
-    <img src="/MathMatix AI Logo.png" alt="Mathmatix AI Logo" height="60" />
-    <div style="flex-grow: 1; text-align: center;"> <h1>Meet Your Math Tutors!</h1>
-      <p>Select the tutor who you'd like to learn math with. You can change your tutor anytime!</p>
-    </div>
-    <button id="logoutBtn" class="logout-button">Logout</button>
+  <header class="landing-header">
+    <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="landing-logo" />
+    <nav class="landing-nav">
+      <h1 class="header-title">Meet Your Math Tutors!</h1>
+      <button id="logoutBtn" class="btn btn-tertiary">Logout</button>
+    </nav>
   </header>
 
-  <main class="page-wrapper">
-    <div class="carousel-wrapper">
+  <main class="pick-tutor-main">
+    <h2 class="section-title">Select Your Personal Math Coach.</h2>
+    <p class="subtitle" style="margin-bottom: 40px; max-width: 600px; text-align: center;">Your choice defines their voice and style. You can change your tutor anytime in settings!</p>
 
-      <div class="tutor-details dashboard-panel"> <h2 id="tutor-name"></h2>
-        <p class="tutor-catchphrase" id="tutor-catchphrase"></p>
-        <h3>About Me:</h3>
-        <p id="tutor-about"></p>
-        <h3>Specializes In:</h3>
-        <p id="tutor-specialties"></p>
-        <h3>Why Students Like Me:</h3>
-        <p id="tutor-likes"></p>
+    <div id="tutor-selection-grid" class="tutor-selection-grid">
       </div>
 
-      <div class="tutor-carousel dashboard-panel"> <button class="carousel-button prev" aria-label="Previous Tutor"><i class="fas fa-chevron-left"></i></button>
-        <ul class="carousel-track"></ul>
-        <button class="carousel-button next" aria-label="Next Tutor"><i class="fas fa-chevron-right"></i></button>
-      </div>
-
-      <div class="tutor-actions dashboard-panel"> <button id="play-voice-btn" class="btn-play">🔊 Hear My Voice</button>
-        <button id="select-tutor-btn" class="btn-select">✅ Select Tutor</button>
-      </div>
-
+    <div class="tutor-actions-bar">
+      <button id="play-voice-btn" class="btn btn-play">
+        <i class="fas fa-volume-up"></i> Hear My Voice
+      </button>
+      <button id="select-tutor-btn" class="btn btn-select">
+        <i class="fas fa-check-circle"></i> Select Tutor
+      </button>
     </div>
   </main>
 
   <footer>
-    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-    <p><a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+    <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+    <p class="edtech-pledge">Proud member of the EdTech Equity Pledge.</p>
   </footer>
 
   <script src="/js/logout.js"></script>
-  <script src="/js/pick-tutor-carousel.js" type="module"></script>
+  <script type="module" src="/js/pick-tutor.js"></script>
 </body>
 </html>

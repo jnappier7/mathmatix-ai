@@ -1,283 +1,554 @@
-// public/js/script.js - FINAL VERSION (COMPREHENSIVE & REFINED - ALL CLIENT-SIDE FIXES)
+// script.js
 console.log("LOG: M∆THM∆TIΧ Initialized");
 
-// --- DECLARE ALL GLOBAL CONSTANTS (DOM Elements) ---
-// These are accessed globally, so they must be declared at the top level
+// --- DECLARE ALL CONSTANTS ONCE AT THE TOP ---
 const chatBox = document.getElementById("chat-container-inner");
 const input = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-button");
 const micBtn = document.getElementById("mic-button");
 const attachBtn = document.getElementById("attach-button");
-const equationBtn = document.getElementById("insert-equation");
-const fileInput = document.getElementById("file-input");
-const mathModal = document.getElementById("equation-popup");
-const insertMathBtn = document.getElementById("insert-latex"); // This is the 'Insert' button in the popup
-const closeMathBtn = document.getElementById("close-equation-popup"); // This is the 'x' close button in the popup
-const mathEditor = document.getElementById("math-editor"); // The <math-field> element
-const switchTutorModal = document.getElementById("switch-tutor-modal");
-const closeTutorModalBtn = document.getElementById("close-tutor-modal-btn");
-const cancelSwitchTutorBtn = document.getElementById("cancel-switch-tutor");
-const avatarContainer = document.getElementById('avatar-container'); // Declare globally
+const equationBtn = document.getElementById("insert-equation-btn"); // Corrected ID
 
-// Tab elements - Declared globally as they are accessed in tab switching logic
-const modeTabs = document.getElementById('mode-tabs');
-const tabButtons = document.querySelectorAll('.tab-button');
-const chatPane = document.getElementById('chat-pane');
-const lessonsPane = document.getElementById('lessons-pane');
-const progressPane = document.getElementById('progress-pane');
-const badgesPane = document.getElementById('badges-pane');
-const settingsPane = document.getElementById('settings-pane');
+const mathModal = document.getElementById("equation-modal"); // Corrected ID
+const insertMathBtn = document.getElementById("insert-latex-eq"); // Corrected ID
+const closeMathBtn = document.getElementById("close-equation-modal"); // Corrected ID
+const mathInput = document.getElementById("math-editor");
 
-// Settings pane elements - Declared globally as they are used by save/load functions
-const tutorSelect = document.getElementById('tutor-select');
-const toneSelect = document.getElementById('tone-select');
-const styleSelect = document.getElementById('style-select');
-const voiceModeEnabledCheckbox = document.getElementById('voice-mode-enabled');
-const saveSettingsBtn = document.getElementById('save-settings-btn');
-const exportHistoryBtn = document.getElementById('export-history-btn');
-// const logoutSettingsBtn = document.getElementById('logout-settings-btn'); // NO LONGER NEEDED HERE
+const currentLevelSpan = document.getElementById("current-level");
+const xpProgressBar = document.getElementById("xp-progress-bar"); // This will be hidden in new design
+const currentXpSpan = document.getElementById("current-xp");
+const xpNeededSpan = document.getElementById("xp-needed");
+const XP_PER_LEVEL = 100; // Define XP needed to level up (must match backend for consistent display)
 
-// Leaderboard elements - Declared globally
-const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
+let leaderboardPopup; // This now refers to the fixed widget
+let xpLevelDisplay; // Reference to the XP/Level widget container
 
+const thinkingIndicator = document.getElementById("thinking-indicator");
+const logoutBtn = document.getElementById("logoutBtn");
 
-// --- DECLARE ALL GLOBAL LET VARIABLES ---
-// These hold state and might be reassigned
-let currentLevelSpan, currentXpSpan, xpNeededSpan, xpLevelDisplay, thinkingIndicator, /* logoutBtn, */ voiceModeToggle, currentAudio = null, isRecognitionActive = false, audioStopBtn;
-let studentParentLinkDisplay, studentLinkCodeValue;
-let recognition = null;
-let currentUser = null; // Declare globally and allow reassignment
-let isVoiceModeEnabled = localStorage.getItem('voiceMode') === 'true'; // Consistent naming
-let isMathJaxReady = window.isMathJaxReady || false; // Check if MathJax has loaded
-let currentChatHistory = []; // Needed for welcome message currentHistory parameter
-const XP_PER_LEVEL = 100; // Define globally for XP calculations
+// Drag and Drop Zone elements - DECLARED ONLY ONCE HERE
+// const dropzone = document.getElementById('dropzone'); // This ID is not in chat.html
+const fullscreenDropzone = document.getElementById('app-layout-wrapper'); // Use a more general area for drop
 
-// Define client-side message length limits
-const CLIENT_MAX_MESSAGE_LENGTH = 1800; // A bit less than server to give buffer
+// --- END DECLARATIONS ---
+
+let currentUser = null; // Ensure currentUser is declared once
+
+// 1. Helper – runs once for each message bubble
+// Renders inline \( … \) and $$ … $$ blocks in that node only
+function renderMathLive(container) {
+  if (window.MathLive && typeof window.MathLive.renderMathInElement === 'function') {
+    window.MathLive.renderMathInElement(container, {
+      TeX: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$', '$$']],
+      }
+    });
+  } else {
+      console.warn("MathLive is not loaded or renderMathInElement is not available.");
+  }
+}
 
 
-// --- CORE HELPER FUNCTIONS (Globally Defined - BEFORE DOMContentLoaded) ---
-
-// File Upload Function
+// --- NEW COMMON FUNCTION FOR FILE UPLOAD ---
+// This function encapsulates the upload process,
+// so it can be called from both file input change and drop events.
 function uploadSelectedFile(file) {
-    console.log("LOG: uploadSelectedFile called for file:", file.name);
     if (!file) return;
+
+    // --- Original file size and type checks from script.js ---
     const fileSizeLimit = 5 * 1024 * 1024; // 5 MB
     if (file.size > fileSizeLimit) {
-        window.appendMessage("File size exceeds 5MB limit.", "ai");
+        alert("File size exceeds 5MB limit.");
+        showThinkingIndicator(false); // Hide indicator in case of early exit
         return;
     }
     const acceptedTypes = ["image/jpeg", "image/png", "application/pdf"];
     if (!acceptedTypes.includes(file.type)) {
-        window.appendMessage("Only JPG, PNG, and PDF files are allowed.", "ai");
+        alert("Only JPG, PNG, and PDF files are allowed.");
+        showThinkingIndicator(false); // Hide indicator in case of early exit
         return;
     }
+    // --- End original checks ---
+
     const formData = new FormData();
     formData.append("file", file);
-    if (currentUser) formData.append("userId", currentUser._id);
-    window.appendMessage(`Uploading: ${file.name}`, "user");
-    showThinkingIndicator(true);
-    fetch("/upload", { method: "POST", body: formData, credentials: 'include' })
-        .then(res => res.json())
-        .then(data => {
-            if (data.text) window.appendMessage(data.text, "ai");
-            if (data.imageUrl) window.appendMessage(`<img src="${data.imageUrl}" class="chat-image" alt="Uploaded Content">`, "ai");
-        })
-        .catch(err => {
-            console.error("Upload error:", err);
-            window.appendMessage("Upload failed. Please try again.", "ai");
-        })
-        .finally(() => showThinkingIndicator(false));
-}
 
-// Audio Playback Function (Text-to-Speech)
-async function speakText(textToSpeak, dynamicVoiceId = null) {
-    console.log("LOG: speakText called for text:", textToSpeak.substring(0, Math.min(textToSpeak.length, 50)) + "...");
-    if (currentAudio) stopAudioPlayback(); // Ensure current audio is stopped before new playback
-    if (!textToSpeak) return; // Don't try to speak empty text
-    let cleanedText = textToSpeak.replace(/\[MATH\].*?\[\/MATH\]/g, ' [equation] '); // Remove math tags for TTS
-    cleanedText = cleanedText.replace(/\*/g, ''); // Remove emphasis asterisks
-
-    const TUTOR_CONFIG_FRONTEND = window.TUTOR_CONFIG;
-    // Fallback voiceId if dynamicVoiceId is null or TUTOR_CONFIG not loaded
-    const voiceId = dynamicVoiceId || (TUTOR_CONFIG_FRONTEND ? TUTOR_CONFIG_FRONTEND['default'].voiceId : "2eFQnnNM32GDnZkCfkSm");
-
-    try {
-        const response = await fetch("/speak", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: cleanedText, voiceId }),
-        });
-        if (!response.ok) throw new Error(`ElevenLabs TTS failed: ${response.statusText}`);
-        const audioBlob = await response.blob();
-        const audioUrl = URL.createObjectURL(audioBlob);
-        currentAudio = new Audio(audioUrl);
-        currentAudio.play().catch(e => console.error("Error playing audio:", e)); // Catch play() errors
-        if (audioStopBtn) audioStopBtn.style.display = 'inline-block'; // Show stop button
-        currentAudio.onended = () => {
-            URL.revokeObjectURL(audioUrl); // Clean up
-            currentAudio = null;
-            if (audioStopBtn) audioStopBtn.style.display = 'none'; // Hide stop button
-        };
-    } catch (err) {
-        console.error("ERROR: Error fetching or playing speech:", err);
-    }
-}
-
-// Stop Audio Playback Function
-function stopAudioPlayback() {
-    console.log("LOG: stopAudioPlayback called.");
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0; // Reset playback position
-        currentAudio = null;
-        if (audioStopBtn) audioStopBtn.style.display = 'none';
-    }
-}
-
-// Function to Append Messages to Chat Box
-window.appendMessage = function(message, sender = "user", voiceIdToUse = null) {
-    console.log(`LOG: appendMessage called. Sender: ${sender}, Message: ${message.substring(0, Math.min(message.length, 50))}...`);
-    const messageContent = String(message || '');
-    const bubble = document.createElement("div");
-    bubble.className = `message ${sender}`;
-    const mathRegex = /\[MATH\](.*?)\[\/MATH\]/g; // Regex to find your custom tags
-
-    if (messageContent.match(mathRegex)) {
-        // Replace your custom [MATH] tags with MathJax's inline delimiters \($ and \)$
-        let processedMessage = messageContent.replace(/\n/g, '<br>'); // Preserve newlines
-        processedMessage = processedMessage.replace(mathRegex, '\\($1\\)'); // Replaces [MATH]...[/MATH] with \($...\)
-        bubble.innerHTML = processedMessage;
-
-        // Only attempt to typeset if MathJax library is confirmed loaded and ready
-        if (window.isMathJaxReady && window.MathJax) {
-            console.log("LOG: MathJax is ready, typesetting message.");
-            // Typeset the newly added bubble element
-            window.MathJax.typesetPromise([bubble]).catch(err => console.error("MathJax typesetting failed:", err));
-        } else {
-            // If MathJax is not yet ready, it will automatically scan and typeset new content once it becomes ready.
-            console.warn("WARN: MathJax not yet ready for immediate typesetting. Will auto-process when ready.");
-        }
+    // Ensure currentUser is available before appending its data
+    if (currentUser && currentUser._id) {
+        formData.append("userId", currentUser._id);
+        formData.append("name", currentUser.name || '');
+        formData.append("tonePreference", currentUser.tonePreference || '');
+        formData.append("learningStyle", JSON.stringify(currentUser.learningStyle || [])); // Stringify non-string data
+        formData.append("interests", JSON.stringify(currentUser.interests || []));
     } else {
-        // No math tags, just append as plain HTML, preserving newlines
-        bubble.innerHTML = messageContent.replace(/\n/g, '<br>');
-    }
-
-    // Add Speak button for AI messages
-    if (sender === "ai") {
-        const speakButton = document.createElement("button");
-        speakButton.className = "speak-message-btn";
-        speakButton.innerHTML = "🔊"; // Speaker emoji
-        speakButton.title = "Read aloud";
-        speakButton.onclick = () => {
-            let textToSpeak = bubble.textContent; // Get plain text from the bubble
-            speakText(textToSpeak, voiceIdToUse); // Use the global speakText function
-        };
-        bubble.prepend(speakButton); // Add button at the beginning of the bubble
-    }
-
-    // Append to chat box and scroll to bottom
-    if (chatBox) {
-        chatBox.appendChild(bubble);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-};
-
-// Show/Hide Thinking Indicator
-function showThinkingIndicator(show) {
-    console.log(`LOG: showThinkingIndicator set to: ${show}`);
-    if (thinkingIndicator) thinkingIndicator.style.display = show ? "flex" : "none";
-}
-
-// Award XP Function
-window.awardXP = function(amount, isSpecial = false) {
-    console.log(`LOG: Awarding ${amount} XP (Special: ${isSpecial})`);
-    if (currentUser) {
-        currentUser.xp = (currentUser.xp || 0) + amount; // Update XP on current user object
-        updateGamifiedDashboard(currentUser.xp, currentUser.level, amount); // Update UI
-    }
-    triggerXpGainAnimation(amount, isSpecial); // Trigger animation
-}
-
-// Update XP/Level Display on Dashboard
-function updateGamifiedDashboard(userXp, userLevel, specialXpAwarded = 0) {
-    console.log(`LOG: updateGamifiedDashboard called with XP: ${userXp}, Level: ${userLevel}`);
-    // Check if elements are available before updating
-    if (!currentLevelSpan || !currentXpSpan || !xpNeededSpan || !xpLevelDisplay) {
-        console.warn("WARN: Gamified dashboard elements not found. Cannot update dashboard UI.");
+        // If currentUser is not available, try to fetch it or alert user
+        console.warn("WARN: currentUser not available for file upload.");
+        alert("User session not fully loaded. Please refresh the page or log in again.");
+        showThinkingIndicator(false);
         return;
     }
-    const oldLevel = parseInt(currentLevelSpan.textContent);
-    currentLevelSpan.textContent = userLevel;
-    const xpNeededForNextLevel = (userLevel) * XP_PER_LEVEL; // Calculate XP needed for next level
-    currentXpSpan.textContent = userXp;
-    xpNeededSpan.textContent = xpNeededForNextLevel;
 
-    // Trigger animations based on changes
-    if (userLevel > oldLevel) {
-        console.log("LOG: Level up animation triggered.");
-        triggerLevelUpAnimation(userLevel);
-    } else if (specialXpAwarded > 0) {
-        console.log("LOG: XP gain animation triggered.");
-        triggerXpGainAnimation(specialXpAwarded, true);
+    appendMessage(`Upload: ${file.name}`, "user");
+
+    showThinkingIndicator(true);
+
+    fetch("/upload", {
+      method: "POST",
+      body: formData,
+      credentials: 'include' // Ensure session cookie is sent with upload
+    })
+      .then((res) => res.json())
+      .then((data) => {
+          if (data.text) { // Ensure there is text to append
+              appendMessage(data.text, "ai");
+          } else {
+              appendMessage("WARNING: Upload processed, but no text was extracted or AI response generated.", "ai");
+          }
+          // Optionally display image if imageUrl is returned and it's an image upload
+          if (data.image) { // Assuming 'image' from upload route is base64 string
+              const imageBubble = document.createElement("div");
+              imageBubble.className = "message ai"; // Or a specific class for image display
+              imageBubble.innerHTML = `<img src="${data.image}" class="chat-image" alt="Uploaded Content">`;
+              chatBox.appendChild(imageBubble);
+              chatBox.scrollTop = chatBox.scrollHeight;
+          }
+      })
+      .catch((err) => {
+        console.error("ERROR: Upload error:", err);
+        appendMessage("WARNING: Upload failed. Please try again. Ensure the file is a clear image of math or PDF.", "ai");
+      })
+      .finally(() => {
+        showThinkingIndicator(false);
+    });
+}
+// --- END NEW COMMON FUNCTION FOR FILE UPLOAD ---
+
+
+// Load user profile and handle redirection based on role
+fetch("/user", { credentials: 'include' })
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.redirect) {
+        console.log(`Redirecting to: ${data.redirect}`);
+        window.location.href = data.redirect;
+        return;
+    }
+
+    // FIX: Correctly access the user object from the 'user' property in the response
+    currentUser = data.user;
+
+    if (!currentUser || !currentUser._id) {
+        console.log("WARN: currentUser not populated or missing _id. Redirecting to login.");
+        window.location.href = "/login.html";
+        return;
+    }
+
+    const userRole = currentUser.role;
+
+    // These redirects generally should be handled by the server's /user route
+    // for authenticated users who don't need profile completion.
+    // Keeping this client-side fallback for robustness.
+    if (userRole === "admin") {
+        window.location.href = "/admin-dashboard.html";
+    } else if (userRole === "teacher") {
+        window.location.href = "/teacher-dashboard.html";
+    } else if (userRole === "parent") {
+        window.location.href = "/parent-dashboard.html";
+    }
+    // If none of the above specific roles, and not redirected, assume student and continue current logic.
+    else {
+        // For student role, continue to chat.html logic
+        const selectedTutorId = localStorage.getItem("selectedTutorId"); // This might be deprecated soon. Fetch from user.selectedTutorId
+        const studentAvatarContainer = document.getElementById("student-avatar");
+
+        // Use user.selectedTutorId from the fetched user data, or localStorage as a fallback.
+        // Eventually, localStorage should be removed as the source of truth.
+        const effectiveTutorId = currentUser.selectedTutorId || selectedTutorId;
+
+        if (effectiveTutorId && studentAvatarContainer) {
+            // Destroy any existing Lottie animation
+            if (window.avatarAnim) {
+                window.avatarAnim.destroy();
+                window.avatarAnim = null;
+            }
+            studentAvatarContainer.innerHTML = ''; // Clear the div's content
+
+            // Create and append the image element for the selected tutor
+            const tutorImage = document.createElement('img');
+            // CORRECTED: Path for tutor avatars
+            tutorImage.src = `/images/tutor_avatars/${effectiveTutorId}.png`;
+            tutorImage.alt = `Your tutor`;
+            tutorImage.style.width = '100%';
+            tutorImage.style.height = '100%';
+            tutorImage.style.objectFit = 'contain';
+            tutorImage.style.borderRadius = '8px'; // Optional: match design
+            studentAvatarContainer.appendChild(tutorImage);
+            console.log(`DEBUG: Displaying selected tutor: ${effectiveTutorId}.png`);
+
+        } else if (currentUser.avatar) {
+            // Fallback to original avatar loading if no tutor is selected
+            // Ensure avatarAnim is defined globally (e.g., as window.avatarAnim)
+            if (typeof lottie !== 'undefined' && studentAvatarContainer) { // Check if Lottie library is available
+                const defaultAvatarPath = "/animations/idle.json";
+                let avatarAnimationPath = defaultAvatarPath;
+
+                if (currentUser.avatar.lottiePath) {
+                    avatarAnimationPath = currentUser.avatar.lottiePath;
+                } else if (currentUser.avatar.skin && currentUser.avatar.hair) {
+                    avatarAnimationPath = `/avatars/preview?skin=${currentUser.avatar.skin}&hair=${currentUser.avatar.hair}&top=${currentUser.avatar.top || 'default'}&bottom=${currentUser.avatar.bottom || 'default'}&accessory=${currentUser.avatar.accessory || 'none'}`;
+                }
+
+                if (window.avatarAnim && window.avatarAnim.path !== avatarAnimationPath) {
+                     window.avatarAnim.destroy();
+                     window.avatarAnim = lottie.loadAnimation({
+                        container: studentAvatarContainer,
+                        renderer: "svg",
+                        loop: true,
+                        autoplay: true,
+                        path: avatarAnimationPath
+                     });
+                     console.log("DEBUG: Reloaded avatar with path:", avatarAnimationPath);
+                } else if (!window.avatarAnim) {
+                    window.avatarAnim = lottie.loadAnimation({
+                        container: studentAvatarContainer,
+                        renderer: "svg",
+                        loop: true,
+                        autoplay: true,
+                        path: avatarAnimationPath
+                     });
+                    console.log("DEBUG: Initialized avatar with path:", avatarAnimationPath);
+                } else {
+                    console.log("DEBUG: Avatar path is already set or current, no need to reload.");
+                }
+            } else {
+                console.warn("WARN: Lottie library or student-avatar container not found. Avatar animations may not work.");
+            }
+        } else {
+            console.log("DEBUG: No custom avatar or selected tutor found for user, using default idle animation.");
+            // Ensure default idle animation is loaded if no custom avatar or selected tutor
+            if (typeof lottie !== 'undefined' && studentAvatarContainer) { // Check if Lottie library is available
+                if (window.avatarAnim && window.avatarAnim.path !== "/animations/idle.json") {
+                    window.avatarAnim.destroy();
+                    window.avatarAnim = lottie.loadAnimation({
+                        container: studentAvatarContainer,
+                        renderer: "svg",
+                        loop: true,
+                        autoplay: true,
+                        path: "/animations/idle.json"
+                    });
+                } else if (!window.avatarAnim) {
+                     window.avatarAnim = lottie.loadAnimation({
+                        container: studentAvatarContainer,
+                        renderer: "svg",
+                        loop: true,
+                        autoplay: true,
+                        path: "/animations/idle.json"
+                     });
+                }
+            }
+        }
+
+        fetch(`/welcome-message?userId=${currentUser._id}`)
+            .then(response => response.json())
+            .then(welcomeData => {
+                appendMessage(welcomeData.greeting, "ai");
+            })
+            .catch(err => {
+                console.error("ERROR: Error fetching welcome message:", err);
+                appendMessage("Hello! How can I help you today?", "ai");
+            });
+
+        updateGamifiedDashboard(currentUser.xp, currentUser.level);
+    }
+  })
+  .catch((err) => {
+    console.error("ERROR: Error loading user profile:", err);
+    if (err.message.includes('401') || err.message.includes('Not logged in')) {
+        window.location.href = "/login.html";
+    } else {
+        // Fallback for other errors, e.g., network issues
+        console.error("Unknown error, redirecting to login as fallback.");
+        window.location.href = "/login.html";
+    }
+  });
+
+function appendMessage(message, sender = "user") {
+  const messageContent = typeof message === 'string' ? message : String(message || '');
+
+  const bubble = document.createElement("div");
+  bubble.className = `message ${sender === "user" ? "user" : "ai"}`;
+
+  // This part is handled by MathLive's renderMathInElement now
+  bubble.textContent = messageContent;
+  chatBox.appendChild(bubble);
+  // NEW: Render MathLive after appending message
+  renderMathLive(bubble); 
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+if (input) input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+  }
+});
+
+function sendMessage() {
+  const message = input.value.trim();
+  if (!message) return;
+
+  appendMessage(message, "user");
+  input.value = "";
+
+  showThinkingIndicator(true);
+
+  fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId: currentUser?._id, message }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+        appendMessage(data.text, "ai");
+        if (data.userXp !== undefined && data.userLevel !== undefined) {
+            updateGamifiedDashboard(data.userXp, data.userLevel, data.specialXpAwarded);
+        }
+    })
+    .catch((err) => {
+      console.error("ERROR: Chat error:", err);
+      appendMessage("WARNING: AI error. Please try again. Your session might have expired. Try logging in again if this persists.", "ai");
+    })
+    .finally(() => {
+        showThinkingIndicator(false);
+    });
+}
+
+let recognition;
+if ("webkitSpeechRecognition" in window) {
+  recognition = new webkitSpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    input.value = transcript;
+    sendMessage();
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Speech recognition error:", event);
+  };
+
+  if (micBtn) micBtn.addEventListener("click", () => recognition.start());
+}
+
+// --- FILE INPUT ATTACH BUTTON LISTENER (UPDATED TO USE COMMON FUNCTION) ---
+if (attachBtn && fileInput) {
+  attachBtn.addEventListener("click", () => fileInput.click());
+}
+
+if (fileInput) {
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    uploadSelectedFile(file);
+  });
+}
+// --- END FILE INPUT ATTACH BUTTON LISTENER ---
+
+// --- Drag and Drop Zone logic (UPDATED) ---
+// dropzone and fullscreenDropzone are declared ONCE at the top of the file.
+// This block ensures the drag/drop listeners are attached correctly.
+if (fullscreenDropzone) { // Using app-layout-wrapper as the drop zone
+    fullscreenDropzone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        // Add a visual indicator for the drop zone
+        fullscreenDropzone.classList.add('drag-active');
+    });
+
+    fullscreenDropzone.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Crucial: prevents browser's default behavior
+    });
+
+    fullscreenDropzone.addEventListener('dragleave', (e) => {
+        // Check if the drag is truly leaving the dropzone, not just moving over a child element
+        if (!e.relatedTarget || !fullscreenDropzone.contains(e.relatedTarget)) {
+             fullscreenDropzone.classList.remove('drag-active');
+        }
+    });
+
+    fullscreenDropzone.addEventListener('drop', (e) => {
+        e.preventDefault(); // Crucial: prevents browser from opening the file
+        fullscreenDropzone.classList.remove('drag-active');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            uploadSelectedFile(file); // Call the new common function here
+        }
+    });
+}
+// --- END Drag AND Drop Zone logic ---
+
+
+if (equationBtn && mathModal && mathInput) {
+  equationBtn.addEventListener("click", () => {
+    mathModal.style.display = "block";
+    // For MathLive, use .setValue('') or .value = ''
+    mathInput.value = "";
+    mathInput.focus();
+  });
+}
+
+if (insertMathBtn && mathModal && mathInput) {
+  insertMathBtn.addEventListener("click", () => {
+    // For MathLive, get the LaTeX value with .getValue('latex') or .value
+    const math = mathInput.value; // Get the raw value from math-field
+    if (math.trim()) { // Check if it's not empty after trimming
+      // Wrap LaTeX with standard MathLive delimiters for rendering
+      const wrapped = `\\(${math}\\)`; // Use inline math delimiters for general chat
+      input.value += " " + wrapped + " ";
+    }
+    mathModal.style.display = "none";
+    mathInput.value = ""; // Clear MathLive input
+  });
+}
+
+if (closeMathBtn && mathModal && mathInput) {
+  closeMathBtn.addEventListener("click", () => {
+    mathModal.style.display = "none";
+    mathInput.value = ""; // Clear MathLive input
+  });
+}
+
+window.addEventListener("click", (e) => {
+  if (e.target === mathModal) {
+    mathModal.style.display = "none";
+    mathInput.value = ""; // Clear MathLive input
+  }
+});
+
+// REMOVED DUPLICATE: const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    fetch("/logout")
+      .then(() => {
+        window.location.href = "/login.html";
+      })
+      .catch((err) => {
+        console.error("ERROR: Logout failed:", err);
+        alert("Logout failed. Please try again.");
+      });
+  });
+}
+
+// REMOVED DUPLICATE: const thinkingIndicator = document.getElementById("thinking-indicator");
+
+function showThinkingIndicator(show) {
+    if (thinkingIndicator) {
+        thinkingIndicator.style.display = show ? "flex" : "none";
     }
 }
 
-// XP Gain Animation
+// --- Send session end signal on tab close/navigation ---
+window.addEventListener('beforeunload', (event) => {
+    const userId = currentUser?._id;
+    if (userId && window.location.pathname.includes('/chat.html')) {
+        navigator.sendBeacon('/api/end-session', JSON.stringify({ userId: userId }));
+    }
+});
+// --- END NEW ---
+
+// --- Gamified Dashboard Update Function ---
+// Modified to accept specialXpAwarded for animation trigger
+function updateGamifiedDashboard(userXp, userLevel, specialXpAwarded = 0) {
+    if (currentLevelSpan && xpLevelDisplay && currentXpSpan && xpNeededSpan) {
+        const oldLevel = parseInt(currentLevelSpan.textContent);
+        // const oldXp = parseInt(currentXpSpan.textContent); // Not used
+
+        currentLevelSpan.textContent = userLevel;
+        const xpNeededForNextLevel = (userLevel + 1) * XP_PER_LEVEL;
+        currentXpSpan.textContent = userXp;
+        xpNeededSpan.textContent = xpNeededForNextLevel;
+
+        // --- ANIMATION TRIGGER LOGIC ---
+        if (userLevel > oldLevel) {
+            // User leveled up! Trigger level up animation.
+            triggerLevelUpAnimation(userLevel);
+        } else if (specialXpAwarded > 0) {
+            // Special XP was awarded by the tutor.
+            triggerXpGainAnimation(specialXpAwarded, true); // `true` for special styling
+        }
+        // No animation for regular turn-based XP now
+
+        console.log(`DEBUG: Gamification updated. Level: ${userLevel}, XP: ${userXp}/${xpNeededForNextLevel}`);
+    } else {
+        console.warn("DEBUG: Gamification elements not found in DOM.");
+    }
+}
+// --- End Gamified Dashboard Update Function ---
+
+// --- Animation Functions for XP/Level Up ---
 function triggerXpGainAnimation(amount, isSpecial = false) {
-    console.log(`LOG: Triggering XP animation for ${amount} XP`);
-    const xpAnim = document.createElement('div');
-    xpAnim.textContent = `+${amount} XP`;
-    xpAnim.classList.add('xp-animation-text');
-    if (isSpecial) xpAnim.classList.add('special-xp');
-    document.body.appendChild(xpAnim);
+    const xpDisplay = document.getElementById('xp-level-display');
+    if (!xpDisplay) return;
 
-    // Position the animation near the XP display
-    if (xpLevelDisplay) {
-        const rect = xpLevelDisplay.getBoundingClientRect();
-        xpAnim.style.left = `${rect.left + rect.width / 2}px`;
-        xpAnim.style.top = `${rect.top}px`;
-    } else {
-        // Fallback positioning if XP display isn't found
-        xpAnim.style.left = '50%';
-        xpAnim.style.top = '50%';
-        xpAnim.style.transform = 'translate(-50%, -50%)';
+    const animationText = document.createElement('div');
+    animationText.className = 'xp-animation-text';
+    animationText.textContent = `+${amount} XP`;
+
+    if (isSpecial) {
+        animationText.classList.add('special-xp');
+        animationText.textContent = `+${amount} XP (Bonus!)`;
     }
 
-    xpAnim.classList.add('animate-xp');
-    xpAnim.onanimationend = () => xpAnim.remove(); // Remove element after animation
+    const rect = xpDisplay.getBoundingClientRect();
+    animationText.style.position = 'fixed';
+    animationText.style.left = `${rect.left + rect.width / 2}px`;
+    animationText.style.top = `${rect.top + rect.height / 2}px`;
+    animationText.style.transform = 'translate(-50%, -50%)';
+
+    document.body.appendChild(animationText);
+
+    // Trigger reflow to ensure animation starts
+    animationText.offsetWidth;
+
+    animationText.classList.add('animate-xp');
+    animationText.addEventListener('animationend', () => {
+        animationText.remove(); // Clean up the element after animation
+    });
 }
 
-// Level Up Animation
 function triggerLevelUpAnimation(newLevel) {
-    console.log(`LOG: Triggering Level Up animation to Level ${newLevel}`);
-    const levelAnim = document.createElement('div');
-    levelAnim.textContent = `LEVEL UP! ${newLevel}!`;
-    levelAnim.classList.add('level-up-animation-text');
-    document.body.appendChild(levelAnim);
+    const xpDisplay = document.getElementById('xp-level-display');
+    if (!xpDisplay) return;
 
-    // Position the animation near the XP display
-    if (xpLevelDisplay) {
-        const rect = xpLevelDisplay.getBoundingClientRect();
-        levelAnim.style.left = `${rect.left + rect.width / 2}px`;
-        levelAnim.style.top = `${rect.top}px`;
-    } else {
-        levelAnim.style.left = '50%';
-        levelAnim.style.top = '50%';
-        levelAnim.style.transform = 'translate(-50%, -50%)';
-    }
+    const animationText = document.createElement('div');
+    animationText.className = 'level-up-animation-text';
+    animationText.textContent = `Level ${newLevel} UP!`;
 
-    levelAnim.classList.add('animate-level-up');
-    levelAnim.onanimationend = () => levelAnim.remove();
+    const rect = xpDisplay.getBoundingClientRect();
+    animationText.style.position = 'fixed';
+    animationText.style.left = `${rect.left + rect.width / 2}px`;
+    animationText.style.top = `${rect.top + rect.height / 2}px`;
+    animationText.style.transform = 'translate(-50%, -50%)';
+
+    document.body.appendChild(animationText);
+
+    animationText.offsetWidth; // Trigger reflow
+
+    animationText.classList.add('animate-level-up');
+    animationText.addEventListener('animationend', () => {
+        animationText.remove();
+    });
 }
+// --- End Animation Functions for XP/Level Up ---
 
-// Fetch and Display Leaderboard Data
+
+// --- LEADERBOARD WIDGET LOGIC ---
 async function fetchAndDisplayLeaderboard() {
-    console.log("LOG: fetchAndDisplayLeaderboard called.");
-    // leaderboardTableBody is already globally defined as a const at the top
-
+    const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
     if (!leaderboardTableBody) {
-        console.warn("WARN: Leaderboard table body not found. Cannot update leaderboard.");
+        console.error("ERROR: Leaderboard table body not found when attempting to fetch and display.");
         return;
     }
 
@@ -288,23 +559,15 @@ async function fetchAndDisplayLeaderboard() {
     `;
 
     try {
-        const response = await fetch('/api/leaderboard', { credentials: 'include' });
+        const response = await fetch('/api/leaderboard', { credentials: 'include' }); // Corrected API path
 
         if (!response.ok) {
             const errorText = await response.text();
-            if (response.status === 401 || response.status === 403) {
-                console.warn(`WARN: Not authorized to view leaderboard: ${response.status}`);
-                leaderboardTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center py-4 text-red-500">Not authorized to view leaderboard. Please log in.</td>
-                    </tr>
-                `;
-                return;
-            }
             throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
 
         const students = await response.json();
+
         leaderboardTableBody.innerHTML = '';
 
         if (students.length === 0) {
@@ -322,549 +585,68 @@ async function fetchAndDisplayLeaderboard() {
             row.className = 'hover:bg-gray-50 transition-colors duration-150';
             row.innerHTML = `
                 <td class="py-3 px-4 text-sm text-gray-700 font-medium">${rank}</td>
-                <td class="py-3 px-4 text-sm text-gray-700">${student.name || student.username || 'N/A'}</td> <td class="py-3 px-4 text-sm text-gray-700">${student.level || 1}</td> <td class="py-3 px-4 text-sm text-gray-700">${student.xp || 0}</td> `;
+                <td class="py-3 px-4 text-sm text-gray-700">${student.name}</td>
+                <td class="py-3 px-4 text-sm text-gray-700">${student.level}</td>
+                <td class="py-3 px-4 text-sm text-gray-700">${student.xp}</td>
+            `;
             leaderboardTableBody.appendChild(row);
         });
-        console.log("LOG: Leaderboard data displayed successfully.");
 
     } catch (error) {
-        console.error('ERROR: Error fetching leaderboard data:', error);
-        leaderboardTableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="text-center py-4 text-red-500">Failed to load leaderboard. Please ensure you are logged in and authorized.</td>
-            </tr>
-        `;
-    }
-}
-
-// Setup Speech Recognition API
-function setupSpeechRecognition() {
-    console.log("LOG: setupSpeechRecognition called.");
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        console.warn("WARN: Speech Recognition not supported in this browser.");
-        if (micBtn) micBtn.style.display = 'none'; // Mic button is hidden if not supported
-        if (voiceModeToggle) voiceModeToggle.style.display = 'none';
-        return;
-    }
-
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = (event) => {
-        const speechResult = event.results[event.results.length - 1][0].transcript;
-        console.log("LOG: Speech Result:", speechResult);
-        input.value = speechResult;
-        sendBtn.click(); // Automatically send message
-        isRecognitionActive = false; // Stop recognition after sending
-        recognition.stop();
-        toggleHandsFreeMode(false); // Visually turn off hands-free after one use
-    };
-
-    recognition.onerror = (event) => {
-        console.error("ERROR: Speech recognition error:", event.error);
-        isRecognitionActive = false;
-        toggleHandsFreeMode(false); // Turn off on error
-    };
-
-    recognition.onend = () => {
-        console.log("LOG: Speech recognition ended.");
-        if (isRecognitionActive) { // If it ended unexpectedly, restart if still "active"
-            console.log("LOG: Restarting speech recognition (continuous mode).");
-            recognition.start();
-        }
-    };
-}
-
-// Toggle Hands-Free Mode
-function toggleHandsFreeMode(enable) {
-    console.log(`LOG: toggleHandsFreeMode called. Enable: ${enable}`);
-    isVoiceModeEnabled = enable;
-    localStorage.setItem('voiceMode', enable);
-    if (voiceModeToggle) {
-        voiceModeToggle.classList.toggle('green', enable);
-        const handsfreeLabel = document.getElementById('handsfree-label');
-        if (handsfreeLabel) handsfreeLabel.textContent = `Hands-Free Mode: ${enable ? 'ON' : 'OFF'}`;
-    }
-
-    if (isVoiceModeEnabled) {
-        if (recognition && !isRecognitionActive) {
-            try {
-                recognition.start();
-                isRecognitionActive = true;
-                console.log("LOG: Speech recognition started.");
-            } catch (e) {
-                console.error("ERROR: Error starting speech recognition:", e);
-                isRecognitionActive = false;
-                toggleHandsFreeMode(false); // Turn off if it fails to start
-            }
-        }
-    } else {
-        if (recognition && isRecognitionActive) {
-            recognition.stop();
-            isRecognitionActive = false;
-            console.log("LOG: Speech recognition stopped.");
+        console.error('Error fetching leaderboard data:', error);
+        if (leaderboardTableBody) {
+            leaderboardTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-red-500">Failed to load leaderboard. Please ensure you are logged in and authorized.</td>
+                </tr>
+            `;
         }
     }
 }
 
-// Load Student Parent Link Code
-function loadStudentParentLinkCode() {
-    console.log("LOG: loadStudentParentLinkCode called.");
-    if (!currentUser || currentUser.role !== 'student') {
-        console.log("LOG: Not a student or no current user, skipping parent link code.");
-        if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
-        return;
-    }
-    
-    fetch('/api/student/generate-invite-code', { method: 'POST', credentials: 'include' })
-        .then(res => {
-            if (!res.ok) { // Check for HTTP errors like 404, 500
-                return res.text().then(text => { throw new Error(`HTTP error! status: ${res.status} - ${text}`); });
-            }
-            return res.json(); // Attempt to parse as JSON
-        })
-        .then(data => {
-            // Modified logic: Only log an ERROR if data.success is explicitly FALSE.
-            // If data.success is true, proceed normally.
-            if (data.success && studentLinkCodeValue) {
-                studentLinkCodeValue.textContent = data.code;
-                if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'block';
-                console.log("LOG: Parent invite code displayed:", data.code);
-            } else if (!data.success) {
-                console.error("ERROR: Failed to generate/fetch parent invite code (backend reported failure):", data.message || 'Unknown error');
-                if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
-            } else {
-                console.warn("WARN: Unexpected response structure from parent invite code API:", data);
-                if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
-            }
-        })
-        .catch(error => {
-            console.error("CRITICAL ERROR: Error fetching parent invite code (network/client-side):", error);
-            if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
-        });
-}
-
-// Save User Settings
-async function saveUserSettings() {
-    console.log("LOG: saveUserSettings called.");
-    if (!currentUser) {
-        console.warn("WARN: No current user to save settings for.");
-        return;
-    }
-
-    const updatedSettings = {
-        selectedTutorId: tutorSelect ? tutorSelect.value : currentUser.selectedTutorId,
-        voiceTone: toneSelect ? toneSelect.value : currentUser.tonePreference, // Corrected to tonePreference
-        learningStyle: styleSelect ? styleSelect.value : currentUser.learningStyle,
-        isHandsFreeModeEnabled: voiceModeEnabledCheckbox ? voiceModeEnabledCheckbox.checked : isVoiceModeEnabled
-    };
-
-    try {
-        const response = await fetch('/api/user/settings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updatedSettings)
-        });
-        if (response.ok) {
-            currentUser = { ...currentUser, ...updatedSettings };
-            localStorage.setItem('voiceMode', updatedSettings.isHandsFreeModeEnabled);
-            isVoiceModeEnabled = updatedSettings.isHandsFreeModeEnabled;
-            toggleHandsFreeMode(isVoiceModeEnabled);
-            loadTutorImage();
-            alert('Settings saved successfully!');
-            console.log("LOG: Settings saved successfully:", updatedSettings);
-        } else {
-            const errorText = await response.text();
-            console.error('ERROR: Failed to save settings. Status:', response.status, 'Error:', errorText);
-            alert('Failed to save settings. Please try again.');
-        }
-    } catch (error) {
-        console.error("ERROR: Error saving user settings:", error);
-        alert('An error occurred while saving settings.');
-    }
-}
-
-// Populate Tutor Options in Settings
-function populateTutorOptions() {
-    console.log("LOG: populateTutorOptions called.");
-    const TUTOR_CONFIG_FRONTEND = window.TUTOR_CONFIG;
-    if (tutorSelect && TUTOR_CONFIG_FRONTEND) {
-        tutorSelect.innerHTML = '';
-        for (const id in TUTOR_CONFIG_FRONTEND) {
-            const tutor = TUTOR_CONFIG_FRONTEND[id];
-            const option = document.createElement('option');
-            option.value = id;
-            option.textContent = tutor.name;
-            tutorSelect.appendChild(option);
-        }
-        console.log("LOG: Tutor options populated in settings.");
-    } else {
-        console.warn("WARN: Tutor select element or config not found for populating options.");
-    }
-}
-
-// Load User Settings into Form
-function loadUserSettings() {
-    console.log("LOG: loadUserSettings called.");
-    if (currentUser) {
-        if (tutorSelect) tutorSelect.value = currentUser.selectedTutorId || 'default';
-        if (toneSelect) toneSelect.value = currentUser.tonePreference || 'friendly'; // Use tonePreference in User model
-        if (styleSelect) styleSelect.value = currentUser.learningStyle || 'step';
-        if (voiceModeEnabledCheckbox) voiceModeEnabledCheckbox.checked = isVoiceModeEnabled;
-        console.log("LOG: User settings loaded into form.");
-    } else {
-        console.warn("WARN: Current user not available to load settings.");
-    }
-}
-
-// Load Tutor Avatar Image
-async function loadTutorImage() {
-    console.log("LOG: loadTutorImage called.");
-    if (!avatarContainer || !currentUser || !currentUser.selectedTutorId) {
-        console.log("LOG: loadTutorImage - Avatar container or current user/tutor ID not available. Clearing avatar.");
-        if (avatarContainer) avatarContainer.innerHTML = '';
-        return;
-    }
-
-    const TUTOR_CONFIG_FRONTEND = window.TUTOR_CONFIG;
-    if (!TUTOR_CONFIG_FRONTEND) {
-        console.error("ERROR: TUTOR_CONFIG_FRONTEND is not loaded in window scope.");
-        return;
-    }
-    
-    const tutorId = currentUser.selectedTutorId;
-    const tutorConfig = TUTOR_CONFIG_FRONTEND[tutorId] || TUTOR_CONFIG_FRONTEND['default'];
-    const tutorImageFileName = tutorConfig.image;
-
-    if (tutorImageFileName) {
-        avatarContainer.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = `/images/${tutorImageFileName}`; // Corrected path to images/ folder
-        img.alt = `Tutor ${tutorConfig.name}`;
-        avatarContainer.appendChild(img);
-        console.log(`LOG: loadTutorImage - Loaded image for tutor ${tutorConfig.name}: /images/${tutorImageFileName}`);
-    } else {
-        console.warn(`WARN: No image file found for selected tutorId: ${tutorId}. Using default.`);
-        avatarContainer.innerHTML = '';
-        const img = document.createElement('img');
-        img.src = `/images/${TUTOR_CONFIG_FRONTEND['default'].image}`; // Corrected path to images/ folder
-        img.alt = `Default Tutor`;
-        avatarContainer.appendChild(img);
-    }
-}
-
-
-// Global handleChatMessage function
-window.handleChatMessage = async function(messageText) {
-    console.log("LOG: handleChatMessage called with:", messageText);
-
-    // Client-side message length check BEFORE sending
-    if (messageText.length > CLIENT_MAX_MESSAGE_LENGTH) {
-        window.appendMessage(`Your message is too long. Please shorten it to under ${CLIENT_MAX_MESSAGE_LENGTH} characters.`, "ai");
-        return; // Do not proceed with sending
-    }
-
-    window.appendMessage(messageText, "user");
-    currentChatHistory.push({ role: 'user', content: messageText });
-    
-    showThinkingIndicator(true);
-
-    try {
-        const userId = currentUser ? currentUser._id : null;
-        if (!userId) {
-            console.error("ERROR: User ID not available for sending message (currentUser is null).");
-            window.appendMessage("Error: Please log in to send messages.", "ai");
-            showThinkingIndicator(false);
-            return;
-        }
-
-        let isGuidedPathAnswer = false;
-        if (window.guidedPath && window.guidedPath.handleGuidedAnswer) {
-            isGuidedPathAnswer = await window.guidedPath.handleGuidedAnswer(messageText, currentUser);
-        }
-        
-        if (!isGuidedPathAnswer) {
-            console.log("LOG: Message not handled by Guided Path. Sending to general chat AI.");
-            const response = await fetch("/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    userId: userId,
-                    message: messageText,
-                    role: currentUser.role,
-                    chatHistory: currentChatHistory
-                }),
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Chat API failed: ${errorData.message || response.statusText}`);
-            }
-
-            const data = await response.json();
-            window.appendMessage(data.text, "ai", data.voiceId);
-            currentChatHistory.push({ role: 'assistant', content: data.text });
-            
-            if (data.userXp !== undefined && data.userLevel !== undefined) {
-                window.updateGamifiedDashboard(data.userXp, data.userLevel, data.specialXpAwarded);
-            }
-        }
-    } catch (error) {
-        console.error("ERROR: Failed to send message or get AI response:", error);
-        // Display a user-friendly error message, especially if it's from server-side validation
-        if (error.message.includes('too long')) {
-            window.appendMessage("Your message was too long. Please try a shorter message.", "ai");
-        } else {
-            window.appendMessage("Sorry, I'm having trouble connecting right now. Please try again.", "ai");
-        }
-    } finally {
-        showThinkingIndicator(false);
-    }
-};
-
-
-// --- DOMContentLoaded: Initial Setup ---
+// Ensure elements are found before attaching listeners
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("LOG: M∆THM∆TIΧ Initialized");
-    
-    // Assign DOM elements to variables that were declared globally above
-    currentLevelSpan = document.getElementById("current-level");
-    currentXpSpan = document.getElementById("current-xp");
-    xpNeededSpan = document.getElementById("xp-needed");
-    xpLevelDisplay = document.getElementById('xp-level-display');
-    thinkingIndicator = document.getElementById("thinking-indicator");
-    // logoutBtn = document.getElementById("logoutBtn"); // REMOVED: Handled by logout.js
-    audioStopBtn = document.getElementById('audio-stop-button');
-    voiceModeToggle = document.getElementById('handsfree-toggle');
-    studentParentLinkDisplay = document.getElementById('student-parent-link-display');
-    studentLinkCodeValue = document.getElementById('student-link-code-value');
+    // Assign widget elements here AFTER DOMContentLoaded
+    leaderboardPopup = document.getElementById('leaderboardPopup'); // This element might not exist anymore if it was a popup
+    xpLevelDisplay = document.getElementById('xp-level-display'); // Get XP display reference
 
+    // Initial fetch of leaderboard data since it's now always visible
+    fetchAndDisplayLeaderboard();
 
-    if (sendBtn) sendBtn.disabled = true;
-    if (input) input.placeholder = "Loading chat...";
-
-    // Other tool button listeners
-    if (attachBtn) attachBtn.addEventListener("click", () => fileInput.click());
-    if (fileInput) fileInput.addEventListener("change", () => uploadSelectedFile(fileInput.files[0]));
-
-    // --- UPDATED EQUATION BUTTON & MODAL LOGIC ---
-    if (equationBtn) equationBtn.addEventListener("click", () => {
-        if (mathModal) mathModal.classList.add('visible'); // Add 'visible' class
-    });
-    if (closeMathBtn) closeMathBtn.addEventListener("click", () => {
-        if (mathModal) {
-            mathModal.classList.remove('visible'); // Remove 'visible' class
-            mathEditor.value = ''; // Clear editor content on close (MathLive uses .value)
-        }
-    });
-    if (insertMathBtn) insertMathBtn.addEventListener("click", () => {
-        const math = mathEditor.value; // MathLive element uses .value for the LaTeX string
-        if (math.trim()) {
-            input.value += ` [MATH]${math}[/MATH] `;
-        }
-        if (mathModal) {
-            mathModal.classList.remove('visible'); // Remove 'visible' class
-            mathEditor.value = ''; // Clear editor content on insert
-        }
-    });
-    // --- END UPDATED EQUATION BUTTON & MODAL LOGIC ---
-    
-    // Hands-free toggle
-    if (voiceModeToggle) {
-        voiceModeToggle.addEventListener('click', () => toggleHandsFreeMode(!isVoiceModeEnabled));
-        toggleHandsFreeMode(isVoiceModeEnabled);
-    }
-    if (audioStopBtn) {
-        audioStopBtn.addEventListener('click', stopAudioPlayback);
-    } else {
-        console.warn("WARN: audioStopBtn not found. Stop audio functionality will be unavailable.");
-    }
-
-    // NEW: Mic button direct listener (if you want this button to also toggle voice input)
-    if (micBtn) {
-        micBtn.addEventListener('click', () => {
-            toggleHandsFreeMode(!isVoiceModeEnabled); // Toggle hands-free mode
-        });
-    }
-
-
-    // Tab switching logic
-    if (tabButtons && tabButtons.length > 0) {
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const tabId = button.dataset.tab;
-                console.log(`LOG: Tab button clicked: ${tabId}`);
-
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(pane => pane.style.display = 'none');
-
-                button.classList.add('active');
-                document.getElementById(tabId).style.display = 'flex';
-
-                if (tabId === 'lessons-pane') {
-                    if (window.guidedPath && currentUser) {
-                        console.log("LOG: Loading Pathway Overview in Lessons tab.");
-                        window.guidedPath.loadPathwayOverview(currentUser);
-                    } else {
-                        console.warn("WARN: guidedPath.js not loaded or currentUser not available for Lessons tab.");
-                    }
-                } else if (tabId === 'progress-pane') {
-                    document.getElementById('progress-summary').textContent = 'Loading XP and milestones... (Feature under development)';
-                    console.log("LOG: Progress tab activated.");
-                } else if (tabId === 'badges-pane') {
-                    document.getElementById('badge-collection').textContent = 'No badges yet. Let’s earn some! (Feature under development)';
-                    console.log("LOG: Badges tab activated.");
-                } else if (tabId === 'settings-pane') {
-                    populateTutorOptions();
-                    loadUserSettings();
-                    console.log("LOG: Settings tab activated.");
-                }
-            });
-        });
-    } else {
-        console.warn("WARN: No tab buttons found on page.");
-    }
-
-    // Event listeners for settings pane buttons
-    if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        saveUserSettings();
-    });
-
-    if (exportHistoryBtn) exportHistoryBtn.addEventListener('click', () => {
-        console.log("LOG: Export chat history (Feature under development).");
-        alert('Export chat history (Feature under development)');
-    });
-    
-    // REMOVED LOGOUT LISTENERS FROM HERE: Now handled exclusively by logout.js
-    // if (logoutSettingsBtn) logoutSettingsBtn.addEventListener('click', () => {
-    //     console.log("LOG: Logout from settings button clicked. Delegating to logout.js.");
-    //     localStorage.removeItem("welcomeShown");
-    //     localStorage.removeItem("voiceMode");
-    // });
-    // if (logoutBtn) {
-    //     logoutBtn.addEventListener('click', () => {
-    //         console.log("LOG: Logout from chat top bar button clicked. Delegating to logout.js.");
-    //         localStorage.removeItem("welcomeShown");
-    //         localStorage.removeItem("voiceMode");
-    //     });
-    // }
-
-    // Initialize speech recognition
-    setupSpeechRecognition();
-    
-    // --- User Data Fetch and Welcome Message Trigger ---
-    console.log("LOG: Attempting to fetch user data and trigger welcome message.");
-    
-    const welcomeShownFlag = localStorage.getItem("welcomeShown");
-
-    fetch("/user", { credentials: 'include' })
-      .then(res => {
-        console.log(`LOG: /user fetch response status: ${res.status}`);
-        if (!res.ok) {
-            console.error(`ERROR: /user fetch failed: Status ${res.status} - ${res.statusText}`);
-            return res.json().then(errData => { throw new Error(`Fetch /user failed: ${errData.message || res.statusText}`); });
-        }
-        return res.json();
-      })
-      .then(data => {
-        currentUser = data.user;
-        window.currentUser = currentUser;
-        console.log("LOG: Current user data loaded:", currentUser ? (currentUser.username || currentUser.firstName + ' ' + currentUser.lastName) : 'N/A', 'Role:', currentUser ? currentUser.role : 'N/A');
-
-        if (sendBtn && input) {
-            sendBtn.disabled = false;
-            input.placeholder = "Type your message here...";
-            sendBtn.addEventListener('click', () => {
-                if (input.value.trim() !== "") {
-                    window.handleChatMessage(input.value);
-                    input.value = "";
-                }
-            });
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendBtn.click();
-                }
-            });
-            console.log("LOG: Chat input listeners attached and enabled after user data loaded.");
-        } else {
-            console.warn("WARN: Chat input elements (sendBtn, input) not found.");
-        }
-
-        if (!currentUser) { 
-            console.warn("WARN: currentUser is null/undefined after fetch /user. Redirecting to login.");
-            window.location.href = "/login.html";
-            return;
-        }
-
-        populateTutorOptions();
-        loadUserSettings();
-
-        if (currentUser.role === 'student') {
-            if (!welcomeShownFlag) {
-                console.log("LOG: Welcome message not shown yet for student. Attempting to fetch personalized welcome.");
-                fetch(`/welcome?userId=${currentUser._id}&currentHistory=${JSON.stringify(currentChatHistory)}`, { credentials: 'include' })
-                    .then(res => {
-                        console.log(`LOG: /welcome fetch response status: ${res.status}`);
-                        if (!res.ok) {
-                            console.error(`ERROR: /welcome fetch failed: Status ${res.status} - ${res.statusText}`);
-                            throw new Error('Failed to fetch personalized welcome from AI.');
-                        }
-                        return res.json();
-                    })
-                    .then(welcomeData => {
-                        window.appendMessage(welcomeData.greeting, "ai", welcomeData.voiceId);
-                        currentChatHistory.push({ role: 'assistant', content: welcomeData.greeting });
-                        console.log("LOG: Personalized welcome message received and displayed. Setting welcomeShown flag.");
-                        localStorage.setItem("welcomeShown", "true");
-                    })
-                    .catch(err => {
-                        console.error("ERROR: Error fetching personalized welcome message from AI (Catch block):", err);
-                        if (window.appendMessage) {
-                            window.appendMessage("Hello! How can I help you today?", "ai");
-                            currentChatHistory.push({ role: 'assistant', content: "Hello! How can I help you today!" });
-                        } else {
-                            console.error("CRITICAL: window.appendMessage is not defined. Cannot display fallback welcome.");
-                        }
-                        console.log("LOG: Fallback welcome message displayed. Setting welcomeShown flag despite error to prevent loop.");
-                        localStorage.setItem("welcomeShown", "true");
-                    });
-            } else {
-                console.log("LOG: Welcome message already shown for student. Skipping fetch.");
-                if (currentChatHistory.length === 0 && window.appendMessage) {
-                    window.appendMessage("Welcome back! What would you like to work on today?", "ai");
-                    currentChatHistory.push({ role: 'assistant', content: "Welcome back! What would you like to work on today?" });
-                }
-            }
-            window.updateGamifiedDashboard(currentUser.xp, currentUser.level, 0);
-            loadStudentParentLinkCode();
-            loadTutorImage();
-
-        } else if (currentUser.role === 'parent' || currentUser.role === 'teacher' || currentUser.role === 'admin') {
-            console.log("LOG: Current user is non-student. Hiding student-specific UI elements or handling role-specific.");
-            if (xpLevelDisplay) xpLevelDisplay.style.display = 'none';
-            if (studentParentLinkDisplay) studentParentLinkDisplay.style.display = 'none';
-            if (avatarContainer) avatarContainer.style.display = 'none';
-        }
-      })
-      .catch(err => {
-          console.error("ERROR: Authentication or User Fetch Error (Final Catch block):", err);
-          console.log("LOG: Redirecting to /login.html due to fetch error or authentication issue.");
-          window.location.href = "/login.html";
-      });
-
-    // Fetch leaderboard if the element exists on the page
-    if (document.getElementById('leaderboardTable')) {
-        console.log("LOG: Leaderboard table found. Initiating fetch.");
-        fetchAndDisplayLeaderboard();
-    } else {
-        console.log("LOG: Leaderboard table not found on page. Skipping fetch.");
-    }
+    // Removed showLeaderboardBtn and closeLeaderboardBtn logic for fixed widgets
+    // If you add a toggle button later, its events would go here.
 });
+// --- END LEADERBOARD WIDGET LOGIC ---
+
+// --- Drag and Drop Zone logic ---
+// dropzone and fullscreenDropzone are declared ONCE at the top of the file.
+// This block ensures the drag/drop listeners are attached correctly.
+// Using app-layout-wrapper as the fullscreen dropzone because chat.html doesn't have a dedicated #dropzone
+if (fullscreenDropzone) {
+    fullscreenDropzone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        // Add a visual indicator for the drop zone (e.g., a border or overlay)
+        fullscreenDropzone.classList.add('drag-active');
+    });
+
+    fullscreenDropzone.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Crucial: prevents browser's default behavior
+    });
+
+    fullscreenDropzone.addEventListener('dragleave', (e) => {
+        // Check if the drag is truly leaving the dropzone, not just moving over a child element
+        if (!e.relatedTarget || !fullscreenDropzone.contains(e.relatedTarget)) {
+             fullscreenDropzone.classList.remove('drag-active');
+        }
+    });
+
+    fullscreenDropzone.addEventListener('drop', (e) => {
+        e.preventDefault(); // Crucial: prevents browser from opening the file
+        fullscreenDropzone.classList.remove('drag-active');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            uploadSelectedFile(file); // Call the new common function here
+        }
+    });
+}
+// --- END Drag AND Drop Zone logic ---
