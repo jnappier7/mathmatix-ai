@@ -385,22 +385,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    function updateGamificationDisplay() {
-        const levelSpan = document.getElementById("current-level");
-        const xpSpan = document.getElementById("current-xp");
-        const xpBar = document.getElementById("xp-progress-bar");
-        const xpNeededSpan = document.getElementById("xp-needed");
-        if (levelSpan) levelSpan.textContent = currentUser.level;
-        if (xpSpan) xpSpan.textContent = currentUser.xp;
-        if (xpBar) {
-            xpBar.value = currentUser.xp;
-            xpBar.max = window.BRAND_CONFIG?.xpPerLevel || 100;
-        }
-        if (xpNeededSpan && window.BRAND_CONFIG) {
-            xpNeededSpan.textContent = window.BRAND_CONFIG.xpPerLevel || 100;
-        }
-    }
+// In script.js
 
+function updateGamificationDisplay() {
+    const levelSpan = document.getElementById("current-level");
+    const xpSpan = document.getElementById("current-xp");
+    const xpBar = document.getElementById("xp-progress-bar");
+    const xpNeededSpan = document.getElementById("xp-needed");
+
+    // Assume currentUser now has properties like 'xpForCurrentLevel' and 'xpForNextLevel' from the server
+    if (levelSpan) levelSpan.textContent = currentUser.level;
+    if (xpSpan) xpSpan.textContent = currentUser.xpForCurrentLevel; // Use current level XP
+    if (xpBar) {
+        xpBar.value = currentUser.xpForCurrentLevel; // Use current level XP
+        xpBar.max = currentUser.xpForNextLevel;      // Use XP needed for next level
+    }
+    if (xpNeededSpan) {
+        xpNeededSpan.textContent = currentUser.xpForNextLevel; // Use XP needed for next level
+    }
+}
     async function fetchAndDisplayLeaderboard() {
         const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
         if (!leaderboardTableBody) return;

@@ -1105,21 +1105,16 @@ a:hover {
     min-height: 0;     /* This is a crucial fix for flexbox scrolling */
 }
 
-#leaderboard-content .popup-header {
-    margin-bottom: 0;
-    flex-shrink: 0;
-    padding: 10px 15px;
-    background-color: var(--clr-primary-teal);
-    font-size: 1.1rem;
-    font-weight: var(--font-weight-headlines);
-    color: var(--clr-bg-light);
-    text-align: center;
-    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+/* Add this to specifically shrink the Leaderboard's header */
+#leaderboard-content .dashboard-panel-header {
+    font-size: 1rem;
+    font-weight: bold;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
 }
-
 #leaderboard-content .popup-header h2 {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--clr-bg-light);
 }
 
@@ -2654,7 +2649,7 @@ main {
 /* 2. The top two panels don't need to change, their default styles are fine. */
 #xp-level-display,
 #student-parent-link-display {
-    flex-shrink: 0; /* Prevents them from shrinking */
+    flex-grow: 0; /* Prevents them from shrinking */
 }
 
 /* 3. Make the avatar container flexible and push it to the bottom. */
@@ -2672,3 +2667,4 @@ main {
   height: 100%;
   object-fit: contain; /* Keeps the image's aspect ratio without stretching */
 }
+
