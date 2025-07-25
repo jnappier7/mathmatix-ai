@@ -1,6 +1,6 @@
 // public/js/pick-tutor.js
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     let allTutors = [];
     let currentUser = null;
     const tutorSelectionGrid = document.getElementById('tutor-selection-grid');
@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function fetchData() {
         try {
-            // Fetch both user and tutor config in parallel
             const [userRes, tutorConfigRes] = await Promise.all([
                 fetch('/user', { credentials: 'include' }),
                 fetch('/js/tutor-config-data.js')
@@ -25,7 +24,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const userData = await userRes.json();
             currentUser = userData.user;
 
-            // Load tutor config from the response text
             const scriptText = await tutorConfigRes.text();
             if (!window.TUTOR_CONFIG) {
                 const script = document.createElement('script');
@@ -65,21 +63,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <h4>Specializes In:</h4><p>${tutor.specialties || ''}</p>
                     </div>
                 `;
-           // in pick-tutor.js
-} else {
-    // Render the "locked" silhouette card
-    // ALWAYS use the actual tutor image. The CSS 'silhouette' class will handle the effect.
-    tutorCard.innerHTML = `
-        <img src="/images/tutor_avatars/${tutor.image}" alt="Locked Tutor" class="tutor-card-image silhouette" />
-        <h3 class="tutor-card-name locked-name">?????</h3>
-        <p class="tutor-card-tagline"><i class="fas fa-lock"></i> ${tutor.unlockCondition?.description || 'Unlock by playing'}</p>
-    `;
-}
+            } else {
+                // Render the "locked" silhouette card
+                // ALWAYS use the actual tutor image. The CSS 'silhouette' class will handle the effect.
+                tutorCard.innerHTML = `
+                    <img src="/images/tutor_avatars/${tutor.image}" alt="Locked Tutor" class="tutor-card-image silhouette" />
+                    <h3 class="tutor-card-name locked-name">?????</h3>
+                    <p class="tutor-card-tagline"><i class="fas fa-lock"></i> ${tutor.unlockCondition?.description || 'Unlock by playing'}</p>
+                `;
+            }
+            tutorSelectionGrid.appendChild(tutorCard);
+        });
+    }
 
     tutorSelectionGrid.addEventListener('click', (event) => {
         const clickedCard = event.target.closest('.tutor-card');
         
-        // Only allow selection of unlocked cards
         if (clickedCard && !clickedCard.classList.contains('locked')) {
             document.querySelectorAll('.tutor-card').forEach(card => card.classList.remove('selected'));
             clickedCard.classList.add('selected');
@@ -143,9 +142,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // --- Initialize Page ---
-    playVoiceBtn.disabled = true;
-    selectTutorBtn.disabled = true;
-    await fetchData();
-    renderTutors();
+    // --- CORRECTED INITIALIZATION ---
+    // We wrap the initialization logic in an async function and call it.
+    async function initializePage() {
+        playVoiceBtn.disabled = true;
+        selectTutorBtn.disabled = true;
+        await fetchData();
+        renderTutors();
+    }
+
+    initializePage();
 });
