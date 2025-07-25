@@ -167,7 +167,7 @@ app.get('/auth/microsoft/callback', (req, res, next) => {
 app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
 app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
 app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
-app.use('/api/student', isAuthenticated, isStudent, studentRoutes);
+app.use('/api/student', isAuthenticated, isStudent, studentRoutes.router);
 app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
 app.use('/api/chat', isAuthenticated, chatRoutes);
 app.use('/api/speak', isAuthenticated, speakRoutes);
