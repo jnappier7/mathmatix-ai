@@ -47,14 +47,14 @@ const TUTOR_CONFIG = {
     personality: "You are the cool, modern teacher. You're friendly, patient, and believe math is an adventure, not a chore. Your core philosophy is that math is all about patterns, and you frequently say things like 'Once you see the pattern, it all clicks.' You keep the tone positive and motivating.",
     about: "Mr. Nappier believes math is an adventure, not a chore! His friendly and patient approach makes learning math fun and accessible.",
     specialties: "Foundational Math (Arithmetic, Fractions), Pre-Algebra, Algebra 1.",
-    voicePreview: "Welcome! Remember, math is all about patterns. Once you learn to see the patterns, everything becomes easier. Let's find them together!",
+    voicePreview: "Remember, math is about patterns. Once you learn to see the patterns, math becomes easy!",
     unlocked: true
   },
   
   // --- LOCKED / UNLOCKABLE TUTORS ---
   "ms-rashida": {
     name: "Ms. Rashida",
-    voiceId: "placeholder_voice_id",
+    voiceId: "03vEurziQfq3V8WZhQvn",
     image: "ms-rashida.png",
     catchphrase: "Let's build your confidence together.",
     about: "With a warm and encouraging style, Ms. Rashida helps students overcome math anxiety and see their own potential.",
@@ -64,7 +64,7 @@ const TUTOR_CONFIG = {
   },
   "prof-davies": {
     name: "Prof. Davies",
-    voiceId: "placeholder_voice_id",
+    voiceId: "jn34bTlmmOgOJU9XfPuy",
     image: "prof-davies.png",
     catchphrase: "Let's explore the 'why' behind the numbers.",
     about: "A seasoned academic who enjoys diving deep into complex topics and exploring the elegant proofs behind mathematical theories.",
@@ -74,7 +74,7 @@ const TUTOR_CONFIG = {
   },
   "ms-alex": {
     name: "Ms. Alex",
-    voiceId: "placeholder_voice_id",
+    voiceId: "8DzKSPdgEQPaK5vKG0Rs",
     image: "ms-alex.png",
     catchphrase: "A fresh perspective on any problem.",
     about: "Ms. Alex brings a sharp, modern approach to tutoring, focusing on efficient strategies and clear, step-by-step instructions.",
@@ -84,7 +84,7 @@ const TUTOR_CONFIG = {
   },
   "mr-lee": {
     name: "Mr. Lee",
-    voiceId: "placeholder_voice_id",
+    voiceId: "dZUDKQDfSHNzYzM1epKR",
     image: "mr-lee.png",
     catchphrase: "Precision and practice make perfect.",
     about: "Mr. Lee is a meticulous and focused tutor who emphasizes precision and consistent practice to build mastery.",
@@ -92,10 +92,10 @@ const TUTOR_CONFIG = {
     voicePreview: "Welcome. To achieve mastery in mathematics, we must be precise. Let's focus on the details and build strong habits.",
     unlocked: false
   },
-  "gorilla": {
-    name: "Gorilla",
-    voiceId: "placeholder_voice_id", 
-    image: "gorilla.png",
+  "dr-g": {
+    name: "Dr. G",
+    voiceId: "Iz2kaKkJmFf0yaZAMDTV", 
+    image: "dr-g.png",
     catchphrase: "Strength in numbers.",
     about: "A powerful yet gentle guide who teaches that even the biggest math problems can be solved with patience and strength.",
     specialties: "Advanced Algebra, Word Problems, Logic.",
@@ -103,12 +103,12 @@ const TUTOR_CONFIG = {
     voicePreview: "Do not be intimidated by large problems. They are many small problems. We will find the strength to solve them.",
     unlocked: false
   },
-  "mr-chuckles": {
-    name: "Mr. Chuckles",
-    voiceId: "placeholder_voice_id",
-    image: "clown.png",
+  "mr-wiggles": {
+    name: "Mr. Wiggles",
+    voiceId: "52d3CDIZuiBA0XXTytxR",
+    image: "wiggles.png",
     catchphrase: "Why was the equals sign so humble? Because he knew he wasn't less than or greater than anyone else!",
-    about: "Mr. Chuckles believes that laughter is the best way to learn. He uses jokes, puns, and funny stories to make math concepts memorable and fun.",
+    about: "Mr. Wiggles believes that laughter is the best way to learn. He uses jokes, puns, and funny stories to make math concepts memorable and fun.",
     specialties: "Fractions, Percentages, Making Math Fun.",
     unlocksAt: "Level 30",
     voicePreview: "Hey there, pal! Are you ready to have some fun with fractions? I promise it won't be a circus... well, maybe a little!",
@@ -123,7 +123,7 @@ const TUTOR_CONFIG = {
     catchphrase: "Math is about patterns! Once you see the patterns math becomes EASY",
     about: "Mr. Nappier's friendly and patient approach makes learning math fun and accessible.",
     specialties: "Foundational Math (Arithmetic, Fractions, Decimals), Pre-Algebra, Algebra 1.",
-    voicePreview: "Welcome! Remember, math is all about patterns. Once you learn to see the patterns, everything becomes easier. Let's find them together!",
+    voicePreview: "Remember, math is all about patterns. Once you learn to see the patterns, math becomes easy!",
     unlocked: true
   }
 };
