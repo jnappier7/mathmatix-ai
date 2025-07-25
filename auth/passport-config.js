@@ -166,7 +166,7 @@ passport.use(new MicrosoftStrategy({
             // Ensure username is always generated and unique on creation
             username: userEmail ? userEmail.split('@')[0].toLowerCase() + Math.floor(Math.random() * 1000) : 'microsoft_user_' + profile.id, //
             needsProfileCompletion: true, //
-            role: 'student' //
+            role: 'student', //
 			xp: 0,      // 
     		level: 1,
 			studentToParentLinkCode: { code: newLinkCode }// 
