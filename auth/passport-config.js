@@ -7,6 +7,7 @@ const MicrosoftStrategy = require("passport-microsoft").Strategy;
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/user"); //
 const bcrypt = require("bcryptjs"); //
+const { generateUniqueStudentLinkCode } = require('../routes/student');
 
 // Session handling
 passport.serializeUser((user, done) => { //
@@ -102,7 +103,10 @@ passport.use(new GoogleStrategy({
             // Ensure username is always generated and unique on creation
             username: userEmail ? userEmail.split('@')[0].toLowerCase() + Math.floor(Math.random() * 1000) : 'google_user_' + profile.id, //
             needsProfileCompletion: true, //
-            role: 'student' //
+            role: 'student',
+			xp: 0,      // Add this line
+    	    level: 1,
+			studentToParentLinkCode: { code: newLinkCode }// Add this line
         });
         console.log('LOG: GoogleStrategy created new user:', newUser.username); //
         return done(null, newUser); //
@@ -163,6 +167,9 @@ passport.use(new MicrosoftStrategy({
             username: userEmail ? userEmail.split('@')[0].toLowerCase() + Math.floor(Math.random() * 1000) : 'microsoft_user_' + profile.id, //
             needsProfileCompletion: true, //
             role: 'student' //
+			xp: 0,      // 
+    		level: 1,
+			studentToParentLinkCode: { code: newLinkCode }// 
         });
         console.log('LOG: MicrosoftStrategy created new user:', newUser.username); //
         return done(null, newUser); //

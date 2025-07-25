@@ -142,20 +142,39 @@ router.post('/', isAuthenticated, async (req, res) => {
 
         await activeConversation.save();
 
+// in routes/chat.js
+        // --- NEW SCALING XP LOGIC ---
         let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
         let specialXpAwardedMessage = bonusXpAwarded > 0 ? `${bonusXpAwarded} XP (${bonusXpReason})` : `${xpAward} XP`;
-        
+
         user.xp = (user.xp || 0) + xpAward;
         user.xpHistory.push({ amount: xpAward, reason: bonusXpReason || "Turn Completion" });
-
-        if (user.xp >= BRAND_CONFIG.xpPerLevel) {
-            user.level = (user.level || 1) + 1;
-            user.xp %= BRAND_CONFIG.xpPerLevel;
+        
+        let currentLevel = user.level || 1;
+        let xpForNextLevel = currentLevel * BRAND_CONFIG.xpPerLevel;
+        
+        // Check for level up
+        if (user.xp >= xpForNextLevel) {
+            user.level += 1;
             specialXpAwardedMessage = `LEVEL_UP! New level: ${user.level}`;
         }
         
         user.lastLogin = new Date();
         await user.save();
+
+        // Calculate the user's progress in the current level for the frontend display
+        const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
+        const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
+        const xpNeededForThisLevel = user.level * BRAND_CONFIG.xpPerLevel;
+
+        // The user object sent back to the frontend
+        const updatedUserData = {
+            level: user.level,
+            xpForCurrentLevel: userXpInCurrentLevel,
+            xpForNextLevel: xpNeededForThisLevel
+        };
+
+        // Note: The res.json() call below needs to be updated.
 
         if (activeConversation.messages.length % 10 === 0) {
             axios.post(`http://localhost:${process.env.PORT || 3000}/api/summary`, {
@@ -166,10 +185,11 @@ router.post('/', isAuthenticated, async (req, res) => {
         }
 
         res.json({
-            text: aiResponseText,
-            userXp: user.xp,
-            userLevel: user.level,
-            specialXpAwarded: specialXpAwardedMessage,
+    		text: aiResponseText,
+			userXp: updatedUserData.xpForCurrentLevel,  // Send the corrected XP data
+			userLevel: updatedUserData.level,
+			xpNeeded: updatedUserData.xpForNextLevel,   // Send the new max value
+			specialXpAwarded: specialXpAwardedMessage,
             voiceId: currentTutor.voiceId,
 			isMasteryQuiz: isMasteryQuiz, 
             accommodationPrompt: frontendAccommodationTrigger,

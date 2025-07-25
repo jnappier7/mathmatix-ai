@@ -88,4 +88,7 @@ router.get('/linked-parent', isAuthenticated, isStudent, async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = {
+    router,
+    generateUniqueStudentLinkCode
+};
