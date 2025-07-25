@@ -81,18 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const tutorSelectDropdown = document.getElementById('tutor-select-dropdown');
     const stopAudioBtn = document.getElementById('stop-audio-btn');
     const fullscreenDropzone = document.getElementById('app-layout-wrapper');
-    const studentParentLinkDisplay = document.getElementById('student-parent-link-display');
-    const generateLinkCodeBtn = document.getElementById('generate-link-code-btn');
-    const linkCodeContainer = document.getElementById('link-code-container');
     const studentLinkCodeValue = document.getElementById('student-link-code-value');
-    const copyCodeBtn = document.getElementById('copy-code-btn');
     const equationModal = document.getElementById('equation-modal');
     const openEquationBtn = document.getElementById('insert-equation-btn');
     const closeEquationBtn = document.getElementById('close-equation-modal');
     const cancelEquationBtn = document.getElementById('cancel-latex-eq');
     const insertLatexBtn = document.getElementById('insert-latex-eq');
     const mathEditor = document.getElementById('math-editor');
-    const userInputForEq = document.getElementById('user-input');
 
     // --- Speech Recognition ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -121,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
             
             setupChatUI();
+            await fetchAndDisplayParentCode(); // Fetch and display the parent link code
             await getWelcomeMessage();
             await fetchAndDisplayLeaderboard();
         } catch (error) {
@@ -140,11 +136,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function setupChatUI() {
         updateTutorAvatar();
         updateGamificationDisplay();
-        if (currentUser.role === 'student' && studentParentLinkDisplay) {
-            studentParentLinkDisplay.style.display = 'block';
-        }
     }
     
+    // NEW: Function to get and display the parent link code
+    async function fetchAndDisplayParentCode() {
+        if (currentUser.role === 'student' && studentLinkCodeValue) {
+            // The user object from initializeApp already has the code
+            if (currentUser.parent_link_code) {
+                studentLinkCodeValue.textContent = currentUser.parent_link_code;
+            } else {
+                studentLinkCodeValue.textContent = "N/A";
+            }
+        }
+    }
+
     async function getWelcomeMessage() {
         try {
             const res = await fetch(`/api/welcome-message?userId=${currentUser._id}`, {credentials: 'include'});
@@ -159,6 +164,38 @@ document.addEventListener("DOMContentLoaded", () => {
         if (window.MathLive && typeof window.MathLive.renderMathInElement === 'function') {
             window.MathLive.renderMathInElement(element);
         }
+    }
+    
+    // NEW: Placeholder function to handle file uploads
+    function handleFileUpload(file) {
+        console.log("File selected:", file.name, file.size, file.type);
+        // Here you would typically use FormData to upload the file to your server
+        // For now, we'll just show a message in the chat.
+        appendMessage(`File selected: ${file.name}`, "user");
+        
+        // Example of how you would start an upload:
+        /*
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('userId', currentUser._id);
+        
+        showThinkingIndicator(true);
+        fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            appendMessage(data.response, "ai");
+        })
+        .catch(error => {
+            console.error('Upload error:', error);
+            appendMessage("Sorry, I couldn't upload that file.", "ai");
+        })
+        .finally(() => {
+            showThinkingIndicator(false);
+        });
+        */
     }
 
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
@@ -185,10 +222,13 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.appendChild(graphContainer);
             setTimeout(() => {
                 try {
+                    // UPDATED: More robust graph width calculation
+                    const plotWidth = chatBox.clientWidth > 150 ? chatBox.clientWidth - 80 : 250;
                     functionPlot({
                         target: '#' + graphId,
-                        width: bubble.clientWidth > 100 ? bubble.clientWidth - 40 : 250,
-                        height: 300, grid: true,
+                        width: plotWidth,
+                        height: 300,
+                        grid: true,
                         data: [{ fn: graphData.function, graphType: 'polyline' }]
                     });
                 } catch (e) { console.error("Graphing error:", e); graphContainer.innerHTML = "Could not render graph."; }
@@ -434,6 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
+    
     if (tutorSelectDropdown) {
         tutorSelectDropdown.addEventListener('change', async () => {
             const newTutorId = tutorSelectDropdown.value;
@@ -443,7 +484,57 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    // ... other listeners would be added here in a similar fashion ...
+
+    // NEW: Event listener for the microphone button
+    if (micBtn) {
+        micBtn.addEventListener('click', () => {
+            if (!recognition) return;
+            if (isRecognizing) {
+                recognition.stop();
+            } else {
+                recognition.start();
+                isRecognizing = true;
+                micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
+            }
+        });
+    }
+
+    // NEW: Event listeners for file attachment button and input
+    if (attachBtn) {
+        attachBtn.addEventListener('click', () => fileInput.click());
+    }
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+    }
+
+    // NEW: Event listeners for drag-and-drop file uploads
+    if (fullscreenDropzone) {
+        fullscreenDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fullscreenDropzone.classList.add('drag-active');
+        });
+
+        fullscreenDropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            fullscreenDropzone.classList.remove('drag-active');
+        });
+
+        fullscreenDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+e.stopPropagation();
+            fullscreenDropzone.classList.remove('drag-active');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleFileUpload(e.dataTransfer.files[0]);
+                e.dataTransfer.clearData();
+            }
+        });
+    }
     
     initializeApp();
 });

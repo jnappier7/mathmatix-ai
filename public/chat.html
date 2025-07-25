@@ -72,15 +72,11 @@
         <progress id="xp-progress-bar" value="0" max="100"></progress>
         <span id="xp-text"><span id="current-xp">0</span> / <span id="xp-needed">100</span> XP</span>
       </div>
-      <div id="student-parent-link-display" class="dashboard-panel card-style-1" style="display: none;">
-         <div class="dashboard-panel-header">Share Progress</div>
-         <p style="margin-bottom: 5px; font-size: 0.9em; color: var(--clr-text-dim);">Give this code to a parent or teacher to link accounts.</p>
-         <button id="generate-link-code-btn" class="btn btn-secondary" style="width: 100%;">Get New Code</button>
-         <div id="link-code-container" class="hidden mt-2">
-             <input type="text" id="student-link-code-value" readonly>
-             <button id="copy-code-btn" title="Copy Code"><i class="fas fa-copy"></i></button>
-         </div>
-      </div>
+  <div id="student-parent-link-display" class="dashboard-panel">
+    <h3>Share Progress</h3>
+    <p>Share this code with a parent or teacher to link accounts.</p>
+    <div id="student-link-code-value" title="Click to copy"></div>
+</div>
       <div id="avatar-container" class="dashboard-panel card-style-1">
           <div id="student-avatar"></div>
       </div>
