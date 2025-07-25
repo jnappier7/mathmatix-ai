@@ -1,64 +1,90 @@
-// routes/student.js - MODIFIED (ENSURE JSON RESPONSE CONSISTENCY)
+// routes/student.js - PHASE 1: Backend Routing & Core Setup - Batch 2
+// Handles student-specific API actions.
+
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
-const { isAuthenticated } = require('../middleware/auth');
+const { isAuthenticated, isStudent } = require('../middleware/auth'); // Import isStudent middleware
 const crypto = require('crypto'); // Node.js built-in module for cryptography
 
-// Helper function to generate a unique code
-async function generateUniqueCode() {
+// Helper function to generate a unique short code for student-to-parent linking
+async function generateUniqueStudentLinkCode() {
     let code;
     let isUnique = false;
     while (!isUnique) {
-        // Generate a random 3-byte hex string (6 characters)
+        // Generate a random 3-byte hex string (6 characters) for uniqueness
         code = crypto.randomBytes(3).toString('hex').toUpperCase();
-        // Check if this code already exists for any user as an inviteCode
-        const existingUser = await User.findOne({ 'inviteCode.code': `MATH-${code}` });
+        // Check if this code already exists for any user's studentToParentLinkCode
+        const existingUser = await User.findOne({ 'studentToParentLinkCode.code': `MATH-${code}` });
         if (!existingUser) {
             isUnique = true;
         }
     }
-    return `MATH-${code}`; // Prefix for readability
+    return `MATH-${code}`; // Prefix for readability (e.g., MATH-A1B2C3)
 }
 
-// POST /api/student/generate-invite-code
-// Only students can generate an invite code for their parents.
-router.post('/generate-invite-code', isAuthenticated, async (req, res) => {
-    // Ensure the logged-in user is a student
-    if (!req.user || req.user.role !== 'student') {
-        return res.status(403).json({ success: false, message: 'Forbidden: Only students can generate invite codes.' }); // [FIXED] Consistent JSON response
-    }
+// POST /api/student/generate-link-code
+// Allows a student to generate a code for their parent to link.
+router.post('/generate-link-code', isAuthenticated, isStudent, async (req, res) => {
+    // Middleware ensures only authenticated students can access this.
+    const studentId = req.user._id;
 
     try {
-        const student = await User.findById(req.user._id);
-        if (!student) {
-            return res.status(404).json({ success: false, message: 'Student account not found.' }); // [FIXED] Consistent JSON response
+        const student = await User.findById(studentId);
+        if (!student) { // Should not happen if isAuthenticated works, but defensive check
+            return res.status(404).json({ success: false, message: 'Student account not found.' });
         }
 
-        // Check if an active invite code already exists for this student
-        if (student.inviteCode && student.inviteCode.code && student.inviteCode.expiresAt > Date.now()) {
-            console.log(`LOG: Returning existing invite code for student ${student.username}`);
-            // [FIXED] Ensure success: true is always present
-            return res.json({ success: true, code: student.inviteCode.code, message: 'An active code already exists.', expiresAt: student.inviteCode.expiresAt });
+        // Check if an active, unused link code already exists for this student
+        // Also checks if parentLinked is false, meaning it hasn't been used yet.
+        if (student.studentToParentLinkCode && student.studentToParentLinkCode.code && !student.studentToParentLinkCode.parentLinked) {
+            console.log(`LOG: Returning existing student link code for student ${student.username}`);
+            return res.json({
+                success: true,
+                code: student.studentToParentLinkCode.code,
+                message: 'An active link code already exists.'
+            });
         }
 
-        const newInviteCode = await generateUniqueCode();
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // Valid for 24 hours from now
-
-        // Store the new invite code on the student's user object
-        student.inviteCode = {
-            code: newInviteCode,
-            expiresAt: expiresAt,
+        const newLinkCode = await generateUniqueStudentLinkCode();
+        
+        // Store the new link code on the student's user object
+        student.studentToParentLinkCode = {
+            code: newLinkCode,
             parentLinked: false // Reset this flag for a new code
         };
         await student.save();
 
-        console.log(`LOG: Generated new invite code: ${newInviteCode} for student ${student.username}`);
-        res.json({ success: true, code: newInviteCode, expiresAt: expiresAt, message: 'New invite code generated.' });
+        console.log(`LOG: Generated new student link code: ${newLinkCode} for student ${student.username}`);
+        res.json({ success: true, code: newLinkCode, message: 'New link code generated successfully.' });
 
     } catch (err) {
-        console.error('ERROR: Failed to generate invite code:', err);
-        res.status(500).json({ success: false, message: 'Server error generating invite code.' }); // [FIXED] Consistent JSON response
+        console.error('ERROR: Failed to generate student link code:', err);
+        res.status(500).json({ success: false, message: 'Server error generating link code.' });
+    }
+});
+
+// GET /api/student/linked-parent
+// Allows a student to check if they are linked to a parent.
+router.get('/linked-parent', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const student = await User.findById(req.user._id).select('teacherId').populate('teacherId', 'firstName lastName username role');
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found.' });
+        }
+
+        if (student.teacherId && student.teacherId.role === 'parent') {
+            res.json({
+                isLinked: true,
+                parentId: student.teacherId._id,
+                parentName: `${student.teacherId.firstName} ${student.teacherId.lastName}`
+            });
+        } else {
+            res.json({ isLinked: false, message: 'Not linked to a parent account.' });
+        }
+    } catch (error) {
+        console.error("ERROR: Failed to check linked parent status:", error);
+        res.status(500).json({ message: "Server error checking link status." });
     }
 });
 

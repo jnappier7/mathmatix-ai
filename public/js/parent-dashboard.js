@@ -1,4 +1,7 @@
 // public/js/parent-dashboard.js
+// MODIFIED: Updated to fetch progress and conversation summaries for each child
+// individually from the new `/api/parent/child/:childId/progress` endpoint.
+
 document.addEventListener("DOMContentLoaded", async () => {
     // --- Dashboard Elements ---
     const childrenListContainer = document.getElementById("children-list-container");
@@ -22,8 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let selectedChild = null; // Stores the currently selected child for chat
     let currentParentId = null; // Store the parent's ID
 
-    // Define client-side message length limits for parent chat
-    const PARENT_CHAT_MAX_MESSAGE_LENGTH = 1800; 
+    const PARENT_CHAT_MAX_MESSAGE_LENGTH = 1800;
 
     // --- Authenticate and Load Parent User Data ---
     async function loadParentUser() {
@@ -54,105 +56,103 @@ document.addEventListener("DOMContentLoaded", async () => {
         parentChatContainer.scrollTop = parentChatContainer.scrollHeight;
     }
 
-    // --- Function to Load and Display Children (for dashboard and chat selector) ---
+    // --- MODIFICATION: Updated function to load children and their progress ---
     async function loadChildren() {
         if (loadingChildren) loadingChildren.style.display = 'block';
         if (childrenListContainer) childrenListContainer.innerHTML = '';
         if (childSelector) childSelector.innerHTML = '<option value="">Select Child</option>';
 
         try {
-            const res = await fetch("/api/parent/children", { credentials: 'include' });
-            if (!res.ok) {
-                if (res.status === 401 || res.status === 403) {
-                    alert("Session expired or unauthorized. Please log in again.");
+            // Step 1: Fetch the list of linked children
+            const childrenRes = await fetch("/api/parent/children", { credentials: 'include' });
+            if (!childrenRes.ok) {
+                if (childrenRes.status === 401 || childrenRes.status === 403) {
                     window.location.href = "/login.html";
-                    return;
                 }
-                const errorText = await res.text();
-                throw new Error(`HTTP error! status: ${res.status} - ${errorText}`);
+                throw new Error(`HTTP error! status: ${childrenRes.status}`);
             }
-            const fetchedChildren = await res.json();
+            const fetchedChildren = await childrenRes.json();
             children = fetchedChildren;
 
             if (loadingChildren) loadingChildren.style.display = 'none';
 
             if (children.length === 0) {
-                childrenListContainer.innerHTML = `<p class="text-center text-gray-500 py-4">No children linked yet. Generate an invite code or link to an existing student!</p>`;
+                childrenListContainer.innerHTML = `<p class="text-center text-gray-500 py-4">No children linked yet. Use the tools on the left to link a child's account.</p>`;
                 if (childSelector) childSelector.disabled = true;
                 if (parentUserInput) parentUserInput.disabled = true;
                 if (parentSendButton) parentSendButton.disabled = true;
-            } else {
-                childrenListContainer.innerHTML = '';
-                children.forEach((child, i) => {
-                    const option = document.createElement('option');
-                    option.value = child._id;
-                    option.textContent = `${child.firstName} ${child.lastName} (${child.gradeLevel || "?"})`;
-                    childSelector.appendChild(option);
-                    if (i === 0) { // Select the first child by default
-                        selectedChild = child;
-                        childSelector.value = child._id; // Ensure the dropdown reflects the selection
+                return;
+            }
+
+            // Step 2: Populate dropdown and fetch progress for each child
+            childrenListContainer.innerHTML = '';
+            children.forEach((child, i) => {
+                const option = document.createElement('option');
+                option.value = child._id;
+                option.textContent = `${child.firstName} ${child.lastName}`;
+                childSelector.appendChild(option);
+                if (i === 0) {
+                    selectedChild = child;
+                    childSelector.value = child._id;
+                }
+            });
+
+            if (childSelector) childSelector.disabled = false;
+            if (parentUserInput) parentUserInput.disabled = false;
+            if (parentSendButton) parentSendButton.disabled = false;
+            if (parentChatContainer) parentChatContainer.innerHTML = '<p class="text-gray-500 text-center py-2">Select a child and ask a question about their progress.</p>';
+
+            // Step 3: Iterate and render progress cards
+            for (const child of children) {
+                try {
+                    const progressRes = await fetch(`/api/parent/child/${child._id}/progress`, { credentials: 'include' });
+                    if (!progressRes.ok) {
+                        throw new Error(`Failed to load progress for ${child.firstName}`);
                     }
-                });
-                if (childSelector) childSelector.disabled = false;
-                if (parentUserInput) parentUserInput.disabled = false;
-                if (parentSendButton) parentSendButton.disabled = false;
-                if (parentChatContainer) parentChatContainer.innerHTML = '<p class="text-gray-500 text-center py-2">Chat about your child\'s progress.</p>';
-
-                // Load progress for each child
-                for (const child of children) {
-                    let progress;
-                    try {
-                        const progressRes = await fetch(`/api/parent/child/${child._id}/progress`, { credentials: 'include' });
-                        if (!progressRes.ok) {
-                            const errorText = await progressRes.text();
-                            throw new Error(`Failed to load progress for ${child.firstName}: ${progressRes.status} - ${errorText}`);
-                        }
-                        progress = await progressRes.json();
-                    } catch (progressErr) {
-                        console.error(`ERROR: Could not fetch progress for child ${child._id}:`, progressErr);
-                        progress = {
-                            firstName: child.firstName,
-                            lastName: child.lastName,
-                            level: 'N/A',
-                            xp: 'N/A',
-                            gradeLevel: 'Unknown',
-                            mathCourse: 'Unknown',
-                            totalActiveTutoringMinutes: '0',
-                            recentSessions: []
-                        };
-                    }
-
-                    const card = document.createElement('div');
-                    card.className = 'child-card';
-
-                    card.innerHTML = `
-                        <div class="child-header">
-                            <h2>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h2>
-                            <span class="child-stats">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
-                        </div>
-                        <div class="child-summary-details">
-                            ${progress.gradeLevel || 'Unknown Grade'} · ${progress.mathCourse || 'Unknown Course'} · ${progress.totalActiveTutoringMinutes || '0'} min tutored
-                        </div>
-                        <div class="session-log-container">
-                            <strong>Recent Sessions:</strong>
-                            ${progress.recentSessions && progress.recentSessions.length > 0 ? progress.recentSessions.map(s => `
-                                <div class="session-entry">
-                                    <strong>${new Date(s.date).toLocaleDateString()}:</strong> ${s.summary || 'No summary'} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
-                                </div>
-                            `).join('') : '<p class="text-gray-500 text-sm">No recent sessions.</p>'}
-                        </div>
-                    `;
-                    childrenListContainer.appendChild(card);
+                    const progress = await progressRes.json();
+                    renderChildCard(progress);
+                } catch (progressErr) {
+                    console.error(`Could not fetch progress for child ${child._id}:`, progressErr);
+                    // Render a card with an error state
+                    const errorCard = document.createElement('div');
+                    errorCard.className = 'child-card';
+                    errorCard.innerHTML = `<h2>${child.firstName} ${child.lastName}</h2><p class="text-red-500">Could not load progress data.</p>`;
+                    childrenListContainer.appendChild(errorCard);
                 }
             }
+
         } catch (error) {
             console.error("Parent dashboard error fetching children list:", error);
             if (loadingChildren) loadingChildren.style.display = 'none';
-            if (childrenListContainer) childrenListContainer.innerHTML = `<p class="text-center text-red-500 py-4">Failed to load children. Please try again or ensure you are logged in.</p>`;
+            if (childrenListContainer) childrenListContainer.innerHTML = `<p class="text-center text-red-500 py-4">Failed to load children data. Please try refreshing.</p>`;
         }
     }
 
-    // --- Parent Chat Selector Change Listener ---
+    function renderChildCard(progress) {
+        const card = document.createElement('div');
+        card.className = 'child-card';
+        card.innerHTML = `
+            <div class="child-header">
+                <h2>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h2>
+                <span class="child-stats">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
+            </div>
+            <div class="child-summary-details">
+                ${progress.gradeLevel || 'N/A'} · ${progress.mathCourse || 'N/A'} · ${progress.totalActiveTutoringMinutes || '0'} min total
+            </div>
+            <div class="session-log-container">
+                <strong>Recent Sessions:</strong>
+                ${progress.recentSessions && progress.recentSessions.length > 0 ? progress.recentSessions.map(s => `
+                    <div class="session-entry">
+                        <strong>${new Date(s.date).toLocaleDateString()}:</strong> ${s.summary || 'No summary.'} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
+                    </div>
+                `).join('') : '<p class="text-gray-500 text-sm">No recent sessions with summaries.</p>'}
+            </div>
+        `;
+        childrenListContainer.appendChild(card);
+    }
+
+
+    // --- Event Listeners (No changes needed here) ---
     if (childSelector) {
         childSelector.addEventListener("change", () => {
             selectedChild = children.find(c => c._id === childSelector.value);
@@ -160,14 +160,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // --- Parent Chat Send Message Logic ---
     if (parentSendButton) {
-        // ADD CLIENT-SIDE INPUT LIMIT LISTENER
         if (parentUserInput) {
             parentUserInput.addEventListener('input', () => {
                 if (parentUserInput.value.length > PARENT_CHAT_MAX_MESSAGE_LENGTH) {
                     parentUserInput.value = parentUserInput.value.substring(0, PARENT_CHAT_MAX_MESSAGE_LENGTH);
-                    console.warn(`WARNING: Parent chat input exceeds ${PARENT_CHAT_MAX_MESSAGE_LENGTH} characters and has been truncated.`);
                 }
             });
         }
@@ -175,11 +172,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         parentSendButton.addEventListener("click", async () => {
             const message = parentUserInput.value.trim();
             if (!message || !selectedChild || !currentParentId) {
-                alert("Please ensure you are logged in, select a child, and type a message.");
+                alert("Please select a child and type a message.");
                 return;
             }
-
-            // Client-side check before sending to server
             if (message.length > PARENT_CHAT_MAX_MESSAGE_LENGTH) {
                  alert(`Your message is too long. Please shorten it to under ${PARENT_CHAT_MAX_MESSAGE_LENGTH} characters.`);
                  return;
@@ -190,7 +185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (parentThinkingIndicator) parentThinkingIndicator.style.display = "flex";
 
             try {
-                const res = await fetch("/chat", {
+                const res = await fetch("/api/chat", { // Note: The parent chat endpoint is currently the main chat endpoint
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: 'include',
@@ -204,20 +199,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 if (!res.ok) {
                     const errorText = await res.text();
-                    // Check for specific backend message length errors
-                    if (errorText.includes('too long')) { // Matches message from chat.js
-                        alert("Your message was too long. Please try a shorter message.");
-                    } else {
-                        alert(`Chat error: ${res.status} - ${errorText}`);
-                    }
                     throw new Error(`Chat error: ${res.status} - ${errorText}`);
                 }
-
                 const data = await res.json();
-                appendParentMessage("ai", data.text || "⚠️ No response from tutor.");
+                appendParentMessage("ai", data.text || "No response from tutor.");
             } catch (err) {
                 console.error("Parent chat error:", err);
-                appendParentMessage("ai", "⚠️ Error. Please try again.");
+                appendParentMessage("ai", "Error connecting to the tutor. Please try again.");
             } finally {
                 if (parentThinkingIndicator) parentThinkingIndicator.style.display = "none";
             }
@@ -233,8 +221,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-
-    // --- Generate Invite Code Logic ---
     if (generateCodeBtn) {
         generateCodeBtn.addEventListener('click', async () => {
             try {
@@ -244,12 +230,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     credentials: 'include'
                 });
                 const data = await res.json();
-
                 if (data.success) {
                     generatedCodeValue.textContent = data.code;
                     codeExpiresAt.textContent = new Date(data.expiresAt).toLocaleDateString();
                     inviteCodeOutput.style.display = 'block';
-                    alert(data.message + "\nCode: " + data.code);
                 } else {
                     alert("Failed to generate code: " + data.message);
                 }
@@ -260,13 +244,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // --- Link to Student Form Logic ---
     if (linkStudentForm) {
         linkStudentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const studentLinkCode = studentLinkCodeInput.value.trim();
-            linkStudentMessage.textContent = ''; // Clear previous messages
-
+            linkStudentMessage.textContent = '';
             try {
                 const res = await fetch("/api/parent/link-to-student", {
                     method: "POST",
@@ -275,11 +257,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     body: JSON.stringify({ studentLinkCode })
                 });
                 const data = await res.json();
-
                 if (data.success) {
                     linkStudentMessage.className = "mt-2 text-sm text-green-600";
                     linkStudentMessage.textContent = data.message;
-                    studentLinkCodeInput.value = ''; // Clear input field
+                    studentLinkCodeInput.value = '';
                     loadChildren(); // Reload children list after successful link
                 } else {
                     linkStudentMessage.className = "mt-2 text-sm text-red-600";
@@ -288,12 +269,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             } catch (error) {
                 console.error("ERROR: Link student error:", error);
                 linkStudentMessage.className = "mt-2 text-sm text-red-600";
-                linkStudentMessage.textContent = "An error occurred while linking student.";
+                linkStudentMessage.textContent = "An error occurred while linking the student.";
             }
         });
     }
 
-    // Initial load of parent user data and then children
+    // Initial load
     const parentUser = await loadParentUser();
     if (parentUser) {
         loadChildren();

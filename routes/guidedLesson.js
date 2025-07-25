@@ -1,10 +1,12 @@
-// routes/guidedLesson.js (add input validation)
+// routes/guidedLesson.js - PHASE 1: Backend Routing & Core Setup - Batch 2
+// (add input validation)
+
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { generateSystemPrompt } = require('../utils/prompt');
 const User = require('../models/user');
-const { openai, retryWithExponentialBackoff } = require("../utils/openaiClient");
+const { callLLM, retryWithExponentialBackoff } = require("../utils/openaiClient"); // Corrected import for callLLM
 
 // Define a reasonable character limit for user input in lesson context
 const MAX_LESSON_INPUT_LENGTH = 1500; // Slightly more generous as it's guided, but still limited
@@ -33,7 +35,7 @@ router.post('/generate-interactive-lesson', async (req, res) => {
         }
 
         const userProfile = req.userProfile;
-        const tutorName = userProfile.selectedTutorId || "M∆THM∆TIΧ AI";
+        const tutorName = userProfile.selectedTutorId || "M∆THM∆TIΧ AI"; // Fallback if no tutor selected
 
         const systemPrompt = generateSystemPrompt(userProfile, tutorName);
         let messages = [];
@@ -63,14 +65,7 @@ You are in the middle of a lesson on '${title}'. The conversation so far is prov
             messages = messages.concat(conversationHistory);
         }
 
-        const completion = await retryWithExponentialBackoff(async () => {
-            return await openai.chat.completions.create({
-                model: "gpt-4o",
-                messages: messages,
-                temperature: 0.7,
-                max_tokens: 500 // Max tokens for lesson parts AI response
-            });
-        });
+        const completion = await callLLM("gpt-4o", messages, { temperature: 0.7, max_tokens: 500 }); // Using centralized LLM call
 
         const aiResponseText = completion.choices[0].message.content.trim();
 
@@ -117,14 +112,7 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
 5. Craft a natural, conversational response that builds confidence.
         `;
         
-        const aiHint = await retryWithExponentialBackoff(async () => {
-            return await openai.chat.completions.create({
-                model: "gpt-4o",
-                messages: [{ role: "system", content: systemPrompt + taskPrompt }],
-                temperature: 0.7,
-                max_tokens: 150 // Max tokens for a hint
-            });
-        });
+        const aiHint = await callLLM("gpt-4o", [{ role: "system", content: systemPrompt + taskPrompt }], { temperature: 0.7, max_tokens: 150 }); // Using centralized LLM call
 
         res.json({ hint: aiHint.choices[0].message.content.trim() });
     } catch (error) {

@@ -1,5 +1,4 @@
-// public/complete-profile.js
-
+// public/js/complete-profile.js
 document.addEventListener('DOMContentLoaded', async () => {
     const profileForm = document.getElementById('profile-form');
     const firstNameInput = document.getElementById('firstName');
@@ -14,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Fetch Current User Data ---
     async function fetchCurrentUser() {
         try {
-            const res = await fetch('/user', { credentials: 'include' }); // This is correct, it hits the /user endpoint
+            const res = await fetch('/user', { credentials: 'include' });
             if (!res.ok) {
                 // If not authenticated or session expired, redirect to login
                 console.error("User not authenticated or session expired.");
@@ -75,24 +74,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } else {
             // For other roles (teacher, admin) who might land here if they need profile completion
-            // You might want to hide both studentOnly and parentOnly or show a specific message
             studentOnlyDiv.style.display = 'none';
             parentOnlyDiv.style.display = 'none';
-            // Optionally, show a message like "Your profile requires no further completion here."
         }
     }
 
     // --- Logic to show/hide math course section based on grade ---
     function toggleMathCourseSection() {
         const selectedGrade = gradeSelect.value;
-        // Grades 9, 10, 11, 12, College should show math course
         const gradesRequiringMathCourse = ['9', '10', '11', '12', 'College']; 
 
         if (gradesRequiringMathCourse.includes(selectedGrade)) {
             mathCourseSection.style.display = 'block';
         } else {
             mathCourseSection.style.display = 'none';
-            // Optionally, reset mathCourse selection if hidden
             document.getElementById('mathCourse').value = ''; 
         }
     }
@@ -117,43 +112,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         updates.firstName = formData.get('firstName');
         updates.lastName = formData.get('lastName');
         
-        // Update the 'name' field if firstName or lastName changed
-        // This logic should ideally be handled on the backend based on firstName/lastName
-        // But for frontend convenience, if you're directly updating a 'name' field
-        if (updates.firstName !== currentUser.firstName || updates.lastName !== currentUser.lastName) {
-             updates.name = `${updates.firstName} ${updates.lastName}`;
-        }
-
+        // Let the backend handle updating the 'name' field via the pre-save hook
+        
         // Collect role-specific fields
         if (currentUser.role === 'student') {
             updates.gradeLevel = formData.get('grade');
-            // Only include mathCourse if the section is visible (i.e., grade 9+)
             if (mathCourseSection.style.display === 'block') {
                 updates.mathCourse = formData.get('mathCourse');
             } else {
-                updates.mathCourse = ''; // Ensure it's cleared if grade is low
+                updates.mathCourse = '';
             }
             updates.learningStyle = formData.get('learningStyle');
             updates.tonePreference = formData.get('tonePreference');
-            updates.interests = formData.getAll('interests[]'); // Gets all checked values
-            updates.needsProfileCompletion = false; // Mark as completed
+            updates.interests = formData.getAll('interests[]');
+            updates.needsProfileCompletion = false;
         } else if (currentUser.role === 'parent') {
             updates.reportFrequency = formData.get('reportFrequency');
             updates.parentTone = formData.get('parentTone');
             updates.parentLanguage = formData.get('parentLanguage');
             updates.goalViewPreference = formData.get('goalViewPreference');
-            updates.needsProfileCompletion = false; // Mark as completed
+            updates.needsProfileCompletion = false;
         }
-        // Add other role-specific fields for teacher/admin if necessary
 
         try {
-            // [CHANGE] Removed /api prefix
-            const res = await fetch(`/user/complete-profile/${currentUser._id}`, { 
+            // FIXED: Use the correct, unified endpoint for updating user settings/profile
+            const res = await fetch('/api/user/settings', { 
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(updates)
+                body: JSON.stringify(updates),
+                credentials: 'include'
             });
 
             if (!res.ok) {
@@ -166,10 +155,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Redirect based on role after successful completion
             if (currentUser.role === 'student') {
-                if (currentUser.selectedTutorId) { // If student already has a tutor
+                if (currentUser.selectedTutorId) {
                     window.location.href = '/chat.html';
                 } else {
-                    window.location.href = '/pick-tutor.html'; // Student needs to pick a tutor
+                    window.location.href = '/pick-tutor.html';
                 }
             } else if (currentUser.role === 'teacher') {
                 window.location.href = '/teacher-dashboard.html';

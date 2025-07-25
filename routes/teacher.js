@@ -1,20 +1,19 @@
+// routes/teacher.js
+// MODIFIED: Updated to query the 'Conversation' collection for student conversation history.
+
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user'); // Adjust path if your user.js is not in ../models/
-const { isTeacher } = require('../middleware/auth'); // CORRECT: Import the shared isTeacher middleware
+const User = require('../models/user');
+const Conversation = require('../models/conversation'); // NEW: Import Conversation model
+const { isTeacher } = require('../middleware/auth');
 
-// REMOVED: The locally defined isTeacher middleware is removed from here.
-// It was redundant and used req.session.userId instead of req.user from Passport.
-
-// Define the GET /api/teacher/students route - fetches students assigned to the logged-in teacher
-router.get('/students', isTeacher, async (req, res) => { // Uses the imported isTeacher
+// Fetches students assigned to the logged-in teacher
+router.get('/students', isTeacher, async (req, res) => {
   try {
-    // CORRECT: Use req.user._id populated by Passport, via the imported isTeacher middleware
     const teacherId = req.user._id;
-    // Find students whose teacherId matches the logged-in teacher's ID
     const students = await User.find(
       { role: 'student', teacherId: teacherId },
-      'firstName lastName username gradeLevel iepPlan' // Select relevant fields including iepPlan
+      'firstName lastName username gradeLevel iepPlan'
     ).lean();
     res.json(students);
   } catch (err) {
@@ -23,44 +22,40 @@ router.get('/students', isTeacher, async (req, res) => { // Uses the imported is
   }
 });
 
-// Define the GET /api/teacher/students/:studentId/iep - fetches a specific student's IEP
-router.get('/students/:studentId/iep', isTeacher, async (req, res) => { // Uses the imported isTeacher
+// Fetches a specific student's IEP
+router.get('/students/:studentId/iep', isTeacher, async (req, res) => {
   try {
     const { studentId } = req.params;
-    // CORRECT: Use req.user._id populated by Passport, via the imported isTeacher middleware
     const teacherId = req.user._id;
 
-    // Find the student, ensuring they are a student role and assigned to this teacher
     const student = await User.findOne({
       _id: studentId,
       role: 'student',
       teacherId: teacherId
-    }, 'firstName lastName username iepPlan').lean(); // Select relevant fields
+    }, 'firstName lastName username iepPlan').lean();
 
     if (!student) {
       return res.status(404).json({ message: 'Student not found or not assigned to this teacher.' });
     }
 
-    res.json(student.iepPlan); // Return the student's IEP plan
+    res.json(student.iepPlan);
   } catch (err) {
     console.error('Error fetching student IEP:', err);
     res.status(500).json({ message: 'Server error fetching IEP data.' });
   }
 });
 
-// Define the PUT /api/teacher/students/:studentId/iep - updates a specific student's IEP
-router.put('/students/:studentId/iep', isTeacher, async (req, res) => { // Uses the imported isTeacher
+// Updates a specific student's IEP
+router.put('/students/:studentId/iep', isTeacher, async (req, res) => {
   try {
     const { studentId } = req.params;
-    // CORRECT: Use req.user._id populated by Passport, via the imported isTeacher middleware
     const teacherId = req.user._id;
-    const updatedIepPlan = req.body; // The entire updated iepPlan object from the frontend
+    const updatedIepPlan = req.body;
 
-    // Find and update the student's IEP plan, ensuring they are a student role and assigned to this teacher
     const result = await User.findOneAndUpdate(
       { _id: studentId, role: 'student', teacherId: teacherId },
       { $set: { iepPlan: updatedIepPlan } },
-      { new: true, runValidators: true } // Return the updated document and run schema validators
+      { new: true, runValidators: true }
     );
 
     if (!result) {
@@ -74,24 +69,26 @@ router.put('/students/:studentId/iep', isTeacher, async (req, res) => { // Uses 
   }
 });
 
-// GET a specific assigned student's conversation history (Teacher only)
-router.get('/students/:studentId/conversations', isTeacher, async (req, res) => { // Uses the imported isTeacher
+// Get a specific assigned student's conversation history (Teacher only)
+router.get('/students/:studentId/conversations', isTeacher, async (req, res) => {
+  const { studentId } = req.params;
+  const teacherId = req.user._id;
+
   try {
-    const { studentId } = req.params;
-    // CORRECT: Use req.user._id populated by Passport, via the imported isTeacher middleware
-    const teacherId = req.user._id; // Get the logged-in teacher's ID
-
-    // Fetch student, ensuring they are a student role AND assigned to this teacher
-    const student = await User.findOne({
-      _id: studentId,
-      role: 'student',
-      teacherId: teacherId
-    }, 'conversations').lean(); // Select conversations field
-
+    // First, confirm the teacher is actually assigned this student
+    const student = await User.findOne({ _id: studentId, teacherId: teacherId });
     if (!student) {
-      return res.status(404).json({ message: 'Student not found or not assigned to this teacher.' });
+        return res.status(403).json({ message: "You are not authorized to view this student's history." });
     }
-    res.json(student.conversations || []); // Return the array of conversations
+
+    // --- MODIFICATION START ---
+    // Fetch all conversations for this student from the Conversation collection
+    const conversations = await Conversation.find({ userId: studentId })
+        .sort({ startDate: -1 }) // Sort by most recent first
+        .select('date summary activeMinutes'); // Select only the necessary fields
+    // --- MODIFICATION END ---
+
+    res.json(conversations || []);
   } catch (err) {
     console.error('Error fetching student conversations for teacher:', err);
     res.status(500).json({ message: 'Server error fetching conversation data.' });

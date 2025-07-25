@@ -5,15 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Complete Profile | M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
-  </head>
-<body>
-  <div class="login-page-wrapper">
-    <div class="profile-container scrollable-form-wrapper">
-      <div class="logo-header">
-        <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" />
-        <button id="logoutBtn" class="logout-button">Logout</button>
-      </div>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <button id="logoutBtn" class="btn btn-tertiary">Logout</button>
+    </nav>
+  </header>
 
+  <main class="login-page-wrapper">
+    <div class="profile-container scrollable-form-wrapper">
       <h1>Complete Your Profile</h1>
       <p class="subtitle">Just a few more details to personalize your experience.</p>
 
@@ -96,7 +101,7 @@
             <option value="biweekly">Biweekly</option>
             <option value="monthly">Monthly</option>
           </select>
-			
+
 			<label for="parentTone">How do you prefer responses?</label>
 			<select id="parentTone" name="parentTone">
 			  <option value="casual">Casual</option>
@@ -121,17 +126,19 @@
           </div>
         </div>
 
-        <button type="submit" class="submit-btn">Let’s Go!</button>
+        <button type="submit" class="submit-btn btn-primary">Let’s Go!</button>
       </form>
     </div>
-  </div> <footer>
-    <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
+  </main>
+  <footer>
+    <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
     <p>
       <a href="/privacy.html">Privacy Policy</a> |
       <a href="/terms.html">Terms of Use</a>
     </p>
   </footer>
 
-  <script src="/js/logout.js"></script> <script src="complete-profile.js"></script>
+  <script src="/js/logout.js"></script>
+  <script src="/js/complete-profile.js"></script>
 </body>
 </html>

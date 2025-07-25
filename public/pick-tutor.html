@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meet Your Math Tutors! | M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0WjTRyT/8dFjF22f+H9z0/L3lYf1kQn5R5z2b/t/1gD+B+A0q/L3V5+A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 </head>
-<body>
+<body class="landing-page-body">
   <header class="landing-header">
-    <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="landing-logo" />
+    <div class="header-logo-container"> <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" /> </div>
     <nav class="landing-nav">
-      <h1 class="header-title">Meet Your Math Tutors!</h1>
       <button id="logoutBtn" class="btn btn-tertiary">Logout</button>
     </nav>
   </header>
 
   <main class="pick-tutor-main">
-    <h2 class="section-title">Select Your Personal Math Coach.</h2>
+    <h1 class="section-title">Select Your Personal Math Coach.</h1>
     <p class="subtitle" style="margin-bottom: 40px; max-width: 600px; text-align: center;">Your choice defines their voice and style. You can change your tutor anytime in settings!</p>
 
     <div id="tutor-selection-grid" class="tutor-selection-grid">
-      </div>
+      <p style="text-align: center; color: var(--clr-text-dim);">Loading tutors...</p>
+    </div>
 
     <div class="tutor-actions-bar">
       <button id="play-voice-btn" class="btn btn-play">
@@ -40,5 +40,6 @@
 
   <script src="/js/logout.js"></script>
   <script type="module" src="/js/pick-tutor.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

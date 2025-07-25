@@ -1,14 +1,16 @@
 // routes/speak.js
+// MODIFIED: Updated to support streaming audio from ElevenLabs for a responsive hands-free experience.
+
 const express = require("express");
 const axios = require("axios");
 const router = express.Router();
-const { retryWithExponentialBackoff } = require("../utils/openaiClient"); // Import the utility
+const { retryWithExponentialBackoff } = require("../utils/openaiClient");
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 router.post("/", async (req, res) => {
   const { text, voiceId } = req.body;
-  const voiceToUse = voiceId || "2eFQnnNM32GDnZkCfkSm"; // Fallback to a specific default voice ID
+  const voiceToUse = voiceId || "2eFQnnNM32GDnZkCfkSm"; // Fallback voice
 
   if (!text) return res.status(400).send("Missing text to speak.");
   if (!ELEVENLABS_API_KEY) {
@@ -18,11 +20,12 @@ router.post("/", async (req, res) => {
 
   try {
     const elevenLabsResponse = await retryWithExponentialBackoff(async () => {
+        // The endpoint for streaming is slightly different.
         const response = await axios.post(
-          `https://api.elevenlabs.io/v1/text-to-speech/${voiceToUse}`,
+          `https://api.elevenlabs.io/v1/text-to-speech/${voiceToUse}/stream`,
           {
             text,
-            model_id: "eleven_monolingual_v1", // Or another model if you prefer
+            model_id: "eleven_monolingual_v1",
             voice_settings: {
               stability: 0.4,
               similarity_boost: 0.7
@@ -31,31 +34,28 @@ router.post("/", async (req, res) => {
           {
             headers: {
               "xi-api-key": ELEVENLABS_API_KEY,
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Accept": "audio/mpeg" // Important for streaming
             },
-            responseType: "arraybuffer"
+            // CRITICAL: Set responseType to 'stream' for axios to handle the binary stream
+            responseType: "stream"
           }
         );
         return response;
     });
 
-    res.set({
-      "Content-Type": "audio/mpeg",
-      "Content-Length": elevenLabsResponse.data.length
-    });
-    res.send(elevenLabsResponse.data);
+    res.setHeader("Content-Type", "audio/mpeg");
+    
+    // Pipe the audio stream directly to the response
+    elevenLabsResponse.data.pipe(res);
+
   } catch (err) {
-    console.error("ERROR: ElevenLabs TTS error:", err.message);
+    console.error("ERROR: ElevenLabs TTS streaming error:", err.message);
     if (err.response) {
-        console.error("ElevenLabs Response Data:", err.response.data.toString());
+        // Error handling for streams might not have a clean JSON body
         console.error("ElevenLabs Response Status:", err.response.status);
     }
-    // Specific message for 429 to inform user better
-    if (err.message.includes('status code 429')) {
-         res.status(503).send("Text-to-speech currently busy due to high traffic. Please try again in a moment.");
-    } else {
-         res.status(500).send("Text-to-speech failed.");
-    }
+    res.status(500).send("Text-to-speech failed.");
   }
 });
 

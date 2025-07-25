@@ -1,70 +1,59 @@
-// routes/login.js - REVISED (WITH LOGGING AND TYPO FIX)
+// routes/login.js - PHASE 1: Backend Routing & Core Setup - Batch 2
+// Handles local login authentication requests.
 
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const passport = require("passport");
-const User = require("../models/user");
+const passport = require('passport'); // Import passport for authentication
+const User = require('../models/user'); // Ensure User model is accessible
+const { isAuthenticated } = require('../middleware/auth'); // For potentially checking if user is already logged in
 
-router.post("/", (req, res, next) => {
-  console.log("\n--- [/login Route] POST request received ---");
+// POST /login - Local authentication strategy
+// Frontend calls this endpoint directly (e.g., fetch('/login', ...))
+router.post('/', (req, res, next) => {
+    // Authenticate using the 'local' Passport strategy
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error("ERROR: Passport local authentication error:", err);
+            return res.status(500).json({ success: false, message: 'Authentication failed. Please try again.' });
+        }
+        if (!user) {
+            // Authentication failed (e.g., incorrect username/password)
+            console.warn("WARN: Local authentication failed. Message:", info.message);
+            return res.status(401).json({ success: false, message: info.message || 'Authentication failed: Invalid credentials.' });
+        }
 
-  // Use Passport's custom callback to gain full control over the response
-  passport.authenticate('local', (err, user, info) => {
-    // Case 1: A catastrophic error occurred (e.g., database connection issue)
-    if (err) {
-      console.error("[/login Route] Passport authentication error:", err);
-      return res.status(500).json({ success: false, message: "Server error during authentication." });
-    }
+        // If authentication is successful, establish a session for the user
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error("ERROR: req.logIn error:", err);
+                return res.status(500).json({ success: false, message: 'Login successful, but session creation failed.' });
+            }
+            console.log(`LOG: User ${user.username} successfully logged in.`);
 
-    // Case 2: Authentication failed (user not found or password incorrect)
-    if (!user) {
-      console.log("[/login Route] Authentication failed:", info.message);
-      return res.status(401).json({ success: false, message: info.message || "Invalid credentials." });
-    }
+            // Determine redirect URL based on user's role and completion status
+            let redirectUrl = '/chat.html'; // Default for students
+            if (user.needsProfileCompletion) {
+                redirectUrl = "/complete-profile.html";
+            } else if (user.role === "teacher") {
+                redirectUrl = "/teacher-dashboard.html";
+            } else if (user.role === "admin") {
+                redirectUrl = "/admin-dashboard.html";
+            } else if (user.role === "parent") {
+                redirectUrl = "/parent-dashboard.html";
+            } else if (user.role === "student" && !user.selectedTutorId) {
+                redirectUrl = "/pick-tutor.html";
+            }
 
-    // Case 3: Authentication succeeded, now log the user in
-    req.logIn(user, async (loginErr) => {
-      if (loginErr) {
-        console.error("[/login Route] req.logIn error (session creation):", loginErr);
-        return res.status(500).json({ success: false, message: "Server error during session creation." });
-      }
+            // Send success response with redirect URL (frontend will handle redirect)
+            return res.status(200).json({ success: true, message: 'Logged in successfully!', redirect: redirectUrl });
+        });
+    })(req, res, next); // Ensure passport.authenticate is called with req, res, next
+});
 
-      console.log(`[/login Route] User ${user.username} successfully logged into session.`);
-      // Login and session are now established. Update lastLogin.
-      user.lastLogin = Date.now();
-      try {
-        await user.save();
-        console.log(`[/login Route] User ${user.username} lastLogin updated.`);
-      } catch (saveError) {
-        console.error(`[/login Route] Error saving user lastLogin for ${user.username}:`, saveError);
-        // Continue despite save error, as login was successful
-      }
-
-      // Determine the correct redirect URL based on user role and status
-      let redirectUrl = '/chat.html'; // Default for student
-      if (user.needsProfileCompletion) {
-        redirectUrl = '/complete-profile.html';
-        console.log(`[/login Route] User ${user.username} needs profile completion. Redirecting to: ${redirectUrl}`);
-      } else if (user.role === 'teacher') {
-        redirectUrl = '/teacher-dashboard.html';
-        console.log(`[/login Route] User ${user.username} is a teacher. Redirecting to: ${redirectUrl}`);
-      } else if (user.role === 'admin') { // [FIXED] Changed user.user.role to user.role
-        redirectUrl = '/admin-dashboard.html';
-        console.log(`[/login Route] User ${user.username} is an admin. Redirecting to: ${redirectUrl}`);
-      } else if (user.role === 'parent') {
-        redirectUrl = '/parent-dashboard.html';
-        console.log(`[/login Route] User ${user.username} is a parent. Redirecting to: ${redirectUrl}`);
-      } else if (user.role === 'student' && !user.selectedTutorId) {
-        redirectUrl = '/pick-tutor.html';
-        console.log(`[/login Route] User ${user.username} is a student but needs to pick a tutor. Redirecting to: ${redirectUrl}`);
-      } else {
-        console.log(`[/login Route] User ${user.username} is a student with tutor selected. Redirecting to: ${redirectUrl}`);
-      }
-      
-      // Send the final success response
-      return res.json({ success: true, message: "Login successful!", redirect: redirectUrl });
-    });
-  })(req, res, next); // This invokes the middleware
+// Optionally, add a GET /login for API debugging or if a client explicitly fetches this.
+// Usually, /login.html serves the page, and POST /login handles credentials.
+router.get('/', (req, res) => {
+    res.status(200).json({ message: 'Login API endpoint. Please send POST request with credentials.' });
 });
 
 module.exports = router;

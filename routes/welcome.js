@@ -1,9 +1,14 @@
-// routes/welcome.js - MODIFIED TO PROPERLY USE REAL SESSION SUMMARIES AND CENTRALIZED LLM CALL
+// routes/welcome.js
+// MODIFIED: Simplified to only generate a welcome message. Session creation is now handled by chat.js.
+// Fetches the last *real* summary from the new Conversation collection for context.
+// CORRECTED: Actually uses the student's name in the welcome message.
+
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
+const Conversation = require('../models/conversation'); // NEW: Import Conversation model
 const { generateSystemPrompt } = require('../utils/prompt');
-const { callLLM } = require("../utils/openaiClient"); // Use centralized LLM call
+const { callLLM } = require("../utils/openaiClient");
 const TUTOR_CONFIG = require("../utils/tutorConfig");
 
 router.get('/', async (req, res) => {
@@ -13,7 +18,7 @@ router.get('/', async (req, res) => {
     }
 
     try {
-        const user = await User.findById(userId); // Fetch mutable user object for saving sessions
+        const user = await User.findById(userId).lean(); // Lean object is fine here
         if (!user) {
             return res.status(404).json({ error: "User not found." });
         }
@@ -25,75 +30,38 @@ router.get('/', async (req, res) => {
         const voiceIdForWelcome = currentTutor.voiceId;
         const tutorNameForPrompt = currentTutor.name;
 
-        let lastSummaryForAI = null;
-        // Filter for sessions that have a 'summary' AND are NOT "Initial Welcome Message"
-        // Also ensure they have actual messages from a conversation.
-        const relevantSessions = user.conversations.filter(
-            session => session.summary &&
-                       session.summary !== "Initial Welcome Message" &&
-                       session.messages &&
-                       session.messages.length > 1 // Ensure it was a real conversation (user + AI message)
-        ).sort((a, b) => b.date - a.date); // Sort by most recent date
+        // Find the most recent conversation for this user that has a real summary.
+        const lastConversation = await Conversation.findOne({
+            userId: user._id,
+            summary: { $ne: null, $ne: "Initial Welcome Message" }
+        }).sort({ lastActivity: -1 }); // Sort by the most recent activity
 
-        if (relevantSessions.length > 0) {
-            lastSummaryForAI = relevantSessions[0].summary; // Get the most recent real summary
-        }
+        const lastSummaryForAI = lastConversation ? lastConversation.summary : null;
 
-        const userProfileForPrompt = user.toObject(); // Use a plain object for prompt generation
-        let systemPromptForWelcome = generateSystemPrompt(userProfileForPrompt, tutorNameForPrompt);
+        const systemPromptForWelcome = generateSystemPrompt(user, tutorNameForPrompt);
 
-        // Prepare messages for the AI. System content needs to be combined if using Claude fallback.
-        let messagesForAI = [];
-        // The system prompt is usually sent as the first message or a dedicated parameter.
-        // For callLLM, it's best if the first message is always role: 'system'.
-        messagesForAI.push({ role: "system", content: systemPromptForWelcome });
-
+        let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
 
         if (lastSummaryForAI) {
-            // Append internal memory as a system message for the AI's context
             messagesForAI.push({ role: "system", content: `(Internal AI memory: Last session summary: ${lastSummaryForAI})` });
         }
-
-        // Add the user message part to trigger generation
-        const userMessageContent = "Generate a brief, personalized welcome message for the student. ";
+        
+        // MODIFICATION: Explicitly tell the AI to greet the user by name.
+        const userMessageContent = `Generate a brief, personalized welcome message for the student named ${user.firstName}. `;
         const userMessagePart = lastSummaryForAI
             ? userMessageContent + "Integrate the context of their last session seamlessly into your greeting, asking if they want to continue or explore something new. "
             : userMessageContent + "Ask what they want to tackle today.";
         messagesForAI.push({ role: "user", content: userMessagePart });
 
-        const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 150 }); // Use centralized LLM call
+        const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 150 });
 
         const initialWelcomeMessage = completion.choices[0].message.content.trim();
-
-        // --- Session handling in Welcome route ---
-        // If this is the very first interaction for this user (no conversations yet)
-        // OR if the very last session recorded was JUST an "Initial Welcome Message" marker,
-        // then we create a *new* empty session here. Subsequent messages will be added to it by chat.js.
-        const isActuallyFirstSession = user.conversations.length === 0 || 
-                                       (user.conversations.length > 0 && user.conversations[user.conversations.length - 1].summary === "Initial Welcome Message");
-
-        if (isActuallyFirstSession) {
-            const newSession = {
-                date: new Date(),
-                messages: [{ role: 'assistant', content: initialWelcomeMessage }], // Start session with AI's welcome
-                summary: "Initial Welcome Message", // Temporarily mark as welcome, summary will be added by chat.js later
-                activeMinutes: 0
-            };
-            user.conversations.push(newSession);
-        } else {
-            // If returning to an existing session (not just a welcome message)
-            // Just ensure the welcome message is consistent, no need to add a new session here,
-            // as chat.js will append to the current active session.
-        }
-        await user.save(); // Save changes to user.conversations (if any new session pushed)
-
 
         res.json({ greeting: initialWelcomeMessage, voiceId: voiceIdForWelcome });
 
     } catch (error) {
         console.error("ERROR: Error generating personalized welcome message from AI:", error?.message || error);
-        // On persistent error, still provide a fallback message
-        res.status(500).json({ greeting: "Hello! How can I help you today?", error: "Failed to load personalized welcome due to a persistent issue." });
+        res.status(500).json({ greeting: `Hello ${user.firstName}! How can I help you today?`, error: "Failed to load personalized welcome." });
     }
 });
 

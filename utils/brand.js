@@ -74,6 +74,7 @@ const BRAND_CONFIG = {
     // 8. Specific Feature Settings
     xpPerLevel: 100, // XP needed to level up
     xpAwardRange: { min: 1, max: 50 }, // Max XP an AI can award in one go
+    baseXpPerTurn: 2, // NEW: Small XP awarded for every valid chat turn
     iepGoalCap: 10, // Max active goals per student
     digestEmailSchedule: "Sunday 7 AM ET", //
     digestEmailProvider: "SendGrid", //

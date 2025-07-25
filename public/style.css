@@ -1,21 +1,25 @@
 @charset "UTF-8";
-/* style.css — FINAL COMPREHENSIVE & ORGANIZED VERSION with ALL FIXES */
+/* style.css — PHASE 2: Frontend HTML Structure & CSS Styling - Batch 1 (CORRECTED & MERGED) */
 
 /* --- 1. Root Variables & Basic Reset --- */
 
 :root {
     /* Sizing & Layout */
     --header-height: 80px;
-    --footer-height: 80px; /* Adjusted slightly for more content */
+    --footer-height: 80px;
     --page-horizontal-padding: 20px;
-    --section-gap: 80px; /* Increased for more visual separation */
-    --content-max-width: 1200px; /* Max width for central content */
+    --section-gap: 50px;
+    --content-max-width: 1100px; /* Updated from 1000px */
+
+    /* NEW: Size Controls */
+    --logo-header-height: 50px;
+    --icon-size-default: 3rem;
 
     /* Dashboard Specific Sizing */
     --dashboard-panel-padding: 20px;
     --dashboard-panel-header-height: 40px;
     --dashboard-panel-header-margin-bottom: 15px;
-    --sidebar-width-desktop: 280px; /* Adjusted sidebar width for more content */
+    --sidebar-width-desktop: 280px;
     --chat-min-width: 400px;
 
     /* Brand Colors (from utils/brand.js) */
@@ -29,19 +33,23 @@
     --clr-text: #18202B;
     --clr-text-dim: #5B6876;
 
+    /* NEW: RGB versions for rgba() usage */
+    --clr-primary-teal-rgb: 18, 179, 179;
+    --clr-accent-hotpink-rgb: 255, 59, 127;
+
     /* Text Colors (derived from brand colors) */
     --text-primary: var(--clr-text);
     --text-secondary: var(--clr-text-dim);
     --text-light: var(--clr-bg-light);
-    --text-dark: var(--clr-text); /* Used for strong headings */
+    --text-dark: var(--clr-text);
     --text-green: var(--clr-success-green);
-    --text-hotpink: var(--clr-accent-hotpink); /* For token counts, badge bursts */
+    --text-hotpink: var(--clr-accent-hotpink);
 
-    /* Shadows (derived from brand rules) */
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-    --shadow-lg: 0 8px 25px rgba(0,0,0,0.25);
-    --shadow-card-primary: 0 4px 8px rgba(var(--clr-primary-teal-rgb), 0.2); /* Example for a themed card shadow */
+    /* Shadows (derived from brand rules) - Made slightly softer for cleaner look */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 10px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 20px rgba(0,0,0,0.15);
+    --shadow-card-primary: 0 4px 8px rgba(var(--clr-primary-teal-rgb), 0.1); /* Example for a themed card shadow */
 
     /* Typography Defaults */
     --font-family-headlines: "Inter", sans-serif;
@@ -50,19 +58,12 @@
     --font-weight-headlines: 700;
     --font-weight-body: 400;
     --brand-base-font-size: 1rem; /* 16px */
-    --brand-h1-font-size: 3em; /* 48px */
-    --brand-h3-font-size: 1.5em; /* 24px */
-
+    --brand-h1-font-size: 2.8em; /* Slightly smaller for hero impact, Apple-like */
+    --brand-h3-font-size: 1.4em; /* Slightly smaller than original 1.5em for cleaner look */
 
     /* Border Radius */
     --border-radius-base: 8px; /* General rounded corners */
 }
-
-/* Define RGB values for shadows if needed */
-body {
-    --clr-primary-teal-rgb: 18, 179, 179;
-}
-
 
 * {
   box-sizing: border-box;
@@ -71,22 +72,23 @@ body {
   font-family: var(--font-family-body);
 }
 
+/* --- Core Layout for Fixed Header/Footer & Scrollable Content --- */
+
 html {
-    height: 100%;
+    scroll-behavior: smooth;
 }
 
 body {
-    min-height: 100vh;
-    overflow-x: hidden; /* Prevent horizontal scroll due to drawers */
     display: flex;
     flex-direction: column;
-    font-size: var(--brand-base-font-size);
+    min-height: 100vh; /* This is the key: makes sure the body is at least as tall as the screen */
     background-color: var(--clr-bg-light);
     color: var(--text-primary);
-    min-width: 320px;
+    font-size: var(--brand-base-font-size);
     line-height: 1.6;
+    position: relative;
+    min-width: 320px;
 }
-
 
 /* --- 2. Typography & General Elements --- */
 
@@ -99,7 +101,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 h1 { font-size: var(--brand-h1-font-size); }
 h2 { font-size: 2.2em; }
-h3 { font-size: var(--brand-h3-font-size); }
+h3 { font-size: var(--brand-h3-font-size); } /* Corrected to use variable */
 h4 { font-size: 1.3em; }
 
 p {
@@ -247,8 +249,14 @@ input[type="checkbox"] {
     border-radius: var(--border-radius-base);
     box-shadow: var(--shadow-md);
     padding: var(--dashboard-panel-padding);
-    border: 1px solid rgba(var(--clr-primary-teal-rgb), 0.1); /* Subtle teal border */
+    border: 1px solid rgba(var(--clr-primary-teal-rgb), 0.05); /* Very subtle teal border */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Added transition for hover */
 }
+.card-style-1:hover {
+    transform: translateY(-3px); /* Slight lift on hover for all cards */
+    box-shadow: var(--shadow-lg); /* More pronounced shadow on hover */
+}
+
 
 .card-style-1.card-hotpink-border {
     border: 2px solid var(--clr-accent-hotpink);
@@ -257,11 +265,6 @@ input[type="checkbox"] {
 
 
 /* --- 5. Header & Footer --- */
-.landing-page-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
 .landing-header {
     display: flex;
     justify-content: space-between;
@@ -270,34 +273,35 @@ input[type="checkbox"] {
     background-color: var(--clr-bg-light);
     box-shadow: var(--shadow-sm);
     flex-shrink: 0;
-    flex-wrap: wrap; /* Allow wrapping on small screens */
-}
-/* NEW: Header Logo Container for Centering */
-.header-logo-container {
-    flex-grow: 1; /* Allows logo to take up space */
-    display: flex;
-    justify-content: center; /* Center logo horizontally */
-    align-items: center;
-    padding: 10px 0; /* Add some vertical padding */
+    flex-wrap: wrap;
+    z-index: 100; /* Ensure header is above scrolling content */
 }
 
-/* NEW: Main Logo Styling */
+.header-logo-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-start; /* Align logo left, like in mockup */
+    align-items: center;
+    padding: 0;
+}
+
+/* Main Logo Styling */
 .main-logo-hero {
-    max-height: 80px; /* Increased size */
+    max-height: var(--logo-header-height); /* Using new variable */
     width: auto;
     display: block;
-    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); /* Soft shadow for elegance */
+    filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.08)); /* Softer shadow */
     transition: all 0.3s ease;
 }
 .main-logo-hero:hover {
-    filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.15));
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
 }
 
 
 .landing-nav {
     display: flex;
     gap: 15px;
-    flex-shrink: 0; /* Prevent nav from shrinking */
+    flex-shrink: 0;
 }
 /* Adjust nav spacing for wrapped state */
 .landing-header.wrapped .landing-nav {
@@ -306,16 +310,54 @@ input[type="checkbox"] {
     justify-content: center;
 }
 
-
-.landing-main {
-    flex-grow: 1; /* Allows main content to expand and fill space */
+main {
+    flex-grow: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     width: 100%;
-    max-width: var(--content-max-width); /* Constrain max width for content */
+    max-width: var(--content-max-width);
     margin: 0 auto;
-    padding: var(--section-gap) var(--page-horizontal-padding);
+    padding: 0 var(--page-horizontal-padding);
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
+    min-height: 0;
+}
+
+.login-page-wrapper,
+#app-layout-wrapper,
+.admin-page-wrapper {
+    flex-grow: 0;
+    overflow-y: visible;
+    height: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+}
+.login-page-wrapper, .signup-page-wrapper {
+    padding: 1rem var(--page-horizontal-padding);
+    flex-grow: 1;
+    justify-content: center;
+}
+#app-layout-wrapper {
+    flex-direction: row;
+    height: 100%;
+    min-height: 500px;
+    align-items: stretch;
+    gap: var(--section-gap);
+    flex-grow: 1;
+}
+.admin-page-wrapper {
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    gap: var(--section-gap);
+    flex-grow: 1;
 }
 
 
@@ -334,7 +376,7 @@ footer {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin-top: auto; /* Push footer to bottom */
+    margin-top: auto;
 }
 
 footer p {
@@ -347,7 +389,7 @@ footer a {
   margin: 0 0.5rem;
 }
 
-footer a:hover {
+a:hover {
   text-decoration: underline;
 }
 .edtech-pledge {
@@ -360,25 +402,52 @@ footer a:hover {
 /* --- 6. Landing Page Sections (MODIFIED & NEW) --- */
 .section-title {
     text-align: center;
-    margin-bottom: var(--section-gap);
+    margin-bottom: calc(var(--section-gap) / 1.5); /* Reduced margin-bottom for tighter feel */
     color: var(--clr-primary-teal);
-    font-size: 2.5em; /* Large section titles */
+    font-size: 2.5em;
     font-weight: var(--font-weight-headlines);
 }
 
 /* Hero Section */
 .hero-section {
     display: flex;
-    flex-direction: column; /* Stack content and image */
+    flex-direction: column; /* Default to column for mobile */
     align-items: center;
-    gap: var(--section-gap);
-    text-align: center;
-    padding: var(--section-gap) 0;
-    background: linear-gradient(135deg, var(--clr-primary-teal) 0%, var(--clr-bg-light) 100%); /* Teal to white gradient */
+    gap: calc(var(--section-gap) / 2); /* Reduced gap */
+    padding: 0; /* Use section-gap for internal padding, main handles outer */
+    background: var(--clr-bg-light); /* Start with light background for Apple-esque */
     border-radius: var(--border-radius-base);
-    box-shadow: var(--shadow-lg);
-    margin-bottom: var(--section-gap);
+    box-shadow: var(--shadow-sm); /* Lighter shadow for hero section */
+    margin-bottom: 0; /* No external margin-bottom, managed by main's gap */
 }
+
+/* Adjust hero section for desktop (side-by-side) */
+@media screen and (min-width: 768px) {
+    .hero-section {
+        flex-direction: row; /* Side-by-side on desktop */
+        text-align: left; /* Align text left */
+        justify-content: center; /* Center content horizontally */
+        padding: var(--section-gap) var(--page-horizontal-padding); /* Add horizontal padding back */
+        gap: 60px; /* Gap between text and image */
+    }
+    .hero-content {
+        flex: 1; /* Allow content to grow */
+        max-width: 50%; /* Control text width */
+        padding: 0; /* Remove internal padding as section has it */
+    }
+    .hero-tagline, .hero-subtagline, .hero-equity-blurb {
+        color: var(--clr-text); /* Dark text on light background */
+        text-shadow: none; /* No text shadow */
+    }
+    .hero-actions {
+        justify-content: flex-start; /* Align buttons left */
+    }
+    .hero-image-card {
+        flex: 1; /* Allow image to grow */
+        margin-top: 0; /* No top margin in row layout */
+    }
+}
+
 
 .hero-content {
     max-width: 800px;
@@ -386,24 +455,24 @@ footer a:hover {
 }
 
 .hero-tagline {
-    font-size: 3em; /* Larger for impact */
-    color: var(--clr-bg-light); /* White text on teal */
+    font-size: 3em;
+    color: var(--clr-text); /* Changed to dark text on light background */
     margin-bottom: 0.3em;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    text-shadow: none; /* Removed text shadow */
 }
 .hero-subtagline {
-    font-size: 1.5em; /* Larger */
-    color: var(--clr-bg-light);
+    font-size: 1.5em;
+    color: var(--clr-text-dim); /* Changed to dim text */
     margin-bottom: 0.8em;
-    opacity: 0.9;
+    opacity: 1; /* Full opacity */
     font-weight: var(--font-weight-body);
 }
 .hero-equity-blurb {
     font-size: 1.1em;
-    color: var(--clr-bg-light);
+    color: var(--clr-text-dim); /* Changed to dim text */
     margin-bottom: 1.5em;
     font-style: italic;
-    opacity: 0.8;
+    opacity: 0.9; /* Slightly less opaque */
 }
 
 .hero-actions {
@@ -419,13 +488,14 @@ footer a:hover {
     padding: 15px;
     background-color: var(--clr-bg-light);
     border-radius: var(--border-radius-base);
-    box-shadow: 0 8px 15px rgba(var(--clr-primary-teal-rgb), 0.3); /* Teal themed shadow */
-    max-width: 90%;
+    box-shadow: 0 8px 15px rgba(var(--clr-primary-teal-rgb), 0.1); /* Lighter teal themed shadow */
+    max-width: 600px; /* Controlled max width for image card */
+    min-width: 280px; /* Ensure it doesn't get too small */
 }
 .hero-classroom-image {
     max-width: 100%;
     height: auto;
-    border-radius: var(--border-radius-base) - 2px; /* Slightly smaller border radius than card */
+    border-radius: var(--border-radius-base);
     display: block;
 }
 
@@ -438,9 +508,9 @@ footer a:hover {
 
 .visual-feature-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive 3-column grid */
-    gap: 30px;
-    margin-top: var(--section-gap);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Slightly smaller minmax */
+    gap: 25px; /* Reduced gap */
+    margin-top: calc(var(--section-gap) / 2); /* Half section gap */
     justify-content: center;
 }
 
@@ -448,25 +518,29 @@ footer a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 30px;
-    min-height: 380px; /* Ensure consistent height for visual balance */
+    padding: 25px; /* Slightly less padding */
+    min-height: 280px; /* Reduced for less empty space */
     text-align: center;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm); /* Softer shadow */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.visual-feature-item i {
+    font-size: var(--icon-size-default); /* Uses new variable */
 }
 
 .visual-feature-item:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md); /* More pronounced shadow on hover */
 }
 
 .visual-feature-image {
     max-width: 100%;
-    height: 200px; /* Increased fixed height for prominent imagery */
+    height: 100px; /* Reduced height for iconic feel */
     object-fit: contain;
-    border-radius: var(--border-radius-base);
-    margin-bottom: 25px;
-    box-shadow: var(--shadow-sm);
+    border-radius: var(--border-radius-base); /* Add border-radius for consistency */
+    margin-bottom: 20px; /* Reduced margin */
+    box-shadow: none; /* No shadow on image */
 }
 
 .visual-feature-item h3 {
@@ -490,8 +564,8 @@ footer a:hover {
 .pricing-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    margin-top: var(--section-gap);
+    gap: 25px; /* Reduced gap */
+    margin-top: calc(var(--section-gap) / 2); /* Half section gap */
     justify-content: center;
 }
 .pricing-card {
@@ -508,16 +582,22 @@ footer a:hover {
     font-size: 1.5em;
     margin-bottom: 10px;
 }
-.pricing-card .price-beta, .pricing-card .price-post-beta {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: var(--clr-accent-hotpink);
+/* Specific styling for the 'Free while in Beta' part for clear hierarchy as per mockup */
+.pricing-card .beta-price-note {
+    font-size: 1.5em; /* Match mockup's emphasis */
+    font-weight: var(--font-weight-headlines);
+    color: var(--clr-accent-hotpink); /* Hot pink for visibility */
     margin-bottom: 10px;
 }
 .pricing-card .price-post-beta {
-    color: var(--clr-text);
-    font-size: 1.2em;
+    color: var(--clr-text-dim); /* More subtle */
+    font-size: 1em; /* Smaller */
+    font-weight: var(--font-weight-body);
+    text-decoration: line-through; /* Strikethrough for beta pricing */
+    margin-bottom: 5px; /* Less margin */
 }
+
+
 .pricing-card .price-contact {
     font-size: 1.5em;
     font-weight: bold;
@@ -528,10 +608,10 @@ footer a:hover {
     font-size: 0.9em;
     color: var(--clr-text-dim);
     margin-bottom: 20px;
-    flex-grow: 1; /* Pushes button to bottom */
+    flex-grow: 1;
 }
 .pricing-equity-section .btn {
-    width: 100%; /* Full width buttons in cards */
+    width: 100%;
     max-width: 200px;
 }
 .access-grants-note {
@@ -547,14 +627,14 @@ footer a:hover {
 }
 
 .our-approach-section .section-title {
-    margin-bottom: 60px; /* More space below title */
+    margin-bottom: calc(var(--section-gap) / 2);
 }
 
 .approach-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 40px; /* Increased gap */
-    max-width: 900px; /* Keep it a bit narrower than main content */
+    gap: 30px; /* Reduced gap */
+    max-width: 900px;
     margin: 0 auto;
 }
 
@@ -566,15 +646,12 @@ footer a:hover {
 }
 
 .approach-icon {
-    width: 120px; /* Larger icons */
-    height: 120px;
+    width: 90px; /* Smaller icons for a cleaner look */
+    height: 90px;
     object-fit: contain;
-    margin-bottom: 20px;
-    filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.1));
-    transition: transform 0.2s ease;
-}
-.approach-icon:hover {
-    transform: translateY(-5px);
+    border-radius: var(--border-radius-base); /* Add border-radius for consistency */
+    margin-bottom: 20px; /* Reduced margin */
+    box-shadow: none; /* No shadow on image */
 }
 
 .approach-item h3 {
@@ -586,6 +663,7 @@ footer a:hover {
 .approach-item p {
     font-size: 0.9em;
     color: var(--clr-text-dim);
+    flex-grow: 1;
 }
 
 
@@ -596,14 +674,14 @@ footer a:hover {
 .feature-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    margin-top: var(--section-gap);
+    gap: 25px; /* Reduced gap */
+    margin-top: calc(var(--section-gap) / 2);
     justify-content: center;
 }
 .feature-card {
     text-align: center;
     padding: 30px;
-    min-height: 200px;
+    min-height: 180px; /* Slightly reduced height */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -617,12 +695,13 @@ footer a:hover {
 .feature-card p {
     font-size: 0.95em;
     color: var(--clr-text-dim);
+    flex-grow: 1;
 }
 
 
 /* Social Proof Section */
 .social-proof-section {
-    background-color: var(--clr-primary-teal); /* Teal tinted backdrop */
+    background-color: var(--clr-primary-teal);
     color: var(--clr-bg-light);
     padding: var(--section-gap);
     border-radius: var(--border-radius-base);
@@ -632,45 +711,41 @@ footer a:hover {
 .social-proof-section .section-title {
     color: var(--clr-bg-light);
 }
-.testimonial-carousel {
-    max-width: 800px;
+/* NEW: Testimonial Grid (replacing carousel) */
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Two columns on desktop */
+    gap: 30px;
+    max-width: 900px; /* Max width for testimonials */
     margin: 0 auto 30px;
-    position: relative;
-    overflow: hidden;
-    min-height: 120px;
 }
 .testimonial-item {
-    font-size: 1.2em;
-    font-style: italic;
-    margin-bottom: 15px;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-    position: absolute;
-    width: 100%;
-    left: 0;
-    top: 0;
+    background-color: var(--clr-bg-light); /* White background for testimonials */
+    color: var(--clr-text); /* Dark text */
+    padding: 25px;
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-md);
+    text-align: left; /* Align text left within testimonial */
+    opacity: 1; /* Always visible, no fade */
+    position: static; /* Remove absolute positioning */
+    width: auto; /* Remove fixed width */
+    min-height: 0; /* Allow testimonial item to shrink */
 }
 .testimonial-item blockquote {
     margin: 0;
+    font-size: 1.1em;
+    font-style: italic;
+    color: var(--clr-text);
+    margin-bottom: 10px;
 }
 .testimonial-author {
     font-size: 0.9em;
     font-weight: bold;
-    color: rgba(255,255,255,0.8);
+    color: var(--clr-text-dim); /* Dimmed author text */
 }
 .school-logos-container {
-    margin-top: 40px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
+    display: none; /* Hide school logos as per mockup */
 }
-.school-logos-container p {
-    font-size: 0.9em;
-    opacity: 0.8;
-}
-/* .school-logos-container img { max-height: 40px; filter: grayscale(100%) brightness(200%); opacity: 0.7; } */
 
 
 /* FAQ Section */
@@ -679,11 +754,11 @@ footer a:hover {
 }
 .accordion-container {
     max-width: 800px;
-    margin: var(--section-gap) auto 0;
+    margin: calc(var(--section-gap) / 2) auto 0; /* Reduced top margin */
 }
 .accordion-item {
     margin-bottom: 15px;
-    overflow: hidden; /* Hide overflowing content initially */
+    overflow: hidden;
 }
 .accordion-header {
     width: 100%;
@@ -704,13 +779,14 @@ footer a:hover {
     transition: background-color 0.2s ease;
 }
 .accordion-header::after {
-    content: '\002B'; /* Plus sign */
+    content: '\002B';
     font-weight: bold;
     font-size: 1.2em;
     transition: transform 0.3s ease;
 }
 .accordion-header.active::after {
-    transform: rotate(45deg); /* Rotate for 'x' or close icon */
+    content: '\2212'; /* Change to minus sign */
+    transform: rotate(0deg); /* No rotation needed */
 }
 .accordion-content {
     max-height: 0;
@@ -729,67 +805,59 @@ footer a:hover {
 /* Final CTA Section */
 .final-cta-section {
     text-align: center;
-    padding: var(--section-gap) 0;
+    padding: var(--section-gap); /* Use full section gap for padding */
     margin-bottom: var(--section-gap);
-    background: linear-gradient(135deg, var(--clr-bg-light) 0%, var(--clr-primary-teal) 100%); /* White to teal gradient */
+    background: var(--clr-primary-teal); /* Solid teal background as per mockup */
     border-radius: var(--border-radius-base);
     box-shadow: var(--shadow-lg);
-    padding: 40px var(--page-horizontal-padding);
 }
 .final-cta-blurb {
     font-size: 1.2em;
-    color: var(--clr-text);
+    color: var(--clr-bg-light); /* White text on teal background */
     margin-bottom: 30px;
 }
 
 
 /* --- 7. Page Layout Wrappers (Common) --- */
 
-/* General page wrappers for content */
-#app-layout-wrapper, .admin-page-wrapper, .login-page-wrapper, .signup-page-wrapper, .profile-container, .page-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex: 1; /* Allows it to take all available vertical space in body */
-    align-items: center; /* Centers content horizontally */
-    padding: 0 var(--page-horizontal-padding);
-    max-width: 1400px;
-    margin: 0 auto;
-    box-sizing: border-box;
-    width: 100%;
-}
-
-/* Main content area for dashboards with sidebars */
+/* Main content area for dashboards with sidebars (These are *children* of the <main> tag) */
 .admin-main-content {
     display: flex;
     width: 100%;
     gap: var(--section-gap);
-    flex-grow: 1;
-    margin-bottom: var(--section-gap);
-    height: 100%;
-    align-items: stretch;
+    flex-grow: 1; /* Allow to grow within its <main> parent */
+    height: auto; /* Let content dictate height, flex-grow will stretch */
+    align-items: stretch; /* Stretch children to fill height in rows */
+    box-sizing: border-box;
+    min-height: 0; /* Allow this flex item to shrink correctly */
 }
 
 /* Dashboard Sidebar Widgets (Left/Right) */
 .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
-    flex: 0 0 var(--sidebar-width-desktop);
+    flex: 0 0 var(--sidebar-width-desktop); /* Fixed width, non-growing */
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
-    overflow-y: auto;
+    overflow-y: visible; /* Let the parent <main> or .admin-main-content handle scroll */
     min-width: var(--sidebar-width-desktop);
-    height: 100%;
+    height: auto; /* Let content define height naturally */
     box-sizing: border-box;
+    flex-shrink: 0; /* Prevent sidebars from shrinking too small */
+    flex-grow: 0; /* Sidebars have fixed width, don't grow */
+    min-height: 0; /* Allow to shrink within flex container */
 }
 
 /* Central Content Area for Dashboards */
 .admin-central-content, #chat-container {
-    flex: 1;
-    min-width: 0;
+    flex: 1; /* Allows this to grow and take remaining space */
+    min-width: 0; /* Important for flex items to prevent overflow in row direction */
     display: flex;
     flex-direction: column;
     gap: var(--section-gap);
-    height: 100%;
+    height: auto; /* Let content dictate height */
     box-sizing: border-box;
+    min-height: 0; /* Allow to shrink within flex container */
+    /* REMOVED: overflow-y: auto; from #chat-container here, moved to #chat-messages-container */
 }
 
 /* Dashboard Panel Base Style */
@@ -799,7 +867,10 @@ footer a:hover {
     box-shadow: var(--shadow-md);
     padding: var(--dashboard-panel-padding);
     width: 100%;
-    flex-grow: 1;
+    flex-grow: 1; /* Allow panels to grow if space permits */
+    height: auto; /* Let content define height naturally, allow flex-grow to stretch */
+    flex-shrink: 0; /* Important: Prevent panels from shrinking too small */
+    min-height: 0; /* Allow panels to shrink within their flex container */
 }
 
 .dashboard-panel-header {
@@ -844,114 +915,52 @@ footer a:hover {
 
 /* --- 8. Chat Page Specifics (excluding common layout) --- */
 
-/* Overall application wrapper for chat page */
-#app-layout-wrapper {
-    flex-direction: row; /* Main columns for chat layout */
-    align-items: stretch; /* Stretch columns to fill height */
-    height: calc(100vh - var(--footer-height) - 40px); /* Fill available viewport height */
-    width: 100%;
-    max-width: 1400px;
-    margin: 20px auto;
-    box-sizing: border-box;
-    padding: 0px var(--page-horizontal-padding);
-    gap: var(--section-gap);
-    min-height: 500px;
-}
-
 /* Wrapper for the central chat container - this is now the MAIN chat pane */
-#chat-container {
-    height: 100%;
-    padding: 0; /* No padding here as inner elements will handle it */
-    background: none; /* No background on the container itself */
-    box-shadow: none;
-    box-sizing: border-box;
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    background-color: var(--clr-bg-light); /* Moved background here */
-    border-radius: var(--border-radius-base);
-    box-shadow: var(--shadow-md);
-    padding: var(--dashboard-panel-padding); /* Padding for the inner content */
-    min-width: var(--chat-min-width); /* Ensure minimum width */
-}
-
-
-/* Top bar within chat container (containing logo and logout) */
-#top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--dashboard-panel-header-margin-bottom);
-    background: none;
-    box-shadow: none;
-    padding: 0;
-    margin-left: 0;
-    margin-right: 0;
-    max-width: none;
-    flex-shrink: 0;
-    width: 100%;
-    box-sizing: border-box;
-    border-bottom: 1px solid var(--clr-text-dim);
-    padding-bottom: 10px;
-}
-
-/* Smaller logo for chat top bar */
-#top-bar #logo {
-    max-width: 120px;
-    margin-right: 20px;
-    flex-shrink: 0;
-    height: auto;
-    display: block;
-}
-
-/* Standardized Logout Button */
-#top-bar .logout-button {
-    margin-left: auto;
-    flex-shrink: 0;
-    padding: 8px 15px;
-    background-color: var(--clr-text-dim);
-    color: var(--clr-bg-light);
-}
-#top-bar .logout-button:hover {
-    background-color: #4a5763;
-}
+/* This is already covered by .admin-central-content, #chat-container rules above */
 
 
 /* Chat messages inner container */
-#messages {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 100px;
-  border: 1px solid var(--clr-text-dim);
-  border-radius: var(--border-radius-base);
-  background-color: #fcfcfc;
+#chat-messages-container { /* Renamed from #messages and adjusted styles */
+    display: flex; /* Use flexbox for message container */
+    flex-direction: column; /* Stack messages vertically */
+    gap: 10px; /* Space between messages */
+    padding: 1rem;
+    overflow-y: auto; /* THIS IS THE KEY for chat messages scrolling */
+    flex-grow: 1; /* Allows it to take available space */
+    background-color: var(--clr-bg-light); /* Assuming this is your light background color */
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-small);
+    min-height: 0; /* Ensure it has a minimum height */
+    border: 1px solid var(--clr-text-dim); /* Match your original #messages border */
 }
 
 .message {
-  max-width: 75%;
-  padding: 12px 16px;
-  border-radius: 20px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  font-size: 0.95em;
+    max-width: 75%; /* Messages don't span full width */
+    padding: 10px 15px;
+    border-radius: 18px; /* More rounded bubbles */
+    line-height: 1.5;
+    word-wrap: break-word; /* Ensure long words wrap */
+    font-size: 0.95em; /* Inherit font size */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for all messages */
+    /* Base styles, will be overridden by .user and .ai */
 }
 
+/* Styles for user messages (right aligned) */
 .message.user {
-  background-color: #dcf8c6; /* Light green */
-  align-self: flex-end;
+    align-self: flex-end; /* Pushes message to the right */
+    background-color: var(--clr-primary-teal); /* Example: Primary teal background */
+    color: white; /* Example: White text for user messages */
+    border-bottom-right-radius: 4px; /* Slightly less rounded corner at the bottom right for user */
 }
 
+/* Styles for AI messages (left aligned) */
 .message.ai {
-  background-color: #e8ecf1; /* Light grey/blue */
-  align-self: flex-start;
+    align-self: flex-start; /* Pushes message to the left */
+    background-color: #e0e0e0; /* Example: Light gray background for AI */
+    color: var(--clr-text-primary); /* Example: Dark text for AI messages */
+    border-bottom-left-radius: 4px; /* Slightly less rounded corner at the bottom left for AI */
 }
+
 
 .chat-image {
     max-width: 100%;
@@ -977,7 +986,7 @@ footer a:hover {
   padding: 10px;
   border-radius: var(--border-radius-base);
   border: 1px solid #ccc;
-  font-size: 16px;
+  font-size: 1rem; /* Use var for consistency */
   resize: vertical;
 }
 
@@ -990,7 +999,7 @@ footer a:hover {
 #send-button:hover { background-color: #109a9a; } /* Darker teal */
 
 /* Input Tools (Mic, Equation, Attach) */
-#tools-left, #tools-right {
+#tools-left, #tools-right { /* These don't exist in chat.html, but keeping for consistency if added later */
     display: flex;
     gap: 5px;
     flex-shrink: 0;
@@ -1003,9 +1012,10 @@ footer a:hover {
     line-height: 1;
     box-shadow: none; /* No shadow on icon buttons */
 }
-#tools-left button img, #tools-right button img {
-    width: 24px;
-    height: 24px;
+/* Explicitly size image icons within buttons */
+#attach-button img, #mic-button img {
+    width: 24px; /* Fixed smaller size */
+    height: 24px; /* Fixed smaller size */
     vertical-align: middle;
     display: block;
 }
@@ -1015,7 +1025,7 @@ footer a:hover {
 
 
 /* Dropzone styling */
-#dropzone.drag-active::before {
+#dropzone.drag-active::before { /* This #dropzone ID doesn't exist in chat.html, assuming it's for general app-layout-wrapper */
   content: "Drop file to upload 📎";
   position: fixed;
   top: 0; left: 0;
@@ -1037,27 +1047,36 @@ footer a:hover {
   justify-content: flex-start; /* Aligned left for AI bubble feel */
   gap: 6px;
   padding: 8px 16px;
-  margin-left: 5px; /* Indent slightly like a bubble */
-  border-radius: 20px; /* Bubble shape */
-  background-color: #e8ecf1; /* AI bubble background */
+  margin-left: 15px; /* Indent slightly like an AI bubble */
+  border-radius: 18px; /* Bubble shape, matching new .message styles */
+  border-bottom-left-radius: 4px; /* Match AI bubble */
+  background-color: #e0e0e0; /* AI bubble background */
   flex-shrink: 0;
   font-size: 0.95em;
   color: var(--clr-text-dim);
   max-width: 75%;
   align-self: flex-start; /* Align left */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Match AI bubble shadow */
 }
-.dot {
-  height: 10px; width: 10px;
-  background-color: var(--clr-primary-teal); /* Teal dots */
+/* Corrected dot animation for thinking indicator */
+#thinking-indicator .dot, #parent-thinking-indicator .dot {
+  width: 8px; /* Smaller dots */
+  height: 8px;
+  background-color: var(--clr-text-dim); /* Darker dots */
   border-radius: 50%;
-  animation: blink 1.2s infinite ease-in-out;
+  animation: bounce 1.4s infinite ease-in-out both;
 }
-.dot:nth-child(2) { animation-delay: 0.2s; }
-.dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes blink {
-  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
-  40% { transform: scale(1.0); opacity: 1; }
+#thinking-indicator .dot:nth-child(1), #parent-thinking-indicator .dot:nth-child(1) { animation-delay: -0.32s; }
+#thinking-indicator .dot:nth-child(2), #parent-thinking-indicator .dot:nth-child(2) { animation-delay: -0.16s; }
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
 }
+
 
 /* Lesson Header in Chat */
 #lessons-pane #lesson-header, #chat-pane #lesson-header {
@@ -1184,7 +1203,7 @@ footer a:hover {
 #student-avatar {
     width: 100%;
     height: 100%;
-    display: flex; /* Ensure inner content can be centered */
+    display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--clr-bg-light);
@@ -1260,14 +1279,19 @@ footer a:hover {
 
 /* --- 9. Login, Signup, and Profile Completion Pages --- */
 
-.login-page-wrapper, .signup-page-wrapper, .profile-container {
-    flex-grow: 1;
+/* Login/Signup/Profile wrappers (children of the <main> tag) */
+.login-page-wrapper, .signup-page-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem 20px;
+    justify-content: center; /* Center content vertically if it doesn't fill the scrollable space */
+    align-items: center; /* Center content horizontally */
+    flex-grow: 1; /* Allow this wrapper to fill available space within <main> */
+    padding: 1rem var(--page-horizontal-padding); /* Keep original padding for these specific pages */
+    height: auto; /* Let content dictate height, flex-grow will stretch */
+    min-height: 0; /* Allow it to shrink correctly */
+    overflow-y: visible; /* Let <main> handle the scrolling */
 }
+
 
 .login-container, .signup-container, .profile-container {
   max-width: 600px;
@@ -1281,40 +1305,13 @@ footer a:hover {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-grow: 0;
-  overflow-y: visible;
+  flex-grow: 0; /* Important: Don't let the inner card grow unnecessarily */
+  overflow-y: visible; /* Content within card will not scroll independently unless explicitly set */
   min-height: fit-content;
 }
 .login-container { max-width: 400px; }
 
-/* The logo-header in these pages (login, signup, profile) */
-.login-page-wrapper .logo-header,
-.signup-page-wrapper .logo-header,
-.profile-container .logo-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 20px;
-    background: none;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 0;
-    flex-shrink: 0;
-}
-.login-page-wrapper .logo-header img,
-.signup-page-wrapper .logo-header img,
-.profile-container .logo-header img {
-    max-width: 100%;
-    height: auto;
-    max-height: 100px;
-    object-fit: contain;
-    margin-right: 0;
-}
-.login-page-wrapper h1, .signup-page-wrapper h1, .profile-container h1 {
-    text-align: center;
-    margin-top: 0;
-}
+/* The logo-header in these pages (login, signup, profile) - will be mostly removed by main header */
 
 .subtitle {
     text-align: center;
@@ -1429,25 +1426,20 @@ form label, .password-label-row label {
 
 /* --- 10. Tutor Selection Page Specifics (Line-Out/Grid) --- */
 
+/* Pick tutor main is handled by the generic <main> style block (it IS the <main> tag) */
 .pick-tutor-main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: var(--section-gap) var(--page-horizontal-padding);
-    width: 100%;
-    max-width: var(--content-max-width);
-    margin: 0 auto;
+    padding-top: var(--section-gap); /* Add top padding to move content down from header */
+    padding-bottom: var(--section-gap); /* Add bottom padding before footer */
 }
 
 .tutor-selection-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Auto-fit columns */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjusted minmax for slightly larger cards */
     gap: 30px;
     width: 100%;
     max-width: 1000px;
-    margin-bottom: 40px;
+    margin-bottom: 40px; /* Space before action buttons */
+    justify-content: center;
 }
 
 .tutor-card {
@@ -1457,12 +1449,13 @@ form label, .password-label-row label {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 25px; /* Increased padding for more breathing room */
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     border: 2px solid transparent; /* Default transparent border */
     position: relative;
     overflow: hidden; /* Hide overflowing details initially */
+    min-height: 0; /* Allow to shrink within flex container */
 }
 
 .tutor-card:hover {
@@ -1478,10 +1471,11 @@ form label, .password-label-row label {
 }
 
 .tutor-card-image {
-    width: 120px;
-    height: 120px;
+    width: 200px; /* Increased image size */
+    height: 200px; /* Increased image size */
     border-radius: 50%;
     object-fit: cover;
+	object-position: center 15%;
     margin-bottom: 15px;
     border: 3px solid var(--clr-primary-teal);
     box-shadow: var(--shadow-sm);
@@ -1495,10 +1489,14 @@ form label, .password-label-row label {
 }
 
 .tutor-card-tagline {
-    font-size: 0.9em;
+    font-size: 0.95em; /* Slightly larger for readability */
     color: var(--clr-text-dim);
     text-align: center;
     margin-bottom: 15px;
+    min-height: 2.8em; /* Ensure consistent height for taglines */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .tutor-card-details-overlay {
@@ -1508,11 +1506,11 @@ form label, .password-label-row label {
     width: 100%;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(5px);
-    padding: 15px;
+    padding: 20px; /* Increased padding */
     transform: translateY(100%); /* Hidden by default */
     transition: transform 0.3s ease-out, opacity 0.3s ease-out;
     opacity: 0;
-    font-size: 0.85em;
+    font-size: 0.9em; /* Adjusted font size */
     color: var(--clr-text-dim);
     border-top: 1px solid rgba(var(--clr-primary-teal-rgb), 0.2);
     box-shadow: var(--shadow-sm);
@@ -1522,6 +1520,7 @@ form label, .password-label-row label {
     flex-direction: column;
     justify-content: center;
     text-align: left;
+    overflow-y: auto; /* Allow scrolling within the overlay if content is too long */
 }
 
 .tutor-card:hover .tutor-card-details-overlay,
@@ -1531,12 +1530,15 @@ form label, .password-label-row label {
 }
 .tutor-card-details-overlay h4 {
     font-size: 1.1em;
-    margin-bottom: 5px;
+    margin-bottom: 8px; /* Adjusted margin */
     color: var(--clr-primary-teal);
     text-align: center;
+    padding-bottom: 5px; /* Small line under heading */
+    border-bottom: 1px solid rgba(var(--clr-primary-teal-rgb), 0.2);
 }
 .tutor-card-details-overlay p {
-    margin-bottom: 5px;
+    margin-bottom: 10px; /* Adjusted margin */
+    font-size: 0.95em; /* Ensures readability */
 }
 
 
@@ -1709,26 +1711,28 @@ form label, .password-label-row label {
 }
 
 
-/* --- 12. Modal Styles (Specific Overrides for IEP/Conversation) --- */
+/* --- 12. Modal Styles (CORRECTED) --- */
 
-/* Ensures the modal overlay shows on top of everything */
+/* This rule hides the modal by default and prepares it for a fade-in transition */
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.6);
-    display: none;
+    display: none; /* Use display to truly hide it */
     justify-content: center;
     align-items: center;
     z-index: 2000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 0; /* Start transparent */
+    transition: opacity 0.3s ease;
 }
 
-.modal-overlay.visible {
-    opacity: 1;
-    visibility: visible;
+/* This is the class JavaScript will add to show the modal */
+.modal-overlay.is-visible {
+    display: flex; /* Change display to show the element */
+    opacity: 1; /* Fade it into view */
 }
 
 /* Modal Content Box */
@@ -1751,7 +1755,7 @@ form label, .password-label-row label {
     max-width: 800px;
 }
 
-.modal-overlay.visible .modal-content {
+.modal-overlay.is-visible .modal-content {
     transform: translateY(0);
     opacity: 1;
 }
@@ -1874,7 +1878,7 @@ form label, .password-label-row label {
     float: right;
 }
 .remove-goal-btn:hover {
-    background-color: #ed4040; /* Darken manually */
+    background-color: #ed4040;
 }
 #add-iep-goal-btn {
     background-color: var(--clr-primary-teal);
@@ -1957,13 +1961,12 @@ form label, .password-label-row label {
 .level-up-animation-text { color: var(--clr-primary-teal); font-size: 1.6rem; }
 
 .animate-xp { animation: xpFlyUpFade 1.5s ease-out forwards; }
-.animate-level-up { animation: levelUpPopFade 2s ease-out forwards; }
-
 @keyframes xpFlyUpFade {
     0% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-100px); }
 }
 
+.animate-level-up { animation: levelUpPopFade 2s ease-out forwards; }
 @keyframes levelUpPopFade {
     0% { opacity: 0; transform: scale(0.5); }
     30% { opacity: 1; transform: scale(1.1); }
@@ -1978,18 +1981,18 @@ form label, .password-label-row label {
     position: fixed;
     top: 0;
     bottom: 0;
-    width: 280px; /* Same as sidebar-width-desktop */
-    max-width: 80%; /* Don't cover entire screen on very small devices */
+    width: 280px;
+    max-width: 80%;
     overflow-y: auto;
     background: var(--clr-bg-light);
     box-shadow: var(--shadow-lg);
     transition: transform 0.3s ease;
-    z-index: 900; /* Under modal, over main chat */
+    z-index: 900;
     padding: var(--dashboard-panel-padding);
     display: flex;
     flex-direction: column;
     gap: var(--dashboard-panel-padding);
-    box-sizing: border-box; /* Ensure padding is included in width */
+    box-sizing: border-box;
 }
 .drawer.left {
     left: 0;
@@ -2007,17 +2010,17 @@ form label, .password-label-row label {
 
 /* Drawer Toggles for Mobile */
 .drawer-toggle {
-    display: none; /* Hidden by default on desktop */
+    display: none;
     position: fixed;
-    top: 15px; /* Aligned with header/logo */
+    top: 15px;
     width: 45px;
     height: 45px;
     border: none;
     background: var(--clr-primary-teal);
     color: var(--clr-bg-light);
     font-size: 1.5rem;
-    z-index: 910; /* Above drawers */
-    border-radius: 50%; /* Circular buttons */
+    z-index: 910;
+    border-radius: 50%;
     box-shadow: var(--shadow-md);
     display: flex;
     align-items: center;
@@ -2037,47 +2040,60 @@ form label, .password-label-row label {
 @media screen and (max-width: 1024px) {
     /* Adjustments for larger tablets/smaller desktops */
     :root {
-        --section-gap: 50px; /* Slightly smaller gap */
+        --section-gap: 50px;
         --brand-h1-font-size: 2.5em;
         --brand-h3-font-size: 1.3em;
     }
     h1 { font-size: var(--brand-h1-font-size); }
     h3 { font-size: var(--brand-h3-font-size); }
 
-    .landing-header, .landing-main {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
     .hero-tagline {
-        font-size: 2.2em; /* Adjusted for tablet */
+        font-size: 2.2em;
     }
     .hero-subtagline {
-        font-size: 1.1em; /* Adjusted for tablet */
+        font-size: 1.1em;
     }
+    /* Header responsiveness for wrapped state */
+    .landing-header {
+        flex-direction: row; /* Keep row for wider tablets */
+        align-items: center;
+        flex-wrap: nowrap; /* Prevent wrapping unless truly necessary */
+    }
+    .header-logo-container {
+        width: auto;
+        flex-grow: 0; /* Let logo be its size */
+    }
+    .landing-nav {
+        margin-top: 0;
+    }
+    .hero-section {
+        flex-direction: column; /* Back to column for tablets if side-by-side gets cramped */
+        text-align: center;
+    }
+    .hero-content {
+        max-width: 800px; /* Allow content to use more width */
+    }
+    .hero-actions {
+        justify-content: center;
+    }
+
+
     .pricing-cards-grid,
     .visual-feature-grid,
     .approach-grid,
     .feature-cards-grid {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 25px; /* Adjusted gap */
+        gap: 25px;
     }
-    /* Header responsiveness for wrapped state */
-    .landing-header {
-        flex-direction: column;
-        align-items: center;
-    }
-    .header-logo-container {
-        width: 100%;
-    }
-    .landing-nav {
-        margin-top: 15px;
+    .testimonial-grid {
+        grid-template-columns: 1fr; /* Single column on tablet if two get too narrow */
     }
 
     /* Chat layout adjustments */
     #app-layout-wrapper {
         flex-direction: column;
-        height: auto; /* Allow content to dictate height */
-        min-height: calc(100vh - var(--footer-height) - 20px); /* Ensure minimum height */
+        height: auto;
+        min-height: calc(100vh - var(--footer-height) - 20px);
         padding: 0px 15px;
     }
     .admin-main-content {
@@ -2088,28 +2104,31 @@ form label, .password-label-row label {
     }
     .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
         width: 100%;
-        flex: auto; /* Allow sidebars to take natural width in column layout */
-        flex-direction: row; /* Display sidebars horizontally within the column */
+        flex: auto;
+        flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
-        overflow-y: visible; /* No scrolling for sidebars in this layout */
-        min-width: unset; /* Remove fixed min-width */
-        padding: 0; /* Remove padding here, panels will handle it */
-        gap: 20px; /* Gap between panels */
+        overflow-y: visible;
+        min-width: unset;
+        padding: 0;
+        gap: 20px;
     }
     .admin-central-content, #chat-container {
         width: 100%;
         min-width: unset;
-        flex: auto; /* Allow central content to take natural height */
+        flex: auto;
         height: auto;
+        border: 1px solid var(--clr-text-dim);
+        border-radius: var(--border-radius-base);
+        box-shadow: var(--shadow-sm);
     }
     .dashboard-panel {
-        flex-grow: 1; /* Allow panels to grow within the row */
+        flex-grow: 1;
     }
 
     /* Tutor selection */
     .tutor-selection-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -2119,10 +2138,10 @@ form label, .password-label-row label {
     :root {
         --header-height: 60px;
         --page-horizontal-padding: 10px;
-        --section-gap: 40px; /* Smaller gap for mobile sections */
+        --section-gap: 40px;
         --brand-h1-font-size: 2em;
         --brand-h3-font-size: 1.2em;
-        --brand-base-font-size: 0.95rem; /* Slightly smaller base font on mobile */
+        --brand-base-font-size: 0.95rem;
     }
     h1 { font-size: var(--brand-h1-font-size); }
     h2 { font-size: 1.8em; }
@@ -2132,12 +2151,19 @@ form label, .password-label-row label {
         padding: 10px var(--page-horizontal-padding);
         border-radius: 0;
         box-shadow: none;
+        flex-direction: column; /* Stack logo and nav vertically on very small screens */
+        align-items: center;
+    }
+    .header-logo-container {
+        width: 100%; /* Take full width for centering */
+        justify-content: center; /* Center logo on small screens */
     }
     .main-logo-hero {
-        max-height: 60px; /* Smaller logo on mobile */
+        max-height: 60px;
     }
     .landing-nav {
         gap: 10px;
+        margin-top: 10px; /* Add margin after logo */
     }
     .btn-primary, .btn-primary-outline, .btn-secondary, .btn-tertiary {
         padding: 0.6rem 1rem;
@@ -2159,32 +2185,29 @@ form label, .password-label-row label {
         padding: 0.8rem 1.5rem;
     }
     .section-title {
-        font-size: 2em; /* Smaller section titles */
+        font-size: 2em;
         margin-bottom: 30px;
     }
-    /* New visual sections on mobile */
     .visual-feature-grid,
     .approach-grid,
     .pricing-cards-grid,
-    .feature-cards-grid {
-        grid-template-columns: 1fr; /* Single column on phone */
+    .feature-cards-grid,
+    .testimonial-grid { /* Ensure testimonial grid also goes to single column */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
     .visual-feature-item {
-        min-height: auto; /* Allow height to adjust */
+        min-height: auto;
         padding: 20px;
     }
     .visual-feature-image {
-        height: 120px; /* Even smaller image height on mobile */
+        height: 80px; /* Smaller image height on mobile */
     }
     .approach-icon {
-        width: 90px;
-        height: 90px;
+        width: 70px; /* Even smaller approach icons */
+        height: 70px;
     }
 
-    .testimonial-carousel {
-        font-size: 1em;
-    }
     .accordion-container {
         padding: 0 10px;
     }
@@ -2194,34 +2217,22 @@ form label, .password-label-row label {
 
     /* Chat layout mobile */
     #app-layout-wrapper {
-        padding: 0; /* No padding on mobile wrapper */
+        padding: 0;
     }
     .admin-main-content {
-        gap: var(--dashboard-panel-padding); /* Smaller gap for mobile panels */
+        gap: var(--dashboard-panel-padding);
     }
     .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
-        /* These are now hidden and replaced by drawers on small screens */
         display: none;
     }
     .drawer-toggle {
-        display: flex; /* Show drawer toggles on mobile */
+        display: flex;
     }
     #chat-container {
-        padding: 10px; /* Padding for chat container on mobile */
+        padding: 10px;
         min-width: unset;
-        border-radius: 0; /* Full width, no rounded corners */
+        border-radius: 0;
         box-shadow: none;
-    }
-    #top-bar {
-        padding-bottom: 5px;
-        margin-bottom: 10px;
-    }
-    #top-bar #logo {
-        max-width: 90px;
-    }
-    #top-bar .logout-button {
-        padding: 5px 10px;
-        font-size: 0.8rem;
     }
     #input-container {
         padding-top: 5px;
@@ -2241,11 +2252,11 @@ form label, .password-label-row label {
 
     /* Tutor selection mobile */
     .tutor-selection-grid {
-        grid-template-columns: 1fr; /* Single column on phone */
+        grid-template-columns: 1fr;
         gap: 20px;
     }
     .tutor-card {
-        padding: 15px;
+        padding: 30px;
     }
     .tutor-card-image {
         width: 100px;
@@ -2283,7 +2294,8 @@ form label, .password-label-row label {
     }
     /* Make main content flow */
     #app-layout-wrapper, .admin-main-content, #chat-container, .tutor-details,
-    .landing-main, .hero-section, .pricing-equity-section, .how-it-works-section,
+    main,
+    .pricing-equity-section, .how-it-works-section,
     .feature-grid-section, .social-proof-section, .faq-section, .final-cta-section,
     .pricing-cards-grid, .stepper-container, .feature-cards-grid, .accordion-container {
         display: block !important;
@@ -2294,6 +2306,32 @@ form label, .password-label-row label {
         box-shadow: none !important;
         background-color: white !important;
     }
+
+    .hero-section {
+        display: flex !important;
+        flex-direction: column !important;
+        text-align: left !important;
+        padding: 0 !important;
+        background: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+    }
+
+    .hero-image-card {
+        max-width: 100% !important;
+        height: auto !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        margin: 10px 0 !important;
+    }
+    .hero-classroom-image {
+        max-width: 100% !important;
+        height: auto !important;
+        object-fit: contain !important;
+        border-radius: 0 !important;
+        display: block !important;
+    }
+
     .message {
         border: 1px solid #ddd;
         page-break-inside: avoid;
@@ -2315,8 +2353,311 @@ form label, .password-label-row label {
         border-radius: 0 !important;
     }
     .accordion-content {
-        max-height: unset !important; /* Force content to show */
+        max-height: unset !important;
         display: block !important;
         padding: 0 10px !important;
     }
+}
+
+
+.settings-form {
+    margin-top: 20px;
+}
+.form-group.settings-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.setting-description {
+    font-size: 0.9em;
+    color: var(--clr-text-dim);
+    margin-bottom: 20px;
+}
+/* Basic toggle switch styling */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* --- NEW: Per-Message Play Button --- */
+.message.ai {
+    position: relative; /* Needed for positioning the button */
+    padding-right: 40px; /* Add space for the button */
+}
+.play-audio-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--clr-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s ease;
+}
+.message.ai:hover .play-audio-btn {
+    opacity: 1; /* Show on hover */
+}
+.play-audio-btn:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+/* --- 15. Exquisite Math Rendering Enhancements --- */
+
+/*
+ * Tweak 1: Better Vertical Alignment for Inline Math
+ * This rule helps center inline math (like a variable 'x') with the
+ * surrounding text, preventing it from looking slightly misaligned.
+*/
+.message .ML__base[display="inline"] {
+    vertical-align: -0.1ex; /* Adjusts baseline alignment */
+}
+
+/*
+ * Tweak 2: More Generous Spacing for Standalone Equations
+ * You already added vertical margins, which is great! This adds a subtle
+ * background color and padding to make display equations a focal point.
+*/
+.message .ML__base[display="block"] {
+    padding-block: 0.5em;        /* Adds a bit more padding top/bottom */
+    padding-inline: 1em;         /* Adds padding left/right */
+    margin-block: 1em;           /* Increases existing vertical margin slightly */
+    border-radius: 6px;          /* Softly rounded corners */
+    background-color: rgba(var(--clr-primary-teal-rgb), 0.03); /* Faint, elegant background */
+    overflow-x: auto;            /* Allows scrolling for very wide equations */
+}
+
+/*
+ * Tweak 3: Increase Font Size for Better Readability
+ * Making the math slightly larger than the surrounding text makes
+ * complex fractions, exponents, and subscripts much easier to read.
+*/
+.message .ML__math-part {
+    font-size: 1.05em; /* A 5% increase is subtle but effective */
+}
+
+/*
+ * Tweak 4: Refine the Math Editor in the Modal
+ * This gives the input area where users type LaTeX more breathing room
+ * and a cleaner look, improving the creation experience.
+*/
+#equation-modal .math-editor-input {
+    font-size: 1.25rem;       /* Larger font for easy typing */
+    padding: 15px;            /* More internal padding */
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    background-color: #fdfdfd;
+}
+
+/* --- 16. Graph Rendering Styles --- */
+.graph-render-area {
+    width: 100%;
+    height: 300px;
+    margin-top: 15px;
+    background-color: #fff;
+    border-radius: var(--border-radius-base);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    padding: 10px;
+}
+.graph-render-area svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Add these styles to make the login form more compact */
+
+.login-container {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem; /* Reduces top/bottom padding */
+}
+
+.login-container .main-logo-hero {
+    margin-bottom: 1.25rem; /* Reduces space below logo */
+    max-height: 50px;
+}
+
+.login-container h1 {
+    margin-bottom: 0.25em; /* Tucks the subtitle closer to the title */
+}
+
+.login-container .subtitle {
+    margin-bottom: 1rem; /* Reduces space below subtitle */
+}
+
+.login-container form label {
+  margin-top: 0.75rem; /* Reduces space above form labels */
+}
+
+.login-container .submit-btn {
+  margin-top: 1.25rem; /* Reduces space above the main login button */
+}
+
+.login-container .or-separator {
+    margin-top: 1rem;
+    margin-bottom: 1rem; /* Reduces space around the "OR" text */
+}
+
+.login-container .signup-link {
+    margin-top: 1rem; /* Reduces space at the very bottom */
+}
+
+/* --- UI Layout Fix for Scrollable Chat --- */
+
+/* 1. Constrain the body to the viewport height and prevent it from scrolling. */
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 2. Ensure the main content area properly fills the space between the header and footer. */
+main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Crucial for nested flex layouts */
+    overflow: hidden;
+}
+
+/* 3. Make the app wrapper fill the main content area. */
+#app-layout-wrapper {
+    flex-grow: 1;
+    min-height: 0;
+}
+
+/* 4. Change the chat container to stretch vertically instead of growing with content. */
+#chat-container {
+    /* This overrides the problematic 'height: auto' */
+    height: 100%;
+
+    /* The original 50px gap is too large for this context; let's reduce it. */
+    gap: 1rem; /* 16px */
+}
+
+/* 5. Your message container is already correctly configured with flex-grow and overflow.
+      These rules are here just to confirm the setup. With its parent's height now
+      fixed, it will behave as expected. */
+#chat-messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* --- Confetti Canvas Style --- */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allows clicks to pass through */
+  z-index: 9999; /* Ensures it's on top of everything */
+}
+
+/* --- Enhanced Speak UX Styles --- */
+
+/* Style for the new global stop button */
+#stop-audio-btn {
+    background-color: var(--clr-error-red);
+    color: var(--clr-bg-light);
+}
+#stop-audio-btn:hover {
+    background-color: #e63c3c; /* Darken red on hover */
+}
+
+/* Style for the per-message play button when audio is playing */
+.play-audio-btn.is-playing .fa-play {
+    display: none; /* Hide the play icon */
+}
+.play-audio-btn .fa-wave-square {
+    display: none; /* Hide the wave icon by default */
+}
+.play-audio-btn.is-playing .fa-wave-square {
+    display: inline-block; /* Show the wave icon when playing */
+    animation: pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Add a spinner for the loading state */
+.play-audio-btn .fa-spinner {
+    display: none; /* Hide spinner by default */
+}
+.play-audio-btn.is-loading .fa-spinner {
+    display: inline-block; /* Show spinner when loading */
+    animation: fa-spin 1s infinite linear;
+}
+.play-audio-btn.is-loading .fa-play,
+.play-audio-btn.is-loading .fa-wave-square {
+    display: none; /* Hide other icons when loading */
+}
+
+.message.mastery-quiz {
+  border: 2px solid var(--clr-primary-teal);
+  background-color: rgba(var(--clr-primary-teal-rgb), 0.05);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- Tutor Unlock System Styles --- */
+.tutor-card.locked {
+    cursor: not-allowed;
+    filter: grayscale(80%) brightness(70%);
+}
+
+.tutor-card.locked:hover {
+    transform: none; /* Disable hover effect */
+    box-shadow: var(--shadow-md); /* Keep original shadow */
+    border-color: transparent;
+}
+
+.tutor-card-image.silhouette {
+    filter: brightness(0) invert(0.1); /* Creates a dark silhouette effect */
+    opacity: 0.8;
+}
+
+.tutor-card-name.locked-name {
+    color: var(--clr-text-dim);
+}
+
+.tutor-card .tutor-card-tagline .fa-lock {
+    margin-right: 8px;
+    font-size: 0.9em;
+}
+
+/* --- Right Sidebar Layout Fix --- */
+
+/* 1. Remove the fixed gap from the sidebar container */
+.widget-sidebar-right {
+    gap: 0; 
+}
+
+/* 2. Add a bottom margin to the top two panels to create space */
+#xp-level-display,
+#student-parent-link-display {
+    margin-bottom: 20px;
+}
+
+/* 3. Push the avatar to the bottom by making its top margin fill all extra space */
+#avatar-container {
+    margin-top: auto; 
 }

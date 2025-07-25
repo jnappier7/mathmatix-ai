@@ -5,57 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard - M∆THM∆TIΧ AI</title>
     <link rel="stylesheet" href="style.css">
-    </head>
-<body>
-    <div class="admin-page-wrapper">
-        <header class="admin-header">
-            <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+	
+</head>
+<body class="landing-page-body">
+    <header class="landing-header">
+        <div class="header-logo-container">
+            <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+        </div>
+        <nav class="landing-nav">
             <h1>Teacher Dashboard</h1>
-            <button id="logoutBtn" class="logout-button">Log Out</button>
-        </header>
+            <button id="logoutBtn" class="btn btn-tertiary">Log Out</button>
+        </nav>
+    </header>
 
+    <main class="admin-page-wrapper">
         <div class="admin-main-content">
             <div class="admin-widget-sidebar">
-                <div class="dashboard-panel">
+                <div class="dashboard-panel card-style-1">
                     <div class="dashboard-panel-header">IEP Search & Edit</div>
                     <p>Quickly find and update student IEPs.</p>
                     <div class="form-group">
                         <input type="text" id="iepSearchInput" placeholder="Search student by name/ID">
-                        <button class="submit-btn" style="margin-top: 10px;">Search IEP</button>
+                        <button class="submit-btn btn-primary" style="margin-top: 10px;">Search IEP</button>
                     </div>
                 </div>
-                <div class="dashboard-panel">
+                <div class="dashboard-panel card-style-1">
                     <div class="dashboard-panel-header">Session Summaries</div>
                     <p>Review tutoring session summaries for your students.</p>
-                    <button class="main-action-btn" style="margin-top: 10px;">View All Summaries</button>
+                    <button class="main-action-btn btn btn-secondary" style="margin-top: 10px;">View All Summaries</button>
                 </div>
             </div>
             <div class="admin-central-content">
-                <div class="dashboard-panel flex-panel-content"> <div class="dashboard-panel-header">My Assigned Students</div>
+                <div class="dashboard-panel flex-panel-content card-style-1">
+                    <div class="dashboard-panel-header">My Assigned Students</div>
                     <div id="student-list" class="table-scroll-container"> Loading students...
                     </div>
                 </div>
             </div>
             <div class="admin-widget-sidebar">
-                <div class="dashboard-panel">
+                <div class="dashboard-panel card-style-1">
                     <div class="dashboard-panel-header">Quick Actions</div>
                     <p>Access frequently used tools.</p>
-                    <button class="main-action-btn" style="margin-top: 10px;">Assign Homework</button>
+                    <button class="main-action-btn btn btn-secondary" style="margin-top: 10px;">Assign Homework</button>
                 </div>
-                <div class="dashboard-panel">
+                <div class="dashboard-panel card-style-1">
                     <div class="dashboard-panel-header">Performance Reports</div>
                     <p>Generate detailed student performance reports.</p>
-                    <button class="main-action-btn" style="margin-top: 10px;">Generate Report</button>
+                    <button class="main-action-btn btn btn-secondary" style="margin-top: 10px;">Generate Report</button>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
     <footer>
-        <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-        <p>
-            <a href="/privacy.html">Privacy Policy</a> |
-            <a href="/terms.html">Terms of Use</a>
-        </p>
+        <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+        <p class="edtech-pledge">Proud member of the EdTech Equity Pledge.</p>
     </footer>
 
     <div id="iep-editor-modal" class="modal-overlay">
@@ -69,7 +73,7 @@
                 <div class="checkbox-group">
                     <label><input type="checkbox" id="extendedTime" /> Extended Time</label>
                     <label><input type="checkbox" id="simplifiedInstructions" /> Simplified Instructions</label>
-                    <label><input type="checkbox" id="frequentCheckIns" /> Frequent Check-ins</label>
+                    <label><input type="checkbox" id="iepFrequentCheckIns" /> Frequent Check-ins</label>
                     <label><input type="checkbox" id="visualSupport" /> Visual Support</label>
                     <label><input type="checkbox" id="chunking" /> Chunking (Break down tasks)</label>
                     <label><input type="checkbox" id="reducedDistraction" /> Reduced Distraction</label>
@@ -85,12 +89,13 @@
                 <h3>IEP Goals (SMART Goals)</h3>
                 <ul id="iep-goals-list">
                     </ul>
-                <button id="add-iep-goal-btn" class="submit-btn">Add New Goal</button>
+                <button id="add-iep-goal-btn" class="submit-btn btn-primary">Add New Goal</button>
 
                 <div class="form-buttons">
-                    <button id="save-iep-btn" class="submit-btn">Save IEP</button>
-                    <button id="cancel-iep-edit-btn" class="submit-btn cancel-btn">Cancel</button>
-                    <button id="close-iep-modal-btn" class="submit-btn cancel-btn">Close</button> </div>
+                    <button id="save-iep-btn" class="submit-btn btn-primary">Save IEP</button>
+                    <button id="cancel-iep-edit-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
+                    <button id="close-iep-modal-btn" class="submit-btn cancel-btn btn-tertiary">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -100,14 +105,15 @@
             <div id="conversation-history-content">
                 <h2>Conversation History for <span id="history-student-name"></span></h2>
                 <div id="conversations-list">
-                    Loading conversation history...
+                    Loading conversation summaries...
                 </div>
                 <div class="form-buttons">
-                    <button id="close-history-modal-btn" class="submit-btn cancel-btn">Close</button>
+                    <button id="close-history-modal-btn" class="submit-btn cancel-btn btn-tertiary">Close</button>
                 </div>
             </div>
         </div>
     </div>
     <script src="/js/logout.js"></script> <script src="/js/teacher-dashboard.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

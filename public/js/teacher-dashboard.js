@@ -1,3 +1,6 @@
+// public/js/teacher-dashboard.js
+// MODIFIED: Verified to correctly consume data from the updated /api/teacher/.../conversations route.
+
 document.addEventListener("DOMContentLoaded", async () => {
     const studentListDiv = document.getElementById("student-list");
     const logoutBtn = document.getElementById("logoutBtn");
@@ -7,15 +10,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const iepStudentNameSpan = document.getElementById("iep-student-name");
     const currentIepStudentIdInput = document.getElementById("current-iep-student-id");
     const saveIepBtn = document.getElementById("save-iep-btn");
-    const cancelIepEditBtn = document.getElementById("cancel-iep-edit-btn");
-    const iepModalCloseBtn = document.getElementById("iepModalCloseBtn"); // 'x' close button at top
-    const closeIepModalBtn = document.getElementById("close-iep-modal-btn"); // New 'Close' button at bottom
+    const closeIepModalBtn = document.getElementById("close-iep-modal-btn");
 
     // IEP Form Elements
     const iepAccommodations = {
         extendedTime: document.getElementById("extendedTime"),
         simplifiedInstructions: document.getElementById("simplifiedInstructions"),
-        frequentCheckIns: document.getElementById("frequentCheckIns"),
+        frequentCheckIns: document.getElementById("iepFrequentCheckIns"),
         visualSupport: document.getElementById("visualSupport"),
         chunking: document.getElementById("chunking"),
         reducedDistraction: document.getElementById("reducedDistraction"),
@@ -30,106 +31,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     const conversationHistoryModal = document.getElementById("conversation-history-modal");
     const historyStudentNameSpan = document.getElementById("history-student-name");
     const conversationsListDiv = document.getElementById("conversations-list");
-    const conversationModalCloseBtn = document.getElementById("conversationModalCloseBtn"); // 'x' close button at top
-    const closeHistoryModalBtn = document.getElementById("close-history-modal-btn"); // 'Close' button at bottom
-	
-	// --- Initial Load ---
-    // This call is now inside the correct DOMContentLoaded scope.
+    const closeHistoryModalBtn = document.getElementById("close-history-modal-btn");
+
+    // --- Initial Load ---
     await fetchAssignedStudents();
-
-
-    // Basic Logout Functionality
-    // This listener is now within the correct DOMContentLoaded scope.
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            fetch("/logout")
-                .then(() => {
-                    localStorage.clear();
-                    window.location.href = "/login.html";
-                })
-                .catch((err) => {
-                    console.error("Logout failed:", err);
-                    alert("Logout failed. Please try again.");
-                });
-        });
-    }
 
     // --- Modal Control Functions ---
     function showModal(modalElement) {
-        modalElement.style.display = 'flex';
+        if (modalElement) modalElement.style.display = 'flex';
     }
 
     function hideModal(modalElement) {
-        modalElement.style.display = 'none';
+        if (modalElement) modalElement.style.display = 'none';
     }
-
-    // Close buttons for modals (both 'x' at top and 'Close' at bottom)
-    if (iepModalCloseBtn) {
-        iepModalCloseBtn.addEventListener('click', () => hideModal(iepEditorModal));
-    }
-    if (closeIepModalBtn) {
-        closeIepModalBtn.addEventListener('click', () => hideModal(iepEditorModal));
-    }
-
-    if (conversationModalCloseBtn) {
-        conversationModalCloseBtn.addEventListener('click', () => hideModal(conversationHistoryModal));
-    }
-    if (closeHistoryModalBtn) {
-        closeHistoryModalBtn.addEventListener('click', () => hideModal(conversationHistoryModal));
-    }
-
-    // Close modals if click outside content (on overlay)
-    window.addEventListener('click', (event) => {
-        if (event.target === iepEditorModal) {
-            hideModal(iepEditorModal);
-        }
-        if (event.target === conversationHistoryModal) {
-            hideModal(conversationHistoryModal);
-        }
+    
+    // Setup all modal close buttons
+    [
+        { btn: document.getElementById("iepModalCloseBtn"), modal: iepEditorModal },
+        { btn: closeIepModalBtn, modal: iepEditorModal },
+        { btn: document.getElementById("cancel-iep-edit-btn"), modal: iepEditorModal },
+        { btn: document.getElementById("conversationModalCloseBtn"), modal: conversationHistoryModal },
+        { btn: closeHistoryModalBtn, modal: conversationHistoryModal }
+    ].forEach(item => {
+        if (item.btn) item.btn.addEventListener('click', () => hideModal(item.modal));
     });
-	
-	// --- IEP Form Functions ---
-    const loadIepData = (iepPlan) => {
-        Object.keys(iepAccommodations).forEach(key => {
-            iepAccommodations[key].checked = iepPlan[key] || false;
-        });
-        readingLevelInput.value = iepPlan.readingLevel || '';
-        preferredScaffoldsInput.value = (iepPlan.preferredScaffolds || []).join(', ');
 
-        iepGoalsList.innerHTML = '';
-        (iepPlan.goals || []).forEach((goal) => {
-            addIepGoalToUI(goal);
+    window.addEventListener('click', (event) => {
+        if (event.target === iepEditorModal) hideModal(iepEditorModal);
+        if (event.target === conversationHistoryModal) hideModal(conversationHistoryModal);
+    });
+
+    // --- IEP Form Logic ---
+    const loadIepData = (iepPlan = {}) => {
+        const accommodations = iepPlan.accommodations || {};
+        Object.keys(iepAccommodations).forEach(key => {
+            if(iepAccommodations[key]) iepAccommodations[key].checked = accommodations[key] || false;
         });
+        if(readingLevelInput) readingLevelInput.value = iepPlan.readingLevel || '';
+        if(preferredScaffoldsInput) preferredScaffoldsInput.value = (iepPlan.preferredScaffolds || []).join(', ');
+        if(iepGoalsList) {
+            iepGoalsList.innerHTML = '';
+            (iepPlan.goals || []).forEach(goal => addIepGoalToUI(goal));
+        }
     };
 
-    const getIepData = () => {
-        const currentGoals = [];
-        iepGoalsList.querySelectorAll('.iep-goal-item').forEach(item => {
-            currentGoals.push({
-                description: item.querySelector('.goal-description').value,
-                targetDate: item.querySelector('.goal-target-date').value,
-                currentProgress: parseFloat(item.querySelector('.goal-progress').value) || 0,
-                measurementMethod: item.querySelector('.goal-method').value,
-                status: item.querySelector('.goal-status').value,
-            });
-        });
-
-        const preferredScaffoldsArray = preferredScaffoldsInput.value
-            .split(',')
-            .map(s => s.trim())
-            .filter(s => s.length > 0);
-
+    const getIepDataFromForm = () => {
+        const goals = Array.from(iepGoalsList.querySelectorAll('.iep-goal-item')).map(item => ({
+            description: item.querySelector('.goal-description').value,
+            targetDate: item.querySelector('.goal-target-date').value,
+            currentProgress: parseFloat(item.querySelector('.goal-progress').value) || 0,
+            measurementMethod: item.querySelector('.goal-method').value,
+            status: item.querySelector('.goal-status').value,
+        }));
         return {
-            extendedTime: iepAccommodations.extendedTime.checked,
-            simplifiedInstructions: iepAccommodations.simplifiedInstructions.checked,
-            frequentCheckIns: iepAccommodations.frequentCheckIns.checked,
-            visualSupport: iepAccommodations.visualSupport.checked,
-            chunking: iepAccommodations.chunking.checked,
-            reducedDistraction: iepAccommodations.reducedDistraction.checked,
-            mathAnxiety: iepAccommodations.mathAnxiety.checked,
+            accommodations: Object.fromEntries(Object.entries(iepAccommodations).map(([key, el]) => [key, el.checked])),
             readingLevel: parseFloat(readingLevelInput.value) || null,
-            preferredScaffolds: preferredScaffoldsArray,
-            goals: currentGoals
+            preferredScaffolds: preferredScaffoldsInput.value.split(',').map(s => s.trim()).filter(Boolean),
+            goals
         };
     };
 
@@ -139,204 +97,145 @@ document.addEventListener("DOMContentLoaded", async () => {
         li.innerHTML = `
             <label>Description:</label>
             <textarea class="goal-description" rows="2" required>${goal.description || ''}</textarea>
-            <label>Target Date:</label>
-            <input type="date" class="goal-target-date" value="${goal.targetDate ? goal.targetDate.substring(0, 10) : ''}" />
-            <label>Current Progress (%):</label>
-            <input type="number" class="goal-progress" min="0" max="100" value="${goal.currentProgress || 0}" />
+            <div style="display: flex; gap: 10px; margin-top: 5px;">
+                <div style="flex: 1;">
+                    <label>Target Date:</label>
+                    <input type="date" class="goal-target-date" value="${goal.targetDate ? new Date(goal.targetDate).toISOString().substring(0, 10) : ''}" />
+                </div>
+                <div style="flex: 1;">
+                    <label>Progress (%):</label>
+                    <input type="number" class="goal-progress" min="0" max="100" value="${goal.currentProgress || 0}" />
+                </div>
+            </div>
             <label>Measurement Method:</label>
-            <input type="text" class="goal-method" value="${goal.measurementMethod || ''}" />
+            <input type="text" class="goal-method" value="${goal.measurementMethod || ''}" placeholder="e.g., Quiz scores, Observation" />
             <label>Status:</label>
             <select class="goal-status">
                 <option value="active" ${goal.status === 'active' ? 'selected' : ''}>Active</option>
                 <option value="completed" ${goal.status === 'completed' ? 'selected' : ''}>Completed</option>
                 <option value="on-hold" ${goal.status === 'on-hold' ? 'selected' : ''}>On-Hold</option>
             </select>
-            <button class="remove-goal-btn">Remove Goal</button>
-            <hr>
+            <button type="button" class="remove-goal-btn">Remove Goal</button>
         `;
         iepGoalsList.appendChild(li);
-
-        li.querySelector('.remove-goal-btn').addEventListener('click', () => {
-            li.remove();
-        });
+        li.querySelector('.remove-goal-btn').addEventListener('click', () => li.remove());
     };
 
-    addIepGoalBtn.addEventListener('click', () => addIepGoalToUI());
+    if(addIepGoalBtn) addIepGoalBtn.addEventListener('click', () => addIepGoalToUI());
 
-    // --- Save IEP Button Handler ---
-    if (saveIepBtn) {
-        saveIepBtn.addEventListener('click', async () => {
-            const studentId = currentIepStudentIdInput.value;
-            if (!studentId) {
-                alert("No student selected for IEP update.");
-                return;
-            }
-
-            const updatedIepPlan = getIepData();
-
-            try {
-                const response = await fetch(`/api/teacher/students/${studentId}/iep`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedIepPlan)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to save IEP: ${response.statusText}`);
-                }
-
-                const result = await response.json();
-                alert(result.message || "IEP saved successfully!");
-                hideModal(iepEditorModal);
-                await fetchAssignedStudents();
-
-            } catch (error) {
-                console.error("Error saving IEP data:", error);
-                alert("Failed to save IEP data. Please try again.");
-            }
-        });
-    }
-
-    // --- Cancel IEP Edit Button Handler ---
-    if (cancelIepEditBtn) {
-        cancelIepEditBtn.addEventListener('click', () => {
+    if(saveIepBtn) saveIepBtn.addEventListener('click', async () => {
+        const studentId = currentIepStudentIdInput.value;
+        if (!studentId) return alert("No student selected.");
+        
+        const updatedIepPlan = getIepDataFromForm();
+        try {
+            const response = await fetch(`/api/teacher/students/${studentId}/iep`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedIepPlan)
+            });
+            if (!response.ok) throw new Error(await response.text());
+            alert("IEP saved successfully!");
             hideModal(iepEditorModal);
-            loadIepData({});
-        });
-    }
-	
-	// --- Student List Loading & Display ---
+            fetchAssignedStudents();
+        } catch (error) {
+            console.error("Error saving IEP data:", error);
+            alert("Failed to save IEP data.");
+        }
+    });
+
+    // --- Main Data Fetching and Rendering ---
     async function fetchAssignedStudents() {
+        if (!studentListDiv) return;
         studentListDiv.innerHTML = 'Loading students...';
         try {
             const response = await fetch("/api/teacher/students");
             if (!response.ok) {
-                if (response.status === 401) {
-                    window.location.href = "/login.html";
-                } else if (response.status === 403) {
-                    studentListDiv.innerHTML = "<p>Access Denied. You are not authorized to view this page.</p>";
-                }
+                if (response.status === 401 || response.status === 403) window.location.href = "/login.html";
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const students = await response.json();
-
-            if (students.length === 0) {
-                studentListDiv.innerHTML = "<p>No students assigned to you yet. Please contact an administrator to assign students.</p>";
-                return;
-            }
-
-            studentListDiv.innerHTML = ''; // Clear previous list
-
-            students.forEach(student => {
-                const studentCard = document.createElement('div');
-                studentCard.className = 'student-card';
-
-                const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim();
-                const displayName = fullName || student.username;
-                const gradeDisplay = student.gradeLevel ? `Grade: ${student.gradeLevel}` : 'Grade: N/A';
-
-                studentCard.innerHTML = `
-                    <strong>${displayName}</strong>
-                    <p>Username: ${student.username}</p>
-                    <p>${gradeDisplay}</p>
-                    <div class="card-buttons">
-                        <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${displayName}">View/Edit IEP</button>
-                        <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${displayName}">View History</button>
-                    </div>
-                `;
-                studentListDiv.appendChild(studentCard);
-            });
-
-            addIepButtonListeners();
-            addHistoryButtonListeners();
-
+            renderStudentList(students);
         } catch (error) {
             console.error("Failed to fetch students:", error);
-            studentListDiv.innerHTML = "<p>Error loading student data.</p>";
+            studentListDiv.innerHTML = "<p>Error loading student data. Please refresh.</p>";
         }
     }
 
-    // --- NEW: Conversation History Button Listener ---
-    function addHistoryButtonListeners() {
-        document.querySelectorAll('.view-history-btn').forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const studentId = event.target.dataset.studentId;
-                const studentName = event.target.dataset.studentName;
-
-                historyStudentNameSpan.textContent = studentName;
-                showModal(conversationHistoryModal);
-
-                hideModal(iepEditorModal); // Hide IEP modal if open
-
-                conversationsListDiv.innerHTML = 'Loading conversation summaries...';
-
-                try {
-                    const response = await fetch(`/api/teacher/students/${studentId}/conversations`);
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch conversations: ${response.statusText}`);
-                    }
-                    const conversations = await response.json();
-
-                    if (conversations.length === 0) {
-                        conversationsListDiv.innerHTML = "<p>No conversation history found for this student.</p>";
-                        return;
-                    }
-
-                    let historyHtml = '';
-                    conversations.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by newest first
-                    conversations.forEach(convo => {
-                        const dateObj = new Date(convo.date);
-                        const formattedDate = dateObj.toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: 'numeric',
-                            hour12: true
-                        });
-                        historyHtml += `
-                            <div class="conversation-card">
-                                <h4>Session on <span class="session-date">${formattedDate}</span></h4>
-                                <p>${convo.summary || 'No summary available.'}</p>
-                            </div>
-                        `;
-                    });
-                    conversationsListDiv.innerHTML = historyHtml;
-
-                } catch (error) {
-                    console.error("Error loading conversation history:", error);
-                    conversationsListDiv.innerHTML = "<p>Error loading conversation history.</p>";
-                }
-            });
+    function renderStudentList(students) {
+        studentListDiv.innerHTML = '';
+        if (students.length === 0) {
+            studentListDiv.innerHTML = "<p>No students have been assigned to you. Please contact an administrator.</p>";
+            return;
+        }
+        students.forEach(student => {
+            const studentCard = document.createElement('div');
+            studentCard.className = 'student-card';
+            const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+            studentCard.innerHTML = `
+                <strong>${fullName}</strong>
+                <p>Username: ${student.username}</p>
+                <p>Grade: ${student.gradeLevel || 'N/A'}</p>
+                <div class="card-buttons">
+                    <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}">View/Edit IEP</button>
+                    <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}">View History</button>
+                </div>
+            `;
+            studentListDiv.appendChild(studentCard);
         });
+        addEventListenersToButtons();
     }
 
-    // --- Event Listeners for Dynamically Created Buttons (IEP for Teacher Dashboard) ---
-    function addIepButtonListeners() {
+    function addEventListenersToButtons() {
         document.querySelectorAll('.view-iep-btn').forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const studentId = event.target.dataset.studentId;
-                const studentName = event.target.dataset.studentName;
-
-                iepStudentNameSpan.textContent = studentName;
-                currentIepStudentIdInput.value = studentId;
-                showModal(iepEditorModal);
-
-                hideModal(conversationHistoryModal); // Hide history modal if open
-
-                try {
-                    const iepResponse = await fetch(`/api/teacher/students/${studentId}/iep`);
-                    if (!iepResponse.ok) {
-                        throw new Error(`Failed to fetch IEP data: ${iepResponse.statusText}`);
-                    }
-                    const iepPlan = await iepResponse.json();
-                    loadIepData(iepPlan);
-                } catch (error) {
-                    console.error("Error loading IEP data:", error);
-                    alert("Failed to load IEP data for this student. Please try again.");
-                    loadIepData({});
-                }
-            });
+            button.addEventListener('click', handleViewIep);
+        });
+        document.querySelectorAll('.view-history-btn').forEach(button => {
+            button.addEventListener('click', handleViewHistory);
         });
     }
-}); // Correctly closes the DOMContentLoaded event listener
+
+    async function handleViewIep(event) {
+        const studentId = event.target.dataset.studentId;
+        iepStudentNameSpan.textContent = event.target.dataset.studentName;
+        currentIepStudentIdInput.value = studentId;
+        showModal(iepEditorModal);
+        try {
+            const iepResponse = await fetch(`/api/teacher/students/${studentId}/iep`);
+            if (!iepResponse.ok) throw new Error(await iepResponse.text());
+            const iepPlan = await iepResponse.json();
+            loadIepData(iepPlan);
+        } catch (error) {
+            console.error("Error loading IEP data:", error);
+            alert("Failed to load IEP data.");
+        }
+    }
+
+    async function handleViewHistory(event) {
+        const studentId = event.target.dataset.studentId;
+        historyStudentNameSpan.textContent = event.target.dataset.studentName;
+        showModal(conversationHistoryModal);
+        conversationsListDiv.innerHTML = 'Loading conversation summaries...';
+        try {
+            // This API call now correctly fetches from the Conversation collection via the backend route
+            const response = await fetch(`/api/teacher/students/${studentId}/conversations`);
+            if (!response.ok) throw new Error(await response.text());
+            const conversations = await response.json();
+            
+            if (conversations.length === 0) {
+                conversationsListDiv.innerHTML = "<p>No conversation history found for this student.</p>";
+                return;
+            }
+            // The rendering logic remains valid as it consumes the data structure provided by the repaired API
+            conversationsListDiv.innerHTML = conversations.map(convo => `
+                <div class="conversation-card">
+                    <h4>Session on <span class="session-date">${new Date(convo.date || convo.startDate).toLocaleDateString()}</span></h4>
+                    <p>${convo.summary || 'No summary available.'}</p>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error("Error loading conversation history:", error);
+            conversationsListDiv.innerHTML = "<p>Error loading conversation history.</p>";
+        }
+    }
+});

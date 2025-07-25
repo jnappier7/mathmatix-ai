@@ -1,8 +1,29 @@
-// server.js - FINAL PRODUCTION VERSION w/ ALL CONSOLIDATED ROUTES & MIDDLEWARE
+// server.js
 console.log("✅✅✅ RUNNING MATHMATIX.AI SERVER ✅✅✅");
 require("dotenv").config();
 
-// --- 1. IMPORTS ---
+// --- 1. ENVIRONMENT VALIDATION ---
+const requiredEnvVars = [
+  'MONGO_URI',
+  'SESSION_SECRET',
+  'GOOGLE_CLIENT_ID',
+  'GOOGLE_CLIENT_SECRET',
+  'GOOGLE_CALLBACK_URL',
+  'MICROSOFT_CLIENT_ID',
+  'MICROSOFT_CLIENT_SECRET',
+  'MICROSOFT_CALLBACK_URL',
+  'ELEVENLABS_API_KEY',
+  'MATHPIX_APP_ID',
+  'MATHPIX_APP_KEY',
+  'OPENAI_API_KEY'
+];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+if (missingVars.length > 0) {
+  console.error(`❌ FATAL ERROR: Missing required environment variables: ${missingVars.join(', ')}`);
+  process.exit(1);
+}
+
+// --- 2. IMPORTS ---
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
@@ -11,184 +32,221 @@ const session = require("express-session");
 const passport = require("passport");
 const MongoStore = require("connect-mongo");
 const rateLimit = require('express-rate-limit');
+const User = require('./models/user');
 
-// Import Passport configuration (ensure it runs)
+// --- 3. CONFIGURATIONS ---
 require("./auth/passport-config");
 
-// Import authentication and authorization middleware
+// --- 4. MIDDLEWARE & ROUTE IMPORTS ---
 const {
   isAuthenticated,
   ensureNotAuthenticated,
   isAdmin,
   isTeacher,
   isParent,
+  isStudent,
+  isAuthorizedForLeaderboard,
   handleLogout
 } = require("./middleware/auth");
 
-// Import route loader utility
-const autoMountRoutes = require("./utils/autoRouteLoader");
+const loginRoutes = require('./routes/login');
+const signupRoutes = require('./routes/signup');
+const studentRoutes = require('./routes/student');
+const teacherRoutes = require('./routes/teacher');
+const adminRoutes = require('./routes/admin');
+const parentRoutes = require('./routes/parent');
+const leaderboardRoutes = require('./routes/leaderboard');
+const chatRoutes = require('./routes/chat');
+const speakRoutes = require('./routes/speak');
+const uploadRoutes = require('./routes/upload');
+const welcomeRoutes = require('./routes/welcome');
+const { router: memoryRouter } = require('./routes/memory');
+const guidedLessonRoutes = require('./routes/guidedLesson');
+const summaryGeneratorRouter = require('./routes/summary_generator');
+const avatarRoutes = require('./routes/avatar');
+const graphRoutes = require('./routes/graph');
+const TUTOR_CONFIG = require('./utils/tutorConfig');
 
-// --- 2. INIT EXPRESS APP ---
+// --- 5. EXPRESS APP SETUP ---
 const app = express();
-const PORT = process.env.PORT || 5001;
-app.set("trust proxy", 1); // Trust proxy headers, essential if deployed behind a proxy/load balancer
+const PORT = process.env.PORT || 3000;
+app.set("trust proxy", 1);
 
-// --- 3. MIDDLEWARE CONFIG ---
+// --- 6. MIDDLEWARE ---
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5000",
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
   credentials: true
 }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Session Middleware
 app.use(session({
-  secret: process.env.SESSION_SECRET || "dev-secret-key",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
-    ttl: 14 * 24 * 60 * 60,
-    autoRemove: 'interval',
-    autoRemoveInterval: 10
+    ttl: 14 * 24 * 60 * 60, // 14 days
   }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'Lax',
-    maxAge: 1000 * 60 * 60 * 24 * 7
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
   }
 }));
 
-// Passport Middleware for Authentication
 app.use(passport.initialize());
 app.use(passport.session());
 
-// --- Rate Limiting Configuration ---
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 120, // Limit each IP to 120 requests per windowMs
+  max: 120,
   message: "Too many requests from this IP, please try again after 15 minutes.",
-  headers: true,
+  standardHeaders: true,
+  legacyHeaders: false,
 });
-
-const aiLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 30, // Limit each IP to 30 requests per 5 minutes for AI calls
-  message: "Too many AI requests from this IP, please try again in 5 minutes.",
-  headers: true,
-});
-
-// --- Apply Rate Limiting (Global and Specific) ---
-// Apply to ALL API routes first
-app.use('/api/', apiLimiter); //
-app.use('/chat', aiLimiter); // Stricter AI limiter for chat
-app.use('/lesson', aiLimiter); // Stricter AI limiter for guided lessons
-app.use('/speak', aiLimiter); // Stricter AI limiter for TTS
-app.use('/upload', aiLimiter); // Stricter AI limiter for uploads that might hit AI/OCR
+app.use('/api/', apiLimiter);
 
 
-// --- 4. DATABASE CONNECTION ---
+// --- 7. DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
-  .catch(err => console.error("❌ MongoDB connection error:", err, "\nEnsure MONGO_URI is correctly set in your .env file."));
+  .catch(err => console.error("❌ MongoDB connection error:", err));
 
 
-// --- 5. ROUTE MOUNTING (Unified via autoRouteLoader) ---
-// All routes are now auto-mounted by autoMountRoutes utility
-autoMountRoutes(app, {
-  // We specify which routes to skip explicit mounting if they handle their own middleware
-  // or are already handled by passport auth routes below
-  skip: ["summary_generator", "login", "welcome", "speak", "chat", "student",
-         "teacher", "admin", "parent", "user", "upload", "guidedLesson", "leaderboard",
-         "image", "image-search", "image 2", "image-search 2", "avatar", "avatar-preview"
-        ]
+// --- 8. ROUTE DEFINITIONS ---
+
+app.use('/login', loginRoutes);
+app.use('/signup', signupRoutes);
+app.post('/logout', isAuthenticated, handleLogout);
+
+// --- Google Auth Routes ---
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', (req, res, next) => {
+    passport.authenticate('google', (err, user, info) => {
+        if (err) { return next(err); }
+        if (!user) {
+            const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
+            return res.redirect(`/login.html?error=${errorMessage}`);
+        }
+        req.logIn(user, (err) => {
+            if (err) { return next(err); }
+            if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+            const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
+            res.redirect(dashboardMap[user.role] || '/login.html');
+        });
+    })(req, res, next);
 });
 
-// Explicitly mount routes with custom Passport callbacks or for clarity
-// These routes handle their own specific middleware/redirects
-app.use('/login', require('./routes/login'));
-app.use('/speak', require('./routes/speak')); // Re-added explicit speak mounting due to it being a direct route
-app.use('/chat', require('./routes/chat')); // Explicitly mount chat as it has complex logic
-app.use('/upload', require('./routes/upload')); // Explicitly mount upload due to its complexity
+// --- Microsoft Auth Routes (FIXED: ADDED MISSING ROUTES) ---
+app.get('/auth/microsoft', passport.authenticate('microsoft', { scope: ['user.read'] }));
 
-// OAuth Routes - these typically need explicit mounting due to Passport's callback handling
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-app.get("/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login.html" }),
-  (req, res) => {
-    let redirectUrl = '/chat.html'; // Default redirect for students
-    if (req.user.needsProfileCompletion) {
-      redirectUrl = "/complete-profile.html";
-    } else if (req.user.role === "teacher") {
-      redirectUrl = "/teacher-dashboard.html";
-    } else if (req.user.role === "admin") {
-      redirectUrl = "/admin-dashboard.html";
-    } else if (req.user.role === "parent") {
-      redirectUrl = "/parent-dashboard.html";
-    } else if (req.user.role === "student" && !req.user.selectedTutorId) {
-      redirectUrl = "/pick-tutor.html";
-    }
-    res.redirect(redirectUrl);
-  }
-);
-
-// Microsoft OAuth Routes - (kept as per previous discussion, but can be commented out if not actively used)
-app.get("/auth/microsoft", passport.authenticate("microsoft"));
-app.get("/auth/microsoft/callback",
-  passport.authenticate("microsoft", { failureRedirect: "/login.html" }),
-  (req, res) => {
-    let redirectUrl = '/chat.html'; // Default redirect for students
-    if (req.user.needsProfileCompletion) {
-      redirectUrl = "/complete-profile.html";
-    } else if (req.user.role === "teacher") {
-      redirectUrl = "/teacher-dashboard.html";
-    } else if (req.user.role === "admin") {
-      redirectUrl = "/admin-dashboard.html";
-    } else if (req.user.role === "parent") {
-      redirectUrl = "/parent-dashboard.html";
-    } else if (req.user.role === "student" && !req.user.selectedTutorId) {
-      redirectUrl = "/pick-tutor.html";
-    }
-    res.redirect(redirectUrl);
-  }
-);
-
-// General User Data Route (used by frontend to get current user)
-app.get("/user", isAuthenticated, (req, res) => {
-  return res.json({ user: req.user.toObject() }); // req.user is populated by Passport
+app.get('/auth/microsoft/callback', (req, res, next) => {
+    passport.authenticate('microsoft', (err, user, info) => {
+        if (err) { return next(err); }
+        if (!user) {
+            const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
+            return res.redirect(`/login.html?error=${errorMessage}`);
+        }
+        req.logIn(user, (err) => {
+            if (err) { return next(err); }
+            if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+            const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
+            res.redirect(dashboardMap[user.role] || '/login.html');
+        });
+    })(req, res, next);
 });
 
-// Logout route
-app.post("/logout", handleLogout);
 
-// --- 6. STATIC FRONTEND ROUTES ---
-// Serve static files from the 'public' directory
+// API Routes
+app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);
+app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
+app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
+app.use('/api/student', isAuthenticated, isStudent, studentRoutes);
+app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
+app.use('/api/chat', isAuthenticated, chatRoutes);
+app.use('/api/speak', isAuthenticated, speakRoutes);
+app.use('/api/upload', isAuthenticated, uploadRoutes);
+app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
+app.use('/api/memory', isAuthenticated, memoryRouter);
+app.use('/api/summary', summaryGeneratorRouter); // <-- CORRECTED: isAuthenticated middleware removed
+app.use('/api/avatars', isAuthenticated, avatarRoutes);
+app.use('/api/graph', isAuthenticated, graphRoutes);
+app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
+
+// User Profile & Settings Routes
+app.get("/user", isAuthenticated, (req, res) => res.json({ user: req.user ? req.user.toObject() : null }));
+
+app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        const allowedUpdates = [
+            'firstName', 'lastName', 'gradeLevel', 'mathCourse', 
+            'tonePreference', 'learningStyle', 'interests', 'needsProfileCompletion',
+            'selectedTutorId', 'reportFrequency', 'goalViewPreference', 
+            'parentTone', 'parentLanguage', 'preferences'
+        ];
+
+        let hasChanges = false;
+        for (const key in req.body) {
+            if (allowedUpdates.includes(key)) {
+                user[key] = req.body[key];
+                hasChanges = true;
+            }
+        }
+        if (req.body.firstName || req.body.lastName) {
+             user.name = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+        }
+
+        if (!hasChanges) {
+             return res.status(400).json({ message: 'No valid fields provided for update.' });
+        }
+        
+        await user.save();
+        res.json({ success: true, message: 'Profile settings updated successfully!', user: user.toObject() });
+    } catch (error) {
+        console.error('Error updating user settings:', error);
+        res.status(500).json({ message: 'Failed to update user settings.' });
+    }
+});
+
+
+// --- 9. STATIC FILE SERVING & HTML ROUTES ---
 app.use(express.static(path.join(__dirname, "public")));
-app.use('/images', express.static(path.join(__dirname, 'public', 'images'))); // Ensure images are served
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 
-// Serve specific HTML pages (ensure middleware protects them)
+// Serve tutor config data as a JS file
+app.get('/js/tutor-config-data.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'utils', 'tutorConfig.js'));
+});
+
+// HTML file routes
 app.get("/", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 app.get("/login.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 app.get("/signup.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "signup.html")));
-app.get("/chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
 app.get("/pick-tutor.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-tutor.html")));
-app.get("/parent-dashboard.html", isParent, (req, res) => res.sendFile(path.join(__dirname, "public", "parent-dashboard.html")));
-app.get("/teacher-dashboard.html", isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-dashboard.html")));
-app.get("/admin-dashboard.html", isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-dashboard.html")));
+app.get("/chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
+app.get("/admin-dashboard.html", isAuthenticated, isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-dashboard.html")));
+app.get("/teacher-dashboard.html", isAuthenticated, isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-dashboard.html")));
+app.get("/parent-dashboard.html", isAuthenticated, isParent, (req, res) => res.sendFile(path.join(__dirname, "public", "parent-dashboard.html")));
 app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public", "privacy.html")));
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
-app.get("/forgot-password.html", (req, res) => res.sendFile(path.join(__dirname, "public", "forgot-password.html")));
 
-
-// --- 7. 404 CATCH-ALL ---
+// Fallback for 404
 app.get("*", (req, res) => {
-  res.status(404).send("404: Page Not Found");
+  res.status(404).send(`Cannot GET ${req.path}`);
 });
 
-// --- 8. START SERVER ---
+
+// --- 10. SERVER LISTENER ---
 app.listen(PORT, () => {
   console.log(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`);
 });

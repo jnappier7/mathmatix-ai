@@ -5,13 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   </head>
-<body>
-  <div class="login-page-wrapper">
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <a href="/signup.html" class="btn btn-primary">Sign Up</a>
+    </nav>
+  </header>
+
+  <main class="login-page-wrapper">
     <div class="login-container">
-      <div class="logo-header">
-        <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" />
-      </div>
       <h1>Welcome Back!</h1>
       <p class="subtitle">Log in to continue your learning journey.</p>
       <form id="loginForm">
@@ -34,11 +41,11 @@
 
       <div class="social-login-buttons">
         <a href="/auth/google" class="social-btn google-btn">
-          <img src="google-icon.png" alt="Google Icon" />
+          <img src="/images/google-icon.png" alt="Google Icon" />
           Login with Google
         </a>
         <a href="/auth/microsoft" class="social-btn microsoft-btn">
-          <img src="microsoft-icon.png" alt="Microsoft Icon" />
+          <img src="/images/microsoft-icon.png" alt="Microsoft Icon" />
           Login with Microsoft
         </a>
       </div>
@@ -47,7 +54,7 @@
         Don't have an account? <a href="/signup.html">Create an account</a>
       </p>
     </div>
-  </div>
+  </main>
 
   <footer>
     <p>© 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
