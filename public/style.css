@@ -2668,3 +2668,32 @@ main {
   object-fit: contain; /* Keeps the image's aspect ratio without stretching */
 }
 
+/* --- Compact Signup Form Styles --- */
+
+/* Reduce the signup form's main top/bottom padding */
+.signup-container {
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+
+/* This is the most important change: it reduces the large space above each form field label */
+.signup-container form label {
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+
+/* Reduces the space below the descriptive paragraphs */
+.signup-container p {
+    margin-bottom: 12px;
+}
+
+/* Tucks the checkbox/radio button group closer to its label */
+.signup-container .checkbox-group {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+/* Reduces the space above the final submit button */
+.signup-container .submit-btn {
+    margin-top: 20px;
+}
