@@ -2697,3 +2697,32 @@ main {
 .signup-container .submit-btn {
     margin-top: 20px;
 }
+
+/* --- Enhanced Locked Tutor Silhouette Styles --- */
+
+/* This prepares the container that holds the image */
+.tutor-card.locked .tutor-card-image {
+    position: relative; /* Needed to position the lock icon */
+    border-style: dashed;
+    border-color: var(--clr-text-dim);
+}
+
+/* This targets the actual image and turns it into a silhouette */
+.tutor-card-image.silhouette {
+    filter: brightness(0) saturate(0%) opacity(40%);
+}
+
+/* This adds the lock icon on top of the silhouetted image */
+.tutor-card.locked .tutor-card-image::after {
+    content: '\f023'; /* Font Awesome lock icon unicode */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.6); /* Semi-transparent white */
+    
+    /* Center the icon */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

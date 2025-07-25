@@ -65,18 +65,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <h4>Specializes In:</h4><p>${tutor.specialties || ''}</p>
                     </div>
                 `;
-            } else {
-                // Render the "locked" silhouette card
-                const silhouetteImage = tutor.image.includes('gorilla') || tutor.image.includes('clown') ? tutor.image : 'silhouette.png';
-                tutorCard.innerHTML = `
-                    <img src="/images/tutor_avatars/${silhouetteImage}" alt="Locked Tutor" class="tutor-card-image silhouette" />
-                    <h3 class="tutor-card-name locked-name">?????</h3>
-                    <p class="tutor-card-tagline"><i class="fas fa-lock"></i> ${tutor.unlockCondition?.description || 'Unlock by playing'}</p>
-                `;
-            }
-            tutorSelectionGrid.appendChild(tutorCard);
-        });
-    }
+           // in pick-tutor.js
+} else {
+    // Render the "locked" silhouette card
+    // ALWAYS use the actual tutor image. The CSS 'silhouette' class will handle the effect.
+    tutorCard.innerHTML = `
+        <img src="/images/tutor_avatars/${tutor.image}" alt="Locked Tutor" class="tutor-card-image silhouette" />
+        <h3 class="tutor-card-name locked-name">?????</h3>
+        <p class="tutor-card-tagline"><i class="fas fa-lock"></i> ${tutor.unlockCondition?.description || 'Unlock by playing'}</p>
+    `;
+}
 
     tutorSelectionGrid.addEventListener('click', (event) => {
         const clickedCard = event.target.closest('.tutor-card');
