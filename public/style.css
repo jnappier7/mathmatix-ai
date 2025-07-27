@@ -1419,24 +1419,27 @@ form label, .password-label-row label {
 }
 
 
-/* --- 10. Tutor Selection Page Specifics (Line-Out/Grid) --- */
+/* --- 10. Tutor Selection Page (Responsive & Fluid) --- */
 
-/* Pick tutor main is handled by the generic <main> style block (it IS the <main> tag) */
+/* This centers the content and reduces the vertical space */
 .pick-tutor-main {
-    padding-top: var(--section-gap); /* Add top padding to move content down from header */
-    padding-bottom: var(--section-gap); /* Add bottom padding before footer */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem var(--page-horizontal-padding);
 }
 
+/* This creates the 5-column grid and uses a fluid gap */
 .tutor-selection-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* Creates 5 equal columns */
-    gap: 30px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(15px, 2vw, 25px);
     width: 100%;
-    max-width: 1000px;
-    margin-bottom: 40px; /* Space before action buttons */
-    justify-content: center;
+    max-width: var(--content-max-width);
+    margin-bottom: 2rem;
 }
 
+/* This section makes the cards and their content scale smoothly */
 .tutor-card {
     background-color: var(--clr-bg-light);
     border-radius: var(--border-radius-base);
@@ -1444,54 +1447,55 @@ form label, .password-label-row label {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 25px; /* Increased padding for more breathing room */
+    padding: clamp(10px, 1.5vw, 20px); /* Fluid padding */
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    border: 2px solid transparent; /* Default transparent border */
+    border: 2px solid transparent;
     position: relative;
-    overflow: hidden; /* Hide overflowing details initially */
-    min-height: 0; /* Allow to shrink within flex container */
-}
-
-.tutor-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--clr-primary-teal); /* Teal border on hover */
-}
-
-.tutor-card.selected {
-    border-color: var(--clr-accent-hotpink); /* Hotpink border when selected */
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-5px);
+    overflow: hidden;
 }
 
 .tutor-card-image {
-    width: 200px; /* Increased image size */
-    height: 200px; /* Increased image size */
+    width: clamp(100px, 12vw, 150px); /* Fluid image size */
+    height: auto; /* Maintain aspect ratio */
     border-radius: 50%;
     object-fit: cover;
-	object-position: center 15%;
-    margin-bottom: 15px;
+    object-position: center 15%;
+    margin-bottom: 10px;
     border: 3px solid var(--clr-primary-teal);
     box-shadow: var(--shadow-sm);
 }
 
 .tutor-card-name {
-    font-size: 1.4em;
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem); /* Fluid font size */
     font-weight: var(--font-weight-headlines);
     color: var(--clr-text);
     margin-bottom: 5px;
 }
 
 .tutor-card-tagline {
-    font-size: 0.95em; /* Slightly larger for readability */
+    font-size: clamp(0.8rem, 1.2vw, 0.9rem); /* Fluid font size */
     color: var(--clr-text-dim);
     text-align: center;
-    margin-bottom: 15px;
-    min-height: 2.8em; /* Ensure consistent height for taglines */
+    margin-bottom: 10px;
+    min-height: 2.8em;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* --- All your existing styles for hover, selection, and the overlay are preserved below --- */
+
+.tutor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--clr-primary-teal);
+}
+
+.tutor-card.selected {
+    border-color: var(--clr-accent-hotpink);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
 }
 
 .tutor-card-details-overlay {
@@ -1501,41 +1505,40 @@ form label, .password-label-row label {
     width: 100%;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(5px);
-    padding: 20px; /* Increased padding */
-    transform: translateY(100%); /* Hidden by default */
+    padding: 20px;
+    transform: translateY(100%);
     transition: transform 0.3s ease-out, opacity 0.3s ease-out;
     opacity: 0;
-    font-size: 0.9em; /* Adjusted font size */
+    font-size: 0.9em;
     color: var(--clr-text-dim);
     border-top: 1px solid rgba(var(--clr-primary-teal-rgb), 0.2);
     box-shadow: var(--shadow-sm);
-    box-sizing: border-box; /* Important for padding/width */
-    height: 100%; /* Cover the whole card */
+    box-sizing: border-box;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: left;
-    overflow-y: auto; /* Allow scrolling within the overlay if content is too long */
+    overflow-y: auto;
 }
 
 .tutor-card:hover .tutor-card-details-overlay,
-.tutor-card.details-visible .tutor-card-details-overlay { /* For touch devices */
+.tutor-card.details-visible .tutor-card-details-overlay {
     transform: translateY(0%);
     opacity: 1;
 }
 .tutor-card-details-overlay h4 {
     font-size: 1.1em;
-    margin-bottom: 8px; /* Adjusted margin */
+    margin-bottom: 8px;
     color: var(--clr-primary-teal);
     text-align: center;
-    padding-bottom: 5px; /* Small line under heading */
+    padding-bottom: 5px;
     border-bottom: 1px solid rgba(var(--clr-primary-teal-rgb), 0.2);
 }
 .tutor-card-details-overlay p {
-    margin-bottom: 10px; /* Adjusted margin */
-    font-size: 0.95em; /* Ensures readability */
+    margin-bottom: 10px;
+    font-size: 0.95em;
 }
-
 
 .tutor-actions-bar {
     width: 100%;
@@ -1552,16 +1555,28 @@ form label, .password-label-row label {
     background-color: var(--clr-success-green);
 }
 .tutor-actions-bar .btn-play:hover {
-    background-color: #16c86d; /* Darken manually */
+    background-color: #16c86d;
 }
 .tutor-actions-bar .btn-select {
     background-color: var(--clr-primary-teal);
 }
 .tutor-actions-bar .btn-select:hover {
-    background-color: #109a9a; /* Darken manually */
+    background-color: #109a9a;
 }
 
+/* --- Media Queries for Structural Changes --- */
 
+@media (max-width: 1024px) {
+    .tutor-selection-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns on tablets */
+    }
+}
+
+@media (max-width: 767px) {
+    .tutor-selection-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on phones */
+    }
+}
 /* --- 11. Parent/Teacher Dashboard Specific Styles --- */
 
 /* Student Card (Teacher Dashboard) */
