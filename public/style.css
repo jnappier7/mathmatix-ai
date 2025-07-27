@@ -1429,7 +1429,7 @@ form label, .password-label-row label {
 
 .tutor-selection-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjusted minmax for slightly larger cards */
+    grid-template-columns: repeat(5, 1fr); /* Creates 5 equal columns */
     gap: 30px;
     width: 100%;
     max-width: 1000px;
@@ -2725,4 +2725,27 @@ main {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+/* --- Tutor Selection Page Layout Fix --- */
+
+/* Reduce the top/bottom space of the main container */
+.pick-tutor-main {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Reduce the space below the title */
+.pick-tutor-main h1 {
+    margin-bottom: 0.25rem;
+}
+
+/* Reduce the space below the subtitle */
+.pick-tutor-main p {
+    margin-bottom: 2rem;
+}
+
+/* Reduce the bottom margin of the tutor grid */
+.tutor-selection-grid {
+    margin-bottom: 2rem;
 }
