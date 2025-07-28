@@ -1,246 +1,396 @@
 /**
- * M∆THM∆TIΧ AI - Admin API Routes
+ * M∆THM∆TIΧ AI - Admin Dashboard Script
  *
- * This file contains all API endpoints for administrative functions.
- * All routes are protected by the `isAdmin` middleware.
+ * Manages all functionality for the admin dashboard, including fetching
+ * and displaying user data, handling teacher assignments, and providing
+ * detailed views and edits of student profiles.
  *
- * @version 2.0
+ * @version 2.1
  * @author Senior Developer
  */
-const express = require('express');
-const router = express.Router();
-const User = require('../models/user');
-const Conversation = require('../models/conversation');
-const { isAdmin } = require('../middleware/auth');
-
-// --- Constants for Database Projections ---
-// Using constants improves readability and makes queries easier to manage.
-const USER_LIST_FIELDS = 'firstName lastName email username role gradeLevel teacherId mathCourse tonePreference learningStyle interests totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastLogin createdAt xp level';
-const TEACHER_LIST_FIELDS = 'firstName lastName _id';
-
-// -----------------------------------------------------------------------------
-// --- User & Teacher Data Routes ---
-// -----------------------------------------------------------------------------
-
-/**
- * @route   GET /api/admin/users
- * @desc    Get a list of all users with essential profile data.
- * @access  Private (Admin)
- */
-router.get('/users', isAdmin, async (req, res) => {
-  try {
-    // .lean() provides a significant performance boost for read-only operations.
-    const users = await User.find({}, USER_LIST_FIELDS).lean();
-    res.json(users);
-  } catch (err) {
-    console.error('Error fetching users for admin:', err);
-    res.status(500).json({ message: 'Server error fetching user data.' });
-  }
-});
-
-/**
- * @route   GET /api/admin/teachers
- * @desc    Get a list of all users with the 'teacher' role.
- * @access  Private (Admin)
- */
-router.get('/teachers', isAdmin, async (req, res) => {
-  try {
-    const teachers = await User.find({ role: 'teacher' }, TEACHER_LIST_FIELDS).lean();
-    res.json(teachers);
-  } catch (err) {
-    console.error('Error fetching teachers for admin:', err);
-    res.status(500).json({ message: 'Server error fetching teacher data.' });
-  }
-});
-
-// -----------------------------------------------------------------------------
-// --- Student-Specific Routes ---
-// -----------------------------------------------------------------------------
-
-/**
- * @route   GET /api/admin/students/:studentId/profile
- * @desc    Get a specific student's full profile for the modal view.
- * @access  Private (Admin)
- */
-// NOTE: This endpoint is implicitly handled by the main GET /users route,
-// as the frontend filters the main list. If a direct fetch is needed in the future,
-// it can be implemented here using the USER_LIST_FIELDS projection.
-
-/**
- * @route   PATCH /api/admin/students/:studentId/profile
- * @desc    Update a student's general profile information.
- * @access  Private (Admin)
- */
-router.patch('/students/:studentId/profile', isAdmin, async (req, res) => {
-  try {
-    const { studentId } = req.params;
-    const updates = req.body;
-    
-    // Whitelist of fields that are safe to update via this endpoint.
-    const allowedUpdates = [
-      'firstName', 'lastName', 'email', 'gradeLevel', 'mathCourse',
-      'tonePreference', 'learningStyle', 'interests'
-    ];
-    
-    const validUpdates = {};
-    for (const key of allowedUpdates) {
-      if (updates[key] !== undefined) {
-        validUpdates[key] = updates[key];
-      }
+document.addEventListener("DOMContentLoaded", async () => {
+    // -------------------------------------------------------------------------
+    // --- Initial Security Check ---
+    // -------------------------------------------------------------------------
+    try {
+        const response = await fetch('/user', { credentials: 'include' });
+        if (!response.ok) throw new Error("Not Authenticated");
+        const { user } = await response.json();
+        if (!user || user.role !== 'admin') {
+            throw new Error("Access Denied");
+        }
+    } catch (err) {
+        // If the user is not an admin, redirect them to the login page.
+        window.location.href = '/login.html';
+        return; // Halt script execution
     }
 
-    if (Object.keys(validUpdates).length === 0) {
-      return res.status(400).json({ message: 'No valid fields provided for update.' });
-    }
+    // -------------------------------------------------------------------------
+    // --- DOM Element Caching ---
+    // -------------------------------------------------------------------------
+    const teacherSelect = document.getElementById("teacherSelect");
+    const assignButton = document.getElementById("assignButton");
+    const studentSearch = document.getElementById("studentSearch");
+    const userTableBody = document.getElementById("userTableBody");
+    const studentDetailModal = document.getElementById("studentDetailModal");
+    const closeModalButton = document.getElementById("closeModalButton");
+    const saveChangesButton = document.getElementById("saveChangesButton");
+    const cancelButton = document.getElementById("cancelButton");
+    const studentProfileForm = document.getElementById("studentProfileForm");
+    const studentIepForm = document.getElementById("studentIepForm");
+    const modalStudentName = document.getElementById("modalStudentName");
+    const modalStudentId = document.getElementById("modalStudentId");
+    const conversationSummariesList = document.getElementById("conversationSummariesList");
 
-    // If name fields are updated, also update the composite 'name' field for consistency.
-    if (validUpdates.firstName || validUpdates.lastName) {
-      const currentUser = await User.findById(studentId, 'firstName lastName').lean();
-      if(currentUser) {
-          const newFirstName = validUpdates.firstName || currentUser.firstName;
-          const newLastName = validUpdates.lastName || currentUser.lastName;
-          validUpdates.name = `${newFirstName} ${newLastName}`;
-      }
-    }
+    // -------------------------------------------------------------------------
+    // --- State Management ---
+    // -------------------------------------------------------------------------
+    let students = [];
+    let teacherMap = new Map(); // Use a Map for efficient O(1) teacher lookups.
 
-    const result = await User.findOneAndUpdate(
-      { _id: studentId, role: 'student' },
-      { $set: validUpdates },
-      { new: true, runValidators: true }
-    );
+    // -------------------------------------------------------------------------
+    // --- Modal Control ---
+    // -------------------------------------------------------------------------
+    const openModal = () => studentDetailModal?.classList.add('is-visible');
+    const closeModal = () => studentDetailModal?.classList.remove('is-visible');
 
-    if (!result) {
-      return res.status(404).json({ message: 'Student not found.' });
-    }
-    res.json({ message: 'Student profile updated successfully!' });
-  } catch (err) {
-    console.error('Error updating student profile for admin:', err);
-    res.status(500).json({ message: 'Server error updating student profile.' });
-  }
-});
+    // -------------------------------------------------------------------------
+    // --- Data Fetching & Initialization ---
+    // -------------------------------------------------------------------------
 
+    /**
+     * Fetches all necessary data from the server and initializes the dashboard.
+     */
+    async function initializeDashboard() {
+        try {
+            const [usersRes, teachersRes] = await Promise.all([
+                fetch('/api/admin/users', { credentials: 'include' }),
+                fetch('/api/admin/teachers', { credentials: 'include' })
+            ]);
 
-/**
- * @route   GET /api/admin/students/:studentId/iep
- * @desc    Get a student's IEP plan.
- * @access  Private (Admin)
- */
-router.get('/students/:studentId/iep', isAdmin, async (req, res) => {
-  try {
-    const student = await User.findById(req.params.studentId, 'iepPlan').lean();
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found.' });
-    }
-    res.json(student.iepPlan || {}); // Return empty object if no plan exists
-  } catch (err) {
-    console.error('Error fetching student IEP for admin:', err);
-    res.status(500).json({ message: 'Server error fetching IEP data.' });
-  }
-});
+            if (!usersRes.ok || !teachersRes.ok) {
+                throw new Error('Failed to load initial user and teacher data.');
+            }
 
-/**
- * @route   PUT /api/admin/students/:studentId/iep
- * @desc    Update/replace a student's entire IEP plan.
- * @access  Private (Admin)
- */
-router.put('/students/:studentId/iep', isAdmin, async (req, res) => {
-  try {
-    // SECURITY HARDENING: Explicitly build the IEP object from the request body
-    // to prevent malicious or accidental field injection.
-    const { accommodations, readingLevel, preferredScaffolds, goals } = req.body;
-    const sanitizedIepPlan = {
-        accommodations: accommodations || {},
-        readingLevel: readingLevel,
-        preferredScaffolds: preferredScaffolds || [],
-        goals: goals || []
-    };
+            const allUsers = await usersRes.json();
+            const teachers = await teachersRes.json();
+            
+            students = allUsers.filter(u => u.role === 'student');
 
-    const result = await User.findOneAndUpdate(
-      { _id: req.params.studentId, role: 'student' },
-      { $set: { iepPlan: sanitizedIepPlan } },
-      { new: true, runValidators: true, lean: true }
-    );
-    if (!result) {
-      return res.status(404).json({ message: 'Student not found.' });
-    }
-    res.json({ message: 'IEP plan updated successfully!', iepPlan: result.iepPlan });
-  } catch (err) {
-    console.error('Error updating student IEP for admin:', err);
-    res.status(500).json({ message: 'Server error updating IEP data.' });
-  }
-});
+            // Create a teacher lookup map for efficient name retrieval.
+            teacherMap = new Map(teachers.map(t => [t._id, `${t.firstName} ${t.lastName}`]));
 
-/**
- * @route   GET /api/admin/students/:studentId/conversations
- * @desc    Get a student's conversation history.
- * @access  Private (Admin)
- */
-router.get('/students/:studentId/conversations', isAdmin, async (req, res) => {
-  try {
-    const conversations = await Conversation.find({ userId: req.params.studentId })
-        .sort({ startDate: -1 })
-        .select('date summary activeMinutes startDate') // Added startDate for robustness
-        .lean();
-    
-    // Returning an empty array is a successful response, not an error.
-    res.json(conversations);
-  } catch (err) {
-    console.error('Error fetching student conversations for admin:', err);
-    res.status(500).json({ message: 'Server error fetching conversation data.' });
-  }
-});
+            renderTeacherOptions();
+            renderStudents();
+            fetchAndDisplayLeaderboard();
+            fetchSystemStatus();
 
-// -----------------------------------------------------------------------------
-// --- Bulk & System Routes ---
-// -----------------------------------------------------------------------------
-
-/**
- * @route   PATCH /api/admin/assign-teacher
- * @desc    Assign or unassign multiple students to a single teacher.
- * @access  Private (Admin)
- */
-router.patch('/assign-teacher', isAdmin, async (req, res) => {
-  try {
-    const { studentIds, teacherId } = req.body;
-    if (!Array.isArray(studentIds) || studentIds.length === 0) {
-      return res.status(400).json({ message: 'An array of student IDs is required.' });
+        } catch (error) {
+            console.error("Error initializing dashboard:", error);
+            if(userTableBody) userTableBody.innerHTML = `<tr><td colspan="5" class="text-center">Error loading data. Please refresh.</td></tr>`;
+        }
     }
     
-    if (teacherId) {
-      const teacher = await User.findOne({ _id: teacherId, role: 'teacher' });
-      if (!teacher) {
-        return res.status(404).json({ message: 'Teacher not found.' });
-      }
+    /**
+     * Fetches and displays the top students in the leaderboard panel.
+     */
+    async function fetchAndDisplayLeaderboard() {
+        const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
+        if (!leaderboardTableBody) return;
+
+        leaderboardTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Loading...</td></tr>`;
+        try {
+            const response = await fetch('/api/leaderboard', { credentials: 'include' });
+            if (!response.ok) throw new Error('Failed to load leaderboard');
+            
+            const topStudents = await response.json();
+            leaderboardTableBody.innerHTML = '';
+            
+            if (topStudents.length === 0) {
+                leaderboardTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No data available.</td></tr>';
+                return;
+            }
+
+            topStudents.forEach((student, index) => {
+                const row = leaderboardTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${student.name}</td>
+                    <td>${student.level}</td>
+                    <td>${student.xp}</td>
+                `;
+            });
+        } catch (error) {
+            console.error('Leaderboard error:', error);
+            leaderboardTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Could not load leaderboard.</td></tr>`;
+        }
+    }
+
+    /**
+     * Fetches the system health and updates the status panel.
+     */
+    async function fetchSystemStatus() {
+        const dbStatus = document.getElementById("dbStatus");
+        const aiStatus = document.getElementById("aiStatus");
+        const lastSyncTime = document.getElementById("lastSyncTime");
+        if (!dbStatus || !aiStatus) return;
+
+        try {
+            const response = await fetch('/api/admin/health-check', { credentials: 'include' });
+            if (!response.ok) throw new Error('Health check failed');
+            const data = await response.json();
+            dbStatus.textContent = 'Online';
+            aiStatus.textContent = data.status || 'Operational';
+            lastSyncTime.textContent = new Date().toLocaleTimeString();
+        } catch (error) {
+            dbStatus.textContent = 'Offline';
+            dbStatus.className = 'status-offline'; // Assumes you have a CSS class for this
+            aiStatus.textContent = 'Unknown';
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // --- Rendering Functions ---
+    // -------------------------------------------------------------------------
+
+    function renderTeacherOptions() {
+        if (!teacherSelect) return;
+        teacherSelect.innerHTML = '<option value="">Unassign</option>';
+        for (const [id, name] of teacherMap.entries()) {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = name;
+            teacherSelect.appendChild(option);
+        }
+    }
+
+    function renderStudents() {
+        if (!userTableBody) return;
+        const query = studentSearch ? studentSearch.value.toLowerCase().trim() : "";
+        userTableBody.innerHTML = "";
+
+        const filteredStudents = students.filter(s =>
+            `${s.firstName || ''} ${s.lastName || ''}`.toLowerCase().includes(query) ||
+            (s.email || '').toLowerCase().includes(query) ||
+            (s.username || '').toLowerCase().includes(query)
+        );
+
+        if (filteredStudents.length === 0) {
+            userTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No students found.</td></tr>`;
+            return;
+        }
+
+        const rowsHtml = filteredStudents.map(s => `
+            <tr data-studentid="${s._id}">
+                <td><input type="checkbox" class="select-student" value="${s._id}"></td>
+                <td><a href="#" class="student-name-link">${s.firstName} ${s.lastName}</a></td>
+                <td>${s.email || 'N/A'}</td>
+                <td>${s.role}</td>
+                <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
+            </tr>
+        `).join('');
+
+        userTableBody.innerHTML = rowsHtml;
     }
     
-    const updateResult = await User.updateMany(
-      { _id: { $in: studentIds }, role: 'student' },
-      { $set: { teacherId: teacherId || null } }
-    );
-
-    if (updateResult.matchedCount === 0) {
-      return res.status(404).json({ message: 'No matching students found to update.' });
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
     }
 
-    const assignmentStatus = teacherId ? `assigned to teacher` : 'unassigned';
-    res.json({ message: `${updateResult.modifiedCount} student(s) have been ${assignmentStatus}.` });
-  } catch (err) {
-    console.error('Error during batch teacher assignment:', err);
-    res.status(500).json({ message: 'Server error during teacher assignment.' });
-  }
+    /**
+     * Populates the student detail modal with data for a given student ID.
+     * @param {string} studentId - The ID of the student to display.
+     */
+    async function populateModal(studentId) {
+        const student = students.find(s => s._id === studentId);
+        if (!student) return;
+
+        // --- Populate Profile & Static Data ---
+        modalStudentId.value = student._id;
+        modalStudentName.textContent = `${student.firstName} ${student.lastName}`;
+        studentProfileForm.elements.firstName.value = student.firstName || '';
+        studentProfileForm.elements.lastName.value = student.lastName || '';
+        studentProfileForm.elements.username.value = student.username || '';
+        studentProfileForm.elements.email.value = student.email || '';
+        studentProfileForm.elements.gradeLevel.value = student.gradeLevel || '';
+        studentProfileForm.elements.mathCourse.value = student.mathCourse || '';
+        studentProfileForm.elements.tonePreference.value = student.tonePreference || '';
+        studentProfileForm.elements.learningStyle.value = student.learningStyle || '';
+        studentProfileForm.elements.interests.value = (student.interests || []).join(', ');
+
+        // --- Populate Usage Stats ---
+        document.getElementById("totalActiveTutoringMinutes").textContent = student.totalActiveTutoringMinutes || 0;
+        document.getElementById("weeklyActiveTutoringMinutes").textContent = student.weeklyActiveTutoringMinutes || 0;
+        document.getElementById("xpDisplay").textContent = student.xp || 0;
+        document.getElementById("levelDisplay").textContent = student.level || 0;
+        document.getElementById("lastLoginDisplay").textContent = formatDate(student.lastLogin);
+        document.getElementById("createdAtDisplay").textContent = formatDate(student.createdAt);
+        
+        openModal();
+
+        // --- Asynchronously Fetch Dynamic Data ---
+        conversationSummariesList.innerHTML = '<li>Loading conversation history...</li>';
+        const iepGoalsList = document.getElementById("iepGoalsList");
+        if(iepGoalsList) iepGoalsList.innerHTML = 'Loading goals...';
+
+        try {
+            const [convoRes, iepRes] = await Promise.all([
+                fetch(`/api/admin/students/${studentId}/conversations`, { credentials: 'include' }),
+                fetch(`/api/admin/students/${studentId}/iep`, { credentials: 'include' })
+            ]);
+
+            if (convoRes.ok) {
+                const conversations = await convoRes.json();
+                conversationSummariesList.innerHTML = conversations.length > 0
+                    ? conversations
+                        .sort((a, b) => new Date(b.date || b.startDate) - new Date(a.date || a.startDate))
+                        .map(s => `<li><strong>${formatDate(s.date || s.startDate)}:</strong> ${s.summary || ''}</li>`)
+                        .join('')
+                    : '<li>No conversation history found.</li>';
+            } else {
+                conversationSummariesList.innerHTML = '<li>Error loading conversation history.</li>';
+            }
+
+            if (iepRes.ok) {
+                const iepPlan = await iepRes.json();
+                studentIepForm.elements.extendedTime.checked = !!iepPlan?.accommodations?.extendedTime;
+                studentIepForm.elements.simplifiedInstructions.checked = !!iepPlan?.accommodations?.simplifiedInstructions;
+                studentIepForm.elements.frequentCheckIns.checked = !!iepPlan?.accommodations?.frequentCheckIns;
+                studentIepForm.elements.visualSupport.checked = !!iepPlan?.accommodations?.visualSupport;
+                studentIepForm.elements.chunking.checked = !!iepPlan?.accommodations?.chunking;
+                studentIepForm.elements.reducedDistraction.checked = !!iepPlan?.accommodations?.reducedDistraction;
+                studentIepForm.elements.mathAnxiety.checked = !!iepPlan?.accommodations?.mathAnxiety;
+                studentIepForm.elements.readingLevel.value = iepPlan?.readingLevel || '';
+                studentIepForm.elements.preferredScaffolds.value = (iepPlan?.preferredScaffolds || []).join(', ');
+                if(iepGoalsList) iepGoalsList.textContent = 'IEP Goals feature not yet implemented.';
+            } else {
+                 if(iepGoalsList) iepGoalsList.innerHTML = 'Could not load IEP data.';
+            }
+
+        } catch (error) {
+            console.error("Failed to load dynamic modal data:", error);
+            conversationSummariesList.innerHTML = '<li>Error loading data.</li>';
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // --- Event Handlers ---
+    // -------------------------------------------------------------------------
+
+    if (userTableBody) {
+        userTableBody.addEventListener('click', (e) => {
+            const link = e.target.closest('.student-name-link');
+            if (link) {
+                e.preventDefault();
+                const studentId = link.closest('tr')?.dataset.studentid;
+                if (studentId) {
+                    populateModal(studentId);
+                }
+            }
+        });
+    }
+
+    if (studentSearch) studentSearch.addEventListener("input", renderStudents);
+
+    if (assignButton) {
+        assignButton.addEventListener("click", async () => {
+            const selectedIds = Array.from(userTableBody.querySelectorAll(".select-student:checked")).map(cb => cb.value);
+            if (selectedIds.length === 0) {
+                alert("Please select at least one student.");
+                return;
+            }
+            
+            const teacherId = teacherSelect.value;
+            if (!teacherId && !confirm("This will unassign the selected students from any teacher. Are you sure?")) {
+                return;
+            }
+            
+            try {
+                const res = await fetch("/api/admin/assign-teacher", {
+                    method: "PATCH",
+                    headers: { 'Content-Type': 'application/json', 'credentials': 'include' },
+                    body: JSON.stringify({ studentIds: selectedIds, teacherId: teacherId || null })
+                });
+                const result = await res.json();
+                if(!res.ok) throw new Error(result.message || "Failed to assign teacher.");
+                
+                alert(result.message);
+                await initializeDashboard(); // Refresh all data
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+    }
+
+    if (saveChangesButton) {
+        saveChangesButton.addEventListener("click", async () => {
+            const studentId = modalStudentId.value;
+            if (!studentId) return;
+
+            const profileData = {
+                firstName: studentProfileForm.elements.firstName.value,
+                lastName: studentProfileForm.elements.lastName.value,
+                email: studentProfileForm.elements.email.value,
+                gradeLevel: studentProfileForm.elements.gradeLevel.value,
+                mathCourse: studentProfileForm.elements.mathCourse.value,
+                tonePreference: studentProfileForm.elements.tonePreference.value,
+                learningStyle: studentProfileForm.elements.learningStyle.value,
+                interests: studentProfileForm.elements.interests.value.split(',').map(s => s.trim()).filter(Boolean)
+            };
+
+            const iepData = {
+                accommodations: {
+                    extendedTime: studentIepForm.elements.extendedTime.checked,
+                    simplifiedInstructions: studentIepForm.elements.simplifiedInstructions.checked,
+                    frequentCheckIns: studentIepForm.elements.frequentCheckIns.checked,
+                    visualSupport: studentIepForm.elements.visualSupport.checked,
+                    chunking: studentIepForm.elements.chunking.checked,
+                    reducedDistraction: studentIepForm.elements.reducedDistraction.checked,
+                    mathAnxiety: studentIepForm.elements.mathAnxiety.checked,
+                },
+                readingLevel: studentIepForm.elements.readingLevel.value,
+                preferredScaffolds: studentIepForm.elements.preferredScaffolds.value.split(',').map(s => s.trim()).filter(Boolean),
+                goals: []
+            };
+
+            saveChangesButton.disabled = true;
+            saveChangesButton.textContent = 'Saving...';
+
+            try {
+                const [profileRes, iepRes] = await Promise.all([
+                    fetch(`/api/admin/students/${studentId}/profile`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json', 'credentials': 'include' },
+                        body: JSON.stringify(profileData)
+                    }),
+                    fetch(`/api/admin/students/${studentId}/iep`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'credentials': 'include' },
+                        body: JSON.stringify(iepData)
+                    })
+                ]);
+
+                if (!profileRes.ok || !iepRes.ok) throw new Error('Failed to save one or more sections.');
+
+                alert('Student updated successfully!');
+                closeModal();
+                await initializeDashboard();
+
+            } catch (error) {
+                alert(`Could not save changes: ${error.message}`);
+            } finally {
+                saveChangesButton.disabled = false;
+                saveChangesButton.textContent = 'Save Changes';
+            }
+        });
+    }
+
+    if (closeModalButton) closeModalButton.addEventListener('click', closeModal);
+    if (cancelButton) cancelButton.addEventListener('click', closeModal);
+
+    // -------------------------------------------------------------------------
+    // --- Initial Load ---
+    // -------------------------------------------------------------------------
+    initializeDashboard();
 });
-
-/**
- * @route   GET /api/admin/health-check
- * @desc    A simple endpoint to confirm the API is running.
- * @access  Private (Admin)
- */
-router.get('/health-check', isAdmin, (req, res) => {
-  res.status(200).json({
-    status: 'Operational',
-    timestamp: new Date().toISOString()
-  });
-});
-
-
-module.exports = router;
