@@ -2764,3 +2764,33 @@ main {
 .tutor-selection-grid {
     margin-bottom: 2rem;
 }
+
+/* --- Modal Styles --- */
+.modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stays in place even if the page scrolls */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+    z-index: 1000; /* Ensures it's on top */
+    justify-content: center;
+    align-items: center;
+}
+
+/* This class is added by JavaScript to show the modal */
+.modal-overlay.is-visible {
+    display: flex; /* Use flexbox to center the content */
+}
+
+.modal-content {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 800px; /* Adjust max-width as needed */
+    max-height: 90vh;
+    overflow-y: auto;
+}
