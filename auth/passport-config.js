@@ -157,7 +157,7 @@ passport.use(new MicrosoftStrategy({
             xp: 0,
             level: 1,
             studentToParentLinkCode: { code: newLinkCode },
-            unlockedTutors: ['mr-nappier', 'maya', 'ms-maria', 'bob'] // Add default unlocked tutor
+            unlockedItems: ['mr-nappier', 'maya', 'ms-maria', 'bob'] // Add default unlocked tutor
         });
         console.log('LOG: MicrosoftStrategy created new user:', newUser.username);
         return done(null, newUser);
