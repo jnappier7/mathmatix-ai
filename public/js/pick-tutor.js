@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         allTutors.forEach(tutor => {
             const tutorCard = document.createElement('div');
-            const isUnlocked = currentUser.unlockedTutors.includes(tutor.id);
+            const isUnlocked = currentUser.unlockedItems.includes(tutor.id);
             
             tutorCard.classList.add('tutor-card', 'card-style-1', isUnlocked ? 'unlocked' : 'locked');
             tutorCard.dataset.tutorId = tutor.id;
