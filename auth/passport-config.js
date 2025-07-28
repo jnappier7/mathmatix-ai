@@ -38,7 +38,7 @@ passport.use(new LocalStrategy(
   },
   async (username, password, done) => {
     try {
-      const user = await User.findOne({ username: username.toLowerCase() });
+      const user = await User.findOne({ username: username.trim().toLowerCase() });
       if (!user) {
         return done(null, false, { message: 'Incorrect username or password.' });
       }
