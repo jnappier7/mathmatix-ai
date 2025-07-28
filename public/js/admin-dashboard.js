@@ -1,11 +1,11 @@
 /**
  * M∆THM∆TIΧ AI - Admin Dashboard Script
  *
- * This script manages all functionality for the admin dashboard, including
- * fetching and displaying user data, handling teacher assignments, and
- * providing detailed views of student profiles.
+ * Manages all functionality for the admin dashboard, including fetching
+ * and displaying user data, handling teacher assignments, and providing
+ * detailed views and edits of student profiles.
  *
- * @version 2.0
+ * @version 2.1
  * @author Senior Developer
  */
 document.addEventListener("DOMContentLoaded", async () => {
@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // -------------------------------------------------------------------------
     // --- DOM Element Caching ---
     // -------------------------------------------------------------------------
-    // Cache all necessary DOM elements at the start for performance.
     const teacherSelect = document.getElementById("teacherSelect");
     const assignButton = document.getElementById("assignButton");
     const studentSearch = document.getElementById("studentSearch");
@@ -47,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- State Management ---
     // -------------------------------------------------------------------------
     let students = [];
-    let teacherMap = new Map(); // Use a Map for efficient teacher lookups.
+    let teacherMap = new Map(); // Use a Map for efficient O(1) teacher lookups.
 
     // -------------------------------------------------------------------------
     // --- Modal Control ---
@@ -76,15 +75,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             const allUsers = await usersRes.json();
             const teachers = await teachersRes.json();
             
-            // Filter users into students for the main list
             students = allUsers.filter(u => u.role === 'student');
 
-            // Create a teacher lookup map for efficient name retrieval (O(1) vs O(n))
+            // Create a teacher lookup map for efficient name retrieval.
             teacherMap = new Map(teachers.map(t => [t._id, `${t.firstName} ${t.lastName}`]));
 
             renderTeacherOptions();
             renderStudents();
-            fetchAndDisplayLeaderboard(); // Now that the page is ready
+            fetchAndDisplayLeaderboard();
             fetchSystemStatus();
 
         } catch (error) {
@@ -95,12 +93,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     /**
      * Fetches and displays the top students in the leaderboard panel.
-     * Note: This requires the "Top Students" panel in admin-dashboard.html to be updated
-     * to use a table with id="leaderboardTable" as previously recommended.
      */
     async function fetchAndDisplayLeaderboard() {
         const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
-        if (!leaderboardTableBody) return; // Exit if the leaderboard table isn't on the page
+        if (!leaderboardTableBody) return;
 
         leaderboardTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Loading...</td></tr>`;
         try {
@@ -108,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!response.ok) throw new Error('Failed to load leaderboard');
             
             const topStudents = await response.json();
-            leaderboardTableBody.innerHTML = ''; // Clear loading state
+            leaderboardTableBody.innerHTML = '';
             
             if (topStudents.length === 0) {
                 leaderboardTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No data available.</td></tr>';
@@ -134,18 +130,29 @@ document.addEventListener("DOMContentLoaded", async () => {
      * Fetches the system health and updates the status panel.
      */
     async function fetchSystemStatus() {
-        // This function will populate the System Status panel dynamically.
-        // For now, it's a placeholder until the backend endpoint is created.
-        // const status = await fetch('/api/admin/health-check');
+        const dbStatus = document.getElementById("dbStatus");
+        const aiStatus = document.getElementById("aiStatus");
+        const lastSyncTime = document.getElementById("lastSyncTime");
+        if (!dbStatus || !aiStatus) return;
+
+        try {
+            const response = await fetch('/api/admin/health-check', { credentials: 'include' });
+            if (!response.ok) throw new Error('Health check failed');
+            const data = await response.json();
+            dbStatus.textContent = 'Online';
+            aiStatus.textContent = data.status || 'Operational';
+            lastSyncTime.textContent = new Date().toLocaleTimeString();
+        } catch (error) {
+            dbStatus.textContent = 'Offline';
+            dbStatus.className = 'status-offline'; // Assumes you have a CSS class for this
+            aiStatus.textContent = 'Unknown';
+        }
     }
 
     // -------------------------------------------------------------------------
     // --- Rendering Functions ---
     // -------------------------------------------------------------------------
 
-    /**
-     * Populates the teacher assignment dropdown menu.
-     */
     function renderTeacherOptions() {
         if (!teacherSelect) return;
         teacherSelect.innerHTML = '<option value="">Unassign</option>';
@@ -157,9 +164,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    /**
-     * Renders the list of students in the main table, applying search filters.
-     */
     function renderStudents() {
         if (!userTableBody) return;
         const query = studentSearch ? studentSearch.value.toLowerCase().trim() : "";
@@ -172,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
         if (filteredStudents.length === 0) {
-            userTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No students found matching your search.</td></tr>`;
+            userTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No students found.</td></tr>`;
             return;
         }
 
@@ -189,11 +193,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         userTableBody.innerHTML = rowsHtml;
     }
     
-    /**
-     * Formats a date string into a readable format.
-     * @param {string} dateString - The ISO date string.
-     * @returns {string} A formatted date string or 'N/A'.
-     */
     function formatDate(dateString) {
         if (!dateString) return 'N/A';
         return new Date(dateString).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
@@ -207,7 +206,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const student = students.find(s => s._id === studentId);
         if (!student) return;
 
-        // --- Populate Static & Profile Data ---
+        // --- Populate Profile & Static Data ---
         modalStudentId.value = student._id;
         modalStudentName.textContent = `${student.firstName} ${student.lastName}`;
         studentProfileForm.elements.firstName.value = student.firstName || '';
@@ -228,43 +227,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("lastLoginDisplay").textContent = formatDate(student.lastLogin);
         document.getElementById("createdAtDisplay").textContent = formatDate(student.createdAt);
         
-        // Open the modal immediately for better UX
         openModal();
 
-        // --- Asynchronously Fetch and Populate Dynamic Data (IEP & Conversations) ---
-        // Reset dynamic content areas to loading state
+        // --- Asynchronously Fetch Dynamic Data ---
         conversationSummariesList.innerHTML = '<li>Loading conversation history...</li>';
         const iepGoalsList = document.getElementById("iepGoalsList");
         if(iepGoalsList) iepGoalsList.innerHTML = 'Loading goals...';
 
-
-        // Fetch conversations and IEP data in parallel
         try {
             const [convoRes, iepRes] = await Promise.all([
                 fetch(`/api/admin/students/${studentId}/conversations`, { credentials: 'include' }),
                 fetch(`/api/admin/students/${studentId}/iep`, { credentials: 'include' })
             ]);
 
-            // Process Conversations
             if (convoRes.ok) {
                 const conversations = await convoRes.json();
-                if (conversations && conversations.length > 0) {
-                    conversationSummariesList.innerHTML = conversations
+                conversationSummariesList.innerHTML = conversations.length > 0
+                    ? conversations
                         .sort((a, b) => new Date(b.date || b.startDate) - new Date(a.date || a.startDate))
-                        .map(session => `
-                            <li class="conversation-item">
-                                <strong>${formatDate(session.date || session.startDate)}:</strong>
-                                ${session.summary || 'No summary available.'}
-                            </li>
-                        `).join('');
-                } else {
-                    conversationSummariesList.innerHTML = '<li>No conversation history found.</li>';
-                }
+                        .map(s => `<li><strong>${formatDate(s.date || s.startDate)}:</strong> ${s.summary || ''}</li>`)
+                        .join('')
+                    : '<li>No conversation history found.</li>';
             } else {
                 conversationSummariesList.innerHTML = '<li>Error loading conversation history.</li>';
             }
 
-            // Process IEP Plan
             if (iepRes.ok) {
                 const iepPlan = await iepRes.json();
                 studentIepForm.elements.extendedTime.checked = !!iepPlan?.accommodations?.extendedTime;
@@ -276,7 +263,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 studentIepForm.elements.mathAnxiety.checked = !!iepPlan?.accommodations?.mathAnxiety;
                 studentIepForm.elements.readingLevel.value = iepPlan?.readingLevel || '';
                 studentIepForm.elements.preferredScaffolds.value = (iepPlan?.preferredScaffolds || []).join(', ');
-                if(iepGoalsList) iepGoalsList.textContent = 'IEP Goals feature not yet implemented.'; // Placeholder
+                if(iepGoalsList) iepGoalsList.textContent = 'IEP Goals feature not yet implemented.';
             } else {
                  if(iepGoalsList) iepGoalsList.innerHTML = 'Could not load IEP data.';
             }
@@ -284,7 +271,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("Failed to load dynamic modal data:", error);
             conversationSummariesList.innerHTML = '<li>Error loading data.</li>';
-            if(iepGoalsList) iepGoalsList.innerHTML = '<li>Error loading data.</li>';
         }
     }
 
@@ -292,10 +278,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Event Handlers ---
     // -------------------------------------------------------------------------
 
-    // Use event delegation for student name clicks.
     if (userTableBody) {
         userTableBody.addEventListener('click', (e) => {
-            // ROBUSTNESS FIX: Check if the closest ancestor is the link, not the exact target.
             const link = e.target.closest('.student-name-link');
             if (link) {
                 e.preventDefault();
@@ -307,10 +291,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Handle student search input.
     if (studentSearch) studentSearch.addEventListener("input", renderStudents);
 
-    // Handle teacher assignment.
     if (assignButton) {
         assignButton.addEventListener("click", async () => {
             const selectedIds = Array.from(userTableBody.querySelectorAll(".select-student:checked")).map(cb => cb.value);
@@ -336,18 +318,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 alert(result.message);
                 await initializeDashboard(); // Refresh all data
             } catch (error) {
-                alert(`Error assigning teacher: ${error.message}`);
+                alert(`Error: ${error.message}`);
             }
         });
     }
 
-    // Handle saving changes from the modal.
     if (saveChangesButton) {
         saveChangesButton.addEventListener("click", async () => {
             const studentId = modalStudentId.value;
             if (!studentId) return;
 
-            // Gather all profile data from the form.
             const profileData = {
                 firstName: studentProfileForm.elements.firstName.value,
                 lastName: studentProfileForm.elements.lastName.value,
@@ -359,7 +339,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 interests: studentProfileForm.elements.interests.value.split(',').map(s => s.trim()).filter(Boolean)
             };
 
-            // Gather all IEP data from the form.
             const iepData = {
                 accommodations: {
                     extendedTime: studentIepForm.elements.extendedTime.checked,
@@ -372,15 +351,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 },
                 readingLevel: studentIepForm.elements.readingLevel.value,
                 preferredScaffolds: studentIepForm.elements.preferredScaffolds.value.split(',').map(s => s.trim()).filter(Boolean),
-                goals: [] // Placeholder for goals feature
+                goals: []
             };
 
-            // Disable button to prevent double-clicks
             saveChangesButton.disabled = true;
             saveChangesButton.textContent = 'Saving...';
 
             try {
-                // Send update requests in parallel
                 const [profileRes, iepRes] = await Promise.all([
                     fetch(`/api/admin/students/${studentId}/profile`, {
                         method: 'PATCH',
@@ -394,25 +371,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                     })
                 ]);
 
-                if (!profileRes.ok || !iepRes.ok) {
-                    throw new Error('Failed to save one or more sections.');
-                }
+                if (!profileRes.ok || !iepRes.ok) throw new Error('Failed to save one or more sections.');
 
                 alert('Student updated successfully!');
                 closeModal();
-                await initializeDashboard(); // Refresh all data
+                await initializeDashboard();
 
             } catch (error) {
                 alert(`Could not save changes: ${error.message}`);
             } finally {
-                // Re-enable button
                 saveChangesButton.disabled = false;
                 saveChangesButton.textContent = 'Save Changes';
             }
         });
     }
 
-    // Modal close buttons
     if (closeModalButton) closeModalButton.addEventListener('click', closeModal);
     if (cancelButton) cancelButton.addEventListener('click', closeModal);
 
