@@ -2794,3 +2794,41 @@ main {
     max-height: 90vh;
     overflow-y: auto;
 }
+
+/* Fix 1: Tutor Page Spacing & Card Redesign */
+
+/* Tighten the header and instruction spacing */
+.pick-tutor-main h1.section-title {
+    margin-bottom: 0.5rem; /* Reduces space after the main title */
+}
+.pick-tutor-main p.subtitle {
+    margin-bottom: 2rem; /* Reduces space after the instructions */
+}
+
+/* Make the cards shorter by default */
+.tutor-card {
+    min-height: 220px; /* Reduces the default height of the cards */
+}
+
+/* Hide the tagline by default */
+.tutor-card .tutor-card-tagline {
+    display: none;
+}
+
+/* Show the tagline INSIDE the hover overlay */
+.tactor-card:hover .tutor-card-tagline {
+    display: block; /* Or 'flex' if you need alignment */
+    font-size: 1em;
+    font-style: italic;
+    color: var(--clr-text-dim);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Fix 2: Complete Profile Page Header Overlap & Scrolling */
+
+.login-page-wrapper {
+    justify-content: flex-start; /* Aligns the form to the top */
+    padding-top: 3rem;          /* Adds some space below the header */
+    padding-bottom: 3rem;       /* Adds space above the footer */
+}
