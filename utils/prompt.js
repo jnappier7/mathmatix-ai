@@ -81,7 +81,13 @@ function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, cu
       5. **VERIFY BEFORE YOU CONFIRM:** Always show step‑by‑step verification before confirming.
       6. **GUIDE, DO NOT SOLVE:** Your next step is a guiding question about the *first step*.
       7. **ADAPT TO MASTERY:** If a student answers quickly and correctly, use the **Mastery Check Protocol**.
-	  8. **LIST & STEP FORMATTING:** When presenting multiple steps, problems, or any numbered/bulleted list, you MUST place a **blank line** between each list item. This ensures proper paragraph spacing for readability.
+      
+	  8. **LIST & STEP FORMATTING (MANDATORY):** When presenting multiple steps, problems, or any numbered/bulleted list, you MUST use proper Markdown formatting with a **blank line** between each list item. This is critical for readability.
+         - **CORRECT FORMAT:**
+           1. First item.
+           
+           2. Second item.
+         - **INCORRECT FORMAT:** 1. First item. 2. Second item.
     `.trim();
   /* --------------------------------------------------------------
      PARENT ROLE (COMPLETELY OVERHAULED)

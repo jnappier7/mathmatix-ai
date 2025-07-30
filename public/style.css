@@ -2900,3 +2900,60 @@ main {
 #close-whiteboard-btn {
     font-size: 1.5rem;
 }
+
+/* --- UI Overhaul Based on Design Notes --- */
+
+/* 1. Logo Prominence */
+.main-logo-hero {
+  transform: scale(1.5);
+  transform-origin: left center;
+  margin-left: 1rem;
+}
+
+/* 2. Consistent Panel Titles */
+.dashboard-panel-header h2 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 3. Right Sidebar Flex Layout & Widget Sizing */
+.widget-sidebar-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Adds space between sidebar panels */
+}
+
+#xp-level-display, #student-parent-link-display {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+/* 4. Enlarge Avatar */
+#avatar-container {
+  flex-grow: 1;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#avatar-container #student-avatar img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+/* 5. Widen Chat Window */
+#app-layout-wrapper {
+  /* Adjust these values to your preference */
+  /* Format: left-sidebar center-chat right-sidebar */
+  grid-template-columns: 240px 1fr 240px;
+}
+
+/* --- Universal Widget Styling --- */
+.dashboard-panel {
+  border: 2px solid #000; /* The black outline from your sketch */
+  border-radius: 12px;     /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Optional: A subtle shadow for depth */
+}

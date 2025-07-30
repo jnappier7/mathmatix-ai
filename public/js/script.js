@@ -173,7 +173,6 @@ document.addEventListener("DOMContentLoaded", () => {
             new ResizeObserver(resizeCanvas).observe(document.getElementById('whiteboard-panel'));
             resizeCanvas();
 
-            // --- NEW: Make the panel draggable ---
             makeElementDraggable(whiteboardPanel);
         }
     }
@@ -209,45 +208,37 @@ document.addEventListener("DOMContentLoaded", () => {
         fabricCanvas.renderAll();
     }
 
-    // --- NEW: Draggable Element Logic ---
     function makeElementDraggable(elmnt) {
         let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
         const header = elmnt.querySelector(".dashboard-panel-header");
 
         if (header) {
-            // if present, the header is where you move the DIV from:
             header.onmousedown = dragMouseDown;
         } else {
-            // otherwise, move the DIV from anywhere inside the DIV:
             elmnt.onmousedown = dragMouseDown;
         }
 
         function dragMouseDown(e) {
             e = e || window.event;
             e.preventDefault();
-            // get the mouse cursor position at startup:
             pos3 = e.clientX;
             pos4 = e.clientY;
             document.onmouseup = closeDragElement;
-            // call a function whenever the cursor moves:
             document.onmousemove = elementDrag;
         }
 
         function elementDrag(e) {
             e = e || window.event;
             e.preventDefault();
-            // calculate the new cursor position:
             pos1 = pos3 - e.clientX;
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;
             pos4 = e.clientY;
-            // set the element's new position:
             elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
             elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
         }
 
         function closeDragElement() {
-            // stop moving when mouse button is released:
             document.onmouseup = null;
             document.onmousemove = null;
         }
@@ -298,78 +289,83 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
-    // --- ADD THIS LINE ---
-    if (!text && !graphData) return; // Prevents creation of empty bubbles
+        if (!text && !graphData) return;
 
-    if (!chatBox) return;
-    const bubble = document.createElement("div");
-    bubble.className = `message ${sender}`;
-    bubble.id = `message-${Date.now()}-${Math.random()}`;
-    if (isMasteryQuiz) { bubble.classList.add('mastery-quiz'); }
-    
-    const textNode = document.createElement('span');
-    textNode.className = 'message-text';
-    if (sender === 'ai' && typeof marked === 'function') {
-        textNode.innerHTML = marked.parse(text, { breaks: true });
-    } else {
-        textNode.textContent = text;
-    }
-    bubble.appendChild(textNode);
-    
-    if (graphData && window.functionPlot) {
-         const graphContainer = document.createElement('div');
-        const graphId = 'graph-container-' + Date.now();
-        graphContainer.id = graphId;
-        graphContainer.className = 'graph-render-area';
-        bubble.appendChild(graphContainer);
-        setTimeout(() => {
-            try {
-                const plotWidth = chatBox.clientWidth > 150 ? chatBox.clientWidth - 80 : 250;
-                functionPlot({
-                    target: '#' + graphId,
-                    width: plotWidth,
-                    height: 300,
-                    grid: true,
-                    data: [{ fn: graphData.function, graphType: 'polyline' }]
-                });
-            } catch (e) { console.error("Graphing error:", e); graphContainer.innerHTML = "Could not render graph."; }
-        }, 0);
-    }
-    
-    if (sender === 'ai') {
-        const playBtn = document.createElement("button");
-        playBtn.className = "play-audio-btn";
-        playBtn.innerHTML = '<i class="fas fa-play"></i><i class="fas fa-wave-square"></i><i class="fas fa-spinner"></i>';
-        playBtn.setAttribute("title", "Play audio");
-        playBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            playBtn.disabled = true;
-            playBtn.classList.add('is-loading');
-            const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
-            const speakableText = generateSpeakableText(text);
-            playAudio(speakableText, tutor.voiceId, bubble.id);
-        });
-        bubble.appendChild(playBtn);
-    }
-
-    chatBox.appendChild(bubble);
-
-    if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
-        if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
-             const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
-             if (playButtonForAutoplay) {
-                playButtonForAutoplay.disabled = true;
-                playButtonForAutoplay.classList.add('is-loading');
-             }
-             const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
-             const speakableText = generateSpeakableText(text);
-             playAudio(speakableText, tutor.voiceId, bubble.id);
+        if (!chatBox) return;
+        const bubble = document.createElement("div");
+        bubble.className = `message ${sender}`;
+        bubble.id = `message-${Date.now()}-${Math.random()}`;
+        if (isMasteryQuiz) { bubble.classList.add('mastery-quiz'); }
+        
+        const textNode = document.createElement('span');
+        textNode.className = 'message-text';
+        
+        // --- FIX APPLIED HERE ---
+        if (sender === 'ai' && typeof marked === 'function') {
+            // Protect LaTeX from Markdown parser
+            const protectedText = text.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
+            const dirtyHtml = marked.parse(protectedText, { breaks: true });
+            // Restore LaTeX delimiters
+            textNode.innerHTML = dirtyHtml.replace(/@@LATEX_OPEN@@/g, '\\(').replace(/@@LATEX_CLOSE@@/g, '\\)').replace(/@@DLATEX_OPEN@@/g, '\\[').replace(/@@DLATEX_CLOSE@@/g, '\\]');
+        } else {
+            textNode.textContent = text;
         }
+        bubble.appendChild(textNode);
+        
+        if (graphData && window.functionPlot) {
+             const graphContainer = document.createElement('div');
+            const graphId = 'graph-container-' + Date.now();
+            graphContainer.id = graphId;
+            graphContainer.className = 'graph-render-area';
+            bubble.appendChild(graphContainer);
+            setTimeout(() => {
+                try {
+                    const plotWidth = chatBox.clientWidth > 150 ? chatBox.clientWidth - 80 : 250;
+                    functionPlot({
+                        target: '#' + graphId,
+                        width: plotWidth,
+                        height: 300,
+                        grid: true,
+                        data: [{ fn: graphData.function, graphType: 'polyline' }]
+                    });
+                } catch (e) { console.error("Graphing error:", e); graphContainer.innerHTML = "Could not render graph."; }
+            }, 0);
+        }
+        
+        if (sender === 'ai') {
+            const playBtn = document.createElement("button");
+            playBtn.className = "play-audio-btn";
+            playBtn.innerHTML = '<i class="fas fa-play"></i><i class="fas fa-wave-square"></i><i class="fas fa-spinner"></i>';
+            playBtn.setAttribute("title", "Play audio");
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                playBtn.disabled = true;
+                playBtn.classList.add('is-loading');
+                const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
+                const speakableText = generateSpeakableText(text);
+                playAudio(speakableText, tutor.voiceId, bubble.id);
+            });
+            bubble.appendChild(playBtn);
+        }
+
+        chatBox.appendChild(bubble);
+
+        if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
+            if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
+                 const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
+                 if (playButtonForAutoplay) {
+                    playButtonForAutoplay.disabled = true;
+                    playButtonForAutoplay.classList.add('is-loading');
+                 }
+                 const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
+                 const speakableText = generateSpeakableText(text);
+                 playAudio(speakableText, tutor.voiceId, bubble.id);
+            }
+        }
+        
+        setTimeout(() => renderMathInElement(bubble), 0);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
-    
-    setTimeout(() => renderMathInElement(bubble), 0);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
 
     async function sendMessage() {
         const messageText = userInput.value.trim();
