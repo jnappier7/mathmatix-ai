@@ -8,11 +8,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" /> 
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <link rel="stylesheet" href="/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
   <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-	
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 </head>
 <body class="landing-page-body">
   <canvas id="confetti-canvas"></canvas>
@@ -66,17 +66,25 @@
     </div>
 
     <aside class="widget-sidebar-right">
+      <div id="whiteboard-panel" class="dashboard-panel card-style-1 is-hidden">
+        <div class="dashboard-panel-header">
+            <h2>Whiteboard</h2>
+            <button id="close-whiteboard-btn" class="modal-close-button">&times;</button>
+        </div>
+        <canvas id="tutor-canvas"></canvas>
+      </div>
+
       <div id="xp-level-display" class="dashboard-panel card-style-1">
         <div class="dashboard-panel-header">Your Progress</div>
         <span id="level-badge">Level <span id="current-level">1</span></span>
         <progress id="xp-progress-bar" value="0" max="100"></progress>
         <span id="xp-text"><span id="current-xp">0</span> / <span id="xp-needed">100</span> XP</span>
       </div>
-  <div id="student-parent-link-display" class="dashboard-panel">
-    <h3>Share Progress</h3>
-    <p>Share this code with a parent or teacher to link accounts.</p>
-    <div id="student-link-code-value" title="Click to copy"></div>
-</div>
+	  <div id="student-parent-link-display" class="dashboard-panel">
+		<h3>Share Progress</h3>
+		<p>Share this code with a parent or teacher to link accounts.</p>
+		<div id="student-link-code-value" title="Click to copy"></div>
+	  </div>
       <div id="avatar-container" class="dashboard-panel card-style-1">
           <div id="student-avatar"></div>
       </div>
@@ -132,6 +140,5 @@
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
-	
 </body>
 </html>

@@ -11,6 +11,7 @@ const { callLLM } = require("../utils/openaiClient");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const axios = require('axios');
+const { getTutorsToUnlock } = require('../utils/unlockTutors');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 const MAX_MESSAGE_LENGTH = 2000;
@@ -47,14 +48,11 @@ router.post('/', isAuthenticated, async (req, res) => {
             activeConversation = await Conversation.findById(user.activeConversationId);
         }
 
-        // --- SURGICAL ENHANCEMENT ---
-        // If the active conversation has been archived (isActive: false), start a new one.
         if (!activeConversation || !activeConversation.isActive) {
             activeConversation = new Conversation({ userId: user._id, messages: [] });
             user.activeConversationId = activeConversation._id;
             await user.save();
         }
-        // --- END ENHANCEMENT ---
 
         activeConversation.messages.push({ role: 'user', content: message });
 
@@ -88,35 +86,28 @@ router.post('/', isAuthenticated, async (req, res) => {
 
        aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond to that. Could you try rephrasing?";
 
-        // --- NEW: XP Award Safety Net ---
-        const xpMentionRegex = /\b(\d+)\s*XP\b/i; // Finds mentions like "40 XP"
+        const xpMentionRegex = /\b(\d+)\s*XP\b/i;
         const hasXpMention = xpMentionRegex.test(aiResponseText);
         const hasXpTag = aiResponseText.includes('<AWARD_XP:');
 
         if (hasXpMention && !hasXpTag) {
             const points = aiResponseText.match(xpMentionRegex)[1];
             console.log(`LOG: XP Safety Net triggered. AI mentioned ${points} XP but forgot the tag. Adding tag programmatically.`);
-            // Add the tag with a generic but positive reason
             aiResponseText += ` <AWARD_XP:${points},For your excellent work!>`;
         }
-        // --- End Safety Net ---
 
-		// --- NEW: Mastery Quiz Parsing ---
         let isMasteryQuiz = false;
         if (aiResponseText.includes('<MASTERY_QUIZ_START>')) {
             isMasteryQuiz = true;
-            // Clean the tags from the response text so they don't appear in the chat
             aiResponseText = aiResponseText
                 .replace(/<MASTERY_QUIZ_START>/g, '')
                 .replace(/<\/MASTERY_QUIZ_END>/g, '');
         }
-        // --- End Mastery Quiz Parsing ---
 
-        // --- UPDATED: Original logic now handles the new AMOUNT,REASON format ---
         const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
         if (xpAwardMatch) {
             bonusXpAwarded = parseInt(xpAwardMatch[1], 10);
-            bonusXpReason = xpAwardMatch[2] || 'AI Bonus Award'; // Use the reason from the tag
+            bonusXpReason = xpAwardMatch[2] || 'AI Bonus Award';
             aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
         }
         
@@ -142,8 +133,6 @@ router.post('/', isAuthenticated, async (req, res) => {
 
         await activeConversation.save();
 
-// in routes/chat.js
-        // --- NEW SCALING XP LOGIC ---
         let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
         let specialXpAwardedMessage = bonusXpAwarded > 0 ? `${bonusXpAwarded} XP (${bonusXpReason})` : `${xpAward} XP`;
 
@@ -153,38 +142,31 @@ router.post('/', isAuthenticated, async (req, res) => {
         let currentLevel = user.level || 1;
         let xpForNextLevel = currentLevel * BRAND_CONFIG.xpPerLevel;
         
-        // Check for level up
         if (user.xp >= xpForNextLevel) {
             user.level += 1;
             specialXpAwardedMessage = `LEVEL_UP! New level: ${user.level}`;
         }
-        // --- NEW: Unlock Tutors on Level Up ---
-const { getTutorsToUnlock } = require('../utils/unlockTutors');
 
-const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
-if (tutorsJustUnlocked.length > 0) {
-    user.unlockedItems.push(...tutorsJustUnlocked);
-    user.markModified('unlockedItems');
-    await user.save();
-    console.log(`✅ Unlocked tutors for ${user.name}:`, tutorsJustUnlocked);
-}
+		const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
+		if (tutorsJustUnlocked.length > 0) {
+			user.unlockedItems.push(...tutorsJustUnlocked);
+			user.markModified('unlockedItems');
+			await user.save();
+			console.log(`✅ Unlocked tutors for ${user.name}:`, tutorsJustUnlocked);
+		}
 
         user.lastLogin = new Date();
         await user.save();
 
-        // Calculate the user's progress in the current level for the frontend display
         const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
         const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
         const xpNeededForThisLevel = user.level * BRAND_CONFIG.xpPerLevel;
 
-        // The user object sent back to the frontend
         const updatedUserData = {
             level: user.level,
             xpForCurrentLevel: userXpInCurrentLevel,
             xpForNextLevel: xpNeededForThisLevel
         };
-
-        // Note: The res.json() call below needs to be updated.
 
         if (activeConversation.messages.length % 10 === 0) {
             axios.post(`http://localhost:${process.env.PORT || 3000}/api/summary`, {
@@ -194,19 +176,27 @@ if (tutorsJustUnlocked.length > 0) {
             }).catch(err => console.error('ERROR: Failed to trigger session summary:', err.message));
         }
 
-       res.json({
-    text: aiResponseText,
-    userXp: updatedUserData.xpForCurrentLevel,
-    userLevel: updatedUserData.level,
-    xpNeeded: updatedUserData.xpForNextLevel,
-    specialXpAwarded: specialXpAwardedMessage,
-    voiceId: currentTutor.voiceId,
-    isMasteryQuiz: isMasteryQuiz, 
-    accommodationPrompt: frontendAccommodationTrigger,
-    chunkedInstruction: frontendChunkedInstruction,
-    newlyUnlockedTutors: tutorsJustUnlocked
-});
+		// This is a sample drawing sequence for testing our whiteboard.
+		const sampleDrawingSequence = [
+			{ type: 'line', points: [50, 200, 50, 50], label: 'Side A' },
+			{ type: 'line', points: [50, 200, 200, 200], label: 'Side B' },
+			{ type: 'line', points: [50, 50, 200, 200], label: 'Hypotenuse' }
+		];
 
+       res.json({
+			text: aiResponseText,
+			userXp: updatedUserData.xpForCurrentLevel,
+			userLevel: updatedUserData.level,
+			xpNeeded: updatedUserData.xpForNextLevel,
+			specialXpAwarded: specialXpAwardedMessage,
+			voiceId: currentTutor.voiceId,
+			isMasteryQuiz: isMasteryQuiz, 
+			accommodationPrompt: frontendAccommodationTrigger,
+			chunkedInstruction: frontendChunkedInstruction,
+			newlyUnlockedTutors: tutorsJustUnlocked,
+			// --- NEWLY ADDED FOR WHITEBOARD TESTING ---
+			drawingSequence: sampleDrawingSequence 
+		});
 
     } catch (error) {
         console.error("ERROR: Chat route failed:", error);

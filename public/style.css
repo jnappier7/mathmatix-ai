@@ -2855,3 +2855,29 @@ main {
     transform: translate(-50%, 0); /* Move to final position */
     opacity: 1;
 }
+
+/* --- Whiteboard Panel Styles --- */
+#whiteboard-panel {
+    display: flex;
+    flex-direction: column;
+    /* You may need to adjust the height based on your layout */
+    height: 300px; 
+    margin-bottom: 1rem; /* Adds spacing between this and the panel below */
+}
+
+/* This is the key rule to hide the panel by default */
+#whiteboard-panel.is-hidden {
+    display: none;
+}
+
+#tutor-canvas {
+    /* This makes the canvas element itself responsive */
+    width: 100%;
+    height: 100%;
+    border-radius: 0 0 8px 8px; /* Match your panel style */
+}
+
+#close-whiteboard-btn {
+    /* Ensures the close button is easily clickable */
+    font-size: 1.5rem;
+}
