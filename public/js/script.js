@@ -7,6 +7,7 @@ let currentUser = null;
 let isPlaying = false; 
 let audioQueue = [];
 let currentAudioSource = null;
+let fabricCanvas = null; // <-- NEW: For whiteboard canvas
 
 // --- Global Helper Functions ---
 function generateSpeakableText(text) {
@@ -112,6 +113,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const insertLatexBtn = document.getElementById('insert-latex-eq');
     const mathEditor = document.getElementById('math-editor');
 
+    // --- NEW: Whiteboard Element Caching ---
+    const whiteboardPanel = document.getElementById('whiteboard-panel');
+    const closeWhiteboardBtn = document.getElementById('close-whiteboard-btn');
+    
     // --- Speech Recognition ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition;
@@ -138,6 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentUser.needsProfileCompletion) return window.location.href = "/complete-profile.html";
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
             
+            initializeWhiteboard(); // <-- NEW: Initialize whiteboard
             setupChatUI();
             await fetchAndDisplayParentCode();
             await getWelcomeMessage();
@@ -147,6 +153,63 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "/login.html";
         }
     }
+    
+    // --- NEW: Whiteboard Functions ---
+    function initializeWhiteboard() {
+        if (document.getElementById('tutor-canvas') && window.fabric) {
+            fabricCanvas = new fabric.Canvas('tutor-canvas', {
+                isDrawingMode: false,
+                selection: false,
+                backgroundColor: '#f9f9f9',
+            });
+            // Make it responsive
+            const resizeCanvas = () => {
+                const parent = document.getElementById('whiteboard-panel');
+                if (parent && fabricCanvas) {
+                    fabricCanvas.setWidth(parent.clientWidth);
+                    fabricCanvas.setHeight(parent.clientHeight - parent.querySelector('.dashboard-panel-header').offsetHeight);
+                    fabricCanvas.renderAll();
+                }
+            };
+            new ResizeObserver(resizeCanvas).observe(document.getElementById('whiteboard-panel'));
+            resizeCanvas();
+        }
+    }
+
+    function renderDrawing(sequence) {
+        if (!fabricCanvas || !whiteboardPanel) return;
+
+        // Clear previous drawing and show the panel
+        fabricCanvas.clear();
+        whiteboardPanel.classList.remove('is-hidden');
+
+        // Render each step of the sequence
+        sequence.forEach(item => {
+            switch (item.type) {
+                case 'line':
+                    const line = new fabric.Line(item.points, {
+                        stroke: 'black',
+                        strokeWidth: 2,
+                        selectable: false,
+                    });
+                    fabricCanvas.add(line);
+                    break;
+                case 'text':
+                    const text = new fabric.Text(item.content, {
+                        left: item.position[0],
+                        top: item.position[1],
+                        fontSize: 16,
+                        selectable: false,
+                    });
+                    fabricCanvas.add(text);
+                    break;
+                // Add more cases here later (e.g., 'highlight', 'circle')
+            }
+        });
+        
+        fabricCanvas.renderAll();
+    }
+    // --- END: Whiteboard Functions ---
 
     function updateTutorAvatar() {
         const studentAvatarContainer = document.getElementById("student-avatar");
@@ -290,25 +353,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
 
+            // --- NEW: Check for drawing data and render it ---
+            if (data.drawingSequence && data.drawingSequence.length > 0) {
+                renderDrawing(data.drawingSequence);
+            }
+
             if (Array.isArray(data.newlyUnlockedTutors) && data.newlyUnlockedTutors.length > 0) {
                 const tutorS = data.newlyUnlockedTutors.length > 1 ? "s" : "";
                 showToast(`🎉 You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
                 triggerConfetti();
             }
             
-            // --- FIX APPLIED HERE ---
             if (data.userXp !== undefined && data.userLevel !== undefined) {
-                // 1. Assign the user's new level
                 currentUser.level = data.userLevel;
-            
-                // 2. Assign the XP progress values from the API
                 currentUser.xpForCurrentLevel = data.userXp;
                 currentUser.xpForNextLevel = data.xpNeeded;
-            
-                // 3. Call the function to update the UI
                 updateGamificationDisplay();
             }
-            // --- END FIX ---
 
             if (data.specialXpAwarded) {
                 const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
@@ -487,6 +548,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
     
+    // --- NEW: Whiteboard Close Button Listener ---
+    if (closeWhiteboardBtn) {
+        closeWhiteboardBtn.addEventListener('click', () => {
+            if (whiteboardPanel) {
+                whiteboardPanel.classList.add('is-hidden');
+            }
+        });
+    }
+
     if (tutorSelectDropdown) {
         tutorSelectDropdown.addEventListener('change', async () => {
             const newTutorId = tutorSelectDropdown.value;
