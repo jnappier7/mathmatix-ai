@@ -7,7 +7,7 @@ let currentUser = null;
 let isPlaying = false; 
 let audioQueue = [];
 let currentAudioSource = null;
-let fabricCanvas = null; // <-- NEW: For whiteboard canvas
+let fabricCanvas = null;
 
 // --- Global Helper Functions ---
 function generateSpeakableText(text) {
@@ -113,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const insertLatexBtn = document.getElementById('insert-latex-eq');
     const mathEditor = document.getElementById('math-editor');
 
-    // --- NEW: Whiteboard Element Caching ---
     const whiteboardPanel = document.getElementById('whiteboard-panel');
     const closeWhiteboardBtn = document.getElementById('close-whiteboard-btn');
     
@@ -143,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentUser.needsProfileCompletion) return window.location.href = "/complete-profile.html";
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
             
-            initializeWhiteboard(); // <-- NEW: Initialize whiteboard
+            initializeWhiteboard(); 
             setupChatUI();
             await fetchAndDisplayParentCode();
             await getWelcomeMessage();
@@ -154,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    // --- NEW: Whiteboard Functions ---
     function initializeWhiteboard() {
         if (document.getElementById('tutor-canvas') && window.fabric) {
             fabricCanvas = new fabric.Canvas('tutor-canvas', {
@@ -162,28 +160,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 selection: false,
                 backgroundColor: '#f9f9f9',
             });
-            // Make it responsive
+            
             const resizeCanvas = () => {
                 const parent = document.getElementById('whiteboard-panel');
                 if (parent && fabricCanvas) {
+                    const headerHeight = parent.querySelector('.dashboard-panel-header').offsetHeight;
                     fabricCanvas.setWidth(parent.clientWidth);
-                    fabricCanvas.setHeight(parent.clientHeight - parent.querySelector('.dashboard-panel-header').offsetHeight);
+                    fabricCanvas.setHeight(parent.clientHeight - headerHeight);
                     fabricCanvas.renderAll();
                 }
             };
             new ResizeObserver(resizeCanvas).observe(document.getElementById('whiteboard-panel'));
             resizeCanvas();
+
+            // --- NEW: Make the panel draggable ---
+            makeElementDraggable(whiteboardPanel);
         }
     }
 
     function renderDrawing(sequence) {
         if (!fabricCanvas || !whiteboardPanel) return;
 
-        // Clear previous drawing and show the panel
         fabricCanvas.clear();
         whiteboardPanel.classList.remove('is-hidden');
 
-        // Render each step of the sequence
         sequence.forEach(item => {
             switch (item.type) {
                 case 'line':
@@ -203,13 +203,55 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     fabricCanvas.add(text);
                     break;
-                // Add more cases here later (e.g., 'highlight', 'circle')
             }
         });
         
         fabricCanvas.renderAll();
     }
-    // --- END: Whiteboard Functions ---
+
+    // --- NEW: Draggable Element Logic ---
+    function makeElementDraggable(elmnt) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        const header = elmnt.querySelector(".dashboard-panel-header");
+
+        if (header) {
+            // if present, the header is where you move the DIV from:
+            header.onmousedown = dragMouseDown;
+        } else {
+            // otherwise, move the DIV from anywhere inside the DIV:
+            elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+            // stop moving when mouse button is released:
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
 
     function updateTutorAvatar() {
         const studentAvatarContainer = document.getElementById("student-avatar");
@@ -353,7 +395,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
 
-            // --- NEW: Check for drawing data and render it ---
             if (data.drawingSequence && data.drawingSequence.length > 0) {
                 renderDrawing(data.drawingSequence);
             }
@@ -548,7 +589,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
     
-    // --- NEW: Whiteboard Close Button Listener ---
     if (closeWhiteboardBtn) {
         closeWhiteboardBtn.addEventListener('click', () => {
             if (whiteboardPanel) {

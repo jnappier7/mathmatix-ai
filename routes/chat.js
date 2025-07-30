@@ -1,5 +1,4 @@
 // routes/chat.js
-// MODIFIED: Now handles starting a new conversation if the previous one was archived.
 
 const express = require('express');
 const router = express.Router();
@@ -15,7 +14,7 @@ const { getTutorsToUnlock } = require('../utils/unlockTutors');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 const MAX_MESSAGE_LENGTH = 2000;
-const MAX_HISTORY_LENGTH_FOR_AI = 40; // The sliding window size
+const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
 const ACCOMMODATION_TRIGGERS = {
     'focus_mode_trigger': { type: 'info', text: "It looks like you might benefit from a focused session! I can help minimize distractions and keep us on track." },
@@ -85,6 +84,24 @@ router.post('/', isAuthenticated, async (req, res) => {
         });
 
        aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond to that. Could you try rephrasing?";
+
+        // --- NEW: LOGIC TO EXTRACT DRAWING SEQUENCE ---
+        let dynamicDrawingSequence = null;
+        const drawingRegex = /"drawingSequence"\s*:\s*(\[.*?\])/;
+        const drawingMatch = aiResponseText.match(drawingRegex);
+
+        if (drawingMatch && drawingMatch[1]) {
+            try {
+                // Parse the extracted array string into a real JSON object
+                dynamicDrawingSequence = JSON.parse(drawingMatch[1]);
+                // Clean the entire "drawingSequence" definition from the AI's text response
+                aiResponseText = aiResponseText.replace(/"drawingSequence"\s*:\s*\[.*?\]/g, '').trim();
+            } catch (e) {
+                console.error("Error parsing drawingSequence from AI response:", e);
+                dynamicDrawingSequence = null; // Ensure it's null if parsing fails
+            }
+        }
+        // --- END OF NEW LOGIC ---
 
         const xpMentionRegex = /\b(\d+)\s*XP\b/i;
         const hasXpMention = xpMentionRegex.test(aiResponseText);
@@ -176,13 +193,8 @@ router.post('/', isAuthenticated, async (req, res) => {
             }).catch(err => console.error('ERROR: Failed to trigger session summary:', err.message));
         }
 
-		// This is a sample drawing sequence for testing our whiteboard.
-		const sampleDrawingSequence = [
-			{ type: 'line', points: [50, 200, 50, 50], label: 'Side A' },
-			{ type: 'line', points: [50, 200, 200, 200], label: 'Side B' },
-			{ type: 'line', points: [50, 50, 200, 200], label: 'Hypotenuse' }
-		];
-
+        // The hard-coded sampleDrawingSequence has been REMOVED.
+        // We now send the sequence dynamically extracted from the AI's response.
        res.json({
 			text: aiResponseText,
 			userXp: updatedUserData.xpForCurrentLevel,
@@ -194,8 +206,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 			accommodationPrompt: frontendAccommodationTrigger,
 			chunkedInstruction: frontendChunkedInstruction,
 			newlyUnlockedTutors: tutorsJustUnlocked,
-			// --- NEWLY ADDED FOR WHITEBOARD TESTING ---
-			drawingSequence: sampleDrawingSequence 
+			drawingSequence: dynamicDrawingSequence // <-- Use the dynamic data here
 		});
 
     } catch (error) {

@@ -2856,28 +2856,47 @@ main {
     opacity: 1;
 }
 
-/* --- Whiteboard Panel Styles --- */
+/* --- Floating Draggable Whiteboard Panel --- */
 #whiteboard-panel {
+    /* Core floating properties */
+    position: absolute;
+    top: 15%;
+    right: 20px;
+    z-index: 1000;
+    
+    /* Sizing and appearance */
+    width: 350px;
+    height: 300px;
+    background-color: #fff; /* Give it a solid background */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-radius: 8px;
+
+    /* Flex layout for header/canvas */
     display: flex;
     flex-direction: column;
-    /* You may need to adjust the height based on your layout */
-    height: 300px; 
-    margin-bottom: 1rem; /* Adds spacing between this and the panel below */
+
+    /* Transition for smooth show/hide */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
 }
 
-/* This is the key rule to hide the panel by default */
 #whiteboard-panel.is-hidden {
-    display: none;
+    /* Hide by making it invisible and non-interactive */
+    opacity: 0;
+    visibility: hidden;
+}
+
+#whiteboard-panel .dashboard-panel-header {
+    cursor: move; /* Indicates the header is draggable */
 }
 
 #tutor-canvas {
-    /* This makes the canvas element itself responsive */
     width: 100%;
     height: 100%;
-    border-radius: 0 0 8px 8px; /* Match your panel style */
+    border-radius: 0 0 8px 8px;
 }
 
 #close-whiteboard-btn {
-    /* Ensures the close button is easily clickable */
     font-size: 1.5rem;
 }
