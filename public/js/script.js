@@ -298,75 +298,78 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
-        if (!chatBox) return;
-        const bubble = document.createElement("div");
-        bubble.className = `message ${sender}`;
-        bubble.id = `message-${Date.now()}-${Math.random()}`;
-        if (isMasteryQuiz) { bubble.classList.add('mastery-quiz'); }
-        
-        const textNode = document.createElement('span');
-        textNode.className = 'message-text';
-        if (sender === 'ai' && typeof marked === 'function') {
-            textNode.innerHTML = marked.parse(text, { breaks: true });
-        } else {
-            textNode.textContent = text;
-        }
-        bubble.appendChild(textNode);
-        
-        if (graphData && window.functionPlot) {
-             const graphContainer = document.createElement('div');
-            const graphId = 'graph-container-' + Date.now();
-            graphContainer.id = graphId;
-            graphContainer.className = 'graph-render-area';
-            bubble.appendChild(graphContainer);
-            setTimeout(() => {
-                try {
-                    const plotWidth = chatBox.clientWidth > 150 ? chatBox.clientWidth - 80 : 250;
-                    functionPlot({
-                        target: '#' + graphId,
-                        width: plotWidth,
-                        height: 300,
-                        grid: true,
-                        data: [{ fn: graphData.function, graphType: 'polyline' }]
-                    });
-                } catch (e) { console.error("Graphing error:", e); graphContainer.innerHTML = "Could not render graph."; }
-            }, 0);
-        }
-        
-        if (sender === 'ai') {
-            const playBtn = document.createElement("button");
-            playBtn.className = "play-audio-btn";
-            playBtn.innerHTML = '<i class="fas fa-play"></i><i class="fas fa-wave-square"></i><i class="fas fa-spinner"></i>';
-            playBtn.setAttribute("title", "Play audio");
-            playBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                playBtn.disabled = true;
-                playBtn.classList.add('is-loading');
-                const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
-                const speakableText = generateSpeakableText(text);
-                playAudio(speakableText, tutor.voiceId, bubble.id);
-            });
-            bubble.appendChild(playBtn);
-        }
+    // --- ADD THIS LINE ---
+    if (!text && !graphData) return; // Prevents creation of empty bubbles
 
-        chatBox.appendChild(bubble);
-
-        if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
-            if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
-                 const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
-                 if (playButtonForAutoplay) {
-                    playButtonForAutoplay.disabled = true;
-                    playButtonForAutoplay.classList.add('is-loading');
-                 }
-                 const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
-                 const speakableText = generateSpeakableText(text);
-                 playAudio(speakableText, tutor.voiceId, bubble.id);
-            }
-        }
-        
-        setTimeout(() => renderMathInElement(bubble), 0);
-        chatBox.scrollTop = chatBox.scrollHeight;
+    if (!chatBox) return;
+    const bubble = document.createElement("div");
+    bubble.className = `message ${sender}`;
+    bubble.id = `message-${Date.now()}-${Math.random()}`;
+    if (isMasteryQuiz) { bubble.classList.add('mastery-quiz'); }
+    
+    const textNode = document.createElement('span');
+    textNode.className = 'message-text';
+    if (sender === 'ai' && typeof marked === 'function') {
+        textNode.innerHTML = marked.parse(text, { breaks: true });
+    } else {
+        textNode.textContent = text;
     }
+    bubble.appendChild(textNode);
+    
+    if (graphData && window.functionPlot) {
+         const graphContainer = document.createElement('div');
+        const graphId = 'graph-container-' + Date.now();
+        graphContainer.id = graphId;
+        graphContainer.className = 'graph-render-area';
+        bubble.appendChild(graphContainer);
+        setTimeout(() => {
+            try {
+                const plotWidth = chatBox.clientWidth > 150 ? chatBox.clientWidth - 80 : 250;
+                functionPlot({
+                    target: '#' + graphId,
+                    width: plotWidth,
+                    height: 300,
+                    grid: true,
+                    data: [{ fn: graphData.function, graphType: 'polyline' }]
+                });
+            } catch (e) { console.error("Graphing error:", e); graphContainer.innerHTML = "Could not render graph."; }
+        }, 0);
+    }
+    
+    if (sender === 'ai') {
+        const playBtn = document.createElement("button");
+        playBtn.className = "play-audio-btn";
+        playBtn.innerHTML = '<i class="fas fa-play"></i><i class="fas fa-wave-square"></i><i class="fas fa-spinner"></i>';
+        playBtn.setAttribute("title", "Play audio");
+        playBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playBtn.disabled = true;
+            playBtn.classList.add('is-loading');
+            const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
+            const speakableText = generateSpeakableText(text);
+            playAudio(speakableText, tutor.voiceId, bubble.id);
+        });
+        bubble.appendChild(playBtn);
+    }
+
+    chatBox.appendChild(bubble);
+
+    if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
+        if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
+             const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
+             if (playButtonForAutoplay) {
+                playButtonForAutoplay.disabled = true;
+                playButtonForAutoplay.classList.add('is-loading');
+             }
+             const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
+             const speakableText = generateSpeakableText(text);
+             playAudio(speakableText, tutor.voiceId, bubble.id);
+        }
+    }
+    
+    setTimeout(() => renderMathInElement(bubble), 0);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
     async function sendMessage() {
         const messageText = userInput.value.trim();
