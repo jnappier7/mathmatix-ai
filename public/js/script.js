@@ -62,6 +62,29 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
     setTimeout(() => { animationText.remove(); }, 3000);
 }
 
+function showToast(message, duration = 3000) {
+    const toast = document.createElement("div");
+    toast.className = "toast-message";
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add("visible"), 10);
+    setTimeout(() => {
+        toast.classList.remove("visible");
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+function triggerConfetti() {
+    if (typeof confetti === 'function') {
+        confetti({
+            particleCount: 150,
+            spread: 80,
+            origin: { y: 0.6 },
+            zIndex: 9999
+        });
+    }
+}
+
 
 // --- Main Application Logic ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -116,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
             
             setupChatUI();
-            await fetchAndDisplayParentCode(); // Fetch and display the parent link code
+            await fetchAndDisplayParentCode();
             await getWelcomeMessage();
             await fetchAndDisplayLeaderboard();
         } catch (error) {
@@ -138,10 +161,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateGamificationDisplay();
     }
     
-    // NEW: Function to get and display the parent link code
     async function fetchAndDisplayParentCode() {
         if (currentUser.role === 'student' && studentLinkCodeValue) {
-            // The user object from initializeApp already has the code
             if (currentUser.parent_link_code) {
                 studentLinkCodeValue.textContent = currentUser.parent_link_code;
             } else {
@@ -166,36 +187,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    // NEW: Placeholder function to handle file uploads
     function handleFileUpload(file) {
         console.log("File selected:", file.name, file.size, file.type);
-        // Here you would typically use FormData to upload the file to your server
-        // For now, we'll just show a message in the chat.
         appendMessage(`File selected: ${file.name}`, "user");
-        
-        // Example of how you would start an upload:
-        /*
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('userId', currentUser._id);
-        
-        showThinkingIndicator(true);
-        fetch('/api/upload', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            appendMessage(data.response, "ai");
-        })
-        .catch(error => {
-            console.error('Upload error:', error);
-            appendMessage("Sorry, I couldn't upload that file.", "ai");
-        })
-        .finally(() => {
-            showThinkingIndicator(false);
-        });
-        */
     }
 
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
@@ -222,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.appendChild(graphContainer);
             setTimeout(() => {
                 try {
-                    // UPDATED: More robust graph width calculation
                     const plotWidth = chatBox.clientWidth > 150 ? chatBox.clientWidth - 80 : 250;
                     functionPlot({
                         target: '#' + graphId,
@@ -296,11 +289,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (e) { console.error("Failed to parse graph JSON:", e); graphData = null; }
             }
             appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
-            if (data.userXp !== undefined) {
-                currentUser.xp = data.userXp;
+
+            if (Array.isArray(data.newlyUnlockedTutors) && data.newlyUnlockedTutors.length > 0) {
+                const tutorS = data.newlyUnlockedTutors.length > 1 ? "s" : "";
+                showToast(`🎉 You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
+                triggerConfetti();
+            }
+            
+            // --- FIX APPLIED HERE ---
+            if (data.userXp !== undefined && data.userLevel !== undefined) {
+                // 1. Assign the user's new level
                 currentUser.level = data.userLevel;
+            
+                // 2. Assign the XP progress values from the API
+                currentUser.xpForCurrentLevel = data.userXp;
+                currentUser.xpForNextLevel = data.xpNeeded;
+            
+                // 3. Call the function to update the UI
                 updateGamificationDisplay();
             }
+            // --- END FIX ---
+
             if (data.specialXpAwarded) {
                 const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
                 const message = isLevelUp ? data.specialXpAwarded : `+${data.specialXpAwarded}`;
@@ -385,25 +394,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-// In script.js
+    function updateGamificationDisplay() {
+        const levelSpan = document.getElementById("current-level");
+        const xpSpan = document.getElementById("current-xp");
+        const xpBar = document.getElementById("xp-progress-bar");
+        const xpNeededSpan = document.getElementById("xp-needed");
 
-function updateGamificationDisplay() {
-    const levelSpan = document.getElementById("current-level");
-    const xpSpan = document.getElementById("current-xp");
-    const xpBar = document.getElementById("xp-progress-bar");
-    const xpNeededSpan = document.getElementById("xp-needed");
+        if (levelSpan && currentUser.level) levelSpan.textContent = currentUser.level;
+        if (xpSpan && currentUser.xpForCurrentLevel !== undefined) xpSpan.textContent = currentUser.xpForCurrentLevel;
+        if (xpBar && currentUser.xpForCurrentLevel !== undefined) {
+            xpBar.value = currentUser.xpForCurrentLevel;
+            xpBar.max = currentUser.xpForNextLevel;
+        }
+        if (xpNeededSpan && currentUser.xpForNextLevel) {
+            xpNeededSpan.textContent = currentUser.xpForNextLevel;
+        }
+    }
 
-    // Assume currentUser now has properties like 'xpForCurrentLevel' and 'xpForNextLevel' from the server
-    if (levelSpan) levelSpan.textContent = currentUser.level;
-    if (xpSpan) xpSpan.textContent = currentUser.xpForCurrentLevel; // Use current level XP
-    if (xpBar) {
-        xpBar.value = currentUser.xpForCurrentLevel; // Use current level XP
-        xpBar.max = currentUser.xpForNextLevel;      // Use XP needed for next level
-    }
-    if (xpNeededSpan) {
-        xpNeededSpan.textContent = currentUser.xpForNextLevel; // Use XP needed for next level
-    }
-}
     async function fetchAndDisplayLeaderboard() {
         const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
         if (!leaderboardTableBody) return;
@@ -452,7 +459,9 @@ function updateGamificationDisplay() {
             settingsModal.classList.add('is-visible');
         }
     }
+
     function closeSettingsModal() { if (settingsModal) settingsModal.classList.remove('is-visible'); }
+
     async function updateSettings(setting) {
         if (!currentUser) return;
         try {
@@ -488,7 +497,6 @@ function updateGamificationDisplay() {
         });
     }
 
-    // NEW: Event listener for the microphone button
     if (micBtn) {
         micBtn.addEventListener('click', () => {
             if (!recognition) return;
@@ -502,10 +510,10 @@ function updateGamificationDisplay() {
         });
     }
 
-    // NEW: Event listeners for file attachment button and input
     if (attachBtn) {
         attachBtn.addEventListener('click', () => fileInput.click());
     }
+
     if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             if (e.target.files && e.target.files.length > 0) {
@@ -514,7 +522,6 @@ function updateGamificationDisplay() {
         });
     }
 
-    // NEW: Event listeners for drag-and-drop file uploads
     if (fullscreenDropzone) {
         fullscreenDropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -530,7 +537,7 @@ function updateGamificationDisplay() {
 
         fullscreenDropzone.addEventListener('drop', (e) => {
             e.preventDefault();
-e.stopPropagation();
+            e.stopPropagation();
             fullscreenDropzone.classList.remove('drag-active');
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                 handleFileUpload(e.dataTransfer.files[0]);

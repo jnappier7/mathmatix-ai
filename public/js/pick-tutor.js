@@ -1,5 +1,4 @@
 // public/js/pick-tutor.js
-
 document.addEventListener('DOMContentLoaded', () => {
     let allTutors = [];
     let currentUser = null;
@@ -23,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const userData = await userRes.json();
             currentUser = userData.user;
+
+            if (!Array.isArray(currentUser.unlockedItems)) {
+                currentUser.unlockedItems = ['mr-nappier', 'maya', 'ms-maria', 'bob'];
+            }
 
             const scriptText = await tutorConfigRes.text();
             if (!window.TUTOR_CONFIG) {
@@ -49,7 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
         allTutors.forEach(tutor => {
             const tutorCard = document.createElement('div');
             const isUnlocked = currentUser.unlockedItems.includes(tutor.id);
-            
+
+            console.log(`[DEBUG] Tutor ID: ${tutor.id} — Unlocked: ${isUnlocked} — User List:`, currentUser.unlockedItems);
+
             tutorCard.classList.add('tutor-card', 'card-style-1', isUnlocked ? 'unlocked' : 'locked');
             tutorCard.dataset.tutorId = tutor.id;
 
@@ -64,12 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             } else {
-                // Render the "locked" silhouette card
-                // ALWAYS use the actual tutor image. The CSS 'silhouette' class will handle the effect.
+                const unlockLabel = tutor.unlockLevel
+                    ? `Unlocks at Level ${tutor.unlockLevel}`
+                    : 'Unlock by playing';
+
                 tutorCard.innerHTML = `
                     <img src="/images/tutor_avatars/${tutor.image}" alt="Locked Tutor" class="tutor-card-image silhouette" />
                     <h3 class="tutor-card-name locked-name">?????</h3>
-                    <p class="tutor-card-tagline"><i class="fas fa-lock"></i> ${tutor.unlockCondition?.description || 'Unlock by playing'}</p>
+                    <p class="tutor-card-tagline"><i class="fas fa-lock"></i> ${unlockLabel}</p>
                 `;
             }
             tutorSelectionGrid.appendChild(tutorCard);
@@ -142,8 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- CORRECTED INITIALIZATION ---
-    // We wrap the initialization logic in an async function and call it.
     async function initializePage() {
         playVoiceBtn.disabled = true;
         selectTutorBtn.disabled = true;

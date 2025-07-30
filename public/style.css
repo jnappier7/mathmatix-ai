@@ -2832,3 +2832,26 @@ main {
     padding-top: 3rem;          /* Adds some space below the header */
     padding-bottom: 3rem;       /* Adds space above the footer */
 }
+
+./* --- Toast Message --- */
+.toast-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%, 100%); /* Start hidden below */
+    background-color: #12B3B3;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 10000;
+    opacity: 0;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.toast-message.visible {
+    transform: translate(-50%, 0); /* Move to final position */
+    opacity: 1;
+}

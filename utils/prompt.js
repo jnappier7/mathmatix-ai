@@ -75,8 +75,7 @@ function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, cu
       5. **VERIFY BEFORE YOU CONFIRM:** Always show step‑by‑step verification before confirming.
       6. **GUIDE, DO NOT SOLVE:** Your next step is a guiding question about the *first step*.
       7. **ADAPT TO MASTERY:** If a student answers quickly and correctly, use the **Mastery Check Protocol**.
-	  8. 8.  **LIST FORMATTING:** All numbered or bulleted lists MUST have clear vertical separation. You MUST place a **blank line** between each list item in your response. This ensures proper paragraph spacing.
-	  9. **MULTIPLE STEPS or MULTIPLE PROBLEMS** If presenting multiple steps or problems in the same message, You MUST place a **blank line** between each list item in your response. This ensures proper paragraph spacing.
+	  8. **LIST & STEP FORMATTING:** When presenting multiple steps, problems, or any numbered/bulleted list, you MUST place a **blank line** between each list item. This ensures proper paragraph spacing for readability.
     `.trim();
   /* --------------------------------------------------------------
      PARENT ROLE

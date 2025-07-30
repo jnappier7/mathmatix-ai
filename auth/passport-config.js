@@ -85,8 +85,7 @@ passport.use(new GoogleStrategy({
             }
         }
 
-        // --- CORRECTED NEW USER CREATION ---
-        const newLinkCode = await generateUniqueStudentLinkCode(); // Define the code
+        const newLinkCode = await generateUniqueStudentLinkCode();
         const newUser = await User.create({
             googleId: profile.id,
             email: userEmail,
@@ -99,7 +98,8 @@ passport.use(new GoogleStrategy({
             xp: 0,
             level: 1,
             studentToParentLinkCode: { code: newLinkCode },
-            unlockedTutors: ['mr-nappier', 'maya', 'ms-maria', 'bob'] // Add default unlocked tutor
+            // --- FIX APPLIED HERE ---
+            unlockedItems: ['mr-nappier', 'maya', 'ms-maria', 'bob']
         });
         console.log('LOG: GoogleStrategy created new user:', newUser.username);
         return done(null, newUser);
@@ -143,8 +143,7 @@ passport.use(new MicrosoftStrategy({
             }
         }
 
-        // --- CORRECTED NEW USER CREATION ---
-        const newLinkCode = await generateUniqueStudentLinkCode(); // Define the code
+        const newLinkCode = await generateUniqueStudentLinkCode();
         const newUser = await User.create({
             microsoftId: profile.id,
             email: userEmail,
@@ -157,7 +156,7 @@ passport.use(new MicrosoftStrategy({
             xp: 0,
             level: 1,
             studentToParentLinkCode: { code: newLinkCode },
-            unlockedItems: ['mr-nappier', 'maya', 'ms-maria', 'bob'] // Add default unlocked tutor
+            unlockedItems: ['mr-nappier', 'maya', 'ms-maria', 'bob']
         });
         console.log('LOG: MicrosoftStrategy created new user:', newUser.username);
         return done(null, newUser);

@@ -158,7 +158,17 @@ router.post('/', isAuthenticated, async (req, res) => {
             user.level += 1;
             specialXpAwardedMessage = `LEVEL_UP! New level: ${user.level}`;
         }
-        
+        // --- NEW: Unlock Tutors on Level Up ---
+const { getTutorsToUnlock } = require('../utils/unlockTutors');
+
+const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
+if (tutorsJustUnlocked.length > 0) {
+    user.unlockedItems.push(...tutorsJustUnlocked);
+    user.markModified('unlockedItems');
+    await user.save();
+    console.log(`✅ Unlocked tutors for ${user.name}:`, tutorsJustUnlocked);
+}
+
         user.lastLogin = new Date();
         await user.save();
 
@@ -184,17 +194,19 @@ router.post('/', isAuthenticated, async (req, res) => {
             }).catch(err => console.error('ERROR: Failed to trigger session summary:', err.message));
         }
 
-        res.json({
-    		text: aiResponseText,
-			userXp: updatedUserData.xpForCurrentLevel,  // Send the corrected XP data
-			userLevel: updatedUserData.level,
-			xpNeeded: updatedUserData.xpForNextLevel,   // Send the new max value
-			specialXpAwarded: specialXpAwardedMessage,
-            voiceId: currentTutor.voiceId,
-			isMasteryQuiz: isMasteryQuiz, 
-            accommodationPrompt: frontendAccommodationTrigger,
-            chunkedInstruction: frontendChunkedInstruction
-        });
+       res.json({
+    text: aiResponseText,
+    userXp: updatedUserData.xpForCurrentLevel,
+    userLevel: updatedUserData.level,
+    xpNeeded: updatedUserData.xpForNextLevel,
+    specialXpAwarded: specialXpAwardedMessage,
+    voiceId: currentTutor.voiceId,
+    isMasteryQuiz: isMasteryQuiz, 
+    accommodationPrompt: frontendAccommodationTrigger,
+    chunkedInstruction: frontendChunkedInstruction,
+    newlyUnlockedTutors: tutorsJustUnlocked
+});
+
 
     } catch (error) {
         console.error("ERROR: Chat route failed:", error);
