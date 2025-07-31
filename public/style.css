@@ -2957,3 +2957,38 @@ main {
   border-radius: 12px;     /* Rounded corners */
   box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Optional: A subtle shadow for depth */
 }
+
+/* --- Proportional Right Sidebar Layout --- */
+
+/* 1. Set up the sidebar as a flexible column */
+.widget-sidebar-right {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px); /* Adjust 100px to match your header/footer height */
+  padding: 1rem;
+  gap: 1rem;
+}
+
+/* 2. Assign the growth proportions */
+#avatar-container {
+  flex-grow: 4; /* 4/8 = 1/2 of the space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0; /* Important for flexbox shrinking */
+}
+
+#xp-level-display {
+  flex-grow: 3; /* 3/8 of the space */
+}
+
+#student-parent-link-display {
+  flex-grow: 1; /* 1/8 of the space */
+}
+
+/* 3. Ensure the avatar image fits its container */
+#avatar-container #student-avatar, #avatar-container #student-avatar img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
