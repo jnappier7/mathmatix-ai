@@ -10,6 +10,8 @@ let currentAudioSource = null;
 let fabricCanvas = null;
 
 // --- Global Helper Functions ---
+const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
 function generateSpeakableText(text) {
     if (!text || !window.MathLive) return text.replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
     const latexRegex = /(\\\(|\\\[|\$\$)([\s\S]+?)(\\\)|\\\]|\$\$)/g;
@@ -177,13 +179,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function renderDrawing(sequence) {
+    async function renderDrawing(sequence, delay = 500) {
         if (!fabricCanvas || !whiteboardPanel) return;
 
         fabricCanvas.clear();
         whiteboardPanel.classList.remove('is-hidden');
 
-        sequence.forEach(item => {
+        for (const item of sequence) {
             switch (item.type) {
                 case 'line':
                     const line = new fabric.Line(item.points, {
@@ -203,9 +205,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     fabricCanvas.add(text);
                     break;
             }
-        });
-        
-        fabricCanvas.renderAll(); 
+            fabricCanvas.renderAll();
+            await sleep(delay);
+        }
     }
 
     function makeElementDraggable(elmnt) {
@@ -585,7 +587,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
     
-    // --- NEW: Equation Modal Listeners ---
     if (openEquationBtn) {
         openEquationBtn.addEventListener('click', () => {
             if (equationModal) equationModal.classList.add('is-visible');
@@ -612,7 +613,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    // --- END: Equation Modal Listeners ---
     
     if (closeWhiteboardBtn) {
         closeWhiteboardBtn.addEventListener('click', () => {
