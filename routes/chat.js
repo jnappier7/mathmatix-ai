@@ -85,23 +85,20 @@ router.post('/', isAuthenticated, async (req, res) => {
 
        aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond to that. Could you try rephrasing?";
 
-        // --- NEW: LOGIC TO EXTRACT DRAWING SEQUENCE ---
         let dynamicDrawingSequence = null;
-        const drawingRegex = /"drawingSequence"\s*:\s*(\[.*?\])/;
+        // --- FINAL, MOST ROBUST REGEX ---
+        const drawingRegex = /"drawingSequence"\s*:\s*(\[[\s\S]*?\])/s;
         const drawingMatch = aiResponseText.match(drawingRegex);
 
         if (drawingMatch && drawingMatch[1]) {
             try {
-                // Parse the extracted array string into a real JSON object
                 dynamicDrawingSequence = JSON.parse(drawingMatch[1]);
-                // Clean the entire "drawingSequence" definition from the AI's text response
-                aiResponseText = aiResponseText.replace(/"drawingSequence"\s*:\s*\[.*?\]/g, '').trim();
+                aiResponseText = aiResponseText.replace(drawingMatch[0], '').replace(/```json|```/g, '').trim();
             } catch (e) {
                 console.error("Error parsing drawingSequence from AI response:", e);
-                dynamicDrawingSequence = null; // Ensure it's null if parsing fails
+                dynamicDrawingSequence = null;
             }
         }
-        // --- END OF NEW LOGIC ---
 
         const xpMentionRegex = /\b(\d+)\s*XP\b/i;
         const hasXpMention = xpMentionRegex.test(aiResponseText);
@@ -109,7 +106,6 @@ router.post('/', isAuthenticated, async (req, res) => {
 
         if (hasXpMention && !hasXpTag) {
             const points = aiResponseText.match(xpMentionRegex)[1];
-            console.log(`LOG: XP Safety Net triggered. AI mentioned ${points} XP but forgot the tag. Adding tag programmatically.`);
             aiResponseText += ` <AWARD_XP:${points},For your excellent work!>`;
         }
 
@@ -169,7 +165,6 @@ router.post('/', isAuthenticated, async (req, res) => {
 			user.unlockedItems.push(...tutorsJustUnlocked);
 			user.markModified('unlockedItems');
 			await user.save();
-			console.log(`✅ Unlocked tutors for ${user.name}:`, tutorsJustUnlocked);
 		}
 
         user.lastLogin = new Date();
@@ -193,8 +188,6 @@ router.post('/', isAuthenticated, async (req, res) => {
             }).catch(err => console.error('ERROR: Failed to trigger session summary:', err.message));
         }
 
-        // The hard-coded sampleDrawingSequence has been REMOVED.
-        // We now send the sequence dynamically extracted from the AI's response.
        res.json({
 			text: aiResponseText,
 			userXp: updatedUserData.xpForCurrentLevel,
@@ -206,7 +199,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 			accommodationPrompt: frontendAccommodationTrigger,
 			chunkedInstruction: frontendChunkedInstruction,
 			newlyUnlockedTutors: tutorsJustUnlocked,
-			drawingSequence: dynamicDrawingSequence // <-- Use the dynamic data here
+			drawingSequence: dynamicDrawingSequence
 		});
 
     } catch (error) {
