@@ -2,6 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
+// --- ADD THIS LINE ---
+const { isAuthenticated } = require('../middleware/auth'); 
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
@@ -51,7 +53,6 @@ router.post('/', isAuthenticated, async (req, res) => {
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
         let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
 
-        // --- NEW, MORE ROBUST DRAWING LOGIC ---
         let dynamicDrawingSequence = [];
         const drawLineRegex = /\[DRAW_LINE:([\d\s,]+)\]/g;
         const drawTextRegex = /\[DRAW_TEXT:([\d\s,]+),([^\]]+)\]/g;
@@ -71,12 +72,10 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         }
 
-        // Clean the tags from the final text
         aiResponseText = aiResponseText.replace(drawLineRegex, '').replace(drawTextRegex, '').trim();
         if (dynamicDrawingSequence.length === 0) {
-            dynamicDrawingSequence = null; // Ensure it's null if no commands were found
+            dynamicDrawingSequence = null;
         }
-        // --- END NEW LOGIC ---
 
         const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
         let bonusXpAwarded = 0;
