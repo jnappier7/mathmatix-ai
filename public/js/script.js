@@ -539,8 +539,8 @@ document.addEventListener("DOMContentLoaded", () => {
             autoplayTtsToggle.checked = !!currentUser.preferences.autoplayTtsHandsFree;
             if (tutorSelectDropdown && window.TUTOR_CONFIG) {
                 tutorSelectDropdown.innerHTML = '';
-                if (currentUser.unlockedTutors && Array.isArray(currentUser.unlockedTutors)) {
-                    currentUser.unlockedTutors.forEach(tutorId => {
+                if (currentUser.unlockedItems && Array.isArray(currentUser.unlockedItems)) {
+                    currentUser.unlockedItems.forEach(tutorId => {
                         const tutor = window.TUTOR_CONFIG[tutorId];
                         if (tutor) {
                             const option = document.createElement('option');
