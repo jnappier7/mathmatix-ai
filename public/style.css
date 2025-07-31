@@ -2958,14 +2958,15 @@ main {
   box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Optional: A subtle shadow for depth */
 }
 
-/* --- Proportional Right Sidebar Layout --- */
+/* --- Proportional Right Sidebar Layout (Corrected) --- */
 
 /* 1. Set up the sidebar as a flexible column */
 .widget-sidebar-right {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 100px); /* Adjust 100px to match your header/footer height */
-  padding: 1rem;
+  /* FIX: Ensure the sidebar has height to distribute */
+  height: 100%; 
+  max-height: calc(100vh - 120px); /* Adjust 120px to match header/footer height */
   gap: 1rem;
 }
 
@@ -2975,7 +2976,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 0; /* Important for flexbox shrinking */
+  min-height: 0; 
 }
 
 #xp-level-display {
