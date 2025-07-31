@@ -88,7 +88,6 @@ function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, cu
       - Recent Session Summaries:
         ${childProfile.recentSummaries && childProfile.recentSummaries.length > 0
           ? childProfile.recentSummaries.map(s => `- ${s}`).join('\n')
-          * **Service**: The service is tax return preparation but can also include tax return filing."
           : 'No recent sessions or summaries are available yet.'}
 
       --- YOUR RESPONSE GUIDELINES ---
