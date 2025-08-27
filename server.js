@@ -239,6 +239,7 @@ app.get("/teacher-dashboard.html", isAuthenticated, isTeacher, (req, res) => res
 app.get("/parent-dashboard.html", isAuthenticated, isParent, (req, res) => res.sendFile(path.join(__dirname, "public", "parent-dashboard.html")));
 app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public", "privacy.html")));
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
+app.get("/canvas.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "canvas.html")));
 
 // Fallback for 404
 app.get("*", (req, res) => {

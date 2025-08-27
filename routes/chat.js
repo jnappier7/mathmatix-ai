@@ -2,8 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-// --- ADD THIS LINE ---
-const { isAuthenticated } = require('../middleware/auth'); 
+const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
@@ -12,6 +11,7 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const axios = require('axios');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
+const drawLineRegex = /\[DRAW_LINE:({.*})\]/s;
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 const MAX_MESSAGE_LENGTH = 2000;
@@ -53,36 +53,25 @@ router.post('/', isAuthenticated, async (req, res) => {
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
         let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
 
-        let dynamicDrawingSequence = null;
-// --- IMPROVED REGEX WITH BETTER ERROR HANDLING ---
-		const drawingRegex = /(?:json\s+)?"drawingSequence"\s*:\s*(\[[\s\S]*?\])/is;
-		const drawingMatch = aiResponseText.match(drawingRegex);
+        let dynamicDrawingSequence = [];
+        const drawLineRegex = /\[DRAW_LINE:([\d\s,]+)\]/g;
+        const drawTextRegex = /\[DRAW_TEXT:([\d\s,]+),([^\]]+)\]/g;
+        
+        let match;
+        while ((match = drawLineRegex.exec(aiResponseText)) !== null) {
+            const points = match[1].split(',').map(Number);
+            if (points.length === 4) {
+                dynamicDrawingSequence.push({ type: 'line', points });
+            }
+        }
+        while ((match = drawTextRegex.exec(aiResponseText)) !== null) {
+            const position = match[1].split(',').map(Number);
+            const content = match[2];
+            if (position.length === 2) {
+                dynamicDrawingSequence.push({ type: 'text', position, content });
+            }
+        }
 
-		if (drawingMatch && drawingMatch[1]) {
-    	try {
-        // Log the raw JSON we're trying to parse
-        console.log("Raw drawingSequence JSON found:", drawingMatch[1]);
-        
-        // Try to clean up common JSON formatting issues
-        let cleanJson = drawingMatch[1]
-            .replace(/'/g, '"')  // Replace single quotes with double quotes
-            .replace(/(\w+):/g, '"$1":')  // Add quotes around unquoted keys
-            .replace(/,\s*]/g, ']')  // Remove trailing commas before closing brackets
-            .replace(/,\s*}/g, '}');  // Remove trailing commas before closing braces
-        
-        console.log("Cleaned JSON:", cleanJson);
-        
-        dynamicDrawingSequence = JSON.parse(cleanJson);
-        aiResponseText = aiResponseText.replace(drawingMatch[0], '').replace(/```json|```/g, '').replace(/^\s*json\s*/i, '').trim();
-        console.log("Successfully parsed drawingSequence:", dynamicDrawingSequence);
-    } catch (e) {
-        console.error("Error parsing drawingSequence from AI response:", e);
-        console.log("Full AI response:", aiResponseText);
-        console.log("Regex match[0]:", drawingMatch[0]);
-        console.log("Regex match[1]:", drawingMatch[1]);
-        dynamicDrawingSequence = null;
-    }
-}
         aiResponseText = aiResponseText.replace(drawLineRegex, '').replace(drawTextRegex, '').trim();
         if (dynamicDrawingSequence.length === 0) {
             dynamicDrawingSequence = null;

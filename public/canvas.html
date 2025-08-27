@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Canvas | M∆THM∆TIΧ AI</title>
+    <link rel="stylesheet" href="/style.css"> <style>
+        /* Basic styles to make the canvas visible */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent scrollbars */
+            background-color: #f0f2f5;
+        }
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #interactive-canvas {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <canvas id="interactive-canvas" width="800" height="600"></canvas>
+    </div>
+
+    <script src="/js/canvas.js"></script>
+</body>
+</html>

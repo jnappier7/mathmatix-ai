@@ -7,7 +7,7 @@
 require("dotenv").config({ path: '../.env' }); // Adjust path to .env if running from scripts/
 const mongoose = require('mongoose');
 const Conversation = require('../models/conversation');
-const User = = require('../models/user');
+const User = require('../models/user');
 const { generateSummary } = require('../utils/summaryService'); // We will create this shared service next
 
 async function archiveOldConversations() {
