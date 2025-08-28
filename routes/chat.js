@@ -11,7 +11,6 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const axios = require('axios');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
-const drawLineRegex = /\[DRAW_LINE:({.*})\]/s;
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 const MAX_MESSAGE_LENGTH = 2000;
@@ -54,6 +53,8 @@ router.post('/', isAuthenticated, async (req, res) => {
         let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
 
         let dynamicDrawingSequence = [];
+        
+        // --- FIX IS HERE ---
         const drawLineRegex = /\[DRAW_LINE:([\d\s,]+)\]/g;
         const drawTextRegex = /\[DRAW_TEXT:([\d\s,]+),([^\]]+)\]/g;
         
