@@ -2993,3 +2993,35 @@ main {
   width: 100%;
   object-fit: contain;
 }
+
+/* --- Tutor Selection Page Layout Fix --- */
+
+/* 1. Make the body a flex container to position header, main, and footer. */
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden; /* This rule stays but will be overridden where needed */
+}
+
+/* 2. Allow the main content area of this specific page to grow and shrink. */
+.pick-tutor-main {
+    flex-grow: 1; /* Allows this element to fill available vertical space */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevents the main container itself from scrolling */
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* 3. Make the grid of tutors the scrollable element if it overflows. */
+.tutor-selection-grid {
+    overflow-y: auto; /* Adds a scrollbar ONLY if the content is too tall */
+    flex-grow: 1; /* Ensures the grid takes up the available space before scrolling */
+    padding: 1rem; /* Adds some internal spacing */
+}
+
+/* 4. Ensure the action bar does not shrink. */
+.tutor-actions-bar {
+    flex-shrink: 0;
+}
