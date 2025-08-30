@@ -2994,34 +2994,59 @@ main {
   object-fit: contain;
 }
 
-/* --- Tutor Selection Page Layout Fix --- */
+/* --- Tutor Selection Page Layout & Spacing Corrections --- */
 
-/* 1. Make the body a flex container to position header, main, and footer. */
-body {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden; /* This rule stays but will be overridden where needed */
-}
+/* 1. TIGHTEN VERTICAL SPACING */
 
-/* 2. Allow the main content area of this specific page to grow and shrink. */
+/* Reduce the top/bottom space of the main container */
 .pick-tutor-main {
-    flex-grow: 1; /* Allows this element to fill available vertical space */
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; /* Prevents the main container itself from scrolling */
     padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding-bottom: 3rem;
 }
 
-/* 3. Make the grid of tutors the scrollable element if it overflows. */
+/* Reduce the space below the main title */
+.pick-tutor-main h1.section-title {
+    margin-bottom: 0.5rem;
+}
+
+/* Set the space below the subtitle */
+.pick-tutor-main .subtitle {
+    margin-bottom: 2rem;
+    max-width: 600px;
+    text-align: center;
+}
+
+/* Reduce the space between the tutor grid and the action buttons */
 .tutor-selection-grid {
-    overflow-y: auto; /* Adds a scrollbar ONLY if the content is too tall */
-    flex-grow: 1; /* Ensures the grid takes up the available space before scrolling */
-    padding: 1rem; /* Adds some internal spacing */
+    margin-bottom: 2rem;
 }
 
-/* 4. Ensure the action bar does not shrink. */
-.tutor-actions-bar {
-    flex-shrink: 0;
+
+/* 2. ADJUST GRID & CARD SIZE FOR VISIBILITY */
+
+/* Widen the main container to give the grid more horizontal space */
+.pick-tutor-main {
+    max-width: 1200px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Make the tutor cards slightly smaller and the gap between them tighter. */
+.tutor-selection-grid {
+    gap: clamp(15px, 1.5vw, 20px);
+}
+
+.tutor-card {
+    min-height: auto; /* Let the content define the card height */
+    padding: clamp(10px, 1.2vw, 15px);
+}
+
+.tutor-card-image {
+    width: clamp(80px, 10vw, 120px);
+    margin-bottom: 8px;
+}
+
+.tutor-card-name {
+    margin-bottom: 4px;
 }
