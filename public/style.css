@@ -3050,3 +3050,21 @@ main {
 .tutor-card-name {
     margin-bottom: 4px;
 }
+
+
+/* --- Tutor Selection Page Spacing Fix (Revision 2) --- */
+
+/* 1. Drastically reduce the space below the main title. */
+.pick-tutor-main h1.section-title {
+    margin-bottom: 0.25rem; /* Tighter spacing below title */
+}
+
+/* 2. Eliminate the space above the grid of tutors. */
+.tutor-selection-grid {
+    margin-top: 0;
+}
+
+/* 3. Reduce the space between the subtitle and the tutor grid. */
+.pick-tutor-main p.subtitle {
+    margin-bottom: 1.5rem; /* Reduced from 2rem */
+}
