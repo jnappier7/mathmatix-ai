@@ -1,5 +1,5 @@
 // PASTE-READY: Full content for script.js
-console.log("LOG: M?THM?TI? AI Initialized");
+console.log("LOG: M∆THM∆TIΧ AI Initialized");
 
 // --- Global Variables ---
 let currentUser = null;
@@ -454,7 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             if (Array.isArray(data.newlyUnlockedTutors) && data.newlyUnlockedTutors.length > 0) {
                 const tutorS = data.newlyUnlockedTutors.length > 1 ? "s" : "";
-                showToast(`? You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
+                showToast(`🎉 You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
                 triggerConfetti();
             }
             if (data.userXp !== undefined && data.userLevel !== undefined) {
