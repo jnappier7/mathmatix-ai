@@ -2994,77 +2994,51 @@ main {
   object-fit: contain;
 }
 
-/* --- Tutor Selection Page Layout & Spacing Corrections --- */
+/* --- Tutor Selection Page - AGGRESSIVE SPACING FIX --- */
 
-/* 1. TIGHTEN VERTICAL SPACING */
-
-/* Reduce the top/bottom space of the main container */
+/* 1. Shrink the main container's vertical padding. */
 .pick-tutor-main {
-    padding-top: 2rem;
-    padding-bottom: 3rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    gap: 0; /* Remove the main content gap for this page */
 }
 
-/* Reduce the space below the main title */
+/* 2. Tighten the spacing for the title and subtitle. */
 .pick-tutor-main h1.section-title {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem; /* Minimal space */
 }
-
-/* Set the space below the subtitle */
 .pick-tutor-main .subtitle {
-    margin-bottom: 2rem;
-    max-width: 600px;
-    text-align: center;
+    margin-bottom: 1.5rem; /* Reduced space before grid */
 }
 
-/* Reduce the space between the tutor grid and the action buttons */
+/* 3. Make the tutor grid and cards as compact as possible. */
 .tutor-selection-grid {
-    margin-bottom: 2rem;
-}
-
-
-/* 2. ADJUST GRID & CARD SIZE FOR VISIBILITY */
-
-/* Widen the main container to give the grid more horizontal space */
-.pick-tutor-main {
-    max-width: 1200px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Make the tutor cards slightly smaller and the gap between them tighter. */
-.tutor-selection-grid {
-    gap: clamp(15px, 1.5vw, 20px);
+    gap: 15px; /* Reduce gap between cards */
+    margin-bottom: 1.5rem; /* Reduce space before action buttons */
 }
 
 .tutor-card {
-    min-height: auto; /* Let the content define the card height */
-    padding: clamp(10px, 1.2vw, 15px);
+    min-height: auto; /* CRITICAL: Let content define height */
+    padding: 10px;    /* Reduce internal card padding */
 }
 
 .tutor-card-image {
-    width: clamp(80px, 10vw, 120px);
+    width: 90px;     /* Reduce avatar size */
+    height: 90px;
     margin-bottom: 8px;
 }
 
 .tutor-card-name {
-    margin-bottom: 4px;
+    font-size: 0.9rem; /* Reduce font size */
+    margin-bottom: 0;
 }
 
-
-/* --- Tutor Selection Page Spacing Fix (Revision 2) --- */
-
-/* 1. Drastically reduce the space below the main title. */
-.pick-tutor-main h1.section-title {
-    margin-bottom: 0.25rem; /* Tighter spacing below title */
+/* Ensure the tagline doesn't add extra space */
+.tutor-card-tagline {
+    display: none;
 }
 
-/* 2. Eliminate the space above the grid of tutors. */
-.tutor-selection-grid {
-    margin-top: 0;
-}
-
-/* 3. Reduce the space between the subtitle and the tutor grid. */
-.pick-tutor-main p.subtitle {
-    margin-bottom: 1.5rem; /* Reduced from 2rem */
+/* 4. Reduce space around the action buttons. */
+.tutor-actions-bar {
+    margin-top: 0; /* Remove top margin, the grid's margin-bottom is enough */
 }
