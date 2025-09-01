@@ -1,6 +1,5 @@
-// public/js/script.js
-
-console.log("LOG: M∆THM∆TIΧ AI Initialized");
+// PASTE-READY: Full content for script.js
+console.log("LOG: M?THM?TI? AI Initialized");
 
 // --- Global Variables ---
 let currentUser = null;
@@ -8,6 +7,14 @@ let isPlaying = false;
 let audioQueue = [];
 let currentAudioSource = null;
 let fabricCanvas = null;
+let attachedFile = null;
+
+// --- Video Animation Mapping ---
+const tutorAnimations = {
+  idle: '/videos/mr-nappier_idle.mp4',
+  celebration: '/videos/mr-nappier_smallcele.mp4',
+  levelUp: '/videos/mr-nappier_levelUp.mp4'
+};
 
 // --- Global Helper Functions ---
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
@@ -88,6 +95,28 @@ function triggerConfetti() {
     }
 }
 
+function playTutorAnimation(animationName) {
+  const tutorVideoElement = document.getElementById('tutor-video');
+  if (!tutorVideoElement || !tutorAnimations[animationName]) {
+    return;
+  }
+
+  const isLooping = (animationName === 'idle');
+  tutorVideoElement.loop = isLooping;
+  tutorVideoElement.src = tutorAnimations[animationName];
+  tutorVideoElement.load();
+  tutorVideoElement.play();
+
+  if (!isLooping) {
+    tutorVideoElement.onended = () => {
+      tutorVideoElement.src = tutorAnimations.idle;
+      tutorVideoElement.loop = true;
+      tutorVideoElement.load();
+      tutorVideoElement.play();
+      tutorVideoElement.onended = null;
+    };
+  }
+}
 
 // --- Main Application Logic ---
 document.addEventListener("DOMContentLoaded", () => {
@@ -114,7 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const cancelEquationBtn = document.getElementById('cancel-latex-eq');
     const insertLatexBtn = document.getElementById('insert-latex-eq');
     const mathEditor = document.getElementById('math-editor');
-
     const whiteboardPanel = document.getElementById('whiteboard-panel');
     const closeWhiteboardBtn = document.getElementById('close-whiteboard-btn');
     
@@ -247,10 +275,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateTutorAvatar() {
-        const studentAvatarContainer = document.getElementById("student-avatar");
-        if (studentAvatarContainer && window.TUTOR_CONFIG && currentUser) {
-            const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
-            studentAvatarContainer.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}">`;
+        const avatarContainer = document.getElementById("avatar-container");
+        if (!avatarContainer || !window.TUTOR_CONFIG || !currentUser) return;
+        
+        const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
+        
+        // Clear previous content
+        avatarContainer.innerHTML = ''; 
+        
+        // For now, only Mr. Nappier has videos.
+        if (tutor.name === "Mr. Nappier") {
+            const video = document.createElement('video');
+            video.id = 'tutor-video';
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.style.objectFit = 'contain';
+            
+            const source = document.createElement('source');
+            source.src = tutorAnimations.idle;
+            source.type = 'video/mp4';
+            video.appendChild(source);
+            avatarContainer.appendChild(video);
+        } else {
+            // Fallback for all other tutors is a static image.
+            const staticAvatar = document.createElement('div');
+            staticAvatar.id = 'student-avatar';
+            staticAvatar.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}">`;
+            avatarContainer.appendChild(staticAvatar);
         }
     }
 
@@ -286,22 +341,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function handleFileUpload(file) {
-        console.log("File selected:", file.name, file.size, file.type);
-        appendMessage(`File selected: ${file.name}`, "user");
+        if (!file) return;
+        console.log("File attached:", file.name);
+        attachedFile = file;
+        userInput.value = `[File Attached: ${file.name}] Ask your question about the file here.`;
+        userInput.focus();
+        showToast(`File "${file.name}" is ready to send.`, 3000);
     }
 
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
         if (!text && !graphData) return;
-
         if (!chatBox) return;
         const bubble = document.createElement("div");
         bubble.className = `message ${sender}`;
         bubble.id = `message-${Date.now()}-${Math.random()}`;
         if (isMasteryQuiz) { bubble.classList.add('mastery-quiz'); }
-        
         const textNode = document.createElement('span');
         textNode.className = 'message-text';
-        
         if (sender === 'ai' && typeof marked === 'function') {
             const protectedText = text.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
@@ -310,7 +366,6 @@ document.addEventListener("DOMContentLoaded", () => {
             textNode.textContent = text;
         }
         bubble.appendChild(textNode);
-        
         if (graphData && window.functionPlot) {
              const graphContainer = document.createElement('div');
             const graphId = 'graph-container-' + Date.now();
@@ -330,7 +385,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (e) { console.error("Graphing error:", e); graphContainer.innerHTML = "Could not render graph."; }
             }, 0);
         }
-        
         if (sender === 'ai') {
             const playBtn = document.createElement("button");
             playBtn.className = "play-audio-btn";
@@ -346,9 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             bubble.appendChild(playBtn);
         }
-
         chatBox.appendChild(bubble);
-
         if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
             if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
                  const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
@@ -361,24 +413,29 @@ document.addEventListener("DOMContentLoaded", () => {
                  playAudio(speakableText, tutor.voiceId, bubble.id);
             }
         }
-        
         setTimeout(() => renderMathInElement(bubble), 0);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     async function sendMessage() {
         const messageText = userInput.value.trim();
-        if (!messageText) return;
+        if (!messageText && !attachedFile) return;
         appendMessage(messageText, "user");
         userInput.value = "";
         showThinkingIndicator(true);
         try {
+            const formData = new FormData();
+            formData.append('userId', currentUser._id);
+            formData.append('message', messageText);
+            if (attachedFile) {
+                formData.append('file', attachedFile);
+            }
             const res = await fetch("/api/chat", {
                 method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUser._id, message: messageText }),
+                body: formData,
                 credentials: 'include'
             });
+            attachedFile = null;
             if (!res.ok) throw new Error(`Server responded with ${res.status}`);
             const data = await res.json();
             let aiText = data.text;
@@ -392,32 +449,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (e) { console.error("Failed to parse graph JSON:", e); graphData = null; }
             }
             appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
-
             if (data.drawingSequence && data.drawingSequence.length > 0) {
                 renderDrawing(data.drawingSequence);
             }
-
             if (Array.isArray(data.newlyUnlockedTutors) && data.newlyUnlockedTutors.length > 0) {
                 const tutorS = data.newlyUnlockedTutors.length > 1 ? "s" : "";
-                showToast(`🎉 You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
+                showToast(`? You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
                 triggerConfetti();
             }
-            
             if (data.userXp !== undefined && data.userLevel !== undefined) {
                 currentUser.level = data.userLevel;
                 currentUser.xpForCurrentLevel = data.userXp;
                 currentUser.xpForNextLevel = data.xpNeeded;
                 updateGamificationDisplay();
             }
-
             if (data.specialXpAwarded) {
                 const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
                 const message = isLevelUp ? data.specialXpAwarded : `+${data.specialXpAwarded}`;
                 triggerXpAnimation(message, isLevelUp, !isLevelUp);
+
+                if (isLevelUp) {
+                  playTutorAnimation('levelUp');
+                } else {
+                  playTutorAnimation('celebration');
+                }
             }
         } catch (error) {
             console.error("Chat error:", error);
             appendMessage("I'm having trouble connecting right now. Please try again in a moment.", "ai");
+            attachedFile = null;
         } finally {
             showThinkingIndicator(false);
         }
