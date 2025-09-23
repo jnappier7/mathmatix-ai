@@ -285,10 +285,55 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    function handleFileUpload(file) {
-        console.log("File selected:", file.name, file.size, file.type);
-        appendMessage(`File selected: ${file.name}`, "user");
+   / CORRECTED AND COMPLETE FUNCTION
+async function handleFileUpload(file) {
+    if (!file) return;
+
+    // 1. Show a loading indicator to the user
+    showThinkingIndicator(true);
+    appendMessage(`Uploading "${file.name}" for OCR...`, "system"); // Optional feedback
+
+    // 2. Create a FormData object to send the file
+    const formData = new FormData();
+    formData.append('file', file); // The key 'file' must match your backend (upload.single('file'))
+    formData.append('userId', currentUser._id); // Your backend endpoint needs the userId
+
+    try {
+        // 3. Send the file to your backend API
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include' // Important for sending session cookies
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'File upload failed');
+        }
+
+        const result = await response.json();
+        const extractedText = result.extracted;
+
+        // 4. Put the extracted text into the user's input box
+        if (extractedText) {
+            userInput.value = extractedText;
+            showToast("Text extracted! Ready to send.", 3000);
+        } else {
+            // Handle cases where OCR returns nothing
+            appendMessage(result.text, 'ai');
+        }
+
+    } catch (error) {
+        console.error('File Upload Error:', error);
+        appendMessage(`Error: ${error.message}`, 'system-error'); // Show an error in the chat
+    } finally {
+        // 5. Hide the loading indicator
+        showThinkingIndicator(false);
+        // Clear the file input so the same file can be uploaded again if needed
+        const fileInput = document.getElementById("file-input");
+        if(fileInput) fileInput.value = "";
     }
+}
 
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
         if (!text && !graphData) return;
