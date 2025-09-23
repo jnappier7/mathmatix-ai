@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-   / CORRECTED AND COMPLETE FUNCTION
+   // CORRECTED AND COMPLETE FUNCTION
 async function handleFileUpload(file) {
     if (!file) return;
 
