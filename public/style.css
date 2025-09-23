@@ -3060,3 +3060,30 @@ main {
        You can adjust the 25% value to frame it perfectly. */
     object-position: center 25%;
 }
+
+.file-pill {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    border-radius: 16px;
+    padding: 5px 10px;
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.file-pill .file-name {
+    margin-right: 8px;
+}
+
+.file-pill .remove-file-btn {
+    cursor: pointer;
+    border: none;
+    background: #c0c0c0;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}

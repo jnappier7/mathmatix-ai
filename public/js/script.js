@@ -8,6 +8,7 @@ let isPlaying = false;
 let audioQueue = [];
 let currentAudioSource = null;
 let fabricCanvas = null;
+let attachedFile = null;
 
 // --- Global Helper Functions ---
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
@@ -285,56 +286,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-   // CORRECTED AND COMPLETE FUNCTION
-async function handleFileUpload(file) {
+  // NEW handleFileUpload function
+function handleFileUpload(file) {
     if (!file) return;
 
-    // 1. Show a loading indicator to the user
-    showThinkingIndicator(true);
-    appendMessage(`Uploading "${file.name}" for OCR...`, "system"); // Optional feedback
+    // Store the file globally
+    attachedFile = file;
 
-    // 2. Create a FormData object to send the file
-    const formData = new FormData();
-    formData.append('file', file); // The key 'file' must match your backend (upload.single('file'))
-    formData.append('userId', currentUser._id); // Your backend endpoint needs the userId
+    // Create the visual "pill"
+    const filePillContainer = document.getElementById('file-pill-container');
+    filePillContainer.innerHTML = `
+        <div class="file-pill">
+            <span class="file-name">${file.name}</span>
+            <button class="remove-file-btn" onclick="removeAttachedFile()">×</button>
+        </div>
+    `;
 
-    try {
-        // 3. Send the file to your backend API
-        const response = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData,
-            credentials: 'include' // Important for sending session cookies
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'File upload failed');
-        }
-
-        const result = await response.json();
-        const extractedText = result.extracted;
-
-        // 4. Put the extracted text into the user's input box
-        if (extractedText) {
-            userInput.value = extractedText;
-            showToast("Text extracted! Ready to send.", 3000);
-        } else {
-            // Handle cases where OCR returns nothing
-            appendMessage(result.text, 'ai');
-        }
-
-    } catch (error) {
-        console.error('File Upload Error:', error);
-        appendMessage(`Error: ${error.message}`, 'system-error'); // Show an error in the chat
-    } finally {
-        // 5. Hide the loading indicator
-        showThinkingIndicator(false);
-        // Clear the file input so the same file can be uploaded again if needed
-        const fileInput = document.getElementById("file-input");
-        if(fileInput) fileInput.value = "";
-    }
+    // Clear the file input so the same file can be uploaded again
+    const fileInput = document.getElementById("file-input");
+    if (fileInput) fileInput.value = "";
 }
 
+// Add this new function to remove the file
+function removeAttachedFile() {
+    attachedFile = null;
+    const filePillContainer = document.getElementById('file-pill-container');
+    filePillContainer.innerHTML = '';
+}
+	
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
         if (!text && !graphData) return;
 
@@ -412,61 +391,81 @@ async function handleFileUpload(file) {
     }
 
     async function sendMessage() {
-        const messageText = userInput.value.trim();
-        if (!messageText) return;
-        appendMessage(messageText, "user");
-        userInput.value = "";
-        showThinkingIndicator(true);
-        try {
-            const res = await fetch("/api/chat", {
+    const messageText = userInput.value.trim();
+    if (!messageText && !attachedFile) return;
+
+    appendMessage(messageText, "user");
+    userInput.value = "";
+    showThinkingIndicator(true);
+
+    try {
+        let response;
+        if (attachedFile) {
+            const formData = new FormData();
+            formData.append('file', attachedFile);
+            formData.append('message', messageText);
+            formData.append('userId', currentUser._id);
+            removeAttachedFile(); // Clear the pill from the UI immediately
+
+            response = await fetch("/api/chat-with-file", {
+                method: "POST",
+                body: formData,
+                credentials: 'include'
+            });
+        } else {
+            response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: currentUser._id, message: messageText }),
                 credentials: 'include'
             });
-            if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-            const data = await res.json();
-            let aiText = data.text;
-            let graphData = null;
-            const graphRegex = /\[GRAPH:({.*})\]/;
-            const graphMatch = aiText.match(graphRegex);
-            if (graphMatch) {
-                try {
-                    aiText = aiText.replace(graphRegex, "").trim();
-                    graphData = JSON.parse(graphMatch[1]);
-                } catch (e) { console.error("Failed to parse graph JSON:", e); graphData = null; }
-            }
-            appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
-
-            if (data.drawingSequence && data.drawingSequence.length > 0) {
-                renderDrawing(data.drawingSequence);
-            }
-
-            if (Array.isArray(data.newlyUnlockedTutors) && data.newlyUnlockedTutors.length > 0) {
-                const tutorS = data.newlyUnlockedTutors.length > 1 ? "s" : "";
-                showToast(`ðŸŽ‰ You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
-                triggerConfetti();
-            }
-            
-            if (data.userXp !== undefined && data.userLevel !== undefined) {
-                currentUser.level = data.userLevel;
-                currentUser.xpForCurrentLevel = data.userXp;
-                currentUser.xpForNextLevel = data.xpNeeded;
-                updateGamificationDisplay();
-            }
-
-            if (data.specialXpAwarded) {
-                const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
-                const message = isLevelUp ? data.specialXpAwarded : `+${data.specialXpAwarded}`;
-                triggerXpAnimation(message, isLevelUp, !isLevelUp);
-            }
-        } catch (error) {
-            console.error("Chat error:", error);
-            appendMessage("I'm having trouble connecting right now. Please try again in a moment.", "ai");
-        } finally {
-            showThinkingIndicator(false);
         }
+
+        if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+        const data = await response.json();
+
+        // The rest of this function handles the AI response and is mostly the same
+        let aiText = data.text;
+        let graphData = null;
+        const graphRegex = /\[GRAPH:({.*})\]/;
+        const graphMatch = aiText.match(graphRegex);
+        if (graphMatch) {
+            try {
+                aiText = aiText.replace(graphRegex, "").trim();
+                graphData = JSON.parse(graphMatch[1]);
+            } catch (e) { console.error("Failed to parse graph JSON:", e); }
+        }
+        appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+
+        if (data.drawingSequence) {
+            renderDrawing(data.drawingSequence);
+        }
+
+        if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
+            const tutorS = data.newlyUnlockedTutors.length > 1 ? "s" : "";
+            showToast(`🎉 You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
+            triggerConfetti();
+        }
+        
+        if (data.userXp !== undefined) {
+            currentUser.level = data.userLevel;
+            currentUser.xpForCurrentLevel = data.userXp;
+            currentUser.xpForNextLevel = data.xpNeeded;
+            updateGamificationDisplay();
+        }
+
+        if (data.specialXpAwarded) {
+            const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
+            triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
+        }
+
+    } catch (error) {
+        console.error("Chat error:", error);
+        appendMessage("I'm having trouble connecting. Please try again.", "system-error");
+    } finally {
+        showThinkingIndicator(false);
     }
+}
     
     function showThinkingIndicator(show) {
         if (thinkingIndicator) thinkingIndicator.style.display = show ? "flex" : "none";

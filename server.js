@@ -59,6 +59,7 @@ const leaderboardRoutes = require('./routes/leaderboard');
 const chatRoutes = require('./routes/chat');
 const speakRoutes = require('./routes/speak');
 const uploadRoutes = require('./routes/upload');
+const chatWithFileRoutes = require('./routes/chatWithFile'); 
 const welcomeRoutes = require('./routes/welcome');
 const { router: memoryRouter } = require('./routes/memory');
 const guidedLessonRoutes = require('./routes/guidedLesson');
@@ -172,6 +173,7 @@ app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderb
 app.use('/api/chat', isAuthenticated, chatRoutes);
 app.use('/api/speak', isAuthenticated, speakRoutes);
 app.use('/api/upload', isAuthenticated, uploadRoutes);
+app.use('/api/chat-with-file', isAuthenticated, chatWithFileRoutes); 
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', summaryGeneratorRouter); // <-- CORRECTED: isAuthenticated middleware removed
