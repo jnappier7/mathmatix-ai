@@ -1,39 +1,58 @@
-// utils/pdf-to-image.js - PDF to PNG using Puppeteer and PDF.js HTML rendering (rephrased emoji comment)
+// utils/pdf-to-image.js - REWRITTEN WITH PDF-POPPLER
 
-const puppeteer = require("puppeteer");
+const fs = require('fs').promises;
+const path = require('path');
+const os = require('os');
+const { Poppler } = require('pdf-poppler');
 
-module.exports = async function pdfToImageBase64(pdfBuffer) {
-  try {
-	process.env.PUPPETEER_EXECUTABLE_PATH = require("puppeteer").executablePath();
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], // Keeping these args for now as per your original code
-    });
+module.exports = async function pdfToImageBuffer(pdfBuffer) {
+    const tempDir = os.tmpdir();
+    // Create a unique filename to avoid conflicts
+    const tempPdfPath = path.join(tempDir, `upload_${Date.now()}.pdf`);
+    const outputPrefix = path.join(tempDir, `output_${Date.now()}`);
+    let imageBuffer = null;
 
-    const page = await browser.newPage();
+    try {
+        // 1. Write the PDF buffer to a temporary file
+        await fs.writeFile(tempPdfPath, pdfBuffer);
 
-    // Write PDF to a data URI for loading in PDF.js
-    const base64PDF = pdfBuffer.toString("base64");
-    const dataURI = `data:application/pdf;base64,${base64PDF}`;
+        const poppler = new Poppler();
+        const options = {
+            firstPageToConvert: 1,
+            lastPageToConvert: 1,
+            pngFile: true, // We want a PNG image
+        };
+        
+        // 2. Convert the PDF file to an image file
+        await poppler.pdfToCairo(tempPdfPath, outputPrefix, options);
+        
+        // The output file will be named like 'output_12345-1.png'
+        const outputImagePath = `${outputPrefix}-1.png`;
 
-    // Load PDF.js viewer to render the first page
-    await page.goto("https://mozilla.github.io/pdf.js/web/viewer.html", { waitUntil: "networkidle2" });
-    await page.evaluate((pdfDataURI) => {
-      PDFViewerApplication.open(pdfDataURI);
-    }, dataURI);
+        // 3. Read the generated image file back into a buffer
+        imageBuffer = await fs.readFile(outputImagePath);
 
-    // Wait for PDF to render visually
-    await page.waitForSelector("#viewer .page[data-loaded='true']", { timeout: 30000 });
+        // 4. Clean up the temporary files
+        await fs.unlink(tempPdfPath);
+        await fs.unlink(outputImagePath);
 
-    // Screenshot first page
-    const clip = await page.$("#viewer .page[data-page-number='1']");
-    const screenshot = await clip.screenshot({ encoding: "base64" });
+        return imageBuffer; // Return the raw image buffer
 
-    await browser.close();
-
-    return `data:image/png;base64,${screenshot}`;
-  } catch (err) {
-    console.error("ERROR: PDF render failed:", err.message); // Replaced emoji
-    return null;
-  }
+    } catch (err) {
+        console.error("ERROR: PDF to Image conversion failed:", err);
+        
+        // Attempt to clean up files even if there was an error
+        try {
+            await fs.unlink(tempPdfPath);
+            const potentialImagePath = `${outputPrefix}-1.png`;
+            // Check if the image file exists before trying to delete it
+            if (await fs.stat(potentialImagePath).catch(() => false)) {
+                 await fs.unlink(potentialImagePath);
+            }
+        } catch (cleanupErr) {
+            console.error("Error during cleanup:", cleanupErr);
+        }
+        
+        return null;
+    }
 };
