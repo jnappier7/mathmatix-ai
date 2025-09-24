@@ -4,9 +4,8 @@ const { getDocument } = require('pdfjs-dist/legacy/build/pdf.js');
 const { createCanvas } = require('canvas');
 
 // Set up the worker for the Node.js environment using the legacy build
-const pdfjs = require('pdfjs-dist/legacy/build/pdf.js');
-pdfjs.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/legacy/build/pdf.worker.js');
-
+const pdfjsLib = require('pdfjs-dist/cjs/pdf.js');
+pdfjsLib.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/cjs/pdf.worker.js');
 module.exports = async function pdfToImageBuffer(pdfBuffer) {
   try {
     const loadingTask = getDocument(pdfBuffer.buffer);
