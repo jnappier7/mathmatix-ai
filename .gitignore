@@ -1,9 +1,14 @@
-node_modules/\n.env\n.DS_Store\npackage-lock 2.json
+# Dependencies
+/node_modules
 
+# Environment Variables
 .env
-routes/vision-key.json
-*.dmg
-node_modules/
 .env.txt
+routes/vision-key.json
+
+# macOS
 .DS_Store
+
+# Other
+*.dmg
 
