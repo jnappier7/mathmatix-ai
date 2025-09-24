@@ -1,14 +1,15 @@
-// utils/pdf-to-image.js - DEFINITIVELY CORRECTED
+// utils/pdf-to-image.js - DEFINITIVELY CORRECTED with LEGACY build
 
-const pdfjs = require('pdfjs-dist');
+const { getDocument } = require('pdfjs-dist/legacy/build/pdf.js');
 const { createCanvas } = require('canvas');
 
 // Set up the worker for the Node.js environment
-pdfjs.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/build/pdf.worker.js');
+const pdfjs = require('pdfjs-dist/legacy/build/pdf.js');
+pdfjs.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/legacy/build/pdf.worker.js');
 
 module.exports = async function pdfToImageBuffer(pdfBuffer) {
   try {
-    const loadingTask = pdfjs.getDocument(pdfBuffer.buffer);
+    const loadingTask = getDocument(pdfBuffer.buffer);
     const pdf = await loadingTask.promise;
 
     const page = await pdf.getPage(1);
