@@ -1,9 +1,9 @@
-// utils/pdf-to-image.js - DEFINITIVELY CORRECTED with LEGACY build
+// utils/pdf-to-image.js - CORRECTED with LEGACY build
 
 const { getDocument } = require('pdfjs-dist/legacy/build/pdf.js');
 const { createCanvas } = require('canvas');
 
-// Set up the worker for the Node.js environment
+// Set up the worker for the Node.js environment using the legacy build
 const pdfjs = require('pdfjs-dist/legacy/build/pdf.js');
 pdfjs.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/legacy/build/pdf.worker.js');
 
