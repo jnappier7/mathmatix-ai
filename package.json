@@ -23,6 +23,7 @@
     "@anthropic-ai/sdk": "^0.20.0",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
+    "canvas": "^3.2.0",
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -42,7 +43,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-microsoft": "^2.1.0",
-    "pdf-poppler": "^0.2.1",
+    "pdfjs-dist": "^5.4.149",
     "puppeteer": "^24.10.2",
     "uuid": "^9.0.1"
   },
