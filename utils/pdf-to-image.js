@@ -1,15 +1,14 @@
-// utils/pdf-to-image.js - CORRECTED IMPORT PATH
+// utils/pdf-to-image.js - DEFINITIVELY CORRECTED
 
-const { getDocument } = require('pdfjs-dist/build/pdf.js');
+const pdfjs = require('pdfjs-dist');
 const { createCanvas } = require('canvas');
+
+// Set up the worker for the Node.js environment
+pdfjs.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/build/pdf.worker.js');
 
 module.exports = async function pdfToImageBuffer(pdfBuffer) {
   try {
-    // This worker is needed for the library to run in Node.js
-    const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.mjs');
-    pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-
-    const loadingTask = getDocument(pdfBuffer.buffer);
+    const loadingTask = pdfjs.getDocument(pdfBuffer.buffer);
     const pdf = await loadingTask.promise;
 
     const page = await pdf.getPage(1);
