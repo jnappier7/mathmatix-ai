@@ -22,10 +22,11 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
     }
 
     // Password strength validation (should match frontend)
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    // SECURITY FIX: Strengthened password requirements to include special characters
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
     if (!passwordRegex.test(password)) {
         console.warn("WARN: Signup failed - weak password.");
-        return res.status(400).json({ message: 'Password must be at least 8 characters long, include one capital letter, and one number.' });
+        return res.status(400).json({ message: 'Password must be at least 8 characters long and include one uppercase letter, one lowercase letter, one number, and one special character.' });
     }
 
     try {
