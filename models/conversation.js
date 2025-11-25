@@ -42,8 +42,42 @@ const conversationSchema = new Schema({
     activeMinutes: {
         type: Number,
         default: 0
-    }
+    },
+    // --- LIVE ACTIVITY TRACKING ---
+    liveSummary: {
+        type: String,
+        default: null // Updated during session for live feed
+    },
+    currentTopic: {
+        type: String,
+        default: null // e.g., "Linear Equations", "Fractions"
+    },
+    problemsAttempted: {
+        type: Number,
+        default: 0
+    },
+    problemsCorrect: {
+        type: Number,
+        default: 0
+    },
+    strugglingWith: {
+        type: String,
+        default: null // e.g., "negative numbers", "isolating variables"
+    },
+    lastSummaryUpdate: {
+        type: Date,
+        default: null
+    },
+    alerts: [{
+        type: { type: String }, // 'struggle', 'milestone', 'help_request', 'session_start', 'session_end'
+        message: String,
+        timestamp: { type: Date, default: Date.now },
+        acknowledged: { type: Boolean, default: false }
+    }]
 }, { timestamps: true }); // Mongoose adds createdAt and updatedAt
+
+// Index for efficient querying of active sessions
+conversationSchema.index({ isActive: 1, lastActivity: -1 });
 
 const Conversation = mongoose.models.Conversation || mongoose.model('Conversation', conversationSchema);
 
