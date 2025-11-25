@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M∆THM∆TIΧ AI Chat</title>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" /> 
+  <link rel="stylesheet" href="/css/whiteboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -66,13 +67,6 @@
     </div>
 
     <aside class="widget-sidebar-right">
-      <div id="whiteboard-panel" class="dashboard-panel card-style-1 is-hidden">
-        <div class="dashboard-panel-header">
-            <h2>Whiteboard</h2>
-            <button id="close-whiteboard-btn" class="modal-close-button">&times;</button>
-        </div>
-        <canvas id="tutor-canvas"></canvas>
-      </div>
 
       <div id="xp-level-display" class="dashboard-panel card-style-1">
         <div class="dashboard-panel-header">Your Progress</div>
@@ -136,8 +130,123 @@
     </div>
   </div>
 
+  <!-- Floating Whiteboard Panel -->
+  <div id="whiteboard-panel" class="is-hidden">
+    <div class="whiteboard-header">
+      <h2>Whiteboard</h2>
+      <div class="whiteboard-header-controls">
+        <button class="whiteboard-control-btn" id="minimize-whiteboard-btn" data-tooltip="Minimize" title="Minimize">
+          <i class="fas fa-window-minimize"></i>
+        </button>
+        <button class="whiteboard-control-btn" id="maximize-whiteboard-btn" data-tooltip="Maximize" title="Maximize">
+          <i class="fas fa-expand"></i>
+        </button>
+        <button class="whiteboard-control-btn" id="close-whiteboard-btn" data-tooltip="Close" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="whiteboard-toolbar">
+      <!-- Selection & Drawing -->
+      <div class="toolbar-section">
+        <button class="toolbar-btn" id="tool-select" data-tooltip="Select" title="Select">
+          <i class="fas fa-mouse-pointer"></i>
+        </button>
+        <button class="toolbar-btn active" id="tool-pen" data-tooltip="Pen" title="Pen">
+          <i class="fas fa-pen"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-highlighter" data-tooltip="Highlighter" title="Highlighter">
+          <i class="fas fa-highlighter"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-eraser" data-tooltip="Eraser" title="Eraser">
+          <i class="fas fa-eraser"></i>
+        </button>
+      </div>
+
+      <!-- Shapes -->
+      <div class="toolbar-section">
+        <button class="toolbar-btn" id="tool-line" data-tooltip="Line" title="Line">
+          <i class="fas fa-minus"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-arrow" data-tooltip="Arrow" title="Arrow">
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-rectangle" data-tooltip="Rectangle" title="Rectangle">
+          <i class="far fa-square"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-circle" data-tooltip="Circle" title="Circle">
+          <i class="far fa-circle"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-triangle" data-tooltip="Triangle" title="Triangle">
+          <i class="fas fa-play" style="transform: rotate(-90deg);"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-text" data-tooltip="Text" title="Text">
+          <i class="fas fa-font"></i>
+        </button>
+      </div>
+
+      <!-- Math Tools -->
+      <div class="toolbar-section">
+        <button class="toolbar-btn" id="tool-grid" data-tooltip="Add Grid" title="Add Grid">
+          <i class="fas fa-grip-lines"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-graph" data-tooltip="Graph Function" title="Graph Function">
+          <i class="fas fa-chart-line"></i>
+        </button>
+        <button class="toolbar-btn" id="tool-protractor" data-tooltip="Protractor" title="Protractor">
+          <i class="fas fa-circle-notch"></i>
+        </button>
+      </div>
+
+      <!-- Color & Size -->
+      <div class="toolbar-section">
+        <div class="color-picker-wrapper">
+          <label class="color-display" for="color-picker" style="color: #000000;"></label>
+          <input type="color" id="color-picker" value="#000000" />
+        </div>
+        <div class="stroke-width-control">
+          <input type="range" id="stroke-width-slider" class="stroke-width-slider" min="1" max="20" value="3" />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="toolbar-section">
+        <button class="toolbar-btn" id="undo-btn" data-tooltip="Undo" title="Undo">
+          <i class="fas fa-undo"></i>
+        </button>
+        <button class="toolbar-btn" id="redo-btn" data-tooltip="Redo" title="Redo">
+          <i class="fas fa-redo"></i>
+        </button>
+        <button class="toolbar-btn" id="delete-btn" data-tooltip="Delete" title="Delete Selected">
+          <i class="fas fa-trash"></i>
+        </button>
+        <button class="toolbar-btn" id="clear-btn" data-tooltip="Clear All" title="Clear All">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+        <button class="toolbar-btn" id="download-btn" data-tooltip="Download" title="Download">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="whiteboard-canvas-container">
+      <canvas id="tutor-canvas"></canvas>
+      <div class="canvas-overlay">
+        <div class="canvas-mode-indicator">✏️ Drawing</div>
+      </div>
+      <div class="whiteboard-resize-handle"></div>
+    </div>
+  </div>
+
+  <!-- Open Whiteboard Button (when closed) -->
+  <button id="open-whiteboard-btn" class="hidden">
+    ✏️
+  </button>
+
   <script src="/js/logout.js"></script>
   <script src="/js/tutor-config-data.js"></script>
+  <script src="/js/whiteboard.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
 </body>
