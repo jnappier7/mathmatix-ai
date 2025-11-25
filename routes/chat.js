@@ -13,6 +13,7 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const axios = require('axios');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
+const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 const MAX_MESSAGE_LENGTH = 2000;
@@ -54,31 +55,10 @@ router.post('/', isAuthenticated, async (req, res) => {
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
         let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
 
-        let dynamicDrawingSequence = [];
-        
-        // --- FIX IS HERE ---
-        const drawLineRegex = /\[DRAW_LINE:([\d\s,]+)\]/g;
-        const drawTextRegex = /\[DRAW_TEXT:([\d\s,]+),([^\]]+)\]/g;
-        
-        let match;
-        while ((match = drawLineRegex.exec(aiResponseText)) !== null) {
-            const points = match[1].split(',').map(Number);
-            if (points.length === 4) {
-                dynamicDrawingSequence.push({ type: 'line', points });
-            }
-        }
-        while ((match = drawTextRegex.exec(aiResponseText)) !== null) {
-            const position = match[1].split(',').map(Number);
-            const content = match[2];
-            if (position.length === 2) {
-                dynamicDrawingSequence.push({ type: 'text', position, content });
-            }
-        }
-
-        aiResponseText = aiResponseText.replace(drawLineRegex, '').replace(drawTextRegex, '').trim();
-        if (dynamicDrawingSequence.length === 0) {
-            dynamicDrawingSequence = null;
-        }
+        // Parse AI drawing commands using the new high-level tools
+        const { drawingSequence, cleanedText } = parseAIDrawingCommands(aiResponseText);
+        const dynamicDrawingSequence = drawingSequence;
+        aiResponseText = cleanedText;
 
         const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
         let bonusXpAwarded = 0;
