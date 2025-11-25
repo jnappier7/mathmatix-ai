@@ -342,7 +342,8 @@ class MathmatixWhiteboard {
             yMin = -10,
             yMax = 10,
             gridSize = 30,
-            showLabels = true
+            showLabels = true,
+            gridColor = '#12B3B3'
         } = options;
 
         const width = this.canvas.width;
@@ -416,7 +417,7 @@ class MathmatixWhiteboard {
         const {
             xMin = -10,
             xMax = 10,
-            color = '#667eea',
+            color = '#12B3B3',
             strokeWidth = 3,
             samples = 200
         } = options;

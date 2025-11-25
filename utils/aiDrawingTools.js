@@ -35,12 +35,12 @@ function parseAIDrawingCommands(aiResponseText, canvasWidth = 450, canvasHeight 
     cleanedText = cleanedText.replace(gridRegex, '');
 
     // --- GRAPH FUNCTION COMMAND ---
-    // [GRAPH:y=x^2] or [GRAPH:y=2*x+1,color=#667eea]
+    // [GRAPH:y=x^2] or [GRAPH:y=2*x+1,color=#12B3B3]
     const graphRegex = /\[GRAPH:([^,\]]+)(?:,color=([#\w]+))?(?:,xMin=(-?\d+))?(?:,xMax=(-?\d+))?\]/g;
 
     while ((match = graphRegex.exec(aiResponseText)) !== null) {
         const funcString = match[1].replace('y=', '').trim();
-        const color = match[2] || '#667eea';
+        const color = match[2] || '#12B3B3';
         const xMin = match[3] ? parseInt(match[3]) : -10;
         const xMax = match[4] ? parseInt(match[4]) : 10;
 
@@ -71,8 +71,8 @@ function parseAIDrawingCommands(aiResponseText, canvasWidth = 450, canvasHeight 
             type: 'circle',
             position: [centerX + (x * gridSize) - 4, centerY - (y * gridSize) - 4],
             radius: 4,
-            fill: '#667eea',
-            stroke: '#667eea',
+            fill: '#12B3B3',
+            stroke: '#12B3B3',
             strokeWidth: 2
         });
 
@@ -187,7 +187,7 @@ function parseAIDrawingCommands(aiResponseText, canvasWidth = 450, canvasHeight 
             content: label,
             position: [centerX + (x * gridSize) + 15, centerY - (y * gridSize) - 15],
             fontSize: 14,
-            color: '#667eea'
+            color: '#12B3B3'
         });
     }
     cleanedText = cleanedText.replace(angleRegex, '');
