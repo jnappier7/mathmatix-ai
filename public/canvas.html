@@ -3,34 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Canvas | M∆THM∆TIΧ AI</title>
-    <link rel="stylesheet" href="/style.css"> <style>
-        /* Basic styles to make the canvas visible */
+    <title>Interactive Whiteboard | M∆THM∆TIΧ AI</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Enhanced styles for interactive whiteboard */
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #50E3C2;
+            --danger-color: #E74C3C;
+            --bg-color: #f0f2f5;
+            --toolbar-bg: #ffffff;
+            --border-color: #ccc;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Prevent scrollbars */
-            background-color: #f0f2f5;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        .whiteboard-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Toolbar Styles */
+        #toolbar {
+            background-color: var(--toolbar-bg);
+            border-bottom: 2px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+
+        .toolbar-section {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 0 15px;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .toolbar-section:last-child {
+            border-right: none;
+        }
+
+        .toolbar-section label {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .tool-btn {
+            background-color: #f8f9fa;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .tool-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.4);
+        }
+
+        .color-preset {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .color-preset:hover {
+            transform: scale(1.15);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        #color-picker {
+            width: 50px;
+            height: 35px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #line-width {
+            width: 120px;
+            cursor: pointer;
+        }
+
+        #line-width-value {
+            display: inline-block;
+            min-width: 25px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .action-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #3a7bc8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+        }
+
+        .action-btn.danger {
+            background-color: var(--danger-color);
+        }
+
+        .action-btn.danger:hover {
+            background-color: #c0392b;
+        }
+
+        /* Canvas Container */
         #canvas-container {
-            width: 100%;
-            height: 100%;
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
+            overflow: auto;
         }
+
         #interactive-canvas {
             background-color: #ffffff;
-            border: 1px solid #ccc;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            cursor: crosshair;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #toolbar {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .toolbar-section {
+                padding: 0 8px;
+                flex-wrap: wrap;
+            }
+
+            .tool-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .action-btn {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            #interactive-canvas {
+                width: 95vw !important;
+                height: auto !important;
+            }
+        }
+
+        /* Branding */
+        .brand-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-right: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="canvas-container">
-        <canvas id="interactive-canvas" width="800" height="600"></canvas>
+    <div class="whiteboard-wrapper">
+        <!-- Toolbar -->
+        <div id="toolbar">
+            <div class="brand-title">M∆THM∆TIΧ Whiteboard</div>
+
+            <!-- Drawing Tools -->
+            <div class="toolbar-section">
+                <label>Tools:</label>
+                <button class="tool-btn active" data-tool="pen" onclick="setDrawingTool('pen')" title="Pen">✏️ Pen</button>
+                <button class="tool-btn" data-tool="eraser" onclick="setDrawingTool('eraser')" title="Eraser">🧹 Eraser</button>
+                <button class="tool-btn" data-tool="line" onclick="setDrawingTool('line')" title="Line">📏 Line</button>
+                <button class="tool-btn" data-tool="rectangle" onclick="setDrawingTool('rectangle')" title="Rectangle">▭ Rectangle</button>
+                <button class="tool-btn" data-tool="circle" onclick="setDrawingTool('circle')" title="Circle">⭕ Circle</button>
+                <button class="tool-btn" data-tool="text" onclick="setDrawingTool('text')" title="Text">T Text</button>
+            </div>
+
+            <!-- Colors -->
+            <div class="toolbar-section">
+                <label>Color:</label>
+                <span class="color-preset" style="background-color: #000000;" onclick="setDrawingColor('#000000')" title="Black"></span>
+                <span class="color-preset" style="background-color: #E74C3C;" onclick="setDrawingColor('#E74C3C')" title="Red"></span>
+                <span class="color-preset" style="background-color: #3498DB;" onclick="setDrawingColor('#3498DB')" title="Blue"></span>
+                <span class="color-preset" style="background-color: #2ECC71;" onclick="setDrawingColor('#2ECC71')" title="Green"></span>
+                <span class="color-preset" style="background-color: #F39C12;" onclick="setDrawingColor('#F39C12')" title="Orange"></span>
+                <span class="color-preset" style="background-color: #9B59B6;" onclick="setDrawingColor('#9B59B6')" title="Purple"></span>
+                <input type="color" id="color-picker" value="#000000" title="Custom Color">
+            </div>
+
+            <!-- Line Width -->
+            <div class="toolbar-section">
+                <label>Width:</label>
+                <input type="range" id="line-width" min="1" max="20" value="3" step="1">
+                <span id="line-width-value">3</span>
+            </div>
+
+            <!-- Actions -->
+            <div class="toolbar-section">
+                <button class="action-btn" onclick="undoCanvas()" title="Undo">↶ Undo</button>
+                <button class="action-btn" onclick="redoCanvas()" title="Redo">↷ Redo</button>
+                <button class="action-btn danger" onclick="clearCanvas()" title="Clear Canvas">🗑️ Clear</button>
+                <button class="action-btn" onclick="downloadCanvas()" title="Download">💾 Save</button>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div id="canvas-container">
+            <canvas id="interactive-canvas" width="1200" height="700"></canvas>
+        </div>
     </div>
 
     <script src="/js/canvas.js"></script>
