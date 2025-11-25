@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard - M∆THM∆TIΧ AI</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/css/teacher-live-feed.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 	
 </head>
@@ -21,19 +22,33 @@
 
     <main class="admin-page-wrapper">
         <div class="admin-main-content">
+            <!-- Live Activity Feed Sidebar -->
             <div class="admin-widget-sidebar">
-                <div class="dashboard-panel card-style-1">
-                    <div class="dashboard-panel-header">IEP Search & Edit</div>
-                    <p>Quickly find and update student IEPs.</p>
-                    <div class="form-group">
-                        <input type="text" id="iepSearchInput" placeholder="Search student by name/ID">
-                        <button class="submit-btn btn-primary" style="margin-top: 10px;">Search IEP</button>
+                <div id="live-feed-panel" class="dashboard-panel card-style-1">
+                    <div class="live-feed-header">
+                        <h2>
+                            <span class="live-indicator"></span>
+                            Live Activity
+                        </h2>
+                        <div class="feed-controls">
+                            <button class="feed-control-btn" id="refresh-feed-btn" title="Refresh">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="feed-control-btn" id="pause-feed-btn" title="Pause Updates">
+                                <i class="fas fa-pause"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="dashboard-panel card-style-1">
-                    <div class="dashboard-panel-header">Session Summaries</div>
-                    <p>Review tutoring session summaries for your students.</p>
-                    <button class="main-action-btn btn btn-secondary" style="margin-top: 10px;">View All Summaries</button>
+
+                    <div class="feed-filter-bar">
+                        <button class="filter-btn active" data-filter="all">All Activity</button>
+                        <button class="filter-btn" data-filter="struggling">⚠️ Struggling</button>
+                        <button class="filter-btn" data-filter="milestones">✨ Milestones</button>
+                    </div>
+
+                    <div class="activity-feed-container" id="activity-feed">
+                        <div class="feed-loading">Loading activity...</div>
+                    </div>
                 </div>
             </div>
             <div class="admin-central-content">
@@ -113,7 +128,9 @@
             </div>
         </div>
     </div>
-    <script src="/js/logout.js"></script> <script src="/js/teacher-dashboard.js"></script>
+    <script src="/js/logout.js"></script>
+    <script src="/js/teacher-live-feed.js"></script>
+    <script src="/js/teacher-dashboard.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
