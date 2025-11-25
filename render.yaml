@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: mathmatix-ai
+    env: node
+    region: oregon
+    plan: free
+    # Simple build - no apt-get needed
+    buildCommand: npm install
+    startCommand: npm start
+
+    # Puppeteer needs this
+    envVars:
+      - key: NODE_VERSION
+        value: 20.14.0
+      - key: NODE_ENV
+        value: production
+      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+        value: true
+      - key: PUPPETEER_EXECUTABLE_PATH
+        value: /usr/bin/google-chrome-stable
+
+      # Your app's environment variables (set these in Render dashboard)
+      - key: MONGO_URI
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CALLBACK_URL
+        sync: false
+      - key: MICROSOFT_CLIENT_ID
+        sync: false
+      - key: MICROSOFT_CLIENT_SECRET
+        sync: false
+      - key: MICROSOFT_CALLBACK_URL
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: MATHPIX_APP_ID
+        sync: false
+      - key: MATHPIX_APP_KEY
+        sync: false
+
+    autoDeploy: true
