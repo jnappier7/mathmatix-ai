@@ -70,8 +70,43 @@ router.post('/', isAuthenticated, async (req, res) => {
         }
 
         activeConversation.messages.push({ role: 'assistant', content: aiResponseText });
+
+        // Real-time struggle detection and activity tracking
+        const { detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
+
+        // Detect if student is struggling in recent messages
+        const struggleInfo = detectStruggle(activeConversation.messages.slice(-10));
+        if (struggleInfo.isStruggling) {
+            activeConversation.alerts = activeConversation.alerts || [];
+
+            // Only create new alert if not already alerted for this struggle recently
+            const recentStruggleAlert = activeConversation.alerts.find(a =>
+                a.type === 'struggle' &&
+                !a.acknowledged &&
+                (Date.now() - new Date(a.timestamp).getTime()) < 10 * 60 * 1000 // Within last 10 minutes
+            );
+
+            if (!recentStruggleAlert) {
+                activeConversation.alerts.push({
+                    type: 'struggle',
+                    message: `Struggling with ${struggleInfo.strugglingWith}`,
+                    timestamp: new Date(),
+                    acknowledged: false,
+                    severity: struggleInfo.severity
+                });
+            }
+            activeConversation.strugglingWith = struggleInfo.strugglingWith;
+        }
+
+        // Update live tracking fields for teacher dashboard
+        activeConversation.currentTopic = detectTopic(activeConversation.messages);
+        const stats = calculateProblemStats(activeConversation.messages);
+        activeConversation.problemsAttempted = stats.attempted;
+        activeConversation.problemsCorrect = stats.correct;
+        activeConversation.lastActivity = new Date();
+
         await activeConversation.save();
-        
+
         let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
         user.xp = (user.xp || 0) + xpAward;
         
