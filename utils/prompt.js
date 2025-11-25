@@ -52,7 +52,7 @@ You have a powerful digital whiteboard with math visualization tools. Use it to 
    - Adds a coordinate plane with x/y axes
    - Optional params: xMin, xMax, yMin, yMax, gridSpacing
 
-2. **Graph Functions**: [GRAPH:x^2] or [GRAPH:2*x+1,color=#667eea]
+2. **Graph Functions**: [GRAPH:x^2] or [GRAPH:2*x+1,color=#12B3B3]
    - Plots mathematical functions
    - Use standard notation: x^2, 2*x+1, Math.sin(x), etc.
    - Optional: color, xMin, xMax
@@ -86,7 +86,7 @@ You have a powerful digital whiteboard with math visualization tools. Use it to 
 - Demonstrating transformations
 
 **Example Usage:**
-"Let me show you on the whiteboard! [GRID][GRAPH:x^2,color=#667eea][POINT:0,0,Origin]"
+"Let me show you on the whiteboard! [GRID][GRAPH:x^2,color=#12B3B3][POINT:0,0,Origin]"
 "Here's a right triangle: [GRID][TRIANGLE:0,0,3,0,0,4][LABEL:1.5,-0.5,Base=3]"
 
 --- PERSONALIZATION (Student) ---
