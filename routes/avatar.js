@@ -18,6 +18,19 @@ router.post('/', isAuthenticated, async (req, res) => { //
             return res.status(404).json({ message: 'User not found.' }); //
         }
 
+        // SECURITY FIX: Validate lottiePath to prevent path traversal and external URL injection
+        if (lottiePath !== undefined) {
+            // Only allow paths within /images/ or /animations/ directories
+            const allowedPathPattern = /^\/?(images|animations)\/[\w\-\/\.]+\.(json|lottie)$/i;
+            // Prevent path traversal attacks
+            const pathTraversalPattern = /\.\./;
+
+            if (pathTraversalPattern.test(lottiePath) || !allowedPathPattern.test(lottiePath)) {
+                console.warn(`WARN: Invalid lottiePath attempted by user ${userId}: ${lottiePath}`);
+                return res.status(400).json({ message: 'Invalid avatar path. Only paths within /images/ or /animations/ are allowed.' });
+            }
+        }
+
         // Update avatar sub-document
         user.avatar = { //
             skin: skin !== undefined ? skin : user.avatar.skin, //

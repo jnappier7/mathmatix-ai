@@ -13,6 +13,7 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const axios = require('axios');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
+const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 const MAX_MESSAGE_LENGTH = 2000;
@@ -54,44 +55,60 @@ router.post('/', isAuthenticated, async (req, res) => {
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
         let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
 
-        let dynamicDrawingSequence = [];
-        
-        // --- FIX IS HERE ---
-        const drawLineRegex = /\[DRAW_LINE:([\d\s,]+)\]/g;
-        const drawTextRegex = /\[DRAW_TEXT:([\d\s,]+),([^\]]+)\]/g;
-        
-        let match;
-        while ((match = drawLineRegex.exec(aiResponseText)) !== null) {
-            const points = match[1].split(',').map(Number);
-            if (points.length === 4) {
-                dynamicDrawingSequence.push({ type: 'line', points });
-            }
-        }
-        while ((match = drawTextRegex.exec(aiResponseText)) !== null) {
-            const position = match[1].split(',').map(Number);
-            const content = match[2];
-            if (position.length === 2) {
-                dynamicDrawingSequence.push({ type: 'text', position, content });
-            }
-        }
-
-        aiResponseText = aiResponseText.replace(drawLineRegex, '').replace(drawTextRegex, '').trim();
-        if (dynamicDrawingSequence.length === 0) {
-            dynamicDrawingSequence = null;
-        }
+        // Parse AI drawing commands using the new high-level tools
+        const { drawingSequence, cleanedText } = parseAIDrawingCommands(aiResponseText);
+        const dynamicDrawingSequence = drawingSequence;
+        aiResponseText = cleanedText;
 
         const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
         let bonusXpAwarded = 0;
         let bonusXpReason = '';
         if (xpAwardMatch) {
-            bonusXpAwarded = parseInt(xpAwardMatch[1], 10);
+            const rawXpAmount = parseInt(xpAwardMatch[1], 10);
+            // SECURITY FIX: Cap XP awards to prevent exploitation
+            bonusXpAwarded = Math.min(Math.max(rawXpAmount, BRAND_CONFIG.xpAwardRange.min), BRAND_CONFIG.xpAwardRange.max);
             bonusXpReason = xpAwardMatch[2] || 'AI Bonus Award';
             aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
         }
 
         activeConversation.messages.push({ role: 'assistant', content: aiResponseText });
+
+        // Real-time struggle detection and activity tracking
+        const { detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
+
+        // Detect if student is struggling in recent messages
+        const struggleInfo = detectStruggle(activeConversation.messages.slice(-10));
+        if (struggleInfo.isStruggling) {
+            activeConversation.alerts = activeConversation.alerts || [];
+
+            // Only create new alert if not already alerted for this struggle recently
+            const recentStruggleAlert = activeConversation.alerts.find(a =>
+                a.type === 'struggle' &&
+                !a.acknowledged &&
+                (Date.now() - new Date(a.timestamp).getTime()) < 10 * 60 * 1000 // Within last 10 minutes
+            );
+
+            if (!recentStruggleAlert) {
+                activeConversation.alerts.push({
+                    type: 'struggle',
+                    message: `Struggling with ${struggleInfo.strugglingWith}`,
+                    timestamp: new Date(),
+                    acknowledged: false,
+                    severity: struggleInfo.severity
+                });
+            }
+            activeConversation.strugglingWith = struggleInfo.strugglingWith;
+        }
+
+        // Update live tracking fields for teacher dashboard
+        activeConversation.currentTopic = detectTopic(activeConversation.messages);
+        const stats = calculateProblemStats(activeConversation.messages);
+        activeConversation.problemsAttempted = stats.attempted;
+        activeConversation.problemsCorrect = stats.correct;
+        activeConversation.lastActivity = new Date();
+
         await activeConversation.save();
-        
+
         let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
         user.xp = (user.xp || 0) + xpAward;
         
