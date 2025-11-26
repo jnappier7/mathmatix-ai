@@ -121,16 +121,16 @@ router.post('/', isAuthenticated, async (req, res) => {
         // Parse rectangles
         while ((match = drawRectRegex.exec(aiResponseText)) !== null) {
             const topLeft = match[1].split(',').map(Number);
-            const width = parseFloat(match[2]);
-            const height = parseFloat(match[3]);
+            const rectWidth = parseFloat(match[2]);
+            const rectHeight = parseFloat(match[3]);
             if (topLeft.length === 2) {
                 dynamicDrawingSequence.push({
                     type: 'rectangle',
                     topLeft,
-                    width,
-                    height,
+                    width: rectWidth,
+                    height: rectHeight,
                     color: match[4] || 'black',
-                    width: match[5] ? parseInt(match[5]) : 2
+                    strokeWidth: match[5] ? parseInt(match[5]) : 2
                 });
             }
         }

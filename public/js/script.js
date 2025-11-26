@@ -238,9 +238,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const clearBtn = document.getElementById('clear-whiteboard-btn');
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
-                if (confirm('Clear the whiteboard?')) {
-                    fabricCanvas.clear();
-                    fabricCanvas.backgroundColor = '#ffffff';
+                if (confirm('Clear your drawings? (Templates will be preserved)')) {
+                    // Clear only user drawings, preserve background templates
+                    const objects = fabricCanvas.getObjects();
+                    objects.forEach(obj => {
+                        if (!obj.isBackground) {
+                            fabricCanvas.remove(obj);
+                        }
+                    });
                     fabricCanvas.renderAll();
                 }
             });
@@ -251,15 +256,26 @@ document.addEventListener("DOMContentLoaded", () => {
         if (shareBtn) {
             shareBtn.addEventListener('click', shareWhiteboardWithAI);
         }
+
+        // Template selector
+        const templateSelect = document.getElementById('background-template');
+        if (templateSelect) {
+            templateSelect.addEventListener('change', (e) => {
+                drawBackgroundTemplate(e.target.value);
+            });
+        }
     }
 
     function updateDrawingMode() {
         if (whiteboardState.currentTool === 'pen') {
             fabricCanvas.isDrawingMode = true;
             fabricCanvas.selection = false;
+            fabricCanvas.freeDrawingBrush.color = whiteboardState.currentColor; // Restore current color
+            fabricCanvas.freeDrawingBrush.width = whiteboardState.brushSize;
         } else if (whiteboardState.currentTool === 'eraser') {
             fabricCanvas.isDrawingMode = true;
             fabricCanvas.freeDrawingBrush.color = '#ffffff'; // White eraser
+            fabricCanvas.freeDrawingBrush.width = whiteboardState.brushSize * 2; // Larger eraser
             fabricCanvas.selection = false;
         } else {
             // Shape tools (line, circle, rectangle, text)
@@ -420,6 +436,330 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function drawBackgroundTemplate(templateType) {
+        if (!fabricCanvas) return;
+
+        // Clear only background objects (preserve user drawings)
+        const objects = fabricCanvas.getObjects();
+        objects.forEach(obj => {
+            if (obj.isBackground) {
+                fabricCanvas.remove(obj);
+            }
+        });
+
+        if (templateType === 'none') {
+            fabricCanvas.renderAll();
+            return;
+        }
+
+        const width = fabricCanvas.width;
+        const height = fabricCanvas.height;
+        const gridColor = '#e0e0e0';
+        const axisColor = '#12B3B3';
+        const labelColor = '#666';
+
+        switch (templateType) {
+            case 'coordinate-grid':
+                drawCoordinateGrid(width, height, gridColor, axisColor, labelColor);
+                break;
+            case 'number-line':
+                drawNumberLine(width, height, axisColor, labelColor);
+                break;
+            case 'graph-paper':
+                drawGraphPaper(width, height, gridColor);
+                break;
+            case 'algebra-tiles':
+                drawAlgebraTilesMat(width, height, gridColor);
+                break;
+        }
+
+        fabricCanvas.renderAll();
+    }
+
+    function drawCoordinateGrid(width, height, gridColor, axisColor, labelColor) {
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const spacing = Math.min(width, height) / 20; // 20 units total (-10 to 10)
+
+        // Draw grid lines
+        for (let i = -10; i <= 10; i++) {
+            // Vertical lines
+            const x = centerX + (i * spacing);
+            const vLine = new fabric.Line([x, 0, x, height], {
+                stroke: gridColor,
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+                isBackground: true
+            });
+            fabricCanvas.add(vLine);
+
+            // Horizontal lines
+            const y = centerY + (i * spacing);
+            const hLine = new fabric.Line([0, y, width, y], {
+                stroke: gridColor,
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+                isBackground: true
+            });
+            fabricCanvas.add(hLine);
+        }
+
+        // Draw axes
+        const xAxis = new fabric.Line([0, centerY, width, centerY], {
+            stroke: axisColor,
+            strokeWidth: 2,
+            selectable: false,
+            evented: false,
+            isBackground: true
+        });
+        fabricCanvas.add(xAxis);
+
+        const yAxis = new fabric.Line([centerX, 0, centerX, height], {
+            stroke: axisColor,
+            strokeWidth: 2,
+            selectable: false,
+            evented: false,
+            isBackground: true
+        });
+        fabricCanvas.add(yAxis);
+
+        // Draw axis labels
+        for (let i = -10; i <= 10; i += 2) {
+            if (i === 0) continue;
+
+            // X-axis labels
+            const xLabelPos = centerX + (i * spacing);
+            const xLabel = new fabric.Text(i.toString(), {
+                left: xLabelPos,
+                top: centerY + 5,
+                fontSize: 12,
+                fill: labelColor,
+                selectable: false,
+                evented: false,
+                isBackground: true,
+                originX: 'center'
+            });
+            fabricCanvas.add(xLabel);
+
+            // Y-axis labels
+            const yLabelPos = centerY - (i * spacing);
+            const yLabel = new fabric.Text(i.toString(), {
+                left: centerX - 20,
+                top: yLabelPos,
+                fontSize: 12,
+                fill: labelColor,
+                selectable: false,
+                evented: false,
+                isBackground: true,
+                originY: 'center'
+            });
+            fabricCanvas.add(yLabel);
+        }
+
+        // Origin label
+        const origin = new fabric.Text('0', {
+            left: centerX - 15,
+            top: centerY + 5,
+            fontSize: 12,
+            fill: labelColor,
+            selectable: false,
+            evented: false,
+            isBackground: true
+        });
+        fabricCanvas.add(origin);
+    }
+
+    function drawNumberLine(width, height, axisColor, labelColor) {
+        const centerY = height / 2;
+        const spacing = width / 22; // Padding on sides
+        const startX = spacing;
+        const endX = width - spacing;
+        const unit = (endX - startX) / 20;
+
+        // Draw main line
+        const line = new fabric.Line([startX, centerY, endX, centerY], {
+            stroke: axisColor,
+            strokeWidth: 3,
+            selectable: false,
+            evented: false,
+            isBackground: true
+        });
+        fabricCanvas.add(line);
+
+        // Draw tick marks and labels
+        for (let i = -10; i <= 10; i++) {
+            const x = startX + (i + 10) * unit;
+            const tickHeight = i % 5 === 0 ? 15 : 10;
+
+            const tick = new fabric.Line([x, centerY - tickHeight, x, centerY + tickHeight], {
+                stroke: axisColor,
+                strokeWidth: 2,
+                selectable: false,
+                evented: false,
+                isBackground: true
+            });
+            fabricCanvas.add(tick);
+
+            if (i % 2 === 0) {
+                const label = new fabric.Text(i.toString(), {
+                    left: x,
+                    top: centerY + 25,
+                    fontSize: 14,
+                    fill: labelColor,
+                    selectable: false,
+                    evented: false,
+                    isBackground: true,
+                    originX: 'center'
+                });
+                fabricCanvas.add(label);
+            }
+        }
+
+        // Add arrows
+        const arrowSize = 10;
+        const leftArrow = new fabric.Triangle({
+            left: startX - arrowSize,
+            top: centerY,
+            width: arrowSize,
+            height: arrowSize,
+            fill: axisColor,
+            angle: -90,
+            selectable: false,
+            evented: false,
+            isBackground: true,
+            originX: 'center',
+            originY: 'center'
+        });
+        fabricCanvas.add(leftArrow);
+
+        const rightArrow = new fabric.Triangle({
+            left: endX + arrowSize,
+            top: centerY,
+            width: arrowSize,
+            height: arrowSize,
+            fill: axisColor,
+            angle: 90,
+            selectable: false,
+            evented: false,
+            isBackground: true,
+            originX: 'center',
+            originY: 'center'
+        });
+        fabricCanvas.add(rightArrow);
+    }
+
+    function drawGraphPaper(width, height, gridColor) {
+        const spacing = 20; // 20 pixels per square
+
+        // Draw vertical lines
+        for (let x = 0; x <= width; x += spacing) {
+            const line = new fabric.Line([x, 0, x, height], {
+                stroke: gridColor,
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+                isBackground: true
+            });
+            fabricCanvas.add(line);
+        }
+
+        // Draw horizontal lines
+        for (let y = 0; y <= height; y += spacing) {
+            const line = new fabric.Line([0, y, width, y], {
+                stroke: gridColor,
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+                isBackground: true
+            });
+            fabricCanvas.add(line);
+        }
+    }
+
+    function drawAlgebraTilesMat(width, height, gridColor) {
+        const padding = 40;
+        const matWidth = width - (2 * padding);
+        const matHeight = height - (2 * padding);
+
+        // Draw mat border
+        const border = new fabric.Rect({
+            left: padding,
+            top: padding,
+            width: matWidth,
+            height: matHeight,
+            stroke: '#12B3B3',
+            strokeWidth: 3,
+            fill: 'transparent',
+            selectable: false,
+            evented: false,
+            isBackground: true
+        });
+        fabricCanvas.add(border);
+
+        // Draw positive/negative divider (horizontal)
+        const divider = new fabric.Line([padding, height / 2, width - padding, height / 2], {
+            stroke: '#12B3B3',
+            strokeWidth: 2,
+            strokeDashArray: [5, 5],
+            selectable: false,
+            evented: false,
+            isBackground: true
+        });
+        fabricCanvas.add(divider);
+
+        // Add labels
+        const posLabel = new fabric.Text('Positive', {
+            left: width / 2,
+            top: padding + 15,
+            fontSize: 16,
+            fill: '#16C86D',
+            fontWeight: 'bold',
+            selectable: false,
+            evented: false,
+            isBackground: true,
+            originX: 'center'
+        });
+        fabricCanvas.add(posLabel);
+
+        const negLabel = new fabric.Text('Negative', {
+            left: width / 2,
+            top: height / 2 + 15,
+            fontSize: 16,
+            fill: '#FF4E4E',
+            fontWeight: 'bold',
+            selectable: false,
+            evented: false,
+            isBackground: true,
+            originX: 'center'
+        });
+        fabricCanvas.add(negLabel);
+
+        // Draw light grid
+        const gridSpacing = 30;
+        for (let x = padding; x <= width - padding; x += gridSpacing) {
+            const line = new fabric.Line([x, padding, x, height - padding], {
+                stroke: '#f0f0f0',
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+                isBackground: true
+            });
+            fabricCanvas.add(line);
+        }
+        for (let y = padding; y <= height - padding; y += gridSpacing) {
+            const line = new fabric.Line([padding, y, width - padding, y], {
+                stroke: '#f0f0f0',
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+                isBackground: true
+            });
+            fabricCanvas.add(line);
+        }
+    }
+
     // Transform mathematical coordinates to canvas pixel coordinates
     function mathToCanvasCoords(mathX, mathY, mathMin = -10, mathMax = 10) {
         if (!fabricCanvas) return { x: 0, y: 0 };
@@ -443,13 +783,20 @@ document.addEventListener("DOMContentLoaded", () => {
     async function renderDrawing(sequence, delay = 500) {
         if (!fabricCanvas || !whiteboardPanel) return;
 
-        fabricCanvas.clear();
+        // Clear only user drawings, preserve background templates
+        const objects = fabricCanvas.getObjects();
+        objects.forEach(obj => {
+            if (!obj.isBackground) {
+                fabricCanvas.remove(obj);
+            }
+        });
+
         fabricCanvas.backgroundColor = '#ffffff';
         whiteboardPanel.classList.remove('is-hidden');
 
         for (const item of sequence) {
             const color = item.color || 'black';
-            const strokeWidth = item.width || 2;
+            const strokeWidth = item.strokeWidth || item.width || 2;
 
             switch (item.type) {
                 case 'line':
