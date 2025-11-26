@@ -129,7 +129,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const whiteboardPanel = document.getElementById('whiteboard-panel');
     const closeWhiteboardBtn = document.getElementById('close-whiteboard-btn');
-    
+    const drawItOutBtn = document.getElementById('draw-it-out-btn');
+
     // --- Speech Recognition ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition;
@@ -1348,6 +1349,15 @@ function removeAttachedFile() {
         closeWhiteboardBtn.addEventListener('click', () => {
             if (whiteboardPanel) {
                 whiteboardPanel.classList.add('is-hidden');
+            }
+        });
+    }
+
+    if (drawItOutBtn) {
+        drawItOutBtn.addEventListener('click', () => {
+            if (whiteboardPanel) {
+                whiteboardPanel.classList.remove('is-hidden');
+                showToast('When in doubt, draw it out! 📝', 2000);
             }
         });
     }
