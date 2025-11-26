@@ -180,6 +180,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Transform mathematical coordinates to canvas pixel coordinates
+    function mathToCanvasCoords(mathX, mathY, mathMin = -10, mathMax = 10) {
+        if (!fabricCanvas) return { x: 0, y: 0 };
+
+        const canvasWidth = fabricCanvas.width;
+        const canvasHeight = fabricCanvas.height;
+        const padding = 40; // Padding from canvas edges
+
+        // Available drawing area
+        const drawWidth = canvasWidth - (2 * padding);
+        const drawHeight = canvasHeight - (2 * padding);
+
+        // Transform from math coordinates to pixel coordinates
+        const mathRange = mathMax - mathMin;
+        const pixelX = padding + ((mathX - mathMin) / mathRange) * drawWidth;
+        const pixelY = padding + ((mathMax - mathY) / mathRange) * drawHeight; // Flip Y axis
+
+        return { x: pixelX, y: pixelY };
+    }
+
     async function renderDrawing(sequence, delay = 500) {
         if (!fabricCanvas || !whiteboardPanel) return;
 
@@ -189,7 +209,11 @@ document.addEventListener("DOMContentLoaded", () => {
         for (const item of sequence) {
             switch (item.type) {
                 case 'line':
-                    const line = new fabric.Line(item.points, {
+                    // Transform mathematical coordinates to canvas coordinates
+                    const start = mathToCanvasCoords(item.points[0], item.points[1]);
+                    const end = mathToCanvasCoords(item.points[2], item.points[3]);
+
+                    const line = new fabric.Line([start.x, start.y, end.x, end.y], {
                         stroke: 'black',
                         strokeWidth: 2,
                         selectable: false,
@@ -197,9 +221,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     fabricCanvas.add(line);
                     break;
                 case 'text':
+                    // Transform text position coordinates
+                    const textPos = mathToCanvasCoords(item.position[0], item.position[1]);
+
                     const text = new fabric.Text(item.content, {
-                        left: item.position[0],
-                        top: item.position[1],
+                        left: textPos.x,
+                        top: textPos.y,
                         fontSize: 16,
                         selectable: false,
                     });
