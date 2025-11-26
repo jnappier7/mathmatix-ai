@@ -4,11 +4,22 @@ console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 
 // --- Global Variables ---
 let currentUser = null;
-let isPlaying = false; 
+let isPlaying = false;
 let audioQueue = [];
 let currentAudioSource = null;
 let fabricCanvas = null;
 let attachedFile = null;
+
+// Whiteboard state
+let whiteboardState = {
+    currentTool: 'pen',
+    currentColor: '#000000',
+    brushSize: 3,
+    isDrawing: false,
+    startX: 0,
+    startY: 0,
+    currentShape: null
+};
 
 // --- Global Helper Functions ---
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
@@ -159,17 +170,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function initializeWhiteboard() {
         if (document.getElementById('tutor-canvas') && window.fabric) {
             fabricCanvas = new fabric.Canvas('tutor-canvas', {
-                isDrawingMode: false,
+                isDrawingMode: true,
                 selection: false,
-                backgroundColor: '#f9f9f9',
+                backgroundColor: '#ffffff',
             });
-            
+
+            // Set default brush
+            fabricCanvas.freeDrawingBrush.color = whiteboardState.currentColor;
+            fabricCanvas.freeDrawingBrush.width = whiteboardState.brushSize;
+
             const resizeCanvas = () => {
                 const parent = document.getElementById('whiteboard-panel');
                 if (parent && fabricCanvas) {
                     const headerHeight = parent.querySelector('.dashboard-panel-header').offsetHeight;
+                    const toolbarHeight = document.getElementById('whiteboard-toolbar').offsetHeight;
                     fabricCanvas.setWidth(parent.clientWidth);
-                    fabricCanvas.setHeight(parent.clientHeight - headerHeight);
+                    fabricCanvas.setHeight(parent.clientHeight - headerHeight - toolbarHeight);
                     fabricCanvas.renderAll();
                 }
             };
@@ -177,6 +193,230 @@ document.addEventListener("DOMContentLoaded", () => {
             resizeCanvas();
 
             makeElementDraggable(whiteboardPanel);
+            initializeWhiteboardControls();
+            setupWhiteboardDrawing();
+        }
+    }
+
+    function initializeWhiteboardControls() {
+        // Tool buttons
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                whiteboardState.currentTool = btn.dataset.tool;
+                updateDrawingMode();
+            });
+        });
+
+        // Color buttons
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                whiteboardState.currentColor = btn.dataset.color;
+                if (fabricCanvas.freeDrawingBrush) {
+                    fabricCanvas.freeDrawingBrush.color = whiteboardState.currentColor;
+                }
+            });
+        });
+
+        // Brush size control
+        const brushSizeInput = document.getElementById('brush-size');
+        const brushSizeValue = document.getElementById('brush-size-value');
+        if (brushSizeInput && brushSizeValue) {
+            brushSizeInput.addEventListener('input', (e) => {
+                whiteboardState.brushSize = parseInt(e.target.value);
+                brushSizeValue.textContent = whiteboardState.brushSize;
+                if (fabricCanvas.freeDrawingBrush) {
+                    fabricCanvas.freeDrawingBrush.width = whiteboardState.brushSize;
+                }
+            });
+        }
+
+        // Clear button
+        const clearBtn = document.getElementById('clear-whiteboard-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                if (confirm('Clear the whiteboard?')) {
+                    fabricCanvas.clear();
+                    fabricCanvas.backgroundColor = '#ffffff';
+                    fabricCanvas.renderAll();
+                }
+            });
+        }
+
+        // Share button
+        const shareBtn = document.getElementById('share-whiteboard-btn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', shareWhiteboardWithAI);
+        }
+    }
+
+    function updateDrawingMode() {
+        if (whiteboardState.currentTool === 'pen') {
+            fabricCanvas.isDrawingMode = true;
+            fabricCanvas.selection = false;
+        } else if (whiteboardState.currentTool === 'eraser') {
+            fabricCanvas.isDrawingMode = true;
+            fabricCanvas.freeDrawingBrush.color = '#ffffff'; // White eraser
+            fabricCanvas.selection = false;
+        } else {
+            // Shape tools (line, circle, rectangle, text)
+            fabricCanvas.isDrawingMode = false;
+            fabricCanvas.selection = false;
+        }
+    }
+
+    function setupWhiteboardDrawing() {
+        fabricCanvas.on('mouse:down', function(options) {
+            if (fabricCanvas.isDrawingMode) return; // Let free drawing handle it
+
+            const pointer = fabricCanvas.getPointer(options.e);
+            whiteboardState.isDrawing = true;
+            whiteboardState.startX = pointer.x;
+            whiteboardState.startY = pointer.y;
+
+            switch (whiteboardState.currentTool) {
+                case 'line':
+                    whiteboardState.currentShape = new fabric.Line(
+                        [pointer.x, pointer.y, pointer.x, pointer.y],
+                        {
+                            stroke: whiteboardState.currentColor,
+                            strokeWidth: whiteboardState.brushSize,
+                            selectable: false
+                        }
+                    );
+                    fabricCanvas.add(whiteboardState.currentShape);
+                    break;
+
+                case 'circle':
+                    whiteboardState.currentShape = new fabric.Circle({
+                        left: pointer.x,
+                        top: pointer.y,
+                        radius: 1,
+                        stroke: whiteboardState.currentColor,
+                        strokeWidth: whiteboardState.brushSize,
+                        fill: 'transparent',
+                        selectable: false,
+                        originX: 'center',
+                        originY: 'center'
+                    });
+                    fabricCanvas.add(whiteboardState.currentShape);
+                    break;
+
+                case 'rectangle':
+                    whiteboardState.currentShape = new fabric.Rect({
+                        left: pointer.x,
+                        top: pointer.y,
+                        width: 1,
+                        height: 1,
+                        stroke: whiteboardState.currentColor,
+                        strokeWidth: whiteboardState.brushSize,
+                        fill: 'transparent',
+                        selectable: false
+                    });
+                    fabricCanvas.add(whiteboardState.currentShape);
+                    break;
+
+                case 'text':
+                    const text = prompt('Enter text:');
+                    if (text) {
+                        const textObj = new fabric.Text(text, {
+                            left: pointer.x,
+                            top: pointer.y,
+                            fill: whiteboardState.currentColor,
+                            fontSize: whiteboardState.brushSize * 5,
+                            selectable: false
+                        });
+                        fabricCanvas.add(textObj);
+                    }
+                    whiteboardState.isDrawing = false;
+                    break;
+            }
+        });
+
+        fabricCanvas.on('mouse:move', function(options) {
+            if (!whiteboardState.isDrawing || !whiteboardState.currentShape) return;
+
+            const pointer = fabricCanvas.getPointer(options.e);
+
+            switch (whiteboardState.currentTool) {
+                case 'line':
+                    whiteboardState.currentShape.set({
+                        x2: pointer.x,
+                        y2: pointer.y
+                    });
+                    break;
+
+                case 'circle':
+                    const radius = Math.sqrt(
+                        Math.pow(pointer.x - whiteboardState.startX, 2) +
+                        Math.pow(pointer.y - whiteboardState.startY, 2)
+                    );
+                    whiteboardState.currentShape.set({ radius: radius });
+                    break;
+
+                case 'rectangle':
+                    whiteboardState.currentShape.set({
+                        width: Math.abs(pointer.x - whiteboardState.startX),
+                        height: Math.abs(pointer.y - whiteboardState.startY)
+                    });
+                    if (pointer.x < whiteboardState.startX) {
+                        whiteboardState.currentShape.set({ left: pointer.x });
+                    }
+                    if (pointer.y < whiteboardState.startY) {
+                        whiteboardState.currentShape.set({ top: pointer.y });
+                    }
+                    break;
+            }
+
+            fabricCanvas.renderAll();
+        });
+
+        fabricCanvas.on('mouse:up', function() {
+            whiteboardState.isDrawing = false;
+            whiteboardState.currentShape = null;
+        });
+    }
+
+    async function shareWhiteboardWithAI() {
+        if (!fabricCanvas || !currentUser) return;
+
+        try {
+            // Convert canvas to base64 image
+            const imageData = fabricCanvas.toDataURL({
+                format: 'png',
+                quality: 0.8
+            });
+
+            // Convert base64 to blob
+            const response = await fetch(imageData);
+            const blob = await response.blob();
+            const file = new File([blob], 'whiteboard.png', { type: 'image/png' });
+
+            // Use the existing file upload mechanism
+            attachedFile = file;
+
+            // Create visual pill
+            const filePillContainer = document.getElementById('file-pill-container');
+            filePillContainer.innerHTML = `
+                <div class="file-pill">
+                    <span class="file-name">📋 Whiteboard snapshot</span>
+                    <button class="remove-file-btn" onclick="removeAttachedFile()">×</button>
+                </div>
+            `;
+
+            // Suggest a message
+            const userInput = document.getElementById('user-input');
+            if (userInput && !userInput.value.trim()) {
+                userInput.value = "Can you help me with this problem I drew on the whiteboard?";
+            }
+
+            showToast('Whiteboard snapshot attached! Click send to share with AI.', 3000);
+        } catch (error) {
+            console.error('Error sharing whiteboard:', error);
+            showToast('Failed to share whiteboard. Please try again.', 3000);
         }
     }
 
@@ -204,9 +444,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!fabricCanvas || !whiteboardPanel) return;
 
         fabricCanvas.clear();
+        fabricCanvas.backgroundColor = '#ffffff';
         whiteboardPanel.classList.remove('is-hidden');
 
         for (const item of sequence) {
+            const color = item.color || 'black';
+            const strokeWidth = item.width || 2;
+
             switch (item.type) {
                 case 'line':
                     // Transform mathematical coordinates to canvas coordinates
@@ -214,12 +458,51 @@ document.addEventListener("DOMContentLoaded", () => {
                     const end = mathToCanvasCoords(item.points[2], item.points[3]);
 
                     const line = new fabric.Line([start.x, start.y, end.x, end.y], {
-                        stroke: 'black',
-                        strokeWidth: 2,
+                        stroke: color,
+                        strokeWidth: strokeWidth,
                         selectable: false,
                     });
                     fabricCanvas.add(line);
                     break;
+
+                case 'circle':
+                    // item.center = [x, y], item.radius = r
+                    const center = mathToCanvasCoords(item.center[0], item.center[1]);
+                    const scaledRadius = (item.radius / 20) * (fabricCanvas.width - 80); // Scale radius to canvas
+
+                    const circle = new fabric.Circle({
+                        left: center.x,
+                        top: center.y,
+                        radius: scaledRadius,
+                        stroke: color,
+                        strokeWidth: strokeWidth,
+                        fill: item.fill || 'transparent',
+                        selectable: false,
+                        originX: 'center',
+                        originY: 'center'
+                    });
+                    fabricCanvas.add(circle);
+                    break;
+
+                case 'rectangle':
+                    // item.topLeft = [x, y], item.width, item.height
+                    const topLeft = mathToCanvasCoords(item.topLeft[0], item.topLeft[1]);
+                    const scaledWidth = (item.width / 20) * (fabricCanvas.width - 80);
+                    const scaledHeight = (item.height / 20) * (fabricCanvas.height - 80);
+
+                    const rect = new fabric.Rect({
+                        left: topLeft.x,
+                        top: topLeft.y,
+                        width: scaledWidth,
+                        height: scaledHeight,
+                        stroke: color,
+                        strokeWidth: strokeWidth,
+                        fill: item.fill || 'transparent',
+                        selectable: false
+                    });
+                    fabricCanvas.add(rect);
+                    break;
+
                 case 'text':
                     // Transform text position coordinates
                     const textPos = mathToCanvasCoords(item.position[0], item.position[1]);
@@ -227,10 +510,39 @@ document.addEventListener("DOMContentLoaded", () => {
                     const text = new fabric.Text(item.content, {
                         left: textPos.x,
                         top: textPos.y,
-                        fontSize: 16,
+                        fontSize: item.fontSize || 16,
+                        fill: color,
                         selectable: false,
                     });
                     fabricCanvas.add(text);
+                    break;
+
+                case 'point':
+                    // Draw a point as a small circle
+                    const pointPos = mathToCanvasCoords(item.position[0], item.position[1]);
+
+                    const point = new fabric.Circle({
+                        left: pointPos.x,
+                        top: pointPos.y,
+                        radius: 4,
+                        fill: color,
+                        selectable: false,
+                        originX: 'center',
+                        originY: 'center'
+                    });
+                    fabricCanvas.add(point);
+
+                    // Add label if provided
+                    if (item.label) {
+                        const label = new fabric.Text(item.label, {
+                            left: pointPos.x + 8,
+                            top: pointPos.y - 8,
+                            fontSize: 14,
+                            fill: color,
+                            selectable: false
+                        });
+                        fabricCanvas.add(label);
+                    }
                     break;
             }
             fabricCanvas.renderAll();

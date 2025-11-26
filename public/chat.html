@@ -69,8 +69,57 @@
       <div id="whiteboard-panel" class="dashboard-panel card-style-1 is-hidden">
         <div class="dashboard-panel-header">
             <h2>Whiteboard</h2>
-            <button id="close-whiteboard-btn" class="modal-close-button">&times;</button>
+            <div class="whiteboard-header-actions">
+                <button id="share-whiteboard-btn" class="icon-btn" title="Share with AI">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <button id="clear-whiteboard-btn" class="icon-btn" title="Clear Canvas">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button id="close-whiteboard-btn" class="modal-close-button">&times;</button>
+            </div>
         </div>
+
+        <div id="whiteboard-toolbar" class="whiteboard-toolbar">
+            <button id="tool-pen" class="tool-btn active" data-tool="pen" title="Pen">
+                <i class="fas fa-pen"></i>
+            </button>
+            <button id="tool-eraser" class="tool-btn" data-tool="eraser" title="Eraser">
+                <i class="fas fa-eraser"></i>
+            </button>
+            <button id="tool-line" class="tool-btn" data-tool="line" title="Line">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button id="tool-circle" class="tool-btn" data-tool="circle" title="Circle">
+                <i class="fas fa-circle"></i>
+            </button>
+            <button id="tool-rectangle" class="tool-btn" data-tool="rectangle" title="Rectangle">
+                <i class="fas fa-square"></i>
+            </button>
+            <button id="tool-text" class="tool-btn" data-tool="text" title="Text">
+                <i class="fas fa-font"></i>
+            </button>
+
+            <div class="toolbar-divider"></div>
+
+            <div class="color-palette">
+                <button class="color-btn active" data-color="#000000" style="background-color: #000000;" title="Black"></button>
+                <button class="color-btn" data-color="#12B3B3" style="background-color: #12B3B3;" title="Teal"></button>
+                <button class="color-btn" data-color="#FF3B7F" style="background-color: #FF3B7F;" title="Hot Pink"></button>
+                <button class="color-btn" data-color="#16C86D" style="background-color: #16C86D;" title="Green"></button>
+                <button class="color-btn" data-color="#FFC24B" style="background-color: #FFC24B;" title="Gold"></button>
+                <button class="color-btn" data-color="#FF4E4E" style="background-color: #FF4E4E;" title="Red"></button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <div class="brush-size-control">
+                <label for="brush-size">Size:</label>
+                <input type="range" id="brush-size" min="1" max="20" value="3" />
+                <span id="brush-size-value">3</span>
+            </div>
+        </div>
+
         <canvas id="tutor-canvas"></canvas>
       </div>
 
