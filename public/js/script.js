@@ -8,6 +8,7 @@ let isPlaying = false;
 let audioQueue = [];
 let currentAudioSource = null;
 let fabricCanvas = null;
+let whiteboard = null; // New whiteboard instance
 let attachedFile = null;
 
 // Whiteboard state
@@ -169,102 +170,173 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function initializeWhiteboard() {
-        if (document.getElementById('tutor-canvas') && window.fabric) {
-            fabricCanvas = new fabric.Canvas('tutor-canvas', {
-                isDrawingMode: true,
-                selection: false,
-                backgroundColor: '#ffffff',
-            });
+        if (document.getElementById('tutor-canvas') && window.MathmatixWhiteboard) {
+            // Initialize the new whiteboard system
+            whiteboard = new MathmatixWhiteboard('tutor-canvas', 'whiteboard-panel');
+            fabricCanvas = whiteboard.canvas; // Keep for backward compatibility
 
-            // Set default brush
-            fabricCanvas.freeDrawingBrush.color = whiteboardState.currentColor;
-            fabricCanvas.freeDrawingBrush.width = whiteboardState.brushSize;
+            // Setup toolbar button event listeners
+            setupWhiteboardToolbar();
 
-            const resizeCanvas = () => {
-                const parent = document.getElementById('whiteboard-panel');
-                if (parent && fabricCanvas) {
-                    const headerHeight = parent.querySelector('.dashboard-panel-header').offsetHeight;
-                    const toolbarHeight = document.getElementById('whiteboard-toolbar').offsetHeight;
-                    fabricCanvas.setWidth(parent.clientWidth);
-                    fabricCanvas.setHeight(parent.clientHeight - headerHeight - toolbarHeight);
-                    fabricCanvas.renderAll();
-                }
-            };
-            new ResizeObserver(resizeCanvas).observe(document.getElementById('whiteboard-panel'));
-            resizeCanvas();
+            // Setup toggle button
+            const toggleBtn = document.getElementById('toggle-whiteboard-btn');
+            const whiteboardPanel = document.getElementById('whiteboard-panel');
+            const openWhiteboardBtn = document.getElementById('open-whiteboard-btn');
 
-            makeElementDraggable(whiteboardPanel);
-            initializeWhiteboardControls();
-            setupWhiteboardDrawing();
+            if (toggleBtn && whiteboardPanel) {
+                toggleBtn.addEventListener('click', () => {
+                    whiteboardPanel.classList.toggle('is-hidden');
+                    if (openWhiteboardBtn) {
+                        openWhiteboardBtn.classList.toggle('hidden');
+                    }
+                });
+            }
+
+            if (openWhiteboardBtn && whiteboardPanel) {
+                openWhiteboardBtn.addEventListener('click', () => {
+                    whiteboardPanel.classList.remove('is-hidden');
+                    openWhiteboardBtn.classList.add('hidden');
+                });
+            }
+
+            console.log('✅ Modern whiteboard initialized');
         }
     }
 
-    function initializeWhiteboardControls() {
+    function setupWhiteboardToolbar() {
         // Tool buttons
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                whiteboardState.currentTool = btn.dataset.tool;
-                updateDrawingMode();
-            });
+        const tools = ['select', 'pen', 'highlighter', 'eraser', 'line', 'arrow',
+                      'rectangle', 'circle', 'triangle', 'text'];
+
+        tools.forEach(tool => {
+            const btn = document.getElementById(`tool-${tool}`);
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all tool buttons
+                    document.querySelectorAll('.toolbar-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    whiteboard.setTool(tool);
+                });
+            }
         });
 
-        // Color buttons
-        document.querySelectorAll('.color-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                whiteboardState.currentColor = btn.dataset.color;
-                if (fabricCanvas.freeDrawingBrush) {
-                    fabricCanvas.freeDrawingBrush.color = whiteboardState.currentColor;
-                }
+        // Math tools
+        const gridBtn = document.getElementById('tool-grid');
+        if (gridBtn) {
+            gridBtn.addEventListener('click', () => {
+                whiteboard.addCoordinateGrid();
             });
-        });
+        }
 
-        // Brush size control
-        const brushSizeInput = document.getElementById('brush-size');
-        const brushSizeValue = document.getElementById('brush-size-value');
-        if (brushSizeInput && brushSizeValue) {
-            brushSizeInput.addEventListener('input', (e) => {
-                whiteboardState.brushSize = parseInt(e.target.value);
-                brushSizeValue.textContent = whiteboardState.brushSize;
-                if (fabricCanvas.freeDrawingBrush) {
-                    fabricCanvas.freeDrawingBrush.width = whiteboardState.brushSize;
+        const graphBtn = document.getElementById('tool-graph');
+        if (graphBtn) {
+            graphBtn.addEventListener('click', () => {
+                const funcStr = prompt('Enter function (e.g., x^2, 2*x+1, Math.sin(x)):');
+                if (funcStr) {
+                    whiteboard.plotFunction(funcStr);
                 }
             });
         }
 
-        // Clear button
-        const clearBtn = document.getElementById('clear-whiteboard-btn');
+        const protractorBtn = document.getElementById('tool-protractor');
+        if (protractorBtn) {
+            protractorBtn.addEventListener('click', () => {
+                whiteboard.addProtractor(whiteboard.canvas.width / 2, whiteboard.canvas.height / 2);
+            });
+        }
+
+        // Color picker
+        const colorPicker = document.getElementById('color-picker');
+        const colorDisplay = document.querySelector('.color-display');
+        if (colorPicker && colorDisplay) {
+            colorPicker.addEventListener('change', (e) => {
+                whiteboard.setColor(e.target.value);
+                colorDisplay.style.color = e.target.value;
+            });
+        }
+
+        // Stroke width
+        const strokeSlider = document.getElementById('stroke-width-slider');
+        if (strokeSlider) {
+            strokeSlider.addEventListener('input', (e) => {
+                whiteboard.setStrokeWidth(e.target.value);
+            });
+        }
+
+        // Action buttons
+        const undoBtn = document.getElementById('undo-btn');
+        if (undoBtn) {
+            undoBtn.addEventListener('click', () => whiteboard.undo());
+        }
+
+        const redoBtn = document.getElementById('redo-btn');
+        if (redoBtn) {
+            redoBtn.addEventListener('click', () => whiteboard.redo());
+        }
+
+        const deleteBtn = document.getElementById('delete-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => whiteboard.deleteSelected());
+        }
+
+        const clearBtn = document.getElementById('clear-btn');
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
-                if (confirm('Clear your drawings? (Templates will be preserved)')) {
-                    // Clear only user drawings, preserve background templates
-                    const objects = fabricCanvas.getObjects();
-                    objects.forEach(obj => {
-                        if (!obj.isBackground) {
-                            fabricCanvas.remove(obj);
-                        }
-                    });
-                    fabricCanvas.renderAll();
+                if (confirm('Clear entire whiteboard?')) {
+                    whiteboard.clear();
                 }
             });
         }
 
-        // Share button
-        const shareBtn = document.getElementById('share-whiteboard-btn');
-        if (shareBtn) {
-            shareBtn.addEventListener('click', shareWhiteboardWithAI);
+        const downloadBtn = document.getElementById('download-btn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', () => whiteboard.downloadImage());
         }
 
-        // Template selector
-        const templateSelect = document.getElementById('background-template');
-        if (templateSelect) {
-            templateSelect.addEventListener('change', (e) => {
-                drawBackgroundTemplate(e.target.value);
+        // Panel controls
+        const minimizeBtn = document.getElementById('minimize-whiteboard-btn');
+        if (minimizeBtn) {
+            minimizeBtn.addEventListener('click', () => whiteboard.minimize());
+        }
+
+        const maximizeBtn = document.getElementById('maximize-whiteboard-btn');
+        if (maximizeBtn) {
+            maximizeBtn.addEventListener('click', () => whiteboard.maximize());
+        }
+
+        const openWhiteboardBtn = document.getElementById('open-whiteboard-btn');
+        if (openWhiteboardBtn) {
+            openWhiteboardBtn.addEventListener('click', () => {
+                whiteboard.show();
+                openWhiteboardBtn.classList.add('hidden');
             });
         }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (!whiteboard) return;
+
+            // Ctrl/Cmd + Z = Undo
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                whiteboard.undo();
+            }
+
+            // Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y = Redo
+            if ((e.ctrlKey || e.metaKey) && (e.shiftKey && e.key === 'z' || e.key === 'y')) {
+                e.preventDefault();
+                whiteboard.redo();
+            }
+
+            // Delete/Backspace = Delete selected
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                const activeElement = document.activeElement;
+                if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    whiteboard.deleteSelected();
+                }
+            }
+        });
     }
 
     function updateDrawingMode() {
@@ -782,120 +854,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function renderDrawing(sequence, delay = 500) {
-        if (!fabricCanvas || !whiteboardPanel) return;
-
-        // Clear only user drawings, preserve background templates
-        const objects = fabricCanvas.getObjects();
-        objects.forEach(obj => {
-            if (!obj.isBackground) {
-                fabricCanvas.remove(obj);
-            }
-        });
-
-        fabricCanvas.backgroundColor = '#ffffff';
-        whiteboardPanel.classList.remove('is-hidden');
-
-        for (const item of sequence) {
-            const color = item.color || 'black';
-            const strokeWidth = item.strokeWidth || item.width || 2;
-
-            switch (item.type) {
-                case 'line':
-                    // Transform mathematical coordinates to canvas coordinates
-                    const start = mathToCanvasCoords(item.points[0], item.points[1]);
-                    const end = mathToCanvasCoords(item.points[2], item.points[3]);
-
-                    const line = new fabric.Line([start.x, start.y, end.x, end.y], {
-                        stroke: color,
-                        strokeWidth: strokeWidth,
-                        selectable: false,
-                    });
-                    fabricCanvas.add(line);
-                    break;
-
-                case 'circle':
-                    // item.center = [x, y], item.radius = r
-                    const center = mathToCanvasCoords(item.center[0], item.center[1]);
-                    const scaledRadius = (item.radius / 20) * (fabricCanvas.width - 80); // Scale radius to canvas
-
-                    const circle = new fabric.Circle({
-                        left: center.x,
-                        top: center.y,
-                        radius: scaledRadius,
-                        stroke: color,
-                        strokeWidth: strokeWidth,
-                        fill: item.fill || 'transparent',
-                        selectable: false,
-                        originX: 'center',
-                        originY: 'center'
-                    });
-                    fabricCanvas.add(circle);
-                    break;
-
-                case 'rectangle':
-                    // item.topLeft = [x, y], item.width, item.height
-                    const topLeft = mathToCanvasCoords(item.topLeft[0], item.topLeft[1]);
-                    const scaledWidth = (item.width / 20) * (fabricCanvas.width - 80);
-                    const scaledHeight = (item.height / 20) * (fabricCanvas.height - 80);
-
-                    const rect = new fabric.Rect({
-                        left: topLeft.x,
-                        top: topLeft.y,
-                        width: scaledWidth,
-                        height: scaledHeight,
-                        stroke: color,
-                        strokeWidth: strokeWidth,
-                        fill: item.fill || 'transparent',
-                        selectable: false
-                    });
-                    fabricCanvas.add(rect);
-                    break;
-
-                case 'text':
-                    // Transform text position coordinates
-                    const textPos = mathToCanvasCoords(item.position[0], item.position[1]);
-
-                    const text = new fabric.Text(item.content, {
-                        left: textPos.x,
-                        top: textPos.y,
-                        fontSize: item.fontSize || 16,
-                        fill: color,
-                        selectable: false,
-                    });
-                    fabricCanvas.add(text);
-                    break;
-
-                case 'point':
-                    // Draw a point as a small circle
-                    const pointPos = mathToCanvasCoords(item.position[0], item.position[1]);
-
-                    const point = new fabric.Circle({
-                        left: pointPos.x,
-                        top: pointPos.y,
-                        radius: 4,
-                        fill: color,
-                        selectable: false,
-                        originX: 'center',
-                        originY: 'center'
-                    });
-                    fabricCanvas.add(point);
-
-                    // Add label if provided
-                    if (item.label) {
-                        const label = new fabric.Text(item.label, {
-                            left: pointPos.x + 8,
-                            top: pointPos.y - 8,
-                            fontSize: 14,
-                            fill: color,
-                            selectable: false
-                        });
-                        fabricCanvas.add(label);
-                    }
-                    break;
-            }
-            fabricCanvas.renderAll();
-            await sleep(delay);
-        }
+        if (!whiteboard) return;
+        await whiteboard.renderAIDrawing(sequence, delay);
     }
 
     function makeElementDraggable(elmnt) {
@@ -1347,8 +1307,10 @@ function removeAttachedFile() {
     
     if (closeWhiteboardBtn) {
         closeWhiteboardBtn.addEventListener('click', () => {
-            if (whiteboardPanel) {
-                whiteboardPanel.classList.add('is-hidden');
+            if (whiteboard) {
+                whiteboard.hide();
+                const openBtn = document.getElementById('open-whiteboard-btn');
+                if (openBtn) openBtn.classList.remove('hidden');
             }
         });
     }
