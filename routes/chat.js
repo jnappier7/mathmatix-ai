@@ -23,6 +23,31 @@ router.post('/', isAuthenticated, async (req, res) => {
     if (!userId || !message) return res.status(400).json({ message: "User ID and message are required." });
     if (message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
 
+    // SAFETY FILTER: Block inappropriate content
+    const inappropriatePatterns = [
+        /\b(sex|porn|penis|vagina|breast|dick|cock|pussy|fuck|shit|ass|damn|bitch)\b/i,
+        /\b(drug|weed|cocaine|alcohol|beer|wine|drunk)\b/i,
+        /\b(gun|weapon|kill|murder|suicide|bomb)\b/i
+    ];
+
+    const messageClean = message.toLowerCase();
+    const containsInappropriate = inappropriatePatterns.some(pattern => pattern.test(messageClean));
+
+    if (containsInappropriate) {
+        console.warn(`⚠️ SAFETY FILTER TRIGGERED - User ${userId} - Message: ${message.substring(0, 50)}...`);
+        return res.json({
+            text: "I'm here to help you learn math in a safe, respectful way. That topic isn't appropriate for our tutoring session. Let's focus on math! What math topic would you like to work on?",
+            userXp: 0,
+            userLevel: 1,
+            xpNeeded: 200,
+            specialXpAwarded: "",
+            voiceId: "default",
+            newlyUnlockedTutors: [],
+            drawingSequence: null,
+            safetyFilter: true
+        });
+    }
+
     try {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found." });
@@ -87,6 +112,14 @@ router.post('/', isAuthenticated, async (req, res) => {
             bonusXpAwarded = parseInt(xpAwardMatch[1], 10);
             bonusXpReason = xpAwardMatch[2] || 'AI Bonus Award';
             aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
+        }
+
+        // SAFETY LOGGING: Check if AI flagged safety concern
+        const safetyConcernMatch = aiResponseText.match(/<SAFETY_CONCERN>([^<]+)<\/SAFETY_CONCERN>/);
+        if (safetyConcernMatch) {
+            console.error(`🚨 SAFETY CONCERN - User ${userId} (${user.firstName} ${user.lastName}) - ${safetyConcernMatch[1]}`);
+            aiResponseText = aiResponseText.replace(safetyConcernMatch[0], '').trim();
+            // TODO: Consider sending alert email to admin or incrementing warning counter on user
         }
 
         activeConversation.messages.push({ role: 'assistant', content: aiResponseText });
