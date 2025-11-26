@@ -166,6 +166,27 @@ document.addEventListener("DOMContentLoaded", () => {
             // Setup toolbar button event listeners
             setupWhiteboardToolbar();
 
+            // Setup toggle button
+            const toggleBtn = document.getElementById('toggle-whiteboard-btn');
+            const whiteboardPanel = document.getElementById('whiteboard-panel');
+            const openWhiteboardBtn = document.getElementById('open-whiteboard-btn');
+
+            if (toggleBtn && whiteboardPanel) {
+                toggleBtn.addEventListener('click', () => {
+                    whiteboardPanel.classList.toggle('is-hidden');
+                    if (openWhiteboardBtn) {
+                        openWhiteboardBtn.classList.toggle('hidden');
+                    }
+                });
+            }
+
+            if (openWhiteboardBtn && whiteboardPanel) {
+                openWhiteboardBtn.addEventListener('click', () => {
+                    whiteboardPanel.classList.remove('is-hidden');
+                    openWhiteboardBtn.classList.add('hidden');
+                });
+            }
+
             console.log('✅ Modern whiteboard initialized');
         }
     }

@@ -64,7 +64,9 @@ router.post('/', isAuthenticated, async (req, res) => {
         let bonusXpAwarded = 0;
         let bonusXpReason = '';
         if (xpAwardMatch) {
-            bonusXpAwarded = parseInt(xpAwardMatch[1], 10);
+            const rawXpAmount = parseInt(xpAwardMatch[1], 10);
+            // SECURITY FIX: Cap XP awards to prevent exploitation
+            bonusXpAwarded = Math.min(Math.max(rawXpAmount, BRAND_CONFIG.xpAwardRange.min), BRAND_CONFIG.xpAwardRange.max);
             bonusXpReason = xpAwardMatch[2] || 'AI Bonus Award';
             aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
         }

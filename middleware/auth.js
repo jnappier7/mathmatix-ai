@@ -3,6 +3,7 @@
 // Kept console.error for actual error logging.
 
 const passport = require("passport");
+const rateLimit = require('express-rate-limit');
 
 /**
  * Checks if a user is logged in and their session data is valid.
@@ -122,6 +123,26 @@ function handleLogout(req, res, next) {
   });
 }
 
+// --- RATE LIMITING FOR EXPENSIVE AI ENDPOINTS ---
+// SECURITY FIX: Per-user rate limiting for AI-powered endpoints to prevent API abuse
+const aiEndpointLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour window
+    max: 100, // Limit each user to 100 requests per hour
+    keyGenerator: (req) => {
+        // Use user ID if authenticated, otherwise fall back to IP
+        return req.user ? req.user._id.toString() : req.ip;
+    },
+    handler: (req, res) => {
+        console.warn(`WARN: Rate limit exceeded for user ${req.user ? req.user._id : req.ip} on ${req.path}`);
+        res.status(429).json({
+            message: 'Too many AI requests. Please try again later.',
+            retryAfter: Math.ceil(req.rateLimit.resetTime / 1000)
+        });
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 module.exports = {
     isAuthenticated,
     ensureNotAuthenticated,
@@ -130,5 +151,6 @@ module.exports = {
     isParent,
     isStudent,
     isAuthorizedForLeaderboard,
-    handleLogout
+    handleLogout,
+    aiEndpointLimiter
 };

@@ -1,0 +1,22 @@
+# Ignore local node modules and sensitive files
+node_modules
+npm-debug.log
+.env
+.gitignore
+.DS_Store
+
+# Additional patterns for Docker builds
+*.log
+.git
+.github
+README.md
+*.md
+.vscode
+.idea
+coverage
+.nyc_output
+*.test.js
+*.spec.js
+__tests__
+test
+tests

@@ -46,7 +46,8 @@ const {
   isParent,
   isStudent,
   isAuthorizedForLeaderboard,
-  handleLogout
+  handleLogout,
+  aiEndpointLimiter
 } = require("./middleware/auth");
 
 const loginRoutes = require('./routes/login');
@@ -170,13 +171,13 @@ app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
 app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
 app.use('/api/student', isAuthenticated, isStudent, studentRoutes.router);
 app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
-app.use('/api/chat', isAuthenticated, chatRoutes);
+app.use('/api/chat', isAuthenticated, aiEndpointLimiter, chatRoutes); // SECURITY FIX: Added per-user rate limiting
 app.use('/api/speak', isAuthenticated, speakRoutes);
-app.use('/api/upload', isAuthenticated, uploadRoutes);
-app.use('/api/chat-with-file', isAuthenticated, chatWithFileRoutes); 
+app.use('/api/upload', isAuthenticated, aiEndpointLimiter, uploadRoutes); // SECURITY FIX: Added per-user rate limiting
+app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, chatWithFileRoutes); // SECURITY FIX: Added per-user rate limiting 
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/memory', isAuthenticated, memoryRouter);
-app.use('/api/summary', summaryGeneratorRouter); // <-- CORRECTED: isAuthenticated middleware removed
+app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
 app.use('/api/graph', isAuthenticated, graphRoutes);
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);

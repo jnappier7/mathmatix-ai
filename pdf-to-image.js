@@ -1,0 +1,27 @@
+// utils/pdf-to-image.js - CORRECTED with LEGACY build
+
+const { getDocument } = require('pdfjs-dist/legacy/build/pdf.js');
+const { createCanvas } = require('canvas');
+
+// Set up the worker for the Node.js environment using the legacy build
+const pdfjsLib = require('pdfjs-dist/cjs/pdf.js');
+pdfjsLib.GlobalWorkerOptions.workerSrc = require.resolve('pdfjs-dist/cjs/pdf.worker.js');
+module.exports = async function pdfToImageBuffer(pdfBuffer) {
+  try {
+    const loadingTask = getDocument(pdfBuffer.buffer);
+    const pdf = await loadingTask.promise;
+
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport({ scale: 1.5 });
+    const canvas = createCanvas(viewport.width, viewport.height);
+    const context = canvas.getContext('2d');
+
+    await page.render({ canvasContext: context, viewport: viewport }).promise;
+    
+    return canvas.toBuffer('image/png');
+
+  } catch (err) {
+    console.error("ERROR: PDF.js rendering failed:", err);
+    return null;
+  }
+};
