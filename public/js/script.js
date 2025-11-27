@@ -220,6 +220,46 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+        // Arrow mode dropdown
+        const arrowBtn = document.getElementById('tool-arrow');
+        const arrowModeMenu = document.getElementById('arrow-mode-menu');
+
+        if (arrowBtn && arrowModeMenu) {
+            // Right-click to open mode menu
+            arrowBtn.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                arrowModeMenu.style.display = arrowModeMenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!arrowBtn.contains(e.target) && !arrowModeMenu.contains(e.target)) {
+                    arrowModeMenu.style.display = 'none';
+                }
+            });
+
+            // Handle arrow mode selection
+            const arrowModeOptions = arrowModeMenu.querySelectorAll('.arrow-mode-option');
+            arrowModeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const mode = option.getAttribute('data-mode');
+                    whiteboard.setArrowMode(mode);
+
+                    // Update tooltip to show current mode
+                    const modeIcons = {
+                        'end': '→',
+                        'start': '←',
+                        'both': '↔',
+                        'none': '—'
+                    };
+                    arrowBtn.setAttribute('data-tooltip', `Arrow (${modeIcons[mode]})`);
+
+                    arrowModeMenu.style.display = 'none';
+                });
+            });
+        }
+
         // Math tools
         const gridBtn = document.getElementById('tool-grid');
         if (gridBtn) {
@@ -248,28 +288,58 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Background upload
-        const uploadBgBtn = document.getElementById('upload-background-btn');
+        // Background menu dropdown
+        const backgroundMenuBtn = document.getElementById('background-menu-btn');
+        const backgroundMenu = document.getElementById('background-menu');
         const bgUploadInput = document.getElementById('whiteboard-bg-upload');
-        if (uploadBgBtn && bgUploadInput) {
-            uploadBgBtn.addEventListener('click', () => {
-                bgUploadInput.click();
+
+        if (backgroundMenuBtn && backgroundMenu) {
+            // Toggle dropdown
+            backgroundMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                backgroundMenu.style.display = backgroundMenu.style.display === 'none' ? 'block' : 'none';
             });
 
-            bgUploadInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    if (file.type.startsWith('image/')) {
-                        whiteboard.setBackgroundImage(file);
-                    } else if (file.type === 'application/pdf') {
-                        alert('PDF support coming soon! For now, please convert to an image or take a screenshot.');
-                    } else {
-                        alert('Please upload an image file (PNG, JPG, etc.)');
-                    }
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!backgroundMenuBtn.contains(e.target) && !backgroundMenu.contains(e.target)) {
+                    backgroundMenu.style.display = 'none';
                 }
-                // Reset input
-                bgUploadInput.value = '';
             });
+
+            // Handle background option clicks
+            const bgOptions = backgroundMenu.querySelectorAll('.bg-option');
+            bgOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const bgType = option.getAttribute('data-bg');
+
+                    if (bgType === 'upload') {
+                        bgUploadInput.click();
+                    } else {
+                        whiteboard.setPresetBackground(bgType);
+                    }
+
+                    backgroundMenu.style.display = 'none';
+                });
+            });
+
+            // File upload handler
+            if (bgUploadInput) {
+                bgUploadInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (file.type.startsWith('image/')) {
+                            whiteboard.setBackgroundImage(file);
+                        } else if (file.type === 'application/pdf') {
+                            alert('PDF support coming soon! For now, please convert to an image or take a screenshot.');
+                        } else {
+                            alert('Please upload an image file (PNG, JPG, etc.)');
+                        }
+                    }
+                    // Reset input
+                    bgUploadInput.value = '';
+                });
+            }
         }
 
         // Color picker
@@ -323,8 +393,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const sendToAiBtn = document.getElementById('send-to-ai-btn');
         if (sendToAiBtn) {
             sendToAiBtn.addEventListener('click', async () => {
-                const message = prompt('Add a message with your drawing (optional):') || 'Please provide feedback on my work.';
-
                 // Convert canvas to blob
                 whiteboard.canvas.toBlob(async (blob) => {
                     if (!blob) {
@@ -335,15 +403,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Create file from blob
                     const file = new File([blob], 'whiteboard-drawing.png', { type: 'image/png' });
 
-                    // Use existing file upload mechanism
+                    // Attach file and show preview in input area
                     attachedFile = file;
-
-                    // Show file pill
                     showFilePill(file.name);
 
-                    // Automatically send the message
-                    userInput.value = message;
-                    sendMessage();
+                    // Set placeholder message (user can edit or replace)
+                    if (!userInput.value.trim()) {
+                        userInput.value = 'Can you help me with this?';
+                    }
+
+                    // Focus input so user can type or send
+                    userInput.focus();
+                    userInput.select();
+
+                    console.log('✅ Whiteboard screenshot attached! Click send when ready.');
                 }, 'image/png');
             });
         }

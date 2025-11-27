@@ -170,9 +170,15 @@
         <button class="toolbar-btn" id="tool-line" data-tooltip="Line" title="Line">
           <i class="fas fa-minus"></i>
         </button>
-        <button class="toolbar-btn" id="tool-arrow" data-tooltip="Arrow" title="Arrow">
+        <button class="toolbar-btn" id="tool-arrow" data-tooltip="Arrow (→)" title="Arrow - click to change mode">
           <i class="fas fa-arrow-right"></i>
         </button>
+        <div id="arrow-mode-menu" class="arrow-mode-dropdown" style="display: none;">
+          <button class="arrow-mode-option" data-mode="end">→ End Only</button>
+          <button class="arrow-mode-option" data-mode="start">← Start Only</button>
+          <button class="arrow-mode-option" data-mode="both">↔ Both Ends</button>
+          <button class="arrow-mode-option" data-mode="none">— No Arrows</button>
+        </div>
         <button class="toolbar-btn" id="tool-rectangle" data-tooltip="Rectangle" title="Rectangle">
           <i class="far fa-square"></i>
         </button>
@@ -198,9 +204,18 @@
         <button class="toolbar-btn" id="tool-protractor" data-tooltip="Protractor" title="Protractor">
           <i class="fas fa-circle-notch"></i>
         </button>
-        <button class="toolbar-btn" id="upload-background-btn" data-tooltip="Upload Background" title="Upload worksheet/image as background">
-          <i class="fas fa-file-upload"></i>
+        <button class="toolbar-btn" id="background-menu-btn" data-tooltip="Background Options" title="Change background">
+          <i class="fas fa-image"></i>
         </button>
+        <div id="background-menu" class="background-dropdown" style="display: none;">
+          <button class="bg-option" data-bg="none">Clear Background</button>
+          <button class="bg-option" data-bg="white">Solid White</button>
+          <button class="bg-option" data-bg="black">Solid Black</button>
+          <button class="bg-option" data-bg="grid">Coordinate Plane</button>
+          <button class="bg-option" data-bg="lined">Lined Paper</button>
+          <button class="bg-option" data-bg="graph">Graph Paper</button>
+          <button class="bg-option" data-bg="upload"><i class="fas fa-upload"></i> Upload Image</button>
+        </div>
         <input type="file" id="whiteboard-bg-upload" accept="image/*,application/pdf" style="display: none;" />
       </div>
 

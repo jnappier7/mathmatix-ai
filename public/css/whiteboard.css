@@ -345,6 +345,95 @@
     overflow: visible !important;
 }
 
+/* Background Dropdown Menu */
+.background-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    min-width: 180px;
+    z-index: 1000;
+}
+
+.bg-option {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+}
+
+.bg-option:last-child {
+    margin-bottom: 0;
+    margin-top: 4px;
+    border-top: 1px solid #e9ecef;
+    padding-top: 12px;
+}
+
+.bg-option:hover {
+    background: #f1f3f5;
+    color: #12B3B3;
+}
+
+.bg-option i {
+    margin-right: 6px;
+}
+
+#background-menu-btn {
+    position: relative;
+}
+
+/* Arrow Mode Dropdown */
+.arrow-mode-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    min-width: 160px;
+    z-index: 1000;
+}
+
+.arrow-mode-option {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+}
+
+.arrow-mode-option:last-child {
+    margin-bottom: 0;
+}
+
+.arrow-mode-option:hover {
+    background: #f1f3f5;
+    color: #12B3B3;
+}
+
+#tool-arrow {
+    position: relative;
+}
+
 /* Open Whiteboard Button (for when hidden) */
 #open-whiteboard-btn {
     position: fixed;
