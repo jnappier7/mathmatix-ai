@@ -6,6 +6,7 @@
   <title>M∆THM∆TIΧ AI Chat</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/whiteboard.css" />
+  <link rel="stylesheet" href="/css/file-upload.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -267,9 +268,83 @@
     ✏️
   </button>
 
+  <!-- Drag & Drop Overlay -->
+  <div id="drag-drop-overlay" class="drag-drop-overlay hidden">
+    <div class="drag-drop-content">
+      <div class="drag-drop-icon">
+        <i class="fas fa-cloud-upload-alt"></i>
+      </div>
+      <h3>Drop your files here</h3>
+      <p>Images, PDFs, or worksheets</p>
+    </div>
+  </div>
+
+  <!-- File Preview Modal -->
+  <div id="file-preview-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content file-preview-container">
+      <button class="modal-close-button" id="close-file-preview">&times;</button>
+
+      <div class="file-preview-header">
+        <h2>File Preview</h2>
+        <div class="file-info">
+          <span id="preview-filename"></span>
+          <span id="preview-filesize"></span>
+        </div>
+      </div>
+
+      <div class="file-preview-body">
+        <!-- Image/PDF Preview -->
+        <div class="preview-visual">
+          <img id="preview-image" style="display: none; max-width: 100%; border-radius: 8px;" />
+          <canvas id="preview-pdf-canvas" style="display: none; max-width: 100%;"></canvas>
+
+          <!-- PDF Navigation -->
+          <div id="pdf-nav-controls" style="display: none;" class="pdf-navigation">
+            <button id="pdf-prev-page" class="btn btn-tertiary"><i class="fas fa-chevron-left"></i></button>
+            <span id="pdf-page-info">Page <span id="pdf-current-page">1</span> of <span id="pdf-total-pages">1</span></span>
+            <button id="pdf-next-page" class="btn btn-tertiary"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <!-- OCR Results -->
+        <div class="ocr-results-panel">
+          <div class="ocr-status">
+            <div id="ocr-loading" style="display: none;" class="ocr-loading">
+              <div class="spinner"></div>
+              <p>Extracting text with AI...</p>
+            </div>
+            <div id="ocr-results" style="display: none;">
+              <h3>Extracted Text <span class="confidence-badge" id="ocr-confidence"></span></h3>
+              <div class="ocr-text-container">
+                <textarea id="ocr-extracted-text" placeholder="Extracted text will appear here..." rows="8"></textarea>
+              </div>
+              <p class="ocr-hint"><i class="fas fa-info-circle"></i> You can edit the text before sending</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-preview-actions">
+        <button id="cancel-upload" class="btn btn-tertiary">Cancel</button>
+        <button id="send-with-file" class="btn btn-primary">
+          <i class="fas fa-paper-plane"></i> Send to AI
+        </button>
+      </div>
+
+      <!-- Upload Progress Bar -->
+      <div id="upload-progress" class="upload-progress" style="display: none;">
+        <div class="progress-bar">
+          <div class="progress-fill" id="upload-progress-fill"></div>
+        </div>
+        <span id="upload-progress-text">Uploading...</span>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/logout.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/whiteboard.js"></script>
+  <script src="/js/file-upload.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
 </body>
