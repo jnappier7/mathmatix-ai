@@ -423,8 +423,15 @@ class MathmatixWhiteboard {
         } = options;
 
         try {
+            // Preprocess: Handle implicit multiplication (2x -> 2*x, 3x^2 -> 3*x^2, etc.)
+            let processedFunc = funcString
+                .replace(/(\d+)([a-zA-Z])/g, '$1*$2')  // 2x -> 2*x
+                .replace(/\)([a-zA-Z])/g, ')*$1')       // )x -> )*x
+                .replace(/([a-zA-Z])\(/g, '$1*(')       // x( -> x*(
+                .replace(/\^/g, '**');                  // x^2 -> x**2
+
             // Parse function (simple evaluation)
-            const func = new Function('x', `return ${funcString.replace(/\^/g, '**')}`);
+            const func = new Function('x', `return ${processedFunc}`);
 
             const width = this.canvas.width;
             const height = this.canvas.height;
@@ -571,6 +578,45 @@ class MathmatixWhiteboard {
         link.download = `mathmatix-whiteboard-${Date.now()}.png`;
         link.href = dataURL;
         link.click();
+    }
+
+    setBackgroundImage(file) {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            fabric.Image.fromURL(e.target.result, (img) => {
+                // Scale image to fit canvas while maintaining aspect ratio
+                const canvasAspect = this.canvas.width / this.canvas.height;
+                const imgAspect = img.width / img.height;
+                let scale;
+
+                if (imgAspect > canvasAspect) {
+                    scale = this.canvas.width / img.width;
+                } else {
+                    scale = this.canvas.height / img.height;
+                }
+
+                img.scale(scale);
+                img.set({
+                    left: 0,
+                    top: 0,
+                    selectable: false,
+                    evented: false,
+                    opacity: 0.7, // Slightly transparent so drawings show up better
+                });
+
+                // Set as background image
+                this.canvas.setBackgroundImage(img, this.canvas.renderAll.bind(this.canvas));
+
+                console.log('✅ Background image loaded');
+            });
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    removeBackgroundImage() {
+        this.canvas.setBackgroundImage(null, this.canvas.renderAll.bind(this.canvas));
     }
 
     // ============================================

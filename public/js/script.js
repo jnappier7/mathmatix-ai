@@ -231,8 +231,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const graphBtn = document.getElementById('tool-graph');
         if (graphBtn) {
             graphBtn.addEventListener('click', () => {
-                const funcStr = prompt('Enter function (e.g., x^2, 2*x+1, Math.sin(x)):');
+                const funcStr = prompt('Enter function (e.g., x^2, 2x+1, Math.sin(x)):');
                 if (funcStr) {
+                    // Automatically add coordinate grid if not present
+                    whiteboard.addCoordinateGrid();
+                    // Then plot the function
                     whiteboard.plotFunction(funcStr);
                 }
             });
@@ -242,6 +245,30 @@ document.addEventListener("DOMContentLoaded", () => {
         if (protractorBtn) {
             protractorBtn.addEventListener('click', () => {
                 whiteboard.addProtractor(whiteboard.canvas.width / 2, whiteboard.canvas.height / 2);
+            });
+        }
+
+        // Background upload
+        const uploadBgBtn = document.getElementById('upload-background-btn');
+        const bgUploadInput = document.getElementById('whiteboard-bg-upload');
+        if (uploadBgBtn && bgUploadInput) {
+            uploadBgBtn.addEventListener('click', () => {
+                bgUploadInput.click();
+            });
+
+            bgUploadInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.type.startsWith('image/')) {
+                        whiteboard.setBackgroundImage(file);
+                    } else if (file.type === 'application/pdf') {
+                        alert('PDF support coming soon! For now, please convert to an image or take a screenshot.');
+                    } else {
+                        alert('Please upload an image file (PNG, JPG, etc.)');
+                    }
+                }
+                // Reset input
+                bgUploadInput.value = '';
             });
         }
 
@@ -291,6 +318,34 @@ document.addEventListener("DOMContentLoaded", () => {
         const downloadBtn = document.getElementById('download-btn');
         if (downloadBtn) {
             downloadBtn.addEventListener('click', () => whiteboard.downloadImage());
+        }
+
+        const sendToAiBtn = document.getElementById('send-to-ai-btn');
+        if (sendToAiBtn) {
+            sendToAiBtn.addEventListener('click', async () => {
+                const message = prompt('Add a message with your drawing (optional):') || 'Please provide feedback on my work.';
+
+                // Convert canvas to blob
+                whiteboard.canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        alert('Failed to capture whiteboard. Please try again.');
+                        return;
+                    }
+
+                    // Create file from blob
+                    const file = new File([blob], 'whiteboard-drawing.png', { type: 'image/png' });
+
+                    // Use existing file upload mechanism
+                    attachedFile = file;
+
+                    // Show file pill
+                    showFilePill(file.name);
+
+                    // Automatically send the message
+                    userInput.value = message;
+                    sendMessage();
+                }, 'image/png');
+            });
         }
 
         // Panel controls
