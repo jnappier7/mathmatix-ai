@@ -36,6 +36,7 @@
     "handlebars": "^4.7.8",
     "html-to-text": "^9.0.0",
     "mathlive": "^0.105.3",
+    "mongodb": "^6.21.0",
     "mongoose": "^8.16.0",
     "multer": "^1.4.5-lts.2",
     "nodemailer": "^6.9.14",
