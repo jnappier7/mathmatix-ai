@@ -3269,3 +3269,148 @@ main {
     justify-content: center;
     font-weight: bold;
 }
+/* ============================================
+   TEACHER DASHBOARD TABS & HOMEWORK
+   ============================================ */
+
+/* Tab Navigation */
+.dashboard-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    background: #fff;
+    border: 2px solid #e9ecef;
+    padding: 10px 20px;
+    border-radius: 8px 8px 0 0;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn:hover {
+    border-color: #12B3B3;
+    background: #f8f9fa;
+}
+
+.tab-btn.active {
+    background: #12B3B3;
+    color: white;
+    border-color: #12B3B3;
+}
+
+.tab-btn i {
+    font-size: 14px;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Homework Table */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data-table thead {
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.data-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #18202B;
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.data-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.data-table .btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* Question Items in Modal */
+.question-item {
+    position: relative;
+}
+
+.question-item label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.question-item input[type="text"],
+.question-item input[type="number"],
+.question-item textarea,
+.question-item select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.question-item textarea {
+    resize: vertical;
+}
+
+.remove-question-btn:hover {
+    background: #cc0000 !important;
+}
+
+/* Modal Improvements */
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #18202B;
+}
+
+.modal-content h3 {
+    color: #18202B;
+    font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        border-radius: 8px;
+    }
+
+    .data-table {
+        font-size: 12px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 8px;
+    }
+}
