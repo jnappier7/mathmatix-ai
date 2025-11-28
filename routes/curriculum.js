@@ -267,6 +267,49 @@ function parseList(str) {
     return str.split(',').map(s => s.trim()).filter(s => s);
 }
 
+// Get current curriculum resources for students
+router.get('/student/resources', isAuthenticated, async (req, res) => {
+    try {
+        const user = await require('../models/user').findById(req.user._id);
+
+        if (!user || !user.teacherId) {
+            return res.json({ hasResources: false });
+        }
+
+        const curriculum = await Curriculum.getActiveCurriculum(user.teacherId);
+
+        if (!curriculum) {
+            return res.json({ hasResources: false });
+        }
+
+        const currentLesson = curriculum.getCurrentLesson();
+
+        if (!currentLesson || !currentLesson.resources || currentLesson.resources.length === 0) {
+            return res.json({
+                hasResources: false,
+                currentTopic: currentLesson ? currentLesson.topic : null
+            });
+        }
+
+        res.json({
+            hasResources: true,
+            currentLesson: {
+                topic: currentLesson.topic,
+                weekNumber: currentLesson.weekNumber,
+                standards: currentLesson.standards,
+                objectives: currentLesson.objectives,
+                resources: currentLesson.resources,
+                startDate: currentLesson.startDate,
+                endDate: currentLesson.endDate
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching student resources:', error);
+        res.status(500).json({ message: 'Failed to fetch resources' });
+    }
+});
+
 // Scrape Common Curriculum schedule
 router.post('/teacher/curriculum/sync-common', isAuthenticated, isTeacher, async (req, res) => {
     try {

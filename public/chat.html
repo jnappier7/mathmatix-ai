@@ -26,6 +26,9 @@
       <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" style="display: none;">
         <i class="fas fa-stop-circle"></i> <span class="mobile-hide">Stop</span>
       </button>
+      <button id="open-resources-modal-btn" class="btn btn-tertiary" title="Resources">
+        <i class="fas fa-book-open"></i> <span class="mobile-hide">Resources</span>
+      </button>
       <button id="open-homework-modal-btn" class="btn btn-tertiary" title="Homework">
         <i class="fas fa-clipboard-list"></i> <span class="mobile-hide">Homework</span>
       </button>
@@ -344,10 +347,22 @@
     </div>
   </div>
 
+  <!-- Resources Modal -->
+  <div id="resources-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 700px;">
+      <span class="modal-close-button" id="close-resources-modal">&times;</span>
+      <h2><i class="fas fa-book-open"></i> Learning Resources</h2>
+      <div id="resources-content">
+        <p style="text-align: center; padding: 20px;">Loading resources...</p>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/logout.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/whiteboard.js"></script>
   <script src="/js/file-upload.js"></script>
+  <script src="/js/student-resources.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
 </body>
