@@ -67,6 +67,7 @@ const guidedLessonRoutes = require('./routes/guidedLesson');
 const summaryGeneratorRouter = require('./routes/summary_generator');
 const avatarRoutes = require('./routes/avatar');
 const graphRoutes = require('./routes/graph');
+const homeworkRoutes = require('./routes/homework');
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -180,6 +181,7 @@ app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
 app.use('/api/graph', isAuthenticated, graphRoutes);
+app.use('/api/homework', isAuthenticated, homeworkRoutes); // Homework system for teachers and students
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 
 // User Profile & Settings Routes
