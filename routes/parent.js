@@ -160,4 +160,59 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
     }
 });
 
+// Get parent settings
+router.get('/settings', isAuthenticated, isParent, async (req, res) => {
+    const parentId = req.user._id;
+    try {
+        const parent = await User.findById(parentId).select('reportFrequency goalViewPreference parentTone parentLanguage');
+        if (!parent) {
+            return res.status(404).json({ message: "Parent not found." });
+        }
+        res.json({
+            reportFrequency: parent.reportFrequency || 'weekly',
+            goalViewPreference: parent.goalViewPreference || 'progress',
+            parentTone: parent.parentTone || '',
+            parentLanguage: parent.parentLanguage || 'English'
+        });
+    } catch (error) {
+        console.error("ERROR: Failed to fetch parent settings:", error);
+        res.status(500).json({ message: "Could not fetch settings." });
+    }
+});
+
+// Update parent settings
+router.put('/settings', isAuthenticated, isParent, async (req, res) => {
+    const parentId = req.user._id;
+    const { reportFrequency, goalViewPreference, parentTone, parentLanguage } = req.body;
+
+    try {
+        const parent = await User.findById(parentId);
+        if (!parent) {
+            return res.status(404).json({ message: "Parent not found." });
+        }
+
+        // Update fields if provided
+        if (reportFrequency) parent.reportFrequency = reportFrequency;
+        if (goalViewPreference) parent.goalViewPreference = goalViewPreference;
+        if (parentTone !== undefined) parent.parentTone = parentTone; // Allow empty string
+        if (parentLanguage) parent.parentLanguage = parentLanguage;
+
+        await parent.save();
+
+        res.json({
+            success: true,
+            message: "Settings updated successfully!",
+            settings: {
+                reportFrequency: parent.reportFrequency,
+                goalViewPreference: parent.goalViewPreference,
+                parentTone: parent.parentTone,
+                parentLanguage: parent.parentLanguage
+            }
+        });
+    } catch (error) {
+        console.error("ERROR: Failed to update parent settings:", error);
+        res.status(500).json({ message: "Could not update settings." });
+    }
+});
+
 module.exports = router;

@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const studentLinkCodeInput = document.getElementById("studentLinkCode");
     const linkStudentMessage = document.getElementById("link-student-message");
 
+    // --- Parent Settings Elements ---
+    const parentSettingsForm = document.getElementById("parent-settings-form");
+    const settingsSaveMessage = document.getElementById("settings-save-message");
+
     // --- Parent Chat Widget Elements ---
     const childSelector = document.getElementById("childSelector");
     const parentChatContainer = document.getElementById("parent-chat-container-inner");
@@ -151,6 +155,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         childrenListContainer.appendChild(card);
     }
 
+    // --- Load Parent Settings ---
+    async function loadParentSettings() {
+        try {
+            const res = await fetch("/api/parent/settings", { credentials: 'include' });
+            if (!res.ok) {
+                throw new Error("Failed to load settings");
+            }
+            const settings = await res.json();
+
+            // Populate form fields
+            if (document.getElementById('reportFrequency')) {
+                document.getElementById('reportFrequency').value = settings.reportFrequency || 'weekly';
+            }
+            if (document.getElementById('goalViewPreference')) {
+                document.getElementById('goalViewPreference').value = settings.goalViewPreference || 'progress';
+            }
+            if (document.getElementById('parentTone')) {
+                document.getElementById('parentTone').value = settings.parentTone || '';
+            }
+            if (document.getElementById('parentLanguage')) {
+                document.getElementById('parentLanguage').value = settings.parentLanguage || 'English';
+            }
+        } catch (error) {
+            console.error("ERROR: Failed to load parent settings:", error);
+        }
+    }
 
     // --- Event Listeners (No changes needed here) ---
     if (childSelector) {
@@ -274,9 +304,50 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // --- Parent Settings Form Handler ---
+    if (parentSettingsForm) {
+        parentSettingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            settingsSaveMessage.textContent = '';
+
+            const formData = {
+                reportFrequency: document.getElementById('reportFrequency').value,
+                goalViewPreference: document.getElementById('goalViewPreference').value,
+                parentTone: document.getElementById('parentTone').value,
+                parentLanguage: document.getElementById('parentLanguage').value
+            };
+
+            try {
+                const res = await fetch("/api/parent/settings", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    settingsSaveMessage.className = "mt-2 text-sm text-green-600";
+                    settingsSaveMessage.textContent = data.message;
+                    setTimeout(() => {
+                        settingsSaveMessage.textContent = '';
+                    }, 3000);
+                } else {
+                    settingsSaveMessage.className = "mt-2 text-sm text-red-600";
+                    settingsSaveMessage.textContent = data.message || 'Failed to save settings';
+                }
+            } catch (error) {
+                console.error("ERROR: Save settings error:", error);
+                settingsSaveMessage.className = "mt-2 text-sm text-red-600";
+                settingsSaveMessage.textContent = "An error occurred while saving settings.";
+            }
+        });
+    }
+
     // Initial load
     const parentUser = await loadParentUser();
     if (parentUser) {
         loadChildren();
+        loadParentSettings();
     }
 });
