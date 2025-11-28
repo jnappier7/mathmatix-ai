@@ -3348,117 +3348,149 @@ main {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
+}
+/* ============================================
+   TEACHER DASHBOARD TABS & HOMEWORK
+   ============================================ */
+
+/* Tab Navigation */
+.dashboard-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
-.file-card-remove:hover {
-    background: rgba(255, 59, 48, 1);
-    transform: scale(1.1);
+.tab-btn {
+    background: #fff;
+    border: 2px solid #e9ecef;
+    padding: 10px 20px;
+    border-radius: 8px 8px 0 0;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* PDF Icon for PDF files */
-.file-card-pdf-icon {
+.tab-btn:hover {
+    border-color: #12B3B3;
+    background: #f8f9fa;
+}
+
+.tab-btn.active {
+    background: #12B3B3;
+    color: white;
+    border-color: #12B3B3;
+}
+
+.tab-btn i {
+    font-size: 14px;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Homework Table */
+.data-table {
     width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    font-size: 48px;
+    border-collapse: collapse;
+    font-size: 14px;
 }
 
-/* Processing State */
-.file-card.processing {
-    pointer-events: none;
+.data-table thead {
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
 }
 
-.file-card.processing::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.file-card-spinner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 32px;
-    height: 32px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #667eea;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    z-index: 10;
-}
-
-@keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-/* Enhanced Drag Overlay */
-#dropzone.drag-active::before {
-    content: "Drop files to upload 📎\AMultiple files supported";
-    white-space: pre;
-    text-align: center;
-    font-size: 28px;
+.data-table th {
+    padding: 12px;
+    text-align: left;
     font-weight: 600;
-    color: white;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
-    backdrop-filter: blur(10px);
-    border: 3px dashed rgba(255, 255, 255, 0.5);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    z-index: 9999;
-    animation: dragPulse 2s ease-in-out infinite;
+    color: #18202B;
 }
 
-@keyframes dragPulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.9; transform: scale(0.98); }
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
 }
 
-/* Camera Button Styles */
-#camera-button {
-    transition: all 0.2s ease;
+.data-table tbody tr:hover {
+    background: #f8f9fa;
 }
 
-#camera-button:hover {
-    transform: scale(1.1);
+.data-table .btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
 }
 
-/* Scrollbar for File Grid */
-.file-grid-container::-webkit-scrollbar {
-    width: 8px;
+/* Question Items in Modal */
+.question-item {
+    position: relative;
 }
 
-.file-grid-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+.question-item label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 0.9em;
 }
 
-.file-grid-container::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
+.question-item input[type="text"],
+.question-item input[type="number"],
+.question-item textarea,
+.question-item select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
-.file-grid-container::-webkit-scrollbar-thumb:hover {
-    background: #555;
+.question-item textarea {
+    resize: vertical;
+}
+
+.remove-question-btn:hover {
+    background: #cc0000 !important;
+}
+
+/* Modal Improvements */
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #18202B;
+}
+
+.modal-content h3 {
+    color: #18202B;
+    font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        border-radius: 8px;
+    }
+
+    .data-table {
+        font-size: 12px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 8px;
+    }
 }

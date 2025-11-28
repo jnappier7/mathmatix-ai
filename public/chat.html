@@ -6,6 +6,7 @@
   <title>M∆THM∆TIΧ AI Chat</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/whiteboard.css" />
+  <link rel="stylesheet" href="/css/file-upload.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -24,6 +25,12 @@
     <nav class="landing-nav">
       <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" style="display: none;">
         <i class="fas fa-stop-circle"></i> <span class="mobile-hide">Stop</span>
+      </button>
+      <button id="open-resources-modal-btn" class="btn btn-tertiary" title="Resources">
+        <i class="fas fa-book-open"></i> <span class="mobile-hide">Resources</span>
+      </button>
+      <button id="open-homework-modal-btn" class="btn btn-tertiary" title="Homework">
+        <i class="fas fa-clipboard-list"></i> <span class="mobile-hide">Homework</span>
       </button>
       <button id="open-settings-modal-btn" class="btn btn-tertiary" title="Settings">
         <i class="fas fa-cog"></i> <span class="mobile-hide">Settings</span>
@@ -179,9 +186,15 @@
         <button class="toolbar-btn" id="tool-line" data-tooltip="Line" title="Line">
           <i class="fas fa-minus"></i>
         </button>
-        <button class="toolbar-btn" id="tool-arrow" data-tooltip="Arrow" title="Arrow">
+        <button class="toolbar-btn" id="tool-arrow" data-tooltip="Arrow (→)" title="Arrow - click to change mode">
           <i class="fas fa-arrow-right"></i>
         </button>
+        <div id="arrow-mode-menu" class="arrow-mode-dropdown" style="display: none;">
+          <button class="arrow-mode-option" data-mode="end">→ End Only</button>
+          <button class="arrow-mode-option" data-mode="start">← Start Only</button>
+          <button class="arrow-mode-option" data-mode="both">↔ Both Ends</button>
+          <button class="arrow-mode-option" data-mode="none">— No Arrows</button>
+        </div>
         <button class="toolbar-btn" id="tool-rectangle" data-tooltip="Rectangle" title="Rectangle">
           <i class="far fa-square"></i>
         </button>
@@ -207,6 +220,19 @@
         <button class="toolbar-btn" id="tool-protractor" data-tooltip="Protractor" title="Protractor">
           <i class="fas fa-circle-notch"></i>
         </button>
+        <button class="toolbar-btn" id="background-menu-btn" data-tooltip="Background Options" title="Change background">
+          <i class="fas fa-image"></i>
+        </button>
+        <div id="background-menu" class="background-dropdown" style="display: none;">
+          <button class="bg-option" data-bg="none">Clear Background</button>
+          <button class="bg-option" data-bg="white">Solid White</button>
+          <button class="bg-option" data-bg="black">Solid Black</button>
+          <button class="bg-option" data-bg="grid">Coordinate Plane</button>
+          <button class="bg-option" data-bg="lined">Lined Paper</button>
+          <button class="bg-option" data-bg="graph">Graph Paper</button>
+          <button class="bg-option" data-bg="upload"><i class="fas fa-upload"></i> Upload Image</button>
+        </div>
+        <input type="file" id="whiteboard-bg-upload" accept="image/*,application/pdf" style="display: none;" />
       </div>
 
       <!-- Color & Size -->
@@ -237,6 +263,9 @@
         <button class="toolbar-btn" id="download-btn" data-tooltip="Download" title="Download">
           <i class="fas fa-download"></i>
         </button>
+        <button class="toolbar-btn" id="send-to-ai-btn" data-tooltip="Send to AI" title="Send to AI for feedback" style="background: linear-gradient(135deg, #12B3B3, #0ea5a5); color: white;">
+          <i class="fas fa-paper-plane"></i>
+        </button>
       </div>
     </div>
 
@@ -254,9 +283,95 @@
     ✏️
   </button>
 
+  <!-- Drag & Drop Overlay -->
+  <div id="drag-drop-overlay" class="drag-drop-overlay hidden">
+    <div class="drag-drop-content">
+      <div class="drag-drop-icon">
+        <i class="fas fa-cloud-upload-alt"></i>
+      </div>
+      <h3>Drop your files here</h3>
+      <p>Images, PDFs, or worksheets</p>
+    </div>
+  </div>
+
+  <!-- File Preview Modal -->
+  <div id="file-preview-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content file-preview-container">
+      <button class="modal-close-button" id="close-file-preview">&times;</button>
+
+      <div class="file-preview-header">
+        <h2>File Preview</h2>
+        <div class="file-info">
+          <span id="preview-filename"></span>
+          <span id="preview-filesize"></span>
+        </div>
+      </div>
+
+      <div class="file-preview-body">
+        <!-- Image/PDF Preview -->
+        <div class="preview-visual">
+          <img id="preview-image" style="display: none; max-width: 100%; border-radius: 8px;" />
+          <canvas id="preview-pdf-canvas" style="display: none; max-width: 100%;"></canvas>
+
+          <!-- PDF Navigation -->
+          <div id="pdf-nav-controls" style="display: none;" class="pdf-navigation">
+            <button id="pdf-prev-page" class="btn btn-tertiary"><i class="fas fa-chevron-left"></i></button>
+            <span id="pdf-page-info">Page <span id="pdf-current-page">1</span> of <span id="pdf-total-pages">1</span></span>
+            <button id="pdf-next-page" class="btn btn-tertiary"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <!-- OCR Results -->
+        <div class="ocr-results-panel">
+          <div class="ocr-status">
+            <div id="ocr-loading" style="display: none;" class="ocr-loading">
+              <div class="spinner"></div>
+              <p>Extracting text with AI...</p>
+            </div>
+            <div id="ocr-results" style="display: none;">
+              <h3>Extracted Text <span class="confidence-badge" id="ocr-confidence"></span></h3>
+              <div class="ocr-text-container">
+                <textarea id="ocr-extracted-text" placeholder="Extracted text will appear here..." rows="8"></textarea>
+              </div>
+              <p class="ocr-hint"><i class="fas fa-info-circle"></i> You can edit the text before sending</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-preview-actions">
+        <button id="cancel-upload" class="btn btn-tertiary">Cancel</button>
+        <button id="send-with-file" class="btn btn-primary">
+          <i class="fas fa-paper-plane"></i> Send to AI
+        </button>
+      </div>
+
+      <!-- Upload Progress Bar -->
+      <div id="upload-progress" class="upload-progress" style="display: none;">
+        <div class="progress-bar">
+          <div class="progress-fill" id="upload-progress-fill"></div>
+        </div>
+        <span id="upload-progress-text">Uploading...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resources Modal -->
+  <div id="resources-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 700px;">
+      <span class="modal-close-button" id="close-resources-modal">&times;</span>
+      <h2><i class="fas fa-book-open"></i> Learning Resources</h2>
+      <div id="resources-content">
+        <p style="text-align: center; padding: 20px;">Loading resources...</p>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/logout.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/whiteboard.js"></script>
+  <script src="/js/file-upload.js"></script>
+  <script src="/js/student-resources.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
 </body>

@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:test": "node scripts/seedTestData.js",
     "cron:weekly-digest": "node scripts/weeklyDigest.js",
-    "cron:archive": "node scripts/archiveOldConversations.js"
+    "cron:archive": "node scripts/archiveOldConversations.js",
+    "migrate:parent-teacher": "node scripts/migrateParentTeacherBug.js"
   },
   "author": "Jason Nappier",
   "license": "MIT",
@@ -25,8 +26,10 @@
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
     "canvas": "^3.2.0",
+    "cheerio": "^1.1.2",
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
     "dotenv": "^16.4.5",
     "elevenlabs": "^1.59.0",
     "express": "^4.19.2",
@@ -36,6 +39,7 @@
     "handlebars": "^4.7.8",
     "html-to-text": "^9.0.0",
     "mathlive": "^0.105.3",
+    "mongodb": "^6.21.0",
     "mongoose": "^8.16.0",
     "multer": "^1.4.5-lts.2",
     "nodemailer": "^6.9.14",

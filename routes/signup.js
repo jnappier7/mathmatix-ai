@@ -73,10 +73,15 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
                     newUser.children.push(studentUser._id);
                 }
                 studentUser.studentToParentLinkCode.parentLinked = true; // Mark student's code as used
-                studentUser.teacherId = newUser._id; // Assign parent as "teacher" for this student
-                
+
+                // Add parent to student's parentIds array (supports multiple parents)
+                studentUser.parentIds = studentUser.parentIds || [];
+                if (!studentUser.parentIds.some(parentId => parentId.equals(newUser._id))) {
+                    studentUser.parentIds.push(newUser._id);
+                }
+
                 await newUser.save(); // Save parent with new child reference
-                await studentUser.save(); // Save student with updated link status and teacherId
+                await studentUser.save(); // Save student with updated link status and parentIds
                 console.log(`LOG: Parent ${newUser.username} linked to student ${studentUser.username} via invite code.`);
             } else {
                 console.warn(`WARN: Parent ${newUser.username} signed up with invalid or already used invite code: ${inviteCode}.`);

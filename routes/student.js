@@ -68,16 +68,20 @@ router.post('/generate-link-code', isAuthenticated, isStudent, async (req, res) 
 // Allows a student to check if they are linked to a parent.
 router.get('/linked-parent', isAuthenticated, isStudent, async (req, res) => {
     try {
-        const student = await User.findById(req.user._id).select('teacherId').populate('teacherId', 'firstName lastName username role');
+        const student = await User.findById(req.user._id).select('parentIds').populate('parentIds', 'firstName lastName username role');
         if (!student) {
             return res.status(404).json({ message: 'Student not found.' });
         }
 
-        if (student.teacherId && student.teacherId.role === 'parent') {
+        // Check if student has any linked parents
+        if (student.parentIds && student.parentIds.length > 0) {
+            // Return first parent (could be enhanced to return all parents)
+            const parent = student.parentIds[0];
             res.json({
                 isLinked: true,
-                parentId: student.teacherId._id,
-                parentName: `${student.teacherId.firstName} ${student.teacherId.lastName}`
+                parentId: parent._id,
+                parentName: `${parent.firstName} ${parent.lastName}`,
+                totalParents: student.parentIds.length
             });
         } else {
             res.json({ isLinked: false, message: 'Not linked to a parent account.' });

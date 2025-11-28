@@ -52,9 +52,60 @@
                 </div>
             </div>
             <div class="admin-central-content">
-                <div class="dashboard-panel flex-panel-content card-style-1">
-                    <div class="dashboard-panel-header">My Assigned Students</div>
-                    <div id="student-list" class="table-scroll-container"> Loading students...
+                <!-- Tab Navigation -->
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="students">
+                        <i class="fas fa-users"></i> My Students
+                    </button>
+                    <button class="tab-btn" data-tab="homework">
+                        <i class="fas fa-clipboard-list"></i> Homework
+                    </button>
+                    <button class="tab-btn" data-tab="curriculum">
+                        <i class="fas fa-book"></i> Curriculum
+                    </button>
+                </div>
+
+                <!-- Students Tab -->
+                <div class="tab-content active" id="students-tab">
+                    <div class="dashboard-panel flex-panel-content card-style-1">
+                        <div class="dashboard-panel-header">My Assigned Students</div>
+                        <div id="student-list" class="table-scroll-container"> Loading students...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homework Tab -->
+                <div class="tab-content" id="homework-tab">
+                    <div class="dashboard-panel flex-panel-content card-style-1">
+                        <div class="dashboard-panel-header">
+                            Homework Assignments
+                            <button id="create-homework-btn" class="btn btn-primary" style="float: right; margin-top: -5px;">
+                                <i class="fas fa-plus"></i> Create Assignment
+                            </button>
+                        </div>
+                        <div id="homework-list" class="table-scroll-container">
+                            Loading homework...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Curriculum Tab -->
+                <div class="tab-content" id="curriculum-tab">
+                    <div class="dashboard-panel flex-panel-content card-style-1">
+                        <div class="dashboard-panel-header">
+                            Curriculum Management
+                            <div style="float: right; margin-top: -5px;">
+                                <button id="sync-common-curriculum-btn" class="btn btn-primary">
+                                    <i class="fas fa-sync"></i> Sync Common Curriculum
+                                </button>
+                                <button id="upload-curriculum-btn" class="btn btn-secondary" style="margin-left: 5px;">
+                                    <i class="fas fa-upload"></i> Upload CSV
+                                </button>
+                            </div>
+                        </div>
+                        <div id="curriculum-content" class="table-scroll-container">
+                            Loading curriculum...
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,9 +179,190 @@
             </div>
         </div>
     </div>
+
+    <!-- Homework Creation Modal -->
+    <div id="homework-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 700px;">
+            <span id="homeworkModalCloseBtn" class="modal-close-button">&times;</span>
+            <div id="homework-modal-content">
+                <h2><i class="fas fa-clipboard-list"></i> Create Homework Assignment</h2>
+
+                <form id="homework-form">
+                    <!-- Basic Info -->
+                    <label for="hw-title">Assignment Title *</label>
+                    <input type="text" id="hw-title" required placeholder="e.g., Linear Equations Practice">
+
+                    <label for="hw-description">Description</label>
+                    <textarea id="hw-description" rows="2" placeholder="Brief description of this assignment"></textarea>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="hw-topic">Topic</label>
+                            <input type="text" id="hw-topic" placeholder="e.g., Algebra">
+                        </div>
+                        <div>
+                            <label for="hw-due-date">Due Date *</label>
+                            <input type="datetime-local" id="hw-due-date" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="hw-difficulty">Difficulty</label>
+                            <select id="hw-difficulty">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>IEP Accommodations</label>
+                            <div style="display: flex; gap: 10px; margin-top: 5px;">
+                                <label style="font-size: 0.9em; font-weight: normal;">
+                                    <input type="checkbox" id="hw-extended-time"> Extended Time
+                                </label>
+                                <label style="font-size: 0.9em; font-weight: normal;">
+                                    <input type="checkbox" id="hw-calculator"> Calculator
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Questions Section -->
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">
+                        <i class="fas fa-list-ol"></i> Questions
+                        <button type="button" id="add-question-btn" class="btn btn-secondary" style="float: right; font-size: 0.85em; padding: 5px 10px;">
+                            <i class="fas fa-plus"></i> Add Question
+                        </button>
+                    </h3>
+                    <div id="questions-container">
+                        <!-- Questions will be added here dynamically -->
+                    </div>
+
+                    <!-- Assign To Students -->
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">
+                        <i class="fas fa-user-check"></i> Assign To Students
+                    </h3>
+                    <div id="student-select-container" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                        <label style="font-size: 0.9em; font-weight: normal;">
+                            <input type="checkbox" id="select-all-students"> Select All
+                        </label>
+                        <hr style="margin: 8px 0;">
+                        <div id="student-checkboxes">
+                            Loading students...
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-buttons" style="margin-top: 20px;">
+                        <button type="submit" class="submit-btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Create & Assign
+                        </button>
+                        <button type="button" id="cancel-homework-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Common Curriculum Sync Modal -->
+    <div id="sync-curriculum-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <span id="syncCurriculumModalCloseBtn" class="modal-close-button">&times;</span>
+            <div id="sync-curriculum-modal-content">
+                <h2><i class="fas fa-sync"></i> Sync Common Curriculum</h2>
+                <p>Import your curriculum schedule directly from Common Curriculum. All lesson videos, PDFs, and resources will be automatically extracted.</p>
+
+                <form id="sync-curriculum-form">
+                    <label for="cc-url">Common Curriculum Schedule URL *</label>
+                    <input type="url" id="cc-url" required placeholder="https://www.commoncurriculum.com/sites/tentative-schedule">
+                    <p style="font-size: 0.85em; color: #666; margin-top: -10px;">
+                        Paste your schedule URL from Common Curriculum
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="cc-name">Curriculum Name *</label>
+                            <input type="text" id="cc-name" required placeholder="e.g., Algebra 1">
+                        </div>
+                        <div>
+                            <label for="cc-school-year">School Year</label>
+                            <input type="text" id="cc-school-year" placeholder="e.g., 2024-2025">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="cc-course-level">Course Level</label>
+                            <input type="text" id="cc-course-level" placeholder="e.g., Algebra 1">
+                        </div>
+                        <div>
+                            <label for="cc-grade-level">Grade Level</label>
+                            <input type="text" id="cc-grade-level" placeholder="e.g., 8th Grade">
+                        </div>
+                    </div>
+
+                    <div class="form-buttons" style="margin-top: 20px;">
+                        <button type="submit" class="submit-btn btn-primary">
+                            <i class="fas fa-download"></i> Import Curriculum
+                        </button>
+                        <button type="button" id="cancel-sync-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Upload Modal -->
+    <div id="upload-curriculum-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <span id="uploadCurriculumModalCloseBtn" class="modal-close-button">&times;</span>
+            <div id="upload-curriculum-modal-content">
+                <h2><i class="fas fa-upload"></i> Upload Curriculum CSV</h2>
+                <p>Upload a CSV file with your curriculum schedule. Expected columns: Week, Topic, Start Date, End Date, Standards, Objectives</p>
+
+                <form id="upload-curriculum-form" enctype="multipart/form-data">
+                    <label for="csv-file">CSV File *</label>
+                    <input type="file" id="csv-file" accept=".csv" required>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="csv-name">Curriculum Name *</label>
+                            <input type="text" id="csv-name" required placeholder="e.g., Geometry">
+                        </div>
+                        <div>
+                            <label for="csv-school-year">School Year</label>
+                            <input type="text" id="csv-school-year" placeholder="e.g., 2024-2025">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="csv-course-level">Course Level</label>
+                            <input type="text" id="csv-course-level" placeholder="e.g., Geometry">
+                        </div>
+                        <div>
+                            <label for="csv-grade-level">Grade Level</label>
+                            <input type="text" id="csv-grade-level" placeholder="e.g., 9th Grade">
+                        </div>
+                    </div>
+
+                    <div class="form-buttons" style="margin-top: 20px;">
+                        <button type="submit" class="submit-btn btn-primary">
+                            <i class="fas fa-upload"></i> Upload & Import
+                        </button>
+                        <button type="button" id="cancel-upload-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="/js/logout.js"></script>
     <script src="/js/teacher-live-feed.js"></script>
     <script src="/js/teacher-dashboard.js"></script>
+    <script src="/js/teacher-homework.js"></script>
+    <script src="/js/teacher-curriculum.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

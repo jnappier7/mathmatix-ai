@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const studentLinkCodeInput = document.getElementById("studentLinkCode");
     const linkStudentMessage = document.getElementById("link-student-message");
 
+    // --- Parent Settings Elements ---
+    const parentSettingsForm = document.getElementById("parent-settings-form");
+    const settingsSaveMessage = document.getElementById("settings-save-message");
+
     // --- Parent Chat Widget Elements ---
     const childSelector = document.getElementById("childSelector");
     const parentChatContainer = document.getElementById("parent-chat-container-inner");
@@ -131,6 +135,69 @@ document.addEventListener("DOMContentLoaded", async () => {
     function renderChildCard(progress) {
         const card = document.createElement('div');
         card.className = 'child-card';
+
+        // Build IEP accommodations display
+        let accommodationsHTML = '';
+        if (progress.iepPlan && progress.iepPlan.accommodations) {
+            const accom = progress.iepPlan.accommodations;
+            const activeAccommodations = [];
+
+            if (accom.extendedTime) activeAccommodations.push('Extended Time');
+            if (accom.reducedDistraction) activeAccommodations.push('Reduced Distraction');
+            if (accom.calculatorAllowed) activeAccommodations.push('Calculator Allowed');
+            if (accom.audioReadAloud) activeAccommodations.push('Audio Read-Aloud');
+            if (accom.chunkedAssignments) activeAccommodations.push('Chunked Assignments');
+            if (accom.breaksAsNeeded) activeAccommodations.push('Breaks as Needed');
+            if (accom.digitalMultiplicationChart) activeAccommodations.push('Digital Multiplication Chart');
+            if (accom.largePrintHighContrast) activeAccommodations.push('Large Print/High Contrast');
+            if (accom.mathAnxietySupport) activeAccommodations.push('Math Anxiety Support');
+            if (accom.custom && accom.custom.length > 0) {
+                activeAccommodations.push(...accom.custom);
+            }
+
+            if (activeAccommodations.length > 0) {
+                accommodationsHTML = `
+                    <div class="iep-accommodations" style="margin-top: 12px;">
+                        <strong><i class="fas fa-universal-access"></i> Active Accommodations:</strong>
+                        <ul style="margin: 8px 0; padding-left: 20px; font-size: 0.9em;">
+                            ${activeAccommodations.map(a => `<li>${a}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        // Build IEP goals display
+        let goalsHTML = '';
+        if (progress.iepPlan && progress.iepPlan.goals && progress.iepPlan.goals.length > 0) {
+            goalsHTML = `
+                <div class="iep-goals" style="margin-top: 12px;">
+                    <strong><i class="fas fa-bullseye"></i> IEP Goals:</strong>
+                    <div style="margin-top: 8px;">
+                        ${progress.iepPlan.goals.map(goal => {
+                            const statusColor = goal.status === 'completed' ? 'green' :
+                                              goal.status === 'on-hold' ? 'orange' : 'blue';
+                            const progressPercent = goal.currentProgress || 0;
+                            return `
+                                <div style="margin-bottom: 12px; padding: 10px; background: #f9f9f9; border-left: 4px solid ${statusColor}; border-radius: 4px;">
+                                    <div style="font-weight: 600; margin-bottom: 4px;">${goal.description}</div>
+                                    <div style="font-size: 0.85em; color: #666;">
+                                        <span>Status: <strong>${goal.status}</strong></span> |
+                                        <span>Progress: <strong>${progressPercent}%</strong></span>
+                                        ${goal.targetDate ? ` | Target: <strong>${new Date(goal.targetDate).toLocaleDateString()}</strong>` : ''}
+                                    </div>
+                                    ${goal.measurementMethod ? `<div style="font-size: 0.8em; color: #888; margin-top: 4px;">Measured by: ${goal.measurementMethod}</div>` : ''}
+                                    <div class="progress-bar" style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin-top: 6px; overflow: hidden;">
+                                        <div style="width: ${progressPercent}%; height: 100%; background: ${statusColor}; transition: width 0.3s;"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
         card.innerHTML = `
             <div class="child-header">
                 <h2>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h2>
@@ -139,7 +206,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div class="child-summary-details">
                 ${progress.gradeLevel || 'N/A'} · ${progress.mathCourse || 'N/A'} · ${progress.totalActiveTutoringMinutes || '0'} min total
             </div>
-            <div class="session-log-container">
+
+            ${accommodationsHTML}
+            ${goalsHTML}
+
+            <div class="session-log-container" style="margin-top: 12px;">
                 <strong>Recent Sessions:</strong>
                 ${progress.recentSessions && progress.recentSessions.length > 0 ? progress.recentSessions.map(s => `
                     <div class="session-entry">
@@ -151,6 +222,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         childrenListContainer.appendChild(card);
     }
 
+    // --- Load Parent Settings ---
+    async function loadParentSettings() {
+        try {
+            const res = await fetch("/api/parent/settings", { credentials: 'include' });
+            if (!res.ok) {
+                throw new Error("Failed to load settings");
+            }
+            const settings = await res.json();
+
+            // Populate form fields
+            if (document.getElementById('reportFrequency')) {
+                document.getElementById('reportFrequency').value = settings.reportFrequency || 'weekly';
+            }
+            if (document.getElementById('goalViewPreference')) {
+                document.getElementById('goalViewPreference').value = settings.goalViewPreference || 'progress';
+            }
+            if (document.getElementById('parentTone')) {
+                document.getElementById('parentTone').value = settings.parentTone || '';
+            }
+            if (document.getElementById('parentLanguage')) {
+                document.getElementById('parentLanguage').value = settings.parentLanguage || 'English';
+            }
+        } catch (error) {
+            console.error("ERROR: Failed to load parent settings:", error);
+        }
+    }
 
     // --- Event Listeners (No changes needed here) ---
     if (childSelector) {
@@ -274,9 +371,50 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // --- Parent Settings Form Handler ---
+    if (parentSettingsForm) {
+        parentSettingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            settingsSaveMessage.textContent = '';
+
+            const formData = {
+                reportFrequency: document.getElementById('reportFrequency').value,
+                goalViewPreference: document.getElementById('goalViewPreference').value,
+                parentTone: document.getElementById('parentTone').value,
+                parentLanguage: document.getElementById('parentLanguage').value
+            };
+
+            try {
+                const res = await fetch("/api/parent/settings", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    settingsSaveMessage.className = "mt-2 text-sm text-green-600";
+                    settingsSaveMessage.textContent = data.message;
+                    setTimeout(() => {
+                        settingsSaveMessage.textContent = '';
+                    }, 3000);
+                } else {
+                    settingsSaveMessage.className = "mt-2 text-sm text-red-600";
+                    settingsSaveMessage.textContent = data.message || 'Failed to save settings';
+                }
+            } catch (error) {
+                console.error("ERROR: Save settings error:", error);
+                settingsSaveMessage.className = "mt-2 text-sm text-red-600";
+                settingsSaveMessage.textContent = "An error occurred while saving settings.";
+            }
+        });
+    }
+
     // Initial load
     const parentUser = await loadParentUser();
     if (parentUser) {
         loadChildren();
+        loadParentSettings();
     }
 });
