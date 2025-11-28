@@ -1061,33 +1061,146 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-  // NEW handleFileUpload function
-function handleFileUpload(file) {
-    if (!file) return;
+  // ============================================
+  // ELEGANT MULTI-FILE UPLOAD SYSTEM
+  // ============================================
 
-    // Store the file globally
-    attachedFile = file;
+  let attachedFiles = []; // Array to hold multiple files
+  const MAX_FILES = 10; // Maximum number of files per upload
 
-    // Create the visual "pill"
-    const filePillContainer = document.getElementById('file-pill-container');
-    filePillContainer.innerHTML = `
-        <div class="file-pill">
-            <span class="file-name">${file.name}</span>
-            <button class="remove-file-btn" onclick="removeAttachedFile()">×</button>
-        </div>
-    `;
+  /**
+   * Handle file upload - supports single or multiple files
+   * @param {File|FileList} files - File or FileList object
+   */
+  function handleFileUpload(files) {
+    if (!files) return;
 
-    // Clear the file input so the same file can be uploaded again
+    // Convert FileList to Array if needed
+    const fileArray = files instanceof FileList ? Array.from(files) : [files];
+
+    // Check if adding these files would exceed the limit
+    if (attachedFiles.length + fileArray.length > MAX_FILES) {
+      showToast(`Maximum ${MAX_FILES} files allowed. You have ${attachedFiles.length} files already.`, 3000);
+      return;
+    }
+
+    // Validate and add files
+    fileArray.forEach(file => {
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        showToast(`File too large: ${file.name} (max 10MB)`, 3000);
+        return;
+      }
+
+      // Check file type
+      const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/heic', 'application/pdf'];
+      if (!validTypes.includes(file.type)) {
+        showToast(`Invalid file type: ${file.name}`, 3000);
+        return;
+      }
+
+      // Add unique ID to file
+      file.uploadId = `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+      // Add to attached files
+      attachedFiles.push(file);
+
+      // Create file card
+      createFileCard(file);
+    });
+
+    // Clear file input
     const fileInput = document.getElementById("file-input");
     if (fileInput) fileInput.value = "";
-}
+  }
 
-// Add this new function to remove the file
-function removeAttachedFile() {
-    attachedFile = null;
-    const filePillContainer = document.getElementById('file-pill-container');
-    filePillContainer.innerHTML = '';
-}
+  /**
+   * Create a beautiful file card with preview
+   * @param {File} file - File object with uploadId
+   */
+  function createFileCard(file) {
+    const container = document.getElementById('file-grid-container');
+    if (!container) return;
+
+    const card = document.createElement('div');
+    card.className = 'file-card';
+    card.setAttribute('data-file-id', file.uploadId);
+
+    const isPDF = file.type === 'application/pdf';
+
+    if (isPDF) {
+      // PDF icon
+      card.innerHTML = `
+        <div class="file-card-pdf-icon">
+          <i class="fas fa-file-pdf"></i>
+        </div>
+        <div class="file-card-overlay">
+          <span class="file-card-name">${escapeHtml(file.name)}</span>
+          <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">
+            ×
+          </button>
+        </div>
+      `;
+    } else {
+      // Image preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        card.innerHTML = `
+          <img src="${e.target.result}" class="file-card-preview" alt="${escapeHtml(file.name)}"/>
+          <div class="file-card-overlay">
+            <span class="file-card-name">${escapeHtml(file.name)}</span>
+            <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">
+              ×
+            </button>
+          </div>
+        `;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    container.appendChild(card);
+  }
+
+  /**
+   * Remove a file from the upload queue
+   * @param {string} fileId - Upload ID of the file
+   */
+  window.removeFile = function(fileId) {
+    // Remove from array
+    attachedFiles = attachedFiles.filter(f => f.uploadId !== fileId);
+
+    // Remove card with animation
+    const card = document.querySelector(`[data-file-id="${fileId}"]`);
+    if (card) {
+      card.style.animation = 'fileCardExit 0.3s ease-out';
+      setTimeout(() => card.remove(), 300);
+    }
+  };
+
+  /**
+   * Clear all attached files
+   */
+  function clearAllFiles() {
+    attachedFiles = [];
+    const container = document.getElementById('file-grid-container');
+    if (container) container.innerHTML = '';
+  }
+
+  /**
+   * Escape HTML to prevent XSS
+   * @param {string} text - Text to escape
+   * @returns {string} Escaped text
+   */
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Legacy function for backward compatibility
+  function removeAttachedFile() {
+    clearAllFiles();
+  }
 	
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
         if (!text && !graphData) return;
@@ -1167,7 +1280,7 @@ function removeAttachedFile() {
 
     async function sendMessage() {
     const messageText = userInput.value.trim();
-    if (!messageText && !attachedFile) return;
+    if (!messageText && attachedFiles.length === 0) return;
 
     appendMessage(messageText, "user");
     userInput.value = "";
@@ -1175,12 +1288,22 @@ function removeAttachedFile() {
 
     try {
         let response;
-        if (attachedFile) {
+
+        // Multi-file upload support
+        if (attachedFiles.length > 0) {
             const formData = new FormData();
-            formData.append('file', attachedFile);
+
+            // Append all files
+            attachedFiles.forEach((file, index) => {
+                formData.append(index === 0 ? 'file' : `file${index}`, file);
+            });
+
             formData.append('message', messageText);
             formData.append('userId', currentUser._id);
-            removeAttachedFile(); // Clear the pill from the UI immediately
+            formData.append('fileCount', attachedFiles.length);
+
+            // Clear files from UI immediately
+            clearAllFiles();
 
             response = await fetch("/api/chat-with-file", {
                 method: "POST",
@@ -1475,6 +1598,10 @@ function removeAttachedFile() {
         });
     }
 
+    // ============================================
+    // ENHANCED FILE UPLOAD EVENT LISTENERS
+    // ============================================
+
     if (attachBtn) {
         attachBtn.addEventListener('click', () => fileInput.click());
     }
@@ -1482,11 +1609,66 @@ function removeAttachedFile() {
     if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             if (e.target.files && e.target.files.length > 0) {
-                handleFileUpload(e.target.files[0]);
+                handleFileUpload(e.target.files); // Support multiple files
             }
         });
     }
 
+    // Camera capture button
+    const cameraBtn = document.getElementById('camera-button');
+    if (cameraBtn) {
+        cameraBtn.addEventListener('click', async () => {
+            try {
+                // Create file input for camera
+                const cameraInput = document.createElement('input');
+                cameraInput.type = 'file';
+                cameraInput.accept = 'image/*';
+                cameraInput.capture = 'environment'; // Use rear camera on mobile
+
+                cameraInput.addEventListener('change', (e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                        handleFileUpload(e.target.files);
+                    }
+                });
+
+                cameraInput.click();
+            } catch (error) {
+                console.error('Camera error:', error);
+                showToast('Camera not available', 2000);
+            }
+        });
+    }
+
+    // Paste from clipboard support
+    document.addEventListener('paste', (e) => {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+
+        const files = [];
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+
+            // Handle image paste
+            if (item.type.indexOf('image') !== -1) {
+                const blob = item.getAsFile();
+                if (blob) {
+                    // Rename pasted image with timestamp
+                    const file = new File([blob], `pasted-image-${Date.now()}.png`, {
+                        type: blob.type
+                    });
+                    files.push(file);
+                }
+            }
+        }
+
+        if (files.length > 0) {
+            handleFileUpload(files);
+            showToast(`Pasted ${files.length} image${files.length > 1 ? 's' : ''}`, 2000);
+            e.preventDefault();
+        }
+    });
+
+    // Enhanced drag and drop - support multiple files
     if (fullscreenDropzone) {
         fullscreenDropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -1504,8 +1686,11 @@ function removeAttachedFile() {
             e.preventDefault();
             e.stopPropagation();
             fullscreenDropzone.classList.remove('drag-active');
+
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                handleFileUpload(e.dataTransfer.files[0]);
+                handleFileUpload(e.dataTransfer.files); // Handle all dropped files
+                const fileCount = e.dataTransfer.files.length;
+                showToast(`Added ${fileCount} file${fileCount > 1 ? 's' : ''}`, 2000);
                 e.dataTransfer.clearData();
             }
         });
