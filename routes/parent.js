@@ -74,7 +74,14 @@ router.post('/link-to-student', isAuthenticated, isParent, async (req, res) => {
         if (student.role !== 'student') {
             return res.status(400).json({ message: "This code is not from a student account." });
         }
-        student.teacherId = parent._id;
+
+        // Add parent to student's parentIds array (supports multiple parents)
+        student.parentIds = student.parentIds || [];
+        if (!student.parentIds.some(parentId => parentId.equals(parent._id))) {
+            student.parentIds.push(parent._id);
+        }
+
+        // Add student to parent's children array
         parent.children = parent.children || [];
         if (!parent.children.some(childId => childId.equals(student._id))) {
             parent.children.push(student._id);

@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:test": "node scripts/seedTestData.js",
     "cron:weekly-digest": "node scripts/weeklyDigest.js",
-    "cron:archive": "node scripts/archiveOldConversations.js"
+    "cron:archive": "node scripts/archiveOldConversations.js",
+    "migrate:parent-teacher": "node scripts/migrateParentTeacherBug.js"
   },
   "author": "Jason Nappier",
   "license": "MIT",
