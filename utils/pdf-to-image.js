@@ -1,17 +1,20 @@
 // utils/pdf-to-image.js - Convert PDF to image using pdfjs-dist and canvas
-const { createCanvas } = require('canvas');
-const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
-
-// Disable worker for Node.js environment
-pdfjsLib.GlobalWorkerOptions.workerSrc = null;
+// Gracefully handles environments where native dependencies aren't available
 
 /**
  * Converts the first page of a PDF buffer to a PNG image buffer
  * @param {Buffer} pdfBuffer - The PDF file as a Buffer
- * @returns {Promise<Buffer>} PNG image buffer
+ * @returns {Promise<Buffer|null>} PNG image buffer or null if dependencies unavailable
  */
 module.exports = async function pdfToImageBuffer(pdfBuffer) {
   try {
+    // Try to load dependencies - they may not be available in all environments
+    const { createCanvas } = require('canvas');
+    const pdfjsLib = require('pdfjs-dist/legacy/build/pdf.js');
+
+    // Disable worker for Node.js environment
+    pdfjsLib.GlobalWorkerOptions.workerSrc = null;
+
     // Load the PDF document
     const loadingTask = pdfjsLib.getDocument({
       data: new Uint8Array(pdfBuffer),
@@ -49,6 +52,12 @@ module.exports = async function pdfToImageBuffer(pdfBuffer) {
 
     return pngBuffer;
   } catch (error) {
+    // If dependencies aren't available (e.g., canvas not built), gracefully degrade
+    if (error.code === 'MODULE_NOT_FOUND') {
+      console.warn('PDF processing dependencies not available - PDFs will be handled without preview');
+      return null;
+    }
+
     console.error('PDF to image conversion error:', error.message);
     throw new Error(`Failed to convert PDF: ${error.message}`);
   }
