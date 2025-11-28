@@ -1,6 +1,6 @@
 // utils/prompt.js
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student') {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences
@@ -116,6 +116,17 @@ You are tutoring a student named ${firstName || 'a student'}.
 - Grade Level: ${gradeLevel || 'not specified'}
 - Preferred Tone: ${tonePreference || 'encouraging and patient'}
 - Learning Style Preferences: ${learningStyle || 'varied approaches'}
+
+${curriculumContext ? `--- CURRICULUM CONTEXT (FROM TEACHER) ---
+${curriculumContext}
+
+**IMPORTANT:** Use this curriculum information to:
+- Keep tutoring aligned with current class topics
+- Reference available resources when helpful
+- Follow teacher's preferred terminology and methods
+- Watch for common mistakes the teacher has flagged
+- Apply the scaffolding approach the teacher prefers
+` : ''}
 
 --- XP AWARDING MECHANISM ---
 **Be an active hunter for rewardable moments.**

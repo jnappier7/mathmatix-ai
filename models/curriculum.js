@@ -35,6 +35,15 @@ const curriculumSchema = new Schema({
     isActive: { type: Boolean, default: true }, // Only one active curriculum per teacher
     autoSyncWithAI: { type: Boolean, default: true }, // Automatically provide context to AI
 
+    // Teacher preferences for AI behavior
+    teacherPreferences: {
+        terminology: { type: String, default: '' }, // Preferred mathematical terminology
+        solutionMethods: { type: String, default: '' }, // Preferred solution approaches
+        scaffolding: { type: String, default: '' }, // How to break down problems
+        commonMistakes: { type: String, default: '' }, // Common student mistakes to watch for
+        additionalGuidance: { type: String, default: '' } // Any other guidance for the AI
+    },
+
     // Import metadata
     importSource: { type: String, enum: ['manual', 'csv', 'excel', 'pdf', 'common-curriculum'], default: 'manual' },
     importedAt: { type: Date },
@@ -92,6 +101,36 @@ curriculumSchema.methods.getAIContext = function() {
 
     if (currentLesson.keywords && currentLesson.keywords.length > 0) {
         context += `. Key concepts: ${currentLesson.keywords.join(', ')}`;
+    }
+
+    // Add teacher preferences for AI behavior
+    if (this.teacherPreferences) {
+        const prefs = this.teacherPreferences;
+
+        if (prefs.terminology) {
+            context += `\n\nTERMINOLOGY PREFERENCES: ${prefs.terminology}`;
+        }
+
+        if (prefs.solutionMethods) {
+            context += `\n\nPREFERRED SOLUTION METHODS: ${prefs.solutionMethods}`;
+        }
+
+        if (prefs.scaffolding) {
+            context += `\n\nSCAFFOLDING APPROACH: ${prefs.scaffolding}`;
+        }
+
+        if (prefs.commonMistakes) {
+            context += `\n\nCOMMON MISTAKES TO WATCH FOR: ${prefs.commonMistakes}`;
+        }
+
+        if (prefs.additionalGuidance) {
+            context += `\n\nADDITIONAL GUIDANCE: ${prefs.additionalGuidance}`;
+        }
+    }
+
+    // Add available resources
+    if (currentLesson.resources && currentLesson.resources.length > 0) {
+        context += `\n\nAVAILABLE RESOURCES: The teacher has provided ${currentLesson.resources.length} resource(s) for this topic. You can reference these materials when helping the student.`;
     }
 
     return context;
