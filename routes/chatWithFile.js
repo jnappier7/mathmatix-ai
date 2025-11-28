@@ -15,21 +15,68 @@ const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const upload = multer({ storage: multer.memoryStorage() });
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 
-router.post('/', isAuthenticated, upload.single('file'), async (req, res) => {
+router.post('/', isAuthenticated, upload.any(), async (req, res) => {
     try {
-        const { userId, message } = req.body;
-        const file = req.file;
+        const { userId, message, fileCount } = req.body;
+        const files = req.files;
 
-        if (!file) return res.status(400).json({ message: "A file is required." });
+        if (!files || files.length === 0) {
+            return res.status(400).json({ message: "At least one file is required." });
+        }
 
-        // --- Step 1: Process the File ---
-        const imageBuffer = file.mimetype.includes("pdf") ? await pdfToImage(file.buffer) : file.buffer;
-        if (!imageBuffer) return res.status(500).json({ error: "Failed to convert file." });
+        console.log(`Processing ${files.length} file(s) for user ${userId}`);
 
-        const base64Image = `data:${file.mimetype.includes("pdf") ? 'image/png' : file.mimetype};base64,${imageBuffer.toString("base64")}`;
-        const extractedText = await ocr(base64Image);
-        
-        const combinedMessage = `${message}\n\n[Content from uploaded file: ${file.originalname}]\n${extractedText}`.trim();
+        // --- Step 1: Process All Files ---
+        const extractedContents = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            try {
+                // Convert PDF to image if needed
+                const imageBuffer = file.mimetype.includes("pdf")
+                    ? await pdfToImage(file.buffer)
+                    : file.buffer;
+
+                if (!imageBuffer) {
+                    console.warn(`Failed to process file: ${file.originalname}`);
+                    extractedContents.push({
+                        filename: file.originalname,
+                        text: `[Could not process ${file.originalname}]`
+                    });
+                    continue;
+                }
+
+                // Perform OCR
+                const base64Image = `data:${
+                    file.mimetype.includes("pdf") ? 'image/png' : file.mimetype
+                };base64,${imageBuffer.toString("base64")}`;
+
+                const extractedText = await ocr(base64Image);
+
+                extractedContents.push({
+                    filename: file.originalname,
+                    text: extractedText || `[No text extracted from ${file.originalname}]`
+                });
+
+                console.log(`Processed file ${i + 1}/${files.length}: ${file.originalname}`);
+            } catch (error) {
+                console.error(`Error processing file ${file.originalname}:`, error);
+                extractedContents.push({
+                    filename: file.originalname,
+                    text: `[Error processing ${file.originalname}]`
+                });
+            }
+        }
+
+        // Combine all extracted content
+        const fileContentsText = extractedContents
+            .map(({ filename, text }) => `[Content from ${filename}]\n${text}`)
+            .join('\n\n');
+
+        const combinedMessage = message
+            ? `${message}\n\n${fileContentsText}`.trim()
+            : fileContentsText;
 
         // --- Step 2: Run Chat Logic (Adapted from chat.js) ---
         const user = await User.findById(userId);
