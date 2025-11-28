@@ -291,6 +291,102 @@
     background: #0d8888;
 }
 
+/* Alert Details Section */
+.alert-details {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+}
+
+.alert-details-header {
+    margin-bottom: 10px;
+    color: #18202B;
+    font-size: 14px;
+}
+
+.alert-details-header i {
+    color: #12B3B3;
+    margin-right: 6px;
+}
+
+.alert-detail-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border-left: 3px solid transparent;
+}
+
+.alert-detail-item.alert-struggle {
+    border-left-color: #FFC24B;
+    background: #fffbf5;
+}
+
+.alert-detail-item.alert-milestone {
+    border-left-color: #16C86D;
+    background: #f0fdf4;
+}
+
+.alert-detail-item.alert-info {
+    border-left-color: #1976d2;
+    background: #e3f2fd;
+}
+
+.alert-detail-item.acknowledged {
+    opacity: 0.6;
+    background: #f1f3f5;
+}
+
+.alert-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    font-size: 13px;
+    color: #18202B;
+}
+
+.alert-content i {
+    font-size: 14px;
+    color: #5B6876;
+}
+
+.acknowledge-btn {
+    background: #12B3B3;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+
+.acknowledge-btn:hover {
+    background: #0d8888;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(18, 179, 179, 0.2);
+}
+
+.acknowledged-label {
+    font-size: 12px;
+    color: #16C86D;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.activity-item.expanded {
+    background: #fafbfc;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .feed-filter-bar {
@@ -300,5 +396,16 @@
     .activity-meta {
         flex-direction: column;
         gap: 6px;
+    }
+
+    .alert-detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .acknowledge-btn {
+        width: 100%;
+        justify-content: center;
     }
 }

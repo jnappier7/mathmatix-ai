@@ -130,11 +130,24 @@ class TeacherLiveFeed {
 
         this.activityFeedDiv.innerHTML = filteredFeed.map(item => this.renderActivityItem(item)).join('');
 
-        // Add click handlers
+        // Add click handlers for expanding alerts
         this.activityFeedDiv.querySelectorAll('.activity-item').forEach(el => {
-            el.addEventListener('click', () => {
-                const studentId = el.dataset.studentId;
-                this.showStudentDetails(studentId);
+            el.addEventListener('click', (e) => {
+                // Don't expand if clicking on acknowledge button
+                if (e.target.classList.contains('acknowledge-btn') || e.target.closest('.acknowledge-btn')) {
+                    return;
+                }
+                this.toggleAlertDetails(el);
+            });
+        });
+
+        // Add acknowledge button handlers
+        this.activityFeedDiv.querySelectorAll('.acknowledge-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const conversationId = btn.dataset.conversationId;
+                const alertIndex = btn.dataset.alertIndex;
+                await this.acknowledgeAlert(conversationId, alertIndex);
             });
         });
     }
@@ -185,8 +198,83 @@ class TeacherLiveFeed {
                     ${item.isStruggling && item.strugglingWith ? `<span class="meta-badge struggling"><i class="fas fa-exclamation-triangle"></i> ${item.strugglingWith}</span>` : ''}
                     <span class="meta-badge"><i class="fas fa-clock"></i> ${duration} min</span>
                 </div>
+
+                ${this.renderAlertDetails(item)}
             </div>
         `;
+    }
+
+    renderAlertDetails(item) {
+        if (!item.alerts || item.alerts.length === 0) {
+            return '';
+        }
+
+        const alertsHTML = item.alerts.map((alert, index) => {
+            const alertTypeIcon = alert.type === 'struggle' ? 'fa-exclamation-triangle' :
+                                 alert.type === 'milestone' ? 'fa-trophy' :
+                                 alert.type === 'extended-session' ? 'fa-clock' :
+                                 'fa-info-circle';
+
+            const alertTypeClass = alert.type === 'struggle' ? 'alert-struggle' :
+                                   alert.type === 'milestone' ? 'alert-milestone' :
+                                   'alert-info';
+
+            return `
+                <div class="alert-detail-item ${alertTypeClass} ${alert.acknowledged ? 'acknowledged' : ''}">
+                    <div class="alert-content">
+                        <i class="fas ${alertTypeIcon}"></i>
+                        <span>${alert.message}</span>
+                    </div>
+                    ${!alert.acknowledged ? `
+                        <button class="acknowledge-btn btn btn-sm btn-secondary"
+                                data-conversation-id="${item.conversationId}"
+                                data-alert-index="${index}">
+                            <i class="fas fa-check"></i> Acknowledge
+                        </button>
+                    ` : `
+                        <span class="acknowledged-label"><i class="fas fa-check-circle"></i> Acknowledged</span>
+                    `}
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="alert-details" style="display: none;">
+                <div class="alert-details-header">
+                    <strong><i class="fas fa-bell"></i> Alerts</strong>
+                </div>
+                ${alertsHTML}
+            </div>
+        `;
+    }
+
+    toggleAlertDetails(activityElement) {
+        const alertDetails = activityElement.querySelector('.alert-details');
+        if (!alertDetails) return;
+
+        const isExpanded = alertDetails.style.display !== 'none';
+        alertDetails.style.display = isExpanded ? 'none' : 'block';
+        activityElement.classList.toggle('expanded', !isExpanded);
+    }
+
+    async acknowledgeAlert(conversationId, alertIndex) {
+        try {
+            const response = await fetch(`/api/teacher/alerts/${conversationId}/${alertIndex}/acknowledge`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to acknowledge alert');
+            }
+
+            // Refresh the feed to show updated acknowledgment status
+            await this.fetchLiveFeed();
+
+        } catch (error) {
+            console.error('Error acknowledging alert:', error);
+            alert('Failed to acknowledge alert. Please try again.');
+        }
     }
 
     formatTimeAgo(date) {
