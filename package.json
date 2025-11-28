@@ -48,7 +48,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-microsoft": "^2.1.0",
-    "pdfjs-dist": "^5.4.149",
+    "pdfjs-dist": "^5.4.394",
     "puppeteer": "^24.10.2",
     "uuid": "^9.0.1"
   },
