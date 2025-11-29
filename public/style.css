@@ -1773,6 +1773,39 @@ form label, .password-label-row label {
     opacity: 1;
 }
 
+/* Equation Modal - Draggable Positioning */
+#equation-modal .modal-content {
+    position: fixed;
+    /* Allow JavaScript to position it */
+}
+
+#equation-modal .modal-header-eq {
+    user-select: none; /* Prevent text selection while dragging */
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #12B3B3, #0ea5a5);
+    color: white;
+    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+    margin: -30px -30px 20px -30px;
+}
+
+/* MathLive Virtual Keyboard - Fix Z-Index */
+.ML__keyboard {
+    z-index: 10000 !important; /* Above modal overlay (z-index: 2000) */
+}
+
+.ML__keyboard-backdrop {
+    z-index: 9999 !important; /* Just below keyboard */
+}
+
+/* Ensure modal allows keyboard to show */
+#equation-modal {
+    overflow: visible !important;
+}
+
+#equation-modal .modal-content {
+    overflow: visible !important;
+}
+
 /* Close Button (top-right 'x') */
 .modal-close-button {
     position: absolute;

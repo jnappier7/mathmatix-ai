@@ -416,8 +416,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const sendToAiBtn = document.getElementById('send-to-ai-btn');
         if (sendToAiBtn) {
             sendToAiBtn.addEventListener('click', async () => {
-                // Convert canvas to blob
-                whiteboard.canvas.toBlob(async (blob) => {
+                try {
+                    // Convert Fabric.js canvas to data URL
+                    const dataURL = whiteboard.canvas.toDataURL({
+                        format: 'png',
+                        quality: 1,
+                        multiplier: 2 // Higher resolution for better OCR
+                    });
+
+                    // Convert data URL to blob
+                    const response = await fetch(dataURL);
+                    const blob = await response.blob();
+
                     if (!blob) {
                         alert('Failed to capture whiteboard. Please try again.');
                         return;
@@ -440,7 +450,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     userInput.select();
 
                     console.log('✅ Whiteboard screenshot attached! Click send when ready.');
-                }, 'image/png');
+                } catch (error) {
+                    console.error('Error capturing whiteboard:', error);
+                    alert('Failed to capture whiteboard. Please try again.');
+                }
             });
         }
 
@@ -1655,10 +1668,65 @@ document.addEventListener("DOMContentLoaded", () => {
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
     
+    // Equation Modal with Draggable Functionality
+    let isDraggingModal = false;
+    let modalOffsetX = 0;
+    let modalOffsetY = 0;
+
     if (openEquationBtn) {
         openEquationBtn.addEventListener('click', () => {
-            if (equationModal) equationModal.classList.add('is-visible');
+            if (equationModal) {
+                equationModal.classList.add('is-visible');
+                // Center modal on first open
+                const modalContent = equationModal.querySelector('.modal-content');
+                if (modalContent && !modalContent.style.left) {
+                    const rect = modalContent.getBoundingClientRect();
+                    modalContent.style.left = `${(window.innerWidth - rect.width) / 2}px`;
+                    modalContent.style.top = `${Math.max(50, (window.innerHeight - rect.height) / 2)}px`;
+                }
+            }
         });
+    }
+
+    // Make equation modal draggable
+    if (equationModal) {
+        const modalContent = equationModal.querySelector('.modal-content');
+        const modalHeader = equationModal.querySelector('.modal-header-eq');
+
+        if (modalHeader && modalContent) {
+            modalHeader.style.cursor = 'move';
+
+            modalHeader.addEventListener('mousedown', (e) => {
+                isDraggingModal = true;
+                const rect = modalContent.getBoundingClientRect();
+                modalOffsetX = e.clientX - rect.left;
+                modalOffsetY = e.clientY - rect.top;
+                modalHeader.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDraggingModal && modalContent) {
+                    e.preventDefault();
+                    let newX = e.clientX - modalOffsetX;
+                    let newY = e.clientY - modalOffsetY;
+
+                    // Keep modal within viewport
+                    newX = Math.max(0, Math.min(newX, window.innerWidth - modalContent.offsetWidth));
+                    newY = Math.max(0, Math.min(newY, window.innerHeight - modalContent.offsetHeight));
+
+                    modalContent.style.left = newX + 'px';
+                    modalContent.style.top = newY + 'px';
+                    modalContent.style.transform = 'none'; // Remove centering transform
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDraggingModal) {
+                    isDraggingModal = false;
+                    modalHeader.style.cursor = 'move';
+                }
+            });
+        }
     }
 
     if (closeEquationBtn) {
