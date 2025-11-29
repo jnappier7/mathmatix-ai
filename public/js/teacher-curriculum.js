@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Error: Modal not loaded. Please refresh the page.');
                 return;
             }
-            syncModal.style.display = 'flex';
+            syncModal.classList.add('is-visible');
             // Pre-fill with current year
             const currentYear = new Date().getFullYear();
             const nextYear = currentYear + 1;
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Close sync modal
     function closeSyncModal() {
-        if (syncModal) syncModal.style.display = 'none';
+        if (syncModal) syncModal.classList.remove('is-visible');
         if (syncForm) syncForm.reset();
     }
 
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Error: Modal not loaded. Please refresh the page.');
                 return;
             }
-            uploadModal.style.display = 'flex';
+            uploadModal.classList.add('is-visible');
             // Pre-fill with current year
             const currentYear = new Date().getFullYear();
             const nextYear = currentYear + 1;
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Close upload modal
     function closeUploadModal() {
-        if (uploadModal) uploadModal.style.display = 'none';
+        if (uploadModal) uploadModal.classList.remove('is-visible');
         if (uploadForm) uploadForm.reset();
     }
 

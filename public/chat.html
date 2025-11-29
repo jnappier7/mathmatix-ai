@@ -367,6 +367,13 @@
   <script src="/js/logout.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/whiteboard.js"></script>
+  <!-- PDF.js library for PDF preview and rendering -->
+  <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
+  <script type="module">
+    import * as pdfjsLib from '/pdfjs-viewer/build/pdf.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdfjs-viewer/build/pdf.worker.mjs';
+    window.pdfjsLib = pdfjsLib;
+  </script>
   <script src="/js/file-upload.js"></script>
   <script src="/js/student-resources.js"></script>
   <script src="/js/script.js" type="module"></script>
