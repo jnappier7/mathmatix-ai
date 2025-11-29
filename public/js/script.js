@@ -243,6 +243,46 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+        // Arrow mode dropdown
+        const arrowBtn = document.getElementById('tool-arrow');
+        const arrowModeMenu = document.getElementById('arrow-mode-menu');
+
+        if (arrowBtn && arrowModeMenu) {
+            // Right-click to open mode menu
+            arrowBtn.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                arrowModeMenu.style.display = arrowModeMenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!arrowBtn.contains(e.target) && !arrowModeMenu.contains(e.target)) {
+                    arrowModeMenu.style.display = 'none';
+                }
+            });
+
+            // Handle arrow mode selection
+            const arrowModeOptions = arrowModeMenu.querySelectorAll('.arrow-mode-option');
+            arrowModeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const mode = option.getAttribute('data-mode');
+                    whiteboard.setArrowMode(mode);
+
+                    // Update tooltip to show current mode
+                    const modeIcons = {
+                        'end': '→',
+                        'start': '←',
+                        'both': '↔',
+                        'none': '—'
+                    };
+                    arrowBtn.setAttribute('data-tooltip', `Arrow (${modeIcons[mode]})`);
+
+                    arrowModeMenu.style.display = 'none';
+                });
+            });
+        }
+
         // Math tools
         const gridBtn = document.getElementById('tool-grid');
         if (gridBtn) {
@@ -254,8 +294,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const graphBtn = document.getElementById('tool-graph');
         if (graphBtn) {
             graphBtn.addEventListener('click', () => {
-                const funcStr = prompt('Enter function (e.g., x^2, 2*x+1, Math.sin(x)):');
+                const funcStr = prompt('Enter function (e.g., x^2, 2x+1, Math.sin(x)):');
                 if (funcStr) {
+                    // Automatically add coordinate grid if not present
+                    whiteboard.addCoordinateGrid();
+                    // Then plot the function
                     whiteboard.plotFunction(funcStr);
                 }
             });
@@ -266,6 +309,60 @@ document.addEventListener("DOMContentLoaded", () => {
             protractorBtn.addEventListener('click', () => {
                 whiteboard.addProtractor(whiteboard.canvas.width / 2, whiteboard.canvas.height / 2);
             });
+        }
+
+        // Background menu dropdown
+        const backgroundMenuBtn = document.getElementById('background-menu-btn');
+        const backgroundMenu = document.getElementById('background-menu');
+        const bgUploadInput = document.getElementById('whiteboard-bg-upload');
+
+        if (backgroundMenuBtn && backgroundMenu) {
+            // Toggle dropdown
+            backgroundMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                backgroundMenu.style.display = backgroundMenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!backgroundMenuBtn.contains(e.target) && !backgroundMenu.contains(e.target)) {
+                    backgroundMenu.style.display = 'none';
+                }
+            });
+
+            // Handle background option clicks
+            const bgOptions = backgroundMenu.querySelectorAll('.bg-option');
+            bgOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const bgType = option.getAttribute('data-bg');
+
+                    if (bgType === 'upload') {
+                        bgUploadInput.click();
+                    } else {
+                        whiteboard.setPresetBackground(bgType);
+                    }
+
+                    backgroundMenu.style.display = 'none';
+                });
+            });
+
+            // File upload handler
+            if (bgUploadInput) {
+                bgUploadInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (file.type.startsWith('image/')) {
+                            whiteboard.setBackgroundImage(file);
+                        } else if (file.type === 'application/pdf') {
+                            alert('PDF support coming soon! For now, please convert to an image or take a screenshot.');
+                        } else {
+                            alert('Please upload an image file (PNG, JPG, etc.)');
+                        }
+                    }
+                    // Reset input
+                    bgUploadInput.value = '';
+                });
+            }
         }
 
         // Color picker
@@ -314,6 +411,37 @@ document.addEventListener("DOMContentLoaded", () => {
         const downloadBtn = document.getElementById('download-btn');
         if (downloadBtn) {
             downloadBtn.addEventListener('click', () => whiteboard.downloadImage());
+        }
+
+        const sendToAiBtn = document.getElementById('send-to-ai-btn');
+        if (sendToAiBtn) {
+            sendToAiBtn.addEventListener('click', async () => {
+                // Convert canvas to blob
+                whiteboard.canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        alert('Failed to capture whiteboard. Please try again.');
+                        return;
+                    }
+
+                    // Create file from blob
+                    const file = new File([blob], 'whiteboard-drawing.png', { type: 'image/png' });
+
+                    // Attach file and show preview in input area
+                    attachedFile = file;
+                    showFilePill(file.name);
+
+                    // Set placeholder message (user can edit or replace)
+                    if (!userInput.value.trim()) {
+                        userInput.value = 'Can you help me with this?';
+                    }
+
+                    // Focus input so user can type or send
+                    userInput.focus();
+                    userInput.select();
+
+                    console.log('✅ Whiteboard screenshot attached! Click send when ready.');
+                }, 'image/png');
+            });
         }
 
         // Panel controls

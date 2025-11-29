@@ -15,6 +15,7 @@ class MathmatixWhiteboard {
         this.strokeWidth = 3;
         this.isDrawing = false;
         this.mode = 'user'; // 'user', 'ai', 'collaborative'
+        this.arrowMode = 'end'; // 'none', 'start', 'end', 'both'
 
         // Panel state
         this.isDragging = false;
@@ -286,36 +287,81 @@ class MathmatixWhiteboard {
 
         const angle = Math.atan2(y2 - y1, x2 - x1);
         const headLength = 15;
+        const objects = [line];
 
-        const arrowHead = new fabric.Triangle({
-            left: x2,
-            top: y2,
-            angle: (angle * 180 / Math.PI) + 90,
-            width: headLength,
-            height: headLength,
-            fill: this.currentColor,
-            originX: 'center',
-            originY: 'center',
-        });
+        // Add arrowhead(s) based on mode
+        if (this.arrowMode === 'end' || this.arrowMode === 'both') {
+            const endHead = new fabric.Triangle({
+                left: x2,
+                top: y2,
+                angle: (angle * 180 / Math.PI) + 90,
+                width: headLength,
+                height: headLength,
+                fill: this.currentColor,
+                originX: 'center',
+                originY: 'center',
+            });
+            objects.push(endHead);
+        }
 
-        return new fabric.Group([line, arrowHead], { selectable: false });
+        if (this.arrowMode === 'start' || this.arrowMode === 'both') {
+            const startHead = new fabric.Triangle({
+                left: x1,
+                top: y1,
+                angle: (angle * 180 / Math.PI) - 90,
+                width: headLength,
+                height: headLength,
+                fill: this.currentColor,
+                originX: 'center',
+                originY: 'center',
+            });
+            objects.push(startHead);
+        }
+
+        return new fabric.Group(objects, { selectable: false });
     }
 
     updateArrow(arrow, x1, y1, x2, y2) {
         const objects = arrow.getObjects();
         const line = objects[0];
-        const head = objects[1];
 
         line.set({ x2: x2 - x1, y2: y2 - y1 });
 
         const angle = Math.atan2(y2 - y1, x2 - x1);
-        head.set({
-            left: x2 - x1,
-            top: y2 - y1,
-            angle: (angle * 180 / Math.PI) + 90,
-        });
+        const headLength = 15;
+
+        // Update arrowheads based on mode
+        let headIndex = 1;
+
+        if (this.arrowMode === 'end' || this.arrowMode === 'both') {
+            if (objects[headIndex]) {
+                objects[headIndex].set({
+                    left: x2 - x1,
+                    top: y2 - y1,
+                    angle: (angle * 180 / Math.PI) + 90,
+                });
+                headIndex++;
+            }
+        }
+
+        if (this.arrowMode === 'start' || this.arrowMode === 'both') {
+            if (objects[headIndex]) {
+                objects[headIndex].set({
+                    left: 0,
+                    top: 0,
+                    angle: (angle * 180 / Math.PI) - 90,
+                });
+            }
+        }
 
         arrow.addWithUpdate();
+    }
+
+    setArrowMode(mode) {
+        if (['none', 'start', 'end', 'both'].includes(mode)) {
+            this.arrowMode = mode;
+            console.log(`Arrow mode set to: ${mode}`);
+        }
     }
 
     addText(x, y) {
@@ -423,8 +469,15 @@ class MathmatixWhiteboard {
         } = options;
 
         try {
+            // Preprocess: Handle implicit multiplication (2x -> 2*x, 3x^2 -> 3*x^2, etc.)
+            let processedFunc = funcString
+                .replace(/(\d+)([a-zA-Z])/g, '$1*$2')  // 2x -> 2*x
+                .replace(/\)([a-zA-Z])/g, ')*$1')       // )x -> )*x
+                .replace(/([a-zA-Z])\(/g, '$1*(')       // x( -> x*(
+                .replace(/\^/g, '**');                  // x^2 -> x**2
+
             // Parse function (simple evaluation)
-            const func = new Function('x', `return ${funcString.replace(/\^/g, '**')}`);
+            const func = new Function('x', `return ${processedFunc}`);
 
             const width = this.canvas.width;
             const height = this.canvas.height;
@@ -571,6 +624,150 @@ class MathmatixWhiteboard {
         link.download = `mathmatix-whiteboard-${Date.now()}.png`;
         link.href = dataURL;
         link.click();
+    }
+
+    setBackgroundImage(file) {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            fabric.Image.fromURL(e.target.result, (img) => {
+                // Scale image to fit canvas while maintaining aspect ratio
+                const canvasAspect = this.canvas.width / this.canvas.height;
+                const imgAspect = img.width / img.height;
+                let scale;
+
+                if (imgAspect > canvasAspect) {
+                    scale = this.canvas.width / img.width;
+                } else {
+                    scale = this.canvas.height / img.height;
+                }
+
+                img.scale(scale);
+                img.set({
+                    left: 0,
+                    top: 0,
+                    selectable: false,
+                    evented: false,
+                    opacity: 0.7, // Slightly transparent so drawings show up better
+                });
+
+                // Set as background image
+                this.canvas.setBackgroundImage(img, this.canvas.renderAll.bind(this.canvas));
+
+                console.log('✅ Background image loaded');
+            });
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    removeBackgroundImage() {
+        this.canvas.setBackgroundImage(null, this.canvas.renderAll.bind(this.canvas));
+        this.canvas.backgroundColor = '#ffffff';
+        this.canvas.renderAll();
+    }
+
+    setPresetBackground(type) {
+        const width = this.canvas.width;
+        const height = this.canvas.height;
+
+        switch (type) {
+            case 'none':
+                this.removeBackgroundImage();
+                break;
+
+            case 'white':
+                this.removeBackgroundImage();
+                this.canvas.backgroundColor = '#ffffff';
+                break;
+
+            case 'black':
+                this.removeBackgroundImage();
+                this.canvas.backgroundColor = '#000000';
+                break;
+
+            case 'grid':
+                // Uses existing coordinate grid method
+                this.removeBackgroundImage();
+                this.canvas.backgroundColor = '#ffffff';
+                this.addCoordinateGrid();
+                break;
+
+            case 'lined':
+                this.removeBackgroundImage();
+                this.generateLinedPaper();
+                break;
+
+            case 'graph':
+                this.removeBackgroundImage();
+                this.generateGraphPaper();
+                break;
+        }
+
+        this.canvas.renderAll();
+    }
+
+    generateLinedPaper() {
+        const width = this.canvas.width;
+        const height = this.canvas.height;
+        const lineSpacing = 30;
+        const marginLeft = 80;
+
+        this.canvas.backgroundColor = '#fffff8'; // Slight cream color
+
+        // Red margin line
+        const marginLine = new fabric.Line([marginLeft, 0, marginLeft, height], {
+            stroke: '#ff6b6b',
+            strokeWidth: 2,
+            selectable: false,
+            evented: false,
+        });
+        this.canvas.add(marginLine);
+        this.canvas.sendToBack(marginLine);
+
+        // Horizontal lines
+        for (let y = lineSpacing; y < height; y += lineSpacing) {
+            const line = new fabric.Line([0, y, width, y], {
+                stroke: '#b8dae8',
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+            });
+            this.canvas.add(line);
+            this.canvas.sendToBack(line);
+        }
+    }
+
+    generateGraphPaper() {
+        const width = this.canvas.width;
+        const height = this.canvas.height;
+        const gridSize = 20;
+
+        this.canvas.backgroundColor = '#ffffff';
+
+        // Vertical lines
+        for (let x = 0; x <= width; x += gridSize) {
+            const line = new fabric.Line([x, 0, x, height], {
+                stroke: '#e0e0e0',
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+            });
+            this.canvas.add(line);
+            this.canvas.sendToBack(line);
+        }
+
+        // Horizontal lines
+        for (let y = 0; y <= height; y += gridSize) {
+            const line = new fabric.Line([0, y, width, y], {
+                stroke: '#e0e0e0',
+                strokeWidth: 1,
+                selectable: false,
+                evented: false,
+            });
+            this.canvas.add(line);
+            this.canvas.sendToBack(line);
+        }
     }
 
     // ============================================

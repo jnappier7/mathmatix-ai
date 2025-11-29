@@ -102,6 +102,9 @@ const userSchema = new Schema({
   teacherId:        { type: Schema.Types.ObjectId, ref: 'User' },
   selectedTutorId:  { type: String, trim: true },
 
+  /* Parent linking (multi-parent support) */
+  parentIds: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+
   /* Gamification */
   xp:        { type: Number, default: 0, min: 0 },
   level:     { type: Number, default: 1, min: 1 },

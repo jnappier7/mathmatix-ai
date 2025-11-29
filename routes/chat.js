@@ -7,6 +7,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
+const Curriculum = require('../models/curriculum');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/openaiClient");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
@@ -69,12 +70,26 @@ router.post('/', isAuthenticated, async (req, res) => {
         const currentTutor = TUTOR_CONFIG[selectedTutorKey];
         const studentProfileForPrompt = user.toObject();
 
+        // Fetch curriculum context if student has a teacher
+        let curriculumContext = null;
+        if (user.teacherId) {
+            try {
+                const curriculum = await Curriculum.getActiveCurriculum(user.teacherId);
+                if (curriculum && curriculum.autoSyncWithAI) {
+                    curriculumContext = curriculum.getAIContext();
+                }
+            } catch (error) {
+                console.error('Error fetching curriculum context:', error);
+                // Continue without curriculum context if there's an error
+            }
+        }
+
         const recentMessagesForAI = activeConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
         const formattedMessagesForLLM = recentMessagesForAI
             .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content)
             .map(msg => ({ role: msg.role, content: msg.content }));
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student');
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
