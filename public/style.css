@@ -3489,16 +3489,120 @@ main {
     transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Optional: Add subtle glow on level-up */
-@keyframes tutorGlow {
+/* ============================================
+   CSS ANIMATIONS FOR ALL TUTORS
+   ============================================ */
+
+/* Gentle breathing effect - subtle scale */
+@keyframes tutorBreathe {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+    }
+    50% {
+        transform: scale(1.02) translateY(-2px);
+    }
+}
+
+/* Floating motion - smooth up/down */
+@keyframes tutorFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Subtle pulse for extra life */
+@keyframes tutorPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.03);
+    }
+}
+
+/* Glow effect when speaking */
+@keyframes tutorSpeakGlow {
     0%, 100% {
         filter: drop-shadow(0 0 0 transparent);
     }
     50% {
-        filter: drop-shadow(0 0 20px rgba(18, 179, 179, 0.6));
+        filter: drop-shadow(0 0 15px rgba(18, 179, 179, 0.4));
     }
 }
 
-.tutor-level-up-glow {
-    animation: tutorGlow 2s ease-in-out;
+/* Level-up celebration glow */
+@keyframes tutorLevelUpGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 0 transparent);
+    }
+    50% {
+        filter: drop-shadow(0 0 25px rgba(18, 179, 179, 0.7));
+    }
+}
+
+/* Apply breathing to static tutor images */
+#student-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    border-radius: 50%;
+    animation: tutorBreathe 4s ease-in-out infinite;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Speaking state - add glow */
+#student-avatar.speaking img,
+#student-avatar.speaking video {
+    animation: tutorBreathe 4s ease-in-out infinite,
+               tutorSpeakGlow 2s ease-in-out infinite;
+}
+
+/* Level-up state - celebration */
+#student-avatar.level-up img,
+#student-avatar.level-up video {
+    animation: tutorPulse 1.5s ease-in-out,
+               tutorLevelUpGlow 2s ease-in-out;
+}
+
+/* Idle state enhancement - gentle float */
+#student-avatar.idle img {
+    animation: tutorBreathe 5s ease-in-out infinite;
+}
+
+/* Hover effect - extra engagement */
+#student-avatar:hover img {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px rgba(18, 179, 179, 0.3));
+}
+
+/* Unique timing variations for different tutors */
+#student-avatar[data-tutor="maya"] img {
+    animation: tutorBreathe 3.5s ease-in-out infinite;
+}
+
+#student-avatar[data-tutor="ms-maria"] img {
+    animation: tutorBreathe 4.5s ease-in-out infinite;
+}
+
+#student-avatar[data-tutor="bob"] img {
+    animation: tutorBreathe 3.8s ease-in-out infinite;
+}
+
+#student-avatar[data-tutor="dr-g"] img {
+    animation: tutorBreathe 4.2s ease-in-out infinite;
+}
+
+#student-avatar[data-tutor="sigma"] img {
+    animation: tutorPulse 3s ease-in-out infinite;
+}
+
+/* Smooth transitions between states */
+#student-avatar,
+#student-avatar img,
+#student-avatar video {
+    transition: filter 0.5s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

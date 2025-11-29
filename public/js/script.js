@@ -49,9 +49,19 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
     if (isLevelUp) {
         animationText.classList.add('level-up-animation-text', 'animate-level-up');
 
-        // 🎬 Trigger tutor level-up animation
+        // 🎬 Trigger tutor level-up animation (video for Mr. Nappier)
         if (typeof playTutorAnimation === 'function') {
             playTutorAnimation('levelUp');
+        }
+
+        // 🎬 Trigger CSS level-up animation (for all other tutors)
+        if (typeof setTutorState === 'function') {
+            setTutorState('level-up');
+
+            // Return to idle after celebration
+            setTimeout(() => {
+                setTutorState('idle');
+            }, 3000);
         }
 
         if (typeof confetti === 'function') {
@@ -919,6 +929,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (studentAvatarContainer && window.TUTOR_CONFIG && currentUser) {
             const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
 
+            // Set data attribute for unique tutor animations
+            studentAvatarContainer.setAttribute('data-tutor', currentUser.selectedTutorId);
+
+            // Set initial state to idle
+            studentAvatarContainer.className = 'idle';
+
             // Check if this tutor has animated videos (currently only Mr. Nappier)
             const hasAnimations = currentUser.selectedTutorId === 'mr-nappier';
 
@@ -943,12 +959,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     currentTutorVideo.addEventListener('ended', handleVideoEnded);
                 }
             } else {
-                // Use static image for other tutors
+                // Use static image for other tutors (with CSS animations)
                 studentAvatarContainer.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}">`;
                 currentTutorVideo = null;
             }
         }
     }
+
+    /**
+     * Set tutor state for animations
+     * @param {string} state - 'idle', 'speaking', or 'level-up'
+     */
+    window.setTutorState = function(state) {
+        const studentAvatarContainer = document.getElementById("student-avatar");
+        if (!studentAvatarContainer) return;
+
+        // Update state class
+        studentAvatarContainer.className = state;
+    };
 
     /**
      * Play a specific tutor animation
@@ -1219,6 +1247,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         chatBox.appendChild(bubble);
 
+        // 🎬 Trigger speaking animation when AI responds
+        if (sender === 'ai') {
+            if (typeof setTutorState === 'function') {
+                setTutorState('speaking');
+
+                // Return to idle after message is done (3 seconds)
+                setTimeout(() => {
+                    setTutorState('idle');
+                }, 3000);
+            }
+        }
+
         if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
             if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
                  const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
@@ -1231,7 +1271,7 @@ document.addEventListener("DOMContentLoaded", () => {
                  playAudio(speakableText, tutor.voiceId, bubble.id);
             }
         }
-        
+
         setTimeout(() => renderMathInElement(bubble), 0);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
