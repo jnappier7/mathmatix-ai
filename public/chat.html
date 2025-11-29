@@ -77,6 +77,41 @@
     </button>
     <button id="mic-button" title="Voice Input" class="btn btn-tertiary"><i class="fas fa-microphone"></i></button>
     <button id="send-button" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+
+    <!-- Inline Equation Palette (MS Word-like) -->
+    <div id="inline-equation-palette" class="inline-equation-palette" style="display: none;">
+      <div class="equation-palette-header">
+        <span>Insert Math Symbol</span>
+        <button id="close-inline-palette" class="palette-close-btn" title="Close">&times;</button>
+      </div>
+      <div class="equation-symbols-grid">
+        <button class="symbol-btn" data-latex="\frac{#0}{#1}">x/y</button>
+        <button class="symbol-btn" data-latex="#0^{#1}">x²</button>
+        <button class="symbol-btn" data-latex="\sqrt{#0}">√</button>
+        <button class="symbol-btn" data-latex="\sqrt[#1]{#0}">ⁿ√</button>
+        <button class="symbol-btn" data-latex="\sum_{#0}^{#1}">∑</button>
+        <button class="symbol-btn" data-latex="\int_{#0}^{#1}">∫</button>
+        <button class="symbol-btn" data-latex="\lim_{#0 \to #1}">lim</button>
+        <button class="symbol-btn" data-latex="\pi">π</button>
+        <button class="symbol-btn" data-latex="\alpha">α</button>
+        <button class="symbol-btn" data-latex="\beta">β</button>
+        <button class="symbol-btn" data-latex="\theta">θ</button>
+        <button class="symbol-btn" data-latex="\infty">∞</button>
+        <button class="symbol-btn" data-latex="\pm">±</button>
+        <button class="symbol-btn" data-latex="\times">×</button>
+        <button class="symbol-btn" data-latex="\div">÷</button>
+        <button class="symbol-btn" data-latex="\leq">≤</button>
+        <button class="symbol-btn" data-latex="\geq">≥</button>
+        <button class="symbol-btn" data-latex="\neq">≠</button>
+        <button class="symbol-btn" data-latex="\approx">≈</button>
+        <button class="symbol-btn" data-latex="\equiv">≡</button>
+      </div>
+      <div class="inline-math-field-container">
+        <label>Edit equation:</label>
+        <math-field id="inline-math-editor" class="inline-math-field"></math-field>
+        <button id="insert-inline-equation" class="btn btn-primary btn-sm">Insert</button>
+      </div>
+    </div>
 </div>
     </div>
 

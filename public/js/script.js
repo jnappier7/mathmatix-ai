@@ -1668,25 +1668,59 @@ document.addEventListener("DOMContentLoaded", () => {
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
     
-    // Equation Modal with Draggable Functionality
-    let isDraggingModal = false;
-    let modalOffsetX = 0;
-    let modalOffsetY = 0;
+    // Inline Equation Palette (MS Word-like)
+    const inlineEquationPalette = document.getElementById('inline-equation-palette');
+    const inlineMathEditor = document.getElementById('inline-math-editor');
+    const insertInlineEqBtn = document.getElementById('insert-inline-equation');
+    const closeInlinePaletteBtn = document.getElementById('close-inline-palette');
 
-    if (openEquationBtn) {
+    // Toggle inline palette instead of modal
+    if (openEquationBtn && inlineEquationPalette) {
         openEquationBtn.addEventListener('click', () => {
-            if (equationModal) {
-                equationModal.classList.add('is-visible');
-                // Center modal on first open
-                const modalContent = equationModal.querySelector('.modal-content');
-                if (modalContent && !modalContent.style.left) {
-                    const rect = modalContent.getBoundingClientRect();
-                    modalContent.style.left = `${(window.innerWidth - rect.width) / 2}px`;
-                    modalContent.style.top = `${Math.max(50, (window.innerHeight - rect.height) / 2)}px`;
-                }
+            const isVisible = inlineEquationPalette.style.display === 'block';
+            inlineEquationPalette.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible && inlineMathEditor) {
+                // Focus the math editor when opening
+                setTimeout(() => inlineMathEditor.focus(), 100);
             }
         });
     }
+
+    // Close inline palette
+    if (closeInlinePaletteBtn) {
+        closeInlinePaletteBtn.addEventListener('click', () => {
+            if (inlineEquationPalette) inlineEquationPalette.style.display = 'none';
+        });
+    }
+
+    // Handle symbol button clicks
+    document.querySelectorAll('.symbol-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const latex = btn.getAttribute('data-latex');
+            if (inlineMathEditor && latex) {
+                inlineMathEditor.executeCommand(['insert', latex]);
+                inlineMathEditor.focus();
+            }
+        });
+    });
+
+    // Insert equation into chat input
+    if (insertInlineEqBtn && inlineMathEditor && userInput) {
+        insertInlineEqBtn.addEventListener('click', () => {
+            const latex = inlineMathEditor.value;
+            if (latex) {
+                userInput.value += ` \\(${latex}\\) `;
+                inlineMathEditor.value = ''; // Clear the editor
+                inlineEquationPalette.style.display = 'none';
+                userInput.focus();
+            }
+        });
+    }
+
+    // Equation Modal with Draggable Functionality (kept for legacy support)
+    let isDraggingModal = false;
+    let modalOffsetX = 0;
+    let modalOffsetY = 0;
 
     // Make equation modal draggable
     if (equationModal) {
