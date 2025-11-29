@@ -48,6 +48,12 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
     animationText.classList.add('xp-animation-text');
     if (isLevelUp) {
         animationText.classList.add('level-up-animation-text', 'animate-level-up');
+
+        // 🎬 Trigger tutor level-up animation
+        if (typeof playTutorAnimation === 'function') {
+            playTutorAnimation('levelUp');
+        }
+
         if (typeof confetti === 'function') {
             const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
@@ -64,7 +70,14 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
         }
     } else {
         animationText.classList.add('animate-xp');
-        if (isSpecialXp) { animationText.classList.add('special-xp'); }
+        if (isSpecialXp) {
+            animationText.classList.add('special-xp');
+
+            // 🎬 Trigger tutor celebration animation for bonus XP
+            if (typeof playTutorAnimation === 'function') {
+                playTutorAnimation('smallcele');
+            }
+        }
     }
     const chatContainer = document.getElementById('chat-container');
     if (chatContainer) {
@@ -894,11 +907,84 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // ============================================
+    // ANIMATED TUTOR AVATAR SYSTEM
+    // ============================================
+
+    let currentTutorVideo = null;
+    let tutorVideoState = 'idle';
+
     function updateTutorAvatar() {
         const studentAvatarContainer = document.getElementById("student-avatar");
         if (studentAvatarContainer && window.TUTOR_CONFIG && currentUser) {
             const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
-            studentAvatarContainer.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}">`;
+
+            // Check if this tutor has animated videos (currently only Mr. Nappier)
+            const hasAnimations = currentUser.selectedTutorId === 'mr-nappier';
+
+            if (hasAnimations) {
+                // Create animated video avatar
+                studentAvatarContainer.innerHTML = `
+                    <video id="tutor-video"
+                           class="tutor-animated-avatar"
+                           autoplay
+                           loop
+                           muted
+                           playsinline>
+                        <source src="/videos/mr-nappier_idle.mp4" type="video/mp4">
+                    </video>
+                `;
+
+                currentTutorVideo = document.getElementById('tutor-video');
+                tutorVideoState = 'idle';
+
+                // Set up video event listeners
+                if (currentTutorVideo) {
+                    currentTutorVideo.addEventListener('ended', handleVideoEnded);
+                }
+            } else {
+                // Use static image for other tutors
+                studentAvatarContainer.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}">`;
+                currentTutorVideo = null;
+            }
+        }
+    }
+
+    /**
+     * Play a specific tutor animation
+     * @param {string} animation - 'idle', 'levelUp', or 'smallcele'
+     */
+    window.playTutorAnimation = function(animation) {
+        if (!currentTutorVideo) return;
+
+        const animations = {
+            'idle': '/videos/mr-nappier_idle.mp4',
+            'levelUp': '/videos/mr-nappier_levelUp.mp4',
+            'smallcele': '/videos/mr-nappier_smallcele.mp4'
+        };
+
+        const videoPath = animations[animation];
+        if (!videoPath) return;
+
+        tutorVideoState = animation;
+
+        // Smooth transition with crossfade
+        currentTutorVideo.style.opacity = '0';
+
+        setTimeout(() => {
+            currentTutorVideo.src = videoPath;
+            currentTutorVideo.loop = (animation === 'idle');
+            currentTutorVideo.play();
+            currentTutorVideo.style.opacity = '1';
+        }, 300);
+    };
+
+    /**
+     * Handle video ended event - return to idle after celebrations
+     */
+    function handleVideoEnded() {
+        if (tutorVideoState !== 'idle') {
+            playTutorAnimation('idle');
         }
     }
 
