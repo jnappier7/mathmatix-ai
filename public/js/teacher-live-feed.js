@@ -26,9 +26,11 @@ class TeacherLiveFeed {
         // Refresh button
         if (this.refreshBtn) {
             this.refreshBtn.addEventListener('click', () => {
-                this.refreshBtn.querySelector('i').classList.add('fa-spin');
+                const icon = this.refreshBtn.querySelector('i');
+                if (icon) icon.classList.add('fa-spin');
                 this.fetchLiveFeed().finally(() => {
-                    this.refreshBtn.querySelector('i').classList.remove('fa-spin');
+                    const icon = this.refreshBtn.querySelector('i');
+                    if (icon) icon.classList.remove('fa-spin');
                 });
             });
         }
@@ -55,14 +57,18 @@ class TeacherLiveFeed {
 
         if (this.isPaused) {
             this.stopPolling();
-            icon.classList.remove('fa-pause');
-            icon.classList.add('fa-play');
+            if (icon) {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            }
             this.pauseBtn.title = 'Resume Updates';
             this.pauseBtn.classList.add('active');
         } else {
             this.startPolling();
-            icon.classList.remove('fa-play');
-            icon.classList.add('fa-pause');
+            if (icon) {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            }
             this.pauseBtn.title = 'Pause Updates';
             this.pauseBtn.classList.remove('active');
         }
