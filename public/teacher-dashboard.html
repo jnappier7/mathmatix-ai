@@ -57,9 +57,6 @@
                     <button class="tab-btn active" data-tab="students">
                         <i class="fas fa-users"></i> My Students
                     </button>
-                    <button class="tab-btn" data-tab="homework">
-                        <i class="fas fa-clipboard-list"></i> Homework
-                    </button>
                     <button class="tab-btn" data-tab="curriculum">
                         <i class="fas fa-book"></i> Curriculum
                     </button>
@@ -70,21 +67,6 @@
                     <div class="dashboard-panel flex-panel-content card-style-1">
                         <div class="dashboard-panel-header">My Assigned Students</div>
                         <div id="student-list" class="table-scroll-container"> Loading students...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Homework Tab -->
-                <div class="tab-content" id="homework-tab">
-                    <div class="dashboard-panel flex-panel-content card-style-1">
-                        <div class="dashboard-panel-header">
-                            Homework Assignments
-                            <button id="create-homework-btn" class="btn btn-primary" style="float: right; margin-top: -5px;">
-                                <i class="fas fa-plus"></i> Create Assignment
-                            </button>
-                        </div>
-                        <div id="homework-list" class="table-scroll-container">
-                            Loading homework...
                         </div>
                     </div>
                 </div>
@@ -110,11 +92,6 @@
                 </div>
             </div>
             <div class="admin-widget-sidebar">
-                <div class="dashboard-panel card-style-1">
-                    <div class="dashboard-panel-header">Quick Actions</div>
-                    <p>Access frequently used tools.</p>
-                    <button class="main-action-btn btn btn-secondary" style="margin-top: 10px;">Assign Homework</button>
-                </div>
                 <div class="dashboard-panel card-style-1">
                     <div class="dashboard-panel-header">Performance Reports</div>
                     <p>Generate detailed student performance reports.</p>
@@ -176,91 +153,6 @@
                 <div class="form-buttons">
                     <button id="close-history-modal-btn" class="submit-btn cancel-btn btn-tertiary">Close</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Homework Creation Modal -->
-    <div id="homework-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 700px;">
-            <span id="homeworkModalCloseBtn" class="modal-close-button">&times;</span>
-            <div id="homework-modal-content">
-                <h2><i class="fas fa-clipboard-list"></i> Create Homework Assignment</h2>
-
-                <form id="homework-form">
-                    <!-- Basic Info -->
-                    <label for="hw-title">Assignment Title *</label>
-                    <input type="text" id="hw-title" required placeholder="e.g., Linear Equations Practice">
-
-                    <label for="hw-description">Description</label>
-                    <textarea id="hw-description" rows="2" placeholder="Brief description of this assignment"></textarea>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label for="hw-topic">Topic</label>
-                            <input type="text" id="hw-topic" placeholder="e.g., Algebra">
-                        </div>
-                        <div>
-                            <label for="hw-due-date">Due Date *</label>
-                            <input type="datetime-local" id="hw-due-date" required>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label for="hw-difficulty">Difficulty</label>
-                            <select id="hw-difficulty">
-                                <option value="easy">Easy</option>
-                                <option value="medium" selected>Medium</option>
-                                <option value="hard">Hard</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>IEP Accommodations</label>
-                            <div style="display: flex; gap: 10px; margin-top: 5px;">
-                                <label style="font-size: 0.9em; font-weight: normal;">
-                                    <input type="checkbox" id="hw-extended-time"> Extended Time
-                                </label>
-                                <label style="font-size: 0.9em; font-weight: normal;">
-                                    <input type="checkbox" id="hw-calculator"> Calculator
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Questions Section -->
-                    <h3 style="margin-top: 20px; margin-bottom: 10px;">
-                        <i class="fas fa-list-ol"></i> Questions
-                        <button type="button" id="add-question-btn" class="btn btn-secondary" style="float: right; font-size: 0.85em; padding: 5px 10px;">
-                            <i class="fas fa-plus"></i> Add Question
-                        </button>
-                    </h3>
-                    <div id="questions-container">
-                        <!-- Questions will be added here dynamically -->
-                    </div>
-
-                    <!-- Assign To Students -->
-                    <h3 style="margin-top: 20px; margin-bottom: 10px;">
-                        <i class="fas fa-user-check"></i> Assign To Students
-                    </h3>
-                    <div id="student-select-container" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
-                        <label style="font-size: 0.9em; font-weight: normal;">
-                            <input type="checkbox" id="select-all-students"> Select All
-                        </label>
-                        <hr style="margin: 8px 0;">
-                        <div id="student-checkboxes">
-                            Loading students...
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="form-buttons" style="margin-top: 20px;">
-                        <button type="submit" class="submit-btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Create & Assign
-                        </button>
-                        <button type="button" id="cancel-homework-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -361,7 +253,6 @@
     <script src="/js/logout.js"></script>
     <script src="/js/teacher-live-feed.js"></script>
     <script src="/js/teacher-dashboard.js"></script>
-    <script src="/js/teacher-homework.js"></script>
     <script src="/js/teacher-curriculum.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
