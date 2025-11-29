@@ -971,19 +971,34 @@ a:hover {
 
 #input-container {
   display: flex;
-  align-items: flex-end;
-  gap: 8px;
+  flex-direction: column;
+  gap: 10px;
   border-top: 1px solid var(--clr-text-dim);
-  padding-top: 10px;
+  padding-top: 15px;
   flex-shrink: 0;
 }
 
+/* Toolbar Above Message Box */
+.input-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.input-toolbar .btn {
+  flex: 0 0 auto;
+  min-width: 40px;
+}
+
 #user-input {
-  flex: 1;
-  min-height: 48px;
-  max-height: 150px;
+  width: 100%;
+  min-height: 60px;
+  max-height: 200px;
   overflow-y: auto;
-  padding: 10px;
+  padding: 12px;
   border-radius: var(--border-radius-base);
   border: 1px solid #ccc;
   font-size: 1rem; /* Use var for consistency */
@@ -1771,6 +1786,162 @@ form label, .password-label-row label {
 .modal-overlay.is-visible .modal-content {
     transform: translateY(0);
     opacity: 1;
+}
+
+/* Equation Modal - Draggable Positioning */
+#equation-modal .modal-content {
+    position: fixed;
+    /* Allow JavaScript to position it */
+}
+
+#equation-modal .modal-header-eq {
+    user-select: none; /* Prevent text selection while dragging */
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #12B3B3, #0ea5a5);
+    color: white;
+    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+    margin: -30px -30px 20px -30px;
+}
+
+/* MathLive Virtual Keyboard - Fix Z-Index */
+.ML__keyboard {
+    z-index: 10000 !important; /* Above modal overlay (z-index: 2000) */
+}
+
+.ML__keyboard-backdrop {
+    z-index: 9999 !important; /* Just below keyboard */
+}
+
+/* Ensure modal allows keyboard to show */
+#equation-modal {
+    overflow: visible !important;
+}
+
+#equation-modal .modal-content {
+    overflow: visible !important;
+}
+
+/* Send Button - Full Width */
+.send-button-fullwidth {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* --- Inline Equation Palette (MS Word-like) --- */
+.inline-equation-palette {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    margin-bottom: 10px;
+    z-index: 1000;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.equation-palette-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.equation-palette-header span {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.palette-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 1;
+}
+
+.palette-close-btn:hover {
+    color: #333;
+}
+
+.equation-symbols-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.symbol-btn {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.symbol-btn:hover {
+    background: #12B3B3;
+    color: white;
+    border-color: #12B3B3;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(18, 179, 179, 0.3);
+}
+
+.inline-math-field-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.inline-math-field-container label {
+    font-size: 0.85em;
+    color: #666;
+    white-space: nowrap;
+}
+
+.inline-math-field {
+    flex: 1;
+    font-size: 1.1rem;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fdfdfd;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85em;
 }
 
 /* Close Button (top-right 'x') */

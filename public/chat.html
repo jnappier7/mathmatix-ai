@@ -61,22 +61,71 @@
         <span>Mathmatix is thinking...</span>
       </div>
      <div id="input-container">
-    <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary">Σ</button>
-    <button id="toggle-whiteboard-btn" title="Toggle Whiteboard" class="btn btn-tertiary"><i class="fas fa-chalkboard"></i></button>
+    <!-- Toolbar Above Message Box -->
+    <div class="input-toolbar">
+      <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary">
+        <i class="fas fa-function"></i>
+      </button>
+      <button id="toggle-whiteboard-btn" title="Toggle Whiteboard" class="btn btn-tertiary">
+        <i class="fas fa-chalkboard"></i>
+      </button>
+      <button id="attach-button" title="Upload Files" class="btn btn-tertiary">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <button id="camera-button" title="Take Photo" class="btn btn-tertiary">
+        <i class="fas fa-camera"></i>
+      </button>
+      <button id="mic-button" title="Voice Input" class="btn btn-tertiary">
+        <i class="fas fa-microphone"></i>
+      </button>
+    </div>
+
+    <!-- Inline Equation Palette (MS Word-like) -->
+    <div id="inline-equation-palette" class="inline-equation-palette" style="display: none;">
+      <div class="equation-palette-header">
+        <span>Insert Math Symbol</span>
+        <button id="close-inline-palette" class="palette-close-btn" title="Close">&times;</button>
+      </div>
+      <div class="equation-symbols-grid">
+        <button class="symbol-btn" data-latex="\frac{#0}{#1}">x/y</button>
+        <button class="symbol-btn" data-latex="#0^{#1}">x²</button>
+        <button class="symbol-btn" data-latex="\sqrt{#0}">√</button>
+        <button class="symbol-btn" data-latex="\sqrt[#1]{#0}">ⁿ√</button>
+        <button class="symbol-btn" data-latex="\sum_{#0}^{#1}">∑</button>
+        <button class="symbol-btn" data-latex="\int_{#0}^{#1}">∫</button>
+        <button class="symbol-btn" data-latex="\lim_{#0 \to #1}">lim</button>
+        <button class="symbol-btn" data-latex="\pi">π</button>
+        <button class="symbol-btn" data-latex="\alpha">α</button>
+        <button class="symbol-btn" data-latex="\beta">β</button>
+        <button class="symbol-btn" data-latex="\theta">θ</button>
+        <button class="symbol-btn" data-latex="\infty">∞</button>
+        <button class="symbol-btn" data-latex="\pm">±</button>
+        <button class="symbol-btn" data-latex="\times">×</button>
+        <button class="symbol-btn" data-latex="\div">÷</button>
+        <button class="symbol-btn" data-latex="\leq">≤</button>
+        <button class="symbol-btn" data-latex="\geq">≥</button>
+        <button class="symbol-btn" data-latex="\neq">≠</button>
+        <button class="symbol-btn" data-latex="\approx">≈</button>
+        <button class="symbol-btn" data-latex="\equiv">≡</button>
+      </div>
+      <div class="inline-math-field-container">
+        <label>Edit equation:</label>
+        <math-field id="inline-math-editor" class="inline-math-field"></math-field>
+        <button id="insert-inline-equation" class="btn btn-primary btn-sm">Insert</button>
+      </div>
+    </div>
 
     <!-- Modern File Grid Container -->
     <div id="file-grid-container" class="file-grid-container"></div>
 
+    <!-- Message Input (Full Width) -->
     <textarea id="user-input" placeholder="Ask a math question..." rows="1"></textarea>
     <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,application/pdf" multiple/>
-    <button id="attach-button" title="Upload Files" class="btn btn-tertiary">
-      <i class="fas fa-paperclip"></i>
+
+    <!-- Send Button (Full Width) -->
+    <button id="send-button" class="btn btn-primary send-button-fullwidth">
+      <i class="fas fa-paper-plane"></i> Send
     </button>
-    <button id="camera-button" title="Take Photo" class="btn btn-tertiary">
-      <i class="fas fa-camera"></i>
-    </button>
-    <button id="mic-button" title="Voice Input" class="btn btn-tertiary"><i class="fas fa-microphone"></i></button>
-    <button id="send-button" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
 </div>
     </div>
 
@@ -367,6 +416,13 @@
   <script src="/js/logout.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/whiteboard.js"></script>
+  <!-- PDF.js library for PDF preview and rendering -->
+  <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
+  <script type="module">
+    import * as pdfjsLib from '/pdfjs-viewer/build/pdf.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdfjs-viewer/build/pdf.worker.mjs';
+    window.pdfjsLib = pdfjsLib;
+  </script>
   <script src="/js/file-upload.js"></script>
   <script src="/js/student-resources.js"></script>
   <script src="/js/script.js" type="module"></script>
