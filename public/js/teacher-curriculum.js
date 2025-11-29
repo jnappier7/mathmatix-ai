@@ -30,18 +30,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Open sync modal
     if (syncCommonBtn) {
         syncCommonBtn.addEventListener('click', () => {
+            if (!syncModal) {
+                console.error('Sync modal not found');
+                alert('Error: Modal not loaded. Please refresh the page.');
+                return;
+            }
             syncModal.style.display = 'flex';
             // Pre-fill with current year
             const currentYear = new Date().getFullYear();
             const nextYear = currentYear + 1;
-            document.getElementById('cc-school-year').value = `${currentYear}-${nextYear}`;
+            const schoolYearInput = document.getElementById('cc-school-year');
+            if (schoolYearInput) {
+                schoolYearInput.value = `${currentYear}-${nextYear}`;
+            }
         });
     }
 
     // Close sync modal
     function closeSyncModal() {
-        syncModal.style.display = 'none';
-        syncForm.reset();
+        if (syncModal) syncModal.style.display = 'none';
+        if (syncForm) syncForm.reset();
     }
 
     if (syncModalCloseBtn) syncModalCloseBtn.addEventListener('click', closeSyncModal);
@@ -50,18 +58,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Open upload modal
     if (uploadCurriculumBtn) {
         uploadCurriculumBtn.addEventListener('click', () => {
+            if (!uploadModal) {
+                console.error('Upload modal not found');
+                alert('Error: Modal not loaded. Please refresh the page.');
+                return;
+            }
             uploadModal.style.display = 'flex';
             // Pre-fill with current year
             const currentYear = new Date().getFullYear();
             const nextYear = currentYear + 1;
-            document.getElementById('csv-school-year').value = `${currentYear}-${nextYear}`;
+            const schoolYearInput = document.getElementById('csv-school-year');
+            if (schoolYearInput) {
+                schoolYearInput.value = `${currentYear}-${nextYear}`;
+            }
         });
     }
 
     // Close upload modal
     function closeUploadModal() {
-        uploadModal.style.display = 'none';
-        uploadForm.reset();
+        if (uploadModal) uploadModal.style.display = 'none';
+        if (uploadForm) uploadForm.reset();
     }
 
     if (uploadModalCloseBtn) uploadModalCloseBtn.addEventListener('click', closeUploadModal);
