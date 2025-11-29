@@ -939,7 +939,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const hasAnimations = currentUser.selectedTutorId === 'mr-nappier';
 
             if (hasAnimations) {
-                // Create animated video avatar
+                // Create dual-video system for seamless crossfades
                 studentAvatarContainer.innerHTML = `
                     <video id="tutor-video"
                            class="tutor-animated-avatar"
@@ -948,6 +948,10 @@ document.addEventListener("DOMContentLoaded", () => {
                            muted
                            playsinline>
                         <source src="/videos/mr-nappier_idle.mp4" type="video/mp4">
+                    </video>
+                    <video id="tutor-video-secondary"
+                           muted
+                           playsinline>
                     </video>
                 `;
 
@@ -979,7 +983,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     /**
-     * Play a specific tutor animation
+     * Play a specific tutor animation with seamless crossfade
      * @param {string} animation - 'idle', 'levelUp', or 'smallcele'
      */
     window.playTutorAnimation = function(animation) {
@@ -996,15 +1000,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
         tutorVideoState = animation;
 
-        // Smooth transition with crossfade
-        currentTutorVideo.style.opacity = '0';
-
-        setTimeout(() => {
+        // Get secondary video element for crossfade
+        const secondaryVideo = document.getElementById('tutor-video-secondary');
+        if (!secondaryVideo) {
+            // Fallback to simple transition if secondary video not available
             currentTutorVideo.src = videoPath;
             currentTutorVideo.loop = (animation === 'idle');
             currentTutorVideo.play();
-            currentTutorVideo.style.opacity = '1';
-        }, 300);
+            return;
+        }
+
+        // Seamless crossfade technique:
+        // 1. Load new video in secondary element
+        secondaryVideo.src = videoPath;
+        secondaryVideo.loop = (animation === 'idle');
+
+        // 2. Preload and prepare
+        secondaryVideo.load();
+
+        // 3. When ready, crossfade
+        secondaryVideo.addEventListener('canplay', function onCanPlay() {
+            secondaryVideo.removeEventListener('canplay', onCanPlay);
+
+            // Start playing the new video
+            secondaryVideo.play();
+
+            // Crossfade: fade out primary, fade in secondary
+            currentTutorVideo.style.opacity = '0';
+            secondaryVideo.style.opacity = '1';
+
+            // After transition, swap videos
+            setTimeout(() => {
+                // Swap the videos
+                currentTutorVideo.src = videoPath;
+                currentTutorVideo.loop = (animation === 'idle');
+                currentTutorVideo.play();
+                currentTutorVideo.style.opacity = '1';
+
+                // Reset secondary
+                secondaryVideo.style.opacity = '0';
+                secondaryVideo.pause();
+                secondaryVideo.src = '';
+
+                // Update event listener
+                currentTutorVideo.removeEventListener('ended', handleVideoEnded);
+                currentTutorVideo.addEventListener('ended', handleVideoEnded);
+            }, 500); // Match CSS transition duration
+        });
     };
 
     /**
