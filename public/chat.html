@@ -61,22 +61,24 @@
         <span>Mathmatix is thinking...</span>
       </div>
      <div id="input-container">
-    <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary">Σ</button>
-    <button id="toggle-whiteboard-btn" title="Toggle Whiteboard" class="btn btn-tertiary"><i class="fas fa-chalkboard"></i></button>
-
-    <!-- Modern File Grid Container -->
-    <div id="file-grid-container" class="file-grid-container"></div>
-
-    <textarea id="user-input" placeholder="Ask a math question..." rows="1"></textarea>
-    <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,application/pdf" multiple/>
-    <button id="attach-button" title="Upload Files" class="btn btn-tertiary">
-      <i class="fas fa-paperclip"></i>
-    </button>
-    <button id="camera-button" title="Take Photo" class="btn btn-tertiary">
-      <i class="fas fa-camera"></i>
-    </button>
-    <button id="mic-button" title="Voice Input" class="btn btn-tertiary"><i class="fas fa-microphone"></i></button>
-    <button id="send-button" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+    <!-- Toolbar Above Message Box -->
+    <div class="input-toolbar">
+      <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary">
+        <i class="fas fa-function"></i>
+      </button>
+      <button id="toggle-whiteboard-btn" title="Toggle Whiteboard" class="btn btn-tertiary">
+        <i class="fas fa-chalkboard"></i>
+      </button>
+      <button id="attach-button" title="Upload Files" class="btn btn-tertiary">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <button id="camera-button" title="Take Photo" class="btn btn-tertiary">
+        <i class="fas fa-camera"></i>
+      </button>
+      <button id="mic-button" title="Voice Input" class="btn btn-tertiary">
+        <i class="fas fa-microphone"></i>
+      </button>
+    </div>
 
     <!-- Inline Equation Palette (MS Word-like) -->
     <div id="inline-equation-palette" class="inline-equation-palette" style="display: none;">
@@ -112,6 +114,18 @@
         <button id="insert-inline-equation" class="btn btn-primary btn-sm">Insert</button>
       </div>
     </div>
+
+    <!-- Modern File Grid Container -->
+    <div id="file-grid-container" class="file-grid-container"></div>
+
+    <!-- Message Input (Full Width) -->
+    <textarea id="user-input" placeholder="Ask a math question..." rows="1"></textarea>
+    <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,application/pdf" multiple/>
+
+    <!-- Send Button (Full Width) -->
+    <button id="send-button" class="btn btn-primary send-button-fullwidth">
+      <i class="fas fa-paper-plane"></i> Send
+    </button>
 </div>
     </div>
 
