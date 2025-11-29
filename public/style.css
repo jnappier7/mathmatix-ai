@@ -3484,12 +3484,28 @@ main {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
+    background-color: #ffffff; /* White background behind video */
 }
 
 /* Smooth video transitions */
 #tutor-video {
     display: block;
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #ffffff; /* White background for video */
+}
+
+/* Secondary video for crossfade transitions */
+#tutor-video-secondary {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #ffffff;
 }
 
 /* ============================================
