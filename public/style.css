@@ -3152,11 +3152,12 @@ main {
 
 /* 2. Assign the growth proportions and apply the fix */
 #avatar-container {
-  flex-grow: 4; /* 4/8 = 1/2 of the space */
+  flex-grow: 6; /* 6/8 = 1.5x taller (was 4/8) */
   min-height: 0; /* FIX: Allows the element to shrink */
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #ffffff !important; /* Force white background */
 }
 
 #xp-level-display {
@@ -3170,10 +3171,23 @@ main {
 }
 
 /* 3. Ensure the avatar image fits its container */
-#avatar-container #student-avatar, #avatar-container #student-avatar img {
+#avatar-container #student-avatar {
+  height: 100%;
+  width: 100%;
+}
+
+#avatar-container #student-avatar img {
   height: 100%;
   width: 100%;
   object-fit: contain;
+}
+
+/* For videos, use cover to eliminate black bars */
+#avatar-container #student-avatar video {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center 25%;
 }
 
 /* --- Tutor Selection Page - BALANCED LAYOUT FIX --- */
@@ -3481,14 +3495,29 @@ main {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
-    background-color: #ffffff; /* White background behind video */
+    background: #ffffff !important; /* Force white background */
+}
+
+/* White circle behind all content */
+#student-avatar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ffffff;
+    border-radius: 50%;
+    z-index: -1;
 }
 
 /* Smooth video transitions */
 #tutor-video {
     display: block;
     transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    background-color: #ffffff; /* White background for video */
+    background: #ffffff !important; /* Force white background */
+    position: relative;
+    z-index: 1;
 }
 
 /* Secondary video for crossfade transitions */
@@ -3502,7 +3531,8 @@ main {
     object-position: center 25%;
     opacity: 0;
     transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    background-color: #ffffff;
+    background: #ffffff !important;
+    z-index: 2;
 }
 
 /* ============================================
