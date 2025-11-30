@@ -33,6 +33,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     const conversationsListDiv = document.getElementById("conversations-list");
     const closeHistoryModalBtn = document.getElementById("close-history-modal-btn");
 
+    // --- Tab Switching Logic ---
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.dataset.tab;
+
+            // Remove active class from all tabs and buttons
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Add active class to clicked button and corresponding content
+            button.classList.add('active');
+            const targetContent = document.getElementById(`${targetTab}-tab`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+
     // --- Initial Load ---
     await fetchAssignedStudents();
 
