@@ -3326,7 +3326,7 @@ main {
 
 /* 2. Assign the growth proportions and apply the fix */
 #avatar-container {
-  flex-grow: 6; /* 6/8 = 1.5x taller (was 4/8) */
+  flex-grow: 9; /* 9/8 = 1.5x taller than previous 6/8 */
   min-height: 0; /* FIX: Allows the element to shrink */
   display: flex;
   align-items: center;
@@ -3340,7 +3340,7 @@ main {
 }
 
 #student-parent-link-display {
-  flex-grow: 1; /* 1/8 of the space */
+  flex-grow: 0.5; /* 0.5/8 of the space - half the previous size */
   min-height: 0; /* FIX: Allows the element to shrink */
 }
 
@@ -3660,7 +3660,7 @@ main {
     height: 100%;
     object-fit: cover;
     object-position: center 25%;
-    border-radius: 50%;
+    border-radius: 16px; /* Changed from 50% to match rectangular portrait frame */
     transition: opacity 0.3s ease-in-out;
     opacity: 1;
 }
@@ -3668,11 +3668,11 @@ main {
 #student-avatar {
     position: relative;
     overflow: hidden;
-    border-radius: 50%;
+    border-radius: 16px; /* Changed from 50% to rectangular portrait frame */
     background: #ffffff !important; /* Force white background */
 }
 
-/* White circle behind all content */
+/* White background behind all content */
 #student-avatar::before {
     content: '';
     position: absolute;
@@ -3681,7 +3681,7 @@ main {
     right: 0;
     bottom: 0;
     background: #ffffff;
-    border-radius: 50%;
+    border-radius: 16px; /* Match the container border-radius */
     z-index: -1;
 }
 
@@ -3769,7 +3769,7 @@ main {
     height: 100%;
     object-fit: cover;
     object-position: center 25%;
-    border-radius: 50%;
+    border-radius: 16px; /* Changed from 50% to match rectangular frame */
     animation: tutorBreathe 4s ease-in-out infinite;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
