@@ -44,13 +44,37 @@ router.post("/", upload.single("file"), async (req, res) => {
             return res.status(404).json({ error: "User profile not found for prompt generation." });
         }
 
-        // Prepare image/PDF for OCR
-        // Note: Mathpix supports PDFs natively, no conversion needed
-        const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+        // Handle PDFs vs Images differently
+        const isPDF = file.mimetype.includes("pdf");
+        let imageBuffer;
+        let imageMimetype;
+
+        if (isPDF) {
+            // Try to convert PDF to image
+            imageBuffer = await pdfToImage(file.buffer);
+
+            if (!imageBuffer) {
+                // Canvas dependencies not available - ask user to convert manually
+                return res.status(400).json({
+                    error: "PDF upload is temporarily unavailable. Please convert your PDF to an image (PNG or JPG) and upload that instead. You can use a screenshot tool or online converter."
+                });
+            }
+
+            imageMimetype = 'image/png';
+            console.log('[Upload API] PDF converted to image successfully');
+        } else {
+            // For images, use directly
+            imageBuffer = file.buffer;
+            imageMimetype = file.mimetype;
+        }
+
+        // Prepare for OCR
+        const base64Image = `data:${imageMimetype};base64,${imageBuffer.toString("base64")}`;
 
         console.log('[Upload API] Sending to OCR:', {
-            mimetype: file.mimetype,
-            bufferSize: file.buffer.length
+            originalMimetype: file.mimetype,
+            finalMimetype: imageMimetype,
+            bufferSize: imageBuffer.length
         });
 
         // Perform OCR
