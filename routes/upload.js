@@ -6,6 +6,7 @@ const { generateSystemPrompt } = require("../utils/prompt");
 const User = require("../models/user");
 const { callLLM } = require("../utils/openaiClient");
 const ocr = require("../utils/ocr");
+const pdfToImage = require("../utils/pdf-to-image");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini";
