@@ -19,13 +19,13 @@ router.post("/", upload.single("file"), async (req, res) => {
             return res.status(400).json({ error: "No file uploaded." });
         }
 
-        const { userId } = req.body;
-        if (!userId) {
-            return res.status(400).json({ error: 'User ID is required for upload context.' });
+        // Get userId from authenticated session (req.user is set by isAuthenticated middleware)
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ error: 'Authentication required.' });
         }
-        
+
         // Fetch the user profile for personalized prompt generation
-        const user = await User.findById(userId).lean();
+        const user = await User.findById(req.user._id).lean();
         if (!user) {
             return res.status(404).json({ error: "User profile not found for prompt generation." });
         }
