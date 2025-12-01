@@ -6,6 +6,7 @@ const { generateSystemPrompt } = require("../utils/prompt");
 const User = require("../models/user");
 const { callLLM } = require("../utils/openaiClient");
 const ocr = require("../utils/ocr");
+const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini";
 
@@ -62,8 +63,11 @@ router.post("/", upload.single("file"), async (req, res) => {
             });
         }
 
+        // Get tutor configuration
+        const tutor = TUTOR_CONFIG[user.selectedTutorId] || TUTOR_CONFIG.default;
+
         // Generate the personalized system prompt
-        const systemPrompt = generateSystemPrompt(user);
+        const systemPrompt = generateSystemPrompt(user, tutor, null, 'student');
         
         const messages = [
             { role: "system", content: systemPrompt },
