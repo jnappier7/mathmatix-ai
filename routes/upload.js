@@ -6,7 +6,6 @@ const { generateSystemPrompt } = require("../utils/prompt");
 const User = require("../models/user");
 const { callLLM } = require("../utils/openaiClient");
 const ocr = require("../utils/ocr");
-const pdfToImage = require("../utils/pdf-to-image");
 
 const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini";
 
@@ -44,32 +43,18 @@ router.post("/", upload.single("file"), async (req, res) => {
             return res.status(404).json({ error: "User profile not found for prompt generation." });
         }
 
-        // Convert PDF to image if necessary
-        const isPDF = file.mimetype.includes("pdf");
-        let imageBuffer;
+        // Prepare image/PDF for OCR
+        // Note: Mathpix supports PDFs natively, no conversion needed
+        const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
-        if (isPDF) {
-            imageBuffer = await pdfToImage(file.buffer);
-            // If PDF conversion fails (e.g., missing dependencies), return helpful error
-            if (!imageBuffer) {
-                return res.status(400).json({
-                    error: "PDF processing is temporarily unavailable. Please convert your PDF to an image (PNG/JPG) and try again."
-                });
-            }
-        } else {
-            // For images, use the buffer directly
-            imageBuffer = file.buffer;
-        }
+        console.log('[Upload API] Sending to OCR:', {
+            mimetype: file.mimetype,
+            bufferSize: file.buffer.length
+        });
 
-        // Verify we have a valid buffer
-        if (!imageBuffer || imageBuffer.length === 0) {
-            return res.status(400).json({ error: "Failed to process the file. Please try again with a different file." });
-        }
-        
         // Perform OCR
-        const base64Image = `data:${isPDF ? 'image/png' : file.mimetype};base64,${imageBuffer.toString("base64")}`;
         const extracted = await ocr(base64Image);
-        
+
         if (!extracted || extracted.trim() === '') {
             return res.status(200).json({ 
                 text: "I couldn't read any text from that image. Could you try a clearer picture or type out the problem?",
