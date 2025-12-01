@@ -1370,6 +1370,19 @@ document.addEventListener("DOMContentLoaded", () => {
   function removeAttachedFile() {
     clearAllFiles();
   }
+
+  // Show file pill for attached file
+  function showFilePill(fileName) {
+    const fileGridContainer = document.getElementById('file-grid-container');
+    if (!fileGridContainer) return;
+
+    fileGridContainer.innerHTML = `
+      <div class="file-pill">
+        <span class="file-name">📎 ${escapeHtml(fileName)}</span>
+        <button class="remove-file-btn" onclick="removeAttachedFile()">×</button>
+      </div>
+    `;
+  }
 	
     function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
         if (!text && !graphData) return;
