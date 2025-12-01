@@ -15,6 +15,20 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.post("/", upload.single("file"), async (req, res) => {
     try {
         const file = req.file;
+
+        // Debug logging
+        console.log('[Upload API] Request received:', {
+            hasFile: !!file,
+            hasUser: !!req.user,
+            fileInfo: file ? {
+                originalname: file.originalname,
+                mimetype: file.mimetype,
+                size: file.size,
+                hasBuffer: !!file.buffer,
+                bufferLength: file.buffer?.length
+            } : null
+        });
+
         if (!file) {
             return res.status(400).json({ error: "No file uploaded." });
         }
@@ -32,9 +46,23 @@ router.post("/", upload.single("file"), async (req, res) => {
 
         // Convert PDF to image if necessary
         const isPDF = file.mimetype.includes("pdf");
-        const imageBuffer = isPDF ? await pdfToImage(file.buffer) : file.buffer;
+        let imageBuffer;
 
-        if (!imageBuffer) {
+        if (isPDF) {
+            imageBuffer = await pdfToImage(file.buffer);
+            // If PDF conversion fails (e.g., missing dependencies), return helpful error
+            if (!imageBuffer) {
+                return res.status(400).json({
+                    error: "PDF processing is temporarily unavailable. Please convert your PDF to an image (PNG/JPG) and try again."
+                });
+            }
+        } else {
+            // For images, use the buffer directly
+            imageBuffer = file.buffer;
+        }
+
+        // Verify we have a valid buffer
+        if (!imageBuffer || imageBuffer.length === 0) {
             return res.status(400).json({ error: "Failed to process the file. Please try again with a different file." });
         }
         
