@@ -1076,8 +1076,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // Set initial state to idle
             studentAvatarContainer.className = 'idle';
 
-            // Check if this tutor has animated videos (currently only Mr. Nappier)
-            const hasAnimations = currentUser.selectedTutorId === 'mr-nappier';
+            // Check if this tutor has animated videos
+            const tutorsWithAnimations = ['mr-nappier', 'maya', 'bob', 'ms-maria'];
+            const hasAnimations = tutorsWithAnimations.includes(currentUser.selectedTutorId);
 
             if (hasAnimations) {
                 // Create dual-video system for seamless crossfades
@@ -1088,7 +1089,7 @@ document.addEventListener("DOMContentLoaded", () => {
                            loop
                            muted
                            playsinline>
-                        <source src="/videos/mr-nappier_idle.mp4" type="video/mp4">
+                        <source src="/videos/${currentUser.selectedTutorId}_idle.mp4" type="video/mp4">
                     </video>
                     <video id="tutor-video-secondary"
                            muted
@@ -1128,12 +1129,15 @@ document.addEventListener("DOMContentLoaded", () => {
      * @param {string} animation - 'idle', 'levelUp', or 'smallcele'
      */
     window.playTutorAnimation = function(animation) {
-        if (!currentTutorVideo) return;
+        if (!currentTutorVideo || !currentUser) return;
+
+        // Get current tutor ID
+        const tutorId = currentUser.selectedTutorId;
 
         const animations = {
-            'idle': '/videos/mr-nappier_idle.mp4',
-            'levelUp': '/videos/mr-nappier_levelUp.mp4',
-            'smallcele': '/videos/mr-nappier_smallcele.mp4'
+            'idle': `/videos/${tutorId}_idle.mp4`,
+            'levelUp': `/videos/${tutorId}_levelUp.mp4`,
+            'smallcele': `/videos/${tutorId}_smallcele.mp4`
         };
 
         const videoPath = animations[animation];
