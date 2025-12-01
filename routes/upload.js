@@ -56,9 +56,9 @@ router.post("/", upload.single("file"), async (req, res) => {
         const extracted = await ocr(base64Image);
 
         if (!extracted || extracted.trim() === '') {
-            return res.status(200).json({ 
+            return res.status(200).json({
                 text: "I couldn't read any text from that image. Could you try a clearer picture or type out the problem?",
-                extracted: "" 
+                extractedText: ""
             });
         }
 
@@ -77,8 +77,8 @@ router.post("/", upload.single("file"), async (req, res) => {
         const completion = await callLLM(PRIMARY_UPLOAD_AI_MODEL, messages, { max_tokens: 400 });
 
         const reply = completion.choices[0]?.message?.content?.trim() || "No feedback generated.";
-        
-        return res.json({ text: reply, extracted });
+
+        return res.json({ text: reply, extractedText: extracted });
 
     } catch (err) {
         console.error("ERROR in /api/upload:", err);
