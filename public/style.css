@@ -3356,13 +3356,12 @@ main {
   object-fit: contain;
 }
 
-/* For videos, use cover and scale to eliminate black bars */
+/* Videos now have no black bars, so no scaling needed */
 #avatar-container #student-avatar video {
   height: 100%;
   width: 100%;
   object-fit: cover;
   object-position: center 25%;
-  transform: scale(1.15); /* Zoom in slightly to crop out black bars on sides */
 }
 
 /* --- Tutor Selection Page - BALANCED LAYOUT FIX --- */
@@ -3664,7 +3663,6 @@ main {
     border-radius: 16px; /* Changed from 50% to match rectangular portrait frame */
     transition: opacity 0.3s ease-in-out;
     opacity: 1;
-    transform: scale(1.15); /* Zoom in to crop black bars */
 }
 
 #student-avatar {
@@ -3694,7 +3692,6 @@ main {
     background: #ffffff !important; /* Force white background */
     position: relative;
     z-index: 1;
-    transform: scale(1.15); /* Zoom in to crop black bars */
 }
 
 /* Secondary video for crossfade transitions */
@@ -3710,7 +3707,6 @@ main {
     transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     background: #ffffff !important;
     z-index: 2;
-    transform: scale(1.15); /* Zoom in to crop black bars */
 }
 
 /* ============================================
