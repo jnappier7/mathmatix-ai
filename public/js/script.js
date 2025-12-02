@@ -1482,6 +1482,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     appendMessage(messageText, "user");
     userInput.value = "";
+    userInput.placeholder = "Type your message..."; // Reset placeholder
     showThinkingIndicator(true);
 
     try {
@@ -1489,6 +1490,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Multi-file upload support
         if (attachedFiles.length > 0) {
+            console.log(`[Frontend] Sending ${attachedFiles.length} file(s) to /api/chat-with-file`);
+            console.log(`[Frontend] Files:`, attachedFiles.map(f => ({ name: f.name, type: f.type, size: f.size })));
+
             const formData = new FormData();
 
             // Append all files
@@ -1886,20 +1890,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ============================================
-    // ENHANCED FILE UPLOAD EVENT LISTENERS
+    // FILE UPLOAD EVENT LISTENERS
+    // Note: Attach button and file input are handled by FileUploadManager in file-upload.js
     // ============================================
-
-    if (attachBtn) {
-        attachBtn.addEventListener('click', () => fileInput.click());
-    }
-
-    if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files.length > 0) {
-                handleFileUpload(e.target.files); // Support multiple files
-            }
-        });
-    }
 
     // Camera capture button
     const cameraBtn = document.getElementById('camera-button');
