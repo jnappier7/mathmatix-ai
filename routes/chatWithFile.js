@@ -9,6 +9,7 @@ const { callLLM } = require("../utils/openaiClient");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const ocr = require('../utils/ocr');
+const pdfOcr = require('../utils/pdfOcr');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -32,13 +33,19 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
             const file = files[i];
 
             try {
-                // Mathpix supports PDFs natively, so no conversion needed
-                const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
-
                 console.log(`[chatWithFile] Processing file: ${file.originalname} (${file.mimetype})`);
 
-                // Perform OCR
-                const extractedText = await ocr(base64Image);
+                let extractedText;
+
+                // Use appropriate processor based on file type
+                if (file.mimetype === 'application/pdf') {
+                    // Use Mathpix /v3/pdf endpoint for PDFs
+                    extractedText = await pdfOcr(file.buffer, file.originalname);
+                } else {
+                    // Use Mathpix /v3/text endpoint for images
+                    const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+                    extractedText = await ocr(base64Image);
+                }
 
                 extractedContents.push({
                     filename: file.originalname,
