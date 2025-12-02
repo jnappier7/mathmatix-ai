@@ -8,6 +8,7 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
+const pdfOcr = require('../utils/pdfOcr');
 const axios = require('axios');
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -24,28 +25,50 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
 
         console.log(`Processing ${files.length} file(s) for user ${userId}`);
 
-        // --- Step 1: Prepare files for Vision API (like Claude/GPT/Gemini) ---
-        // Instead of OCR pre-processing, send files directly to GPT-4o-mini's vision
+        // --- Step 1: Hybrid Processing (Best of Both Worlds) ---
+        // Images → Vision API (Claude/GPT/Gemini method)
+        // PDFs → Mathpix specialized endpoint
         const imageContents = [];
+        const pdfTexts = [];
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             console.log(`[chatWithFile] Processing file: ${file.originalname} (${file.mimetype})`);
 
-            // Convert file to base64 data URL
-            const base64 = file.buffer.toString('base64');
-            const dataUrl = `data:${file.mimetype};base64,${base64}`;
+            if (file.mimetype === 'application/pdf') {
+                // PDFs: Use Mathpix /v3/pdf endpoint (specialized for documents)
+                console.log(`[chatWithFile] Using Mathpix PDF endpoint for: ${file.originalname}`);
+                const extractedText = await pdfOcr(file.buffer, file.originalname);
 
-            imageContents.push({
-                type: "image_url",
-                image_url: {
-                    url: dataUrl,
-                    detail: "high" // Use high detail for better text reading
+                if (extractedText && extractedText.trim()) {
+                    pdfTexts.push({
+                        filename: file.originalname,
+                        text: extractedText
+                    });
+                    console.log(`[chatWithFile] Extracted ${extractedText.length} characters from PDF`);
+                } else {
+                    pdfTexts.push({
+                        filename: file.originalname,
+                        text: `[Could not extract text from ${file.originalname}]`
+                    });
                 }
-            });
+            } else {
+                // Images: Use GPT-4o-mini vision directly (fast, native)
+                console.log(`[chatWithFile] Using Vision API for: ${file.originalname}`);
+                const base64 = file.buffer.toString('base64');
+                const dataUrl = `data:${file.mimetype};base64,${base64}`;
+
+                imageContents.push({
+                    type: "image_url",
+                    image_url: {
+                        url: dataUrl,
+                        detail: "high" // Use high detail for better text reading
+                    }
+                });
+            }
         }
 
-        console.log(`[chatWithFile] Prepared ${imageContents.length} file(s) for vision API`);
+        console.log(`[chatWithFile] Prepared ${imageContents.length} image(s) for vision API, ${pdfTexts.length} PDF(s) processed`);
 
         // --- Step 2: Run Chat Logic with Vision API ---
         const user = await User.findById(userId);
@@ -55,9 +78,19 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
             user.activeConversationId = activeConversation._id;
         }
 
+        // Build combined message with PDF text and user message
+        let combinedText = message || "Can you help me with this?";
+
+        // Add PDF extracted text to the message
+        if (pdfTexts.length > 0) {
+            const pdfContent = pdfTexts.map(({ filename, text }) =>
+                `[Content from ${filename}]\n${text}`
+            ).join('\n\n');
+            combinedText = `${combinedText}\n\n${pdfContent}`;
+        }
+
         // Store user message in conversation (text only, for history)
-        const userMessageText = message || "Can you help me with this?";
-        activeConversation.messages.push({ role: 'user', content: userMessageText });
+        activeConversation.messages.push({ role: 'user', content: combinedText });
 
         const tutor = TUTOR_CONFIG[user.selectedTutorId] || TUTOR_CONFIG.default;
         const systemPrompt = generateSystemPrompt(user.toObject(), tutor, null, 'student');
@@ -65,11 +98,11 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
         // Build messages for AI with vision content
         const recentMessages = activeConversation.messages.slice(-40).map(m => ({ role: m.role, content: m.content }));
 
-        // Create user message with both text and images (Vision API format)
+        // Create user message with text (including PDF content) and images (Vision API format)
         const visionUserMessage = {
             role: 'user',
             content: [
-                { type: "text", text: userMessageText },
+                { type: "text", text: combinedText },
                 ...imageContents
             ]
         };
