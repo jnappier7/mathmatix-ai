@@ -6,7 +6,7 @@
 :root {
     /* Sizing & Layout */
     --header-height: 80px;
-    --footer-height: 80px;
+    --footer-height: 50px; /* Reduced from 80px to fit content without scrolling */
     --page-horizontal-padding: 20px;
     --section-gap: 50px;
     --content-max-width: 1100px; /* Updated from 1000px */
@@ -365,10 +365,10 @@ footer {
     width: 100%;
     flex-shrink: 0;
     height: var(--footer-height);
-    padding: 1rem;
+    padding: 0.5rem; /* Reduced from 1rem for compact footer */
     background-color: var(--clr-bg-dark);
     color: var(--clr-bg-light);
-    font-size: 0.85rem;
+    font-size: 0.8rem; /* Slightly smaller text */
     text-align: center;
     box-sizing: border-box;
     z-index: 100;
@@ -1197,12 +1197,13 @@ a:hover {
 
 /* Tutor Avatar Styling in Sidebar */
 #avatar-container {
-  height: 350px;
+  height: auto;
+  min-height: 500px;
   max-width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  overflow: hidden;
+  overflow: visible; /* Allow landscape videos to overflow */
   margin-top: auto;
   margin-bottom: 1rem;
   flex-grow: 1;
@@ -3356,12 +3357,13 @@ main {
   object-fit: contain;
 }
 
-/* Videos now have no black bars, so no scaling needed */
+/* Videos fill container vertically (landscape optimized) */
 #avatar-container #student-avatar video {
   height: 100%;
-  width: 100%;
+  width: auto; /* Allow width to expand based on aspect ratio */
   object-fit: cover;
   object-position: center 25%;
+  min-width: 100%; /* Ensure video fills at least the container width */
 }
 
 /* --- Tutor Selection Page - BALANCED LAYOUT FIX --- */
