@@ -1245,7 +1245,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Handle file upload - supports single or multiple files
    * @param {File|FileList} files - File or FileList object
    */
-  function handleFileUpload(files) {
+  window.handleFileUpload = function(files) {
     if (!files) return;
 
     // Convert FileList to Array if needed

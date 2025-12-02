@@ -102,24 +102,25 @@ class FileUploadManager {
     // ============================================
 
     async handleFile(file) {
+        // Claude-style: Attach immediately, no modal
         this.currentFile = file;
 
-        // Show preview modal
-        this.filePreviewModal.style.display = 'flex';
-
-        // Update file info
-        document.getElementById('preview-filename').textContent = file.name;
-        document.getElementById('preview-filesize').textContent = this.formatFileSize(file.size);
-
-        // Show preview based on file type
-        if (file.type.startsWith('image/')) {
-            await this.previewImage(file);
-        } else if (file.type === 'application/pdf') {
-            await this.previewPDF(file);
+        // Use existing file handling system from script.js
+        if (typeof handleFileUpload === 'function') {
+            handleFileUpload([file]);
         }
 
-        // Start OCR processing
-        this.processOCR(file);
+        // Focus input for user to add optional message
+        const userInput = document.getElementById('user-input');
+        if (userInput) {
+            userInput.focus();
+            // Add placeholder hint
+            if (!userInput.value.trim()) {
+                userInput.placeholder = 'Add a message (optional) or just hit send...';
+            }
+        }
+
+        console.log('✅ File attached:', file.name);
     }
 
     formatFileSize(bytes) {
