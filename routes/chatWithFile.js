@@ -8,7 +8,6 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/openaiClient");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
-const pdfToImage = require('../utils/pdf-to-image');
 const ocr = require('../utils/ocr');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
 
@@ -33,25 +32,12 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
             const file = files[i];
 
             try {
-                // Convert PDF to image if needed
-                const imageBuffer = file.mimetype.includes("pdf")
-                    ? await pdfToImage(file.buffer)
-                    : file.buffer;
+                // Mathpix supports PDFs natively, so no conversion needed
+                const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
-                if (!imageBuffer) {
-                    console.warn(`Failed to process file: ${file.originalname}`);
-                    extractedContents.push({
-                        filename: file.originalname,
-                        text: `[Could not process ${file.originalname}]`
-                    });
-                    continue;
-                }
+                console.log(`[chatWithFile] Processing file: ${file.originalname} (${file.mimetype})`);
 
                 // Perform OCR
-                const base64Image = `data:${
-                    file.mimetype.includes("pdf") ? 'image/png' : file.mimetype
-                };base64,${imageBuffer.toString("base64")}`;
-
                 const extractedText = await ocr(base64Image);
 
                 extractedContents.push({
