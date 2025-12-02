@@ -1210,10 +1210,40 @@ document.addEventListener("DOMContentLoaded", () => {
     
     async function fetchAndDisplayParentCode() {
         if (currentUser.role === 'student' && studentLinkCodeValue) {
-            if (currentUser.parent_link_code) {
-                studentLinkCodeValue.textContent = currentUser.parent_link_code;
+            // Check if student has a link code already
+            if (currentUser.studentToParentLinkCode && currentUser.studentToParentLinkCode.code) {
+                studentLinkCodeValue.textContent = currentUser.studentToParentLinkCode.code;
+                // Make it clickable to copy
+                studentLinkCodeValue.style.cursor = 'pointer';
+                studentLinkCodeValue.onclick = () => {
+                    navigator.clipboard.writeText(currentUser.studentToParentLinkCode.code);
+                    showToast('Code copied to clipboard!', 2000);
+                };
             } else {
-                studentLinkCodeValue.textContent = "N/A";
+                // No code exists, generate one
+                try {
+                    const res = await fetch('/api/student/generate-link-code', {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+                    const data = await res.json();
+                    if (data.success && data.code) {
+                        studentLinkCodeValue.textContent = data.code;
+                        // Update currentUser object
+                        currentUser.studentToParentLinkCode = { code: data.code, parentLinked: false };
+                        // Make it clickable to copy
+                        studentLinkCodeValue.style.cursor = 'pointer';
+                        studentLinkCodeValue.onclick = () => {
+                            navigator.clipboard.writeText(data.code);
+                            showToast('Code copied to clipboard!', 2000);
+                        };
+                    } else {
+                        studentLinkCodeValue.textContent = "Error generating code";
+                    }
+                } catch (err) {
+                    console.error('Error generating parent link code:', err);
+                    studentLinkCodeValue.textContent = "Error generating code";
+                }
             }
         }
     }
