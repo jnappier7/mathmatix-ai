@@ -75,7 +75,7 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
         activeConversation.messages.push({ role: 'user', content: combinedMessage });
         
         const tutor = TUTOR_CONFIG[user.selectedTutorId] || TUTOR_CONFIG.default;
-        const systemPrompt = generateSystemPrompt(user.toObject(), tutor.name, null, 'student');
+        const systemPrompt = generateSystemPrompt(user.toObject(), tutor, null, 'student');
         
         const recentMessages = activeConversation.messages.slice(-40).map(m => ({ role: m.role, content: m.content }));
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...recentMessages];

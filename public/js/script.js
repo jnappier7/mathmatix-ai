@@ -1886,20 +1886,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ============================================
-    // ENHANCED FILE UPLOAD EVENT LISTENERS
+    // FILE UPLOAD EVENT LISTENERS
+    // Note: Attach button and file input are handled by FileUploadManager in file-upload.js
     // ============================================
-
-    if (attachBtn) {
-        attachBtn.addEventListener('click', () => fileInput.click());
-    }
-
-    if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files.length > 0) {
-                handleFileUpload(e.target.files); // Support multiple files
-            }
-        });
-    }
 
     // Camera capture button
     const cameraBtn = document.getElementById('camera-button');
