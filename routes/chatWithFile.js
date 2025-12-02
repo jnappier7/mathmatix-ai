@@ -40,6 +40,8 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
                 // Perform OCR
                 const extractedText = await ocr(base64Image);
 
+                console.log(`[chatWithFile] Extracted ${extractedText ? extractedText.length : 0} characters from ${file.originalname}`);
+
                 extractedContents.push({
                     filename: file.originalname,
                     text: extractedText || `[No text extracted from ${file.originalname}]`
@@ -63,6 +65,9 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
         const combinedMessage = message
             ? `${message}\n\n${fileContentsText}`.trim()
             : fileContentsText;
+
+        console.log(`[chatWithFile] Combined message length: ${combinedMessage.length} characters`);
+        console.log(`[chatWithFile] Message preview: ${combinedMessage.substring(0, 200)}...`);
 
         // --- Step 2: Run Chat Logic (Adapted from chat.js) ---
         const user = await User.findById(userId);

@@ -1482,6 +1482,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     appendMessage(messageText, "user");
     userInput.value = "";
+    userInput.placeholder = "Type your message..."; // Reset placeholder
     showThinkingIndicator(true);
 
     try {
@@ -1489,6 +1490,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Multi-file upload support
         if (attachedFiles.length > 0) {
+            console.log(`[Frontend] Sending ${attachedFiles.length} file(s) to /api/chat-with-file`);
+            console.log(`[Frontend] Files:`, attachedFiles.map(f => ({ name: f.name, type: f.type, size: f.size })));
+
             const formData = new FormData();
 
             // Append all files
