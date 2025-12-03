@@ -31,6 +31,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const PARENT_CHAT_MAX_MESSAGE_LENGTH = 1800;
 
+    // Tutor configuration (simplified for parent dashboard)
+    const TUTOR_CONFIG = {
+        "bob": { name: "Bob", image: "bob.png" },
+        "maya": { name: "Maya", image: "maya.png" },
+        "ms-maria": { name: "Ms. Maria", image: "ms-maria.png" },
+        "mr-nappier": { name: "Mr. Nappier", image: "mr-nappier.png" },
+        "ms-rashida": { name: "Ms. Rashida", image: "ms-rashida.png" },
+        "prof-davies": { name: "Prof. Davies", image: "prof-davies.png" },
+        "ms-alex": { name: "Ms. Alex", image: "ms-alex.png" },
+        "mr-lee": { name: "Mr. Lee", image: "mr-lee.png" },
+        "dr-g": { name: "Dr. G", image: "dr-g.png" },
+        "default": { name: "Math Tutor", image: "default-tutor.png" }
+    };
+
     // --- Authenticate and Load Parent User Data ---
     async function loadParentUser() {
         try {
@@ -68,6 +82,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         parentChatContainer.style.flexDirection = 'column';
         parentChatContainer.appendChild(msg);
         parentChatContainer.scrollTop = parentChatContainer.scrollHeight;
+    }
+
+    // --- Update Tutor Avatar Display ---
+    function updateTutorAvatar(child) {
+        const tutorAvatarContainer = document.getElementById('tutor-avatar-container');
+        const tutorAvatarImg = document.getElementById('tutor-avatar-img');
+        const tutorNameDisplay = document.getElementById('tutor-name');
+
+        if (!child || !child.selectedTutorId) {
+            tutorAvatarContainer.style.display = 'none';
+            return;
+        }
+
+        const tutorId = child.selectedTutorId;
+        const tutor = TUTOR_CONFIG[tutorId] || TUTOR_CONFIG['default'];
+
+        tutorAvatarImg.src = `/images/tutors/${tutor.image}`;
+        tutorAvatarImg.alt = tutor.name;
+        tutorNameDisplay.textContent = tutor.name;
+        tutorAvatarContainer.style.display = 'block';
     }
 
     // --- MODIFICATION: Updated function to load children and their progress ---
@@ -108,6 +142,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (i === 0) {
                     selectedChild = child;
                     childSelector.value = child._id;
+                    updateTutorAvatar(selectedChild);
                 }
             });
 
@@ -259,11 +294,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // --- Event Listeners (No changes needed here) ---
+    // --- Event Listeners ---
     if (childSelector) {
         childSelector.addEventListener("change", () => {
             selectedChild = children.find(c => c._id === childSelector.value);
             if (parentChatContainer) parentChatContainer.innerHTML = '<p class="text-gray-500 text-center py-2">Chat about your child\'s progress.</p>';
+            updateTutorAvatar(selectedChild);
         });
     }
 

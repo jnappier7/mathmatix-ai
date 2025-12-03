@@ -61,8 +61,18 @@
             <i class="fas fa-user-tie"></i> Parent-Teacher Conference
           </div>
           <div class="chat-header-widget" style="background: #f3e5f5; padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #9b59b6;">
-            <label for="childSelector" class="text-sm font-semibold" style="color: #6a1b9a; display: block; margin-bottom: 5px;"><i class="fas fa-user-graduate"></i> Discussing Student:</label>
-            <select id="childSelector" class="text-sm p-2 border rounded" style="width: 100%; border: 2px solid #9b59b6; border-radius: 6px;"></select>
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <div style="flex: 1;">
+                <label for="childSelector" class="text-sm font-semibold" style="color: #6a1b9a; display: block; margin-bottom: 5px;"><i class="fas fa-user-graduate"></i> Discussing Student:</label>
+                <select id="childSelector" class="text-sm p-2 border rounded" style="width: 100%; border: 2px solid #9b59b6; border-radius: 6px;"></select>
+              </div>
+              <div id="tutor-avatar-container" style="display: none; flex-shrink: 0; text-align: center;">
+                <div style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; border: 3px solid #9b59b6; box-shadow: 0 2px 8px rgba(155,89,182,0.3); margin: 0 auto 5px;">
+                  <img id="tutor-avatar-img" src="" alt="Tutor" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div id="tutor-name" style="font-size: 0.75em; color: #6a1b9a; font-weight: 600;"></div>
+              </div>
+            </div>
           </div>
           <div id="parent-chat-container-inner" class="chat-display-widget" style="border: 2px solid #e1bee7; background: white; min-height: 300px; max-height: 400px; overflow-y: auto; padding: 15px; border-radius: 6px;">
             <p class="text-gray-500 text-center py-2"><i class="fas fa-comments"></i> Select a child to discuss their learning progress.</p>
