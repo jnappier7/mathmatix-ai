@@ -179,7 +179,7 @@ router.get('/students/:studentId/conversations', isAdmin, async (req, res) => {
   try {
     const conversations = await Conversation.find({ userId: req.params.studentId })
         .sort({ startDate: -1 })
-        .select('date summary activeMinutes startDate') // Added startDate for robustness
+        .select('summary activeMinutes startDate') // Fixed: removed non-existent 'date' field
         .lean();
     
     // Returning an empty array is a successful response, not an error.

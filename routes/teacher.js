@@ -86,7 +86,7 @@ router.get('/students/:studentId/conversations', isTeacher, async (req, res) => 
     // Fetch all conversations for this student from the Conversation collection
     const conversations = await Conversation.find({ userId: studentId })
         .sort({ startDate: -1 }) // Sort by most recent first
-        .select('date summary activeMinutes'); // Select only the necessary fields
+        .select('summary activeMinutes startDate'); // Fixed: removed non-existent 'date' field, added startDate
     // --- MODIFICATION END ---
 
     res.json(conversations || []);
