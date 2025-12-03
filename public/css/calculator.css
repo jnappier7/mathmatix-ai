@@ -1,21 +1,16 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
+/* Standalone Calculator Page Styles (calculator.html only) */
+/* Use a specific wrapper to avoid affecting chat page */
+body:has(.calculator-container:not(.floating-calculator)) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
 }
 
 .calculator-container {
     perspective: 1000px;
+    padding: 20px;
 }
 
 .calculator {
