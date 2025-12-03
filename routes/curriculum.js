@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const Curriculum = require('../models/curriculum');
+const User = require('../models/user');
 const { isAuthenticated, isTeacher } = require('../middleware/auth');
 const multer = require('multer');
 const csv = require('csv-parser');
@@ -270,7 +271,7 @@ function parseList(str) {
 // Get current curriculum resources for students
 router.get('/student/resources', isAuthenticated, async (req, res) => {
     try {
-        const user = await require('../models/user').findById(req.user._id);
+        const user = await User.findById(req.user._id);
 
         if (!user || !user.teacherId) {
             return res.json({ hasResources: false });
