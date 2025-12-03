@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TI-30XIIS Calculator</title>
+    <link rel="stylesheet" href="/css/calculator.css">
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator">
+            <!-- Calculator Header -->
+            <div class="calculator-header">
+                <div class="brand">TEXAS INSTRUMENTS</div>
+                <div class="model">TI-30XIIS</div>
+            </div>
+
+            <!-- Display -->
+            <div class="display-container">
+                <div class="display-indicators">
+                    <span id="angle-mode">DEG</span>
+                    <span id="hyp-indicator"></span>
+                    <span id="memory-indicator"></span>
+                </div>
+                <div class="display">
+                    <div class="display-line" id="input-line"></div>
+                    <div class="display-line result-line" id="result-line">0</div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="buttons">
+                <!-- Row 1 -->
+                <button class="btn btn-function" data-action="2nd">2nd</button>
+                <button class="btn btn-function" data-action="mode">MODE</button>
+                <button class="btn btn-function" data-action="stat">STAT</button>
+                <button class="btn btn-function" data-action="data">DATA</button>
+                <button class="btn btn-function" data-action="del">DEL</button>
+
+                <!-- Row 2 -->
+                <button class="btn btn-function" data-fn="asin" data-fn2="sin-1">
+                    <span class="secondary">sin⁻¹</span>
+                    <span class="primary">sin</span>
+                </button>
+                <button class="btn btn-function" data-fn="acos" data-fn2="cos-1">
+                    <span class="secondary">cos⁻¹</span>
+                    <span class="primary">cos</span>
+                </button>
+                <button class="btn btn-function" data-fn="atan" data-fn2="tan-1">
+                    <span class="secondary">tan⁻¹</span>
+                    <span class="primary">tan</span>
+                </button>
+                <button class="btn btn-function" data-fn="pi">
+                    <span class="secondary">π</span>
+                    <span class="primary">^</span>
+                </button>
+                <button class="btn btn-clear" data-action="clear">CLEAR</button>
+
+                <!-- Row 3 -->
+                <button class="btn btn-function" data-fn="square" data-fn2="sinh">
+                    <span class="secondary">sinh</span>
+                    <span class="primary">x²</span>
+                </button>
+                <button class="btn btn-function" data-fn="sqrt" data-fn2="cosh">
+                    <span class="secondary">cosh</span>
+                    <span class="primary">√</span>
+                </button>
+                <button class="btn btn-function" data-fn="nthroot" data-fn2="tanh">
+                    <span class="secondary">tanh</span>
+                    <span class="primary">ⁿ√</span>
+                </button>
+                <button class="btn btn-function" data-fn="log" data-fn2="pow10">
+                    <span class="secondary">10ˣ</span>
+                    <span class="primary">log</span>
+                </button>
+                <button class="btn btn-function" data-fn="ln" data-fn2="exp">
+                    <span class="secondary">eˣ</span>
+                    <span class="primary">ln</span>
+                </button>
+
+                <!-- Row 4 -->
+                <button class="btn btn-function" data-fn="dec" data-fn2="abs">
+                    <span class="secondary">abs</span>
+                    <span class="primary">▸DEC</span>
+                </button>
+                <button class="btn btn-function" data-fn="nd" data-fn2="factorial">
+                    <span class="secondary">!</span>
+                    <span class="primary">n/d</span>
+                </button>
+                <button class="btn btn-function" data-fn="prn">
+                    <span class="secondary">nPr</span>
+                    <span class="primary">nCr</span>
+                </button>
+                <button class="btn btn-function" data-fn="lparen">(</button>
+                <button class="btn btn-function" data-fn="rparen">)</button>
+
+                <!-- Row 5 -->
+                <button class="btn btn-function" data-fn="sto">
+                    <span class="secondary">RCL</span>
+                    <span class="primary">STO</span>
+                </button>
+                <button class="btn btn-number" data-num="7">7</button>
+                <button class="btn btn-number" data-num="8">8</button>
+                <button class="btn btn-number" data-num="9">9</button>
+                <button class="btn btn-operator" data-op="÷">÷</button>
+
+                <!-- Row 6 -->
+                <button class="btn btn-function" data-fn="fd" data-fn2="percent">
+                    <span class="secondary">%</span>
+                    <span class="primary">F⇔D</span>
+                </button>
+                <button class="btn btn-number" data-num="4">4</button>
+                <button class="btn btn-number" data-num="5">5</button>
+                <button class="btn btn-number" data-num="6">6</button>
+                <button class="btn btn-operator" data-op="×">×</button>
+
+                <!-- Row 7 -->
+                <button class="btn btn-function" data-fn="ud" data-fn2="toggle">
+                    <span class="secondary">U⇔D</span>
+                    <span class="primary">F⇔D</span>
+                </button>
+                <button class="btn btn-number" data-num="1">1</button>
+                <button class="btn btn-number" data-num="2">2</button>
+                <button class="btn btn-number" data-num="3">3</button>
+                <button class="btn btn-operator" data-op="-">−</button>
+
+                <!-- Row 8 -->
+                <button class="btn btn-function" data-action="on">ON</button>
+                <button class="btn btn-number" data-num="0">0</button>
+                <button class="btn btn-function" data-fn="decimal">.</button>
+                <button class="btn btn-function" data-fn="negative">(-)</button>
+                <button class="btn btn-operator" data-op="+">+</button>
+
+                <!-- Row 9 -->
+                <button class="btn btn-enter" data-action="enter">ENTER</button>
+            </div>
+
+            <!-- Solar Panel -->
+            <div class="solar-panel"></div>
+        </div>
+    </div>
+
+    <script src="/js/calculator.js"></script>
+</body>
+</html>
