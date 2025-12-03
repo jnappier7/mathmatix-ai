@@ -418,6 +418,18 @@ body {
     background: linear-gradient(145deg, #27ae60, #00b894);
 }
 
+.calc-btn.btn-arrow {
+    background: linear-gradient(145deg, #2c5282, #1e3a5f);
+    color: #4c8bca;
+    font-size: 18px;
+    border: 1px solid #1a2e4f;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.calc-btn.btn-arrow:hover {
+    filter: brightness(1.3);
+}
+
 /* Mobile responsiveness for floating calculator */
 @media (max-width: 480px) {
     .floating-calculator {
