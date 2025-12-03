@@ -1,6 +1,6 @@
 /* Standalone Calculator Page Styles (calculator.html only) */
-/* Use a specific wrapper to avoid affecting chat page */
-body:has(.calculator-container:not(.floating-calculator)) {
+/* Only apply purple gradient to standalone calculator page */
+body.standalone-calculator-page {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     display: flex;
@@ -106,7 +106,11 @@ body:has(.calculator-container:not(.floating-calculator)) {
     gap: 6px;
 }
 
-.btn {
+/* Scope calculator button styles to avoid conflicts with site buttons */
+.calculator .calc-btn,
+.floating-calculator .calc-btn,
+.calculator .btn,
+.floating-calculator .btn {
     border: none;
     border-radius: 5px;
     font-size: 11px;
@@ -125,38 +129,46 @@ body:has(.calculator-container:not(.floating-calculator)) {
     min-height: 45px;
 }
 
-.btn:active {
+.calculator .calc-btn:active,
+.floating-calculator .calc-btn:active,
+.calculator .btn:active,
+.floating-calculator .btn:active {
     transform: translateY(2px);
     box-shadow:
         0 1px 0 rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.btn-number {
+.calculator .btn-number,
+.floating-calculator .btn-number {
     background: linear-gradient(145deg, #34495e, #2c3e50);
     color: #fff;
     font-size: 16px;
 }
 
-.btn-operator {
+.calculator .btn-operator,
+.floating-calculator .btn-operator {
     background: linear-gradient(145deg, #34495e, #2c3e50);
     color: #fff;
     font-size: 18px;
 }
 
-.btn-function {
+.calculator .btn-function,
+.floating-calculator .btn-function {
     background: linear-gradient(145deg, #3d566e, #2c3e50);
     color: #fff;
     font-size: 10px;
 }
 
-.btn-clear {
+.calculator .btn-clear,
+.floating-calculator .btn-clear {
     background: linear-gradient(145deg, #e74c3c, #c0392b);
     color: #fff;
     font-size: 11px;
 }
 
-.btn-enter {
+.calculator .btn-enter,
+.floating-calculator .btn-enter {
     background: linear-gradient(145deg, #27ae60, #229954);
     color: #fff;
     grid-column: span 5;
@@ -164,29 +176,36 @@ body:has(.calculator-container:not(.floating-calculator)) {
     letter-spacing: 2px;
 }
 
-.btn .secondary {
+.calculator .btn .secondary,
+.floating-calculator .calc-btn .secondary {
     font-size: 8px;
     color: #f39c12;
     margin-bottom: 2px;
     font-weight: normal;
 }
 
-.btn .primary {
+.calculator .btn .primary,
+.floating-calculator .calc-btn .primary {
     font-size: 11px;
     color: #fff;
 }
 
-.btn-number:hover,
-.btn-operator:hover,
-.btn-function:hover {
+.calculator .btn-number:hover,
+.calculator .btn-operator:hover,
+.calculator .btn-function:hover,
+.floating-calculator .btn-number:hover,
+.floating-calculator .btn-operator:hover,
+.floating-calculator .btn-function:hover {
     filter: brightness(1.2);
 }
 
-.btn-clear:hover {
+.calculator .btn-clear:hover,
+.floating-calculator .btn-clear:hover {
     background: linear-gradient(145deg, #e74c3c, #d63031);
 }
 
-.btn-enter:hover {
+.calculator .btn-enter:hover,
+.floating-calculator .btn-enter:hover {
     background: linear-gradient(145deg, #27ae60, #00b894);
 }
 
@@ -196,7 +215,8 @@ body:has(.calculator-container:not(.floating-calculator)) {
     51%, 100% { opacity: 0; }
 }
 
-.cursor {
+.calculator .cursor,
+.floating-calculator .cursor {
     display: inline-block;
     width: 8px;
     height: 16px;
@@ -205,8 +225,9 @@ body:has(.calculator-container:not(.floating-calculator)) {
     margin-left: 2px;
 }
 
-/* Error state */
-.error {
+/* Error state - scope to calculator only */
+.calculator .error,
+.floating-calculator .error {
     color: #e74c3c !important;
 }
 
@@ -217,7 +238,10 @@ body:has(.calculator-container:not(.floating-calculator)) {
         max-width: 380px;
     }
 
-    .btn {
+    .calculator .calc-btn,
+    .floating-calculator .calc-btn,
+    .calculator .btn,
+    .floating-calculator .btn {
         padding: 10px 2px;
         min-height: 40px;
     }
