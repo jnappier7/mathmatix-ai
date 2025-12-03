@@ -236,10 +236,9 @@ async function handleParentChat(req, res, parentId, childId, message) {
         }
 
         // Get or create parent conversation for this child
-        const conversationKey = `parent_${parentId}_child_${childId}`;
         let parentConversation = await Conversation.findOne({
             userId: parentId,
-            metadata: { childId: childId }
+            'metadata.childId': childId
         });
 
         if (!parentConversation) {

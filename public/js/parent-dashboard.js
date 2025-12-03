@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const tutorId = child.selectedTutorId;
         const tutor = TUTOR_CONFIG[tutorId] || TUTOR_CONFIG['default'];
 
-        tutorAvatarImg.src = `/images/tutors/${tutor.image}`;
+        tutorAvatarImg.src = `/images/tutor_avatars/${tutor.image}`;
         tutorAvatarImg.alt = tutor.name;
         tutorNameDisplay.textContent = tutor.name;
         tutorAvatarContainer.style.display = 'block';
