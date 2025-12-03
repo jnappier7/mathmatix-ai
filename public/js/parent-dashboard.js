@@ -55,7 +55,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     function appendParentMessage(sender, text) {
         const msg = document.createElement("div");
         msg.className = `message ${sender} message-widget`;
+
+        // Apply distinct parent chat styling
+        if (sender === 'user') {
+            msg.style.cssText = 'background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; padding: 12px 16px; border-radius: 12px 12px 4px 12px; margin: 8px 0; max-width: 80%; align-self: flex-end; box-shadow: 0 2px 4px rgba(155,89,182,0.3);';
+        } else if (sender === 'ai') {
+            msg.style.cssText = 'background: #f3e5f5; color: #4a148c; padding: 12px 16px; border-radius: 12px 12px 12px 4px; margin: 8px 0; max-width: 80%; align-self: flex-start; border-left: 4px solid #9b59b6; box-shadow: 0 2px 4px rgba(155,89,182,0.15);';
+        }
+
         msg.innerText = text;
+        parentChatContainer.style.display = 'flex';
+        parentChatContainer.style.flexDirection = 'column';
         parentChatContainer.appendChild(msg);
         parentChatContainer.scrollTop = parentChatContainer.scrollHeight;
     }

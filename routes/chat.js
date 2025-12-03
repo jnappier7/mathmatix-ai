@@ -21,9 +21,14 @@ const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
 router.post('/', isAuthenticated, async (req, res) => {
-    const { userId, message } = req.body;
+    const { userId, message, role, childId } = req.body;
     if (!userId || !message) return res.status(400).json({ message: "User ID and message are required." });
     if (message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
+
+    // Handle parent chat separately
+    if (role === 'parent' && childId) {
+        return handleParentChat(req, res, userId, childId, message);
+    }
 
     // SAFETY FILTER: Block inappropriate content
     const inappropriatePatterns = [
@@ -194,5 +199,169 @@ router.post('/', isAuthenticated, async (req, res) => {
         res.status(500).json({ message: "An internal server error occurred." });
     }
 });
+
+// Handle parent-teacher conference chat
+async function handleParentChat(req, res, parentId, childId, message) {
+    try {
+        // Verify parent has access to this child
+        const parent = await User.findById(parentId);
+        if (!parent || !parent.children || !parent.children.some(c => c._id.toString() === childId)) {
+            return res.status(403).json({ message: "You don't have access to this child's information." });
+        }
+
+        // Fetch child's complete information
+        const child = await User.findById(childId).lean();
+        if (!child) {
+            return res.status(404).json({ message: "Child not found." });
+        }
+
+        // Get child's recent conversations for context
+        const recentSessions = await Conversation.find({ userId: childId })
+            .sort({ lastActivity: -1 })
+            .limit(10)
+            .select('summary currentTopic strugglingWith problemsAttempted problemsCorrect activeMinutes lastActivity')
+            .lean();
+
+        // Get child's curriculum context if they have a teacher
+        let curriculumContext = null;
+        if (child.teacherId) {
+            try {
+                const curriculum = await Curriculum.getActiveCurriculum(child.teacherId);
+                if (curriculum && curriculum.autoSyncWithAI) {
+                    curriculumContext = curriculum.getAIContext();
+                }
+            } catch (error) {
+                console.error('Error fetching curriculum context:', error);
+            }
+        }
+
+        // Get or create parent conversation for this child
+        const conversationKey = `parent_${parentId}_child_${childId}`;
+        let parentConversation = await Conversation.findOne({
+            userId: parentId,
+            metadata: { childId: childId }
+        });
+
+        if (!parentConversation) {
+            parentConversation = new Conversation({
+                userId: parentId,
+                messages: [],
+                metadata: { childId: childId, conversationType: 'parent-teacher' }
+            });
+        }
+
+        parentConversation.messages.push({ role: 'user', content: message });
+
+        // Build system prompt for parent-teacher conference
+        const systemPrompt = generateParentTeacherPrompt(child, recentSessions, curriculumContext, parent);
+
+        const recentMessages = parentConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
+        const formattedMessages = recentMessages
+            .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content)
+            .map(msg => ({ role: msg.role, content: msg.content }));
+
+        const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessages];
+
+        const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, {
+            system: systemPrompt,
+            temperature: 0.7,
+            max_tokens: 500
+        });
+
+        let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I apologize, I'm having trouble responding right now.";
+
+        parentConversation.messages.push({ role: 'assistant', content: aiResponseText });
+        parentConversation.lastActivity = new Date();
+        await parentConversation.save();
+
+        res.json({
+            text: aiResponseText,
+            userXp: 0,
+            userLevel: 0,
+            xpNeeded: 0,
+            specialXpAwarded: "",
+            voiceId: "default",
+            newlyUnlockedTutors: [],
+            drawingSequence: null
+        });
+
+    } catch (error) {
+        console.error("ERROR: Parent chat failed:", error);
+        res.status(500).json({ message: "An internal server error occurred." });
+    }
+}
+
+// Generate system prompt for parent-teacher conference
+function generateParentTeacherPrompt(child, recentSessions, curriculumContext, parent) {
+    const childName = `${child.firstName} ${child.lastName}`;
+    const parentName = `${parent.firstName} ${parent.lastName}`;
+
+    let prompt = `You are a knowledgeable, supportive math teacher having a conference with a parent.
+
+PARENT: ${parentName}
+STUDENT: ${childName}
+Grade: ${child.gradeLevel || 'Not specified'}
+Math Course: ${child.mathCourse || 'Not specified'}
+
+STUDENT PROFILE:
+- Current Level: ${child.level || 1}
+- Total XP: ${child.xp || 0}
+- Total Active Learning Time: ${child.totalActiveTutoringMinutes || 0} minutes
+`;
+
+    // Add IEP information if available
+    if (child.iepPlan) {
+        prompt += `\nIEP ACCOMMODATIONS:\n`;
+        const accom = child.iepPlan.accommodations || {};
+        if (accom.extendedTime) prompt += `- Extended time on assignments\n`;
+        if (accom.calculatorAllowed) prompt += `- Calculator permitted\n`;
+        if (accom.audioReadAloud) prompt += `- Audio read-aloud support\n`;
+        if (accom.chunkedAssignments) prompt += `- Assignments broken into smaller chunks\n`;
+        if (accom.mathAnxietySupport) prompt += `- Math anxiety support strategies\n`;
+
+        if (child.iepPlan.goals && child.iepPlan.goals.length > 0) {
+            prompt += `\nIEP GOALS:\n`;
+            child.iepPlan.goals.forEach(goal => {
+                prompt += `- ${goal.description} (Status: ${goal.status}, Progress: ${goal.currentProgress || 0}%)\n`;
+            });
+        }
+    }
+
+    // Add recent learning activity
+    if (recentSessions && recentSessions.length > 0) {
+        prompt += `\nRECENT LEARNING ACTIVITY:\n`;
+        recentSessions.slice(0, 5).forEach(session => {
+            if (session.currentTopic) {
+                prompt += `- ${session.currentTopic}`;
+                if (session.problemsAttempted) {
+                    prompt += ` (${session.problemsCorrect || 0}/${session.problemsAttempted} correct)`;
+                }
+                if (session.strugglingWith) {
+                    prompt += ` - Struggling with: ${session.strugglingWith}`;
+                }
+                prompt += `\n`;
+            }
+        });
+    }
+
+    // Add curriculum context
+    if (curriculumContext) {
+        prompt += `\nCURRENT CURRICULUM:\n${curriculumContext}\n`;
+    }
+
+    prompt += `\nYOUR ROLE:
+- Discuss ${childName}'s progress, strengths, and areas for improvement
+- Answer parent questions about their child's learning
+- Suggest specific strategies parents can use to support their child at home
+- Be encouraging but honest about challenges
+- Reference specific topics and skills from their recent work
+- If discussing struggles, explain them clearly and offer actionable advice
+- Keep responses concise (2-3 paragraphs maximum)
+- Use a warm, professional teacher tone
+
+Focus on concrete observations from ${childName}'s actual work and provide practical, actionable guidance for ${parentName}.`;
+
+    return prompt;
+}
 
 module.exports = router;
