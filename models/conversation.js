@@ -73,7 +73,12 @@ const conversationSchema = new Schema({
         message: String,
         timestamp: { type: Date, default: Date.now },
         acknowledged: { type: Boolean, default: false }
-    }]
+    }],
+    // Additional metadata for special conversation types (e.g., parent-teacher)
+    metadata: {
+        type: Schema.Types.Mixed,
+        default: {}
+    }
 }, { timestamps: true }); // Mongoose adds createdAt and updatedAt
 
 // Index for efficient querying of active sessions

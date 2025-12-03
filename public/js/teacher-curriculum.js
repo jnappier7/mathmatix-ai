@@ -269,11 +269,16 @@ document.addEventListener('DOMContentLoaded', () => {
                                     </td>
                                     <td style="font-size: 0.85em;">${lesson.standards && lesson.standards.length > 0 ? lesson.standards.join(', ') : '—'}</td>
                                     <td>
-                                        ${lesson.resources && lesson.resources.length > 0 ?
-                                            `<button class="btn btn-sm btn-secondary view-resources-btn" data-lesson-id="${lesson._id}">
-                                                <i class="fas fa-link"></i> ${lesson.resources.length} resources
-                                            </button>` :
-                                            '<span style="color: #999;">No resources</span>'}
+                                        <div style="display: flex; gap: 5px; align-items: center;">
+                                            ${lesson.resources && lesson.resources.length > 0 ?
+                                                `<button class="btn btn-sm btn-secondary view-resources-btn" data-lesson-id="${lesson._id}">
+                                                    <i class="fas fa-link"></i> ${lesson.resources.length}
+                                                </button>` :
+                                                '<span style="color: #999; font-size: 0.85em;">None</span>'}
+                                            <button class="btn btn-sm btn-primary add-resource-btn" data-lesson-id="${lesson._id}" data-lesson-topic="${lesson.topic}" title="Add Resource">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -318,8 +323,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     const lessonId = btn.dataset.lessonId;
                     const lesson = curriculum.lessons.find(l => l._id === lessonId);
                     if (lesson) {
-                        showResourcesModal(lesson);
+                        showResourcesModal(lesson, curriculum._id);
                     }
+                });
+            });
+
+            // Add resource handlers
+            document.querySelectorAll('.add-resource-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const lessonId = btn.dataset.lessonId;
+                    const lessonTopic = btn.dataset.lessonTopic;
+                    showAddResourceModal(curriculum._id, lessonId, lessonTopic);
                 });
             });
 
@@ -327,33 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading curriculum:', error);
             curriculumContent.innerHTML = '<div style="padding: 20px; text-align: center; color: #ff4e4e;">Failed to load curriculum</div>';
         }
-    }
-
-    // Show resources modal
-    function showResourcesModal(lesson) {
-        const resourcesHtml = `
-            <div style="padding: 20px;">
-                <h3>${lesson.topic}</h3>
-                <p style="color: #666; margin: 10px 0;">Week ${lesson.weekNumber} Resources</p>
-                <div style="margin-top: 20px;">
-                    ${lesson.resources.map(resource => {
-                        const fileName = resource.split('/').pop();
-                        const fileType = getFileType(resource);
-                        return `
-                            <div style="padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
-                                <a href="${resource}" target="_blank" style="color: #12B3B3; font-weight: 500; display: flex; align-items: center; gap: 10px;">
-                                    <i class="${fileType.icon}" style="font-size: 20px; color: ${fileType.color};"></i>
-                                    <span>${fileName}</span>
-                                </a>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-
-        alert(resourcesHtml.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim());
-        // TODO: Create a proper modal for this
     }
 
     // Get file type icon and color
@@ -488,6 +475,150 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Show Add Resource Modal (make it global for onclick handlers)
+    window.showAddResourceModal = function(curriculumId, lessonId, lessonTopic) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay is-visible';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 600px;">
+                <span class="modal-close-button" onclick="this.closest('.modal-overlay').remove()">&times;</span>
+                <h2><i class="fas fa-plus-circle"></i> Add Resource</h2>
+                <p style="color: #666; margin-bottom: 20px;">
+                    Add a resource link for: <strong>${lessonTopic}</strong>
+                </p>
+                <form id="add-resource-form">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">
+                            Resource URL <span style="color: #ff4e4e;">*</span>
+                        </label>
+                        <input
+                            type="url"
+                            id="resource-url"
+                            placeholder="https://example.com/worksheet.pdf"
+                            required
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
+                        />
+                        <p style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                            Enter a link to a PDF, video, Google Doc, or any other resource
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Resource
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Handle form submission
+        const form = modal.querySelector('#add-resource-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            submitBtn.disabled = true;
+
+            const resourceUrl = document.getElementById('resource-url').value.trim();
+
+            try {
+                const res = await fetch(`/api/curriculum/teacher/curriculum/${curriculumId}/lesson/${lessonId}/resource`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ resourceUrl })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ Resource added successfully!');
+                    modal.remove();
+                    loadCurriculum();
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to add resource'));
+                }
+            } catch (error) {
+                console.error('Error adding resource:', error);
+                alert('Failed to add resource. Please try again.');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // Update showResourcesModal to allow deletion
+    function showResourcesModal(lesson, curriculumId) {
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay is-visible';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 700px;">
+                <span class="modal-close-button" onclick="this.closest('.modal-overlay').remove()">&times;</span>
+                <h2><i class="fas fa-link"></i> Resources</h2>
+                <h3 style="margin: 10px 0; color: #666;">${lesson.topic}</h3>
+                <p style="color: #888; margin-bottom: 20px;">Week ${lesson.weekNumber}</p>
+                <div id="resources-list">
+                    ${lesson.resources && lesson.resources.length > 0 ?
+                        lesson.resources.map(resource => {
+                            const fileName = resource.split('/').pop();
+                            const fileType = getFileType(resource);
+                            return `
+                                <div class="resource-item" style="padding: 15px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                    <a href="${resource}" target="_blank" style="color: #12B3B3; font-weight: 500; display: flex; align-items: center; gap: 10px; flex: 1;">
+                                        <i class="${fileType.icon}" style="font-size: 20px; color: ${fileType.color};"></i>
+                                        <span>${fileName}</span>
+                                        <i class="fas fa-external-link-alt" style="font-size: 12px; color: #999;"></i>
+                                    </a>
+                                    <button class="btn btn-sm" style="background: #ff4e4e; color: white;" onclick="deleteResource('${curriculumId}', '${lesson._id}', '${resource}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')
+                    : '<p style="color: #999; padding: 20px; text-align: center;">No resources added yet</p>'}
+                </div>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                    <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove(); showAddResourceModal('${curriculumId}', '${lesson._id}', '${lesson.topic}')">
+                        <i class="fas fa-plus"></i> Add Another Resource
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+
+    // Delete resource function (global scope for onclick)
+    window.deleteResource = async function(curriculumId, lessonId, resourceUrl) {
+        if (!confirm('Are you sure you want to remove this resource?')) return;
+
+        try {
+            const res = await fetch(`/api/curriculum/teacher/curriculum/${curriculumId}/lesson/${lessonId}/resource`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ resourceUrl })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert('✅ Resource removed successfully!');
+                document.querySelector('.modal-overlay')?.remove();
+                loadCurriculum();
+            } else {
+                alert('Error: ' + (data.message || 'Failed to remove resource'));
+            }
+        } catch (error) {
+            console.error('Error removing resource:', error);
+            alert('Failed to remove resource. Please try again.');
+        }
+    };
 
     // Initial load if on curriculum tab
     if (document.querySelector('[data-tab="curriculum"]')?.classList.contains('active')) {
