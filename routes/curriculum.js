@@ -150,6 +150,98 @@ router.delete('/teacher/curriculum/:id', isAuthenticated, isTeacher, async (req,
     }
 });
 
+// Add resource to a specific lesson
+router.post('/teacher/curriculum/:curriculumId/lesson/:lessonId/resource', isAuthenticated, isTeacher, async (req, res) => {
+    try {
+        const { curriculumId, lessonId } = req.params;
+        const { resourceUrl } = req.body;
+
+        if (!resourceUrl || !resourceUrl.trim()) {
+            return res.status(400).json({ message: 'Resource URL is required' });
+        }
+
+        const curriculum = await Curriculum.findOne({
+            _id: curriculumId,
+            teacherId: req.user._id
+        });
+
+        if (!curriculum) {
+            return res.status(404).json({ message: 'Curriculum not found' });
+        }
+
+        const lesson = curriculum.lessons.id(lessonId);
+        if (!lesson) {
+            return res.status(404).json({ message: 'Lesson not found' });
+        }
+
+        // Initialize resources array if it doesn't exist
+        if (!lesson.resources) {
+            lesson.resources = [];
+        }
+
+        // Add resource if it doesn't already exist
+        if (!lesson.resources.includes(resourceUrl)) {
+            lesson.resources.push(resourceUrl);
+            await curriculum.save();
+
+            res.json({
+                success: true,
+                message: 'Resource added successfully',
+                resourcesCount: lesson.resources.length
+            });
+        } else {
+            res.status(400).json({ message: 'Resource already exists for this lesson' });
+        }
+
+    } catch (error) {
+        console.error('Error adding resource:', error);
+        res.status(500).json({ message: 'Failed to add resource' });
+    }
+});
+
+// Remove resource from a specific lesson
+router.delete('/teacher/curriculum/:curriculumId/lesson/:lessonId/resource', isAuthenticated, isTeacher, async (req, res) => {
+    try {
+        const { curriculumId, lessonId } = req.params;
+        const { resourceUrl } = req.body;
+
+        if (!resourceUrl) {
+            return res.status(400).json({ message: 'Resource URL is required' });
+        }
+
+        const curriculum = await Curriculum.findOne({
+            _id: curriculumId,
+            teacherId: req.user._id
+        });
+
+        if (!curriculum) {
+            return res.status(404).json({ message: 'Curriculum not found' });
+        }
+
+        const lesson = curriculum.lessons.id(lessonId);
+        if (!lesson) {
+            return res.status(404).json({ message: 'Lesson not found' });
+        }
+
+        if (lesson.resources) {
+            lesson.resources = lesson.resources.filter(r => r !== resourceUrl);
+            await curriculum.save();
+
+            res.json({
+                success: true,
+                message: 'Resource removed successfully',
+                resourcesCount: lesson.resources.length
+            });
+        } else {
+            res.status(404).json({ message: 'No resources found for this lesson' });
+        }
+
+    } catch (error) {
+        console.error('Error removing resource:', error);
+        res.status(500).json({ message: 'Failed to remove resource' });
+    }
+});
+
 // Parse and import curriculum from file
 router.post('/teacher/curriculum/parse', isAuthenticated, isTeacher, upload.single('file'), async (req, res) => {
     try {
