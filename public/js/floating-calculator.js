@@ -28,6 +28,11 @@ class FloatingCalculator {
         this.history = [];
         this.dataEntryMode = false;
         this.currentDataVar = 'x'; // 'x' or 'y'
+        this.menuMode = null; // 'STAT', 'DATA', 'STATVAR', null
+        this.menuCursor = 0;
+        this.statVarMode = false;
+        this.statVarIndex = 0;
+        this.statVars = ['n', 'x̄', 'Σx', 'Σx²', 'σx', 'ȳ', 'Σy', 'Σy²', 'σy', 'Σxy', 'r', 'a', 'b', 'ŷ'];
 
         // Drag state
         this.isDragging = false;
@@ -288,10 +293,46 @@ class FloatingCalculator {
                 this.toggleAngleMode();
                 break;
             case 'stat':
-                this.cycleStatMode();
+                if (this.secondFunction) {
+                    // 2nd + STAT = show stat mode menu
+                    this.showStatMenu();
+                } else {
+                    // Just STAT = shortcut to enter stat mode
+                    this.cycleStatMode();
+                }
+                this.secondFunction = false;
                 break;
             case 'data':
-                this.enterDataMode();
+                if (this.secondFunction) {
+                    // 2nd + DATA = show data menu with CLRDATA
+                    this.showDataMenu();
+                } else {
+                    // Just DATA = enter data entry mode
+                    this.enterDataMode();
+                }
+                this.secondFunction = false;
+                break;
+            case 'statvar':
+                if (this.secondFunction) {
+                    // 2nd + STATVAR = EXIT STAT
+                    this.exitStatMode();
+                } else {
+                    // STATVAR = show stat variables
+                    this.enterStatVarMode();
+                }
+                this.secondFunction = false;
+                break;
+            case 'arrow-up':
+                this.handleArrowUp();
+                break;
+            case 'arrow-down':
+                this.handleArrowDown();
+                break;
+            case 'arrow-left':
+                this.handleArrowLeft();
+                break;
+            case 'arrow-right':
+                this.handleArrowRight();
                 break;
             case 'del':
                 this.deleteLastChar();
@@ -300,8 +341,12 @@ class FloatingCalculator {
                 this.clear();
                 break;
             case 'enter':
-                if (this.dataEntryMode) {
+                if (this.menuMode) {
+                    this.selectMenuItem();
+                } else if (this.dataEntryMode) {
                     this.addDataPoint();
+                } else if (this.statVarMode) {
+                    this.displayStatVar();
                 } else {
                     this.calculate();
                 }
@@ -309,6 +354,171 @@ class FloatingCalculator {
             case 'on':
                 this.reset();
                 break;
+        }
+    }
+
+    // Arrow key handlers
+    handleArrowUp() {
+        // Arrow up does nothing in most modes
+    }
+
+    handleArrowDown() {
+        if (this.dataEntryMode) {
+            // Down arrow in data entry mode
+            if (this.currentInput) {
+                this.addDataPoint();
+            }
+        }
+    }
+
+    handleArrowLeft() {
+        if (this.menuMode === 'STAT') {
+            this.menuCursor = 0;
+            this.showStatMenu();
+        } else if (this.menuMode === 'DATA') {
+            this.menuCursor = 0;
+            this.showDataMenu();
+        } else if (this.statVarMode) {
+            this.statVarIndex = Math.max(0, this.statVarIndex - 1);
+            this.displayStatVar();
+        }
+    }
+
+    handleArrowRight() {
+        if (this.menuMode === 'STAT') {
+            this.menuCursor = 1;
+            this.showStatMenu();
+        } else if (this.menuMode === 'DATA') {
+            this.menuCursor = 1;
+            this.showDataMenu();
+        } else if (this.statVarMode) {
+            const maxIndex = this.statMode === '2-VAR' ? 13 : 4;
+            this.statVarIndex = Math.min(maxIndex, this.statVarIndex + 1);
+            this.displayStatVar();
+        }
+    }
+
+    // Menu functions
+    showStatMenu() {
+        this.menuMode = 'STAT';
+        this.menuCursor = this.statMode === '2-VAR' ? 1 : 0;
+        const options = ['1-VAR', '2-VAR'];
+        this.inputLine.textContent = options.map((opt, i) =>
+            i === this.menuCursor ? `>${opt}<` : opt
+        ).join(' ');
+        this.resultLine.textContent = 'Select mode';
+    }
+
+    showDataMenu() {
+        this.menuMode = 'DATA';
+        this.menuCursor = 0;
+        this.inputLine.textContent = '>CLRDATA<';
+        this.resultLine.textContent = 'Clear stat data?';
+    }
+
+    selectMenuItem() {
+        if (this.menuMode === 'STAT') {
+            if (this.menuCursor === 0) {
+                this.statMode = '1-VAR';
+                this.showMessage('1-VAR MODE');
+            } else {
+                this.statMode = '2-VAR';
+                this.showMessage('2-VAR MODE');
+            }
+            this.menuMode = null;
+        } else if (this.menuMode === 'DATA') {
+            // Clear data
+            this.statData = { x: [], y: [] };
+            this.showMessage('DATA CLEARED');
+            this.menuMode = null;
+        }
+    }
+
+    enterStatVarMode() {
+        if (!this.statMode) {
+            this.showMessage('NO STAT MODE');
+            return;
+        }
+        if (this.statData.x.length === 0) {
+            this.showMessage('NO DATA');
+            return;
+        }
+        this.statVarMode = true;
+        this.statVarIndex = 0;
+        this.displayStatVar();
+    }
+
+    exitStatMode() {
+        this.statMode = null;
+        this.statData = { x: [], y: [] };
+        this.statVarMode = false;
+        this.dataEntryMode = false;
+        this.showMessage('STAT OFF');
+    }
+
+    displayStatVar() {
+        const varName = this.statVars[this.statVarIndex];
+        const stats = this.calculateStatistics();
+
+        if (!stats) {
+            this.showMessage('NO DATA');
+            return;
+        }
+
+        let value;
+        switch(varName) {
+            case 'n':
+                value = this.statData.x.length;
+                break;
+            case 'x̄':
+                value = stats.xMean;
+                break;
+            case 'Σx':
+                value = stats.xSum;
+                break;
+            case 'Σx²':
+                value = stats.xSumSq;
+                break;
+            case 'σx':
+                value = stats.xStd;
+                break;
+            case 'ȳ':
+                value = this.statMode === '2-VAR' ? stats.yMean : undefined;
+                break;
+            case 'Σy':
+                value = this.statMode === '2-VAR' ? stats.ySum : undefined;
+                break;
+            case 'Σy²':
+                value = this.statMode === '2-VAR' ? stats.ySumSq : undefined;
+                break;
+            case 'σy':
+                value = this.statMode === '2-VAR' ? stats.yStd : undefined;
+                break;
+            case 'Σxy':
+                value = this.statMode === '2-VAR' ? stats.xySum : undefined;
+                break;
+            case 'r':
+                value = this.statMode === '2-VAR' ? stats.r : undefined;
+                break;
+            case 'a':
+                value = this.statMode === '2-VAR' ? stats.intercept : undefined;
+                break;
+            case 'b':
+                value = this.statMode === '2-VAR' ? stats.slope : undefined;
+                break;
+            case 'ŷ':
+                // For ŷ, user needs to enter x value
+                this.inputLine.textContent = `ŷ (Enter x)`;
+                this.resultLine.textContent = '';
+                return;
+        }
+
+        if (value === undefined) {
+            this.inputLine.textContent = varName;
+            this.resultLine.textContent = 'N/A (2-VAR only)';
+        } else {
+            this.inputLine.textContent = varName;
+            this.resultLine.textContent = this.formatNumber(value);
         }
     }
 
@@ -371,16 +581,16 @@ class FloatingCalculator {
 
     calculateStatistics() {
         if (!this.statMode || this.statData.x.length === 0) {
-            this.showError('NO DATA');
-            return;
+            return null;
         }
 
         const stats = {};
         const n = this.statData.x.length;
         const xData = this.statData.x;
 
-        // Calculate mean
+        // Calculate sums
         const xSum = xData.reduce((a, b) => a + b, 0);
+        stats.xSum = xSum;
         stats.xMean = xSum / n;
 
         // Calculate standard deviation
@@ -393,14 +603,19 @@ class FloatingCalculator {
         if (this.statMode === '2-VAR' && this.statData.y.length === n) {
             const yData = this.statData.y;
             const ySum = yData.reduce((a, b) => a + b, 0);
+            stats.ySum = ySum;
             stats.yMean = ySum / n;
 
             const yVariance = yData.reduce((sum, val) => sum + Math.pow(val - stats.yMean, 2), 0) / n;
             stats.yStd = Math.sqrt(yVariance);
 
+            // Calculate sum of squares
+            stats.ySumSq = yData.reduce((sum, val) => sum + val * val, 0);
+
             // Linear regression: y = a + bx
             const xySum = xData.reduce((sum, x, i) => sum + x * yData[i], 0);
-            const xSumSq = xData.reduce((sum, x) => sum + x * x, 0);
+            stats.xySum = xySum;
+            const xSumSq = stats.xSumSq;
 
             const slope = (n * xySum - xSum * ySum) / (n * xSumSq - xSum * xSum);
             const intercept = (ySum - slope * xSum) / n;
@@ -409,13 +624,8 @@ class FloatingCalculator {
             stats.intercept = intercept; // a
 
             // Correlation coefficient (r)
-            const numerator = n * xySum - xSum * ySum;
-            const denominator = Math.sqrt((n * xSumSq - xSum * xSum) * (n * stats.ySumSq - ySum * ySum));
-            stats.ySumSq = yData.reduce((sum, val) => sum + val * val, 0);
-
-            const ySumSq = yData.reduce((sum, val) => sum + val * val, 0);
             const corrNumerator = n * xySum - xSum * ySum;
-            const corrDenominator = Math.sqrt((n * xSumSq - xSum * xSum) * (n * ySumSq - ySum * ySum));
+            const corrDenominator = Math.sqrt((n * xSumSq - xSum * xSum) * (n * stats.ySumSq - ySum * ySum));
             stats.r = corrNumerator / corrDenominator;
 
             // R-squared

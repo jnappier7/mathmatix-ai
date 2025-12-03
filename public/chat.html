@@ -441,11 +441,14 @@
 
       <!-- Buttons -->
       <div class="calc-buttons">
-        <!-- Row 1 -->
+        <!-- Row 1 with arrow buttons -->
         <button class="calc-btn btn-function" data-action="2nd">2nd</button>
-        <button class="calc-btn btn-function" data-action="mode">MODE</button>
+        <button class="calc-btn btn-function" data-action="mode">
+          <span class="secondary">DRG</span>
+          <span class="primary">MODE</span>
+        </button>
         <button class="calc-btn btn-function" data-action="stat">STAT</button>
-        <button class="calc-btn btn-function" data-action="data">DATA</button>
+        <button class="calc-btn btn-arrow" data-action="arrow-up">⬆</button>
         <button class="calc-btn btn-function" data-action="del">DEL</button>
 
         <!-- Row 2 -->
@@ -461,11 +464,8 @@
           <span class="secondary">tan⁻¹</span>
           <span class="primary">tan</span>
         </button>
-        <button class="calc-btn btn-function" data-fn="pi">
-          <span class="secondary">π</span>
-          <span class="primary">^</span>
-        </button>
-        <button class="calc-btn btn-clear" data-action="clear">CLEAR</button>
+        <button class="calc-btn btn-arrow" data-action="arrow-left">⬅</button>
+        <button class="calc-btn btn-arrow" data-action="arrow-right">➡</button>
 
         <!-- Row 3 -->
         <button class="calc-btn btn-function" data-fn="square" data-fn2="sinh">
@@ -480,6 +480,10 @@
           <span class="secondary">tanh</span>
           <span class="primary">ⁿ√</span>
         </button>
+        <button class="calc-btn btn-arrow" data-action="arrow-down">⬇</button>
+        <button class="calc-btn btn-clear" data-action="clear">CLEAR</button>
+
+        <!-- Row 4 -->
         <button class="calc-btn btn-function" data-fn="log" data-fn2="pow10">
           <span class="secondary">10ˣ</span>
           <span class="primary">log</span>
@@ -488,12 +492,17 @@
           <span class="secondary">eˣ</span>
           <span class="primary">ln</span>
         </button>
-
-        <!-- Row 4 -->
-        <button class="calc-btn btn-function" data-fn="dec" data-fn2="abs">
-          <span class="secondary">abs</span>
-          <span class="primary">▸DEC</span>
+        <button class="calc-btn btn-function" data-action="data">
+          <span class="secondary">CLRDATA</span>
+          <span class="primary">DATA</span>
         </button>
+        <button class="calc-btn btn-function" data-action="statvar">
+          <span class="secondary">EXIT STAT</span>
+          <span class="primary">STATVAR</span>
+        </button>
+        <button class="calc-btn btn-function" data-fn="pi">^</button>
+
+        <!-- Row 5 -->
         <button class="calc-btn btn-function" data-fn="nd" data-fn2="factorial">
           <span class="secondary">!</span>
           <span class="primary">n/d</span>
@@ -504,8 +513,9 @@
         </button>
         <button class="calc-btn btn-function" data-fn="lparen">(</button>
         <button class="calc-btn btn-function" data-fn="rparen">)</button>
+        <button class="calc-btn btn-operator" data-op="÷">÷</button>
 
-        <!-- Row 5 -->
+        <!-- Row 6 -->
         <button class="calc-btn btn-function" data-fn="sto">
           <span class="secondary">RCL</span>
           <span class="primary">STO</span>
@@ -513,9 +523,9 @@
         <button class="calc-btn btn-number" data-num="7">7</button>
         <button class="calc-btn btn-number" data-num="8">8</button>
         <button class="calc-btn btn-number" data-num="9">9</button>
-        <button class="calc-btn btn-operator" data-op="÷">÷</button>
+        <button class="calc-btn btn-operator" data-op="×">×</button>
 
-        <!-- Row 6 -->
+        <!-- Row 7 -->
         <button class="calc-btn btn-function" data-fn="fd" data-fn2="percent">
           <span class="secondary">%</span>
           <span class="primary">F⇔D</span>
@@ -523,9 +533,9 @@
         <button class="calc-btn btn-number" data-num="4">4</button>
         <button class="calc-btn btn-number" data-num="5">5</button>
         <button class="calc-btn btn-number" data-num="6">6</button>
-        <button class="calc-btn btn-operator" data-op="×">×</button>
+        <button class="calc-btn btn-operator" data-op="-">−</button>
 
-        <!-- Row 7 -->
+        <!-- Row 8 -->
         <button class="calc-btn btn-function" data-fn="ud" data-fn2="toggle">
           <span class="secondary">U⇔D</span>
           <span class="primary">F⇔D</span>
@@ -533,16 +543,13 @@
         <button class="calc-btn btn-number" data-num="1">1</button>
         <button class="calc-btn btn-number" data-num="2">2</button>
         <button class="calc-btn btn-number" data-num="3">3</button>
-        <button class="calc-btn btn-operator" data-op="-">−</button>
+        <button class="calc-btn btn-operator" data-op="+">+</button>
 
-        <!-- Row 8 -->
+        <!-- Row 9 -->
         <button class="calc-btn btn-function" data-action="on">ON</button>
         <button class="calc-btn btn-number" data-num="0">0</button>
         <button class="calc-btn btn-function" data-fn="decimal">.</button>
         <button class="calc-btn btn-function" data-fn="negative">(-)</button>
-        <button class="calc-btn btn-operator" data-op="+">+</button>
-
-        <!-- Row 9 -->
         <button class="calc-btn btn-enter" data-action="enter">ENTER</button>
       </div>
     </div>
