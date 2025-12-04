@@ -242,5 +242,190 @@ router.get('/health-check', isAdmin, (req, res) => {
   });
 });
 
+// -----------------------------------------------------------------------------
+// --- Reports ---
+// -----------------------------------------------------------------------------
+
+/**
+ * @route   GET /api/admin/reports/usage
+ * @desc    Get comprehensive usage report showing who's logging in and for how long
+ * @query   startDate - Optional start date filter (ISO string)
+ * @query   endDate - Optional end date filter (ISO string)
+ * @query   role - Optional role filter (student, teacher, parent, admin)
+ * @query   sortBy - Optional sort field (lastLogin, totalMinutes, weeklyMinutes, name)
+ * @query   sortOrder - Optional sort direction (asc, desc)
+ * @access  Private (Admin)
+ */
+router.get('/reports/usage', isAdmin, async (req, res) => {
+  try {
+    const { startDate, endDate, role, sortBy = 'lastLogin', sortOrder = 'desc' } = req.query;
+
+    // Build query filter
+    const filter = {};
+    if (role) {
+      filter.role = role;
+    }
+
+    if (startDate || endDate) {
+      filter.lastLogin = {};
+      if (startDate) {
+        filter.lastLogin.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        filter.lastLogin.$lte = new Date(endDate);
+      }
+    }
+
+    // Determine sort field
+    const sortField = {
+      'lastLogin': { lastLogin: sortOrder === 'asc' ? 1 : -1 },
+      'totalMinutes': { totalActiveTutoringMinutes: sortOrder === 'asc' ? 1 : -1 },
+      'weeklyMinutes': { weeklyActiveTutoringMinutes: sortOrder === 'asc' ? 1 : -1 },
+      'name': { firstName: sortOrder === 'asc' ? 1 : -1, lastName: sortOrder === 'asc' ? 1 : -1 }
+    }[sortBy] || { lastLogin: -1 };
+
+    // Fetch all users with activity data
+    const users = await User.find(filter)
+      .select('firstName lastName username email role lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes createdAt xp level teacherId')
+      .populate('teacherId', 'firstName lastName')
+      .sort(sortField)
+      .lean();
+
+    // Get conversation counts for each user
+    const userIds = users.map(u => u._id);
+    const conversationStats = await Conversation.aggregate([
+      {
+        $match: {
+          userId: { $in: userIds },
+          ...(startDate || endDate ? {
+            lastActivity: {
+              ...(startDate ? { $gte: new Date(startDate) } : {}),
+              ...(endDate ? { $lte: new Date(endDate) } : {})
+            }
+          } : {})
+        }
+      },
+      {
+        $group: {
+          _id: '$userId',
+          sessionCount: { $sum: 1 },
+          totalMessages: { $sum: { $size: '$messages' } }
+        }
+      }
+    ]);
+
+    // Create lookup map for conversation stats
+    const statsMap = {};
+    conversationStats.forEach(stat => {
+      statsMap[stat._id.toString()] = {
+        sessionCount: stat.sessionCount,
+        totalMessages: stat.totalMessages
+      };
+    });
+
+    // Calculate summary statistics
+    const now = new Date();
+    const oneDayAgo = new Date(now - 24 * 60 * 60 * 1000);
+    const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+
+    const activeToday = users.filter(u => u.lastLogin && new Date(u.lastLogin) > oneDayAgo).length;
+    const activeThisWeek = users.filter(u => u.lastLogin && new Date(u.lastLogin) > oneWeekAgo).length;
+    const totalMinutesThisWeek = users.reduce((sum, u) => sum + (u.weeklyActiveTutoringMinutes || 0), 0);
+    const totalMinutesAllTime = users.reduce((sum, u) => sum + (u.totalActiveTutoringMinutes || 0), 0);
+
+    // Enrich user data with conversation stats
+    const enrichedUsers = users.map(user => {
+      const stats = statsMap[user._id.toString()] || { sessionCount: 0, totalMessages: 0 };
+      return {
+        userId: user._id,
+        name: `${user.firstName} ${user.lastName}`,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        lastLogin: user.lastLogin,
+        totalMinutes: user.totalActiveTutoringMinutes || 0,
+        weeklyMinutes: user.weeklyActiveTutoringMinutes || 0,
+        level: user.level || 1,
+        xp: user.xp || 0,
+        sessionCount: stats.sessionCount,
+        totalMessages: stats.totalMessages,
+        teacher: user.teacherId ? `${user.teacherId.firstName} ${user.teacherId.lastName}` : null,
+        createdAt: user.createdAt,
+        daysSinceLastLogin: user.lastLogin ? Math.floor((now - new Date(user.lastLogin)) / (1000 * 60 * 60 * 24)) : null
+      };
+    });
+
+    res.json({
+      summary: {
+        totalUsers: users.length,
+        activeToday: activeToday,
+        activeThisWeek: activeThisWeek,
+        totalMinutesThisWeek: totalMinutesThisWeek,
+        totalMinutesAllTime: totalMinutesAllTime,
+        averageMinutesPerUser: users.length > 0 ? Math.round(totalMinutesAllTime / users.length) : 0
+      },
+      filters: {
+        startDate: startDate || null,
+        endDate: endDate || null,
+        role: role || 'all',
+        sortBy: sortBy,
+        sortOrder: sortOrder
+      },
+      users: enrichedUsers
+    });
+
+  } catch (err) {
+    console.error('Error generating usage report:', err);
+    res.status(500).json({ message: 'Server error generating usage report.' });
+  }
+});
+
+/**
+ * @route   GET /api/admin/reports/live-activity
+ * @desc    Get live activity feed showing currently active students
+ * @access  Private (Admin)
+ */
+router.get('/reports/live-activity', isAdmin, async (req, res) => {
+  try {
+    // Find conversations that were active in the last 10 minutes
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+
+    const activeConversations = await Conversation.find({
+      isActive: true,
+      lastActivity: { $gte: tenMinutesAgo }
+    })
+      .populate('userId', 'firstName lastName level xp teacherId')
+      .sort({ lastActivity: -1 })
+      .limit(50)
+      .lean();
+
+    const liveActivity = activeConversations.map(conv => ({
+      conversationId: conv._id,
+      studentId: conv.userId?._id,
+      studentName: conv.userId ? `${conv.userId.firstName} ${conv.userId.lastName}` : 'Unknown',
+      level: conv.userId?.level || 1,
+      xp: conv.userId?.xp || 0,
+      currentTopic: conv.currentTopic || 'mathematics',
+      problemsAttempted: conv.problemsAttempted || 0,
+      problemsCorrect: conv.problemsCorrect || 0,
+      strugglingWith: conv.strugglingWith || null,
+      activeMinutes: conv.activeMinutes || 0,
+      lastActivity: conv.lastActivity,
+      alerts: conv.alerts?.filter(a => !a.acknowledged) || [],
+      minutesAgo: Math.floor((Date.now() - new Date(conv.lastActivity).getTime()) / (1000 * 60))
+    }));
+
+    res.json({
+      timestamp: new Date().toISOString(),
+      activeSessionCount: liveActivity.length,
+      sessions: liveActivity
+    });
+
+  } catch (err) {
+    console.error('Error fetching live activity:', err);
+    res.status(500).json({ message: 'Server error fetching live activity.' });
+  }
+});
+
 
 module.exports = router;

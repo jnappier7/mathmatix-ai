@@ -363,4 +363,54 @@ Focus on concrete observations from ${childName}'s actual work and provide pract
     return prompt;
 }
 
+// Track session time - receives heartbeat updates from frontend
+router.post('/track-time', isAuthenticated, async (req, res) => {
+    try {
+        const { userId, activeSeconds } = req.body;
+
+        if (!userId || activeSeconds === undefined) {
+            return res.status(400).json({ message: "userId and activeSeconds are required" });
+        }
+
+        // Convert seconds to minutes (rounded)
+        const activeMinutes = Math.round(activeSeconds / 60);
+
+        if (activeMinutes === 0) {
+            // Less than 30 seconds, acknowledge but don't update
+            return res.status(200).json({ message: "Time tracked (below minimum)" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Update user's total active tutoring minutes
+        user.totalActiveTutoringMinutes = (user.totalActiveTutoringMinutes || 0) + activeMinutes;
+        user.weeklyActiveTutoringMinutes = (user.weeklyActiveTutoringMinutes || 0) + activeMinutes;
+
+        // Update active conversation if exists
+        if (user.activeConversationId) {
+            const conversation = await Conversation.findById(user.activeConversationId);
+            if (conversation && conversation.isActive) {
+                conversation.activeMinutes = (conversation.activeMinutes || 0) + activeMinutes;
+                conversation.lastActivity = new Date();
+                await conversation.save();
+            }
+        }
+
+        await user.save();
+
+        res.status(200).json({
+            message: "Time tracked successfully",
+            totalMinutes: user.totalActiveTutoringMinutes,
+            weeklyMinutes: user.weeklyActiveTutoringMinutes
+        });
+
+    } catch (error) {
+        console.error("ERROR: Track time failed:", error);
+        res.status(500).json({ message: "Failed to track time" });
+    }
+});
+
 module.exports = router;
