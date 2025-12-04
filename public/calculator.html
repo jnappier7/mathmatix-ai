@@ -8,14 +8,17 @@
 </head>
 <body class="standalone-calculator-page">
     <div class="calculator-container" id="calculator-container">
-        <!-- Resize Controls -->
-        <div class="calculator-resize-controls">
-            <button class="resize-btn" id="zoom-out" title="Zoom Out">−</button>
-            <span class="resize-label" id="zoom-level">100%</span>
-            <button class="resize-btn" id="zoom-in" title="Zoom In">+</button>
-        </div>
+        <div class="calculator" id="calculator-main">
+            <!-- Resize Handle (bottom-right corner) -->
+            <div class="resize-handle" id="resize-handle" title="Drag to resize">
+                <svg width="20" height="20" viewBox="0 0 20 20">
+                    <path d="M19 19L19 13M19 19L13 19M19 19L11 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M19 7L7 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
 
-        <div class="calculator">
+            <!-- Scale Indicator -->
+            <div class="scale-indicator" id="scale-indicator">100%</div>
             <!-- Calculator Header -->
             <div class="calculator-header">
                 <div class="brand">TEXAS INSTRUMENTS</div>
@@ -180,78 +183,114 @@
 
     <script src="/js/calculator.js"></script>
     <script>
-        // Calculator Zoom/Resize Functionality
+        // Calculator Drag-to-Resize Functionality
         (function() {
             const container = document.getElementById('calculator-container');
-            const zoomInBtn = document.getElementById('zoom-in');
-            const zoomOutBtn = document.getElementById('zoom-out');
-            const zoomLabel = document.getElementById('zoom-level');
+            const resizeHandle = document.getElementById('resize-handle');
+            const scaleIndicator = document.getElementById('scale-indicator');
 
             let currentScale = 1.0;
             const minScale = 0.4;
-            const maxScale = 1.2;
-            const scaleStep = 0.1;
+            const maxScale = 1.5;
+
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+            let startScale = 1.0;
 
             // Calculate optimal initial scale to fit viewport
             function calculateOptimalScale() {
                 const viewportHeight = window.innerHeight;
                 const viewportWidth = window.innerWidth;
-
-                // Calculator dimensions (approximate with padding)
-                const calcHeight = 700; // ~680px calculator + controls
-                const calcWidth = 420; // 380px + margins
-
-                // Calculate scale to fit both dimensions with 10% padding
+                const calcHeight = 680;
+                const calcWidth = 430;
                 const heightScale = (viewportHeight * 0.9) / calcHeight;
                 const widthScale = (viewportWidth * 0.9) / calcWidth;
-
-                // Use the smaller scale to ensure it fits
-                const optimalScale = Math.min(heightScale, widthScale, maxScale);
-
-                return Math.max(optimalScale, minScale);
+                return Math.max(Math.min(heightScale, widthScale, maxScale), minScale);
             }
 
-            function updateScale(scale) {
+            function updateScale(scale, showIndicator = false) {
                 currentScale = Math.max(minScale, Math.min(maxScale, scale));
                 container.style.transform = `scale(${currentScale})`;
-                zoomLabel.textContent = `${Math.round(currentScale * 100)}%`;
+                scaleIndicator.textContent = `${Math.round(currentScale * 100)}%`;
 
-                // Update button states
-                zoomInBtn.disabled = currentScale >= maxScale;
-                zoomOutBtn.disabled = currentScale <= minScale;
-
-                // Visual feedback for disabled state
-                if (currentScale >= maxScale) {
-                    zoomInBtn.style.opacity = '0.4';
-                    zoomInBtn.style.cursor = 'not-allowed';
-                } else {
-                    zoomInBtn.style.opacity = '1';
-                    zoomInBtn.style.cursor = 'pointer';
-                }
-
-                if (currentScale <= minScale) {
-                    zoomOutBtn.style.opacity = '0.4';
-                    zoomOutBtn.style.cursor = 'not-allowed';
-                } else {
-                    zoomOutBtn.style.opacity = '1';
-                    zoomOutBtn.style.cursor = 'pointer';
+                if (showIndicator) {
+                    scaleIndicator.classList.add('visible');
                 }
             }
 
-            // Initialize with optimal scale
-            const initialScale = calculateOptimalScale();
-            updateScale(initialScale);
+            function hideIndicator() {
+                scaleIndicator.classList.remove('visible');
+            }
 
-            // Event listeners
-            zoomInBtn.addEventListener('click', () => {
-                if (currentScale < maxScale) {
-                    updateScale(currentScale + scaleStep);
+            // Drag to resize
+            resizeHandle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startScale = currentScale;
+
+                scaleIndicator.classList.add('visible');
+                resizeHandle.style.color = 'rgba(255, 255, 255, 1)';
+
+                document.body.style.cursor = 'nwse-resize';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                // Calculate distance from start point
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+
+                // Use diagonal distance (average of x and y movement)
+                const avgDelta = (deltaX + deltaY) / 2;
+
+                // Convert pixel movement to scale change
+                // Roughly 100px drag = 0.2 scale change
+                const scaleChange = avgDelta / 500;
+                const newScale = startScale + scaleChange;
+
+                updateScale(newScale, true);
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    document.body.style.cursor = '';
+                    resizeHandle.style.color = '';
+
+                    setTimeout(hideIndicator, 1000);
                 }
             });
 
-            zoomOutBtn.addEventListener('click', () => {
-                if (currentScale > minScale) {
-                    updateScale(currentScale - scaleStep);
+            // Touch support for mobile
+            resizeHandle.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                isDragging = true;
+                startX = touch.clientX;
+                startY = touch.clientY;
+                startScale = currentScale;
+                scaleIndicator.classList.add('visible');
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - startX;
+                const deltaY = touch.clientY - startY;
+                const avgDelta = (deltaX + deltaY) / 2;
+                const scaleChange = avgDelta / 500;
+                const newScale = startScale + scaleChange;
+                updateScale(newScale, true);
+            });
+
+            document.addEventListener('touchend', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    setTimeout(hideIndicator, 1000);
                 }
             });
 
@@ -260,32 +299,47 @@
                 if (e.ctrlKey || e.metaKey) {
                     if (e.key === '=' || e.key === '+') {
                         e.preventDefault();
-                        if (currentScale < maxScale) {
-                            updateScale(currentScale + scaleStep);
-                        }
+                        updateScale(currentScale + 0.1, true);
+                        setTimeout(hideIndicator, 1000);
                     } else if (e.key === '-') {
                         e.preventDefault();
-                        if (currentScale > minScale) {
-                            updateScale(currentScale - scaleStep);
-                        }
+                        updateScale(currentScale - 0.1, true);
+                        setTimeout(hideIndicator, 1000);
                     } else if (e.key === '0') {
                         e.preventDefault();
-                        updateScale(1.0);
+                        updateScale(1.0, true);
+                        setTimeout(hideIndicator, 1000);
                     }
                 }
             });
 
-            // Recalculate on window resize
+            // Mouse wheel zoom (bonus feature)
+            container.addEventListener('wheel', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    const delta = -Math.sign(e.deltaY) * 0.05;
+                    updateScale(currentScale + delta, true);
+
+                    clearTimeout(container.wheelTimeout);
+                    container.wheelTimeout = setTimeout(hideIndicator, 1000);
+                }
+            }, { passive: false });
+
+            // Window resize handler
             let resizeTimeout;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
                     const newOptimalScale = calculateOptimalScale();
-                    if (currentScale === 1.0 || currentScale > newOptimalScale) {
+                    if (currentScale > newOptimalScale) {
                         updateScale(newOptimalScale);
                     }
                 }, 150);
             });
+
+            // Initialize
+            const initialScale = calculateOptimalScale();
+            updateScale(initialScale);
         })();
     </script>
 </body>
