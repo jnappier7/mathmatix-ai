@@ -73,9 +73,11 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
         // --- Step 2: Run Chat Logic with Vision API ---
         const user = await User.findById(userId);
         let activeConversation = await Conversation.findById(user.activeConversationId);
-        if (!activeConversation) {
+        if (!activeConversation || !activeConversation.isActive) {
             activeConversation = new Conversation({ userId: user._id, messages: [] });
+            await activeConversation.save(); // Save conversation first to get valid _id
             user.activeConversationId = activeConversation._id;
+            await user.save(); // Save user with new conversation reference
         }
 
         // Build combined message with PDF text and user message
