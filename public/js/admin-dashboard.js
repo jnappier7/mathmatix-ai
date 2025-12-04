@@ -408,28 +408,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Open/Close Usage Report Modal
     if (openUsageReportBtn) {
         openUsageReportBtn.addEventListener('click', () => {
-            usageReportModal.style.display = 'flex';
+            usageReportModal?.classList.add('is-visible');
             loadUsageReport();
         });
     }
 
     if (closeUsageReportBtn) {
         closeUsageReportBtn.addEventListener('click', () => {
-            usageReportModal.style.display = 'none';
+            usageReportModal?.classList.remove('is-visible');
         });
     }
 
     // Open/Close Live Activity Modal
     if (openLiveActivityBtn) {
         openLiveActivityBtn.addEventListener('click', () => {
-            liveActivityModal.style.display = 'flex';
+            liveActivityModal?.classList.add('is-visible');
             loadLiveActivity();
         });
     }
 
     if (closeLiveActivityBtn) {
         closeLiveActivityBtn.addEventListener('click', () => {
-            liveActivityModal.style.display = 'none';
+            liveActivityModal?.classList.remove('is-visible');
         });
     }
 
