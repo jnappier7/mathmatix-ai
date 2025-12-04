@@ -7,8 +7,18 @@
     <link rel="stylesheet" href="/css/calculator.css">
 </head>
 <body class="standalone-calculator-page">
-    <div class="calculator-container">
-        <div class="calculator">
+    <div class="calculator-container" id="calculator-container">
+        <div class="calculator" id="calculator-main">
+            <!-- Resize Handle (bottom-right corner) -->
+            <div class="resize-handle" id="resize-handle" title="Drag to resize">
+                <svg width="20" height="20" viewBox="0 0 20 20">
+                    <path d="M19 19L19 13M19 19L13 19M19 19L11 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M19 7L7 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <!-- Scale Indicator -->
+            <div class="scale-indicator" id="scale-indicator">100%</div>
             <!-- Calculator Header -->
             <div class="calculator-header">
                 <div class="brand">TEXAS INSTRUMENTS</div>
@@ -87,16 +97,16 @@
                     <span class="primary">π</span>
                 </button>
                 <button class="btn btn-function" data-fn="sin" data-fn2="asin">
-                    <span class="secondary">sin⁻¹</span>
-                    <span class="primary">sin</span>
+                    <span class="secondary">SIN⁻¹</span>
+                    <span class="primary">SIN</span>
                 </button>
                 <button class="btn btn-function" data-fn="cos" data-fn2="acos">
-                    <span class="secondary">cos⁻¹</span>
-                    <span class="primary">cos</span>
+                    <span class="secondary">COS⁻¹</span>
+                    <span class="primary">COS</span>
                 </button>
                 <button class="btn btn-function" data-fn="tan" data-fn2="atan">
-                    <span class="secondary">tan⁻¹</span>
-                    <span class="primary">tan</span>
+                    <span class="secondary">TAN⁻¹</span>
+                    <span class="primary">TAN</span>
                 </button>
                 <button class="btn btn-operator" data-op="÷">÷</button>
                 <div class="button-spacer"></div>
@@ -129,13 +139,13 @@
                 <button class="btn btn-number" data-num="7">7</button>
                 <button class="btn btn-number" data-num="8">8</button>
                 <button class="btn btn-number" data-num="9">9</button>
-                <button class="btn btn-operator" data-op="-">−</button>
+                <button class="btn btn-operator" data-op="-">-</button>
                 <div class="button-spacer"></div>
 
                 <!-- Row 7 -->
-                <button class="btn btn-function" data-fn="sto" data-fn2="rcl">
+                <button class="btn btn-function" data-fn="rcl">
                     <span class="secondary">RCL</span>
-                    <span class="primary">STO</span>
+                    <span class="primary"></span>
                 </button>
                 <button class="btn btn-number" data-num="4">4</button>
                 <button class="btn btn-number" data-num="5">5</button>
@@ -144,7 +154,10 @@
                 <div class="button-spacer"></div>
 
                 <!-- Row 8 -->
-                <button class="btn btn-function" data-action="on">ON</button>
+                <button class="btn btn-function" data-fn="sto" data-fn2="off">
+                    <span class="secondary">OFF</span>
+                    <span class="primary">STO→</span>
+                </button>
                 <button class="btn btn-number" data-num="1">1</button>
                 <button class="btn btn-number" data-num="2">2</button>
                 <button class="btn btn-number" data-num="3">3</button>
@@ -155,7 +168,7 @@
                 <div class="button-spacer"></div>
 
                 <!-- Row 9 -->
-                <button class="btn btn-function" data-action="off">OFF</button>
+                <button class="btn btn-function" data-action="on">ON</button>
                 <button class="btn btn-number" data-num="0">0</button>
                 <button class="btn btn-function" data-fn="decimal">.</button>
                 <button class="btn btn-function" data-fn="negative">(-)</button>
@@ -169,5 +182,165 @@
     </div>
 
     <script src="/js/calculator.js"></script>
+    <script>
+        // Calculator Drag-to-Resize Functionality
+        (function() {
+            const container = document.getElementById('calculator-container');
+            const resizeHandle = document.getElementById('resize-handle');
+            const scaleIndicator = document.getElementById('scale-indicator');
+
+            let currentScale = 1.0;
+            const minScale = 0.4;
+            const maxScale = 1.5;
+
+            let isDragging = false;
+            let startX = 0;
+            let startY = 0;
+            let startScale = 1.0;
+
+            // Calculate optimal initial scale to fit viewport
+            function calculateOptimalScale() {
+                const viewportHeight = window.innerHeight;
+                const viewportWidth = window.innerWidth;
+                const calcHeight = 680;
+                const calcWidth = 430;
+                const heightScale = (viewportHeight * 0.9) / calcHeight;
+                const widthScale = (viewportWidth * 0.9) / calcWidth;
+                return Math.max(Math.min(heightScale, widthScale, maxScale), minScale);
+            }
+
+            function updateScale(scale, showIndicator = false) {
+                currentScale = Math.max(minScale, Math.min(maxScale, scale));
+                container.style.transform = `scale(${currentScale})`;
+                scaleIndicator.textContent = `${Math.round(currentScale * 100)}%`;
+
+                if (showIndicator) {
+                    scaleIndicator.classList.add('visible');
+                }
+            }
+
+            function hideIndicator() {
+                scaleIndicator.classList.remove('visible');
+            }
+
+            // Drag to resize
+            resizeHandle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startScale = currentScale;
+
+                scaleIndicator.classList.add('visible');
+                resizeHandle.style.color = 'rgba(255, 255, 255, 1)';
+
+                document.body.style.cursor = 'nwse-resize';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                // Calculate distance from start point
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+
+                // Use diagonal distance (average of x and y movement)
+                const avgDelta = (deltaX + deltaY) / 2;
+
+                // Convert pixel movement to scale change
+                // Roughly 100px drag = 0.2 scale change
+                const scaleChange = avgDelta / 500;
+                const newScale = startScale + scaleChange;
+
+                updateScale(newScale, true);
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    document.body.style.cursor = '';
+                    resizeHandle.style.color = '';
+
+                    setTimeout(hideIndicator, 1000);
+                }
+            });
+
+            // Touch support for mobile
+            resizeHandle.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const touch = e.touches[0];
+                isDragging = true;
+                startX = touch.clientX;
+                startY = touch.clientY;
+                startScale = currentScale;
+                scaleIndicator.classList.add('visible');
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - startX;
+                const deltaY = touch.clientY - startY;
+                const avgDelta = (deltaX + deltaY) / 2;
+                const scaleChange = avgDelta / 500;
+                const newScale = startScale + scaleChange;
+                updateScale(newScale, true);
+            });
+
+            document.addEventListener('touchend', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    setTimeout(hideIndicator, 1000);
+                }
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    if (e.key === '=' || e.key === '+') {
+                        e.preventDefault();
+                        updateScale(currentScale + 0.1, true);
+                        setTimeout(hideIndicator, 1000);
+                    } else if (e.key === '-') {
+                        e.preventDefault();
+                        updateScale(currentScale - 0.1, true);
+                        setTimeout(hideIndicator, 1000);
+                    } else if (e.key === '0') {
+                        e.preventDefault();
+                        updateScale(1.0, true);
+                        setTimeout(hideIndicator, 1000);
+                    }
+                }
+            });
+
+            // Mouse wheel zoom (bonus feature)
+            container.addEventListener('wheel', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    const delta = -Math.sign(e.deltaY) * 0.05;
+                    updateScale(currentScale + delta, true);
+
+                    clearTimeout(container.wheelTimeout);
+                    container.wheelTimeout = setTimeout(hideIndicator, 1000);
+                }
+            }, { passive: false });
+
+            // Window resize handler
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    const newOptimalScale = calculateOptimalScale();
+                    if (currentScale > newOptimalScale) {
+                        updateScale(newOptimalScale);
+                    }
+                }, 150);
+            });
+
+            // Initialize
+            const initialScale = calculateOptimalScale();
+            updateScale(initialScale);
+        })();
+    </script>
 </body>
 </html>
