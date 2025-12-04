@@ -22,6 +22,106 @@ let whiteboardState = {
     currentShape: null
 };
 
+// --- Session Time Tracking ---
+let sessionTracker = {
+    startTime: null,
+    totalActiveSeconds: 0,
+    lastHeartbeat: null,
+    heartbeatInterval: null,
+    isPageVisible: true,
+    lastVisibilityChange: null
+};
+
+function initSessionTracking() {
+    sessionTracker.startTime = Date.now();
+    sessionTracker.lastHeartbeat = Date.now();
+    sessionTracker.lastVisibilityChange = Date.now();
+
+    // Track page visibility (pause timer when tab is inactive)
+    document.addEventListener('visibilitychange', () => {
+        const now = Date.now();
+
+        if (document.hidden) {
+            // Tab became inactive - record active time
+            if (sessionTracker.isPageVisible) {
+                const activeSeconds = Math.floor((now - sessionTracker.lastVisibilityChange) / 1000);
+                sessionTracker.totalActiveSeconds += activeSeconds;
+            }
+            sessionTracker.isPageVisible = false;
+        } else {
+            // Tab became active again
+            sessionTracker.isPageVisible = true;
+            sessionTracker.lastVisibilityChange = now;
+        }
+    });
+
+    // Send heartbeat every 30 seconds
+    sessionTracker.heartbeatInterval = setInterval(() => {
+        sendTimeHeartbeat();
+    }, 30000); // 30 seconds
+
+    // Send final time on page unload
+    window.addEventListener('beforeunload', () => {
+        sendTimeHeartbeat(true);
+    });
+
+    // Also try pagehide for mobile browsers
+    window.addEventListener('pagehide', () => {
+        sendTimeHeartbeat(true);
+    });
+}
+
+function getActiveSeconds() {
+    const now = Date.now();
+    let totalSeconds = sessionTracker.totalActiveSeconds;
+
+    // Add current active period if page is visible
+    if (sessionTracker.isPageVisible && sessionTracker.lastVisibilityChange) {
+        const currentActiveSeconds = Math.floor((now - sessionTracker.lastVisibilityChange) / 1000);
+        totalSeconds += currentActiveSeconds;
+    }
+
+    return totalSeconds;
+}
+
+async function sendTimeHeartbeat(isFinal = false) {
+    if (!currentUser || !currentUser._id) return;
+
+    const activeSeconds = getActiveSeconds();
+
+    // Only send if we have at least 5 seconds of activity (avoid spam)
+    if (activeSeconds < 5 && !isFinal) return;
+
+    try {
+        const payload = {
+            userId: currentUser._id,
+            activeSeconds: activeSeconds
+        };
+
+        if (isFinal) {
+            // Use sendBeacon for reliable delivery during page unload
+            const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+            navigator.sendBeacon('/api/chat/track-time', blob);
+        } else {
+            // Regular fetch for heartbeats
+            await fetch('/api/chat/track-time', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                credentials: 'include'
+            });
+        }
+
+        // Reset the counter after successful send
+        sessionTracker.totalActiveSeconds = 0;
+        sessionTracker.lastVisibilityChange = Date.now();
+        sessionTracker.lastHeartbeat = Date.now();
+
+    } catch (error) {
+        console.error('Failed to send time tracking heartbeat:', error);
+    }
+}
+
 // --- Global Helper Functions ---
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
@@ -180,8 +280,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!currentUser) throw new Error('User not found');
             if (currentUser.needsProfileCompletion) return window.location.href = "/complete-profile.html";
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
-            
-            initializeWhiteboard(); 
+
+            // Initialize session time tracking
+            initSessionTracking();
+
+            initializeWhiteboard();
             setupChatUI();
             await fetchAndDisplayParentCode();
             await getWelcomeMessage();

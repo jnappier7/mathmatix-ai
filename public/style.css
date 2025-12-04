@@ -3879,3 +3879,126 @@ main {
 #student-avatar video {
     transition: filter 0.5s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Admin Reports - Stat Cards */
+.stat-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+    border: 2px solid #e0e6ed;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: #12B3B3;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    background: linear-gradient(135deg, #12B3B3, #FF3B7F);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Live Activity Cards */
+.activity-card {
+    background: white;
+    border: 2px solid #e0e6ed;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.activity-card:hover {
+    border-color: #12B3B3;
+    box-shadow: 0 4px 12px rgba(18, 179, 179, 0.1);
+}
+
+.activity-card.struggling {
+    border-left: 4px solid #FF3B7F;
+    background: linear-gradient(to right, rgba(255, 59, 127, 0.05), white);
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.activity-student-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.activity-time {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.activity-topic {
+    display: inline-block;
+    background: #12B3B3;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    margin-right: 8px;
+}
+
+.activity-stats {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.activity-stat {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.activity-stat i {
+    color: #12B3B3;
+    margin-right: 5px;
+}
+
+.struggle-alert {
+    background: rgba(255, 59, 127, 0.1);
+    border-left: 3px solid #FF3B7F;
+    padding: 8px 12px;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #c7254e;
+}
+
+.no-activity-message {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 1.1rem;
+}
+
+.no-activity-message i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}

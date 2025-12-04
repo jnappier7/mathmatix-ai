@@ -91,8 +91,13 @@
         </div>
         <div class="dashboard-panel card-style-1">
           <div class="dashboard-panel-header">Quick Reports</div>
-          <p>Generate usage and performance reports.</p>
-          <button class="main-action-btn btn btn-secondary">Generate Report</button>
+          <p>View comprehensive usage and activity reports.</p>
+          <button id="openUsageReportBtn" class="main-action-btn btn btn-secondary">
+            <i class="fas fa-chart-bar"></i> Usage Report
+          </button>
+          <button id="openLiveActivityBtn" class="main-action-btn btn btn-secondary" style="margin-top: 10px;">
+            <i class="fas fa-broadcast-tower"></i> Live Activity
+          </button>
         </div>
       </div>
     </div>
@@ -160,6 +165,131 @@
       <div class="modal-actions">
         <button class="save-button btn-primary" id="saveChangesButton">Save Changes</button>
         <button class="cancel-button btn-tertiary" id="cancelButton">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usage Report Modal -->
+  <div id="usageReportModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 1200px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close-button" id="closeUsageReportBtn">&times;</button>
+      <h2><i class="fas fa-chart-bar"></i> Usage Report</h2>
+
+      <!-- Filters -->
+      <div class="modal-section">
+        <h3>Filters</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+          <div class="modal-form-group">
+            <label for="reportRoleFilter">Role:</label>
+            <select id="reportRoleFilter">
+              <option value="">All</option>
+              <option value="student">Students</option>
+              <option value="teacher">Teachers</option>
+              <option value="parent">Parents</option>
+              <option value="admin">Admins</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label for="reportSortBy">Sort By:</label>
+            <select id="reportSortBy">
+              <option value="lastLogin">Last Login</option>
+              <option value="totalMinutes">Total Minutes</option>
+              <option value="weeklyMinutes">Weekly Minutes</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label for="reportSortOrder">Order:</label>
+            <select id="reportSortOrder">
+              <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <button id="applyReportFilters" class="btn-primary" style="align-self: flex-end;">
+              <i class="fas fa-filter"></i> Apply Filters
+            </button>
+            <button id="exportReportCSV" class="btn-secondary" style="align-self: flex-end; margin-left: 10px;">
+              <i class="fas fa-download"></i> Export CSV
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Stats -->
+      <div class="modal-section">
+        <h3>Summary Statistics</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+          <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" id="summaryTotalUsers">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Today</div>
+            <div class="stat-value" id="summaryActiveToday">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active This Week</div>
+            <div class="stat-value" id="summaryActiveWeek">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Minutes (All Time)</div>
+            <div class="stat-value" id="summaryTotalMinutes">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Minutes (This Week)</div>
+            <div class="stat-value" id="summaryWeekMinutes">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Minutes/User</div>
+            <div class="stat-value" id="summaryAvgMinutes">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Activity Table -->
+      <div class="modal-section">
+        <h3>User Activity</h3>
+        <div class="table-scroll-container" style="max-height: 400px;">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Last Login</th>
+                <th>Total Min</th>
+                <th>Weekly Min</th>
+                <th>Sessions</th>
+                <th>Level</th>
+                <th>XP</th>
+                <th>Teacher</th>
+              </tr>
+            </thead>
+            <tbody id="usageReportTableBody">
+              <tr><td colspan="9" style="text-align: center;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Activity Modal -->
+  <div id="liveActivityModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 1000px;">
+      <button class="modal-close-button" id="closeLiveActivityBtn">&times;</button>
+      <h2><i class="fas fa-broadcast-tower"></i> Live Activity Feed</h2>
+      <p style="color: #666; margin-bottom: 20px;">
+        <i class="fas fa-clock"></i> Showing sessions active in the last 10 minutes
+        <button id="refreshLiveActivityBtn" class="btn-secondary" style="float: right;">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </p>
+
+      <div class="modal-section">
+        <div id="liveActivityContainer">
+          <p style="text-align: center;">Loading...</p>
+        </div>
       </div>
     </div>
   </div>

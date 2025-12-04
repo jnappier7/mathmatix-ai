@@ -390,6 +390,261 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (cancelButton) cancelButton.addEventListener('click', closeModal);
 
     // -------------------------------------------------------------------------
+    // --- Reports Functionality ---
+    // -------------------------------------------------------------------------
+
+    const usageReportModal = document.getElementById('usageReportModal');
+    const liveActivityModal = document.getElementById('liveActivityModal');
+    const openUsageReportBtn = document.getElementById('openUsageReportBtn');
+    const openLiveActivityBtn = document.getElementById('openLiveActivityBtn');
+    const closeUsageReportBtn = document.getElementById('closeUsageReportBtn');
+    const closeLiveActivityBtn = document.getElementById('closeLiveActivityBtn');
+    const applyReportFilters = document.getElementById('applyReportFilters');
+    const exportReportCSV = document.getElementById('exportReportCSV');
+    const refreshLiveActivityBtn = document.getElementById('refreshLiveActivityBtn');
+
+    let currentReportData = null;
+
+    // Open/Close Usage Report Modal
+    if (openUsageReportBtn) {
+        openUsageReportBtn.addEventListener('click', () => {
+            usageReportModal.style.display = 'flex';
+            loadUsageReport();
+        });
+    }
+
+    if (closeUsageReportBtn) {
+        closeUsageReportBtn.addEventListener('click', () => {
+            usageReportModal.style.display = 'none';
+        });
+    }
+
+    // Open/Close Live Activity Modal
+    if (openLiveActivityBtn) {
+        openLiveActivityBtn.addEventListener('click', () => {
+            liveActivityModal.style.display = 'flex';
+            loadLiveActivity();
+        });
+    }
+
+    if (closeLiveActivityBtn) {
+        closeLiveActivityBtn.addEventListener('click', () => {
+            liveActivityModal.style.display = 'none';
+        });
+    }
+
+    // Apply Filters
+    if (applyReportFilters) {
+        applyReportFilters.addEventListener('click', loadUsageReport);
+    }
+
+    // Refresh Live Activity
+    if (refreshLiveActivityBtn) {
+        refreshLiveActivityBtn.addEventListener('click', loadLiveActivity);
+    }
+
+    // Export CSV
+    if (exportReportCSV) {
+        exportReportCSV.addEventListener('click', exportUsageReportToCSV);
+    }
+
+    /**
+     * Load Usage Report from API
+     */
+    async function loadUsageReport() {
+        try {
+            const role = document.getElementById('reportRoleFilter')?.value || '';
+            const sortBy = document.getElementById('reportSortBy')?.value || 'lastLogin';
+            const sortOrder = document.getElementById('reportSortOrder')?.value || 'desc';
+
+            const params = new URLSearchParams();
+            if (role) params.append('role', role);
+            params.append('sortBy', sortBy);
+            params.append('sortOrder', sortOrder);
+
+            const response = await fetch(`/api/admin/reports/usage?${params.toString()}`, {
+                credentials: 'include'
+            });
+
+            if (!response.ok) throw new Error('Failed to load usage report');
+
+            const data = await response.json();
+            currentReportData = data;
+
+            // Update summary stats
+            document.getElementById('summaryTotalUsers').textContent = data.summary.totalUsers;
+            document.getElementById('summaryActiveToday').textContent = data.summary.activeToday;
+            document.getElementById('summaryActiveWeek').textContent = data.summary.activeThisWeek;
+            document.getElementById('summaryTotalMinutes').textContent = data.summary.totalMinutesAllTime.toLocaleString();
+            document.getElementById('summaryWeekMinutes').textContent = data.summary.totalMinutesThisWeek.toLocaleString();
+            document.getElementById('summaryAvgMinutes').textContent = data.summary.averageMinutesPerUser;
+
+            // Render user table
+            renderUsageReportTable(data.users);
+
+        } catch (error) {
+            console.error('Error loading usage report:', error);
+            alert('Failed to load usage report');
+        }
+    }
+
+    /**
+     * Render Usage Report Table
+     */
+    function renderUsageReportTable(users) {
+        const tbody = document.getElementById('usageReportTableBody');
+        if (!tbody) return;
+
+        if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No users found</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = users.map(user => {
+            const lastLogin = user.lastLogin
+                ? new Date(user.lastLogin).toLocaleDateString()
+                : 'Never';
+            const daysSince = user.daysSinceLastLogin !== null
+                ? `(${user.daysSinceLastLogin}d ago)`
+                : '';
+
+            return `
+                <tr>
+                    <td><strong>${user.name}</strong></td>
+                    <td><span class="badge badge-${user.role}">${user.role}</span></td>
+                    <td>${lastLogin} ${daysSince}</td>
+                    <td>${user.totalMinutes}</td>
+                    <td>${user.weeklyMinutes}</td>
+                    <td>${user.sessionCount}</td>
+                    <td>${user.level}</td>
+                    <td>${user.xp.toLocaleString()}</td>
+                    <td>${user.teacher || '-'}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    /**
+     * Export Usage Report to CSV
+     */
+    function exportUsageReportToCSV() {
+        if (!currentReportData || !currentReportData.users) {
+            alert('No report data to export');
+            return;
+        }
+
+        const headers = ['Name', 'Role', 'Email', 'Last Login', 'Total Minutes', 'Weekly Minutes', 'Sessions', 'Level', 'XP', 'Teacher'];
+        const rows = currentReportData.users.map(user => [
+            user.name,
+            user.role,
+            user.email,
+            user.lastLogin ? new Date(user.lastLogin).toISOString() : 'Never',
+            user.totalMinutes,
+            user.weeklyMinutes,
+            user.sessionCount,
+            user.level,
+            user.xp,
+            user.teacher || ''
+        ]);
+
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `usage-report-${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    /**
+     * Load Live Activity Feed
+     */
+    async function loadLiveActivity() {
+        const container = document.getElementById('liveActivityContainer');
+        if (!container) return;
+
+        container.innerHTML = '<p style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
+
+        try {
+            const response = await fetch('/api/admin/reports/live-activity', {
+                credentials: 'include'
+            });
+
+            if (!response.ok) throw new Error('Failed to load live activity');
+
+            const data = await response.json();
+            renderLiveActivity(data.sessions);
+
+        } catch (error) {
+            console.error('Error loading live activity:', error);
+            container.innerHTML = '<p style="text-align: center; color: red;">Failed to load live activity</p>';
+        }
+    }
+
+    /**
+     * Render Live Activity Cards
+     */
+    function renderLiveActivity(sessions) {
+        const container = document.getElementById('liveActivityContainer');
+        if (!container) return;
+
+        if (sessions.length === 0) {
+            container.innerHTML = `
+                <div class="no-activity-message">
+                    <i class="fas fa-inbox"></i>
+                    <p>No active sessions in the last 10 minutes</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = sessions.map(session => {
+            const accuracy = session.problemsAttempted > 0
+                ? Math.round((session.problemsCorrect / session.problemsAttempted) * 100)
+                : 0;
+
+            const isStruggling = session.strugglingWith || session.alerts.length > 0;
+            const cardClass = isStruggling ? 'activity-card struggling' : 'activity-card';
+
+            return `
+                <div class="${cardClass}">
+                    <div class="activity-header">
+                        <div class="activity-student-name">
+                            ${session.studentName}
+                            <span class="activity-topic">${session.currentTopic}</span>
+                        </div>
+                        <div class="activity-time">
+                            <i class="fas fa-clock"></i> ${session.minutesAgo}m ago
+                        </div>
+                    </div>
+                    <div class="activity-stats">
+                        <div class="activity-stat">
+                            <i class="fas fa-hourglass-half"></i> ${session.activeMinutes} min
+                        </div>
+                        <div class="activity-stat">
+                            <i class="fas fa-tasks"></i> ${session.problemsCorrect}/${session.problemsAttempted} correct (${accuracy}%)
+                        </div>
+                        <div class="activity-stat">
+                            <i class="fas fa-trophy"></i> Level ${session.level} (${session.xp.toLocaleString()} XP)
+                        </div>
+                    </div>
+                    ${isStruggling ? `
+                        <div class="struggle-alert">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Struggling with:</strong> ${session.strugglingWith || 'Current concept'}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    // -------------------------------------------------------------------------
     // --- Initial Load ---
     // -------------------------------------------------------------------------
     initializeDashboard();
