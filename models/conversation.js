@@ -19,6 +19,10 @@ const conversationSchema = new Schema({
         required: true,
         index: true // Index this field for faster lookups
     },
+    conversationName: {
+        type: String,
+        default: 'Math Session'
+    },
     startDate: {
         type: Date,
         default: Date.now
@@ -30,6 +34,14 @@ const conversationSchema = new Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    isAssessment: {
+        type: Boolean,
+        default: false
+    },
+    isAssessmentComplete: {
+        type: Boolean,
+        default: false
     },
     messages: {
         type: [messageSchema],
