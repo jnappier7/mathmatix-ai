@@ -1,0 +1,654 @@
+[
+  {
+    "skillId": "integers-understanding",
+    "displayName": "Understanding Integers",
+    "description": "Understand positive and negative numbers on a number line",
+    "category": "number-system",
+    "prerequisites": [],
+    "enables": ["integer-addition", "integer-subtraction", "absolute-value"],
+    "standardsAlignment": ["6.NS.5", "6.NS.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Positive and negative numbers",
+        "Number line representation",
+        "Opposite numbers",
+        "Zero as neither positive nor negative"
+      ],
+      "commonMistakes": [
+        "Confusing -5 with 'minus 5' as an operation",
+        "Not understanding that -3 is to the left of 0"
+      ],
+      "teachingTips": [
+        "Use temperature or elevation as real-world context",
+        "Visual number line is essential",
+        "Connect to debt/credit or floors in a building"
+      ],
+      "exampleTypes": ["Number line placement", "Comparing integers", "Real-world scenarios"],
+      "connectionsToPriorKnowledge": ["Whole numbers", "Counting"]
+    },
+    "difficultyLevel": 2
+  },
+  {
+    "skillId": "integer-addition",
+    "displayName": "Adding Integers",
+    "description": "Add positive and negative numbers",
+    "category": "operations",
+    "prerequisites": ["integers-understanding"],
+    "enables": ["integer-all-operations", "one-step-equations-addition"],
+    "standardsAlignment": ["7.NS.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Adding same signs: add and keep the sign",
+        "Adding different signs: subtract and take sign of larger",
+        "Zero pairs concept"
+      ],
+      "commonMistakes": [
+        "Adding signs instead of numbers",
+        "Forgetting to keep track of which number is larger"
+      ],
+      "teachingTips": [
+        "Use 'units language' - positive units and negative units",
+        "Opposites make ZERO",
+        "Temperature changes or money examples"
+      ],
+      "exampleTypes": ["-3 + 5", "7 + (-4)", "-6 + (-2)", "Problems with zero"],
+      "connectionsToPriorKnowledge": ["Addition of whole numbers", "Number line"]
+    },
+    "difficultyLevel": 3
+  },
+  {
+    "skillId": "integer-subtraction",
+    "displayName": "Subtracting Integers",
+    "description": "Subtract positive and negative numbers",
+    "category": "operations",
+    "prerequisites": ["integer-addition"],
+    "enables": ["integer-all-operations", "one-step-equations-addition"],
+    "standardsAlignment": ["7.NS.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Subtracting is adding the opposite",
+        "Change subtraction to addition problem",
+        "Keep-Change-Change method"
+      ],
+      "commonMistakes": [
+        "Subtracting without changing to addition",
+        "Changing both signs instead of just the operation and second number"
+      ],
+      "teachingTips": [
+        "Emphasize 'add the opposite'",
+        "Rewrite every subtraction as addition first",
+        "Use number line to verify"
+      ],
+      "exampleTypes": ["5 - 8", "-3 - 7", "4 - (-6)", "-2 - (-5)"],
+      "connectionsToPriorKnowledge": ["Integer addition", "Opposite numbers"]
+    },
+    "difficultyLevel": 4
+  },
+  {
+    "skillId": "integer-all-operations",
+    "displayName": "All Integer Operations",
+    "description": "Multiply, divide, and perform all operations with integers",
+    "category": "operations",
+    "prerequisites": ["integer-addition", "integer-subtraction"],
+    "enables": ["order-of-operations", "distributive-property"],
+    "standardsAlignment": ["7.NS.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Multiplication: same signs = positive, different signs = negative",
+        "Division: same rules as multiplication",
+        "Mixed operations require order of operations"
+      ],
+      "commonMistakes": [
+        "Thinking negative × negative = negative",
+        "Confusing division by negative with subtraction"
+      ],
+      "teachingTips": [
+        "Sign rules: two positives or two negatives = positive result",
+        "Practice with small numbers first",
+        "Connect to patterns: -3 × 2, -3 × 1, -3 × 0, -3 × -1..."
+      ],
+      "exampleTypes": ["-4 × 6", "-8 ÷ -2", "Mixed problems with multiple operations"],
+      "connectionsToPriorKnowledge": ["Multiplication tables", "Division"]
+    },
+    "difficultyLevel": 5
+  },
+  {
+    "skillId": "order-of-operations",
+    "displayName": "Order of Operations (GEMS/PEMDAS)",
+    "description": "Apply correct order when solving multi-step expressions",
+    "category": "operations",
+    "prerequisites": ["integer-all-operations"],
+    "enables": ["evaluating-expressions", "distributive-property"],
+    "standardsAlignment": ["6.EE.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "GEMS: Grouping, Exponents, Multiply/Divide (left to right), Add/Subtract (left to right)",
+        "Work from innermost grouping outward",
+        "Left-to-right for same-level operations"
+      ],
+      "commonMistakes": [
+        "Doing operations left to right regardless of priority",
+        "Forgetting that M and D are same level, A and S are same level",
+        "Skipping grouping symbols"
+      ],
+      "teachingTips": [
+        "Use GEMS or PEMDAS mnemonic",
+        "Show what happens when order is wrong",
+        "Practice with clear step-by-step work"
+      ],
+      "exampleTypes": ["3 + 2 × 5", "(8 - 3) × 2", "12 ÷ 3 + 4", "Complex nested expressions"],
+      "connectionsToPriorKnowledge": ["All four operations"]
+    },
+    "difficultyLevel": 5
+  },
+  {
+    "skillId": "combining-like-terms",
+    "displayName": "Combining Like Terms",
+    "description": "Simplify expressions by combining terms with same variable",
+    "category": "expressions",
+    "prerequisites": ["integer-addition"],
+    "enables": ["distributive-property", "solving-multi-step-equations"],
+    "standardsAlignment": ["6.EE.3", "6.EE.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Like terms have same variable and exponent",
+        "Add/subtract coefficients, keep the variable",
+        "Constants are like terms with each other"
+      ],
+      "commonMistakes": [
+        "Combining 2x and 3y",
+        "Multiplying coefficients instead of adding",
+        "Forgetting about the constants"
+      ],
+      "teachingTips": [
+        "Use different colors for different terms",
+        "Think of x as a unit (like 3 apples + 2 apples)",
+        "Circle or underline like terms before combining"
+      ],
+      "exampleTypes": ["3x + 2x", "5y - 2y + 3", "2a + 3b - a + b", "4x² + 2x - x + 1"],
+      "connectionsToPriorKnowledge": ["Variables as unknowns", "Integer addition"]
+    },
+    "difficultyLevel": 4
+  },
+  {
+    "skillId": "distributive-property",
+    "displayName": "Distributive Property",
+    "description": "Expand expressions using a(b + c) = ab + ac",
+    "category": "expressions",
+    "prerequisites": ["combining-like-terms", "integer-all-operations"],
+    "enables": ["solving-multi-step-equations", "factoring-basics"],
+    "standardsAlignment": ["6.EE.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Multiply outside term by each term inside",
+        "Works with subtraction: a(b - c) = ab - ac",
+        "Watch signs when distributing negatives"
+      ],
+      "commonMistakes": [
+        "Only distributing to first term",
+        "Losing negative signs when distributing",
+        "Confusing with combining like terms"
+      ],
+      "teachingTips": [
+        "Draw arrows from outside to each inside term",
+        "Use area model for visual learners",
+        "Practice with -1 as multiplier: -(x + 3) = -x - 3"
+      ],
+      "exampleTypes": ["3(x + 4)", "-2(y - 5)", "5(2a + 3b - 1)", "Reverse: factoring"],
+      "connectionsToPriorKnowledge": ["Multiplication", "Combining like terms"]
+    },
+    "difficultyLevel": 6
+  },
+  {
+    "skillId": "one-step-equations-addition",
+    "displayName": "One-Step Equations (Addition/Subtraction)",
+    "description": "Solve equations like x + 5 = 12 using inverse operations",
+    "category": "equations",
+    "prerequisites": ["integer-addition", "integer-subtraction"],
+    "enables": ["one-step-equations-multiplication", "two-step-equations"],
+    "standardsAlignment": ["6.EE.7"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Isolation of variable using inverse operations",
+        "What you do to one side, do to the other",
+        "Opposites make ZERO - goal is to get variable alone",
+        "Check solution by substituting back"
+      ],
+      "commonMistakes": [
+        "Adding when should subtract (not using inverse)",
+        "Only operating on one side",
+        "Forgetting to check the answer"
+      ],
+      "teachingTips": [
+        "Use 'Box and Think' - box the variable term",
+        "Ask: what's attached to x? Do the opposite",
+        "Always verify solution",
+        "Use balance scale visual"
+      ],
+      "exampleTypes": ["x + 7 = 10", "y - 3 = 8", "-5 + n = 2", "12 = x + 4"],
+      "connectionsToPriorKnowledge": ["Integer operations", "Inverse operations concept"]
+    },
+    "difficultyLevel": 3
+  },
+  {
+    "skillId": "one-step-equations-multiplication",
+    "displayName": "One-Step Equations (Multiplication/Division)",
+    "description": "Solve equations like 3x = 15 or x/4 = 2",
+    "category": "equations",
+    "prerequisites": ["one-step-equations-addition", "integer-all-operations"],
+    "enables": ["two-step-equations"],
+    "standardsAlignment": ["6.EE.7"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Division undoes multiplication",
+        "Multiplication undoes division",
+        "Coefficient must become 1",
+        "'Side by side, divide' - number next to variable"
+      ],
+      "commonMistakes": [
+        "Multiplying when should divide",
+        "Dividing by the variable instead of coefficient",
+        "Sign errors with negative coefficients"
+      ],
+      "teachingTips": [
+        "Identify what's being done to x (multiplied or divided)",
+        "Do the opposite operation",
+        "Fraction form: 3x = 15 is same as (3/1)x = 15",
+        "Check by substituting"
+      ],
+      "exampleTypes": ["3x = 12", "y/5 = 4", "-2n = 10", "x/(-3) = 6"],
+      "connectionsToPriorKnowledge": ["Division", "Fractions", "One-step with add/subtract"]
+    },
+    "difficultyLevel": 4
+  },
+  {
+    "skillId": "two-step-equations",
+    "displayName": "Two-Step Equations",
+    "description": "Solve equations requiring two operations like 2x + 3 = 11",
+    "category": "equations",
+    "prerequisites": ["one-step-equations-addition", "one-step-equations-multiplication"],
+    "enables": ["solving-multi-step-equations", "literal-equations"],
+    "standardsAlignment": ["7.EE.4", "8.EE.7"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Undo operations in reverse order (reverse of order of operations)",
+        "Undo addition/subtraction first",
+        "Then undo multiplication/division",
+        "Work backwards through GEMS"
+      ],
+      "commonMistakes": [
+        "Dividing first instead of undoing addition",
+        "Trying to do both steps at once",
+        "Sign errors when working with negatives"
+      ],
+      "teachingTips": [
+        "Think: what happened to x? Reverse it",
+        "First isolate the term with x, then isolate x",
+        "Use 'Box and Think' - box 2x, then isolate",
+        "Show the parallel: building equation vs. solving it"
+      ],
+      "exampleTypes": ["2x + 5 = 13", "3y - 7 = 8", "-4n + 1 = -11", "x/2 - 3 = 5"],
+      "connectionsToPriorKnowledge": ["One-step equations", "Order of operations"]
+    },
+    "difficultyLevel": 6
+  },
+  {
+    "skillId": "solving-multi-step-equations",
+    "displayName": "Multi-Step Equations",
+    "description": "Solve complex equations with combining terms and distributive property",
+    "category": "equations",
+    "prerequisites": ["two-step-equations", "combining-like-terms", "distributive-property"],
+    "enables": ["equations-variables-both-sides", "literal-equations"],
+    "standardsAlignment": ["8.EE.7"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Simplify each side first (combine like terms, distribute)",
+        "Then solve like a two-step equation",
+        "Work systematically step by step"
+      ],
+      "commonMistakes": [
+        "Skipping the simplification step",
+        "Distributing incorrectly",
+        "Losing track of negative signs"
+      ],
+      "teachingTips": [
+        "Always simplify before solving",
+        "Write each step clearly",
+        "Check answer in original equation",
+        "Encourage organized work"
+      ],
+      "exampleTypes": ["2(x + 3) = 14", "3x + 2x - 4 = 11", "-2(y - 1) + 5 = 9"],
+      "connectionsToPriorKnowledge": ["Two-step equations", "Distributive property", "Like terms"]
+    },
+    "difficultyLevel": 7
+  },
+  {
+    "skillId": "equations-variables-both-sides",
+    "displayName": "Equations with Variables on Both Sides",
+    "description": "Solve equations like 3x + 5 = 2x + 9",
+    "category": "equations",
+    "prerequisites": ["solving-multi-step-equations"],
+    "enables": ["systems-of-equations-basic"],
+    "standardsAlignment": ["8.EE.7"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Get all variables on one side, constants on other",
+        "Add or subtract variable terms to move them",
+        "Then solve the resulting two-step equation"
+      ],
+      "commonMistakes": [
+        "Subtracting from wrong side",
+        "Forgetting to move the constant",
+        "Combining unlike terms"
+      ],
+      "teachingTips": [
+        "Choose to move the smaller variable term",
+        "Show work in clear steps",
+        "Verify solution works in original equation",
+        "Use balance scale analogy"
+      ],
+      "exampleTypes": ["3x + 4 = 2x + 7", "5y - 3 = 2y + 9", "4x + 1 = x - 8"],
+      "connectionsToPriorKnowledge": ["Multi-step equations", "Combining like terms"]
+    },
+    "difficultyLevel": 8
+  },
+  {
+    "skillId": "literal-equations",
+    "displayName": "Literal Equations",
+    "description": "Solve formulas for a specific variable like solving d = rt for t",
+    "category": "equations",
+    "prerequisites": ["two-step-equations"],
+    "enables": ["advanced-problem-solving"],
+    "standardsAlignment": ["A-CED.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Treat other variables like numbers",
+        "Same solving process as regular equations",
+        "Isolate the target variable"
+      ],
+      "commonMistakes": [
+        "Trying to solve for all variables",
+        "Getting confused by multiple letters",
+        "Not treating letters as constants"
+      ],
+      "teachingTips": [
+        "Ask: which variable am I solving for?",
+        "All other letters are 'in the way' like numbers",
+        "Use real formulas: d=rt, A=lw, C=2πr"
+      ],
+      "exampleTypes": ["Solve d = rt for t", "Solve A = (1/2)bh for h", "Solve ax + b = c for x"],
+      "connectionsToPriorKnowledge": ["Two-step equations", "Formulas"]
+    },
+    "difficultyLevel": 7
+  },
+  {
+    "skillId": "ratios-and-rates",
+    "displayName": "Ratios and Unit Rates",
+    "description": "Express and interpret ratios, find unit rates",
+    "category": "ratios-proportions",
+    "prerequisites": ["integer-all-operations"],
+    "enables": ["proportions", "percent-problems"],
+    "standardsAlignment": ["6.RP.1", "6.RP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Ratio shows relationship between quantities",
+        "Unit rate is ratio with denominator of 1",
+        "Different ways to write ratios: 3:4, 3/4, 3 to 4"
+      ],
+      "commonMistakes": [
+        "Reversing the ratio",
+        "Not simplifying",
+        "Confusing ratio with difference"
+      ],
+      "teachingTips": [
+        "Use real contexts: recipes, speeds, prices",
+        "Label units clearly",
+        "Practice unit rate calculations ($ per item, miles per hour)"
+      ],
+      "exampleTypes": ["3 apples : 5 oranges", "120 miles in 2 hours = ? mph", "Price comparison"],
+      "connectionsToPriorKnowledge": ["Division", "Fractions"]
+    },
+    "difficultyLevel": 4
+  },
+  {
+    "skillId": "proportions",
+    "displayName": "Solving Proportions",
+    "description": "Solve proportions using cross-multiplication",
+    "category": "ratios-proportions",
+    "prerequisites": ["ratios-and-rates", "one-step-equations-multiplication"],
+    "enables": ["percent-problems", "scale-drawings", "similar-figures"],
+    "standardsAlignment": ["6.RP.3", "7.RP.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Proportion is an equation with two equal ratios",
+        "Cross-multiply to solve",
+        "Check that answer makes sense in context"
+      ],
+      "commonMistakes": [
+        "Setting up proportion incorrectly",
+        "Cross-multiplying before checking if simplified",
+        "Not labeling units"
+      ],
+      "teachingTips": [
+        "Set up carefully with labels",
+        "Cross-multiply then solve",
+        "Verify answer makes sense",
+        "Use real-world problems"
+      ],
+      "exampleTypes": ["3/4 = x/12", "Scale problems", "Similar triangles", "Recipe scaling"],
+      "connectionsToPriorKnowledge": ["Ratios", "One-step equations", "Fractions"]
+    },
+    "difficultyLevel": 6
+  },
+  {
+    "skillId": "percent-basics",
+    "displayName": "Understanding Percent",
+    "description": "Convert between percents, decimals, and fractions",
+    "category": "percent",
+    "prerequisites": ["integer-all-operations"],
+    "enables": ["percent-problems", "percent-change"],
+    "standardsAlignment": ["6.RP.3c"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Percent means 'per hundred'",
+        "Move decimal 2 places to convert to/from percent",
+        "Percent can be written as fraction over 100"
+      ],
+      "commonMistakes": [
+        "Moving decimal wrong direction",
+        "Thinking 0.5 = 5%",
+        "Forgetting the percent sign"
+      ],
+      "teachingTips": [
+        "Visual with 100-square grid",
+        "Practice conversions in all directions",
+        "Memorize common: 1/2 = 50%, 1/4 = 25%"
+      ],
+      "exampleTypes": ["Convert 0.35 to percent", "Convert 40% to decimal", "75% as fraction"],
+      "connectionsToPriorKnowledge": ["Decimals", "Fractions", "Division"]
+    },
+    "difficultyLevel": 4
+  },
+  {
+    "skillId": "percent-problems",
+    "displayName": "Solving Percent Problems",
+    "description": "Find percent of a number, find what percent one number is of another",
+    "category": "percent",
+    "prerequisites": ["percent-basics", "proportions"],
+    "enables": ["percent-change", "real-world-applications"],
+    "standardsAlignment": ["7.RP.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Part = Percent × Whole",
+        "Set up proportion: is/of = %/100",
+        "Three types: find part, find whole, find percent"
+      ],
+      "commonMistakes": [
+        "Confusing part and whole",
+        "Using percent instead of decimal in calculation",
+        "Setting up proportion backwards"
+      ],
+      "teachingTips": [
+        "Identify: What is the whole? What is the part?",
+        "Use proportion method or equation method",
+        "Check if answer makes sense"
+      ],
+      "exampleTypes": ["What is 30% of 80?", "24 is what % of 60?", "15 is 25% of what?"],
+      "connectionsToPriorKnowledge": ["Percent basics", "Proportions", "Multiplication"]
+    },
+    "difficultyLevel": 6
+  },
+  {
+    "skillId": "coordinate-plane-basics",
+    "displayName": "Coordinate Plane Basics",
+    "description": "Plot and identify points using ordered pairs",
+    "category": "graphing",
+    "prerequisites": ["integer-addition"],
+    "enables": ["graphing-linear-equations", "distance-formula"],
+    "standardsAlignment": ["6.NS.6", "6.NS.8"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Ordered pair (x, y) where x is horizontal, y is vertical",
+        "Four quadrants, x and y axes",
+        "Origin is (0, 0)"
+      ],
+      "commonMistakes": [
+        "Reversing x and y coordinates",
+        "Going up/down first instead of left/right",
+        "Not understanding negative coordinates"
+      ],
+      "teachingTips": [
+        "Remember: 'along the hallway, up the stairs'",
+        "Practice all four quadrants",
+        "Use graph paper",
+        "Connect to real maps, battleship game"
+      ],
+      "exampleTypes": ["Plot (3, 4)", "Plot (-2, 5)", "What point is shown?", "Quadrant identification"],
+      "connectionsToPriorKnowledge": ["Number lines", "Integers"]
+    },
+    "difficultyLevel": 3
+  },
+  {
+    "skillId": "graphing-linear-equations",
+    "displayName": "Graphing Linear Equations",
+    "description": "Graph lines from equations using tables or slope-intercept",
+    "category": "graphing",
+    "prerequisites": ["coordinate-plane-basics"],
+    "enables": ["slope-basics", "interpreting-graphs"],
+    "standardsAlignment": ["8.EE.5", "8.EE.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Make a table of x and y values",
+        "Plot points and connect with a line",
+        "All solutions to equation lie on the line"
+      ],
+      "commonMistakes": [
+        "Not using a ruler for the line",
+        "Only plotting two points without checking third",
+        "Incorrect arithmetic when making table"
+      ],
+      "teachingTips": [
+        "Choose easy x values (including 0)",
+        "Plot at least 3 points to verify",
+        "Extend line beyond plotted points",
+        "Label the line with its equation"
+      ],
+      "exampleTypes": ["Graph y = 2x + 1", "Graph y = -x + 3", "Graph x = 2 (vertical line)"],
+      "connectionsToPriorKnowledge": ["Coordinate plane", "Solving equations"]
+    },
+    "difficultyLevel": 5
+  },
+  {
+    "skillId": "slope-basics",
+    "displayName": "Understanding Slope",
+    "description": "Calculate and interpret slope as rate of change",
+    "category": "graphing",
+    "prerequisites": ["graphing-linear-equations", "ratios-and-rates"],
+    "enables": ["slope-intercept-form", "writing-equations"],
+    "standardsAlignment": ["8.EE.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Slope = rise/run = change in y / change in x",
+        "Positive slope rises left to right",
+        "Negative slope falls left to right",
+        "Zero slope is horizontal, undefined slope is vertical"
+      ],
+      "commonMistakes": [
+        "Reversing rise and run",
+        "Subtracting in wrong order",
+        "Confusing positive and negative slope"
+      ],
+      "teachingTips": [
+        "Use stairs or ramp analogy",
+        "Always start from left point",
+        "Count rise (up/down) then run (left/right)",
+        "Connect to real rates: speed, cost per item"
+      ],
+      "exampleTypes": ["Find slope from two points", "Find slope from graph", "Interpret slope in context"],
+      "connectionsToPriorKnowledge": ["Ratios", "Graphing", "Integers"]
+    },
+    "difficultyLevel": 6
+  },
+  {
+    "skillId": "slope-intercept-form",
+    "displayName": "Slope-Intercept Form (y = mx + b)",
+    "description": "Graph and write equations in y = mx + b form",
+    "category": "graphing",
+    "prerequisites": ["slope-basics", "graphing-linear-equations"],
+    "enables": ["writing-equations", "parallel-perpendicular-lines"],
+    "standardsAlignment": ["8.F.3", "8.F.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "y = mx + b where m is slope, b is y-intercept",
+        "Start at y-intercept (0, b)",
+        "Use slope to find next points",
+        "Can write equation if you know slope and y-intercept"
+      ],
+      "commonMistakes": [
+        "Confusing m and b",
+        "Thinking b is the x-intercept",
+        "Not using slope correctly to plot points"
+      ],
+      "teachingTips": [
+        "Identify m and b from equation first",
+        "Plot b on y-axis, then use slope",
+        "Practice reading slope and intercept from graphs",
+        "Connect to real situations with starting value and rate"
+      ],
+      "exampleTypes": ["Graph y = 3x + 2", "Write equation from graph", "Identify slope and intercept"],
+      "connectionsToPriorKnowledge": ["Slope", "Graphing", "Y-intercept"]
+    },
+    "difficultyLevel": 7
+  },
+  {
+    "skillId": "intro-to-functions",
+    "displayName": "Introduction to Functions",
+    "description": "Understand functions as input-output relationships",
+    "category": "functions",
+    "prerequisites": ["coordinate-plane-basics"],
+    "enables": ["function-notation", "linear-vs-nonlinear"],
+    "standardsAlignment": ["8.F.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Function assigns one output to each input",
+        "Can represent with table, graph, equation, words",
+        "Vertical line test for graphs",
+        "Domain (inputs) and range (outputs)"
+      ],
+      "commonMistakes": [
+        "Thinking any relationship is a function",
+        "Not understanding one-to-one vs. one-to-many",
+        "Confusing independent and dependent variables"
+      ],
+      "teachingTips": [
+        "Use function machine analogy",
+        "Give real examples: vending machines, recipes",
+        "Practice vertical line test",
+        "Emphasize: one input → one output"
+      ],
+      "exampleTypes": ["Function tables", "Is this a function?", "Function machines", "Real-world functions"],
+      "connectionsToPriorKnowledge": ["Ordered pairs", "Graphing"]
+    },
+    "difficultyLevel": 5
+  }
+]

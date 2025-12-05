@@ -83,6 +83,67 @@ const badgeSchema = new Schema({
   unlockedAt: { type: Date,   default: Date.now }
 }, { _id: false });
 
+/* ---------- SKILL MASTERY TRACKING ---------- */
+const skillMasterySchema = new Schema({
+  status: {
+    type: String,
+    enum: ['locked', 'ready', 'learning', 'mastered', 'needs-review'],
+    default: 'locked'
+  },
+  masteryScore: { type: Number, min: 0, max: 1, default: 0 },
+  lastPracticed: { type: Date },
+  consecutiveCorrect: { type: Number, default: 0 },
+  totalAttempts: { type: Number, default: 0 },
+  learningStarted: { type: Date },
+  masteredDate: { type: Date },
+  strugglingAreas: [String],  // Specific concepts within this skill
+  notes: String  // AI observations about student's understanding
+}, { _id: false });
+
+/* ---------- LEARNING PROFILE ---------- */
+const learningProfileSchema = new Schema({
+  // Student interests for personalized examples
+  interests: [String],  // e.g., ['skateboarding', 'video games', 'basketball']
+
+  // Learning style preferences (AI-detected)
+  learningStyle: {
+    prefersDiagrams: { type: Boolean, default: false },
+    prefersRealWorldExamples: { type: Boolean, default: false },
+    prefersStepByStep: { type: Boolean, default: false },
+    prefersDiscovery: { type: Boolean, default: false }
+  },
+
+  // Historical context
+  pastStruggles: [{
+    skill: String,
+    description: String,
+    date: Date
+  }],
+
+  recentWins: [{
+    skill: String,
+    description: String,
+    date: Date
+  }],
+
+  // Emotional/behavioral patterns
+  mathAnxietyLevel: { type: Number, min: 0, max: 10, default: 5 },
+  frustrationTolerance: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
+  confidenceLevel: { type: Number, min: 0, max: 10, default: 5 },
+
+  // AI relationship building
+  memorableConversations: [{
+    date: Date,
+    summary: String,
+    context: String  // Why this was memorable/important
+  }],
+
+  // Initial assessment
+  assessmentCompleted: { type: Boolean, default: false },
+  assessmentDate: { type: Date },
+  initialPlacement: String  // Starting point determined by assessment
+}, { _id: false });
+
 /* ---------- MAIN USER SCHEMA ---------- */
 const userSchema = new Schema({
   /* Credentials */
@@ -159,7 +220,19 @@ const userSchema = new Schema({
     default: () => ['mr-nappier', 'maya', 'ms-maria', 'bob']
   },
 
-  badges: { type: [badgeSchema], default: [] }
+  badges: { type: [badgeSchema], default: [] },
+
+  /* Skill Mastery & Learning Profile */
+  skillMastery: {
+    type: Map,
+    of: skillMasterySchema,
+    default: () => new Map()
+  },
+
+  learningProfile: {
+    type: learningProfileSchema,
+    default: () => ({})
+  }
 }, { timestamps: true });
 
 /* ---------- PRE-SAVE HOOK ---------- */
