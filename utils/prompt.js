@@ -1,5 +1,163 @@
 // utils/prompt.js
 
+/**
+ * Build skill mastery context for AI prompt
+ */
+function buildSkillMasteryContext(userProfile) {
+  if (!userProfile.skillMastery || userProfile.skillMastery.size === 0) {
+    return `--- SKILL PROGRESSION & LEARNING PATH ---
+**ASSESSMENT NEEDED:** This student hasn't completed their initial skills assessment yet.
+- If they ask what to learn or seem ready for structured learning, suggest they take the assessment
+- For now, provide tutoring help on whatever they ask about
+`;
+  }
+
+  const mastered = [];
+  const learning = [];
+  const ready = [];
+
+  for (const [skillId, data] of userProfile.skillMastery) {
+    const displayId = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+    if (data.status === 'mastered') {
+      mastered.push({ id: skillId, display: displayId, date: data.masteredDate });
+    } else if (data.status === 'learning') {
+      learning.push({ id: skillId, display: displayId, notes: data.notes });
+    } else if (data.status === 'ready') {
+      ready.push({ id: skillId, display: displayId });
+    }
+  }
+
+  // Sort mastered by date (most recent first)
+  mastered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  let context = `--- SKILL PROGRESSION & LEARNING PATH ---\n`;
+
+  if (mastered.length > 0) {
+    context += `**MASTERED SKILLS** (${mastered.length}):\n`;
+    const recentMastered = mastered.slice(0, 5);
+    recentMastered.forEach(skill => {
+      const daysAgo = skill.date ? Math.floor((new Date() - new Date(skill.date)) / (1000 * 60 * 60 * 24)) : null;
+      const timeStr = daysAgo !== null ? ` (${daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`})` : '';
+      context += `  ✓ ${skill.display}${timeStr}\n`;
+    });
+    if (mastered.length > 5) {
+      context += `  ... and ${mastered.length - 5} more\n`;
+    }
+    context += '\n';
+  }
+
+  if (learning.length > 0) {
+    context += `**CURRENTLY LEARNING:**\n`;
+    learning.forEach(skill => {
+      context += `  → ${skill.display}${skill.notes ? ` - ${skill.notes}` : ''}\n`;
+    });
+    context += '\n';
+  }
+
+  if (ready.length > 0) {
+    context += `**READY TO LEARN** (Prerequisites Met):\n`;
+    ready.slice(0, 5).forEach(skill => {
+      context += `  🔓 ${skill.display}\n`;
+    });
+    if (ready.length > 5) {
+      context += `  ... and ${ready.length - 5} more\n`;
+    }
+    context += '\n';
+  }
+
+  context += `**HOW TO USE THIS INFORMATION:**
+1. **Reference Growth:** When relevant, acknowledge their progress ("Remember when you were learning ${mastered[0]?.display || 'that skill'}? Look at you now!")
+2. **Suggest Next Steps:** When a student finishes a problem set or asks "what's next", suggest a ready skill
+3. **Mark Progress:** When you're confident they've mastered a skill, use: <SKILL_MASTERED:skill-id>
+4. **Start New Learning:** When teaching a new skill, use: <SKILL_STARTED:skill-id>
+5. **Stay Aligned:** Focus tutoring on current learning skills or ready skills unless student asks about something else
+
+**IMPORTANT:** Suggest new skills naturally in conversation. Don't force it. Examples:
+- "You're crushing these two-step equations! Want to level up to multi-step?"
+- "I've noticed you've got this down. Ready to try something new, or want more practice?"
+- After completing work: "Great session! You're ready for [skill] whenever you want to tackle it."
+`;
+
+  return context;
+}
+
+/**
+ * Build learning profile context for relationship-based teaching
+ */
+function buildLearningProfileContext(userProfile) {
+  const profile = userProfile.learningProfile || {};
+
+  if (!profile.assessmentCompleted) {
+    return '';
+  }
+
+  let context = `--- RELATIONSHIP & LEARNING PROFILE ---\n`;
+
+  // Learning style preferences
+  if (profile.learningStyle) {
+    const styles = [];
+    if (profile.learningStyle.prefersDiagrams) styles.push('visual/diagrams');
+    if (profile.learningStyle.prefersRealWorldExamples) styles.push('real-world examples');
+    if (profile.learningStyle.prefersStepByStep) styles.push('step-by-step guidance');
+    if (profile.learningStyle.prefersDiscovery) styles.push('discovery/exploration');
+
+    if (styles.length > 0) {
+      context += `**Learning Style:** ${styles.join(', ')}\n`;
+      context += '- Adapt your teaching to match these preferences\n\n';
+    }
+  }
+
+  // Past struggles
+  if (profile.pastStruggles && profile.pastStruggles.length > 0) {
+    context += `**Past Struggles:**\n`;
+    profile.pastStruggles.slice(0, 3).forEach(struggle => {
+      context += `  ⚠️  ${struggle.description || struggle.skill}\n`;
+    });
+    context += '- Be sensitive to these areas; celebrate when they overcome them\n\n';
+  }
+
+  // Recent wins
+  if (profile.recentWins && profile.recentWins.length > 0) {
+    context += `**Recent Wins:**\n`;
+    profile.recentWins.slice(0, 3).forEach(win => {
+      context += `  🎉 ${win.description || win.skill}\n`;
+    });
+    context += '- Reference these successes to build confidence\n\n';
+  }
+
+  // Math anxiety/confidence
+  if (profile.mathAnxietyLevel !== undefined) {
+    if (profile.mathAnxietyLevel > 6) {
+      context += `**Math Anxiety:** HIGH (${profile.mathAnxietyLevel}/10)\n`;
+      context += '- Be extra encouraging, patient, and positive\n';
+      context += '- Break problems into smaller steps\n';
+      context += '- Celebrate small wins frequently\n\n';
+    } else if (profile.mathAnxietyLevel < 4 && profile.confidenceLevel > 6) {
+      context += `**Confidence Level:** HIGH - Student is confident and ready for challenges\n\n`;
+    }
+  }
+
+  // Memorable conversations
+  if (profile.memorableConversations && profile.memorableConversations.length > 0) {
+    context += `**Memorable Moments:**\n`;
+    profile.memorableConversations.slice(0, 2).forEach(memory => {
+      context += `  💭 ${memory.summary} (${memory.context})\n`;
+    });
+    context += '- Reference these when relevant to build rapport\n\n';
+  }
+
+  context += `**RELATIONSHIP-BASED TEACHING PRINCIPLES:**
+1. **Remember & Reference:** Acknowledge their growth, recall past struggles they've overcome
+2. **Personalize Examples:** Use their interests (${userProfile.interests?.join(', ') || 'general contexts'}) in word problems
+3. **Adapt to Mood:** If you notice frustration, adjust your approach (smaller steps, more encouragement)
+4. **Build Connection:** You're not just teaching math, you're building a relationship that makes learning safe and enjoyable
+5. **Track Insights:** If you notice something important about how they learn, include: <LEARNING_INSIGHT:description>
+`;
+
+  return context;
+}
+
 function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
@@ -116,6 +274,11 @@ You are tutoring a student named ${firstName || 'a student'}.
 - Grade Level: ${gradeLevel || 'not specified'}
 - Preferred Tone: ${tonePreference || 'encouraging and patient'}
 - Learning Style Preferences: ${learningStyle || 'varied approaches'}
+${interests && interests.length > 0 ? `- Student Interests: ${interests.join(', ')} (use these for examples!)` : ''}
+
+${buildSkillMasteryContext(userProfile)}
+
+${buildLearningProfileContext(userProfile)}
 
 ${curriculumContext ? `--- CURRICULUM CONTEXT (FROM TEACHER) ---
 ${curriculumContext}
