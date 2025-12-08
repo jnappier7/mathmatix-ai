@@ -1385,8 +1385,16 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Convert FileList to Array if needed
-    const fileArray = files instanceof FileList ? Array.from(files) : [files];
+    // Convert FileList or Array to Array if needed
+    // Handle both FileList (from input) and Array (from drag-drop/file-upload.js)
+    let fileArray;
+    if (files instanceof FileList) {
+      fileArray = Array.from(files);
+    } else if (Array.isArray(files)) {
+      fileArray = files; // Already an array, don't wrap again!
+    } else {
+      fileArray = [files]; // Single file, wrap it
+    }
     console.log('[handleFileUpload] Processing', fileArray.length, 'file(s)');
     console.log('[handleFileUpload] fileArray:', fileArray);
     console.log('[handleFileUpload] About to enter forEach loop...');
