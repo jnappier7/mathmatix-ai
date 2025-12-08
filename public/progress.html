@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M∆THM∆TIΧ AI - Your Math Journey</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    .progress-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .progress-header {
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+      padding: 0.5rem;
+      transition: color 0.2s;
+    }
+
+    .back-btn:hover {
+      color: #12B3B3;
+    }
+
+    .progress-header h1 {
+      flex: 1;
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #12B3B3;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section-icon {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+      flex: 1;
+    }
+
+    .section-count {
+      background: #12B3B3;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .skill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .skill-item {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 1rem;
+      transition: transform 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+
+    .skill-item:hover {
+      background: #f0f0f0;
+      transform: translateX(4px);
+    }
+
+    .skill-item.mastered {
+      border-left: 4px solid #10b981;
+    }
+
+    .skill-item.learning {
+      border-left: 4px solid #3b82f6;
+    }
+
+    .skill-item.ready {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .skill-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .skill-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .skill-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .skill-badge.mastered {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .skill-badge.learning {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .skill-badge.ready {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .skill-meta {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    .skill-progress {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .skill-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .skill-actions {
+      margin-top: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .skill-btn {
+      background: #12B3B3;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .skill-btn:hover {
+      background: #0a8f8f;
+      transform: translateY(-2px);
+    }
+
+    .skill-btn.secondary {
+      background: white;
+      color: #12B3B3;
+      border: 2px solid #12B3B3;
+    }
+
+    .skill-btn.secondary:hover {
+      background: #f0f9f9;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: #ddd;
+      margin-bottom: 1rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #12B3B3;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .progress-container {
+        padding: 1rem;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <button id="logoutBtn" class="btn btn-tertiary logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </nav>
+  </header>
+
+  <main class="progress-container">
+    <div id="loading-state" class="loading">
+      <div class="spinner"></div>
+      <p>Loading your progress...</p>
+    </div>
+
+    <div id="progress-content" style="display: none;">
+      <div class="progress-header">
+        <button class="back-btn" onclick="history.back()">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1>Your Math Journey</h1>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-number" id="stat-mastered">0</span>
+          <span class="stat-label">Mastered</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="stat-learning">0</span>
+          <span class="stat-label">Learning</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="stat-ready">0</span>
+          <span class="stat-label">Ready</span>
+        </div>
+      </div>
+
+      <!-- Mastered Skills -->
+      <div class="section" id="mastered-section">
+        <div class="section-header">
+          <span class="section-icon">✅</span>
+          <h2 class="section-title">Mastered</h2>
+          <span class="section-count" id="mastered-count">0</span>
+        </div>
+        <div class="skill-list" id="mastered-list"></div>
+      </div>
+
+      <!-- Learning Skills -->
+      <div class="section" id="learning-section">
+        <div class="section-header">
+          <span class="section-icon">📚</span>
+          <h2 class="section-title">Currently Learning</h2>
+          <span class="section-count" id="learning-count">0</span>
+        </div>
+        <div class="skill-list" id="learning-list"></div>
+      </div>
+
+      <!-- Ready Skills -->
+      <div class="section" id="ready-section">
+        <div class="section-header">
+          <span class="section-icon">🔓</span>
+          <h2 class="section-title">Ready to Learn</h2>
+          <span class="section-count" id="ready-count">0</span>
+        </div>
+        <div class="skill-list" id="ready-list"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    async function init() {
+      try {
+        // Check auth
+        const userRes = await fetch('/user');
+        if (!userRes.ok) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        const { user } = await userRes.json();
+        if (!user || user.role !== 'student') {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        // Load progress
+        await loadProgress();
+
+        // Show content
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('progress-content').style.display = 'block';
+
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('loading-state').innerHTML =
+          '<p style="color: red;">Error loading progress. <a href="/student-dashboard.html">Go to Dashboard</a></p>';
+      }
+    }
+
+    async function loadProgress() {
+      const res = await fetch('/api/student/progress');
+      const data = await res.json();
+
+      if (!data.assessmentCompleted) {
+        document.getElementById('progress-content').innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-clipboard-check"></i>
+            <h2>No Progress Yet</h2>
+            <p>Take the assessment to start tracking your progress!</p>
+            <button class="skill-btn" onclick="location.href='/assessment.html'">
+              Take Assessment
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const { mastered, learning, ready } = data.progress;
+      const { totalMastered, currentlyLearning, readyToLearn } = data.stats;
+
+      // Update stats
+      document.getElementById('stat-mastered').textContent = totalMastered;
+      document.getElementById('stat-learning').textContent = currentlyLearning;
+      document.getElementById('stat-ready').textContent = readyToLearn;
+
+      // Update counts
+      document.getElementById('mastered-count').textContent = totalMastered;
+      document.getElementById('learning-count').textContent = currentlyLearning;
+      document.getElementById('ready-count').textContent = readyToLearn;
+
+      // Render lists
+      renderSkillList('mastered-list', mastered, 'mastered');
+      renderSkillList('learning-list', learning, 'learning');
+      renderSkillList('ready-list', ready, 'ready');
+
+      // Hide empty sections
+      if (totalMastered === 0) document.getElementById('mastered-section').style.display = 'none';
+      if (currentlyLearning === 0) document.getElementById('learning-section').style.display = 'none';
+      if (readyToLearn === 0) document.getElementById('ready-section').style.display = 'none';
+    }
+
+    function renderSkillList(listId, skills, type) {
+      const container = document.getElementById(listId);
+
+      if (skills.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No skills in this category yet.</p></div>';
+        return;
+      }
+
+      const html = skills.map(skill => {
+        const badgeLabel = type === 'mastered' ? 'Mastered' :
+                          type === 'learning' ? 'In Progress' : 'Ready';
+
+        let metaText = '';
+        if (type === 'mastered' && skill.masteredDate) {
+          metaText = `Completed ${formatDate(skill.masteredDate)}`;
+        } else if (type === 'learning') {
+          const progress = Math.round((skill.masteryScore || 0) * 100);
+          metaText = `${progress}% complete`;
+        }
+
+        let actionsHtml = '';
+        if (type === 'learning') {
+          actionsHtml = `
+            <div class="skill-actions">
+              <button class="skill-btn" onclick="continueSkill('${skill.skillId}')">
+                <i class="fas fa-play"></i> Continue
+              </button>
+            </div>
+          `;
+        } else if (type === 'ready') {
+          actionsHtml = `
+            <div class="skill-actions">
+              <button class="skill-btn" onclick="startSkill('${skill.skillId}')">
+                <i class="fas fa-rocket"></i> Start Learning
+              </button>
+            </div>
+          `;
+        }
+
+        let progressBar = '';
+        if (type === 'learning') {
+          const progress = Math.round((skill.masteryScore || 0) * 100);
+          progressBar = `
+            <div class="skill-progress">
+              <div class="skill-progress-fill" style="width: ${progress}%"></div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="skill-item ${type}">
+            <div class="skill-header">
+              <div class="skill-name">${skill.displayName}</div>
+              <div class="skill-badge ${type}">${badgeLabel}</div>
+            </div>
+            ${metaText ? `<div class="skill-meta">${metaText}</div>` : ''}
+            ${progressBar}
+            ${actionsHtml}
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = html;
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return 'today';
+      if (diffDays === 1) return 'yesterday';
+      if (diffDays < 7) return `${diffDays} days ago`;
+      return date.toLocaleDateString();
+    }
+
+    async function startSkill(skillId) {
+      try {
+        await fetch('/api/student/start-skill', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ skillId })
+        });
+
+        // Go to chat
+        window.location.href = '/chat.html';
+      } catch (error) {
+        console.error('Error starting skill:', error);
+        alert('Error starting skill. Please try again.');
+      }
+    }
+
+    function continueSkill(skillId) {
+      window.location.href = '/chat.html';
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await fetch('/logout', { method: 'POST' });
+        window.location.href = '/login.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '/login.html';
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>

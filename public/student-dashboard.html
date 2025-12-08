@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M∆THM∆TIΧ AI - Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .dashboard-header {
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-right: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .card-content {
+      margin: 1rem 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #12B3B3, #0a8f8f);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .skill-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .skill-meta {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .recent-item:last-child {
+      border-bottom: none;
+    }
+
+    .recent-item i {
+      color: #12B3B3;
+      margin-right: 0.75rem;
+      font-size: 1.2rem;
+    }
+
+    .recent-item-text {
+      flex: 1;
+    }
+
+    .recent-item-date {
+      font-size: 0.85rem;
+      color: #999;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #12B3B3, #0a8f8f);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(18, 179, 179, 0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #12B3B3;
+      border: 2px solid #12B3B3;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    .btn-secondary:hover {
+      background: #12B3B3;
+      color: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      color: #ddd;
+      margin-bottom: 1rem;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .quick-action-btn {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .quick-action-btn:hover {
+      border-color: #12B3B3;
+      transform: translateY(-2px);
+    }
+
+    .quick-action-btn i {
+      font-size: 2rem;
+      color: #12B3B3;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #12B3B3;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 1rem;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <button id="logoutBtn" class="btn btn-tertiary logout-button">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </nav>
+  </header>
+
+  <main class="dashboard-container">
+    <div id="loading-state" class="loading">
+      <div class="spinner"></div>
+      <p>Loading your progress...</p>
+    </div>
+
+    <div id="dashboard-content" style="display: none;">
+      <div class="dashboard-header">
+        <h1>Welcome back, <span id="student-name">Student</span>! 👋</h1>
+        <p id="welcome-subtitle">Ready to learn?</p>
+      </div>
+
+      <!-- Main Cards -->
+      <div class="dashboard-grid">
+        <!-- Continue Learning Card -->
+        <div id="continue-card" class="dashboard-card" style="display: none;">
+          <div class="card-header">
+            <div class="card-icon">📚</div>
+            <div>
+              <h3 class="card-title">Continue Learning</h3>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="skill-name" id="current-skill-name"></div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="current-skill-progress" style="width: 0%"></div>
+            </div>
+            <div class="skill-meta" id="current-skill-meta"></div>
+          </div>
+          <button class="btn-primary" onclick="continueLearning()">
+            <i class="fas fa-play"></i> Continue
+          </button>
+        </div>
+
+        <!-- Recent Progress Card -->
+        <div id="progress-card" class="dashboard-card" style="display: none;">
+          <div class="card-header">
+            <div class="card-icon">🎉</div>
+            <div>
+              <h3 class="card-title">Recent Progress</h3>
+            </div>
+          </div>
+          <div class="card-content" id="recent-wins-content">
+            <!-- Will be populated dynamically -->
+          </div>
+          <button class="btn-secondary" onclick="viewFullProgress()">
+            View All Progress
+          </button>
+        </div>
+
+        <!-- Get Started Card (No Assessment) -->
+        <div id="no-assessment-card" class="dashboard-card" style="display: none;">
+          <div class="card-header">
+            <div class="card-icon">🚀</div>
+            <div>
+              <h3 class="card-title">Get Started</h3>
+            </div>
+          </div>
+          <div class="card-content">
+            <p>Take a quick 10-15 minute assessment so I can understand where you're at with math and suggest what to learn next.</p>
+          </div>
+          <button class="btn-primary" onclick="startAssessment()">
+            <i class="fas fa-clipboard-check"></i> Take Assessment
+          </button>
+          <button class="btn-secondary" onclick="location.href='/chat.html'">
+            Just Chat Instead
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <a href="/chat.html" class="quick-action-btn">
+          <i class="fas fa-comment"></i>
+          <div>Chat with Tutor</div>
+        </a>
+        <a href="/progress.html" class="quick-action-btn">
+          <i class="fas fa-chart-line"></i>
+          <div>View Progress</div>
+        </a>
+        <a href="#" class="quick-action-btn" onclick="location.href='/chat.html'; return false;">
+          <i class="fas fa-book"></i>
+          <div>Get Homework Help</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentUserId = null;
+
+    // Check authentication and load dashboard
+    async function init() {
+      try {
+        // Get current user
+        const userRes = await fetch('/user');
+        if (!userRes.ok) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        const { user } = await userRes.json();
+        if (!user || user.role !== 'student') {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        currentUserId = user._id;
+        document.getElementById('student-name').textContent = user.firstName || 'Student';
+
+        // Load progress summary
+        await loadProgressSummary();
+
+        // Show content, hide loading
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('dashboard-content').style.display = 'block';
+
+      } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        document.getElementById('loading-state').innerHTML =
+          '<p style="color: red;">Error loading dashboard. <a href="/chat.html">Go to Chat</a></p>';
+      }
+    }
+
+    async function loadProgressSummary() {
+      try {
+        const res = await fetch('/api/student/progress/summary');
+        const data = await res.json();
+
+        if (!data.assessmentCompleted) {
+          // Show "get started" card
+          document.getElementById('no-assessment-card').style.display = 'block';
+          document.getElementById('welcome-subtitle').textContent =
+            'Let\'s find out what you know and build your learning path!';
+          return;
+        }
+
+        // Has completed assessment - show progress cards
+        if (data.currentLearning) {
+          const continueCard = document.getElementById('continue-card');
+          continueCard.style.display = 'block';
+
+          document.getElementById('current-skill-name').textContent = data.currentLearning.displayName;
+          document.getElementById('current-skill-progress').style.width = data.currentLearning.progress + '%';
+          document.getElementById('current-skill-meta').textContent =
+            data.currentLearning.progress + '% complete';
+        }
+
+        if (data.recentWins && data.recentWins.length > 0) {
+          const progressCard = document.getElementById('progress-card');
+          progressCard.style.display = 'block';
+
+          const winsHtml = data.recentWins.map(win => `
+            <div class="recent-item">
+              <i class="fas fa-check-circle"></i>
+              <div class="recent-item-text">
+                <div>${win.description}</div>
+                <div class="recent-item-date">${formatDate(win.date)}</div>
+              </div>
+            </div>
+          `).join('');
+
+          document.getElementById('recent-wins-content').innerHTML = winsHtml;
+        }
+
+      } catch (error) {
+        console.error('Error loading progress:', error);
+      }
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) return 'Today';
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return `${diffDays} days ago`;
+      return date.toLocaleDateString();
+    }
+
+    function continueLearning() {
+      window.location.href = '/chat.html';
+    }
+
+    function viewFullProgress() {
+      window.location.href = '/progress.html';
+    }
+
+    function startAssessment() {
+      window.location.href = '/assessment.html';
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await fetch('/logout', { method: 'POST' });
+        window.location.href = '/login.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = '/login.html';
+      }
+    });
+
+    // Initialize on page load
+    init();
+  </script>
+</body>
+</html>
