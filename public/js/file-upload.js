@@ -105,9 +105,14 @@ class FileUploadManager {
         // Claude-style: Attach immediately, no modal
         this.currentFile = file;
 
+        console.log('[FileUploadManager] handleFile called with:', file.name, file.type);
+
         // Use existing file handling system from script.js
         if (typeof handleFileUpload === 'function') {
+            console.log('[FileUploadManager] Calling handleFileUpload...');
             handleFileUpload([file]);
+        } else {
+            console.error('[FileUploadManager] ERROR: handleFileUpload function not found on window!');
         }
 
         // Focus input for user to add optional message

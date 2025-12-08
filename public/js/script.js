@@ -1379,10 +1379,15 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {File|FileList} files - File or FileList object
    */
   window.handleFileUpload = function(files) {
-    if (!files) return;
+    console.log('[handleFileUpload] Called with files:', files);
+    if (!files) {
+      console.warn('[handleFileUpload] No files provided');
+      return;
+    }
 
     // Convert FileList to Array if needed
     const fileArray = files instanceof FileList ? Array.from(files) : [files];
+    console.log('[handleFileUpload] Processing', fileArray.length, 'file(s)');
 
     // Check if adding these files would exceed the limit
     if (attachedFiles.length + fileArray.length > MAX_FILES) {
@@ -1410,8 +1415,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Add to attached files
       attachedFiles.push(file);
+      console.log('[handleFileUpload] Added file to attachedFiles. Total files:', attachedFiles.length);
 
       // Create file card
+      console.log('[handleFileUpload] Calling createFileCard for:', file.name);
       createFileCard(file);
     });
 
@@ -1425,8 +1432,13 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {File} file - File object with uploadId
    */
   function createFileCard(file) {
+    console.log('[createFileCard] Called for file:', file.name, 'Type:', file.type);
     const container = document.getElementById('file-grid-container');
-    if (!container) return;
+    if (!container) {
+      console.error('[createFileCard] ERROR: file-grid-container not found in DOM!');
+      return;
+    }
+    console.log('[createFileCard] Container found:', container);
 
     const card = document.createElement('div');
     card.className = 'file-card';
@@ -1465,6 +1477,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     container.appendChild(card);
+    console.log('[createFileCard] Card appended to container. Container children:', container.children.length);
   }
 
   /**
