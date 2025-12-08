@@ -1388,6 +1388,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Convert FileList to Array if needed
     const fileArray = files instanceof FileList ? Array.from(files) : [files];
     console.log('[handleFileUpload] Processing', fileArray.length, 'file(s)');
+    console.log('[handleFileUpload] fileArray:', fileArray);
+    console.log('[handleFileUpload] About to enter forEach loop...');
 
     // Check if adding these files would exceed the limit
     if (attachedFiles.length + fileArray.length > MAX_FILES) {
@@ -1396,7 +1398,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Validate and add files
-    fileArray.forEach(file => {
+    console.log('[handleFileUpload] Starting forEach on', fileArray.length, 'files');
+    fileArray.forEach((file, index) => {
+      console.log(`[handleFileUpload] forEach iteration ${index + 1}/${fileArray.length}`);
       console.log('[handleFileUpload] Validating file:', file.name, 'Type:', file.type, 'Size:', file.size);
 
       // Check file size (10MB limit)
