@@ -1472,31 +1472,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isPDF = file.type === 'application/pdf';
 
+    // Helper function to format file size
+    const formatSize = (bytes) => {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
+    };
+
     if (isPDF) {
-      // PDF icon
+      // PDF card with icon and info
       card.innerHTML = `
+        <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">×</button>
         <div class="file-card-pdf-icon">
           <i class="fas fa-file-pdf"></i>
         </div>
-        <div class="file-card-overlay">
-          <span class="file-card-name">${escapeHtml(file.name)}</span>
-          <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">
-            ×
-          </button>
+        <div class="file-card-info">
+          <span class="file-card-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+          <span class="file-card-size">${formatSize(file.size)}</span>
         </div>
       `;
     } else {
-      // Image preview
+      // Image preview card
+      card.style.padding = '0'; // Remove padding for images
       const reader = new FileReader();
       reader.onload = (e) => {
         card.innerHTML = `
-          <img src="${e.target.result}" class="file-card-preview" alt="${escapeHtml(file.name)}"/>
-          <div class="file-card-overlay">
-            <span class="file-card-name">${escapeHtml(file.name)}</span>
-            <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">
-              ×
-            </button>
-          </div>
+          <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">×</button>
+          <img src="${e.target.result}" class="file-card-preview" alt="${escapeHtml(file.name)}" title="${escapeHtml(file.name)}"/>
         `;
       };
       reader.readAsDataURL(file);
