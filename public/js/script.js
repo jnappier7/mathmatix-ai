@@ -1504,6 +1504,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     container.appendChild(card);
     console.log('[createFileCard] Card appended to container. Container children:', container.children.length);
+
+    // Force container to be visible (in case :empty CSS isn't updating)
+    container.style.display = 'grid';
+    console.log('[createFileCard] Forced container display to grid');
   }
 
   /**
