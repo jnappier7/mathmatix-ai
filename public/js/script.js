@@ -1397,18 +1397,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Validate and add files
     fileArray.forEach(file => {
+      console.log('[handleFileUpload] Validating file:', file.name, 'Type:', file.type, 'Size:', file.size);
+
       // Check file size (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
+        console.warn('[handleFileUpload] File too large:', file.name, file.size);
         showToast(`File too large: ${file.name} (max 10MB)`, 3000);
         return;
       }
 
-      // Check file type
-      const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/heic', 'application/pdf'];
+      // Check file type - added image/svg+xml for SVG support
+      const validTypes = [
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/webp',
+        'image/heic',
+        'image/svg+xml',  // Added SVG support
+        'application/pdf'
+      ];
       if (!validTypes.includes(file.type)) {
-        showToast(`Invalid file type: ${file.name}`, 3000);
+        console.warn('[handleFileUpload] Invalid file type:', file.name, file.type);
+        showToast(`Invalid file type: ${file.name} (${file.type}). Please upload images (PNG, JPG, WebP, SVG) or PDFs.`, 4000);
         return;
       }
+
+      console.log('[handleFileUpload] ✅ File passed validation:', file.name);
 
       // Add unique ID to file
       file.uploadId = `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
