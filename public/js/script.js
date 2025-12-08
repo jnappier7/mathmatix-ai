@@ -1654,7 +1654,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`;
+            throw new Error(errorMessage);
+        }
         const data = await response.json();
 
         // The rest of this function handles the AI response and is mostly the same
@@ -1694,7 +1698,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     } catch (error) {
         console.error("Chat error:", error);
-        appendMessage("I'm having trouble connecting. Please try again.", "system-error");
+
+        // Show specific error message if available, otherwise generic message
+        let errorMessage = "I'm having trouble connecting. Please try again.";
+        if (error.message) {
+            // Check if it's a specific error we can help with
+            if (error.message.includes('Mathpix') || error.message.includes('API credentials')) {
+                errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable. Please try again later or contact support.";
+            } else if (error.message.includes('PDF processing failed') || error.message.includes('Image OCR failed')) {
+                errorMessage = `File processing error: ${error.message}. Please try a different file or contact support if the issue persists.`;
+            } else if (!error.message.includes('Server error')) {
+                errorMessage = error.message;
+            }
+        }
+
+        appendMessage(errorMessage, "system-error");
     } finally {
         showThinkingIndicator(false);
     }

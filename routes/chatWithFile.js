@@ -38,18 +38,29 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
             if (file.mimetype === 'application/pdf') {
                 // PDFs: Use Mathpix /v3/pdf endpoint (specialized for documents)
                 console.log(`[chatWithFile] Using Mathpix PDF endpoint for: ${file.originalname}`);
-                const extractedText = await pdfOcr(file.buffer, file.originalname);
 
-                if (extractedText && extractedText.trim()) {
-                    pdfTexts.push({
-                        filename: file.originalname,
-                        text: extractedText
-                    });
-                    console.log(`[chatWithFile] Extracted ${extractedText.length} characters from PDF`);
-                } else {
-                    pdfTexts.push({
-                        filename: file.originalname,
-                        text: `[Could not extract text from ${file.originalname}]`
+                try {
+                    const extractedText = await pdfOcr(file.buffer, file.originalname);
+
+                    if (extractedText && extractedText.trim()) {
+                        pdfTexts.push({
+                            filename: file.originalname,
+                            text: extractedText
+                        });
+                        console.log(`[chatWithFile] Extracted ${extractedText.length} characters from PDF`);
+                    } else {
+                        pdfTexts.push({
+                            filename: file.originalname,
+                            text: `[Could not extract text from ${file.originalname}]`
+                        });
+                        console.warn(`[chatWithFile] No text extracted from PDF: ${file.originalname}`);
+                    }
+                } catch (pdfError) {
+                    console.error(`[chatWithFile] PDF processing error for ${file.originalname}:`, pdfError.message);
+                    // Return error to user instead of silently failing
+                    return res.status(500).json({
+                        message: `Failed to process PDF: ${pdfError.message}`,
+                        error: 'PDF_PROCESSING_ERROR'
                     });
                 }
             } else {

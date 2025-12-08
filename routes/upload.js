@@ -52,21 +52,34 @@ router.post("/", upload.single("file"), async (req, res) => {
 
         // Perform OCR - use appropriate processor based on file type
         let extracted;
-        if (file.mimetype === 'application/pdf') {
-            // Use Mathpix /v3/pdf endpoint for PDFs
-            extracted = await pdfOcr(file.buffer, file.originalname);
-        } else {
-            // Use Mathpix /v3/text endpoint for images
-            const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
-            extracted = await ocr(base64Image);
-        }
-
-        if (!extracted || extracted.trim() === '') {
-            return res.status(200).json({
-                text: "I couldn't read any text from that image. Could you try a clearer picture or type out the problem?",
+        try {
+            if (file.mimetype === 'application/pdf') {
+                // Use Mathpix /v3/pdf endpoint for PDFs
+                console.log('[Upload API] Processing PDF with Mathpix...');
+                extracted = await pdfOcr(file.buffer, file.originalname);
+            } else {
+                // Use Mathpix /v3/text endpoint for images
+                console.log('[Upload API] Processing image with Mathpix...');
+                const base64Image = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+                extracted = await ocr(base64Image);
+            }
+        } catch (ocrError) {
+            console.error('[Upload API] OCR processing error:', ocrError.message);
+            return res.status(500).json({
+                error: `Failed to process file: ${ocrError.message}`,
                 extractedText: ""
             });
         }
+
+        if (!extracted || extracted.trim() === '') {
+            console.warn('[Upload API] No text extracted from file');
+            return res.status(200).json({
+                text: "I couldn't read any text from that file. Could you try a clearer picture or type out the problem?",
+                extractedText: ""
+            });
+        }
+
+        console.log('[Upload API] Successfully extracted text, length:', extracted.length);
 
         // Get tutor configuration
         const tutor = TUTOR_CONFIG[user.selectedTutorId] || TUTOR_CONFIG.default;
