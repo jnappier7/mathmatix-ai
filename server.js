@@ -68,6 +68,7 @@ const summaryGeneratorRouter = require('./routes/summary_generator');
 const avatarRoutes = require('./routes/avatar');
 const graphRoutes = require('./routes/graph');
 const curriculumRoutes = require('./routes/curriculum');
+const assessmentRoutes = require('./routes/assessment');
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -183,6 +184,7 @@ app.use('/api/avatars', isAuthenticated, avatarRoutes);
 app.use('/api/graph', isAuthenticated, graphRoutes);
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
+app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, (req, res) => res.json({ user: req.user ? req.user.toObject() : null }));

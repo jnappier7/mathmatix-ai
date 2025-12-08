@@ -124,6 +124,76 @@ router.post('/', isAuthenticated, async (req, res) => {
             // TODO: Consider sending alert email to admin or incrementing warning counter on user
         }
 
+        // SKILL MASTERY TRACKING: Parse AI skill progression tags
+        const skillMasteredMatch = aiResponseText.match(/<SKILL_MASTERED:([^>]+)>/);
+        if (skillMasteredMatch) {
+            const skillId = skillMasteredMatch[1].trim();
+            user.skillMastery = user.skillMastery || new Map();
+            user.skillMastery.set(skillId, {
+                status: 'mastered',
+                masteryScore: 1.0,
+                masteredDate: new Date(),
+                notes: 'AI-determined mastery through conversation'
+            });
+
+            // Add to recent wins
+            if (!user.learningProfile.recentWins) {
+                user.learningProfile.recentWins = [];
+            }
+            const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            user.learningProfile.recentWins.unshift({
+                skill: skillId,
+                description: `Mastered ${displayName}`,
+                date: new Date()
+            });
+            // Keep only last 10 wins
+            user.learningProfile.recentWins = user.learningProfile.recentWins.slice(0, 10);
+
+            user.markModified('skillMastery');
+            user.markModified('learningProfile');
+            aiResponseText = aiResponseText.replace(skillMasteredMatch[0], '').trim();
+
+            console.log(`✓ Student ${user.firstName} mastered skill: ${skillId}`);
+        }
+
+        const skillStartedMatch = aiResponseText.match(/<SKILL_STARTED:([^>]+)>/);
+        if (skillStartedMatch) {
+            const skillId = skillStartedMatch[1].trim();
+            user.skillMastery = user.skillMastery || new Map();
+            user.skillMastery.set(skillId, {
+                status: 'learning',
+                masteryScore: 0.3,
+                learningStarted: new Date(),
+                notes: 'Currently learning with AI'
+            });
+            user.markModified('skillMastery');
+            aiResponseText = aiResponseText.replace(skillStartedMatch[0], '').trim();
+
+            console.log(`→ Student ${user.firstName} started learning: ${skillId}`);
+        }
+
+        const learningInsightMatch = aiResponseText.match(/<LEARNING_INSIGHT:([^>]+)>/);
+        if (learningInsightMatch) {
+            const insight = learningInsightMatch[1].trim();
+
+            // Add to memorable conversations
+            if (!user.learningProfile.memorableConversations) {
+                user.learningProfile.memorableConversations = [];
+            }
+            user.learningProfile.memorableConversations.unshift({
+                date: new Date(),
+                summary: insight,
+                context: 'Learning insight from AI'
+            });
+            // Keep only last 10
+            user.learningProfile.memorableConversations = user.learningProfile.memorableConversations.slice(0, 10);
+
+            user.markModified('learningProfile');
+            aiResponseText = aiResponseText.replace(learningInsightMatch[0], '').trim();
+
+            console.log(`💡 Learning insight for ${user.firstName}: ${insight}`);
+        }
+
         activeConversation.messages.push({ role: 'assistant', content: aiResponseText });
 
         // Real-time struggle detection and activity tracking
