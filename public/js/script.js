@@ -1379,10 +1379,15 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {File|FileList} files - File or FileList object
    */
   window.handleFileUpload = function(files) {
-    if (!files) return;
+    console.log('[handleFileUpload] Called with files:', files);
+    if (!files) {
+      console.warn('[handleFileUpload] No files provided');
+      return;
+    }
 
     // Convert FileList to Array if needed
     const fileArray = files instanceof FileList ? Array.from(files) : [files];
+    console.log('[handleFileUpload] Processing', fileArray.length, 'file(s)');
 
     // Check if adding these files would exceed the limit
     if (attachedFiles.length + fileArray.length > MAX_FILES) {
@@ -1410,8 +1415,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Add to attached files
       attachedFiles.push(file);
+      console.log('[handleFileUpload] Added file to attachedFiles. Total files:', attachedFiles.length);
 
       // Create file card
+      console.log('[handleFileUpload] Calling createFileCard for:', file.name);
       createFileCard(file);
     });
 
@@ -1425,8 +1432,13 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param {File} file - File object with uploadId
    */
   function createFileCard(file) {
+    console.log('[createFileCard] Called for file:', file.name, 'Type:', file.type);
     const container = document.getElementById('file-grid-container');
-    if (!container) return;
+    if (!container) {
+      console.error('[createFileCard] ERROR: file-grid-container not found in DOM!');
+      return;
+    }
+    console.log('[createFileCard] Container found:', container);
 
     const card = document.createElement('div');
     card.className = 'file-card';
@@ -1465,6 +1477,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     container.appendChild(card);
+    console.log('[createFileCard] Card appended to container. Container children:', container.children.length);
   }
 
   /**
@@ -1654,7 +1667,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`;
+            throw new Error(errorMessage);
+        }
         const data = await response.json();
 
         // The rest of this function handles the AI response and is mostly the same
@@ -1694,7 +1711,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     } catch (error) {
         console.error("Chat error:", error);
-        appendMessage("I'm having trouble connecting. Please try again.", "system-error");
+
+        // Show specific error message if available, otherwise generic message
+        let errorMessage = "I'm having trouble connecting. Please try again.";
+        if (error.message) {
+            // Check if it's a specific error we can help with
+            if (error.message.includes('Mathpix') || error.message.includes('API credentials')) {
+                errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable. Please try again later or contact support.";
+            } else if (error.message.includes('PDF processing failed') || error.message.includes('Image OCR failed')) {
+                errorMessage = `File processing error: ${error.message}. Please try a different file or contact support if the issue persists.`;
+            } else if (!error.message.includes('Server error')) {
+                errorMessage = error.message;
+            }
+        }
+
+        appendMessage(errorMessage, "system-error");
     } finally {
         showThinkingIndicator(false);
     }

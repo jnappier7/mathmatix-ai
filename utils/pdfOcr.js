@@ -13,6 +13,12 @@ module.exports = async function processPDF(pdfBuffer, filename) {
   try {
     console.log(`[pdfOcr] Starting PDF processing for: ${filename}`);
 
+    // Validate API credentials
+    if (!process.env.MATHPIX_APP_ID || !process.env.MATHPIX_APP_KEY) {
+      console.error('[pdfOcr] ERROR: Mathpix API credentials not configured');
+      throw new Error('Mathpix API credentials not configured. Please contact support.');
+    }
+
     // Step 1: Upload PDF to Mathpix
     const formData = new FormData();
     formData.append('file', pdfBuffer, { filename, contentType: 'application/pdf' });
@@ -20,6 +26,7 @@ module.exports = async function processPDF(pdfBuffer, filename) {
       conversion_formats: { text: true }
     }));
 
+    console.log(`[pdfOcr] Uploading PDF to Mathpix API...`);
     const uploadResponse = await axios.post(
       "https://api.mathpix.com/v3/pdf",
       formData,
@@ -33,8 +40,13 @@ module.exports = async function processPDF(pdfBuffer, filename) {
       }
     );
 
+    if (!uploadResponse.data || !uploadResponse.data.pdf_id) {
+      console.error('[pdfOcr] ERROR: No pdf_id in upload response:', uploadResponse.data);
+      throw new Error('Failed to upload PDF to Mathpix - no pdf_id returned');
+    }
+
     const pdfId = uploadResponse.data.pdf_id;
-    console.log(`[pdfOcr] PDF uploaded, got pdf_id: ${pdfId}`);
+    console.log(`[pdfOcr] PDF uploaded successfully, pdf_id: ${pdfId}`);
 
     // Step 2: Poll for completion (max 60 seconds)
     const maxAttempts = 30;
@@ -64,16 +76,25 @@ module.exports = async function processPDF(pdfBuffer, filename) {
         console.log(`[pdfOcr] Successfully extracted ${extractedText.length} characters from PDF`);
         return extractedText;
       } else if (status === 'error') {
+        const errorDetails = statusResponse.data?.error || 'Unknown error';
         console.error(`[pdfOcr] PDF processing failed:`, statusResponse.data);
-        return "";
+        throw new Error(`PDF processing failed: ${errorDetails}`);
       }
     }
 
     console.error(`[pdfOcr] PDF processing timeout after ${maxAttempts * pollInterval / 1000}s`);
-    return "";
+    throw new Error(`PDF processing timed out after ${maxAttempts * pollInterval / 1000} seconds. Please try a smaller PDF or contact support.`);
 
   } catch (err) {
-    console.error("[pdfOcr] Error processing PDF:", err?.response?.data || err.message);
-    return "";
+    console.error("[pdfOcr] Error processing PDF:", {
+      message: err.message,
+      status: err?.response?.status,
+      statusText: err?.response?.statusText,
+      data: err?.response?.data,
+      stack: err.stack
+    });
+
+    // Re-throw the error so it can be handled by the caller
+    throw new Error(`PDF processing failed: ${err.message}`);
   }
 };
