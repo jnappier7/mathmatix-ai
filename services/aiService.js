@@ -1,7 +1,7 @@
 // services/aiService.js
 
 const OpenAI = require("openai");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+// const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Initialize clients once using environment variables
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
