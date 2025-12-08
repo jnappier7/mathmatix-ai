@@ -4,7 +4,10 @@
  * Build skill mastery context for AI prompt
  */
 function buildSkillMasteryContext(userProfile) {
-  if (!userProfile.skillMastery || userProfile.skillMastery.size === 0) {
+  // Handle missing or invalid skillMastery field (existing users)
+  if (!userProfile.skillMastery ||
+      !(userProfile.skillMastery instanceof Map) ||
+      userProfile.skillMastery.size === 0) {
     return `--- SKILL PROGRESSION & LEARNING PATH ---
 **ASSESSMENT NEEDED:** This student hasn't completed their initial skills assessment yet.
 - If they ask what to learn or seem ready for structured learning, suggest they take the assessment
