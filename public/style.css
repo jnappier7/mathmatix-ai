@@ -3507,13 +3507,19 @@ main {
 .file-card {
     position: relative;
     aspect-ratio: 1;
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     animation: fileCardEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
 }
 
 @keyframes fileCardEnter {
@@ -3539,8 +3545,9 @@ main {
 }
 
 .file-card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border-color: #12B3B3;
 }
 
 /* File Preview Image */
@@ -3551,44 +3558,65 @@ main {
     background: #f5f5f5;
 }
 
-/* File Overlay */
-.file-card-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+/* PDF Icon */
+.file-card-pdf-icon {
+    font-size: 48px;
+    color: #DC2626;
+    margin-bottom: 8px;
+}
+
+.file-card-pdf-icon i {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* File Info Section */
+.file-card-info {
+    text-align: center;
+    width: 100%;
 }
 
 .file-card-name {
-    color: white;
+    color: #374151;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex: 1;
-    margin-right: 4px;
+    width: 100%;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.file-card-size {
+    color: #9CA3AF;
+    font-size: 10px;
 }
 
 /* Remove Button */
 .file-card-remove {
-    background: rgba(255, 59, 48, 0.9);
-    border: none;
-    color: white;
-    width: 24px;
-    height: 24px;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e5e7eb;
+    color: #6B7280;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.file-card-remove:hover {
+    background: #FEE2E2;
+    color: #DC2626;
+    border-color: #FCA5A5;
 }
 /* ============================================
    TEACHER DASHBOARD TABS & HOMEWORK

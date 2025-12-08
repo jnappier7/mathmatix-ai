@@ -23,7 +23,7 @@ module.exports = async function processPDF(pdfBuffer, filename) {
     const formData = new FormData();
     formData.append('file', pdfBuffer, { filename, contentType: 'application/pdf' });
     formData.append('options_json', JSON.stringify({
-      conversion_formats: { text: true }
+      conversion_formats: { mmd: true }  // Use 'mmd' (Markdown) instead of 'text'
     }));
 
     console.log(`[pdfOcr] Uploading PDF to Mathpix API...`);
@@ -65,12 +65,12 @@ module.exports = async function processPDF(pdfBuffer, filename) {
         }
       );
 
-      const { status, text_url } = statusResponse.data;
+      const { status, mmd: mmdUrl } = statusResponse.data;
       console.log(`[pdfOcr] Poll attempt ${attempt + 1}/${maxAttempts}, status: ${status}`);
 
-      if (status === 'completed' && text_url) {
-        // Step 3: Fetch the extracted text
-        const textResponse = await axios.get(text_url);
+      if (status === 'completed' && mmdUrl) {
+        // Step 3: Fetch the extracted text (in Markdown format)
+        const textResponse = await axios.get(mmdUrl);
         const extractedText = textResponse.data;
 
         console.log(`[pdfOcr] Successfully extracted ${extractedText.length} characters from PDF`);
