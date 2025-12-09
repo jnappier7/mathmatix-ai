@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeSettingsBtn = document.getElementById("close-settings-modal-btn");
     const handsFreeToggle = document.getElementById("handsFreeToggle");
     const autoplayTtsToggle = document.getElementById("autoplayTtsToggle");
-    const tutorSelectDropdown = document.getElementById('tutor-select-dropdown');
+    const changeTutorBtn = document.getElementById('change-tutor-btn');
     const stopAudioBtn = document.getElementById('stop-audio-btn');
     const fullscreenDropzone = document.getElementById('app-layout-wrapper');
     const studentLinkCodeValue = document.getElementById('student-link-code-value');
@@ -1917,23 +1917,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (settingsModal && currentUser) {
             handsFreeToggle.checked = !!currentUser.preferences.handsFreeModeEnabled;
             autoplayTtsToggle.checked = !!currentUser.preferences.autoplayTtsHandsFree;
-            if (tutorSelectDropdown && window.TUTOR_CONFIG) {
-                tutorSelectDropdown.innerHTML = '';
-                if (currentUser.unlockedItems && Array.isArray(currentUser.unlockedItems)) {
-                    currentUser.unlockedItems.forEach(tutorId => {
-                        const tutor = window.TUTOR_CONFIG[tutorId];
-                        if (tutor) {
-                            const option = document.createElement('option');
-                            option.value = tutorId;
-                            option.textContent = tutor.name;
-                            if (tutorId === currentUser.selectedTutorId) {
-                                option.selected = true;
-                            }
-                            tutorSelectDropdown.appendChild(option);
-                        }
-                    });
-                }
-            }
+            // Tutor change button handled separately below
             settingsModal.classList.add('is-visible');
         }
     }
@@ -2100,13 +2084,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (tutorSelectDropdown) {
-        tutorSelectDropdown.addEventListener('change', async () => {
-            const newTutorId = tutorSelectDropdown.value;
-            if (newTutorId && newTutorId !== currentUser.selectedTutorId) {
-                await updateSettings({ selectedTutorId: newTutorId });
-                updateTutorAvatar();
-            }
+    if (changeTutorBtn) {
+        changeTutorBtn.addEventListener('click', () => {
+            window.location.href = '/pick-tutor.html';
         });
     }
 
