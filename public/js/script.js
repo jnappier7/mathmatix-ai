@@ -2203,6 +2203,48 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    
+
+    // ============================================
+    // DESMOS GRAPHING CALCULATOR MODAL
+    // ============================================
+    const openGraphingCalcBtn = document.getElementById('open-graphing-calc-btn');
+    const closeGraphingCalcBtn = document.getElementById('close-graphing-calc-modal');
+    const graphingCalcModal = document.getElementById('graphing-calc-modal');
+    let desmosCalculator = null;
+
+    if (openGraphingCalcBtn && graphingCalcModal) {
+        openGraphingCalcBtn.addEventListener('click', () => {
+            graphingCalcModal.style.display = 'flex';
+
+            // Initialize Desmos calculator on first open
+            if (!desmosCalculator && window.Desmos) {
+                const container = document.getElementById('desmos-calculator-container');
+                if (container) {
+                    desmosCalculator = Desmos.GraphingCalculator(container, {
+                        expressions: true,
+                        settingsMenu: true,
+                        zoomButtons: true,
+                        expressionsTopbar: true,
+                        border: false
+                    });
+                }
+            }
+        });
+
+        // Close modal on X button
+        if (closeGraphingCalcBtn) {
+            closeGraphingCalcBtn.addEventListener('click', () => {
+                graphingCalcModal.style.display = 'none';
+            });
+        }
+
+        // Close modal on overlay click
+        graphingCalcModal.addEventListener('click', (e) => {
+            if (e.target === graphingCalcModal) {
+                graphingCalcModal.style.display = 'none';
+            }
+        });
+    }
+
     initializeApp();
 });
