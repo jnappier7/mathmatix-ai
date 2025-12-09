@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
         // --- NATURAL WELCOME MESSAGE PROMPT ---
         if (contextType !== 'none') {
              messagesForAI.push({ role: "system", content: `(Last session context: \n${lastContextForAI})` });
-             userMessagePart = `Write a quick, casual greeting for ${user.firstName}. Keep it SHORT (1-2 sentences max). Sound natural, like you're texting. Sometimes reference last session, sometimes don't - mix it up. When you do reference it, vary your approach: don't always say "I remember how you..." or "I was thinking about..." Just dive in naturally. Then ask what they want to work on. BANNED PHRASES: "Great to see you", "Welcome back", "I remember how you solved", "I was thinking about how you", "that tricky problem". Be creative.`;
+             userMessagePart = `Write a quick, casual greeting for ${user.firstName}. Keep it SHORT (1-2 sentences max). Sound natural, like you're texting. Sometimes reference last session, sometimes don't - mix it up. When you do reference it, vary your approach: don't always say "I remember how you..." or "I was thinking about..." Just dive in naturally. Then ask what they want to work on. BANNED PHRASES: "Great to see you", "Welcome back", "I remember how you solved", "I was thinking about how you", "that tricky problem", "Ready to dive into". Be creative.`;
         } else {
             userMessagePart = `Write a quick, casual first-time greeting for ${user.firstName}. Keep it SHORT (1-2 sentences). Sound friendly and human, not robotic. Ask what they want to work on. NO canned phrases.`;
         }
