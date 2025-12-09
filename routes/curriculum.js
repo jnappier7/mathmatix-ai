@@ -490,56 +490,77 @@ function parseCommonCurriculumHTML(html) {
     const lessons = [];
     let weekNumber = 0;
 
+    console.log('🔍 Starting Common Curriculum parsing...');
+    console.log(`📄 HTML length: ${html.length} characters`);
+
     // Common Curriculum structure: Look for week containers, daily schedules, etc.
     // The structure may vary, so we'll look for common patterns
 
-    // Strategy 1: Look for week/unit containers
-    $('.week, .unit, [class*="week"], [class*="unit"]').each(function() {
-        weekNumber++;
+    // Strategy 1: Look for week/unit containers with more flexible selectors
+    const weekSelectors = $('.week, .unit, [class*="week"], [class*="unit"], [id*="week"], [id*="unit"], tr, .row, [class*="schedule"], [class*="lesson"]');
+    console.log(`📋 Found ${weekSelectors.length} potential week/lesson containers`);
+
+    weekSelectors.each(function() {
         const weekEl = $(this);
+        const weekText = weekEl.text().trim();
 
-        // Extract week info
-        const weekText = weekEl.find('.week-title, .unit-title, h2, h3').first().text().trim();
+        // Skip empty or very short elements
+        if (weekText.length < 10) return;
 
-        // Look for date ranges
-        const dateText = weekEl.find('.date, .dates, [class*="date"]').text().trim();
-        const dates = extractDates(dateText);
+        // Try to find week number in text
+        const weekMatch = weekText.match(/week\s*#?\s*(\d+)/i) || weekText.match(/unit\s*#?\s*(\d+)/i);
+        if (weekMatch) {
+            weekNumber = parseInt(weekMatch[1]);
+        } else {
+            weekNumber++;
+        }
 
-        // Look for daily lessons within this week
-        weekEl.find('.day, .lesson, [class*="day"], [class*="lesson"]').each(function() {
-            const lessonEl = $(this);
+        // Extract topic - try multiple patterns
+        let topic = weekEl.find('.topic, .title, .lesson-title, h2, h3, h4, h5, td:first-child, .name').first().text().trim();
 
-            // Extract topic
-            const topic = lessonEl.find('.topic, .title, h4, h5').first().text().trim() || weekText;
+        // If no specific topic found, use the element text (first 100 chars)
+        if (!topic || topic.length < 3) {
+            topic = weekText.slice(0, 100).replace(/\s+/g, ' ').trim();
+        }
 
-            if (!topic) return;
+        if (!topic || topic.length < 3) return;
 
-            // Extract all resource links
-            const resources = [];
-            lessonEl.find('a[href]').each(function() {
-                const href = $(this).attr('href');
-                const text = $(this).text().trim();
+        // Look for date ranges with more patterns
+        const dateText = weekEl.find('.date, .dates, [class*="date"], td').text().trim();
+        const dates = extractDates(dateText || weekText);
 
-                // Filter for actual resource links (PDFs, videos, etc.)
-                if (href && (
-                    href.includes('.pdf') ||
-                    href.includes('.mp4') ||
-                    href.includes('.docx') ||
-                    href.includes('.pptx') ||
-                    href.includes('youtube.com') ||
-                    href.includes('vimeo.com') ||
-                    href.includes('drive.google.com')
-                )) {
-                    // Make absolute URL if needed
-                    const absoluteUrl = href.startsWith('http') ? href :
-                                      href.startsWith('/') ? `https://www.commoncurriculum.com${href}` :
-                                      `https://www.commoncurriculum.com/${href}`;
+        // Extract all resource links
+        const resources = [];
+        weekEl.find('a[href]').each(function() {
+            const href = $(this).attr('href');
+            const text = $(this).text().trim();
+
+            // Filter for actual resource links (PDFs, videos, etc.)
+            if (href && (
+                href.includes('.pdf') ||
+                href.includes('.mp4') ||
+                href.includes('.docx') ||
+                href.includes('.pptx') ||
+                href.includes('youtube.com') ||
+                href.includes('youtu.be') ||
+                href.includes('vimeo.com') ||
+                href.includes('drive.google.com') ||
+                href.includes('dropbox.com')
+            )) {
+                // Make absolute URL if needed
+                const absoluteUrl = href.startsWith('http') ? href :
+                                  href.startsWith('/') ? `https://www.commoncurriculum.com${href}` :
+                                  `https://www.commoncurriculum.com/${href}`;
+                if (!resources.includes(absoluteUrl)) {
                     resources.push(absoluteUrl);
                 }
-            });
+            }
+        });
 
+        // Only add lessons that have meaningful content
+        if (topic.length >= 5) {
             // Extract standards, objectives, keywords from text
-            const fullText = lessonEl.text();
+            const fullText = weekEl.text();
             const standards = extractStandards(fullText);
             const objectives = extractObjectives(fullText);
 
@@ -552,13 +573,66 @@ function parseCommonCurriculumHTML(html) {
                 objectives,
                 keywords: [],
                 resources,
-                notes: weekText !== topic ? weekText : ''
+                notes: ''
             });
-        });
+        }
     });
 
-    // Strategy 2: If no structured weeks found, look for all links with resources
+    console.log(`✅ Strategy 1 found ${lessons.length} lessons`);
+
+    // Strategy 2: If no structured weeks found, look for tables
     if (lessons.length === 0) {
+        console.log('📊 Trying table parsing strategy...');
+
+        $('table tr').each(function(index) {
+            const row = $(this);
+            const cells = row.find('td, th');
+
+            if (cells.length < 2) return; // Need at least 2 columns
+
+            const firstCell = cells.eq(0).text().trim();
+            const secondCell = cells.eq(1).text().trim();
+
+            // Skip header rows
+            if (firstCell.toLowerCase().includes('week') && firstCell.length < 20) return;
+
+            if (firstCell.length > 3 && secondCell.length > 3) {
+                const resources = [];
+                row.find('a[href]').each(function() {
+                    const href = $(this).attr('href');
+                    if (href && (
+                        href.includes('.pdf') ||
+                        href.includes('youtube.com') ||
+                        href.includes('drive.google.com')
+                    )) {
+                        const absoluteUrl = href.startsWith('http') ? href :
+                                          href.startsWith('/') ? `https://www.commoncurriculum.com${href}` :
+                                          `https://www.commoncurriculum.com/${href}`;
+                        resources.push(absoluteUrl);
+                    }
+                });
+
+                lessons.push({
+                    weekNumber: index,
+                    topic: firstCell + ' - ' + secondCell,
+                    startDate: null,
+                    endDate: null,
+                    standards: [],
+                    objectives: [],
+                    keywords: [],
+                    resources,
+                    notes: 'Imported from table'
+                });
+            }
+        });
+
+        console.log(`✅ Table strategy found ${lessons.length} lessons`);
+    }
+
+    // Strategy 3: Fall back to extracting all resource links
+    if (lessons.length === 0) {
+        console.log('🔗 Falling back to link extraction strategy...');
+
         const allLinks = [];
         $('a[href]').each(function() {
             const href = $(this).attr('href');
@@ -582,6 +656,8 @@ function parseCommonCurriculumHTML(html) {
                 });
             }
         });
+
+        console.log(`🔗 Found ${allLinks.length} resource links`);
 
         // Group by context/topic
         if (allLinks.length > 0) {
@@ -613,7 +689,20 @@ function parseCommonCurriculumHTML(html) {
         }
     }
 
-    return lessons;
+    // Deduplicate lessons by topic
+    const uniqueLessons = [];
+    const seenTopics = new Set();
+
+    lessons.forEach(lesson => {
+        if (!seenTopics.has(lesson.topic)) {
+            seenTopics.add(lesson.topic);
+            uniqueLessons.push(lesson);
+        }
+    });
+
+    console.log(`✨ Final result: ${uniqueLessons.length} unique lessons`);
+
+    return uniqueLessons;
 }
 
 // Extract date ranges from text
