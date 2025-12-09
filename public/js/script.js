@@ -1362,8 +1362,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderMathInElement(element) {
-        if (window.MathLive && typeof window.MathLive.renderMathInElement === 'function') {
-            window.MathLive.renderMathInElement(element);
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
         }
     }
     
