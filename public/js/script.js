@@ -1776,9 +1776,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
-            const tutorS = data.newlyUnlockedTutors.length > 1 ? "s" : "";
-            showToast(`🎉 You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
-            triggerConfetti();
+            // Show dramatic unlock screen for each tutor
+            showTutorUnlockCelebration(data.newlyUnlockedTutors);
         }
         
         if (data.userXp !== undefined) {
@@ -2222,6 +2221,69 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.dataTransfer.clearData();
             }
         });
+    }
+
+    // ============================================
+    // TUTOR UNLOCK CELEBRATION
+    // ============================================
+    function showTutorUnlockCelebration(tutorIds) {
+        if (!tutorIds || tutorIds.length === 0) return;
+
+        let currentIndex = 0;
+
+        function showNextTutor() {
+            if (currentIndex >= tutorIds.length) {
+                triggerConfetti();
+                return;
+            }
+
+            const tutorId = tutorIds[currentIndex];
+            const tutor = window.TUTOR_CONFIG[tutorId];
+            if (!tutor) {
+                currentIndex++;
+                showNextTutor();
+                return;
+            }
+
+            const unlockScreen = document.getElementById('tutor-unlock-screen');
+            const unlockImage = document.getElementById('unlock-tutor-image');
+            const unlockName = document.getElementById('unlock-tutor-name');
+            const unlockCatchphrase = document.getElementById('unlock-tutor-catchphrase');
+            const unlockSpecialty = document.getElementById('unlock-tutor-specialty');
+
+            // Set tutor info
+            unlockImage.src = `/images/tutors/${tutor.image}`;
+            unlockImage.alt = tutor.name;
+            unlockName.textContent = tutor.name;
+            unlockCatchphrase.textContent = `"${tutor.catchphrase}"`;
+            unlockSpecialty.textContent = `Specialties: ${tutor.specialties}`;
+
+            // Show overlay
+            unlockScreen.style.display = 'flex';
+
+            // Play sound effect (optional - if you have one)
+            // You could add a dramatic sound here
+
+            // Click to dismiss
+            const dismissHandler = () => {
+                unlockScreen.style.display = 'none';
+                unlockScreen.removeEventListener('click', dismissHandler);
+                currentIndex++;
+                // Small delay before showing next tutor
+                setTimeout(showNextTutor, 300);
+            };
+
+            unlockScreen.addEventListener('click', dismissHandler);
+
+            // Auto-dismiss after 8 seconds if not clicked
+            setTimeout(() => {
+                if (unlockScreen.style.display === 'flex') {
+                    unlockScreen.click();
+                }
+            }, 8000);
+        }
+
+        showNextTutor();
     }
 
     // ============================================
