@@ -1653,6 +1653,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 playAudio(speakableText, tutor.voiceId, bubble.id);
             });
             bubble.appendChild(playBtn);
+
+            // Add emoji reaction functionality
+            const reactionContainer = document.createElement('div');
+            reactionContainer.className = 'message-reaction-container';
+
+            const reactionDisplay = document.createElement('div');
+            reactionDisplay.className = 'reaction-display';
+            reactionContainer.appendChild(reactionDisplay);
+
+            const reactionBtn = document.createElement('button');
+            reactionBtn.className = 'reaction-add-btn';
+            reactionBtn.innerHTML = '<i class="far fa-smile"></i>';
+            reactionBtn.setAttribute('title', 'Add reaction');
+            reactionBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showEmojiPicker(bubble, reactionDisplay);
+            });
+            reactionContainer.appendChild(reactionBtn);
+
+            bubble.appendChild(reactionContainer);
         }
 
         chatBox.appendChild(bubble);
@@ -2202,6 +2222,67 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.dataTransfer.clearData();
             }
         });
+    }
+
+    // ============================================
+    // EMOJI REACTION SYSTEM
+    // ============================================
+    const REACTION_EMOJIS = ['❤️', '👍', '😂', '🔥', '🎉', '💯'];
+
+    function showEmojiPicker(messageBubble, reactionDisplay) {
+        // Remove any existing picker
+        const existingPicker = document.querySelector('.emoji-picker-popup');
+        if (existingPicker) existingPicker.remove();
+
+        // Create picker
+        const picker = document.createElement('div');
+        picker.className = 'emoji-picker-popup';
+
+        REACTION_EMOJIS.forEach(emoji => {
+            const emojiBtn = document.createElement('button');
+            emojiBtn.className = 'emoji-option';
+            emojiBtn.textContent = emoji;
+            emojiBtn.addEventListener('click', () => {
+                addReaction(messageBubble, reactionDisplay, emoji);
+                picker.remove();
+            });
+            picker.appendChild(emojiBtn);
+        });
+
+        messageBubble.appendChild(picker);
+
+        // Close picker when clicking outside
+        setTimeout(() => {
+            const closeHandler = (e) => {
+                if (!picker.contains(e.target)) {
+                    picker.remove();
+                    document.removeEventListener('click', closeHandler);
+                }
+            };
+            document.addEventListener('click', closeHandler);
+        }, 0);
+    }
+
+    function addReaction(messageBubble, reactionDisplay, emoji) {
+        // Check if already has this reaction
+        const existingReaction = reactionDisplay.querySelector('.reaction-emoji');
+        if (existingReaction && existingReaction.textContent === emoji) {
+            // Remove reaction
+            existingReaction.remove();
+            reactionDisplay.classList.remove('has-reaction');
+        } else {
+            // Clear previous reaction and add new one
+            reactionDisplay.innerHTML = '';
+            const reactionEmoji = document.createElement('span');
+            reactionEmoji.className = 'reaction-emoji';
+            reactionEmoji.textContent = emoji;
+            reactionEmoji.addEventListener('click', () => {
+                reactionEmoji.remove();
+                reactionDisplay.classList.remove('has-reaction');
+            });
+            reactionDisplay.appendChild(reactionEmoji);
+            reactionDisplay.classList.add('has-reaction');
+        }
     }
 
     // ============================================

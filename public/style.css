@@ -979,8 +979,118 @@ a:hover {
     background-color: #e0e0e0; /* Example: Light gray background for AI */
     color: var(--clr-text-primary); /* Example: Dark text for AI messages */
     border-bottom-left-radius: 4px; /* Slightly less rounded corner at the bottom left for AI */
+    position: relative; /* For absolute positioning of reaction elements */
 }
 
+/* ===== EMOJI REACTION SYSTEM ===== */
+.message-reaction-container {
+    position: absolute;
+    bottom: -12px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 10;
+}
+
+.reaction-display {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 2px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.reaction-display.has-reaction {
+    display: flex;
+}
+
+.reaction-emoji {
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    user-select: none;
+}
+
+.reaction-emoji:hover {
+    transform: scale(1.2);
+}
+
+.reaction-add-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: white;
+    border: 1px solid #d0d0d0;
+    border-radius: 14px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.reaction-add-btn i {
+    font-size: 14px;
+    color: #666;
+}
+
+.message.ai:hover .reaction-add-btn {
+    display: flex;
+    opacity: 1;
+}
+
+.emoji-picker-popup {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    padding: 8px;
+    display: flex;
+    gap: 4px;
+    z-index: 1000;
+    animation: slideUp 0.15s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.emoji-option {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.emoji-option:hover {
+    background: #f0f0f0;
+    transform: scale(1.2);
+}
+
+.emoji-option:active {
+    transform: scale(1.1);
+}
 
 .chat-image {
     max-width: 100%;
