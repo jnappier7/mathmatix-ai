@@ -187,7 +187,37 @@ app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
 
 // User Profile & Settings Routes
-app.get("/user", isAuthenticated, (req, res) => res.json({ user: req.user ? req.user.toObject() : null }));
+app.get("/user", isAuthenticated, async (req, res) => {
+    try {
+        if (!req.user) return res.json({ user: null });
+
+        const User = require('./models/user');
+        const { getTutorsToUnlock } = require('./utils/unlockTutors');
+
+        // Check for retroactive tutor unlocks
+        const user = await User.findById(req.user._id);
+        if (user && user.level) {
+            const tutorsToUnlock = getTutorsToUnlock(user.level, user.unlockedItems || []);
+
+            if (tutorsToUnlock.length > 0) {
+                // User should have tutors they don't - add them retroactively
+                user.unlockedItems = user.unlockedItems || [];
+                tutorsToUnlock.forEach(tutorId => {
+                    if (!user.unlockedItems.includes(tutorId)) {
+                        user.unlockedItems.push(tutorId);
+                    }
+                });
+                await user.save();
+                console.log(`✨ Retroactively unlocked ${tutorsToUnlock.length} tutor(s) for ${user.firstName}: ${tutorsToUnlock.join(', ')}`);
+            }
+        }
+
+        res.json({ user: user ? user.toObject() : req.user.toObject() });
+    } catch (error) {
+        console.error('Error in /user endpoint:', error);
+        res.json({ user: req.user ? req.user.toObject() : null });
+    }
+});
 
 app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
     try {

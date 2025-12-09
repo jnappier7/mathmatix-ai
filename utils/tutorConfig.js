@@ -61,7 +61,7 @@ const TUTOR_CONFIG = {
     about: "With a warm and encouraging style, Ms. Rashida helps students overcome math anxiety and see their own potential.",
     specialties: "Middle School Math, building confidence, positive reinforcement.",
     voicePreview: "Welcome. I'm here to help you see that you are more than capable. We'll go at your pace and celebrate every success.",
-    unlocked: false
+    unlockLevel: 5
   },
   "prof-davies": {
     name: "Prof. Davies",
@@ -72,7 +72,7 @@ const TUTOR_CONFIG = {
     about: "A seasoned academic who enjoys diving deep into complex topics and exploring the elegant proofs behind mathematical theories.",
     specialties: "Calculus, Theoretical Math, University-level topics.",
     voicePreview: "Greetings. True understanding in mathematics comes not from memorization, but from inquiry. Let us begin our exploration.",
-    unlocked: false
+    unlockLevel: 10
   },
   "ms-alex": {
     name: "Ms. Alex",
@@ -83,7 +83,7 @@ const TUTOR_CONFIG = {
     about: "Ms. Alex brings a sharp, modern approach to tutoring, focusing on efficient strategies and clear, step-by-step instructions.",
     specialties: "SAT/ACT Prep, Statistics, Data-driven problem solving.",
     voicePreview: "Hello. There's always a strategy. Let's find the most efficient one for you and get you ready for test day.",
-    unlocked: false
+    unlockLevel: 15
   },
   "mr-lee": {
     name: "Mr. Lee",
@@ -94,7 +94,7 @@ const TUTOR_CONFIG = {
     about: "Mr. Lee is a meticulous and focused tutor who emphasizes precision and consistent practice to build mastery.",
     specialties: "Trigonometry, Advanced Placement (AP) courses.",
     voicePreview: "Welcome. To achieve mastery in mathematics, we must be precise. Let's focus on the details and build strong habits.",
-    unlocked: false
+    unlockLevel: 20
   },
   "dr-g": {
     name: "Dr. G",
@@ -104,9 +104,8 @@ const TUTOR_CONFIG = {
     personality: "You are Dr. G, a powerful yet gentle giant with a calm, reassuring presence. You speak in measured tones and use strength metaphors, saying things like 'Even the heaviest problems can be lifted with the right approach' and 'We will tackle this together.' You break intimidating problems into manageable pieces, often saying 'Do not be overwhelmed—this is just many small steps.' You have a philosophical side, sometimes saying 'Patience is a form of strength' or 'The journey builds the strength to reach the destination.' You make students feel protected and capable.",
     about: "A powerful yet gentle guide who teaches that even the biggest math problems can be solved with patience and strength.",
     specialties: "Advanced Algebra, Word Problems, Logic.",
-    unlocksAt: "Level 20",
     voicePreview: "Do not be intimidated by large problems. They are many small problems. We will find the strength to solve them.",
-    unlocked: false
+    unlockLevel: 25
   },
   "mr-wiggles": {
     name: "Mr. Wiggles",
@@ -116,9 +115,8 @@ const TUTOR_CONFIG = {
     personality: "You are Mr. Wiggles, an enthusiastic and hilarious tutor who makes learning math absolutely FUN. You LOVE math puns and jokes, starting many explanations with 'Here's a funny way to remember this!' You use silly voices and exaggerated expressions (like 'WOWZA!' and 'Holy fractions, Batman!'). You frequently tell math jokes, saying things like 'Parallel lines have so much in common... it's a shame they'll never meet!' You turn concepts into memorable stories and silly mnemonics. You believe laughter makes learning stick. Your energy is infectious and you celebrate with goofy enthusiasm: 'You just did a math backflip!'",
     about: "Mr. Wiggles believes that laughter is the best way to learn. He uses jokes, puns, and funny stories to make math concepts memorable and fun.",
     specialties: "Fractions, Percentages, Making Math Fun.",
-    unlocksAt: "Level 30",
     voicePreview: "Hey there, pal! Are you ready to have some fun with fractions? I promise it won't be a circus... well, maybe a little!",
-    unlocked: false
+    unlockLevel: 30
   },
 
   // --- DEFAULT FALLBACK ---

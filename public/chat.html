@@ -16,6 +16,20 @@
   <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
+  <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
 </head>
 <body class="landing-page-body">
   <canvas id="confetti-canvas"></canvas>
@@ -26,6 +40,9 @@
     <nav class="landing-nav">
       <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" style="display: none;">
         <i class="fas fa-stop-circle"></i> <span class="mobile-hide">Stop</span>
+      </button>
+      <button id="open-graphing-calc-btn" class="btn btn-tertiary" title="Graphing Calculator">
+        <i class="fas fa-chart-line"></i> <span class="mobile-hide">Graphing Calculator</span>
       </button>
       <button id="open-resources-modal-btn" class="btn btn-tertiary" title="Resources">
         <i class="fas fa-book-open"></i> <span class="mobile-hide">Resources</span>
@@ -417,6 +434,20 @@
     </div>
   </div>
 
+  <!-- Desmos Graphing Calculator Modal -->
+  <div id="graphing-calc-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 1000px; max-height: 90vh;">
+      <button class="modal-close-button" id="close-graphing-calc-modal">&times;</button>
+      <h2><i class="fas fa-chart-line"></i> Desmos Graphing Calculator</h2>
+      <div id="desmos-calculator-container" style="width: 100%; height: 600px; border-radius: 8px; margin-top: 15px;"></div>
+      <div style="margin-top: 15px; text-align: right;">
+        <button id="send-desmos-to-ai" class="btn btn-primary">
+          <i class="fas fa-paper-plane"></i> Send to AI
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Floating Calculator Widget -->
   <div id="floating-calculator" class="floating-calculator" style="display: none;">
     <div class="calculator-header-bar" id="calculator-drag-handle">
@@ -552,6 +583,21 @@
         <button class="calc-btn btn-function" data-fn="negative">(-)</button>
         <button class="calc-btn btn-enter" data-action="enter">ENTER</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Tutor Unlock Celebration Screen -->
+  <div id="tutor-unlock-screen" class="tutor-unlock-overlay" style="display: none;">
+    <div class="tutor-unlock-content">
+      <div class="unlock-flash"></div>
+      <h1 class="unlock-title">NEW TUTOR UNLOCKED!</h1>
+      <div class="tutor-reveal-card">
+        <img id="unlock-tutor-image" src="" alt="" class="unlock-tutor-img">
+        <h2 id="unlock-tutor-name" class="unlock-tutor-name"></h2>
+        <p id="unlock-tutor-catchphrase" class="unlock-tutor-catchphrase"></p>
+        <p id="unlock-tutor-specialty" class="unlock-tutor-specialty"></p>
+      </div>
+      <p class="unlock-dismiss-hint">Click anywhere to continue</p>
     </div>
   </div>
 

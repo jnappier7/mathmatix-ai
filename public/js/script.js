@@ -149,19 +149,10 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
     if (isLevelUp) {
         animationText.classList.add('level-up-animation-text', 'animate-level-up');
 
-        // 🎬 Trigger tutor level-up animation (video for Mr. Nappier)
+        // 🎬 Trigger tutor level-up animation with smooth crossfade
         if (typeof playTutorAnimation === 'function') {
             playTutorAnimation('levelUp');
-        }
-
-        // 🎬 Trigger CSS level-up animation (for all other tutors)
-        if (typeof setTutorState === 'function') {
-            setTutorState('level-up');
-
-            // Return to idle after celebration
-            setTimeout(() => {
-                setTutorState('idle');
-            }, 3000);
+            // Will automatically crossfade back to idle when animation ends
         }
 
         if (typeof confetti === 'function') {
@@ -1362,8 +1353,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderMathInElement(element) {
-        if (window.MathLive && typeof window.MathLive.renderMathInElement === 'function') {
-            window.MathLive.renderMathInElement(element);
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
         }
     }
     
@@ -1586,7 +1577,39 @@ document.addEventListener("DOMContentLoaded", () => {
             textNode.textContent = text;
         }
         bubble.appendChild(textNode);
-        
+
+        // Handle Desmos graphs: [DESMOS:y=2x+3]
+        if (sender === 'ai' && text && text.includes('[DESMOS:')) {
+            const desmosRegex = /\[DESMOS:([^\]]+)\]/g;
+            let match;
+            while ((match = desmosRegex.exec(text)) !== null) {
+                const expression = match[1].trim();
+                const desmosContainer = document.createElement('div');
+                const desmosId = 'desmos-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                desmosContainer.id = desmosId;
+                desmosContainer.className = 'desmos-graph';
+                desmosContainer.style.width = '100%';
+                desmosContainer.style.height = '400px';
+                desmosContainer.style.marginTop = '10px';
+                desmosContainer.style.borderRadius = '8px';
+                desmosContainer.style.border = '1px solid #e0e0e0';
+                bubble.appendChild(desmosContainer);
+
+                setTimeout(() => {
+                    if (window.Desmos) {
+                        const calculator = Desmos.GraphingCalculator(document.getElementById(desmosId), {
+                            expressionsCollapsed: true,
+                            settingsMenu: false,
+                            zoomButtons: true
+                        });
+                        calculator.setExpression({ latex: expression });
+                    }
+                }, 100);
+            }
+            // Remove [DESMOS:...] tags from displayed text
+            textNode.innerHTML = textNode.innerHTML.replace(desmosRegex, '');
+        }
+
         if (graphData && window.functionPlot) {
              const graphContainer = document.createElement('div');
             const graphId = 'graph-container-' + Date.now();
@@ -1621,19 +1644,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 playAudio(speakableText, tutor.voiceId, bubble.id);
             });
             bubble.appendChild(playBtn);
+
+            // Add emoji reaction functionality
+            const reactionContainer = document.createElement('div');
+            reactionContainer.className = 'message-reaction-container';
+
+            const reactionDisplay = document.createElement('div');
+            reactionDisplay.className = 'reaction-display';
+            reactionContainer.appendChild(reactionDisplay);
+
+            const reactionBtn = document.createElement('button');
+            reactionBtn.className = 'reaction-add-btn';
+            reactionBtn.innerHTML = '<i class="far fa-smile"></i>';
+            reactionBtn.setAttribute('title', 'Add reaction');
+            reactionBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showEmojiPicker(bubble, reactionDisplay);
+            });
+            reactionContainer.appendChild(reactionBtn);
+
+            bubble.appendChild(reactionContainer);
         }
 
         chatBox.appendChild(bubble);
 
         // 🎬 Trigger speaking animation when AI responds
         if (sender === 'ai') {
-            if (typeof setTutorState === 'function') {
-                setTutorState('speaking');
-
-                // Return to idle after message is done (3 seconds)
-                setTimeout(() => {
-                    setTutorState('idle');
-                }, 3000);
+            if (typeof playTutorAnimation === 'function') {
+                // Play smallcele animation - will automatically crossfade back to idle when done
+                playTutorAnimation('smallcele');
             }
         }
 
@@ -1724,9 +1763,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
-            const tutorS = data.newlyUnlockedTutors.length > 1 ? "s" : "";
-            showToast(`🎉 You just unlocked ${data.newlyUnlockedTutors.length} new tutor${tutorS}!`, 5000);
-            triggerConfetti();
+            // Show dramatic unlock screen for each tutor
+            showTutorUnlockCelebration(data.newlyUnlockedTutors);
         }
         
         if (data.userXp !== undefined) {
@@ -2171,6 +2209,228 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    
+
+    // ============================================
+    // TUTOR UNLOCK CELEBRATION
+    // ============================================
+    function showTutorUnlockCelebration(tutorIds) {
+        if (!tutorIds || tutorIds.length === 0) return;
+
+        let currentIndex = 0;
+
+        function showNextTutor() {
+            if (currentIndex >= tutorIds.length) {
+                triggerConfetti();
+                return;
+            }
+
+            const tutorId = tutorIds[currentIndex];
+            const tutor = window.TUTOR_CONFIG[tutorId];
+            if (!tutor) {
+                currentIndex++;
+                showNextTutor();
+                return;
+            }
+
+            const unlockScreen = document.getElementById('tutor-unlock-screen');
+            const unlockImage = document.getElementById('unlock-tutor-image');
+            const unlockName = document.getElementById('unlock-tutor-name');
+            const unlockCatchphrase = document.getElementById('unlock-tutor-catchphrase');
+            const unlockSpecialty = document.getElementById('unlock-tutor-specialty');
+
+            // Set tutor info
+            unlockImage.src = `/images/tutors/${tutor.image}`;
+            unlockImage.alt = tutor.name;
+            unlockName.textContent = tutor.name;
+            unlockCatchphrase.textContent = `"${tutor.catchphrase}"`;
+            unlockSpecialty.textContent = `Specialties: ${tutor.specialties}`;
+
+            // Show overlay
+            unlockScreen.style.display = 'flex';
+
+            // Play sound effect (optional - if you have one)
+            // You could add a dramatic sound here
+
+            // Click to dismiss
+            const dismissHandler = () => {
+                unlockScreen.style.display = 'none';
+                unlockScreen.removeEventListener('click', dismissHandler);
+                currentIndex++;
+                // Small delay before showing next tutor
+                setTimeout(showNextTutor, 300);
+            };
+
+            unlockScreen.addEventListener('click', dismissHandler);
+
+            // Auto-dismiss after 8 seconds if not clicked
+            setTimeout(() => {
+                if (unlockScreen.style.display === 'flex') {
+                    unlockScreen.click();
+                }
+            }, 8000);
+        }
+
+        showNextTutor();
+    }
+
+    // ============================================
+    // EMOJI REACTION SYSTEM
+    // ============================================
+    const REACTION_EMOJIS = ['❤️', '👍', '😂', '🔥', '🎉', '💯'];
+
+    function showEmojiPicker(messageBubble, reactionDisplay) {
+        // Remove any existing picker
+        const existingPicker = document.querySelector('.emoji-picker-popup');
+        if (existingPicker) existingPicker.remove();
+
+        // Create picker
+        const picker = document.createElement('div');
+        picker.className = 'emoji-picker-popup';
+
+        REACTION_EMOJIS.forEach(emoji => {
+            const emojiBtn = document.createElement('button');
+            emojiBtn.className = 'emoji-option';
+            emojiBtn.textContent = emoji;
+            emojiBtn.addEventListener('click', () => {
+                addReaction(messageBubble, reactionDisplay, emoji);
+                picker.remove();
+            });
+            picker.appendChild(emojiBtn);
+        });
+
+        messageBubble.appendChild(picker);
+
+        // Close picker when clicking outside
+        setTimeout(() => {
+            const closeHandler = (e) => {
+                if (!picker.contains(e.target)) {
+                    picker.remove();
+                    document.removeEventListener('click', closeHandler);
+                }
+            };
+            document.addEventListener('click', closeHandler);
+        }, 0);
+    }
+
+    function addReaction(messageBubble, reactionDisplay, emoji) {
+        // Check if already has this reaction
+        const existingReaction = reactionDisplay.querySelector('.reaction-emoji');
+        if (existingReaction && existingReaction.textContent === emoji) {
+            // Remove reaction
+            existingReaction.remove();
+            reactionDisplay.classList.remove('has-reaction');
+        } else {
+            // Clear previous reaction and add new one
+            reactionDisplay.innerHTML = '';
+            const reactionEmoji = document.createElement('span');
+            reactionEmoji.className = 'reaction-emoji';
+            reactionEmoji.textContent = emoji;
+            reactionEmoji.addEventListener('click', () => {
+                reactionEmoji.remove();
+                reactionDisplay.classList.remove('has-reaction');
+            });
+            reactionDisplay.appendChild(reactionEmoji);
+            reactionDisplay.classList.add('has-reaction');
+        }
+    }
+
+    // ============================================
+    // DESMOS GRAPHING CALCULATOR MODAL
+    // ============================================
+    const openGraphingCalcBtn = document.getElementById('open-graphing-calc-btn');
+    const closeGraphingCalcBtn = document.getElementById('close-graphing-calc-modal');
+    const graphingCalcModal = document.getElementById('graphing-calc-modal');
+    const sendDesmosToAiBtn = document.getElementById('send-desmos-to-ai');
+    let desmosCalculator = null;
+
+    if (openGraphingCalcBtn && graphingCalcModal) {
+        openGraphingCalcBtn.addEventListener('click', () => {
+            graphingCalcModal.style.display = 'flex';
+
+            // Initialize Desmos calculator on first open
+            if (!desmosCalculator && window.Desmos) {
+                const container = document.getElementById('desmos-calculator-container');
+                if (container) {
+                    desmosCalculator = Desmos.GraphingCalculator(container, {
+                        expressions: true,
+                        settingsMenu: true,
+                        zoomButtons: true,
+                        expressionsTopbar: true,
+                        border: false
+                    });
+                }
+            }
+        });
+
+        // Close modal on X button
+        if (closeGraphingCalcBtn) {
+            closeGraphingCalcBtn.addEventListener('click', () => {
+                graphingCalcModal.style.display = 'none';
+            });
+        }
+
+        // Close modal on overlay click
+        graphingCalcModal.addEventListener('click', (e) => {
+            if (e.target === graphingCalcModal) {
+                graphingCalcModal.style.display = 'none';
+            }
+        });
+
+        // Send Desmos graph to AI
+        if (sendDesmosToAiBtn) {
+            sendDesmosToAiBtn.addEventListener('click', async () => {
+                if (!desmosCalculator) {
+                    showToast('Please create a graph first', 2000);
+                    return;
+                }
+
+                try {
+                    // Get calculator state (all expressions)
+                    const state = desmosCalculator.getState();
+                    const expressions = state.expressions.list
+                        .filter(expr => expr.latex) // Only expressions with LaTeX
+                        .map(expr => expr.latex)
+                        .join('\n');
+
+                    if (!expressions) {
+                        showToast('No expressions to send', 2000);
+                        return;
+                    }
+
+                    // Capture screenshot
+                    const screenshotDataUrl = desmosCalculator.screenshot({
+                        width: 1200,
+                        height: 800,
+                        targetPixelRatio: 2
+                    });
+
+                    // Convert data URL to blob
+                    const response = await fetch(screenshotDataUrl);
+                    const blob = await response.blob();
+                    const file = new File([blob], `desmos-graph-${Date.now()}.png`, { type: 'image/png' });
+
+                    // Add file to attachments
+                    file.uploadId = `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                    attachedFiles.push(file);
+                    createFileCard(file);
+
+                    // Set message text with expressions
+                    const userInput = document.getElementById('user-input');
+                    if (userInput) {
+                        userInput.value = `Here's my graph:\n${expressions}`;
+                    }
+
+                    // Close modal
+                    graphingCalcModal.style.display = 'none';
+
+                    showToast('Graph added to chat', 2000);
+                } catch (error) {
+                    console.error('Error sending Desmos to AI:', error);
+                    showToast('Failed to capture graph', 2000);
+                }
+            });
+        }
+    }
+
     initializeApp();
 });

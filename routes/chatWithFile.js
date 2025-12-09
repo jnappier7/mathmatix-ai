@@ -191,7 +191,20 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
         });
 
     } catch (error) {
-        console.error("ERROR: Chat-with-file route failed:", error);
+        console.error("ERROR: Chat-with-file route failed:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+        });
+
+        // Return more helpful error message
+        if (error.response?.status === 400) {
+            return res.status(400).json({
+                message: "The request to process your file was invalid. The PDF content might be too large.",
+                error: error.response?.data?.error?.message || "Bad request"
+            });
+        }
+
         res.status(500).json({ message: "An internal server error occurred." });
     }
 });

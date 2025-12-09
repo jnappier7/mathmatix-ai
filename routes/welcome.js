@@ -54,20 +54,18 @@ router.get('/', async (req, res) => {
         let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
         let userMessagePart;
 
-        // --- THIS IS THE FINAL, REVISED PROMPT SECTION ---
-        const baseInstruction = `Your goal is to generate a short, welcoming message for a returning student named ${user.firstName}. You are their personal mentor who remembers them. Your tone should be casual, friendly, and show genuine recognition.`;
-
+        // --- NATURAL WELCOME MESSAGE PROMPT ---
         if (contextType !== 'none') {
-             messagesForAI.push({ role: "system", content: `(Internal AI memory of last interaction: \n${lastContextForAI})` });
-             userMessagePart = `${baseInstruction} Review the internal memory provided. Use it to craft a unique greeting that builds rapport. You could mention a specific success, a point of struggle we overcame, or a funny moment to show you remember them. Do NOT be generic. End with an open-ended question about what they want to work on today.`;
+             messagesForAI.push({ role: "system", content: `(Last session context: \n${lastContextForAI})` });
+             userMessagePart = `Write a quick, casual greeting for ${user.firstName}. Keep it SHORT (1-2 sentences max). Sound natural, like you're texting. Sometimes reference last session, sometimes don't - mix it up. When you do reference it, vary your approach: don't always say "I remember how you..." or "I was thinking about..." Just dive in naturally. Then ask what they want to work on. BANNED PHRASES: "Great to see you", "Welcome back", "I remember how you solved", "I was thinking about how you", "that tricky problem", "Ready to dive into". Be creative.`;
         } else {
-            userMessagePart = `${baseGreeting} This is their first time talking to you. Give them a warm welcome and ask what they'd like to work on.`;
+            userMessagePart = `Write a quick, casual first-time greeting for ${user.firstName}. Keep it SHORT (1-2 sentences). Sound friendly and human, not robotic. Ask what they want to work on. NO canned phrases.`;
         }
         // --- END OF REVISED PROMPT SECTION ---
         
         messagesForAI.push({ role: "user", content: userMessagePart });
 
-        const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 150 });
+        const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 80 });
         const initialWelcomeMessage = completion.choices[0].message.content.trim();
 
         res.json({ greeting: initialWelcomeMessage, voiceId: voiceIdForWelcome });

@@ -23,7 +23,7 @@ module.exports = async function processPDF(pdfBuffer, filename) {
     const formData = new FormData();
     formData.append('file', pdfBuffer, { filename, contentType: 'application/pdf' });
     formData.append('options_json', JSON.stringify({
-      conversion_formats: { mmd: true }  // Use 'mmd' (Markdown) instead of 'text'
+      conversion_formats: { md: true }  // Use 'md' (Markdown) format
     }));
 
     console.log(`[pdfOcr] Uploading PDF to Mathpix API...`);
@@ -65,12 +65,22 @@ module.exports = async function processPDF(pdfBuffer, filename) {
         }
       );
 
-      const { status, mmd: mmdUrl } = statusResponse.data;
+      const { status, conversion_status } = statusResponse.data;
       console.log(`[pdfOcr] Poll attempt ${attempt + 1}/${maxAttempts}, status: ${status}`);
 
-      if (status === 'completed' && mmdUrl) {
-        // Step 3: Fetch the extracted text (in Markdown format)
-        const textResponse = await axios.get(mmdUrl);
+      // Check if markdown conversion is complete
+      if (status === 'completed' && conversion_status?.md?.status === 'completed') {
+        // Step 3: Fetch the markdown file directly using pdf_id
+        console.log(`[pdfOcr] Fetching markdown from: /v3/pdf/${pdfId}.md`);
+        const textResponse = await axios.get(
+          `https://api.mathpix.com/v3/pdf/${pdfId}.md`,
+          {
+            headers: {
+              app_id: process.env.MATHPIX_APP_ID,
+              app_key: process.env.MATHPIX_APP_KEY
+            }
+          }
+        );
         const extractedText = textResponse.data;
 
         console.log(`[pdfOcr] Successfully extracted ${extractedText.length} characters from PDF`);
