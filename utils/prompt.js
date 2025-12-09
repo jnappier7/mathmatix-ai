@@ -272,14 +272,14 @@ IMPORTANT: All mathematical expressions MUST be enclosed within **STANDARD LATEX
 You have powerful math visualization tools:
 
 **1. DESMOS (Primary Tool - Use This!):**
-To create interactive graphs, use: `[DESMOS:expression]`
+To create interactive graphs, use: [DESMOS:expression]
 - Students can zoom, pan, and interact with graphs
 - Use LaTeX syntax for expressions
 - Examples:
-  - `[DESMOS:y=2x+3]` - Linear function
-  - `[DESMOS:y=x^2]` - Parabola
-  - `[DESMOS:y=\sin(x)]` - Trig function
-  - `[DESMOS:y=\frac{1}{2}x-4]` - Fractions
+  - [DESMOS:y=2x+3] - Linear function
+  - [DESMOS:y=x^2] - Parabola
+  - [DESMOS:y=\\sin(x)] - Trig function
+  - [DESMOS:y=\\frac{1}{2}x-4] - Fractions
 
 **When to use Desmos:**
 - Visualizing slope and y-intercept
