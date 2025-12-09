@@ -43,13 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!data.hasResources) {
                 resourcesContent.innerHTML = `
-                    <div style="padding: 40px; text-align: center; color: #666;">
-                        <i class="fas fa-book-open" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
-                        <h3 style="color: #444;">No Resources Available</h3>
-                        <p>${data.currentTopic ? `You're currently studying: <strong>${data.currentTopic}</strong>` : 'Your teacher hasn\'t uploaded resources yet.'}</p>
-                        <p style="font-size: 0.9em; margin-top: 10px;">
-                            Resources like lesson videos, worksheets, and practice problems will appear here when your teacher adds them.
-                        </p>
+                    <div style="padding: 20px;">
+                        <!-- Tentative Schedule Section -->
+                        <div style="margin-bottom: 25px;">
+                            <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
+                                Tentative Schedule
+                            </h3>
+                            <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+                                    <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" style="border: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" title="Common Curriculum Tentative Schedule"></iframe>
+                                </div>
+                            </div>
+                            <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
+                                <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
+                            </p>
+                        </div>
+
+                        <div style="padding: 40px; text-align: center; color: #666; background: #f8f9fa; border-radius: 8px;">
+                            <i class="fas fa-book-open" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+                            <h3 style="color: #444;">No Additional Resources Available</h3>
+                            <p>${data.currentTopic ? `You're currently studying: <strong>${data.currentTopic}</strong>` : 'Your teacher hasn\'t uploaded resources yet.'}</p>
+                            <p style="font-size: 0.9em; margin-top: 10px;">
+                                Resources like lesson videos, worksheets, and practice problems will appear here when your teacher adds them.
+                            </p>
+                        </div>
                     </div>
                 `;
                 return;
@@ -75,6 +93,22 @@ document.addEventListener('DOMContentLoaded', () => {
             // Build HTML
             let html = `
                 <div style="padding: 20px;">
+                    <!-- Tentative Schedule Section -->
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
+                            <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
+                            Tentative Schedule
+                        </h3>
+                        <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+                                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" style="border: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" title="Common Curriculum Tentative Schedule"></iframe>
+                            </div>
+                        </div>
+                        <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
+                            <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
+                        </p>
+                    </div>
+
                     <div style="background: #e8f9f8; border-left: 4px solid #12B3B3; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
                         <h3 style="margin: 0 0 10px 0; color: #12B3B3;">
                             <i class="fas fa-calendar-check"></i> Week ${lesson.weekNumber}: ${lesson.topic}
