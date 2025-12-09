@@ -69,6 +69,7 @@ const avatarRoutes = require('./routes/avatar');
 const graphRoutes = require('./routes/graph');
 const curriculumRoutes = require('./routes/curriculum');
 const assessmentRoutes = require('./routes/assessment');
+const teacherResourceRoutes = require('./routes/teacherResources');
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -183,6 +184,7 @@ app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FI
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
 app.use('/api/graph', isAuthenticated, graphRoutes);
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
+app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
 
@@ -258,6 +260,28 @@ app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
 // --- 9. STATIC FILE SERVING & HTML ROUTES ---
 app.use(express.static(path.join(__dirname, "public")));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+
+// Protected route for serving teacher resource files
+app.get('/uploads/teacher-resources/:teacherId/:filename', isAuthenticated, async (req, res) => {
+    try {
+        const { teacherId, filename } = req.params;
+        const user = await User.findById(req.user._id);
+
+        // Allow teachers to access their own files, or students to access their teacher's files
+        const isTeacher = user.role === 'teacher' && user._id.toString() === teacherId;
+        const isStudentOfTeacher = user.role === 'student' && user.teacherId && user.teacherId.toString() === teacherId;
+
+        if (!isTeacher && !isStudentOfTeacher) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        const filePath = path.join(__dirname, 'uploads', 'teacher-resources', teacherId, filename);
+        res.sendFile(filePath);
+    } catch (error) {
+        console.error('Error serving teacher resource:', error);
+        res.status(500).json({ message: 'Failed to load resource' });
+    }
+});
 
 // Serve tutor config data as a JS file
 app.get('/js/tutor-config-data.js', (req, res) => {
