@@ -2210,6 +2210,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const openGraphingCalcBtn = document.getElementById('open-graphing-calc-btn');
     const closeGraphingCalcBtn = document.getElementById('close-graphing-calc-modal');
     const graphingCalcModal = document.getElementById('graphing-calc-modal');
+    const sendDesmosToAiBtn = document.getElementById('send-desmos-to-ai');
     let desmosCalculator = null;
 
     if (openGraphingCalcBtn && graphingCalcModal) {
@@ -2244,6 +2245,61 @@ document.addEventListener("DOMContentLoaded", () => {
                 graphingCalcModal.style.display = 'none';
             }
         });
+
+        // Send Desmos graph to AI
+        if (sendDesmosToAiBtn) {
+            sendDesmosToAiBtn.addEventListener('click', async () => {
+                if (!desmosCalculator) {
+                    showToast('Please create a graph first', 2000);
+                    return;
+                }
+
+                try {
+                    // Get calculator state (all expressions)
+                    const state = desmosCalculator.getState();
+                    const expressions = state.expressions.list
+                        .filter(expr => expr.latex) // Only expressions with LaTeX
+                        .map(expr => expr.latex)
+                        .join('\n');
+
+                    if (!expressions) {
+                        showToast('No expressions to send', 2000);
+                        return;
+                    }
+
+                    // Capture screenshot
+                    const screenshotDataUrl = desmosCalculator.screenshot({
+                        width: 1200,
+                        height: 800,
+                        targetPixelRatio: 2
+                    });
+
+                    // Convert data URL to blob
+                    const response = await fetch(screenshotDataUrl);
+                    const blob = await response.blob();
+                    const file = new File([blob], `desmos-graph-${Date.now()}.png`, { type: 'image/png' });
+
+                    // Add file to attachments
+                    file.uploadId = `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                    attachedFiles.push(file);
+                    createFileCard(file);
+
+                    // Set message text with expressions
+                    const userInput = document.getElementById('user-input');
+                    if (userInput) {
+                        userInput.value = `Here's my graph:\n${expressions}`;
+                    }
+
+                    // Close modal
+                    graphingCalcModal.style.display = 'none';
+
+                    showToast('Graph added to chat', 2000);
+                } catch (error) {
+                    console.error('Error sending Desmos to AI:', error);
+                    showToast('Failed to capture graph', 2000);
+                }
+            });
+        }
     }
 
     initializeApp();
