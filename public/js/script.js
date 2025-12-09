@@ -1586,7 +1586,39 @@ document.addEventListener("DOMContentLoaded", () => {
             textNode.textContent = text;
         }
         bubble.appendChild(textNode);
-        
+
+        // Handle Desmos graphs: [DESMOS:y=2x+3]
+        if (sender === 'ai' && text && text.includes('[DESMOS:')) {
+            const desmosRegex = /\[DESMOS:([^\]]+)\]/g;
+            let match;
+            while ((match = desmosRegex.exec(text)) !== null) {
+                const expression = match[1].trim();
+                const desmosContainer = document.createElement('div');
+                const desmosId = 'desmos-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                desmosContainer.id = desmosId;
+                desmosContainer.className = 'desmos-graph';
+                desmosContainer.style.width = '100%';
+                desmosContainer.style.height = '400px';
+                desmosContainer.style.marginTop = '10px';
+                desmosContainer.style.borderRadius = '8px';
+                desmosContainer.style.border = '1px solid #e0e0e0';
+                bubble.appendChild(desmosContainer);
+
+                setTimeout(() => {
+                    if (window.Desmos) {
+                        const calculator = Desmos.GraphingCalculator(document.getElementById(desmosId), {
+                            expressionsCollapsed: true,
+                            settingsMenu: false,
+                            zoomButtons: true
+                        });
+                        calculator.setExpression({ latex: expression });
+                    }
+                }, 100);
+            }
+            // Remove [DESMOS:...] tags from displayed text
+            textNode.innerHTML = textNode.innerHTML.replace(desmosRegex, '');
+        }
+
         if (graphData && window.functionPlot) {
              const graphContainer = document.createElement('div');
             const graphId = 'graph-container-' + Date.now();
