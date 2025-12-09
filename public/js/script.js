@@ -149,19 +149,10 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
     if (isLevelUp) {
         animationText.classList.add('level-up-animation-text', 'animate-level-up');
 
-        // 🎬 Trigger tutor level-up animation (video for Mr. Nappier)
+        // 🎬 Trigger tutor level-up animation with smooth crossfade
         if (typeof playTutorAnimation === 'function') {
             playTutorAnimation('levelUp');
-        }
-
-        // 🎬 Trigger CSS level-up animation (for all other tutors)
-        if (typeof setTutorState === 'function') {
-            setTutorState('level-up');
-
-            // Return to idle after celebration
-            setTimeout(() => {
-                setTutorState('idle');
-            }, 3000);
+            // Will automatically crossfade back to idle when animation ends
         }
 
         if (typeof confetti === 'function') {
@@ -1679,13 +1670,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 🎬 Trigger speaking animation when AI responds
         if (sender === 'ai') {
-            if (typeof setTutorState === 'function') {
-                setTutorState('speaking');
-
-                // Return to idle after message is done (3 seconds)
-                setTimeout(() => {
-                    setTutorState('idle');
-                }, 3000);
+            if (typeof playTutorAnimation === 'function') {
+                // Play smallcele animation - will automatically crossfade back to idle when done
+                playTutorAnimation('smallcele');
             }
         }
 
