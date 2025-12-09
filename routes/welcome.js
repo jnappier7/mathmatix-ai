@@ -54,20 +54,18 @@ router.get('/', async (req, res) => {
         let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
         let userMessagePart;
 
-        // --- THIS IS THE FINAL, REVISED PROMPT SECTION ---
-        const baseInstruction = `Your goal is to generate a short, welcoming message for a returning student named ${user.firstName}. You are their personal mentor who remembers them. Your tone should be casual, friendly, and show genuine recognition.`;
-
+        // --- NATURAL WELCOME MESSAGE PROMPT ---
         if (contextType !== 'none') {
-             messagesForAI.push({ role: "system", content: `(Internal AI memory of last interaction: \n${lastContextForAI})` });
-             userMessagePart = `${baseInstruction} Review the internal memory provided. Use it to craft a unique greeting that builds rapport. You could mention a specific success, a point of struggle we overcame, or a funny moment to show you remember them. Do NOT be generic. End with an open-ended question about what they want to work on today.`;
+             messagesForAI.push({ role: "system", content: `(Last session context: \n${lastContextForAI})` });
+             userMessagePart = `Write a quick, casual greeting for ${user.firstName} who's back for another session. Keep it SHORT (1-2 sentences max). Sound like you're genuinely glad to see them, not like a customer service bot. Reference something specific from last time if you can, but keep it natural - like texting a friend. Then ask what they want to tackle. NO formulaic phrases like "Great to see you!" or "Welcome back!" - be more creative and authentic.`;
         } else {
-            userMessagePart = `${baseGreeting} This is their first time talking to you. Give them a warm welcome and ask what they'd like to work on.`;
+            userMessagePart = `Write a quick, casual first-time greeting for ${user.firstName}. Keep it SHORT (1-2 sentences). Sound friendly and human, not robotic. Ask what they want to work on. NO canned phrases.`;
         }
         // --- END OF REVISED PROMPT SECTION ---
         
         messagesForAI.push({ role: "user", content: userMessagePart });
 
-        const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 150 });
+        const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 80 });
         const initialWelcomeMessage = completion.choices[0].message.content.trim();
 
         res.json({ greeting: initialWelcomeMessage, voiceId: voiceIdForWelcome });
