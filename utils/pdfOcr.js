@@ -68,6 +68,11 @@ module.exports = async function processPDF(pdfBuffer, filename) {
       const { status, md: mdUrl } = statusResponse.data;
       console.log(`[pdfOcr] Poll attempt ${attempt + 1}/${maxAttempts}, status: ${status}`);
 
+      // Debug: Log the full response when completed
+      if (status === 'completed') {
+        console.log(`[pdfOcr] Completed response data:`, JSON.stringify(statusResponse.data, null, 2));
+      }
+
       if (status === 'completed' && mdUrl) {
         // Step 3: Fetch the extracted text (in Markdown format)
         const textResponse = await axios.get(mdUrl);
