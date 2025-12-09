@@ -7,7 +7,24 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="/css/teacher-live-feed.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
-	
+	<style>
+        .resources-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; padding: 15px; }
+        .resource-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; display: flex; gap: 15px; }
+        .resource-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .resource-icon { font-size: 48px; color: #12B3B3; width: 60px; text-align: center; }
+        .resource-info { flex: 1; }
+        .resource-info h4 { margin: 0 0 8px 0; font-size: 1.1em; color: #333; }
+        .resource-meta { font-size: 0.85em; color: #666; margin: 5px 0; }
+        .resource-type { background: #e8f9f8; color: #12B3B3; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        .resource-description { font-size: 0.9em; color: #666; margin: 8px 0; }
+        .resource-stats { font-size: 0.85em; color: #999; margin: 8px 0; }
+        .resource-keywords { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
+        .keyword-tag { background: #f0f0f0; color: #666; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; }
+        .resource-actions { display: flex; flex-direction: column; gap: 8px; }
+        .btn-icon { background: #f0f0f0; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .btn-icon:hover { background: #12B3B3; color: white; }
+        .btn-icon.btn-danger:hover { background: #ff4e4e; color: white; }
+    </style>
 </head>
 <body class="landing-page-body">
     <header class="landing-header">
@@ -63,6 +80,9 @@
                     <button class="tab-btn" data-tab="schedule">
                         <i class="fas fa-calendar-alt"></i> Schedule
                     </button>
+                    <button class="tab-btn" data-tab="resources">
+                        <i class="fas fa-file-upload"></i> Resources
+                    </button>
                 </div>
 
                 <!-- Students Tab -->
@@ -104,6 +124,30 @@
                             <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
                                 <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" style="border: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" title="Common Curriculum Tentative Schedule"></iframe>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resources Tab -->
+                <div class="tab-content" id="resources-tab">
+                    <div class="dashboard-panel flex-panel-content card-style-1">
+                        <div class="dashboard-panel-header">
+                            <i class="fas fa-file-upload"></i> Student Resources
+                            <div style="float: right; margin-top: -5px;">
+                                <button id="upload-resource-btn" class="btn btn-primary">
+                                    <i class="fas fa-upload"></i> Upload File
+                                </button>
+                            </div>
+                        </div>
+                        <div style="padding: 20px; background: #f0f7ff; border-radius: 6px; margin: 15px; border-left: 4px solid #2196F3;">
+                            <p style="margin: 0; font-size: 0.9em; color: #555;">
+                                <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
+                                <strong>Smart Resource Detection:</strong> Upload files with clear names like "Module 6.2 Practice" or "Unit 3 Quiz".
+                                When students mention them in chat, the AI will automatically fetch and analyze the file!
+                            </p>
+                        </div>
+                        <div id="resources-list" class="table-scroll-container">
+                            Loading resources...
                         </div>
                     </div>
                 </div>
@@ -267,10 +311,57 @@
         </div>
     </div>
 
+    <!-- Upload Resource Modal -->
+    <div id="upload-resource-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <span id="close-upload-resource-modal" class="modal-close-button">&times;</span>
+            <div>
+                <h2><i class="fas fa-upload"></i> Upload Student Resource</h2>
+                <p>Upload files that students can reference in chat. Use clear, descriptive names!</p>
+
+                <form id="upload-resource-form" enctype="multipart/form-data">
+                    <label for="resource-file">File * (PDF, Word, PowerPoint, Images)</label>
+                    <input type="file" id="resource-file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.webp" required>
+
+                    <label for="resource-name">Display Name *</label>
+                    <input type="text" id="resource-name" name="displayName" required placeholder="e.g., Module 6.2 Practice Sheet">
+                    <p style="font-size: 0.85em; color: #666; margin-top: -10px;">
+                        Students will reference this by name in chat
+                    </p>
+
+                    <label for="resource-description">Description (Optional)</label>
+                    <textarea id="resource-description" name="description" rows="2" placeholder="Brief description of what this resource contains..."></textarea>
+
+                    <label for="resource-keywords">Keywords (Optional, comma-separated)</label>
+                    <input type="text" id="resource-keywords" name="keywords" placeholder="e.g., quadratic, equations, practice">
+
+                    <label for="resource-category">Category</label>
+                    <select id="resource-category" name="category">
+                        <option value="worksheet">Worksheet</option>
+                        <option value="practice">Practice Problems</option>
+                        <option value="homework">Homework</option>
+                        <option value="notes">Notes/Handout</option>
+                        <option value="quiz">Quiz</option>
+                        <option value="test">Test</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <div class="form-buttons" style="margin-top: 20px;">
+                        <button type="submit" class="submit-btn btn-primary">
+                            <i class="fas fa-upload"></i> Upload Resource
+                        </button>
+                        <button type="button" id="cancel-resource-upload-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="/js/logout.js"></script>
     <script src="/js/teacher-live-feed.js"></script>
     <script src="/js/teacher-dashboard.js"></script>
     <script src="/js/teacher-curriculum.js"></script>
+    <script src="/js/teacher-resources.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

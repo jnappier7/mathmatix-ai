@@ -15,6 +15,7 @@ const BRAND_CONFIG = require('../utils/brand');
 const axios = require('axios');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
+const { detectAndFetchResource } = require('../utils/resourceDetector');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 const MAX_MESSAGE_LENGTH = 2000;
@@ -89,10 +90,38 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         }
 
+        // Detect and fetch teacher resource if mentioned in message
+        let resourceContext = null;
+        if (user.teacherId) {
+            try {
+                const detectedResource = await detectAndFetchResource(user.teacherId, message);
+                if (detectedResource) {
+                    console.log(`📚 Resource detected and fetched: ${detectedResource.displayName}`);
+                    resourceContext = detectedResource;
+                }
+            } catch (error) {
+                console.error('Error detecting/fetching resource:', error);
+                // Continue without resource context if there's an error
+            }
+        }
+
         const recentMessagesForAI = activeConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
-        const formattedMessagesForLLM = recentMessagesForAI
+        let formattedMessagesForLLM = recentMessagesForAI
             .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content)
             .map(msg => ({ role: msg.role, content: msg.content }));
+
+        // If a resource was detected, inject it into the conversation
+        if (resourceContext) {
+            const resourceMessage = `[SYSTEM: Student is referencing "${resourceContext.displayName}"${resourceContext.description ? ` - ${resourceContext.description}` : ''}. Content:\n\n${resourceContext.content}\n\nPlease help the student with their question about this resource.]`;
+
+            // Replace the last user message with one that includes the resource context
+            if (formattedMessagesForLLM.length > 0) {
+                const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+                if (lastMessage.role === 'user') {
+                    lastMessage.content = resourceMessage + '\n\nStudent question: ' + lastMessage.content;
+                }
+            }
+        }
 
         const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
