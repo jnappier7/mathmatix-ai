@@ -50,10 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
                                 Tentative Schedule
                             </h3>
-                            <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
-                                    <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" style="border: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" title="Common Curriculum Tentative Schedule"></iframe>
-                                </div>
+                            <div class="schedule-iframe-container">
+                                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
                             </div>
                             <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
                                 <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
@@ -99,10 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
                             Tentative Schedule
                         </h3>
-                        <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
-                                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" style="border: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" title="Common Curriculum Tentative Schedule"></iframe>
-                            </div>
+                        <div class="schedule-iframe-container">
+                            <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
                         </div>
                         <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
                             <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
