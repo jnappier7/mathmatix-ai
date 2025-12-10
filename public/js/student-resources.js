@@ -1,17 +1,43 @@
 // student-resources.js
 // Learning resources display for students
 
+console.log('📚 Student Resources JS Loading...');
+
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('📚 Student Resources - DOM Ready');
+
     const openResourcesBtn = document.getElementById('open-resources-modal-btn');
     const resourcesModal = document.getElementById('resources-modal');
     const closeResourcesBtn = document.getElementById('close-resources-modal');
     const resourcesContent = document.getElementById('resources-content');
 
+    console.log('📚 Elements found:', {
+        button: !!openResourcesBtn,
+        modal: !!resourcesModal,
+        closeBtn: !!closeResourcesBtn,
+        content: !!resourcesContent
+    });
+
     // Open resources modal
-    if (openResourcesBtn) {
-        openResourcesBtn.addEventListener('click', async () => {
-            resourcesModal.style.display = 'flex';
-            await loadResources();
+    if (openResourcesBtn && resourcesModal) {
+        console.log('📚 Attaching click handler to Resources button');
+        openResourcesBtn.addEventListener('click', async (e) => {
+            console.log('📚 Resources button clicked!');
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                resourcesModal.style.display = 'flex';
+                await loadResources();
+            } catch (error) {
+                console.error('📚 Error opening resources:', error);
+                alert('Error opening resources: ' + error.message);
+            }
+        });
+        console.log('📚 Resources button click handler attached successfully');
+    } else {
+        console.error('📚 Missing elements!', {
+            button: !openResourcesBtn ? 'MISSING' : 'OK',
+            modal: !resourcesModal ? 'MISSING' : 'OK'
         });
     }
 
