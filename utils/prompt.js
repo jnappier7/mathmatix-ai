@@ -161,7 +161,7 @@ function buildLearningProfileContext(userProfile) {
   return context;
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences
@@ -352,6 +352,21 @@ ${curriculumContext}
 - Follow teacher's preferred terminology and methods
 - Watch for common mistakes the teacher has flagged
 - Apply the scaffolding approach the teacher prefers
+` : ''}
+
+${uploadContext ? `--- STUDENT'S PREVIOUS WORK (UPLOADED FILES) ---
+${firstName} has uploaded ${uploadContext.count} file${uploadContext.count !== 1 ? 's' : ''} recently. Here's what you know about their previous work:
+
+${uploadContext.summary}
+
+**HOW TO USE THIS INFORMATION:**
+1. **Recognize Patterns:** Reference previous problems when relevant ("This is similar to that problem you uploaded yesterday about...")
+2. **Track Progress:** Notice if they're working on similar topics or advancing to new ones
+3. **Personalize Help:** If they struggled with something before, provide extra support now
+4. **Build Continuity:** Create a sense of ongoing learning journey ("Last time you were working on X, now you're tackling Y - that's great progress!")
+5. **Be Natural:** Don't force references to previous work, only mention when genuinely relevant
+
+**IMPORTANT:** Only reference uploaded files when it adds value to the current conversation. Don't mention them just for the sake of it.
 ` : ''}
 
 --- XP AWARDING MECHANISM ---

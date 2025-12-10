@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
+const StudentUpload = require('../models/studentUpload');
 const { generateSystemPrompt } = require('../utils/prompt');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
@@ -159,11 +162,62 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
 
         activeConversation.messages.push({ role: 'assistant', content: aiResponseText });
         await activeConversation.save();
-        
+
+        // --- Step 4: Save uploaded files to student's resource library ---
+        const savedUploads = [];
+        const uploadsDir = path.join(__dirname, '../uploads');
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            try {
+                // Generate unique filename
+                const timestamp = Date.now();
+                const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+                const storedFilename = `${userId}_${timestamp}_${sanitizedName}`;
+                const filePath = path.join(uploadsDir, storedFilename);
+
+                // Save file to disk
+                await fs.writeFile(filePath, file.buffer);
+                console.log(`[chatWithFile] Saved file to: ${filePath}`);
+
+                // Determine file type
+                const fileType = file.mimetype === 'application/pdf' ? 'pdf' : 'image';
+
+                // Get extracted text for this file
+                let extractedText = '';
+                if (fileType === 'pdf' && pdfTexts.length > i) {
+                    extractedText = pdfTexts[i].text || '';
+                } else if (fileType === 'image') {
+                    extractedText = combinedText; // The text includes user message + any extracted content
+                }
+
+                // Create database record
+                const studentUpload = new StudentUpload({
+                    userId: user._id,
+                    originalFilename: file.originalname,
+                    storedFilename: storedFilename,
+                    filePath: filePath,
+                    fileType: fileType,
+                    mimeType: file.mimetype,
+                    fileSize: file.size,
+                    extractedText: extractedText.substring(0, 10000), // Limit to 10k chars
+                    conversationId: activeConversation._id
+                });
+
+                await studentUpload.save();
+                savedUploads.push(studentUpload._id);
+                console.log(`[chatWithFile] Saved upload record: ${studentUpload._id}`);
+
+            } catch (saveError) {
+                console.error(`[chatWithFile] Error saving file ${file.originalname}:`, saveError);
+                // Continue with other files even if one fails
+            }
+        }
+
         let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
         user.xp = (user.xp || 0) + xpAward;
         let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
-        
+
         let specialXpAwardedMessage = bonusXpAwarded > 0 ? `${bonusXpAwarded} XP (${bonusXpReason})` : `${xpAward} XP`;
         if (user.xp >= xpForNextLevel) {
             user.level += 1;
@@ -176,7 +230,7 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
 			user.markModified('unlockedItems');
 		}
         await user.save();
-        
+
         const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
 
         res.json({

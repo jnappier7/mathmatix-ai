@@ -62,10 +62,21 @@ document.addEventListener('DOMContentLoaded', () => {
         resourcesContent.innerHTML = '<p style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading resources...</p>';
 
         try {
-            const res = await fetch('/api/curriculum/student/resources', { credentials: 'include' });
-            if (!res.ok) throw new Error('Failed to fetch resources');
+            // Fetch both curriculum resources and student uploads in parallel
+            const [curriculumRes, uploadsRes] = await Promise.all([
+                fetch('/api/curriculum/student/resources', { credentials: 'include' }),
+                fetch('/api/student/uploads?limit=10', { credentials: 'include' })
+            ]);
 
-            const data = await res.json();
+            if (!curriculumRes.ok) throw new Error('Failed to fetch curriculum resources');
+
+            const data = await curriculumRes.json();
+            let myUploads = [];
+
+            if (uploadsRes.ok) {
+                const uploadsData = await uploadsRes.json();
+                myUploads = uploadsData.success ? uploadsData.uploads : [];
+            }
 
             if (!data.hasResources) {
                 resourcesContent.innerHTML = `
@@ -83,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
                             </p>
                         </div>
+
+                        ${generateMyUploadsSection(myUploads)}
 
                         <div style="padding: 40px; text-align: center; color: #666; background: #f8f9fa; border-radius: 8px;">
                             <i class="fas fa-book-open" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
@@ -130,6 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
                         </p>
                     </div>
+
+                    ${generateMyUploadsSection(myUploads)}
 
                     <div style="background: #e8f9f8; border-left: 4px solid #12B3B3; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
                         <h3 style="margin: 0 0 10px 0; color: #12B3B3;">
@@ -263,5 +278,66 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             return { icon: 'fas fa-link', color: '#666' };
         }
+    }
+
+    // Generate "My Uploads" section HTML
+    function generateMyUploadsSection(uploads) {
+        if (!uploads || uploads.length === 0) {
+            return ''; // Don't show section if no uploads
+        }
+
+        const formatFileSize = (bytes) => {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        };
+
+        const formatDate = (dateStr) => {
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+            return date.toLocaleDateString();
+        };
+
+        const uploadsHtml = uploads.map(upload => {
+            const icon = upload.fileType === 'pdf' ?
+                { class: 'fas fa-file-pdf', color: '#ff4e4e' } :
+                { class: 'fas fa-image', color: '#4CAF50' };
+
+            return `
+                <a href="/api/student/uploads/${upload._id}/file" target="_blank" class="resource-link upload-link"
+                   data-upload-id="${upload._id}"
+                   style="display: flex; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 6px; text-decoration: none; color: #333; border: 1px solid #e0e0e0; transition: all 0.2s;">
+                    <i class="${icon.class}" style="font-size: 24px; color: ${icon.color}; margin-right: 15px;"></i>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500;">${upload.originalFilename}</div>
+                        <div style="font-size: 0.85em; color: #666; margin-top: 2px;">
+                            ${formatFileSize(upload.fileSize)} • ${formatDate(upload.uploadedAt)}
+                        </div>
+                    </div>
+                    <i class="fas fa-external-link-alt" style="color: #999;"></i>
+                </a>
+            `;
+        }).join('');
+
+        return `
+            <div style="margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-folder-open" style="color: #FF9800;"></i>
+                    My Uploads
+                </h3>
+                <div style="display: grid; gap: 10px;">
+                    ${uploadsHtml}
+                </div>
+                <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
+                    <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
+                    <strong>Pro tip:</strong> The AI can reference your previously uploaded problems to provide better help!
+                </p>
+            </div>
+        `;
     }
 });

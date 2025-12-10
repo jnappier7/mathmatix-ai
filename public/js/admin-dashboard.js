@@ -187,6 +187,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${s.email || 'N/A'}</td>
                 <td>${s.role}</td>
                 <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
+                <td>
+                    <button class="btn-icon btn-danger delete-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" title="Delete User">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
             </tr>
         `).join('');
 
@@ -279,13 +284,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     // -------------------------------------------------------------------------
 
     if (userTableBody) {
-        userTableBody.addEventListener('click', (e) => {
+        userTableBody.addEventListener('click', async (e) => {
+            // Handle student name link click
             const link = e.target.closest('.student-name-link');
             if (link) {
                 e.preventDefault();
                 const studentId = link.closest('tr')?.dataset.studentid;
                 if (studentId) {
                     populateModal(studentId);
+                }
+                return;
+            }
+
+            // Handle delete button click
+            const deleteBtn = e.target.closest('.delete-user-btn');
+            if (deleteBtn) {
+                e.preventDefault();
+                const userId = deleteBtn.dataset.userid;
+                const username = deleteBtn.dataset.username;
+
+                if (!confirm(`⚠️ Are you sure you want to delete "${username}"?\n\nThis will permanently delete:\n• Their account\n• All conversation history\n• All progress data\n\nThis action CANNOT be undone.`)) {
+                    return;
+                }
+
+                try {
+                    deleteBtn.disabled = true;
+                    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    const response = await fetch(`/api/admin/users/${userId}`, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        alert(`✅ ${result.message}`);
+                        await initializeDashboard(); // Refresh the dashboard
+                    } else {
+                        throw new Error(result.message || 'Failed to delete user');
+                    }
+                } catch (error) {
+                    console.error('Delete error:', error);
+                    alert(`❌ Error: ${error.message}`);
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
                 }
             }
         });

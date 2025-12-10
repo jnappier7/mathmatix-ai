@@ -427,5 +427,67 @@ router.get('/reports/live-activity', isAdmin, async (req, res) => {
   }
 });
 
+/**
+ * @route   DELETE /api/admin/users/:userId
+ * @desc    Delete a user account (admin only)
+ * @access  Private (Admin)
+ */
+router.delete('/users/:userId', isAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Prevent admin from deleting themselves
+    if (userId === req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'You cannot delete your own account.'
+      });
+    }
+
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.'
+      });
+    }
+
+    // Store user info for logging
+    const userInfo = `${user.firstName} ${user.lastName} (${user.email}, ${user.role})`;
+
+    // Delete associated data
+    await Promise.all([
+      // Delete all conversations
+      Conversation.deleteMany({ userId: user._id }),
+      // If teacher, remove from students' teacherId
+      user.role === 'teacher' ? User.updateMany(
+        { teacherId: user._id },
+        { $unset: { teacherId: '' } }
+      ) : Promise.resolve(),
+      // If parent, unlink from children
+      user.role === 'parent' && user.children?.length > 0 ? User.updateMany(
+        { _id: { $in: user.children } },
+        { $unset: { parentId: '' } }
+      ) : Promise.resolve(),
+      // Delete the user
+      User.findByIdAndDelete(userId)
+    ]);
+
+    console.log(`[ADMIN] User deleted by ${req.user.email}: ${userInfo}`);
+
+    res.json({
+      success: true,
+      message: `User "${userInfo}" has been deleted successfully.`
+    });
+
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Server error deleting user.'
+    });
+  }
+});
 
 module.exports = router;

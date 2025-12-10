@@ -59,11 +59,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Modal Control Functions ---
     function showModal(modalElement) {
-        if (modalElement) modalElement.style.display = 'flex';
+        if (modalElement) modalElement.classList.add('is-visible');
     }
 
     function hideModal(modalElement) {
-        if (modalElement) modalElement.style.display = 'none';
+        if (modalElement) modalElement.classList.remove('is-visible');
     }
     
     // Setup all modal close buttons

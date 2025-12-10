@@ -2108,30 +2108,30 @@ document.addEventListener("DOMContentLoaded", () => {
     // Note: Attach button and file input are handled by FileUploadManager in file-upload.js
     // ============================================
 
-    // Camera capture button
-    const cameraBtn = document.getElementById('camera-button');
-    if (cameraBtn) {
-        cameraBtn.addEventListener('click', async () => {
-            try {
-                // Create file input for camera
-                const cameraInput = document.createElement('input');
-                cameraInput.type = 'file';
-                cameraInput.accept = 'image/*';
-                cameraInput.capture = 'environment'; // Use rear camera on mobile
+    // Camera capture button - now handled by show-your-work.js
+    // const cameraBtn = document.getElementById('camera-button');
+    // if (cameraBtn) {
+    //     cameraBtn.addEventListener('click', async () => {
+    //         try {
+    //             // Create file input for camera
+    //             const cameraInput = document.createElement('input');
+    //             cameraInput.type = 'file';
+    //             cameraInput.accept = 'image/*';
+    //             cameraInput.capture = 'environment'; // Use rear camera on mobile
 
-                cameraInput.addEventListener('change', (e) => {
-                    if (e.target.files && e.target.files.length > 0) {
-                        handleFileUpload(e.target.files);
-                    }
-                });
+    //             cameraInput.addEventListener('change', (e) => {
+    //                 if (e.target.files && e.target.files.length > 0) {
+    //                     handleFileUpload(e.target.files);
+    //                 }
+    //             });
 
-                cameraInput.click();
-            } catch (error) {
-                console.error('Camera error:', error);
-                showToast('Camera not available', 2000);
-            }
-        });
-    }
+    //             cameraInput.click();
+    //         } catch (error) {
+    //             console.error('Camera error:', error);
+    //             showToast('Camera not available', 2000);
+    //         }
+    //     });
+    // }
 
     // Paste from clipboard support
     document.addEventListener('paste', (e) => {
@@ -2325,7 +2325,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (openGraphingCalcBtn && graphingCalcModal) {
         openGraphingCalcBtn.addEventListener('click', () => {
-            graphingCalcModal.style.display = 'flex';
+            graphingCalcModal.classList.add('is-visible');
 
             // Initialize Desmos calculator on first open
             if (!desmosCalculator && window.Desmos) {
@@ -2345,14 +2345,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Close modal on X button
         if (closeGraphingCalcBtn) {
             closeGraphingCalcBtn.addEventListener('click', () => {
-                graphingCalcModal.style.display = 'none';
+                graphingCalcModal.classList.remove('is-visible');
             });
         }
 
         // Close modal on overlay click
         graphingCalcModal.addEventListener('click', (e) => {
             if (e.target === graphingCalcModal) {
-                graphingCalcModal.style.display = 'none';
+                graphingCalcModal.classList.remove('is-visible');
             }
         });
 
@@ -2401,7 +2401,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     // Close modal
-                    graphingCalcModal.style.display = 'none';
+                    graphingCalcModal.classList.remove('is-visible');
 
                     showToast('Graph added to chat', 2000);
                 } catch (error) {

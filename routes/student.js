@@ -3,7 +3,9 @@
 
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const User = require('../models/user');
+const StudentUpload = require('../models/studentUpload');
 const { isAuthenticated, isStudent } = require('../middleware/auth'); // Import isStudent middleware
 const crypto = require('crypto'); // Node.js built-in module for cryptography
 
@@ -292,6 +294,104 @@ router.post('/start-skill', isAuthenticated, isStudent, async (req, res) => {
     } catch (error) {
         console.error('ERROR: Failed to start skill:', error);
         res.status(500).json({ error: 'Failed to start skill' });
+    }
+});
+
+// GET /api/student/uploads
+// Retrieve student's uploaded files for their personal resource library
+router.get('/uploads', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const studentId = req.user._id;
+        const limit = parseInt(req.query.limit) || 50;
+
+        // Get recent uploads
+        const uploads = await StudentUpload.getRecentUploads(studentId, limit);
+
+        res.json({
+            success: true,
+            uploads: uploads.map(upload => ({
+                _id: upload._id,
+                originalFilename: upload.originalFilename,
+                fileType: upload.fileType,
+                fileSize: upload.fileSize,
+                uploadedAt: upload.uploadedAt,
+                notes: upload.notes,
+                tags: upload.tags
+            }))
+        });
+
+    } catch (error) {
+        console.error('[Student Uploads] Error fetching uploads:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve uploads'
+        });
+    }
+});
+
+// GET /api/student/uploads/:uploadId
+// Get full details of a specific upload including extracted text
+router.get('/uploads/:uploadId', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const studentId = req.user._id;
+        const { uploadId } = req.params;
+
+        const upload = await StudentUpload.getUploadDetails(uploadId, studentId);
+
+        if (!upload) {
+            return res.status(404).json({
+                success: false,
+                message: 'Upload not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            upload: upload
+        });
+
+    } catch (error) {
+        console.error('[Student Uploads] Error fetching upload details:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve upload details'
+        });
+    }
+});
+
+// GET /api/student/uploads/:uploadId/file
+// Serve the actual file (for viewing/downloading)
+router.get('/uploads/:uploadId/file', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const studentId = req.user._id;
+        const { uploadId } = req.params;
+
+        const upload = await StudentUpload.getUploadDetails(uploadId, studentId);
+
+        if (!upload) {
+            return res.status(404).json({
+                success: false,
+                message: 'Upload not found'
+            });
+        }
+
+        // Send the file
+        res.sendFile(upload.filePath, (err) => {
+            if (err) {
+                console.error('[Student Uploads] Error sending file:', err);
+                res.status(500).json({
+                    success: false,
+                    message: 'Failed to retrieve file'
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error('[Student Uploads] Error serving file:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to serve file'
+        });
     }
 });
 

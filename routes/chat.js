@@ -8,6 +8,7 @@ const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const Curriculum = require('../models/curriculum');
+const StudentUpload = require('../models/studentUpload');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/openaiClient");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
@@ -105,6 +106,41 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         }
 
+        // Fetch recent student uploads for AI context (personalization)
+        let uploadContext = null;
+        try {
+            const recentUploads = await StudentUpload.find({ userId: user._id })
+                .sort({ uploadedAt: -1 })
+                .limit(5)
+                .select('originalFilename extractedText uploadedAt fileType')
+                .lean();
+
+            if (recentUploads && recentUploads.length > 0) {
+                // Build a context summary of recent uploads
+                const uploadsSummary = recentUploads.map((upload, idx) => {
+                    const daysAgo = Math.floor((Date.now() - new Date(upload.uploadedAt)) / (1000 * 60 * 60 * 24));
+                    const timeStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`;
+
+                    // Include excerpt of extracted text (first 200 chars)
+                    const textExcerpt = upload.extractedText ?
+                        upload.extractedText.substring(0, 200) + (upload.extractedText.length > 200 ? '...' : '') :
+                        '';
+
+                    return `${idx + 1}. "${upload.originalFilename}" (${upload.fileType}, uploaded ${timeStr})${textExcerpt ? `\n   Content excerpt: "${textExcerpt}"` : ''}`;
+                }).join('\n');
+
+                uploadContext = {
+                    count: recentUploads.length,
+                    summary: uploadsSummary
+                };
+
+                console.log(`📁 Injected ${recentUploads.length} recent uploads into AI context`);
+            }
+        } catch (error) {
+            console.error('Error fetching student uploads for context:', error);
+            // Continue without upload context if there's an error
+        }
+
         const recentMessagesForAI = activeConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
         let formattedMessagesForLLM = recentMessagesForAI
             .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content)
@@ -123,7 +159,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         }
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext);
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext, uploadContext);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
