@@ -1,0 +1,76 @@
+/* Mobile-specific fixes for button interactions */
+
+/* Ensure all buttons are touchable */
+button,
+.btn,
+.tab-btn {
+    -webkit-tap-highlight-color: rgba(18, 179, 179, 0.2);
+    touch-action: manipulation;
+    cursor: pointer;
+}
+
+/* Remove any pointer-events blocking */
+.input-toolbar,
+.header-nav {
+    pointer-events: auto;
+}
+
+.input-toolbar button,
+.header-nav button {
+    pointer-events: auto;
+}
+
+/* Increase tap target for toolbar buttons on mobile */
+@media (max-width: 768px) {
+    .input-toolbar {
+        display: flex;
+        gap: 8px;
+        padding: 10px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .input-toolbar button {
+        min-width: 48px;
+        min-height: 48px;
+        flex-shrink: 0;
+        padding: 12px;
+        font-size: 1.1em;
+    }
+
+    /* Header buttons */
+    .header-nav button {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 10px 15px;
+    }
+
+    /* Ensure modals are on top */
+    .modal-overlay {
+        z-index: 9999;
+        touch-action: none;
+    }
+
+    .modal-content {
+        touch-action: auto;
+    }
+}
+
+/* Fix for iOS Safari button tap delay */
+@media (hover: none) {
+    button {
+        cursor: default;
+    }
+}
+
+/* Prevent accidental zoom on double-tap */
+* {
+    touch-action: manipulation;
+}
+
+input,
+textarea,
+select,
+.math-field {
+    touch-action: auto;
+}
