@@ -48,6 +48,7 @@ Your task:
    - Correct final answer (40 points)
    - Correct methodology/steps (40 points)
    - Clear work shown (20 points)
+6. **Provide annotation locations** for visual feedback
 
 Format your response as follows:
 
@@ -55,6 +56,18 @@ Format your response as follows:
 
 **PROBLEM IDENTIFIED:**
 [Describe what problem they were solving]
+
+**ANNOTATIONS:**
+[For each annotation, specify: ANNOTATION|type|region|text]
+Where:
+- type: "check" (correct), "error" (mistake), "warning" (careful), or "info" (note)
+- region: "top", "top-left", "top-right", "middle", "middle-left", "middle-right", "bottom", "bottom-left", "bottom-right"
+- text: short annotation text (max 30 chars)
+
+Examples:
+ANNOTATION|check|top|Great start!
+ANNOTATION|error|middle-left|Sign error here
+ANNOTATION|warning|bottom|Check this step
 
 **STEP-BY-STEP ANALYSIS:**
 
@@ -116,6 +129,20 @@ Be specific, encouraging, and educational. Remember this is for learning, not ju
         const scoreMatch = aiResponse.match(/\*\*SCORE:\s*(\d+)\/100\*\*/);
         const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
 
+        // Parse annotations from the response
+        const annotations = [];
+        const annotationRegex = /ANNOTATION\|(\w+)\|([a-z\-]+)\|(.+)/g;
+        let match;
+        while ((match = annotationRegex.exec(aiResponse)) !== null) {
+            annotations.push({
+                type: match[1], // check, error, warning, info
+                region: match[2], // top, middle, bottom, etc.
+                text: match[3].trim()
+            });
+        }
+
+        console.log(`[gradeWork] Parsed ${annotations.length} annotations`);
+
         // Award XP based on completion (not score, to encourage practice)
         const xpEarned = 15; // Base XP for submitting work for grading
         const bonusXp = score >= 80 ? 10 : 0; // Bonus for high scores
@@ -123,12 +150,14 @@ Be specific, encouraging, and educational. Remember this is for learning, not ju
         user.xp = (user.xp || 0) + xpEarned + bonusXp;
         await user.save();
 
-        // Return grading results
+        // Return grading results with annotations
         res.json({
             success: true,
             score: `${score}/100`,
             scorePercent: score,
             feedback: aiResponse,
+            annotations: annotations,
+            imageData: dataUrl, // Return the image so frontend can draw on it
             xpEarned: xpEarned + bonusXp,
             message: 'Work graded successfully'
         });

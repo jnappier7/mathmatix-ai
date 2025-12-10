@@ -101,6 +101,12 @@ class ShowYourWorkManager {
         // Reset file inputs
         this.fileInput.value = '';
         this.cameraInput.value = '';
+
+        // Remove annotated section if it exists
+        const annotatedSection = document.getElementById('syw-annotated-section');
+        if (annotatedSection) {
+            annotatedSection.remove();
+        }
     }
 
     handleFileSelect(e) {
@@ -200,9 +206,130 @@ class ShowYourWorkManager {
         }
         this.scoreText.textContent = scoreMessage;
 
+        // Create annotated image if annotations exist
+        if (result.annotations && result.annotations.length > 0 && result.imageData) {
+            this.createAnnotatedImage(result.imageData, result.annotations);
+        }
+
         // Display feedback with formatting
         const feedback = result.feedback || 'No feedback available';
         this.feedbackContent.innerHTML = this.formatFeedback(feedback);
+    }
+
+    createAnnotatedImage(imageData, annotations) {
+        // Create a container for before/after comparison
+        const feedbackContainer = document.getElementById('syw-feedback-container');
+
+        // Add annotated image section above feedback
+        const annotatedSection = document.createElement('div');
+        annotatedSection.id = 'syw-annotated-section';
+        annotatedSection.style.cssText = 'margin-bottom: 20px; background: white; border-radius: 8px; padding: 15px;';
+
+        annotatedSection.innerHTML = `
+            <h4 style="margin-bottom: 15px;"><i class="fas fa-edit"></i> Annotated Work</h4>
+            <div style="position: relative; max-width: 100%;">
+                <canvas id="syw-annotated-canvas" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></canvas>
+            </div>
+        `;
+
+        // Insert before feedback
+        feedbackContainer.parentNode.insertBefore(annotatedSection, feedbackContainer);
+
+        // Draw annotations on canvas
+        const canvas = document.getElementById('syw-annotated-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const img = new Image();
+        img.onload = () => {
+            // Set canvas size to match image
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Draw original image
+            ctx.drawImage(img, 0, 0);
+
+            // Draw annotations
+            annotations.forEach(annotation => {
+                this.drawAnnotation(ctx, canvas.width, canvas.height, annotation);
+            });
+        };
+        img.src = imageData;
+    }
+
+    drawAnnotation(ctx, canvasWidth, canvasHeight, annotation) {
+        // Map region to coordinates
+        const regions = {
+            'top': { x: 0.5, y: 0.15 },
+            'top-left': { x: 0.15, y: 0.15 },
+            'top-right': { x: 0.85, y: 0.15 },
+            'middle': { x: 0.5, y: 0.5 },
+            'middle-left': { x: 0.15, y: 0.5 },
+            'middle-right': { x: 0.85, y: 0.5 },
+            'bottom': { x: 0.5, y: 0.85 },
+            'bottom-left': { x: 0.15, y: 0.85 },
+            'bottom-right': { x: 0.85, y: 0.85 }
+        };
+
+        const position = regions[annotation.region] || { x: 0.5, y: 0.5 };
+        const x = canvasWidth * position.x;
+        const y = canvasHeight * position.y;
+
+        // Style based on annotation type
+        const styles = {
+            'check': { color: '#10b981', icon: '✓', bgColor: '#d1fae5' },
+            'error': { color: '#ef4444', icon: '✗', bgColor: '#fee2e2' },
+            'warning': { color: '#f59e0b', icon: '⚠', bgColor: '#fef3c7' },
+            'info': { color: '#3b82f6', icon: 'ℹ', bgColor: '#dbeafe' }
+        };
+
+        const style = styles[annotation.type] || styles.info;
+
+        // Draw annotation bubble
+        ctx.save();
+
+        // Measure text
+        ctx.font = 'bold 16px Arial';
+        const textWidth = ctx.measureText(annotation.text).width;
+        const bubbleWidth = textWidth + 40;
+        const bubbleHeight = 35;
+
+        // Draw bubble background
+        ctx.fillStyle = style.bgColor;
+        ctx.strokeStyle = style.color;
+        ctx.lineWidth = 3;
+
+        // Rounded rectangle
+        const bubbleX = x - bubbleWidth / 2;
+        const bubbleY = y - bubbleHeight / 2;
+        const radius = 8;
+
+        ctx.beginPath();
+        ctx.moveTo(bubbleX + radius, bubbleY);
+        ctx.lineTo(bubbleX + bubbleWidth - radius, bubbleY);
+        ctx.quadraticCurveTo(bubbleX + bubbleWidth, bubbleY, bubbleX + bubbleWidth, bubbleY + radius);
+        ctx.lineTo(bubbleX + bubbleWidth, bubbleY + bubbleHeight - radius);
+        ctx.quadraticCurveTo(bubbleX + bubbleWidth, bubbleY + bubbleHeight, bubbleX + bubbleWidth - radius, bubbleY + bubbleHeight);
+        ctx.lineTo(bubbleX + radius, bubbleY + bubbleHeight);
+        ctx.quadraticCurveTo(bubbleX, bubbleY + bubbleHeight, bubbleX, bubbleY + bubbleHeight - radius);
+        ctx.lineTo(bubbleX, bubbleY + radius);
+        ctx.quadraticCurveTo(bubbleX, bubbleY, bubbleX + radius, bubbleY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw icon
+        ctx.fillStyle = style.color;
+        ctx.font = 'bold 20px Arial';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(style.icon, bubbleX + 10, y);
+
+        // Draw text
+        ctx.font = 'bold 16px Arial';
+        ctx.fillStyle = '#1f2937';
+        ctx.fillText(annotation.text, bubbleX + 30, y);
+
+        ctx.restore();
     }
 
     formatFeedback(feedback) {
