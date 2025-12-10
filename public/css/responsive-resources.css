@@ -1,0 +1,115 @@
+/* Responsive styles for student resources modal */
+
+/* Schedule iframe container */
+.schedule-iframe-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.schedule-iframe-container iframe {
+    border: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Resources modal improvements */
+.resource-link {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s;
+}
+
+.resource-link:hover {
+    background: #e3f2fd;
+    transform: translateX(5px);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    /* Resources modal full-screen on mobile */
+    #resources-modal .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 10px;
+        max-height: 95vh;
+    }
+
+    /* Schedule iframe - taller on mobile */
+    .schedule-iframe-container {
+        padding-bottom: 75%;
+    }
+
+    /* Resource links stack better */
+    .resource-link {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+
+    .resource-link i.fa-video,
+    .resource-link i.fa-file-pdf,
+    .resource-link i.fa-link {
+        margin-right: 0 !important;
+        margin-bottom: 8px;
+    }
+
+    /* Adjust padding for mobile */
+    #resources-content > div {
+        padding: 15px !important;
+    }
+
+    /* Info box adjustments */
+    .info-box {
+        padding: 12px !important;
+        font-size: 0.85em !important;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra small screens */
+    .schedule-iframe-container {
+        padding-bottom: 80%;
+    }
+
+    .resource-link {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .resource-link i {
+        font-size: 20px !important;
+    }
+}
+
+/* Landscape mode on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .schedule-iframe-container {
+        padding-bottom: 50%;
+    }
+
+    #resources-modal .modal-content {
+        max-height: 90vh;
+    }
+}
+
+/* Touch-friendly close button */
+#resources-modal .modal-close-button {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

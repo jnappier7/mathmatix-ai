@@ -8,22 +8,211 @@
     <link rel="stylesheet" href="/css/teacher-live-feed.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 	<style>
-        .resources-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; padding: 15px; }
-        .resource-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; display: flex; gap: 15px; }
+        /* Resource Grid - Responsive */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 15px;
+        }
+
+        /* Resource Cards */
+        .resource-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            gap: 15px;
+        }
         .resource-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .resource-icon { font-size: 48px; color: #12B3B3; width: 60px; text-align: center; }
-        .resource-info { flex: 1; }
-        .resource-info h4 { margin: 0 0 8px 0; font-size: 1.1em; color: #333; }
-        .resource-meta { font-size: 0.85em; color: #666; margin: 5px 0; }
-        .resource-type { background: #e8f9f8; color: #12B3B3; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        .resource-icon { font-size: 48px; color: #12B3B3; width: 60px; text-align: center; flex-shrink: 0; }
+        .resource-info { flex: 1; min-width: 0; }
+        .resource-info h4 { margin: 0 0 8px 0; font-size: 1.1em; color: #333; word-wrap: break-word; }
+        .resource-meta { font-size: 0.85em; color: #666; margin: 5px 0; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+        .resource-type { background: #e8f9f8; color: #12B3B3; padding: 2px 8px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
         .resource-description { font-size: 0.9em; color: #666; margin: 8px 0; }
         .resource-stats { font-size: 0.85em; color: #999; margin: 8px 0; }
         .resource-keywords { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
         .keyword-tag { background: #f0f0f0; color: #666; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; }
-        .resource-actions { display: flex; flex-direction: column; gap: 8px; }
-        .btn-icon { background: #f0f0f0; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .resource-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .btn-icon {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 40px;
+            min-height: 40px; /* Touch-friendly size */
+        }
         .btn-icon:hover { background: #12B3B3; color: white; }
         .btn-icon.btn-danger:hover { background: #ff4e4e; color: white; }
+
+        /* Schedule iframe container - responsive */
+        .schedule-iframe-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .schedule-iframe-container iframe {
+            border: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Dashboard tabs - mobile responsive */
+        .dashboard-tabs {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            gap: 5px;
+            padding-bottom: 5px;
+        }
+        .dashboard-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        .dashboard-tabs::-webkit-scrollbar-thumb {
+            background: #12B3B3;
+            border-radius: 4px;
+        }
+
+        /* Modal improvements for mobile */
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: 20px;
+        }
+
+        /* Form inputs - touch-friendly */
+        input[type="text"],
+        input[type="file"],
+        textarea,
+        select {
+            min-height: 44px; /* iOS recommended touch target */
+        }
+
+        /* Mobile Responsive Breakpoints */
+        @media (max-width: 768px) {
+            /* Stack resource grid on mobile */
+            .resources-grid {
+                grid-template-columns: 1fr;
+                padding: 10px;
+                gap: 15px;
+            }
+
+            /* Adjust resource card layout for mobile */
+            .resource-card {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .resource-icon {
+                width: 100%;
+                font-size: 36px;
+                margin-bottom: 10px;
+            }
+
+            .resource-actions {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            .resource-meta {
+                flex-direction: column;
+                gap: 3px;
+                align-items: flex-start;
+            }
+
+            /* Dashboard tabs scroll on mobile */
+            .dashboard-tabs {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+            }
+
+            .tab-btn {
+                white-space: nowrap;
+                flex-shrink: 0;
+                font-size: 0.9em;
+                padding: 10px 15px;
+            }
+
+            /* Modal full-screen on mobile */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 10px auto;
+                max-height: 95vh;
+            }
+
+            /* Schedule iframe - adjust aspect ratio for mobile */
+            .schedule-iframe-container {
+                padding-bottom: 75%; /* Taller on mobile for better visibility */
+            }
+
+            /* Touch-friendly buttons */
+            .btn, .submit-btn, button {
+                min-height: 44px;
+                padding: 12px 20px;
+            }
+
+            /* Header adjustments */
+            .dashboard-panel-header {
+                font-size: 1em;
+                padding: 12px 15px;
+                flex-wrap: wrap;
+            }
+
+            .dashboard-panel-header > div {
+                margin-top: 10px !important;
+                width: 100%;
+            }
+
+            /* Form buttons stack on mobile */
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            .form-buttons button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Extra small screens */
+            .resource-info h4 {
+                font-size: 1em;
+            }
+
+            .resource-icon {
+                font-size: 32px;
+            }
+
+            .btn-icon {
+                padding: 10px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+
+            /* Hide some meta info on very small screens to save space */
+            .resource-stats {
+                font-size: 0.8em;
+            }
+        }
+
+        /* Landscape mobile optimization */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .schedule-iframe-container {
+                padding-bottom: 50%; /* Better aspect ratio for landscape */
+            }
+        }
     </style>
 </head>
 <body class="landing-page-body">
@@ -121,8 +310,8 @@
                             <i class="fas fa-calendar-alt"></i> Tentative Schedule
                         </div>
                         <div style="padding: 20px;">
-                            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
-                                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" style="border: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%;" title="Common Curriculum Tentative Schedule"></iframe>
+                            <div class="schedule-iframe-container">
+                                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
                             </div>
                         </div>
                     </div>
