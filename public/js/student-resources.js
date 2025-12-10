@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             e.stopPropagation();
             try {
-                resourcesModal.style.display = 'flex';
+                resourcesModal.classList.add('is-visible');
                 await loadResources();
             } catch (error) {
                 console.error('📚 Error opening resources:', error);
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Close modal handlers
     function closeModal() {
-        resourcesModal.style.display = 'none';
+        resourcesModal.classList.remove('is-visible');
     }
 
     if (closeResourcesBtn) {
