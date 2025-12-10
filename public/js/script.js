@@ -2325,7 +2325,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (openGraphingCalcBtn && graphingCalcModal) {
         openGraphingCalcBtn.addEventListener('click', () => {
-            graphingCalcModal.style.display = 'flex';
+            graphingCalcModal.classList.add('is-visible');
 
             // Initialize Desmos calculator on first open
             if (!desmosCalculator && window.Desmos) {
@@ -2345,14 +2345,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // Close modal on X button
         if (closeGraphingCalcBtn) {
             closeGraphingCalcBtn.addEventListener('click', () => {
-                graphingCalcModal.style.display = 'none';
+                graphingCalcModal.classList.remove('is-visible');
             });
         }
 
         // Close modal on overlay click
         graphingCalcModal.addEventListener('click', (e) => {
             if (e.target === graphingCalcModal) {
-                graphingCalcModal.style.display = 'none';
+                graphingCalcModal.classList.remove('is-visible');
             }
         });
 
@@ -2401,7 +2401,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     // Close modal
-                    graphingCalcModal.style.display = 'none';
+                    graphingCalcModal.classList.remove('is-visible');
 
                     showToast('Graph added to chat', 2000);
                 } catch (error) {

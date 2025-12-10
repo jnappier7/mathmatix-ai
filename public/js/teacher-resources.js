@@ -12,14 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Open upload modal
     if (uploadBtn) {
         uploadBtn.addEventListener('click', () => {
-            uploadModal.style.display = 'flex';
+            uploadModal.classList.add('is-visible');
         });
     }
 
     // Close modal
     if (closeUploadModal) {
         closeUploadModal.addEventListener('click', () => {
-            uploadModal.style.display = 'none';
+            uploadModal.classList.remove('is-visible');
             uploadForm.reset();
         });
     }
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelBtn = document.getElementById('cancel-resource-upload-btn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {
-            uploadModal.style.display = 'none';
+            uploadModal.classList.remove('is-visible');
             uploadForm.reset();
         });
     }
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close on outside click
     uploadModal?.addEventListener('click', (e) => {
         if (e.target === uploadModal) {
-            uploadModal.style.display = 'none';
+            uploadModal.classList.remove('is-visible');
             uploadForm.reset();
         }
     });
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok && result.success) {
                     alert('✅ Resource uploaded successfully!');
-                    uploadModal.style.display = 'none';
+                    uploadModal.classList.remove('is-visible');
                     uploadForm.reset();
                     await loadResources(); // Reload resources list
                 } else {
