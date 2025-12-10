@@ -100,8 +100,8 @@
       <button id="attach-button" title="Upload Files" class="btn btn-tertiary">
         <i class="fas fa-paperclip"></i>
       </button>
-      <button id="camera-button" title="Take Photo" class="btn btn-tertiary">
-        <i class="fas fa-camera"></i>
+      <button id="camera-button" title="Show Your Work - Get Graded" class="btn btn-tertiary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <i class="fas fa-camera-retro"></i>
       </button>
       <button id="mic-button" title="Voice Input" class="btn btn-tertiary">
         <i class="fas fa-microphone"></i>
@@ -474,6 +474,86 @@
     </div>
   </div>
 
+  <!-- Show Your Work Modal -->
+  <div id="show-your-work-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close-button" id="close-show-your-work-modal">&times;</button>
+      <h2><i class="fas fa-camera-retro"></i> Show Your Work - Get Graded</h2>
+      <p style="color: #666; margin-bottom: 20px;">
+        Take a photo of your math work and get instant AI grading with step-by-step feedback!
+      </p>
+
+      <!-- Step 1: Capture Photo -->
+      <div id="syw-capture-section" style="margin-bottom: 20px;">
+        <h3 style="margin-bottom: 15px;">📸 Step 1: Capture Your Work</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+          <button id="syw-take-photo-btn" class="btn btn-primary">
+            <i class="fas fa-camera"></i> Take Photo
+          </button>
+          <button id="syw-upload-photo-btn" class="btn btn-secondary">
+            <i class="fas fa-upload"></i> Upload Image
+          </button>
+        </div>
+        <input type="file" id="syw-file-input" accept="image/*" style="display: none;">
+        <input type="file" id="syw-camera-input" accept="image/*" capture="environment" style="display: none;">
+      </div>
+
+      <!-- Step 2: Preview & Submit -->
+      <div id="syw-preview-section" style="display: none; margin-bottom: 20px;">
+        <h3 style="margin-bottom: 15px;">👀 Step 2: Review & Submit</h3>
+        <div style="background: #f5f5f5; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+          <img id="syw-preview-image" src="" alt="Preview" style="max-width: 100%; border-radius: 8px; display: none;">
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button id="syw-retake-btn" class="btn btn-tertiary">
+            <i class="fas fa-redo"></i> Retake
+          </button>
+          <button id="syw-submit-btn" class="btn btn-primary">
+            <i class="fas fa-check-circle"></i> Submit for Grading
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="syw-loading-section" style="display: none; text-align: center; padding: 40px;">
+        <div style="font-size: 48px; margin-bottom: 20px;">
+          <i class="fas fa-spinner fa-spin" style="color: #667eea;"></i>
+        </div>
+        <h3>Analyzing Your Work...</h3>
+        <p style="color: #666;">Our AI is grading your work step-by-step</p>
+      </div>
+
+      <!-- Step 3: Graded Results -->
+      <div id="syw-results-section" style="display: none;">
+        <h3 style="margin-bottom: 15px;">✨ Grading Results</h3>
+
+        <!-- Score Summary -->
+        <div id="syw-score-summary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center;">
+          <div style="font-size: 48px; font-weight: bold; margin-bottom: 10px;" id="syw-score-display">--</div>
+          <div style="font-size: 18px;" id="syw-score-text">Great effort!</div>
+        </div>
+
+        <!-- Annotated Feedback -->
+        <div id="syw-feedback-container" style="background: #f9f9f9; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+          <h4 style="margin-bottom: 15px;"><i class="fas fa-clipboard-check"></i> Detailed Feedback</h4>
+          <div id="syw-feedback-content" style="white-space: pre-wrap; line-height: 1.8;">
+            <!-- AI feedback will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; justify-content: space-between;">
+          <button id="syw-try-again-btn" class="btn btn-secondary">
+            <i class="fas fa-redo"></i> Try Another Problem
+          </button>
+          <button id="syw-ask-tutor-btn" class="btn btn-primary">
+            <i class="fas fa-comments"></i> Ask My Tutor About This
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Floating Calculator Widget -->
   <div id="floating-calculator" class="floating-calculator" style="display: none;">
     <div class="calculator-header-bar" id="calculator-drag-handle">
@@ -643,6 +723,7 @@
   <script src="/js/file-upload.js"></script>
   <script src="/js/student-resources.js"></script>
   <script src="/js/settings.js"></script>
+  <script src="/js/show-your-work.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
 </body>
