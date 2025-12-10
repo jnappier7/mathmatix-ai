@@ -274,12 +274,12 @@ class ShowYourWorkManager {
         const x = canvasWidth * position.x;
         const y = canvasHeight * position.y;
 
-        // Style based on annotation type
+        // Style based on annotation type (all purple to match brand)
         const styles = {
-            'check': { color: '#10b981', icon: '✓', bgColor: '#d1fae5' },
-            'error': { color: '#ef4444', icon: '✗', bgColor: '#fee2e2' },
-            'warning': { color: '#f59e0b', icon: '⚠', bgColor: '#fef3c7' },
-            'info': { color: '#3b82f6', icon: 'ℹ', bgColor: '#dbeafe' }
+            'check': { color: '#8b5cf6', icon: '✓', bgColor: '#ede9fe' },
+            'error': { color: '#7c3aed', icon: '✗', bgColor: '#ede9fe' },
+            'warning': { color: '#667eea', icon: '⚠', bgColor: '#e0e7ff' },
+            'info': { color: '#764ba2', icon: 'ℹ', bgColor: '#f3e8ff' }
         };
 
         const style = styles[annotation.type] || styles.info;
