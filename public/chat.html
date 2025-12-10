@@ -491,10 +491,10 @@
             <i class="fas fa-camera"></i> Take Photo
           </button>
           <button id="syw-upload-photo-btn" class="btn btn-secondary">
-            <i class="fas fa-upload"></i> Upload Image
+            <i class="fas fa-upload"></i> Upload Image/PDF
           </button>
         </div>
-        <input type="file" id="syw-file-input" accept="image/*" style="display: none;">
+        <input type="file" id="syw-file-input" accept="image/*,application/pdf" style="display: none;">
         <input type="file" id="syw-camera-input" accept="image/*" capture="environment" style="display: none;">
       </div>
 
@@ -503,6 +503,12 @@
         <h3 style="margin-bottom: 15px;">👀 Step 2: Review & Submit</h3>
         <div style="background: #f5f5f5; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
           <img id="syw-preview-image" src="" alt="Preview" style="max-width: 100%; border-radius: 8px; display: none;">
+          <canvas id="syw-preview-pdf-canvas" style="max-width: 100%; border-radius: 8px; display: none;"></canvas>
+          <div id="syw-pdf-info" style="text-align: center; margin-top: 10px; color: #666; display: none;">
+            <i class="fas fa-file-pdf" style="color: #ef4444;"></i>
+            <span id="syw-pdf-pages-info">Page 1 of 1</span>
+            <p style="font-size: 12px; margin-top: 5px;">Only the first page will be graded</p>
+          </div>
         </div>
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
           <button id="syw-retake-btn" class="btn btn-tertiary">

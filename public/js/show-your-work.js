@@ -109,43 +109,109 @@ class ShowYourWorkManager {
         }
     }
 
-    handleFileSelect(e) {
+    async handleFileSelect(e) {
         const files = e.target.files;
         if (!files || files.length === 0) return;
 
         const file = files[0];
 
         // Validate file type
-        if (!file.type.startsWith('image/')) {
-            alert('Please select an image file');
+        const isImage = file.type.startsWith('image/');
+        const isPDF = file.type === 'application/pdf';
+
+        if (!isImage && !isPDF) {
+            alert('Please select an image or PDF file');
             return;
         }
 
         // Validate file size (10MB max)
         if (file.size > 10 * 1024 * 1024) {
-            alert('Image is too large. Please use an image under 10MB.');
+            alert('File is too large. Please use a file under 10MB.');
             return;
         }
 
         this.currentFile = file;
 
-        // Show preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.currentImageData = e.target.result;
-            this.previewImage.src = e.target.result;
-            this.previewImage.style.display = 'block';
+        // Handle image preview
+        if (isImage) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.currentImageData = e.target.result;
+                this.previewImage.src = e.target.result;
+                this.previewImage.style.display = 'block';
+
+                // Hide PDF elements
+                const pdfCanvas = document.getElementById('syw-preview-pdf-canvas');
+                const pdfInfo = document.getElementById('syw-pdf-info');
+                if (pdfCanvas) pdfCanvas.style.display = 'none';
+                if (pdfInfo) pdfInfo.style.display = 'none';
+
+                // Switch to preview section
+                this.captureSection.style.display = 'none';
+                this.previewSection.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+        // Handle PDF preview
+        else if (isPDF) {
+            await this.renderPDFPreview(file);
+        }
+    }
+
+    async renderPDFPreview(file) {
+        try {
+            // Check if PDF.js is available
+            if (typeof window.pdfjsLib === 'undefined') {
+                alert('PDF viewer is not available. Please upload an image instead.');
+                return;
+            }
+
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+            // Get first page
+            const page = await pdf.getPage(1);
+
+            const canvas = document.getElementById('syw-preview-pdf-canvas');
+            const context = canvas.getContext('2d');
+
+            // Set scale for good quality
+            const viewport = page.getViewport({ scale: 2.0 });
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+
+            // Render PDF page to canvas
+            await page.render({
+                canvasContext: context,
+                viewport: viewport
+            }).promise;
+
+            // Convert canvas to data URL for submission
+            this.currentImageData = canvas.toDataURL('image/png');
+
+            // Show PDF preview
+            canvas.style.display = 'block';
+            this.previewImage.style.display = 'none';
+
+            // Show PDF info
+            const pdfInfo = document.getElementById('syw-pdf-info');
+            const pdfPagesInfo = document.getElementById('syw-pdf-pages-info');
+            if (pdfInfo) pdfInfo.style.display = 'block';
+            if (pdfPagesInfo) pdfPagesInfo.textContent = `Page 1 of ${pdf.numPages}`;
 
             // Switch to preview section
             this.captureSection.style.display = 'none';
             this.previewSection.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
+
+        } catch (error) {
+            console.error('PDF rendering error:', error);
+            alert('Failed to load PDF. Please try an image file instead.');
+        }
     }
 
     async submitForGrading() {
-        if (!this.currentFile) {
-            alert('Please select an image first');
+        if (!this.currentImageData) {
+            alert('Please select an image or PDF first');
             return;
         }
 
@@ -156,7 +222,16 @@ class ShowYourWorkManager {
 
             // Prepare form data
             const formData = new FormData();
-            formData.append('file', this.currentFile);
+
+            // If PDF was uploaded, send the converted PNG instead
+            if (this.currentFile.type === 'application/pdf') {
+                // Convert data URL to blob
+                const blob = await this.dataURLToBlob(this.currentImageData);
+                formData.append('file', blob, 'work.png');
+            } else {
+                // Send original image file
+                formData.append('file', this.currentFile);
+            }
 
             // Submit to grading endpoint
             const response = await fetch('/api/grade-work', {
@@ -181,6 +256,12 @@ class ShowYourWorkManager {
             alert(`Error: ${error.message}`);
             this.resetToCapture();
         }
+    }
+
+    // Helper to convert data URL to Blob
+    async dataURLToBlob(dataURL) {
+        const response = await fetch(dataURL);
+        return await response.blob();
     }
 
     displayResults(result) {
