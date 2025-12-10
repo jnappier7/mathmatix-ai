@@ -208,12 +208,34 @@
           <input type="checkbox" id="handsFreeToggle" class="toggle-switch">
         </div>
         <p class="setting-description">When enabled, the AI's responses will be read aloud automatically and typed out on screen.</p>
-        
+
         <div class="form-group settings-toggle">
           <label for="autoplayTtsToggle">Autoplay Audio</label>
           <input type="checkbox" id="autoplayTtsToggle" class="toggle-switch">
         </div>
         <p class="setting-description">Controls whether audio plays automatically in Hands-Free mode.</p>
+
+        <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;">
+
+        <div class="form-group" id="password-change-section" style="display: none;">
+          <label>Change Password</label>
+          <div id="password-change-form">
+            <input type="password" id="current-password" class="form-input" placeholder="Current Password" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="password" id="new-password" class="form-input" placeholder="New Password (min 6 characters)" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="password" id="confirm-new-password" class="form-input" placeholder="Confirm New Password" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <button id="change-password-btn" class="btn btn-primary" style="width: 100%; margin-top: 5px;">
+              <i class="fas fa-key"></i> Update Password
+            </button>
+          </div>
+          <p class="setting-description">Change your account password. Make sure to use a strong password that you can remember.</p>
+        </div>
+
+        <div class="form-group" id="oauth-notice" style="display: none;">
+          <label>Account Security</label>
+          <p class="setting-description" style="padding: 15px; background: #f0f7ff; border-radius: 4px; border-left: 4px solid #2196F3;">
+            <i class="fas fa-info-circle"></i> You signed in with Google/Microsoft. Your password is managed by your identity provider.
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -620,6 +642,7 @@
   <script src="/js/mobile-touch-fix.js"></script>
   <script src="/js/file-upload.js"></script>
   <script src="/js/student-resources.js"></script>
+  <script src="/js/settings.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
 </body>
