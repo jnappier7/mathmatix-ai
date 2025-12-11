@@ -1683,14 +1683,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         chatBox.appendChild(bubble);
 
-        // 🎬 Trigger speaking animation when AI responds
-        if (sender === 'ai') {
-            if (typeof playTutorAnimation === 'function') {
-                // Play smallcele animation - will automatically crossfade back to idle when done
-                playTutorAnimation('smallcele');
-            }
-        }
-
         if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
             if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
                  const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
