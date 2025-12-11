@@ -338,77 +338,63 @@ class ShowYourWorkManager {
     }
 
     drawAnnotation(ctx, canvasWidth, canvasHeight, annotation) {
-        // Map region to coordinates
-        const regions = {
-            'top': { x: 0.5, y: 0.15 },
-            'top-left': { x: 0.15, y: 0.15 },
-            'top-right': { x: 0.85, y: 0.15 },
-            'middle': { x: 0.5, y: 0.5 },
-            'middle-left': { x: 0.15, y: 0.5 },
-            'middle-right': { x: 0.85, y: 0.5 },
-            'bottom': { x: 0.5, y: 0.85 },
-            'bottom-left': { x: 0.15, y: 0.85 },
-            'bottom-right': { x: 0.85, y: 0.85 }
-        };
+        // Use precise percentage-based positioning from AI
+        const x = canvasWidth * (annotation.x / 100);
+        const y = canvasHeight * (annotation.y / 100);
 
-        const position = regions[annotation.region] || { x: 0.5, y: 0.5 };
-        const x = canvasWidth * position.x;
-        const y = canvasHeight * position.y;
-
-        // Style based on annotation type (all purple to match brand)
-        const styles = {
-            'check': { color: '#8b5cf6', icon: '✓', bgColor: '#ede9fe' },
-            'error': { color: '#7c3aed', icon: '✗', bgColor: '#ede9fe' },
-            'warning': { color: '#667eea', icon: '⚠', bgColor: '#e0e7ff' },
-            'info': { color: '#764ba2', icon: 'ℹ', bgColor: '#f3e8ff' }
-        };
-
-        const style = styles[annotation.type] || styles.info;
-
-        // Draw annotation bubble
         ctx.save();
 
-        // Measure text
-        ctx.font = 'bold 16px Arial';
-        const textWidth = ctx.measureText(annotation.text).width;
-        const bubbleWidth = textWidth + 40;
-        const bubbleHeight = 35;
+        // Purple color for all marks (teacher grading pen)
+        const purpleColor = '#8b5cf6';
 
-        // Draw bubble background
-        ctx.fillStyle = style.bgColor;
-        ctx.strokeStyle = style.color;
-        ctx.lineWidth = 3;
+        // Scale sizes based on canvas dimensions
+        const baseSize = Math.max(30, Math.min(canvasWidth, canvasHeight) / 30);
 
-        // Rounded rectangle
-        const bubbleX = x - bubbleWidth / 2;
-        const bubbleY = y - bubbleHeight / 2;
-        const radius = 8;
+        if (annotation.type === 'check') {
+            // Draw checkmark ✓
+            ctx.strokeStyle = purpleColor;
+            ctx.lineWidth = baseSize / 8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
 
-        ctx.beginPath();
-        ctx.moveTo(bubbleX + radius, bubbleY);
-        ctx.lineTo(bubbleX + bubbleWidth - radius, bubbleY);
-        ctx.quadraticCurveTo(bubbleX + bubbleWidth, bubbleY, bubbleX + bubbleWidth, bubbleY + radius);
-        ctx.lineTo(bubbleX + bubbleWidth, bubbleY + bubbleHeight - radius);
-        ctx.quadraticCurveTo(bubbleX + bubbleWidth, bubbleY + bubbleHeight, bubbleX + bubbleWidth - radius, bubbleY + bubbleHeight);
-        ctx.lineTo(bubbleX + radius, bubbleY + bubbleHeight);
-        ctx.quadraticCurveTo(bubbleX, bubbleY + bubbleHeight, bubbleX, bubbleY + bubbleHeight - radius);
-        ctx.lineTo(bubbleX, bubbleY + radius);
-        ctx.quadraticCurveTo(bubbleX, bubbleY, bubbleX + radius, bubbleY);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x - baseSize * 0.4, y);
+            ctx.lineTo(x - baseSize * 0.1, y + baseSize * 0.4);
+            ctx.lineTo(x + baseSize * 0.5, y - baseSize * 0.5);
+            ctx.stroke();
 
-        // Draw icon
-        ctx.fillStyle = style.color;
-        ctx.font = 'bold 20px Arial';
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(style.icon, bubbleX + 10, y);
+        } else if (annotation.type === 'miss') {
+            // Draw X mark ✗
+            ctx.strokeStyle = purpleColor;
+            ctx.lineWidth = baseSize / 8;
+            ctx.lineCap = 'round';
 
-        // Draw text
-        ctx.font = 'bold 16px Arial';
-        ctx.fillStyle = '#1f2937';
-        ctx.fillText(annotation.text, bubbleX + 30, y);
+            const size = baseSize * 0.5;
+            ctx.beginPath();
+            ctx.moveTo(x - size, y - size);
+            ctx.lineTo(x + size, y + size);
+            ctx.moveTo(x + size, y - size);
+            ctx.lineTo(x - size, y + size);
+            ctx.stroke();
+
+        } else if (annotation.type === 'circle') {
+            // Draw circle around answer
+            ctx.strokeStyle = purpleColor;
+            ctx.lineWidth = baseSize / 10;
+            const radius = baseSize * 0.8;
+
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+        } else if (annotation.type === 'partial' || annotation.type === 'note') {
+            // Draw text (like "-1", "A", "slope=rise/run", etc.)
+            ctx.fillStyle = purpleColor;
+            ctx.font = `bold ${baseSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(annotation.mark || '', x, y);
+        }
 
         ctx.restore();
     }
