@@ -338,22 +338,9 @@ class ShowYourWorkManager {
     }
 
     drawAnnotation(ctx, canvasWidth, canvasHeight, annotation) {
-        // Map region to coordinates
-        const regions = {
-            'top': { x: 0.5, y: 0.15 },
-            'top-left': { x: 0.15, y: 0.15 },
-            'top-right': { x: 0.85, y: 0.15 },
-            'middle': { x: 0.5, y: 0.5 },
-            'middle-left': { x: 0.15, y: 0.5 },
-            'middle-right': { x: 0.85, y: 0.5 },
-            'bottom': { x: 0.5, y: 0.85 },
-            'bottom-left': { x: 0.15, y: 0.85 },
-            'bottom-right': { x: 0.85, y: 0.85 }
-        };
-
-        const position = regions[annotation.region] || { x: 0.5, y: 0.5 };
-        const x = canvasWidth * position.x;
-        const y = canvasHeight * position.y;
+        // Use precise percentage-based positioning from AI
+        const x = canvasWidth * (annotation.x / 100);
+        const y = canvasHeight * (annotation.y / 100);
 
         // Style based on annotation type (all purple to match brand)
         const styles = {
@@ -368,11 +355,15 @@ class ShowYourWorkManager {
         // Draw annotation bubble
         ctx.save();
 
+        // Scale font size based on canvas dimensions for readability
+        const baseFontSize = Math.max(20, Math.min(canvasWidth, canvasHeight) / 40);
+        const fontSize = baseFontSize;
+
         // Measure text
-        ctx.font = 'bold 16px Arial';
+        ctx.font = `bold ${fontSize}px Arial`;
         const textWidth = ctx.measureText(annotation.text).width;
-        const bubbleWidth = textWidth + 40;
-        const bubbleHeight = 35;
+        const bubbleWidth = textWidth + 60;
+        const bubbleHeight = fontSize * 2.2;
 
         // Draw bubble background
         ctx.fillStyle = style.bgColor;
@@ -400,15 +391,17 @@ class ShowYourWorkManager {
 
         // Draw icon
         ctx.fillStyle = style.color;
-        ctx.font = 'bold 20px Arial';
+        ctx.font = `bold ${fontSize * 1.2}px Arial`;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(style.icon, bubbleX + 10, y);
+        const iconOffset = bubbleHeight * 0.3;
+        ctx.fillText(style.icon, bubbleX + iconOffset, y);
 
         // Draw text
-        ctx.font = 'bold 16px Arial';
+        ctx.font = `bold ${fontSize}px Arial`;
         ctx.fillStyle = '#1f2937';
-        ctx.fillText(annotation.text, bubbleX + 30, y);
+        const textOffset = iconOffset + fontSize * 1.5;
+        ctx.fillText(annotation.text, bubbleX + textOffset, y);
 
         ctx.restore();
     }

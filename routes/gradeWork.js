@@ -58,16 +58,22 @@ Format your response as follows:
 [Describe what problem they were solving]
 
 **ANNOTATIONS:**
-[For each annotation, specify: ANNOTATION|type|region|text]
+[For each annotation, provide precise positioning using: ANNOTATION|type|x|y|text]
 Where:
 - type: "check" (correct), "error" (mistake), "warning" (careful), or "info" (note)
-- region: "top", "top-left", "top-right", "middle", "middle-left", "middle-right", "bottom", "bottom-left", "bottom-right"
-- text: short annotation text (max 30 chars)
+- x: horizontal position as percentage (0-100, where 0=left edge, 100=right edge)
+- y: vertical position as percentage (0-100, where 0=top, 100=bottom)
+- text: annotation text describing the issue/praise (max 50 chars)
+
+IMPORTANT: Look at WHERE each problem is located on the page and position annotations directly next to the relevant work.
 
 Examples:
-ANNOTATION|check|top|Great start!
-ANNOTATION|error|middle-left|Sign error here
-ANNOTATION|warning|bottom|Check this step
+ANNOTATION|check|15|20|Problem 1: Correct!
+ANNOTATION|error|65|25|Problem 2: Sign error
+ANNOTATION|check|15|45|Problem 3: Perfect
+ANNOTATION|error|65|50|Problem 4: Wrong inequality
+ANNOTATION|warning|15|70|Problem 5: Check graph
+ANNOTATION|check|65|75|Problem 6: Great work!
 
 **STEP-BY-STEP ANALYSIS:**
 
@@ -131,13 +137,14 @@ Be specific, encouraging, and educational. Remember this is for learning, not ju
 
         // Parse annotations from the response
         const annotations = [];
-        const annotationRegex = /ANNOTATION\|(\w+)\|([a-z\-]+)\|(.+)/g;
+        const annotationRegex = /ANNOTATION\|(\w+)\|([\d\.]+)\|([\d\.]+)\|(.+)/g;
         let match;
         while ((match = annotationRegex.exec(aiResponse)) !== null) {
             annotations.push({
                 type: match[1], // check, error, warning, info
-                region: match[2], // top, middle, bottom, etc.
-                text: match[3].trim()
+                x: parseFloat(match[2]), // x position as percentage (0-100)
+                y: parseFloat(match[3]), // y position as percentage (0-100)
+                text: match[4].trim()
             });
         }
 
