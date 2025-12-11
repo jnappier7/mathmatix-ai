@@ -342,66 +342,59 @@ class ShowYourWorkManager {
         const x = canvasWidth * (annotation.x / 100);
         const y = canvasHeight * (annotation.y / 100);
 
-        // Style based on annotation type (all purple to match brand)
-        const styles = {
-            'check': { color: '#8b5cf6', icon: '✓', bgColor: '#ede9fe' },
-            'error': { color: '#7c3aed', icon: '✗', bgColor: '#ede9fe' },
-            'warning': { color: '#667eea', icon: '⚠', bgColor: '#e0e7ff' },
-            'info': { color: '#764ba2', icon: 'ℹ', bgColor: '#f3e8ff' }
-        };
-
-        const style = styles[annotation.type] || styles.info;
-
-        // Draw annotation bubble
         ctx.save();
 
-        // Scale font size based on canvas dimensions for readability
-        const baseFontSize = Math.max(20, Math.min(canvasWidth, canvasHeight) / 40);
-        const fontSize = baseFontSize;
+        // Purple color for all marks (teacher grading pen)
+        const purpleColor = '#8b5cf6';
 
-        // Measure text
-        ctx.font = `bold ${fontSize}px Arial`;
-        const textWidth = ctx.measureText(annotation.text).width;
-        const bubbleWidth = textWidth + 60;
-        const bubbleHeight = fontSize * 2.2;
+        // Scale sizes based on canvas dimensions
+        const baseSize = Math.max(30, Math.min(canvasWidth, canvasHeight) / 30);
 
-        // Draw bubble background
-        ctx.fillStyle = style.bgColor;
-        ctx.strokeStyle = style.color;
-        ctx.lineWidth = 3;
+        if (annotation.type === 'check') {
+            // Draw checkmark ✓
+            ctx.strokeStyle = purpleColor;
+            ctx.lineWidth = baseSize / 8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
 
-        // Rounded rectangle
-        const bubbleX = x - bubbleWidth / 2;
-        const bubbleY = y - bubbleHeight / 2;
-        const radius = 8;
+            ctx.beginPath();
+            ctx.moveTo(x - baseSize * 0.4, y);
+            ctx.lineTo(x - baseSize * 0.1, y + baseSize * 0.4);
+            ctx.lineTo(x + baseSize * 0.5, y - baseSize * 0.5);
+            ctx.stroke();
 
-        ctx.beginPath();
-        ctx.moveTo(bubbleX + radius, bubbleY);
-        ctx.lineTo(bubbleX + bubbleWidth - radius, bubbleY);
-        ctx.quadraticCurveTo(bubbleX + bubbleWidth, bubbleY, bubbleX + bubbleWidth, bubbleY + radius);
-        ctx.lineTo(bubbleX + bubbleWidth, bubbleY + bubbleHeight - radius);
-        ctx.quadraticCurveTo(bubbleX + bubbleWidth, bubbleY + bubbleHeight, bubbleX + bubbleWidth - radius, bubbleY + bubbleHeight);
-        ctx.lineTo(bubbleX + radius, bubbleY + bubbleHeight);
-        ctx.quadraticCurveTo(bubbleX, bubbleY + bubbleHeight, bubbleX, bubbleY + bubbleHeight - radius);
-        ctx.lineTo(bubbleX, bubbleY + radius);
-        ctx.quadraticCurveTo(bubbleX, bubbleY, bubbleX + radius, bubbleY);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        } else if (annotation.type === 'miss') {
+            // Draw X mark ✗
+            ctx.strokeStyle = purpleColor;
+            ctx.lineWidth = baseSize / 8;
+            ctx.lineCap = 'round';
 
-        // Draw icon
-        ctx.fillStyle = style.color;
-        ctx.font = `bold ${fontSize * 1.2}px Arial`;
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'middle';
-        const iconOffset = bubbleHeight * 0.3;
-        ctx.fillText(style.icon, bubbleX + iconOffset, y);
+            const size = baseSize * 0.5;
+            ctx.beginPath();
+            ctx.moveTo(x - size, y - size);
+            ctx.lineTo(x + size, y + size);
+            ctx.moveTo(x + size, y - size);
+            ctx.lineTo(x - size, y + size);
+            ctx.stroke();
 
-        // Draw text
-        ctx.font = `bold ${fontSize}px Arial`;
-        ctx.fillStyle = '#1f2937';
-        const textOffset = iconOffset + fontSize * 1.5;
-        ctx.fillText(annotation.text, bubbleX + textOffset, y);
+        } else if (annotation.type === 'circle') {
+            // Draw circle around answer
+            ctx.strokeStyle = purpleColor;
+            ctx.lineWidth = baseSize / 10;
+            const radius = baseSize * 0.8;
+
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+        } else if (annotation.type === 'partial' || annotation.type === 'note') {
+            // Draw text (like "-1", "A", "slope=rise/run", etc.)
+            ctx.fillStyle = purpleColor;
+            ctx.font = `bold ${baseSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(annotation.mark || '', x, y);
+        }
 
         ctx.restore();
     }

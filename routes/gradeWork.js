@@ -58,22 +58,23 @@ Format your response as follows:
 [Describe what problem they were solving]
 
 **ANNOTATIONS:**
-[For each annotation, provide precise positioning using: ANNOTATION|type|x|y|text]
-Where:
-- type: "check" (correct), "error" (mistake), "warning" (careful), or "info" (note)
-- x: horizontal position as percentage (0-100, where 0=left edge, 100=right edge)
-- y: vertical position as percentage (0-100, where 0=top, 100=bottom)
-- text: annotation text describing the issue/praise (max 50 chars)
+Grade like a real teacher with simple, clean marks. For each annotation:
+ANNOTATION|type|x|y|mark
 
-IMPORTANT: Look at WHERE each problem is located on the page and position annotations directly next to the relevant work.
+Where:
+- type: "check" (✓ correct), "miss" (✗ wrong), "partial" (-points deducted), "circle" (circle answer), "note" (brief text)
+- x: horizontal position as percentage (0-100, where 0=left, 100=right)
+- y: vertical position as percentage (0-100, where 0=top, 100=bottom)
+- mark: What to write (examples: "✓", "✗", "-2", "A", "slope=m", etc.) - KEEP IT BRIEF!
+
+**GRADING STYLE:** Mark like a real teacher - use checkmarks for correct, X or "-A" for errors, circle final answers, add brief helpful notes. Position marks RIGHT NEXT TO each problem number or answer.
 
 Examples:
-ANNOTATION|check|15|20|Problem 1: Correct!
-ANNOTATION|error|65|25|Problem 2: Sign error
-ANNOTATION|check|15|45|Problem 3: Perfect
-ANNOTATION|error|65|50|Problem 4: Wrong inequality
-ANNOTATION|warning|15|70|Problem 5: Check graph
-ANNOTATION|check|65|75|Problem 6: Great work!
+ANNOTATION|check|10|22|✓
+ANNOTATION|miss|10|28|✗
+ANNOTATION|partial|60|35|-1
+ANNOTATION|circle|25|40|
+ANNOTATION|note|15|75|slope=rise/run
 
 **STEP-BY-STEP ANALYSIS:**
 
@@ -137,14 +138,14 @@ Be specific, encouraging, and educational. Remember this is for learning, not ju
 
         // Parse annotations from the response
         const annotations = [];
-        const annotationRegex = /ANNOTATION\|(\w+)\|([\d\.]+)\|([\d\.]+)\|(.+)/g;
+        const annotationRegex = /ANNOTATION\|(\w+)\|([\d\.]+)\|([\d\.]+)\|(.*)$/gm;
         let match;
         while ((match = annotationRegex.exec(aiResponse)) !== null) {
             annotations.push({
-                type: match[1], // check, error, warning, info
+                type: match[1], // check, miss, partial, circle, note
                 x: parseFloat(match[2]), // x position as percentage (0-100)
                 y: parseFloat(match[3]), // y position as percentage (0-100)
-                text: match[4].trim()
+                mark: match[4].trim() // The mark to draw (✓, ✗, -1, text, etc.)
             });
         }
 
