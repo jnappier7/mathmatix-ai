@@ -2866,8 +2866,8 @@ form label, .password-label-row label {
 
 /* --- UI Layout Fix for Scrollable Chat --- */
 
-/* 1. Constrain the body to the viewport height and prevent it from scrolling ONLY when app-layout-wrapper exists (chat page). */
-body:has(#app-layout-wrapper) {
+/* 1. Constrain the body to the viewport height and prevent it from scrolling. */
+body {
     height: 100vh;
     overflow: hidden;
 }
@@ -2878,10 +2878,6 @@ main {
     display: flex;
     flex-direction: column;
     min-height: 0; /* Crucial for nested flex layouts */
-}
-
-/* On chat page, hide overflow on main */
-main:has(#app-layout-wrapper) {
     overflow: hidden;
 }
 
@@ -2889,9 +2885,6 @@ main:has(#app-layout-wrapper) {
 #app-layout-wrapper {
     flex-grow: 1;
     min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
 }
 
 /* 4. Change the chat container to stretch vertically instead of growing with content. */
@@ -3536,20 +3529,11 @@ main:has(#app-layout-wrapper) {
 
 /* --- Tutor Selection Page - BALANCED LAYOUT FIX --- */
 
-/* 1. Restore comfortable vertical padding for the main container and ensure it flexes properly. */
+/* 1. Restore comfortable vertical padding for the main container. */
 .pick-tutor-main {
     padding-top: 2rem;
     padding-bottom: 2rem;
     gap: 0;
-    overflow-y: auto; /* Allow scrolling when content exceeds viewport */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-}
-
-/* Ensure body allows scrolling for non-chat pages */
-body.landing-page-body:not(:has(#app-layout-wrapper)) {
-    overflow-y: auto;
-    height: auto;
-    min-height: 100vh;
 }
 
 /* 2. Maintain tight spacing for the title and subtitle. */
