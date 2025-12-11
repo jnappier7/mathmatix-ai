@@ -2880,19 +2880,18 @@ main {
     min-height: 0; /* Crucial for nested flex layouts */
 }
 
-/* Only hide overflow on main when it's the chat page app wrapper */
-#app-layout-wrapper {
+/* On chat page, hide overflow on main */
+main:has(#app-layout-wrapper) {
     overflow: hidden;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
 }
 
 /* 3. Make the app wrapper fill the main content area. */
 #app-layout-wrapper {
     flex-grow: 1;
     min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 4. Change the chat container to stretch vertically instead of growing with content. */
