@@ -3911,10 +3911,12 @@ body.landing-page-body:not(:has(#app-layout-wrapper)) {
     height: 100%;
     object-fit: cover;
     object-position: center 25%;
+    border-radius: 16px;
     opacity: 0;
     transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     background: #ffffff !important;
     z-index: 2;
+    pointer-events: none; /* Don't interfere with interactions */
 }
 
 /* ============================================
