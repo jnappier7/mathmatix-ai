@@ -1171,7 +1171,7 @@ document.addEventListener("DOMContentLoaded", () => {
             studentAvatarContainer.className = 'idle';
 
             // Check if this tutor has animated videos
-            const tutorsWithAnimations = ['mr-nappier', 'maya', 'bob', 'ms-maria'];
+            const tutorsWithAnimations = ['mr-nappier', 'maya', 'bob', 'ms-maria', 'mr-sierawski', 'ms-rashida'];
             const hasAnimations = tutorsWithAnimations.includes(currentUser.selectedTutorId);
 
             if (hasAnimations) {
