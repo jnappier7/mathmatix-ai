@@ -88,7 +88,9 @@
         <div class="dashboard-panel card-style-1">
           <div class="dashboard-panel-header">User Summaries Access</div>
           <p>Quickly view detailed student and parent profiles.</p>
-          <button class="main-action-btn btn btn-secondary">View All Summaries</button>
+          <button id="openSummariesBtn" class="main-action-btn btn btn-secondary">
+            <i class="fas fa-list-alt"></i> View All Summaries
+          </button>
         </div>
         <div class="dashboard-panel card-style-1">
           <div class="dashboard-panel-header">Quick Reports</div>
@@ -289,6 +291,53 @@
 
       <div class="modal-section">
         <div id="liveActivityContainer">
+          <p style="text-align: center;">Loading...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Summaries Modal -->
+  <div id="summariesModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 1200px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close-button" id="closeSummariesBtn">&times;</button>
+      <h2><i class="fas fa-list-alt"></i> User Summaries</h2>
+      <p style="color: #666; margin-bottom: 20px;">
+        <i class="fas fa-users"></i> Showing all users with recent conversation summaries
+        <button id="refreshSummariesBtn" class="btn-secondary" style="float: right;">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </p>
+
+      <!-- Filters -->
+      <div class="modal-section">
+        <h3>Filters</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+          <div class="modal-form-group">
+            <label for="summariesRoleFilter">Role:</label>
+            <select id="summariesRoleFilter">
+              <option value="">All</option>
+              <option value="student">Students</option>
+              <option value="teacher">Teachers</option>
+              <option value="parent">Parents</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label for="summariesSearchInput">Search:</label>
+            <input type="text" id="summariesSearchInput" placeholder="Search by name or email...">
+          </div>
+          <div class="modal-form-group">
+            <button id="applySummariesFilters" class="btn-primary" style="align-self: flex-end;">
+              <i class="fas fa-filter"></i> Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Summaries List -->
+      <div class="modal-section">
+        <h3>User Summaries (<span id="summariesCount">0</span>)</h3>
+        <div id="summariesContainer">
           <p style="text-align: center;">Loading...</p>
         </div>
       </div>

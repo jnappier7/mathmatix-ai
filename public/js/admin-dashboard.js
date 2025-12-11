@@ -438,15 +438,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const usageReportModal = document.getElementById('usageReportModal');
     const liveActivityModal = document.getElementById('liveActivityModal');
+    const summariesModal = document.getElementById('summariesModal');
     const openUsageReportBtn = document.getElementById('openUsageReportBtn');
     const openLiveActivityBtn = document.getElementById('openLiveActivityBtn');
+    const openSummariesBtn = document.getElementById('openSummariesBtn');
     const closeUsageReportBtn = document.getElementById('closeUsageReportBtn');
     const closeLiveActivityBtn = document.getElementById('closeLiveActivityBtn');
+    const closeSummariesBtn = document.getElementById('closeSummariesBtn');
     const applyReportFilters = document.getElementById('applyReportFilters');
     const exportReportCSV = document.getElementById('exportReportCSV');
     const refreshLiveActivityBtn = document.getElementById('refreshLiveActivityBtn');
+    const refreshSummariesBtn = document.getElementById('refreshSummariesBtn');
+    const applySummariesFilters = document.getElementById('applySummariesFilters');
 
     let currentReportData = null;
+    let currentSummariesData = null;
 
     // Open/Close Usage Report Modal
     if (openUsageReportBtn) {
@@ -476,6 +482,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // Open/Close Summaries Modal
+    if (openSummariesBtn) {
+        openSummariesBtn.addEventListener('click', () => {
+            summariesModal?.classList.add('is-visible');
+            loadSummaries();
+        });
+    }
+
+    if (closeSummariesBtn) {
+        closeSummariesBtn.addEventListener('click', () => {
+            summariesModal?.classList.remove('is-visible');
+        });
+    }
+
     // Apply Filters
     if (applyReportFilters) {
         applyReportFilters.addEventListener('click', loadUsageReport);
@@ -484,6 +504,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Refresh Live Activity
     if (refreshLiveActivityBtn) {
         refreshLiveActivityBtn.addEventListener('click', loadLiveActivity);
+    }
+
+    // Refresh Summaries
+    if (refreshSummariesBtn) {
+        refreshSummariesBtn.addEventListener('click', loadSummaries);
+    }
+
+    // Apply Summaries Filters
+    if (applySummariesFilters) {
+        applySummariesFilters.addEventListener('click', () => {
+            if (currentSummariesData) {
+                renderSummaries(currentSummariesData.users);
+            }
+        });
     }
 
     // Export CSV
@@ -682,6 +716,139 @@ document.addEventListener("DOMContentLoaded", async () => {
                             <strong>Struggling with:</strong> ${session.strugglingWith || 'Current concept'}
                         </div>
                     ` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    /**
+     * Load User Summaries from API
+     */
+    async function loadSummaries() {
+        const container = document.getElementById('summariesContainer');
+        if (!container) return;
+
+        container.innerHTML = '<p style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
+
+        try {
+            const response = await fetch('/api/admin/reports/summaries', {
+                credentials: 'include'
+            });
+
+            if (!response.ok) throw new Error('Failed to load summaries');
+
+            const data = await response.json();
+            currentSummariesData = data;
+
+            renderSummaries(data.users);
+
+        } catch (error) {
+            console.error('Error loading summaries:', error);
+            container.innerHTML = '<p style="text-align: center; color: red;">Failed to load summaries</p>';
+        }
+    }
+
+    /**
+     * Render User Summaries
+     */
+    function renderSummaries(users) {
+        const container = document.getElementById('summariesContainer');
+        const countDisplay = document.getElementById('summariesCount');
+        if (!container) return;
+
+        // Apply filters
+        const roleFilter = document.getElementById('summariesRoleFilter')?.value || '';
+        const searchQuery = document.getElementById('summariesSearchInput')?.value.toLowerCase().trim() || '';
+
+        let filteredUsers = users;
+
+        if (roleFilter) {
+            filteredUsers = filteredUsers.filter(u => u.role === roleFilter);
+        }
+
+        if (searchQuery) {
+            filteredUsers = filteredUsers.filter(u =>
+                u.name.toLowerCase().includes(searchQuery) ||
+                u.email.toLowerCase().includes(searchQuery) ||
+                u.username.toLowerCase().includes(searchQuery)
+            );
+        }
+
+        if (countDisplay) {
+            countDisplay.textContent = filteredUsers.length;
+        }
+
+        if (filteredUsers.length === 0) {
+            container.innerHTML = `
+                <div class="no-activity-message">
+                    <i class="fas fa-inbox"></i>
+                    <p>No users found matching your filters</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filteredUsers.map(user => {
+            const lastLogin = user.lastLogin
+                ? new Date(user.lastLogin).toLocaleDateString()
+                : 'Never';
+
+            const conversationsHtml = user.recentConversations && user.recentConversations.length > 0
+                ? user.recentConversations.map(conv => `
+                    <div class="conversation-summary-item">
+                        <div class="conversation-date">
+                            <i class="fas fa-calendar"></i> ${formatDate(conv.startDate)}
+                            <span style="color: #888; margin-left: 10px;">
+                                <i class="fas fa-clock"></i> ${conv.activeMinutes || 0} min
+                            </span>
+                        </div>
+                        <div class="conversation-summary-text">${conv.summary || 'No summary available'}</div>
+                    </div>
+                `).join('')
+                : '<p style="color: #888; font-style: italic;">No recent conversation summaries</p>';
+
+            return `
+                <div class="user-summary-card" style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; background: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                        <div>
+                            <h4 style="margin: 0 0 5px 0; color: #333;">
+                                <i class="fas fa-user"></i> ${user.name}
+                                <span class="badge badge-${user.role}" style="margin-left: 10px; font-size: 0.8em;">${user.role}</span>
+                            </h4>
+                            <div style="color: #666; font-size: 0.9em;">
+                                <i class="fas fa-envelope"></i> ${user.email}
+                                ${user.username ? `<span style="margin-left: 15px;"><i class="fas fa-at"></i> ${user.username}</span>` : ''}
+                            </div>
+                        </div>
+                        <div style="text-align: right; font-size: 0.9em; color: #666;">
+                            <div><strong>Last Login:</strong> ${lastLogin}</div>
+                            ${user.teacher ? `<div><strong>Teacher:</strong> ${user.teacher}</div>` : ''}
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                        <div class="stat-item">
+                            <i class="fas fa-trophy"></i> <strong>Level:</strong> ${user.level}
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-star"></i> <strong>XP:</strong> ${user.xp.toLocaleString()}
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-clock"></i> <strong>Total Min:</strong> ${user.totalMinutes}
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-calendar-week"></i> <strong>Weekly Min:</strong> ${user.weeklyMinutes}
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid #eee; padding-top: 15px;">
+                        <h5 style="margin: 0 0 10px 0; color: #555;">
+                            <i class="fas fa-comments"></i> Recent Conversation Summaries
+                        </h5>
+                        <div class="conversation-summaries">
+                            ${conversationsHtml}
+                        </div>
+                    </div>
                 </div>
             `;
         }).join('');

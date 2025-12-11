@@ -428,6 +428,85 @@ router.get('/reports/live-activity', isAdmin, async (req, res) => {
 });
 
 /**
+ * @route   GET /api/admin/reports/summaries
+ * @desc    Get all users with their recent conversation summaries
+ * @access  Private (Admin)
+ */
+router.get('/reports/summaries', isAdmin, async (req, res) => {
+  try {
+    // Get all users (excluding admins for cleaner view)
+    const users = await User.find({ role: { $ne: 'admin' } })
+      .select('firstName lastName email role username totalActiveTutoringMinutes weeklyActiveTutoringMinutes level xp lastLogin createdAt teacherId')
+      .populate('teacherId', 'firstName lastName')
+      .sort({ lastName: 1, firstName: 1 })
+      .lean();
+
+    // Get recent conversations for all users (limit to 3 most recent per user)
+    const userIds = users.map(u => u._id);
+
+    const conversations = await Conversation.aggregate([
+      {
+        $match: { userId: { $in: userIds } }
+      },
+      {
+        $sort: { startDate: -1 }
+      },
+      {
+        $group: {
+          _id: '$userId',
+          conversations: {
+            $push: {
+              summary: '$summary',
+              startDate: '$startDate',
+              activeMinutes: '$activeMinutes'
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          conversations: { $slice: ['$conversations', 3] }
+        }
+      }
+    ]);
+
+    // Create lookup map for conversations
+    const conversationsMap = {};
+    conversations.forEach(conv => {
+      conversationsMap[conv._id.toString()] = conv.conversations;
+    });
+
+    // Enrich users with their recent conversations
+    const enrichedUsers = users.map(user => ({
+      userId: user._id,
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      level: user.level || 1,
+      xp: user.xp || 0,
+      totalMinutes: user.totalActiveTutoringMinutes || 0,
+      weeklyMinutes: user.weeklyActiveTutoringMinutes || 0,
+      lastLogin: user.lastLogin,
+      createdAt: user.createdAt,
+      teacher: user.teacherId ? `${user.teacherId.firstName} ${user.teacherId.lastName}` : null,
+      recentConversations: conversationsMap[user._id.toString()] || []
+    }));
+
+    res.json({
+      users: enrichedUsers,
+      totalUsers: enrichedUsers.length,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (err) {
+    console.error('Error fetching user summaries:', err);
+    res.status(500).json({ message: 'Server error fetching user summaries.' });
+  }
+});
+
+/**
  * @route   DELETE /api/admin/users/:userId
  * @desc    Delete a user account (admin only)
  * @access  Private (Admin)
