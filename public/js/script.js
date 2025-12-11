@@ -1171,7 +1171,7 @@ document.addEventListener("DOMContentLoaded", () => {
             studentAvatarContainer.className = 'idle';
 
             // Check if this tutor has animated videos
-            const tutorsWithAnimations = ['mr-nappier', 'maya', 'bob', 'ms-maria'];
+            const tutorsWithAnimations = ['mr-nappier', 'maya', 'bob', 'ms-maria', 'mr-sierawski', 'ms-rashida'];
             const hasAnimations = tutorsWithAnimations.includes(currentUser.selectedTutorId);
 
             if (hasAnimations) {
@@ -1253,27 +1253,35 @@ document.addEventListener("DOMContentLoaded", () => {
         // 1. Load new video in secondary element
         secondaryVideo.src = videoPath;
         secondaryVideo.loop = (animation === 'idle');
+        secondaryVideo.preload = 'auto'; // Force preloading
 
         // 2. Preload and prepare
         secondaryVideo.load();
 
-        // 3. When ready, crossfade
-        secondaryVideo.addEventListener('canplay', function onCanPlay() {
-            secondaryVideo.removeEventListener('canplay', onCanPlay);
+        // 3. When video is fully buffered and ready, crossfade
+        secondaryVideo.addEventListener('canplaythrough', function onCanPlayThrough() {
+            secondaryVideo.removeEventListener('canplaythrough', onCanPlayThrough);
 
             // Start playing the new video
-            secondaryVideo.play();
+            secondaryVideo.play().catch(err => {
+                console.warn('Video playback failed:', err);
+                // Fallback to direct swap if autoplay fails
+                currentTutorVideo.src = videoPath;
+                currentTutorVideo.loop = (animation === 'idle');
+                currentTutorVideo.play();
+                return;
+            });
 
             // Crossfade: fade out primary, fade in secondary
             currentTutorVideo.style.opacity = '0';
             secondaryVideo.style.opacity = '1';
 
-            // After transition, swap videos
+            // After transition completes, swap videos
             setTimeout(() => {
                 // Swap the videos
                 currentTutorVideo.src = videoPath;
                 currentTutorVideo.loop = (animation === 'idle');
-                currentTutorVideo.play();
+                currentTutorVideo.play().catch(err => console.warn('Primary video play failed:', err));
                 currentTutorVideo.style.opacity = '1';
 
                 // Reset secondary
@@ -1286,6 +1294,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentTutorVideo.addEventListener('ended', handleVideoEnded);
             }, 500); // Match CSS transition duration
         });
+
+        // Fallback: if canplaythrough doesn't fire within 3 seconds, use canplay
+        setTimeout(() => {
+            if (secondaryVideo.readyState >= 3) { // HAVE_FUTURE_DATA
+                secondaryVideo.dispatchEvent(new Event('canplaythrough'));
+            }
+        }, 3000);
     };
 
     /**
