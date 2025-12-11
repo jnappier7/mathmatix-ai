@@ -66,7 +66,7 @@ const TUTOR_CONFIG = {
   "mr-sierawski": {
     name: "Mr. Sierawski",
     voiceId: "PLACEHOLDER_VOICE_ID_NEEDED",
-    image: "mr-ross.png",
+    image: "mr-sierawski.png",
     catchphrase: "PLACEHOLDER_CATCHPHRASE",
     personality: "PLACEHOLDER_PERSONALITY",
     about: "PLACEHOLDER_ABOUT",
