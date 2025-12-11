@@ -63,6 +63,17 @@ const TUTOR_CONFIG = {
     voicePreview: "Welcome. I'm here to help you see that you are more than capable. We'll go at your pace and celebrate every success.",
     unlockLevel: 5
   },
+  "mr-sierawski": {
+    name: "Mr. Sierawski",
+    voiceId: "PLACEHOLDER_VOICE_ID_NEEDED",
+    image: "mr-ross.png",
+    catchphrase: "PLACEHOLDER_CATCHPHRASE",
+    personality: "PLACEHOLDER_PERSONALITY",
+    about: "PLACEHOLDER_ABOUT",
+    specialties: "PLACEHOLDER_SPECIALTIES",
+    voicePreview: "PLACEHOLDER_VOICE_PREVIEW",
+    unlockLevel: 10
+  },
   "prof-davies": {
     name: "Prof. Davies",
     voiceId: "jn34bTlmmOgOJU9XfPuy",
@@ -72,7 +83,7 @@ const TUTOR_CONFIG = {
     about: "A seasoned academic who enjoys diving deep into complex topics and exploring the elegant proofs behind mathematical theories.",
     specialties: "Calculus, Theoretical Math, University-level topics.",
     voicePreview: "Greetings. True understanding in mathematics comes not from memorization, but from inquiry. Let us begin our exploration.",
-    unlockLevel: 10
+    unlockLevel: 15
   },
   "ms-alex": {
     name: "Ms. Alex",
@@ -83,7 +94,7 @@ const TUTOR_CONFIG = {
     about: "Ms. Alex brings a sharp, modern approach to tutoring, focusing on efficient strategies and clear, step-by-step instructions.",
     specialties: "SAT/ACT Prep, Statistics, Data-driven problem solving.",
     voicePreview: "Hello. There's always a strategy. Let's find the most efficient one for you and get you ready for test day.",
-    unlockLevel: 15
+    unlockLevel: 20
   },
   "mr-lee": {
     name: "Mr. Lee",
@@ -94,7 +105,7 @@ const TUTOR_CONFIG = {
     about: "Mr. Lee is a meticulous and focused tutor who emphasizes precision and consistent practice to build mastery.",
     specialties: "Trigonometry, Advanced Placement (AP) courses.",
     voicePreview: "Welcome. To achieve mastery in mathematics, we must be precise. Let's focus on the details and build strong habits.",
-    unlockLevel: 20
+    unlockLevel: 25
   },
   "dr-g": {
     name: "Dr. G",
@@ -105,7 +116,7 @@ const TUTOR_CONFIG = {
     about: "A powerful yet gentle guide who teaches that even the biggest math problems can be solved with patience and strength.",
     specialties: "Advanced Algebra, Word Problems, Logic.",
     voicePreview: "Do not be intimidated by large problems. They are many small problems. We will find the strength to solve them.",
-    unlockLevel: 25
+    unlockLevel: 30
   },
   "mr-wiggles": {
     name: "Mr. Wiggles",
@@ -116,7 +127,7 @@ const TUTOR_CONFIG = {
     about: "Mr. Wiggles believes that laughter is the best way to learn. He uses jokes, puns, and funny stories to make math concepts memorable and fun.",
     specialties: "Fractions, Percentages, Making Math Fun.",
     voicePreview: "Hey there, pal! Are you ready to have some fun with fractions? I promise it won't be a circus... well, maybe a little!",
-    unlockLevel: 30
+    unlockLevel: 35
   },
 
   // --- DEFAULT FALLBACK ---
