@@ -69,6 +69,7 @@ const avatarRoutes = require('./routes/avatar');
 const graphRoutes = require('./routes/graph');
 const curriculumRoutes = require('./routes/curriculum');
 const assessmentRoutes = require('./routes/assessment');
+const screenerRoutes = require('./routes/screener');  // IRT-based adaptive screener
 const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
 const gradeWorkRoutes = require('./routes/gradeWork');
@@ -189,6 +190,7 @@ app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum sch
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
+app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive screener (CAT)
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes); // AI grading for student work
 
