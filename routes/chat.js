@@ -9,6 +9,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const Curriculum = require('../models/curriculum');
 const StudentUpload = require('../models/studentUpload');
+const Skill = require('../models/skill');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/openaiClient");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
@@ -17,15 +18,21 @@ const axios = require('axios');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 const { detectAndFetchResource } = require('../utils/resourceDetector');
+const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
 router.post('/', isAuthenticated, async (req, res) => {
-    const { userId, message, role, childId } = req.body;
+    const { userId, message, role, childId, responseTime } = req.body;
     if (!userId || !message) return res.status(400).json({ message: "User ID and message are required." });
     if (message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
+
+    // Log response time if provided (from ghost timer)
+    if (responseTime) {
+        console.log(`[Fluency] User ${userId} responded in ${responseTime.toFixed(1)}s`);
+    }
 
     // Handle parent chat separately
     if (role === 'parent' && childId) {
@@ -71,7 +78,12 @@ router.post('/', isAuthenticated, async (req, res) => {
             await user.save();
         }
 
-        activeConversation.messages.push({ role: 'user', content: message });
+        activeConversation.messages.push({
+            role: 'user',
+            content: message,
+            timestamp: new Date(),
+            responseTime: responseTime || null
+        });
 
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
         const currentTutor = TUTOR_CONFIG[selectedTutorKey];

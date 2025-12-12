@@ -1683,6 +1683,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         chatBox.appendChild(bubble);
 
+        // AUTO-START GHOST TIMER when AI asks a question
+        if (sender === 'ai' && typeof autoStartGhostTimer === 'function') {
+            autoStartGhostTimer(text);
+        }
+
         if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
             if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
                  const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
@@ -1703,6 +1708,12 @@ document.addEventListener("DOMContentLoaded", () => {
     async function sendMessage() {
     const messageText = userInput.value.trim();
     if (!messageText && attachedFiles.length === 0) return;
+
+    // CAPTURE RESPONSE TIME from ghost timer
+    let responseTime = null;
+    if (typeof getResponseTimeAndStop === 'function') {
+        responseTime = getResponseTimeAndStop();
+    }
 
     appendMessage(messageText, "user");
     userInput.value = "";
@@ -1728,6 +1739,11 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append('userId', currentUser._id);
             formData.append('fileCount', attachedFiles.length);
 
+            // Add response time if captured
+            if (responseTime !== null) {
+                formData.append('responseTime', responseTime);
+            }
+
             // Clear files from UI immediately
             clearAllFiles();
 
@@ -1737,10 +1753,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 credentials: 'include'
             });
         } else {
+            const payload = {
+                userId: currentUser._id,
+                message: messageText
+            };
+
+            // Add response time if captured
+            if (responseTime !== null) {
+                payload.responseTime = responseTime;
+            }
+
             response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUser._id, message: messageText }),
+                body: JSON.stringify(payload),
                 credentials: 'include'
             });
         }

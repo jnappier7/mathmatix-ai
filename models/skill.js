@@ -66,6 +66,36 @@ const skillSchema = new mongoose.Schema({
     default: 5
   },
 
+  // Adaptive Fluency Engine: Expected time for mastery-level performance
+  fluencyMetadata: {
+    // Base time in seconds for a neurotypical student at mastery level
+    baseFluencyTime: {
+      type: Number,
+      min: 1,
+      default: 30  // Default: 30 seconds for most problems
+    },
+
+    // Fluency type determines how time-sensitive this skill is
+    fluencyType: {
+      type: String,
+      enum: ['reflex', 'process', 'algorithm', 'conceptual'],
+      default: 'process',
+      // reflex: Math facts, basic operations (3-10s) - Must be instant
+      // process: One-step equations, simplification (10-30s) - Should be smooth
+      // algorithm: Multi-step procedures, quadratics (60-180s) - Methodical but efficient
+      // conceptual: Explanation, reasoning (no strict time) - Understanding over speed
+    },
+
+    // Time tolerance factor: How much variance is acceptable
+    // 1.0 = strict (reflex), 2.0 = moderate (process), 3.0+ = flexible (algorithm)
+    toleranceFactor: {
+      type: Number,
+      min: 1.0,
+      max: 5.0,
+      default: 2.0
+    }
+  },
+
   // Active/inactive flag
   isActive: {
     type: Boolean,
