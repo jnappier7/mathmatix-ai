@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptive Placement Test - M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/adaptiveScreener.css">
+  <link rel="stylesheet" href="/css/aperture.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <!-- Background particles (optional) -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Main Container -->
+  <div class="screener-container" id="screener-container">
+
+    <!-- Welcome Screen -->
+    <div class="screen active" id="welcome-screen">
+      <div class="welcome-content">
+        <h1>🎯 Adaptive Placement Test</h1>
+        <p class="subtitle">We'll find your exact level in just a few minutes</p>
+
+        <div class="info-box">
+          <h3>How it works:</h3>
+          <ul>
+            <li><i class="fas fa-bolt"></i> <strong>Fast:</strong> 8-12 questions (vs 30+ traditional)</li>
+            <li><i class="fas fa-brain"></i> <strong>Smart:</strong> Adapts to YOUR level in real-time</li>
+            <li><i class="fas fa-heart"></i> <strong>Respectful:</strong> No frustrating easy/hard questions</li>
+            <li><i class="fas fa-chart-line"></i> <strong>Precise:</strong> Finds your exact skill level</li>
+          </ul>
+        </div>
+
+        <button class="btn btn-primary btn-large" id="start-btn">
+          <i class="fas fa-play"></i> Start Assessment
+        </button>
+
+        <p class="note">This is NOT a test you can fail. We're just finding where you are.</p>
+      </div>
+    </div>
+
+    <!-- Screener Screen -->
+    <div class="screen" id="screener-screen">
+      <!-- Aperture Visualization -->
+      <div class="aperture-container" id="aperture-container">
+        <div class="aperture-ring" id="aperture-ring">
+          <div class="aperture-center">
+            <!-- Problem Display -->
+            <div class="problem-card" id="problem-card">
+              <div class="problem-header">
+                <span class="question-number" id="question-number">Question 1</span>
+                <span class="confidence-badge" id="confidence-badge">
+                  <i class="fas fa-crosshairs"></i> Calibrating...
+                </span>
+              </div>
+
+              <div class="problem-content" id="problem-content">
+                <p class="problem-text" id="problem-text">Loading...</p>
+              </div>
+
+              <div class="answer-section">
+                <input
+                  type="text"
+                  id="answer-input"
+                  class="answer-input"
+                  placeholder="Type your answer..."
+                  autocomplete="off"
+                  autofocus
+                />
+                <button class="btn btn-primary" id="submit-btn">
+                  Submit <i class="fas fa-arrow-right"></i>
+                </button>
+              </div>
+
+              <div class="feedback-section" id="feedback-section" style="display: none;">
+                <!-- Feedback appears here after submitting -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confidence Label -->
+        <div class="confidence-label" id="confidence-label">
+          <div class="confidence-text">Calibrating your level...</div>
+          <div class="confidence-bar">
+            <div class="confidence-fill" id="confidence-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Indicator -->
+      <div class="progress-info" id="progress-info">
+        <div class="stat">
+          <span class="stat-label">Questions</span>
+          <span class="stat-value" id="question-count">0 / ~12</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Estimated Level</span>
+          <span class="stat-value" id="theta-display">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div class="screen" id="results-screen">
+      <div class="results-content">
+        <div class="results-hero">
+          <div class="results-icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <h1>Assessment Complete!</h1>
+          <p class="results-subtitle">We've found your exact level</p>
+        </div>
+
+        <div class="results-stats">
+          <div class="result-stat">
+            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-content">
+              <div class="stat-label">Ability Level</div>
+              <div class="stat-value-large" id="final-theta">--</div>
+              <div class="stat-sublabel" id="final-percentile">--th percentile</div>
+            </div>
+          </div>
+
+          <div class="result-stat">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-content">
+              <div class="stat-label">Time</div>
+              <div class="stat-value-large" id="final-duration">--</div>
+              <div class="stat-sublabel" id="final-questions">-- questions</div>
+            </div>
+          </div>
+
+          <div class="result-stat">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-content">
+              <div class="stat-label">Accuracy</div>
+              <div class="stat-value-large" id="final-accuracy">--</div>
+              <div class="stat-sublabel">correct answers</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-skills">
+          <h3><i class="fas fa-star"></i> Your Skills</h3>
+
+          <div class="skill-category">
+            <div class="category-header mastered">
+              <i class="fas fa-trophy"></i> <strong>Mastered</strong>
+            </div>
+            <div class="skill-list" id="mastered-skills">Loading...</div>
+          </div>
+
+          <div class="skill-category">
+            <div class="category-header learning">
+              <i class="fas fa-book-open"></i> <strong>Learning</strong>
+            </div>
+            <div class="skill-list" id="learning-skills">Loading...</div>
+          </div>
+
+          <div class="skill-category">
+            <div class="category-header frontier">
+              <i class="fas fa-mountain"></i> <strong>Frontier (Your Edge)</strong>
+            </div>
+            <div class="skill-list" id="frontier-skills">Loading...</div>
+          </div>
+        </div>
+
+        <div class="results-actions">
+          <button class="btn btn-primary btn-large" id="continue-btn">
+            <i class="fas fa-arrow-right"></i> Continue to Interview
+          </button>
+          <button class="btn btn-secondary" id="retake-btn">
+            <i class="fas fa-redo"></i> Retake Assessment
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/adaptiveScreener.js"></script>
+</body>
+</html>
