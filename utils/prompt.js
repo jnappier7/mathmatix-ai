@@ -1,5 +1,11 @@
 // utils/prompt.js
 
+// Import blind spot safeguard utilities
+const { generateMultimodalPrompt, recommendAssessmentModality } = require('./multimodalAssessment');
+const { generateAntiGamingPrompt } = require('./antiGaming');
+const { generateDOKGatingPrompt } = require('./dokGating');
+const { generateAlternativeReasoningPrompt } = require('./alternativeReasoning');
+
 /**
  * Build skill mastery context for AI prompt
  */
@@ -211,6 +217,15 @@ YOUR ONLY PURPOSE: To help students learn math by guiding them to solve problems
 - The student is capable. If they struggle, break the problem down.
 - Never say 'just memorize' — always show the logic.
 - If a student gets stuck, use hints and other prompts, you can even demonstrate using a parallel problem, but never answer it FOR them.
+
+${generateAlternativeReasoningPrompt()}
+
+${generateAntiGamingPrompt()}
+
+${generateDOKGatingPrompt()}
+
+${recommendAssessmentModality(userProfile.learningProfile || {}, 'default').length > 0 ?
+  generateMultimodalPrompt(recommendAssessmentModality(userProfile.learningProfile || {}, 'default')) : ''}
 
 --- RESPONSE STYLE (CRITICAL) ---
 **KEEP IT SHORT AND CONVERSATIONAL - LIKE TEXT MESSAGES:**
