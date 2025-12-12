@@ -262,11 +262,33 @@ async function handleCompletion(data) {
     const completeData = await completeResponse.json();
     const report = completeData.report;
 
-    // Display results
-    displayResults(report);
+    // Check if in Mastery Mode
+    const masteryModeActive = sessionStorage.getItem('masteryModeActive');
 
-    // Switch to results screen
-    switchScreen('results');
+    if (masteryModeActive === 'true') {
+      // Save results for Phase 2 (AI Interview)
+      sessionStorage.setItem('screenerResults', JSON.stringify(report));
+      sessionStorage.setItem('masteryPhase', 'interview');
+
+      // Show brief completion message
+      displayResults(report);
+      switchScreen('results');
+
+      // Update continue button text for mastery mode
+      if (elements.continueBtn) {
+        elements.continueBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Continue to AI Interview';
+      }
+
+      // Auto-redirect after 3 seconds
+      setTimeout(() => {
+        window.location.href = '/chat.html';
+      }, 3000);
+
+    } else {
+      // Normal screener mode
+      displayResults(report);
+      switchScreen('results');
+    }
 
   } catch (error) {
     console.error('Error completing screener:', error);

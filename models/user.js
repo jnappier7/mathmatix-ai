@@ -80,7 +80,10 @@ const userPreferencesSchema = new Schema({
 /* ---------- BADGES ---------- */
 const badgeSchema = new Schema({
   key:        { type: String, unique: true, sparse: true },
-  unlockedAt: { type: Date,   default: Date.now }
+  badgeId:    { type: String },  // For mastery mode badges
+  unlockedAt: { type: Date,   default: Date.now },
+  earnedDate: { type: Date },
+  score:      { type: Number }
 }, { _id: false });
 
 /* ---------- SKILL MASTERY TRACKING ---------- */
@@ -278,6 +281,26 @@ const userSchema = new Schema({
   },
 
   badges: { type: [badgeSchema], default: [] },
+
+  /* Mastery Mode Progress */
+  masteryProgress: {
+    activeBadge: {
+      badgeId: String,
+      badgeName: String,
+      skillId: String,
+      startedAt: Date,
+      problemsCompleted: { type: Number, default: 0 },
+      problemsCorrect: { type: Number, default: 0 },
+      requiredProblems: Number,
+      requiredAccuracy: Number
+    },
+    attempts: [{
+      badgeId: String,
+      attemptDate: Date,
+      completed: Boolean,
+      score: Number
+    }]
+  },
 
   /* Skill Mastery & Learning Profile */
   skillMastery: {
