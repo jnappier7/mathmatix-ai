@@ -42,6 +42,15 @@ const problemSchema = new mongoose.Schema({
     required: true
   },
 
+  // Multiple choice options (if applicable)
+  options: [{
+    label: String,  // 'A', 'B', 'C', 'D'
+    text: String    // The option text
+  }],
+
+  // Correct option letter (for multiple choice)
+  correctOption: String,  // 'A', 'B', 'C', or 'D'
+
   // Answer type for validation
   answerType: {
     type: String,
@@ -110,10 +119,10 @@ const problemSchema = new mongoose.Schema({
     // Tags for organization
     tags: [String],
 
-    // Source (template-generated, LLM-generated, expert-authored)
+    // Source (template-generated, LLM-generated, expert-authored, imported)
     source: {
       type: String,
-      enum: ['template', 'llm', 'expert'],
+      enum: ['template', 'llm', 'expert', 'imported'],
       default: 'template'
     },
 
@@ -121,7 +130,13 @@ const problemSchema = new mongoose.Schema({
     templateId: String,
 
     // Generation parameters (for reproducibility)
-    generationParams: mongoose.Schema.Types.Mixed
+    generationParams: mongoose.Schema.Types.Mixed,
+
+    // Import-specific metadata
+    standardCode: String,      // e.g., '6EE7', '7NS1' (Common Core)
+    gradeLevel: String,         // e.g., '6', '7', '8'
+    pValues: [Number],          // Raw p-values from calibration
+    importDate: Date
   },
 
   // Active/inactive flag

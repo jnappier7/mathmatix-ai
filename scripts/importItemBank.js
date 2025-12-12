@@ -175,10 +175,11 @@ function estimateDiscrimination(pValues) {
  */
 function parseRow(row) {
   const problem = {
-    problemId: generateProblemId(),
+    problemId: null,
     skillId: null,
     content: '',
     answer: null,
+    options: [],
     irtParameters: {
       difficulty: 0,
       discrimination: 1.2,
@@ -190,40 +191,80 @@ function parseRow(row) {
     }
   };
 
-  // Extract problem text (assuming first column)
-  problem.content = row['Problem'] || row['Question'] || row['Content'] || '';
+  // Extract ID (use original if available, otherwise generate)
+  problem.problemId = row['ID'] || row['id'] || generateProblemId();
 
-  // Extract standard code
-  const standardCode = row['Standard'] || row['Code'] || row['Skill'] || '';
-  problem.skillId = SKILL_MAP[standardCode] || standardCode.toLowerCase();
+  // Extract problem text
+  problem.content = row['Question_Text'] || row['Question'] || row['Problem'] || row['Content'] || '';
 
-  // Extract difficulty data (assuming columns like 'Grade3', 'Grade4', etc.)
+  // Extract multiple choice options
+  const optionA = row['Option_A'] || row['A'];
+  const optionB = row['Option_B'] || row['B'];
+  const optionC = row['Option_C'] || row['C'];
+  const optionD = row['Option_D'] || row['D'];
+
+  if (optionA || optionB || optionC || optionD) {
+    problem.options = [
+      { label: 'A', text: optionA || '' },
+      { label: 'B', text: optionB || '' },
+      { label: 'C', text: optionC || '' },
+      { label: 'D', text: optionD || '' }
+    ].filter(opt => opt.text); // Remove empty options
+  }
+
+  // Extract correct answer
+  const correctAnswer = row['Correct_Answer'] || row['Answer'] || row['Correct'] || null;
+
+  // If it's a letter (A, B, C, D), convert to the actual answer text
+  if (correctAnswer && /^[A-D]$/i.test(correctAnswer)) {
+    const optionMap = { A: optionA, B: optionB, C: optionC, D: optionD };
+    problem.answer = optionMap[correctAnswer.toUpperCase()] || correctAnswer;
+    problem.correctOption = correctAnswer.toUpperCase();
+  } else {
+    problem.answer = correctAnswer;
+  }
+
+  // Try to parse answer as number if possible
+  if (problem.answer && !isNaN(parseFloat(problem.answer))) {
+    problem.answer = parseFloat(problem.answer);
+  }
+
+  // Extract standard/skill code
+  const standardCode = row['Skill_Standard'] || row['Standard'] || row['Code'] || row['Skill'] || '';
+  problem.skillId = SKILL_MAP[standardCode] || standardCode.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  problem.metadata.standardCode = standardCode;
+
+  // Extract grade level
+  const gradeLevel = row['Grade_Level'] || row['Grade'] || '';
+  problem.metadata.gradeLevel = gradeLevel;
+
+  // Extract difficulty data from additional columns
+  // Look for columns with numeric p-values (0.0 to 1.0)
   const pValues = [];
-  for (let grade = 1; grade <= 10; grade++) {
-    const colName = `Grade${grade}`;
-    if (row[colName] && !isNaN(parseFloat(row[colName]))) {
-      pValues.push(parseFloat(row[colName]));
+  const allColumns = Object.keys(row);
+
+  // Skip known text columns
+  const skipColumns = ['ID', 'Question_Text', 'Option_A', 'Option_B', 'Option_C', 'Option_D',
+                       'Correct_Answer', 'Skill_Standard', 'Grade_Level'];
+
+  for (const col of allColumns) {
+    if (!skipColumns.includes(col)) {
+      const value = parseFloat(row[col]);
+      // If it's a valid p-value (between 0 and 1)
+      if (!isNaN(value) && value >= 0 && value <= 1) {
+        pValues.push(value);
+      }
     }
   }
 
-  // Also check for columns like 'A', 'B', 'C', 'D' (population groups)
-  ['A', 'B', 'C', 'D'].forEach(col => {
-    if (row[col] && !isNaN(parseFloat(row[col]))) {
-      pValues.push(parseFloat(row[col]));
-    }
-  });
-
-  // Estimate IRT parameters
-  const grade = extractGrade(standardCode);
+  // Estimate IRT parameters from p-values
+  const grade = gradeLevel || extractGrade(standardCode);
   problem.irtParameters.difficulty = estimateDifficulty(pValues, grade);
   problem.irtParameters.discrimination = estimateDiscrimination(pValues);
 
-  // Extract answer if available
-  problem.answer = row['Answer'] || row['Correct'] || row['Solution'] || null;
-
-  // Try to parse answer as number
-  if (problem.answer && !isNaN(parseFloat(problem.answer))) {
-    problem.answer = parseFloat(problem.answer);
+  // Store raw p-values for reference
+  if (pValues.length > 0) {
+    problem.metadata.pValues = pValues;
   }
 
   return problem;
