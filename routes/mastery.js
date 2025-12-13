@@ -438,6 +438,110 @@ async function generateAvailableBadges(theta, user) {
       requiredProblems: 10,
       requiredAccuracy: 0.90,
       description: 'Handle complex nested operations with ease'
+    },
+
+    // ========== PLATINUM TIER (Endless Journey) ==========
+    {
+      badgeId: 'equation-platinum',
+      name: 'Equation Virtuoso',
+      domain: 'algebra',
+      skillId: 'solving-multi-step-equations',
+      skillName: 'Advanced Equations',
+      tier: 'platinum',
+      requiredTheta: 2.5,
+      requiredProblems: 15,
+      requiredAccuracy: 0.92,
+      description: 'Solve the most complex multi-step equations with mastery'
+    },
+    {
+      badgeId: 'algebra-master-platinum',
+      name: 'Algebra Master',
+      domain: 'algebra',
+      skillId: 'algebra-comprehensive',
+      skillName: 'Comprehensive Algebra',
+      tier: 'platinum',
+      requiredTheta: 2.0,
+      requiredProblems: 20,
+      requiredAccuracy: 0.90,
+      description: 'Demonstrate comprehensive mastery across all algebra skills'
+    },
+
+    // ========== CHALLENGE BADGES (Time & Streak Based) ==========
+    {
+      badgeId: 'speed-demon-bronze',
+      name: 'Quick Thinker',
+      domain: 'challenge',
+      skillId: 'any',
+      skillName: 'Speed Challenge',
+      tier: 'bronze',
+      requiredTheta: 0.0,
+      requiredProblems: 10,
+      requiredAccuracy: 0.80,
+      challengeType: 'speed',
+      timeLimit: 300000, // 5 minutes
+      description: 'Complete 10 problems in under 5 minutes at 80% accuracy'
+    },
+    {
+      badgeId: 'perfectionist',
+      name: 'Perfectionist',
+      domain: 'challenge',
+      skillId: 'any',
+      skillName: 'Perfect Streak',
+      tier: 'gold',
+      requiredTheta: 0.0,
+      requiredProblems: 10,
+      requiredAccuracy: 1.0,
+      challengeType: 'perfect',
+      description: 'Answer 10 problems in a row with 100% accuracy'
+    },
+    {
+      badgeId: 'marathon-runner',
+      name: 'Marathon Runner',
+      domain: 'challenge',
+      skillId: 'any',
+      skillName: 'Endurance Challenge',
+      tier: 'silver',
+      requiredTheta: 0.0,
+      requiredProblems: 50,
+      requiredAccuracy: 0.85,
+      challengeType: 'endurance',
+      description: 'Complete 50 problems in a single session at 85% accuracy'
+    },
+
+    // ========== DOMAIN MASTERY (Meta Badges) ==========
+    {
+      badgeId: 'number-sense-master',
+      name: 'Number Sense Master',
+      domain: 'meta',
+      skillId: 'number-sense-all',
+      skillName: 'Complete Number Mastery',
+      tier: 'platinum',
+      requiredTheta: 0.5,
+      requiredProblems: 0, // Awarded when all number-sense badges earned
+      requiredAccuracy: 0.0,
+      metaBadge: true,
+      prerequisiteBadges: ['integer-operations-silver', 'fraction-operations-silver', 'decimal-operations-bronze'],
+      description: 'Earn all Number Sense badges to unlock this master badge'
+    },
+    {
+      badgeId: 'algebra-master',
+      name: 'Algebra Champion',
+      domain: 'meta',
+      skillId: 'algebra-all',
+      skillName: 'Complete Algebra Mastery',
+      tier: 'platinum',
+      requiredTheta: 1.5,
+      requiredProblems: 0,
+      requiredAccuracy: 0.0,
+      metaBadge: true,
+      prerequisiteBadges: [
+        'one-step-equations-silver',
+        'two-step-equations-gold',
+        'combining-like-terms-silver',
+        'distributive-property-silver',
+        'multi-step-equations-gold'
+      ],
+      description: 'Earn all core Algebra badges to unlock this champion badge'
     }
   ];
 

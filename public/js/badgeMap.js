@@ -48,6 +48,18 @@ const domainConfig = {
     icon: '⚖️',
     description: 'Relationships between quantities',
     color: '#E91E63'
+  },
+  'challenge': {
+    name: 'Challenges',
+    icon: '⚡',
+    description: 'Speed, streaks, and special achievements',
+    color: '#FF5722'
+  },
+  'meta': {
+    name: 'Master Badges',
+    icon: '👑',
+    description: 'Complete domain mastery achievements',
+    color: '#9C27B0'
   }
 };
 
@@ -201,7 +213,8 @@ function renderBadgeCard(badge) {
   const tierEmoji = {
     bronze: '🥉',
     silver: '🥈',
-    gold: '🥇'
+    gold: '🥇',
+    platinum: '💎'
   };
 
   return `
