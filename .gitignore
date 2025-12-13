@@ -13,3 +13,4 @@ routes/vision-key.json
 *.dmg
 
 uploads/
+import-log.txt
