@@ -142,8 +142,8 @@ Let's start with a question that will help me understand your reasoning process.
   };
 
   // Display in chat
-  if (window.displayMessage) {
-    window.displayMessage(interviewMessage);
+  if (window.appendMessage) {
+    window.appendMessage(interviewMessage.content, 'ai');
   }
 
   // Trigger first interview question via API
@@ -173,22 +173,16 @@ async function triggerInterviewQuestion(results) {
     const data = await response.json();
 
     // Display AI's question
-    if (data.question && window.displayMessage) {
-      window.displayMessage({
-        role: 'assistant',
-        content: data.question
-      });
+    if (data.question && window.appendMessage) {
+      window.appendMessage(data.question, 'ai');
     }
 
   } catch (error) {
     console.error('Error getting interview question:', error);
 
     // Fallback: Just let the AI continue naturally
-    if (window.displayMessage) {
-      window.displayMessage({
-        role: 'assistant',
-        content: 'Let\'s explore your understanding. Can you explain your thinking on the problems you found challenging?'
-      });
+    if (window.appendMessage) {
+      window.appendMessage('Let\'s explore your understanding. Can you explain your thinking on the problems you found challenging?', 'ai');
     }
   }
 }
@@ -204,18 +198,14 @@ async function showBadgeEarning() {
   console.log('Starting Badge Earning Phase...');
 
   // Show brief intro message before redirecting
-  if (window.displayMessage) {
-    window.displayMessage({
-      role: 'assistant',
-      content: `# 🎖️ Phase 3: Mastery Badge Earning
+  if (window.appendMessage) {
+    window.appendMessage(`# 🎖️ Phase 3: Mastery Badge Earning
 
 Excellent work! You've completed the interview phase.
 
 Now it's time to choose a skill to master and earn your first badge!
 
-Redirecting you to the Badge Map...`,
-      isSystemMessage: true
-    });
+Redirecting you to the Badge Map...`, 'ai');
   }
 
   // Redirect to badge map after short delay
@@ -228,23 +218,19 @@ Redirecting you to the Badge Map...`,
  * Display badge earning interface
  */
 function displayBadgeInterface(badges) {
-  if (!window.displayMessage) return;
+  if (!window.appendMessage) return;
 
   const badgeList = badges.map(badge =>
     `- **${badge.name}** - ${badge.description} (Difficulty: ${badge.difficulty})`
   ).join('\n');
 
-  window.displayMessage({
-    role: 'assistant',
-    content: `# 🎖️ Available Mastery Badges
+  window.appendMessage(`# 🎖️ Available Mastery Badges
 
 Based on your assessment, here are the badges you can earn:
 
 ${badgeList}
 
-Reply with the name of the badge you'd like to pursue, or say "show me all" to see your full progress.`,
-    isSystemMessage: true
-  });
+Reply with the name of the badge you'd like to pursue, or say "show me all" to see your full progress.`, 'ai');
 }
 
 // ============================================================================
