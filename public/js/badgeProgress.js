@@ -52,6 +52,7 @@ async function checkActiveBadge() {
  */
 function displayBadgeWidget(badge) {
   let widget = document.getElementById('badge-progress-widget');
+  let wasCollapsed = false;
 
   // Create widget if it doesn't exist
   if (!widget) {
@@ -59,6 +60,9 @@ function displayBadgeWidget(badge) {
     widget.id = 'badge-progress-widget';
     widget.className = 'badge-progress-widget';
     document.body.appendChild(widget);
+  } else {
+    // Preserve collapsed state during updates
+    wasCollapsed = widget.classList.contains('collapsed');
   }
 
   const progressPercent = badge.progress || 0;
@@ -72,7 +76,7 @@ function displayBadgeWidget(badge) {
         <span class="badge-name">${badge.badgeName}</span>
       </div>
       <button class="badge-widget-close" onclick="toggleBadgeWidget()">
-        <i class="fas fa-chevron-down"></i>
+        <i class="fas ${wasCollapsed ? 'fa-chevron-up' : 'fa-chevron-down'}"></i>
       </button>
     </div>
 
@@ -116,7 +120,10 @@ function displayBadgeWidget(badge) {
     </div>
   `;
 
-  widget.classList.remove('collapsed');
+  // Restore collapsed state after updating content
+  if (wasCollapsed) {
+    widget.classList.add('collapsed');
+  }
 }
 
 /**

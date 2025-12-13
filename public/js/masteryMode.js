@@ -37,22 +37,22 @@ function initializeMasteryMode() {
   // Open modal
   elements.masteryModeBtn?.addEventListener('click', () => {
     console.log('Mastery Mode button clicked!');
-    elements.masteryModeModal.style.display = 'flex';
+    elements.masteryModeModal.classList.add('is-visible');
   });
 
   // Close modal
   elements.closeMasteryModal?.addEventListener('click', () => {
-    elements.masteryModeModal.style.display = 'none';
+    elements.masteryModeModal.classList.remove('is-visible');
   });
 
   elements.cancelBtn?.addEventListener('click', () => {
-    elements.masteryModeModal.style.display = 'none';
+    elements.masteryModeModal.classList.remove('is-visible');
   });
 
   // Click outside to close
   elements.masteryModeModal?.addEventListener('click', (e) => {
     if (e.target === elements.masteryModeModal) {
-      elements.masteryModeModal.style.display = 'none';
+      elements.masteryModeModal.classList.remove('is-visible');
     }
   });
 
