@@ -1,0 +1,751 @@
+﻿ID,Question_Text,Option_A,Option_B,Option_C,Option_D,Correct_Answer,Skill_Standard,Grade_Level
+1,Evaluate: -7 + (-4),3,-3,11,-11,D,7.NS.A.1,7
+2,Evaluate: 12 - (-5),7,17,-7,-17,B,7.NS.A.1,7
+3,Evaluate: (-3) * (-6),-18,18,-9,9,B,7.NS.A.2,7
+4,Which integer represents the opposite of 15?,|15|,0,-15,51,C,6.NS.C.6,6
+5,Evaluate: -20 / 4,-5,5,-16,-80,A,7.NS.A.2,7
+6,Evaluate: 5 + 3 * 4,32,17,12,60,B,6.EE.A.1,6
+7,Evaluate: 20 - 8 / 2,6,16,12,10,B,6.EE.A.1,6
+8,Evaluate: (6 + 2)^2 - 10,54,6,22,64,A,6.EE.A.1,6
+9,Evaluate: 4^2 + 3(5 - 2),19,25,22,27,B,6.EE.A.1,6
+10,Evaluate: (10 + 8) / (9 - 6),6,2,18,3,A,6.EE.A.1,6
+11,Simplify the fraction: 12/16,3/4,2/3,4/5,4/3,A,4.NF.A.1,4
+12,Calculate: 1/3 + 2/5,45724,45976,45703,45731,B,5.NF.A.1,5
+13,Calculate: 3/4 * 2/9,45790,45663,13302,27/8,B,5.NF.B.4,5
+14,Convert 3/5 to a decimal.,0.35,0.6,0.53,3.5,B,7.NS.A.2,7
+15,Evaluate: 2.5 * 0.4,1,0.1,10,0.01,A,6.NS.B.3,6
+16,Evaluate 3x + 5 when x = 4.,12,17,27,9,B,6.EE.A.2,6
+17,Evaluate 2a - b when a = 5 and b = 3.,4,13,7,10,C,6.EE.A.2,6
+18,Evaluate y^2 when y = -5.,-25,25,-10,10,B,6.EE.A.2,6
+19,Evaluate x/2 + 7 when x = 10.,12,17,5,9,A,6.EE.A.2,6
+20,Evaluate 4(n - 1) when n = 6.,23,20,24,10,B,6.EE.A.2,6
+21,Simplify: 3x + 4x,7x^2,12x,7x,7,C,6.EE.A.3,6
+22,Simplify: 5a - 2a + 3,3a + 3,6a,3a,6,A,7.EE.A.1,7
+23,Simplify: 2y + 5 + 3y - 2,5y + 7,5y + 3,6y + 3,8y,B,7.EE.A.1,7
+24,Simplify: 4(x + 2),4x + 2,4x + 6,4x + 8,x + 8,C,6.EE.A.3,6
+25,Simplify: 7m - m,7,6m,7m,6,B,7.EE.A.1,7
+26,Solve for x: x + 5 = 12,17,60,7,-7,C,6.EE.B.7,6
+27,Solve for y: y - 8 = 10,2,18,80,-2,B,6.EE.B.7,6
+28,Solve for m: 3m = 21,7,18,63,24,A,6.EE.B.7,6
+29,Solve for k: k/4 = 6,24,10,2,1.5,A,6.EE.B.7,6
+30,Solve for x: -2x = 10,5,-5,12,8,B,7.EE.B.4,7
+31,Solve for x: 2x + 1 = 11,6,5,10,4,B,7.EE.B.4,7
+32,Solve for a: 3a - 4 = 17,7,4.33,21,13,A,7.EE.B.4,7
+33,Solve for y: y/2 + 3 = 8,22,10,5,11,B,7.EE.B.4,7
+34,Solve for b: -4b + 5 = -7,3,-3,0.5,12,A,7.EE.B.4,7
+35,Solve for x: 5 = 2x - 5,0,5,10,2.5,B,7.EE.B.4,7
+36,Which graph represents x > 3?,Open circle on 3 shaded right,Closed circle on 3 shaded right,Open circle on 3 shaded left,Closed circle on 3 shaded left,A,6.EE.B.8,6
+37,Solve: x + 4 < 10,x < 6,x > 6,x < 14,x > 14,A,6.EE.B.8,6
+38,Solve: -2x > 8 (Remember to flip the sign!),x > -4,x < -4,x > 4,x < 4,B,7.EE.B.4,7
+39,Which value is a solution to 3x <= 12?,5,6,4,10,C,6.EE.B.5,6
+40,"Translate: ""A number n is at least 10.""",n > 10,n < 10,n >= 10,n <= 10,C,6.EE.B.8,6
+41,Express the ratio 8 : 12 in simplest form.,0.170833333,0.085416667,0.126388889,0.044444444,B,6.RP.A.1,6
+42,Solve the proportion: x/5 = 4/10,2,5,8,1,A,7.RP.A.2,7
+43,What is 20% of 50?,25,10,5,100,B,6.RP.A.3,6
+44,Convert 0.75 to a percentage.,0.0075,0.075,0.75,7.5,C,6.RP.A.3,6
+45,A shirt costs $40 and is on sale for 10% off. What is the discount?,10,4,36,30,B,7.RP.A.3,7
+46,"In which quadrant is the point (-3, 4) located?",I,II,III,IV,B,6.NS.C.8,6
+47,What is the y-intercept of the line y = 2x + 3?,2,3,0,-3,B,8.EE.B.6,8
+48,"Calculate the slope between points (1, 2) and (3, 6).",2,4,45659,1,A,8.EE.B.6,8
+49,Which ordered pair is a solution to y = x - 2?,"(5, 3)","(5,7)","(2,2)","(0,2)",A,8.F.A.1,8
+50,"The point (0, 0) is known as the:",Axis,Intercept,Origin,Ordinate,C,6.NS.C.8,6
+51,"Which list shows the numbers in order from least to greatest? -2.5, -4, 0, 1.5","0, 1.5, -2.5, -4","-4, -2.5, 0, 1.5","-2.5, -4, 0, 1.5","1.5, 0, -2.5, -4",B,6.NS.C.7,6
+52,What is the absolute value of -18?,-18,0,18,36,C,6.NS.C.7,6
+53,Evaluate: -4/5 / 2/3,-0.533333333,-1.2,45813,-0.833333333,B,7.NS.A.2,7
+54,Identify the Greatest Common Factor (GCF) of 24 and 36.,6,12,4,72,B,6.NS.B.4,6
+55,Which of the following is an irrational number?,sqrt(25),3.14,sqrt(2),45660,C,8.NS.A.1,8
+56,Evaluate using GEMS: 2[3 + (5 - 2)^2],24,16,14,36,A,6.EE.A.1,6
+57,Simplify the expression: 5(2x - 3) + 4,10x - 11,10x - 15,10x + 1,10x + 7,A,7.EE.A.1,7
+58,Identify the coefficient in the term -8y.,y,8,-8,1,C,6.EE.A.2,6
+59,Which expression is equivalent to x + x + x + y + y?,3x + 2y,5xy,x^3y^2,3x + y,A,6.EE.A.3,6
+60,Evaluate b^2 - 4ac if a=1 b=5 c=6.,1,49,-1,19,A,Algebra Readiness,6
+61,Solve: (2/3)x = 12,8,18,36,24,B,6.EE.B.7,6
+62,Solve: -3x + 7 = 22,-5,5,-29,15,A,7.EE.B.4,7
+63,Solve for w: 4w - 2w = 16,4,8,2,16,B,8.EE.C.7,8
+64,"Which inequality represents: """"The bus can hold at most 40 passengers""""?",p < 40,p > 40,p <= 40,p >= 40,C,6.EE.B.8,6
+65,Solve: 5x - 3(x - 2) = 12,3,6,4,9,A,8.EE.C.7,8
+66,If 3 apples cost $1.50 what is the unit price per apple?,0.3,0.45,0.5,3,C,6.RP.A.2,6
+67,A map has a scale of 1 inch = 50 miles. If two cities are 3.5 inches apart how far are they?,150 miles,175 miles,100 miles,53.5 miles,B,7.RP.A.2,7
+68,Identify the percent of change from 20 to 25.,20% decrease,25% increase,20% increase,5% increase,B,7.RP.A.3,7
+69,Which ratio is equivalent to 4:5?,0.34375,0.513888889,0.680555556,0.85,C,6.RP.A.3,6
+70,What is 150% of 40?,60,20,400,50,A,7.RP.A.3,7
+71,Which relation represents a function?,"{(1, 2), (1, 3), (2, 4)}","{(0, 5), (1, 5), (2, 5)}","{(3, 1), (3, 2), (3, 3)}","{(4, 1), (4, 2), (5, 6)}",B,8.F.A.1,8
+72,Given the function y = 3x - 1 find y when x = -2.,5,-5,-7,7,C,8.F.A.1,8
+73,The equation y = kx represents which type of relationship?,Direct Variation (Proportional),Inverse Variation,Quadratic,Exponential,A,7.RP.A.2,7
+74,"What is the slope of the line passing through (0,0) and (4,2)?",2,4,1/2,-0.5,C,8.EE.B.5,8
+75,Which equation represents a line with a slope of -2 and y-intercept of 5?,y = 5x - 2,y = -2x - 5,y = -2x + 5,y = 2x + 5,C,8.EE.B.6,8
+76,Find the area of a triangle with a base of 10 cm and a height of 5 cm.,50 sq cm,25 sq cm,15 sq cm,100 sq cm,B,6.G.A.1,6
+77,What is the circumference of a circle with a diameter of 10 cm? (Use pi = 3.14),31.4 cm,15.7 cm,78.5 cm,314 cm,A,7.G.B.4,7
+78,Two angles are complementary. If one is 40 degrees what is the other?,140 deg,50 deg,40 deg,90 deg,B,7.G.B.5,7
+79,Find the volume of a rectangular prism with length 4 width 3 and height 2.,9,24,12,48,B,6.G.A.2,6
+80,What is the sum of the interior angles of a triangle?,360 deg,90 deg,180 deg,270 deg,C,7.G.B.5,7
+81,Simplify: x^3 * x^4,x^7,x^12,2x^7,x,A,8.EE.A.1,8
+82,Write 0.00045 in scientific notation.,4.5 x 10^4,4.5 x 10^-4,45 x 10^-5,0.45 x 10^-3,B,8.EE.A.3,8
+83,Evaluate: sqrt(64),32,4,8,16,C,8.EE.A.2,8
+84,Simplify: (2^3)^2,2^5,2^6,2^9,6^2,B,8.EE.A.1,8
+85,Any non-zero number raised to the power of 0 is:,0,1,Undefined,The number itself,B,8.EE.A.1,8
+86,Find the median of the data set: 3 5 7 9 11.,5,7,9,35,B,6.SP.B.5,6
+87,A bag contains 2 red marbles and 3 blue marbles. What is the probability of choosing a red marble?,45659,45691,45693,45721,C,7.SP.C.7,7
+88,Find the mean (average) of: 10 20 30.,20,15,60,25,A,6.SP.B.5,6
+89,If the probability of an event is 0 the event is:,Certain,Unlikely,Likely,Impossible,D,7.SP.C.5,7
+90,What is the range of the data set: 2 8 5 12 3?,10,8,5,12,A,6.SP.B.5,6
+91,Calculate the hypotenuse (c) of a right triangle with legs a=3 and b=4.,5,7,6,25,A,8.G.B.7,8
+92,A triangle is reflected across the y-axis. This is a type of:,Dilation,Rotation,Translation,Rigid Transformation,D,8.G.A.1,8
+93,If a shape is dilated by a scale factor of 2 the new shape is:,Smaller,The same size,Larger,Rotated,C,8.G.A.3,8
+94,Check if these lengths form a right triangle: 6 8 10.,No,"Yes, because 6+8 > 10","Yes, because 6^2 + 8^2 = 10^2","No, because it is isosceles",C,8.G.B.6,8
+95,Moving a shape 3 units up and 2 units right is called a:,Reflection,Rotation,Translation,Dilation,C,8.G.A.3,8
+96,Sarah has $50. She buys a book for $12 and earns $15 babysitting. How much does she have now?,47,53,77,23,B,6.NS.B.3,6
+97,A taxi charges $3 flat fee plus $2 per mile. Which expression models the cost for m miles?,3m + 2,2m + 3,5m,6m,B,7.EE.B.4,7
+98,The temperature was -5F and dropped 4F. What is the new temperature?,-1 F,-9 F,1 F,9 F,B,7.NS.A.1,7
+99,A rectangle has a perimeter of 24 units. If the width is 4 what is the length?,20,8,6,16,B,7.EE.B.4,7
+100,You roll a standard 6-sided die. What is the probability of rolling a number greater than 4?,45663,45659,45660,45691,C,7.SP.C.7,7
+101,What is the product of 6 and 7?,42,36,48,13,A,3.OA.A.1,3
+102,Which equation shows the Commutative Property?,3 x 5 = 5 x 3,3 x 5 = 3 + 5,3 x 1 = 3,3 x 0 = 0,A,3.OA.B.5,3
+103,Solve: 24 / 3,6,7,8,9,C,3.OA.A.2,3
+104,Round 148 to the nearest 10.,100,140,150,200,C,3.NBT.A.1,3
+105,Round 432 to the nearest 100.,400,430,500,450,A,3.NBT.A.1,3
+106,Calculate: 500 - 268,232,332,242,168,A,3.NBT.A.2,3
+107,What fraction of the shape is shaded if 1 out of 4 parts is colored?,45659,45660,45661,45720,C,3.NF.A.1,3
+108,Which fraction is equivalent to 1?,45717,45719,45660,0/3,B,3.NF.A.3,3
+109,Compare: 1/4 ___ 1/2,<,>,=,None of these,A,3.NF.A.3,3
+110,Find the area of a rectangle with sides 4cm and 5cm.,9 sq cm,20 sq cm,18 sq cm,10 sq cm,B,3.MD.C.7,3
+111,What is the perimeter of a square with side length 3 inches?,9 inches,6 inches,12 inches,15 inches,C,3.MD.D.8,3
+112,Start time: 3:15. End time: 3:45. How much time passed?,20 mins,45 mins,30 mins,60 mins,C,3.MD.A.1,3
+113,Which shape has exactly 4 sides?,Triangle,Pentagon,Quadrilateral,Hexagon,C,3.G.A.1,3
+114,Identify the pattern: 2 4 8 16 ...,20,24,32,30,C,3.OA.D.9,3
+115,Solve for n: 5 x n = 35,5,6,7,8,C,3.OA.A.4,3
+116,Which number is an odd number?,12,24,31,40,C,3.OA.D.9,3
+117,What is 900 + 40 + 6 in standard form?,9406,9046,946,964,C,3.NBT.A.2,3
+118,A pizza is cut into 8 slices. You eat 3. What fraction is left?,45724,45755,45785,45874,C,3.NF.A.1,3
+119,How many minutes are in 2 hours?,60,100,120,24,C,3.MD.A.1,3
+120,"Which expression matches: """"4 groups of 3""""?",4 + 3,4 x 3,45750,45750,B,3.OA.A.1,3
+121,Solve: 8 x 0,8,0,1,80,B,3.OA.A.1,3
+122,Which unit is best to measure the water in a pool?,Milliliters,Liters,Grams,Meters,B,3.MD.A.2,3
+123,Is 4/4 equal to 8/8?,Yes,No,Only on Tuesdays,Cannot tell,A,3.NF.A.3,3
+124,Break apart 7 x 6 into:,(7 x 3) + (7 x 3),(7 x 2) + (7 x 2),(7 x 1) + (7 x 1),(7 x 5) + (7 x 5),A,3.OA.B.5,3
+125,Find the sum: 456 + 123,579,589,569,679,A,3.NBT.A.2,3
+126,Which polygon has 5 sides?,Square,Pentagon,Hexagon,Octagon,B,3.G.A.1,3
+127,What is the missing number? 18 / ___ = 3,3,6,9,2,B,3.OA.A.4,3
+128,If a bar graph bar stops between 4 and 6 what is the value?,4,6,5,10,C,3.MD.B.3,3
+129,Estimate the sum: 29 + 32 (Nearest 10),50,60,70,80,B,3.NBT.A.1,3
+130,What is 10 x 4?,14,40,400,4,B,3.NBT.A.3,3
+131,A square has a perimeter of 20. What is one side length?,4,5,10,2,B,3.MD.D.8,3
+132,Which fraction is smaller: 1/8 or 1/3?,45665,45660,They are equal,Depends on the whole,A,3.NF.A.3,3
+133,Calculate area: Length=6 Width=3,9,12,18,21,C,3.MD.C.7,3
+134,What is 45 x 100?,450,4500,4050,45000,B,4.NBT.B.5,4
+135,Which number is prime?,9,15,13,21,C,4.OA.B.4,4
+136,Find the factor pairs of 12.,1&12 2&6 3&4,1&12 2&8,1&6 2&6,3&3 4&4,A,4.OA.B.4,4
+137,Write 4/100 as a decimal.,0.4,0.04,4,0.44,B,4.NF.C.6,4
+138,Compare: 0.5 ___ 0.05,>,<,=,None,A,4.NF.C.7,4
+139,Solve: 32 x 4,120,128,136,108,B,4.NBT.B.5,4
+140,Solve: 1345 + 289,1634,1524,1624,1534,A,4.NBT.B.4,4
+141,What is the value of the 7 in 3724?,7,70,700,7000,C,4.NBT.A.1,4
+142,Simplify 4/12 to simplest form.,45694,45660,45661,45748,B,4.NF.A.1,4
+143,Add fractions: 2/8 + 3/8,45793,45816,45785,45665,C,4.NF.B.3,4
+144,Convert 2 1/3 to an improper fraction.,45780,45841,45811,45691,B,4.NF.B.3,4
+145,Which angle is obtuse?,45 degrees,90 degrees,120 degrees,10 degrees,C,4.MD.C.5,4
+146,How many degrees are in a right angle?,180,90,45,360,B,4.MD.C.5,4
+147,Identify the parallel lines.,Lines that cross at 90 deg,Lines that never cross,Lines that cross once,Curved lines,B,4.G.A.1,4
+148,How many lines of symmetry does a square have?,1,2,4,8,C,4.G.A.3,4
+149,Solve: 56 / 8,6,8,7,9,C,4.NBT.B.6,4
+150,A rectangle has area 24 and width 4. What is the length?,6,8,12,20,A,4.MD.A.3,4
+151,Which is a multiple of 6?,15,22,30,32,C,4.OA.B.4,4
+152,Subtract: 5/6 - 2/6,36586,45722,45728,45844,B,4.NF.B.3,4
+153,Solve: 1200 / 6,20,200,2000,600,B,4.NBT.B.6,4
+154,If 1 kg = 1000 g how many grams in 3 kg?,300,3000,30,1003,B,4.MD.A.1,4
+155,What type of triangle has all sides equal?,Isosceles,Scalene,Equilateral,Right,C,4.G.A.2,4
+156,Decompose 3/4 into a sum of unit fractions.,1/4 + 1/4 + 1/4,1/2 + 1/2,1/3 + 1/1,3/1 + 1/4,A,4.NF.B.3,4
+157,Multiply: 5 x 1/3,45792,45672,45780,45811,C,4.NF.B.4,4
+158,Which number is 10 times larger than 300?,3000,30,30000,300000,A,4.NBT.A.1,4
+159,Estimate: 41 x 28,1200,800,1500,1000,A,4.NBT.B.5,4
+160,What is the measure of a straight angle?,90,100,180,360,C,4.MD.C.5,4
+161,Which digit is in the ten-thousands place: 456789?,4,5,6,7,B,4.NBT.A.2,4
+162,Solve: 4000 - 1500,3500,2500,2000,3000,B,4.NBT.B.4,4
+163,Convert 5ft to inches (1ft = 12in),50,60,48,72,B,4.MD.A.1,4
+164,Compare: 3/4 ___ 5/8 (Hint: find common denom),<,>,=,?,B,4.NF.A.2,4
+165,Describe a ray.,Line with 2 endpoints,Line with 1 endpoint,Line with no endpoints,A dot,B,4.G.A.1,4
+166,Find the perimeter of a rectangle 10m by 5m.,15m,30m,50m,20m,B,4.MD.A.3,4
+167,Evaluate: 10^3,30,100,1000,300,C,5.NBT.A.2,5
+168,Solve: (10 + 2) / 4,3,4,2,6,A,5.OA.A.1,5
+169,"Write as a numerical expression: """"Add 8 and 7 then multiply by 2""""",8 + 7 x 2,2 x (8 + 7),(8 + 7) / 2,2 + 8 x 7,B,5.OA.A.2,5
+170,Multiply: 2.5 x 4,10,100,8.5,6.5,A,5.NBT.B.7,5
+171,Round 14.567 to the nearest tenth.,14.5,14.6,15,14.57,B,5.NBT.A.4,5
+172,What is the volume of a cube with side 3?,9,18,27,12,C,5.MD.C.5,5
+173,Add: 1/2 + 1/3 (Hint: Common Denominator),45693,45783,45663,45662,B,5.NF.A.1,5
+174,Subtract: 3.5 - 1.2,2.3,4.7,2.7,1.3,A,5.NBT.B.7,5
+175,Identify the coordinate pair for the Origin.,(1 1),(0 0),(10 10),(0 1),B,5.G.A.1,5
+176,Move 3 units right and 2 units up. What is the point?,(2 3),(3 2),(3 0),(0 2),B,5.G.A.1,5
+177,Which is a quadrilateral?,Triangle,Circle,Trapezoid,Pentagon,C,5.G.B.3,5
+178,Multiply fractions: 2/3 x 3/4,45784,6/12 (or 1/2),45815,45878,B,5.NF.B.4,5
+179,Solve: 12 / 0.5,6,24,60,12.5,B,5.NBT.B.7,5
+180,Convert 300 cm to meters (1m = 100cm),3m,30m,0.3m,3000m,A,5.MD.A.1,5
+181,Solve: 4 + 2 x 6,36,16,12,20,B,5.OA.A.1,5
+182,What is 1/2 divided by 4?,2,45665,8,45663,B,5.NF.B.7,5
+183,The volume formula is:,L + W + H,L x W x H,L x W,2L + 2W,B,5.MD.C.5,5
+184,In number 5.432 what place is the 2?,Tenths,Hundredths,Thousandths,Ones,C,5.NBT.A.3,5
+185,Compare 0.4 ___ 0.40,>,<,=,Different,C,5.NBT.A.3,5
+186,Solve: 15 x 12,170,180,150,160,B,5.NBT.B.5,5
+187,What is 1/5 of 20?,5,4,10,2,B,5.NF.B.4,5
+188,Evaluate: 3 x 10^2,30,300,3000,32,B,5.NBT.A.2,5
+189,A box is 2 by 3 by 5. Volume?,10,30,25,15,B,5.MD.C.5,5
+190,Classify a triangle with one 90 degree angle.,Acute,Obtuse,Right,Equilateral,C,5.G.B.3,5
+191,Solve: 4.2 + 0.08,4.28,5,4.1,4.38,A,5.NBT.B.7,5
+192,If you divide 4 whole items into 1/3 pieces how many pieces?,12,45750,45720,7,A,5.NF.B.7,5
+193,Which comes first in Order of Operations?,Exponents,Addition,Parentheses,Division,C,5.OA.A.1,5
+194,Coordinate (5 0) is located on which axis?,X-axis,Y-axis,Z-axis,In the middle,A,5.G.A.1,5
+195,Convert 4kg to grams.,40,400,4000,40000,C,5.MD.A.1,5
+196,Multiplying a number by a fraction less than 1 makes it:,Bigger,Smaller,Same,Zero,B,5.NF.B.5,5
+197,Solve: 3/4 - 1/2,45690,45661,45659,45692,B,5.NF.A.1,5
+198,What is 0.1 as a fraction?,1/100,45667,45658,45931,B,5.NBT.A.3,5
+199,Find the area of a rectangle with fractional sides: 1/2 ft by 1/4 ft.,1/6 sq ft,1/8 sq ft,2/6 sq ft,1 sq ft,B,5.NF.B.4,5
+200,Solve: 100 / 10^2,10,100,1,0.1,C,5.NBT.A.2,5
+201,"Find the slope of the line passing through (2,5) and (4,11).",3,2,6,-3,A,HSF.LE.A.2,9
+202,Solve the system: y = 2x and y = x + 4.,"(2, 6)","(-4, -8)","(4, 8)","(4 ,4)",C,HSA.REI.C.6,9
+203,Factor the trinomial: x^2 + 5x + 6.,(x+1)(x+6),(x-2)(x-3),(x+5)(x+1),(x+2)(x+3),D,HSA.SSE.B.3,9
+204,What is the y-intercept of 2x + 3y = 12?,6,12,4,2,C,HSF.IF.C.7,9
+205,Simplify: (3x^2)(4x^5),12x^10,7x^7,7x^10,12x^7,D,HSA.APR.A.1,9
+206,Solve for x: |x - 3| = 5,x=8 or x=-2,x=8,x=-2,x=2 or x=-8,A,HSA.REI.B.3,9
+207,Which is the Difference of Squares?,x^2 + 9,x^2 - 3,x - 9,x^2 - 9,D,HSA.SSE.A.2,9
+208,Find the roots of: x^2 - 4x = 0,2 and -2,0 and 4,0 and -4,4,B,HSA.REI.B.4,9
+209,Simplify: sqrt(50),5sqrt(2),2sqrt(5),25,10,A,HSN.RN.A.2,9
+210,Expand: (x + 4)^2,x^2 + 16,x^2 + 8x + 16,x^2 + 4x + 16,2x + 8,B,HSA.APR.A.1,9
+211,Identify the vertex of y = (x - 2)^2 + 3.,"(2, 3)","(-2 ,3)","(2 ,-3)","(-2, -3)",A,HSF.IF.C.7,9
+212,Solve the inequality: -3x < 12 (Flip sign!),x < -4,x > -4,x > 4,x < 4,B,HSA.REI.B.3,9
+213,What is the domain of f(x) = 1/x?,All real numbers,x > 0,x < 0,All real numbers except 0,D,HSF.IF.A.1,9
+214,Solve using Quadratic Formula for x^2 + 2x - 8 = 0.,2 and 4,4 and -2,2 and -4,-2 and -4,C,HSA.REI.B.4,9
+215,Which lines are parallel?,y=2x+1 and y=2x-5,y=2x and y=-2x,y=3x and y=1/3x,y=x and y=5,A,HSF.LE.B.5,9
+216,Calculate f(3) if f(x) = 2x^2 - 5.,1,7,13,31,C,HSF.IF.A.2,9
+217,Factor completely: 2x^2 - 8,2(x-2)(x+2),2(x-4),2(x^2 - 4),(2x-4)(x+2),A,HSA.SSE.B.3,9
+218,Determine the discriminant of x^2 + 4x + 4.,Positive (2 real roots),Negative (2 imaginary),Undefined,0 (1 real root),D,HSA.REI.B.4,9
+219,Simplify: (x^3)^4,x^12,x^7,x^81,4x^3,A,HSN.RN.A.1,9
+220,What is the zero of the function f(x) = 3x - 9?,3,-3,9,0,A,HSA.APR.B.3,9
+221,Which point lies on the line 2x - y = 6?,(0 6),(3 0),(4 1),(1 -4),B,HSA.REI.D.10,9
+222,Subtract polynomials: (3x + 5) - (x - 2),2x + 7,2x + 3,4x + 3,2x - 7,A,HSA.APR.A.1,9
+223,Solve for y: Ax + By = C,y = C - Ax - B,y = (C - Ax)/B,y = (C + Ax)/B,y = C/B - Ax,B,HSA.CED.A.4,9
+224,"Is the sequence Arithmetic? 2, 5, 8,  11...",No (multiply),No (random),Yes (add 3),Yes (add 2),C,HSF.BF.A.2,9
+225,Multiply: (x - 5)(x + 2),x^2 - 3x - 10,x^2 - 7x - 10,x^2 + 3x - 10,x^2 - 10,A,HSA.APR.A.1,9
+226,Solve: sqrt(x) = 9,3,18,81,4.5,C,HSA.REI.A.2,9
+227,What describes the correlation if points go down from left to right?,Negative,Positive,No Correlation,Undefined,A,HSS.ID.C.8,9
+228,Evaluate 2x^0 + (2x)^0 (where x is not 0).,3,2,4,1,A,HSN.RN.A.1,9
+229,"Write the equation of a line with slope 1/2 passing through (0,4).",y = 1/2x - 4,y = 4x + 1/2,y = 1/2x + 4,y = 2x + 4,C,HSF.LE.A.2,9
+230,Find the solution to the inequality 2x - 5 > 9,x > 7,x > 2,x > 14,x < 7,A,HSA.REI.B.3,9
+231,Two lines are perpendicular if their slopes are:,Equal,Opposites,Reciprocals,Negative reciprocals,D,HSG.GPE.B.5,10
+232,Sum of interior angles of a triangle is always:,360 degrees,90 degrees,270 degrees,180 degrees,D,HSG.CO.C.10,10
+233,"If a triangle has sides 3,4,5 it is a:",Acute Triangle,Obtuse Triangle,Right Triangle,Isosceles Triangle,C,HSG.SRT.C.8,10
+234,Find the circumference of a circle with radius 5.,10pi,25pi,5pi,20pi,A,HSG.C.B.5,10
+235,In a right triangle sin(A) is defined as:,Opposite / Hypotenuse,Adjacent / Hypotenuse,Opposite / Adjacent,Hypotenuse / Opposite,A,HSG.SRT.C.6,10
+236,What is the area of a circle with diameter 10?,25pi,100pi,50pi,10pi,A,HSG.C.B.5,10
+237,Complementary angles sum to:,180 degrees,360 degrees,90 degrees,45 degrees,C,HSG.CO.C.9,10
+238,"Identify the transformation: (x,y) -> (x,-y)",Reflection over y-axis,Rotation 180,Translation,Reflection over x-axis,D,HSG.CO.A.2,10
+239,The sum of interior angles of a quadrilateral is:,180,360,720,540,B,HSG.CO.C.11,10
+240,Which theorem proves triangles congruent? (Side-Angle-Side),AAA,SAS,SSA,AA,B,HSG.CO.B.8,10
+241,Find the volume of a cylinder with r=3 and h=10.,30pi,60pi,90pi,300pi,C,HSG.GMD.A.3,10
+242,If two triangles are similar their corresponding sides are:,Congruent,Equal,Proportional,Parallel,C,HSG.SRT.A.2,10
+243,A line intersecting two parallel lines is called a:,Transversal,Bisector,Median,Tangent,A,HSG.CO.C.9,10
+244,"Calculate the midpoint of (0, 0) and (10, 10).",(10 10),(20 20),(5 5),(0 0),C,HSG.GPE.B.6,10
+245,"What is the distance between (1,1) and (4,5)?",5,7,25,3,A,HSG.GPE.B.7,10
+246,In a 30-60-90 triangle if the short leg is x the hypotenuse is:,x * sqrt(3),x,3x,2x,D,HSG.SRT.C.8,10
+247,The longest chord in a circle is the:,Radius,Secant,Diameter,Tangent,C,HSG.C.A.2,10
+248,Find tan(45) degrees.,0,Undefined,1,0.5,C,HSG.SRT.C.6,10
+249,Surface Area of a sphere formula:,4/3 * pi * r^3,2 * pi * r,pi * r^2,4 * pi * r^2,D,HSG.GMD.A.3,10
+250,Alternate Interior Angles are equal if lines are:,Perpendicular,Parallel,Skew,Intersecting,B,HSG.CO.C.9,10
+251,What is the value of i^2?,1,i,#NAME?,-1,D,HSN.CN.A.1,11
+252,Simplify: sqrt(-16),4i,4,-4,16i,A,HSN.CN.A.1,11
+253,Add complex numbers: (3 + 2i) + (1 - 5i),4 - 3i,4 + 7i,2 + 7i,4 - 7i,A,HSN.CN.A.2,11
+254,Evaluate log_10(100),10,100,2,0.1,C,HSF.LE.A.4,11
+255,Rewrite in exponential form: log_2(8) = 3,2^3 = 8,3^2 = 8,8^2 = 3,2^8 = 3,A,HSF.LE.A.4,11
+256,Solve 3^x = 27,9,3,1,2,B,HSF.LE.A.4,11
+257,What is the inverse of f(x) = x + 4?,x - 4,#NAME?,x + 4,1/(x+4),A,HSF.BF.B.4,11
+258,Simplify rational expression: x^2/x,x,1,x^2,2x,A,HSA.APR.D.6,11
+259,Find the vertical asymptote of y = 1/(x-2),x = 2,y = 2,x = 0,y = 0,A,HSF.IF.C.7,11
+260,Multiply conjugates: (2 + i)(2 - i),5,3,4 - i,4 + i,A,HSN.CN.A.3,11
+261,Factor x^3 - 8 (Difference of Cubes),(x-2)(x^2-2x+4),(x+2)(x^2-2x+4),(x-2)(x^2+2x+4),(x-2)^3,C,HSA.SSE.A.2,11
+262,Value of 5! (5 factorial),25,120,15,60,B,HSS.CP.B.9,11
+263,How many ways to arrange 3 books on a shelf?,3,9,1,6,D,HSS.CP.B.9,11
+264,Solve: log(x) + log(2) = log(10),5,8,20,12,A,HSF.LE.A.4,11
+265,What is the center of the circle (x-2)^2 + (y+3)^2 = 16?,(2 -3),(-2 3),(2 3),(-2 -3),A,HSG.GPE.A.1,11
+266,Find f(g(x)) if f(x)=2x and g(x)=x+1,2x + 2,2x + 1,x + 2,x + 1,A,HSF.BF.A.1,11
+267,Simplify: (x^2 - 1) / (x + 1),x - 1,x + 1,x,1,A,HSA.APR.D.6,11
+268,If f(x) = e^x what is the natural log of e?,0,e,1,undefined,C,HSF.LE.A.4,11
+269,Solve for x: x^(1/2) = 5,25,10,2.5,1,A,HSN.RN.A.2,11
+270,Sum of an infinite geometric series 1 + 1/2 + 1/4 + ...,1.5,Infinite,3,2,D,HSA.SSE.B.4,11
+271,The graph of y = x^2 is a:,Circle,Hyperbola,Line,Parabola,D,HSF.IF.C.7,11
+272,Solve: |2x + 1| > 5,x > 2 or x < -3,#NAME?,x > 2,x < -3,A,HSA.REI.B.3,11
+273,What is the conjugate of -3 + 4i?,-3 - 4i,3 + 4i,3 - 4i,-3 + 4i,A,HSN.CN.A.3,11
+274,Simplify i^4,1,-1,i,#NAME?,A,HSN.CN.A.1,11
+275,Identify the polynomial degree: 4x^3 + 2x^2 + 7,4,2,7,3,D,HSA.APR.A.1,11
+276,Log base b of 1 is always:,0,1,b,undefined,A,HSF.LE.A.4,11
+277,Solve rational eq: 1/x + 1/2 = 3/x,x = 4,x = 2,x = 1,x = 0,A,HSA.REI.A.2,11
+278,Binomial expansion of (x+y)^2 is:,x^2 + 2xy + y^2,x^2 + y^2,x^2 + xy + y^2,2x + 2y,A,HSA.APR.C.5,11
+279,Find the radius of x^2 + y^2 = 49,7,49,24.5,1,A,HSG.GPE.A.1,11
+280,What is the period of y = sin(x)?,2pi,pi,360,90,A,HSF.TF.B.5,11
+281,Events A and B are independent if P(A and B) =,P(A) * P(B),P(A) + P(B),P(A) - P(B),0,A,HSS.CP.A.2,11
+282,Simplify: (27)^(1/3),3,9,1,27,A,HSN.RN.A.2,11
+283,Solve: e^x = 1,1,e,10,0,D,HSF.LE.A.4,11
+284,Matrix addition is only possible if:,Dimensions are the same,Columns match rows,They are square,Determinant is non-zero,A,HSN.VM.C.8,11
+285,"What is the 5th term of 2, 4, 8, 16...?",24,30,20,32,D,HSF.BF.A.2,11
+286,If discriminant is negative roots are:,Imaginary,Real,Equal,Rational,A,HSA.REI.B.4,11
+287,Function y = 2(x-1)^2 + 4 opens:,Down,Left,Right,Up,D,HSF.IF.C.7,11
+288,Convert 180 degrees to radians.,2pi,pi,pi/2,3pi/2,B,HSF.TF.A.1,11
+289,Simplify: log(a) - log(b),log(a/b),log(a-b),log(ab),log(a)/log(b),A,HSF.LE.A.4,11
+290,Solve: x^2 = -9,3i and -3i,3 and -3,No solution,9i,A,HSN.CN.C.7,11
+291,The inverse of an exponential function is:,Logarithmic,Quadratic,Linear,Rational,A,HSF.LE.A.4,11
+292,Simplify: x^-2,1/x^2,#NAME?,x^2,-2x,A,HSN.RN.A.1,11
+293,What is the horizontal asymptote of y = (2x)/(x+1)?,y = 1,x = -1,y = 0,y = 2,D,HSF.IF.C.7,11
+294,Calculate 10 C 1 (Combinations),1,100,0,10,D,HSS.CP.B.9,11
+295,Probability of flipping Heads 3 times in a row?,45665,45663,45659,45718,A,HSS.CP.A.2,11
+296,Which function models rapid population growth?,Exponential,Linear,Quadratic,Logarithmic,A,HSF.LE.A.1,11
+297,Find the amplitude of y = 4sin(x),1,2pi,0,4,D,HSF.TF.B.5,11
+298,Solve for x: 5^(x+1) = 25,1,2,3,0,A,HSF.LE.A.4,11
+299,What is 0! (Zero Factorial)?,0,Undefined,Infinity,1,D,HSS.CP.B.9,11
+300,The graph of x^2 + y^2 = r^2 is a:,Parabola,Ellipse,Hyperbola,Circle,D,HSG.GPE.A.1,11
+301,"Convert the polar coordinate (4, 180 deg) to rectangular form.",(4 0),(0 4),(0 -4),(-4 0),D,PreCalc,11
+302,"Find the magnitude of vector v = <3,4>.",7,25,1,5,D,PreCalc,11
+303,Which function is the inverse of f(x) = ln(x)?,f(x) = 1/x,f(x) = x^2,f(x) = e^x,f(x) = log(x),C,PreCalc,11
+304,Evaluate: cos(pi/3),sqrt(3)/2,1,0,45659,D,PreCalc,11
+305,"Find the dot product of u=<1, 2> and v=<3,4>.",11,7,5,10,A,PreCalc,11
+306,What is the period of y = 2cos(4x)?,4pi,2pi,pi,pi/2,D,PreCalc,11
+307,Solve for theta: 2sin(theta) = 1 (in Quadrant I),60 degrees,45 degrees,30 degrees,90 degrees,C,PreCalc,11
+308,Simplify: (sin^2 x + cos^2 x) / tan x,tan x,1,sec x,cot x,D,PreCalc,11
+309,"Convert 2 + 2i to polar form (r,  theta).",(2sqrt(2) 45 deg),(2 45 deg),(4 90 deg),(2sqrt(2) 30 deg),A,PreCalc,12 
+310,Find the vertical asymptote of f(x) = (x+1)/(x-3).,x = 3,x = -1,y = 1,y = 0,A,PreCalc,45973
+311,"Evaluate sum of infinite geometric series: 1, 1/2, 1/4, …",1,infinity,1.5,2,D,PreCalc,12-Nov
+312,"If f(x) = x^3 is transformed to f(x-2), it moves:",Left 2,Up 2,Down 2,Right 2,D,PreCalc,12-Nov
+313,Evaluate the limit: lim x->3 of (x^2 - 9)/(x - 3).,0,Undefined,9,6,D,Calc 1,12
+314,What is the derivative of f(x) = x^4?,4x^3,x^3,4x,3x^4,A,Calc 1,12
+315,Find the derivative of sin(x).,cos(x),#NAME?,#NAME?,tan(x),A,Calc 1,12
+316,The slope of the tangent line to y = x^2 at x = 3 is:,9,3,1,6,D,Calc 1,12
+317,Evaluate integral: S 2x dx.,x^2 + C,2x^2 + C,2 + C,x + C,A,Calc 1,12
+318,If f'(x) > 0 on an interval  f(x) is:,Decreasing,Constant,Concave Up,Increasing,D,Calc 1,12
+319,Find derivative of y = e^(2x) (Chain Rule).,e^(2x),2xe^(2x),e^x,2e^(2x),D,Calc 1,12
+320,Identify the critical point of f(x) = x^2 - 4x.,x = 4,x = 0,x = -2,x = 2,D,Calc 1,12
+321,Evaluate: lim x->infinity of (3x^2 + 1)/(x^2 - 5).,0,1,infinity,3,D,Calc 1,12
+322,What does the second derivative f''(x) tell us?,Slope,Velocity,Area,Concavity,D,Calc 1,12
+323,Product Rule: d/dx [u*v] =,u'v + uv',u'v - uv',u'v',u' + v',A,Calc 1,12
+324,Evaluate integral from 0 to 2 of x dx.,4,1,0,2,D,Calc 1,12
+325,Derivative of ln(x) is:,e^x,1,x,1/x,D,Calc 1,12
+326,Find the derivative of y = tan(x).,cot(x),sec(x)tan(x),sin^2(x),sec^2(x),D,Calc 1,12
+327,Use L'Hopital's Rule for lim x->0 (sin x)/x.,0,infinity,undefined,1,D,Calc 1,12
+328,Implicit differentiation of x^2 + y^2 = 25 gives dy/dx =,#NAME?,x/y,#NAME?,y/x,A,Calc 1,12
+329,Acceleration is the derivative of:,Position,Time,Speed,Velocity,D,Calc 1,12
+330,Mean Value Theorem guarantees a point where slope equals:,Zero,Infinity,Min Value,Average Rate of Change,D,Calc 1,12
+331,Integral of cos(x) dx is:,sin(x) + C,-sin(x) + C,cos(x) + C,-cos(x) + C,A,Calc 1,12
+332,Find the area under y = x from x=0 to x=4.,16,4,2,8,D,Calc 1,12
+333,If f''(x) < 0  the graph is:,Concave Up,Increasing,Decreasing,Concave Down,D,Calc 1,12
+334,Derivative of y = 5^x is:,5^x,x * 5^(x-1),ln(5)/5^x,5^x * ln(5),D,Calc 1,12
+335,Related Rates: If Area A = pi*r^2  then dA/dt =,pi*r * dr/dt,2*pi * dr/dt,r * dr/dt,2*pi*r * dr/dt,D,Calc 1,12
+336,Integration by Parts formula: S u dv =,uv + S v du,u'v - uv',uv - u'v,uv - S v du,D,Calc 2,12
+337,Evaluate integral of 1/x dx.,-1/x^2 + C,e^x + C,1 + C,ln|x| + C,D,Calc 2,12
+338,The harmonic series (1 + 1/2 + 1/3...) is:,Convergent to 1,Convergent to 0,Oscillating,Divergent,D,Calc 2,12
+339,Taylor Series for e^x starts with:,1 - x + x^2/2!...,x - x^3/3!...,1 + x + x^2...,1 + x + x^2/2!...,D,Calc 2,12
+340,Volume of revolution (Disk Method) formula:,2pi * S x*f(x) dx,S (f(x))^2 dx,pi * S f(x) dx,pi * S (f(x))^2 dx,D,Calc 2,12
+341,Integrate using U-Sub: S 2x(x^2 + 1)^3 dx.,(1/4)(x^2+1)^4 + C,(x^2+1)^4 + C,4(x^2+1)^4 + C,3(x^2+1)^2 + C,A,Calc 2,12
+342,A geometric series converges if common ratio |r| is:,Greater than 1,Equal to 1,Zero,Less than 1,D,Calc 2,12
+343,Integral of e^(3x) dx is:,3e^(3x) + C,e^(3x) + C,e^(3x)/x + C,(1/3)e^(3x) + C,D,Calc 2,12
+344,Parametric eq x=cos(t) y=sin(t) forms a:,Line,Parabola,Hyperbola,Circle,D,Calc 2,12
+345,Identify the test: lim n->inf |a_(n+1)/a_n| < 1.,Root Test,Integral Test,Comparison Test,Ratio Test,D,Calc 2,12
+346,Polar Area formula: A =,S r d(theta),pi * S r^2 d(theta),1/2 * S r d(theta),1/2 * S r^2 d(theta),D,Calc 2,12
+347,Evaluate sum: 1 - 1/2 + 1/4 - 1/8...,45659,1,45750,45691,D,Calc 2,12
+348,Integral of 1/(1+x^2) dx is:,arcsin(x) + C,ln(1+x^2) + C,tan(x) + C,arctan(x) + C,D,Calc 2,12
+349,Euler's Method is used to:,Find exact roots,Calculate Area,Find limits,Approximate solutions to Diff Eqs,D,Calc 2,12
+350,Maclaurin series is a Taylor series centered at:,x = 1,x = infinity,x = -1,x = 0,D,Calc 2,12
+351,"Find the median of: 1, 3, 3, 6, 7, 8, 9.",3,7,5.5,6,D,Stats,HS
+352,Standard Deviation measures:,Center,Accuracy,Total,Spread/Dispersion,D,Stats,HS
+353,"In a Normal Distribution, 68% of data",2 SD of mean,3 SD of mean,0.5 SD of mean,1 SD of mean,D,Stats,HS
+354,A correlation coefficient r = -0.9 indicates:,Weak negative relationship,Strong positive relationship,No relationship,Strong negative linear relationship,D,Stats,HS
+355,Z-score formula is:,z = (mean - x) / SD,z = SD / (x - mean),z = x - mean,z = (x - mean) / SD,D,Stats,HS
+356,Type I Error is:,Failing to reject false null,Calculation error,Sampling bias,Rejecting a true null hypothesis,D,Stats,HS
+357,Probability of rolling two 6s on dice?,45663,45694,45669,13150,D,Stats,HS
+358,The total area under a probability density curve is:,100,0.5,Unknown,1,D,Stats,HS
+359,Central Limit Theorem involves the distribution of:,Population Data,Sample Errors,Outliers,Sample Means,D,Stats,HS
+360,Which is robust to outliers?,Mean,Range,Standard Deviation,Median,D,Stats,HS
+361,P(A or B) for mutually exclusive events is:,P(A) * P(B),P(A) - P(B),P(A)/P(B),P(A) + P(B),D,Stats,HS
+362,Binomial dist requires independent trials with:,Three outcomes,Continuous data,Changing probability,Two possible outcomes,D,Stats,HS
+363,If P-value < alpha (0.05) we:,Fail to Reject Null,Accept Null,Retest,Reject Null Hypothesis,D,Stats,HS
+364,Residual in regression is:,Predicted y - Actual y,Slope,Intercept,Actual y - Predicted y,D,Stats,HS
+365,Sampling method where every member has equal chance?,Cluster,Stratified,Convenience,Simple Random Sample,D,Stats,HS
+366,Chi-Square test is often used for:,Means comparison,Prediction,Time series,Categorical data/Independence,D,Stats,HS
+367,A 95% Confidence Interval means:,95% of data is in the interval,The parameter is 95,There is a 5% chance of error,We are 95% confident the true parameter is in the interval,D,Stats,HS
+368,Null Hypothesis usually states:,There is an effect,The data is flawed,The result is positive,No effect / No difference,D,Stats,HS
+369,Which graph is best for quantitative data?,Bar Chart,Pie Chart,Venn Diagram,Histogram,D,Stats,HS
+370,IQR (Interquartile Range) is:,Q3 + Q1,Max - Min,Median - Mean,Q3 - Q1,D,Stats,HS
+371,Permutation order matters? (Yes/No),No,Sometimes,Only for small n,Yes,D,Stats,HS
+372,Identify the Skew: Tail extends to the right.,Left Skewed (Negative),Symmetric,Normal,Right Skewed (Positive),D,Stats,HS
+373,Degrees of Freedom for t-test (sample size n):,n,n - 2,n + 1,n - 1,D,Stats,HS
+374,Coefficient of Determination is:,r,Slope,Mean,r^2,D,Stats,HS
+375,Continuous variable example:,Shoe Size,Number of siblings,Coin flips,Height,D,Stats,HS
+376,If Mean > Median distribution,Left Skewed,Symmetric,Bimodal,Right Skewed,D,Stats,HS
+377,Linear Regression equation:,y = mx + b,y = x^2,y = e^x,y-hat = a + bx,D,Stats,HS
+378,Which variable is the explanatory variable?,Dependent (y),Response,Confounding,Independent (x),D,Stats,HS
+379,Law of Large Numbers states:,Sample mean deviates more as n increases,Outliers don't matter,Probability changes over time,Sample mean approaches population mean as n increases,D,Stats,HS
+380,Bayes Theorem calculates:,Standard Deviation,Mean,Median,Conditional Probability,D,Stats,HS
+381,Simpson's Paradox involves:,Outliers skewing mean,Correlation implies causation,Sample size too small,Trends reversing when groups combined,D,Stats,HS
+382,Standard Error of the Mean formula:,SD * n,SD / n,Mean / n,SD / sqrt(n),D,Stats,HS
+383,Margin of Error depends on:,Mean and Median,Sample size only,Population size,Critical value and Standard Error,D,Stats,HS
+384,Poisson distribution models:,Success/Fail,Measurements,Rankings,Count of events in fixed interval,D,Stats,HS
+385,Skewness of Normal Curve is:,1,-1,Undefined,0,D,Stats,HS
+386,ANOVA stands for:,Analysis of Variables,Annual Variable Assessment,Another Value Added,Analysis of Variance,D,Stats,HS
+387,P(A|B) is read as:,Probability of A and B,Probability of A or B,Probability of B given A,Probability of A given B,D,Stats,HS
+388,Bernoulli trial has how many outcomes?,1,Infinite,10,2,D,Stats,HS
+389,Observational study vs Experiment?,Observation manipulates variables,No difference,Experiment is always better,Experiment imposes treatment,D,Stats,HS
+390,Double-Blind means:,Both know,Only subject knows,Only evaluator knows,Neither subject nor evaluator knows treatment,D,Stats,HS
+391,"Mode of: 2, 2, 3, 4 is",3,4,2.75,2,D,Stats,HS
+392,Variance is:,Square root of SD,Mean absolute deviation,Range / 2,Standard Deviation squared,D,Stats,HS
+393,Sum of probabilities in sample space:,100,0,Infinite,1,D,Stats,HS
+394,Complement Rule: P(not A) =,1 + P(A),P(A) - 1,1 / P(A),1 - P(A),D,Stats,HS
+395,Quantitative Discrete data example:,Height,Weight,Temperature,Number of students,D,Stats,HS
+396,Stratified sampling divides population into:,Clusters (heterogeneous),Simple lists,Random groups,Strata (homogeneous groups),D,Stats,HS
+397,t-distribution is used when:,Sample is large,Population is skewed,Data is categorical,Population SD unknown,D,Stats,HS
+398,Power of a test is:,Probability of Type I error,1 - Beta,Probability of accepting null,Probability of correctly rejecting false null,D,Stats,HS
+399,Extrapolation is:,Predicting inside range,Interpolation,Sampling,Predicting outside data range,D,Stats,HS
+400,A placebo is:,Active drug,The experimenter,The variable,Fake treatment/Control,D,Stats,HS
+401,A car travels 100 meters in 5 seconds. What is its average speed?,20 m/s,50 m/s,500 m/s,10 m/s,A,HS-PS2 (Kinematics),HS
+402,Calculate the force needed to accelerate a 10 kg object at 2 m/s^2.,5 N,20 N,12 N,8 N,B,HS-PS2.A (Newton's 2nd Law),HS
+403,What is the Kinetic Energy of a 2 kg ball moving at 3 m/s?,6 J,9 J,18 J,36 J,B,HS-PS3.A (Kinetic Energy),HS
+404,"A 5 kg rock is held 10 m above the ground. Potential Energy (PE = mgh, g=10)?",50 J,500 J,2 J,15 J,B,HS-PS3.A (Gravitational PE),HS
+405,Calculate the current in a circuit with 12 Volts and 4 Ohms resistance.,48 Amps,3 Amps,0.33 Amps,8 Amps,B,HS-PS3 (Ohm's Law),HS
+406,What is the momentum of a 4 kg object moving at 5 m/s?,20 kg*m/s,1.25 kg*m/s,9 kg*m/s,1 kg*m/s,A,HS-PS2 (Momentum),HS
+407,A wave has a frequency of 10 Hz and wavelength of 2 m. What is the speed?,20 m/s,5 m/s,0.2 m/s,12 m/s,A,HS-PS4.A (Wave Speed),HS
+408,How much Work is done pushing a box with 10 N of force for 5 meters?,2 J,50 J,15 J,0.5 J,B,HS-PS3 (Work),HS
+409,Calculate the density of a cube with mass 20g and volume 4cm^3.,80 g/cm^3,0.2 g/cm^3,5 g/cm^3,24 g/cm^3,C,HS-PS1 (Density),HS
+410,"If the period of a pendulum is 2 seconds,  what is the frequency (f=1/T)?",2 Hz,0.5 Hz,4 Hz,10 Hz,B,HS-PS4 (Period/Freq),
+411,Convert 2 hours into seconds.,120 seconds,7200 seconds,3600 seconds,60 seconds,B,HS-PS (Unit Conversion),12
+412,Calculate the power used if 100 J of work is done in 20 seconds.,5 Watts,2000 Watts,120 Watts,80 Watts,A,HS-PS3 (Power),12
+413,Two resistors of 3 Ohms and 6 Ohms are in Series. Total Resistance?,2 Ohms,18 Ohms,9 Ohms,3 Ohms,C,HS-PS3 (Circuits),12
+414,Find the weight of a 50 kg person on Earth (g = 9.8 m/s^2).,50 N,490 N,5.1 N,5000 N,B,HS-PS2 (Weight vs Mass),12
+415,A spring stretches 0.5 m when pulled by 10 N. Find the spring constant k (F=kx).,5 N/m,20 N/m,10 N/m,15 N/m,B,HS-PS2 (Hooke's Law),12
+416,Specific Heat: Energy to heat 1kg of water by 1 deg C is 4184 J. Heat for 2kg?,4184 J,8368 J,2092 J,1000 J,B,HS-PS3 (Thermodynamics),12
+417,Acceleration is defined as the rate of change of:,Position,Velocity,Force,Energy,B,HS-PS2 (Definitions),12
+418,An object falls from rest for 3 seconds (v = gt). Velocity?,9.8 m/s,19.6 m/s,29.4 m/s,3 m/s,C,HS-PS2 (Free Fall),12
+419,The slope of a Distance vs. Time graph represents:,Acceleration,Velocity,Displacement,Force,B,HS-PS2 (Graphing Motion),12
+420,Pressure is Force divided by:,Mass,Volume,Area,Distance,C,HS-PS (Pressure Formula),12
+421,What is 5 + 3?,7,8,9,6,B,1.OA.C.6 (Addition Facts),1
+422,"Which number is the number ""seven""?",17,7,70,700,B,1.NBT.A.1 (Number Recognition),1
+423,How many sides does a triangle have?,4,2,3,5,C,1.G.A.1 (Shapes),1
+424,What comes next? 2 4 6 __,7,8,9,10,B,1.OA.C.5 (Skip Counting),1
+425,Which object is the heaviest?,Feather,Car,Pencil,Shoe,B,1.MD.A.1 (Measurement Concepts),1
+426,Solve: 10 - 4,5,6,7,4,B,1.OA.D.8 (Subtraction),1
+427,What is 10 more than 25?,35,26,15,45,A,1.NBT.C.5 (Mental Math),1
+428,Which number is greater than 12?,10,9,11,15,D,1.NBT.B.3 (Comparing Numbers),1
+429,How many pennies are in a nickel?,1,10,5,25,C,2.MD.C.8 (Money),1
+430,What time is it when the big hand is on 12 and little hand is on 3?,0.125,0.5,0.502083333,0.145833333,A,1.MD.B.3 (Time),1
+431,Solve: 8 + 8,15,16,14,18,B,1.OA.C.6 (Doubles),1
+432,Which shape is round?,Square,Triangle,Circle,Rectangle,C,1.G.A.1 (Shapes),1
+433,Count the tally marks: ||||,5,6,4,3,C,1.MD.C.4 (Data),1
+434,Subtract: 20 - 10,20,10,0,5,B,1.NBT.C.6 (Tens Subtraction),1
+435,Which is a 2-digit number?,5,100,50,9,C,1.NBT.B.2 (Place Value),1
+436,What is the sum of 6 and 4?,9,11,10,12,C,1.OA.C.6 (Making Ten),1
+437,If you have 3 cats and get 2 more how many total?,6,5,4,1,B,1.OA.A.1 (Word Problems),1
+438,Find the missing number: 5 + __ = 9,4,3,5,6,A,1.OA.D.8 (Missing Addend),1
+439,Which is an odd number?,2,4,6,7,D,2.OA.C.3 (Odd/Even),2
+440,What is the value of a Quarter?,10 cents,1 cent,25 cents,5 cents,C,2.MD.C.8 (Money),2
+441,"Write ""One Hundred Twenty"" as a number.",10020,120,102,210,B,2.NBT.A.3 (Number Names),2
+442,Solve: 45 + 10,50,65,55,46,C,2.NBT.B.5 (Mental Math),2
+443,How many inches are in 1 foot?,10,12,100,3,B,2.MD.A.1 (Measurement),2
+444,Is 100 greater than less than or equal to 99?,Greater than,Less than,Equal to,None,A,2.NBT.A.4 (Comparing),2
+445,Expanded form of 345?,3 + 4 + 5,300 + 40 + 5,30 + 40 + 50,300 + 4 + 5,B,2.NBT.A.3 (Place Value),2
+446,Subtract: 50 - 25,20,30,25,15,C,2.NBT.B.5 (Subtraction),2
+447,How many vertices (corners) does a square have?,3,4,5,6,B,2.G.A.1 (Geometry),2
+448,What is 3 groups of 5?,8,10,15,35,C,2.OA.C.4 (Intro to Mult),2
+449,If the sun is up it is likely:,PM,AM,Night,Midnight,A,2.MD.C.7 (Time),2
+450,Add: 12 + 12 + 12,24,30,36,48,C,2.NBT.B.6 (Adding Multiple),2
+451,Which tool measures length?,Scale,Ruler,Clock,Thermometer,B,2.MD.A.1 (Tools),2
+452,How many minutes in 1 hour?,30,100,60,24,C,2.MD.C.7 (Time),2
+453,Solve: 100 - 30,80,60,70,50,C,2.NBT.B.5 (Subtraction),2
+454,Choose the even number.,11,13,15,18,D,2.OA.C.3 (Even Numbers),2
+455,What fraction is half?,45660,45659,45661,45658,B,2.G.A.3 (Fractions),2
+456,1 dollar is equal to how many cents?,50,100,25,10,B,2.MD.C.8 (Money),2
+457,Measurement: A paperclip is about how long?,1 inch,1 foot,1 yard,1 mile,A,2.MD.A.3 (Estimation),2
+458,Solve: 24 + 35,50,59,69,49,B,2.NBT.B.5 (Addition),2
+459,Which solid shape looks like a ball?,Cube,Cone,Sphere,Cylinder,C,2.G.A.1 (3D Shapes),2
+460,If you count by 5s: 5 10 15 __,16,20,25,30,B,2.NBT.A.2 (Skip Counting),2
+461,Round 37 to the nearest 10.,30,40,35,50,B,3.NBT.A.1 (Rounding),3
+462,Product of 9 and 3?,12,21,27,30,C,3.OA.A.1 (Multiplication),3
+463,Which fraction is larger: 1/2 or 1/8?,45659,45665,Equal,Depends,A,3.NF.A.3 (Comparing Fractions),3
+464,Perimeter of a triangle with sides 3 3 3?,6,9,12,27,B,3.MD.D.8 (Perimeter),3
+465,Division: 20 / 5,5,4,10,2,B,3.OA.A.2 (Division Facts),3
+466,Area of a square with side 4?,8,12,16,20,C,3.MD.C.7 (Area),3
+467,A rhombus has how many sides?,3,4,5,6,B,3.G.A.1 (Shapes),3
+468,Find the missing factor: 6 x __ = 36,5,6,7,4,B,3.OA.A.4 (Algebraic Thinking),3
+469,Identify the numerator in 3/4.,3,4,7,1,A,3.NF.A.1 (Fraction Parts),3
+470,Which property: 5x2 = 2x5?,Associative,Distributive,Commutative,Identity,C,3.OA.B.5 (Properties),3
+471,Solve: 345 + 234,579,569,589,479,A,3.NBT.A.2 (Addition),3
+472,What time is 15 minutes after 1:00?,0.052083333,0.0625,0.076388889,0.53125,A,3.MD.A.1 (Elapsed Time),3
+473,How many grams in 1 kilogram?,10,100,1000,500,C,3.MD.A.2 (Metric System),3
+474,Is a square a rectangle?,Yes,No,Sometimes,Only if red,A,3.G.A.1 (Classifying Shapes),3
+475,Estimate 19 x 5.,50,100,150,200,B,3.OA.D.8 (Estimation),3
+476,Fraction equivalent to 2/4?,45660,45659,45721,45662,B,3.NF.A.3 (Equivalence),3
+477,Solve: 6 x 8,42,48,54,56,B,3.OA.A.1 (Multiplication),3
+478,Subtract: 500 - 200,200,300,400,100,B,3.NBT.A.2 (Subtraction),3
+479,Which unit measures liquid?,Liters,Meters,Grams,Inches,A,3.MD.A.2 (Measurement),3
+480,Any number multiplied by 1 is:,The number itself,1,0,Double,A,3.OA.A.1 (Identity Prop),3
+481,Solve: 125 x 5,625,525,600,725,A,4.NBT.B.5 (Multi-Digit Mult),4
+482,Factors of 10?,1 2 5 10,1 10,2 5,1 2 3 10,A,4.OA.B.4 (Factors),4
+483,Is 41 prime or composite?,Prime,Composite,Neither,Both,A,4.OA.B.4 (Prime Numbers),4
+484,Compare: 0.3 ___ 0.30,>,<,=,Different,C,4.NF.C.7 (Decimals),4
+485,How many degrees in a circle?,180,90,360,100,C,4.MD.C.5 (Angles),4
+486,Subtract fractions: 5/8 - 2/8,45724,45846,36586,45732,A,4.NF.B.3 (Subtracting Fractions),4
+487,Convert 3 meters to centimeters.,30,300,3000,3,B,4.MD.A.1 (Conversions),4
+488,Lines that intersect at a right angle are:,Parallel,Perpendicular,Skew,Straight,B,4.G.A.1 (Lines),4
+489,Solve: 456 / 3,152,142,162,132,A,4.NBT.B.6 (Division),4
+490,A mixed number is:,Whole number + Fraction,Two fractions,Two decimals,A negative number,A,4.NF.B.3 (Definitions),4
+491,Symmetry: How many lines for a rectangle?,1,2,4,0,B,4.G.A.3 (Symmetry),4
+492,Multiply: 24 x 13,312,212,400,302,A,4.NBT.B.5 (2-digit Mult),4
+493,Decompose 5/6.,1/6+1/6+3/6,2/6+2/6,1/6+4/6,All of these,D,4.NF.B.3 (Fractions),4
+494,Angle measuring 120 degrees is:,Acute,Right,Obtuse,Straight,C,4.MD.C.5 (Classifying Angles),4
+495,Round 15678 to thousands.,15000,16000,15600,15700,B,4.NBT.A.3 (Rounding),4
+496,Formula for Area of Rectangle?,L + W,L x W,2L + 2W,L / W,B,4.MD.A.3 (Area),4
+497,What is 1/10 of 30?,3,10,30,0.3,A,4.NBT.A.1 (Place Value),4
+498,Add: 2.5 + 3.4,5.9,6,5.8,5.5,A,5.NBT.B.7 (Decimal Addition),5
+499,Divide: 1 / 2,0.5,0.2,2,1.2,A,5.NBT.A.3 (Fractions/Decimals),5
+500,Order of Operations: 5 + 2 x 3,21,11,10,13,B,5.OA.A.1 (PEMDAS),5
+501,Volume of cube with side 2?,4,6,8,10,C,5.MD.C.5 (Volume),5
+502,Coordinate pair (3 5): Move __ right.,3,5,0,8,A,5.G.A.1 (Graphing),5
+503,Subtract: 5.0 - 1.5,4.5,3.5,2.5,3,B,5.NBT.B.7 (Decimal Sub),5
+504,Multiply: 0.1 x 0.1,0.1,0.2,0.01,1,C,5.NBT.B.7 (Decimal Mult),5
+505,Convert 1/4 to decimal.,0.4,0.25,0.75,0.14,B,5.NBT.A.3 (Conversions),5
+506,Classify triangle with sides 3 3 3.,Isosceles,Scalene,Equilateral,Right,C,5.G.B.3 (Triangles),5
+507,Solve: 240 / 60,40,4,6,24,B,5.NBT.B.6 (Mental Division),5
+508,"Expression: ""Double 5 then add 3""",5 x 2 + 3,5 + 3 x 2,(5+3) x 2,5 x 5 + 3,A,5.OA.A.2 (Expressions),5
+509,Multiplying by 100 moves decimal:,Left 2 spots,Right 2 spots,Left 1 spot,Right 1 spot,B,5.NBT.A.2 (Powers of 10),5
+510,How many cm in 1 meter?,10,100,1000,50,B,5.MD.A.1 (Metric),5
+511,Solve: 1/3 + 1/6,45697,3/6 (1/2),45666,45694,B,5.NF.A.1 (Unlike Fractions),5
+512,10^4 is equal to:,100,1000,10000,40,C,5.NBT.A.2 (Exponents),5
+513,Which is heavier: 1kg or 1g?,1kg,1g,Same,Depends on material,A,5.MD.A.1 (Measurement),5
+514,A polygon with 8 sides?,Hexagon,Heptagon,Octagon,Nonagon,C,5.G.B.3 (Geometry),5
+515,Reciprocal of 2/3?,45718,45660,45689,45719,A,5.NF.B.7 (Fraction Vocab),5
+516,Solve: 3.2 x 10,32,0.32,320,3.2,A,5.NBT.A.2 (Mult by 10),5
+517,Rounding 9.99 to nearest whole number?,9,10,9.9,9,B,5.NBT.A.4 (Rounding),5
+518,A straight line is how many degrees?,90,100,180,360,C,4.MD.C.5 (Angles),1
+519,Simplify: 20/25,45752,45721,45662,45693,A,5.NF.A.1 (Simplifying),5
+520,If x + 5 = 12 what is x?,5,6,7,17,C,5.OA.B.3 (Pre-Algebra),5
+521,Find the domain of the function f(x) = sqrt(2x - 6).,[3 infinity),(-infinity 3],(3 infinity),[0 infinity),A,College Alg (Domain),13+
+522,If f(x) = x^2 + 1 and g(x) = x - 3 find f(g(x)).,x^2 - 6x + 10,x^2 - 2,x^2 - 6x - 8,x^2 + x - 2,A,College Alg (Composite Functions),13+
+523,Find the inverse of f(x) = (2x + 1) / (x - 1).,f^-1(x) = (x+1)/(x-2),f^-1(x) = (x-1)/(x+2),f^-1(x) = (2x-1)/(x+1),f^-1(x) = x,A,College Alg (Inverse Functions),13+
+524,Solve for x: log_2(x) + log_2(x - 2) = 3.,x = 4,x = 2,x = -2,x = 3,A,College Alg (Log Equations),13+
+525,Identify the horizontal asymptote of f(x) = (3x^2)/(x^2 - 4).,y = 3,y = 0,y = 1,None,A,College Alg (Rational Functions),13+
+526,Solve the system using matrices: 2x - y = 5 and x + y = 4.,(3 1),(2 2),(1 3),(4 0),A,College Alg (Systems),13+
+527,What is the determinant of the matrix [[2 3] [1 4]]?,5,11,8,6,A,College Alg (Matrices),13+
+528,"Find the sum of the infinite geometric series: 5, 2.5, 1.25, …",10,15,5,20,A,College Alg (Series),13+
+529,"Which equation represents a circle with center (-2, 5) and radius 4?",(x+2)^2 + (y-5)^2 = 16,(x-2)^2 + (y+5)^2 = 16,(x+2)^2 + (y-5)^2 = 4,(x-2)^2 + (y-5)^2 = 16,A,College Alg (Conics),13+
+530,Solve the inequality: |2x - 5| > 9.,x > 7 or x < -2,#NAME?,x > 7,x < -2,A,College Alg (Absolute Value),13+
+531,Find the vertex of the parabola y = 2x^2 - 12x + 10.,(3 -8),(3 8),(-3 -8),(-3 8),A,College Alg (Quadratics),13+
+532,Divide using synthetic division: (x^3 - 3x^2 + x - 3) / (x - 3).,x^2 + 1,x^2 - 1,x^2 + x,x^2 + 3,A,College Alg (Polynomials),13+
+533,Find the exact value of e^(ln 5).,5,e,1,ln 5,A,College Alg (Log Properties),13+
+534,Determine the end behavior of P(x) = -x^4 + 3x^2.,Down-Down,Up-Up,Down-Up,Up-Down,A,College Alg (Polynomial Behavior),13+
+535,Solve for x: 27^(x-1) = 9^(2x).,x = -3,x = 3,x = -1,x = 0,A,College Alg (Exponential Eq),13+
+536,"Find the 10th term of the arithmetic sequence: 3, 7, 11, …",39,43,37,40,A,College Alg (Sequences),13+
+537,Convert the complex number 4 - 4i to polar form.,4sqrt(2) cis(315 deg),4 cis(315 deg),4sqrt(2) cis(45 deg),8 cis(270 deg),A,College Alg (Complex Polar),13+
+538,If a polynomial has a root at x = 2i it must also have a root at:,x = -2i,x = 2,x = -2,x = 0,A,College Alg (Conjugate Root Thm),13+
+539,Solve the rational inequality: (x - 3)/(x + 1) >= 0.,(-inf -1) U [3 inf),[-1 3],(-inf -1] U [3 inf),(-1 3),A,College Alg (Inequalities),13+
+540,"Evaluate the binomial coefficient ""5 choose 2"" (5C2).",10,20,5,60,A,College Alg (Combinatorics),13+
+541,Expand log(a^2 / b).,2log(a) - log(b),log(a) - log(b),2log(a) + log(b),log(a^2) + log(b),A,College Alg (Log Laws),13+
+542,Identify the center of the ellipse: ((x-1)^2)/9 + ((y+2)^2)/4 = 1.,(1 -2),(-1 2),(1 2),(-1 -2),A,College Alg (Conics),13+
+543,Solve for x: sqrt(2x + 15) = x.,x = 5,x = -3,x = 5 and -3,No solution,A,College Alg (Radical Eq),13+
+544,If f(x) is an even function and f(3) = 5 then f(-3) is:,5,-5,3,-3,A,College Alg (Function Properties),13+
+545,Find the slant (oblique) asymptote of f(x) = (x^2 + 1)/(x - 1).,y = x + 1,y = x,y = x - 1,y = 1,A,College Alg (Asymptotes),13+
+546,"Multiply matrices: [[1 2]] x [[3] , [4]].",[11],[7],[12],[3 8],A,College Alg (Matrices),13+
+547,What is the remainder when x^25 + 1 is divided by x - 1?,2,0,1,25,A,College Alg (Remainder Thm),13+
+548,Half-life of a substance is 10 years. Start with 100g. How much in 20 years?,25g,50g,10g,0g,A,College Alg (Exp Decay),13+
+549,Solve for x: x^4 - 5x^2 + 4 = 0.,2,-2,1,No real solution,A,College Alg (Higher Order Eq),13+
+550,Find the difference quotient (f(x+h)-f(x))/h for f(x) = 2x + 3.,2,2x,h,2h,A,College Alg (Difference Quotient),13+
+551,Which sequence is geometric?,"2, 6, 18, 54...","2, 4, 6, 8...","1, 1, 2, 3…","5, 10, 15, 20.....",A,College Alg (Sequences),13+
+552,Solve the system: y = x^2 and y = 2x + 3.,(-1 1) and (3 9),(1 1) and (-3 9),(0 0) and (2 7),(3 9) only,A,College Alg (Nonlinear Systems),13+
+553,The graph of y = e^x passes through which point?,(0 1),(1 0),(0 0),(1 1),A,College Alg (Exponentials),13+
+554,Find the value of k if x - 2 is a factor of x^2 + kx - 6.,1,-1,5,-5,A,College Alg (Factor Thm),13+
+555,What type of conic is 4x^2 - 9y^2 = 36?,Hyperbola,Ellipse,Circle,Parabola,A,College Alg (Conics),13+
+556,Simplify: (1 + i) / (1 - i).,i,#NAME?,1,-1,A,College Alg (Complex Numbers),13+
+557,Find the domain of f(x) = ln(x - 5).,x > 5,x >= 5,x < 5,x != 5,A,College Alg (Log Domain),13+
+558,"If 3^x = 7, then x=?.",log_3(7),log_7(3),45841,7-Mar,A,College Alg (Log Definition),13+
+559,Row-reduced echelon form is used to solve:,Systems of Equations,Quadratic Equations,Inequalities,Logarithms,A,College Alg (Matrices),13+
+560,Find the summation: Sum(k=1 to 4) of k^2.,30,10,16,25,A,College Alg (Series),13+
+561,A function is one-to-one if it passes the:,Horizontal Line Test,Vertical Line Test,Diagonal Test,Origin Test,A,College Alg (Functions),13+
+562,Solve: e^(2x) - 4e^x + 3 = 0.,x = 0 and x = ln(3),x = 1 and x = 3,x = ln(3),x = 0,A,College Alg (Exp Quadratic),13+
+563,Decomposition of 1/(x^2 - 1) involves:,A/(x-1) + B/(x+1),A/(x-1),A/(x^2) + B,A/(x+1),A,College Alg (Partial Fractions),13+
+564,The eccentricity (e) of a circle is:,0,1,Less than 1,Greater than 1,A,College Alg (Conics),13+
+565,Solve for x: |3x + 2| = -5.,No solution,-2.333333333,1,-1,A,College Alg (Abs Value Eq),13+
+566,How many solutions does a system of two parallel lines have?,0,1,2,Infinite,A,College Alg (Systems),13+
+567,Find the range of y = x^2 + 4.,[4 infinity),(-infinity infinity),[0 infinity),(-infinity 4],A,College Alg (Range),13+
+568,"Using Cramer's Rule,  the denominator is the determinant of the:",Coefficient Matrix,Answer Column,Inverse Matrix,Identity Matrix,A,College Alg (Cramer's Rule),13+
+569,Factor x^4 - 16 completely.,(x-2)(x+2)(x^2+4),(x^2-4)(x^2+4),(x-2)^2(x+2)^2,(x-2)(x+2)(x-2)(x+2),A,College Alg (Factoring),13+
+570,The Binomial Theorem expands (x + y)^n using coefficients from:,Pascal's Triangle,The Unit Circle,Fibonacci Sequence,Pythagorean Triples,A,College Alg (Binomial Thm),13+
+571,How many fingers are on one hand?,4,10,5,1,C,K.CC.B.5 (Counting),K
+572,Which number comes after 3?,2,4,5,1,B,K.CC.A.2 (Counting Forward),K
+573,What is 1 + 1?,1,3,11,2,D,K.OA.A.5 (Addition),K
+574,Which shape has 3 sides?,Square,Circle,Triangle,Rectangle,C,K.G.A.2 (Shapes),K
+575,Which number is the biggest?,2,5,9,1,C,K.CC.C.7 (Comparing Numbers),K
+576,Count the dots: * * *,2,3,4,5,B,K.CC.B.4 (Counting Objects),K
+577,What is 5 minus 0?,0,5,50,1,B,K.OA.A.5 (Subtraction),K
+578,Which object is round?,Book,Ball,Table,Door,B,K.G.A.1 (Shape Identification),K
+579,Which number is ten?,1,10,100,1,B,K.CC.A.3 (Number Writing),K
+580,If you have 2 apples and eat 1 how many are left?,1,2,3,0,A,K.OA.A.2 (Word Problems),K
+581,What comes next? 1 2 3 __,5,6,4,0,C,K.CC.A.2 (Sequencing),K
+582,Which animal has 4 legs?,Bird,Snake,Dog,Fish,C,K.MD.A.2 (Attributes),K
+583,"Which shows ""none""?",0,1,10,100,A,K.CC.A.3 (Zero Concept),K
+584,Is a giraffe tall or short?,Tall,Short,Small,Tiny,A,K.MD.A.1 (Measurement),K
+585,How many corners does a circle have?,4,3,1,0,D,K.G.A.2 (Geometry),K
+586,What is 2 + 2?,3,5,4,22,C,K.OA.A.5 (Addition),K
+587,Which is a penny?,Silver coin,Copper/Brown coin,Paper money,Gold bar,B,1.MD.B.3 (Money),1
+588,Which group has more?,5 stars,2 stars,1 star,0 stars,A,K.CC.C.6 (Comparing),K
+589,"What number is this: ""Eight""",8,18,80,0,A,K.CC.A.3 (Number Names),K
+590,Subtract: 3 - 2,1,2,3,5,A,K.OA.A.5 (Subtraction),K
+591,Which shape looks like a box?,Circle,Triangle,Square,Star,C,K.G.A.1 (Shapes),K
+592,"Fill in the blank: A, B, C, __.",E,F,D,G,C,K.ELA (Patterns/Sequence),K
+593,How many wheels on a bicycle?,1,2,3,4,B,K.CC.B.5 (Counting),K
+594,What is 10 + 0?,100,0,1,10,D,1.OA.C.6 (Identity Prop),1
+595,Which represents the number 5?,||,|||||,|||,|,B,K.CC.B.4 (Tally Marks),K
+596,Is ice hot or cold?,Hot,Cold,Warm,Dry,B,K.MD.A.2 (Attributes),K
+597,Solve: 4 + 1,4,1,5,6,C,K.OA.A.5 (Addition),K
+598,Which number is smaller than 4?,5,6,3,10,C,K.CC.C.7 (Comparing),K
+599,How many toes do you (usually) have on one foot?,10,1,5,2,C,K.CC.B.5 (Counting),K
+600,What is 0 + 0?,0,1,10,100,A,K.OA.A.5 (Addition),K
+601,Which is a number?,A,$,7,?,C,K.CC.A.3 (Number Recog),K
+602,Identify the rectangle.,Ball,Door,Pizza Slice,Ice Cream Cone,B,K.G.A.1 (Real World Shapes),K
+603,How many suns are in the sky?,1,2,3,100,A,K.CC.B.5 (Counting),K
+604,Which is heavy?,Feather,Elephant,Pencil,Leaf,B,K.MD.A.1 (Weight),K
+605,What is 1 take away 1?,1,11,2,0,D,K.OA.A.2 (Subtraction),K
+606,Which number looks like a snowman?,1,8,4,7,B,K.CC.A.3 (Number Shapes),K
+607,"Count backwards: 3, 2, __",4,5,1,0,C,K.CC.A.2 (Counting Back),K
+608,Are these equal? 2 and 2.,Yes,No,Maybe,Sometimes,A,K.CC.C.6 (Equality),K
+609,Which is the color of grass?,Red,Blue,Green,Purple,C,Pre-K (Colors),PK
+610,How many eyes does a face have?,1,2,3,4,B,K.CC.B.5 (Counting),K
+611,"Which is the number ""one""?",1,2,3,4,A,K.CC.A.3 (Number Recog),K
+612,Solve: 2 + 3,4,5,6,1,B,K.OA.A.5 (Addition),K
+613,Which line is straight?,~~~~,----,^^^^,OOOO,B,K.G.A.1 (Lines),K
+614,Find the pair.,Shoe and Sock,Shoe and Apple,Sock and Car,Hat and Fish,A,K.MD.B.3 (Matching),K
+615,Is a mouse big or small?,Big,Small,Huge,Tall,B,K.MD.A.1 (Size),K
+616,Which number is first?,1,2,3,10,A,K.CC.A.2 (Ordinal Numbers),K
+617,What comes after Monday?,Sunday,Wednesday,Tuesday,Friday,C,K.MD (Time),K
+618,Solve: 6 - 1,5,6,7,4,A,1.OA.D.8 (Subtraction),1
+619,How many sides on a square?,2,3,4,5,C,1.G.A.1 (Geometry),1
+620,What is 5 + 5?,55,10,9,11,B,1.OA.C.6 (Doubles),1
+621,Which month comes after March?,May,February,April,June,C,1.MD.B.3 (Time/Calendar),2
+622,How many cents are in a dime?,5,10,25,1,B,2.MD.C.8 (Money),2
+623,Solve: 15 - 7,8,7,9,6,A,2.OA.B.2 (Subtraction Facts),2
+624,What shape has 6 sides?,Pentagon,Octagon,Hexagon,Triangle,C,3.G.A.1 (Geometry),3
+625,"Write the number for ""forty-two"".",402,42,24,420,B,1.NBT.A.1 (Number Names),1
+626,If you have 50 cents and spend 10 cents how much is left?,30 cents,60 cents,40 cents,50 cents,C,2.MD.C.8 (Money Math),2
+627,Which is the largest number?,109,190,901,910,D,2.NBT.A.4 (Comparing Numbers),2
+628,What time is shown if the little hand is on 6 and big hand on 12?,0.25,0.5,0.258333333,0.504166667,A,1.MD.B.3 (Telling Time),1
+629,Double 6 is:,10,12,14,18,B,2.OA.C.3 (Doubles),2
+630,Which is a liquid?,Rock,Milk,Pencil,Apple,B,2.MD (States of Matter/Measurement),2
+631,How many days are in a week?,5,7,12,30,B,1.MD.B.3 (Time),1
+632,Solve: 20 + 20,30,50,40,100,C,2.NBT.B.5 (Addition),2
+633,What is the place value of the 5 in 53?,Ones,Tens,Hundreds,Thousands,B,2.NBT.A.1 (Place Value),2
+634,Which coin is brown/copper?,Nickel,Dime,Quarter,Penny,D,1.MD.B.3 (Money Identification),1
+635,"Count by 10s: 10, 20, 30,  __",35,40,50,25,B,1.NBT.A.1 (Skip Counting),1
+636,Solve: 9 + 6,14,15,16,13,B,2.OA.B.2 (Addition Facts),2
+637,Is a basketball a sphere or a circle?,Circle,Sphere,Cube,Square,B,2.G.A.1 (3D Shapes),2
+638,"Identify the pattern: Red, Blue, Red, Blue, __",Green,Red,Yellow,Orange,B,1.MD (Patterns),1
+639,Which holds more water?,Teaspoon,Cup,Bucket,Bathtub,D,2.MD.A.1 (Capacity),2
+640,What is 100 + 50?,105,150,500,10050,B,2.NBT.B.7 (Addition),2
+641,Find the difference: 12 - 5,6,8,7,5,C,2.OA.B.2 (Subtraction),2
+642,How many hours are in 1 day?,12,24,48,7,B,2.MD.C.7 (Time),2
+643,If today is Friday what was yesterday?,Saturday,Sunday,Thursday,Wednesday,C,1.MD.B.3 (Calendar),1
+644,What does a ruler measure?,Weight,Time,Length,Temperature,C,2.MD.A.1 (Tools),2
+645,Solve: 3 x 2,5,6,1,32,B,3.OA.A.1 (Intro Multiplication),3
+646,Which number is even?,7,9,11,12,D,2.OA.C.3 (Odd/Even),2
+647,How many sides does a rectangle have?,3,4,5,6,B,1.G.A.1 (Geometry),1
+648,Split 10 into 2 equal groups. How many in each?,2,5,10,4,B,3.OA.A.2 (Division Concept),3
+649,Which represents 3 tens and 4 ones?,34,43,304,7,A,2.NBT.A.1 (Place Value),2
+650,Add: 8 + 2 + 5,10,13,15,14,C,2.OA.B.2 (Adding 3 Numbers),2
+651,Identify the cone.,Ice Cream Cone,Ball,Box,Can,A,2.G.A.1 (3D Shapes),2
+652,Which is colder?,30 degrees,80 degrees,100 degrees,50 degrees,A,2.MD (Temperature),2
+653,"Fill in the blank: 15, 16, __, 18",17,19,14,20,A,1.NBT.A.1 (Counting),1
+654,A car has 4 wheels. How many wheels do 2 cars have?,4,6,8,10,C,2.OA.A.1 (Word Problems),2
+655,What fraction is shaded if 2 out of 4 parts are red?,45661,45720,45692,45749,C,3.NF.A.1 (Fractions),3
+656,Subtract: 100 - 1,90,99,101,98,B,2.NBT.B.5 (Subtraction),2
+657,Which is a cylinder?,Ball,Soda Can,Box,Pyramid,B,2.G.A.1 (3D Shapes),2
+658,10 pennies equal:,1 Nickel,1 Dime,1 Quarter,1 Dollar,B,2.MD.C.8 (Money Equivalence),2
+659,Solve: 7 + 7,14,12,16,15,A,2.OA.C.3 (Doubles),2
+660,Which is heavier?,Car,Bike,Skateboard,Human,A,2.MD.A.1 (Weight),2
+661,What is half of 10?,2,4,5,10,C,3.OA.A.2 (Division/Halving),3
+662,Find the sum of 10 and 9.,19,90,91,109,A,1.NBT.B.2 (Addition),1
+663,Which season is usually hot?,Winter,Spring,Summer,Fall,C,1.MD (Seasons),1
+664,Count the legs on a spider.,4,6,8,10,C,2.OA (Counting),2
+665,Write 500 + 60 + 9 as a standard number.,569,500609,596,659,A,2.NBT.A.3 (Expanded Form),2
+666,Is 55 closer to 50 or 60?,50,60,Neither,Both,B,3.NBT.A.1 (Rounding),3
+667,How many sides does a pentagon have?,4,5,6,8,B,3.G.A.1 (Geometry),3
+668,Solve: 11 - 9,2,3,1,4,A,2.OA.B.2 (Subtraction),2
+669,Which is longer? 1 meter or 1 centimeter?,1 meter,1 centimeter,Same,Unknown,A,2.MD.A.4 (Comparing Length),2
+670,Start at 5 count up 3. Where are you?,7,8,9,6,B,1.OA.C.5 (Counting On),1
+671,Solve for x: 3(x - 2) = 15,9,7,5,3,B,HSA.REI.B.3 (Linear Eq),HS-Alg1
+672,Find the slope of the line y = -4x + 7.,7,-4,4,-7,B,HSF.LE.A.2 (Slope),HS-Alg1
+673,Simplify: x^5 * x^3,x^8,x^15,2x^8,x^2,A,HSN.RN.A.1 (Exponent Rules),HS-Alg1
+674,Solve the system: y = 2x and x + y = 12.,(4 8),(3 6),(2 4),(6 12),A,HSA.REI.C.6 (Systems),HS-Alg1
+675,Factor: x^2 - 9,(x-3)(x-3),(x+3)(x+3),(x-3)(x+3),(x-9)(x+1),C,HSA.SSE.B.3 (Diff of Squares),HS-Alg1
+676,What is the y-intercept of 3x + 4y = 12?,3,4,12,3,A,HSF.IF.C.7 (Intercepts),HS-Alg1
+677,Multiply: (x + 3)(x - 4),x^2 - x - 12,x^2 + x - 12,x^2 - 7x - 12,x^2 - 12,A,HSA.APR.A.1 (Polynomials),HS-Alg1
+678,Solve for y: 2y + 6 = 4y - 10,8,4,16,2,A,HSA.REI.B.3 (Variables on Both Sides),HS-Alg1
+679,Which inequality flips the sign when solving?,Dividing by a positive,Subtracting a negative,Multiplying by a negative,Adding a positive,C,HSA.REI.B.3 (Inequality Rules),HS-Alg1
+680,Simplify: sqrt(72),6sqrt(2),36sqrt(2),2sqrt(6),8,A,HSN.RN.A.2 (Radicals),HS-Alg1
+681,Evaluate f(x) = -x^2 + 1 when x = 3.,-8,10,7,-5,A,HSF.IF.A.2 (Function Notation),HS-Alg1
+682,What is the slope of a horizontal line?,0,1,Undefined,x,A,HSF.LE.A.2 (Slopes),HS-Alg1
+683,Solve: |x| = 7,7,-7,"7, -7",0,C,HSA.REI.B.3 (Abs Value),HS-Alg1
+684,Factor out the GCF: 4x^2 + 8x,4x(x+2),2x(2x+4),x(4x+8),4(x^2+2),A,HSA.SSE.B.3 (Factoring),HS-Alg1
+685,Identify the vertex of y = (x + 1)^2 - 5.,(1 -5),(-1 -5),(-1 5),(1 5),B,HSF.IF.C.7 (Vertex Form),HS-Alg1
+686,Solve for x: 1/2 x - 4 = 6,20,5,10,12,A,HSA.REI.B.3 (Linear Eq),HS-Alg1
+687,Find the discriminant of x^2 + 6x + 9.,0,36,-36,1,A,HSA.REI.B.4 (Discriminant),HS-Alg2
+688,Simplify: (2x^3)^3,8x^9,6x^9,8x^6,2x^9,A,HSN.RN.A.1 (Power Rule),HS-Alg1
+689,Which point satisfies y > x + 1?,(0 0),(2 1),(1 5),(3 2),C,HSA.REI.D.12 (Inequalities),HS-Alg1
+690,Find the x-intercept of 2x - 5y = 10.,2,-2,5,-5,C,HSF.IF.C.7 (Intercepts),HS-Alg1
+691,Parallel lines have slopes that are:,Opposite,Reciprocal,Equal,Undefined,C,HSG.GPE.B.5 (Parallel Lines),HS-Alg1
+692,Solve: x^2 = 49,7,-7,"7, -7",49,C,HSA.REI.B.4 (Quadratics),HS-Alg1
+693,"Domain of relation {(1,2), (3,4), (5,6)}:",{1 3 5},{2 4 6},{1 2 3 4 5 6},All real numbers,A,HSF.IF.A.1 (Domain),HS-Alg1
+694,Add: (3x^2 + 2) + (x^2 - 5),4x^2 - 3,4x^2 + 3,2x^2 - 3,3x^4 - 3,A,HSA.APR.A.1 (Polynomials),HS-Alg1
+695,Solve using Quadratic Formula: x^2 - 5x + 6 = 0,2 and 3,-2 and -3,1 and 6,-1 and -6,A,HSA.REI.B.4 (Quad Formula),HS-Alg1
+696,Simplify: x^-3,x^3,-3x,1/x^3,#NAME?,C,HSN.RN.A.1 (Negative Exponents),HS-Alg1
+697,What is the degree of 5x^4 - 2x + 1?,5,4,1,3,B,HSA.APR.A.1 (Polynomial Degree),HS-Alg2
+698,Solve: 4^x = 64,3,4,2,16,A,HSF.LE.A.4 (Exponentials),HS-Alg2
+699,Which is a function?,Vertical line,Circle,Parabola opening up,Parabola opening left,C,HSF.IF.A.1 (Functions),HS-Alg1
+700,Evaluate log_2(16),8,4,2,16,B,HSF.LE.A.4 (Logarithms),HS-Alg2
+701,Multiply: (x + 5)^2,x^2 + 25,x^2 + 10x + 25,x^2 + 5x + 25,2x + 10,B,HSA.APR.A.1 (Polynomials),HS-Alg1
+702,Solve: sqrt(x - 1) = 4,17,15,5,3,A,HSA.REI.A.2 (Radical Eq),HS-Alg2
+703,Find the inverse of y = 3x,y = x/3,y = -3x,y = 3/x,y = x + 3,A,HSF.BF.B.4 (Inverses),HS-Alg2
+704,Write in scientific notation: 5200,5.2 x 10^2,5.2 x 10^3,52 x 10^2,0.52 x 10^4,B,8.EE.A.3 (Sci Notation),HS-Alg1
+705,Simplify: i^2,-1,1,i,#NAME?,A,HSN.CN.A.1 (Imaginary Numbers),HS-Alg2
+706,"What is the midpoint of (2,4) and (6,8)?",(4 6),(8 12),(2 2),(3 5),A,HSG.GPE.B.6 (Midpoint),HS-Alg1
+707,"What is the distance between (0,0) and (3,4)?",5,7,25,1,A,HSG.GPE.B.7 (Distance),HS-Alg1
+708,Factor: x^2 + 7x + 12,(x+3)(x+4),(x+2)(x+6),(x+1)(x+12),(x-3)(x-4),A,HSA.SSE.B.3 (Factoring),HS-Alg1
+709,Solve: 2x < 10,x < 5,x > 5,x < 20,x = 5,A,HSA.REI.B.3 (Inequalities),HS-Alg1
+710,Identify the coefficient of -7x^2,-7,2,x,7,A,HSA.APR.A.1 (Vocab),HS-Alg1
+711,"Slope of line through (1,1) and (2, 3)?",2,1,0.5,-2,A,HSF.LE.A.2 (Slope Formula),HS-Alg1
+712,Equation of line with m=2 and b=3?,y = 2x + 3,y = 3x + 2,y = 2x - 3,y = x + 5,A,HSF.LE.A.2 (Slope-Intercept),HS-Alg1
+713,Subtract: (5x - 2) - (2x + 1),3x - 3,3x - 1,7x - 3,3x + 3,A,HSA.APR.A.1 (Polynomials),HS-Alg1
+714,Find f(2) if f(x) = 3^x,9,6,5,8,A,HSF.LE.A.2 (Exponentials),HS-Alg1
+715,The graph of x = 4 is:,Vertical line,Horizontal line,Point,Parabola,A,HSF.LE.A.2 (Graphing),HS-Alg1
+716,Perpendicular slope to m = 2?,45659,-2,-0.5,2,C,HSG.GPE.B.5 (Perpendicular),HS-Alg1
+717,Solve system: x = 3 and y = x + 2,(3 5),(3 2),(5 3),(0 2),A,HSA.REI.C.6 (Substitution),HS-Alg1
+718,Zero Product Property: If ab = 0 then?,a=0 or b=0,a=0 and b=0,a=1,b=1,A,HSA.REI.B.4 (Properties),HS-Alg1
+719,Simplify: (x^2y)(xy^2),x^3y^3,x^2y^2,x^3y^2,xy,A,HSN.RN.A.1 (Exponents),HS-Alg1
+720,"What represents ""twice a number plus four""?",2x + 4,2(x + 4),4x + 2,x^2 + 4,A,HSA.CED.A.1 (Expressions),HS-Alg1
+721,What is the difference between Gross and Net Income?,Gross is after taxes,Gross is before taxes,They are the same,Net includes bonuses only,B,FinLit (Income),HS
+722,What is a Fixed Expense?,Costs that change monthly,Costs that stay the same,One-time purchases,Emergency costs,B,FinLit (Budgeting),HS
+723,Which rule suggests saving 20% of your income?,The 50/30/20 Rule,The Rule of 72,The 80/20 Rule,The Gold Standard,A,FinLit (Budgeting),HS
+724,What does APR stand for?,Annual Percentage Rate,Actual Payment Return,Annual Pay Raise,Automated Payment Record,A,FinLit (Credit),HS
+725,Which factor impacts your Credit Score the most?,Total debt,Payment history,Number of cards,Age,B,FinLit (Credit Scores),HS
+726,Compound Interest is best described as:,Interest on principal only,Interest on principal plus interest,A fee for banking,A type of tax,B,FinLit (Interest),HS
+727,What is an insurance deductible?,The monthly payment,Amount you pay before insurance covers,The maximum payout,The policy expiry date,B,FinLit (Insurance),HS
+728,Which asset is the most liquid?,Real Estate,Cash in Savings,Stocks,A car,B,FinLit (Assets),HS
+729,What form reports your wages for taxes?,W-4,W-2,1040,I-9,B,FinLit (Taxes),HS
+730,What is an Overdraft Fee?,Fee for using an ATM,Fee for spending more than you have,Monthly maintenance fee,Fee for opening account,B,FinLit (Banking),HS
+731,Stocks offer higher returns than bonds but come with:,Lower risk,Higher risk,Guaranteed income,Tax immunity,B,FinLit (Investing),HS
+732,The Rule of 72 estimates:,How long to double money,Retirement age,Tax rate,Credit score,A,FinLit (Math),HS
+733,What is the purpose of an Emergency Fund?,To buy a new car,To cover unexpected expenses,To invest in stocks,To pay for a vacation,B,FinLit (Savings),HS
+734,Which debt usually has the highest interest rate?,Mortgage,Student Loan,Credit Card,Auto Loan,C,FinLit (Debt),HS
+735,A Bear Market means stock prices are:,Rising,Falling,Stable,Frozen,B,FinLit (Investing Vocab),HS
+736,What does FDIC insurance protect?,Stock market losses,Bank deposits up to a limit,Car accidents,Identity theft,B,FinLit (Banking),HS
+737,Difference between Debit and Credit?,Debit uses your money,Credit uses your money,No difference,Debit builds credit score,A,FinLit (Banking),HS
+738,Depreciation refers to:,Assets increasing in value,Assets losing value over time,Stock market gains,Inflation,B,FinLit (Assets),HS
+739,Which of these is a Want rather than a Need?,Rent,Groceries,Designer Shoes,Electricity,C,FinLit (Budgeting),HS
+740,A 401(k) is primarily for:,Education savings,Retirement savings,Buying a house,Medical bills,B,FinLit (Retirement),HS
+741,Inflation causes purchasing power to:,Increase,Decrease,Stay the same,Double,B,FinLit (Economics),HS
+742,What is a co-signer?,Someone who witnesses a signature,Person responsible if you do not pay,A bank manager,A loan officer,B,FinLit (Loans),HS
+743,Diversification in investing means:,Putting all money in one stock,Spreading money across investments,Keeping cash only,Buying only bonds,B,FinLit (Investing),HS
+744,Which tax form determines paycheck withholding?,W-2,W-4,1099,1040,B,FinLit (Taxes),HS
+745,Using a high percentage of your credit limit can:,Raise your score,Lower your score,Have no effect,Cancel your card,B,FinLit (Credit Scores),HS
+746,A Ponzi scheme is a type of:,Investment strategy,Investment fraud,Retirement plan,Insurance policy,B,FinLit (Scams),HS
+747,Net Worth is calculated as:,Income minus Expenses,Assets minus Liabilities,Savings plus Checking,Total Debt,B,FinLit (Net Worth),HS
+748,Payday loans are known for:,Low interest rates,High interest rates and fees,Long repayment terms,Government backing,B,FinLit (Predatory Lending),HS
+749,The Principal of a loan is:,The interest paid,The original amount borrowed,The monthly payment,The lender,B,FinLit (Loans),HS
+750,Ideally housing costs should not exceed what % of income?,10 percent,30 percent,50 percent,75 percent,B,FinLit (Budgeting),HS

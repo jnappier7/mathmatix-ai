@@ -242,6 +242,76 @@ router.get('/health-check', isAdmin, (req, res) => {
   });
 });
 
+/**
+ * @route   POST /api/admin/seed-skills
+ * @desc    Seed the skills database with Ready for Algebra 1 skills.
+ * @access  Private (Admin)
+ */
+router.post('/seed-skills', isAdmin, async (req, res) => {
+  try {
+    const Skill = require('../models/skill');
+    const fs = require('fs');
+    const path = require('path');
+
+    // Read skills JSON
+    const skillsPath = path.join(__dirname, '../seeds/skills-ready-for-algebra.json');
+    const skillsData = JSON.parse(fs.readFileSync(skillsPath, 'utf8'));
+
+    // Check for existing skills
+    const existingCount = await Skill.countDocuments();
+
+    // Clear existing skills if requested
+    if (req.body.clearExisting && existingCount > 0) {
+      await Skill.deleteMany({});
+    }
+
+    // Insert or update skills
+    const results = {
+      inserted: 0,
+      updated: 0,
+      unchanged: 0
+    };
+
+    for (const skillData of skillsData) {
+      const existing = await Skill.findOne({ skillId: skillData.skillId });
+
+      if (!existing) {
+        await Skill.create(skillData);
+        results.inserted++;
+      } else if (req.body.updateExisting) {
+        await Skill.findOneAndUpdate(
+          { skillId: skillData.skillId },
+          skillData,
+          { new: true }
+        );
+        results.updated++;
+      } else {
+        results.unchanged++;
+      }
+    }
+
+    // Get summary by category
+    const categories = await Skill.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.json({
+      message: 'Skills seeding completed',
+      results,
+      totalSkills: await Skill.countDocuments(),
+      categories: categories.map(c => ({ category: c._id, count: c.count }))
+    });
+
+  } catch (err) {
+    console.error('Error seeding skills:', err);
+    res.status(500).json({
+      message: 'Error seeding skills database',
+      error: err.message
+    });
+  }
+});
+
 // -----------------------------------------------------------------------------
 // --- Reports ---
 // -----------------------------------------------------------------------------
