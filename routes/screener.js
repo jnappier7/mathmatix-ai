@@ -19,6 +19,7 @@ const User = require('../models/user');
 const Problem = require('../models/problem');
 const { initializeSession, processResponse, generateReport, identifyInterviewSkills } = require('../utils/adaptiveScreener');
 const { generateProblem } = require('../utils/problemGenerator');
+const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 
 // In-memory session storage (TODO: move to Redis/database for production)
 const activeSessions = new Map();
@@ -333,6 +334,18 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       });
     }
 
+    // 🎖️ AUTO-AWARD BADGES (Like ALEKS: fill in the pie with what they already know)
+    const earnedBadges = await awardBadgesForSkills(
+      user,
+      session,
+      report.masteredSkills,
+      report.theta
+    );
+
+    // Add earned badges to report
+    report.earnedBadges = earnedBadges;
+    report.badgeCount = earnedBadges.length;
+
     // Mark assessment as completed
     user.learningProfile.assessmentCompleted = true;
     user.learningProfile.assessmentDate = new Date();
@@ -346,7 +359,9 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     res.json({
       success: true,
       report,
-      message: 'Assessment complete! Your learning path has been customized.'
+      message: earnedBadges.length > 0
+        ? `Assessment complete! You tested out and earned ${earnedBadges.length} badge${earnedBadges.length > 1 ? 's' : ''}!`
+        : 'Assessment complete! Your learning path has been customized.'
     });
 
   } catch (error) {

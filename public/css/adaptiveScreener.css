@@ -511,3 +511,140 @@
     justify-content: center;
   }
 }
+
+/* ============================================================================
+   EARNED BADGES SECTION (ALEKS-style: show what they tested out of)
+   ============================================================================ */
+
+.results-badges {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.results-badges h3 {
+  font-size: 24px;
+  margin: 0 0 10px 0;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badges-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 25px 0;
+}
+
+.earned-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.earned-badge-card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  animation: badgeSlideIn 0.5s ease-out backwards;
+}
+
+@keyframes badgeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.earned-badge-card:nth-child(1) { animation-delay: 0.1s; }
+.earned-badge-card:nth-child(2) { animation-delay: 0.2s; }
+.earned-badge-card:nth-child(3) { animation-delay: 0.3s; }
+.earned-badge-card:nth-child(4) { animation-delay: 0.4s; }
+.earned-badge-card:nth-child(5) { animation-delay: 0.5s; }
+
+.earned-badge-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.earned-badge-card.bronze {
+  background: linear-gradient(135deg, #CD7F32 0%, #E8B87E 100%);
+  color: white;
+  border-color: #A0522D;
+}
+
+.earned-badge-card.silver {
+  background: linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 100%);
+  color: #333;
+  border-color: #A0A0A0;
+}
+
+.earned-badge-card.gold {
+  background: linear-gradient(135deg, #FFD700 0%, #FFF4A3 100%);
+  color: #333;
+  border-color: #DAA520;
+}
+
+.badge-tier-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+  animation: badgeBounce 1s ease-in-out infinite;
+}
+
+@keyframes badgeBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.earned-badge-card:hover .badge-tier-icon {
+  animation: badgeSpin 0.6s ease-in-out;
+}
+
+@keyframes badgeSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.badge-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.badge-score {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.badge-tested-out {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.earned-badge-card.bronze .badge-tested-out {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.earned-badge-card.silver .badge-tested-out {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.earned-badge-card.gold .badge-tested-out {
+  background: rgba(218, 165, 32, 0.3);
+}
+}
