@@ -72,6 +72,22 @@ function initializeMasteryMode() {
     }
   });
 
+  // Start mastery journey - redirect to screener
+  elements.startJourneyBtn?.addEventListener('click', async () => {
+    try {
+      console.log('Begin Journey clicked!');
+      // Save state to indicate we're starting mastery mode
+      sessionStorage.setItem('masteryModeActive', 'true');
+      sessionStorage.setItem('masteryPhase', 'placement');
+
+      // Redirect to screener
+      window.location.href = '/screener.html';
+    } catch (error) {
+      console.error('Error starting mastery journey:', error);
+      alert('Failed to start mastery journey. Please try again.');
+    }
+  });
+
   console.log('Mastery Mode initialized', elements);
 }
 
