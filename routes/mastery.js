@@ -164,112 +164,384 @@ router.get('/available-badges', async (req, res) => {
  * Generate available badges based on student level
  */
 async function generateAvailableBadges(theta, user) {
-  const badges = [];
-
-  // Badge difficulty tiers
-  const badgeTiers = [
-    // Foundation badges (θ < 0)
+  // Complete badge catalog organized by domain
+  const badgeCatalog = [
+    // ========== NUMBER SENSE ==========
     {
-      minTheta: -2,
-      maxTheta: 0,
-      badges: [
-        {
-          id: 'integer-master',
-          name: 'Integer Master',
-          description: 'Master all four operations with integers',
-          difficulty: 'Foundation',
-          skillId: 'integer-all-operations',
-          requiredAccuracy: 0.9,
-          requiredProblems: 10
-        },
-        {
-          id: 'one-step-solver',
-          name: 'One-Step Solver',
-          description: 'Solve one-step equations consistently',
-          difficulty: 'Foundation',
-          skillId: 'one-step-equations-addition',
-          requiredAccuracy: 0.85,
-          requiredProblems: 8
-        }
-      ]
+      badgeId: 'integer-operations-bronze',
+      name: 'Integer Explorer',
+      domain: 'number-sense',
+      skillId: 'integer-all-operations',
+      skillName: 'Integer Operations',
+      tier: 'bronze',
+      requiredTheta: -2.0,
+      requiredProblems: 5,
+      requiredAccuracy: 0.80,
+      description: 'Master basic integer addition and subtraction'
+    },
+    {
+      badgeId: 'integer-operations-silver',
+      name: 'Integer Master',
+      domain: 'number-sense',
+      skillId: 'integer-all-operations',
+      skillName: 'Integer Operations',
+      tier: 'silver',
+      requiredTheta: -1.0,
+      requiredProblems: 8,
+      requiredAccuracy: 0.85,
+      description: 'Master all four operations with integers including negatives'
+    },
+    {
+      badgeId: 'fraction-operations-bronze',
+      name: 'Fraction Apprentice',
+      domain: 'number-sense',
+      skillId: 'fraction-operations',
+      skillName: 'Fraction Operations',
+      tier: 'bronze',
+      requiredTheta: -1.5,
+      requiredProblems: 6,
+      requiredAccuracy: 0.75,
+      description: 'Add and subtract fractions with common denominators'
+    },
+    {
+      badgeId: 'fraction-operations-silver',
+      name: 'Fraction Expert',
+      domain: 'number-sense',
+      skillId: 'fraction-operations',
+      skillName: 'Fraction Operations',
+      tier: 'silver',
+      requiredTheta: -0.5,
+      requiredProblems: 8,
+      requiredAccuracy: 0.85,
+      description: 'Master all fraction operations including multiplication and division'
+    },
+    {
+      badgeId: 'decimal-operations-bronze',
+      name: 'Decimal Beginner',
+      domain: 'number-sense',
+      skillId: 'decimal-operations',
+      skillName: 'Decimal Operations',
+      tier: 'bronze',
+      requiredTheta: -1.5,
+      requiredProblems: 5,
+      requiredAccuracy: 0.80,
+      description: 'Add and subtract decimals accurately'
     },
 
-    // Intermediate badges (θ 0 to 1)
+    // ========== ALGEBRA ==========
     {
-      minTheta: -0.5,
-      maxTheta: 1.5,
-      badges: [
-        {
-          id: 'two-step-champion',
-          name: 'Two-Step Champion',
-          description: 'Demonstrate mastery of two-step equations',
-          difficulty: 'Intermediate',
-          skillId: 'two-step-equations',
-          requiredAccuracy: 0.9,
-          requiredProblems: 12
-        },
-        {
-          id: 'order-expert',
-          name: 'Order of Operations Expert',
-          description: 'Execute order of operations flawlessly',
-          difficulty: 'Intermediate',
-          skillId: 'order-of-operations',
-          requiredAccuracy: 0.85,
-          requiredProblems: 10
-        }
-      ]
+      badgeId: 'one-step-equations-bronze',
+      name: 'Equation Starter',
+      domain: 'algebra',
+      skillId: 'one-step-equations-addition',
+      skillName: 'One-Step Equations',
+      tier: 'bronze',
+      requiredTheta: -1.5,
+      requiredProblems: 5,
+      requiredAccuracy: 0.80,
+      description: 'Solve basic one-step equations with addition and subtraction'
+    },
+    {
+      badgeId: 'one-step-equations-silver',
+      name: 'One-Step Solver',
+      domain: 'algebra',
+      skillId: 'one-step-equations-multiplication',
+      skillName: 'One-Step Equations',
+      tier: 'silver',
+      requiredTheta: -0.5,
+      requiredProblems: 8,
+      requiredAccuracy: 0.85,
+      description: 'Solve all types of one-step equations including multiplication and division'
+    },
+    {
+      badgeId: 'two-step-equations-bronze',
+      name: 'Two-Step Beginner',
+      domain: 'algebra',
+      skillId: 'two-step-equations',
+      skillName: 'Two-Step Equations',
+      tier: 'bronze',
+      requiredTheta: 0.0,
+      requiredProblems: 6,
+      requiredAccuracy: 0.75,
+      description: 'Solve basic two-step equations'
+    },
+    {
+      badgeId: 'two-step-equations-silver',
+      name: 'Two-Step Champion',
+      domain: 'algebra',
+      skillId: 'two-step-equations',
+      skillName: 'Two-Step Equations',
+      tier: 'silver',
+      requiredTheta: 0.5,
+      requiredProblems: 10,
+      requiredAccuracy: 0.85,
+      description: 'Master two-step equations with confidence'
+    },
+    {
+      badgeId: 'two-step-equations-gold',
+      name: 'Two-Step Expert',
+      domain: 'algebra',
+      skillId: 'two-step-equations',
+      skillName: 'Two-Step Equations',
+      tier: 'gold',
+      requiredTheta: 1.0,
+      requiredProblems: 12,
+      requiredAccuracy: 0.90,
+      description: 'Demonstrate complete mastery of two-step equations'
+    },
+    {
+      badgeId: 'combining-like-terms-bronze',
+      name: 'Term Combiner',
+      domain: 'algebra',
+      skillId: 'combining-like-terms',
+      skillName: 'Combining Like Terms',
+      tier: 'bronze',
+      requiredTheta: -0.5,
+      requiredProblems: 5,
+      requiredAccuracy: 0.80,
+      description: 'Simplify expressions by combining like terms'
+    },
+    {
+      badgeId: 'combining-like-terms-silver',
+      name: 'Expression Simplifier',
+      domain: 'algebra',
+      skillId: 'combining-like-terms',
+      skillName: 'Combining Like Terms',
+      tier: 'silver',
+      requiredTheta: 0.5,
+      requiredProblems: 8,
+      requiredAccuracy: 0.85,
+      description: 'Master simplification with multiple variable types'
+    },
+    {
+      badgeId: 'distributive-property-silver',
+      name: 'Distributive Master',
+      domain: 'algebra',
+      skillId: 'distributive-property',
+      skillName: 'Distributive Property',
+      tier: 'silver',
+      requiredTheta: 1.0,
+      requiredProblems: 8,
+      requiredAccuracy: 0.85,
+      description: 'Apply the distributive property with confidence'
+    },
+    {
+      badgeId: 'multi-step-equations-silver',
+      name: 'Multi-Step Solver',
+      domain: 'algebra',
+      skillId: 'solving-multi-step-equations',
+      skillName: 'Multi-Step Equations',
+      tier: 'silver',
+      requiredTheta: 1.5,
+      requiredProblems: 10,
+      requiredAccuracy: 0.85,
+      description: 'Solve complex multi-step equations'
+    },
+    {
+      badgeId: 'multi-step-equations-gold',
+      name: 'Equation Master',
+      domain: 'algebra',
+      skillId: 'solving-multi-step-equations',
+      skillName: 'Multi-Step Equations',
+      tier: 'gold',
+      requiredTheta: 2.0,
+      requiredProblems: 12,
+      requiredAccuracy: 0.90,
+      description: 'Demonstrate complete mastery of equation solving'
     },
 
-    // Advanced badges (θ > 1)
+    // ========== GEOMETRY ==========
     {
-      minTheta: 0.5,
-      maxTheta: 3,
-      badges: [
-        {
-          id: 'distributive-master',
-          name: 'Distributive Property Master',
-          description: 'Apply distributive property with confidence',
-          difficulty: 'Advanced',
-          skillId: 'distributive-property',
-          requiredAccuracy: 0.9,
-          requiredProblems: 10
-        },
-        {
-          id: 'multi-step-solver',
-          name: 'Multi-Step Equation Solver',
-          description: 'Tackle complex multi-step equations',
-          difficulty: 'Advanced',
-          skillId: 'solving-multi-step-equations',
-          requiredAccuracy: 0.85,
-          requiredProblems: 12
-        }
-      ]
+      badgeId: 'area-perimeter-bronze',
+      name: 'Shape Measurer',
+      domain: 'geometry',
+      skillId: 'area-and-perimeter',
+      skillName: 'Area & Perimeter',
+      tier: 'bronze',
+      requiredTheta: -1.0,
+      requiredProblems: 5,
+      requiredAccuracy: 0.80,
+      description: 'Calculate area and perimeter of basic shapes'
+    },
+    {
+      badgeId: 'area-perimeter-silver',
+      name: 'Geometry Expert',
+      domain: 'geometry',
+      skillId: 'area-and-perimeter',
+      skillName: 'Area & Perimeter',
+      tier: 'silver',
+      requiredTheta: 0.5,
+      requiredProblems: 8,
+      requiredAccuracy: 0.85,
+      description: 'Master area and perimeter for all shapes'
+    },
+
+    // ========== RATIOS & PROPORTIONS ==========
+    {
+      badgeId: 'ratios-bronze',
+      name: 'Ratio Explorer',
+      domain: 'ratios',
+      skillId: 'understanding-ratios',
+      skillName: 'Ratios',
+      tier: 'bronze',
+      requiredTheta: -0.5,
+      requiredProblems: 5,
+      requiredAccuracy: 0.80,
+      description: 'Understand and write ratios'
+    },
+    {
+      badgeId: 'proportions-silver',
+      name: 'Proportion Solver',
+      domain: 'ratios',
+      skillId: 'solving-proportions',
+      skillName: 'Proportions',
+      tier: 'silver',
+      requiredTheta: 0.5,
+      requiredProblems: 8,
+      requiredAccuracy: 0.85,
+      description: 'Solve proportion problems with confidence'
+    },
+
+    // ========== ORDER OF OPERATIONS ==========
+    {
+      badgeId: 'order-operations-bronze',
+      name: 'PEMDAS Beginner',
+      domain: 'algebra',
+      skillId: 'order-of-operations',
+      skillName: 'Order of Operations',
+      tier: 'bronze',
+      requiredTheta: -1.0,
+      requiredProblems: 5,
+      requiredAccuracy: 0.80,
+      description: 'Apply order of operations to simple expressions'
+    },
+    {
+      badgeId: 'order-operations-silver',
+      name: 'Order Expert',
+      domain: 'algebra',
+      skillId: 'order-of-operations',
+      skillName: 'Order of Operations',
+      tier: 'silver',
+      requiredTheta: 0.0,
+      requiredProblems: 8,
+      requiredAccuracy: 0.85,
+      description: 'Execute order of operations flawlessly'
+    },
+    {
+      badgeId: 'order-operations-gold',
+      name: 'PEMDAS Master',
+      domain: 'algebra',
+      skillId: 'order-of-operations',
+      skillName: 'Order of Operations',
+      tier: 'gold',
+      requiredTheta: 1.0,
+      requiredProblems: 10,
+      requiredAccuracy: 0.90,
+      description: 'Handle complex nested operations with ease'
     }
   ];
 
-  // Filter badges appropriate for student's level
-  for (const tier of badgeTiers) {
-    if (theta >= tier.minTheta && theta <= tier.maxTheta) {
-      badges.push(...tier.badges);
-    }
-  }
-
-  // Add progress if user already started working on badges
+  // Determine status for each badge
   const earnedBadges = user.badges || [];
+  const activeBadge = user.masteryProgress?.activeBadge;
 
-  badges.forEach(badge => {
-    const earned = earnedBadges.find(b => b.badgeId === badge.id);
+  const badges = badgeCatalog.map(badge => {
+    const earned = earnedBadges.find(b => b.badgeId === badge.badgeId);
+    const isActive = activeBadge?.badgeId === badge.badgeId;
+
+    let status = 'available';
+    let progress = 0;
+
     if (earned) {
-      badge.earned = true;
-      badge.earnedDate = earned.earnedDate;
-      badge.score = earned.score;
-    } else {
-      badge.earned = false;
+      status = 'completed';
+      progress = 100;
+    } else if (isActive) {
+      status = 'in-progress';
+      const completed = activeBadge.problemsCompleted || 0;
+      const required = activeBadge.requiredProblems || badge.requiredProblems;
+      progress = Math.round((completed / required) * 100);
+    } else if (theta < badge.requiredTheta) {
+      status = 'locked';
     }
+
+    // Determine if recommended (within 0.5 theta of current level and not locked)
+    const recommended = !earned && !isActive &&
+                       theta >= badge.requiredTheta &&
+                       theta <= (badge.requiredTheta + 1.0);
+
+    return {
+      ...badge,
+      status,
+      progress,
+      recommended
+    };
   });
 
   return badges;
 }
+
+/**
+ * Select a badge to work toward
+ * POST /api/mastery/select-badge
+ */
+router.post('/select-badge', async (req, res) => {
+  try {
+    const { badgeId } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get badge details
+    const theta = user.learningProfile?.abilityEstimate?.theta || 0;
+    const availableBadges = await generateAvailableBadges(theta, user);
+    const badge = availableBadges.find(b => b.badgeId === badgeId);
+
+    if (!badge) {
+      return res.status(404).json({ error: 'Badge not found or not available' });
+    }
+
+    // Check if badge is locked
+    if (badge.status === 'locked') {
+      return res.status(400).json({ error: 'Badge is locked. Improve your ability level to unlock it.' });
+    }
+
+    // Check if already completed
+    if (badge.status === 'completed') {
+      return res.status(400).json({ error: 'Badge already earned' });
+    }
+
+    // Initialize badge attempt in user profile
+    if (!user.masteryProgress) {
+      user.masteryProgress = { activeBadge: null, attempts: [] };
+    }
+
+    user.masteryProgress.activeBadge = {
+      badgeId: badge.badgeId,
+      badgeName: badge.name,
+      skillId: badge.skillId,
+      startedAt: new Date(),
+      problemsCompleted: 0,
+      problemsCorrect: 0,
+      requiredProblems: badge.requiredProblems,
+      requiredAccuracy: badge.requiredAccuracy
+    };
+
+    await user.save();
+
+    res.json({
+      success: true,
+      badge,
+      message: `Started working on ${badge.name}!`,
+      nextStep: 'solve-problems'
+    });
+
+  } catch (error) {
+    console.error('Error selecting badge:', error);
+    res.status(500).json({ error: 'Failed to select badge' });
+  }
+});
 
 /**
  * Start badge earning attempt
@@ -321,6 +593,168 @@ router.post('/start-badge', async (req, res) => {
   } catch (error) {
     console.error('Error starting badge:', error);
     res.status(500).json({ error: 'Failed to start badge earning' });
+  }
+});
+
+/**
+ * Record problem attempt for active badge
+ * POST /api/mastery/record-badge-attempt
+ */
+router.post('/record-badge-attempt', async (req, res) => {
+  try {
+    const { correct, problemId } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user || !user.masteryProgress?.activeBadge) {
+      return res.status(400).json({ error: 'No active badge' });
+    }
+
+    const activeBadge = user.masteryProgress.activeBadge;
+
+    // Increment counters
+    activeBadge.problemsCompleted = (activeBadge.problemsCompleted || 0) + 1;
+    if (correct) {
+      activeBadge.problemsCorrect = (activeBadge.problemsCorrect || 0) + 1;
+    }
+
+    await user.save();
+
+    // Check if badge requirements met
+    const accuracy = activeBadge.problemsCorrect / activeBadge.problemsCompleted;
+    const meetsRequirements =
+      activeBadge.problemsCompleted >= activeBadge.requiredProblems &&
+      accuracy >= activeBadge.requiredAccuracy;
+
+    res.json({
+      success: true,
+      progress: {
+        problemsCompleted: activeBadge.problemsCompleted,
+        problemsCorrect: activeBadge.problemsCorrect,
+        requiredProblems: activeBadge.requiredProblems,
+        requiredAccuracy: activeBadge.requiredAccuracy,
+        currentAccuracy: accuracy,
+        meetsRequirements
+      }
+    });
+
+  } catch (error) {
+    console.error('Error recording badge attempt:', error);
+    res.status(500).json({ error: 'Failed to record attempt' });
+  }
+});
+
+/**
+ * Get active badge progress
+ * GET /api/mastery/active-badge
+ */
+router.get('/active-badge', async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const activeBadge = user.masteryProgress?.activeBadge;
+
+    if (!activeBadge) {
+      return res.json({ success: true, activeBadge: null });
+    }
+
+    // Calculate progress
+    const accuracy = activeBadge.problemsCompleted > 0
+      ? activeBadge.problemsCorrect / activeBadge.problemsCompleted
+      : 0;
+
+    const progress = Math.round(
+      (activeBadge.problemsCompleted / activeBadge.requiredProblems) * 100
+    );
+
+    res.json({
+      success: true,
+      activeBadge: {
+        ...activeBadge.toObject(),
+        currentAccuracy: accuracy,
+        progress,
+        meetsRequirements:
+          activeBadge.problemsCompleted >= activeBadge.requiredProblems &&
+          accuracy >= activeBadge.requiredAccuracy
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching active badge:', error);
+    res.status(500).json({ error: 'Failed to load active badge' });
+  }
+});
+
+/**
+ * Complete active badge (award it)
+ * POST /api/mastery/complete-badge
+ */
+router.post('/complete-badge', async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user || !user.masteryProgress?.activeBadge) {
+      return res.status(400).json({ error: 'No active badge' });
+    }
+
+    const activeBadge = user.masteryProgress.activeBadge;
+
+    // Verify requirements are met
+    const accuracy = activeBadge.problemsCorrect / activeBadge.problemsCompleted;
+    const meetsRequirements =
+      activeBadge.problemsCompleted >= activeBadge.requiredProblems &&
+      accuracy >= activeBadge.requiredAccuracy;
+
+    if (!meetsRequirements) {
+      return res.status(400).json({
+        error: 'Badge requirements not met',
+        current: {
+          problems: activeBadge.problemsCompleted,
+          accuracy: accuracy
+        },
+        required: {
+          problems: activeBadge.requiredProblems,
+          accuracy: activeBadge.requiredAccuracy
+        }
+      });
+    }
+
+    // Award the badge
+    if (!user.badges) user.badges = [];
+
+    const alreadyEarned = user.badges.find(b => b.badgeId === activeBadge.badgeId);
+    if (!alreadyEarned) {
+      user.badges.push({
+        badgeId: activeBadge.badgeId,
+        earnedDate: new Date(),
+        score: Math.round(accuracy * 100)
+      });
+
+      // Award XP bonus
+      const xpBonus = 500;
+      user.xp = (user.xp || 0) + xpBonus;
+    }
+
+    // Clear active badge
+    const earnedBadgeName = activeBadge.badgeName;
+    user.masteryProgress.activeBadge = null;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: `Congratulations! You earned the ${earnedBadgeName} badge!`,
+      badge: earnedBadgeName,
+      xpBonus: 500,
+      totalBadges: user.badges.length
+    });
+
+  } catch (error) {
+    console.error('Error completing badge:', error);
+    res.status(500).json({ error: 'Failed to complete badge' });
   }
 });
 
