@@ -12,3 +12,4 @@ routes/vision-key.json
 # Other
 *.dmg
 
+uploads/

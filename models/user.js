@@ -80,7 +80,10 @@ const userPreferencesSchema = new Schema({
 /* ---------- BADGES ---------- */
 const badgeSchema = new Schema({
   key:        { type: String, unique: true, sparse: true },
-  unlockedAt: { type: Date,   default: Date.now }
+  badgeId:    { type: String },  // For mastery mode badges
+  unlockedAt: { type: Date,   default: Date.now },
+  earnedDate: { type: Date },
+  score:      { type: Number }
 }, { _id: false });
 
 /* ---------- SKILL MASTERY TRACKING ---------- */
@@ -97,7 +100,34 @@ const skillMasterySchema = new Schema({
   learningStarted: { type: Date },
   masteredDate: { type: Date },
   strugglingAreas: [String],  // Specific concepts within this skill
-  notes: String  // AI observations about student's understanding
+  notes: String,  // AI observations about student's understanding
+
+  // Adaptive Fluency Engine: Time-based performance tracking
+  fluencyTracking: {
+    // Recent response times (in seconds) - keep last 20
+    recentTimes: {
+      type: [Number],
+      default: []
+    },
+
+    // Statistical measures
+    medianTime: { type: Number },      // Median response time (robust to outliers)
+    averageTime: { type: Number },     // Mean response time
+
+    // Fluency score: How does student compare to expected time?
+    // Positive z-score = slower than expected, Negative = faster
+    fluencyZScore: { type: Number },
+
+    // Trend indicator
+    speedTrend: {
+      type: String,
+      enum: ['improving', 'stable', 'declining', 'unknown'],
+      default: 'unknown'
+    },
+
+    // Last time fluency was updated
+    lastFluencyUpdate: { type: Date }
+  }
 }, { _id: false });
 
 /* ---------- LEARNING PROFILE ---------- */
@@ -141,7 +171,37 @@ const learningProfileSchema = new Schema({
   // Initial assessment
   assessmentCompleted: { type: Boolean, default: false },
   assessmentDate: { type: Date },
-  initialPlacement: String  // Starting point determined by assessment
+  initialPlacement: String,  // Starting point determined by assessment
+
+  // Adaptive Fluency Engine: Baseline speed modifier
+  fluencyBaseline: {
+    // Measured during initial assessment - multiplier for time expectations
+    // 1.0 = neurotypical speed, 1.5 = needs 50% more time, 0.8 = faster than average
+    readSpeedModifier: {
+      type: Number,
+      min: 0.5,   // Minimum: Fast processors (half the time)
+      max: 3.0,   // Maximum: Students needing triple time (severe processing delays)
+      default: 1.0  // Default to neurotypical until measured
+    },
+
+    // Has baseline been calculated?
+    baselineCalculated: { type: Boolean, default: false },
+    baselineDate: { type: Date },
+
+    // Raw timing data from baseline measurement (median response times)
+    measurements: {
+      reflexProblems: { type: Number },    // Median time for 5 reflex problems
+      processProblems: { type: Number },   // Median time for 5 process problems
+      readingSpeed: { type: Number }       // Words per minute (if measured)
+    },
+
+    // Confidence in the baseline (improves over time)
+    confidence: {
+      type: String,
+      enum: ['initial', 'moderate', 'high'],
+      default: 'initial'
+    }
+  }
 }, { _id: false });
 
 /* ---------- MAIN USER SCHEMA ---------- */
@@ -221,6 +281,26 @@ const userSchema = new Schema({
   },
 
   badges: { type: [badgeSchema], default: [] },
+
+  /* Mastery Mode Progress */
+  masteryProgress: {
+    activeBadge: {
+      badgeId: String,
+      badgeName: String,
+      skillId: String,
+      startedAt: Date,
+      problemsCompleted: { type: Number, default: 0 },
+      problemsCorrect: { type: Number, default: 0 },
+      requiredProblems: Number,
+      requiredAccuracy: Number
+    },
+    attempts: [{
+      badgeId: String,
+      attemptDate: Date,
+      completed: Boolean,
+      score: Number
+    }]
+  },
 
   /* Skill Mastery & Learning Profile */
   skillMastery: {

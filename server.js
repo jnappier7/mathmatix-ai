@@ -69,9 +69,12 @@ const avatarRoutes = require('./routes/avatar');
 const graphRoutes = require('./routes/graph');
 const curriculumRoutes = require('./routes/curriculum');
 const assessmentRoutes = require('./routes/assessment');
+const screenerRoutes = require('./routes/screener');  // IRT-based adaptive screener
+const masteryRoutes = require('./routes/mastery');  // Mastery mode (placement + interview + badges)
 const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
 const gradeWorkRoutes = require('./routes/gradeWork');
+const adminImportRoutes = require('./routes/adminImport');  // Item bank CSV import
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -189,8 +192,11 @@ app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum sch
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
+app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive screener (CAT)
+app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placement → interview → badges)
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes); // AI grading for student work
+app.use('/api/admin', adminImportRoutes); // Admin tools: CSV import for item bank
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
@@ -300,6 +306,7 @@ app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(pa
 app.get("/pick-tutor.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-tutor.html")));
 app.get("/chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
 app.get("/admin-dashboard.html", isAuthenticated, isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-dashboard.html")));
+app.get("/admin-upload.html", isAuthenticated, isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-upload.html")));
 app.get("/teacher-dashboard.html", isAuthenticated, isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-dashboard.html")));
 app.get("/parent-dashboard.html", isAuthenticated, isParent, (req, res) => res.sendFile(path.join(__dirname, "public", "parent-dashboard.html")));
 app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public", "privacy.html")));

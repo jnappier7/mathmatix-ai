@@ -26,7 +26,12 @@
       "exampleTypes": ["Number line placement", "Comparing integers", "Real-world scenarios"],
       "connectionsToPriorKnowledge": ["Whole numbers", "Counting"]
     },
-    "difficultyLevel": 2
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
   },
   {
     "skillId": "integer-addition",
@@ -54,7 +59,12 @@
       "exampleTypes": ["-3 + 5", "7 + (-4)", "-6 + (-2)", "Problems with zero"],
       "connectionsToPriorKnowledge": ["Addition of whole numbers", "Number line"]
     },
-    "difficultyLevel": 3
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 8,
+      "fluencyType": "reflex",
+      "toleranceFactor": 1.5
+    }
   },
   {
     "skillId": "integer-subtraction",
@@ -228,7 +238,12 @@
       "exampleTypes": ["x + 7 = 10", "y - 3 = 8", "-5 + n = 2", "12 = x + 4"],
       "connectionsToPriorKnowledge": ["Integer operations", "Inverse operations concept"]
     },
-    "difficultyLevel": 3
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "process",
+      "toleranceFactor": 2.0
+    }
   },
   {
     "skillId": "one-step-equations-multiplication",
@@ -290,7 +305,12 @@
       "exampleTypes": ["2x + 5 = 13", "3y - 7 = 8", "-4n + 1 = -11", "x/2 - 3 = 5"],
       "connectionsToPriorKnowledge": ["One-step equations", "Order of operations"]
     },
-    "difficultyLevel": 6
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "algorithm",
+      "toleranceFactor": 2.5
+    }
   },
   {
     "skillId": "solving-multi-step-equations",

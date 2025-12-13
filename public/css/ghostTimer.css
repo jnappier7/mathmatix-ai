@@ -1,0 +1,188 @@
+/**
+ * GHOST TIMER VISUAL CUES
+ *
+ * Subtle, non-panic-inducing visual feedback for the adaptive fluency engine.
+ *
+ * PHILOSOPHY:
+ * - NO countdown clocks
+ * - NO red warnings
+ * - Gentle encouragement, not stress
+ *
+ * DESIGN:
+ * - Barely noticeable border pulse at 75% threshold
+ * - Slightly more visible (but still calm) at ghost limit
+ * - Use warm, encouraging colors (NOT red)
+ */
+
+/* ============================================================================
+   GENTLE CUE (75% of ghost limit)
+   ============================================================================
+   A subtle, slow pulse on the input border. Barely noticeable.
+   Message: "You're doing great, keep going"
+*/
+
+.ghost-timer-gentle {
+  animation: ghost-timer-gentle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes ghost-timer-gentle-pulse {
+  0%, 100% {
+    border-color: var(--input-border-color, #ddd);
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+  }
+  50% {
+    border-color: #52a9e0;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+  }
+}
+
+/* ============================================================================
+   TIME-PASSING CUE (at ghost limit)
+   ============================================================================
+   Slightly more visible pulse with warm amber color. Still encouraging.
+   Message: "Take your time, but we're tracking fluency"
+*/
+
+.ghost-timer-time-passing {
+  animation: ghost-timer-passing-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ghost-timer-passing-pulse {
+  0%, 100% {
+    border-color: var(--input-border-color, #ddd);
+    box-shadow: 0 0 0 0 rgba(241, 196, 15, 0);
+  }
+  50% {
+    border-color: #f8c471;
+    box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.15);
+  }
+}
+
+/* ============================================================================
+   FLUENCY BADGE VISUAL (for completed problems)
+   ============================================================================
+   Small badges that appear after completing a problem to show fluency level
+*/
+
+.fluency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 8px;
+  transition: all 0.3s ease;
+}
+
+.fluency-badge-fluent {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(46, 204, 113, 0.3);
+}
+
+.fluency-badge-proficient {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+}
+
+.fluency-badge-developing {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(243, 156, 18, 0.3);
+}
+
+.fluency-badge-struggling {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(149, 165, 166, 0.3);
+}
+
+.fluency-badge-icon {
+  font-size: 0.9rem;
+}
+
+/* ============================================================================
+   OPTIONAL: Time display for teachers/debugging
+   ============================================================================
+   Hidden by default, can be shown for teacher accounts
+*/
+
+.ghost-timer-display {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+
+.ghost-timer-display.visible {
+  opacity: 1;
+}
+
+.ghost-timer-display.debug-mode {
+  opacity: 0.5;
+  pointer-events: auto;
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================
+   Ensure animations respect user preferences
+*/
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-timer-gentle,
+  .ghost-timer-time-passing {
+    animation: none;
+  }
+
+  /* Instead of animation, use static color change */
+  .ghost-timer-gentle {
+    border-color: #52a9e0;
+  }
+
+  .ghost-timer-time-passing {
+    border-color: #f8c471;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================
+   Adjust colors for dark theme
+*/
+
+@media (prefers-color-scheme: dark) {
+  @keyframes ghost-timer-gentle-pulse {
+    0%, 100% {
+      border-color: #555;
+      box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+    }
+    50% {
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+  }
+
+  @keyframes ghost-timer-passing-pulse {
+    0%, 100% {
+      border-color: #555;
+      box-shadow: 0 0 0 0 rgba(241, 196, 15, 0);
+    }
+    50% {
+      border-color: #f1c40f;
+      box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.25);
+    }
+  }
+}

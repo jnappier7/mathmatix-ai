@@ -4,6 +4,7 @@ const User = require('../models/user');
 const Skill = require('../models/skill');
 const Conversation = require('../models/conversation');
 const aiService = require('../services/aiService');
+const { calculateBaselineModifier } = require('../utils/adaptiveFluency');
 
 // Grade-to-skill mapping for starting point
 const GRADE_STARTING_SKILLS = {
@@ -88,7 +89,7 @@ router.post('/start', async (req, res) => {
 router.post('/respond', async (req, res) => {
   try {
     const userId = req.session?.userId;
-    const { message, conversationId } = req.body;
+    const { message, conversationId, responseTime } = req.body;  // Added responseTime
 
     if (!userId) {
       return res.status(401).json({ error: 'Not authenticated' });
@@ -101,10 +102,12 @@ router.post('/respond', async (req, res) => {
       return res.status(404).json({ error: 'Conversation not found' });
     }
 
-    // Add user message
+    // Add user message with timing metadata
     conversation.messages.push({
       role: 'user',
-      content: message
+      content: message,
+      timestamp: new Date(),
+      responseTime: responseTime || null  // Time in seconds to answer previous question
     });
 
     // Get AI response
@@ -182,14 +185,30 @@ ASSESSMENT STRATEGY:
 
 7. Aim for 8-12 questions total (10-15 minutes)
 
-8. When you have enough information, signal completion with:
+8. FLUENCY BASELINE MEASUREMENT (CRITICAL):
+   Early in the assessment, include exactly 3 REFLEX problems and 3 PROCESS problems.
+   Mark these with tags so the system can track response times:
+
+   REFLEX PROBLEMS (Basic facts, should take 3-10 seconds):
+   - "<REFLEX_PROBLEM>What is 7 × 8?</REFLEX_PROBLEM>"
+   - "<REFLEX_PROBLEM>What is 45 ÷ 9?</REFLEX_PROBLEM>"
+   - "<REFLEX_PROBLEM>What is -3 + 7?</REFLEX_PROBLEM>"
+
+   PROCESS PROBLEMS (One-step thinking, should take 10-30 seconds):
+   - "<PROCESS_PROBLEM>Solve: x + 5 = 12</PROCESS_PROBLEM>"
+   - "<PROCESS_PROBLEM>Simplify: 3x + 2x</PROCESS_PROBLEM>"
+   - "<PROCESS_PROBLEM>What is 20% of 50?</PROCESS_PROBLEM>"
+
+   These problems help us calibrate fair time expectations for THIS student.
+
+9. When you have enough information, signal completion with:
    <ASSESSMENT_COMPLETE>
    <MASTERED>skill-id-1,skill-id-2,skill-id-3</MASTERED>
    <LEARNING>skill-id-4,skill-id-5</LEARNING>
    <READY>skill-id-6,skill-id-7</READY>
    </ASSESSMENT_COMPLETE>
 
-9. Then provide a friendly summary for the student
+10. Then provide a friendly summary for the student
 
 SKILL IDs TO USE:
 - integers-understanding
@@ -231,6 +250,56 @@ async function completeAssessment(user, conversation, aiResponse) {
     const masteredSkills = masteredMatch ? masteredMatch[1].split(',').map(s => s.trim()) : [];
     const learningSkills = learningMatch ? learningMatch[1].split(',').map(s => s.trim()) : [];
     const readySkills = readyMatch ? readyMatch[1].split(',').map(s => s.trim()) : [];
+
+    // FLUENCY BASELINE CALCULATION
+    // Extract response times for REFLEX and PROCESS problems from conversation
+    const reflexTimes = [];
+    const processTimes = [];
+
+    for (let i = 0; i < conversation.messages.length - 1; i++) {
+      const currentMsg = conversation.messages[i];
+      const nextMsg = conversation.messages[i + 1];
+
+      // Check if current message is from AI and contains a tagged problem
+      if (currentMsg.role === 'assistant') {
+        const isReflexProblem = currentMsg.content.includes('<REFLEX_PROBLEM>');
+        const isProcessProblem = currentMsg.content.includes('<PROCESS_PROBLEM>');
+
+        // Check if next message is user response with timing data
+        if (nextMsg && nextMsg.role === 'user' && nextMsg.responseTime) {
+          if (isReflexProblem) {
+            reflexTimes.push(nextMsg.responseTime);
+          } else if (isProcessProblem) {
+            processTimes.push(nextMsg.responseTime);
+          }
+        }
+      }
+    }
+
+    // Calculate baseline modifier if we have enough data
+    if (reflexTimes.length >= 2 && processTimes.length >= 2) {
+      const baselineData = calculateBaselineModifier(reflexTimes, processTimes);
+
+      user.learningProfile.fluencyBaseline = {
+        readSpeedModifier: baselineData.readSpeedModifier,
+        baselineCalculated: true,
+        baselineDate: new Date(),
+        measurements: baselineData.measurements,
+        confidence: baselineData.confidence
+      };
+
+      console.log('Baseline calculated:', {
+        reflexTimes,
+        processTimes,
+        modifier: baselineData.readSpeedModifier,
+        confidence: baselineData.confidence
+      });
+    } else {
+      console.log('Insufficient timing data for baseline calculation', {
+        reflexCount: reflexTimes.length,
+        processCount: processTimes.length
+      });
+    }
 
     // Update user's skill mastery
     for (const skillId of masteredSkills) {

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/css/calculator.css" />
   <link rel="stylesheet" href="/css/responsive-resources.css" />
   <link rel="stylesheet" href="/css/mobile-fixes.css" />
+  <link rel="stylesheet" href="/css/ghostTimer.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -40,6 +41,9 @@
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </div>
     <nav class="landing-nav">
+      <button id="mastery-mode-btn" class="btn btn-primary" title="Enter Mastery Mode" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); margin-right: 10px;">
+        <i class="fas fa-trophy"></i> <span class="mobile-hide">Mastery Mode</span>
+      </button>
       <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" style="display: none;">
         <i class="fas fa-stop-circle"></i> <span class="mobile-hide">Stop</span>
       </button>
@@ -713,6 +717,71 @@
     </div>
   </div>
 
+  <!-- Mastery Mode Modal -->
+  <div id="mastery-mode-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px;">
+      <button class="modal-close-button" id="close-mastery-mode-modal">&times;</button>
+
+      <div class="mastery-mode-intro">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <div style="font-size: 64px; margin-bottom: 15px;">🏆</div>
+          <h1 style="margin-bottom: 10px; color: #667eea;">Mastery Mode</h1>
+          <p style="font-size: 18px; color: #666;">Earn skill badges through adaptive assessment and deep understanding</p>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+          <h3 style="margin-bottom: 15px; color: white;"><i class="fas fa-route"></i> Your Journey</h3>
+          <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div style="display: flex; align-items: start; gap: 15px;">
+              <div style="min-width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">1</div>
+              <div>
+                <h4 style="margin: 0 0 5px 0; color: white;">📊 Adaptive Placement</h4>
+                <p style="margin: 0; opacity: 0.95; font-size: 14px;">8-12 smart questions to find your exact level (like NWEA MAP, GRE)</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: start; gap: 15px;">
+              <div style="min-width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">2</div>
+              <div>
+                <h4 style="margin: 0 0 5px 0; color: white;">🔬 AI Interview Probe</h4>
+                <p style="margin: 0; opacity: 0.95; font-size: 14px;">Deep dive into your frontier skills with personalized questioning</p>
+              </div>
+            </div>
+            <div style="display: flex; align-items: start; gap: 15px;">
+              <div style="min-width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">3</div>
+              <div>
+                <h4 style="margin: 0 0 5px 0; color: white;">🎖️ Earn Mastery Badges</h4>
+                <p style="margin: 0; opacity: 0.95; font-size: 14px;">Demonstrate mastery and collect verified skill badges</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #f0f7ff; border-left: 4px solid #2196F3; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+          <p style="margin: 0; color: #1976D2;"><i class="fas fa-info-circle"></i> <strong>Why Mastery Mode?</strong></p>
+          <ul style="margin: 10px 0 0 20px; color: #555;">
+            <li>Track your progress with verified achievements</li>
+            <li>Identify exactly where your skills are strong</li>
+            <li>Get targeted practice at your frontier</li>
+            <li>Build a portfolio of proven competencies</li>
+          </ul>
+        </div>
+
+        <div style="display: flex; gap: 15px; justify-content: center;">
+          <button id="start-mastery-journey-btn" class="btn btn-primary btn-large" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 15px 40px;">
+            <i class="fas fa-rocket"></i> Begin Journey
+          </button>
+          <button id="cancel-mastery-mode-btn" class="btn btn-secondary btn-large" style="padding: 15px 40px;">
+            Maybe Later
+          </button>
+        </div>
+
+        <p style="text-align: center; color: #999; font-size: 13px; margin-top: 20px;">
+          ⏱️ Estimated time: 15-20 minutes for complete assessment
+        </p>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/logout.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/whiteboard.js"></script>
@@ -730,6 +799,8 @@
   <script src="/js/student-resources.js"></script>
   <script src="/js/settings.js"></script>
   <script src="/js/show-your-work.js"></script>
+  <script src="/js/ghostTimer.js"></script>
+  <script src="/js/masteryMode.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
 </body>
