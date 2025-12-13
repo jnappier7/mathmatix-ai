@@ -7,6 +7,7 @@ let currentScaffoldStepIndex = 0; // Tracks the current step within a module's s
 let currentProblemIndex = 0; // For practice/assessment problems within a step
 let sessionState = 'idle'; // idle, in-lesson-dialogue, awaiting-problem-answer, displaying-scaffold
 let lessonHistory = []; // To keep track of the current lesson dialogue
+let lessonPhaseState = null; // NEW: Adaptive lesson phase state (I Do / We Do / You Do)
 
 // --- Path Initialization & Course Overview ---
 
@@ -89,8 +90,9 @@ export async function startOrResumeModule(moduleId, moduleIndex) {
 
         currentScaffoldStepIndex = 0;
         currentProblemIndex = 0;
-        lessonHistory = []; 
-        
+        lessonHistory = [];
+        lessonPhaseState = null; // Reset adaptive lesson phase
+
         displayModuleHeader(currentModuleData);
         await processNextScaffoldStep();
         
@@ -232,14 +234,24 @@ export async function handleGuidedAnswer(userInput, currentUserData) {
     if (sessionState === 'in-lesson-dialogue') {
         const lessonContext = {
             title: currentModuleData.title,
-            goals: currentModuleData.goals,
+            goals: currentModuleData.goals || [],
+            miniLessonConcepts: currentModuleData.miniLessonConcepts || currentModuleData.concepts || [],
+            instructionalStrategies: currentModuleData.instructionalStrategy || ['inquiry', 'modeling', 'scaffolding'],
+            skillId: currentModuleData.skillId || currentModuleData.moduleId,
             scaffold: currentModuleData.scaffold,
             conversationHistory: lessonHistory,
-            currentScaffoldStep: currentModuleData.scaffold[currentScaffoldStepIndex]
+            currentScaffoldStep: currentModuleData.scaffold[currentScaffoldStepIndex],
+            phaseState: lessonPhaseState // Pass current phase state
         };
         try {
-            // CHANGED: Corrected endpoint path
-            const data = await requestLessonAIResponse(lessonContext, '/guidedLesson/generate-interactive-lesson'); 
+            const data = await requestLessonAIResponse(lessonContext, '/guidedLesson/generate-interactive-lesson');
+
+            // Update phase state from response
+            if (data.phaseState) {
+                lessonPhaseState = data.phaseState;
+                console.log(`📚 Lesson Phase: ${data.currentPhase || 'unknown'}`);
+            }
+
             if (data.lessonState === 'start_assessment' || data.lessonState === 'scaffold_complete') {
                 currentScaffoldStepIndex++;
                 await processNextScaffoldStep();

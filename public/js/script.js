@@ -1705,6 +1705,9 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
+    // Expose appendMessage globally for masteryMode.js and guidedPath.js
+    window.appendMessage = appendMessage;
+
     async function sendMessage() {
     const messageText = userInput.value.trim();
     if (!messageText && attachedFiles.length === 0) return;
