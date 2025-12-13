@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Bank Upload - Admin</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .upload-container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      color: #667eea;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .upload-area {
+      border: 3px dashed #ddd;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+    }
+
+    .upload-area:hover {
+      border-color: #667eea;
+      background: #f9f9ff;
+    }
+
+    .upload-area.dragover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .upload-icon {
+      font-size: 64px;
+      color: #667eea;
+      margin-bottom: 15px;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    .file-info {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .file-info.visible {
+      display: block;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .progress-bar.visible {
+      display: block;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .log {
+      background: #1e1e1e;
+      color: #00ff00;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+      display: none;
+      margin-top: 20px;
+    }
+
+    .log.visible {
+      display: block;
+    }
+
+    .log-line {
+      margin-bottom: 5px;
+    }
+
+    .success {
+      color: #2ecc71;
+    }
+
+    .error {
+      color: #e74c3c;
+    }
+
+    .warning {
+      color: #f39c12;
+    }
+  </style>
+</head>
+<body>
+  <div class="upload-container">
+    <h1><i class="fas fa-database"></i> Item Bank Upload</h1>
+    <p class="subtitle">Upload your 750-question CSV file for import</p>
+
+    <div class="upload-area" id="upload-area">
+      <div class="upload-icon">
+        <i class="fas fa-cloud-upload-alt"></i>
+      </div>
+      <h3>Drag & Drop CSV File Here</h3>
+      <p>or click to browse</p>
+      <p style="font-size: 12px; color: #999; margin-top: 10px;">
+        Expected format: ID, Question_Text, Option_A/B/C/D, Correct_Answer, Skill_Standard, Grade_Level
+      </p>
+    </div>
+
+    <input type="file" id="file-input" accept=".csv">
+
+    <div class="file-info" id="file-info">
+      <strong>Selected File:</strong>
+      <div id="file-name"></div>
+      <div id="file-size" style="font-size: 13px; color: #666; margin-top: 5px;"></div>
+    </div>
+
+    <div class="progress-bar" id="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <button class="btn btn-primary" id="upload-btn" disabled>
+      <i class="fas fa-upload"></i> Upload & Import to Database
+    </button>
+
+    <button class="btn btn-secondary" id="dry-run-btn" disabled>
+      <i class="fas fa-check-circle"></i> Test Import (Dry Run)
+    </button>
+
+    <div class="log" id="log"></div>
+  </div>
+
+  <script>
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('file-input');
+    const fileInfo = document.getElementById('file-info');
+    const fileName = document.getElementById('file-name');
+    const fileSize = document.getElementById('file-size');
+    const uploadBtn = document.getElementById('upload-btn');
+    const dryRunBtn = document.getElementById('dry-run-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const progressFill = document.getElementById('progress-fill');
+    const log = document.getElementById('log');
+
+    let selectedFile = null;
+
+    // Click to browse
+    uploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // File selected
+    fileInput.addEventListener('change', (e) => {
+      handleFile(e.target.files[0]);
+    });
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      handleFile(e.dataTransfer.files[0]);
+    });
+
+    function handleFile(file) {
+      if (!file) return;
+
+      if (!file.name.endsWith('.csv')) {
+        alert('Please select a CSV file');
+        return;
+      }
+
+      selectedFile = file;
+      fileName.textContent = file.name;
+      fileSize.textContent = `${(file.size / 1024).toFixed(2)} KB`;
+      fileInfo.classList.add('visible');
+      uploadBtn.disabled = false;
+      dryRunBtn.disabled = false;
+
+      addLog('✅ File selected: ' + file.name);
+    }
+
+    // Dry run
+    dryRunBtn.addEventListener('click', async () => {
+      await uploadFile(true);
+    });
+
+    // Upload
+    uploadBtn.addEventListener('click', async () => {
+      if (confirm('Import all questions to database? This will take 2-3 minutes for 750 questions.')) {
+        await uploadFile(false);
+      }
+    });
+
+    async function uploadFile(dryRun) {
+      if (!selectedFile) return;
+
+      uploadBtn.disabled = true;
+      dryRunBtn.disabled = true;
+      progressBar.classList.add('visible');
+      log.classList.add('visible');
+
+      addLog(dryRun ? '🔍 Starting dry run validation...' : '📥 Starting import...');
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('dryRun', dryRun);
+
+      try {
+        const response = await fetch('/api/admin/import-items', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error('Upload failed: ' + response.statusText);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n').filter(l => l.trim());
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = JSON.parse(line.substring(6));
+              handleProgress(data);
+            }
+          }
+        }
+
+        addLog('✅ Complete!', 'success');
+        uploadBtn.disabled = false;
+        dryRunBtn.disabled = false;
+
+      } catch (error) {
+        addLog('❌ Error: ' + error.message, 'error');
+        uploadBtn.disabled = false;
+        dryRunBtn.disabled = false;
+      }
+    }
+
+    function handleProgress(data) {
+      if (data.type === 'log') {
+        addLog(data.message, data.level);
+      } else if (data.type === 'progress') {
+        const percent = (data.current / data.total) * 100;
+        progressFill.style.width = percent + '%';
+        addLog(`Progress: ${data.current}/${data.total} (${percent.toFixed(0)}%)`);
+      }
+    }
+
+    function addLog(message, level = 'info') {
+      const line = document.createElement('div');
+      line.className = 'log-line ' + level;
+      line.textContent = message;
+      log.appendChild(line);
+      log.scrollTop = log.scrollHeight;
+    }
+  </script>
+</body>
+</html>
