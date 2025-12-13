@@ -6,7 +6,16 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { generateSystemPrompt } = require('../utils/prompt');
 const User = require('../models/user');
-const { callLLM, retryWithExponentialBackoff } = require("../utils/openaiClient"); // Corrected import for callLLM
+const { callLLM, retryWithExponentialBackoff } = require("../utils/openaiClient");
+const { selectWarmupSkill, checkPrerequisiteReadiness } = require('../utils/prerequisiteMapper');
+const {
+  initializeLessonPhase,
+  recordAssessment,
+  evaluatePhaseTransition,
+  transitionPhase,
+  getPhasePrompt,
+  PHASES
+} = require('../utils/lessonPhaseManager');
 
 // Define a reasonable character limit for user input in lesson context
 const MAX_LESSON_INPUT_LENGTH = 1500; // Slightly more generous as it's guided, but still limited
@@ -25,8 +34,8 @@ router.use(isAuthenticated, async (req, res, next) => {
 router.post('/generate-interactive-lesson', async (req, res) => {
     try {
         const { lessonContext } = req.body;
-        const { title, goals, miniLessonConcepts, instructionalStrategies, conversationHistory } = lessonContext;
-        const userId = req.userProfile._id; // Correctly get userId from req.userProfile
+        const { title, goals, miniLessonConcepts, instructionalStrategies, conversationHistory, phaseState, skillId } = lessonContext;
+        const userId = req.userProfile._id;
 
         // Validate incoming user message (if any)
         const latestUserMessage = conversationHistory.length > 0 ? conversationHistory[conversationHistory.length - 1].content : '';
@@ -35,53 +44,159 @@ router.post('/generate-interactive-lesson', async (req, res) => {
         }
 
         const userProfile = req.userProfile;
-        const tutorName = userProfile.selectedTutorId || "M∆THM∆TIΧ AI"; // Fallback if no tutor selected
+        const tutorName = userProfile.selectedTutorId || "M∆THM∆TIΧ AI";
 
         const systemPrompt = generateSystemPrompt(userProfile, tutorName);
         let messages = [];
 
+        // ========== ADAPTIVE LESSON PHASE MANAGEMENT ==========
+        let currentPhaseState = phaseState;
+
+        // Initialize phase state if this is the first message
         if (!conversationHistory || conversationHistory.length === 0) {
-            const taskPrompt = `
-### Your Task: The Socratic Lesson Opener ###
-Your task is to start an interactive lesson on '${title}'.
-1.  **Start with a Pre-Lesson Review:** Begin with a brief, confidence-building review of a prerequisite skill. Connect '${title}' to a concept the student likely already knows.
-2.  **Introduce & Inquire:** After the review, introduce the new topic and immediately ask an engaging question to assess prior knowledge and start a dialogue.
-Your response MUST combine both steps into a single, natural opening message that ends with a question.
-**Reference Information:**
-- Key Learning Goals: ${goals.join(', ')}
-- Core Concepts to Weave In: ${miniLessonConcepts.join(', ')}
-            `;
-            messages.push({ role: 'system', content: systemPrompt + taskPrompt });
+            // Select intelligent warmup based on prerequisites
+            const warmupData = selectWarmupSkill(skillId || title, userProfile);
+
+            // Check if student ready for this skill
+            const readiness = checkPrerequisiteReadiness(skillId || title, userProfile);
+            if (!readiness.ready) {
+                console.log(`⚠️ Prerequisite gaps detected: ${readiness.recommendation}`);
+            }
+
+            // Initialize adaptive lesson phases
+            currentPhaseState = initializeLessonPhase(skillId || title, warmupData);
+
+            console.log(`🎓 Starting adaptive lesson: ${title}`);
+            console.log(`📚 Warmup skill: ${warmupData.skillName}`);
+            console.log(`📊 Current phase: ${currentPhaseState.currentPhase}`);
+        }
+
+        // Auto-advance phase based on message count (simple heuristic for now)
+        // TODO: Enhance with explicit assessment signal recording
+        if (currentPhaseState && conversationHistory.length > 0) {
+            const messagesSincePhaseStart = conversationHistory.length -
+                (currentPhaseState.phaseHistory.reduce((sum, p) => sum + (p.messageCount || 2), 0));
+
+            // Simple auto-transition logic based on conversation depth
+            const transitionDecision = evaluatePhaseTransition(currentPhaseState);
+
+            // Override: force transition based on message count if not enough data
+            if (currentPhaseState.assessmentData[currentPhaseState.currentPhase].attempts === 0) {
+                if (currentPhaseState.currentPhase === PHASES.WARMUP && messagesSincePhaseStart >= 2) {
+                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.I_DO, 'Auto-transition: warmup complete');
+                } else if (currentPhaseState.currentPhase === PHASES.I_DO && messagesSincePhaseStart >= 2) {
+                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.WE_DO, 'Auto-transition: modeling complete');
+                } else if (currentPhaseState.currentPhase === PHASES.WE_DO && messagesSincePhaseStart >= 4) {
+                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.CHECK_IN, 'Auto-transition: ready for check-in');
+                } else if (currentPhaseState.currentPhase === PHASES.CHECK_IN && messagesSincePhaseStart >= 1) {
+                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.YOU_DO, 'Auto-transition: moving to independent practice');
+                } else if (currentPhaseState.currentPhase === PHASES.YOU_DO && messagesSincePhaseStart >= 5) {
+                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.MASTERY_CHECK, 'Auto-transition: checking for mastery');
+                }
+            } else if (transitionDecision.shouldTransition) {
+                currentPhaseState = transitionPhase(
+                    currentPhaseState,
+                    transitionDecision.nextPhase,
+                    transitionDecision.rationale
+                );
+            }
+        }
+
+        // Get adaptive phase prompt
+        const phasePrompt = currentPhaseState
+            ? getPhasePrompt(currentPhaseState, title)
+            : '';
+
+        // Build task prompt based on lesson context
+        const contextPrompt = `
+## Lesson Context
+**Target Skill:** ${title}
+**Learning Goals:** ${goals.join(', ')}
+**Core Concepts:** ${miniLessonConcepts.join(', ')}
+**Instructional Strategies Available:** ${instructionalStrategies.join(', ')}
+
+${phasePrompt}
+
+**IMPORTANT REMINDERS:**
+- Keep responses conversational and natural (students don't see phase labels)
+- Check for understanding frequently
+- Adapt to student signals (confidence, accuracy, verbal cues)
+- When student demonstrates mastery (${PHASES.MASTERY_CHECK} phase, 80%+ accuracy), end with: **<END_LESSON_DIALOGUE />**
+`;
+
+        // Build message array
+        if (!conversationHistory || conversationHistory.length === 0) {
+            messages.push({ role: 'system', content: systemPrompt + '\n\n' + contextPrompt });
         } else {
-            const taskPrompt = `
-### Your Task: Continue the Lesson Dialogue ###
-You are in the middle of a lesson on '${title}'. The conversation so far is provided in the history. Your task is to continue the dialogue naturally based on the student's last response.
-- Use your Instructional Toolbox (Inquiry, Modeling, Direct Instruction, etc.) to adapt to the student.
-- Keep your responses conversational and focused on building understanding.
-- **Decision Point:** Once you feel the student has a foundational grasp of the concept from the dialogue, you MUST end your response with the special signal: **<END_LESSON_DIALOGUE />**. This tells the application to move on to the practice problems. Do not add this signal until you are confident the student is ready.
-            `;
-            messages.push({ role: 'system', content: systemPrompt + taskPrompt });
-            // Correctly concatenate conversationHistory to messages
+            messages.push({ role: 'system', content: systemPrompt + '\n\n' + contextPrompt });
             messages = messages.concat(conversationHistory);
         }
 
-        const completion = await callLLM("gpt-4o", messages, { temperature: 0.7, max_tokens: 500 }); // Using centralized LLM call
+        const completion = await callLLM("gpt-4o", messages, { temperature: 0.7, max_tokens: 500 });
 
         const aiResponseText = completion.choices[0].message.content.trim();
 
         let lessonState = 'continue';
         let cleanMessage = aiResponseText;
 
+        // Check for mastery signal
         if (aiResponseText.includes('<END_LESSON_DIALOGUE />')) {
             lessonState = 'start_assessment';
             cleanMessage = aiResponseText.replace('<END_LESSON_DIALOGUE />', '').trim();
+
+            // Mark as ready for mastery if not already
+            if (currentPhaseState) {
+                currentPhaseState.readyForMastery = true;
+            }
         }
 
-        res.json({ aiMessage: cleanMessage, lessonState: lessonState });
+        // Return response with updated phase state
+        res.json({
+            aiMessage: cleanMessage,
+            lessonState: lessonState,
+            phaseState: currentPhaseState, // Send back to client for next request
+            currentPhase: currentPhaseState?.currentPhase, // For debugging/visibility
+            phaseTransitions: currentPhaseState?.transitionLog // For analytics
+        });
 
     } catch (error) {
         console.error('Error in /generate-interactive-lesson:', error?.response?.data || error.message || error);
         res.status(500).json({ error: 'Failed to generate lesson. Please try again.' });
+    }
+});
+
+/**
+ * OPTIONAL: Record explicit assessment signal
+ * Allows frontend to send explicit correct/incorrect/confidence signals
+ * Enhances adaptive phase transitions with real formative assessment data
+ */
+router.post('/record-assessment', async (req, res) => {
+    try {
+        const { phaseState, responseType, verbalSignal } = req.body;
+
+        if (!phaseState) {
+            return res.status(400).json({ error: 'Phase state required' });
+        }
+
+        // Record the assessment
+        const updatedPhaseState = recordAssessment(phaseState, responseType, verbalSignal);
+
+        // Check if transition needed
+        const transitionDecision = evaluatePhaseTransition(updatedPhaseState);
+
+        if (transitionDecision.shouldTransition) {
+            transitionPhase(updatedPhaseState, transitionDecision.nextPhase, transitionDecision.rationale);
+        }
+
+        res.json({
+            success: true,
+            phaseState: updatedPhaseState,
+            transitionDecision
+        });
+
+    } catch (error) {
+        console.error('Error recording assessment:', error);
+        res.status(500).json({ error: 'Failed to record assessment' });
     }
 });
 
