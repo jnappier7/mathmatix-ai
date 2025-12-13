@@ -22,34 +22,49 @@ const masteryState = {
 // MODAL CONTROLS
 // ============================================================================
 
-const elements = {
-  masteryModeBtn: document.getElementById('mastery-mode-btn'),
-  masteryModeModal: document.getElementById('mastery-mode-modal'),
-  closeMasteryModal: document.getElementById('close-mastery-mode-modal'),
-  startJourneyBtn: document.getElementById('start-mastery-journey-btn'),
-  cancelBtn: document.getElementById('cancel-mastery-mode-btn')
-};
+let elements = {};
 
-// Open modal
-elements.masteryModeBtn?.addEventListener('click', () => {
-  elements.masteryModeModal.style.display = 'flex';
-});
+// Initialize after DOM is loaded
+function initializeMasteryMode() {
+  elements = {
+    masteryModeBtn: document.getElementById('mastery-mode-btn'),
+    masteryModeModal: document.getElementById('mastery-mode-modal'),
+    closeMasteryModal: document.getElementById('close-mastery-mode-modal'),
+    startJourneyBtn: document.getElementById('start-mastery-journey-btn'),
+    cancelBtn: document.getElementById('cancel-mastery-mode-btn')
+  };
 
-// Close modal
-elements.closeMasteryModal?.addEventListener('click', () => {
-  elements.masteryModeModal.style.display = 'none';
-});
+  // Open modal
+  elements.masteryModeBtn?.addEventListener('click', () => {
+    console.log('Mastery Mode button clicked!');
+    elements.masteryModeModal.style.display = 'flex';
+  });
 
-elements.cancelBtn?.addEventListener('click', () => {
-  elements.masteryModeModal.style.display = 'none';
-});
-
-// Click outside to close
-elements.masteryModeModal?.addEventListener('click', (e) => {
-  if (e.target === elements.masteryModeModal) {
+  // Close modal
+  elements.closeMasteryModal?.addEventListener('click', () => {
     elements.masteryModeModal.style.display = 'none';
-  }
-});
+  });
+
+  elements.cancelBtn?.addEventListener('click', () => {
+    elements.masteryModeModal.style.display = 'none';
+  });
+
+  // Click outside to close
+  elements.masteryModeModal?.addEventListener('click', (e) => {
+    if (e.target === elements.masteryModeModal) {
+      elements.masteryModeModal.style.display = 'none';
+    }
+  });
+
+  console.log('Mastery Mode initialized', elements);
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeMasteryMode);
+} else {
+  initializeMasteryMode();
+}
 
 // ============================================================================
 // PHASE 1: ADAPTIVE PLACEMENT
