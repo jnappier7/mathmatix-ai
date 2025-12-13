@@ -5,7 +5,14 @@
  * Maps to our Problem schema with IRT parameters
  */
 
-require('dotenv').config();
+// Load environment variables if dotenv is available
+try {
+  require('dotenv').config();
+} catch (e) {
+  // dotenv not available, assume environment is already configured
+  console.log('Running without dotenv (environment should be pre-configured)');
+}
+
 const mongoose = require('mongoose');
 const fs = require('fs');
 const csv = require('csv-parser');
