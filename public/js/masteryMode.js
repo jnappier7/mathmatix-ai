@@ -56,6 +56,22 @@ function initializeMasteryMode() {
     }
   });
 
+  // Start mastery journey - redirect to screener
+  elements.startJourneyBtn?.addEventListener('click', async () => {
+    try {
+      console.log('Begin Journey clicked!');
+      // Save state to indicate we're starting mastery mode
+      sessionStorage.setItem('masteryModeActive', 'true');
+      sessionStorage.setItem('masteryPhase', 'placement');
+
+      // Redirect to screener
+      window.location.href = '/screener.html';
+    } catch (error) {
+      console.error('Error starting mastery journey:', error);
+      alert('Failed to start mastery journey. Please try again.');
+    }
+  });
+
   console.log('Mastery Mode initialized', elements);
 }
 
@@ -65,27 +81,6 @@ if (document.readyState === 'loading') {
 } else {
   initializeMasteryMode();
 }
-
-// ============================================================================
-// PHASE 1: ADAPTIVE PLACEMENT
-// ============================================================================
-
-/**
- * Start the mastery journey - redirect to screener
- */
-elements.startJourneyBtn?.addEventListener('click', async () => {
-  try {
-    // Save state to indicate we're starting mastery mode
-    sessionStorage.setItem('masteryModeActive', 'true');
-    sessionStorage.setItem('masteryPhase', 'placement');
-
-    // Redirect to screener
-    window.location.href = '/screener.html';
-  } catch (error) {
-    console.error('Error starting mastery journey:', error);
-    alert('Failed to start mastery journey. Please try again.');
-  }
-});
 
 // ============================================================================
 // PHASE 2: AI INTERVIEW PROBE
@@ -208,42 +203,25 @@ async function triggerInterviewQuestion(results) {
 async function showBadgeEarning() {
   console.log('Starting Badge Earning Phase...');
 
-  try {
-    // Fetch available badges based on student's level
-    const response = await fetch('/api/mastery/available-badges', {
-      method: 'GET',
-      credentials: 'include'
+  // Show brief intro message before redirecting
+  if (window.displayMessage) {
+    window.displayMessage({
+      role: 'assistant',
+      content: `# 🎖️ Phase 3: Mastery Badge Earning
+
+Excellent work! You've completed the interview phase.
+
+Now it's time to choose a skill to master and earn your first badge!
+
+Redirecting you to the Badge Map...`,
+      isSystemMessage: true
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to load badges');
-    }
-
-    const data = await response.json();
-
-    // Show badge selection interface
-    displayBadgeInterface(data.badges);
-
-  } catch (error) {
-    console.error('Error loading badges:', error);
-
-    // Fallback message
-    if (window.displayMessage) {
-      window.displayMessage({
-        role: 'assistant',
-        content: `# 🎖️ Mastery Badges
-
-You've completed the interview! Now you can start earning mastery badges.
-
-**How it works:**
-- Choose a skill to demonstrate mastery in
-- Complete a series of problems at that skill level
-- Earn your badge when you demonstrate consistent mastery
-
-Which skill would you like to work on first?`
-      });
-    }
   }
+
+  // Redirect to badge map after short delay
+  setTimeout(() => {
+    window.location.href = '/badge-map.html';
+  }, 2000);
 }
 
 /**

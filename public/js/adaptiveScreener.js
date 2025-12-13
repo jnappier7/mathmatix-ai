@@ -402,10 +402,56 @@ function displayResults(report) {
   elements.finalQuestions.textContent = `${report.questionsAnswered} questions`;
   elements.finalAccuracy.textContent = `${report.accuracy}%`;
 
+  // 🎖️ Display earned badges (Like ALEKS: show what they tested out of)
+  if (report.earnedBadges && report.earnedBadges.length > 0) {
+    displayEarnedBadges(report.earnedBadges);
+  }
+
   // Skills
   displaySkillList(elements.masteredSkills, report.masteredSkills);
   displaySkillList(elements.learningSkills, report.learningSkills);
   displaySkillList(elements.frontierSkills, report.frontierSkills);
+}
+
+/**
+ * Display earned badges (ALEKS-style: show what they tested out of)
+ */
+function displayEarnedBadges(badges) {
+  const section = document.getElementById('earned-badges-section');
+  const list = document.getElementById('earned-badges-list');
+
+  if (!badges || badges.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+
+  const tierEmoji = {
+    bronze: '🥉',
+    silver: '🥈',
+    gold: '🥇'
+  };
+
+  list.innerHTML = badges.map(badge => `
+    <div class="earned-badge-card ${badge.tier}">
+      <div class="badge-tier-icon">${tierEmoji[badge.tier] || '🏅'}</div>
+      <div class="badge-name">${badge.name}</div>
+      <div class="badge-score">${badge.score}%</div>
+      <div class="badge-tested-out">✓ Tested Out</div>
+    </div>
+  `).join('');
+
+  // Trigger confetti celebration if badges earned
+  if (window.confetti && badges.length > 0) {
+    setTimeout(() => {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }, 500);
+  }
 }
 
 /**
