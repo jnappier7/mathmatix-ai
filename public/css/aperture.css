@@ -132,6 +132,31 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+
+  /* Counter-rotate to keep content stationary while ring spins */
+  animation: aperture-counter-rotate 20s linear infinite;
+}
+
+@keyframes aperture-counter-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Counter-rotation for locked state */
+.aperture-ring[data-confidence="locked"] .aperture-center {
+  animation: aperture-center-lock 2s ease-out forwards;
+}
+
+@keyframes aperture-center-lock {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-180deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
 }
 
 /* Confidence label below aperture */
@@ -226,6 +251,10 @@
   .aperture-ring {
     animation: none;
     transform: scale(var(--aperture-scale, 1.0)) !important;
+  }
+
+  .aperture-center {
+    animation: none;
   }
 
   .aperture-ring::before,
