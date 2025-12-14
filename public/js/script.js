@@ -1359,6 +1359,90 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getWelcomeMessage() {
         try {
+            // Check if user just completed screener
+            const screenerJustCompleted = sessionStorage.getItem('screenerJustCompleted');
+            const screenerResults = sessionStorage.getItem('screenerResults');
+
+            if (screenerJustCompleted === 'true' && screenerResults) {
+                // User just finished screener - provide personalized welcome
+                const results = JSON.parse(screenerResults);
+
+                const message = `🎉 Great job completing the placement assessment!\n\n` +
+                    `**Your Results:**\n` +
+                    `• Level: θ = ${results.theta} (${results.percentile}th percentile)\n` +
+                    `• Accuracy: ${results.accuracy}% on ${results.questionsAnswered} questions\n\n` +
+                    `I've analyzed your responses and identified your strengths and areas for growth. ` +
+                    `I'm here to help you learn at your own pace. What would you like to work on today?`;
+
+                appendMessage(message, "ai");
+
+                // Clear the flag so this only shows once
+                sessionStorage.removeItem('screenerJustCompleted');
+                return;
+            }
+
+            // Check if user just selected a badge to work on
+            const activeBadgeId = sessionStorage.getItem('activeBadgeId');
+            const masteryPhase = sessionStorage.getItem('masteryPhase');
+
+            if (activeBadgeId && masteryPhase === 'badge-earning') {
+                // Fetch active badge details from backend
+                try {
+                    const badgeResponse = await fetch('/api/mastery/active-badge', {
+                        credentials: 'include'
+                    });
+
+                    if (badgeResponse.ok) {
+                        const badgeData = await badgeResponse.json();
+                        const badge = badgeData.activeBadge;
+
+                        if (badge) {
+                            const tierEmoji = {
+                                bronze: '🥉',
+                                silver: '🥈',
+                                gold: '🥇',
+                                platinum: '💎'
+                            };
+
+                            const currentProgress = badge.progress || 0;
+                            const currentAccuracy = badge.currentAccuracy
+                                ? Math.round(badge.currentAccuracy * 100)
+                                : 0;
+
+                            let progressInfo = '';
+                            if (badge.problemsCompleted > 0) {
+                                progressInfo = `**Current Progress:**\n` +
+                                    `• Problems: ${badge.problemsCompleted}/${badge.requiredProblems}\n` +
+                                    `• Accuracy: ${currentAccuracy}%\n\n`;
+                            }
+
+                            const descriptionText = badge.description
+                                ? `\n${badge.description}\n\n`
+                                : '\n';
+
+                            const message = `${tierEmoji[badge.tier] || '🏅'} Let's work on earning the **${badge.badgeName}** badge!` +
+                                descriptionText +
+                                `**Challenge Requirements:**\n` +
+                                `• Complete ${badge.requiredProblems} problems\n` +
+                                `• Maintain ${Math.round((badge.requiredAccuracy || 0.8) * 100)}% accuracy\n\n` +
+                                progressInfo +
+                                `I'll guide you through practice problems for **${badge.skillId}**. ` +
+                                `Ready to ${badge.problemsCompleted > 0 ? 'continue' : 'start'}? Let me know!`;
+
+                            appendMessage(message, "ai");
+
+                            // Clear the flag so this only shows once
+                            sessionStorage.removeItem('activeBadgeId');
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching badge details:', error);
+                    // Fall through to normal welcome message
+                }
+            }
+
+            // Normal welcome message flow
             const res = await fetch(`/api/welcome-message?userId=${currentUser._id}`, {credentials: 'include'});
             const data = await res.json();
             if (data.greeting) appendMessage(data.greeting, "ai");

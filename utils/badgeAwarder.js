@@ -142,9 +142,9 @@ async function awardBadgesForSkills(user, screenerSession, masteredSkills, theta
  * @returns {Object} Performance metrics
  */
 function calculateSkillPerformance(session, skillId) {
-  const skillResponses = session.responses.filter(r =>
-    r.problem && (r.problem.skillId === skillId || r.problem.metadata?.skillTag === skillId)
-  );
+  // Filter responses for this skill
+  // Response objects have skillId at top level (from routes/screener.js)
+  const skillResponses = session.responses.filter(r => r.skillId === skillId);
 
   if (skillResponses.length === 0) {
     return { accuracy: 0, questionsAnswered: 0, correct: 0, incorrect: 0 };
