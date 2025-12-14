@@ -202,15 +202,36 @@ problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficu
     return problems[Math.floor(Math.random() * problems.length)];
   }
 
-  // If no problems found, widen search
-  return await this.findOne({
-    skillId,
-    isActive: true,
-    problemId: { $nin: excludeIds }
-  }).sort({
-    // Sort by closest to target difficulty
-    $abs: { $subtract: ['$irtParameters.difficulty', targetDifficulty] }
-  });
+  // If no problems found, widen search using aggregation
+  const results = await this.aggregate([
+    {
+      $match: {
+        skillId,
+        isActive: true,
+        problemId: { $nin: excludeIds }
+      }
+    },
+    {
+      $addFields: {
+        difficultyDistance: {
+          $abs: { $subtract: ['$irtParameters.difficulty', targetDifficulty] }
+        }
+      }
+    },
+    {
+      $sort: { difficultyDistance: 1 }
+    },
+    {
+      $limit: 1
+    }
+  ]);
+
+  // Convert aggregation result back to Mongoose document
+  if (results.length > 0) {
+    return await this.findById(results[0]._id);
+  }
+
+  return null;
 };
 
 // Static method: Get problems for a skill sorted by difficulty

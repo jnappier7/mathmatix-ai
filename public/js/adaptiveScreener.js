@@ -136,7 +136,8 @@ async function loadNextProblem() {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to load problem');
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to load problem');
     }
 
     const data = await response.json();
