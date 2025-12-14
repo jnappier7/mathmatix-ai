@@ -1381,6 +1381,67 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Check if user just selected a badge to work on
+            const activeBadgeId = sessionStorage.getItem('activeBadgeId');
+            const masteryPhase = sessionStorage.getItem('masteryPhase');
+
+            if (activeBadgeId && masteryPhase === 'badge-earning') {
+                // Fetch active badge details from backend
+                try {
+                    const badgeResponse = await fetch('/api/mastery/active-badge', {
+                        credentials: 'include'
+                    });
+
+                    if (badgeResponse.ok) {
+                        const badgeData = await badgeResponse.json();
+                        const badge = badgeData.activeBadge;
+
+                        if (badge) {
+                            const tierEmoji = {
+                                bronze: '🥉',
+                                silver: '🥈',
+                                gold: '🥇',
+                                platinum: '💎'
+                            };
+
+                            const currentProgress = badge.progress || 0;
+                            const currentAccuracy = badge.currentAccuracy
+                                ? Math.round(badge.currentAccuracy * 100)
+                                : 0;
+
+                            let progressInfo = '';
+                            if (badge.problemsCompleted > 0) {
+                                progressInfo = `**Current Progress:**\n` +
+                                    `• Problems: ${badge.problemsCompleted}/${badge.requiredProblems}\n` +
+                                    `• Accuracy: ${currentAccuracy}%\n\n`;
+                            }
+
+                            const descriptionText = badge.description
+                                ? `\n${badge.description}\n\n`
+                                : '\n';
+
+                            const message = `${tierEmoji[badge.tier] || '🏅'} Let's work on earning the **${badge.badgeName}** badge!` +
+                                descriptionText +
+                                `**Challenge Requirements:**\n` +
+                                `• Complete ${badge.requiredProblems} problems\n` +
+                                `• Maintain ${Math.round((badge.requiredAccuracy || 0.8) * 100)}% accuracy\n\n` +
+                                progressInfo +
+                                `I'll guide you through practice problems for **${badge.skillId}**. ` +
+                                `Ready to ${badge.problemsCompleted > 0 ? 'continue' : 'start'}? Let me know!`;
+
+                            appendMessage(message, "ai");
+
+                            // Clear the flag so this only shows once
+                            sessionStorage.removeItem('activeBadgeId');
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching badge details:', error);
+                    // Fall through to normal welcome message
+                }
+            }
+
             // Normal welcome message flow
             const res = await fetch(`/api/welcome-message?userId=${currentUser._id}`, {credentials: 'include'});
             const data = await res.json();

@@ -625,6 +625,8 @@ router.post('/select-badge', async (req, res) => {
       badgeId: badge.badgeId,
       badgeName: badge.name,
       skillId: badge.skillId,
+      tier: badge.tier,
+      description: badge.description,
       startedAt: new Date(),
       problemsCompleted: 0,
       problemsCorrect: 0,
