@@ -139,7 +139,12 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
 
   } catch (error) {
     console.error('Error getting next problem:', error);
-    res.status(500).json({ error: 'Failed to get next problem' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({
+      error: 'Failed to get next problem',
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
