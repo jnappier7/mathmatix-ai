@@ -263,12 +263,15 @@ async function handleCompletion(data) {
     const completeData = await completeResponse.json();
     const report = completeData.report;
 
+    // Save results to sessionStorage for chat to access
+    sessionStorage.setItem('screenerResults', JSON.stringify(report));
+    sessionStorage.setItem('screenerJustCompleted', 'true');
+
     // Check if in Mastery Mode
     const masteryModeActive = sessionStorage.getItem('masteryModeActive');
 
     if (masteryModeActive === 'true') {
-      // Save results for Phase 2 (AI Interview)
-      sessionStorage.setItem('screenerResults', JSON.stringify(report));
+      // Mastery mode: Set phase for interview
       sessionStorage.setItem('masteryPhase', 'interview');
 
       // Show brief completion message
@@ -497,14 +500,16 @@ function switchScreen(screenName) {
  * Parse user answer (handle integers, decimals, fractions)
  */
 function parseAnswer(answer) {
-  // Try to parse as number
-  const num = parseFloat(answer);
-  if (!isNaN(num)) {
-    return num;
+  const trimmed = answer.trim();
+
+  // Only parse as number if it's purely numeric (no variables)
+  // This prevents "7k" from being parsed as 7
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+    return parseFloat(trimmed);
   }
 
-  // Return as string (for expressions)
-  return answer.trim();
+  // Return as string (for expressions like "7k", "3x + 5", etc.)
+  return trimmed;
 }
 
 /**

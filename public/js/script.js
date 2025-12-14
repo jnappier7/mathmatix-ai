@@ -1359,6 +1359,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getWelcomeMessage() {
         try {
+            // Check if user just completed screener
+            const screenerJustCompleted = sessionStorage.getItem('screenerJustCompleted');
+            const screenerResults = sessionStorage.getItem('screenerResults');
+
+            if (screenerJustCompleted === 'true' && screenerResults) {
+                // User just finished screener - provide personalized welcome
+                const results = JSON.parse(screenerResults);
+
+                const message = `🎉 Great job completing the placement assessment!\n\n` +
+                    `**Your Results:**\n` +
+                    `• Level: θ = ${results.theta} (${results.percentile}th percentile)\n` +
+                    `• Accuracy: ${results.accuracy}% on ${results.questionsAnswered} questions\n\n` +
+                    `I've analyzed your responses and identified your strengths and areas for growth. ` +
+                    `I'm here to help you learn at your own pace. What would you like to work on today?`;
+
+                appendMessage(message, "ai");
+
+                // Clear the flag so this only shows once
+                sessionStorage.removeItem('screenerJustCompleted');
+                return;
+            }
+
+            // Normal welcome message flow
             const res = await fetch(`/api/welcome-message?userId=${currentUser._id}`, {credentials: 'include'});
             const data = await res.json();
             if (data.greeting) appendMessage(data.greeting, "ai");
