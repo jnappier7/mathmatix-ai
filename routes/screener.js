@@ -30,10 +30,7 @@ const activeSessions = new Map();
  */
 router.post('/start', isAuthenticated, async (req, res) => {
   try {
-    const userId = req.session?.userId;
-    if (!userId) {
-      return res.status(401).json({ error: 'Not authenticated' });
-    }
+    const userId = req.user._id;
 
     const user = await User.findById(userId);
     if (!user) {
@@ -287,7 +284,7 @@ router.get('/report', isAuthenticated, async (req, res) => {
  */
 router.post('/complete', isAuthenticated, async (req, res) => {
   try {
-    const userId = req.session?.userId;
+    const userId = req.user._id;
     const { sessionId } = req.body;
 
     if (!sessionId) {
