@@ -66,7 +66,25 @@ document.addEventListener("DOMContentLoaded", () => {
         alert(data.message);
         window.location.href = "/login.html"; // Redirect to login after successful signup
       } else {
-        alert(data.message || "Something went wrong during signup.");
+        // Handle "already logged in" error specially
+        if (data.alreadyLoggedIn || data.action === 'logout_required') {
+          const shouldLogout = confirm(
+            `${data.message}\n\nCurrent account: ${data.currentUser}\n\nClick OK to log out and create a new account, or Cancel to stay logged in.`
+          );
+          if (shouldLogout) {
+            // Logout and reload the page
+            fetch('/logout', { method: 'POST', credentials: 'include' })
+              .then(() => {
+                window.location.reload();
+              })
+              .catch(err => {
+                console.error('Logout error:', err);
+                alert('Failed to log out. Please try manually.');
+              });
+          }
+        } else {
+          alert(data.message || "Something went wrong during signup.");
+        }
       }
     } catch (err) {
       console.error("Signup fetch error:", err);

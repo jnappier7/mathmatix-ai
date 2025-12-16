@@ -28,7 +28,13 @@ function isAuthenticated(req, res, next) {
 function ensureNotAuthenticated(req, res, next) {
     if (req.isAuthenticated() && req.user) {
         if (req.method === 'POST') {
-            return res.status(403).json({ success: false, message: 'Forbidden: You are already logged in.' });
+            return res.status(403).json({
+                success: false,
+                message: 'You are already logged in. Please log out first to create a new account.',
+                alreadyLoggedIn: true,
+                currentUser: req.user.username,
+                action: 'logout_required'
+            });
         }
 
         let redirectUrl = '/chat.html'; // Default for students
