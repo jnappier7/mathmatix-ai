@@ -201,7 +201,16 @@ const learningProfileSchema = new Schema({
       enum: ['initial', 'moderate', 'high'],
       default: 'initial'
     }
-  }
+  },
+
+  // Assessment history (for tracking resets by teachers)
+  assessmentHistory: [{
+    completedDate: { type: Date },
+    placement: { type: String },
+    resetDate: { type: Date },
+    resetBy: { type: Schema.Types.ObjectId, ref: 'User' },  // Teacher/Admin who reset it
+    reason: { type: String }
+  }]
 }, { _id: false });
 
 /* ---------- MAIN USER SCHEMA ---------- */
