@@ -64,11 +64,22 @@ function initializeMasteryMode() {
       // Check if user has already completed the placement screener
       const userResponse = await fetch('/user', { credentials: 'include' });
       if (!userResponse.ok) {
-        throw new Error('Failed to fetch user data');
+        if (userResponse.status === 401) {
+          console.error('[Mastery Mode] Session expired - redirecting to login');
+          alert('Your session has expired. Please log in again.');
+          window.location.href = '/login.html';
+          return;
+        }
+        const errorText = await userResponse.text();
+        console.error('[Mastery Mode] Failed to fetch user:', userResponse.status, errorText);
+        throw new Error(`Failed to fetch user data: ${userResponse.status}`);
       }
 
       const userData = await userResponse.json();
+      console.log('[Mastery Mode] User data:', userData);
+
       const assessmentCompleted = userData.user?.learningProfile?.assessmentCompleted;
+      console.log('[Mastery Mode] Assessment completed:', assessmentCompleted);
 
       if (assessmentCompleted) {
         // User already completed placement - skip straight to badge selection
@@ -84,8 +95,8 @@ function initializeMasteryMode() {
         window.location.href = '/screener.html';
       }
     } catch (error) {
-      console.error('Error starting mastery journey:', error);
-      alert('Failed to start mastery journey. Please try again.');
+      console.error('[Mastery Mode] Error starting journey:', error);
+      alert(`Failed to start mastery journey: ${error.message}`);
     }
   });
 
