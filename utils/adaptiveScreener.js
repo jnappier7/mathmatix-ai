@@ -83,6 +83,7 @@ function initializeSession(options = {}) {
     theta: startingTheta,
     standardError: Infinity,
     confidence: 0,  // 0 to 1
+    cumulativeInformation: 0,  // Track total information gathered
 
     // Response history
     responses: [],
@@ -104,9 +105,23 @@ function initializeSession(options = {}) {
     startTime: Date.now(),
     endTime: null,
 
-    // Completion criteria
-    maxQuestions: 12,
-    seThreshold: 0.3,
+    // Completion criteria (like ALEKS: 20-30 questions adaptive)
+    minQuestions: 15,       // Minimum for reliable estimate
+    targetQuestions: 20,    // Target for most students
+    maxQuestions: 25,       // Hard cap to prevent fatigue
+    seThresholdStringent: 0.25,  // Ideal confidence (early stop)
+    seThresholdAcceptable: 0.30,  // Acceptable confidence (normal stop)
+    seThresholdFallback: 0.35,    // Minimum at max questions
+    minInformationGain: 0.05,     // Stop if gains < this for 3 questions
+
+    // Skill coverage tracking
+    testedSkills: [],
+    testedSkillCategories: {
+      'number-operations': 0,
+      'algebra': 0,
+      'geometry': 0,
+      'advanced': 0
+    },
 
     // Phase tracking
     phase: 'screener'  // 'screener' | 'interview' | 'complete'
@@ -121,12 +136,21 @@ function initializeSession(options = {}) {
  * @returns {Object} Updated session with next recommendation
  */
 function processResponse(session, response) {
+  // Calculate information gained from this response (before updating theta)
+  const informationBefore = session.cumulativeInformation;
+  const questionInfo = calculateInformation(session.theta, [{
+    difficulty: response.difficulty,
+    discrimination: response.discrimination,
+    correct: response.correct
+  }]);
+
   // Add response to history
   session.responses.push({
     ...response,
     questionNumber: session.questionCount + 1,
     thetaBefore: session.theta,
-    seBefore: session.standardError
+    seBefore: session.standardError,
+    informationGained: questionInfo
   });
 
   session.questionCount++;
@@ -138,12 +162,22 @@ function processResponse(session, response) {
     correct: r.correct
   })));
 
+  const previousTheta = session.theta;
   session.theta = abilityEstimate.theta;
   session.standardError = abilityEstimate.standardError;
   session.confidence = 1 / (1 + session.standardError);  // Convert SE to confidence (0-1)
 
+  // Update cumulative information
+  session.cumulativeInformation = informationBefore + questionInfo;
+
+  // Track skill coverage
+  if (!session.testedSkills.includes(response.skillId)) {
+    session.testedSkills.push(response.skillId);
+  }
+
   // Update response history with theta after
   session.responses[session.responses.length - 1].thetaAfter = session.theta;
+  session.responses[session.responses.length - 1].thetaChange = Math.abs(session.theta - previousTheta);
 
   // FRONTIER DETECTION: Track first failure
   if (!response.correct && !session.frontier.firstFailureTheta) {
@@ -154,22 +188,67 @@ function processResponse(session, response) {
     };
   }
 
-  // Check convergence
-  session.converged = hasConverged(session.standardError, {
-    seThreshold: session.seThreshold,
-    minQuestions: 5
-  });
+  // Check convergence using new multi-criteria approach
+  session.converged = checkConvergenceCriteria(session);
 
   // Check plateau
   session.plateaued = hasPlateaued(session.responses);
 
   // Detect if we should move to interview phase
-  if (session.frontier.firstFailureTheta && session.questionCount >= 8) {
+  if (session.frontier.firstFailureTheta && session.questionCount >= session.minQuestions) {
     session.frontierDetected = true;
   }
 
   // Determine next action
   return determineNextAction(session);
+}
+
+/**
+ * Check if multiple convergence criteria are met (like ALEKS/Scantron)
+ *
+ * STOPPING RULES (research-based):
+ * 1. Standard Error below threshold (primary)
+ * 2. Minimum questions answered (reliability)
+ * 3. Confidence interval width acceptable
+ * 4. Information gains plateauing (efficiency)
+ *
+ * @param {Object} session - Current session state
+ * @returns {Boolean} True if converged with high confidence
+ */
+function checkConvergenceCriteria(session) {
+  const { questionCount, standardError, responses, minQuestions, seThresholdStringent, seThresholdAcceptable } = session;
+
+  // Must meet minimum questions first
+  if (questionCount < minQuestions) {
+    return false;
+  }
+
+  // CRITERION 1: Standard Error below threshold
+  const seConverged = standardError <= seThresholdAcceptable;
+
+  // CRITERION 2: Confidence Interval width < 1.0 logit (95% CI = theta ± 1.96*SE)
+  const confidenceIntervalWidth = 2 * 1.96 * standardError;
+  const ciNarrow = confidenceIntervalWidth < 1.0;
+
+  // CRITERION 3: Information gains plateauing (last 3 questions added < 0.05 each)
+  let informationPlateaued = false;
+  if (responses.length >= 3) {
+    const last3 = responses.slice(-3);
+    const avgRecentInfo = last3.reduce((sum, r) => sum + (r.informationGained || 0), 0) / 3;
+    informationPlateaued = avgRecentInfo < session.minInformationGain;
+  }
+
+  // High confidence: SE below stringent threshold + narrow CI
+  if (standardError <= seThresholdStringent && ciNarrow) {
+    return true;
+  }
+
+  // Normal confidence: SE below acceptable + (narrow CI OR information plateau)
+  if (seConverged && (ciNarrow || informationPlateaued)) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -179,71 +258,91 @@ function processResponse(session, response) {
  * @returns {Object} Recommendation for next action
  */
 function determineNextAction(session) {
-  // COMPLETION CRITERIA
+  // COMPLETION CRITERIA (Multi-tier like ALEKS)
 
-  // 1. High confidence convergence
-  if (session.converged && session.questionCount >= 5) {
+  // 1. High confidence convergence (IDEAL STOP)
+  if (session.converged && session.questionCount >= session.minQuestions) {
     return {
       action: 'interview',
       reason: 'converged',
-      message: 'We\'ve found your level! Let\'s explore a bit deeper.',
+      message: 'We\'ve found your level with high confidence! Let\'s explore a bit deeper.',
       theta: session.theta,
       confidence: session.confidence,
+      standardError: session.standardError,
+      percentile: thetaToPercentile(session.theta),
+      questionsAnswered: session.questionCount
+    };
+  }
+
+  // 2. Target questions reached with acceptable confidence
+  if (session.questionCount >= session.targetQuestions && session.standardError <= session.seThresholdFallback) {
+    return {
+      action: 'interview',
+      reason: 'target-reached',
+      message: 'Great progress! I have a good sense of your abilities.',
+      theta: session.theta,
+      confidence: session.confidence,
+      standardError: session.standardError,
       percentile: thetaToPercentile(session.theta)
     };
   }
 
-  // 2. Plateau detected
-  if (session.plateaued) {
+  // 3. Max questions reached (HARD STOP)
+  if (session.questionCount >= session.maxQuestions) {
+    return {
+      action: 'interview',
+      reason: 'max-questions',
+      message: 'Excellent work! I\'ve gathered enough information about your abilities.',
+      theta: session.theta,
+      confidence: session.confidence,
+      standardError: session.standardError,
+      percentile: thetaToPercentile(session.theta)
+    };
+  }
+
+  // 4. Plateau detected (EFFICIENCY STOP)
+  if (session.plateaued && session.questionCount >= session.minQuestions) {
     return {
       action: 'interview',
       reason: 'plateaued',
       message: 'I see where your frontier is. Let\'s dig into that.',
       theta: session.theta,
-      frontier: session.frontier
+      frontier: session.frontier,
+      standardError: session.standardError
     };
   }
 
-  // 3. Max questions reached
-  if (session.questionCount >= session.maxQuestions) {
+  // 5. Early high confidence (ADVANCED STUDENTS - like when you ace first 5 calculus problems)
+  if (session.questionCount >= session.minQuestions &&
+      session.standardError <= session.seThresholdStringent &&
+      session.responses.slice(-5).every(r => r.correct)) {
     return {
       action: 'interview',
-      reason: 'max-questions',
-      message: 'Great work! Let\'s talk about what you\'ve learned.',
+      reason: 'early-mastery',
+      message: 'Impressive! You\'re clearly advanced. Let\'s confirm your level.',
       theta: session.theta,
-      confidence: session.confidence
+      confidence: session.confidence,
+      standardError: session.standardError,
+      percentile: thetaToPercentile(session.theta)
     };
   }
 
-  // 4. Frontier detected and sufficient data
-  if (session.frontierDetected && session.standardError < 0.5) {
-    return {
-      action: 'interview',
-      reason: 'frontier-detected',
-      message: 'I found your edge. Let\'s probe deeper.',
-      theta: session.theta,
-      frontier: session.frontier
-    };
-  }
-
-  // CONTINUE SCREENING: Calculate next difficulty
-  const lastResponse = session.responses[session.responses.length - 1];
-  const jumpSize = calculateJumpSize(
-    lastResponse.correct,
-    session.questionCount,
-    session.standardError
-  );
-
-  const nextDifficulty = session.theta + jumpSize * 0.5;  // Move toward target
-
+  // CONTINUE SCREENING: Calculate next difficulty (use theta directly, not jump-based)
+  // This allows maximum information selection to work properly
   return {
     action: 'continue',
     reason: 'gathering-data',
-    nextDifficulty,
+    targetDifficulty: session.theta,  // Next problem should target current theta estimate
     theta: session.theta,
     standardError: session.standardError,
     confidence: session.confidence,
-    questionCount: session.questionCount
+    questionCount: session.questionCount,
+    progress: {
+      min: session.minQuestions,
+      current: session.questionCount,
+      target: session.targetQuestions,
+      max: session.maxQuestions
+    }
   };
 }
 
@@ -425,6 +524,7 @@ module.exports = {
   initializeSession,
   processResponse,
   determineNextAction,
+  checkConvergenceCriteria,
 
   // Analysis
   identifyInterviewSkills,

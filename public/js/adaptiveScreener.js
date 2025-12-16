@@ -316,23 +316,44 @@ function displayProblem(problem) {
  * Update progress indicators
  */
 function updateProgress(session) {
-  elements.questionCount.textContent = `${session.questionCount} / ~12`;
+  // Adaptive progress display (15-25 questions based on confidence)
+  const currentQ = session.questionCount;
+  const standardError = session.standardError || Infinity;
 
-  // Format theta display
+  // Display shows range: "X of 15-25" where the actual stop point is adaptive
+  let progressText;
+  if (currentQ < 15) {
+    progressText = `${currentQ} / 15-25`;
+  } else if (standardError < 0.30) {
+    // High confidence - may finish soon
+    progressText = `${currentQ} / ~${currentQ + 2}`;
+  } else if (standardError < 0.35) {
+    // Medium confidence - need a few more
+    progressText = `${currentQ} / ~${Math.min(currentQ + 5, 25)}`;
+  } else {
+    // Low confidence - might need up to max
+    progressText = `${currentQ} / 25`;
+  }
+
+  elements.questionCount.textContent = progressText;
+
+  // Format theta display with SE (Standard Error)
   const thetaValue = session.theta.toFixed(1);
   const thetaLabel = getThetaLabel(session.theta);
-  elements.thetaDisplay.textContent = `θ=${thetaValue} (${thetaLabel})`;
+  const seDisplay = standardError < 10 ? `±${standardError.toFixed(2)}` : '';
+  elements.thetaDisplay.textContent = `θ=${thetaValue} ${seDisplay} (${thetaLabel})`;
 
-  // Update confidence badge
-  const confidencePercent = Math.round(session.confidence * 100);
+  // Update confidence badge (based on Standard Error, not arbitrary confidence)
   let confidenceText = 'Calibrating...';
 
-  if (confidencePercent < 40) {
+  if (standardError === Infinity || standardError > 0.5) {
     confidenceText = 'Searching...';
-  } else if (confidencePercent < 70) {
-    confidenceText = `${confidencePercent}% confident`;
+  } else if (standardError <= 0.25) {
+    confidenceText = `High Confidence (SE=${standardError.toFixed(2)})`;
+  } else if (standardError <= 0.30) {
+    confidenceText = `Good Confidence (SE=${standardError.toFixed(2)})`;
   } else {
-    confidenceText = `${confidencePercent}% locked`;
+    confidenceText = `Moderate (SE=${standardError.toFixed(2)})`;
   }
 
   elements.confidenceBadge.innerHTML = `<i class="fas fa-crosshairs"></i> ${confidenceText}`;
