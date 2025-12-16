@@ -97,18 +97,18 @@ async function startScreener() {
 
     if (!response.ok) {
       const error = await response.json();
+
+      // Handle "already completed" case (403 Forbidden)
+      if (error.alreadyCompleted) {
+        alert(error.message || 'You have already completed the placement assessment.');
+        window.location.href = '/chat.html';
+        return;
+      }
+
       throw new Error(error.error || 'Failed to start screener');
     }
 
     const data = await response.json();
-
-    if (data.alreadyCompleted) {
-      const retake = confirm(data.message);
-      if (!retake) {
-        window.location.href = '/chat.html';
-        return;
-      }
-    }
 
     state.sessionId = data.sessionId;
 

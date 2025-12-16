@@ -39,10 +39,13 @@ router.post('/start', isAuthenticated, async (req, res) => {
 
     // Check if assessment already completed
     if (user.learningProfile.assessmentCompleted) {
-      return res.json({
+      return res.status(403).json({
+        error: 'Assessment already completed',
         alreadyCompleted: true,
-        message: 'Assessment already completed. Would you like to retake it?',
-        completedDate: user.learningProfile.assessmentDate
+        message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
+        completedDate: user.learningProfile.assessmentDate,
+        theta: user.learningProfile.initialPlacement,
+        canReset: false  // Only teachers can reset via dashboard
       });
     }
 
