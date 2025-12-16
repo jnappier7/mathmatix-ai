@@ -171,7 +171,19 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         }
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext, uploadContext);
+        // Pass mastery mode context if student has an active badge
+        const masteryContext = user.masteryProgress?.activeBadge ? {
+            mode: 'badge-earning',
+            badgeName: user.masteryProgress.activeBadge.badgeName,
+            skillId: user.masteryProgress.activeBadge.skillId,
+            tier: user.masteryProgress.activeBadge.tier,
+            problemsCompleted: user.masteryProgress.activeBadge.problemsCompleted || 0,
+            problemsCorrect: user.masteryProgress.activeBadge.problemsCorrect || 0,
+            requiredProblems: user.masteryProgress.activeBadge.requiredProblems,
+            requiredAccuracy: user.masteryProgress.activeBadge.requiredAccuracy
+        } : null;
+
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext, uploadContext, masteryContext);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
@@ -308,6 +320,46 @@ router.post('/', isAuthenticated, async (req, res) => {
         activeConversation.lastActivity = new Date();
 
         await activeConversation.save();
+
+        // Track badge progress if user has an active badge
+        if (user.masteryProgress?.activeBadge) {
+            const latestAIResponse = aiResponseText.toLowerCase();
+            let problemAnswered = false;
+            let wasCorrect = false;
+
+            // Detect if a problem was just answered based on AI response keywords
+            if (latestAIResponse.includes('correct') || latestAIResponse.includes('exactly') ||
+                latestAIResponse.includes('great job') || latestAIResponse.includes('perfect') ||
+                latestAIResponse.includes('well done')) {
+                problemAnswered = true;
+                wasCorrect = true;
+            } else if (latestAIResponse.includes('not quite') || latestAIResponse.includes('try again') ||
+                       latestAIResponse.includes('almost') || latestAIResponse.includes('incorrect') ||
+                       latestAIResponse.includes('not exactly')) {
+                problemAnswered = true;
+                wasCorrect = false;
+            }
+
+            // Update badge progress if a problem was answered
+            if (problemAnswered) {
+                const activeBadge = user.masteryProgress.activeBadge;
+                activeBadge.problemsCompleted = (activeBadge.problemsCompleted || 0) + 1;
+                if (wasCorrect) {
+                    activeBadge.problemsCorrect = (activeBadge.problemsCorrect || 0) + 1;
+                }
+
+                console.log(`📊 Badge Progress: ${activeBadge.badgeName} - ${activeBadge.problemsCompleted}/${activeBadge.requiredProblems} (${activeBadge.problemsCorrect} correct)`);
+
+                // Check if badge is complete
+                const accuracy = activeBadge.problemsCorrect / activeBadge.problemsCompleted;
+                if (activeBadge.problemsCompleted >= activeBadge.requiredProblems &&
+                    accuracy >= activeBadge.requiredAccuracy) {
+                    console.log(`🎖️ Badge ${activeBadge.badgeName} earned!`);
+                }
+
+                user.markModified('masteryProgress');
+            }
+        }
 
         let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
         user.xp = (user.xp || 0) + xpAward;

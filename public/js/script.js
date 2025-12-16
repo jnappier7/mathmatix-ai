@@ -1385,7 +1385,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const activeBadgeId = sessionStorage.getItem('activeBadgeId');
             const masteryPhase = sessionStorage.getItem('masteryPhase');
 
-            if (activeBadgeId && masteryPhase === 'badge-earning') {
+            if (activeBadgeId && masteryPhase) {
                 // Fetch active badge details from backend
                 try {
                     const badgeResponse = await fetch('/api/mastery/active-badge', {
@@ -1442,7 +1442,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Normal welcome message flow
+            // Check if user is in any mastery mode phase
+            // If so, skip the normal welcome message (they're in a structured journey)
+            if (masteryPhase) {
+                // User is in mastery mode - no generic welcome needed
+                console.log('[Chat] User in mastery mode, skipping generic welcome');
+                return;
+            }
+
+            // Normal welcome message flow (only for non-mastery sessions)
             const res = await fetch(`/api/welcome-message?userId=${currentUser._id}`, {credentials: 'include'});
             const data = await res.json();
             if (data.greeting) appendMessage(data.greeting, "ai");

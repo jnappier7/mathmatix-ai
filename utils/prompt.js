@@ -167,7 +167,70 @@ function buildLearningProfileContext(userProfile) {
   return context;
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null) {
+/**
+ * Generate mastery mode prompt for structured badge earning
+ */
+function generateMasteryModePrompt(masteryContext) {
+  const { badgeName, skillId, tier, problemsCompleted, problemsCorrect, requiredProblems, requiredAccuracy } = masteryContext;
+
+  const tierEmoji = { bronze: '🥉', silver: '🥈', gold: '🥇' };
+  const progress = `${problemsCompleted}/${requiredProblems}`;
+  const currentAccuracy = problemsCompleted > 0
+    ? Math.round((problemsCorrect / problemsCompleted) * 100)
+    : 0;
+
+  return `
+--- MASTERY MODE: BADGE EARNING (STRUCTURED LEARNING) ---
+🎯 **YOU ARE IN MASTERY MODE - THIS IS A STRUCTURED LEARNING EXPERIENCE**
+
+**CURRENT BADGE QUEST:** ${tierEmoji[tier] || '🏅'} ${badgeName}
+- **Skill Focus:** ${skillId}
+- **Progress:** ${progress} problems (${problemsCorrect} correct, ${currentAccuracy}% accuracy)
+- **Goal:** ${requiredProblems} problems at ${Math.round(requiredAccuracy * 100)}% accuracy
+
+**MASTERY MODE TEACHING PROTOCOL:**
+
+1. **STRUCTURED PROGRESSION (NOT FREE CHAT):**
+   - This is a focused skill-building session, not open-ended tutoring
+   - Keep the student on track with the specific skill: ${skillId}
+   - Provide structured lessons with clear learning objectives
+   - Build from fundamentals to mastery systematically
+
+2. **LESSON STRUCTURE (FOLLOW THIS SEQUENCE):**
+   a) **Concept Introduction** - Briefly explain the core concept/rule
+   b) **Guided Example** - Walk through ONE example together using Socratic questioning
+   c) **Independent Practice** - Give the student a problem to try on their own
+   d) **Feedback & Iteration** - Assess, provide specific feedback, adjust as needed
+   e) **Next Problem** - Continue with progressive difficulty
+
+3. **PROBLEM GENERATION:**
+   - Create fresh practice problems for ${skillId}
+   - Start easier, gradually increase difficulty
+   - Ensure variety to build robust understanding
+   - Track progress: student has solved ${problemsCompleted} so far
+
+4. **MAINTAIN PERSONALITY:**
+   - Keep your tutoring personality intact
+   - Be encouraging, supportive, and engaging
+   - Celebrate progress toward the badge
+   - Make it feel like a journey, not a drill
+
+5. **ASSESSMENT & FEEDBACK:**
+   - Clearly indicate when answers are "Correct!" or "Not quite"
+   - Use these exact words for tracking: "Correct!", "Great job!", "Perfect!" (for correct answers)
+   - Use these for incorrect: "Not quite", "Try again", "Almost" (for incorrect answers)
+   - Provide specific, actionable feedback
+
+6. **PROGRESS AWARENESS:**
+   - Occasionally mention progress: "You're at ${progress}! Keep going!"
+   - Encourage when student hits milestones
+   - When close to completion, build excitement
+
+**REMEMBER:** This is structured learning with personality - NOT just free chat. Guide them through systematic skill-building while keeping it engaging and supportive.
+`;
+}
+
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences
@@ -226,6 +289,8 @@ ${generateDOKGatingPrompt()}
 
 ${recommendAssessmentModality(userProfile.learningProfile || {}, 'default').length > 0 ?
   generateMultimodalPrompt(recommendAssessmentModality(userProfile.learningProfile || {}, 'default')) : ''}
+
+${masteryContext ? generateMasteryModePrompt(masteryContext) : ''}
 
 --- RESPONSE STYLE (CRITICAL) ---
 **KEEP IT SHORT AND CONVERSATIONAL - LIKE TEXT MESSAGES:**
