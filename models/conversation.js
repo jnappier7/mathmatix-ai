@@ -9,7 +9,8 @@ const Schema = mongoose.Schema;
 const messageSchema = new Schema({
     role: { type: String, required: true }, // 'user' or 'assistant'
     content: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now }
+    timestamp: { type: Date, default: Date.now },
+    reaction: { type: String, default: null } // Emoji reaction (e.g., '❤️', '👍', '💯')
 }, { _id: false });
 
 const conversationSchema = new Schema({

@@ -986,7 +986,7 @@ a:hover {
 .message-reaction-container {
     position: absolute;
     bottom: -12px;
-    right: 8px;
+    right: 45px; /* Moved further right to avoid TTS button overlap */
     display: flex;
     align-items: center;
     gap: 4px;

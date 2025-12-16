@@ -183,7 +183,12 @@ router.post('/', isAuthenticated, async (req, res) => {
             requiredAccuracy: user.masteryProgress.activeBadge.requiredAccuracy
         } : null;
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext, uploadContext, masteryContext);
+        // Extract liked messages for rapport building
+        const likedMessages = recentMessagesForAI
+            .filter(msg => msg.role === 'assistant' && msg.reaction)
+            .map(msg => ({ content: msg.content.substring(0, 150), reaction: msg.reaction }));
+
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
@@ -609,6 +614,54 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
     } catch (error) {
         console.error("ERROR: Track time failed:", error);
         res.status(500).json({ message: "Failed to track time" });
+    }
+});
+
+// Add or remove emoji reaction to a message
+router.patch('/reaction', isAuthenticated, async (req, res) => {
+    try {
+        const { messageIndex, reaction } = req.body;
+        const userId = req.user._id;
+
+        if (messageIndex === undefined) {
+            return res.status(400).json({ message: "Message index is required" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Get active conversation
+        const conversation = await Conversation.findById(user.activeConversationId);
+        if (!conversation) {
+            return res.status(404).json({ message: "No active conversation found" });
+        }
+
+        // Validate message index
+        if (messageIndex < 0 || messageIndex >= conversation.messages.length) {
+            return res.status(400).json({ message: "Invalid message index" });
+        }
+
+        // Update or clear reaction
+        if (reaction && reaction.trim()) {
+            conversation.messages[messageIndex].reaction = reaction;
+        } else {
+            conversation.messages[messageIndex].reaction = null;
+        }
+
+        conversation.markModified('messages');
+        await conversation.save();
+
+        res.json({
+            success: true,
+            messageIndex,
+            reaction: conversation.messages[messageIndex].reaction
+        });
+
+    } catch (error) {
+        console.error("ERROR: Update reaction failed:", error);
+        res.status(500).json({ message: "Failed to update reaction" });
     }
 });
 
