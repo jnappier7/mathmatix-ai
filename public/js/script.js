@@ -250,6 +250,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition;
     let isRecognizing = false;
+    let messageIndexCounter = 0; // Track message index for reactions
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -1671,6 +1672,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const bubble = document.createElement("div");
         bubble.className = `message ${sender}`;
         bubble.id = `message-${Date.now()}-${Math.random()}`;
+        bubble.dataset.messageIndex = messageIndexCounter++; // Track index for reactions
         if (isMasteryQuiz) { bubble.classList.add('mastery-quiz'); }
         
         const textNode = document.createElement('span');
@@ -2420,25 +2422,53 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 0);
     }
 
-    function addReaction(messageBubble, reactionDisplay, emoji) {
+    async function addReaction(messageBubble, reactionDisplay, emoji) {
+        const messageIndex = parseInt(messageBubble.dataset.messageIndex);
+        if (isNaN(messageIndex)) {
+            console.error('Message index not found');
+            return;
+        }
+
         // Check if already has this reaction
         const existingReaction = reactionDisplay.querySelector('.reaction-emoji');
-        if (existingReaction && existingReaction.textContent === emoji) {
-            // Remove reaction
-            existingReaction.remove();
-            reactionDisplay.classList.remove('has-reaction');
-        } else {
-            // Clear previous reaction and add new one
-            reactionDisplay.innerHTML = '';
-            const reactionEmoji = document.createElement('span');
-            reactionEmoji.className = 'reaction-emoji';
-            reactionEmoji.textContent = emoji;
-            reactionEmoji.addEventListener('click', () => {
-                reactionEmoji.remove();
-                reactionDisplay.classList.remove('has-reaction');
+        const isRemoving = existingReaction && existingReaction.textContent === emoji;
+
+        try {
+            // Send to backend
+            const response = await fetch('/api/chat/reaction', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    messageIndex,
+                    reaction: isRemoving ? null : emoji
+                })
             });
-            reactionDisplay.appendChild(reactionEmoji);
-            reactionDisplay.classList.add('has-reaction');
+
+            if (!response.ok) {
+                throw new Error('Failed to save reaction');
+            }
+
+            // Update UI
+            if (isRemoving) {
+                // Remove reaction
+                existingReaction.remove();
+                reactionDisplay.classList.remove('has-reaction');
+            } else {
+                // Clear previous reaction and add new one
+                reactionDisplay.innerHTML = '';
+                const reactionEmoji = document.createElement('span');
+                reactionEmoji.className = 'reaction-emoji';
+                reactionEmoji.textContent = emoji;
+                reactionEmoji.addEventListener('click', () => {
+                    addReaction(messageBubble, reactionDisplay, emoji); // Remove on click
+                });
+                reactionDisplay.appendChild(reactionEmoji);
+                reactionDisplay.classList.add('has-reaction');
+            }
+        } catch (error) {
+            console.error('Error saving reaction:', error);
+            showToast('Failed to save reaction', 2000);
         }
     }
 

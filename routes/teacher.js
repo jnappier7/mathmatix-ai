@@ -269,4 +269,185 @@ router.post('/alerts/:conversationId/:alertIndex/acknowledge', isTeacher, async 
   }
 });
 
+// ============================================
+// ASSESSMENT MANAGEMENT
+// ============================================
+
+/**
+ * Reset a student's placement assessment
+ * POST /api/teacher/students/:studentId/reset-assessment
+ *
+ * Allows teacher to reset a student's screener so they can retake it
+ * Use cases: After summer break, significant skill regression, incorrect placement
+ */
+router.post('/students/:studentId/reset-assessment', isTeacher, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+    const { reason } = req.body; // Optional reason for audit trail
+
+    // Verify teacher has access to this student
+    const student = await User.findOne({ _id: studentId, teacherId: teacherId });
+    if (!student) {
+      return res.status(403).json({ message: 'Not authorized. Student not assigned to you.' });
+    }
+
+    // Store previous assessment data for audit trail
+    const previousAssessment = {
+      completedDate: student.learningProfile.assessmentDate,
+      placement: student.learningProfile.initialPlacement,
+      resetDate: new Date(),
+      resetBy: teacherId,
+      reason: reason || 'Teacher requested reset'
+    };
+
+    // Add to assessment history if it doesn't exist
+    if (!student.learningProfile.assessmentHistory) {
+      student.learningProfile.assessmentHistory = [];
+    }
+    student.learningProfile.assessmentHistory.push(previousAssessment);
+
+    // Reset assessment flags
+    student.learningProfile.assessmentCompleted = false;
+    student.learningProfile.assessmentDate = null;
+    student.learningProfile.initialPlacement = null;
+
+    // Clear skill mastery (optional - may want to keep some data)
+    // student.skillMastery = new Map();
+
+    await student.save();
+
+    console.log(`[Teacher] Assessment reset for student ${studentId} by teacher ${teacherId}`);
+
+    res.json({
+      success: true,
+      message: `Assessment reset successfully for ${student.firstName} ${student.lastName}`,
+      studentName: `${student.firstName} ${student.lastName}`,
+      previousAssessment
+    });
+
+  } catch (error) {
+    console.error('Error resetting student assessment:', error);
+    res.status(500).json({ message: 'Error resetting assessment' });
+  }
+});
+
+/**
+ * Get detailed skill mastery report for a student
+ * GET /api/teacher/students/:studentId/skill-report
+ *
+ * Returns comprehensive breakdown of:
+ * - Placement screener results (theta, percentile)
+ * - Skill mastery by category
+ * - Badge progress
+ * - Recent activity
+ */
+router.get('/students/:studentId/skill-report', isTeacher, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+
+    // Verify teacher has access to this student
+    const student = await User.findOne({ _id: studentId, teacherId: teacherId }).lean();
+    if (!student) {
+      return res.status(403).json({ message: 'Not authorized. Student not assigned to you.' });
+    }
+
+    // Parse theta from initialPlacement if available
+    let theta = null;
+    let percentile = null;
+    if (student.learningProfile?.initialPlacement) {
+      const match = student.learningProfile.initialPlacement.match(/Theta:\s*([-\d.]+)\s*\((\d+)th percentile\)/);
+      if (match) {
+        theta = parseFloat(match[1]);
+        percentile = parseInt(match[2]);
+      }
+    }
+
+    // Organize skill mastery by status
+    const masteredSkills = [];
+    const learningSkills = [];
+    const readySkills = [];
+
+    if (student.skillMastery) {
+      for (const [skillId, data] of Object.entries(student.skillMastery)) {
+        const skillData = {
+          skillId,
+          status: data.status,
+          masteryScore: data.masteryScore,
+          date: data.masteredDate || data.learningStarted,
+          notes: data.notes
+        };
+
+        switch (data.status) {
+          case 'mastered':
+            masteredSkills.push(skillData);
+            break;
+          case 'learning':
+            learningSkills.push(skillData);
+            break;
+          case 'ready':
+            readySkills.push(skillData);
+            break;
+        }
+      }
+    }
+
+    // Get badge progress
+    const badgeProgress = {
+      total: student.masteryProgress?.earnedBadges?.length || 0,
+      activeBadge: student.masteryProgress?.activeBadge || null,
+      earnedBadges: student.masteryProgress?.earnedBadges || []
+    };
+
+    // Get recent conversations for activity summary
+    const recentConversations = await Conversation.find({ userId: studentId })
+      .sort({ startDate: -1 })
+      .limit(5)
+      .select('startDate activeMinutes problemsAttempted problemsCorrect currentTopic')
+      .lean();
+
+    const activitySummary = {
+      totalSessions: await Conversation.countDocuments({ userId: studentId }),
+      recentSessions: recentConversations.map(c => ({
+        date: c.startDate,
+        duration: c.activeMinutes,
+        problemsAttempted: c.problemsAttempted || 0,
+        problemsCorrect: c.problemsCorrect || 0,
+        accuracy: c.problemsAttempted > 0 ? Math.round((c.problemsCorrect / c.problemsAttempted) * 100) : 0,
+        topic: c.currentTopic
+      }))
+    };
+
+    res.json({
+      student: {
+        id: student._id,
+        name: `${student.firstName} ${student.lastName}`,
+        username: student.username,
+        gradeLevel: student.gradeLevel
+      },
+      placement: {
+        completed: student.learningProfile?.assessmentCompleted || false,
+        date: student.learningProfile?.assessmentDate,
+        theta,
+        percentile,
+        initialPlacement: student.learningProfile?.initialPlacement
+      },
+      skillMastery: {
+        mastered: masteredSkills,
+        learning: learningSkills,
+        ready: readySkills,
+        totalMastered: masteredSkills.length,
+        totalLearning: learningSkills.length
+      },
+      badges: badgeProgress,
+      activity: activitySummary
+    });
+
+  } catch (error) {
+    console.error('Error fetching skill report:', error);
+    res.status(500).json({ message: 'Error fetching skill report' });
+  }
+});
+
 module.exports = router;

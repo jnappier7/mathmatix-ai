@@ -201,7 +201,16 @@ const learningProfileSchema = new Schema({
       enum: ['initial', 'moderate', 'high'],
       default: 'initial'
     }
-  }
+  },
+
+  // Assessment history (for tracking resets by teachers)
+  assessmentHistory: [{
+    completedDate: { type: Date },
+    placement: { type: String },
+    resetDate: { type: Date },
+    resetBy: { type: Schema.Types.ObjectId, ref: 'User' },  // Teacher/Admin who reset it
+    reason: { type: String }
+  }]
 }, { _id: false });
 
 /* ---------- MAIN USER SCHEMA ---------- */
@@ -218,6 +227,13 @@ const userSchema = new Schema({
   lastName:  { type: String, trim: true, required: true },
   name:      { type: String, trim: true },              // derived in pre-save hook
   role:      { type: String, enum: ['student','teacher','parent','admin'], default: 'student' },
+
+  /* Student-specific profile */
+  gradeLevel: { type: String, trim: true },              // e.g., '7th Grade', '9th Grade', 'College'
+  mathCourse: { type: String, trim: true },              // e.g., 'Algebra 1', 'Geometry', 'Pre-Calculus'
+  tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual'], default: 'encouraging' },
+  learningStyle: { type: String, trim: true },           // 'Visual', 'Auditory', 'Kinesthetic'
+  interests: [{ type: String, trim: true }],             // ['Gaming', 'Basketball', 'Music']
 
   /* Tutor selection */
   teacherId:        { type: Schema.Types.ObjectId, ref: 'User' },

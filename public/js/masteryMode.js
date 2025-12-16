@@ -56,32 +56,33 @@ function initializeMasteryMode() {
     }
   });
 
-  // Start mastery journey - redirect to screener
+  // Start mastery journey - check if user already completed placement screener
   elements.startJourneyBtn?.addEventListener('click', async () => {
     try {
       console.log('Begin Journey clicked!');
-      // Save state to indicate we're starting mastery mode
-      sessionStorage.setItem('masteryModeActive', 'true');
-      sessionStorage.setItem('masteryPhase', 'placement');
 
-      // Redirect to screener
-      window.location.href = '/screener.html';
-    } catch (error) {
-      console.error('Error starting mastery journey:', error);
-      alert('Failed to start mastery journey. Please try again.');
-    }
-  });
+      // Check if user has already completed the placement screener
+      const userResponse = await fetch('/user', { credentials: 'include' });
+      if (!userResponse.ok) {
+        throw new Error('Failed to fetch user data');
+      }
 
-  // Start mastery journey - redirect to screener
-  elements.startJourneyBtn?.addEventListener('click', async () => {
-    try {
-      console.log('Begin Journey clicked!');
-      // Save state to indicate we're starting mastery mode
-      sessionStorage.setItem('masteryModeActive', 'true');
-      sessionStorage.setItem('masteryPhase', 'placement');
+      const userData = await userResponse.json();
+      const assessmentCompleted = userData.user?.learningProfile?.assessmentCompleted;
 
-      // Redirect to screener
-      window.location.href = '/screener.html';
+      if (assessmentCompleted) {
+        // User already completed placement - skip straight to badge selection
+        console.log('[Mastery Mode] User already completed placement screener, skipping to badges');
+        sessionStorage.setItem('masteryModeActive', 'true');
+        sessionStorage.setItem('masteryPhase', 'badges');
+        window.location.href = '/badge-map.html';
+      } else {
+        // User needs placement - redirect to screener
+        console.log('[Mastery Mode] User needs placement screener');
+        sessionStorage.setItem('masteryModeActive', 'true');
+        sessionStorage.setItem('masteryPhase', 'placement');
+        window.location.href = '/screener.html';
+      }
     } catch (error) {
       console.error('Error starting mastery journey:', error);
       alert('Failed to start mastery journey. Please try again.');

@@ -39,10 +39,13 @@ router.post('/start', isAuthenticated, async (req, res) => {
 
     // Check if assessment already completed
     if (user.learningProfile.assessmentCompleted) {
-      return res.json({
+      return res.status(403).json({
+        error: 'Assessment already completed',
         alreadyCompleted: true,
-        message: 'Assessment already completed. Would you like to retake it?',
-        completedDate: user.learningProfile.assessmentDate
+        message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
+        completedDate: user.learningProfile.assessmentDate,
+        theta: user.learningProfile.initialPlacement,
+        canReset: false  // Only teachers can reset via dashboard
       });
     }
 
@@ -94,28 +97,69 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       targetDifficulty = session.theta;
     }
 
-    // Select skill to test (TODO: more sophisticated skill selection)
-    const skillsToTest = [
-      'integer-addition',
-      'one-step-equations-addition',
-      'two-step-equations',
-      'combining-like-terms',
-      'order-of-operations'
-    ];
+    // ADAPTIVE SKILL SELECTION (diversified, not round-robin)
+    // Full skill library organized by difficulty tiers
+    const skillLibrary = {
+      'foundations': [
+        { id: 'integer-addition', difficulty: -1.5 },
+        { id: 'integer-subtraction', difficulty: -1.3 }
+      ],
+      'basic-algebra': [
+        { id: 'combining-like-terms', difficulty: -0.5 },
+        { id: 'order-of-operations', difficulty: -0.3 },
+        { id: 'one-step-equations-addition', difficulty: 0.0 }
+      ],
+      'intermediate': [
+        { id: 'one-step-equations-multiplication', difficulty: 0.5 },
+        { id: 'two-step-equations', difficulty: 1.0 },
+        { id: 'distributive-property', difficulty: 1.2 }
+      ],
+      'advanced': [
+        { id: 'solving-multi-step-equations', difficulty: 1.8 },
+        { id: 'integer-all-operations', difficulty: 2.0 }
+      ]
+    };
 
-    const skillId = skillsToTest[session.questionCount % skillsToTest.length];
+    // Select skill near target difficulty that hasn't been over-tested
+    let selectedSkillId;
+    let candidateSkills = [];
+
+    // Gather candidate skills from all tiers
+    for (const tier in skillLibrary) {
+      for (const skill of skillLibrary[tier]) {
+        // Count how many times this skill has been tested
+        const testCount = session.testedSkills.filter(s => s === skill.id).length;
+
+        // Calculate distance from target difficulty
+        const difficultyDistance = Math.abs(skill.difficulty - targetDifficulty);
+
+        // Prefer untested or less-tested skills near target difficulty
+        candidateSkills.push({
+          skillId: skill.id,
+          difficulty: skill.difficulty,
+          testCount,
+          difficultyDistance,
+          // Lower score = better candidate
+          score: difficultyDistance * 10 + testCount * 5
+        });
+      }
+    }
+
+    // Sort by score (lower is better) and pick best untested or least-tested
+    candidateSkills.sort((a, b) => a.score - b.score);
+    selectedSkillId = candidateSkills[0].skillId;
 
     // Try to find existing problem in database
     let problem = await Problem.findNearDifficulty(
-      skillId,
+      selectedSkillId,
       targetDifficulty,
       session.responses.map(r => r.problemId)
     );
 
     // If no problem found, generate one
     if (!problem) {
-      console.log(`[Screener] No problem found in DB, generating for ${skillId} at difficulty ${targetDifficulty}`);
-      const generated = generateProblem(skillId, { difficulty: targetDifficulty });
+      console.log(`[Screener] No problem found in DB, generating for ${selectedSkillId} at difficulty ${targetDifficulty.toFixed(2)}`);
+      const generated = generateProblem(selectedSkillId, { difficulty: targetDifficulty });
 
       // Optionally save to database for future use
       problem = new Problem(generated);
@@ -128,11 +172,17 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
         content: problem.content,
         skillId: problem.skillId,
         questionNumber: session.questionCount + 1,
-        maxQuestions: session.maxQuestions
+        progress: {
+          current: session.questionCount + 1,
+          min: session.minQuestions,
+          target: session.targetQuestions,
+          max: session.maxQuestions
+        }
       },
       session: {
         questionCount: session.questionCount,
         theta: session.theta,
+        standardError: session.standardError,
         confidence: session.confidence
       }
     });
