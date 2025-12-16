@@ -1681,12 +1681,30 @@ form label, .password-label-row label {
     border-top: 1px solid rgba(var(--clr-primary-teal-rgb), 0.2);
     box-shadow: var(--shadow-sm);
     box-sizing: border-box;
-    height: 100%;
+    max-height: 100%; /* Changed from height to max-height for better overflow handling */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Changed from center to flex-start so content aligns from top */
     text-align: left;
     overflow-y: auto;
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: var(--clr-primary-teal) rgba(0,0,0,0.1); /* For Firefox */
+}
+
+/* Webkit scrollbar styling for overlay */
+.tutor-card-details-overlay::-webkit-scrollbar {
+    width: 6px;
+}
+.tutor-card-details-overlay::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+    border-radius: 3px;
+}
+.tutor-card-details-overlay::-webkit-scrollbar-thumb {
+    background: var(--clr-primary-teal);
+    border-radius: 3px;
+}
+.tutor-card-details-overlay::-webkit-scrollbar-thumb:hover {
+    background: var(--clr-primary-dark);
 }
 
 .tutor-card:hover .tutor-card-details-overlay,

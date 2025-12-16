@@ -121,11 +121,20 @@ function displayAbilityLevel() {
   const abilityFill = document.getElementById('ability-fill');
   const thetaDisplay = document.getElementById('theta-display');
 
+  // Handle new users who haven't completed screener yet
+  if (state.currentTheta === null || state.currentTheta === undefined || isNaN(state.currentTheta)) {
+    abilityFill.style.width = '0%';
+    thetaDisplay.textContent = 'Complete screener to see your level';
+    thetaDisplay.style.fontSize = '14px'; // Make text smaller to fit
+    return;
+  }
+
   // Map theta (-3 to +3) to percentage (0% to 100%)
   const percentage = Math.min(100, Math.max(0, ((state.currentTheta + 3) / 6) * 100));
 
   abilityFill.style.width = `${percentage}%`;
   thetaDisplay.textContent = `θ = ${state.currentTheta.toFixed(1)}`;
+  thetaDisplay.style.fontSize = ''; // Reset font size
 }
 
 function renderBadgeMap() {
