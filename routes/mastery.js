@@ -9,6 +9,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Skill = require('../models/skill');
 const { prepareBadgeLaunch } = require('../utils/badgeLaunchService'); // TEACHING ENHANCEMENT
@@ -25,7 +26,7 @@ const { generateInterviewQuestions, generateFollowUp, evaluateResponse, createIn
  * TEACHING ENHANCEMENT: Dynamic Interview Question Generation
  * POST /api/mastery/interview-question
  */
-router.post('/interview-question', async (req, res) => {
+router.post('/interview-question', isAuthenticated, async (req, res) => {
   try {
     const { screenerResults } = req.body;
 
@@ -63,7 +64,7 @@ router.post('/interview-question', async (req, res) => {
  * TEACHING ENHANCEMENT: Evaluate interview response and generate follow-up
  * POST /api/mastery/interview-response
  */
-router.post('/interview-response', async (req, res) => {
+router.post('/interview-response', isAuthenticated, async (req, res) => {
   try {
     const { question, studentResponse, skillId } = req.body;
 
@@ -107,7 +108,7 @@ router.post('/interview-response', async (req, res) => {
  * Get available badges for student
  * GET /api/mastery/available-badges
  */
-router.get('/available-badges', async (req, res) => {
+router.get('/available-badges', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -561,7 +562,7 @@ async function generateAvailableBadges(theta, user) {
  * Select a badge to work toward
  * POST /api/mastery/select-badge
  */
-router.post('/select-badge', async (req, res) => {
+router.post('/select-badge', isAuthenticated, async (req, res) => {
   try {
     const { badgeId } = req.body;
     const user = await User.findById(req.user._id);
@@ -636,7 +637,7 @@ router.post('/select-badge', async (req, res) => {
  * Start badge earning attempt
  * POST /api/mastery/start-badge
  */
-router.post('/start-badge', async (req, res) => {
+router.post('/start-badge', isAuthenticated, async (req, res) => {
   try {
     const { badgeId } = req.body;
     const user = await User.findById(req.user._id);
@@ -689,7 +690,7 @@ router.post('/start-badge', async (req, res) => {
  * Record problem attempt for active badge
  * POST /api/mastery/record-badge-attempt
  */
-router.post('/record-badge-attempt', async (req, res) => {
+router.post('/record-badge-attempt', isAuthenticated, async (req, res) => {
   try {
     const { correct, problemId } = req.body;
     const user = await User.findById(req.user._id);
@@ -736,7 +737,7 @@ router.post('/record-badge-attempt', async (req, res) => {
  * Get active badge progress
  * GET /api/mastery/active-badge
  */
-router.get('/active-badge', async (req, res) => {
+router.get('/active-badge', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -781,7 +782,7 @@ router.get('/active-badge', async (req, res) => {
  * Complete active badge (award it)
  * POST /api/mastery/complete-badge
  */
-router.post('/complete-badge', async (req, res) => {
+router.post('/complete-badge', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -851,7 +852,7 @@ router.post('/complete-badge', async (req, res) => {
  * Award badge to student
  * POST /api/mastery/award-badge
  */
-router.post('/award-badge', async (req, res) => {
+router.post('/award-badge', isAuthenticated, async (req, res) => {
   try {
     const { badgeId, score } = req.body;
     const user = await User.findById(req.user._id);
@@ -902,7 +903,7 @@ router.post('/award-badge', async (req, res) => {
  * Get next problem for current phase
  * GET /api/mastery/next-phase-problem
  */
-router.get('/next-phase-problem', async (req, res) => {
+router.get('/next-phase-problem', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -930,7 +931,7 @@ router.get('/next-phase-problem', async (req, res) => {
  * Record problem attempt in current phase
  * POST /api/mastery/record-phase-attempt
  */
-router.post('/record-phase-attempt', async (req, res) => {
+router.post('/record-phase-attempt', isAuthenticated, async (req, res) => {
   try {
     const { problemId, correct, timeSpent, hintsUsed } = req.body;
     const user = await User.findById(req.user._id);
@@ -956,7 +957,7 @@ router.post('/record-phase-attempt', async (req, res) => {
  * Get current phase instructions for AI tutor
  * GET /api/mastery/phase-instructions
  */
-router.get('/phase-instructions', async (req, res) => {
+router.get('/phase-instructions', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -983,7 +984,7 @@ router.get('/phase-instructions', async (req, res) => {
  * Request a hint for current problem
  * POST /api/mastery/request-hint
  */
-router.post('/request-hint', async (req, res) => {
+router.post('/request-hint', isAuthenticated, async (req, res) => {
   try {
     const { problemId, currentLevel, studentWork, problem } = req.body;
     const user = await User.findById(req.user._id);
@@ -1038,7 +1039,7 @@ router.post('/request-hint', async (req, res) => {
  * Analyze error and get reteaching
  * POST /api/mastery/analyze-error
  */
-router.post('/analyze-error', async (req, res) => {
+router.post('/analyze-error', isAuthenticated, async (req, res) => {
   try {
     const { problem, studentAnswer } = req.body;
     const user = await User.findById(req.user._id);
@@ -1079,7 +1080,7 @@ router.post('/analyze-error', async (req, res) => {
  * Mark misconception as addressed
  * POST /api/mastery/misconception-addressed
  */
-router.post('/misconception-addressed', async (req, res) => {
+router.post('/misconception-addressed', isAuthenticated, async (req, res) => {
   try {
     const { misconceptionName } = req.body;
     const user = await User.findById(req.user._id);
