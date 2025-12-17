@@ -8,8 +8,10 @@ const { generateAlternativeReasoningPrompt } = require('./alternativeReasoning')
 
 /**
  * Build skill mastery context for AI prompt
+ * @param {Object} userProfile - User profile object
+ * @param {string|null} filterToSkill - Optional skill ID to filter to (for mastery mode)
  */
-function buildSkillMasteryContext(userProfile) {
+function buildSkillMasteryContext(userProfile, filterToSkill = null) {
   // Handle missing or invalid skillMastery field (existing users)
   if (!userProfile.skillMastery ||
       !(userProfile.skillMastery instanceof Map) ||
@@ -26,6 +28,11 @@ function buildSkillMasteryContext(userProfile) {
   const ready = [];
 
   for (const [skillId, data] of userProfile.skillMastery) {
+    // If filtering to a specific skill (mastery mode), only include that skill
+    if (filterToSkill && skillId !== filterToSkill) {
+      continue;
+    }
+
     const displayId = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
     if (data.status === 'mastered') {
@@ -180,6 +187,24 @@ function generateMasteryModePrompt(masteryContext) {
     : 0;
 
   return `
+🚨 ==================== CONTEXT OVERRIDE: MASTERY MODE ACTIVE ==================== 🚨
+
+**CRITICAL: YOU ARE IN MASTERY MODE - ALL OTHER CONTEXTS ARE SUSPENDED**
+
+You are currently in a LOCKED, FOCUSED badge-earning session. This overrides all other curriculum, learning paths, and general tutoring contexts.
+
+**IGNORE:**
+- ❌ Any "currently learning" skills that are NOT ${skillId}
+- ❌ Curriculum context from teachers (unless it's about ${skillId})
+- ❌ General "what's next" suggestions
+- ❌ Uploaded files or previous work (unless directly related to ${skillId})
+- ❌ Broader learning profile discussions
+
+**FOCUS EXCLUSIVELY ON:**
+✅ ${skillId} - THIS SKILL ONLY
+✅ Badge progress for ${badgeName}
+✅ Problems and practice for ${skillId}
+
 --- MASTERY MODE: BADGE EARNING (STRUCTURED LEARNING) ---
 🎯 **YOU ARE IN MASTERY MODE - THIS IS A STRUCTURED LEARNING EXPERIENCE**
 
@@ -193,18 +218,20 @@ function generateMasteryModePrompt(masteryContext) {
 1. **STRUCTURED PROGRESSION (NOT FREE CHAT):**
    - This is a focused skill-building session, not open-ended tutoring
    - Keep the student on track with the specific skill: ${skillId}
+   - If the student asks a vague question like "What do I need to know?", answer IN THE CONTEXT OF ${skillId} ONLY
+   - Do NOT reference other skills, exam prep, or general topics unless student explicitly asks to exit mastery mode
    - Provide structured lessons with clear learning objectives
    - Build from fundamentals to mastery systematically
 
 2. **LESSON STRUCTURE (FOLLOW THIS SEQUENCE):**
-   a) **Concept Introduction** - Briefly explain the core concept/rule
+   a) **Concept Introduction** - Briefly explain the core concept/rule for ${skillId}
    b) **Guided Example** - Walk through ONE example together using Socratic questioning
    c) **Independent Practice** - Give the student a problem to try on their own
    d) **Feedback & Iteration** - Assess, provide specific feedback, adjust as needed
    e) **Next Problem** - Continue with progressive difficulty
 
 3. **PROBLEM GENERATION:**
-   - Create fresh practice problems for ${skillId}
+   - Create fresh practice problems for ${skillId} ONLY
    - Start easier, gradually increase difficulty
    - Ensure variety to build robust understanding
    - Track progress: student has solved ${problemsCompleted} so far
@@ -226,7 +253,15 @@ function generateMasteryModePrompt(masteryContext) {
    - Encourage when student hits milestones
    - When close to completion, build excitement
 
-**REMEMBER:** This is structured learning with personality - NOT just free chat. Guide them through systematic skill-building while keeping it engaging and supportive.
+**VAGUE QUESTION HANDLING:**
+If the student asks "What do I need to know?", "What should I learn?", or similar vague questions:
+- Answer ONLY in the context of ${skillId}
+- Example: "For ${skillId}, you need to understand [key concepts for this specific skill]"
+- Do NOT mention other skills, linear equations, exam prep, or anything outside ${skillId}
+
+**REMEMBER:** This is structured learning with personality - NOT free chat. Stay laser-focused on ${skillId}. Guide them through systematic skill-building while keeping it engaging and supportive.
+
+🚨 ==================== END MASTERY MODE CONTEXT ==================== 🚨
 `;
 }
 
@@ -348,7 +383,11 @@ ${generateDOKGatingPrompt()}
 ${recommendAssessmentModality(userProfile.learningProfile || {}, 'default').length > 0 ?
   generateMultimodalPrompt(recommendAssessmentModality(userProfile.learningProfile || {}, 'default')) : ''}
 
-${masteryContext ? generateMasteryModePrompt(masteryContext) : ''}
+${masteryContext ? `
+${generateMasteryModePrompt(masteryContext)}
+
+**NOTE:** The mastery mode above OVERRIDES other contexts. Stay focused on ${masteryContext.skillId} only.
+` : ''}
 
 --- RESPONSE STYLE (CRITICAL) ---
 **KEEP IT SHORT AND CONVERSATIONAL - LIKE TEXT MESSAGES:**
@@ -477,11 +516,16 @@ You are tutoring a student named ${firstName || 'a student'}.
 - Learning Style Preferences: ${learningStyle || 'varied approaches'}
 ${interests && interests.length > 0 ? `- Student Interests: ${interests.join(', ')} (use these for examples!)` : ''}
 
-${buildSkillMasteryContext(userProfile)}
+${masteryContext ?
+  `${buildSkillMasteryContext(userProfile, masteryContext.skillId)}
 
-${buildLearningProfileContext(userProfile)}
+**NOTE:** You are in mastery mode for ${masteryContext.skillId}. Other learning contexts are suspended.
+` :
+  `${buildSkillMasteryContext(userProfile)}
 
-${curriculumContext ? `--- CURRICULUM CONTEXT (FROM TEACHER) ---
+${buildLearningProfileContext(userProfile)}`}
+
+${!masteryContext && curriculumContext ? `--- CURRICULUM CONTEXT (FROM TEACHER) ---
 ${curriculumContext}
 
 **IMPORTANT:** Use this curriculum information to:
@@ -492,7 +536,7 @@ ${curriculumContext}
 - Apply the scaffolding approach the teacher prefers
 ` : ''}
 
-${uploadContext ? `--- STUDENT'S PREVIOUS WORK (UPLOADED FILES) ---
+${!masteryContext && uploadContext ? `--- STUDENT'S PREVIOUS WORK (UPLOADED FILES) ---
 ${firstName} has uploaded ${uploadContext.count} file${uploadContext.count !== 1 ? 's' : ''} recently. Here's what you know about their previous work:
 
 ${uploadContext.summary}

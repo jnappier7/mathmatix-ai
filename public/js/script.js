@@ -1854,13 +1854,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         messageRef.bubble.classList.remove('streaming');
 
-        // Add audio playback button (if speakText function exists)
-        if (typeof speakText === 'function') {
+        // Add audio playback button
+        if (typeof playAudio === 'function') {
             const playBtn = document.createElement("button");
             playBtn.className = "play-audio-btn";
-            playBtn.textContent = "🔊";
-            playBtn.title = "Play audio";
-            playBtn.onclick = () => speakText(fullText, currentUser?.selectedTutorId);
+            playBtn.innerHTML = '<i class="fas fa-play"></i><i class="fas fa-wave-square"></i><i class="fas fa-spinner"></i>';
+            playBtn.setAttribute("title", "Play audio");
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                playBtn.disabled = true;
+                playBtn.classList.add('is-loading');
+                const tutor = window.TUTOR_CONFIG?.[currentUser?.selectedTutorId] || window.TUTOR_CONFIG?.['default'];
+                const speakableText = generateSpeakableText(fullText);
+                playAudio(speakableText, tutor?.voiceId, messageRef.bubble.id);
+            });
             messageRef.bubble.appendChild(playBtn);
         }
 
