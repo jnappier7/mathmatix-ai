@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
@@ -14,7 +15,17 @@ const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const pdfOcr = require('../utils/pdfOcr');
 const axios = require('axios');
 
-const upload = multer({ storage: multer.memoryStorage() });
+// CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: '/tmp',
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        }
+    }),
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB per file
+});
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 
 router.post('/', isAuthenticated, upload.any(), async (req, res) => {
@@ -43,7 +54,9 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
                 console.log(`[chatWithFile] Using Mathpix PDF endpoint for: ${file.originalname}`);
 
                 try {
-                    const extractedText = await pdfOcr(file.buffer, file.originalname);
+                    // Read file from disk
+                    const fileBuffer = fsSync.readFileSync(file.path);
+                    const extractedText = await pdfOcr(fileBuffer, file.originalname);
 
                     if (extractedText && extractedText.trim()) {
                         pdfTexts.push({
@@ -60,7 +73,8 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
                     }
                 } catch (pdfError) {
                     console.error(`[chatWithFile] PDF processing error for ${file.originalname}:`, pdfError.message);
-                    // Return error to user instead of silently failing
+                    // Clean up all temp files before returning error
+                    files.forEach(f => { if (f.path) try { fsSync.unlinkSync(f.path); } catch(e) {} });
                     return res.status(500).json({
                         message: `Failed to process PDF: ${pdfError.message}`,
                         error: 'PDF_PROCESSING_ERROR'
@@ -69,7 +83,9 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
             } else {
                 // Images: Use GPT-4o-mini vision directly (fast, native)
                 console.log(`[chatWithFile] Using Vision API for: ${file.originalname}`);
-                const base64 = file.buffer.toString('base64');
+                // Read file from disk
+                const fileBuffer = fsSync.readFileSync(file.path);
+                const base64 = fileBuffer.toString('base64');
                 const dataUrl = `data:${file.mimetype};base64,${base64}`;
 
                 imageContents.push({
@@ -233,6 +249,18 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
 
         const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
 
+        // Clean up all temp files after successful processing
+        files.forEach(file => {
+            if (file.path) {
+                try {
+                    fsSync.unlinkSync(file.path);
+                    console.log(`[chatWithFile] Cleaned up temp file: ${file.path}`);
+                } catch (cleanupErr) {
+                    console.error(`[chatWithFile] Failed to cleanup ${file.path}:`, cleanupErr.message);
+                }
+            }
+        });
+
         res.json({
             text: aiResponseText,
             userXp: user.xp - xpForCurrentLevelStart,
@@ -250,6 +278,19 @@ router.post('/', isAuthenticated, upload.any(), async (req, res) => {
             response: error.response?.data,
             status: error.response?.status
         });
+
+        // Clean up temp files on error
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(file => {
+                if (file.path) {
+                    try {
+                        fsSync.unlinkSync(file.path);
+                    } catch (cleanupErr) {
+                        console.error(`Failed to cleanup temp file: ${cleanupErr.message}`);
+                    }
+                }
+            });
+        }
 
         // Return more helpful error message
         if (error.response?.status === 400) {
