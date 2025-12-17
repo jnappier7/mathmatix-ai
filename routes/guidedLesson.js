@@ -6,7 +6,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { generateSystemPrompt } = require('../utils/prompt');
 const User = require('../models/user');
-const { callLLM, retryWithExponentialBackoff } = require("../utils/openaiClient");
+const { callLLM, retryWithExponentialBackoff } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
 const { selectWarmupSkill, checkPrerequisiteReadiness } = require('../utils/prerequisiteMapper');
 const {
   initializeLessonPhase,

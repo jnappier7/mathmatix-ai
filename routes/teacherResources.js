@@ -11,7 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const { extractTextFromPDF } = require('../utils/pdfOcr');
 const { performOCR } = require('../utils/ocr');
-const { generateEmbedding } = require('../utils/openaiClient'); // DIRECTIVE 3
+const { generateEmbedding } = require('../utils/llmGateway'); // DIRECTIVE 3 + CTO REVIEW FIX
 
 // Ensure upload directory exists
 const uploadDir = 'uploads/teacher-resources';

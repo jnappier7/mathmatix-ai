@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
-const axios = require('axios');
+const { gradeWithVision } = require('../utils/llmGateway'); // CTO REVIEW FIX: Use unified LLMGateway
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -110,42 +110,16 @@ Step 2: [What they did]
 
 Be specific, encouraging, and educational. Remember this is for learning, not just evaluation.`;
 
-        // Call OpenAI Vision API
-        const openaiResponse = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
-            {
-                model: 'gpt-4o',
-                messages: [
-                    {
-                        role: 'user',
-                        content: [
-                            {
-                                type: 'text',
-                                text: gradingPrompt
-                            },
-                            {
-                                type: 'image_url',
-                                image_url: {
-                                    url: dataUrl,
-                                    detail: 'high'
-                                }
-                            }
-                        ]
-                    }
-                ],
-                max_tokens: 1500,
-                temperature: 0.7
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
+        // CTO REVIEW FIX: Call LLMGateway for consistent AI interaction
+        const aiResponse = await gradeWithVision({
+            imageDataUrl: dataUrl,
+            prompt: gradingPrompt
+        }, {
+            maxTokens: 1500,
+            temperature: 0.7
+        });
 
-        const aiResponse = openaiResponse.data.choices[0].message.content;
-        console.log('[gradeWork] AI grading response received');
+        console.log('[gradeWork] AI grading response received (via LLMGateway)');
 
         // Parse the score from the response
         const scoreMatch = aiResponse.match(/\*\*SCORE:\s*(\d+)\/100\*\*/);
@@ -193,10 +167,6 @@ Be specific, encouraging, and educational. Remember this is for learning, not ju
 
     } catch (error) {
         console.error('[gradeWork] Error:', error.message);
-
-        if (error.response) {
-            console.error('[gradeWork] API error:', error.response.data);
-        }
 
         // Clean up temp file on error
         if (req.file && req.file.path) {

@@ -23,6 +23,19 @@ const { generateProblem } = require('../utils/problemGenerator');
 const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 
 /**
+ * CTO REVIEW FIX: LRU (Least Recently Used) Strategy for Problem Exclusion
+ *
+ * PROBLEM: Using $nin with all historical problemIds causes O(N) database queries
+ * as students answer 1000+ problems over a school year.
+ *
+ * SOLUTION: Only exclude the LAST 100 problems (LRU window). This:
+ * - Prevents immediate repeats (boring for students)
+ * - Keeps database query size bounded to O(1) constant
+ * - Allows old problems to resurface for spaced repetition (pedagogically sound)
+ */
+const LRU_EXCLUSION_WINDOW = 100;
+
+/**
  * POST /api/screener/start
  * Initialize a new adaptive screener session
  */
@@ -153,10 +166,15 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     selectedSkillId = candidateSkills[0].skillId;
 
     // Try to find existing problem in database
+    // CTO REVIEW FIX: Use LRU strategy - only exclude last N problems (not all history)
+    const recentProblemIds = session.responses
+      .slice(-LRU_EXCLUSION_WINDOW)  // Take only the last 100 responses
+      .map(r => r.problemId);
+
     let problem = await Problem.findNearDifficulty(
       selectedSkillId,
       targetDifficulty,
-      session.responses.map(r => r.problemId)
+      recentProblemIds  // Bounded array size (max 100 items) instead of O(N)
     );
 
     // If no problem found, generate one
