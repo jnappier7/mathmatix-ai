@@ -48,6 +48,16 @@ router.post('/start', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Initialize learningProfile if it doesn't exist
+    if (!user.learningProfile) {
+      user.learningProfile = {
+        assessmentCompleted: false,
+        abilityEstimate: {},
+        skillMastery: new Map()
+      };
+      await user.save();
+    }
+
     // Check if assessment already completed
     if (user.learningProfile.assessmentCompleted) {
       return res.status(403).json({
@@ -381,6 +391,15 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Initialize learningProfile if it doesn't exist
+    if (!user.learningProfile) {
+      user.learningProfile = {
+        assessmentCompleted: false,
+        abilityEstimate: {},
+        skillMastery: new Map()
+      };
     }
 
     // Generate final report
