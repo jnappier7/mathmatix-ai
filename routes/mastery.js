@@ -116,6 +116,16 @@ router.get('/available-badges', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Initialize learningProfile if it doesn't exist
+    if (!user.learningProfile) {
+      user.learningProfile = {
+        assessmentCompleted: false,
+        abilityEstimate: {},
+        skillMastery: new Map()
+      };
+      await user.save();
+    }
+
     // Get user's theta estimate
     const theta = user.learningProfile?.abilityEstimate?.theta || 0;
 
@@ -743,6 +753,16 @@ router.get('/active-badge', isAuthenticated, async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Initialize learningProfile if it doesn't exist
+    if (!user.learningProfile) {
+      user.learningProfile = {
+        assessmentCompleted: false,
+        abilityEstimate: {},
+        skillMastery: new Map()
+      };
+      await user.save();
     }
 
     const activeBadge = user.masteryProgress?.activeBadge;
