@@ -127,7 +127,24 @@ router.get('/available-badges', isAuthenticated, async (req, res) => {
     }
 
     // Get user's theta estimate
-    const theta = user.learningProfile?.abilityEstimate?.theta || 0;
+    let theta = user.learningProfile?.abilityEstimate?.theta;
+
+    // MIGRATION: Handle old format where theta was stored as string in initialPlacement
+    if (theta === undefined && user.learningProfile?.initialPlacement) {
+      // Parse "Theta: 1.5 (75th percentile)" format
+      const match = user.learningProfile.initialPlacement.match(/Theta:\s*([-\d.]+)/);
+      if (match) {
+        theta = parseFloat(match[1]);
+        // Update to new format
+        user.learningProfile.abilityEstimate = { theta };
+        await user.save();
+      }
+    }
+
+    // Default to 0 if still undefined
+    if (theta === undefined || isNaN(theta)) {
+      theta = 0;
+    }
 
     // Generate available badges based on theta
     const badges = await generateAvailableBadges(theta, user);
