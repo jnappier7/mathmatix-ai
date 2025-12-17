@@ -11,7 +11,7 @@ const Curriculum = require('../models/curriculum');
 const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
 const { generateSystemPrompt } = require('../utils/prompt');
-const { callLLM } = require("../utils/openaiClient");
+const { callLLM, callLLMStream } = require("../utils/openaiClient");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const axios = require('axios');
@@ -188,11 +188,75 @@ router.post('/', isAuthenticated, async (req, res) => {
             .filter(msg => msg.role === 'assistant' && msg.reaction)
             .map(msg => ({ content: msg.content.substring(0, 150), reaction: msg.reaction }));
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages);
+        // DIRECTIVE 2: Extract fluency profile for adaptive difficulty
+        let fluencyContext = null;
+        if (user.fluencyProfile) {
+            const avgFluencyZScore = user.fluencyProfile.averageFluencyZScore || 0;
+            const speedLevel = avgFluencyZScore < -1.0 ? 'fast'
+                            : avgFluencyZScore > 1.0 ? 'slow'
+                            : 'normal';
+
+            fluencyContext = {
+                fluencyZScore: avgFluencyZScore,
+                speedLevel,
+                readSpeedModifier: user.learningProfile?.fluencyBaseline?.readSpeedModifier || 1.0
+            };
+
+            console.log(`📊 [Adaptive] Fluency context: z=${avgFluencyZScore.toFixed(2)}, speed=${speedLevel}`);
+        }
+
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
-        const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
-        let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+        // Check if client wants streaming (via query parameter)
+        const useStreaming = req.query.stream === 'true';
+
+        let aiResponseText = '';
+
+        if (useStreaming) {
+            // STREAMING MODE: Use Server-Sent Events for real-time response
+            console.log('📡 Streaming mode activated');
+
+            // Set SSE headers
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+            res.flushHeaders();
+
+            try {
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 400 });
+
+                // Buffer to collect the complete response for database storage
+                let fullResponseBuffer = '';
+
+                // Stream chunks to client as they arrive
+                for await (const chunk of stream) {
+                    const content = chunk.choices[0]?.delta?.content || '';
+                    if (content) {
+                        fullResponseBuffer += content;
+
+                        // Send chunk to client via SSE
+                        res.write(`data: ${JSON.stringify({ type: 'chunk', content })}\n\n`);
+                    }
+                }
+
+                aiResponseText = fullResponseBuffer.trim() || "I'm not sure how to respond.";
+
+                // Continue with post-processing...
+                // (XP awards, drawing commands, etc. will be handled below and sent as final event)
+
+            } catch (streamError) {
+                console.error('ERROR: Streaming failed, falling back to non-streaming:', streamError.message);
+                // Fallback to non-streaming if streaming fails
+                const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 400 });
+                aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+                res.write(`data: ${JSON.stringify({ type: 'chunk', content: aiResponseText })}\n\n`);
+            }
+        } else {
+            // NON-STREAMING MODE: Original behavior
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
+            aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+        }
 
         // Parse AI drawing commands using the new high-level tools
         const { drawingSequence, cleanedText } = parseAIDrawingCommands(aiResponseText);
@@ -383,20 +447,29 @@ router.post('/', isAuthenticated, async (req, res) => {
 		}
 
         await user.save();
-        
+
         const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
         const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
 
-        res.json({
-			text: aiResponseText,
-			userXp: userXpInCurrentLevel,
-			userLevel: user.level,
-			xpNeeded: xpForNextLevel,
-			specialXpAwarded: specialXpAwardedMessage,
-			voiceId: currentTutor.voiceId,
-			newlyUnlockedTutors: tutorsJustUnlocked,
-			drawingSequence: dynamicDrawingSequence
-		});
+        const responseData = {
+            text: aiResponseText,
+            userXp: userXpInCurrentLevel,
+            userLevel: user.level,
+            xpNeeded: xpForNextLevel,
+            specialXpAwarded: specialXpAwardedMessage,
+            voiceId: currentTutor.voiceId,
+            newlyUnlockedTutors: tutorsJustUnlocked,
+            drawingSequence: dynamicDrawingSequence
+        };
+
+        if (useStreaming) {
+            // Send final metadata as 'complete' event
+            res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
+            res.end();
+        } else {
+            // Non-streaming: send as regular JSON
+            res.json(responseData);
+        }
 
     } catch (error) {
         console.error("ERROR: Chat route failed:", error);

@@ -11,6 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const { extractTextFromPDF } = require('../utils/pdfOcr');
 const { performOCR } = require('../utils/ocr');
+const { generateEmbedding } = require('../utils/openaiClient'); // DIRECTIVE 3
 
 // Ensure upload directory exists
 const uploadDir = 'uploads/teacher-resources';
@@ -108,6 +109,25 @@ router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async 
         const autoKeywords = displayName.toLowerCase().split(/\s+/).filter(k => k.length > 2);
         const allKeywords = [...new Set([...keywordArray, ...autoKeywords])];
 
+        // DIRECTIVE 3: Generate vector embedding for semantic search
+        let embedding = null;
+        try {
+            // Create a combined text for embedding (displayName + description + extracted text)
+            const textForEmbedding = [
+                displayName,
+                description || '',
+                extractedText.slice(0, 3000) // First 3000 chars of content
+            ].filter(Boolean).join('\n\n');
+
+            if (textForEmbedding.trim().length > 0) {
+                console.log(`📊 [Embedding] Generating embedding for "${displayName}"`);
+                embedding = await generateEmbedding(textForEmbedding);
+            }
+        } catch (embeddingError) {
+            console.warn(`⚠️ [Embedding] Failed to generate embedding for "${displayName}":`, embeddingError.message);
+            // Continue without embedding - can be regenerated later
+        }
+
         // Create resource record
         const resource = new TeacherResource({
             teacherId: req.user._id,
@@ -121,6 +141,7 @@ router.post('/upload', isAuthenticated, isTeacher, upload.single('file'), async 
             keywords: allKeywords,
             category: category || 'other',
             extractedText: extractedText.slice(0, 5000), // Store first 5000 chars
+            embedding: embedding, // DIRECTIVE 3: Store embedding vector
             publicUrl: `/uploads/teacher-resources/${relativePath}`
         });
 

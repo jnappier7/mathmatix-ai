@@ -230,7 +230,7 @@ function generateMasteryModePrompt(masteryContext) {
 `;
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = []) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences
@@ -282,6 +282,32 @@ ${firstName} reacted positively to these messages from you:
 ${likedMessages.map((msg, i) => `${i + 1}. ${msg.reaction} "${msg.content}${msg.content.length >= 150 ? '...' : ''}"`).join('\n')}
 
 **This shows what communication style works best with ${firstName}. Keep doing more of what resonates!**
+` : ''}
+
+${fluencyContext ? `
+--- ADAPTIVE DIFFICULTY (DIRECTIVE 2: Fluency-Based Problem Generation) ---
+${firstName}'s processing speed: **${fluencyContext.speedLevel.toUpperCase()}** (z-score: ${fluencyContext.fluencyZScore.toFixed(2)})
+${fluencyContext.readSpeedModifier !== 1.0 ? `Read speed modifier: ${fluencyContext.readSpeedModifier.toFixed(2)}x` : ''}
+
+**PROBLEM GENERATION GUIDELINES:**
+${fluencyContext.speedLevel === 'fast' ? `
+- ${firstName} is answering quickly and may be BORED or UNDER-CHALLENGED
+- Generate problems at **HIGHER DIFFICULTY** (DOK 3: Reasoning, Word Problems, Multi-Step)
+- Example: Instead of "2x + 3 = 7", ask "Sarah has twice as many books as Tom, plus 3 more. If she has 7 books, how many does Tom have?"
+- Push them into the "stretch zone" - they're ready for more complex thinking
+` : fluencyContext.speedLevel === 'slow' ? `
+- ${firstName} is taking more time and may be STRUGGLING or STILL BUILDING FLUENCY
+- Generate problems at **LOWER DIFFICULTY** (DOK 1: Recall, Basic Facts, Simple Steps)
+- Example: Instead of "2(x + 3) = 14", start with "2x + 6 = 14" or even simpler
+- Build confidence with mastery before increasing complexity
+- Consider breaking multi-step problems into single steps
+` : `
+- ${firstName} is working at an appropriate pace
+- Continue with balanced difficulty (DOK 2: Skills & Concepts)
+- Monitor for changes and adjust as needed
+`}
+
+**IMPORTANT:** When generating practice problems, adjust the complexity to match ${firstName}'s demonstrated speed. This creates the optimal learning zone.
 ` : ''}
 
 --- SAFETY & CONTENT BOUNDARIES (ABSOLUTE) ---

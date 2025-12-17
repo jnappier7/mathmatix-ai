@@ -1802,6 +1802,87 @@ document.addEventListener("DOMContentLoaded", () => {
     // Expose appendMessage globally for masteryMode.js and guidedPath.js
     window.appendMessage = appendMessage;
 
+    // Helper function to start a streaming message (creates empty bubble)
+    function startStreamingMessage() {
+        if (!chatBox) return null;
+
+        const bubble = document.createElement("div");
+        bubble.className = "message ai streaming";
+        bubble.id = `message-${Date.now()}-${Math.random()}`;
+        bubble.dataset.messageIndex = messageIndexCounter++;
+
+        const textNode = document.createElement('span');
+        textNode.className = 'message-text';
+        textNode.textContent = ''; // Start empty
+        bubble.appendChild(textNode);
+
+        chatBox.appendChild(bubble);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        return { bubble, textNode };
+    }
+
+    // Helper function to append a chunk to a streaming message
+    function appendStreamingChunk(messageRef, chunk) {
+        if (!messageRef || !messageRef.textNode) return;
+
+        const currentText = messageRef.textNode.textContent || '';
+        const newText = currentText + chunk;
+
+        // Update the text content
+        messageRef.textNode.textContent = newText;
+
+        // Re-parse markdown if it's an AI message
+        if (messageRef.bubble.classList.contains('ai') && typeof marked === 'function') {
+            const protectedText = newText.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
+            const dirtyHtml = marked.parse(protectedText, { breaks: true });
+            messageRef.textNode.innerHTML = dirtyHtml.replace(/@@LATEX_OPEN@@/g, '\\(').replace(/@@LATEX_CLOSE@@/g, '\\)').replace(/@@DLATEX_OPEN@@/g, '\\[').replace(/@@DLATEX_CLOSE@@/g, '\\]');
+        }
+
+        // Re-render math if MathJax is available
+        if (window.renderMathInElement && messageRef.bubble) {
+            setTimeout(() => renderMathInElement(messageRef.bubble), 0);
+        }
+
+        // Auto-scroll
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Finalize streaming message (add audio, reactions, etc.)
+    function finalizeStreamingMessage(messageRef, fullText) {
+        if (!messageRef || !messageRef.bubble) return;
+
+        messageRef.bubble.classList.remove('streaming');
+
+        // Add audio playback button (if speakText function exists)
+        if (typeof speakText === 'function') {
+            const playBtn = document.createElement("button");
+            playBtn.className = "play-audio-btn";
+            playBtn.textContent = "🔊";
+            playBtn.title = "Play audio";
+            playBtn.onclick = () => speakText(fullText, currentUser?.selectedTutorId);
+            messageRef.bubble.appendChild(playBtn);
+        }
+
+        // Add emoji reaction container (if updateReaction function exists)
+        if (typeof updateReaction === 'function') {
+            const reactionContainer = document.createElement('div');
+            reactionContainer.className = 'reaction-container';
+            const reactions = ['😊', '🤔', '😕', '🎉'];
+            reactions.forEach(emoji => {
+                const reactionBtn = document.createElement('button');
+                reactionBtn.className = 'reaction-btn';
+                reactionBtn.textContent = emoji;
+                reactionBtn.title = `React with ${emoji}`;
+                reactionBtn.onclick = async () => {
+                    await updateReaction(messageRef.bubble.dataset.messageIndex, emoji);
+                };
+                reactionContainer.appendChild(reactionBtn);
+            });
+            messageRef.bubble.appendChild(reactionContainer);
+        }
+    }
+
     async function sendMessage() {
     const messageText = userInput.value.trim();
     if (!messageText && attachedFiles.length === 0) return;
@@ -1850,12 +1931,110 @@ document.addEventListener("DOMContentLoaded", () => {
                 credentials: 'include'
             });
         } else {
+            // STREAMING PATH: Use real-time streaming responses
+            const USE_STREAMING = true; // Feature flag - set to false to disable streaming
+
+            if (USE_STREAMING) {
+                const payload = {
+                    userId: currentUser._id,
+                    message: messageText
+                };
+
+                if (responseTime !== null) {
+                    payload.responseTime = responseTime;
+                }
+
+                // Fetch with stream=true query parameter
+                response = await fetch("/api/chat?stream=true", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                // Create streaming message bubble
+                const messageRef = startStreamingMessage();
+                let fullText = '';
+                let finalData = null;
+
+                // Read SSE stream
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+
+                    // Process SSE events (format: "data: {...}\n\n")
+                    const events = buffer.split('\n\n');
+                    buffer = events.pop(); // Keep incomplete event in buffer
+
+                    for (const event of events) {
+                        if (!event.trim() || !event.startsWith('data: ')) continue;
+
+                        try {
+                            const jsonData = JSON.parse(event.substring(6)); // Remove "data: " prefix
+
+                            if (jsonData.type === 'chunk') {
+                                fullText += jsonData.content;
+                                appendStreamingChunk(messageRef, jsonData.content);
+                            } else if (jsonData.type === 'complete') {
+                                finalData = jsonData.data;
+                            }
+                        } catch (e) {
+                            console.error('Error parsing SSE event:', e);
+                        }
+                    }
+                }
+
+                // Finalize the message
+                finalizeStreamingMessage(messageRef, fullText);
+
+                // Auto-start ghost timer if function exists
+                if (typeof autoStartGhostTimer === 'function') {
+                    autoStartGhostTimer(fullText);
+                }
+
+                // Process final data (XP, drawings, etc.)
+                if (finalData) {
+                    if (finalData.drawingSequence) {
+                        renderDrawing(finalData.drawingSequence);
+                    }
+
+                    if (finalData.newlyUnlockedTutors && finalData.newlyUnlockedTutors.length > 0) {
+                        showTutorUnlockCelebration(finalData.newlyUnlockedTutors);
+                    }
+
+                    if (finalData.userXp !== undefined) {
+                        currentUser.level = finalData.userLevel;
+                        currentUser.xpForCurrentLevel = finalData.userXp;
+                        currentUser.xpForNextLevel = finalData.xpNeeded;
+                        updateGamificationDisplay();
+                    }
+
+                    if (finalData.specialXpAwarded) {
+                        const isLevelUp = finalData.specialXpAwarded.includes('LEVEL_UP');
+                        triggerXpAnimation(finalData.specialXpAwarded, isLevelUp, !isLevelUp);
+                    }
+                }
+
+                showThinkingIndicator(false);
+                return; // Exit early since streaming path is complete
+            }
+
+            // NON-STREAMING FALLBACK (original behavior)
             const payload = {
                 userId: currentUser._id,
                 message: messageText
             };
 
-            // Add response time if captured
             if (responseTime !== null) {
                 payload.responseTime = responseTime;
             }

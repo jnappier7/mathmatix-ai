@@ -69,6 +69,11 @@ const teacherResourceSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    // DIRECTIVE 3: Vector embedding for semantic search (using OpenAI text-embedding-3-small)
+    embedding: {
+        type: [Number],
+        default: null
+    },
     // Public URL (if hosted)
     publicUrl: {
         type: String
@@ -146,6 +151,68 @@ teacherResourceSchema.methods.recordAccess = async function() {
     this.accessCount += 1;
     this.lastAccessed = new Date();
     await this.save();
+};
+
+// DIRECTIVE 3: Cosine similarity function for vector search
+function cosineSimilarity(vecA, vecB) {
+    if (!vecA || !vecB || vecA.length !== vecB.length) {
+        return 0;
+    }
+
+    let dotProduct = 0;
+    let normA = 0;
+    let normB = 0;
+
+    for (let i = 0; i < vecA.length; i++) {
+        dotProduct += vecA[i] * vecB[i];
+        normA += vecA[i] * vecA[i];
+        normB += vecB[i] * vecB[i];
+    }
+
+    normA = Math.sqrt(normA);
+    normB = Math.sqrt(normB);
+
+    if (normA === 0 || normB === 0) {
+        return 0;
+    }
+
+    return dotProduct / (normA * normB);
+}
+
+// DIRECTIVE 3: Vector similarity search method
+teacherResourceSchema.statics.vectorSearch = async function(teacherId, queryEmbedding, limit = 5) {
+    // Get all resources for this teacher that have embeddings
+    const resources = await this.find({
+        teacherId,
+        embedding: { $exists: true, $ne: null, $not: { $size: 0 } }
+    }).lean();
+
+    if (resources.length === 0) {
+        console.log('⚠️ [Vector Search] No resources with embeddings found');
+        return [];
+    }
+
+    // Calculate similarity for each resource
+    const resourcesWithScores = resources.map(resource => ({
+        resource,
+        similarity: cosineSimilarity(queryEmbedding, resource.embedding)
+    }));
+
+    // Sort by similarity (highest first) and return top N
+    resourcesWithScores.sort((a, b) => b.similarity - a.similarity);
+
+    console.log(`🔍 [Vector Search] Top ${limit} matches:`,
+        resourcesWithScores.slice(0, limit).map(r =>
+            `${r.resource.displayName} (similarity: ${r.similarity.toFixed(3)})`
+        )
+    );
+
+    return resourcesWithScores
+        .slice(0, limit)
+        .map(item => ({
+            ...item.resource,
+            _similarityScore: item.similarity
+        }));
 };
 
 module.exports = mongoose.model('TeacherResource', teacherResourceSchema);
