@@ -90,8 +90,14 @@ router.post('/start', isAuthenticated, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error starting screener:', error);
-    res.status(500).json({ error: 'Failed to start screener' });
+    console.error('[Screener Start] Error starting screener:', error);
+    console.error('[Screener Start] Error stack:', error.stack);
+    console.error('[Screener Start] User ID:', req.user?._id);
+    res.status(500).json({
+      error: 'Failed to start screener',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 

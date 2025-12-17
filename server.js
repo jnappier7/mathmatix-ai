@@ -201,13 +201,22 @@ app.use('/api/admin', adminImportRoutes); // Admin tools: CSV import for item ba
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
     try {
-        if (!req.user) return res.json({ user: null });
+        if (!req.user) {
+            console.log('[/user] No req.user found');
+            return res.json({ user: null });
+        }
 
         const User = require('./models/user');
         const { getTutorsToUnlock } = require('./utils/unlockTutors');
 
         // Check for retroactive tutor unlocks
         const user = await User.findById(req.user._id);
+
+        if (!user) {
+            console.error('[/user] User not found in database:', req.user._id);
+            return res.json({ user: null });
+        }
+
         if (user && user.level) {
             const tutorsToUnlock = getTutorsToUnlock(user.level, user.unlockedItems || []);
 
@@ -226,8 +235,10 @@ app.get("/user", isAuthenticated, async (req, res) => {
 
         res.json({ user: user ? user.toObject() : req.user.toObject() });
     } catch (error) {
-        console.error('Error in /user endpoint:', error);
-        res.json({ user: req.user ? req.user.toObject() : null });
+        console.error('[/user] Error in /user endpoint:', error);
+        console.error('[/user] Error stack:', error.stack);
+        // Return 500 error instead of trying to send user data
+        res.status(500).json({ error: 'Failed to load user data', message: error.message });
     }
 });
 

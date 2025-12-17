@@ -156,8 +156,14 @@ router.get('/available-badges', isAuthenticated, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error fetching badges:', error);
-    res.status(500).json({ error: 'Failed to load badges' });
+    console.error('[Available Badges] Error fetching badges:', error);
+    console.error('[Available Badges] Error stack:', error.stack);
+    console.error('[Available Badges] User ID:', req.user?._id);
+    res.status(500).json({
+      error: 'Failed to load badges',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
