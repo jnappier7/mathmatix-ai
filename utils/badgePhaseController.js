@@ -202,7 +202,7 @@ Encourage: "Let's try this together..."`,
 - Let student work independently
 - Provide hints only if requested or after struggle
 - Give specific feedback on errors (not just "wrong")
-- Celebrate progress: "${activeBadge.problemsCompleted}/${activeBadge.requiredProblems} done!"
+- Celebrate progress as they complete problems
 
 **When Student Gets Stuck:**
 - First ask: "What have you tried?"
