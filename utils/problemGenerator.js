@@ -440,6 +440,72 @@ const TEMPLATES = {
 };
 
 // ===========================================================================
+// ADAPTIVE DIFFICULTY ADJUSTMENT
+// ===========================================================================
+
+/**
+ * Adjust problem difficulty based on student's fluency performance
+ *
+ * DIRECTIVE 2: Connect fluency to difficulty
+ * - If fluencyZScore < -1.0 (Fast/Bored): Increase difficulty
+ * - If fluencyZScore > 1.0 (Slow/Struggling): Decrease difficulty
+ *
+ * @param {Number} baseDifficulty - Base difficulty level
+ * @param {Number} fluencyZScore - Student's fluency z-score
+ * @returns {Number} Adjusted difficulty
+ */
+function adjustDifficultyForFluency(baseDifficulty, fluencyZScore) {
+  if (!fluencyZScore || isNaN(fluencyZScore)) {
+    return baseDifficulty;
+  }
+
+  let adjustment = 0;
+
+  if (fluencyZScore < -1.0) {
+    // Student is FAST (bored) - increase difficulty
+    adjustment = 0.5;
+    console.log(`🔥 [Adaptive] Student is fast (z=${fluencyZScore.toFixed(2)}), increasing difficulty by +${adjustment}`);
+
+  } else if (fluencyZScore > 1.0) {
+    // Student is SLOW (struggling) - decrease difficulty
+    adjustment = -0.5;
+    console.log(`🐢 [Adaptive] Student is struggling (z=${fluencyZScore.toFixed(2)}), decreasing difficulty by ${adjustment}`);
+  }
+
+  const adjustedDifficulty = baseDifficulty + adjustment;
+
+  // Clamp to reasonable bounds (-2.0 to 3.0)
+  return Math.max(-2.0, Math.min(3.0, adjustedDifficulty));
+}
+
+/**
+ * Determine DOK level based on fluency performance
+ *
+ * @param {Number} fluencyZScore - Student's fluency z-score
+ * @returns {Number} DOK level (1-3)
+ */
+function determineDOKLevel(fluencyZScore) {
+  if (!fluencyZScore || isNaN(fluencyZScore)) {
+    return 1; // Default to DOK 1 (Recall)
+  }
+
+  if (fluencyZScore < -1.0) {
+    // Fast/Bored: Force DOK 3 (Reasoning/Word Problems)
+    console.log(`📊 [Adaptive] Forcing DOK 3 (Reasoning) for fast student (z=${fluencyZScore.toFixed(2)})`);
+    return 3;
+
+  } else if (fluencyZScore > 1.0) {
+    // Slow/Struggling: Force DOK 1 (Recall/Definitions)
+    console.log(`📊 [Adaptive] Forcing DOK 1 (Recall) for struggling student (z=${fluencyZScore.toFixed(2)})`);
+    return 1;
+
+  } else {
+    // Normal range: DOK 2 (Skills/Concepts)
+    return 2;
+  }
+}
+
+// ===========================================================================
 // GENERATOR FUNCTIONS
 // ===========================================================================
 
@@ -447,11 +513,20 @@ const TEMPLATES = {
  * Generate a problem at target difficulty for a skill
  *
  * @param {String} skillId - Skill identifier
- * @param {Object} options - { difficulty, templateHint }
+ * @param {Object} options - { difficulty, templateHint, fluencyModifier }
  * @returns {Object} Generated problem
  */
 function generateProblem(skillId, options = {}) {
-  const { difficulty = 0, templateHint } = options;
+  const { difficulty = 0, templateHint, fluencyModifier } = options;
+
+  // DIRECTIVE 2: Adjust difficulty based on fluency
+  let adjustedDifficulty = difficulty;
+  let dokLevel = 1;
+
+  if (fluencyModifier && fluencyModifier.fluencyZScore !== undefined) {
+    adjustedDifficulty = adjustDifficultyForFluency(difficulty, fluencyModifier.fluencyZScore);
+    dokLevel = determineDOKLevel(fluencyModifier.fluencyZScore);
+  }
 
   // Find templates for this skill
   const matchingTemplates = Object.entries(TEMPLATES)
@@ -469,8 +544,8 @@ function generateProblem(skillId, options = {}) {
     template = randomChoice(matchingTemplates.map(([k, v]) => v));
   }
 
-  // Generate problem
-  const problem = template.generate(difficulty);
+  // Generate problem with adjusted difficulty
+  const problem = template.generate(adjustedDifficulty);
 
   // Add metadata
   return {
@@ -484,12 +559,17 @@ function generateProblem(skillId, options = {}) {
       discrimination: problem.discrimination,
       calibrationConfidence: 'expert'
     },
-    dokLevel: 1,
+    dokLevel: dokLevel, // DIRECTIVE 2: Use adaptive DOK level
     metadata: {
       estimatedTime: problem.estimatedTime,
       source: 'template',
       templateId: templateHint,
-      generationParams: { difficulty, templateHint }
+      generationParams: {
+        difficulty,
+        adjustedDifficulty, // Track adjustment
+        templateHint,
+        fluencyModifier: fluencyModifier || null
+      }
     },
     isActive: true
   };
@@ -528,5 +608,7 @@ function generateProblemId() {
 module.exports = {
   generateProblem,
   generateBatch,
-  TEMPLATES
+  TEMPLATES,
+  adjustDifficultyForFluency,
+  determineDOKLevel
 };

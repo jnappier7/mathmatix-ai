@@ -5,7 +5,7 @@ const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
-const { callLLM } = require("../utils/openaiClient");
+const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
 const TUTOR_CONFIG = require("../utils/tutorConfig");
 
 router.get('/', async (req, res) => {

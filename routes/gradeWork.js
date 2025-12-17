@@ -1,11 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
-const axios = require('axios');
+const { gradeWithVision } = require('../utils/llmGateway'); // CTO REVIEW FIX: Use unified LLMGateway
 
-const upload = multer({ storage: multer.memoryStorage() });
+// CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: '/tmp',
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        }
+    }),
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
 
 /**
  * POST /api/grade-work
@@ -24,6 +36,8 @@ router.post('/', isAuthenticated, upload.single('file'), async (req, res) => {
         }
 
         if (!file.mimetype.startsWith('image/')) {
+            // Clean up temp file
+            if (file.path) fs.unlinkSync(file.path);
             return res.status(400).json({
                 success: false,
                 message: 'Only image files are supported'
@@ -32,8 +46,9 @@ router.post('/', isAuthenticated, upload.single('file'), async (req, res) => {
 
         console.log(`[gradeWork] Processing work for user: ${user.firstName} ${user.lastName}`);
 
-        // Convert image to base64 for vision API
-        const base64Image = file.buffer.toString('base64');
+        // Read file from disk and convert to base64 for vision API
+        const fileBuffer = fs.readFileSync(file.path);
+        const base64Image = fileBuffer.toString('base64');
         const dataUrl = `data:${file.mimetype};base64,${base64Image}`;
 
         // Prepare grading prompt for AI
@@ -95,42 +110,16 @@ Step 2: [What they did]
 
 Be specific, encouraging, and educational. Remember this is for learning, not just evaluation.`;
 
-        // Call OpenAI Vision API
-        const openaiResponse = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
-            {
-                model: 'gpt-4o',
-                messages: [
-                    {
-                        role: 'user',
-                        content: [
-                            {
-                                type: 'text',
-                                text: gradingPrompt
-                            },
-                            {
-                                type: 'image_url',
-                                image_url: {
-                                    url: dataUrl,
-                                    detail: 'high'
-                                }
-                            }
-                        ]
-                    }
-                ],
-                max_tokens: 1500,
-                temperature: 0.7
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
+        // CTO REVIEW FIX: Call LLMGateway for consistent AI interaction
+        const aiResponse = await gradeWithVision({
+            imageDataUrl: dataUrl,
+            prompt: gradingPrompt
+        }, {
+            maxTokens: 1500,
+            temperature: 0.7
+        });
 
-        const aiResponse = openaiResponse.data.choices[0].message.content;
-        console.log('[gradeWork] AI grading response received');
+        console.log('[gradeWork] AI grading response received (via LLMGateway)');
 
         // Parse the score from the response
         const scoreMatch = aiResponse.match(/\*\*SCORE:\s*(\d+)\/100\*\*/);
@@ -158,6 +147,12 @@ Be specific, encouraging, and educational. Remember this is for learning, not ju
         user.xp = (user.xp || 0) + xpEarned + bonusXp;
         await user.save();
 
+        // Clean up temp file after successful processing
+        if (file.path) {
+            fs.unlinkSync(file.path);
+            console.log('[gradeWork] Cleaned up temp file:', file.path);
+        }
+
         // Return grading results with annotations
         res.json({
             success: true,
@@ -173,8 +168,13 @@ Be specific, encouraging, and educational. Remember this is for learning, not ju
     } catch (error) {
         console.error('[gradeWork] Error:', error.message);
 
-        if (error.response) {
-            console.error('[gradeWork] API error:', error.response.data);
+        // Clean up temp file on error
+        if (req.file && req.file.path) {
+            try {
+                fs.unlinkSync(req.file.path);
+            } catch (cleanupErr) {
+                console.error('[gradeWork] Failed to cleanup temp file:', cleanupErr.message);
+            }
         }
 
         res.status(500).json({

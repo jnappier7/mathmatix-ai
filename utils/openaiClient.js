@@ -122,10 +122,74 @@ async function callLLM(primaryModel, messages, options = {}) {
     }
 }
 
+/**
+ * Streaming version of callLLM - returns a stream object for real-time responses
+ * @param {string} model - The primary model name (e.g., "gpt-4o-mini")
+ * @param {Array<Object>} messages - Array of message objects for the AI
+ * @param {Object} options - Additional options like temperature, max_tokens
+ * @returns {Promise<Stream>} The stream object from OpenAI
+ */
+async function callLLMStream(primaryModel, messages, options = {}) {
+    try {
+        console.log(`LOG: Calling primary model with streaming (${primaryModel})`);
+        const stream = await openai.chat.completions.create({
+            model: primaryModel,
+            messages: messages,
+            temperature: options.temperature || 0.7,
+            max_tokens: options.max_tokens,
+            stream: true, // Enable streaming
+        });
+        return stream;
+    } catch (openAiError) {
+        console.error(`ERROR: Streaming failed for ${primaryModel}:`, openAiError.message);
+        // For streaming, we don't fallback to Claude as it uses a different streaming API
+        // Instead, we throw and let the caller handle fallback to non-streaming
+        throw openAiError;
+    }
+}
+
+/**
+ * DIRECTIVE 3: Generate text embedding using OpenAI's text-embedding-3-small
+ * @param {string} text - The text to embed
+ * @returns {Promise<Array<number>>} The embedding vector
+ */
+async function generateEmbedding(text) {
+    try {
+        if (!text || typeof text !== 'string' || text.trim().length === 0) {
+            throw new Error('Text must be a non-empty string');
+        }
+
+        // Truncate to first 8000 characters to avoid token limits
+        const truncatedText = text.substring(0, 8000);
+
+        console.log(`LOG: Generating embedding for text (${truncatedText.length} chars)`);
+
+        const response = await retryWithExponentialBackoff(() =>
+            openai.embeddings.create({
+                model: "text-embedding-3-small",
+                input: truncatedText,
+                encoding_format: "float"
+            })
+        );
+
+        const embedding = response.data[0].embedding;
+
+        console.log(`✅ [Embedding] Generated embedding: ${embedding.length} dimensions`);
+
+        return embedding;
+
+    } catch (error) {
+        console.error(`ERROR: Embedding generation failed:`, error.message);
+        throw error;
+    }
+}
+
 // Export the OpenAI client (still useful for direct access if needed) and the retry utility
 module.exports = {
     openai, // Renamed from 'openai' to 'openaiClient' in some previous versions, but keep original if it was 'openai'
     anthropic,
     retryWithExponentialBackoff,
-    callLLM // New centralized LLM call function
+    callLLM, // Centralized LLM call function (non-streaming)
+    callLLMStream, // Streaming version for real-time responses
+    generateEmbedding // DIRECTIVE 3: Vector embedding generation
 };

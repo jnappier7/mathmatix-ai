@@ -17,12 +17,23 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Problem = require('../models/problem');
+const ScreenerSession = require('../models/screenerSession'); // CTO REVIEW FIX: Persistent session storage
 const { initializeSession, processResponse, generateReport, identifyInterviewSkills } = require('../utils/adaptiveScreener');
 const { generateProblem } = require('../utils/problemGenerator');
 const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 
-// In-memory session storage (TODO: move to Redis/database for production)
-const activeSessions = new Map();
+/**
+ * CTO REVIEW FIX: LRU (Least Recently Used) Strategy for Problem Exclusion
+ *
+ * PROBLEM: Using $nin with all historical problemIds causes O(N) database queries
+ * as students answer 1000+ problems over a school year.
+ *
+ * SOLUTION: Only exclude the LAST 100 problems (LRU window). This:
+ * - Prevents immediate repeats (boring for students)
+ * - Keeps database query size bounded to O(1) constant
+ * - Allows old problems to resurface for spaced repetition (pedagogically sound)
+ */
+const LRU_EXCLUSION_WINDOW = 100;
 
 /**
  * POST /api/screener/start
@@ -50,13 +61,17 @@ router.post('/start', isAuthenticated, async (req, res) => {
     }
 
     // Initialize screener session
-    const session = initializeSession({
+    const sessionData = initializeSession({
       userId: user._id.toString(),
       startingTheta: 0  // Start at average ability
     });
 
-    // Store session
-    activeSessions.set(session.sessionId, session);
+    // CTO REVIEW FIX: Store session in database (prevents data loss on restart)
+    const session = new ScreenerSession({
+      ...sessionData,
+      userId: user._id // Convert to ObjectId
+    });
+    await session.save();
 
     res.json({
       sessionId: session.sessionId,
@@ -82,7 +97,8 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       return res.status(400).json({ error: 'Session ID required' });
     }
 
-    const session = activeSessions.get(sessionId);
+    // CTO REVIEW FIX: Retrieve session from database
+    const session = await ScreenerSession.findBySessionId(sessionId);
     if (!session) {
       return res.status(404).json({ error: 'Session not found or expired' });
     }
@@ -150,10 +166,15 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     selectedSkillId = candidateSkills[0].skillId;
 
     // Try to find existing problem in database
+    // CTO REVIEW FIX: Use LRU strategy - only exclude last N problems (not all history)
+    const recentProblemIds = session.responses
+      .slice(-LRU_EXCLUSION_WINDOW)  // Take only the last 100 responses
+      .map(r => r.problemId);
+
     let problem = await Problem.findNearDifficulty(
       selectedSkillId,
       targetDifficulty,
-      session.responses.map(r => r.problemId)
+      recentProblemIds  // Bounded array size (max 100 items) instead of O(N)
     );
 
     // If no problem found, generate one
@@ -210,7 +231,8 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const session = activeSessions.get(sessionId);
+    // CTO REVIEW FIX: Retrieve session from database
+    const session = await ScreenerSession.findBySessionId(sessionId);
     if (!session) {
       return res.status(404).json({ error: 'Session not found' });
     }
@@ -238,8 +260,11 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
 
     const result = processResponse(session, response);
 
-    // Update session
-    activeSessions.set(sessionId, session);
+    // CTO REVIEW FIX: Update session in database
+    session.markModified('responses'); // Ensure nested arrays are saved
+    session.markModified('testedSkills');
+    session.markModified('testedSkillCategories');
+    await session.save();
 
     // Determine next action
     if (result.action === 'continue') {
@@ -262,10 +287,10 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       session.endTime = Date.now();
 
       // Generate report
-      const report = generateReport(session);
+      const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
       // Identify skills to probe
-      const interviewSkills = identifyInterviewSkills(session, []);
+      const interviewSkills = identifyInterviewSkills(session.toObject(), []);
 
       res.json({
         correct: isCorrect,
@@ -287,7 +312,7 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       session.phase = 'complete';
       session.endTime = Date.now();
 
-      const report = generateReport(session);
+      const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
       res.json({
         correct: isCorrect,
@@ -314,7 +339,8 @@ router.get('/report', isAuthenticated, async (req, res) => {
       return res.status(400).json({ error: 'Session ID required' });
     }
 
-    const session = activeSessions.get(sessionId);
+    // CTO REVIEW FIX: Retrieve session from database
+    const session = await ScreenerSession.findBySessionId(sessionId);
     if (!session) {
       return res.status(404).json({ error: 'Session not found' });
     }
@@ -323,7 +349,7 @@ router.get('/report', isAuthenticated, async (req, res) => {
       return res.status(400).json({ error: 'Screener not yet complete' });
     }
 
-    const report = generateReport(session);
+    const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
     res.json(report);
 
@@ -346,7 +372,8 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       return res.status(400).json({ error: 'Session ID required' });
     }
 
-    const session = activeSessions.get(sessionId);
+    // CTO REVIEW FIX: Retrieve session from database
+    const session = await ScreenerSession.findBySessionId(sessionId);
     if (!session) {
       return res.status(404).json({ error: 'Session not found' });
     }
@@ -357,7 +384,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     }
 
     // Generate final report
-    const report = generateReport(session);
+    const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
     // Update user's skill mastery based on screener results
     for (const skillId of report.masteredSkills) {
@@ -405,8 +432,10 @@ router.post('/complete', isAuthenticated, async (req, res) => {
 
     await user.save();
 
-    // Clean up session
-    activeSessions.delete(sessionId);
+    // CTO REVIEW FIX: Mark session as complete and let TTL index auto-delete after 24h
+    session.phase = 'complete';
+    session.endTime = new Date();
+    await session.save();
 
     res.json({
       success: true,
