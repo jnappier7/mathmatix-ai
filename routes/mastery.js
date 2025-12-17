@@ -11,18 +11,23 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Skill = require('../models/skill');
+const { prepareBadgeLaunch } = require('../utils/badgeLaunchService'); // TEACHING ENHANCEMENT
+const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = require('../utils/badgePhaseController'); // TEACHING ENHANCEMENT
+const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
+const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
+const { generateInterviewQuestions, generateFollowUp, evaluateResponse, createInterviewSession } = require('../utils/dynamicInterviewGenerator'); // TEACHING ENHANCEMENT
 
 // ============================================================================
 // PHASE 2: AI INTERVIEW PROBE
 // ============================================================================
 
 /**
- * Generate interview question based on screener results
+ * TEACHING ENHANCEMENT: Dynamic Interview Question Generation
  * POST /api/mastery/interview-question
  */
 router.post('/interview-question', async (req, res) => {
   try {
-    const { screenerResults, phase } = req.body;
+    const { screenerResults } = req.body;
 
     if (!screenerResults || !screenerResults.theta) {
       return res.status(400).json({ error: 'Missing screener results' });
@@ -35,96 +40,64 @@ router.post('/interview-question', async (req, res) => {
       return res.status(400).json({ error: 'No frontier skills identified' });
     }
 
-    // Select a frontier skill to probe
-    const targetSkill = frontierSkills[0];
-
-    // Generate interview question context
-    const interviewContext = {
-      skillId: targetSkill,
-      theta: screenerResults.theta,
-      phase: phase || 'initial',
-      interviewType: 'frontier-probe'
-    };
-
-    // Build AI prompt for interview question
-    const question = await generateInterviewQuestion(interviewContext);
+    // Create full interview session
+    const interviewSession = await createInterviewSession(
+      frontierSkills,
+      screenerResults.theta,
+      screenerResults
+    );
 
     res.json({
       success: true,
-      question,
-      skillId: targetSkill,
-      context: interviewContext
+      interviewSession,
+      message: 'Dynamic interview questions generated for all frontier skills'
     });
 
   } catch (error) {
-    console.error('Error generating interview question:', error);
-    res.status(500).json({ error: 'Failed to generate interview question' });
+    console.error('Error generating interview questions:', error);
+    res.status(500).json({ error: 'Failed to generate interview questions' });
   }
 });
 
 /**
- * Generate AI interview question
+ * TEACHING ENHANCEMENT: Evaluate interview response and generate follow-up
+ * POST /api/mastery/interview-response
  */
-async function generateInterviewQuestion(context) {
-  const { skillId, theta, phase } = context;
+router.post('/interview-response', async (req, res) => {
+  try {
+    const { question, studentResponse, skillId } = req.body;
 
-  // Map skill to question types
-  const questionPrompts = {
-    'two-step-equations': {
-      initial: `I see you're working on two-step equations. Let's go deeper.
-
-Can you solve this problem AND explain each step?
-
-**Problem:** 3x + 7 = 22
-
-Show me your work and explain why you chose each operation.`,
-
-      followUp: `Good! Now let's test your understanding. What if the equation was:
-
-**Problem:** -2x + 5 = 13
-
-How would your approach change? Walk me through your thinking.`
-    },
-
-    'order-of-operations': {
-      initial: `Let's explore order of operations at a deeper level.
-
-**Problem:** 6 + 3 × (8 - 2)
-
-Solve this AND explain: Why do we multiply before we add? What would happen if we did it the other way?`,
-
-      followUp: `Interesting! Now consider this:
-
-**Problem:** (6 + 3) × 8 - 2
-
-How do the parentheses change everything? Explain the difference.`
-    },
-
-    'combining-like-terms': {
-      initial: `Let's dive into combining like terms.
-
-**Problem:** Simplify 4x + 7 - 2x + 3
-
-Not just the answer - explain what "like terms" means and WHY we can combine them.`,
-
-      followUp: `Great! Now a harder one:
-
-**Problem:** 3x² + 5x - 2x² + 7x
-
-Why CAN'T we combine x² and x terms? Explain your reasoning.`
+    if (!question || !studentResponse) {
+      return res.status(400).json({ error: 'Missing question or response' });
     }
-  };
 
-  // Get question for this skill
-  const skillQuestions = questionPrompts[skillId] || {
-    initial: `Let's explore your understanding of ${skillId.replace(/-/g, ' ')}.
+    const skill = await Skill.findOne({ skillId }).lean();
 
-Can you solve a problem in this area AND explain your reasoning?`,
-    followUp: `Good! Let's probe deeper into your understanding.`
-  };
+    if (!skill) {
+      return res.status(404).json({ error: 'Skill not found' });
+    }
 
-  return skillQuestions[phase] || skillQuestions.initial;
-}
+    // Evaluate the response
+    const evaluation = await evaluateResponse(question, studentResponse, skill);
+
+    // Generate follow-up if needed
+    let followUp = null;
+    if (evaluation.rating !== 'excellent' || evaluation.understandingLevel === 'surface') {
+      followUp = await generateFollowUp(question, studentResponse, skill);
+    }
+
+    res.json({
+      success: true,
+      evaluation,
+      followUp,
+      shouldContinue: evaluation.rating !== 'excellent'
+    });
+
+  } catch (error) {
+    console.error('Error evaluating interview response:', error);
+    res.status(500).json({ error: 'Failed to evaluate response' });
+  }
+});
 
 // ============================================================================
 // PHASE 3: MASTERY BADGES
@@ -616,7 +589,10 @@ router.post('/select-badge', async (req, res) => {
       return res.status(400).json({ error: 'Badge already earned' });
     }
 
-    // Initialize badge attempt in user profile
+    // TEACHING ENHANCEMENT: Prepare comprehensive launch information
+    const launchInfo = await prepareBadgeLaunch(badge, user);
+
+    // Initialize badge attempt in user profile with phase tracking
     if (!user.masteryProgress) {
       user.masteryProgress = { activeBadge: null, attempts: [] };
     }
@@ -631,7 +607,12 @@ router.post('/select-badge', async (req, res) => {
       problemsCompleted: 0,
       problemsCorrect: 0,
       requiredProblems: badge.requiredProblems,
-      requiredAccuracy: badge.requiredAccuracy
+      requiredAccuracy: badge.requiredAccuracy,
+      // TEACHING ENHANCEMENT: Add phase tracking
+      currentPhase: 'launch',  // launch → i-do → we-do → you-do → mastery-check
+      phaseHistory: [],
+      hintsUsed: 0,
+      misconceptionsAddressed: []
     };
 
     await user.save();
@@ -640,7 +621,9 @@ router.post('/select-badge', async (req, res) => {
       success: true,
       badge,
       message: `Started working on ${badge.name}!`,
-      nextStep: 'solve-problems'
+      // TEACHING ENHANCEMENT: Return comprehensive launch info
+      launchInfo,
+      nextStep: launchInfo.readyToStart ? 'begin-i-do' : 'review-prerequisites'
     });
 
   } catch (error) {
@@ -908,6 +891,213 @@ router.post('/award-badge', async (req, res) => {
   } catch (error) {
     console.error('Error awarding badge:', error);
     res.status(500).json({ error: 'Failed to award badge' });
+  }
+});
+
+// ============================================================================
+// TEACHING ENHANCEMENT: PHASE-BASED BADGE EARNING
+// ============================================================================
+
+/**
+ * Get next problem for current phase
+ * GET /api/mastery/next-phase-problem
+ */
+router.get('/next-phase-problem', async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user || !user.masteryProgress?.activeBadge) {
+      return res.status(400).json({ error: 'No active badge' });
+    }
+
+    const activeBadge = user.masteryProgress.activeBadge;
+    const problem = await generatePhaseProblem(activeBadge.currentPhase, activeBadge, user);
+
+    res.json({
+      success: true,
+      problem,
+      phase: activeBadge.currentPhase,
+      phaseGuidance: problem.phaseGuidance
+    });
+
+  } catch (error) {
+    console.error('Error generating phase problem:', error);
+    res.status(500).json({ error: 'Failed to generate problem' });
+  }
+});
+
+/**
+ * Record problem attempt in current phase
+ * POST /api/mastery/record-phase-attempt
+ */
+router.post('/record-phase-attempt', async (req, res) => {
+  try {
+    const { problemId, correct, timeSpent, hintsUsed } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user || !user.masteryProgress?.activeBadge) {
+      return res.status(400).json({ error: 'No active badge' });
+    }
+
+    const result = await recordPhaseAttempt(user, problemId, correct, timeSpent, hintsUsed);
+
+    res.json({
+      success: true,
+      ...result
+    });
+
+  } catch (error) {
+    console.error('Error recording phase attempt:', error);
+    res.status(500).json({ error: 'Failed to record attempt' });
+  }
+});
+
+/**
+ * Get current phase instructions for AI tutor
+ * GET /api/mastery/phase-instructions
+ */
+router.get('/phase-instructions', async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user || !user.masteryProgress?.activeBadge) {
+      return res.status(400).json({ error: 'No active badge' });
+    }
+
+    const activeBadge = user.masteryProgress.activeBadge;
+    const instructions = await getPhaseInstructions(activeBadge.currentPhase, activeBadge);
+
+    res.json({
+      success: true,
+      phase: activeBadge.currentPhase,
+      instructions
+    });
+
+  } catch (error) {
+    console.error('Error getting phase instructions:', error);
+    res.status(500).json({ error: 'Failed to get instructions' });
+  }
+});
+
+/**
+ * Request a hint for current problem
+ * POST /api/mastery/request-hint
+ */
+router.post('/request-hint', async (req, res) => {
+  try {
+    const { problemId, currentLevel, studentWork, problem } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user || !user.masteryProgress?.activeBadge) {
+      return res.status(400).json({ error: 'No active badge' });
+    }
+
+    const activeBadge = user.masteryProgress.activeBadge;
+
+    // Check if student should be reteaching instead
+    const needsReteaching = shouldReteach(user, problemId);
+
+    if (needsReteaching && currentLevel >= 3) {
+      return res.json({
+        success: true,
+        needsReteaching: true,
+        message: "You've tried several hints. Let's review this concept together before continuing.",
+        suggestion: 'reteach'
+      });
+    }
+
+    // Get skill info
+    const skill = await Skill.findOne({ skillId: activeBadge.skillId }).lean();
+
+    // Determine hint level
+    const hintLevel = currentLevel ? currentLevel + 1 : 1;
+
+    // Generate hint
+    const hint = await generateHint(problem, skill, hintLevel, { studentWork });
+
+    // Track hint usage
+    await trackHintUsage(user, problemId, hintLevel);
+
+    // Analyze hint patterns
+    const analysis = analyzeHintUsage(user);
+
+    res.json({
+      success: true,
+      hint,
+      analysis,
+      needsReteaching: false
+    });
+
+  } catch (error) {
+    console.error('Error generating hint:', error);
+    res.status(500).json({ error: 'Failed to generate hint' });
+  }
+});
+
+/**
+ * Analyze error and get reteaching
+ * POST /api/mastery/analyze-error
+ */
+router.post('/analyze-error', async (req, res) => {
+  try {
+    const { problem, studentAnswer } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user || !user.masteryProgress?.activeBadge) {
+      return res.status(400).json({ error: 'No active badge' });
+    }
+
+    const activeBadge = user.masteryProgress.activeBadge;
+    const skill = await Skill.findOne({ skillId: activeBadge.skillId }).lean();
+
+    // Analyze the error
+    const misconception = await analyzeError(problem, studentAnswer, skill);
+
+    // Generate reteaching
+    const reteaching = await generateReteaching(misconception, problem, skill);
+
+    // Record misconception
+    await recordMisconception(user, skill.skillId, misconception);
+
+    // Analyze patterns
+    const pattern = analyzeMisconceptionPattern(user);
+
+    res.json({
+      success: true,
+      misconception,
+      reteaching,
+      pattern
+    });
+
+  } catch (error) {
+    console.error('Error analyzing error:', error);
+    res.status(500).json({ error: 'Failed to analyze error' });
+  }
+});
+
+/**
+ * Mark misconception as addressed
+ * POST /api/mastery/misconception-addressed
+ */
+router.post('/misconception-addressed', async (req, res) => {
+  try {
+    const { misconceptionName } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    await markMisconceptionAddressed(user, misconceptionName);
+
+    res.json({
+      success: true,
+      message: 'Misconception marked as addressed'
+    });
+
+  } catch (error) {
+    console.error('Error marking misconception:', error);
+    res.status(500).json({ error: 'Failed to mark misconception' });
   }
 });
 
