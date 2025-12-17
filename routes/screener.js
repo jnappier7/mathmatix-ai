@@ -449,6 +449,13 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     user.learningProfile.assessmentDate = new Date();
     user.learningProfile.initialPlacement = `Theta: ${report.theta} (${report.percentile}th percentile)`;
 
+    // Store theta in the format expected by badge system
+    user.learningProfile.abilityEstimate = {
+      theta: report.theta,
+      standardError: report.standardError,
+      percentile: report.percentile
+    };
+
     await user.save();
 
     // CTO REVIEW FIX: Mark session as complete and let TTL index auto-delete after 24h
