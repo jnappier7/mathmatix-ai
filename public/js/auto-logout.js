@@ -1,10 +1,11 @@
 /**
  * AUTO-LOGOUT MANAGER
  *
- * Handles automatic logout in three scenarios:
- * 1. Tab/browser close
- * 2. Inactivity timeout (30 minutes default)
- * 3. Manual logout button (handled elsewhere)
+ * Handles automatic logout in four scenarios:
+ * 1. Tab close (sessionStorage cleared)
+ * 2. Browser close (sendBeacon logout)
+ * 3. Inactivity timeout (30 minutes default)
+ * 4. Manual logout button (handled elsewhere)
  */
 
 (function() {
@@ -13,6 +14,7 @@
   // Configuration
   const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
   const WARNING_BEFORE_LOGOUT = 2 * 60 * 1000; // Warn 2 minutes before logout
+  const SESSION_KEY = 'mathmatix_tab_session_active';
 
   let inactivityTimer = null;
   let warningTimer = null;
@@ -22,11 +24,8 @@
    * Perform logout
    */
   function performLogout() {
-    // Clear mastery mode session storage flags to prevent redirect loops
-    sessionStorage.removeItem('masteryModeActive');
-    sessionStorage.removeItem('masteryPhase');
-    sessionStorage.removeItem('activeBadgeId');
-    sessionStorage.removeItem('screenerResults');
+    // Clear ALL session storage (including tab session flag)
+    sessionStorage.clear();
 
     // Use sendBeacon for reliable logout even during page unload
     if (navigator.sendBeacon) {
@@ -90,6 +89,14 @@
   }
 
   /**
+   * Mark tab session as active (set on every protected page load)
+   */
+  function activateTabSession() {
+    sessionStorage.setItem(SESSION_KEY, 'true');
+    console.log('[Auto-Logout] Tab session activated');
+  }
+
+  /**
    * Initialize auto-logout
    */
   function initialize() {
@@ -102,7 +109,11 @@
       return;
     }
 
-    console.log('[Auto-Logout] Initialized');
+    // Activate tab session (set flag in sessionStorage)
+    // This gets cleared automatically when tab closes
+    activateTabSession();
+
+    console.log('[Auto-Logout] Initialized with tab-close logout enabled');
 
     // 1. INACTIVITY TIMEOUT
     // Listen for user activity events
@@ -115,13 +126,11 @@
     resetInactivityTimer();
 
     // 2. TAB/BROWSER CLOSE LOGOUT
-    // Note: Modern browsers restrict this for security. Best effort approach.
-    window.addEventListener('beforeunload', (event) => {
-      // Use sendBeacon for most reliable delivery during page unload
-      performLogout();
-
-      // Don't show confirmation dialog (annoying for users)
-      // Just logout silently in background
+    // sessionStorage is automatically cleared when tab closes
+    // Send logout beacon to clean up server session
+    window.addEventListener('beforeunload', () => {
+      console.log('[Auto-Logout] Tab closing - sending logout beacon');
+      performLogout(); // Clears sessionStorage and sends logout beacon
     });
 
     // Alternative: Use visibilitychange for tab switches
@@ -141,11 +150,7 @@
     window.addEventListener('storage', (event) => {
       if (event.key === 'logout-event') {
         console.log('[Auto-Logout] Logout detected in another tab');
-        // Clear mastery mode flags before redirecting
-        sessionStorage.removeItem('masteryModeActive');
-        sessionStorage.removeItem('masteryPhase');
-        sessionStorage.removeItem('activeBadgeId');
-        sessionStorage.removeItem('screenerResults');
+        sessionStorage.clear(); // Clear all session data
         window.location.href = '/login.html';
       }
     });
@@ -160,18 +165,15 @@
 
   // Expose logout function globally for manual logout buttons
   window.triggerLogout = function() {
-    // Clear mastery mode flags before logout
-    sessionStorage.removeItem('masteryModeActive');
-    sessionStorage.removeItem('masteryPhase');
-    sessionStorage.removeItem('activeBadgeId');
-    sessionStorage.removeItem('screenerResults');
-
     // Set storage event to logout all tabs
     localStorage.setItem('logout-event', Date.now().toString());
     localStorage.removeItem('logout-event'); // Clean up
 
-    performLogout();
+    performLogout(); // This clears sessionStorage
     window.location.href = '/login.html';
   };
+
+  // Expose session activation for login page
+  window.activateTabSession = activateTabSession;
 
 })();
