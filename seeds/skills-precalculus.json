@@ -1,0 +1,135 @@
+[
+  {
+    "skillId": "trig-unit-circle",
+    "displayName": "Unit Circle and Trigonometric Functions",
+    "description": "Understand the unit circle and evaluate trig functions for any angle",
+    "category": "trigonometry",
+    "course": "Pre-Calculus",
+    "quarter": 1,
+    "unit": "Trigonometry",
+    "prerequisites": ["coordinate-plane", "pythagorean-theorem"],
+    "enables": ["trig-graphs", "trig-identities"],
+    "standardsAlignment": ["F-TF.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["(cos θ, sin θ) on unit circle", "ASTC (All Students Take Calculus)", "Reference angles", "Radians vs degrees"],
+      "commonMistakes": ["Confusing sin and cos", "Sign errors by quadrant", "Degree/radian confusion"],
+      "teachingTips": ["Memorize special angles", "Use hand trick for quadrants", "Relate to right triangle ratios"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "trig-graphs",
+    "displayName": "Graphing Trigonometric Functions",
+    "description": "Graph and analyze sine, cosine, tangent and transformations",
+    "category": "trigonometry",
+    "course": "Pre-Calculus",
+    "quarter": 1,
+    "unit": "Trigonometry",
+    "prerequisites": ["trig-unit-circle", "transformations-functions"],
+    "enables": ["trig-equations", "sinusoidal-models"],
+    "standardsAlignment": ["F-TF.5"],
+    "teachingGuidance": {
+      "coreConcepts": ["Amplitude, period, phase shift, vertical shift", "y = A sin(B(x - C)) + D", "Asymptotes for tan, cot, sec, csc"],
+      "commonMistakes": ["Period = B instead of 2π/B", "Phase shift direction", "Amplitude with negative A"],
+      "teachingTips": ["Pattern recognition", "Real-world: sound waves, tides, seasons", "Technology for visualization"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 75, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "trig-identities",
+    "displayName": "Trigonometric Identities",
+    "description": "Prove and apply Pythagorean, sum/difference, double-angle identities",
+    "category": "trigonometry",
+    "course": "Pre-Calculus",
+    "quarter": 2,
+    "unit": "Trigonometric Identities",
+    "prerequisites": ["trig-unit-circle"],
+    "enables": ["trig-equations", "calculus-trig"],
+    "standardsAlignment": ["F-TF.8"],
+    "teachingGuidance": {
+      "coreConcepts": ["sin²θ + cos²θ = 1", "Sum/difference formulas", "Double-angle formulas", "Strategic substitution"],
+      "commonMistakes": ["Treating like algebraic equations", "Sign errors", "Not recognizing patterns"],
+      "teachingTips": ["Reference sheet", "Work both sides separately", "Practice recognition"]
+    },
+    "difficultyLevel": 9,
+    "fluencyMetadata": {"baseFluencyTime": 70, "fluencyType": "conceptual", "toleranceFactor": 4.5}
+  },
+  {
+    "skillId": "polar-coordinates",
+    "displayName": "Polar Coordinates and Graphs",
+    "description": "Convert between polar and rectangular, graph polar equations",
+    "category": "coordinate-systems",
+    "course": "Pre-Calculus",
+    "quarter": 2,
+    "unit": "Polar and Parametric",
+    "prerequisites": ["trig-unit-circle"],
+    "enables": ["complex-polar-form", "calculus-polar"],
+    "standardsAlignment": ["N-CN.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["(r, θ) representation", "x = r cos θ, y = r sin θ", "Roses, cardioids, limaçons"],
+      "commonMistakes": ["Conversion errors", "Not considering all solutions", "Symmetry misidentification"],
+      "teachingTips": ["Graph by hand first", "Technology for complex graphs", "Physics: projectiles, orbits"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "vectors",
+    "displayName": "Vectors and Operations",
+    "description": "Represent vectors, perform operations, find magnitude and direction",
+    "category": "vectors",
+    "course": "Pre-Calculus",
+    "quarter": 3,
+    "unit": "Vectors",
+    "prerequisites": ["pythagorean-theorem", "trig-unit-circle"],
+    "enables": ["dot-product", "calculus-vectors"],
+    "standardsAlignment": ["N-VM.1", "N-VM.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Component form ⟨a, b⟩", "Magnitude: ||v|| = √(a² + b²)", "Direction angle", "Addition, scalar multiplication"],
+      "commonMistakes": ["Vector vs scalar confusion", "Magnitude calculation errors", "Direction angle quadrant"],
+      "teachingTips": ["Geometric interpretation", "Physics: force, velocity", "Unit vectors î, ĵ"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "matrices-operations",
+    "displayName": "Matrix Operations",
+    "description": "Add, subtract, multiply matrices, find determinants and inverses",
+    "category": "matrices",
+    "course": "Pre-Calculus",
+    "quarter": 3,
+    "unit": "Matrices",
+    "prerequisites": [],
+    "enables": ["systems-matrices", "linear-algebra"],
+    "standardsAlignment": ["N-VM.6", "N-VM.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Dimensions must match for addition", "Matrix multiplication (rows × columns)", "Determinant for 2×2 and 3×3", "Inverse: A⁻¹"],
+      "commonMistakes": ["Multiplication is not commutative", "Dimension errors", "Determinant vs inverse"],
+      "teachingTips": ["Organize work carefully", "Check dimensions first", "Applications: transformations, cryptography"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "limits-intuitive",
+    "displayName": "Introduction to Limits",
+    "description": "Understand limit concept and evaluate limits numerically and graphically",
+    "category": "limits",
+    "course": "Pre-Calculus",
+    "quarter": 4,
+    "unit": "Introduction to Calculus",
+    "prerequisites": ["function-notation-composition"],
+    "enables": ["calculus-limits", "continuity"],
+    "standardsAlignment": ["Pre-Calculus Bridge"],
+    "teachingGuidance": {
+      "coreConcepts": ["Approaching from left and right", "lim as x→a", "Does not require f(a) to exist", "Infinite limits"],
+      "commonMistakes": ["Confusing limit with function value", "One-sided limit errors", "Indeterminate forms"],
+      "teachingTips": ["Tables of values", "Graph visualization", "Prepare for calculus"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  }
+]

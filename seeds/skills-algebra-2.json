@@ -1,0 +1,230 @@
+[
+  {
+    "skillId": "function-notation-composition",
+    "displayName": "Function Notation and Composition",
+    "description": "Evaluate and compose functions using proper notation",
+    "category": "functions",
+    "course": "Algebra 2",
+    "quarter": 1,
+    "unit": "Functions",
+    "prerequisites": ["function-basics"],
+    "enables": ["inverse-functions", "transformations"],
+    "standardsAlignment": ["F-BF.1c", "F-IF.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["f(x) notation", "Composition (f ∘ g)(x) = f(g(x))", "Domain and range", "Function operations"],
+      "commonMistakes": ["Confusing f(x+2) with f(x) + 2", "Order matters in composition", "Not checking domain restrictions"],
+      "teachingTips": ["Use machines metaphor", "Practice multi-step compositions", "Connect to real-world transformations"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "conceptual", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "inverse-functions",
+    "displayName": "Inverse Functions",
+    "description": "Find and verify inverse functions",
+    "category": "functions",
+    "course": "Algebra 2",
+    "quarter": 1,
+    "unit": "Functions",
+    "prerequisites": ["function-notation-composition"],
+    "enables": ["logarithms", "inverse-trig"],
+    "standardsAlignment": ["F-BF.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["Swap x and y, solve for y", "Horizontal line test", "f⁻¹(f(x)) = x", "Reflection over y=x"],
+      "commonMistakes": ["Confusing with reciprocal", "Not restricting domain", "Verification errors"],
+      "teachingTips": ["Graph both functions", "Show symmetry", "Real-world: encoding/decoding"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "quadratic-completing-square",
+    "displayName": "Completing the Square",
+    "description": "Convert quadratics to vertex form by completing the square",
+    "category": "quadratics",
+    "course": "Algebra 2",
+    "quarter": 1,
+    "unit": "Quadratics Advanced",
+    "prerequisites": ["solving-quadratics-formula"],
+    "enables": ["quadratic-vertex-form", "conic-sections"],
+    "standardsAlignment": ["A-SSE.3b"],
+    "teachingGuidance": {
+      "coreConcepts": ["(b/2)² to complete square", "Perfect square trinomial", "Vertex form: a(x-h)² + k", "Derive quadratic formula"],
+      "commonMistakes": ["Sign errors", "Forgetting to balance equation", "Not factoring out a first"],
+      "teachingTips": ["Algebraic tiles", "Step-by-step procedure", "Connect to vertex"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "complex-numbers",
+    "displayName": "Complex Numbers",
+    "description": "Perform operations with complex numbers a + bi",
+    "category": "numbers",
+    "course": "Algebra 2",
+    "quarter": 1,
+    "unit": "Complex Numbers",
+    "prerequisites": ["square-roots", "imaginary-unit"],
+    "enables": ["quadratics-complex-solutions", "polar-form"],
+    "standardsAlignment": ["N-CN.1", "N-CN.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["i = √(-1), i² = -1", "Standard form a + bi", "Add/subtract/multiply/divide", "Complex conjugates"],
+      "commonMistakes": ["Forgetting i² = -1", "Sign errors", "Division errors"],
+      "teachingTips": ["Pattern recognition for powers of i", "Visual: complex plane", "Electrical engineering applications"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "polynomial-division",
+    "displayName": "Polynomial Long Division and Synthetic Division",
+    "description": "Divide polynomials using long division and synthetic division",
+    "category": "polynomials",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Polynomials",
+    "prerequisites": ["polynomial-multiplication-binomials"],
+    "enables": ["remainder-theorem", "rational-functions"],
+    "standardsAlignment": ["A-APR.6"],
+    "teachingGuidance": {
+      "coreConcepts": ["Long division algorithm", "Synthetic division shortcut", "Remainder theorem", "Factor theorem"],
+      "commonMistakes": ["Missing placeholder terms", "Sign errors", "Not lining up terms"],
+      "teachingTips": ["Parallel to numeric division", "Synthetic for (x-k) divisors only", "Check: dividend = divisor × quotient + remainder"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "rational-expressions",
+    "displayName": "Simplifying Rational Expressions",
+    "description": "Simplify, add, subtract, multiply, and divide rational expressions",
+    "category": "rational",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Rational Functions",
+    "prerequisites": ["factoring-trinomials", "polynomial-division"],
+    "enables": ["rational-equations", "rational-functions-graphing"],
+    "standardsAlignment": ["A-APR.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Factor and cancel common factors", "LCD for addition/subtraction", "Multiply numerators and denominators", "Restrictions on domain"],
+      "commonMistakes": ["Canceling terms instead of factors", "Forgetting domain restrictions", "Sign errors with negatives"],
+      "teachingTips": ["Emphasize: cancel factors, not terms", "Factor completely first", "State restrictions"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 70, "fluencyType": "procedural", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "radical-expressions",
+    "displayName": "Simplifying Radical Expressions",
+    "description": "Simplify, rationalize, and perform operations with radicals",
+    "category": "radicals",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Radicals",
+    "prerequisites": ["square-roots", "exponent-rules"],
+    "enables": ["radical-equations", "rational-exponents"],
+    "standardsAlignment": ["N-RN.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Product/quotient properties", "Simplest radical form", "Rationalizing denominators", "Like radicals"],
+      "commonMistakes": ["√(a+b) ≠ √a + √b", "Forgetting to simplify", "Rationalization errors"],
+      "teachingTips": ["Perfect square factors", "Conjugates for rationalization", "Index must match to combine"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "exponential-equations-logarithms",
+    "displayName": "Logarithms and Exponential Equations",
+    "description": "Solve exponential equations using logarithms",
+    "category": "exponential-logarithmic",
+    "course": "Algebra 2",
+    "quarter": 3,
+    "unit": "Exponential and Logarithmic Functions",
+    "prerequisites": ["exponential-functions-basics", "inverse-functions"],
+    "enables": ["logarithmic-properties", "exponential-models"],
+    "standardsAlignment": ["F-LE.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["log_b(x) is inverse of b^x", "log_b(b^x) = x", "b^(log_b(x)) = x", "Common and natural logarithms"],
+      "commonMistakes": ["log(a+b) ≠ log(a) + log(b)", "Not using same base", "Domain violations (log of negative)"],
+      "teachingTips": ["Emphasize inverse relationship", "Change of base formula", "pH, Richter scale, decibels"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "sequences-series-arithmetic",
+    "displayName": "Arithmetic Sequences and Series",
+    "description": "Identify patterns, find terms, and sum arithmetic sequences",
+    "category": "sequences",
+    "course": "Algebra 2",
+    "quarter": 3,
+    "unit": "Sequences and Series",
+    "prerequisites": ["linear-functions"],
+    "enables": ["geometric-sequences", "sigma-notation"],
+    "standardsAlignment": ["F-BF.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Common difference d", "a_n = a_1 + (n-1)d", "Sum: S_n = n(a_1 + a_n)/2", "Linear growth"],
+      "commonMistakes": ["Confusing n and n-1", "Arithmetic errors in formulas", "Not identifying d correctly"],
+      "teachingTips": ["Pattern recognition", "Real-world: salary increases, seating arrangements", "Visual: linear graphs"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "sequences-series-geometric",
+    "displayName": "Geometric Sequences and Series",
+    "description": "Work with geometric sequences and find sums, including infinite series",
+    "category": "sequences",
+    "course": "Algebra 2",
+    "quarter": 3,
+    "unit": "Sequences and Series",
+    "prerequisites": ["sequences-series-arithmetic", "exponential-functions-basics"],
+    "enables": ["infinite-series", "financial-applications"],
+    "standardsAlignment": ["F-BF.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Common ratio r", "a_n = a_1 · r^(n-1)", "Sum: S_n = a_1(1-r^n)/(1-r)", "Infinite sum: |r| < 1"],
+      "commonMistakes": ["Confusing with arithmetic", "Sign errors with r", "Not checking |r| < 1 for infinite"],
+      "teachingTips": ["Exponential growth pattern", "Real-world: investments, population, fractals", "Infinite series: bouncing ball"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "conic-sections-circles",
+    "displayName": "Circles (Conic Sections)",
+    "description": "Write and graph equations of circles",
+    "category": "conics",
+    "course": "Algebra 2",
+    "quarter": 4,
+    "unit": "Conic Sections",
+    "prerequisites": ["completing-square", "distance-formula"],
+    "enables": ["ellipses", "hyperbolas"],
+    "standardsAlignment": ["G-GPE.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["(x-h)² + (y-k)² = r²", "Center (h,k), radius r", "Complete square to find center/radius", "Tangent lines"],
+      "commonMistakes": ["Sign errors for h and k", "Forgetting to take √ for radius", "Confusing with parabola"],
+      "teachingTips": ["Derive from distance formula", "Graph on coordinate plane", "GPS, circular motion"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "conceptual", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "probability-counting",
+    "displayName": "Counting Principles and Probability",
+    "description": "Apply fundamental counting principle, permutations, combinations",
+    "category": "probability",
+    "course": "Algebra 2",
+    "quarter": 4,
+    "unit": "Probability and Statistics",
+    "prerequisites": ["factorial-notation"],
+    "enables": ["binomial-theorem", "probability-distributions"],
+    "standardsAlignment": ["S-CP.9"],
+    "teachingGuidance": {
+      "coreConcepts": ["Multiplication principle", "Permutations: order matters", "Combinations: order doesn't matter", "P(A) = favorable/total"],
+      "commonMistakes": ["Confusing permutations and combinations", "Not simplifying factorials", "Overcounting or undercounting"],
+      "teachingTips": ["Decision trees", "Real-world: passwords, committees, lotteries", "Calculator functions for nPr, nCr"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  }
+]

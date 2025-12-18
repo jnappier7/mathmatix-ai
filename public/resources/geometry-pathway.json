@@ -1,0 +1,93 @@
+{
+  "track": "Geometry",
+  "overview": "Develop spatial reasoning through proof, construction, and measurement. Master plane and solid figures.",
+  "modules": [
+    {
+      "moduleId": "foundations_angles",
+      "quarter": 1,
+      "title": "Geometric Foundations & Angles",
+      "preview": "Build vocabulary and understand angle relationships.",
+      "skills": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals"]
+    },
+    {
+      "moduleId": "triangles_basics",
+      "quarter": 1,
+      "title": "Triangle Foundations",
+      "preview": "Classify triangles and apply angle sum theorem.",
+      "skills": ["triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"]
+    },
+    {
+      "moduleId": "checkpoint_q1",
+      "quarter": 1,
+      "title": "Q1 Checkpoint",
+      "preview": "Cumulative assessment: Foundations and triangles"
+    },
+    {
+      "moduleId": "congruence",
+      "quarter": 2,
+      "title": "Triangle Congruence",
+      "preview": "Prove triangles congruent using SSS, SAS, ASA, AAS, HL.",
+      "skills": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs"]
+    },
+    {
+      "moduleId": "right_triangles",
+      "quarter": 2,
+      "title": "Right Triangles",
+      "preview": "Master Pythagorean theorem and special right triangles.",
+      "skills": ["pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"]
+    },
+    {
+      "moduleId": "checkpoint_q2",
+      "quarter": 2,
+      "title": "Q2 Checkpoint",
+      "preview": "Cumulative assessment: Congruence and right triangles"
+    },
+    {
+      "moduleId": "polygons_quadrilaterals",
+      "quarter": 3,
+      "title": "Polygons & Quadrilaterals",
+      "preview": "Explore angle sums and properties of special quadrilaterals.",
+      "skills": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties"]
+    },
+    {
+      "moduleId": "circles",
+      "quarter": 3,
+      "title": "Circles",
+      "preview": "Study circle theorems, arcs, sectors, and inscribed angles.",
+      "skills": ["circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"]
+    },
+    {
+      "moduleId": "checkpoint_q3",
+      "quarter": 3,
+      "title": "Q3 Checkpoint",
+      "preview": "Cumulative assessment: Polygons and circles"
+    },
+    {
+      "moduleId": "similarity",
+      "quarter": 4,
+      "title": "Similarity",
+      "preview": "Apply similarity theorems and solve proportions.",
+      "skills": ["similarity-ratios", "similar-triangle-theorems", "similarity-proofs", "geometric-mean"]
+    },
+    {
+      "moduleId": "3d_geometry",
+      "quarter": 4,
+      "title": "Three-Dimensional Geometry",
+      "preview": "Calculate surface area and volume of prisms, cylinders, pyramids, cones, and spheres.",
+      "skills": ["volume-prisms-cylinders", "volume-pyramids-cones-spheres", "surface-area-prisms-cylinders", "surface-area-pyramids-cones-spheres"]
+    },
+    {
+      "moduleId": "coordinate_geometry",
+      "quarter": 4,
+      "title": "Coordinate Geometry",
+      "preview": "Apply algebra to geometric concepts on the coordinate plane.",
+      "skills": ["coordinate-geometry-distance-midpoint", "coordinate-proofs", "equation-of-circle", "parallel-perpendicular-slopes"]
+    },
+    {
+      "moduleId": "final_mastery_assessment",
+      "quarter": 4,
+      "title": "Final Mastery Assessment",
+      "preview": "Comprehensive assessment covering all Geometry content"
+    }
+  ]
+}

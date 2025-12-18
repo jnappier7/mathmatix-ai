@@ -1,0 +1,19 @@
+{
+  "track": "Algebra 2",
+  "overview": "Extend algebraic concepts to advanced functions, complex numbers, and conic sections.",
+  "modules": [
+    {"moduleId": "functions_advanced", "quarter": 1, "title": "Functions & Inverses", "preview": "Master function operations, composition, and inverses", "skills": ["function-notation-composition", "inverse-functions", "transformations-functions"]},
+    {"moduleId": "quadratics_advanced", "quarter": 1, "title": "Advanced Quadratics", "preview": "Completing the square, vertex form, complex solutions", "skills": ["quadratic-completing-square", "quadratic-vertex-form", "complex-numbers"]},
+    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Functions and quadratics"},
+    {"moduleId": "polynomials", "quarter": 2, "title": "Polynomial Functions", "preview": "Division, remainder theorem, graphing polynomials", "skills": ["polynomial-division", "remainder-factor-theorems", "graphing-polynomials"]},
+    {"moduleId": "rational_expressions", "quarter": 2, "title": "Rational Functions", "preview": "Simplify expressions, solve equations, graph rational functions", "skills": ["rational-expressions", "rational-equations", "rational-functions-graphing"]},
+    {"moduleId": "radicals", "quarter": 2, "title": "Radicals & Rational Exponents", "preview": "Simplify radicals, rational exponents, radical equations", "skills": ["radical-expressions", "rational-exponents", "radical-equations"]},
+    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Polynomials and rational functions"},
+    {"moduleId": "exponential_logarithmic", "quarter": 3, "title": "Exponential & Logarithmic Functions", "preview": "Logarithm properties, exponential models, solving equations", "skills": ["exponential-equations-logarithms", "logarithmic-properties", "exponential-growth-decay-models"]},
+    {"moduleId": "sequences_series", "quarter": 3, "title": "Sequences & Series", "preview": "Arithmetic and geometric sequences, summation notation", "skills": ["sequences-series-arithmetic", "sequences-series-geometric", "sigma-notation"]},
+    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Exponential, logarithmic, sequences"},
+    {"moduleId": "conic_sections", "quarter": 4, "title": "Conic Sections", "preview": "Circles, parabolas, ellipses, hyperbolas", "skills": ["conic-sections-circles", "parabolas", "ellipses", "hyperbolas"]},
+    {"moduleId": "probability_statistics", "quarter": 4, "title": "Probability & Statistics", "preview": "Counting, permutations, combinations, probability", "skills": ["probability-counting", "binomial-theorem", "normal-distribution"]},
+    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment", "preview": "Comprehensive Algebra 2 assessment"}
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "track": "Algebra 1",
+  "overview": "Build algebraic thinking through equations, functions, and data analysis. Master linear and quadratic relationships.",
+  "modules": [
+    {
+      "moduleId": "foundations_equations",
+      "quarter": 1,
+      "title": "Foundations & Linear Equations",
+      "preview": "Solve equations systematically and understand equality.",
+      "skills": ["solving-one-step-equations", "solving-two-step-equations", "solving-multi-step-equations", "solving-equations-with-variables-both-sides"]
+    },
+    {
+      "moduleId": "linear_functions",
+      "quarter": 2,
+      "title": "Linear Functions & Graphing",
+      "preview": "Graph linear relationships and write equations from multiple representations.",
+      "skills": ["graphing-linear-equations-slope-intercept", "writing-linear-equations-slope-intercept", "slope-from-points", "parallel-perpendicular-lines"]
+    },
+    {
+      "moduleId": "systems_equations",
+      "quarter": 2,
+      "title": "Systems of Equations",
+      "preview": "Solve systems using graphing, substitution, and elimination methods.",
+      "skills": ["systems-of-equations-graphing", "systems-of-equations-substitution", "systems-of-equations-elimination", "systems-word-problems"]
+    },
+    {
+      "moduleId": "checkpoint_q2",
+      "quarter": 2,
+      "title": "Q2 Checkpoint",
+      "preview": "Cumulative assessment: Linear functions and systems"
+    },
+    {
+      "moduleId": "exponents_polynomials",
+      "quarter": 3,
+      "title": "Exponents & Polynomials",
+      "preview": "Master exponent rules and polynomial operations.",
+      "skills": ["exponent-rules-multiplication", "exponent-rules-division", "exponent-rules-power-of-power", "polynomial-addition-subtraction", "polynomial-multiplication-monomial"]
+    },
+    {
+      "moduleId": "factoring",
+      "quarter": 3,
+      "title": "Factoring",
+      "preview": "Factor polynomials using GCF, grouping, and special patterns.",
+      "skills": ["factoring-gcf", "factoring-trinomials", "factoring-difference-of-squares", "factoring-perfect-square-trinomials"]
+    },
+    {
+      "moduleId": "checkpoint_q3",
+      "quarter": 3,
+      "title": "Q3 Checkpoint",
+      "preview": "Cumulative assessment: Exponents, polynomials, and factoring"
+    },
+    {
+      "moduleId": "quadratic_functions",
+      "quarter": 4,
+      "title": "Quadratic Functions",
+      "preview": "Graph parabolas and solve quadratic equations using multiple methods.",
+      "skills": ["quadratic-equations-graphing", "solving-quadratics-factoring", "solving-quadratics-square-roots", "quadratic-formula", "discriminant"]
+    },
+    {
+      "moduleId": "exponential_functions",
+      "quarter": 4,
+      "title": "Exponential Functions",
+      "preview": "Model growth and decay with exponential relationships.",
+      "skills": ["exponential-functions-basics", "exponential-growth-decay", "exponential-equations"]
+    },
+    {
+      "moduleId": "final_mastery_assessment",
+      "quarter": 4,
+      "title": "Final Mastery Assessment",
+      "preview": "Comprehensive assessment covering all Algebra 1 content"
+    }
+  ]
+}

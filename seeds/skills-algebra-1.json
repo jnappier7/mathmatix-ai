@@ -1,0 +1,761 @@
+[
+  {
+    "skillId": "solving-one-step-equations",
+    "displayName": "Solving One-Step Equations",
+    "description": "Solve equations using addition, subtraction, multiplication, or division",
+    "category": "equations",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Linear Equations",
+    "prerequisites": ["integer-operations", "inverse-operations"],
+    "enables": ["solving-two-step-equations", "solving-multi-step-equations"],
+    "standardsAlignment": ["A-REI.1", "A-REI.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Inverse operations undo each other",
+        "Keep equations balanced (do same to both sides)",
+        "Isolate the variable",
+        "Check your solution by substituting back"
+      ],
+      "commonMistakes": [
+        "Forgetting to do the same operation to both sides",
+        "Confusing which inverse operation to use",
+        "Sign errors when dividing by negative numbers"
+      ],
+      "teachingTips": [
+        "Use balance scale visual",
+        "Teach 'work backwards' strategy",
+        "Always emphasize checking solutions",
+        "Connect to real-world scenarios (earnings, shopping)"
+      ],
+      "exampleTypes": ["Addition equations", "Subtraction equations", "Multiplication equations", "Division equations"],
+      "connectionsToPriorKnowledge": ["Inverse operations from arithmetic", "Integer operations"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "solving-two-step-equations",
+    "displayName": "Solving Two-Step Equations",
+    "description": "Solve equations requiring two inverse operations",
+    "category": "equations",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Linear Equations",
+    "prerequisites": ["solving-one-step-equations"],
+    "enables": ["solving-multi-step-equations", "solving-equations-with-variables-both-sides"],
+    "standardsAlignment": ["A-REI.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Undo operations in reverse order (PEMDAS backwards)",
+        "Addition/subtraction first, then multiplication/division",
+        "Keep equation balanced at each step",
+        "Simplify before solving when possible"
+      ],
+      "commonMistakes": [
+        "Doing operations in wrong order",
+        "Forgetting to distribute negative signs",
+        "Arithmetic errors with fractions",
+        "Not checking solutions"
+      ],
+      "teachingTips": [
+        "Teach SADMEP (reverse PEMDAS)",
+        "Use color coding for different operations",
+        "Show vertical format for tracking steps",
+        "Real-world: phone plans, gym memberships"
+      ],
+      "exampleTypes": ["2x + 5 = 13", "3x - 7 = 20", "x/4 + 3 = 8", "Problems with fractions"],
+      "connectionsToPriorKnowledge": ["One-step equations", "Order of operations"]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "solving-multi-step-equations",
+    "displayName": "Solving Multi-Step Equations",
+    "description": "Solve complex equations with distributive property and combining like terms",
+    "category": "equations",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Linear Equations",
+    "prerequisites": ["solving-two-step-equations", "distributive-property", "combining-like-terms"],
+    "enables": ["solving-equations-with-variables-both-sides", "literal-equations"],
+    "standardsAlignment": ["A-REI.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Simplify first: distribute and combine like terms",
+        "Get variable terms on one side, constants on other",
+        "Work step-by-step, showing all work",
+        "Verify solution in original equation"
+      ],
+      "commonMistakes": [
+        "Not distributing correctly",
+        "Sign errors when combining like terms",
+        "Trying to do too many steps at once",
+        "Forgetting to simplify before isolating variable"
+      ],
+      "teachingTips": [
+        "Teach systematic approach: Simplify → Collect → Isolate → Check",
+        "Use vertical alignment to track work",
+        "Encourage annotation of each step",
+        "Practice identifying structure before solving"
+      ],
+      "exampleTypes": ["3(x + 4) = 21", "2x + 5 - x = 12", "4(2x - 3) + 5 = 17", "Equations with negatives"],
+      "connectionsToPriorKnowledge": ["Distributive property", "Combining like terms", "Two-step equations"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "solving-equations-with-variables-both-sides",
+    "displayName": "Equations with Variables on Both Sides",
+    "description": "Solve equations where the variable appears on both sides",
+    "category": "equations",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Linear Equations",
+    "prerequisites": ["solving-multi-step-equations"],
+    "enables": ["literal-equations", "linear-inequalities"],
+    "standardsAlignment": ["A-REI.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Collect variable terms on one side (usually left)",
+        "Collect constant terms on other side",
+        "Choose which side strategically (avoid negatives)",
+        "Simplify first, then move terms"
+      ],
+      "commonMistakes": [
+        "Sign errors when moving terms",
+        "Subtracting instead of adding (or vice versa)",
+        "Forgetting to move ALL terms properly",
+        "Not recognizing special cases (no solution, all real numbers)"
+      ],
+      "teachingTips": [
+        "Teach 'move variables to left, numbers to right' as default",
+        "Use arrows to show term movement",
+        "Introduce identity (∞ solutions) and contradiction (no solution)",
+        "Real-world: comparing costs, break-even analysis"
+      ],
+      "exampleTypes": ["3x + 5 = 2x + 12", "5x - 7 = 3x + 9", "2(x + 3) = x + 10", "Special cases"],
+      "connectionsToPriorKnowledge": ["Multi-step equations", "Inverse operations"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "graphing-linear-equations-slope-intercept",
+    "displayName": "Graphing Lines in Slope-Intercept Form",
+    "description": "Graph linear equations in y = mx + b form",
+    "category": "graphing",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Linear Functions",
+    "prerequisites": ["coordinate-plane", "slope-concept", "y-intercept"],
+    "enables": ["writing-equations-from-graphs", "parallel-perpendicular-lines"],
+    "standardsAlignment": ["A-CED.2", "F-IF.7a"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "y = mx + b: m is slope, b is y-intercept",
+        "Start at y-intercept (0, b)",
+        "Use slope as rise/run to find next points",
+        "Slope is rate of change"
+      ],
+      "commonMistakes": [
+        "Plotting y-intercept at wrong location",
+        "Confusing rise and run",
+        "Drawing points instead of lines",
+        "Backwards slope (run/rise instead of rise/run)"
+      ],
+      "teachingTips": [
+        "Teach 'start at b, move by m' method",
+        "Use slope triangle visual",
+        "Connect to real-world rates (speed, cost per item)",
+        "Practice converting to slope-intercept form first"
+      ],
+      "exampleTypes": ["y = 2x + 3", "y = -x + 5", "y = (1/2)x - 2", "Horizontal and vertical lines"],
+      "connectionsToPriorKnowledge": ["Coordinate plane", "Slope from prior course"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "writing-linear-equations-slope-intercept",
+    "displayName": "Writing Equations in Slope-Intercept Form",
+    "description": "Write linear equations given slope and y-intercept or from graphs",
+    "category": "functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Linear Functions",
+    "prerequisites": ["slope-concept", "y-intercept", "graphing-linear-equations-slope-intercept"],
+    "enables": ["point-slope-form", "standard-form-linear-equations"],
+    "standardsAlignment": ["A-CED.2", "F-LE.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Identify slope (m) and y-intercept (b)",
+        "Substitute into y = mx + b",
+        "From graph: count rise/run for slope, find b at y-axis",
+        "From context: identify rate of change and starting value"
+      ],
+      "commonMistakes": [
+        "Swapping m and b values",
+        "Sign errors (especially with negative slopes)",
+        "Not simplifying fractions for slope",
+        "Misidentifying y-intercept from graph"
+      ],
+      "teachingTips": [
+        "Use template: y = __x + __",
+        "Practice reading slope and intercept from graphs",
+        "Real-world: write equations for phone plans, rental costs",
+        "Show connection between equation, graph, and table"
+      ],
+      "exampleTypes": ["Given m and b", "From graph", "From word problems", "From tables"],
+      "connectionsToPriorKnowledge": ["Slope-intercept form", "Graphing lines"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "systems-of-equations-graphing",
+    "displayName": "Solving Systems by Graphing",
+    "description": "Solve systems of linear equations by graphing both lines",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Systems of Equations",
+    "prerequisites": ["graphing-linear-equations-slope-intercept"],
+    "enables": ["systems-substitution", "systems-elimination"],
+    "standardsAlignment": ["A-REI.6", "A-REI.11"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Solution is the point where lines intersect",
+        "Graph both equations on same axes",
+        "Read coordinates of intersection point",
+        "Check solution in both equations"
+      ],
+      "commonMistakes": [
+        "Reading wrong coordinates from graph",
+        "Graphing lines incorrectly",
+        "Not checking solution in both equations",
+        "Confusing x and y coordinates"
+      ],
+      "teachingTips": [
+        "Use different colors for each line",
+        "Graph on same grid carefully",
+        "Discuss parallel lines (no solution) and same line (infinite solutions)",
+        "Real-world: when do two scenarios cost the same?"
+      ],
+      "exampleTypes": ["One solution", "No solution (parallel)", "Infinite solutions (same line)"],
+      "connectionsToPriorKnowledge": ["Graphing lines", "Coordinate plane"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 90,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4.0
+    }
+  },
+  {
+    "skillId": "systems-of-equations-substitution",
+    "displayName": "Solving Systems by Substitution",
+    "description": "Solve systems algebraically using substitution method",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Systems of Equations",
+    "prerequisites": ["systems-of-equations-graphing", "solving-equations-with-variables-both-sides"],
+    "enables": ["systems-elimination", "systems-word-problems"],
+    "standardsAlignment": ["A-REI.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Solve one equation for one variable",
+        "Substitute expression into other equation",
+        "Solve for remaining variable",
+        "Back-substitute to find first variable"
+      ],
+      "commonMistakes": [
+        "Not substituting correctly (missing parentheses)",
+        "Forgetting to back-substitute",
+        "Sign errors during substitution",
+        "Choosing harder equation to solve first"
+      ],
+      "teachingTips": [
+        "Look for equation already solved for a variable",
+        "Use parentheses when substituting",
+        "Show all steps vertically",
+        "Check solution in BOTH original equations"
+      ],
+      "exampleTypes": ["One equation solved", "Need to solve for variable first", "Fractional coefficients"],
+      "connectionsToPriorKnowledge": ["Multi-step equations", "Systems by graphing"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "systems-of-equations-elimination",
+    "displayName": "Solving Systems by Elimination",
+    "description": "Solve systems algebraically using elimination (addition) method",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Systems of Equations",
+    "prerequisites": ["systems-substitution"],
+    "enables": ["systems-word-problems", "systems-three-variables"],
+    "standardsAlignment": ["A-REI.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Add/subtract equations to eliminate one variable",
+        "Multiply equations to create opposite coefficients",
+        "Solve for remaining variable",
+        "Substitute back to find eliminated variable"
+      ],
+      "commonMistakes": [
+        "Not multiplying entire equation",
+        "Sign errors when adding/subtracting",
+        "Forgetting to solve for second variable",
+        "Not recognizing when to use elimination vs substitution"
+      ],
+      "teachingTips": [
+        "Line up variables vertically",
+        "Circle coefficients to eliminate",
+        "Use multiplication strategically",
+        "Compare efficiency with substitution method"
+      ],
+      "exampleTypes": ["Coefficients already opposite", "Need to multiply one equation", "Need to multiply both equations"],
+      "connectionsToPriorKnowledge": ["Systems by substitution", "Combining like terms"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 70,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "exponent-rules-multiplication",
+    "displayName": "Multiplying Powers (Same Base)",
+    "description": "Apply product rule: x^a · x^b = x^(a+b)",
+    "category": "exponents",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Exponents and Polynomials",
+    "prerequisites": ["exponent-basics"],
+    "enables": ["exponent-rules-division", "exponent-rules-power-of-power"],
+    "standardsAlignment": ["A-SSE.3c", "N-RN.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Same base: add exponents",
+        "Write out expanded form to show why",
+        "Base stays the same",
+        "Only works with multiplication"
+      ],
+      "commonMistakes": [
+        "Multiplying exponents instead of adding",
+        "Multiplying bases together",
+        "Applying rule when bases are different",
+        "Confusing with power of power rule"
+      ],
+      "teachingTips": [
+        "Show expanded form: x³ · x² = (x·x·x)(x·x) = x⁵",
+        "Create exponent rule reference sheet",
+        "Use color coding for bases vs exponents",
+        "Practice identifying when rule applies"
+      ],
+      "exampleTypes": ["x³ · x⁴", "a² · a⁵ · a", "With coefficients: 3x² · 4x³"],
+      "connectionsToPriorKnowledge": ["Exponent notation", "Repeated multiplication"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "exponent-rules-division",
+    "displayName": "Dividing Powers (Same Base)",
+    "description": "Apply quotient rule: x^a / x^b = x^(a-b)",
+    "category": "exponents",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Exponents and Polynomials",
+    "prerequisites": ["exponent-rules-multiplication"],
+    "enables": ["negative-exponents", "zero-exponent"],
+    "standardsAlignment": ["A-SSE.3c", "N-RN.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Same base: subtract exponents",
+        "Cancel common factors to show why",
+        "Base stays the same",
+        "Leads to zero and negative exponents"
+      ],
+      "commonMistakes": [
+        "Dividing exponents instead of subtracting",
+        "Dividing bases",
+        "Subtracting in wrong order",
+        "Not simplifying negative exponents"
+      ],
+      "teachingTips": [
+        "Show cancellation: x⁵/x² = (x·x·x·x·x)/(x·x) = x³",
+        "Connect to multiplication rule",
+        "Introduce zero exponent: x³/x³ = x⁰ = 1",
+        "Practice with variables and numbers"
+      ],
+      "exampleTypes": ["x⁵/x²", "a⁸/a³", "With coefficients: 12x⁶/3x²"],
+      "connectionsToPriorKnowledge": ["Multiplication rule", "Fraction simplification"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "polynomial-addition-subtraction",
+    "displayName": "Adding and Subtracting Polynomials",
+    "description": "Combine polynomials by adding/subtracting like terms",
+    "category": "polynomials",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Exponents and Polynomials",
+    "prerequisites": ["combining-like-terms", "distributive-property"],
+    "enables": ["polynomial-multiplication", "factoring-basics"],
+    "standardsAlignment": ["A-APR.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Combine only like terms (same variable and exponent)",
+        "Distribute negative for subtraction",
+        "Write in standard form (descending exponents)",
+        "Keep track of signs carefully"
+      ],
+      "commonMistakes": [
+        "Combining unlike terms",
+        "Forgetting to distribute negative sign",
+        "Sign errors with subtraction",
+        "Losing terms during combination"
+      ],
+      "teachingTips": [
+        "Use vertical alignment method",
+        "Color-code like terms",
+        "Circle terms to be combined",
+        "Emphasize distributing negative across entire polynomial"
+      ],
+      "exampleTypes": ["(3x² + 2x - 5) + (x² - 4x + 3)", "Subtraction with negatives", "Three or more polynomials"],
+      "connectionsToPriorKnowledge": ["Combining like terms", "Integer operations"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "polynomial-multiplication-monomial",
+    "displayName": "Multiplying Polynomials by Monomials",
+    "description": "Use distributive property to multiply monomial by polynomial",
+    "category": "polynomials",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Exponents and Polynomials",
+    "prerequisites": ["distributive-property", "exponent-rules-multiplication"],
+    "enables": ["polynomial-multiplication-binomials", "factoring-gcf"],
+    "standardsAlignment": ["A-APR.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Distribute monomial to every term",
+        "Multiply coefficients, add exponents",
+        "Keep track of signs",
+        "Write answer in standard form"
+      ],
+      "commonMistakes": [
+        "Not distributing to all terms",
+        "Multiplying exponents instead of adding",
+        "Sign errors with negative monomials",
+        "Forgetting coefficient"
+      ],
+      "teachingTips": [
+        "Draw arrows to show distribution",
+        "Use area model visual",
+        "Check: number of terms should match",
+        "Real-world: scaling dimensions"
+      ],
+      "exampleTypes": ["3x(2x + 5)", "-2x²(x² - 3x + 4)", "With negatives"],
+      "connectionsToPriorKnowledge": ["Distributive property", "Exponent rules"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "factoring-gcf",
+    "displayName": "Factoring Greatest Common Factor",
+    "description": "Factor out the GCF from polynomials",
+    "category": "factoring",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Factoring",
+    "prerequisites": ["polynomial-multiplication-monomial", "gcf-numbers"],
+    "enables": ["factoring-trinomials", "factoring-difference-of-squares"],
+    "standardsAlignment": ["A-SSE.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Find GCF of coefficients and variables",
+        "Divide each term by GCF",
+        "Check by distributing back",
+        "GCF goes outside parentheses"
+      ],
+      "commonMistakes": [
+        "Not finding complete GCF",
+        "Forgetting to divide all terms",
+        "Sign errors",
+        "Leaving 1 inside parentheses implicit"
+      ],
+      "teachingTips": [
+        "List factors of each term",
+        "Use box method for checking",
+        "Always verify by multiplying back",
+        "Emphasize: factoring undoes distribution"
+      ],
+      "exampleTypes": ["6x² + 9x", "4x³ - 8x² + 12x", "Negative GCF"],
+      "connectionsToPriorKnowledge": ["GCF from arithmetic", "Distributive property"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "quadratic-equations-graphing",
+    "displayName": "Graphing Quadratic Functions",
+    "description": "Graph parabolas and identify vertex, axis of symmetry, intercepts",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Functions",
+    "prerequisites": ["graphing-linear-equations-slope-intercept", "evaluating-functions"],
+    "enables": ["quadratic-vertex-form", "quadratic-word-problems"],
+    "standardsAlignment": ["F-IF.7a", "F-IF.8"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Parabola shape (U-shaped)",
+        "Vertex is maximum or minimum",
+        "Axis of symmetry: x = -b/2a",
+        "Opens up if a > 0, down if a < 0"
+      ],
+      "commonMistakes": [
+        "Connecting points with straight lines",
+        "Not plotting enough points",
+        "Forgetting negative signs in vertex formula",
+        "Confusing x and y coordinates of vertex"
+      ],
+      "teachingTips": [
+        "Create table of values (use symmetry)",
+        "Find vertex first, then points on each side",
+        "Use graphing technology to verify",
+        "Real-world: projectile motion, area optimization"
+      ],
+      "exampleTypes": ["y = x²", "y = -2x² + 4x + 1", "Finding vertex and intercepts"],
+      "connectionsToPriorKnowledge": ["Graphing lines", "Evaluating expressions"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 90,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4.0
+    }
+  },
+  {
+    "skillId": "solving-quadratics-factoring",
+    "displayName": "Solving Quadratics by Factoring",
+    "description": "Solve quadratic equations using factoring and zero product property",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Functions",
+    "prerequisites": ["factoring-trinomials", "zero-product-property"],
+    "enables": ["solving-quadratics-formula", "quadratic-word-problems"],
+    "standardsAlignment": ["A-REI.4b"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Set equation equal to zero",
+        "Factor completely",
+        "Apply zero product property",
+        "Solve each factor for variable"
+      ],
+      "commonMistakes": [
+        "Not setting equal to zero first",
+        "Factoring incorrectly",
+        "Forgetting one solution",
+        "Not checking solutions"
+      ],
+      "teachingTips": [
+        "Standard form first: ax² + bx + c = 0",
+        "Check factoring by FOILing",
+        "Show why zero product property works",
+        "Graph to verify solutions are x-intercepts"
+      ],
+      "exampleTypes": ["x² + 5x + 6 = 0", "2x² - 7x + 3 = 0", "Difference of squares"],
+      "connectionsToPriorKnowledge": ["Factoring", "Zero product property"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "solving-quadratics-square-roots",
+    "displayName": "Solving by Taking Square Roots",
+    "description": "Solve quadratics in form x² = k using square roots",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Functions",
+    "prerequisites": ["square-roots", "solving-one-step-equations"],
+    "enables": ["completing-the-square", "solving-quadratics-formula"],
+    "standardsAlignment": ["A-REI.4b"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Isolate x² term",
+        "Take square root of both sides",
+        "Remember ± (plus or minus)",
+        "Simplify radical if needed"
+      ],
+      "commonMistakes": [
+        "Forgetting negative solution",
+        "Not isolating x² first",
+        "Arithmetic errors with radicals",
+        "Taking square root of negative (no real solution)"
+      ],
+      "teachingTips": [
+        "Emphasize TWO solutions (± )",
+        "Graph to show why two x-intercepts",
+        "Discuss imaginary numbers briefly",
+        "Use perfect squares first, then radicals"
+      ],
+      "exampleTypes": ["x² = 25", "(x - 3)² = 16", "3x² = 48", "x² = -9 (no real solution)"],
+      "connectionsToPriorKnowledge": ["Square roots", "Inverse operations"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "quadratic-formula",
+    "displayName": "Quadratic Formula",
+    "description": "Solve any quadratic using x = [-b ± √(b²-4ac)] / 2a",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Functions",
+    "prerequisites": ["solving-quadratics-factoring", "solving-quadratics-square-roots"],
+    "enables": ["discriminant", "quadratic-word-problems"],
+    "standardsAlignment": ["A-REI.4a", "A-REI.4b"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Works for ANY quadratic equation",
+        "Standard form: ax² + bx + c = 0",
+        "Identify a, b, c carefully",
+        "Simplify radical and fraction fully"
+      ],
+      "commonMistakes": [
+        "Sign errors (especially with negative b)",
+        "Forgetting parentheses in b² - 4ac",
+        "Not simplifying radical",
+        "Dividing only part of numerator by 2a"
+      ],
+      "teachingTips": [
+        "Create formula reference card",
+        "Show step-by-step substitution",
+        "Practice identifying a, b, c first",
+        "Use calculator efficiently, but show work"
+      ],
+      "exampleTypes": ["x² + 6x + 5 = 0", "2x² - 5x - 3 = 0", "With radicals in answer"],
+      "connectionsToPriorKnowledge": ["Square roots", "Simplifying radicals", "Fraction operations"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "exponential-functions-basics",
+    "displayName": "Understanding Exponential Functions",
+    "description": "Identify and evaluate exponential functions f(x) = a·b^x",
+    "category": "exponential",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Exponential Functions",
+    "prerequisites": ["exponent-rules-multiplication", "function-notation"],
+    "enables": ["exponential-growth-decay", "exponential-equations"],
+    "standardsAlignment": ["F-IF.7e", "F-LE.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Form: f(x) = a·b^x where b > 0",
+        "a is initial value, b is growth/decay factor",
+        "Growth if b > 1, decay if 0 < b < 1",
+        "Exponential change vs linear change"
+      ],
+      "commonMistakes": [
+        "Confusing with polynomial functions",
+        "Not understanding rapid growth",
+        "Evaluating exponents incorrectly",
+        "Mixing up growth factor and rate"
+      ],
+      "teachingTips": [
+        "Graph to show rapid increase/decrease",
+        "Compare table of values: linear vs exponential",
+        "Real-world: population growth, compound interest, radioactive decay",
+        "Use calculator for large exponents"
+      ],
+      "exampleTypes": ["f(x) = 2^x", "f(x) = 100(1.05)^x", "f(x) = 50(0.5)^x"],
+      "connectionsToPriorKnowledge": ["Exponent rules", "Function evaluation"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  }
+]
