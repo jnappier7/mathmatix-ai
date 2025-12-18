@@ -188,6 +188,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${s.role}</td>
                 <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
                 <td>
+                    <button class="btn-icon reset-screener-btn" data-studentid="${s._id}" data-studentname="${s.firstName} ${s.lastName}" title="Reset Screener">
+                        <i class="fas fa-redo"></i>
+                    </button>
                     <button class="btn-icon btn-danger delete-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" title="Delete User">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -292,6 +295,51 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const studentId = link.closest('tr')?.dataset.studentid;
                 if (studentId) {
                     populateModal(studentId);
+                }
+                return;
+            }
+
+            // Handle reset screener button click
+            const resetBtn = e.target.closest('.reset-screener-btn');
+            if (resetBtn) {
+                e.preventDefault();
+                const studentId = resetBtn.dataset.studentid;
+                const studentName = resetBtn.dataset.studentname;
+
+                const reason = prompt(
+                    `Reset placement assessment for ${studentName}?\n\n` +
+                    `This will allow them to retake the screener.\n\n` +
+                    `Optional: Enter a reason for this reset (e.g., "summer break", "skill regression"):`
+                );
+
+                // User cancelled
+                if (reason === null) return;
+
+                try {
+                    resetBtn.disabled = true;
+                    resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    const response = await fetch(`/api/admin/students/${studentId}/reset-assessment`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ reason: reason || 'Admin requested reset' })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        alert(`✅ ${result.message}\n\nThe student can now retake the placement screener.`);
+                        await initializeDashboard(); // Refresh the dashboard
+                    } else {
+                        throw new Error(result.message || 'Failed to reset assessment');
+                    }
+                } catch (error) {
+                    console.error('Reset assessment error:', error);
+                    alert(`❌ Error: ${error.message}`);
+                } finally {
+                    resetBtn.disabled = false;
+                    resetBtn.innerHTML = '<i class="fas fa-redo"></i>';
                 }
                 return;
             }

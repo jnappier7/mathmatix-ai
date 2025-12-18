@@ -577,6 +577,67 @@ router.get('/reports/summaries', isAdmin, async (req, res) => {
 });
 
 /**
+ * @route   POST /api/admin/students/:studentId/reset-assessment
+ * @desc    Reset a student's placement assessment (admin only)
+ * @access  Private (Admin)
+ *
+ * Allows admin to reset any student's screener so they can retake it.
+ * Use cases: After summer break, significant skill regression, incorrect placement
+ */
+router.post('/students/:studentId/reset-assessment', isAdmin, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const adminId = req.user._id;
+    const { reason } = req.body; // Optional reason for audit trail
+
+    // Find the student
+    const student = await User.findOne({ _id: studentId, role: 'student' });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found.' });
+    }
+
+    // Store previous assessment data for audit trail
+    const previousAssessment = {
+      completedDate: student.learningProfile.assessmentDate,
+      placement: student.learningProfile.initialPlacement,
+      resetDate: new Date(),
+      resetBy: adminId,
+      resetByRole: 'admin',
+      reason: reason || 'Admin requested reset'
+    };
+
+    // Add to assessment history if it doesn't exist
+    if (!student.learningProfile.assessmentHistory) {
+      student.learningProfile.assessmentHistory = [];
+    }
+    student.learningProfile.assessmentHistory.push(previousAssessment);
+
+    // Reset assessment flags
+    student.learningProfile.assessmentCompleted = false;
+    student.learningProfile.assessmentDate = null;
+    student.learningProfile.initialPlacement = null;
+
+    // Optional: Clear skill mastery (keeping it for now to preserve learning history)
+    // student.skillMastery = new Map();
+
+    await student.save();
+
+    console.log(`[Admin] Assessment reset for student ${studentId} by admin ${adminId}`);
+
+    res.json({
+      success: true,
+      message: `Assessment reset successfully for ${student.firstName} ${student.lastName}`,
+      studentName: `${student.firstName} ${student.lastName}`,
+      previousAssessment
+    });
+
+  } catch (error) {
+    console.error('Error resetting student assessment:', error);
+    res.status(500).json({ message: 'Error resetting assessment' });
+  }
+});
+
+/**
  * @route   DELETE /api/admin/users/:userId
  * @desc    Delete a user account (admin only)
  * @access  Private (Admin)
