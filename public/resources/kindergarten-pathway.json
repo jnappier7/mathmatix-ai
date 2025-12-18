@@ -1,0 +1,11 @@
+{
+  "track": "Kindergarten Math",
+  "overview": "Foundation in counting, number recognition, basic operations, and shape identification.",
+  "modules": [
+    {"moduleId": "counting_numbers", "quarter": 1, "title": "Counting & Number Recognition", "preview": "Count to 20, recognize numerals 0-10", "skills": ["counting-to-20", "number-recognition-0-10", "one-to-one-correspondence"]},
+    {"moduleId": "comparing_ordering", "quarter": 2, "title": "Comparing & Ordering", "preview": "Compare groups, more/less/same, order numbers", "skills": ["comparing-numbers-k", "ordering-numbers", "number-recognition-11-20"]},
+    {"moduleId": "operations", "quarter": 3, "title": "Addition & Subtraction", "preview": "Add and subtract within 5, decompose numbers", "skills": ["addition-within-5", "subtraction-within-5", "decomposing-numbers-k"]},
+    {"moduleId": "geometry_measurement", "quarter": 4, "title": "Geometry & Measurement", "preview": "2D and 3D shapes, compare sizes", "skills": ["shapes-2d-k", "shapes-3d-k", "measurement-comparison-k"]},
+    {"moduleId": "final_assessment", "quarter": 4, "title": "Kindergarten Assessment", "preview": "Counting, operations, shapes"}
+  ]
+}

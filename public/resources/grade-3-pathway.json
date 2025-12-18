@@ -1,0 +1,11 @@
+{
+  "track": "Grade 3 Math",
+  "overview": "Multiplication, division, fractions, area, and perimeter.",
+  "modules": [
+    {"moduleId": "multiplication", "quarter": 1, "title": "Multiplication", "preview": "Concept, strategies, fact fluency 0-12", "skills": ["multiplication-basics", "multiplication-facts", "multiplication-patterns"]},
+    {"moduleId": "division_fractions", "quarter": 2, "title": "Division & Fractions", "preview": "Division basics, unit fractions, number line", "skills": ["division-basics", "division-facts", "fractions-unit-fractions", "fractions-on-number-line"]},
+    {"moduleId": "area_perimeter", "quarter": 3, "title": "Area & Perimeter", "preview": "Rectangles, composite figures, measurement", "skills": ["area-rectangles", "perimeter", "area-perimeter-word-problems"]},
+    {"moduleId": "data_measurement", "quarter": 4, "title": "Data & Measurement", "preview": "Bar graphs, line plots, time, mass, volume", "skills": ["bar-graphs-scaled", "measuring-mass-volume", "elapsed-time"]},
+    {"moduleId": "final_assessment", "quarter": 4, "title": "Grade 3 Assessment", "preview": "Multiplication, division, fractions, area"}
+  ]
+}
