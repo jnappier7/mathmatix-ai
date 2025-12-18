@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastery Mode - MΔTHMΔTIΧ</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Mastery Mode Specific Styles - Different Feel, Same Brand */
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            color: #fff;
+        }
+
+        .mastery-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-bottom: 2px solid #12B3B3;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .badge-progress {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .badge-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .badge-icon {
+            font-size: 48px;
+        }
+
+        .badge-details h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #12B3B3;
+        }
+
+        .badge-details p {
+            margin: 5px 0 0 0;
+            opacity: 0.8;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #12B3B3, #16D9D9);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .exit-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid #fff;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .exit-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .mastery-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+            height: calc(100vh - 180px);
+        }
+
+        .whiteboard-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #mastery-chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 12px;
+            max-width: 90%;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #12B3B3, #16D9D9);
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .message.ai {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+        }
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #mastery-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        #mastery-input:focus {
+            outline: none;
+            border-color: #12B3B3;
+        }
+
+        #mastery-send-btn {
+            background: linear-gradient(135deg, #12B3B3, #16D9D9);
+            border: none;
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        #mastery-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(18, 179, 179, 0.4);
+        }
+
+        .whiteboard-placeholder {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 18px;
+        }
+
+        @media (max-width: 1024px) {
+            .mastery-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .whiteboard-section {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mastery Mode Header with Badge Progress -->
+    <div class="mastery-header">
+        <div class="badge-progress">
+            <div class="badge-info">
+                <div class="badge-icon" id="badge-icon">🏅</div>
+                <div class="badge-details">
+                    <h2 id="badge-name">Loading...</h2>
+                    <p id="badge-skill">Skill: Loading...</p>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%">
+                        <span id="progress-text">0/5</span>
+                    </div>
+                </div>
+            </div>
+            <button class="exit-button" onclick="exitMasteryMode()">
+                <i class="fas fa-sign-out-alt"></i> Exit Mastery Mode
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Mastery Interface -->
+    <div class="mastery-container">
+        <!-- Whiteboard Section (Left/Top) -->
+        <div class="whiteboard-section">
+            <h3 style="margin-top: 0; color: #12B3B3;">Visual Teaching Board</h3>
+            <div class="whiteboard-placeholder">
+                <p><i class="fas fa-chalkboard"></i> Whiteboard will appear here as tutor teaches</p>
+            </div>
+        </div>
+
+        <!-- Chat Section (Right/Bottom) -->
+        <div class="chat-section">
+            <div id="mastery-chat-box">
+                <!-- Messages will appear here -->
+            </div>
+            <div class="input-area">
+                <div class="input-container">
+                    <input
+                        type="text"
+                        id="mastery-input"
+                        placeholder="Type your answer or question..."
+                        autocomplete="off"
+                    >
+                    <button id="mastery-send-btn">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // Initialize mastery mode
+        async function initializeMasteryMode() {
+            try {
+                // Get user data
+                const userRes = await fetch('/user', { credentials: 'include' });
+                if (!userRes.ok) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const data = await userRes.json();
+                currentUser = data.user;
+
+                // Check if user has active badge
+                if (!currentUser.masteryProgress || !currentUser.masteryProgress.activeBadge) {
+                    alert('No active badge. Please select a badge first.');
+                    window.location.href = '/badge-map.html';
+                    return;
+                }
+
+                // Update header with badge info
+                const badge = currentUser.masteryProgress.activeBadge;
+                const tierEmoji = { bronze: '🥉', silver: '🥈', gold: '🥇', platinum: '💎' };
+
+                document.getElementById('badge-icon').textContent = tierEmoji[badge.tier] || '🏅';
+                document.getElementById('badge-name').textContent = badge.badgeName;
+                document.getElementById('badge-skill').textContent = `Skill: ${badge.skillId.replace(/-/g, ' ')}`;
+
+                updateProgress(badge.problemsCompleted || 0, badge.requiredProblems);
+
+                // Send welcome message
+                appendMessage('ai', `Welcome to ${badge.badgeName}! Let's start working on ${badge.skillId.replace(/-/g, ' ')}. Ready to begin?`);
+
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('Error loading mastery mode. Please try again.');
+                window.location.href = '/chat.html';
+            }
+        }
+
+        // Update progress bar
+        function updateProgress(completed, required) {
+            const percentage = (completed / required) * 100;
+            document.getElementById('progress-fill').style.width = `${percentage}%`;
+            document.getElementById('progress-text').textContent = `${completed}/${required}`;
+        }
+
+        // Append message to chat
+        function appendMessage(role, content) {
+            const chatBox = document.getElementById('mastery-chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.textContent = content;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Send message
+        async function sendMessage() {
+            const input = document.getElementById('mastery-input');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // Add user message
+            appendMessage('user', message);
+            input.value = '';
+
+            try {
+                // Send to mastery chat API
+                const response = await fetch('/api/mastery/chat?stream=true', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        userId: currentUser._id,
+                        message: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+
+                // Handle streaming response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let aiMessage = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                if (data.chunk) {
+                                    aiMessage += data.chunk;
+                                }
+                                if (data.done) {
+                                    appendMessage('ai', aiMessage);
+                                }
+                            } catch (e) {
+                                // Ignore parse errors
+                            }
+                        }
+                    }
+                }
+
+            } catch (error) {
+                console.error('Send error:', error);
+                appendMessage('ai', 'Sorry, there was an error. Please try again.');
+            }
+        }
+
+        // Exit mastery mode
+        function exitMasteryMode() {
+            if (confirm('Exit mastery mode and return to regular chat?')) {
+                window.location.href = '/chat.html';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('mastery-send-btn').addEventListener('click', sendMessage);
+        document.getElementById('mastery-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeMasteryMode);
+        } else {
+            initializeMasteryMode();
+        }
+    </script>
+</body>
+</html>

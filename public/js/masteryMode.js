@@ -37,7 +37,8 @@ function initializeMasteryMode() {
   // Open modal
   elements.masteryModeBtn?.addEventListener('click', () => {
     console.log('Mastery Mode button clicked!');
-    elements.masteryModeModal.classList.add('is-visible');
+    // Redirect to badge map for separate mastery experience
+    window.location.href = '/badge-map.html';
   });
 
   // Close modal
