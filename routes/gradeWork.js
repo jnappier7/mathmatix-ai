@@ -73,31 +73,51 @@ Format your response as follows:
 [Describe what problem they were solving]
 
 **ANNOTATIONS:**
-Grade like a real teacher with simple, clean marks. For each annotation:
+CRITICAL: Study the image carefully to position annotations precisely. Look at:
+- Where each problem number is located
+- Where each answer appears
+- The layout and spacing of their work
+- Estimate percentages by mentally dividing the image into a grid
+
+For each annotation, create a line:
 ANNOTATION|type|x|y|mark
 
 Where:
 - type: "check" (✓ correct), "miss" (✗ wrong), "partial" (-points deducted), "circle" (circle answer), "note" (brief text)
-- x: horizontal position as percentage (0-100, where 0=left, 100=right)
-- y: vertical position as percentage (0-100, where 0=top, 100=bottom)
-- mark: What to write (examples: "✓", "✗", "-2", "A", "slope=m", etc.) - KEEP IT BRIEF!
+- x: horizontal position as percentage (0-100, where 0=left edge, 100=right edge, 50=center)
+- y: vertical position as percentage (0-100, where 0=top edge, 100=bottom edge, 50=center)
+- mark: What to write (examples: "✓", "✗", "-2", "See below", "Check work", etc.) - KEEP IT BRIEF!
 
-**GRADING STYLE:** Mark like a real teacher - use checkmarks for correct, X or "-A" for errors, circle final answers, add brief helpful notes. Position marks RIGHT NEXT TO each problem number or answer.
+**POSITIONING TIPS:**
+- For problem #1 at top-left: Try x=10-20, y=15-25
+- For work in the middle: Try x=30-70, y=40-60
+- For answers on the right side: Try x=70-85, y=[their vertical position]
+- Leave 5-10% margin from edges
+- If you can't position accurately, add a note explaining which problem it refers to
 
-Examples:
-ANNOTATION|check|10|22|✓
-ANNOTATION|miss|10|28|✗
-ANNOTATION|partial|60|35|-1
-ANNOTATION|circle|25|40|
-ANNOTATION|note|15|75|slope=rise/run
+**GRADING STYLE:**
+- Put checkmarks ✓ next to correct answers
+- Put X marks next to wrong answers
+- Circle final answers
+- Add brief notes with context: "See #3", "Check sign", "-2 pts"
+
+Example annotations:
+ANNOTATION|check|15|20|✓
+ANNOTATION|miss|15|45|✗
+ANNOTATION|partial|40|30|-2
+ANNOTATION|circle|75|35|
+ANNOTATION|note|15|60|Check sign
 
 **STEP-BY-STEP ANALYSIS:**
+[For each problem or step, create a numbered item]
 
-Step 1: [What they did]
+Problem/Step 1: [What they did]
 ✅ Correct / ❌ Error: [Explanation]
+→ If error: [What they should have done]
 
-Step 2: [What they did]
+Problem/Step 2: [What they did]
 ✅ Correct / ❌ Error: [Explanation]
+→ If error: [What they should have done]
 
 [Continue for all steps...]
 

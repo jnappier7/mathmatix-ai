@@ -344,16 +344,17 @@ class ShowYourWorkManager {
 
         ctx.save();
 
-        // Purple color for all marks (teacher grading pen)
-        const purpleColor = '#8b5cf6';
+        // Purple color for all marks (Mathmatix brand color)
+        const gradingColor = '#8b5cf6'; // Bright purple for visibility
 
-        // Scale sizes based on canvas dimensions
-        const baseSize = Math.max(30, Math.min(canvasWidth, canvasHeight) / 30);
+        // Scale sizes based on canvas dimensions - MUCH LARGER for visibility
+        // Changed from /30 to /12 to make annotations 2.5x bigger
+        const baseSize = Math.max(60, Math.min(canvasWidth, canvasHeight) / 12);
 
         if (annotation.type === 'check') {
-            // Draw checkmark ✓
-            ctx.strokeStyle = purpleColor;
-            ctx.lineWidth = baseSize / 8;
+            // Draw checkmark ✓ - Bold and visible
+            ctx.strokeStyle = gradingColor;
+            ctx.lineWidth = baseSize / 4; // Changed from /8 to /4 for thicker lines
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
@@ -364,9 +365,9 @@ class ShowYourWorkManager {
             ctx.stroke();
 
         } else if (annotation.type === 'miss') {
-            // Draw X mark ✗
-            ctx.strokeStyle = purpleColor;
-            ctx.lineWidth = baseSize / 8;
+            // Draw X mark ✗ - Bold and clear
+            ctx.strokeStyle = gradingColor;
+            ctx.lineWidth = baseSize / 4; // Changed from /8 to /4 for thicker lines
             ctx.lineCap = 'round';
 
             const size = baseSize * 0.5;
@@ -378,9 +379,9 @@ class ShowYourWorkManager {
             ctx.stroke();
 
         } else if (annotation.type === 'circle') {
-            // Draw circle around answer
-            ctx.strokeStyle = purpleColor;
-            ctx.lineWidth = baseSize / 10;
+            // Draw circle around answer - Prominent outline
+            ctx.strokeStyle = gradingColor;
+            ctx.lineWidth = baseSize / 6; // Changed from /10 to /6 for thicker circles
             const radius = baseSize * 0.8;
 
             ctx.beginPath();
@@ -389,11 +390,40 @@ class ShowYourWorkManager {
 
         } else if (annotation.type === 'partial' || annotation.type === 'note') {
             // Draw text (like "-1", "A", "slope=rise/run", etc.)
-            ctx.fillStyle = purpleColor;
-            ctx.font = `bold ${baseSize}px Arial`;
+            const fontSize = baseSize * 1.2; // Larger font for visibility
+            ctx.font = `bold ${fontSize}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(annotation.mark || '', x, y);
+
+            // Measure text for background
+            const text = annotation.mark || '';
+            const metrics = ctx.measureText(text);
+            const textWidth = metrics.width;
+            const textHeight = fontSize;
+            const padding = fontSize * 0.3;
+
+            // Draw semi-transparent white background for readability
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            ctx.fillRect(
+                x - textWidth / 2 - padding,
+                y - textHeight / 2 - padding,
+                textWidth + padding * 2,
+                textHeight + padding * 2
+            );
+
+            // Draw border around text background
+            ctx.strokeStyle = gradingColor;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(
+                x - textWidth / 2 - padding,
+                y - textHeight / 2 - padding,
+                textWidth + padding * 2,
+                textHeight + padding * 2
+            );
+
+            // Draw the text in red
+            ctx.fillStyle = gradingColor;
+            ctx.fillText(text, x, y);
         }
 
         ctx.restore();
