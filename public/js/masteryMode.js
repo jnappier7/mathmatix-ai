@@ -30,10 +30,46 @@ function initializeMasteryMode() {
     masteryModeBtn: document.getElementById('mastery-mode-btn')
   };
 
-  // Redirect to badge map for separate mastery experience
-  elements.masteryModeBtn?.addEventListener('click', () => {
-    console.log('Mastery Mode button clicked! Redirecting to badge map...');
-    window.location.href = '/badge-map.html';
+  // Start mastery journey - check progression through phases
+  elements.masteryModeBtn?.addEventListener('click', async () => {
+    console.log('Mastery Mode button clicked!');
+
+    try {
+      // Check if user has completed the placement screener
+      const userResponse = await fetch('/user', { credentials: 'include' });
+      if (!userResponse.ok) {
+        if (userResponse.status === 401) {
+          console.error('[Mastery Mode] Session expired - redirecting to login');
+          alert('Your session has expired. Please log in again.');
+          window.location.href = '/login.html';
+          return;
+        }
+        throw new Error(`Failed to fetch user data: ${userResponse.status}`);
+      }
+
+      const userData = await userResponse.json();
+      console.log('[Mastery Mode] User data:', userData);
+
+      const assessmentCompleted = userData.user?.learningProfile?.assessmentCompleted;
+      console.log('[Mastery Mode] Assessment completed:', assessmentCompleted);
+
+      if (assessmentCompleted) {
+        // User already completed placement - skip straight to badge selection
+        console.log('[Mastery Mode] User already completed placement screener, skipping to badges');
+        sessionStorage.setItem('masteryModeActive', 'true');
+        sessionStorage.setItem('masteryPhase', 'badges');
+        window.location.href = '/badge-map.html';
+      } else {
+        // User needs placement - redirect to screener
+        console.log('[Mastery Mode] User needs placement screener');
+        sessionStorage.setItem('masteryModeActive', 'true');
+        sessionStorage.setItem('masteryPhase', 'placement');
+        window.location.href = '/screener.html';
+      }
+    } catch (error) {
+      console.error('[Mastery Mode] Error starting journey:', error);
+      alert(`Failed to start mastery journey: ${error.message}`);
+    }
   });
 
   console.log('Mastery Mode button initialized');
