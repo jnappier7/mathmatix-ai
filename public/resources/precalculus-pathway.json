@@ -1,0 +1,15 @@
+{
+  "track": "Pre-Calculus",
+  "overview": "Bridge algebra and geometry to calculus through trigonometry, vectors, and advanced functions.",
+  "modules": [
+    {"moduleId": "trig_functions", "quarter": 1, "title": "Trigonometric Functions", "preview": "Unit circle, trig functions, graphs", "skills": ["trig-unit-circle", "trig-graphs", "trig-inverse-functions"]},
+    {"moduleId": "trig_identities", "quarter": 2, "title": "Trigonometric Identities & Equations", "preview": "Prove identities, solve trig equations", "skills": ["trig-identities", "sum-difference-formulas", "trig-equations"]},
+    {"moduleId": "polar_parametric", "quarter": 2, "title": "Polar & Parametric Equations", "preview": "Polar coordinates, parametric curves", "skills": ["polar-coordinates", "parametric-equations", "polar-graphs"]},
+    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Trigonometry mastery"},
+    {"moduleId": "vectors", "quarter": 3, "title": "Vectors", "preview": "Vector operations, dot product, applications", "skills": ["vectors", "dot-product", "vector-applications"]},
+    {"moduleId": "matrices", "quarter": 3, "title": "Matrices", "preview": "Matrix operations, systems, transformations", "skills": ["matrices-operations", "systems-matrices", "matrix-transformations"]},
+    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Vectors and matrices"},
+    {"moduleId": "intro_calculus", "quarter": 4, "title": "Introduction to Calculus", "preview": "Limits, continuity, intro to derivatives", "skills": ["limits-intuitive", "continuity", "average-rate-of-change"]},
+    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment", "preview": "Comprehensive Pre-Calculus assessment"}
+  ]
+}

@@ -76,11 +76,11 @@ router.post('/', isAuthenticated, async (req, res) => {
             responseTime: responseTime || null
         });
 
-        // Get tutor config
+        // Get tutor config - Mr. Nappier is the default for mastery mode
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
             ? user.selectedTutorId
-            : "default";
-        const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+            : "mr-nappier";
+        const currentTutor = TUTOR_CONFIG[selectedTutorKey] || TUTOR_CONFIG["mr-nappier"];
 
         // Build mastery context from active badge
         const masteryContext = {

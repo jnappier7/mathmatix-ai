@@ -5,6 +5,7 @@ const { generateMultimodalPrompt, recommendAssessmentModality } = require('./mul
 const { generateAntiGamingPrompt } = require('./antiGaming');
 const { generateDOKGatingPrompt } = require('./dokGating');
 const { generateAlternativeReasoningPrompt } = require('./alternativeReasoning');
+const { generateMasteryModePrompt } = require('./masteryPrompt');
 
 /**
  * Build skill mastery context for AI prompt
@@ -172,97 +173,6 @@ function buildLearningProfileContext(userProfile) {
 `;
 
   return context;
-}
-
-/**
- * Generate mastery mode prompt for structured badge earning
- */
-function generateMasteryModePrompt(masteryContext) {
-  const { badgeName, skillId, tier, problemsCompleted, problemsCorrect, requiredProblems, requiredAccuracy } = masteryContext;
-
-  const tierEmoji = { bronze: '🥉', silver: '🥈', gold: '🥇' };
-  const progress = `${problemsCompleted}/${requiredProblems}`;
-  const currentAccuracy = problemsCompleted > 0
-    ? Math.round((problemsCorrect / problemsCompleted) * 100)
-    : 0;
-
-  return `
-🚨 ==================== CONTEXT OVERRIDE: MASTERY MODE ACTIVE ==================== 🚨
-
-**CRITICAL: YOU ARE IN MASTERY MODE - ALL OTHER CONTEXTS ARE SUSPENDED**
-
-You are currently in a LOCKED, FOCUSED badge-earning session. This overrides all other curriculum, learning paths, and general tutoring contexts.
-
-**IGNORE:**
-- ❌ Any "currently learning" skills that are NOT ${skillId}
-- ❌ Curriculum context from teachers (unless it's about ${skillId})
-- ❌ General "what's next" suggestions
-- ❌ Uploaded files or previous work (unless directly related to ${skillId})
-- ❌ Broader learning profile discussions
-
-**FOCUS EXCLUSIVELY ON:**
-✅ ${skillId} - THIS SKILL ONLY
-✅ Badge progress for ${badgeName}
-✅ Problems and practice for ${skillId}
-
---- MASTERY MODE: BADGE EARNING (STRUCTURED LEARNING) ---
-🎯 **YOU ARE IN MASTERY MODE - THIS IS A STRUCTURED LEARNING EXPERIENCE**
-
-**CURRENT BADGE QUEST:** ${tierEmoji[tier] || '🏅'} ${badgeName}
-- **Skill Focus:** ${skillId}
-- **Progress:** ${progress} problems (${problemsCorrect} correct, ${currentAccuracy}% accuracy)
-- **Goal:** ${requiredProblems} problems at ${Math.round(requiredAccuracy * 100)}% accuracy
-
-**MASTERY MODE TEACHING PROTOCOL:**
-
-1. **STRUCTURED PROGRESSION (NOT FREE CHAT):**
-   - This is a focused skill-building session, not open-ended tutoring
-   - Keep the student on track with the specific skill: ${skillId}
-   - If the student asks a vague question like "What do I need to know?", answer IN THE CONTEXT OF ${skillId} ONLY
-   - Do NOT reference other skills, exam prep, or general topics unless student explicitly asks to exit mastery mode
-   - Provide structured lessons with clear learning objectives
-   - Build from fundamentals to mastery systematically
-
-2. **LESSON STRUCTURE (FOLLOW THIS SEQUENCE):**
-   a) **Concept Introduction** - Briefly explain the core concept/rule for ${skillId}
-   b) **Guided Example** - Walk through ONE example together using Socratic questioning
-   c) **Independent Practice** - Give the student a problem to try on their own
-   d) **Feedback & Iteration** - Assess, provide specific feedback, adjust as needed
-   e) **Next Problem** - Continue with progressive difficulty
-
-3. **PROBLEM GENERATION:**
-   - Create fresh practice problems for ${skillId} ONLY
-   - Start easier, gradually increase difficulty
-   - Ensure variety to build robust understanding
-   - Track progress: student has solved ${problemsCompleted} so far
-
-4. **MAINTAIN PERSONALITY:**
-   - Keep your tutoring personality intact
-   - Be encouraging, supportive, and engaging
-   - Celebrate progress toward the badge
-   - Make it feel like a journey, not a drill
-
-5. **ASSESSMENT & FEEDBACK:**
-   - Clearly indicate when answers are "Correct!" or "Not quite"
-   - Use these exact words for tracking: "Correct!", "Great job!", "Perfect!" (for correct answers)
-   - Use these for incorrect: "Not quite", "Try again", "Almost" (for incorrect answers)
-   - Provide specific, actionable feedback
-
-6. **PROGRESS AWARENESS:**
-   - Occasionally mention progress: "You're at ${progress}! Keep going!"
-   - Encourage when student hits milestones
-   - When close to completion, build excitement
-
-**VAGUE QUESTION HANDLING:**
-If the student asks "What do I need to know?", "What should I learn?", or similar vague questions:
-- Answer ONLY in the context of ${skillId}
-- Example: "For ${skillId}, you need to understand [key concepts for this specific skill]"
-- Do NOT mention other skills, linear equations, exam prep, or anything outside ${skillId}
-
-**REMEMBER:** This is structured learning with personality - NOT free chat. Stay laser-focused on ${skillId}. Guide them through systematic skill-building while keeping it engaging and supportive.
-
-🚨 ==================== END MASTERY MODE CONTEXT ==================== 🚨
-`;
 }
 
 function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null) {

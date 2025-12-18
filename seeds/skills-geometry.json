@@ -1,0 +1,536 @@
+[
+  {
+    "skillId": "points-lines-planes",
+    "displayName": "Points, Lines, and Planes",
+    "description": "Understand undefined terms and their relationships in geometric space",
+    "category": "foundations",
+    "course": "Geometry",
+    "quarter": 1,
+    "unit": "Geometric Foundations",
+    "prerequisites": [],
+    "enables": ["angle-relationships", "parallel-perpendicular"],
+    "standardsAlignment": ["G-CO.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Point: location with no dimension",
+        "Line: infinite points in one dimension",
+        "Plane: infinite points in two dimensions",
+        "Collinear and coplanar points"
+      ],
+      "commonMistakes": [
+        "Confusing line with line segment",
+        "Thinking planes have edges",
+        "Not understanding undefined terms",
+        "Improper notation for geometric objects"
+      ],
+      "teachingTips": [
+        "Use physical models and sketches",
+        "Emphasize proper geometric notation",
+        "Connect to real-world: floor (plane), laser (line), GPS location (point)",
+        "Build foundation for all geometric thinking"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "angle-measurement",
+    "displayName": "Measuring and Classifying Angles",
+    "description": "Use protractor, classify angles, and understand angle relationships",
+    "category": "foundations",
+    "course": "Geometry",
+    "quarter": 1,
+    "unit": "Geometric Foundations",
+    "prerequisites": ["points-lines-planes"],
+    "enables": ["angle-pair-relationships", "triangle-angle-sum"],
+    "standardsAlignment": ["G-CO.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Acute: 0° < θ < 90°",
+        "Right: θ = 90°",
+        "Obtuse: 90° < θ < 180°",
+        "Straight: θ = 180°",
+        "Protractor use and precision"
+      ],
+      "commonMistakes": [
+        "Reading wrong scale on protractor",
+        "Confusing acute and obtuse",
+        "Not aligning protractor correctly",
+        "Rounding too early"
+      ],
+      "teachingTips": [
+        "Practice estimating before measuring",
+        "Use dynamic geometry software",
+        "Real-world: architecture, navigation, design",
+        "Connect to benchmark angles (30°, 45°, 60°, 90°)"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "triangle-classification",
+    "displayName": "Classifying Triangles",
+    "description": "Classify triangles by sides and angles",
+    "category": "triangles",
+    "course": "Geometry",
+    "quarter": 1,
+    "unit": "Triangles",
+    "prerequisites": ["angle-measurement"],
+    "enables": ["triangle-angle-sum", "triangle-congruence"],
+    "standardsAlignment": ["G-CO.10"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "By sides: equilateral, isosceles, scalene",
+        "By angles: acute, right, obtuse, equiangular",
+        "Dual classification (e.g., acute isosceles)",
+        "Properties of each type"
+      ],
+      "commonMistakes": [
+        "Confusing classifications",
+        "Not recognizing dual classification",
+        "Assuming properties without proof",
+        "Misidentifying isosceles triangles"
+      ],
+      "teachingTips": [
+        "Use Venn diagrams to show relationships",
+        "Provide counterexamples",
+        "Physical models and constructions",
+        "Connect to real structures: trusses, pyramids"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "triangle-angle-sum",
+    "displayName": "Triangle Angle Sum Theorem",
+    "description": "Apply theorem that triangle angles sum to 180°",
+    "category": "triangles",
+    "course": "Geometry",
+    "quarter": 1,
+    "unit": "Triangles",
+    "prerequisites": ["triangle-classification", "angle-measurement"],
+    "enables": ["exterior-angle-theorem", "polygon-angle-sum"],
+    "standardsAlignment": ["G-CO.10"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Sum of interior angles = 180°",
+        "Finding missing angles",
+        "Connection to parallel lines",
+        "Proof using auxiliary line"
+      ],
+      "commonMistakes": [
+        "Arithmetic errors in angle calculations",
+        "Not setting up equation correctly",
+        "Confusing with exterior angles",
+        "Assuming without justification"
+      ],
+      "teachingTips": [
+        "Physical demonstration: tear triangle corners",
+        "Multiple proof methods",
+        "Set up equation: angle1 + angle2 + angle3 = 180",
+        "Real-world: surveying, navigation"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "triangle-congruence-sss-sas-asa",
+    "displayName": "Triangle Congruence (SSS, SAS, ASA)",
+    "description": "Prove triangles congruent using postulates",
+    "category": "congruence",
+    "course": "Geometry",
+    "quarter": 2,
+    "unit": "Congruence",
+    "prerequisites": ["triangle-classification"],
+    "enables": ["cpctc", "congruence-proofs"],
+    "standardsAlignment": ["G-CO.7", "G-CO.8"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "SSS: three sides congruent",
+        "SAS: two sides and included angle",
+        "ASA: two angles and included side",
+        "Correspondence of vertices"
+      ],
+      "commonMistakes": [
+        "Confusing SSA (not valid) with SAS",
+        "Not marking given information",
+        "Incorrect correspondence statement",
+        "Not identifying included angle/side"
+      ],
+      "teachingTips": [
+        "Use color coding for corresponding parts",
+        "Physical models and manipulatives",
+        "Practice marking diagrams systematically",
+        "Emphasize 'included' terminology"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "pythagorean-theorem",
+    "displayName": "Pythagorean Theorem",
+    "description": "Apply a² + b² = c² to find side lengths in right triangles",
+    "category": "triangles",
+    "course": "Geometry",
+    "quarter": 2,
+    "unit": "Right Triangles",
+    "prerequisites": ["triangle-classification", "square-roots"],
+    "enables": ["distance-formula", "pythagorean-converse"],
+    "standardsAlignment": ["G-SRT.8"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "a² + b² = c² for right triangles only",
+        "c is always the hypotenuse",
+        "Can solve for any side",
+        "Multiple proofs exist"
+      ],
+      "commonMistakes": [
+        "Using wrong side as c",
+        "Applying to non-right triangles",
+        "Arithmetic errors with squares/roots",
+        "Forgetting units"
+      ],
+      "teachingTips": [
+        "Visual proof with squares",
+        "Pythagorean triples (3-4-5, 5-12-13)",
+        "Real-world: construction, navigation, screen sizes",
+        "Calculator proficiency for radicals"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "parallel-lines-transversals",
+    "displayName": "Parallel Lines and Transversals",
+    "description": "Identify angle relationships when parallel lines are cut by transversal",
+    "category": "angles",
+    "course": "Geometry",
+    "quarter": 1,
+    "unit": "Angles and Parallel Lines",
+    "prerequisites": ["angle-measurement"],
+    "enables": ["proving-lines-parallel", "triangle-angle-sum"],
+    "standardsAlignment": ["G-CO.9"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Corresponding angles congruent",
+        "Alternate interior angles congruent",
+        "Alternate exterior angles congruent",
+        "Same-side interior angles supplementary"
+      ],
+      "commonMistakes": [
+        "Confusing angle pair types",
+        "Not identifying parallel lines correctly",
+        "Forgetting supplementary vs congruent",
+        "Misidentifying transversal"
+      ],
+      "teachingTips": [
+        "Use color coding for angle pairs",
+        "Z-pattern for alternate interior",
+        "F-pattern for corresponding",
+        "Physical models with rulers"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "polygon-angle-sum",
+    "displayName": "Polygon Angle Sum",
+    "description": "Find sum of interior angles using formula (n-2)·180°",
+    "category": "polygons",
+    "course": "Geometry",
+    "quarter": 3,
+    "unit": "Polygons and Quadrilaterals",
+    "prerequisites": ["triangle-angle-sum"],
+    "enables": ["regular-polygons", "exterior-angle-sum"],
+    "standardsAlignment": ["G-MG.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Formula: (n-2)·180° where n = number of sides",
+        "Divide polygon into triangles",
+        "Each angle in regular polygon: (n-2)·180° / n",
+        "Applies to convex polygons"
+      ],
+      "commonMistakes": [
+        "Using n instead of (n-2)",
+        "Not counting sides correctly",
+        "Confusing interior and exterior angles",
+        "Division errors for regular polygons"
+      ],
+      "teachingTips": [
+        "Draw diagonals from one vertex",
+        "Derive formula collaboratively",
+        "Create polygon angle chart",
+        "Real-world: tile patterns, architecture"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "quadrilateral-properties",
+    "displayName": "Properties of Quadrilaterals",
+    "description": "Identify and apply properties of parallelograms, rectangles, rhombi, squares, trapezoids",
+    "category": "polygons",
+    "course": "Geometry",
+    "quarter": 3,
+    "unit": "Polygons and Quadrilaterals",
+    "prerequisites": ["polygon-angle-sum", "parallel-lines-transversals"],
+    "enables": ["coordinate-geometry-quadrilaterals", "quadrilateral-proofs"],
+    "standardsAlignment": ["G-CO.11"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Parallelogram: opposite sides parallel and congruent",
+        "Rectangle: parallelogram with right angles",
+        "Rhombus: parallelogram with congruent sides",
+        "Square: rectangle and rhombus",
+        "Trapezoid: exactly one pair parallel sides"
+      ],
+      "commonMistakes": [
+        "Confusing properties of different quadrilaterals",
+        "Not understanding hierarchy",
+        "Assuming converses without proof",
+        "Misidentifying quadrilaterals"
+      ],
+      "teachingTips": [
+        "Venn diagram of quadrilateral family",
+        "Property chart for comparison",
+        "Use dynamic geometry software",
+        "Physical models and constructions"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "circle-basics",
+    "displayName": "Circles: Radius, Diameter, Circumference",
+    "description": "Understand circle definitions and find circumference using C = 2πr",
+    "category": "circles",
+    "course": "Geometry",
+    "quarter": 3,
+    "unit": "Circles",
+    "prerequisites": [],
+    "enables": ["circle-area", "arc-length", "circle-theorems"],
+    "standardsAlignment": ["G-C.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "All points equidistant from center",
+        "Diameter = 2 × radius",
+        "Circumference = 2πr = πd",
+        "π ≈ 3.14159..."
+      ],
+      "commonMistakes": [
+        "Confusing radius and diameter",
+        "Forgetting π in formula",
+        "Rounding π incorrectly",
+        "Not understanding π is irrational"
+      ],
+      "teachingTips": [
+        "Physical measurement of circular objects",
+        "Derive C/d = π experimentally",
+        "Calculator proficiency with π",
+        "Real-world: wheels, orbits, circular motion"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "circle-area",
+    "displayName": "Area of Circles",
+    "description": "Find area using A = πr²",
+    "category": "circles",
+    "course": "Geometry",
+    "quarter": 3,
+    "unit": "Circles",
+    "prerequisites": ["circle-basics"],
+    "enables": ["sector-area", "composite-area"],
+    "standardsAlignment": ["G-C.5"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "A = πr² (radius squared)",
+        "If given diameter, find radius first",
+        "Units are square units",
+        "Derivation using circumference"
+      ],
+      "commonMistakes": [
+        "Using diameter instead of radius",
+        "Forgetting to square radius",
+        "Confusing circumference and area formulas",
+        "Unit errors (linear vs square)"
+      ],
+      "teachingTips": [
+        "Visual: unroll circle into parallelogram",
+        "Compare to square with side r",
+        "Real-world: pizza, garden design, circular rooms",
+        "Practice converting diameter to radius"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "volume-prisms-cylinders",
+    "displayName": "Volume of Prisms and Cylinders",
+    "description": "Calculate volume using V = Bh (base area × height)",
+    "category": "3d-geometry",
+    "course": "Geometry",
+    "quarter": 4,
+    "unit": "Three-Dimensional Geometry",
+    "prerequisites": ["area-formulas", "circle-area"],
+    "enables": ["volume-pyramids-cones", "surface-area"],
+    "standardsAlignment": ["G-GMD.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "V = Bh where B is base area",
+        "Rectangular prism: V = lwh",
+        "Cylinder: V = πr²h",
+        "Units are cubic"
+      ],
+      "commonMistakes": [
+        "Using perimeter instead of area for base",
+        "Confusing which dimension is height",
+        "Unit conversion errors",
+        "Forgetting π for cylinders"
+      ],
+      "teachingTips": [
+        "Physical models with unit cubes",
+        "Layering visualization",
+        "Real-world: containers, tanks, buildings",
+        "Emphasize base shape determines formula"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "similarity-ratios",
+    "displayName": "Similar Figures and Scale Factor",
+    "description": "Understand similarity, find scale factors, and solve proportions",
+    "category": "similarity",
+    "course": "Geometry",
+    "quarter": 4,
+    "unit": "Similarity",
+    "prerequisites": ["ratios-proportions", "corresponding-parts"],
+    "enables": ["similar-triangle-theorems", "dilation"],
+    "standardsAlignment": ["G-SRT.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Same shape, different size",
+        "Corresponding angles congruent",
+        "Corresponding sides proportional",
+        "Scale factor = ratio of corresponding sides"
+      ],
+      "commonMistakes": [
+        "Confusing similarity with congruence",
+        "Setting up proportions incorrectly",
+        "Not matching corresponding parts",
+        "Scale factor calculation errors"
+      ],
+      "teachingTips": [
+        "Visual: photo enlargement/reduction",
+        "Practice identifying corresponding parts",
+        "Use color coding",
+        "Real-world: models, maps, scale drawings"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "coordinate-geometry-distance-midpoint",
+    "displayName": "Distance and Midpoint Formulas",
+    "description": "Find distance and midpoint between two points on coordinate plane",
+    "category": "coordinate-geometry",
+    "course": "Geometry",
+    "quarter": 4,
+    "unit": "Coordinate Geometry",
+    "prerequisites": ["pythagorean-theorem", "coordinate-plane"],
+    "enables": ["coordinate-proofs", "equation-of-circle"],
+    "standardsAlignment": ["G-GPE.7"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Distance: d = √[(x₂-x₁)² + (y₂-y₁)²]",
+        "Midpoint: M = ((x₁+x₂)/2, (y₁+y₂)/2)",
+        "Distance formula derived from Pythagorean theorem",
+        "Midpoint is average of coordinates"
+      ],
+      "commonMistakes": [
+        "Sign errors with subtraction",
+        "Forgetting square root in distance",
+        "Mixing up x and y coordinates",
+        "Not simplifying radicals"
+      ],
+      "teachingTips": [
+        "Show Pythagorean derivation",
+        "Plot points first for visualization",
+        "Create formula reference card",
+        "Real-world: GPS navigation, computer graphics"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  }
+]

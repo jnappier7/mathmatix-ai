@@ -1,0 +1,16 @@
+{
+  "track": "Calculus 2",
+  "overview": "Advanced integration techniques, sequences and series, parametric/polar calculus, and differential equations.",
+  "modules": [
+    {"moduleId": "integration_techniques", "quarter": 1, "title": "Integration Techniques", "preview": "Integration by parts, trig substitution, partial fractions", "skills": ["integration-by-parts", "trig-substitution", "partial-fractions", "improper-integrals"]},
+    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Advanced integration mastery"},
+    {"moduleId": "sequences_series", "quarter": 2, "title": "Sequences and Series", "preview": "Convergence tests for sequences and series", "skills": ["sequences", "series-tests", "geometric-series", "harmonic-series"]},
+    {"moduleId": "power_series", "quarter": 2, "title": "Power Series", "preview": "Radius/interval of convergence, operations", "skills": ["power-series", "radius-convergence", "term-by-term"]},
+    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Series convergence"},
+    {"moduleId": "taylor_series", "quarter": 3, "title": "Taylor and Maclaurin Series", "preview": "Series representations, approximations", "skills": ["taylor-series", "maclaurin-series", "taylor-polynomials", "lagrange-error"]},
+    {"moduleId": "parametric_polar", "quarter": 3, "title": "Parametric & Polar Calculus", "preview": "Derivatives, areas, arc length", "skills": ["parametric-calculus", "polar-calculus", "arc-length-polar"]},
+    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Taylor series and parametric/polar"},
+    {"moduleId": "differential_equations", "quarter": 4, "title": "Differential Equations", "preview": "Separable DEs, slope fields, logistic growth", "skills": ["differential-equations-intro", "slope-fields", "logistic-growth", "eulers-method"]},
+    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment / AP BC Exam Prep", "preview": "Comprehensive Calculus 2 (AP Calc BC level)"}
+  ]
+}

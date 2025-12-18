@@ -200,6 +200,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="card-buttons">
                     <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}">View/Edit IEP</button>
                     <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}">View History</button>
+                    <button class="reset-screener-btn submit-btn btn-tertiary" data-student-id="${student._id}" data-student-name="${fullName}">Reset Screener</button>
                 </div>
             `;
             studentListDiv.appendChild(studentCard);
@@ -213,6 +214,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         document.querySelectorAll('.view-history-btn').forEach(button => {
             button.addEventListener('click', handleViewHistory);
+        });
+        document.querySelectorAll('.reset-screener-btn').forEach(button => {
+            button.addEventListener('click', handleResetScreener);
         });
     }
 
@@ -242,7 +246,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const response = await fetch(`/api/teacher/students/${studentId}/conversations`);
             if (!response.ok) throw new Error(await response.text());
             const conversations = await response.json();
-            
+
             if (conversations.length === 0) {
                 conversationsListDiv.innerHTML = "<p>No conversation history found for this student.</p>";
                 return;
@@ -257,6 +261,44 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("Error loading conversation history:", error);
             conversationsListDiv.innerHTML = "<p>Error loading conversation history.</p>";
+        }
+    }
+
+    async function handleResetScreener(event) {
+        const studentId = event.target.dataset.studentId;
+        const studentName = event.target.dataset.studentName;
+
+        // Confirm action
+        const reason = prompt(
+            `Reset placement assessment for ${studentName}?\n\n` +
+            `This will allow them to retake the screener.\n\n` +
+            `Optional: Enter a reason for this reset (e.g., "summer break", "skill regression"):`
+        );
+
+        // User cancelled
+        if (reason === null) return;
+
+        try {
+            const response = await fetch(`/api/teacher/students/${studentId}/reset-assessment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason: reason || 'Teacher requested reset' })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to reset assessment');
+            }
+
+            const result = await response.json();
+            alert(`✅ ${result.message}\n\nThe student can now retake the placement screener.`);
+
+            // Refresh student list to show updated status
+            await fetchAssignedStudents();
+
+        } catch (error) {
+            console.error('Error resetting assessment:', error);
+            alert(`❌ Failed to reset assessment: ${error.message}`);
         }
     }
 });

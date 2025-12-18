@@ -1,0 +1,11 @@
+{
+  "track": "Grade 2 Math",
+  "overview": "Addition and subtraction within 100, place value to 1000, measurement, time, and money.",
+  "modules": [
+    {"moduleId": "addition_subtraction", "quarter": 1, "title": "Addition & Subtraction Within 100", "preview": "Two-digit operations with regrouping", "skills": ["addition-within-100", "subtraction-within-100", "mental-math-strategies"]},
+    {"moduleId": "place_value", "quarter": 2, "title": "Place Value to 1000", "preview": "Hundreds, tens, ones; comparing and ordering", "skills": ["place-value-to-1000", "comparing-three-digit", "skip-counting-patterns"]},
+    {"moduleId": "arrays_measurement", "quarter": 3, "title": "Arrays, Money & Measurement", "preview": "Repeated addition, money, length", "skills": ["arrays-intro", "money-counting", "measuring-inches-centimeters"]},
+    {"moduleId": "time_geometry_data", "quarter": 4, "title": "Time, Geometry & Data", "preview": "Time to 5 min, shapes, line plots", "skills": ["telling-time-5-minutes", "partitioning-rectangles", "line-plots"]},
+    {"moduleId": "final_assessment", "quarter": 4, "title": "Grade 2 Assessment", "preview": "Operations, place value, measurement"}
+  ]
+}

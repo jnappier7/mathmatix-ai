@@ -1,0 +1,11 @@
+{
+  "track": "Grade 4 Math",
+  "overview": "Multi-digit operations, fractions, decimals, factors/multiples, and angles.",
+  "modules": [
+    {"moduleId": "multiplication_division", "quarter": 1, "title": "Multi-Digit Multiplication & Division", "preview": "Algorithms, word problems, remainders", "skills": ["multi-digit-multiplication", "division-multi-digit", "interpreting-remainders"]},
+    {"moduleId": "fractions_decimals", "quarter": 2, "title": "Fractions & Decimals", "preview": "Equivalent fractions, decimals to hundredths", "skills": ["fractions-equivalent", "comparing-fractions", "decimals-place-value", "adding-fractions-like"]},
+    {"moduleId": "factors_multiples", "quarter": 3, "title": "Factors, Multiples & Patterns", "preview": "Prime/composite, patterns, rules", "skills": ["factors-multiples", "number-patterns", "prime-composite"]},
+    {"moduleId": "geometry_measurement", "quarter": 4, "title": "Geometry & Measurement", "preview": "Angles, symmetry, conversions", "skills": ["angles", "line-symmetry", "measurement-conversions"]},
+    {"moduleId": "final_assessment", "quarter": 4, "title": "Grade 4 Assessment", "preview": "Operations, fractions, decimals, geometry"}
+  ]
+}

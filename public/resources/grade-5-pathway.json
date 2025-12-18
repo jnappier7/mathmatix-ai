@@ -1,0 +1,11 @@
+{
+  "track": "Grade 5 Math",
+  "overview": "Decimals, fractions (operations), volume, coordinate plane, and algebraic thinking.",
+  "modules": [
+    {"moduleId": "place_value_decimals", "quarter": 1, "title": "Place Value & Decimal Operations", "preview": "Millions, decimal operations, powers of 10", "skills": ["place-value-millions", "decimal-operations", "powers-of-10"]},
+    {"moduleId": "fractions", "quarter": 2, "title": "Fraction Operations", "preview": "Add, subtract, multiply, divide fractions", "skills": ["adding-subtracting-fractions", "multiplying-fractions", "dividing-fractions", "fraction-word-problems"]},
+    {"moduleId": "volume_measurement", "quarter": 3, "title": "Volume & Measurement", "preview": "Volume of prisms, measurement conversions", "skills": ["volume-rectangular-prisms-5th", "measurement-conversions-5th", "volume-word-problems"]},
+    {"moduleId": "geometry_data", "quarter": 4, "title": "Coordinate Plane & Data", "preview": "Plotting points, graphing patterns, data analysis", "skills": ["coordinate-plane-5th", "graphing-patterns", "line-plots-fractions"]},
+    {"moduleId": "final_assessment", "quarter": 4, "title": "Grade 5 Assessment / Middle School Readiness", "preview": "Comprehensive elementary math, ready for Grade 6"}
+  ]
+}

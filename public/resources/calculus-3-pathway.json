@@ -1,0 +1,20 @@
+{
+  "track": "Calculus 3 (Multivariable)",
+  "overview": "Vector calculus, partial derivatives, multiple integrals, and the fundamental theorems of vector calculus.",
+  "modules": [
+    {"moduleId": "vectors_3d", "quarter": 1, "title": "Vectors and 3D Geometry", "preview": "3D vectors, dot product, cross product, lines and planes", "skills": ["vectors-3d", "dot-product-3d", "cross-product", "lines-planes-3d"]},
+    {"moduleId": "vector_functions", "quarter": 1, "title": "Vector Functions", "preview": "Vector-valued functions, derivatives, arc length", "skills": ["vector-functions", "vector-derivatives", "arc-length-vector"]},
+    {"moduleId": "partial_derivatives", "quarter": 1, "title": "Partial Derivatives", "preview": "Partials, chain rule, gradient", "skills": ["partial-derivatives", "chain-rule-multivariable", "gradient"]},
+    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Vectors and partial derivatives"},
+    {"moduleId": "optimization", "quarter": 2, "title": "Multivariable Optimization", "preview": "Critical points, Lagrange multipliers", "skills": ["optimization-multivariable", "lagrange-multipliers", "second-derivative-test-multivariable"]},
+    {"moduleId": "double_integrals", "quarter": 2, "title": "Double Integrals", "preview": "Rectangular and polar double integrals", "skills": ["double-integrals", "polar-double-integrals", "applications-double-integrals"]},
+    {"moduleId": "triple_integrals", "quarter": 2, "title": "Triple Integrals", "preview": "Cartesian, cylindrical, spherical", "skills": ["triple-integrals", "cylindrical-spherical", "applications-triple-integrals"]},
+    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Multiple integrals"},
+    {"moduleId": "vector_fields", "quarter": 3, "title": "Vector Fields", "preview": "Vector fields, curl, divergence", "skills": ["vector-fields", "curl-divergence", "conservative-fields"]},
+    {"moduleId": "line_integrals", "quarter": 3, "title": "Line Integrals", "preview": "Line integrals, Green's theorem", "skills": ["line-integrals", "greens-theorem", "path-independence"]},
+    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Vector fields and line integrals"},
+    {"moduleId": "surface_integrals", "quarter": 4, "title": "Surface Integrals", "preview": "Parametric surfaces, flux", "skills": ["parametric-surfaces", "surface-integrals", "flux"]},
+    {"moduleId": "major_theorems", "quarter": 4, "title": "Stokes' and Divergence Theorems", "preview": "Fundamental theorems of vector calculus", "skills": ["stokes-theorem", "divergence-theorem"]},
+    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment", "preview": "Comprehensive Calculus 3"}
+  ]
+}

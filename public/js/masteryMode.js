@@ -19,7 +19,7 @@ const masteryState = {
 };
 
 // ============================================================================
-// MODAL CONTROLS
+// BUTTON CONTROLS (No modal - redirects to separate page)
 // ============================================================================
 
 let elements = {};
@@ -27,42 +27,15 @@ let elements = {};
 // Initialize after DOM is loaded
 function initializeMasteryMode() {
   elements = {
-    masteryModeBtn: document.getElementById('mastery-mode-btn'),
-    masteryModeModal: document.getElementById('mastery-mode-modal'),
-    closeMasteryModal: document.getElementById('close-mastery-mode-modal'),
-    startJourneyBtn: document.getElementById('start-mastery-journey-btn'),
-    cancelBtn: document.getElementById('cancel-mastery-mode-btn')
+    masteryModeBtn: document.getElementById('mastery-mode-btn')
   };
 
-  // Open modal
-  elements.masteryModeBtn?.addEventListener('click', () => {
+  // Start mastery journey - check progression through phases
+  elements.masteryModeBtn?.addEventListener('click', async () => {
     console.log('Mastery Mode button clicked!');
-    // Redirect to badge map for separate mastery experience
-    window.location.href = '/badge-map.html';
-  });
 
-  // Close modal
-  elements.closeMasteryModal?.addEventListener('click', () => {
-    elements.masteryModeModal.classList.remove('is-visible');
-  });
-
-  elements.cancelBtn?.addEventListener('click', () => {
-    elements.masteryModeModal.classList.remove('is-visible');
-  });
-
-  // Click outside to close
-  elements.masteryModeModal?.addEventListener('click', (e) => {
-    if (e.target === elements.masteryModeModal) {
-      elements.masteryModeModal.classList.remove('is-visible');
-    }
-  });
-
-  // Start mastery journey - check if user already completed placement screener
-  elements.startJourneyBtn?.addEventListener('click', async () => {
     try {
-      console.log('Begin Journey clicked!');
-
-      // Check if user has already completed the placement screener
+      // Check if user has completed the placement screener
       const userResponse = await fetch('/user', { credentials: 'include' });
       if (!userResponse.ok) {
         if (userResponse.status === 401) {
@@ -71,8 +44,6 @@ function initializeMasteryMode() {
           window.location.href = '/login.html';
           return;
         }
-        const errorText = await userResponse.text();
-        console.error('[Mastery Mode] Failed to fetch user:', userResponse.status, errorText);
         throw new Error(`Failed to fetch user data: ${userResponse.status}`);
       }
 
@@ -101,7 +72,7 @@ function initializeMasteryMode() {
     }
   });
 
-  console.log('Mastery Mode initialized', elements);
+  console.log('Mastery Mode button initialized');
 }
 
 // Initialize when DOM is ready

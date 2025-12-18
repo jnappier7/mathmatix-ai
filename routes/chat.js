@@ -72,8 +72,10 @@ router.post('/', isAuthenticated, async (req, res) => {
         if (user.activeConversationId) {
             activeConversation = await Conversation.findById(user.activeConversationId);
         }
-        if (!activeConversation || !activeConversation.isActive) {
-            activeConversation = new Conversation({ userId: user._id, messages: [] });
+        // Create new conversation if: no conversation, inactive, OR it's a mastery conversation
+        // This prevents mastery messages from appearing in regular chat
+        if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
+            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
             user.activeConversationId = activeConversation._id;
             await user.save();
         }

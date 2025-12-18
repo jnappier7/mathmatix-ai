@@ -1,0 +1,15 @@
+{
+  "track": "Grade 7 Math",
+  "overview": "Develop proportional reasoning, operations with rational numbers, equations, inequalities, and geometric relationships.",
+  "modules": [
+    {"moduleId": "proportional_relationships", "quarter": 1, "title": "Proportional Relationships", "preview": "Identify, represent, and analyze proportional relationships", "skills": ["proportional-relationships", "constant-of-proportionality", "proportional-graphs", "percent-applications"]},
+    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Proportional reasoning"},
+    {"moduleId": "number_system", "quarter": 2, "title": "The Number System", "preview": "Integer and rational number operations", "skills": ["integer-operations", "rational-number-operations", "converting-rational-numbers"]},
+    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Rational number fluency"},
+    {"moduleId": "expressions_equations", "quarter": 3, "title": "Expressions, Equations & Inequalities", "preview": "Solve multi-step equations and inequalities", "skills": ["simplifying-expressions-7th", "solving-equations-7th", "solving-inequalities-7th", "word-problems-equations"]},
+    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Algebraic problem solving"},
+    {"moduleId": "geometry", "quarter": 4, "title": "Geometry", "preview": "Scale, circles, angles, area, volume", "skills": ["scale-drawings", "circles-circumference-area", "angle-relationships", "area-volume-applications"]},
+    {"moduleId": "statistics_probability", "quarter": 4, "title": "Statistics & Probability", "preview": "Data analysis, sampling, probability", "skills": ["sampling-populations", "comparing-data-sets", "probability-simple", "probability-models"]},
+    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment", "preview": "Comprehensive Grade 7"}
+  ]
+}

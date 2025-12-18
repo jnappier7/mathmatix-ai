@@ -1,0 +1,15 @@
+{
+  "track": "Grade 6 Math",
+  "overview": "Build foundations in ratios, rates, negative numbers, expressions, equations, and geometric reasoning.",
+  "modules": [
+    {"moduleId": "ratios_rates", "quarter": 1, "title": "Ratios & Rates", "preview": "Understand ratios, unit rates, and percent", "skills": ["ratios-intro", "unit-rates", "equivalent-ratios", "percent-basics"]},
+    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Ratios and rates mastery"},
+    {"moduleId": "number_system", "quarter": 2, "title": "The Number System", "preview": "Divide fractions, decimal operations, negative numbers", "skills": ["dividing-fractions", "decimals-operations", "negative-numbers-intro", "gcf-lcm"]},
+    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Number system fluency"},
+    {"moduleId": "expressions_equations", "quarter": 3, "title": "Expressions & Equations", "preview": "Write, simplify, and solve", "skills": ["expressions-writing", "evaluating-expressions", "equivalent-expressions", "solving-equations-6th", "solving-inequalities-6th"]},
+    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Algebraic thinking"},
+    {"moduleId": "geometry", "quarter": 4, "title": "Geometry", "preview": "Area, surface area, volume", "skills": ["area-composite-figures", "surface-area-nets", "volume-rectangular-prisms"]},
+    {"moduleId": "statistics", "quarter": 4, "title": "Statistics", "preview": "Data displays and analysis", "skills": ["statistics-mean-median", "data-displays", "statistical-questions"]},
+    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment", "preview": "Comprehensive Grade 6"}
+  ]
+}

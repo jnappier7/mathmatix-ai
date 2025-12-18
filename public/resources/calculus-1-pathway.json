@@ -1,0 +1,18 @@
+{
+  "track": "Calculus 1",
+  "overview": "Introduction to differential and integral calculus. Limits, derivatives, integrals, and applications.",
+  "modules": [
+    {"moduleId": "limits_continuity", "quarter": 1, "title": "Limits & Continuity", "preview": "Evaluate limits, determine continuity", "skills": ["limits-algebraic", "continuity", "intermediate-value-theorem"]},
+    {"moduleId": "derivatives_definition", "quarter": 1, "title": "Derivative Concept", "preview": "Definition of derivative, interpretations", "skills": ["derivatives-definition", "tangent-lines", "differentiability"]},
+    {"moduleId": "differentiation_rules", "quarter": 1, "title": "Differentiation Rules", "preview": "Power, product, quotient, chain rules", "skills": ["power-rule", "product-rule", "quotient-rule", "trig-derivatives"]},
+    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Limits and basic differentiation"},
+    {"moduleId": "advanced_differentiation", "quarter": 2, "title": "Advanced Differentiation", "preview": "Chain rule, implicit, exponential, logarithmic", "skills": ["chain-rule", "implicit-differentiation", "exponential-log-derivatives"]},
+    {"moduleId": "applications_derivatives", "quarter": 2, "title": "Applications of Derivatives", "preview": "Related rates, optimization, curve sketching", "skills": ["related-rates", "optimization", "first-derivative-test", "second-derivative-test", "curve-sketching"]},
+    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Differentiation mastery"},
+    {"moduleId": "antiderivatives_indefinite", "quarter": 3, "title": "Antiderivatives", "preview": "Indefinite integrals, basic integration", "skills": ["indefinite-integrals", "u-substitution", "integration-trig"]},
+    {"moduleId": "definite_integrals", "quarter": 3, "title": "Definite Integrals", "preview": "FTC, Riemann sums, accumulation", "skills": ["riemann-sums", "definite-integrals-ftc", "accumulation-functions"]},
+    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Integration fundamentals"},
+    {"moduleId": "applications_integrals", "quarter": 4, "title": "Applications of Integration", "preview": "Area, volume, average value", "skills": ["area-under-curve", "area-between-curves", "volume-disks-washers", "volume-shells"]},
+    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment / AP Exam Prep", "preview": "Comprehensive Calculus 1 (AP Calc AB level)"}
+  ]
+}
