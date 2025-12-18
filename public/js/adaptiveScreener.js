@@ -96,6 +96,19 @@ async function startScreener() {
     });
 
     if (!response.ok) {
+      // Handle authentication errors
+      if (response.status === 401) {
+        console.error('Authentication failed - redirecting to login');
+        // Clear any stale mastery mode flags
+        sessionStorage.removeItem('masteryModeActive');
+        sessionStorage.removeItem('masteryPhase');
+        sessionStorage.removeItem('activeBadgeId');
+        sessionStorage.removeItem('screenerResults');
+        alert('Your session has expired. Please log in again.');
+        window.location.href = '/login.html';
+        return;
+      }
+
       const error = await response.json();
 
       // Handle "already completed" case (403 Forbidden)
