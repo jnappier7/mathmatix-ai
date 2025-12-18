@@ -22,6 +22,12 @@
    * Perform logout
    */
   function performLogout() {
+    // Clear mastery mode session storage flags to prevent redirect loops
+    sessionStorage.removeItem('masteryModeActive');
+    sessionStorage.removeItem('masteryPhase');
+    sessionStorage.removeItem('activeBadgeId');
+    sessionStorage.removeItem('screenerResults');
+
     // Use sendBeacon for reliable logout even during page unload
     if (navigator.sendBeacon) {
       navigator.sendBeacon('/logout', new URLSearchParams({ method: 'POST' }));
@@ -135,6 +141,11 @@
     window.addEventListener('storage', (event) => {
       if (event.key === 'logout-event') {
         console.log('[Auto-Logout] Logout detected in another tab');
+        // Clear mastery mode flags before redirecting
+        sessionStorage.removeItem('masteryModeActive');
+        sessionStorage.removeItem('masteryPhase');
+        sessionStorage.removeItem('activeBadgeId');
+        sessionStorage.removeItem('screenerResults');
         window.location.href = '/login.html';
       }
     });
@@ -149,6 +160,12 @@
 
   // Expose logout function globally for manual logout buttons
   window.triggerLogout = function() {
+    // Clear mastery mode flags before logout
+    sessionStorage.removeItem('masteryModeActive');
+    sessionStorage.removeItem('masteryPhase');
+    sessionStorage.removeItem('activeBadgeId');
+    sessionStorage.removeItem('screenerResults');
+
     // Set storage event to logout all tabs
     localStorage.setItem('logout-event', Date.now().toString());
     localStorage.removeItem('logout-event'); // Clean up

@@ -71,6 +71,17 @@ async function initialize() {
     });
 
     if (!response.ok) {
+      // Handle authentication errors
+      if (response.status === 401) {
+        console.error('Authentication failed - redirecting to login');
+        // Clear any stale mastery mode flags
+        sessionStorage.removeItem('masteryModeActive');
+        sessionStorage.removeItem('masteryPhase');
+        sessionStorage.removeItem('activeBadgeId');
+        sessionStorage.removeItem('screenerResults');
+        window.location.href = '/login.html';
+        return;
+      }
       throw new Error('Failed to fetch badges');
     }
 
@@ -350,6 +361,14 @@ function showError(message) {
     <div class="loading">
       <div style="font-size: 48px; margin-bottom: 20px; color: #f44336;">⚠️</div>
       <p>${message}</p>
+      <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center;">
+        <button onclick="window.location.reload()" style="padding: 12px 24px; background: #12B3B3; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500;">
+          Try Again
+        </button>
+        <button onclick="window.location.href='/chat.html'" style="padding: 12px 24px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500;">
+          Back to Chat
+        </button>
+      </div>
     </div>
   `;
 }
