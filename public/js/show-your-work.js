@@ -265,27 +265,54 @@ class ShowYourWorkManager {
     }
 
     displayResults(result) {
-        // Hide loading, show results
+        // Hide loading, show results with animation
         this.loadingSection.style.display = 'none';
         this.resultsSection.style.display = 'block';
+        this.resultsSection.style.animation = 'fadeInUp 0.6s ease forwards';
 
-        // Display score
+        // Display score with beautiful styling
         const score = result.score || '--';
         const scorePercent = result.scorePercent || 0;
-        this.scoreDisplay.textContent = `${scorePercent}%`;
 
-        // Set score text based on percentage
+        // Animated score counter
+        let currentScore = 0;
+        const increment = scorePercent / 30; // 30 frames for smooth animation
+        const scoreInterval = setInterval(() => {
+            currentScore += increment;
+            if (currentScore >= scorePercent) {
+                currentScore = scorePercent;
+                clearInterval(scoreInterval);
+            }
+            this.scoreDisplay.textContent = `${Math.round(currentScore)}%`;
+        }, 20);
+
+        // Set score text and color based on percentage
         let scoreMessage = 'Keep practicing!';
+        let scoreColor = '#8b5cf6';
+        let scoreEmoji = '💪';
+
         if (scorePercent >= 90) {
-            scoreMessage = '🌟 Outstanding work!';
+            scoreMessage = 'Outstanding work!';
+            scoreColor = '#10b981';
+            scoreEmoji = '🌟';
         } else if (scorePercent >= 80) {
-            scoreMessage = '🎉 Great job!';
+            scoreMessage = 'Great job!';
+            scoreColor = '#8b5cf6';
+            scoreEmoji = '🎉';
         } else if (scorePercent >= 70) {
-            scoreMessage = '👍 Good effort!';
+            scoreMessage = 'Good effort!';
+            scoreColor = '#3b82f6';
+            scoreEmoji = '👍';
         } else if (scorePercent >= 60) {
-            scoreMessage = '💪 Keep going!';
+            scoreMessage = 'Keep going!';
+            scoreColor = '#f59e0b';
+            scoreEmoji = '💪';
         }
-        this.scoreText.textContent = scoreMessage;
+
+        this.scoreText.textContent = `${scoreEmoji} ${scoreMessage}`;
+        this.scoreText.style.color = scoreColor;
+        this.scoreDisplay.style.background = `linear-gradient(135deg, ${scoreColor}, ${scoreColor}dd)`;
+        this.scoreDisplay.style.boxShadow = `0 8px 24px ${scoreColor}40`;
 
         // Create annotated image if annotations exist
         if (result.annotations && result.annotations.length > 0 && result.imageData) {
@@ -301,22 +328,57 @@ class ShowYourWorkManager {
         // Create a container for before/after comparison
         const feedbackContainer = document.getElementById('syw-feedback-container');
 
-        // Add annotated image section above feedback
+        // Add annotated image section above feedback with fade-in animation
         const annotatedSection = document.createElement('div');
         annotatedSection.id = 'syw-annotated-section';
-        annotatedSection.style.cssText = 'margin-bottom: 20px; background: white; border-radius: 8px; padding: 15px;';
+        annotatedSection.style.cssText = `
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.1);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.6s ease forwards;
+        `;
 
         annotatedSection.innerHTML = `
-            <h4 style="margin-bottom: 15px;"><i class="fas fa-edit"></i> Annotated Work</h4>
+            <style>
+                @keyframes fadeInUp {
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                @keyframes drawIn {
+                    from {
+                        stroke-dashoffset: 1000;
+                        opacity: 0;
+                    }
+                    to {
+                        stroke-dashoffset: 0;
+                        opacity: 1;
+                    }
+                }
+            </style>
+            <h4 style="margin-bottom: 15px; color: #8b5cf6; font-weight: 700;">
+                <i class="fas fa-edit" style="margin-right: 8px;"></i>
+                Your Graded Work
+            </h4>
             <div style="position: relative; max-width: 100%;">
-                <canvas id="syw-annotated-canvas" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></canvas>
+                <canvas id="syw-annotated-canvas" style="
+                    max-width: 100%;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+                    border: 2px solid #e9d5ff;
+                "></canvas>
             </div>
         `;
 
         // Insert before feedback
         feedbackContainer.parentNode.insertBefore(annotatedSection, feedbackContainer);
 
-        // Draw annotations on canvas
+        // Draw annotations on canvas with staggered animation
         const canvas = document.getElementById('syw-annotated-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -329,9 +391,11 @@ class ShowYourWorkManager {
             // Draw original image
             ctx.drawImage(img, 0, 0);
 
-            // Draw annotations
-            annotations.forEach(annotation => {
-                this.drawAnnotation(ctx, canvas.width, canvas.height, annotation);
+            // Animate annotations appearing one by one
+            annotations.forEach((annotation, index) => {
+                setTimeout(() => {
+                    this.drawAnnotation(ctx, canvas.width, canvas.height, annotation);
+                }, index * 200); // Stagger by 200ms each
             });
         };
         img.src = imageData;
@@ -346,52 +410,142 @@ class ShowYourWorkManager {
 
         // Purple color for all marks (Mathmatix brand color)
         const gradingColor = '#8b5cf6'; // Bright purple for visibility
+        const glowColor = 'rgba(139, 92, 246, 0.3)'; // Purple glow
 
         // Scale sizes based on canvas dimensions - MUCH LARGER for visibility
         // Changed from /30 to /12 to make annotations 2.5x bigger
         const baseSize = Math.max(60, Math.min(canvasWidth, canvasHeight) / 12);
 
+        // Hand-drawn effect: Add slight random variance for natural look
+        // Use annotation position as seed for consistent randomness
+        const seed = (annotation.x + annotation.y) * 0.01;
+        const wobble = baseSize * 0.05; // 5% variance
+        const xOffset = Math.sin(seed * 13.7) * wobble;
+        const yOffset = Math.cos(seed * 17.3) * wobble;
+
         if (annotation.type === 'check') {
-            // Draw checkmark ✓ - Bold and visible
+            // Draw checkmark ✓ - Bold, beautiful, with glow
+
+            // Glow effect (outer shadow)
+            ctx.shadowColor = glowColor;
+            ctx.shadowBlur = baseSize / 3;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+
             ctx.strokeStyle = gradingColor;
-            ctx.lineWidth = baseSize / 4; // Changed from /8 to /4 for thicker lines
+            ctx.lineWidth = baseSize / 4;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
+            // Hand-drawn checkmark with slight curve
             ctx.beginPath();
-            ctx.moveTo(x - baseSize * 0.4, y);
-            ctx.lineTo(x - baseSize * 0.1, y + baseSize * 0.4);
-            ctx.lineTo(x + baseSize * 0.5, y - baseSize * 0.5);
+            ctx.moveTo(x - baseSize * 0.4 + xOffset, y + yOffset);
+
+            // Add slight curve using quadratic curve
+            const midX = x - baseSize * 0.1 + xOffset * 0.5;
+            const midY = y + baseSize * 0.4 + yOffset * 0.5;
+            ctx.quadraticCurveTo(
+                midX - wobble,
+                midY + wobble,
+                midX,
+                midY
+            );
+
+            ctx.quadraticCurveTo(
+                x + baseSize * 0.2 - xOffset,
+                y - yOffset,
+                x + baseSize * 0.5 - xOffset,
+                y - baseSize * 0.5 - yOffset
+            );
             ctx.stroke();
 
         } else if (annotation.type === 'miss') {
-            // Draw X mark ✗ - Bold and clear
+            // Draw X mark ✗ - Bold, dramatic, with glow
+
+            // Glow effect
+            ctx.shadowColor = glowColor;
+            ctx.shadowBlur = baseSize / 3;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+
             ctx.strokeStyle = gradingColor;
-            ctx.lineWidth = baseSize / 4; // Changed from /8 to /4 for thicker lines
+            ctx.lineWidth = baseSize / 4;
             ctx.lineCap = 'round';
 
             const size = baseSize * 0.5;
+
+            // Draw first diagonal with slight curve
             ctx.beginPath();
-            ctx.moveTo(x - size, y - size);
-            ctx.lineTo(x + size, y + size);
-            ctx.moveTo(x + size, y - size);
-            ctx.lineTo(x - size, y + size);
+            ctx.moveTo(x - size + xOffset, y - size + yOffset);
+            ctx.quadraticCurveTo(
+                x + xOffset * 0.5,
+                y + yOffset * 0.5,
+                x + size - xOffset,
+                y + size - yOffset
+            );
+            ctx.stroke();
+
+            // Draw second diagonal with slight curve
+            ctx.beginPath();
+            ctx.moveTo(x + size + xOffset, y - size - yOffset);
+            ctx.quadraticCurveTo(
+                x - xOffset * 0.5,
+                y - yOffset * 0.5,
+                x - size - xOffset,
+                y + size + yOffset
+            );
             ctx.stroke();
 
         } else if (annotation.type === 'circle') {
-            // Draw circle around answer - Prominent outline
+            // Draw hand-drawn circle around answer - Imperfect and beautiful
+
+            // Glow effect
+            ctx.shadowColor = glowColor;
+            ctx.shadowBlur = baseSize / 3;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+
             ctx.strokeStyle = gradingColor;
-            ctx.lineWidth = baseSize / 6; // Changed from /10 to /6 for thicker circles
+            ctx.lineWidth = baseSize / 6;
+            ctx.lineCap = 'round';
             const radius = baseSize * 0.8;
 
+            // Hand-drawn circle using multiple arcs for imperfect look
             ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            const segments = 8;
+            for (let i = 0; i <= segments; i++) {
+                const angle = (i / segments) * Math.PI * 2;
+                const nextAngle = ((i + 1) / segments) * Math.PI * 2;
+
+                // Add slight radius variation for hand-drawn effect
+                const radiusVar = radius + Math.sin(angle * 3 + seed) * wobble;
+                const nextRadiusVar = radius + Math.sin(nextAngle * 3 + seed) * wobble;
+
+                const px = x + Math.cos(angle) * radiusVar;
+                const py = y + Math.sin(angle) * radiusVar;
+                const nx = x + Math.cos(nextAngle) * nextRadiusVar;
+                const ny = y + Math.sin(nextAngle) * nextRadiusVar;
+
+                if (i === 0) {
+                    ctx.moveTo(px, py);
+                }
+
+                // Use quadratic curve for smoother transitions
+                const midAngle = (angle + nextAngle) / 2;
+                const midRadius = (radiusVar + nextRadiusVar) / 2;
+                const cx = x + Math.cos(midAngle) * midRadius;
+                const cy = y + Math.sin(midAngle) * midRadius;
+
+                ctx.quadraticCurveTo(cx, cy, nx, ny);
+            }
             ctx.stroke();
 
         } else if (annotation.type === 'partial' || annotation.type === 'note') {
-            // Draw text (like "-1", "A", "slope=rise/run", etc.)
-            const fontSize = baseSize * 1.2; // Larger font for visibility
-            ctx.font = `bold ${fontSize}px Arial`;
+            // Draw text annotation with exquisite styling
+            const fontSize = baseSize * 1.2;
+
+            // Use a more sophisticated font stack
+            ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
@@ -399,57 +553,123 @@ class ShowYourWorkManager {
             const text = annotation.mark || '';
             const metrics = ctx.measureText(text);
             const textWidth = metrics.width;
-            const textHeight = fontSize;
-            const padding = fontSize * 0.3;
+            const textHeight = fontSize * 1.2; // Account for ascenders/descenders
+            const padding = fontSize * 0.4;
 
-            // Draw semi-transparent white background for readability
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-            ctx.fillRect(
-                x - textWidth / 2 - padding,
-                y - textHeight / 2 - padding,
+            // Add slight offset for hand-drawn effect
+            const boxX = x + xOffset * 0.5;
+            const boxY = y + yOffset * 0.5;
+
+            // Shadow for depth
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+            ctx.shadowBlur = baseSize / 6;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+
+            // Draw background with rounded corners
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            this.roundRect(
+                ctx,
+                boxX - textWidth / 2 - padding,
+                boxY - textHeight / 2 - padding,
                 textWidth + padding * 2,
-                textHeight + padding * 2
+                textHeight + padding * 2,
+                fontSize * 0.25 // Rounded corners
             );
+            ctx.fill();
 
-            // Draw border around text background
+            // Reset shadow for border
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+
+            // Draw elegant border
             ctx.strokeStyle = gradingColor;
-            ctx.lineWidth = 2;
-            ctx.strokeRect(
-                x - textWidth / 2 - padding,
-                y - textHeight / 2 - padding,
+            ctx.lineWidth = 3;
+            this.roundRect(
+                ctx,
+                boxX - textWidth / 2 - padding,
+                boxY - textHeight / 2 - padding,
                 textWidth + padding * 2,
-                textHeight + padding * 2
+                textHeight + padding * 2,
+                fontSize * 0.25
             );
+            ctx.stroke();
 
-            // Draw the text in red
+            // Add inner glow to text
+            ctx.shadowColor = glowColor;
+            ctx.shadowBlur = fontSize / 8;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+
+            // Draw the text
             ctx.fillStyle = gradingColor;
-            ctx.fillText(text, x, y);
+            ctx.fillText(text, boxX, boxY);
         }
 
         ctx.restore();
     }
 
-    formatFeedback(feedback) {
-        // Convert feedback to HTML with nice formatting
-        // Support markdown-like syntax: **bold**, *italic*, bullet points, etc.
+    // Helper function to draw rounded rectangles
+    roundRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+    }
 
+    formatFeedback(feedback) {
+        // Convert feedback to beautifully formatted HTML
         let html = feedback;
 
-        // Convert step markers
-        html = html.replace(/Step (\d+):/g, '<strong style="color: #667eea;">Step $1:</strong>');
+        // Enhanced section headers with icons and styling
+        html = html.replace(/\*\*SCORE:\s*([^\*]+)\*\*/g,
+            '<div style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); color: white; padding: 15px 20px; border-radius: 10px; margin: 15px 0; font-size: 1.2em; font-weight: bold; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">📊 Score: $1</div>');
 
-        // Convert checkmarks and X marks
-        html = html.replace(/✓|✅/g, '<span style="color: #10b981;">✅</span>');
-        html = html.replace(/✗|❌/g, '<span style="color: #ef4444;">❌</span>');
+        html = html.replace(/\*\*PROBLEM IDENTIFIED:\*\*/g,
+            '<div style="margin-top: 20px; padding: 12px 16px; background: linear-gradient(to right, #f0e7ff, transparent); border-left: 4px solid #8b5cf6; border-radius: 4px; font-weight: 600; color: #6b21a8;">🎯 Problem Identified</div>');
 
-        // Convert bullet points
-        html = html.replace(/^[\-\*] (.+)$/gm, '<li>$1</li>');
-        html = html.replace(/(<li>.*<\/li>)/s, '<ul style="margin-left: 20px;">$1</ul>');
+        html = html.replace(/\*\*STEP-BY-STEP ANALYSIS:\*\*/g,
+            '<div style="margin-top: 20px; padding: 12px 16px; background: linear-gradient(to right, #f0e7ff, transparent); border-left: 4px solid #8b5cf6; border-radius: 4px; font-weight: 600; color: #6b21a8;">📝 Step-by-Step Analysis</div>');
 
-        // Add line breaks for readability
-        html = html.replace(/\n\n/g, '<br><br>');
+        html = html.replace(/\*\*OVERALL FEEDBACK:\*\*/g,
+            '<div style="margin-top: 20px; padding: 12px 16px; background: linear-gradient(to right, #f0e7ff, transparent); border-left: 4px solid #8b5cf6; border-radius: 4px; font-weight: 600; color: #6b21a8;">💬 Overall Feedback</div>');
 
-        return html;
+        html = html.replace(/\*\*WHAT TO WORK ON:\*\*/g,
+            '<div style="margin-top: 20px; padding: 12px 16px; background: linear-gradient(to right, #fef3c7, transparent); border-left: 4px solid #f59e0b; border-radius: 4px; font-weight: 600; color: #92400e;">🎓 What to Work On</div>');
+
+        // Enhanced step markers with badges
+        html = html.replace(/(Problem\/Step|Step)\s+(\d+):/g,
+            '<div style="display: inline-block; background: #8b5cf6; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9em; font-weight: bold; margin: 10px 5px 10px 0;">$1 $2</div>');
+
+        // Beautiful checkmarks and X marks with backgrounds
+        html = html.replace(/✓|✅/g,
+            '<span style="display: inline-block; background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.9em; margin: 0 4px;">✓</span>');
+        html = html.replace(/✗|❌/g,
+            '<span style="display: inline-block; background: #ef4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.9em; margin: 0 4px;">✗</span>');
+
+        // Style "Correct" and "Error" labels
+        html = html.replace(/Correct/g,
+            '<span style="color: #10b981; font-weight: 600;">Correct</span>');
+        html = html.replace(/Error:/g,
+            '<span style="color: #ef4444; font-weight: 600;">Error:</span>');
+
+        // Enhanced bullet points with custom styling
+        html = html.replace(/^[\-\*]\s+(.+)$/gm, '<li style="margin: 8px 0; padding-left: 8px;">$1</li>');
+        html = html.replace(/(<li[^>]*>.*<\/li>)/s, '<ul style="margin: 12px 0 12px 20px; list-style-type: none;"><style>ul li:before { content: "→"; color: #8b5cf6; font-weight: bold; margin-right: 8px; }</style>$1</ul>');
+
+        // Add proper spacing
+        html = html.replace(/\n\n/g, '<div style="height: 12px;"></div>');
+        html = html.replace(/\n/g, '<br>');
+
+        // Wrap in a nice container
+        return `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial; line-height: 1.7; color: #374151;">${html}</div>`;
     }
 
     async askTutorAboutWork() {
