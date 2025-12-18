@@ -71,6 +71,7 @@ const curriculumRoutes = require('./routes/curriculum');
 const assessmentRoutes = require('./routes/assessment');
 const screenerRoutes = require('./routes/screener');  // IRT-based adaptive screener
 const masteryRoutes = require('./routes/mastery');  // Mastery mode (placement + interview + badges)
+const masteryChatRoutes = require('./routes/masteryChat');  // Mastery mode chat endpoint
 const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
 const gradeWorkRoutes = require('./routes/gradeWork');
@@ -194,6 +195,7 @@ app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
 app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive screener (CAT)
 app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placement → interview → badges)
+app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, masteryChatRoutes); // Mastery mode dedicated chat
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes); // AI grading for student work
 app.use('/api/admin', adminImportRoutes); // Admin tools: CSV import for item bank
