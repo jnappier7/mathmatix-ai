@@ -669,6 +669,21 @@ class ShowYourWorkManager {
                         0%, 100% { transform: scale(1); }
                         50% { transform: scale(1.05); }
                     }
+                    @keyframes flash {
+                        0% { opacity: 0; }
+                        50% { opacity: 1; }
+                        100% { opacity: 0; }
+                    }
+                    @keyframes slideDown {
+                        from {
+                            opacity: 0;
+                            transform: translateY(-20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
                 </style>
 
                 <!-- Camera controls header -->
@@ -684,18 +699,34 @@ class ShowYourWorkManager {
                         <i class="fas fa-camera" style="margin-right: 8px;"></i>
                         Camera Preview
                     </h3>
-                    <button id="syw-close-camera-btn" style="
-                        background: rgba(255,255,255,0.2);
-                        color: white;
-                        border: none;
-                        padding: 8px 16px;
-                        border-radius: 6px;
-                        cursor: pointer;
-                        font-weight: 600;
-                        transition: all 0.2s;
-                    ">
-                        <i class="fas fa-times"></i> Close
-                    </button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <!-- Grid toggle button -->
+                        <button id="syw-toggle-grid-btn" style="
+                            background: rgba(255,255,255,0.15);
+                            color: white;
+                            border: 1px solid rgba(255,255,255,0.3);
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-size: 0.9em;
+                            font-weight: 600;
+                            transition: all 0.2s;
+                        " title="Toggle alignment grid">
+                            <i class="fas fa-th"></i> Grid
+                        </button>
+                        <button id="syw-close-camera-btn" style="
+                            background: rgba(255,255,255,0.2);
+                            color: white;
+                            border: none;
+                            padding: 8px 16px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: 600;
+                            transition: all 0.2s;
+                        ">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Video preview container -->
@@ -713,6 +744,64 @@ class ShowYourWorkManager {
                         border-radius: 12px;
                         box-shadow: 0 8px 32px rgba(0,0,0,0.5);
                     "></video>
+
+                    <!-- Grid overlay -->
+                    <div id="syw-camera-grid" style="
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 80%;
+                        height: 80%;
+                        max-width: 600px;
+                        max-height: 800px;
+                        pointer-events: none;
+                        display: none;
+                    ">
+                        <!-- Rule of thirds grid -->
+                        <svg width="100%" height="100%" style="opacity: 0.6;">
+                            <!-- Vertical lines -->
+                            <line x1="33.33%" y1="0" x2="33.33%" y2="100%" stroke="white" stroke-width="1" stroke-dasharray="5,5"/>
+                            <line x1="66.66%" y1="0" x2="66.66%" y2="100%" stroke="white" stroke-width="1" stroke-dasharray="5,5"/>
+                            <!-- Horizontal lines -->
+                            <line x1="0" y1="33.33%" x2="100%" y2="33.33%" stroke="white" stroke-width="1" stroke-dasharray="5,5"/>
+                            <line x1="0" y1="66.66%" x2="100%" y2="66.66%" stroke="white" stroke-width="1" stroke-dasharray="5,5"/>
+                            <!-- Corner guides -->
+                            <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="#8b5cf6" stroke-width="2" rx="8"/>
+                        </svg>
+                    </div>
+
+                    <!-- Helpful tips overlay (shows initially, then fades) -->
+                    <div id="syw-camera-tips" style="
+                        position: absolute;
+                        top: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: rgba(139, 92, 246, 0.95);
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 12px;
+                        font-size: 0.9em;
+                        text-align: center;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                        animation: slideDown 0.5s ease;
+                        max-width: 90%;
+                    ">
+                        <i class="fas fa-lightbulb" style="margin-right: 6px;"></i>
+                        <strong>Tip:</strong> Position your homework flat and ensure good lighting
+                    </div>
+
+                    <!-- Flash effect overlay -->
+                    <div id="syw-camera-flash" style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: white;
+                        opacity: 0;
+                        pointer-events: none;
+                    "></div>
 
                     <!-- Camera loading indicator -->
                     <div id="syw-camera-loading" style="
@@ -795,18 +884,44 @@ class ShowYourWorkManager {
                 this.capturePhoto();
             });
 
+            document.getElementById('syw-toggle-grid-btn').addEventListener('click', () => {
+                const grid = document.getElementById('syw-camera-grid');
+                const btn = document.getElementById('syw-toggle-grid-btn');
+                if (grid.style.display === 'none') {
+                    grid.style.display = 'block';
+                    btn.style.background = 'rgba(139, 92, 246, 0.6)';
+                    btn.style.borderColor = '#8b5cf6';
+                } else {
+                    grid.style.display = 'none';
+                    btn.style.background = 'rgba(255,255,255,0.15)';
+                    btn.style.borderColor = 'rgba(255,255,255,0.3)';
+                }
+            });
+
+            // Auto-hide tips after 4 seconds
+            setTimeout(() => {
+                const tips = document.getElementById('syw-camera-tips');
+                if (tips) {
+                    tips.style.transition = 'opacity 0.5s ease';
+                    tips.style.opacity = '0';
+                    setTimeout(() => tips.remove(), 500);
+                }
+            }, 4000);
+
             // Add hover effects
             const buttons = liveCameraSection.querySelectorAll('button');
             buttons.forEach(btn => {
                 btn.addEventListener('mouseenter', () => {
                     btn.style.transform = 'translateY(-2px)';
-                    btn.style.boxShadow = '0 8px 24px rgba(139, 92, 246, 0.6)';
+                    if (btn.id === 'syw-capture-photo-btn') {
+                        btn.style.boxShadow = '0 8px 24px rgba(139, 92, 246, 0.6)';
+                    }
                 });
                 btn.addEventListener('mouseleave', () => {
                     btn.style.transform = 'translateY(0)';
-                    btn.style.boxShadow = btn.id === 'syw-capture-photo-btn'
-                        ? '0 6px 20px rgba(139, 92, 246, 0.4)'
-                        : 'none';
+                    if (btn.id === 'syw-capture-photo-btn') {
+                        btn.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.4)';
+                    }
                 });
             });
 
@@ -894,11 +1009,28 @@ class ShowYourWorkManager {
 
     capturePhoto() {
         const videoElement = document.getElementById('syw-camera-video');
+        const flashElement = document.getElementById('syw-camera-flash');
 
         if (!videoElement || !this.cameraStream) {
             console.error('No active camera stream');
             return;
         }
+
+        // Trigger flash animation
+        if (flashElement) {
+            flashElement.style.animation = 'flash 0.5s ease';
+            setTimeout(() => {
+                flashElement.style.animation = '';
+            }, 500);
+        }
+
+        // Vibrate device if supported (tactile feedback)
+        if ('vibrate' in navigator) {
+            navigator.vibrate(50);
+        }
+
+        // Play shutter sound effect (optional - silent by default)
+        // Uncomment to enable: this.playShutterSound();
 
         // Create a canvas to capture the current frame
         const canvas = document.createElement('canvas');
@@ -916,28 +1048,31 @@ class ShowYourWorkManager {
             this.currentImageData = canvas.toDataURL('image/jpeg', 0.95);
             this.currentFile = file;
 
-            // Close camera and show preview
-            this.stopCamera();
-            const liveCameraSection = document.getElementById('syw-live-camera-section');
-            if (liveCameraSection) {
-                liveCameraSection.remove();
-            }
+            // Brief delay for visual feedback, then close camera
+            setTimeout(() => {
+                // Close camera and show preview
+                this.stopCamera();
+                const liveCameraSection = document.getElementById('syw-live-camera-section');
+                if (liveCameraSection) {
+                    liveCameraSection.remove();
+                }
 
-            // Show preview
-            this.previewImage.src = this.currentImageData;
-            this.previewImage.style.display = 'block';
+                // Show preview
+                this.previewImage.src = this.currentImageData;
+                this.previewImage.style.display = 'block';
 
-            // Hide PDF elements
-            const pdfCanvas = document.getElementById('syw-preview-pdf-canvas');
-            const pdfInfo = document.getElementById('syw-pdf-info');
-            if (pdfCanvas) pdfCanvas.style.display = 'none';
-            if (pdfInfo) pdfInfo.style.display = 'none';
+                // Hide PDF elements
+                const pdfCanvas = document.getElementById('syw-preview-pdf-canvas');
+                const pdfInfo = document.getElementById('syw-pdf-info');
+                if (pdfCanvas) pdfCanvas.style.display = 'none';
+                if (pdfInfo) pdfInfo.style.display = 'none';
 
-            // Switch to preview section
-            this.captureSection.style.display = 'none';
-            this.previewSection.style.display = 'block';
+                // Switch to preview section
+                this.captureSection.style.display = 'none';
+                this.previewSection.style.display = 'block';
 
-            console.log('✅ Photo captured successfully');
+                console.log('✅ Photo captured successfully');
+            }, 300);
 
         }, 'image/jpeg', 0.95);
     }
