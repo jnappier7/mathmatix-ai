@@ -1,0 +1,15 @@
+{
+  "track": "Grade 8 Math",
+  "overview": "Bridge to high school math through exponents, linear functions, systems, geometry, and transformations.",
+  "modules": [
+    {"moduleId": "exponents_expressions", "quarter": 1, "title": "Exponents & Expressions", "preview": "Integer exponents, scientific notation, radicals", "skills": ["integer-exponents", "scientific-notation", "square-cube-roots", "irrational-numbers"]},
+    {"moduleId": "linear_equations", "quarter": 1, "title": "Linear Equations", "preview": "Slope, y-intercept, graphing, solving", "skills": ["linear-equations-slope-intercept", "slope-from-graph-table", "writing-linear-equations"]},
+    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Exponents and linear equations"},
+    {"moduleId": "functions_systems", "quarter": 2, "title": "Functions & Systems", "preview": "Function concept, linear vs nonlinear, systems intro", "skills": ["function-concept", "linear-vs-nonlinear", "comparing-functions", "systems-8th"]},
+    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Functions and systems"},
+    {"moduleId": "geometry", "quarter": 3, "title": "Geometry & Measurement", "preview": "Pythagorean theorem, volume, transformations", "skills": ["pythagorean-theorem-8th", "distance-coordinate-plane", "volume-cylinders-cones-spheres", "transformations", "congruence-similarity-intro"]},
+    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Geometry mastery"},
+    {"moduleId": "statistics", "quarter": 4, "title": "Statistics & Data Analysis", "preview": "Scatter plots, lines of fit, two-way tables", "skills": ["scatter-plots-lines-of-fit", "two-way-tables", "bivariate-data"]},
+    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment / Algebra Readiness", "preview": "Comprehensive Grade 8, ready for Algebra 1"}
+  ]
+}
