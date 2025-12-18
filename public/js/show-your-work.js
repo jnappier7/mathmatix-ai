@@ -33,10 +33,13 @@ class ShowYourWorkManager {
         this.tryAgainBtn = document.getElementById('syw-try-again-btn');
         this.askTutorBtn = document.getElementById('syw-ask-tutor-btn');
 
-        // State
+        // Camera state
         this.currentFile = null;
         this.currentImageData = null;
         this.gradingResult = null;
+        this.cameraStream = null;
+        this.currentFacingMode = 'environment'; // Start with rear camera (better for homework)
+        this.isLiveCameraActive = false;
 
         this.init();
     }
@@ -57,7 +60,7 @@ class ShowYourWorkManager {
         });
 
         // Capture handlers
-        this.takePhotoBtn?.addEventListener('click', () => this.cameraInput.click());
+        this.takePhotoBtn?.addEventListener('click', () => this.openLiveCamera());
         this.uploadPhotoBtn?.addEventListener('click', () => this.fileInput.click());
 
         this.cameraInput?.addEventListener('change', (e) => this.handleFileSelect(e));
@@ -81,6 +84,7 @@ class ShowYourWorkManager {
 
     closeModal() {
         this.modal?.classList.remove('is-visible');
+        this.stopCamera(); // Stop camera when closing modal
         this.resetToCapture();
     }
 
@@ -90,6 +94,9 @@ class ShowYourWorkManager {
         this.previewSection.style.display = 'none';
         this.loadingSection.style.display = 'none';
         this.resultsSection.style.display = 'none';
+
+        // Stop camera if active
+        this.stopCamera();
 
         // Reset state
         this.currentFile = null;
@@ -106,6 +113,12 @@ class ShowYourWorkManager {
         const annotatedSection = document.getElementById('syw-annotated-section');
         if (annotatedSection) {
             annotatedSection.remove();
+        }
+
+        // Remove live camera section if it exists
+        const liveCameraSection = document.getElementById('syw-live-camera-section');
+        if (liveCameraSection) {
+            liveCameraSection.remove();
         }
     }
 
@@ -622,6 +635,320 @@ class ShowYourWorkManager {
         ctx.lineTo(x, y + radius);
         ctx.quadraticCurveTo(x, y, x + radius, y);
         ctx.closePath();
+    }
+
+    // ============================================
+    // LIVE CAMERA FUNCTIONALITY
+    // ============================================
+
+    async openLiveCamera() {
+        try {
+            // Create live camera UI
+            const liveCameraSection = document.createElement('div');
+            liveCameraSection.id = 'syw-live-camera-section';
+            liveCameraSection.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 10000;
+                display: flex;
+                flex-direction: column;
+                animation: fadeIn 0.3s ease;
+            `;
+
+            liveCameraSection.innerHTML = `
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.05); }
+                    }
+                </style>
+
+                <!-- Camera controls header -->
+                <div style="
+                    padding: 15px 20px;
+                    background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                ">
+                    <h3 style="color: white; margin: 0; font-size: 1.1em;">
+                        <i class="fas fa-camera" style="margin-right: 8px;"></i>
+                        Camera Preview
+                    </h3>
+                    <button id="syw-close-camera-btn" style="
+                        background: rgba(255,255,255,0.2);
+                        color: white;
+                        border: none;
+                        padding: 8px 16px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        transition: all 0.2s;
+                    ">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+
+                <!-- Video preview container -->
+                <div style="
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <video id="syw-camera-video" autoplay playsinline style="
+                        max-width: 100%;
+                        max-height: 100%;
+                        border-radius: 12px;
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+                    "></video>
+
+                    <!-- Camera loading indicator -->
+                    <div id="syw-camera-loading" style="
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        color: white;
+                        font-size: 1.2em;
+                        text-align: center;
+                    ">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2em; margin-bottom: 10px;"></i>
+                        <div>Starting camera...</div>
+                    </div>
+                </div>
+
+                <!-- Camera controls footer -->
+                <div style="
+                    padding: 20px;
+                    background: rgba(0,0,0,0.8);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 20px;
+                    flex-wrap: wrap;
+                ">
+                    <!-- Switch camera button -->
+                    <button id="syw-switch-camera-btn" class="camera-control-btn" style="
+                        background: rgba(255,255,255,0.1);
+                        color: white;
+                        border: 2px solid rgba(255,255,255,0.3);
+                        padding: 12px 20px;
+                        border-radius: 12px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        transition: all 0.2s;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    ">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Switch Camera</span>
+                    </button>
+
+                    <!-- Capture button -->
+                    <button id="syw-capture-photo-btn" style="
+                        background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+                        color: white;
+                        border: none;
+                        padding: 18px 36px;
+                        border-radius: 50px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        font-size: 1.1em;
+                        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+                        transition: all 0.2s;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    ">
+                        <i class="fas fa-camera" style="font-size: 1.3em;"></i>
+                        Capture Photo
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(liveCameraSection);
+
+            // Add event listeners
+            document.getElementById('syw-close-camera-btn').addEventListener('click', () => {
+                this.stopCamera();
+                liveCameraSection.remove();
+            });
+
+            document.getElementById('syw-switch-camera-btn').addEventListener('click', () => {
+                this.switchCamera();
+            });
+
+            document.getElementById('syw-capture-photo-btn').addEventListener('click', () => {
+                this.capturePhoto();
+            });
+
+            // Add hover effects
+            const buttons = liveCameraSection.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    btn.style.transform = 'translateY(-2px)';
+                    btn.style.boxShadow = '0 8px 24px rgba(139, 92, 246, 0.6)';
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translateY(0)';
+                    btn.style.boxShadow = btn.id === 'syw-capture-photo-btn'
+                        ? '0 6px 20px rgba(139, 92, 246, 0.4)'
+                        : 'none';
+                });
+            });
+
+            // Start the camera
+            await this.startCamera();
+
+        } catch (error) {
+            console.error('Failed to open camera:', error);
+            alert('Unable to access camera. Please check permissions or use the upload option.');
+        }
+    }
+
+    async startCamera() {
+        try {
+            // Stop existing stream if any
+            this.stopCamera();
+
+            const constraints = {
+                video: {
+                    facingMode: this.currentFacingMode,
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                },
+                audio: false
+            };
+
+            console.log(`Starting camera with facingMode: ${this.currentFacingMode}`);
+
+            this.cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+            const videoElement = document.getElementById('syw-camera-video');
+
+            if (videoElement) {
+                videoElement.srcObject = this.cameraStream;
+                this.isLiveCameraActive = true;
+
+                // Hide loading indicator
+                const loadingIndicator = document.getElementById('syw-camera-loading');
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+
+                console.log('✅ Camera started successfully');
+            }
+
+        } catch (error) {
+            console.error('Camera error:', error);
+
+            // Hide loading indicator
+            const loadingIndicator = document.getElementById('syw-camera-loading');
+            if (loadingIndicator) {
+                loadingIndicator.innerHTML = `
+                    <i class="fas fa-exclamation-triangle" style="font-size: 2em; margin-bottom: 10px; color: #f59e0b;"></i>
+                    <div>Camera access denied or unavailable</div>
+                    <div style="font-size: 0.9em; margin-top: 10px; opacity: 0.8;">Please check permissions or use the upload option</div>
+                `;
+            }
+
+            throw error;
+        }
+    }
+
+    async switchCamera() {
+        // Toggle between front and rear cameras
+        this.currentFacingMode = this.currentFacingMode === 'environment' ? 'user' : 'environment';
+        console.log(`Switching to ${this.currentFacingMode} camera`);
+
+        // Show loading indicator briefly
+        const loadingIndicator = document.getElementById('syw-camera-loading');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'block';
+            loadingIndicator.innerHTML = `
+                <i class="fas fa-spinner fa-spin" style="font-size: 2em; margin-bottom: 10px;"></i>
+                <div>Switching camera...</div>
+            `;
+        }
+
+        try {
+            await this.startCamera();
+        } catch (error) {
+            console.error('Failed to switch camera:', error);
+            // Revert to previous facing mode
+            this.currentFacingMode = this.currentFacingMode === 'environment' ? 'user' : 'environment';
+        }
+    }
+
+    capturePhoto() {
+        const videoElement = document.getElementById('syw-camera-video');
+
+        if (!videoElement || !this.cameraStream) {
+            console.error('No active camera stream');
+            return;
+        }
+
+        // Create a canvas to capture the current frame
+        const canvas = document.createElement('canvas');
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(videoElement, 0, 0);
+
+        // Convert to blob and create file
+        canvas.toBlob((blob) => {
+            const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+
+            // Store the captured image
+            this.currentImageData = canvas.toDataURL('image/jpeg', 0.95);
+            this.currentFile = file;
+
+            // Close camera and show preview
+            this.stopCamera();
+            const liveCameraSection = document.getElementById('syw-live-camera-section');
+            if (liveCameraSection) {
+                liveCameraSection.remove();
+            }
+
+            // Show preview
+            this.previewImage.src = this.currentImageData;
+            this.previewImage.style.display = 'block';
+
+            // Hide PDF elements
+            const pdfCanvas = document.getElementById('syw-preview-pdf-canvas');
+            const pdfInfo = document.getElementById('syw-pdf-info');
+            if (pdfCanvas) pdfCanvas.style.display = 'none';
+            if (pdfInfo) pdfInfo.style.display = 'none';
+
+            // Switch to preview section
+            this.captureSection.style.display = 'none';
+            this.previewSection.style.display = 'block';
+
+            console.log('✅ Photo captured successfully');
+
+        }, 'image/jpeg', 0.95);
+    }
+
+    stopCamera() {
+        if (this.cameraStream) {
+            this.cameraStream.getTracks().forEach(track => track.stop());
+            this.cameraStream = null;
+            this.isLiveCameraActive = false;
+            console.log('Camera stopped');
+        }
     }
 
     formatFeedback(feedback) {
