@@ -126,11 +126,17 @@
     resetInactivityTimer();
 
     // 2. TAB/BROWSER CLOSE LOGOUT
-    // sessionStorage is automatically cleared when tab closes
-    // Send logout beacon to clean up server session
-    window.addEventListener('beforeunload', () => {
-      console.log('[Auto-Logout] Tab closing - sending logout beacon');
-      performLogout(); // Clears sessionStorage and sends logout beacon
+    // Use pagehide instead of beforeunload - more reliable for detecting actual tab close
+    // The 'persisted' property tells us if the page is being cached (navigation) or discarded (tab close)
+    window.addEventListener('pagehide', (event) => {
+      // If persisted = true, page is going into bfcache (back/forward cache) = navigation
+      // If persisted = false, page is being discarded = tab/browser close
+      if (!event.persisted) {
+        console.log('[Auto-Logout] Tab closing (not cached) - sending logout beacon');
+        performLogout(); // Clears sessionStorage and sends logout beacon
+      } else {
+        console.log('[Auto-Logout] Page cached for navigation - keeping session');
+      }
     });
 
     // Alternative: Use visibilitychange for tab switches
