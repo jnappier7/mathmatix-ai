@@ -252,6 +252,7 @@ const userSchema = new Schema({
 
   /* Conversations */
   activeConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
+  activeMasteryConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
 
   /* Timestamps */
   lastLogin:  { type: Date },

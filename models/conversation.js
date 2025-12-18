@@ -44,6 +44,18 @@ const conversationSchema = new Schema({
         type: Boolean,
         default: false
     },
+    isMastery: {
+        type: Boolean,
+        default: false
+    },
+    masteryBadgeId: {
+        type: String,
+        default: null
+    },
+    masterySkillId: {
+        type: String,
+        default: null
+    },
     messages: {
         type: [messageSchema],
         default: []

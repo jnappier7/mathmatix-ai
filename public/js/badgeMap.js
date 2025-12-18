@@ -330,8 +330,8 @@ async function selectBadge(badgeId) {
     sessionStorage.setItem('activeBadgeId', badgeId);
     sessionStorage.setItem('masteryPhase', 'badge-earning');
 
-    // Redirect to chat to begin badge work
-    window.location.href = '/chat.html';
+    // Redirect to mastery mode interface to begin badge work
+    window.location.href = '/mastery-chat.html';
 
   } catch (error) {
     console.error('Error selecting badge:', error);

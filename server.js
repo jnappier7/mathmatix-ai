@@ -71,6 +71,7 @@ const curriculumRoutes = require('./routes/curriculum');
 const assessmentRoutes = require('./routes/assessment');
 const screenerRoutes = require('./routes/screener');  // IRT-based adaptive screener
 const masteryRoutes = require('./routes/mastery');  // Mastery mode (placement + interview + badges)
+const masteryChatRoutes = require('./routes/masteryChat');  // Mastery mode chat endpoint
 const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
 const gradeWorkRoutes = require('./routes/gradeWork');
@@ -94,16 +95,17 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  rolling: true, // Reset session expiration on every request (sliding window)
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
-    ttl: 14 * 24 * 60 * 60, // 14 days
+    ttl: 3 * 60 * 60, // 3 hours (sliding window with rolling: true)
   }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+    maxAge: 1000 * 60 * 60 * 3 // 3 hours (extends on each request)
   }
 }));
 
@@ -194,6 +196,7 @@ app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
 app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive screener (CAT)
 app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placement → interview → badges)
+app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, masteryChatRoutes); // Mastery mode dedicated chat
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes); // AI grading for student work
 app.use('/api/admin', adminImportRoutes); // Admin tools: CSV import for item bank
