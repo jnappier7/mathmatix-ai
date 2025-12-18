@@ -95,16 +95,17 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  rolling: true, // Reset session expiration on every request (sliding window)
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
-    ttl: 3 * 60 * 60, // 3 hours (for shared/school devices)
+    ttl: 3 * 60 * 60, // 3 hours (sliding window with rolling: true)
   }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 1000 * 60 * 60 * 3 // 3 hours (auto-logout for security on shared devices)
+    maxAge: 1000 * 60 * 60 * 3 // 3 hours (extends on each request)
   }
 }));
 
