@@ -1,4 +1,4 @@
-// factFluencyBlaster.js - Main game logic for Fact Fluency Blaster
+// factFluencyBlaster.js - Main game logic for M∆THBL∆ST Fact Fluency
 
 // Game State
 const gameState = {

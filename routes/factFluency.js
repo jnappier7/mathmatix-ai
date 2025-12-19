@@ -1,4 +1,4 @@
-// routes/factFluency.js - API routes for Fact Fluency Blaster game
+// routes/factFluency.js - API routes for M∆THBL∆ST Fact Fluency game
 
 const express = require('express');
 const router = express.Router();
