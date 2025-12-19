@@ -288,6 +288,9 @@ const userSchema = new Schema({
   /* Preferences */
   preferences: { type: userPreferencesSchema, default: () => ({}) },
 
+  /* Upload Retention Settings */
+  retainUploadsIndefinitely: { type: Boolean, default: false }, // If true, student's uploads won't auto-delete (parent/teacher/admin can set)
+
   /* Tokens / Unlockables */
   tokens: { type: Number, default: 0, min: 0 },
 

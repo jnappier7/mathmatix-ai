@@ -139,6 +139,7 @@ const uploadRateLimiter = require('express-rate-limit')({
 /**
  * Auto-deletion job
  * Deletes uploads older than specified retention period
+ * Respects user's retainUploadsIndefinitely setting (set by parent/teacher/admin)
  */
 async function cleanupOldUploads() {
     try {
@@ -148,16 +149,41 @@ async function cleanupOldUploads() {
 
         console.log(`[Upload Cleanup] Checking for uploads older than ${cutoffDate.toISOString()}`);
 
+        // Get all old uploads
         const oldUploads = await StudentUpload.find({
             uploadedAt: { $lt: cutoffDate }
         });
 
-        console.log(`[Upload Cleanup] Found ${oldUploads.length} uploads to delete`);
+        console.log(`[Upload Cleanup] Found ${oldUploads.length} candidate uploads for deletion`);
+
+        // Check each upload's user to see if they have retention enabled
+        const User = require('../models/user');
+        const uploadsToDelete = [];
+
+        for (const upload of oldUploads) {
+            const user = await User.findById(upload.userId);
+
+            if (!user) {
+                // User deleted, safe to delete upload
+                uploadsToDelete.push(upload);
+                continue;
+            }
+
+            if (user.retainUploadsIndefinitely) {
+                console.log(`[Upload Cleanup] Skipping upload ${upload._id} for user ${user.firstName} ${user.lastName} - retention enabled`);
+                continue;
+            }
+
+            // Upload is old and user doesn't have retention enabled
+            uploadsToDelete.push(upload);
+        }
+
+        console.log(`[Upload Cleanup] ${uploadsToDelete.length} uploads will be deleted (${oldUploads.length - uploadsToDelete.length} retained by user preference)`);
 
         const fs = require('fs');
         const path = require('path');
 
-        for (const upload of oldUploads) {
+        for (const upload of uploadsToDelete) {
             try {
                 // Delete file from disk
                 const filePath = path.join(__dirname, '..', 'uploads', upload.filename);
@@ -175,7 +201,7 @@ async function cleanupOldUploads() {
             }
         }
 
-        console.log(`[Upload Cleanup] Cleanup complete. Deleted ${oldUploads.length} old uploads.`);
+        console.log(`[Upload Cleanup] Cleanup complete. Deleted ${uploadsToDelete.length} old uploads.`);
 
     } catch (error) {
         console.error('[Upload Cleanup] Error during cleanup:', error);
