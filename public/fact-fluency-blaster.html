@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fact Fluency Blaster | MathMatrix.AI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/factFluencyBlaster.css">
+    <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <a href="/dashboard.html">
+                    <img src="/images/logo-teal.png" alt="MathMatrix.AI Logo">
+                </a>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span id="userName">Student</span>
+                    <span class="level-badge">Level <span id="userLevel">1</span></span>
+                </div>
+                <button id="backBtn" class="btn-secondary">← Back to Mastery Mode</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="fluency-container">
+        <!-- Placement Test Screen -->
+        <div id="placementScreen" class="game-screen active">
+            <div class="placement-content">
+                <h1>🚀 Fact Fluency Blaster</h1>
+                <h2>Welcome, Math Champion!</h2>
+                <p class="subtitle">Let's find out where you are with your math facts</p>
+
+                <div class="placement-info">
+                    <div class="info-card">
+                        <h3>What is this?</h3>
+                        <p>This is a fun way to master your math facts, just like the classic Math Blaster game!</p>
+                        <p>You'll practice addition, subtraction, multiplication, and division until they become automatic.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>How it works:</h3>
+                        <ol>
+                            <li><strong>Placement Test:</strong> A quick 1-minute test to find your starting point</li>
+                            <li><strong>Practice:</strong> Blast through math facts with visual feedback</li>
+                            <li><strong>Master:</strong> Build fluency systematically using proven methods</li>
+                        </ol>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Mastery Goals:</h3>
+                        <ul>
+                            <li>✓ <strong>Accuracy:</strong> 95% or higher</li>
+                            <li>✓ <strong>Speed:</strong> 40-60 problems per minute</li>
+                            <li>✓ <strong>Automaticity:</strong> Facts become instant!</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button id="startPlacementBtn" class="btn-primary large">Start Placement Test 🚀</button>
+            </div>
+        </div>
+
+        <!-- Placement Test In Progress -->
+        <div id="placementTestScreen" class="game-screen">
+            <div class="test-header">
+                <h2>Placement Test: <span id="currentOperation">Addition</span></h2>
+                <div class="timer-display">
+                    <span class="timer-label">Time Remaining:</span>
+                    <span id="placementTimer" class="timer-value">60</span>s
+                </div>
+            </div>
+
+            <div class="problem-container">
+                <div class="problem-display" id="placementProblem">7 + 3</div>
+                <input type="number" id="placementAnswer" class="answer-input" placeholder="?" autocomplete="off">
+                <button id="submitPlacementAnswer" class="btn-primary">Submit</button>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="placementProgress"></div>
+            </div>
+
+            <div class="placement-stats">
+                <div class="stat">
+                    <span class="stat-label">Attempted:</span>
+                    <span id="placementAttempted" class="stat-value">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Correct:</span>
+                    <span id="placementCorrect" class="stat-value">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placement Results Screen -->
+        <div id="placementResultsScreen" class="game-screen">
+            <div class="results-content">
+                <h1>🎯 Placement Results</h1>
+
+                <div id="placementResultsData" class="results-grid">
+                    <!-- Results will be inserted here dynamically -->
+                </div>
+
+                <div class="recommendation">
+                    <h3>Recommended Starting Point:</h3>
+                    <div class="recommended-level">
+                        <span id="recommendedOperation">Addition</span> → <span id="recommendedLevel">+0</span>
+                    </div>
+                </div>
+
+                <button id="startPracticeBtn" class="btn-primary large">Start Practice! 🚀</button>
+            </div>
+        </div>
+
+        <!-- Main Game Screen -->
+        <div id="gameScreen" class="game-screen">
+            <div class="game-header">
+                <div class="level-info">
+                    <h2 id="currentLevelName">Addition +0</h2>
+                    <div class="mastery-indicator">
+                        <span id="masteryStatus" class="status-badge">In Progress</span>
+                    </div>
+                </div>
+
+                <div class="game-stats">
+                    <div class="stat">
+                        <span class="stat-label">Time:</span>
+                        <span id="gameTimer" class="stat-value">0</span>s
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Accuracy:</span>
+                        <span id="gameAccuracy" class="stat-value">100</span>%
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Rate:</span>
+                        <span id="gameRate" class="stat-value">0</span>/min
+                    </div>
+                </div>
+
+                <button id="endSessionBtn" class="btn-secondary">End Session</button>
+            </div>
+
+            <!-- Space-themed game area -->
+            <div class="space-background">
+                <div class="stars"></div>
+                <div class="asteroid" id="asteroid">
+                    <div class="problem-display" id="gameProblem">7 + 3</div>
+                </div>
+            </div>
+
+            <div class="answer-area">
+                <input type="number" id="gameAnswer" class="answer-input-game" placeholder="Type answer..." autocomplete="off">
+                <div class="aim-line">
+                    <div class="aim-line-label">Fluency Aim:</div>
+                    <div class="aim-line-bar">
+                        <div id="fluencyProgress" class="fluency-progress"></div>
+                        <span class="aim-marker">🎯</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feedback-display" id="feedbackDisplay"></div>
+        </div>
+
+        <!-- Session Results Screen -->
+        <div id="resultsScreen" class="game-screen">
+            <div class="results-content">
+                <h1 id="resultsTitle">Session Complete! 🎉</h1>
+
+                <div class="results-summary">
+                    <div class="result-stat">
+                        <span class="result-label">Problems Attempted:</span>
+                        <span id="resultAttempted" class="result-value">0</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="result-label">Problems Correct:</span>
+                        <span id="resultCorrect" class="result-value">0</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="result-label">Accuracy:</span>
+                        <span id="resultAccuracy" class="result-value">0%</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="result-label">Rate:</span>
+                        <span id="resultRate" class="result-value">0</span> /min
+                    </div>
+                    <div class="result-stat">
+                        <span class="result-label">Duration:</span>
+                        <span id="resultDuration" class="result-value">0</span>s
+                    </div>
+                </div>
+
+                <div id="masteryMessage" class="mastery-message">
+                    <!-- Mastery status message will appear here -->
+                </div>
+
+                <div class="result-actions">
+                    <button id="practiceAgainBtn" class="btn-primary">Practice Again</button>
+                    <button id="nextLevelBtn" class="btn-success" style="display: none;">Next Level 🚀</button>
+                    <button id="viewProgressBtn" class="btn-secondary">View All Progress</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Dashboard Screen -->
+        <div id="progressScreen" class="game-screen">
+            <div class="progress-content">
+                <h1>📊 Your Fact Fluency Progress</h1>
+
+                <div class="overall-stats">
+                    <div class="stat-card">
+                        <h3>Total Sessions</h3>
+                        <div class="stat-big" id="totalSessions">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Current Streak</h3>
+                        <div class="stat-big" id="currentStreak">0</div>
+                        <small>days in a row</small>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Overall Accuracy</h3>
+                        <div class="stat-big" id="overallAccuracy">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Facts Mastered</h3>
+                        <div class="stat-big" id="factsMastered">0</div>
+                    </div>
+                </div>
+
+                <div class="progress-by-operation">
+                    <h2>Progress by Operation</h2>
+                    <div id="operationTabs" class="operation-tabs">
+                        <button class="tab-btn active" data-operation="addition">Addition</button>
+                        <button class="tab-btn" data-operation="subtraction">Subtraction</button>
+                        <button class="tab-btn" data-operation="multiplication">Multiplication</button>
+                        <button class="tab-btn" data-operation="division">Division</button>
+                    </div>
+
+                    <div id="familyProgressGrid" class="family-progress-grid">
+                        <!-- Fact family progress cards will be inserted here -->
+                    </div>
+                </div>
+
+                <button id="backToGameBtn" class="btn-primary">Back to Practice</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/factFluencyBlaster.js"></script>
+</body>
+</html>

@@ -386,6 +386,67 @@ const userSchema = new Schema({
   learningProfile: {
     type: learningProfileSchema,
     default: () => ({})
+  },
+
+  /* Fact Fluency Progress (Math Blaster-style game) */
+  factFluencyProgress: {
+    // Placement test (1-minute timed assessment to determine starting point)
+    placement: {
+      completed: { type: Boolean, default: false },
+      completedDate: { type: Date },
+      recommendedOperation: String,  // 'addition', 'subtraction', 'multiplication', 'division'
+      recommendedLevel: String,      // 'plus0', 'times2', etc.
+      placementResults: [{
+        operation: String,
+        averageRate: Number,      // Digits correct per minute
+        averageAccuracy: Number   // Percentage
+      }]
+    },
+
+    // Track each fact family (e.g., +0, +1, ×2, ×5, etc.)
+    factFamilies: {
+      type: Map,
+      of: new Schema({
+        operation: String,      // 'addition', 'subtraction', 'multiplication', 'division'
+        familyName: String,     // 'plus0', 'minus2', 'times5', 'divided-by-3'
+        displayName: String,    // '+0', '-2', '×5', '÷3'
+
+        // Mastery status (Morningside criteria: 95%+ accuracy, 40-60 digits/min)
+        mastered: { type: Boolean, default: false },
+        masteredDate: { type: Date },
+
+        // Best performance
+        bestRate: Number,       // Digits correct per minute
+        bestAccuracy: Number,   // Percentage (0-100)
+
+        // Practice tracking
+        attempts: { type: Number, default: 0 },
+        lastPracticed: { type: Date },
+
+        // Session history (keep last 10 sessions)
+        sessions: [{
+          date: { type: Date, default: Date.now },
+          durationSeconds: Number,
+          problemsAttempted: Number,
+          problemsCorrect: Number,
+          rate: Number,           // Digits correct per minute
+          accuracy: Number,       // Percentage
+          masteryAchieved: Boolean
+        }]
+      }, { _id: false }),
+      default: () => new Map()
+    },
+
+    // Overall statistics
+    stats: {
+      totalSessions: { type: Number, default: 0 },
+      totalProblemsAttempted: { type: Number, default: 0 },
+      totalProblemsCorrect: { type: Number, default: 0 },
+      overallAccuracy: Number,
+      currentStreak: { type: Number, default: 0 },   // Days practiced in a row
+      longestStreak: { type: Number, default: 0 },
+      lastPracticeDate: { type: Date }
+    }
   }
 }, { timestamps: true });
 
