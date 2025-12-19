@@ -97,6 +97,36 @@
             </div>
         </div>
 
+        <!-- Break Between Operations -->
+        <div id="placementBreakScreen" class="game-screen">
+            <div class="placement-content">
+                <h1>Great Job! 🎉</h1>
+                <h2 id="breakOperationComplete">Addition Complete!</h2>
+
+                <div class="break-stats">
+                    <div class="stat-card">
+                        <h3>Problems Attempted</h3>
+                        <div class="stat-big" id="breakAttempted">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Correct</h3>
+                        <div class="stat-big" id="breakCorrect">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Accuracy</h3>
+                        <div class="stat-big" id="breakAccuracy">0%</div>
+                    </div>
+                </div>
+
+                <div class="break-message">
+                    <p>Take a quick break! When you're ready, click below to continue.</p>
+                    <p><strong>Next:</strong> <span id="breakNextOperation">Subtraction</span></p>
+                </div>
+
+                <button id="continueToNextOperation" class="btn-primary large">Continue to Next Test →</button>
+            </div>
+        </div>
+
         <!-- Placement Results Screen -->
         <div id="placementResultsScreen" class="game-screen">
             <div class="results-content">
