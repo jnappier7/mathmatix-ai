@@ -83,21 +83,30 @@
     "standardsAlignment": ["7.NS.1"],
     "teachingGuidance": {
       "coreConcepts": [
-        "Subtracting is adding the opposite",
-        "Change subtraction to addition problem",
-        "Keep-Change-Change method"
+        "TERM SEPARATION: Visualize each number as separate groups of units",
+        "Subtracting means 'adding the opposite' (change - to + opposite)",
+        "Apply cancellation concept from addition after converting",
+        "Keep-Change-Change method with visual representation"
       ],
       "commonMistakes": [
-        "Subtracting without changing to addition",
+        "Not visualizing terms as separate groups before operating",
+        "Subtracting without changing to addition first",
         "Changing both signs instead of just the operation and second number"
       ],
       "teachingTips": [
-        "Emphasize 'add the opposite'",
-        "Rewrite every subtraction as addition first",
-        "Use number line to verify"
+        "VISUAL TERM SEPARATION: Show 5 - 7 as TWO groups first",
+        "5 = five positives (+1, +1, +1, +1, +1)",
+        "7 = seven units (when subtracting, these become negatives)",
+        "Convert: 5 - 7 becomes 5 + (-7)",
+        "Now apply cancellation: 5 positives, 7 negatives",
+        "Five positives cancel 5 negatives, leaving 2 negatives",
+        "Therefore 5 - 7 = -2",
+        "ALWAYS show term separation BEFORE applying cancellation",
+        "Subtraction is just addition with visual conversion step",
+        "Use number line to verify final answer"
       ],
-      "exampleTypes": ["5 - 8", "-3 - 7", "4 - (-6)", "-2 - (-5)"],
-      "connectionsToPriorKnowledge": ["Integer addition", "Opposite numbers"]
+      "exampleTypes": ["5 - 7 (term separation warmup)", "5 - 8", "-3 - 7", "4 - (-6)", "-2 - (-5)"],
+      "connectionsToPriorKnowledge": ["Integer addition (cancellation)", "Opposite numbers", "Adding the opposite"]
     },
     "difficultyLevel": 4
   },
