@@ -43,21 +43,28 @@
     "standardsAlignment": ["7.NS.1"],
     "teachingGuidance": {
       "coreConcepts": [
-        "Adding same signs: add and keep the sign",
-        "Adding different signs: subtract and take sign of larger",
-        "Zero pairs concept"
+        "CANCELLATION CONCEPT: Positives and negatives cancel each other out",
+        "Each integer is made of units: -3 = three negative units (-1, -1, -1)",
+        "When positive and negative units meet, they cancel (make zero pairs)",
+        "Adding same signs: combine all units and keep the sign",
+        "Adding different signs: cancel pairs, keep leftover units"
       ],
       "commonMistakes": [
         "Adding signs instead of numbers",
-        "Forgetting to keep track of which number is larger"
+        "Forgetting that opposites cancel",
+        "Not visualizing the units"
       ],
       "teachingTips": [
-        "Use 'units language' - positive units and negative units",
-        "Opposites make ZERO",
-        "Temperature changes or money examples"
+        "START WITH CANCELLATION WARMUP: Show -3 + 5 as units canceling",
+        "Visual: -3 = (-1, -1, -1) and 5 = (+1, +1, +1, +1, +1)",
+        "Three negatives cancel three positives, leaving 2 positives",
+        "Therefore -3 + 5 = 2",
+        "Use this concrete visualization FIRST before rules",
+        "Build from addition (easier) before subtraction",
+        "Temperature, money, elevation examples reinforce concept"
       ],
-      "exampleTypes": ["-3 + 5", "7 + (-4)", "-6 + (-2)", "Problems with zero"],
-      "connectionsToPriorKnowledge": ["Addition of whole numbers", "Number line"]
+      "exampleTypes": ["-3 + 5 (cancellation warmup)", "7 + (-4)", "-6 + (-2)", "Problems with zero"],
+      "connectionsToPriorKnowledge": ["Addition of whole numbers", "Number line", "Opposites make zero"]
     },
     "difficultyLevel": 3,
     "fluencyMetadata": {
@@ -104,21 +111,26 @@
     "standardsAlignment": ["7.NS.2"],
     "teachingGuidance": {
       "coreConcepts": [
+        "BUILD ON CANCELLATION FOUNDATION from addition/subtraction",
         "Multiplication: same signs = positive, different signs = negative",
         "Division: same rules as multiplication",
         "Mixed operations require order of operations"
       ],
       "commonMistakes": [
         "Thinking negative × negative = negative",
-        "Confusing division by negative with subtraction"
+        "Confusing division by negative with subtraction",
+        "Jumping to multiplication before mastering addition/subtraction"
       ],
       "teachingTips": [
+        "SEQUENCE: Teach addition/subtraction FIRST using cancellation concept",
+        "Review: -3 + 5 = 2 (three negatives cancel three positives)",
+        "Then extend to multiplication as repeated addition",
         "Sign rules: two positives or two negatives = positive result",
         "Practice with small numbers first",
         "Connect to patterns: -3 × 2, -3 × 1, -3 × 0, -3 × -1..."
       ],
       "exampleTypes": ["-4 × 6", "-8 ÷ -2", "Mixed problems with multiple operations"],
-      "connectionsToPriorKnowledge": ["Multiplication tables", "Division"]
+      "connectionsToPriorKnowledge": ["Integer addition (cancellation)", "Multiplication tables", "Division"]
     },
     "difficultyLevel": 5
   },
