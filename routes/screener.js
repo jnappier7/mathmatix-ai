@@ -17,6 +17,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Problem = require('../models/problem');
+const Skill = require('../models/skill');
 const ScreenerSession = require('../models/screenerSession'); // CTO REVIEW FIX: Persistent session storage
 const { initializeSession, processResponse, generateReport, identifyInterviewSkills } = require('../utils/adaptiveScreener');
 const { generateProblem } = require('../utils/problemGenerator');
@@ -129,57 +130,103 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       targetDifficulty = session.theta;
     }
 
-    // ADAPTIVE SKILL SELECTION (diversified, not round-robin)
-    // Full skill library organized by difficulty tiers
-    const skillLibrary = {
-      'foundations': [
-        { id: 'integer-addition', difficulty: -1.5 },
-        { id: 'integer-subtraction', difficulty: -1.3 }
-      ],
-      'basic-algebra': [
-        { id: 'combining-like-terms', difficulty: -0.5 },
-        { id: 'order-of-operations', difficulty: -0.3 },
-        { id: 'one-step-equations-addition', difficulty: 0.0 }
-      ],
-      'intermediate': [
-        { id: 'one-step-equations-multiplication', difficulty: 0.5 },
-        { id: 'two-step-equations', difficulty: 1.0 },
-        { id: 'distributive-property', difficulty: 1.2 }
-      ],
-      'advanced': [
-        { id: 'solving-multi-step-equations', difficulty: 1.8 },
-        { id: 'integer-all-operations', difficulty: 2.0 }
-      ]
+    // ADAPTIVE SKILL SELECTION - Use FULL curriculum from database (not hardcoded!)
+    // Query all skills from database with estimated difficulty ranges
+    const allSkills = await Skill.find({}).select('skillId name category irtDifficulty').lean();
+
+    // If no IRT difficulty in database, use category-based estimates
+    const categoryDifficultyMap = {
+      // Elementary (K-5)
+      'counting-cardinality': -2.5,
+      'number-recognition': -2.3,
+      'addition-subtraction': -2.0,
+      'place-value': -1.8,
+      'multiplication-division': -1.5,
+      'fractions-basics': -1.2,
+      'decimals-basics': -1.0,
+      'measurement': -0.8,
+
+      // Middle School (6-8)
+      'integers-rationals': -0.5,
+      'proportional-reasoning': -0.3,
+      'percent-applications': 0.0,
+      'integer-operations': -0.4,
+      'integer-addition': -0.6,
+      'integer-subtraction': -0.5,
+      'integer-multiplication': -0.2,
+      'integer-division': 0.0,
+      'integer-all-operations': 0.2,
+      'expressions-equations': 0.3,
+      'solving-equations': 0.5,
+      'one-step-equations-addition': 0.0,
+      'one-step-equations-multiplication': 0.5,
+      'two-step-equations': 1.0,
+      'multi-step-equations': 1.5,
+      'inequalities': 0.8,
+      'scientific-notation': 0.6,
+      'pythagorean-theorem': 0.7,
+      'geometry-basics': -0.6,
+
+      // High School Algebra
+      'linear-equations': 1.0,
+      'systems-equations': 1.5,
+      'quadratics': 1.8,
+      'polynomials': 1.6,
+      'rational-expressions': 2.0,
+      'exponentials-logs': 2.2,
+      'functions': 1.4,
+      'graphing': 1.2,
+
+      // Advanced
+      'trigonometry': 2.5,
+      'precalculus': 2.8,
+      'limits': 3.0,
+      'derivatives': 3.2,
+      'integration': 3.5,
+      'series': 3.8
     };
 
-    // Select skill near target difficulty that hasn't been over-tested
-    let selectedSkillId;
+    // Build candidate skills with estimated difficulties
     let candidateSkills = [];
+    for (const skill of allSkills) {
+      // Use IRT difficulty if available, otherwise category estimate
+      const estimatedDifficulty = skill.irtDifficulty || categoryDifficultyMap[skill.category] || 0;
 
-    // Gather candidate skills from all tiers
-    for (const tier in skillLibrary) {
-      for (const skill of skillLibrary[tier]) {
-        // Count how many times this skill has been tested
-        const testCount = session.testedSkills.filter(s => s === skill.id).length;
+      // Count how many times this skill has been tested
+      const testCount = session.testedSkills.filter(s => s === skill.skillId).length;
 
-        // Calculate distance from target difficulty
-        const difficultyDistance = Math.abs(skill.difficulty - targetDifficulty);
+      // Calculate distance from target difficulty
+      const difficultyDistance = Math.abs(estimatedDifficulty - targetDifficulty);
 
-        // Prefer untested or less-tested skills near target difficulty
-        candidateSkills.push({
-          skillId: skill.id,
-          difficulty: skill.difficulty,
-          testCount,
-          difficultyDistance,
-          // Lower score = better candidate
-          score: difficultyDistance * 10 + testCount * 5
-        });
-      }
+      // Prefer untested or less-tested skills near target difficulty
+      candidateSkills.push({
+        skillId: skill.skillId,
+        difficulty: estimatedDifficulty,
+        category: skill.category,
+        testCount,
+        difficultyDistance,
+        // Lower score = better candidate
+        // Weight: difficulty match is most important, then test count
+        score: difficultyDistance * 10 + testCount * 3
+      });
     }
 
-    // Sort by score (lower is better) and pick best untested or least-tested
+    // Filter out skills tested 3+ times (ensure diversity)
+    const fresherSkills = candidateSkills.filter(s => s.testCount < 3);
+    if (fresherSkills.length > 0) {
+      candidateSkills = fresherSkills;
+    }
+
+    // Sort by score (lower is better) and pick best match
     candidateSkills.sort((a, b) => a.score - b.score);
-    selectedSkillId = candidateSkills[0].skillId;
+
+    if (candidateSkills.length === 0) {
+      console.error('[Screener] No candidate skills found! Using fallback.');
+      selectedSkillId = 'one-step-equations-addition';
+    } else {
+      selectedSkillId = candidateSkills[0].skillId;
+      console.log(`[Screener Q${session.questionCount + 1}] Target θ=${targetDifficulty.toFixed(2)} → Selected "${selectedSkillId}" (difficulty=${candidateSkills[0].difficulty.toFixed(2)}, distance=${candidateSkills[0].difficultyDistance.toFixed(2)})`);
+    }
 
     // Try to find existing problem in database
     // CTO REVIEW FIX: Use LRU strategy - only exclude last N problems (not all history)
@@ -213,15 +260,11 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
           current: session.questionCount + 1,
           min: session.minQuestions,
           target: session.targetQuestions,
-          max: session.maxQuestions
+          max: session.maxQuestions,
+          percentComplete: Math.round(((session.questionCount + 1) / session.targetQuestions) * 100)
         }
-      },
-      session: {
-        questionCount: session.questionCount,
-        theta: session.theta,
-        standardError: session.standardError,
-        confidence: session.confidence
       }
+      // DO NOT expose session theta/SE/confidence to students - teacher/admin only
     });
 
   } catch (error) {
@@ -284,17 +327,17 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
 
     // Determine next action
     if (result.action === 'continue') {
-      // Continue screening
+      // Continue screening - NO FEEDBACK DURING SCREENER (prevents negative momentum)
       res.json({
-        correct: isCorrect,
-        feedback: isCorrect ? 'Correct!' : `Not quite. The answer was ${problem.answer}.`,
         nextAction: 'continue',
-        session: {
-          questionCount: session.questionCount,
-          theta: session.theta,
-          standardError: session.standardError,
-          confidence: session.confidence
+        progress: {
+          current: session.questionCount,
+          min: session.minQuestions,
+          target: session.targetQuestions,
+          max: session.maxQuestions,
+          percentComplete: Math.round((session.questionCount / session.targetQuestions) * 100)
         }
+        // DO NOT send: correct, feedback, theta, standardError (student shouldn't see these)
       });
 
     } else if (result.action === 'interview') {
@@ -309,16 +352,14 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       const interviewSkills = identifyInterviewSkills(session.toObject(), []);
 
       res.json({
-        correct: isCorrect,
-        feedback: isCorrect ? 'Correct!' : `The answer was ${problem.answer}.`,
         nextAction: 'interview',
         reason: result.reason,
         message: result.message,
         report: {
-          theta: report.theta,
-          percentile: report.percentile,
-          confidence: report.confidence,
+          // Students see: score percentage only
+          accuracy: report.accuracy,
           questionsAnswered: report.questionsAnswered
+          // Teachers/admin see in separate endpoint: theta, percentile, confidence, SE
         },
         interviewSkills
       });
@@ -331,9 +372,14 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
       res.json({
-        correct: isCorrect,
         nextAction: 'complete',
-        report
+        report: {
+          // Students see: final score and time only
+          accuracy: report.accuracy,
+          questionsAnswered: report.questionsAnswered,
+          duration: report.duration
+          // Teachers/admin see full report via /admin/student-detail endpoint
+        }
       });
     }
 
