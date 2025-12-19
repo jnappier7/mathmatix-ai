@@ -239,6 +239,16 @@ async function startOperationPlacement() {
     document.getElementById('placementAttempted').textContent = '0';
     document.getElementById('placementCorrect').textContent = '0';
 
+    // Reset and enable input fields
+    const answerInput = document.getElementById('placementAnswer');
+    const submitBtn = document.getElementById('submitPlacementAnswer');
+    answerInput.disabled = false;
+    submitBtn.disabled = false;
+    answerInput.value = '';
+
+    // Reset timer display
+    document.getElementById('placementTimer').classList.remove('warning');
+
     // Show first problem
     displayPlacementProblem();
 
@@ -246,7 +256,7 @@ async function startOperationPlacement() {
     gameState.placement.timer = setInterval(updatePlacementTimer, 1000);
 
     // Focus on answer input
-    document.getElementById('placementAnswer').focus();
+    answerInput.focus();
 }
 
 function displayPlacementProblem() {
@@ -297,6 +307,12 @@ function updatePlacementTimer() {
     // Time's up
     if (gameState.placement.timeRemaining <= 0) {
         clearInterval(gameState.placement.timer);
+        gameState.placement.timer = null;
+
+        // Disable input to prevent further answers
+        document.getElementById('placementAnswer').disabled = true;
+        document.getElementById('submitPlacementAnswer').disabled = true;
+
         finishOperationPlacement();
     }
 }
