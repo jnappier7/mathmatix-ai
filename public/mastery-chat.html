@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mastery Mode - MΔTHMΔTIΧ</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/css/algebra-tiles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* Mastery Mode Specific Styles - Different Feel, Same Brand */
@@ -297,6 +298,9 @@
             </div>
             <div class="input-area">
                 <div class="input-container">
+                    <button id="algebra-tiles-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); margin-right: 10px; padding: 12px 20px; border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 14px;" title="Algebra Tiles">
+                        <i class="fas fa-th"></i> Tiles
+                    </button>
                     <input
                         type="text"
                         id="mastery-input"
@@ -533,5 +537,9 @@
             initializeMasteryMode();
         }
     </script>
+
+    <!-- Algebra Tiles Container -->
+    <div id="algebraTilesContainer"></div>
+    <script src="/js/algebra-tiles.js"></script>
 </body>
 </html>
