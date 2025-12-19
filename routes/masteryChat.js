@@ -7,7 +7,7 @@ const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
-const { callLLMStream } = require("../utils/llmGateway");
+const { callLLM, callLLMStream } = require("../utils/llmGateway");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
@@ -114,6 +114,12 @@ router.post('/', isAuthenticated, async (req, res) => {
             content: msg.content
         }));
 
+        // Add system prompt to messages array (OpenAI format)
+        const messagesForAI = [
+            { role: 'system', content: systemPrompt },
+            ...conversationForAI
+        ];
+
         // Check for streaming support
         const isStreaming = req.query.stream === 'true';
 
@@ -122,38 +128,43 @@ router.post('/', isAuthenticated, async (req, res) => {
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
+            res.flushHeaders();
 
             let fullResponse = '';
 
             try {
-                await callLLMStream(
+                const stream = await callLLMStream(
                     PRIMARY_CHAT_MODEL,
-                    systemPrompt,
-                    conversationForAI,
-                    (chunk) => {
-                        fullResponse += chunk;
-                        res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
-                    },
-                    () => {
-                        // Save AI response to conversation
-                        masteryConversation.messages.push({
-                            role: 'assistant',
-                            content: fullResponse,
-                            timestamp: new Date()
-                        });
-
-                        masteryConversation.lastActivity = new Date();
-                        masteryConversation.save();
-
-                        // Send completion event
-                        res.write(`data: ${JSON.stringify({
-                            done: true,
-                            fullText: fullResponse,
-                            voiceId: currentTutor.voiceId
-                        })}\n\n`);
-                        res.end();
-                    }
+                    messagesForAI,
+                    { temperature: 0.7, max_tokens: 500 }
                 );
+
+                // Stream chunks to client as they arrive
+                for await (const chunk of stream) {
+                    const content = chunk.choices[0]?.delta?.content || '';
+                    if (content) {
+                        fullResponse += content;
+                        res.write(`data: ${JSON.stringify({ chunk: content })}\n\n`);
+                    }
+                }
+
+                // Save AI response to conversation
+                masteryConversation.messages.push({
+                    role: 'assistant',
+                    content: fullResponse,
+                    timestamp: new Date()
+                });
+
+                masteryConversation.lastActivity = new Date();
+                await masteryConversation.save();
+
+                // Send completion event
+                res.write(`data: ${JSON.stringify({
+                    done: true,
+                    fullText: fullResponse,
+                    voiceId: currentTutor.voiceId
+                })}\n\n`);
+                res.end();
             } catch (error) {
                 console.error("[Mastery Chat Stream Error]:", error);
                 res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
@@ -161,7 +172,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         } else {
             // Non-streaming response
-            const aiResponse = await callLLM(PRIMARY_CHAT_MODEL, systemPrompt, conversationForAI);
+            const aiResponse = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI);
 
             // Save AI response
             masteryConversation.messages.push({

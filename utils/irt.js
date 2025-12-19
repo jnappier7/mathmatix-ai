@@ -116,6 +116,13 @@ function estimateAbility(responses, options = {}) {
     }
 
     // Newton-Raphson update
+    // Guard against division by zero (when all items are at extreme probabilities)
+    if (Math.abs(secondDerivative) < 1e-10) {
+      // Information is too low to update - return current theta
+      converged = true;
+      break;
+    }
+
     const delta = firstDerivative / secondDerivative;
     theta = theta - delta;
 
@@ -133,6 +140,12 @@ function estimateAbility(responses, options = {}) {
   // Calculate standard error
   const information = calculateInformation(theta, responses);
   const standardError = information > 0 ? 1 / Math.sqrt(information) : Infinity;
+
+  // Final NaN check - if theta became NaN, reset to initial value
+  if (isNaN(theta)) {
+    console.warn('[IRT] Theta calculation resulted in NaN, resetting to 0');
+    theta = initialTheta;
+  }
 
   return {
     theta: Math.round(theta * 100) / 100,  // Round to 2 decimals

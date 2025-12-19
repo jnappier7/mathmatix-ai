@@ -210,6 +210,60 @@ const learningProfileSchema = new Schema({
     resetDate: { type: Date },
     resetBy: { type: Schema.Types.ObjectId, ref: 'User' },  // Teacher/Admin who reset it
     reason: { type: String }
+  }],
+
+  // Quarterly growth tracking checkpoints
+  quarterlyCheckpoints: [{
+    // Checkpoint metadata
+    checkpointDate: { type: Date, default: Date.now },
+    schoolYear: { type: String },  // e.g., "2024-2025"
+    quarter: { type: Number, min: 1, max: 4 },  // 1=Fall, 2=Winter, 3=Spring, 4=Summer
+    academicQuarter: { type: String },  // e.g., "2024-Q1", "2024-Q2"
+
+    // Snapshot of mastery state at checkpoint
+    skillsMastered: [{
+      skillId: { type: String },
+      masteredDate: { type: Date },
+      course: { type: String },  // Course this skill belongs to
+      category: { type: String }
+    }],
+
+    // Growth metrics calculated at checkpoint
+    metrics: {
+      // New skills mastered this quarter
+      newSkillsCount: { type: Number, default: 0 },
+      newSkillsList: [String],  // skillIds mastered this quarter
+
+      // Retention: skills from previous quarters still mastered
+      retainedSkillsCount: { type: Number, default: 0 },
+      retainedPercentage: { type: Number, min: 0, max: 100 },  // % of previous skills retained
+
+      // Skills that were mastered before but no longer mastered
+      lostSkillsCount: { type: Number, default: 0 },
+      lostSkillsList: [String],  // skillIds that regressed
+
+      // Velocity: skills mastered per week
+      skillsPerWeek: { type: Number, default: 0 },
+
+      // Theta (ability level) change
+      thetaChange: { type: Number },  // Change from previous quarter
+
+      // Course progression
+      coursesInProgress: [String],  // Courses student is working on
+      coursesCompleted: [String]    // Courses where all skills are mastered
+    },
+
+    // Activity metrics
+    activity: {
+      totalMinutes: { type: Number, default: 0 },
+      problemsAttempted: { type: Number, default: 0 },
+      problemsCorrect: { type: Number, default: 0 },
+      accuracy: { type: Number, min: 0, max: 100 }
+    },
+
+    // Notes from teacher/system
+    notes: { type: String },
+    generatedBy: { type: String, enum: ['auto', 'manual', 'teacher'], default: 'auto' }
   }]
 }, { _id: false });
 

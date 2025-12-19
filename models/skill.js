@@ -22,16 +22,93 @@ const skillSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: [
+      // Elementary (K-5)
+      'counting-cardinality',
+      'number-recognition',
+      'addition-subtraction',
+      'multiplication-division',
+      'place-value',
+      'shapes-geometry',
+      'measurement',
+      'time',
+      'data',
+      'money',
+      'arrays',
+
+      // Middle School (6-8)
+      'integers-rationals',
+      'scientific-notation',
+      'area-perimeter',
+      'volume',
+      'angles',
+      'pythagorean-theorem',
+      'transformations',
+      'scatter-plots',
+
+      // High School & College (Algebra 1 - Calculus 3)
       'number-system',
       'operations',
-      'expressions',
-      'equations',
+      'decimals',
+      'fractions',
       'ratios-proportions',
       'percent',
-      'graphing',
+      'expressions',
+      'equations',
+      'linear-equations',
+      'systems',
+      'inequalities',
+      'polynomials',
+      'factoring',
+      'quadratics',
+      'radicals',
+      'rational-expressions',
+      'complex-numbers',
+      'exponentials-logarithms',
+      'sequences-series',
+      'conics',
       'functions',
+      'graphing',
+      'coordinate-plane',
+      'geometry',
+      'trigonometry',
+      'identities',
+      'polar-coordinates',
+      'vectors',
+      'matrices',
+      'limits',
+      'derivatives',
+      'integration',
+      'series-tests',
+      'taylor-series',
+      'parametric-polar',
+      'differential-equations',
+      'multivariable',
+      'vector-calculus',
+      'statistics',
+      'probability',
+
+      // Catch-all
       'advanced'
     ]
+  },
+
+  // Curriculum tracking for quarterly growth reports
+  course: {
+    type: String,
+    required: false,  // Optional for backward compatibility with existing skills
+    index: true
+  },
+
+  quarter: {
+    type: Number,
+    min: 1,
+    max: 4,
+    required: false  // Optional for backward compatibility
+  },
+
+  unit: {
+    type: String,
+    required: false  // Optional for backward compatibility
   },
 
   // Skills that must be mastered before this one

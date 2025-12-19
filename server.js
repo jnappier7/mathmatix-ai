@@ -76,6 +76,7 @@ const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
 const gradeWorkRoutes = require('./routes/gradeWork');
 const adminImportRoutes = require('./routes/adminImport');  // Item bank CSV import
+const quarterlyGrowthRoutes = require('./routes/quarterlyGrowth');  // Quarterly growth tracking and retention
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -200,6 +201,7 @@ app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, masteryChatRout
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes); // AI grading for student work
 app.use('/api/admin', adminImportRoutes); // Admin tools: CSV import for item bank
+app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Quarterly growth tracking and retention analytics
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
