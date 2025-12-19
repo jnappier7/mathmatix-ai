@@ -333,7 +333,14 @@ app.get("*", (req, res) => {
 });
 
 
-// --- 10. SERVER LISTENER ---
+// --- 10. SAFETY & SECURITY INITIALIZATION ---
+const { scheduleCleanup } = require('./middleware/uploadSecurity');
+
+// Start auto-deletion scheduler for old uploads (30-day retention)
+scheduleCleanup();
+console.log('🛡️ Upload security: Auto-deletion scheduler initialized');
+
+// --- 11. SERVER LISTENER ---
 app.listen(PORT, () => {
   console.log(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`);
 });

@@ -6,6 +6,7 @@ const path = require('path');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const { gradeWithVision } = require('../utils/llmGateway'); // CTO REVIEW FIX: Use unified LLMGateway
+const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -22,8 +23,15 @@ const upload = multer({
 /**
  * POST /api/grade-work
  * Analyzes student's written math work and provides grading with feedback
+ *
+ * Security: Rate limited, file validation, access control
  */
-router.post('/', isAuthenticated, upload.single('file'), async (req, res) => {
+router.post('/',
+    isAuthenticated,
+    uploadRateLimiter,
+    upload.single('file'),
+    validateUpload,
+    async (req, res) => {
     try {
         const file = req.file;
         const user = await User.findById(req.user._id);
@@ -51,72 +59,125 @@ router.post('/', isAuthenticated, upload.single('file'), async (req, res) => {
         const base64Image = fileBuffer.toString('base64');
         const dataUrl = `data:${file.mimetype};base64,${base64Image}`;
 
-        // Prepare grading prompt for AI
-        const gradingPrompt = `You are an expert math teacher grading a student's work. Analyze this image of their written math work carefully.
+        // Prepare grading prompt for AI with rigorous mathematical verification
+        const gradingPrompt = `You are an expert math teacher grading a student's work. You must be MATHEMATICALLY RIGOROUS and ACCURATE.
 
-Your task:
-1. **Identify the problem(s)** they were solving
-2. **Check each step** of their work for accuracy
-3. **Identify errors** and explain what went wrong
-4. **Provide corrections** with clear explanations
-5. **Give a score** out of 100 based on:
-   - Correct final answer (40 points)
-   - Correct methodology/steps (40 points)
-   - Clear work shown (20 points)
-6. **Provide annotation locations** for visual feedback
+# YOUR GRADING PROCESS (CRITICAL - FOLLOW EXACTLY):
 
-Format your response as follows:
+## STEP 1: SOLVE EACH PROBLEM YOURSELF FIRST
+Before grading, solve each problem in the image from scratch. Show your work:
+- Identify each problem/question
+- Solve it step-by-step with complete mathematical rigor
+- Write out the correct answer
+- This is your ANSWER KEY
+
+## STEP 2: VERIFY STUDENT'S WORK AGAINST YOUR SOLUTION
+Compare each step of the student's work to your correct solution:
+- Check if they used the correct method
+- Verify each arithmetic operation (addition, subtraction, multiplication, division)
+- Check algebraic manipulations (combining like terms, factoring, distributing)
+- Verify signs (positive/negative)
+- Check if they simplified correctly
+- Verify final answer matches yours
+
+## STEP 3: COMMON ERROR PATTERNS TO CHECK
+- **Arithmetic errors**: Did they add/subtract/multiply/divide correctly?
+- **Sign errors**: Did they lose a negative sign? Distribute incorrectly?
+- **Algebraic errors**: Did they combine unlike terms? Forget to apply operations to both sides?
+- **Order of operations**: Did they follow PEMDAS correctly?
+- **Graphing errors**: Did they plot points correctly? Choose correct direction for inequality?
+- **Solution set errors**: Did they write the solution in correct notation?
+
+## STEP 4: ASSIGN GRADE
+Score out of 100 based on:
+- **Correct final answer (40 points)**: Full credit only if answer is exactly correct
+- **Correct methodology (40 points)**: Full credit only if approach and steps are sound
+- **Work shown clearly (20 points)**: Partial credit based on clarity
+
+BE STRICT: Mathematical correctness is binary. x = 8 is not the same as x = 64.
+
+# OUTPUT FORMAT:
+
+**SOLUTION KEY (YOUR WORK FIRST):**
+[Solve each problem yourself step-by-step. This proves you know the correct answer.]
+
+Problem 1: [Problem statement]
+Step 1: [Your step]
+Step 2: [Your step]
+...
+✓ CORRECT ANSWER: [Your answer]
+
+Problem 2: [Problem statement]
+[Your solution steps]
+✓ CORRECT ANSWER: [Your answer]
+
+[Continue for all problems...]
 
 **SCORE: [number]/100**
 
-**PROBLEM IDENTIFIED:**
-[Describe what problem they were solving]
+**VERIFICATION:**
+Problem 1:
+- Student's answer: [Their answer]
+- Correct answer: [Your answer from solution key]
+- ✅ CORRECT / ❌ INCORRECT: [Explanation]
+- Method used: ✅ VALID / ❌ INVALID: [Why]
+
+Problem 2:
+- Student's answer: [Their answer]
+- Correct answer: [Your answer]
+- ✅ CORRECT / ❌ INCORRECT: [Explanation]
+- Method used: ✅ VALID / ❌ INVALID: [Why]
+
+[Continue for all problems...]
 
 **ANNOTATIONS:**
-Grade like a real teacher with simple, clean marks. For each annotation:
+Study the image layout carefully. For each annotation:
 ANNOTATION|type|x|y|mark
 
 Where:
-- type: "check" (✓ correct), "miss" (✗ wrong), "partial" (-points deducted), "circle" (circle answer), "note" (brief text)
-- x: horizontal position as percentage (0-100, where 0=left, 100=right)
-- y: vertical position as percentage (0-100, where 0=top, 100=bottom)
-- mark: What to write (examples: "✓", "✗", "-2", "A", "slope=m", etc.) - KEEP IT BRIEF!
+- type: "check" (✓), "miss" (✗), "partial" (-pts), "circle" (circle answer), "note" (brief text)
+- x: horizontal % (0=left, 100=right)
+- y: vertical % (0=top, 100=bottom)
+- mark: Brief mark (✓, ✗, -2, "Check algebra", "Wrong sign", etc.)
 
-**GRADING STYLE:** Mark like a real teacher - use checkmarks for correct, X or "-A" for errors, circle final answers, add brief helpful notes. Position marks RIGHT NEXT TO each problem number or answer.
+**POSITIONING TIPS:**
+- Top-left area: x=10-20, y=15-25
+- Middle: x=30-70, y=40-60
+- Right side: x=70-85, y=[appropriate vertical]
+- Use 5-10% margins from edges
 
 Examples:
-ANNOTATION|check|10|22|✓
-ANNOTATION|miss|10|28|✗
-ANNOTATION|partial|60|35|-1
-ANNOTATION|circle|25|40|
-ANNOTATION|note|15|75|slope=rise/run
+ANNOTATION|check|15|20|✓
+ANNOTATION|miss|15|45|✗
+ANNOTATION|partial|40|30|-3
+ANNOTATION|circle|75|50|
+ANNOTATION|note|15|65|Wrong sign
 
-**STEP-BY-STEP ANALYSIS:**
+**DETAILED ERROR ANALYSIS:**
+[For each error found, explain precisely what went wrong]
 
-Step 1: [What they did]
-✅ Correct / ❌ Error: [Explanation]
-
-Step 2: [What they did]
-✅ Correct / ❌ Error: [Explanation]
-
-[Continue for all steps...]
+Problem X, Step Y:
+❌ ERROR: [Specific mistake]
+→ WHY IT'S WRONG: [Mathematical explanation]
+→ CORRECT APPROACH: [What they should have done]
 
 **OVERALL FEEDBACK:**
-[2-3 sentences of encouraging, constructive feedback]
+[2-3 sentences: encouraging but honest about errors]
 
-**WHAT TO WORK ON:**
-- [Specific skill or concept to practice]
-- [Another area for improvement if applicable]
+**WHAT TO PRACTICE:**
+- [Specific skill: "Division with negative numbers", "Distributing across parentheses", etc.]
+- [Another specific skill if needed]
 
-Be specific, encouraging, and educational. Remember this is for learning, not just evaluation.`;
+REMEMBER: Accuracy matters. Be mathematically rigorous. Verify your own solution first, then grade accordingly.`;
 
         // CTO REVIEW FIX: Call LLMGateway for consistent AI interaction
+        // Using lower temperature (0.3) for mathematical accuracy, higher tokens for detailed analysis
         const aiResponse = await gradeWithVision({
             imageDataUrl: dataUrl,
             prompt: gradingPrompt
         }, {
-            maxTokens: 1500,
-            temperature: 0.7
+            maxTokens: 3000,      // More tokens for detailed step-by-step verification
+            temperature: 0.3      // Lower temperature for mathematical precision
         });
 
         console.log('[gradeWork] AI grading response received (via LLMGateway)');
