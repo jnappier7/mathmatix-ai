@@ -165,6 +165,11 @@ function initializeEventListeners() {
     document.getElementById('backBtn').addEventListener('click', () => {
         window.location.href = '/badge-map.html';
     });
+
+    // Break screen continue button
+    document.getElementById('continueToNextOperation').addEventListener('click', () => {
+        startOperationPlacement();
+    });
 }
 
 // Show specific screen
@@ -175,6 +180,7 @@ function showScreen(screenName) {
     const screenMap = {
         'placement': 'placementScreen',
         'placementTest': 'placementTestScreen',
+        'placementBreak': 'placementBreakScreen',
         'placementResults': 'placementResultsScreen',
         'game': 'gameScreen',
         'results': 'resultsScreen',
@@ -313,10 +319,36 @@ function finishOperationPlacement() {
     // Move to next operation or finish
     gameState.placement.currentOperation++;
     if (gameState.placement.currentOperation < gameState.placement.operations.length) {
-        setTimeout(() => startOperationPlacement(), 2000);
+        // Show break screen before next operation
+        showBreakScreen(operation, accuracy);
     } else {
+        // All operations complete
         finishPlacement();
     }
+}
+
+function showBreakScreen(completedOperation, accuracy) {
+    showScreen('placementBreak');
+
+    const operationNames = {
+        'addition': 'Addition',
+        'subtraction': 'Subtraction',
+        'multiplication': 'Multiplication',
+        'division': 'Division'
+    };
+
+    // Show what was just completed
+    document.getElementById('breakOperationComplete').textContent =
+        operationNames[completedOperation] + ' Complete!';
+
+    // Show stats from last operation
+    document.getElementById('breakAttempted').textContent = gameState.placement.attempted;
+    document.getElementById('breakCorrect').textContent = gameState.placement.correct;
+    document.getElementById('breakAccuracy').textContent = accuracy + '%';
+
+    // Show what's next
+    const nextOperation = gameState.placement.operations[gameState.placement.currentOperation];
+    document.getElementById('breakNextOperation').textContent = operationNames[nextOperation];
 }
 
 async function finishPlacement() {
