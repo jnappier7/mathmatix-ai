@@ -6,6 +6,7 @@ const path = require('path');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const { gradeWithVision } = require('../utils/llmGateway'); // CTO REVIEW FIX: Use unified LLMGateway
+const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -22,8 +23,15 @@ const upload = multer({
 /**
  * POST /api/grade-work
  * Analyzes student's written math work and provides grading with feedback
+ *
+ * Security: Rate limited, file validation, access control
  */
-router.post('/', isAuthenticated, upload.single('file'), async (req, res) => {
+router.post('/',
+    isAuthenticated,
+    uploadRateLimiter,
+    upload.single('file'),
+    validateUpload,
+    async (req, res) => {
     try {
         const file = req.file;
         const user = await User.findById(req.user._id);

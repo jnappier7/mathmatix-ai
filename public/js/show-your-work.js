@@ -786,9 +786,37 @@ class ShowYourWorkManager {
                         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
                         animation: slideDown 0.5s ease;
                         max-width: 90%;
-                    ">
+                        cursor: pointer;
+                    " title="Click for privacy info">
                         <i class="fas fa-lightbulb" style="margin-right: 6px;"></i>
                         <strong>Tip:</strong> Position your homework flat and ensure good lighting
+                    </div>
+
+                    <!-- Privacy notice overlay -->
+                    <div id="syw-privacy-notice" style="
+                        position: absolute;
+                        bottom: 80px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        background: rgba(0, 0, 0, 0.85);
+                        color: white;
+                        padding: 15px 20px;
+                        border-radius: 12px;
+                        font-size: 0.85em;
+                        text-align: center;
+                        box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+                        max-width: 90%;
+                        border: 1px solid rgba(139, 92, 246, 0.5);
+                    ">
+                        <div style="margin-bottom: 8px;">
+                            <i class="fas fa-shield-alt" style="color: #8b5cf6; margin-right: 6px;"></i>
+                            <strong>Your Privacy Matters</strong>
+                        </div>
+                        <div style="font-size: 0.9em; line-height: 1.4; opacity: 0.9;">
+                            Your photo is private and secure. Only you and your teacher can see it.
+                            <br>
+                            Photos are automatically deleted after 30 days.
+                        </div>
                     </div>
 
                     <!-- Flash effect overlay -->

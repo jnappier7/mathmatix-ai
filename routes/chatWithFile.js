@@ -14,6 +14,7 @@ const BRAND_CONFIG = require('../utils/brand');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const pdfOcr = require('../utils/pdfOcr');
 const axios = require('axios');
+const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -28,7 +29,12 @@ const upload = multer({
 });
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
 
-router.post('/', isAuthenticated, upload.any(), async (req, res) => {
+router.post('/',
+    isAuthenticated,
+    uploadRateLimiter,
+    upload.any(),
+    validateUpload,
+    async (req, res) => {
     try {
         const { userId, message, fileCount } = req.body;
         const files = req.files;
