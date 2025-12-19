@@ -25,7 +25,16 @@
    */
   function performLogout() {
     // Clear ALL session storage (including tab session flag)
-    sessionStorage.clear();
+    if (window.StorageUtils) {
+      StorageUtils.session.clear();
+    } else {
+      // Fallback if StorageUtils not loaded
+      try {
+        sessionStorage.clear();
+      } catch (e) {
+        console.warn('[Auto-Logout] Could not clear sessionStorage:', e);
+      }
+    }
 
     // Use sendBeacon for reliable logout even during page unload
     if (navigator.sendBeacon) {
@@ -92,7 +101,16 @@
    * Mark tab session as active (set on every protected page load)
    */
   function activateTabSession() {
-    sessionStorage.setItem(SESSION_KEY, 'true');
+    if (window.StorageUtils) {
+      StorageUtils.session.setItem(SESSION_KEY, 'true');
+    } else {
+      // Fallback if StorageUtils not loaded
+      try {
+        sessionStorage.setItem(SESSION_KEY, 'true');
+      } catch (e) {
+        console.warn('[Auto-Logout] Could not set sessionStorage:', e);
+      }
+    }
     console.log('[Auto-Logout] Tab session activated');
   }
 
@@ -156,7 +174,16 @@
     window.addEventListener('storage', (event) => {
       if (event.key === 'logout-event') {
         console.log('[Auto-Logout] Logout detected in another tab');
-        sessionStorage.clear(); // Clear all session data
+        // Clear all session data
+        if (window.StorageUtils) {
+          StorageUtils.session.clear();
+        } else {
+          try {
+            sessionStorage.clear();
+          } catch (e) {
+            console.warn('[Auto-Logout] Could not clear sessionStorage:', e);
+          }
+        }
         window.location.href = '/login.html';
       }
     });
@@ -172,8 +199,17 @@
   // Expose logout function globally for manual logout buttons
   window.triggerLogout = function() {
     // Set storage event to logout all tabs
-    localStorage.setItem('logout-event', Date.now().toString());
-    localStorage.removeItem('logout-event'); // Clean up
+    if (window.StorageUtils) {
+      StorageUtils.local.setItem('logout-event', Date.now().toString());
+      StorageUtils.local.removeItem('logout-event'); // Clean up
+    } else {
+      try {
+        localStorage.setItem('logout-event', Date.now().toString());
+        localStorage.removeItem('logout-event'); // Clean up
+      } catch (e) {
+        console.warn('[Auto-Logout] Could not access localStorage for cross-tab logout:', e);
+      }
+    }
 
     performLogout(); // This clears sessionStorage
     window.location.href = '/login.html';
