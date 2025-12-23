@@ -8,8 +8,8 @@
     position: fixed;
     right: 20px;
     top: 80px;
-    width: 450px;
-    height: 500px;
+    width: 650px;  /* Increased from 450px for better workspace */
+    height: 700px; /* Increased from 500px for better workspace */
     background: #ffffff;
     border-radius: 8px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
