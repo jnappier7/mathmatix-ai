@@ -281,6 +281,9 @@ document.addEventListener("DOMContentLoaded", () => {
             await fetchAndDisplayParentCode();
             await getWelcomeMessage();
             await fetchAndDisplayLeaderboard();
+
+            // Show default suggestions after welcome message
+            setTimeout(() => showDefaultSuggestions(), 1000);
         } catch (error) {
             console.error("Initialization failed, redirecting to login.", error);
             window.location.href = "/login.html";
@@ -1876,6 +1879,99 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
+    // Quick Reply Suggestion Chips (contextual help)
+    const suggestionsContainer = document.getElementById('suggestion-chips-container');
+
+    function showSuggestions(suggestions) {
+        if (!suggestionsContainer || !suggestions || suggestions.length === 0) return;
+
+        // Clear existing chips
+        suggestionsContainer.innerHTML = '';
+
+        // Create chip elements
+        suggestions.forEach(suggestion => {
+            const chip = document.createElement('button');
+            chip.className = 'suggestion-chip';
+            chip.textContent = suggestion.text;
+            chip.style.cssText = `
+                background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+                border: 1px solid #d1d5db;
+                border-radius: 20px;
+                padding: 8px 16px;
+                font-size: 13px;
+                color: #374151;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+                font-weight: 500;
+            `;
+
+            // Hover effect
+            chip.addEventListener('mouseenter', () => {
+                chip.style.background = 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)';
+                chip.style.color = 'white';
+                chip.style.borderColor = '#8b5cf6';
+                chip.style.transform = 'translateY(-2px)';
+                chip.style.boxShadow = '0 4px 8px rgba(139, 92, 246, 0.3)';
+            });
+
+            chip.addEventListener('mouseleave', () => {
+                chip.style.background = 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)';
+                chip.style.color = '#374151';
+                chip.style.borderColor = '#d1d5db';
+                chip.style.transform = 'translateY(0)';
+                chip.style.boxShadow = 'none';
+            });
+
+            // Click handler - fills input but doesn't auto-send
+            chip.addEventListener('click', () => {
+                if (userInput) {
+                    userInput.value = suggestion.message;
+                    userInput.focus();
+                    // Trigger resize if needed
+                    if (userInput.dispatchEvent) {
+                        userInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                }
+                // Hide suggestions after selection
+                hideSuggestions();
+            });
+
+            suggestionsContainer.appendChild(chip);
+        });
+
+        // Show with animation
+        suggestionsContainer.style.display = 'flex';
+        setTimeout(() => {
+            suggestionsContainer.style.opacity = '1';
+            suggestionsContainer.style.maxHeight = '100px';
+        }, 10);
+    }
+
+    function hideSuggestions() {
+        if (!suggestionsContainer) return;
+
+        suggestionsContainer.style.opacity = '0';
+        suggestionsContainer.style.maxHeight = '0';
+        setTimeout(() => {
+            suggestionsContainer.style.display = 'none';
+        }, 300);
+    }
+
+    // Show default suggestions on load (these will become contextual later)
+    function showDefaultSuggestions() {
+        const defaultSuggestions = [
+            { text: "💡 Give me a hint", message: "Can you give me a hint?" },
+            { text: "📝 Show me an example", message: "Can you show me an example problem?" },
+            { text: "🔄 Explain differently", message: "Can you explain that a different way?" }
+        ];
+        showSuggestions(defaultSuggestions);
+    }
+
+    // Expose globally so we can call from other contexts
+    window.showSuggestions = showSuggestions;
+    window.hideSuggestions = hideSuggestions;
+
     // Helper function to start a streaming message (creates empty bubble)
     function startStreamingMessage() {
         if (!chatBox) return null;
@@ -2110,6 +2206,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 showThinkingIndicator(false);
+
+                // Show suggestions after AI response completes
+                setTimeout(() => showDefaultSuggestions(), 500);
+
                 return; // Exit early since streaming path is complete
             }
 
@@ -2191,6 +2291,9 @@ document.addEventListener("DOMContentLoaded", () => {
         appendMessage(errorMessage, "system-error");
     } finally {
         showThinkingIndicator(false);
+
+        // Show suggestions after response (even on error)
+        setTimeout(() => showDefaultSuggestions(), 500);
     }
 }
     
@@ -2337,7 +2440,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Event Listeners ---
     if (sendBtn) sendBtn.addEventListener("click", sendMessage);
-    if (userInput) userInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+    if (userInput) {
+        userInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+        // Hide suggestions when user starts typing
+        userInput.addEventListener("input", () => {
+            if (userInput.value.trim().length > 0) {
+                hideSuggestions();
+            }
+        });
+    }
     if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });

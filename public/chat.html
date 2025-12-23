@@ -155,6 +155,22 @@
     <!-- Modern File Grid Container -->
     <div id="file-grid-container" class="file-grid-container"></div>
 
+    <!-- Quick Reply Suggestions (contextual chips) -->
+    <div id="suggestion-chips-container" style="
+      display: none;
+      padding: 8px 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease, max-height 0.3s ease;
+      max-height: 0;
+      overflow: hidden;
+    ">
+      <!-- Chips will be dynamically inserted here -->
+    </div>
+
     <!-- Message Input (Full Width) -->
     <textarea id="user-input" placeholder="Ask a math question..." rows="1"></textarea>
     <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/svg+xml,application/pdf" multiple/>
