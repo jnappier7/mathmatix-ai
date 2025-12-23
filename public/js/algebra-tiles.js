@@ -82,9 +82,9 @@ class AlgebraTiles {
                 <input
                   type="text"
                   id="equationInput"
-                  placeholder="Enter equation..."
+                  placeholder="Enter equation (e.g., 2x + 3 = 15)"
                   class="equation-input"
-                  title="Enter equation (e.g., 2x + 3, x² - 4x + 4)"
+                  title="Type an expression and click Build It!"
                 />
                 <button id="buildItBtn" class="build-it-btn">🚀</button>
                 <button id="clearWorkspaceBtn" class="clear-btn">Clear</button>
@@ -548,22 +548,52 @@ class AlgebraTiles {
   }
 
   buildFromEquation() {
-    const equation = document.getElementById('equationInput').value.trim();
-    if (!equation) {
-      alert('Please enter an equation first!');
+    const input = document.getElementById('equationInput').value.trim();
+    if (!input) {
+      alert('Please enter an expression first!');
       return;
     }
 
     try {
-      const parsed = this.parseEquation(equation);
-      this.clearWorkspace();
-      this.layoutTiles(parsed);
+      // Route to appropriate parser based on current mode
+      if (this.currentMode === 'algebra') {
+        this.buildAlgebraTiles(input);
+      } else if (this.currentMode === 'baseten') {
+        this.buildBaseTen(input);
+      } else if (this.currentMode === 'fractions') {
+        this.buildFractions(input);
+      } else if (this.currentMode === 'numberline') {
+        this.buildNumberLine(input);
+      }
     } catch (error) {
-      alert(`Error parsing equation: ${error.message}`);
+      alert(`Error: ${error.message}`);
     }
   }
 
-  parseEquation(equation) {
+  // ============================================
+  // ALGEBRA TILES BUILDER
+  // ============================================
+
+  buildAlgebraTiles(input) {
+    const parsed = this.parseAlgebraExpression(input);
+    this.clearWorkspace();
+
+    // Auto-select mat based on input
+    const matSelector = document.getElementById('matSelector');
+    if (input.includes('=')) {
+      // Has equals sign → Equation mat
+      matSelector.value = 'equation';
+      this.setMat('equation');
+    } else if (input.includes('*') || input.includes('(')) {
+      // Has multiplication → Multiplication mat
+      matSelector.value = 'multiplication';
+      this.setMat('multiplication');
+    }
+
+    this.layoutTiles(parsed);
+  }
+
+  parseAlgebraExpression(equation) {
     // Remove spaces
     equation = equation.replace(/\s+/g, '');
 
@@ -621,6 +651,136 @@ class AlgebraTiles {
     }
 
     return tiles;
+  }
+
+  // ============================================
+  // BASE TEN BLOCKS BUILDER
+  // ============================================
+
+  buildBaseTen(input) {
+    // Parse number (e.g., "245", "1567")
+    const num = parseInt(input.replace(/[^\d]/g, ''));
+    if (isNaN(num) || num < 0) {
+      throw new Error('Please enter a positive number (e.g., 245, 1567)');
+    }
+
+    this.clearWorkspace();
+
+    // Break down into place values
+    const hundreds = Math.floor(num / 100);
+    const tens = Math.floor((num % 100) / 10);
+    const ones = num % 10;
+
+    const tiles = [];
+
+    // Add hundreds blocks
+    for (let i = 0; i < hundreds; i++) {
+      tiles.push('hundred');
+    }
+    // Add tens blocks
+    for (let i = 0; i < tens; i++) {
+      tiles.push('ten');
+    }
+    // Add ones blocks
+    for (let i = 0; i < ones; i++) {
+      tiles.push('one');
+    }
+
+    this.layoutTiles(tiles);
+  }
+
+  // ============================================
+  // FRACTION BARS BUILDER
+  // ============================================
+
+  buildFractions(input) {
+    // Parse fractions (e.g., "1/2", "3/4 + 1/8", "2/3")
+    const fractionPattern = /(\d+)\/(\d+)/g;
+    const tiles = [];
+    let match;
+
+    while ((match = fractionPattern.exec(input)) !== null) {
+      const numerator = parseInt(match[1]);
+      const denominator = parseInt(match[2]);
+
+      // Map denominator to tile type
+      const denominatorMap = {
+        1: 'whole',
+        2: 'half',
+        3: 'third',
+        4: 'fourth',
+        5: 'fifth',
+        6: 'sixth',
+        8: 'eighth',
+        10: 'tenth',
+        12: 'twelfth'
+      };
+
+      const tileType = denominatorMap[denominator];
+      if (!tileType) {
+        throw new Error(`Fraction 1/${denominator} not supported. Available: 1/2, 1/3, 1/4, 1/5, 1/6, 1/8, 1/10, 1/12`);
+      }
+
+      // Add tiles for numerator count
+      for (let i = 0; i < numerator; i++) {
+        tiles.push(tileType);
+      }
+    }
+
+    if (tiles.length === 0) {
+      throw new Error('No fractions found. Use format: 1/2, 3/4, 2/3 + 1/6');
+    }
+
+    this.clearWorkspace();
+    this.layoutTiles(tiles);
+  }
+
+  // ============================================
+  // NUMBER LINE BUILDER
+  // ============================================
+
+  buildNumberLine(input) {
+    // Parse integer expression (e.g., "-7", "5 + 3", "-4 - 2")
+    // Remove spaces and evaluate
+    const cleaned = input.replace(/\s+/g, '');
+
+    // Simple parsing for addition/subtraction
+    let value = 0;
+    try {
+      // Basic evaluation - split by + and -
+      const parts = cleaned.split(/([+-])/);
+      let current = '';
+
+      for (const part of parts) {
+        if (part === '+' || part === '-') {
+          if (current) {
+            value += parseInt(current);
+          }
+          current = part;
+        } else {
+          current += part;
+        }
+      }
+      if (current) {
+        value += parseInt(current);
+      }
+    } catch (e) {
+      value = parseInt(cleaned);
+    }
+
+    if (isNaN(value)) {
+      throw new Error('Please enter an integer or expression (e.g., -7, 5 + 3, -4 - 2)');
+    }
+
+    this.clearWorkspace();
+
+    const tiles = [];
+    const type = value >= 0 ? 'positive-counter' : 'negative-counter';
+    for (let i = 0; i < Math.abs(value); i++) {
+      tiles.push(type);
+    }
+
+    this.layoutTiles(tiles);
   }
 
   layoutTiles(tileTypes) {
@@ -690,6 +850,18 @@ class AlgebraTiles {
       numberline: '📏 Number Line'
     };
     document.querySelector('.algebra-tiles-header h2').textContent = titles[mode] || '🧮 Algebra Tiles';
+
+    // Update input placeholder
+    const placeholders = {
+      algebra: 'Enter equation (e.g., 2x + 3 = 15)',
+      baseten: 'Enter number (e.g., 245, 1567)',
+      fractions: 'Enter fractions (e.g., 1/2, 3/4 + 1/8)',
+      numberline: 'Enter integer (e.g., -7, 5 + 3)'
+    };
+    const input = document.getElementById('equationInput');
+    if (input) {
+      input.placeholder = placeholders[mode] || 'Enter expression...';
+    }
   }
 
   renderPaletteForMode(mode) {
