@@ -1835,8 +1835,9 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Expose appendMessage globally for masteryMode.js and guidedPath.js
+    // Expose appendMessage and renderMathInElement globally
     window.appendMessage = appendMessage;
+    window.renderMathInElement = renderMathInElement;
 
     // Add action buttons for returning students (warm-up or continue)
     function addActionButtons() {
@@ -1961,6 +1962,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             messageRef.bubble.appendChild(reactionContainer);
         }
+
+        // Final MathJax render to ensure all LaTeX is processed
+        setTimeout(() => renderMathInElement(messageRef.bubble), 100);
     }
 
     async function sendMessage() {
