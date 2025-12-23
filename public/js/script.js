@@ -1758,6 +1758,83 @@ document.addEventListener("DOMContentLoaded", () => {
             textNode.innerHTML = textNode.innerHTML.replace(desmosRegex, '');
         }
 
+        // Handle Visual Step Breadcrumbs: [STEPS]...[/STEPS]
+        if (sender === 'ai' && text && text.includes('[STEPS]')) {
+            const stepsRegex = /\[STEPS\]([\s\S]*?)\[\/STEPS\]/g;
+            let match;
+            while ((match = stepsRegex.exec(text)) !== null) {
+                const stepsContent = match[1].trim();
+                const lines = stepsContent.split('\n').map(l => l.trim()).filter(l => l);
+
+                if (lines.length > 0) {
+                    const stepsContainer = document.createElement('div');
+                    stepsContainer.className = 'visual-steps-container';
+                    stepsContainer.style.cssText = `
+                        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+                        border-left: 4px solid #3b82f6;
+                        border-radius: 8px;
+                        padding: 20px;
+                        margin: 15px 0;
+                        font-family: 'Courier New', monospace;
+                        line-height: 2;
+                    `;
+
+                    lines.forEach((line, index) => {
+                        // Check if line is an equation (contains = or math operators)
+                        const isEquation = /[=+\-*/]|\\[a-z]+/.test(line);
+
+                        const lineDiv = document.createElement('div');
+                        lineDiv.style.cssText = `
+                            margin: ${isEquation ? '8px 0' : '4px 0'};
+                            padding: ${isEquation ? '8px 12px' : '4px 8px'};
+                            ${isEquation ? 'background: white; border-radius: 6px; font-size: 1.1em; font-weight: 600;' : 'font-size: 0.9em; color: #1e40af; padding-left: 20px;'}
+                        `;
+
+                        // If it's an equation, wrap in LaTeX delimiters if not already
+                        if (isEquation && !line.includes('\\(')) {
+                            lineDiv.innerHTML = `\\(${line}\\)`;
+                        } else {
+                            lineDiv.textContent = line;
+                        }
+
+                        stepsContainer.appendChild(lineDiv);
+
+                        // Add arrow between steps (but not after last equation or after explanatory text)
+                        if (index < lines.length - 1 && isEquation) {
+                            const arrow = document.createElement('div');
+                            arrow.innerHTML = '↓';
+                            arrow.style.cssText = `
+                                text-align: center;
+                                font-size: 1.5em;
+                                color: #3b82f6;
+                                margin: 4px 0;
+                            `;
+                            stepsContainer.appendChild(arrow);
+                        }
+                    });
+
+                    bubble.appendChild(stepsContainer);
+                }
+            }
+            // Remove [STEPS]...[/STEPS] tags from displayed text
+            textNode.innerHTML = textNode.innerHTML.replace(stepsRegex, '');
+        }
+
+        // Handle Color-Coded Highlights: [OLD:text] and [NEW:text]
+        if (sender === 'ai' && textNode.innerHTML) {
+            // Highlight removed/changed terms in red
+            textNode.innerHTML = textNode.innerHTML.replace(/\[OLD:([^\]]+)\]/g,
+                '<span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; text-decoration: line-through; font-weight: 600;">$1</span>');
+
+            // Highlight new/added terms in green
+            textNode.innerHTML = textNode.innerHTML.replace(/\[NEW:([^\]]+)\]/g,
+                '<span style="background: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 4px; font-weight: 600;">$1</span>');
+
+            // Highlight focus terms in blue (what we're working on)
+            textNode.innerHTML = textNode.innerHTML.replace(/\[FOCUS:([^\]]+)\]/g,
+                '<span style="background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-weight: 600; border: 2px solid #3b82f6;">$1</span>');
+        }
+
         if (graphData && window.functionPlot) {
              const graphContainer = document.createElement('div');
             const graphId = 'graph-container-' + Date.now();
