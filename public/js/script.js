@@ -1451,6 +1451,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Check for last session to provide personalized greeting
+            try {
+                const lastSessionRes = await fetch('/api/chat/last-session', {credentials: 'include'});
+                const lastSessionData = await lastSessionRes.json();
+
+                if (lastSessionData.hasLastSession) {
+                    // Build personalized greeting based on last session
+                    const firstName = currentUser.firstName || 'there';
+                    let greeting = `Welcome back, ${firstName}! `;
+
+                    // Add context from last session
+                    if (lastSessionData.currentTopic) {
+                        greeting += `Last time we were working on **${lastSessionData.currentTopic}**`;
+                        if (lastSessionData.strugglingWith) {
+                            greeting += ` and you were working through **${lastSessionData.strugglingWith}**`;
+                        }
+                        greeting += '. ';
+                    } else if (lastSessionData.summary) {
+                        // Fallback to summary if no currentTopic
+                        greeting += `${lastSessionData.summary} `;
+                    }
+
+                    greeting += '\n\nWhat would you like to do?';
+
+                    // Display greeting
+                    appendMessage(greeting, "ai");
+
+                    // Add action buttons
+                    addActionButtons();
+                    return;
+                }
+            } catch (error) {
+                console.log('[Chat] No last session found or error fetching:', error);
+                // Fall through to normal welcome
+            }
+
             // Normal welcome message flow (only for non-mastery sessions)
             const res = await fetch(`/api/welcome-message?userId=${currentUser._id}`, {credentials: 'include'});
             const data = await res.json();
@@ -1801,6 +1837,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Expose appendMessage globally for masteryMode.js and guidedPath.js
     window.appendMessage = appendMessage;
+
+    // Add action buttons for returning students (warm-up or continue)
+    function addActionButtons() {
+        if (!chatBox) return;
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "welcome-action-buttons";
+        buttonContainer.style.cssText = "display: flex; gap: 10px; margin: 15px auto; max-width: 500px; justify-content: center;";
+
+        // Quick warm-up button
+        const warmupBtn = document.createElement("button");
+        warmupBtn.className = "btn btn-primary";
+        warmupBtn.innerHTML = '<i class="fas fa-fire"></i> Quick warm-up (30 sec)';
+        warmupBtn.style.cssText = "flex: 1; padding: 12px 20px; font-size: 14px; border-radius: 8px; cursor: pointer;";
+        warmupBtn.onclick = () => {
+            buttonContainer.remove(); // Remove buttons after click
+            userInput.value = "Give me a quick 30-second warm-up problem";
+            sendBtn.click();
+        };
+
+        // Continue button
+        const continueBtn = document.createElement("button");
+        continueBtn.className = "btn btn-secondary";
+        continueBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Continue where we left off';
+        continueBtn.style.cssText = "flex: 1; padding: 12px 20px; font-size: 14px; border-radius: 8px; cursor: pointer;";
+        continueBtn.onclick = () => {
+            buttonContainer.remove(); // Remove buttons after click
+            userInput.value = "Let's continue where we left off last time";
+            sendBtn.click();
+        };
+
+        buttonContainer.appendChild(warmupBtn);
+        buttonContainer.appendChild(continueBtn);
+        chatBox.appendChild(buttonContainer);
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
     // Helper function to start a streaming message (creates empty bubble)
     function startStreamingMessage() {
@@ -2261,6 +2334,33 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Event Listeners ---
     if (sendBtn) sendBtn.addEventListener("click", sendMessage);
     if (userInput) userInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+
+    // Quick Help Buttons (Student-Brain Handles)
+    const hintBtn = document.getElementById('hint-btn');
+    const checkStepBtn = document.getElementById('check-step-btn');
+    const explainDifferentBtn = document.getElementById('explain-different-btn');
+
+    if (hintBtn) {
+        hintBtn.addEventListener('click', () => {
+            userInput.value = "Can you give me a hint?";
+            sendBtn.click();
+        });
+    }
+
+    if (checkStepBtn) {
+        checkStepBtn.addEventListener('click', () => {
+            userInput.value = "Can you check my step and see if I'm on the right track?";
+            sendBtn.click();
+        });
+    }
+
+    if (explainDifferentBtn) {
+        explainDifferentBtn.addEventListener('click', () => {
+            userInput.value = "Can you explain this a different way?";
+            sendBtn.click();
+        });
+    }
+
     if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });

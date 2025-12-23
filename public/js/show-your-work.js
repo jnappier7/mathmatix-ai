@@ -229,9 +229,10 @@ class ShowYourWorkManager {
         }
 
         try {
-            // Show loading
+            // Show loading with animated progress messages
             this.previewSection.style.display = 'none';
             this.loadingSection.style.display = 'block';
+            this.showProgressMessages();
 
             // Prepare form data
             const formData = new FormData();
@@ -275,6 +276,62 @@ class ShowYourWorkManager {
     async dataURLToBlob(dataURL) {
         const response = await fetch(dataURL);
         return await response.blob();
+    }
+
+    // Show animated progress messages during grading (teacher-like)
+    showProgressMessages() {
+        const loadingSection = this.loadingSection;
+        if (!loadingSection) return;
+
+        const messages = [
+            { text: "Got it. I'm reading your work now. Give me a sec.", delay: 0 },
+            { text: "Found your problems... checking your steps...", delay: 1500 },
+            { text: "Verifying your answers...", delay: 3000 },
+            { text: "Writing personalized feedback...", delay: 4500 }
+        ];
+
+        // Clear existing content and create message container
+        loadingSection.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px;">
+                <div class="spinner" style="
+                    width: 60px;
+                    height: 60px;
+                    border: 4px solid #f3f4f6;
+                    border-top: 4px solid #8b5cf6;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto 30px auto;
+                "></div>
+                <div id="progress-message" style="
+                    font-size: 1.1em;
+                    color: #8b5cf6;
+                    font-weight: 600;
+                    min-height: 30px;
+                    transition: opacity 0.3s ease;
+                "></div>
+            </div>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+
+        const messageEl = document.getElementById('progress-message');
+
+        // Show messages with fade transitions
+        messages.forEach(({ text, delay }) => {
+            setTimeout(() => {
+                if (messageEl) {
+                    messageEl.style.opacity = '0';
+                    setTimeout(() => {
+                        messageEl.textContent = text;
+                        messageEl.style.opacity = '1';
+                    }, 150);
+                }
+            }, delay);
+        });
     }
 
     displayResults(result) {
@@ -1115,12 +1172,20 @@ class ShowYourWorkManager {
     }
 
     formatFeedback(feedback) {
-        // Convert feedback to beautifully formatted HTML
+        // Convert feedback to beautifully formatted HTML with structured problem cards
         let html = feedback;
 
         // Enhanced section headers with icons and styling
         html = html.replace(/\*\*SCORE:\s*([^\*]+)\*\*/g,
             '<div style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); color: white; padding: 15px 20px; border-radius: 10px; margin: 15px 0; font-size: 1.2em; font-weight: bold; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">📊 Score: $1</div>');
+
+        // Highlight VERIFICATION section with problem breakdown
+        html = html.replace(/\*\*VERIFICATION:\*\*/g,
+            '<div style="margin-top: 25px; padding: 12px 16px; background: linear-gradient(to right, #dbeafe, transparent); border-left: 4px solid #3b82f6; border-radius: 4px; font-weight: 600; color: #1e40af;">🔍 Problem-by-Problem Breakdown</div>');
+
+        // Highlight DETAILED ERROR ANALYSIS section
+        html = html.replace(/\*\*DETAILED ERROR ANALYSIS:\*\*/g,
+            '<div style="margin-top: 25px; padding: 12px 16px; background: linear-gradient(to right, #fee2e2, transparent); border-left: 4px solid #ef4444; border-radius: 4px; font-weight: 600; color: #991b1b;">🔧 How to Fix Your Mistakes</div>');
 
         html = html.replace(/\*\*PROBLEM IDENTIFIED:\*\*/g,
             '<div style="margin-top: 20px; padding: 12px 16px; background: linear-gradient(to right, #f0e7ff, transparent); border-left: 4px solid #8b5cf6; border-radius: 4px; font-weight: 600; color: #6b21a8;">🎯 Problem Identified</div>');
@@ -1133,6 +1198,35 @@ class ShowYourWorkManager {
 
         html = html.replace(/\*\*WHAT TO WORK ON:\*\*/g,
             '<div style="margin-top: 20px; padding: 12px 16px; background: linear-gradient(to right, #fef3c7, transparent); border-left: 4px solid #f59e0b; border-radius: 4px; font-weight: 600; color: #92400e;">🎓 What to Work On</div>');
+
+        html = html.replace(/\*\*WHAT TO PRACTICE:\*\*/g,
+            '<div style="margin-top: 20px; padding: 12px 16px; background: linear-gradient(to right, #dbeafe, transparent); border-left: 4px solid #3b82f6; border-radius: 4px; font-weight: 600; color: #1e40af;">🔁 Practice These Skills</div>');
+
+        // Create visual cards for each problem with structured feedback
+        html = html.replace(/Problem\s+(\d+):\s*\n-\s*Student's answer:\s*([^\n]+)\n-\s*Correct answer:\s*([^\n]+)\n-\s*(✅ CORRECT|❌ INCORRECT):\s*([^\n]+)/g,
+            (match, num, studentAns, correctAns, status, explanation) => {
+                const isCorrect = status.includes('CORRECT');
+                const color = isCorrect ? '#10b981' : '#ef4444';
+                const bgColor = isCorrect ? '#d1fae5' : '#fee2e2';
+                const icon = isCorrect ? '✅' : '⚠️';
+
+                return `
+                <div style="background: ${bgColor}; border-left: 4px solid ${color}; border-radius: 8px; padding: 16px; margin: 15px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="font-weight: 700; color: ${color}; margin-bottom: 10px; font-size: 1.05em;">
+                        ${icon} Problem ${num}
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: #6b7280;">Your answer:</strong> ${studentAns}
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: #6b7280;">Correct answer:</strong> ${correctAns}
+                    </div>
+                    <div style="padding: 10px; background: white; border-radius: 6px; margin-top: 10px;">
+                        <strong style="color: ${color};">${isCorrect ? 'Why this works:' : 'What went wrong:'}</strong><br>
+                        ${explanation}
+                    </div>
+                </div>`;
+            });
 
         // Enhanced step markers with badges
         html = html.replace(/(Problem\/Step|Step)\s+(\d+):/g,

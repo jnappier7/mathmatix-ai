@@ -75,7 +75,6 @@ const masteryChatRoutes = require('./routes/masteryChat');  // Mastery mode chat
 const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
 const gradeWorkRoutes = require('./routes/gradeWork');
-const adminImportRoutes = require('./routes/adminImport');  // Item bank CSV import
 const quarterlyGrowthRoutes = require('./routes/quarterlyGrowth');  // Quarterly growth tracking and retention
 const factFluencyRoutes = require('./routes/factFluency');  // M∆THBL∆ST Fact Fluency game
 const TUTOR_CONFIG = require('./utils/tutorConfig');
@@ -201,7 +200,6 @@ app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placem
 app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, masteryChatRoutes); // Mastery mode dedicated chat
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes); // AI grading for student work
-app.use('/api/admin', adminImportRoutes); // Admin tools: CSV import for item bank
 app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Quarterly growth tracking and retention analytics
 app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆ST Fact Fluency - Math facts practice game
 

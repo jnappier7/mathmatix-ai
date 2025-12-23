@@ -740,4 +740,50 @@ router.patch('/reaction', isAuthenticated, async (req, res) => {
     }
 });
 
+/**
+ * GET /api/chat/last-session
+ * Fetch the last conversation session with context for personalized greeting
+ */
+router.get('/last-session', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Find the most recent COMPLETED conversation (not active, has meaningful content)
+        const lastConversation = await Conversation.findOne({
+            userId: userId,
+            isActive: false, // Only completed sessions
+            $or: [
+                { summary: { $exists: true, $ne: null, $ne: '' } },
+                { currentTopic: { $exists: true, $ne: null, $ne: '' } },
+                { strugglingWith: { $exists: true, $ne: null, $ne: '' } }
+            ]
+        })
+        .sort({ lastActivity: -1 })
+        .limit(1)
+        .select('summary currentTopic strugglingWith lastActivity problemsAttempted problemsCorrect')
+        .lean();
+
+        if (!lastConversation) {
+            return res.json({ hasLastSession: false });
+        }
+
+        // Calculate how long ago the session was
+        const hoursAgo = Math.floor((Date.now() - new Date(lastConversation.lastActivity).getTime()) / (1000 * 60 * 60));
+
+        res.json({
+            hasLastSession: true,
+            summary: lastConversation.summary,
+            currentTopic: lastConversation.currentTopic,
+            strugglingWith: lastConversation.strugglingWith,
+            problemsAttempted: lastConversation.problemsAttempted || 0,
+            problemsCorrect: lastConversation.problemsCorrect || 0,
+            hoursAgo: hoursAgo
+        });
+
+    } catch (error) {
+        console.error("ERROR: Fetch last session failed:", error);
+        res.status(500).json({ message: "Failed to fetch last session" });
+    }
+});
+
 module.exports = router;
