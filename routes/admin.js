@@ -12,11 +12,18 @@ const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { isAdmin } = require('../middleware/auth');
+const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 
 // --- Constants for Database Projections ---
 // Using constants improves readability and makes queries easier to manage.
 const USER_LIST_FIELDS = 'firstName lastName email username role gradeLevel teacherId mathCourse tonePreference learningStyle interests totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastLogin createdAt xp level';
 const TEACHER_LIST_FIELDS = 'firstName lastName _id';
+
+// -----------------------------------------------------------------------------
+// --- Item Bank Import Routes (CSV Upload) ---
+// -----------------------------------------------------------------------------
+// Mount adminImportRoutes here so they inherit the isAdmin middleware
+router.use('/', adminImportRoutes);
 
 // -----------------------------------------------------------------------------
 // --- User & Teacher Data Routes ---
