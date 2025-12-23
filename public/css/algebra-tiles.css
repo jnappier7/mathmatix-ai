@@ -96,26 +96,37 @@
   transform: rotate(90deg);
 }
 
-/* ===== CONTROLS SECTION ===== */
-.algebra-tiles-controls {
-  background: white;
-  padding: 20px 30px;
-  border-bottom: 3px solid #e0e0e0;
+/* ===== MAIN LAYOUT (Sidebar + Workspace) ===== */
+.algebra-tiles-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===== LEFT SIDEBAR (Compact Controls) ===== */
+.algebra-tiles-sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+  border-right: 3px solid #dee2e6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px;
+  overflow-y: auto;
 }
 
 .equation-input-section {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  align-items: center;
+  gap: 6px;
+  flex-direction: column;
 }
 
 .equation-input {
-  flex: 1;
-  padding: 15px 20px;
-  font-size: 18px;
-  border: 2px solid #d0d0d0;
-  border-radius: 12px;
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 2px solid #cbd5e0;
+  border-radius: 8px;
   font-family: 'Courier New', monospace;
   transition: all 0.3s ease;
 }
@@ -127,21 +138,21 @@
 }
 
 .build-it-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  padding: 15px 30px;
-  font-size: 18px;
+  padding: 10px;
+  font-size: 16px;
   font-weight: 700;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .build-it-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .build-it-btn:active {
@@ -152,58 +163,64 @@
   background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
   color: white;
   border: none;
-  padding: 15px 25px;
-  font-size: 16px;
+  padding: 8px;
+  font-size: 14px;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .clear-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
 }
 
-/* ===== TILE PALETTE ===== */
+/* ===== TILE PALETTE (Vertical Stack) ===== */
 .tile-palette {
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .palette-section {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #f8f9fa;
-  padding: 12px 20px;
-  border-radius: 12px;
-  border: 2px solid #e9ecef;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #dee2e6;
 }
 
 .palette-label {
   font-weight: 700;
   color: #495057;
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.palette-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
 }
 
 .tile-btn {
   background: white;
   border: 2px solid #dee2e6;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 6px;
+  padding: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tile-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   border-color: #667eea;
 }
 
@@ -213,14 +230,14 @@
 
 /* ===== TILE PREVIEWS IN PALETTE ===== */
 .tile-preview {
-  width: 45px;
+  width: 100%;
   height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 16px;
-  border-radius: 6px;
+  font-size: 14px;
+  border-radius: 4px;
   transition: all 0.2s ease;
 }
 
@@ -242,16 +259,12 @@
   background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   color: white;
   border: 2px solid #2980b9;
-  width: 60px;
-  height: 45px;
 }
 
 .tile-preview.tile-x-negative {
   background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
   color: white;
   border: 2px solid #5f27cd;
-  width: 60px;
-  height: 45px;
 }
 
 /* Y variable tiles */
@@ -259,16 +272,12 @@
   background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
   color: white;
   border: 2px solid #00a885;
-  width: 60px;
-  height: 45px;
 }
 
 .tile-preview.tile-y-negative {
   background: linear-gradient(135deg, #81ecec 0%, #00cec9 100%);
   color: white;
   border: 2px solid #00b8b8;
-  width: 60px;
-  height: 45px;
 }
 
 /* XY product tiles */
@@ -276,16 +285,14 @@
   background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
   color: white;
   border: 2px solid #5f27cd;
-  width: 60px;
-  height: 60px;
+  height: 50px;
 }
 
 .tile-preview.tile-xy-negative {
   background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
   color: white;
   border: 2px solid #d63384;
-  width: 60px;
-  height: 60px;
+  height: 50px;
 }
 
 /* X² tiles */
@@ -293,18 +300,16 @@
   background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   color: white;
   border: 2px solid #2980b9;
-  width: 70px;
-  height: 70px;
-  font-size: 18px;
+  height: 55px;
+  font-size: 16px;
 }
 
 .tile-preview.tile-x2-negative {
   background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
   color: white;
   border: 2px solid #5f27cd;
-  width: 70px;
-  height: 70px;
-  font-size: 18px;
+  height: 55px;
+  font-size: 16px;
 }
 
 /* ===== WORKSPACE ===== */
@@ -343,19 +348,25 @@
 .mat-selector-section {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 15px;
+  gap: 8px;
+  padding: 8px;
   background: rgba(255, 255, 255, 0.7);
-  border-radius: 10px;
-  margin-top: 10px;
+  border-radius: 8px;
+}
+
+.mat-selector-section label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
 }
 
 .mat-selector {
-  padding: 8px 12px;
+  flex: 1;
+  padding: 6px 8px;
   border: 2px solid #cbd5e0;
-  border-radius: 8px;
+  border-radius: 6px;
   background: white;
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -367,7 +378,85 @@
 .mat-selector:focus {
   outline: none;
   border-color: #12B3B3;
-  box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.1);
+  box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
+}
+
+/* Mat opacity section */
+.mat-opacity-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+}
+
+.mat-opacity-section label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.mat-opacity-section input[type="range"] {
+  width: 100%;
+}
+
+.mat-opacity-section span {
+  font-size: 11px;
+  color: #6c757d;
+  text-align: center;
+}
+
+/* Expression display and tile count in sidebar */
+.expression-display,
+.tile-count {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  font-size: 11px;
+  text-align: center;
+  color: #495057;
+}
+
+.expression-display strong,
+.tile-count strong {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  color: #6c757d;
+}
+
+.expression-display span,
+.tile-count span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* Send to AI button in sidebar */
+.send-to-ai-btn {
+  background: linear-gradient(135deg, #12B3B3 0%, #0d8888 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(18, 179, 179, 0.3);
+  margin-top: auto; /* Push to bottom of sidebar */
+}
+
+.send-to-ai-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(18, 179, 179, 0.4);
+}
+
+.send-to-ai-btn:active {
+  transform: translateY(0);
 }
 
 /* ===== WORKSPACE TILES (DRAGGABLE) ===== */
@@ -610,18 +699,30 @@
     border-radius: 0;
   }
 
-  .equation-input-section {
+  .algebra-tiles-main {
     flex-direction: column;
+  }
+
+  .algebra-tiles-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 35vh;
+    border-right: none;
+    border-bottom: 3px solid #dee2e6;
+  }
+
+  .equation-input-section {
+    flex-direction: row;
   }
 
   .tile-palette {
-    flex-direction: column;
-    gap: 15px;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
   }
 
-  .algebra-tiles-footer {
-    flex-direction: column;
-    align-items: stretch;
+  .palette-section {
+    min-width: 140px;
   }
 
   .workspace-tile {

@@ -32,92 +32,104 @@ class AlgebraTiles {
             <button class="close-btn" id="closeTilesBtn">&times;</button>
           </div>
 
-          <div class="algebra-tiles-controls">
-            <div class="equation-input-section">
-              <input
-                type="text"
-                id="equationInput"
-                placeholder="Enter equation (e.g., 2x + 3, x² - 4x + 4)"
-                class="equation-input"
-              />
-              <button id="buildItBtn" class="build-it-btn">Build It! 🚀</button>
-              <button id="clearWorkspaceBtn" class="clear-btn">Clear</button>
-            </div>
-
-            <div class="mat-selector-section">
-              <label for="matSelector">Mat Type:</label>
-              <select id="matSelector" class="mat-selector">
-                <option value="none">None (Blank Workspace)</option>
-                <option value="equation">Equation Mat (LHS = RHS)</option>
-                <option value="expression">Expression Mat (Combine Like Terms)</option>
-                <option value="multiplication">Multiplication/Area Model</option>
-                <option value="factoring">Factoring Mat (Build Rectangle)</option>
-                <option value="integer">Integer/Zero-Pair Mat</option>
-              </select>
-              <label for="matOpacity" style="margin-left: 15px;">Opacity:</label>
-              <input type="range" id="matOpacity" min="0" max="100" value="30" style="width: 100px; vertical-align: middle;" />
-              <span id="matOpacityValue">30%</span>
-            </div>
-
-            <div class="tile-palette">
-              <div class="palette-section">
-                <span class="palette-label">Integers:</span>
-                <button class="tile-btn" data-type="positive-unit" title="Positive Unit (+1)">
-                  <div class="tile-preview tile-positive-unit">+1</div>
-                </button>
-                <button class="tile-btn" data-type="negative-unit" title="Negative Unit (-1)">
-                  <div class="tile-preview tile-negative-unit">-1</div>
-                </button>
+          <div class="algebra-tiles-main">
+            <!-- LEFT SIDEBAR: Compact controls + tile palette -->
+            <div class="algebra-tiles-sidebar">
+              <div class="equation-input-section">
+                <input
+                  type="text"
+                  id="equationInput"
+                  placeholder="Enter equation..."
+                  class="equation-input"
+                  title="Enter equation (e.g., 2x + 3, x² - 4x + 4)"
+                />
+                <button id="buildItBtn" class="build-it-btn">🚀</button>
+                <button id="clearWorkspaceBtn" class="clear-btn">Clear</button>
               </div>
 
-              <div class="palette-section">
-                <span class="palette-label">Variables:</span>
-                <button class="tile-btn" data-type="x-positive" title="Positive x">
-                  <div class="tile-preview tile-x-positive">x</div>
-                </button>
-                <button class="tile-btn" data-type="x-negative" title="Negative x">
-                  <div class="tile-preview tile-x-negative">-x</div>
-                </button>
-                <button class="tile-btn" data-type="y-positive" title="Positive y">
-                  <div class="tile-preview tile-y-positive">y</div>
-                </button>
-                <button class="tile-btn" data-type="y-negative" title="Negative y">
-                  <div class="tile-preview tile-y-negative">-y</div>
-                </button>
+              <div class="mat-selector-section">
+                <label for="matSelector">Mat:</label>
+                <select id="matSelector" class="mat-selector">
+                  <option value="none">None</option>
+                  <option value="equation">Equation</option>
+                  <option value="expression">Expression</option>
+                  <option value="multiplication">Multiplication</option>
+                  <option value="factoring">Factoring</option>
+                  <option value="integer">Integer</option>
+                </select>
               </div>
 
-              <div class="palette-section">
-                <span class="palette-label">Products:</span>
-                <button class="tile-btn" data-type="xy-positive" title="Positive xy">
-                  <div class="tile-preview tile-xy-positive">xy</div>
-                </button>
-                <button class="tile-btn" data-type="xy-negative" title="Negative xy">
-                  <div class="tile-preview tile-xy-negative">-xy</div>
-                </button>
-                <button class="tile-btn" data-type="x2-positive" title="Positive x²">
-                  <div class="tile-preview tile-x2-positive">x²</div>
-                </button>
-                <button class="tile-btn" data-type="x2-negative" title="Negative x²">
-                  <div class="tile-preview tile-x2-negative">-x²</div>
-                </button>
+              <div class="mat-opacity-section">
+                <label for="matOpacity">Opacity:</label>
+                <input type="range" id="matOpacity" min="0" max="100" value="30" />
+                <span id="matOpacityValue">30%</span>
+              </div>
+
+              <div class="tile-palette">
+                <div class="palette-section">
+                  <span class="palette-label">Integers</span>
+                  <div class="palette-buttons">
+                    <button class="tile-btn" data-type="positive-unit" title="Positive Unit (+1)">
+                      <div class="tile-preview tile-positive-unit">+1</div>
+                    </button>
+                    <button class="tile-btn" data-type="negative-unit" title="Negative Unit (-1)">
+                      <div class="tile-preview tile-negative-unit">-1</div>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="palette-section">
+                  <span class="palette-label">Variables</span>
+                  <div class="palette-buttons">
+                    <button class="tile-btn" data-type="x-positive" title="Positive x">
+                      <div class="tile-preview tile-x-positive">x</div>
+                    </button>
+                    <button class="tile-btn" data-type="x-negative" title="Negative x">
+                      <div class="tile-preview tile-x-negative">-x</div>
+                    </button>
+                    <button class="tile-btn" data-type="y-positive" title="Positive y">
+                      <div class="tile-preview tile-y-positive">y</div>
+                    </button>
+                    <button class="tile-btn" data-type="y-negative" title="Negative y">
+                      <div class="tile-preview tile-y-negative">-y</div>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="palette-section">
+                  <span class="palette-label">Products</span>
+                  <div class="palette-buttons">
+                    <button class="tile-btn" data-type="xy-positive" title="Positive xy">
+                      <div class="tile-preview tile-xy-positive">xy</div>
+                    </button>
+                    <button class="tile-btn" data-type="xy-negative" title="Negative xy">
+                      <div class="tile-preview tile-xy-negative">-xy</div>
+                    </button>
+                    <button class="tile-btn" data-type="x2-positive" title="Positive x²">
+                      <div class="tile-preview tile-x2-positive">x²</div>
+                    </button>
+                    <button class="tile-btn" data-type="x2-negative" title="Negative x²">
+                      <div class="tile-preview tile-x2-negative">-x²</div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="expression-display" id="expressionDisplay">
+                <strong>Expression:</strong> <span id="currentExpression">0</span>
+              </div>
+              <div class="tile-count" id="tileCount">
+                <strong>Tiles:</strong> <span id="tileCountValue">0</span>
+              </div>
+              <button id="sendToAIBtn" class="send-to-ai-btn">📤 Send to AI</button>
+            </div>
+
+            <!-- RIGHT: Large workspace (bulk of space) -->
+            <div class="algebra-tiles-workspace" id="tilesWorkspace">
+              <div class="workspace-grid" id="workspaceGrid">
+                <!-- Tiles will be added here -->
               </div>
             </div>
-          </div>
-
-          <div class="algebra-tiles-workspace" id="tilesWorkspace">
-            <div class="workspace-grid" id="workspaceGrid">
-              <!-- Tiles will be added here -->
-            </div>
-          </div>
-
-          <div class="algebra-tiles-footer">
-            <div class="expression-display" id="expressionDisplay">
-              <strong>Current Expression:</strong> <span id="currentExpression">0</span>
-            </div>
-            <div class="tile-count" id="tileCount">
-              <strong>Tiles:</strong> <span id="tileCountValue">0</span>
-            </div>
-            <button id="sendToAIBtn" class="send-to-ai-btn">📤 Send to AI</button>
           </div>
         </div>
       </div>
