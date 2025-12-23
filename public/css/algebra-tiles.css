@@ -96,26 +96,37 @@
   transform: rotate(90deg);
 }
 
-/* ===== CONTROLS SECTION ===== */
-.algebra-tiles-controls {
-  background: white;
-  padding: 20px 30px;
-  border-bottom: 3px solid #e0e0e0;
+/* ===== MAIN LAYOUT (Sidebar + Workspace) ===== */
+.algebra-tiles-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ===== LEFT SIDEBAR (Compact Controls) ===== */
+.algebra-tiles-sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+  border-right: 3px solid #dee2e6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px;
+  overflow-y: auto;
 }
 
 .equation-input-section {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  align-items: center;
+  gap: 6px;
+  flex-direction: column;
 }
 
 .equation-input {
-  flex: 1;
-  padding: 15px 20px;
-  font-size: 18px;
-  border: 2px solid #d0d0d0;
-  border-radius: 12px;
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 2px solid #cbd5e0;
+  border-radius: 8px;
   font-family: 'Courier New', monospace;
   transition: all 0.3s ease;
 }
@@ -127,21 +138,21 @@
 }
 
 .build-it-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  padding: 15px 30px;
-  font-size: 18px;
+  padding: 10px;
+  font-size: 16px;
   font-weight: 700;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .build-it-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .build-it-btn:active {
@@ -152,58 +163,64 @@
   background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
   color: white;
   border: none;
-  padding: 15px 25px;
-  font-size: 16px;
+  padding: 8px;
+  font-size: 14px;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .clear-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
 }
 
-/* ===== TILE PALETTE ===== */
+/* ===== TILE PALETTE (Vertical Stack) ===== */
 .tile-palette {
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .palette-section {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #f8f9fa;
-  padding: 12px 20px;
-  border-radius: 12px;
-  border: 2px solid #e9ecef;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #dee2e6;
 }
 
 .palette-label {
   font-weight: 700;
   color: #495057;
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.palette-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
 }
 
 .tile-btn {
   background: white;
   border: 2px solid #dee2e6;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 6px;
+  padding: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tile-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   border-color: #667eea;
 }
 
@@ -213,14 +230,14 @@
 
 /* ===== TILE PREVIEWS IN PALETTE ===== */
 .tile-preview {
-  width: 45px;
+  width: 100%;
   height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 16px;
-  border-radius: 6px;
+  font-size: 14px;
+  border-radius: 4px;
   transition: all 0.2s ease;
 }
 
@@ -242,16 +259,12 @@
   background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   color: white;
   border: 2px solid #2980b9;
-  width: 60px;
-  height: 45px;
 }
 
 .tile-preview.tile-x-negative {
   background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
   color: white;
   border: 2px solid #5f27cd;
-  width: 60px;
-  height: 45px;
 }
 
 /* Y variable tiles */
@@ -259,16 +272,12 @@
   background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
   color: white;
   border: 2px solid #00a885;
-  width: 60px;
-  height: 45px;
 }
 
 .tile-preview.tile-y-negative {
   background: linear-gradient(135deg, #81ecec 0%, #00cec9 100%);
   color: white;
   border: 2px solid #00b8b8;
-  width: 60px;
-  height: 45px;
 }
 
 /* XY product tiles */
@@ -276,16 +285,14 @@
   background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
   color: white;
   border: 2px solid #5f27cd;
-  width: 60px;
-  height: 60px;
+  height: 50px;
 }
 
 .tile-preview.tile-xy-negative {
   background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
   color: white;
   border: 2px solid #d63384;
-  width: 60px;
-  height: 60px;
+  height: 50px;
 }
 
 /* X² tiles */
@@ -293,18 +300,16 @@
   background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   color: white;
   border: 2px solid #2980b9;
-  width: 70px;
-  height: 70px;
-  font-size: 18px;
+  height: 55px;
+  font-size: 16px;
 }
 
 .tile-preview.tile-x2-negative {
   background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
   color: white;
   border: 2px solid #5f27cd;
-  width: 70px;
-  height: 70px;
-  font-size: 18px;
+  height: 55px;
+  font-size: 16px;
 }
 
 /* ===== WORKSPACE ===== */
@@ -324,6 +329,134 @@
     linear-gradient(90deg, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
   background-size: 20px 20px;
   padding: 20px;
+}
+
+/* ===== MAT OVERLAYS ===== */
+.algebra-mat {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allow tiles to be placed on top */
+  z-index: 0; /* Below tiles */
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+/* Mat selector dropdown */
+.mat-selector-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+}
+
+.mat-selector-section label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.mat-selector {
+  flex: 1;
+  padding: 6px 8px;
+  border: 2px solid #cbd5e0;
+  border-radius: 6px;
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mat-selector:hover {
+  border-color: #12B3B3;
+}
+
+.mat-selector:focus {
+  outline: none;
+  border-color: #12B3B3;
+  box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
+}
+
+/* Mat opacity section */
+.mat-opacity-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+}
+
+.mat-opacity-section label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.mat-opacity-section input[type="range"] {
+  width: 100%;
+}
+
+.mat-opacity-section span {
+  font-size: 11px;
+  color: #6c757d;
+  text-align: center;
+}
+
+/* Expression display and tile count in sidebar */
+.expression-display,
+.tile-count {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  font-size: 11px;
+  text-align: center;
+  color: #495057;
+}
+
+.expression-display strong,
+.tile-count strong {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  color: #6c757d;
+}
+
+.expression-display span,
+.tile-count span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* Send to AI button in sidebar */
+.send-to-ai-btn {
+  background: linear-gradient(135deg, #12B3B3 0%, #0d8888 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(18, 179, 179, 0.3);
+  margin-top: auto; /* Push to bottom of sidebar */
+}
+
+.send-to-ai-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(18, 179, 179, 0.4);
+}
+
+.send-to-ai-btn:active {
+  transform: translateY(0);
 }
 
 /* ===== WORKSPACE TILES (DRAGGABLE) ===== */
@@ -566,18 +699,30 @@
     border-radius: 0;
   }
 
-  .equation-input-section {
+  .algebra-tiles-main {
     flex-direction: column;
+  }
+
+  .algebra-tiles-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 35vh;
+    border-right: none;
+    border-bottom: 3px solid #dee2e6;
+  }
+
+  .equation-input-section {
+    flex-direction: row;
   }
 
   .tile-palette {
-    flex-direction: column;
-    gap: 15px;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
   }
 
-  .algebra-tiles-footer {
-    flex-direction: column;
-    align-items: stretch;
+  .palette-section {
+    min-width: 140px;
   }
 
   .workspace-tile {
@@ -626,4 +771,365 @@
 
 .algebra-tiles-workspace::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* ===== MODE SELECTOR ===== */
+.mode-selector-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.mode-selector-section label {
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mode-selector {
+  padding: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mode-selector:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== TOOL PALETTE ===== */
+.tool-palette-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.tool-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.tool-btn {
+  background: white;
+  border: 2px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tool-btn:hover {
+  background: #f7fafc;
+  border-color: #667eea;
+  color: #667eea;
+  transform: translateY(-1px);
+}
+
+.tool-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* ===== HISTORY CONTROLS (UNDO/REDO) ===== */
+.history-controls {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+}
+
+.history-btn {
+  flex: 1;
+  background: white;
+  border: 2px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-btn:hover:not(:disabled) {
+  background: #f7fafc;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.history-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== TRASH ZONE ===== */
+.trash-zone {
+  padding: 16px;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border: 2px dashed #ef4444;
+  border-radius: 8px;
+  text-align: center;
+  color: #991b1b;
+  font-weight: 600;
+  transition: all 0.3s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.trash-zone i {
+  font-size: 20px;
+}
+
+.trash-zone span {
+  font-size: 11px;
+}
+
+.trash-zone:hover {
+  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+  border-color: #dc2626;
+}
+
+.trash-zone.drag-over {
+  background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%);
+  border-color: #b91c1c;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ===== NEW TILE TYPES: BASE TEN BLOCKS ===== */
+.tile-preview.tile-hundred,
+.workspace-tile.tile-hundred {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde047 100%);
+  color: #92400e;
+  border: 3px solid #f59e0b;
+  font-weight: 700;
+  font-size: 14px;
+  /* 10x10 grid visual */
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 9px, #f59e0b 9px, #f59e0b 10px),
+    repeating-linear-gradient(90deg, transparent, transparent 9px, #f59e0b 9px, #f59e0b 10px);
+}
+
+.tile-preview.tile-ten,
+.workspace-tile.tile-ten {
+  background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+  color: #1e40af;
+  border: 3px solid #3b82f6;
+  font-weight: 700;
+  font-size: 14px;
+  /* 1x10 stripe visual */
+  background-image: repeating-linear-gradient(90deg, transparent, transparent 9px, #3b82f6 9px, #3b82f6 10px);
+}
+
+.tile-preview.tile-one,
+.workspace-tile.tile-one {
+  background: linear-gradient(135deg, #f0fdf4 0%, #86efac 100%);
+  color: #166534;
+  border: 3px solid #22c55e;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.workspace-tile.tile-hundred {
+  width: 100px;
+  height: 100px;
+}
+
+.workspace-tile.tile-ten {
+  width: 100px;
+  height: 30px;
+}
+
+.workspace-tile.tile-one {
+  width: 30px;
+  height: 30px;
+}
+
+/* ===== NEW TILE TYPES: FRACTION BARS ===== */
+.palette-fractions {
+  grid-template-columns: 1fr 1fr;
+}
+
+.tile-preview.tile-whole,
+.workspace-tile.tile-whole {
+  background: linear-gradient(135deg, #ddd6fe 0%, #a78bfa 100%);
+  color: #5b21b6;
+  border: 3px solid #8b5cf6;
+  font-weight: 700;
+}
+
+.tile-preview.tile-half,
+.workspace-tile.tile-half {
+  background: linear-gradient(135deg, #fce7f3 0%, #f9a8d4 100%);
+  color: #9f1239;
+  border: 3px solid #ec4899;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tile-preview.tile-third,
+.workspace-tile.tile-third {
+  background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
+  color: #78350f;
+  border: 3px solid #f59e0b;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tile-preview.tile-fourth,
+.workspace-tile.tile-fourth {
+  background: linear-gradient(135deg, #dbeafe 0%, #60a5fa 100%);
+  color: #1e3a8a;
+  border: 3px solid #3b82f6;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tile-preview.tile-fifth,
+.workspace-tile.tile-fifth {
+  background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%);
+  color: #14532d;
+  border: 3px solid #22c55e;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tile-preview.tile-sixth,
+.workspace-tile.tile-sixth {
+  background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+  color: #7f1d1d;
+  border: 3px solid #ef4444;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tile-preview.tile-eighth,
+.workspace-tile.tile-eighth {
+  background: linear-gradient(135deg, #e0e7ff 0%, #a5b4fc 100%);
+  color: #312e81;
+  border: 3px solid #6366f1;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tile-preview.tile-tenth,
+.workspace-tile.tile-tenth {
+  background: linear-gradient(135deg, #fef9c3 0%, #fde047 100%);
+  color: #713f12;
+  border: 3px solid #eab308;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.tile-preview.tile-twelfth,
+.workspace-tile.tile-twelfth {
+  background: linear-gradient(135deg, #f3e8ff 0%, #d8b4fe 100%);
+  color: #581c87;
+  border: 3px solid #a855f7;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Workspace fraction bars - horizontally oriented */
+.workspace-tile.tile-whole {
+  width: 200px;
+  height: 40px;
+}
+
+.workspace-tile.tile-half {
+  width: 100px;
+  height: 40px;
+}
+
+.workspace-tile.tile-third {
+  width: 66px;
+  height: 40px;
+}
+
+.workspace-tile.tile-fourth {
+  width: 50px;
+  height: 40px;
+}
+
+.workspace-tile.tile-fifth {
+  width: 40px;
+  height: 40px;
+}
+
+.workspace-tile.tile-sixth {
+  width: 33px;
+  height: 40px;
+}
+
+.workspace-tile.tile-eighth {
+  width: 25px;
+  height: 40px;
+}
+
+.workspace-tile.tile-tenth {
+  width: 20px;
+  height: 40px;
+}
+
+.workspace-tile.tile-twelfth {
+  width: 16px;
+  height: 40px;
+}
+
+/* ===== NUMBER LINE COUNTERS ===== */
+.tile-preview.tile-positive-counter,
+.workspace-tile.tile-positive-counter {
+  background: radial-gradient(circle, #86efac 0%, #22c55e 100%);
+  color: white;
+  border: 3px solid #16a34a;
+  font-weight: 900;
+  font-size: 24px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.tile-preview.tile-negative-counter,
+.workspace-tile.tile-negative-counter {
+  background: radial-gradient(circle, #fca5a5 0%, #ef4444 100%);
+  color: white;
+  border: 3px solid #dc2626;
+  font-weight: 900;
+  font-size: 32px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.workspace-tile.tile-positive-counter,
+.workspace-tile.tile-negative-counter {
+  cursor: grab;
 }

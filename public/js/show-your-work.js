@@ -392,6 +392,9 @@ class ShowYourWorkManager {
         // Display feedback with formatting
         const feedback = result.feedback || 'No feedback available';
         this.feedbackContent.innerHTML = this.formatFeedback(feedback);
+
+        // Add snippet card to chat history
+        this.addWorkSnippetToChat(result, scorePercent, scoreEmoji, scoreMessage, scoreColor);
     }
 
     createAnnotatedImage(imageData, annotations) {
@@ -1254,6 +1257,73 @@ class ShowYourWorkManager {
 
         // Wrap in a nice container
         return `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial; line-height: 1.7; color: #374151;">${html}</div>`;
+    }
+
+    addWorkSnippetToChat(result, scorePercent, scoreEmoji, scoreMessage, scoreColor) {
+        // Find the chat messages container
+        const chatContainer = document.getElementById('chat-messages');
+        if (!chatContainer) return;
+
+        // Create snippet card element
+        const snippetCard = document.createElement('div');
+        snippetCard.className = 'work-snippet-card';
+
+        // Create thumbnail from submitted image
+        const thumbnailSrc = this.currentImageData || '/images/default-work-thumbnail.png';
+
+        // Truncate feedback for preview (first 150 chars)
+        const feedbackPreview = (result.feedback || 'No feedback available')
+            .replace(/<[^>]*>/g, '') // Strip HTML
+            .substring(0, 150) + (result.feedback && result.feedback.length > 150 ? '...' : '');
+
+        snippetCard.innerHTML = `
+            <div class="work-snippet-header">
+                <div class="work-snippet-icon">📝</div>
+                <div class="work-snippet-title">
+                    <strong>Work Submitted & Graded</strong>
+                    <span class="work-snippet-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+            </div>
+            <div class="work-snippet-body">
+                <div class="work-snippet-thumbnail">
+                    <img src="${thumbnailSrc}" alt="Submitted work" />
+                </div>
+                <div class="work-snippet-details">
+                    <div class="work-snippet-score" style="background: linear-gradient(135deg, ${scoreColor}, ${scoreColor}dd); box-shadow: 0 2px 8px ${scoreColor}40;">
+                        ${scoreEmoji} ${scorePercent}%
+                    </div>
+                    <div class="work-snippet-feedback">
+                        ${feedbackPreview}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Add click handler to re-open modal with results
+        snippetCard.style.cursor = 'pointer';
+        snippetCard.addEventListener('click', () => {
+            // Re-open the modal and show results
+            this.modal?.classList.add('is-visible');
+            this.captureSection.style.display = 'none';
+            this.previewSection.style.display = 'none';
+            this.loadingSection.style.display = 'none';
+            this.resultsSection.style.display = 'block';
+        });
+
+        // Add to chat with animation
+        snippetCard.style.opacity = '0';
+        snippetCard.style.transform = 'translateY(20px)';
+        chatContainer.appendChild(snippetCard);
+
+        // Trigger animation
+        setTimeout(() => {
+            snippetCard.style.transition = 'all 0.4s ease';
+            snippetCard.style.opacity = '1';
+            snippetCard.style.transform = 'translateY(0)';
+        }, 100);
+
+        // Auto-scroll to show the new snippet
+        chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
     async askTutorAboutWork() {

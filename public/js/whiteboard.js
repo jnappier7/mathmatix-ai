@@ -51,6 +51,7 @@ class MathmatixWhiteboard {
 
         this.setupEventListeners();
         this.setupPanelControls();
+        this.loadSavedLayout(); // Load saved position/size from localStorage
         this.resizeCanvas();
         this.saveState();
 
@@ -831,6 +832,7 @@ class MathmatixWhiteboard {
     stopDragging() {
         this.isDragging = false;
         this.panel.style.cursor = '';
+        this.saveLayout(); // Save position when dragging stops
     }
 
     startResizing(e) {
@@ -864,6 +866,7 @@ class MathmatixWhiteboard {
 
     stopResizing() {
         this.isResizing = false;
+        this.saveLayout(); // Save size when resizing stops
     }
 
     resizeCanvas() {
@@ -989,6 +992,77 @@ class MathmatixWhiteboard {
 
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ============================================
+    // LAYOUT PERSISTENCE (LocalStorage)
+    // ============================================
+
+    saveLayout() {
+        if (!this.panel || this.isMaximized) return;
+
+        const layout = {
+            width: this.panel.offsetWidth,
+            height: this.panel.offsetHeight,
+            left: this.panel.offsetLeft,
+            top: this.panel.offsetTop
+        };
+
+        try {
+            localStorage.setItem('whiteboardLayout', JSON.stringify(layout));
+        } catch (e) {
+            console.warn('Failed to save whiteboard layout:', e);
+        }
+    }
+
+    loadSavedLayout() {
+        if (!this.panel) return;
+
+        try {
+            const saved = localStorage.getItem('whiteboardLayout');
+            if (!saved) return;
+
+            const layout = JSON.parse(saved);
+
+            // Apply saved layout (with bounds checking)
+            if (layout.width && layout.height) {
+                const maxWidth = window.innerWidth - 40;
+                const maxHeight = window.innerHeight - 100;
+
+                this.panel.style.width = Math.min(layout.width, maxWidth) + 'px';
+                this.panel.style.height = Math.min(layout.height, maxHeight) + 'px';
+            }
+
+            if (layout.left !== undefined && layout.top !== undefined) {
+                const maxLeft = window.innerWidth - this.panel.offsetWidth;
+                const maxTop = window.innerHeight - this.panel.offsetHeight;
+
+                this.panel.style.left = Math.max(0, Math.min(layout.left, maxLeft)) + 'px';
+                this.panel.style.top = Math.max(0, Math.min(layout.top, maxTop)) + 'px';
+                this.panel.style.right = 'auto'; // Override default right positioning
+            }
+
+            console.log('✅ Restored whiteboard layout from localStorage');
+        } catch (e) {
+            console.warn('Failed to load whiteboard layout:', e);
+        }
+    }
+
+    resetLayout() {
+        if (!this.panel) return;
+
+        // Clear saved layout
+        localStorage.removeItem('whiteboardLayout');
+
+        // Reset to default position and size
+        this.panel.style.width = '650px';
+        this.panel.style.height = '700px';
+        this.panel.style.right = '20px';
+        this.panel.style.top = '80px';
+        this.panel.style.left = 'auto';
+
+        this.resizeCanvas();
+        console.log('✅ Reset whiteboard layout to defaults');
     }
 }
 
