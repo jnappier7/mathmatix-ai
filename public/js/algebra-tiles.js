@@ -35,6 +35,49 @@ class AlgebraTiles {
           <div class="algebra-tiles-main">
             <!-- LEFT SIDEBAR: Compact controls + tile palette -->
             <div class="algebra-tiles-sidebar">
+              <!-- MODE SELECTOR -->
+              <div class="mode-selector-section">
+                <label for="modeSelector">Mode:</label>
+                <select id="modeSelector" class="mode-selector">
+                  <option value="algebra">Algebra Tiles</option>
+                  <option value="baseten">Base Ten Blocks</option>
+                  <option value="fractions">Fraction Bars</option>
+                  <option value="numberline">Number Line</option>
+                </select>
+              </div>
+
+              <!-- ANNOTATION TOOLS -->
+              <div class="tool-palette-section">
+                <span class="palette-label">Tools</span>
+                <div class="tool-buttons">
+                  <button class="tool-btn active" data-tool="select" title="Select/Move">
+                    <i class="fas fa-mouse-pointer"></i>
+                  </button>
+                  <button class="tool-btn" data-tool="text" title="Add Text">
+                    <i class="fas fa-font"></i>
+                  </button>
+                  <button class="tool-btn" data-tool="arrow" title="Draw Arrow">
+                    <i class="fas fa-arrow-right"></i>
+                  </button>
+                  <button class="tool-btn" data-tool="circle" title="Draw Circle">
+                    <i class="far fa-circle"></i>
+                  </button>
+                  <button class="tool-btn" data-tool="eraser" title="Eraser">
+                    <i class="fas fa-eraser"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- UNDO/REDO -->
+              <div class="history-controls">
+                <button id="undoBtn" class="history-btn" title="Undo" disabled>
+                  <i class="fas fa-undo"></i>
+                </button>
+                <button id="redoBtn" class="history-btn" title="Redo" disabled>
+                  <i class="fas fa-redo"></i>
+                </button>
+              </div>
+
               <div class="equation-input-section">
                 <input
                   type="text"
@@ -65,7 +108,7 @@ class AlgebraTiles {
                 <span id="matOpacityValue">30%</span>
               </div>
 
-              <div class="tile-palette">
+              <div class="tile-palette" id="tilePalette">
                 <div class="palette-section">
                   <span class="palette-label">Integers</span>
                   <div class="palette-buttons">
@@ -121,6 +164,13 @@ class AlgebraTiles {
               <div class="tile-count" id="tileCount">
                 <strong>Tiles:</strong> <span id="tileCountValue">0</span>
               </div>
+
+              <!-- TRASH ZONE -->
+              <div class="trash-zone" id="trashZone">
+                <i class="fas fa-trash-alt"></i>
+                <span>Drag here to delete</span>
+              </div>
+
               <button id="sendToAIBtn" class="send-to-ai-btn">📤 Send to AI</button>
             </div>
 
@@ -136,6 +186,10 @@ class AlgebraTiles {
     `;
 
     this.workspace = document.getElementById('workspaceGrid');
+    this.currentMode = 'algebra';
+    this.currentTool = 'select';
+    this.history = [];
+    this.historyIndex = -1;
   }
 
   setupEventListeners() {
@@ -143,6 +197,24 @@ class AlgebraTiles {
     document.getElementById('closeTilesBtn').addEventListener('click', () => {
       this.close();
     });
+
+    // Mode selector
+    document.getElementById('modeSelector').addEventListener('change', (e) => {
+      this.switchMode(e.target.value);
+    });
+
+    // Tool selection
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.selectTool(btn.dataset.tool);
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Undo/Redo
+    document.getElementById('undoBtn').addEventListener('click', () => this.undo());
+    document.getElementById('redoBtn').addEventListener('click', () => this.redo());
 
     // Build It button
     document.getElementById('buildItBtn').addEventListener('click', () => {
@@ -157,6 +229,23 @@ class AlgebraTiles {
     // Send to AI button
     document.getElementById('sendToAIBtn').addEventListener('click', () => {
       this.sendToAI();
+    });
+
+    // Trash zone drag events
+    const trashZone = document.getElementById('trashZone');
+    trashZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      trashZone.classList.add('drag-over');
+    });
+    trashZone.addEventListener('dragleave', () => {
+      trashZone.classList.remove('drag-over');
+    });
+    trashZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      trashZone.classList.remove('drag-over');
+      if (this.draggedTile) {
+        this.deleteTile(this.draggedTile);
+      }
     });
 
     // Enter key in equation input
@@ -221,6 +310,7 @@ class AlgebraTiles {
 
   getTileValue(type) {
     const values = {
+      // Algebra tiles
       'positive-unit': 1,
       'negative-unit': -1,
       'x-positive': 'x',
@@ -230,7 +320,24 @@ class AlgebraTiles {
       'xy-positive': 'xy',
       'xy-negative': '-xy',
       'x2-positive': 'x²',
-      'x2-negative': '-x²'
+      'x2-negative': '-x²',
+      // Base ten blocks
+      'hundred': 100,
+      'ten': 10,
+      'one': 1,
+      // Fractions
+      'whole': '1',
+      'half': '1/2',
+      'third': '1/3',
+      'fourth': '1/4',
+      'fifth': '1/5',
+      'sixth': '1/6',
+      'eighth': '1/8',
+      'tenth': '1/10',
+      'twelfth': '1/12',
+      // Number line
+      'positive-counter': '+1',
+      'negative-counter': '-1'
     };
     return values[type] || 0;
   }
@@ -539,6 +646,7 @@ class AlgebraTiles {
   }
 
   clearWorkspace() {
+    this.saveState(); // Save to history before clearing
     this.tiles = [];
     this.renderWorkspace();
     this.updateExpression();
@@ -549,6 +657,248 @@ class AlgebraTiles {
     for (const tile of this.tiles) {
       this.renderTile(tile);
     }
+
+    // Re-render mat if one was selected
+    const matSelector = document.getElementById('matSelector');
+    if (matSelector && matSelector.value !== 'none') {
+      this.setMat(matSelector.value);
+    }
+  }
+
+  deleteTile(tileElement) {
+    const tileId = parseInt(tileElement.dataset.tileId);
+    this.saveState(); // Save to history
+    this.tiles = this.tiles.filter(t => t.id !== tileId);
+    tileElement.remove();
+    this.updateExpression();
+  }
+
+  // ============================================
+  // MODE SWITCHING
+  // ============================================
+
+  switchMode(mode) {
+    this.currentMode = mode;
+    this.clearWorkspace();
+    this.renderPaletteForMode(mode);
+
+    // Update header title
+    const titles = {
+      algebra: '🧮 Algebra Tiles',
+      baseten: '📊 Base Ten Blocks',
+      fractions: '🍰 Fraction Bars',
+      numberline: '📏 Number Line'
+    };
+    document.querySelector('.algebra-tiles-header h2').textContent = titles[mode] || '🧮 Algebra Tiles';
+  }
+
+  renderPaletteForMode(mode) {
+    const palette = document.getElementById('tilePalette');
+
+    if (mode === 'algebra') {
+      this.renderAlgebraTilesPalette(palette);
+    } else if (mode === 'baseten') {
+      this.renderBaseTenPalette(palette);
+    } else if (mode === 'fractions') {
+      this.renderFractionsPalette(palette);
+    } else if (mode === 'numberline') {
+      this.renderNumberLinePalette(palette);
+    }
+
+    // Re-attach tile button listeners
+    document.querySelectorAll('.tile-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tileType = btn.dataset.type;
+        this.addTile(tileType, 100, 100);
+      });
+    });
+  }
+
+  renderAlgebraTilesPalette(palette) {
+    palette.innerHTML = `
+      <div class="palette-section">
+        <span class="palette-label">Integers</span>
+        <div class="palette-buttons">
+          <button class="tile-btn" data-type="positive-unit" title="Positive Unit (+1)">
+            <div class="tile-preview tile-positive-unit">+1</div>
+          </button>
+          <button class="tile-btn" data-type="negative-unit" title="Negative Unit (-1)">
+            <div class="tile-preview tile-negative-unit">-1</div>
+          </button>
+        </div>
+      </div>
+      <div class="palette-section">
+        <span class="palette-label">Variables</span>
+        <div class="palette-buttons">
+          <button class="tile-btn" data-type="x-positive" title="Positive x">
+            <div class="tile-preview tile-x-positive">x</div>
+          </button>
+          <button class="tile-btn" data-type="x-negative" title="Negative x">
+            <div class="tile-preview tile-x-negative">-x</div>
+          </button>
+          <button class="tile-btn" data-type="y-positive" title="Positive y">
+            <div class="tile-preview tile-y-positive">y</div>
+          </button>
+          <button class="tile-btn" data-type="y-negative" title="Negative y">
+            <div class="tile-preview tile-y-negative">-y</div>
+          </button>
+        </div>
+      </div>
+      <div class="palette-section">
+        <span class="palette-label">Products</span>
+        <div class="palette-buttons">
+          <button class="tile-btn" data-type="xy-positive" title="Positive xy">
+            <div class="tile-preview tile-xy-positive">xy</div>
+          </button>
+          <button class="tile-btn" data-type="xy-negative" title="Negative xy">
+            <div class="tile-preview tile-xy-negative">-xy</div>
+          </button>
+          <button class="tile-btn" data-type="x2-positive" title="Positive x²">
+            <div class="tile-preview tile-x2-positive">x²</div>
+          </button>
+          <button class="tile-btn" data-type="x2-negative" title="Negative x²">
+            <div class="tile-preview tile-x2-negative">-x²</div>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  renderBaseTenPalette(palette) {
+    palette.innerHTML = `
+      <div class="palette-section">
+        <span class="palette-label">Base 10</span>
+        <div class="palette-buttons">
+          <button class="tile-btn" data-type="hundred" title="Hundred (100)">
+            <div class="tile-preview tile-hundred">100</div>
+          </button>
+          <button class="tile-btn" data-type="ten" title="Ten (10)">
+            <div class="tile-preview tile-ten">10</div>
+          </button>
+          <button class="tile-btn" data-type="one" title="One (1)">
+            <div class="tile-preview tile-one">1</div>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  renderFractionsPalette(palette) {
+    palette.innerHTML = `
+      <div class="palette-section">
+        <span class="palette-label">Fractions</span>
+        <div class="palette-buttons palette-fractions">
+          <button class="tile-btn" data-type="whole" title="Whole (1)">
+            <div class="tile-preview tile-whole">1</div>
+          </button>
+          <button class="tile-btn" data-type="half" title="Half (1/2)">
+            <div class="tile-preview tile-half">1/2</div>
+          </button>
+          <button class="tile-btn" data-type="third" title="Third (1/3)">
+            <div class="tile-preview tile-third">1/3</div>
+          </button>
+          <button class="tile-btn" data-type="fourth" title="Fourth (1/4)">
+            <div class="tile-preview tile-fourth">1/4</div>
+          </button>
+          <button class="tile-btn" data-type="fifth" title="Fifth (1/5)">
+            <div class="tile-preview tile-fifth">1/5</div>
+          </button>
+          <button class="tile-btn" data-type="sixth" title="Sixth (1/6)">
+            <div class="tile-preview tile-sixth">1/6</div>
+          </button>
+          <button class="tile-btn" data-type="eighth" title="Eighth (1/8)">
+            <div class="tile-preview tile-eighth">1/8</div>
+          </button>
+          <button class="tile-btn" data-type="tenth" title="Tenth (1/10)">
+            <div class="tile-preview tile-tenth">1/10</div>
+          </button>
+          <button class="tile-btn" data-type="twelfth" title="Twelfth (1/12)">
+            <div class="tile-preview tile-twelfth">1/12</div>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  renderNumberLinePalette(palette) {
+    palette.innerHTML = `
+      <div class="palette-section">
+        <span class="palette-label">Counters</span>
+        <div class="palette-buttons">
+          <button class="tile-btn" data-type="positive-counter" title="Positive Counter">
+            <div class="tile-preview tile-positive-counter">+</div>
+          </button>
+          <button class="tile-btn" data-type="negative-counter" title="Negative Counter">
+            <div class="tile-preview tile-negative-counter">−</div>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============================================
+  // ANNOTATION TOOLS
+  // ============================================
+
+  selectTool(tool) {
+    this.currentTool = tool;
+    this.workspace.style.cursor = tool === 'select' ? 'default' : 'crosshair';
+  }
+
+  // ============================================
+  // UNDO/REDO SYSTEM
+  // ============================================
+
+  saveState() {
+    // Remove any states after current position (if we've undone)
+    this.history = this.history.slice(0, this.historyIndex + 1);
+
+    // Save current state
+    const state = {
+      tiles: JSON.parse(JSON.stringify(this.tiles)),
+      mode: this.currentMode
+    };
+    this.history.push(state);
+    this.historyIndex++;
+
+    // Limit history to 50 states
+    if (this.history.length > 50) {
+      this.history.shift();
+      this.historyIndex--;
+    }
+
+    this.updateHistoryButtons();
+  }
+
+  undo() {
+    if (this.historyIndex > 0) {
+      this.historyIndex--;
+      this.restoreState(this.history[this.historyIndex]);
+      this.updateHistoryButtons();
+    }
+  }
+
+  redo() {
+    if (this.historyIndex < this.history.length - 1) {
+      this.historyIndex++;
+      this.restoreState(this.history[this.historyIndex]);
+      this.updateHistoryButtons();
+    }
+  }
+
+  restoreState(state) {
+    this.tiles = JSON.parse(JSON.stringify(state.tiles));
+    this.currentMode = state.mode;
+    this.renderWorkspace();
+    this.updateExpression();
+  }
+
+  updateHistoryButtons() {
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+
+    if (undoBtn) undoBtn.disabled = this.historyIndex <= 0;
+    if (redoBtn) redoBtn.disabled = this.historyIndex >= this.history.length - 1;
   }
 
   updateExpression() {
