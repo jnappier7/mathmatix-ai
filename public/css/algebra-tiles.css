@@ -326,6 +326,50 @@
   padding: 20px;
 }
 
+/* ===== MAT OVERLAYS ===== */
+.algebra-mat {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Allow tiles to be placed on top */
+  z-index: 0; /* Below tiles */
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+/* Mat selector dropdown */
+.mat-selector-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.mat-selector {
+  padding: 8px 12px;
+  border: 2px solid #cbd5e0;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mat-selector:hover {
+  border-color: #12B3B3;
+}
+
+.mat-selector:focus {
+  outline: none;
+  border-color: #12B3B3;
+  box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.1);
+}
+
 /* ===== WORKSPACE TILES (DRAGGABLE) ===== */
 .workspace-tile {
   position: absolute;

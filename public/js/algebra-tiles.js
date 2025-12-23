@@ -44,6 +44,21 @@ class AlgebraTiles {
               <button id="clearWorkspaceBtn" class="clear-btn">Clear</button>
             </div>
 
+            <div class="mat-selector-section">
+              <label for="matSelector">Mat Type:</label>
+              <select id="matSelector" class="mat-selector">
+                <option value="none">None (Blank Workspace)</option>
+                <option value="equation">Equation Mat (LHS = RHS)</option>
+                <option value="expression">Expression Mat (Combine Like Terms)</option>
+                <option value="multiplication">Multiplication/Area Model</option>
+                <option value="factoring">Factoring Mat (Build Rectangle)</option>
+                <option value="integer">Integer/Zero-Pair Mat</option>
+              </select>
+              <label for="matOpacity" style="margin-left: 15px;">Opacity:</label>
+              <input type="range" id="matOpacity" min="0" max="100" value="30" style="width: 100px; vertical-align: middle;" />
+              <span id="matOpacityValue">30%</span>
+            </div>
+
             <div class="tile-palette">
               <div class="palette-section">
                 <span class="palette-label">Integers:</span>
@@ -146,6 +161,25 @@ class AlgebraTiles {
         this.addTile(tileType, 100, 100); // Add at default position
       });
     });
+
+    // Mat selector
+    const matSelector = document.getElementById('matSelector');
+    if (matSelector) {
+      matSelector.addEventListener('change', (e) => {
+        this.setMat(e.target.value);
+      });
+    }
+
+    // Mat opacity slider
+    const matOpacity = document.getElementById('matOpacity');
+    const matOpacityValue = document.getElementById('matOpacityValue');
+    if (matOpacity && matOpacityValue) {
+      matOpacity.addEventListener('input', (e) => {
+        const opacity = e.target.value;
+        matOpacityValue.textContent = `${opacity}%`;
+        this.setMatOpacity(opacity / 100);
+      });
+    }
 
     // Workspace drag listeners
     this.workspace.addEventListener('mousedown', (e) => this.onMouseDown(e));
@@ -543,6 +577,156 @@ class AlgebraTiles {
     if (coefficient === 1) return variable;
     if (coefficient === -1) return `-${variable}`;
     return `${coefficient}${variable}`;
+  }
+
+  // ============================================
+  // MAT SYSTEM
+  // ============================================
+
+  setMat(matType) {
+    // Remove existing mat if any
+    const existingMat = this.workspace.querySelector('.algebra-mat');
+    if (existingMat) {
+      existingMat.remove();
+    }
+
+    if (matType === 'none') return;
+
+    // Create mat overlay
+    const mat = document.createElement('div');
+    mat.className = 'algebra-mat';
+    mat.dataset.matType = matType;
+    mat.style.opacity = document.getElementById('matOpacity')?.value / 100 || 0.3;
+
+    // Render specific mat type
+    switch (matType) {
+      case 'equation':
+        this.renderEquationMat(mat);
+        break;
+      case 'expression':
+        this.renderExpressionMat(mat);
+        break;
+      case 'multiplication':
+        this.renderMultiplicationMat(mat);
+        break;
+      case 'factoring':
+        this.renderFactoringMat(mat);
+        break;
+      case 'integer':
+        this.renderIntegerMat(mat);
+        break;
+    }
+
+    this.workspace.appendChild(mat);
+  }
+
+  setMatOpacity(opacity) {
+    const mat = this.workspace.querySelector('.algebra-mat');
+    if (mat) {
+      mat.style.opacity = opacity;
+    }
+  }
+
+  renderEquationMat(mat) {
+    mat.innerHTML = `
+      <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+        <!-- Left side label -->
+        <text x="25%" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#4a5568">LEFT SIDE</text>
+
+        <!-- Right side label -->
+        <text x="75%" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#4a5568">RIGHT SIDE</text>
+
+        <!-- Vertical divider (equals sign) -->
+        <line x1="50%" y1="50" x2="50%" y2="95%" stroke="#4a5568" stroke-width="3" stroke-dasharray="10,5"/>
+        <text x="50%" y="50%" text-anchor="middle" font-size="32" font-weight="bold" fill="#2d3748">=</text>
+
+        <!-- Left box -->
+        <rect x="5%" y="50" width="40%" height="calc(100% - 70px)" fill="none" stroke="#cbd5e0" stroke-width="2" rx="8"/>
+
+        <!-- Right box -->
+        <rect x="55%" y="50" width="40%" height="calc(100% - 70px)" fill="none" stroke="#cbd5e0" stroke-width="2" rx="8"/>
+      </svg>
+    `;
+  }
+
+  renderExpressionMat(mat) {
+    mat.innerHTML = `
+      <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+        <!-- Title -->
+        <text x="50%" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#4a5568">COMBINE LIKE TERMS</text>
+
+        <!-- Zones for different term types -->
+        <text x="20%" y="70" text-anchor="middle" font-size="14" fill="#4a5568">x² terms</text>
+        <rect x="10%" y="80" width="20%" height="30%" fill="none" stroke="#cbd5e0" stroke-width="2" rx="6"/>
+
+        <text x="50%" y="70" text-anchor="middle" font-size="14" fill="#4a5568">x terms</text>
+        <rect x="40%" y="80" width="20%" height="30%" fill="none" stroke="#cbd5e0" stroke-width="2" rx="6"/>
+
+        <text x="80%" y="70" text-anchor="middle" font-size="14" fill="#4a5568">Constants</text>
+        <rect x="70%" y="80" width="20%" height="30%" fill="none" stroke="#cbd5e0" stroke-width="2" rx="6"/>
+
+        <!-- Work area -->
+        <text x="50%" y="calc(30% + 100px)" text-anchor="middle" font-size="14" fill="#4a5568">↓ Simplified Expression ↓</text>
+        <rect x="25%" y="calc(30% + 120px)" width="50%" height="calc(70% - 140px)" fill="none" stroke="#48bb78" stroke-width="3" stroke-dasharray="8,4" rx="8"/>
+      </svg>
+    `;
+  }
+
+  renderMultiplicationMat(mat) {
+    mat.innerHTML = `
+      <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+        <!-- Title -->
+        <text x="50%" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#4a5568">AREA MODEL (Width × Height)</text>
+
+        <!-- Grid for area model -->
+        <rect x="15%" y="15%" width="70%" height="70%" fill="none" stroke="#cbd5e0" stroke-width="3"/>
+
+        <!-- Subdivisions (2x2 grid for FOIL) -->
+        <line x1="50%" y1="15%" x2="50%" y2="85%" stroke="#cbd5e0" stroke-width="2" stroke-dasharray="5,3"/>
+        <line x1="15%" y1="50%" x2="85%" y2="50%" stroke="#cbd5e0" stroke-width="2" stroke-dasharray="5,3"/>
+
+        <!-- Labels -->
+        <text x="30%" y="12%" text-anchor="middle" font-size="14" fill="#4a5568">Width →</text>
+        <text x="12%" y="30%" text-anchor="middle" font-size="14" fill="#4a5568" transform="rotate(-90, 12%, 30%)">Height →</text>
+      </svg>
+    `;
+  }
+
+  renderFactoringMat(mat) {
+    mat.innerHTML = `
+      <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+        <!-- Title -->
+        <text x="50%" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#4a5568">BUILD A RECTANGLE TO FACTOR</text>
+
+        <!-- Work area with grid -->
+        <rect x="20%" y="15%" width="60%" height="70%" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8,4"/>
+
+        <!-- Instructions -->
+        <text x="50%" y="90%" text-anchor="middle" font-size="14" fill="#4a5568">Arrange tiles into a rectangle. Dimensions = factors!</text>
+      </svg>
+    `;
+  }
+
+  renderIntegerMat(mat) {
+    mat.innerHTML = `
+      <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+        <!-- Title -->
+        <text x="50%" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#4a5568">ZERO PAIRS</text>
+
+        <!-- Positive zone -->
+        <text x="25%" y="60" text-anchor="middle" font-size="14" fill="#4a5568">Positive (+)</text>
+        <rect x="10%" y="70" width="30%" height="calc(100% - 90px)" fill="rgba(72, 187, 120, 0.1)" stroke="#48bb78" stroke-width="2" rx="8"/>
+
+        <!-- Negative zone -->
+        <text x="75%" y="60" text-anchor="middle" font-size="14" fill="#4a5568">Negative (−)</text>
+        <rect x="60%" y="70" width="30%" height="calc(100% - 90px)" fill="rgba(239, 68, 68, 0.1)" stroke="#ef4444" stroke-width="2" rx="8"/>
+
+        <!-- Zero pair indicator -->
+        <circle cx="50%" cy="50%" r="40" fill="none" stroke="#a0aec0" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="50%" y="50%" text-anchor="middle" font-size="12" fill="#a0aec0">+1 and −1</text>
+        <text x="50%" y="calc(50% + 15px)" text-anchor="middle" font-size="12" fill="#a0aec0">cancel to 0</text>
+      </svg>
+    `;
   }
 
   open() {
