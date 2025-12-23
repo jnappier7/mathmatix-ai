@@ -2338,33 +2338,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Event Listeners ---
     if (sendBtn) sendBtn.addEventListener("click", sendMessage);
     if (userInput) userInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-
-    // Quick Help Buttons (Student-Brain Handles)
-    const hintBtn = document.getElementById('hint-btn');
-    const checkStepBtn = document.getElementById('check-step-btn');
-    const explainDifferentBtn = document.getElementById('explain-different-btn');
-
-    if (hintBtn) {
-        hintBtn.addEventListener('click', () => {
-            userInput.value = "Can you give me a hint?";
-            sendBtn.click();
-        });
-    }
-
-    if (checkStepBtn) {
-        checkStepBtn.addEventListener('click', () => {
-            userInput.value = "Can you check my step and see if I'm on the right track?";
-            sendBtn.click();
-        });
-    }
-
-    if (explainDifferentBtn) {
-        explainDifferentBtn.addEventListener('click', () => {
-            userInput.value = "Can you explain this a different way?";
-            sendBtn.click();
-        });
-    }
-
     if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
