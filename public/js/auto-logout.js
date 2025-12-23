@@ -1,11 +1,11 @@
 /**
  * AUTO-LOGOUT MANAGER
  *
- * Handles automatic logout in four scenarios:
- * 1. Tab close (sessionStorage cleared)
- * 2. Browser close (sendBeacon logout)
- * 3. Inactivity timeout (30 minutes default)
- * 4. Manual logout button (handled elsewhere)
+ * Handles automatic logout in two scenarios:
+ * 1. Inactivity timeout (30 minutes default)
+ * 2. Manual logout button (handled elsewhere)
+ *
+ * Note: Tab-close logout removed to prevent unintended logouts during navigation
  */
 
 (function() {
@@ -128,10 +128,9 @@
     }
 
     // Activate tab session (set flag in sessionStorage)
-    // This gets cleared automatically when tab closes
     activateTabSession();
 
-    console.log('[Auto-Logout] Initialized with tab-close logout enabled');
+    console.log('[Auto-Logout] Initialized with inactivity timeout');
 
     // 1. INACTIVITY TIMEOUT
     // Listen for user activity events
@@ -143,21 +142,8 @@
     // Start the timer
     resetInactivityTimer();
 
-    // 2. TAB/BROWSER CLOSE LOGOUT
-    // Use pagehide instead of beforeunload - more reliable for detecting actual tab close
-    // The 'persisted' property tells us if the page is being cached (navigation) or discarded (tab close)
-    window.addEventListener('pagehide', (event) => {
-      // If persisted = true, page is going into bfcache (back/forward cache) = navigation
-      // If persisted = false, page is being discarded = tab/browser close
-      if (!event.persisted) {
-        console.log('[Auto-Logout] Tab closing (not cached) - sending logout beacon');
-        performLogout(); // Clears sessionStorage and sends logout beacon
-      } else {
-        console.log('[Auto-Logout] Page cached for navigation - keeping session');
-      }
-    });
-
-    // Alternative: Use visibilitychange for tab switches
+    // 2. VISIBILITY CHANGE (pause timers when tab is hidden)
+    // Use visibilitychange for tab switches
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         // Tab hidden - pause timers to avoid logout while tab is in background
