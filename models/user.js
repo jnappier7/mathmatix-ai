@@ -480,6 +480,39 @@ const userSchema = new Schema({
       of: Schema.Types.Mixed,
       default: () => new Map()
     }
+  },
+
+  /* Weekly Challenges System */
+  weeklyChallenges: {
+    // Current week's challenges (reset weekly)
+    challenges: [{
+      id: String,
+      templateId: String,
+      name: String,
+      description: String,
+      icon: String,
+      difficulty: String,       // 'easy', 'medium', 'hard'
+      targetType: String,
+      targetCount: Number,
+      progress: { type: Number, default: 0 },
+      completed: { type: Boolean, default: false },
+      xpReward: Number,
+      specialReward: String,
+      startDate: Date,
+      endDate: Date,
+      completedAt: Date
+    }],
+
+    // Metadata
+    weekStartDate: Date,
+    completedChallengesAllTime: { type: Number, default: 0 },
+
+    // Weekly progress tracking (resets each week)
+    weeklyProgress: {
+      type: Map,
+      of: Schema.Types.Mixed,
+      default: () => new Map()
+    }
   }
 }, { timestamps: true });
 

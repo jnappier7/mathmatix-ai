@@ -78,6 +78,8 @@ const gradeWorkRoutes = require('./routes/gradeWork');
 const quarterlyGrowthRoutes = require('./routes/quarterlyGrowth');  // Quarterly growth tracking and retention
 const factFluencyRoutes = require('./routes/factFluency');  // M∆THBL∆ST Fact Fluency game
 const dailyQuestsRoutes = require('./routes/dailyQuests');  // Daily Quests & Streak System
+const weeklyChallengesRoutes = require('./routes/weeklyChallenges');  // Weekly Challenges System
+const learningCurveRoutes = require('./routes/learningCurve');  // Learning Curve Visualization & IRT Transparency
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -204,6 +206,8 @@ app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes);
 app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Quarterly growth tracking and retention analytics
 app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆ST Fact Fluency - Math facts practice game
 app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak System for mastery mode
+app.use('/api', isAuthenticated, weeklyChallengesRoutes); // Weekly Challenges System for engagement
+app.use('/api', isAuthenticated, learningCurveRoutes); // Learning Curve Visualization & IRT transparency
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {

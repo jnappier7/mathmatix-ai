@@ -1,0 +1,391 @@
+/* Learning Curve Visualization Styles */
+
+.learning-curve-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.curve-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 15px;
+  color: white;
+}
+
+.curve-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 32px;
+}
+
+.curve-header p {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* Canvas Container */
+.canvas-container {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+#learningCurveCanvas {
+  width: 100%;
+  height: 400px;
+  display: block;
+}
+
+/* Stats Grid */
+.curve-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.stat-value-small {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.stat-subtext {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Interpretation Card */
+.interpretation-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border-radius: 12px;
+  padding: 25px;
+  border-left: 4px solid #667eea;
+}
+
+.interpretation-card h4 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.interpretation-card p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Skills Overview Grid */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.skill-overview-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.skill-overview-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border: 2px solid #667eea;
+}
+
+.skill-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.skill-card-header h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.skill-status {
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #e0e0e0;
+  color: #666;
+  font-weight: 600;
+}
+
+.skill-status.mastered {
+  background: #4caf50;
+  color: white;
+}
+
+.skill-status.learning {
+  background: #2196F3;
+  color: white;
+}
+
+.skill-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.mini-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mini-label {
+  font-size: 12px;
+  color: #888;
+}
+
+.mini-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.skill-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #888;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* No Data / Error Messages */
+.no-data-message,
+.error-message,
+.no-skills-message {
+  background: white;
+  border-radius: 15px;
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.no-data-message h3,
+.error-message h3 {
+  margin: 0 0 15px 0;
+  font-size: 24px;
+  color: #666;
+}
+
+.no-data-message p,
+.error-message p,
+.no-skills-message p {
+  margin: 0;
+  font-size: 16px;
+  color: #888;
+}
+
+/* Back Button */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: white;
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-button:hover {
+  background: #f0f0f0;
+  transform: translateX(-5px);
+}
+
+/* Milestones Section */
+.milestones-section {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.milestones-section h3 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.milestone-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.milestone-item:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+.milestone-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.milestone-content {
+  flex: 1;
+}
+
+.milestone-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.milestone-description {
+  font-size: 14px;
+  color: #666;
+}
+
+.milestone-date {
+  font-size: 12px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .curve-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #learningCurveCanvas {
+    height: 300px;
+  }
+
+  .stat-card {
+    padding: 15px;
+  }
+
+  .stat-icon {
+    font-size: 28px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .curve-header h1 {
+    font-size: 24px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .canvas-container,
+  .stat-card,
+  .skill-overview-card,
+  .interpretation-card,
+  .milestones-section,
+  .no-data-message,
+  .error-message {
+    background: #2d3748;
+    color: #e2e8f0;
+  }
+
+  .stat-label,
+  .mini-label,
+  .milestone-description,
+  .skill-card-footer {
+    color: #cbd5e0;
+  }
+
+  .stat-value,
+  .mini-value,
+  .milestone-title,
+  .skill-card-header h4 {
+    color: #e2e8f0;
+  }
+
+  .milestone-item {
+    background: #1a202c;
+  }
+
+  .milestone-item:hover {
+    background: #2d3748;
+  }
+
+  .skill-card-header,
+  .skill-card-footer {
+    border-color: #4a5568;
+  }
+}
