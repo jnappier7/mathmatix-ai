@@ -27,7 +27,7 @@ const upload = multer({
     }),
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB per file
 });
-const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
+const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reasoning (with GPT fallback)
 
 router.post('/',
     isAuthenticated,

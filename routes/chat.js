@@ -20,7 +20,7 @@ const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 const { detectAndFetchResource } = require('../utils/resourceDetector');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 
-const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
+const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reasoning (with GPT fallback)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
