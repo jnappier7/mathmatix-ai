@@ -415,44 +415,90 @@ class AlgebraTiles {
 
   onMouseDown(e) {
     if (e.target.classList.contains('workspace-tile')) {
+      const tileId = parseInt(e.target.dataset.tileId);
+
+      // Multi-select with Shift/Ctrl/Cmd
+      if (e.shiftKey || e.ctrlKey || e.metaKey) {
+        if (this.selectedTiles.has(tileId)) {
+          this.selectedTiles.delete(tileId);
+          e.target.classList.remove('selected');
+        } else {
+          this.selectedTiles.add(tileId);
+          e.target.classList.add('selected');
+        }
+        return;
+      }
+
+      // If clicking a selected tile, drag all selected tiles
+      const tilesToDrag = this.selectedTiles.has(tileId)
+        ? Array.from(this.selectedTiles)
+        : [tileId];
+
       this.draggedTile = {
         element: e.target,
-        id: parseInt(e.target.dataset.tileId),
+        ids: tilesToDrag,
         offsetX: e.clientX - e.target.offsetLeft,
-        offsetY: e.clientY - e.target.offsetTop
+        offsetY: e.clientY - e.target.offsetTop,
+        initialPositions: new Map()
       };
-      e.target.classList.add('dragging');
+
+      // Store initial positions for all dragged tiles
+      tilesToDrag.forEach(id => {
+        const tile = this.tiles.find(t => t.id === id);
+        const element = document.querySelector(`[data-tile-id="${id}"]`);
+        if (tile && element) {
+          this.draggedTile.initialPositions.set(id, { x: tile.x, y: tile.y });
+          element.classList.add('dragging');
+        }
+      });
     }
   }
 
   onMouseMove(e) {
     if (this.draggedTile) {
-      const x = e.clientX - this.draggedTile.offsetX;
-      const y = e.clientY - this.draggedTile.offsetY;
+      const deltaX = e.clientX - this.draggedTile.offsetX - this.draggedTile.initialPositions.get(this.draggedTile.ids[0]).x;
+      const deltaY = e.clientY - this.draggedTile.offsetY - this.draggedTile.initialPositions.get(this.draggedTile.ids[0]).y;
 
-      this.draggedTile.element.style.left = `${x}px`;
-      this.draggedTile.element.style.top = `${y}px`;
+      // Move all dragged tiles together
+      this.draggedTile.ids.forEach(id => {
+        const element = document.querySelector(`[data-tile-id="${id}"]`);
+        const initialPos = this.draggedTile.initialPositions.get(id);
+        if (element && initialPos) {
+          element.style.left = `${initialPos.x + deltaX}px`;
+          element.style.top = `${initialPos.y + deltaY}px`;
+        }
+      });
     }
   }
 
   onMouseUp(e) {
     if (this.draggedTile) {
-      const x = parseInt(this.draggedTile.element.style.left);
-      const y = parseInt(this.draggedTile.element.style.top);
+      // Update positions for all dragged tiles
+      this.draggedTile.ids.forEach(id => {
+        const element = document.querySelector(`[data-tile-id="${id}"]`);
+        const tile = this.tiles.find(t => t.id === id);
 
-      // Update tile position in data
-      const tile = this.tiles.find(t => t.id === this.draggedTile.id);
-      if (tile) {
-        tile.x = this.snapToGrid(x);
-        tile.y = this.snapToGrid(y);
-        this.draggedTile.element.style.left = `${tile.x}px`;
-        this.draggedTile.element.style.top = `${tile.y}px`;
-      }
+        if (element && tile) {
+          const x = parseInt(element.style.left);
+          const y = parseInt(element.style.top);
 
-      this.draggedTile.element.classList.remove('dragging');
+          tile.x = this.snapToGrid(x);
+          tile.y = this.snapToGrid(y);
+          element.style.left = `${tile.x}px`;
+          element.style.top = `${tile.y}px`;
+          element.classList.remove('dragging');
+        }
+      });
+
+      // Clear selection after drag
+      this.selectedTiles.clear();
+      document.querySelectorAll('.workspace-tile.selected').forEach(el => {
+        el.classList.remove('selected');
+      });
+
       this.draggedTile = null;
-
       this.checkForCancellation();
+      this.checkForZeroPairs(); // Magic zero-pair animation!
     }
   }
 
@@ -545,6 +591,87 @@ class AlgebraTiles {
 
     if (el1) el1.classList.add('canceling');
     if (el2) el2.classList.add('canceling');
+  }
+
+  // NEW: Check for zero pairs when tiles are close together (dragged near each other)
+  checkForZeroPairs() {
+    const pairDistance = 60; // Pixels - how close tiles need to be
+    const pairs = [
+      ['positive-unit', 'negative-unit'],
+      ['x-positive', 'x-negative'],
+      ['y-positive', 'y-negative'],
+      ['xy-positive', 'xy-negative'],
+      ['x2-positive', 'x2-negative'],
+      ['positive-counter', 'negative-counter'] // Number line counters
+    ];
+
+    const tilesToRemove = new Set();
+
+    for (const [posType, negType] of pairs) {
+      const posTiles = this.tiles.filter(t => t.type === posType && !tilesToRemove.has(t.id));
+      const negTiles = this.tiles.filter(t => t.type === negType && !tilesToRemove.has(t.id));
+
+      // Check each positive tile against negative tiles
+      posTiles.forEach(posTile => {
+        negTiles.forEach(negTile => {
+          if (tilesToRemove.has(posTile.id) || tilesToRemove.has(negTile.id)) return;
+
+          // Calculate distance
+          const dx = posTile.x - negTile.x;
+          const dy = posTile.y - negTile.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < pairDistance) {
+            // They're close! Create zero pair animation
+            this.animateZeroPair(posTile, negTile);
+            tilesToRemove.add(posTile.id);
+            tilesToRemove.add(negTile.id);
+          }
+        });
+      });
+    }
+  }
+
+  animateZeroPair(tile1, tile2) {
+    const el1 = document.querySelector(`[data-tile-id="${tile1.id}"]`);
+    const el2 = document.querySelector(`[data-tile-id="${tile2.id}"]`);
+
+    if (el1 && el2) {
+      // Add zero-pair animation class
+      el1.classList.add('zero-pairing');
+      el2.classList.add('zero-pairing');
+
+      // Calculate midpoint
+      const midX = (tile1.x + tile2.x) / 2;
+      const midY = (tile1.y + tile2.y) / 2;
+
+      // Animate both tiles to midpoint, then explode
+      el1.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      el2.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+
+      el1.style.left = `${midX}px`;
+      el1.style.top = `${midY}px`;
+      el2.style.left = `${midX}px`;
+      el2.style.top = `${midY}px`;
+
+      // After meeting, explode/vanish
+      setTimeout(() => {
+        el1.style.transition = 'all 0.2s ease-out';
+        el2.style.transition = 'all 0.2s ease-out';
+        el1.style.transform = 'scale(1.5)';
+        el2.style.transform = 'scale(1.5)';
+        el1.style.opacity = '0';
+        el2.style.opacity = '0';
+
+        setTimeout(() => {
+          // Remove from DOM and data
+          this.tiles = this.tiles.filter(t => t.id !== tile1.id && t.id !== tile2.id);
+          el1.remove();
+          el2.remove();
+          this.updateExpression();
+        }, 200);
+      }, 300);
+    }
   }
 
   buildFromEquation() {

@@ -204,6 +204,8 @@ async function startPlacement() {
 }
 
 async function startOperationPlacement() {
+    showScreen('placementTest');
+
     const operation = gameState.placement.operations[gameState.placement.currentOperation];
 
     // Reset for this operation

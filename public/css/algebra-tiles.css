@@ -1133,3 +1133,35 @@
 .workspace-tile.tile-negative-counter {
   cursor: grab;
 }
+
+/* ===== MULTI-SELECT ===== */
+.workspace-tile.selected {
+  outline: 3px solid #667eea;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2), 0 5px 15px rgba(0, 0, 0, 0.25);
+  z-index: 50;
+}
+
+/* ===== ZERO PAIR ANIMATION ===== */
+.workspace-tile.zero-pairing {
+  z-index: 1000;
+  animation: pulse 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Enhanced dragging state for multi-select */
+.workspace-tile.dragging {
+  cursor: grabbing;
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  opacity: 0.9;
+}

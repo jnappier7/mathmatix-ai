@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Speed Progress</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/celeration.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+      min-height: 100vh;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+      font-size: 36px;
+      margin: 0 0 10px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .page-header p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background: white;
+      color: #4caf50;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: #f0f0f0;
+      transform: translateX(-5px);
+    }
+
+    .families-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .unlock-message {
+      background: white;
+      border-radius: 15px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .unlock-message h3 {
+      margin: 0 0 15px 0;
+      font-size: 24px;
+      color: #666;
+    }
+
+    .unlock-message p {
+      margin: 0;
+      font-size: 16px;
+      color: #888;
+    }
+
+    .mode-toggle {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .toggle-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: white;
+      color: #4caf50;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .toggle-button:hover {
+      background: #f0f0f0;
+    }
+
+    .toggle-button.active {
+      background: #4caf50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <a href="/fact-fluency-blaster.html" class="back-button">← Back to Math Facts</a>
+
+    <div class="page-header">
+      <h1>🚀 My Speed Progress</h1>
+      <p>Watch yourself get faster at math facts!</p>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div class="mode-toggle">
+      <a href="/my-speed-progress.html" class="toggle-button active">📊 Simple View</a>
+      <a href="/my-celeration-charts.html" class="toggle-button">🔬 Scientist Mode</a>
+    </div>
+
+    <!-- Progress Views -->
+    <div id="progressContainer" class="families-grid"></div>
+
+    <!-- Unlock Message -->
+    <div id="unlockMessage" class="unlock-message" style="display: none;">
+      <h3>🎯 Start Practicing to See Your Progress!</h3>
+      <p>Complete at least 2 practice sessions on any fact family to unlock your speed progress chart.</p>
+    </div>
+  </div>
+
+  <script src="/js/celerationChart.js"></script>
+  <script>
+    async function loadAllProgress() {
+      try {
+        const response = await fetch('/api/celeration/overview');
+        const data = await response.json();
+
+        if (!data.success || data.families.length === 0) {
+          document.getElementById('unlockMessage').style.display = 'block';
+          return;
+        }
+
+        renderFamiliesProgress(data.families);
+      } catch (error) {
+        console.error('Error loading progress:', error);
+      }
+    }
+
+    function renderFamiliesProgress(families) {
+      const container = document.getElementById('progressContainer');
+
+      container.innerHTML = families.map(family => {
+        const improvement = family.celeration ? Math.round((family.celeration - 1) * 100) : 0;
+        const emoji = improvement > 20 ? '🚀' : improvement > 10 ? '📈' : improvement > 0 ? '➡️' : '🔄';
+        const progressPercent = Math.min((family.currentRate / family.aim) * 100, 100);
+
+        return `
+          <div class="speed-progress-card">
+            <div class="speed-header">
+              <h3>${emoji} ${family.displayName}</h3>
+              <div class="speed-subtitle">${family.operation}</div>
+            </div>
+
+            <div class="speed-gauge">
+              <div class="gauge-current">
+                <div class="gauge-value">${family.currentRate}</div>
+                <div class="gauge-label">digits/min</div>
+              </div>
+              <div class="gauge-arrow">→</div>
+              <div class="gauge-goal">
+                <div class="gauge-value">${family.aim}</div>
+                <div class="gauge-label">goal</div>
+              </div>
+            </div>
+
+            <div class="speed-bar-container">
+              <div class="speed-bar">
+                <div class="speed-bar-fill" style="width: ${progressPercent}%"></div>
+              </div>
+              <div class="speed-percentage">${Math.round(progressPercent)}% there!</div>
+            </div>
+
+            ${improvement > 0 ? `
+              <div class="speed-improvement">
+                <div class="improvement-badge">
+                  Getting ${improvement}% faster each week!
+                </div>
+              </div>
+            ` : ''}
+
+            ${family.atAim ? `
+              <div class="speed-success">
+                🎉 You're FLUENT! You can recall these facts automatically!
+              </div>
+            ` : family.mastered ? `
+              <div class="speed-success">
+                🏆 MASTERED! Keep practicing to stay sharp!
+              </div>
+            ` : ''}
+
+            <div style="text-align: center; margin-top: 15px;">
+              <a href="/celeration.html?operation=${family.operation}&family=${family.familyName}"
+                 style="color: #4caf50; text-decoration: none; font-weight: 600; font-size: 14px;">
+                View Detailed Chart →
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAllProgress();
+    });
+  </script>
+</body>
+</html>

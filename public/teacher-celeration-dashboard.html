@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celeration Dashboard - Teacher View</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/celeration.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-button:hover {
+      background: #f0f0f0;
+      transform: translateX(-5px);
+    }
+
+    .page-header {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+      margin: 0 0 10px 0;
+      font-size: 32px;
+      color: #333;
+    }
+
+    .page-header p {
+      margin: 0;
+      font-size: 16px;
+      color: #666;
+    }
+
+    .loading-spinner {
+      text-align: center;
+      padding: 60px;
+      color: white;
+      font-size: 18px;
+    }
+
+    .no-data {
+      background: white;
+      padding: 60px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .no-data h3 {
+      margin: 0 0 15px 0;
+      font-size: 24px;
+      color: #666;
+    }
+
+    .no-data p {
+      margin: 0;
+      font-size: 16px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <a href="/teacher-dashboard.html" class="back-button">← Back to Teacher Dashboard</a>
+
+    <div class="page-header">
+      <h1>📈 Class Celeration Dashboard</h1>
+      <p>Monitor student fact fluency using Standard Celeration Charts (Precision Teaching)</p>
+    </div>
+
+    <!-- Overview Stats -->
+    <div id="overviewStats"></div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-spinner">
+      <div>Loading celeration data...</div>
+    </div>
+
+    <!-- Students List -->
+    <div id="studentsList" class="students-grid" style="display: none;"></div>
+
+    <!-- No Data State -->
+    <div id="noDataState" class="no-data" style="display: none;">
+      <h3>No Student Data Yet</h3>
+      <p>Students need to complete at least 2 fact fluency practice sessions to generate celeration charts.</p>
+    </div>
+  </div>
+
+  <script src="/js/celerationChart.js"></script>
+  <script>
+    async function loadClassCeleration() {
+      try {
+        const response = await fetch('/api/celeration/class-summary');
+        const data = await response.json();
+
+        document.getElementById('loadingState').style.display = 'none';
+
+        if (!data.success || data.studentsWithData === 0) {
+          document.getElementById('noDataState').style.display = 'block';
+          return;
+        }
+
+        // Render overview stats
+        renderOverviewStats(data);
+
+        // Render students list
+        renderStudentsList(data.classSummary);
+
+        document.getElementById('studentsList').style.display = 'grid';
+      } catch (error) {
+        console.error('Error loading class celeration:', error);
+        document.getElementById('loadingState').innerHTML = '<div style="color: #f44336;">Error loading data. Please try again.</div>';
+      }
+    }
+
+    function renderOverviewStats(data) {
+      const needsIntervention = data.classSummary.filter(s =>
+        s.families.some(f => f.needsIntervention)
+      ).length;
+
+      const atAim = data.classSummary.reduce((count, s) =>
+        count + s.families.filter(f => f.atAim).length, 0
+      );
+
+      const container = document.getElementById('overviewStats');
+      container.innerHTML = `
+        <div class="overview-cards">
+          <div class="overview-card">
+            <div class="overview-label">Total Students</div>
+            <div class="overview-number">${data.totalStudents}</div>
+          </div>
+
+          <div class="overview-card">
+            <div class="overview-label">With Data</div>
+            <div class="overview-number" style="color: #4caf50;">${data.studentsWithData}</div>
+          </div>
+
+          <div class="overview-card">
+            <div class="overview-label">Need Help</div>
+            <div class="overview-number" style="color: #f44336;">${needsIntervention}</div>
+          </div>
+
+          <div class="overview-card">
+            <div class="overview-label">At Aim</div>
+            <div class="overview-number" style="color: #4caf50;">${atAim}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStudentsList(students) {
+      const container = document.getElementById('studentsList');
+
+      container.innerHTML = students.map(student => {
+        const needsHelp = student.families.some(f => f.needsIntervention);
+
+        return `
+          <div class="student-celeration-card ${needsHelp ? 'needs-intervention' : ''}">
+            <div class="student-card-header">
+              <div>
+                <div class="student-name">${student.name}</div>
+              </div>
+              <div class="student-grade">Grade ${student.gradeLevel || '?'}</div>
+            </div>
+
+            ${needsHelp ? `
+              <div style="margin-bottom: 15px;">
+                <span class="intervention-badge">⚠️ Needs Intervention</span>
+              </div>
+            ` : ''}
+
+            <div class="families-list">
+              ${student.families.map(family => {
+                const celerationClass = family.celeration >= 1.2 ? 'good' :
+                                       family.celeration >= 1.0 ? '' : 'warning';
+
+                return `
+                  <div class="family-celeration-item ${family.atAim ? 'at-aim' : ''} ${family.needsIntervention ? 'needs-help' : ''}">
+                    <div>
+                      <div class="family-name-display">${family.displayName}</div>
+                      <div style="font-size: 12px; color: #888; margin-top: 4px;">
+                        ${family.currentRate}/min
+                        ${family.celeration ? `• ×${family.celeration.toFixed(2)}/week` : ''}
+                        • ${family.sessionCount} sessions
+                      </div>
+                    </div>
+                    <div>
+                      ${family.atAim ? `
+                        <span class="at-aim-badge">✓ FLUENT</span>
+                      ` : family.celeration ? `
+                        <span class="celeration-value ${celerationClass}">
+                          ${family.celeration >= 1.0 ? '↑' : '↓'} ${Math.round((family.celeration - 1) * 100)}%
+                        </span>
+                      ` : `
+                        <span style="font-size: 12px; color: #888;">Calculating...</span>
+                      `}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <div style="margin-top: 15px; text-align: right;">
+              <a href="/celeration.html?student=${student.studentId}" style="font-size: 14px; color: #667eea; text-decoration: none; font-weight: 600;">
+                View Full Charts →
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadClassCeleration();
+    });
+  </script>
+</body>
+</html>

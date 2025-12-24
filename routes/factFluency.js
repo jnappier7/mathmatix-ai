@@ -212,11 +212,71 @@ router.post('/placement', async (req, res) => {
       (current.rate < lowest.rate) ? current : lowest
     );
 
+    // Determine mastery criteria based on grade level
+    let targetRate = MASTERY_CRITERIA.minRateElementary;
+    if (user.gradeLevel) {
+      const grade = parseInt(user.gradeLevel);
+      if (grade >= 9) targetRate = MASTERY_CRITERIA.minRateHigh;
+      else if (grade >= 6) targetRate = MASTERY_CRITERIA.minRateMiddle;
+    }
+
+    // For each operation in placement results, mark families as mastered based on performance
+    results.forEach(result => {
+      const { operation, rate, accuracy } = result;
+      const families = FACT_FAMILIES[operation];
+
+      // Determine how many families to mark as mastered based on placement performance
+      let startingFamilyIndex = 0;
+
+      if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate) {
+        // Excellent performance - skip first 60% of families
+        startingFamilyIndex = Math.floor(families.length * 0.6);
+      } else if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate * 0.75) {
+        // Good performance - skip first 40% of families
+        startingFamilyIndex = Math.floor(families.length * 0.4);
+      } else if (accuracy >= 85 && rate >= targetRate * 0.5) {
+        // Fair performance - skip first 20% of families
+        startingFamilyIndex = Math.floor(families.length * 0.2);
+      }
+      // Otherwise start at 0 (first family)
+
+      // Mark all families before starting point as "screened out" mastery
+      for (let i = 0; i < startingFamilyIndex; i++) {
+        const family = families[i];
+        const familyKey = `${operation}-${family.familyName}`;
+
+        user.factFluencyProgress.factFamilies.set(familyKey, {
+          operation,
+          familyName: family.familyName,
+          displayName: family.displayName,
+          mastered: true,
+          masteredDate: new Date(),
+          screenedOut: true, // Flag to indicate this was earned via placement, not practice
+          bestRate: rate,
+          bestAccuracy: accuracy,
+          attempts: 0,
+          sessions: []
+        });
+      }
+    });
+
+    // Set recommended starting point for lowest performing operation
+    const lowestOpFamilies = FACT_FAMILIES[lowestPerformance.operation];
+    let recommendedFamilyIndex = 0;
+
+    if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate) {
+      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.6);
+    } else if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate * 0.75) {
+      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.4);
+    } else if (lowestPerformance.accuracy >= 85 && lowestPerformance.rate >= targetRate * 0.5) {
+      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.2);
+    }
+
     user.factFluencyProgress.placement = {
       completed: true,
       completedDate: new Date(),
       recommendedOperation: lowestPerformance.operation,
-      recommendedLevel: FACT_FAMILIES[lowestPerformance.operation][0].familyName,
+      recommendedLevel: lowestOpFamilies[recommendedFamilyIndex].familyName,
       placementResults: results
     };
 

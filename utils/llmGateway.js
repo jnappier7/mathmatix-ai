@@ -25,10 +25,10 @@ const { generateSystemPrompt } = require('./prompt');
 // ============================================================================
 
 const DEFAULT_MODELS = {
-    chat: 'gpt-4o-mini',           // Fast, cheap for chat
-    grading: 'gpt-4o',             // Vision-capable for grading
-    reasoning: 'gpt-4o',           // High-quality for complex tasks
-    embedding: 'text-embedding-3-small'
+    chat: 'claude-3-5-sonnet-20241022',      // Best teaching & reasoning model
+    grading: 'claude-3-5-sonnet-20241022',   // Vision-capable, superior analysis
+    reasoning: 'claude-3-5-sonnet-20241022', // Top-tier complex problem solving
+    embedding: 'text-embedding-3-small'      // Keep OpenAI for embeddings (specialized task)
 };
 
 // ============================================================================
@@ -142,6 +142,7 @@ async function chatStream(context, options = {}) {
 
 /**
  * Vision-based grading - for homework images
+ * Uses Claude Sonnet 3.5 for superior image analysis
  * @param {Object} context - Grading context
  * @param {string} context.imageDataUrl - Base64 image data URL
  * @param {string} context.prompt - Grading instructions
@@ -161,34 +162,77 @@ async function gradeWithVision(context, options = {}) {
 
     console.log(`[LLMGateway] Calling vision model: ${model}`);
 
-    try {
-        const completion = await retryWithExponentialBackoff(() =>
-            openai.chat.completions.create({
-                model: model,
-                messages: [
-                    {
-                        role: 'user',
-                        content: [
-                            {
-                                type: 'text',
-                                text: prompt
-                            },
-                            {
-                                type: 'image_url',
-                                image_url: {
-                                    url: imageDataUrl,
-                                    detail: 'high'
-                                }
-                            }
-                        ]
-                    }
-                ],
-                max_tokens: maxTokens,
-                temperature: temperature
-            })
-        );
+    const isClaudeModel = model.startsWith('claude-');
 
-        return completion.choices[0].message.content;
+    try {
+        if (isClaudeModel && anthropic) {
+            // Claude vision API (superior image analysis)
+            // Extract base64 data from data URL
+            const base64Match = imageDataUrl.match(/^data:image\/(.*?);base64,(.*)$/);
+            if (!base64Match) {
+                throw new Error('Invalid image data URL format');
+            }
+            const [, mediaType, base64Data] = base64Match;
+
+            const completion = await retryWithExponentialBackoff(() =>
+                anthropic.messages.create({
+                    model: model,
+                    max_tokens: maxTokens,
+                    temperature: temperature,
+                    messages: [
+                        {
+                            role: 'user',
+                            content: [
+                                {
+                                    type: 'image',
+                                    source: {
+                                        type: 'base64',
+                                        media_type: `image/${mediaType}`,
+                                        data: base64Data
+                                    }
+                                },
+                                {
+                                    type: 'text',
+                                    text: prompt
+                                }
+                            ]
+                        }
+                    ]
+                })
+            );
+
+            return completion.content[0].text;
+
+        } else {
+            // OpenAI vision API (fallback)
+            const completion = await retryWithExponentialBackoff(() =>
+                openai.chat.completions.create({
+                    model: model,
+                    messages: [
+                        {
+                            role: 'user',
+                            content: [
+                                {
+                                    type: 'text',
+                                    text: prompt
+                                },
+                                {
+                                    type: 'image_url',
+                                    image_url: {
+                                        url: imageDataUrl,
+                                        detail: 'high'
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    max_tokens: maxTokens,
+                    temperature: temperature
+                })
+            );
+
+            return completion.choices[0].message.content;
+        }
 
     } catch (error) {
         console.error('[LLMGateway] Vision grading failed:', error.message);

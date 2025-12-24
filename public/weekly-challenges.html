@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Challenges | MathMatrix.AI</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/weeklyChallenges.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
+
+    .page-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .page-header h1 {
+      font-size: 36px;
+      margin: 0 0 10px 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-header p {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button:hover {
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      transform: translateY(-2px);
+    }
+
+    .timer-banner {
+      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 20px rgba(255,107,107,0.3);
+    }
+
+    .timer-banner h2 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+    }
+
+    .timer-display {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .timer-subtext {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .loading i {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #667eea;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="window.location.href='/badge-map.html'">
+    <i class="fas fa-arrow-left"></i> Back to Mastery Mode
+  </button>
+
+  <div class="page-container">
+    <div class="page-header">
+      <h1>⚡ Weekly Challenges</h1>
+      <p>Complete challenges to earn bonus XP and special rewards</p>
+    </div>
+
+    <div class="timer-banner">
+      <h2><i class="fas fa-clock"></i> Time Remaining</h2>
+      <div class="timer-display" id="timer-display">
+        7 days 0 hours
+      </div>
+      <div class="timer-subtext">Challenges reset every Monday at midnight</div>
+    </div>
+
+    <div id="challenges-container">
+      <div class="loading">
+        <div><i class="fas fa-spinner"></i></div>
+        <p>Loading weekly challenges...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/storage-utils.js"></script>
+  <script src="/js/auto-logout.js"></script>
+  <script src="/js/weeklyChallenges.js"></script>
+  <script>
+    // Initialize weekly challenges manager
+    const challengeManager = new WeeklyChallengeManager();
+
+    async function loadChallenges() {
+      await challengeManager.loadChallenges();
+      challengeManager.renderToContainer(document.getElementById('challenges-container'));
+      updateTimer();
+    }
+
+    function updateTimer() {
+      const response = challengeManager.challenges;
+      if (!response) return;
+
+      // Calculate time remaining
+      const now = new Date();
+      const weekStart = new Date(challengeManager.weekStart);
+      const nextMonday = new Date(weekStart);
+      nextMonday.setDate(nextMonday.getDate() + 7);
+
+      const diff = nextMonday - now;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      let timerText = '';
+      if (days > 0) {
+        timerText = `${days} day${days > 1 ? 's' : ''} ${hours} hour${hours !== 1 ? 's' : ''}`;
+      } else if (hours > 0) {
+        timerText = `${hours} hour${hours > 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+      } else {
+        timerText = `${minutes} minute${minutes > 1 ? 's' : ''}`;
+      }
+
+      document.getElementById('timer-display').textContent = timerText;
+    }
+
+    // Load on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadChallenges();
+      // Update timer every minute
+      setInterval(updateTimer, 60000);
+    });
+  </script>
+</body>
+</html>

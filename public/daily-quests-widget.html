@@ -1,0 +1,149 @@
+<!-- Daily Quests Widget - Include this in student dashboard and mastery mode pages -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Quests</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/dailyQuests.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+      font-size: 36px;
+      margin: 0 0 10px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .page-header p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: #f0f0f0;
+      transform: translateX(-5px);
+    }
+
+    .quest-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+      color: #667eea;
+      margin: 10px 0;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <a href="/student-dashboard.html" class="back-button">← Back to Dashboard</a>
+
+    <div class="page-header">
+      <h1>📋 Daily Quests</h1>
+      <p>Complete daily challenges to earn bonus XP and build your streak!</p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="quest-stats-grid" id="questStats"></div>
+
+    <!-- Daily Quests Widget -->
+    <div id="dailyQuestsContainer"></div>
+  </div>
+
+  <script src="/js/dailyQuests.js"></script>
+  <script>
+    // Load quests and stats on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      await dailyQuestManager.loadQuests();
+      await loadQuestStats();
+    });
+
+    async function loadQuestStats() {
+      try {
+        const response = await fetch('/api/daily-quests/stats');
+        const data = await response.json();
+
+        if (data.success) {
+          const { stats } = data;
+
+          const statsContainer = document.getElementById('questStats');
+          statsContainer.innerHTML = `
+            <div class="stat-card">
+              <div class="stat-label">Current Streak</div>
+              <div class="stat-number">🔥 ${stats.currentStreak}</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">Longest Streak</div>
+              <div class="stat-number">🏆 ${stats.longestStreak}</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">Total Completed</div>
+              <div class="stat-number">✅ ${stats.totalQuestsCompleted}</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">Today's Progress</div>
+              <div class="stat-number">${stats.questsCompletedToday}/${stats.totalQuestsToday}</div>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Error loading quest stats:', error);
+      }
+    }
+  </script>
+</body>
+</html>
