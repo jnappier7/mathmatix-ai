@@ -3,161 +3,694 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Parent Dashboard | M∆THM∆TIΧ AI</title>
-  <link rel="stylesheet" href="/style.css" />
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
-</head>
-<body class="landing-page-body">
-  <header class="landing-header">
-    <div class="header-logo-container">
-      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
-    </div>
-    <nav class="landing-nav">
-      <h3 style="margin: 0; font-size: 1.4em;">Parent Dashboard</h3>
-      <button id="logoutBtn" class="btn btn-tertiary logout-button">Logout</button>
-    </nav>
-  </header>
+  <title>Parent Dashboard - MATHMATIX AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <style>
+    /* ============================================
+       MATHMATIX AI - PARENT DASHBOARD
+       Fixed 3-Column Layout with Parent Branding
+       ============================================ */
 
-  <main class="admin-page-wrapper" style="padding: 20px; max-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); overflow-y: auto;">
-    <div class="admin-main-content" style="align-items: flex-start;">
-      <div class="admin-widget-sidebar">
-        <div class="dashboard-panel card-style-1">
-          <div class="dashboard-panel-header">Your Parent Account</div>
-          <p>This section can show parent-specific stats or settings.</p>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      background: #f8f9fa;
+    }
+
+    /* ============================================
+       PAGE LAYOUT - FIXED STRUCTURE
+       ============================================ */
+
+    .page-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ============================================
+       HEADER - MATHMATIX BRANDED (Blue Parent Theme)
+       ============================================ */
+
+    .main-header {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+      color: white;
+      padding: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .main-header-content {
+      max-width: 100%;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-container {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-glasses {
+      width: 50px;
+      height: 50px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="none" stroke="white" stroke-width="3"><circle cx="25" cy="50" r="18"/><circle cx="75" cy="50" r="18"/><path d="M 43 50 Q 50 45 57 50"/><text x="20" y="55" font-size="14" fill="white" font-family="Georgia">∫</text><text x="68" y="55" font-size="12" fill="white" font-family="Georgia">dy</text></g></svg>');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-name {
+      font-size: 1.5em;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .brand-tagline {
+      font-size: 0.75em;
+      opacity: 0.95;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .mode-indicator {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .main-header-nav {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================
+       3-COLUMN CONTENT LAYOUT
+       ============================================ */
+
+    .main-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 280px 1fr 300px;
+      gap: 0;
+      overflow: hidden;
+      background: #f8f9fa;
+    }
+
+    .left-sidebar,
+    .center-content,
+    .right-sidebar {
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    /* Parent-themed scrollbars (blue) */
+    .left-sidebar::-webkit-scrollbar,
+    .center-content::-webkit-scrollbar,
+    .right-sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .left-sidebar::-webkit-scrollbar-track,
+    .center-content::-webkit-scrollbar-track,
+    .right-sidebar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .left-sidebar::-webkit-scrollbar-thumb,
+    .center-content::-webkit-scrollbar-thumb,
+    .right-sidebar::-webkit-scrollbar-thumb {
+      background: #3498db;
+      border-radius: 4px;
+    }
+
+    .left-sidebar::-webkit-scrollbar-thumb:hover,
+    .center-content::-webkit-scrollbar-thumb:hover,
+    .right-sidebar::-webkit-scrollbar-thumb:hover {
+      background: #2980b9;
+    }
+
+    /* ============================================
+       PANELS AND CARDS
+       ============================================ */
+
+    .dashboard-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e9ecef;
+    }
+
+    .dashboard-panel-header {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #3498db;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2980b9, #21618c);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #7f8c8d, #6c7a89);
+      transform: translateY(-2px);
+    }
+
+    .btn-tertiary {
+      background: transparent;
+      border: 2px solid #3498db;
+      color: #3498db;
+    }
+
+    .btn-tertiary:hover {
+      background: #3498db;
+      color: white;
+    }
+
+    .main-action-btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .submit-btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .send-button-widget {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+    }
+
+    .send-button-widget:hover {
+      background: linear-gradient(135deg, #2980b9, #21618c);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================
+       FORMS
+       ============================================ */
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 0.95em;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    /* ============================================
+       PARENT CHAT WIDGET
+       ============================================ */
+
+    .parent-chat-widget {
+      background: linear-gradient(to bottom, #ebf5fb 0%, #ffffff 100%);
+      border: 3px solid #3498db !important;
+      padding: 25px;
+    }
+
+    .chat-header-widget {
+      background: #ebf5fb;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      border-left: 4px solid #3498db;
+    }
+
+    .chat-display-widget {
+      background: white;
+      border: 2px solid #d6eaf8;
+      border-radius: 6px;
+      padding: 15px;
+      min-height: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .chat-input-widget textarea {
+      width: 100%;
+      border: 2px solid #3498db;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 0.95em;
+      resize: vertical;
+    }
+
+    #parent-thinking-indicator {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      padding: 8px;
+      font-size: 0.85rem;
+      color: #2980b9;
+      background: #ebf5fb;
+      border-radius: 6px;
+      margin: 10px 0;
+    }
+
+    #parent-thinking-indicator .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3498db;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* ============================================
+       CHILDREN LIST
+       ============================================ */
+
+    .child-card {
+      background: linear-gradient(135deg, #ebf5fb 0%, white 100%);
+      border-left: 4px solid #3498db;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+
+    .child-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+    }
+
+    .child-card h4 {
+      color: #2980b9;
+      margin-bottom: 10px;
+    }
+
+    /* ============================================
+       INVITE CODE DISPLAY
+       ============================================ */
+
+    #invite-code-output {
+      margin-top: 15px;
+      text-align: center;
+      padding: 15px;
+      background: #ebf5fb;
+      border-radius: 8px;
+      border: 2px solid #3498db;
+    }
+
+    #invite-code-output .code-display {
+      background: #d6eaf8;
+      color: #21618c;
+      font-weight: bold;
+      font-size: 1.3em;
+      padding: 12px;
+      border-radius: 8px;
+      border: 2px solid #3498db;
+      margin: 10px 0;
+      user-select: all;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+
+    .main-footer {
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      padding: 15px 20px;
+      font-size: 0.85em;
+      flex-shrink: 0;
+    }
+
+    .main-footer a {
+      color: #3498db;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .main-footer a:hover {
+      color: #2980b9;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+
+    @media (max-width: 1200px) {
+      .main-content {
+        grid-template-columns: 250px 1fr 250px;
+      }
+    }
+
+    @media (max-width: 968px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .left-sidebar,
+      .right-sidebar {
+        display: none;
+      }
+    }
+
+    /* Legacy styles for existing JS */
+    .text-sm { font-size: 0.875rem; }
+    .font-semibold { font-weight: 600; }
+    .text-gray-700 { color: #4a5568; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .bg-blue-100 { background-color: #dbeafe; }
+    .text-blue-800 { color: #1e40af; }
+    .font-bold { font-weight: 700; }
+    .text-lg { font-size: 1.125rem; }
+    .p-2 { padding: 0.5rem; }
+    .rounded-lg { border-radius: 0.5rem; }
+    .border-2 { border-width: 2px; }
+    .border-blue-300 { border-color: #93c5fd; }
+    .text-center { text-align: center; }
+    .select-all { user-select: all; }
+    .text-xs { font-size: 0.75rem; }
+    .text-gray-500 { color: #6b7280; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-4 { margin-top: 1rem; }
+    .block { display: block; }
+    .w-full { width: 100%; }
+    .border { border: 1px solid #e5e7eb; }
+    .border-gray-300 { border-color: #d1d5db; }
+    .focus\:outline-none:focus { outline: none; }
+    .focus\:ring-2:focus { box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5); }
+    .focus\:ring-teal-500:focus { box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.5); }
+    .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="page-layout">
+    <!-- ============================================
+         HEADER - MATHMATIX BRANDED (Parent Mode)
+         ============================================ -->
+    <header class="main-header">
+      <div class="main-header-content">
+        <div class="brand-section">
+          <div class="logo-container">
+            <div class="logo-glasses"></div>
+          </div>
+          <div class="brand-text">
+            <h1 class="brand-name">MATHMATIX AI</h1>
+            <p class="brand-tagline">Unlock the Pattern. Learn for Life.</p>
+          </div>
+          <div class="mode-indicator">
+            <i class="fas fa-heart"></i> Parent Dashboard
+          </div>
         </div>
-        <div class="dashboard-panel card-style-1">
+        <nav class="main-header-nav">
+          <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ============================================
+         3-COLUMN CONTENT
+         ============================================ -->
+    <main class="main-content">
+      <!-- LEFT SIDEBAR - Invite & Link Students -->
+      <aside class="left-sidebar">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">Your Parent Account</div>
+          <p>Manage your children's learning progress and communicate with their AI tutors.</p>
+        </div>
+
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">Invite a Child</div>
-          <button id="generate-code-btn" class="main-action-btn btn btn-primary">Generate Invite Code</button>
-          <div id="invite-code-output" style="display:none; margin-top: 15px; text-align: center;">
+          <button id="generate-code-btn" class="btn btn-primary main-action-btn">
+            <i class="fas fa-user-plus"></i> Generate Invite Code
+          </button>
+          <div id="invite-code-output" style="display:none;">
             <p class="text-sm font-semibold text-gray-700 mb-2">Share this code with your child:</p>
-            <div class="bg-blue-100 text-blue-800 font-bold text-lg p-2 rounded-lg border-2 border-blue-300 text-center select-all">
+            <div class="code-display">
               <span id="generated-code-value"></span>
             </div>
             <p class="text-xs text-gray-500 mt-2">Expires: <span id="code-expires-at"></span></p>
           </div>
         </div>
 
-        <div class="dashboard-panel card-style-1">
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">Link to Existing Student</div>
-          <form id="link-student-form" class="mt-4">
-            <label for="studentLinkCode" class="block text-sm font-semibold text-gray-700 mb-2">Student's Link Code</label>
-            <input type="text" id="studentLinkCode" name="studentLinkCode" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Enter student's 6-character code" required>
-            <button type="submit" class="submit-btn btn-primary mt-4">Link Student</button>
+          <form id="link-student-form">
+            <div class="form-group">
+              <label for="studentLinkCode">Student's Link Code</label>
+              <input type="text" id="studentLinkCode" name="studentLinkCode" placeholder="Enter 6-character code" required>
+            </div>
+            <button type="submit" class="btn btn-primary main-action-btn">
+              <i class="fas fa-link"></i> Link Student
+            </button>
             <div id="link-student-message" class="mt-2 text-sm text-center"></div>
           </form>
         </div>
-        </div>
+      </aside>
 
-      <div class="admin-central-content">
-        <div class="dashboard-panel card-style-1">
+      <!-- CENTER CONTENT - Children & AI Chat -->
+      <section class="center-content">
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">Your Linked Children</div>
           <div id="children-list-container">
             <p class="text-center text-gray-500 py-4" id="loading-children">Loading children...</p>
           </div>
         </div>
 
-        <div class="dashboard-panel parent-chat-widget large-chat-panel card-style-1" style="border: 3px solid #9b59b6; background: linear-gradient(to bottom, #f8f5fb 0%, #ffffff 100%);">
-          <div class="dashboard-panel-header" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; padding: 15px; margin: -20px -20px 15px -20px; border-radius: 8px 8px 0 0;">
-            <i class="fas fa-user-tie"></i> Parent-Teacher Conference
+        <div class="dashboard-panel parent-chat-widget">
+          <div class="dashboard-panel-header" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 15px; margin: -25px -25px 15px -25px; border-radius: 12px 12px 0 0;">
+            <i class="fas fa-comments"></i> Parent-Teacher AI Conference
           </div>
-          <div class="chat-header-widget" style="background: #f3e5f5; padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #9b59b6;">
+          <div class="chat-header-widget">
             <div style="display: flex; align-items: center; gap: 15px;">
               <div style="flex: 1;">
-                <label for="childSelector" class="text-sm font-semibold" style="color: #6a1b9a; display: block; margin-bottom: 5px;"><i class="fas fa-user-graduate"></i> Discussing Student:</label>
-                <select id="childSelector" class="text-sm p-2 border rounded" style="width: 100%; border: 2px solid #9b59b6; border-radius: 6px;"></select>
+                <label for="childSelector" class="text-sm font-semibold" style="color: #21618c; display: block; margin-bottom: 5px;">
+                  <i class="fas fa-user-graduate"></i> Discussing Student:
+                </label>
+                <select id="childSelector" class="text-sm p-2 border rounded" style="width: 100%; border: 2px solid #3498db; border-radius: 6px;"></select>
               </div>
               <div id="tutor-avatar-container" style="display: none; flex-shrink: 0; text-align: center;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; border: 3px solid #9b59b6; box-shadow: 0 2px 8px rgba(155,89,182,0.3); margin: 0 auto 5px;">
+                <div style="width: 70px; height: 70px; border-radius: 50%; overflow: hidden; border: 3px solid #3498db; box-shadow: 0 2px 8px rgba(52,152,219,0.3); margin: 0 auto 5px;">
                   <img id="tutor-avatar-img" src="" alt="Tutor" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <div id="tutor-name" style="font-size: 0.75em; color: #6a1b9a; font-weight: 600;"></div>
+                <div id="tutor-name" style="font-size: 0.75em; color: #21618c; font-weight: 600;"></div>
               </div>
             </div>
           </div>
-          <div id="parent-chat-container-inner" class="chat-display-widget" style="border: 2px solid #e1bee7; background: white; min-height: 300px; max-height: 400px; overflow-y: auto; padding: 15px; border-radius: 6px;">
+          <div id="parent-chat-container-inner" class="chat-display-widget">
             <p class="text-gray-500 text-center py-2"><i class="fas fa-comments"></i> Select a child to discuss their learning progress.</p>
           </div>
-          <div id="parent-thinking-indicator" style="display: none; justify-content: center; align-items: center; gap: 5px; padding: 8px; font-size: 0.85rem; color: #8e44ad; background: #f3e5f5; border-radius: 6px; margin: 10px 0;">
-            <span class="dot" style="background: #9b59b6;"></span><span class="dot" style="background: #9b59b6;"></span><span class="dot" style="background: #9b59b6;"></span>
-            <span><i class="fas fa-spinner fa-spin"></i> Teacher AI is thinking...</span>
+          <div id="parent-thinking-indicator">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span><i class="fas fa-spinner fa-spin"></i> AI Tutor is thinking...</span>
           </div>
-          <div class="chat-input-widget" style="margin-top: 10px;">
-            <textarea id="parent-user-input" placeholder="Ask about your child's learning progress, strengths, areas for improvement..." style="border: 2px solid #9b59b6; border-radius: 6px; min-height: 80px;"></textarea>
-            <button id="parent-send-button" class="submit-btn send-button-widget" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; margin-top: 8px;"><i class="fas fa-paper-plane"></i> Send to Teacher</button>
+          <div class="chat-input-widget">
+            <textarea id="parent-user-input" placeholder="Ask about your child's learning progress, strengths, areas for improvement..." rows="3"></textarea>
+            <button id="parent-send-button" class="submit-btn send-button-widget" style="width: 100%; margin-top: 10px;">
+              <i class="fas fa-paper-plane"></i> Send Message
+            </button>
           </div>
         </div>
-        </div>
+      </section>
 
-      <div class="admin-widget-sidebar">
-        <div class="dashboard-panel card-style-1">
+      <!-- RIGHT SIDEBAR - Settings & Preferences -->
+      <aside class="right-sidebar">
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">Settings & Notifications</div>
 
-          <form id="parent-settings-form" class="mt-4">
+          <form id="parent-settings-form">
             <!-- Report Frequency -->
-            <div class="form-group mb-4">
-              <label for="reportFrequency" class="block text-sm font-semibold text-gray-700 mb-2">
+            <div class="form-group">
+              <label for="reportFrequency">
                 <i class="fas fa-calendar-alt"></i> Report Frequency
               </label>
-              <select id="reportFrequency" name="reportFrequency" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <select id="reportFrequency" name="reportFrequency">
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
                 <option value="biweekly">Bi-weekly</option>
                 <option value="monthly">Monthly</option>
               </select>
-              <p class="text-xs text-gray-500 mt-1">How often you receive progress reports</p>
+              <p class="text-xs text-gray-500 mt-2">How often you receive progress reports</p>
             </div>
 
             <!-- Goal View Preference -->
-            <div class="form-group mb-4">
-              <label for="goalViewPreference" class="block text-sm font-semibold text-gray-700 mb-2">
+            <div class="form-group">
+              <label for="goalViewPreference">
                 <i class="fas fa-chart-line"></i> Dashboard View
               </label>
-              <select id="goalViewPreference" name="goalViewPreference" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <select id="goalViewPreference" name="goalViewPreference">
                 <option value="progress">Progress Overview</option>
                 <option value="gaps">Learning Gaps</option>
                 <option value="goals">IEP Goals</option>
               </select>
-              <p class="text-xs text-gray-500 mt-1">What you see first when viewing child progress</p>
+              <p class="text-xs text-gray-500 mt-2">What you see first when viewing child progress</p>
             </div>
 
             <!-- Communication Tone -->
-            <div class="form-group mb-4">
-              <label for="parentTone" class="block text-sm font-semibold text-gray-700 mb-2">
+            <div class="form-group">
+              <label for="parentTone">
                 <i class="fas fa-comments"></i> Communication Tone
               </label>
-              <select id="parentTone" name="parentTone" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+              <select id="parentTone" name="parentTone">
                 <option value="">Standard (default)</option>
                 <option value="detailed">Detailed & Technical</option>
                 <option value="simple">Simple & Concise</option>
                 <option value="encouraging">Encouraging & Positive</option>
               </select>
-              <p class="text-xs text-gray-500 mt-1">How the AI communicates with you</p>
+              <p class="text-xs text-gray-500 mt-2">How the AI communicates with you</p>
             </div>
 
             <!-- Language Preference -->
-            <div class="form-group mb-4">
-              <label for="parentLanguage" class="block text-sm font-semibold text-gray-700 mb-2">
+            <div class="form-group">
+              <label for="parentLanguage">
                 <i class="fas fa-language"></i> Language
               </label>
-              <input type="text" id="parentLanguage" name="parentLanguage" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="English">
-              <p class="text-xs text-gray-500 mt-1">Preferred language for reports</p>
+              <input type="text" id="parentLanguage" name="parentLanguage" placeholder="English">
+              <p class="text-xs text-gray-500 mt-2">Preferred language for reports</p>
             </div>
 
             <!-- Save Button -->
-            <button type="submit" class="submit-btn btn-primary w-full">
+            <button type="submit" class="btn btn-primary main-action-btn">
               <i class="fas fa-save"></i> Save Settings
             </button>
             <div id="settings-save-message" class="mt-2 text-sm text-center"></div>
           </form>
         </div>
-      </div>
-    </div>
-  </main>
+      </aside>
+    </main>
 
-  <footer>
-    <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
-    <p class="edtech-pledge">Proud member of the EdTech Equity Pledge.</p>
-  </footer>
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="main-footer">
+      © 2025 MATHMATIX AI. All rights reserved. | <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a>
+    </footer>
+  </div>
 
   <script src="/js/logout.js"></script>
   <script src="/js/storage-utils.js"></script>

@@ -3,33 +3,589 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard - M∆THM∆TIΧ AI</title>
-  <link rel="stylesheet" href="/style.css" />
+  <title>Admin Dashboard - MATHMATIX AI</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* ============================================
+       MATHMATIX AI - ADMIN DASHBOARD
+       Fixed 3-Column Layout with Admin Branding
+       ============================================ */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      background: #f8f9fa;
+    }
+
+    /* ============================================
+       PAGE LAYOUT - FIXED STRUCTURE
+       ============================================ */
+
+    .page-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ============================================
+       HEADER - MATHMATIX BRANDED
+       ============================================ */
+
+    .main-header {
+      background: linear-gradient(135deg, #e74c3c 0%, #e67e22 100%);
+      color: white;
+      padding: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .main-header-content {
+      max-width: 100%;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-container {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-glasses {
+      width: 50px;
+      height: 50px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="none" stroke="white" stroke-width="3"><circle cx="25" cy="50" r="18"/><circle cx="75" cy="50" r="18"/><path d="M 43 50 Q 50 45 57 50"/><text x="20" y="55" font-size="14" fill="white" font-family="Georgia">∫</text><text x="68" y="55" font-size="12" fill="white" font-family="Georgia">dy</text></g></svg>');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-name {
+      font-size: 1.5em;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .brand-tagline {
+      font-size: 0.75em;
+      opacity: 0.95;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .mode-indicator {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .main-header-nav {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================
+       3-COLUMN CONTENT LAYOUT
+       ============================================ */
+
+    .main-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 300px 1fr 300px;
+      gap: 0;
+      overflow: hidden;
+      background: #f8f9fa;
+    }
+
+    .left-sidebar,
+    .center-content,
+    .right-sidebar {
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    /* Admin-themed scrollbars */
+    .left-sidebar::-webkit-scrollbar,
+    .center-content::-webkit-scrollbar,
+    .right-sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .left-sidebar::-webkit-scrollbar-track,
+    .center-content::-webkit-scrollbar-track,
+    .right-sidebar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .left-sidebar::-webkit-scrollbar-thumb,
+    .center-content::-webkit-scrollbar-thumb,
+    .right-sidebar::-webkit-scrollbar-thumb {
+      background: #e74c3c;
+      border-radius: 4px;
+    }
+
+    .left-sidebar::-webkit-scrollbar-thumb:hover,
+    .center-content::-webkit-scrollbar-thumb:hover,
+    .right-sidebar::-webkit-scrollbar-thumb:hover {
+      background: #c0392b;
+    }
+
+    /* ============================================
+       PANELS AND CARDS
+       ============================================ */
+
+    .dashboard-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e9ecef;
+    }
+
+    .dashboard-panel-header {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e74c3c;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-online {
+      color: #27ae60;
+      font-weight: 600;
+    }
+
+    .status-offline {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #c0392b, #a93226);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #7f8c8d, #6c7a89);
+      transform: translateY(-2px);
+    }
+
+    .btn-tertiary {
+      background: transparent;
+      border: 2px solid #e74c3c;
+      color: #e74c3c;
+    }
+
+    .btn-tertiary:hover {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .main-action-btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    /* ============================================
+       TABLES
+       ============================================ */
+
+    .table-scroll-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    .user-table thead {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .user-table th,
+    .user-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .user-table th {
+      font-weight: 600;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .user-table tbody tr:hover {
+      background: #fff5f5;
+    }
+
+    /* ============================================
+       FORMS
+       ============================================ */
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 0.95em;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #e74c3c;
+    }
+
+    /* ============================================
+       STATS CARDS
+       ============================================ */
+
+    .stat-card {
+      background: linear-gradient(135deg, #fff5f5 0%, white 100%);
+      border-left: 4px solid #e74c3c;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .stat-label {
+      font-size: 0.85em;
+      color: #7f8c8d;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 1.8em;
+      font-weight: 700;
+      color: #e74c3c;
+    }
+
+    /* ============================================
+       MODALS
+       ============================================ */
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .modal-close-button {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.5em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close-button:hover {
+      background: #c0392b;
+      transform: rotate(90deg);
+    }
+
+    .modal-section {
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .modal-section:last-child {
+      border-bottom: none;
+    }
+
+    .modal-section h3 {
+      color: #e74c3c;
+      font-size: 1.2em;
+      margin-bottom: 15px;
+    }
+
+    .modal-form-group {
+      margin-bottom: 15px;
+    }
+
+    .modal-form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+    }
+
+    .modal-form-group input,
+    .modal-form-group select,
+    .modal-form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 0.95em;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: normal;
+    }
+
+    .info-display-group {
+      margin-bottom: 10px;
+      padding: 8px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+
+    .main-footer {
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      padding: 15px 20px;
+      font-size: 0.85em;
+      flex-shrink: 0;
+    }
+
+    .main-footer a {
+      color: #e74c3c;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .main-footer a:hover {
+      color: #c0392b;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+
+    @media (max-width: 1200px) {
+      .main-content {
+        grid-template-columns: 250px 1fr 250px;
+      }
+    }
+
+    @media (max-width: 968px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .left-sidebar,
+      .right-sidebar {
+        display: none;
+      }
+    }
+  </style>
 </head>
-<body class="landing-page-body">
+<body>
+  <div class="page-layout">
+    <!-- ============================================
+         HEADER - MATHMATIX BRANDED
+         ============================================ -->
+    <header class="main-header">
+      <div class="main-header-content">
+        <div class="brand-section">
+          <div class="logo-container">
+            <div class="logo-glasses"></div>
+          </div>
+          <div class="brand-text">
+            <h1 class="brand-name">MATHMATIX AI</h1>
+            <p class="brand-tagline">Unlock the Pattern. Learn for Life.</p>
+          </div>
+          <div class="mode-indicator">
+            <i class="fas fa-user-shield"></i> Admin Dashboard
+          </div>
+        </div>
+        <nav class="main-header-nav">
+          <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </nav>
+      </div>
+    </header>
 
-  <header class="landing-header">
-    <div class="header-logo-container">
-      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
-    </div>
-    <nav class="landing-nav">
-      <h1>Admin Dashboard</h1>
-      <button id="logoutBtn" class="btn btn-tertiary logout-button">Log Out</button>
-    </nav>
-  </header>
-
-  <main class="admin-page-wrapper">
-    <div class="admin-main-content">
-
-      <div class="admin-widget-sidebar">
-        <div class="dashboard-panel card-style-1">
+    <!-- ============================================
+         3-COLUMN CONTENT
+         ============================================ -->
+    <main class="main-content">
+      <!-- LEFT SIDEBAR - System Status & Leaderboard -->
+      <aside class="left-sidebar">
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">System Status</div>
           <p>Database: <span id="dbStatus" class="status-online">Online</span></p>
           <p>AI Service: <span id="aiStatus" class="status-online">Operational</span></p>
           <p>Last Sync: <span id="lastSyncTime">Just now</span></p>
         </div>
-        <div class="dashboard-panel card-style-1">
+
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">Top Students</div>
           <div class="table-scroll-container">
             <table id="leaderboardTable" class="user-table">
@@ -47,19 +603,24 @@
             </table>
           </div>
         </div>
-      </div>
+      </aside>
 
-      <div class="admin-central-content">
-        <div class="dashboard-panel controls card-style-1">
-          <div class="dashboard-panel-header">Teacher Assignment</div>
+      <!-- CENTER CONTENT - Student Management -->
+      <section class="center-content">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            Teacher Assignment
+          </div>
           <div class="form-group">
             <label for="teacherSelect">Assign selected students to:</label>
             <select id="teacherSelect"></select>
           </div>
-          <button id="assignButton" class="submit-btn btn-primary">Assign</button>
+          <button id="assignButton" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Assign
+          </button>
         </div>
 
-        <div class="dashboard-panel card-style-1">
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">Student List</div>
           <div class="form-group">
             <input type="text" id="studentSearch" placeholder="Search students by name or email..." />
@@ -82,35 +643,44 @@
             </table>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="admin-widget-sidebar">
-        <div class="dashboard-panel card-style-1">
-          <div class="dashboard-panel-header">User Summaries Access</div>
+      <!-- RIGHT SIDEBAR - Quick Actions -->
+      <aside class="right-sidebar">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">User Summaries</div>
           <p>Quickly view detailed student and parent profiles.</p>
-          <button id="openSummariesBtn" class="main-action-btn btn btn-secondary">
+          <button id="openSummariesBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-list-alt"></i> View All Summaries
           </button>
         </div>
-        <div class="dashboard-panel card-style-1">
+
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">Quick Reports</div>
           <p>View comprehensive usage and activity reports.</p>
-          <button id="openUsageReportBtn" class="main-action-btn btn btn-secondary">
+          <button id="openUsageReportBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-chart-bar"></i> Usage Report
           </button>
-          <button id="openLiveActivityBtn" class="main-action-btn btn btn-secondary" style="margin-top: 10px;">
+          <button id="openLiveActivityBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-broadcast-tower"></i> Live Activity
           </button>
         </div>
-      </div>
-    </div>
-  </main>
+      </aside>
+    </main>
 
-  <footer>
-    <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved.</p>
-    <p><a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
-  </footer>
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="main-footer">
+      © 2025 MATHMATIX AI. All rights reserved. | <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a>
+    </footer>
+  </div>
 
+  <!-- ============================================
+       MODALS (Unchanged functionality)
+       ============================================ -->
+
+  <!-- Student Detail Modal -->
   <div id="studentDetailModal" class="modal-overlay">
     <div class="modal-content">
       <button class="modal-close-button" id="closeModalButton">&times;</button>
@@ -166,8 +736,8 @@
       </div>
 
       <div class="modal-actions">
-        <button class="save-button btn-primary" id="saveChangesButton">Save Changes</button>
-        <button class="cancel-button btn-tertiary" id="cancelButton">Cancel</button>
+        <button class="btn btn-primary" id="saveChangesButton"><i class="fas fa-save"></i> Save Changes</button>
+        <button class="btn btn-tertiary" id="cancelButton">Cancel</button>
       </div>
     </div>
   </div>
@@ -178,7 +748,6 @@
       <button class="modal-close-button" id="closeUsageReportBtn">&times;</button>
       <h2><i class="fas fa-chart-bar"></i> Usage Report</h2>
 
-      <!-- Filters -->
       <div class="modal-section">
         <h3>Filters</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
@@ -209,17 +778,16 @@
             </select>
           </div>
           <div class="modal-form-group">
-            <button id="applyReportFilters" class="btn-primary" style="align-self: flex-end;">
+            <button id="applyReportFilters" class="btn btn-primary">
               <i class="fas fa-filter"></i> Apply Filters
             </button>
-            <button id="exportReportCSV" class="btn-secondary" style="align-self: flex-end; margin-left: 10px;">
+            <button id="exportReportCSV" class="btn btn-secondary" style="margin-left: 10px;">
               <i class="fas fa-download"></i> Export CSV
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Summary Stats -->
       <div class="modal-section">
         <h3>Summary Statistics</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
@@ -250,7 +818,6 @@
         </div>
       </div>
 
-      <!-- User Activity Table -->
       <div class="modal-section">
         <h3>User Activity</h3>
         <div class="table-scroll-container" style="max-height: 400px;">
@@ -284,7 +851,7 @@
       <h2><i class="fas fa-broadcast-tower"></i> Live Activity Feed</h2>
       <p style="color: #666; margin-bottom: 20px;">
         <i class="fas fa-clock"></i> Showing sessions active in the last 10 minutes
-        <button id="refreshLiveActivityBtn" class="btn-secondary" style="float: right;">
+        <button id="refreshLiveActivityBtn" class="btn btn-secondary" style="float: right;">
           <i class="fas fa-sync-alt"></i> Refresh
         </button>
       </p>
@@ -304,12 +871,11 @@
       <h2><i class="fas fa-list-alt"></i> User Summaries</h2>
       <p style="color: #666; margin-bottom: 20px;">
         <i class="fas fa-users"></i> Showing all users with recent conversation summaries
-        <button id="refreshSummariesBtn" class="btn-secondary" style="float: right;">
+        <button id="refreshSummariesBtn" class="btn btn-secondary" style="float: right;">
           <i class="fas fa-sync-alt"></i> Refresh
         </button>
       </p>
 
-      <!-- Filters -->
       <div class="modal-section">
         <h3>Filters</h3>
         <div style="display: flex; gap: 15px; flex-wrap: wrap;">
@@ -327,14 +893,13 @@
             <input type="text" id="summariesSearchInput" placeholder="Search by name or email...">
           </div>
           <div class="modal-form-group">
-            <button id="applySummariesFilters" class="btn-primary" style="align-self: flex-end;">
+            <button id="applySummariesFilters" class="btn btn-primary">
               <i class="fas fa-filter"></i> Apply Filters
             </button>
           </div>
         </div>
       </div>
 
-      <!-- User Summaries List -->
       <div class="modal-section">
         <h3>User Summaries (<span id="summariesCount">0</span>)</h3>
         <div id="summariesContainer">
