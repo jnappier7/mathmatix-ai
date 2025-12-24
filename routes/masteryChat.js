@@ -10,7 +10,7 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM, callLLMStream } = require("../utils/llmGateway");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
-const PRIMARY_CHAT_MODEL = "gpt-4o-mini";
+const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reasoning (with GPT fallback)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 

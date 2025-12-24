@@ -11,7 +11,7 @@ const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
-const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini";
+const PRIMARY_UPLOAD_AI_MODEL = "claude-3-5-sonnet-20241022"; // Best for analyzing student work
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
