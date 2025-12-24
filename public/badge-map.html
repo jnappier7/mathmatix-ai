@@ -3,24 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Badge Map - Mastery Mode</title>
+  <title>Badge Map - Mastery Mode | MathMatrix AI</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dailyQuests.css">
   <link rel="stylesheet" href="/css/weeklyChallenges.css">
   <style>
-    /* FIXED 3-COLUMN LAYOUT - NO PAGE SCROLL */
+    /* FIXED 3-COLUMN LAYOUT - MASTERY MODE THEME */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      overflow: hidden; /* Prevent page scroll */
+      overflow: hidden;
       height: 100vh;
       display: flex;
       flex-direction: column;
+      background: #f8f9fa;
     }
 
-    /* Page layout: Header | Content | Footer */
     .page-layout {
       display: flex;
       flex-direction: column;
@@ -28,12 +32,12 @@
       overflow: hidden;
     }
 
-    /* Header navbar */
+    /* HEADER - MATHMATIX BRANDED */
     .main-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 12px 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      background: white;
+      border-bottom: 3px solid #764ba2;
+      padding: 15px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
       flex-shrink: 0;
       z-index: 100;
     }
@@ -46,46 +50,106 @@
       justify-content: space-between;
     }
 
-    .main-header h1 {
-      margin: 0;
-      font-size: 22px;
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-glasses {
+      width: 50px;
+      height: 50px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="10" y="35" width="35" height="30" rx="5" fill="none" stroke="%23000" stroke-width="3"/><rect x="55" y="35" width="35" height="30" rx="5" fill="none" stroke="%23000" stroke-width="3"/><line x1="45" y1="50" x2="55" y2="50" stroke="%23000" stroke-width="3"/><text x="22" y="55" font-family="Arial" font-size="20" fill="%23000">∫</text><text x="67" y="55" font-family="Arial" font-size="20" fill="%23000">dy</text></svg>') no-repeat center;
+      background-size: contain;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-size: 24px;
       font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #000;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      color: #666;
+      margin: 2px 0 0 0;
+      font-weight: 400;
+    }
+
+    .mode-indicator {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .main-header-nav {
       display: flex;
-      gap: 15px;
+      gap: 10px;
       align-items: center;
     }
 
-    .main-header-nav a, .main-header-nav button {
-      color: white;
+    .nav-btn {
+      color: #555;
       text-decoration: none;
-      padding: 8px 16px;
+      padding: 10px 18px;
       border-radius: 8px;
-      background: rgba(255,255,255,0.15);
+      background: #f0f0f0;
       border: none;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
-      transition: background 0.2s;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .main-header-nav a:hover, .main-header-nav button:hover {
-      background: rgba(255,255,255,0.25);
+    .nav-btn:hover {
+      background: #e0e0e0;
+      color: #000;
+    }
+
+    .nav-btn.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .nav-btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     /* 3-COLUMN GRID LAYOUT */
     .main-content {
       flex: 1;
       display: grid;
-      grid-template-columns: 300px 1fr 320px;
+      grid-template-columns: 280px 1fr 300px;
       gap: 0;
       overflow: hidden;
-      background: #f5f7fa;
+      background: #f8f9fa;
     }
 
-    /* Left sidebar: Engagement */
+    /* Left sidebar */
     .left-sidebar {
       background: white;
       border-right: 1px solid #e0e0e0;
@@ -93,14 +157,15 @@
       overflow-x: hidden;
     }
 
-    /* Center column: Badge map */
+    /* Center column */
     .center-content {
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 20px;
+      padding: 25px;
+      background: #f8f9fa;
     }
 
-    /* Right sidebar: Stats/Progress */
+    /* Right sidebar */
     .right-sidebar {
       background: white;
       border-left: 1px solid #e0e0e0;
@@ -108,20 +173,31 @@
       overflow-x: hidden;
     }
 
-    /* Footer */
+    /* FOOTER - CONSISTENT WITH CHAT */
     .main-footer {
-      background: #2d3748;
+      background: #1a1a1a;
       color: white;
-      padding: 12px 20px;
+      padding: 12px 30px;
       text-align: center;
-      font-size: 13px;
+      font-size: 12px;
       flex-shrink: 0;
+      border-top: 3px solid #764ba2;
+    }
+
+    .main-footer a {
+      color: #667eea;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    .main-footer a:hover {
+      text-decoration: underline;
     }
 
     /* Sidebar sections */
     .sidebar-section {
       padding: 20px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid #f0f0f0;
     }
 
     .sidebar-section:last-child {
@@ -130,148 +206,179 @@
 
     .sidebar-section h3 {
       margin: 0 0 15px 0;
-      font-size: 16px;
+      font-size: 14px;
       color: #333;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    /* Ability indicator (compact for sidebar) */
+    /* Ability indicator - MASTERY PURPLE THEME */
     .ability-compact {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 15px;
+      padding: 18px;
       border-radius: 12px;
       margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
     }
 
     .ability-compact-label {
-      font-size: 12px;
+      font-size: 11px;
       opacity: 0.9;
       margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
     }
 
     .ability-compact-bar {
-      height: 8px;
+      height: 10px;
       background: rgba(255,255,255,0.3);
-      border-radius: 4px;
+      border-radius: 5px;
       overflow: hidden;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .ability-compact-fill {
       height: 100%;
       background: white;
-      border-radius: 4px;
+      border-radius: 5px;
       transition: width 0.5s ease;
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
 
     .ability-compact-value {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 700;
     }
 
-    /* Quest/Challenge cards */
-    .widget-card-compact {
+    /* Quest/Challenge cards - COMPACT */
+    .quest-item {
+      font-size: 12px;
+      padding: 10px;
       background: #f8f9fa;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      border-left: 3px solid #764ba2;
+      transition: all 0.2s;
     }
 
-    .widget-card-compact h4 {
-      margin: 0 0 10px 0;
-      font-size: 14px;
-      color: #667eea;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .quest-item:hover {
+      background: #fff;
+      border-left-color: #667eea;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    .widget-card-compact .quest-item {
-      font-size: 13px;
-      padding: 8px;
-      background: white;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      border-left: 3px solid #667eea;
-    }
-
-    .widget-card-compact .quest-item:last-child {
+    .quest-item:last-child {
       margin-bottom: 0;
+    }
+
+    .progress-link {
+      display: block;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      margin-top: 12px;
+      text-decoration: none;
+      color: #667eea;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .progress-link:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
     }
 
     /* Badge map header */
     .badge-map-header {
       text-align: center;
-      margin-bottom: 25px;
-      padding: 20px;
+      margin-bottom: 30px;
+      padding: 30px;
       background: white;
       border-radius: 15px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      border: 2px solid #f0f0f0;
     }
 
     .badge-map-header h2 {
-      margin: 0 0 8px 0;
-      font-size: 28px;
+      margin: 0 0 10px 0;
+      font-size: 32px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      font-weight: 800;
     }
 
     .badge-map-header p {
       margin: 0;
       color: #666;
-      font-size: 15px;
+      font-size: 16px;
     }
 
-    /* Domain sections */
+    /* Domain sections - MASTERY PURPLE ACCENTS */
     .domain {
       background: white;
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      border: 2px solid #f0f0f0;
+      transition: all 0.3s;
+    }
+
+    .domain:hover {
+      border-color: #764ba2;
+      box-shadow: 0 4px 20px rgba(118, 75, 162, 0.1);
     }
 
     .domain-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 15px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #f0f0f0;
+      gap: 15px;
+      margin-bottom: 18px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f5f5f5;
     }
 
     .domain-icon {
-      font-size: 24px;
-      width: 45px;
-      height: 45px;
+      font-size: 28px;
+      width: 50px;
+      height: 50px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 10px;
-      background: #f8f9fa;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
     }
 
     .domain-title h3 {
       margin: 0;
-      font-size: 18px;
+      font-size: 20px;
       color: #333;
+      font-weight: 700;
     }
 
     .domain-title p {
-      margin: 3px 0 0 0;
-      font-size: 12px;
+      margin: 5px 0 0 0;
+      font-size: 13px;
       color: #666;
     }
 
     .badge-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
     }
 
     .badge-card {
@@ -281,11 +388,12 @@
       cursor: pointer;
       transition: all 0.2s ease;
       border: 2px solid transparent;
+      position: relative;
     }
 
     .badge-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
       border-color: #667eea;
       background: white;
     }
@@ -303,12 +411,12 @@
 
     .badge-card.in-progress {
       border-color: #FFC107;
-      background: #fff9e6;
+      background: #fffbf0;
     }
 
     .badge-card.completed {
       border-color: #4CAF50;
-      background: #e8f5e9;
+      background: #f1f8f4;
     }
 
     .badge-header {
@@ -319,24 +427,21 @@
     }
 
     .badge-name {
-      font-weight: 600;
+      font-weight: 700;
       font-size: 14px;
       color: #333;
       margin: 0;
     }
 
     .badge-tier {
-      font-size: 18px;
+      font-size: 20px;
     }
-
-    .badge-tier.bronze { color: #CD7F32; }
-    .badge-tier.silver { color: #C0C0C0; }
-    .badge-tier.gold { color: #FFD700; }
 
     .badge-description {
       font-size: 12px;
       color: #666;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
     .badge-progress {
@@ -344,7 +449,7 @@
       background: #e0e0e0;
       border-radius: 3px;
       overflow: hidden;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .badge-progress-fill {
@@ -357,27 +462,32 @@
     .badge-stats {
       font-size: 11px;
       color: #999;
+      font-weight: 500;
     }
 
-    /* Right sidebar stats */
+    /* Right sidebar stats - MASTERY PURPLE THEME */
     .stat-card {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 15px;
+      padding: 18px;
       border-radius: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
       text-align: center;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
     }
 
     .stat-card h4 {
       margin: 0 0 8px 0;
-      font-size: 13px;
+      font-size: 12px;
       opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
     }
 
     .stat-card .stat-value {
-      font-size: 32px;
-      font-weight: 700;
+      font-size: 36px;
+      font-weight: 800;
       margin: 0;
     }
 
@@ -387,28 +497,40 @@
       margin-top: 4px;
     }
 
-    .progress-link {
+    .stat-card.streak {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    }
+
+    .stat-card.xp {
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+    }
+
+    .progress-tool-link {
       display: block;
       padding: 12px;
       background: #f8f9fa;
       border-radius: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       text-decoration: none;
       color: #333;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       transition: all 0.2s;
-      text-align: center;
+      text-align: left;
+      border: 2px solid transparent;
     }
 
-    .progress-link:hover {
-      background: #667eea;
+    .progress-tool-link:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      transform: translateX(3px);
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
     }
 
-    .progress-link i {
-      margin-right: 6px;
+    .progress-tool-link i {
+      margin-right: 8px;
+      width: 20px;
+      text-align: center;
     }
 
     /* Scrollbar styling */
@@ -427,27 +549,45 @@
     .left-sidebar::-webkit-scrollbar-thumb,
     .center-content::-webkit-scrollbar-thumb,
     .right-sidebar::-webkit-scrollbar-thumb {
-      background: #888;
+      background: #764ba2;
       border-radius: 4px;
     }
 
     .left-sidebar::-webkit-scrollbar-thumb:hover,
     .center-content::-webkit-scrollbar-thumb:hover,
     .right-sidebar::-webkit-scrollbar-thumb:hover {
-      background: #555;
+      background: #667eea;
     }
   </style>
 </head>
 <body>
   <div class="page-layout">
-    <!-- HEADER NAVBAR -->
+    <!-- HEADER - MATHMATIX BRANDED -->
     <header class="main-header">
       <div class="main-header-content">
-        <h1>🏆 MathMatrix - Badge Map</h1>
+        <div class="brand-section">
+          <div class="logo-container">
+            <div class="logo-glasses"></div>
+          </div>
+          <div class="brand-text">
+            <h1 class="brand-name">MATHMATIX AI</h1>
+            <p class="brand-tagline">Unlock the Pattern. Learn for Life.</p>
+          </div>
+          <div class="mode-indicator">
+            <i class="fas fa-trophy"></i> Mastery Mode
+          </div>
+        </div>
+
         <nav class="main-header-nav">
-          <a href="/chat.html"><i class="fas fa-comments"></i> Chat</a>
-          <a href="/screener.html"><i class="fas fa-crosshairs"></i> Screener</a>
-          <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          <a href="/chat.html" class="nav-btn">
+            <i class="fas fa-comments"></i> Chat
+          </a>
+          <a href="/screener.html" class="nav-btn">
+            <i class="fas fa-crosshairs"></i> Screener
+          </a>
+          <button onclick="logout()" class="nav-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
         </nav>
       </div>
     </header>
@@ -469,27 +609,27 @@
         <div class="sidebar-section">
           <h3><span>🎯</span> Today's Quests</h3>
           <div id="mini-quests-container">
-            <div style="text-align: center; padding: 20px; color: #999; font-size: 13px;">
+            <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
               Loading quests...
             </div>
           </div>
-          <a href="/daily-quests-widget.html" class="progress-link" style="margin-top: 12px;">
-            View All Quests →
+          <a href="/daily-quests-widget.html" class="progress-link">
+            View All Quests <i class="fas fa-arrow-right"></i>
           </a>
         </div>
 
         <div class="sidebar-section">
           <h3><span>⚡</span> Weekly Challenges</h3>
           <div id="mini-challenges-container">
-            <div style="text-align: center; padding: 20px; color: #999; font-size: 13px;">
+            <div style="text-align: center; padding: 20px; color: #999; font-size: 12px;">
               Loading challenges...
             </div>
           </div>
           <div id="challenge-timer" style="margin-top: 10px; text-align: center; font-size: 12px; color: #666;">
             <i class="fas fa-clock"></i> <span id="time-remaining">Loading...</span>
           </div>
-          <a href="/weekly-challenges.html" class="progress-link" style="margin-top: 12px;">
-            View All Challenges →
+          <a href="/weekly-challenges.html" class="progress-link">
+            View All Challenges <i class="fas fa-arrow-right"></i>
           </a>
         </div>
       </aside>
@@ -497,14 +637,15 @@
       <!-- CENTER: Badge Map -->
       <section class="center-content">
         <div class="badge-map-header">
-          <h2>Choose Your Next Mastery Challenge</h2>
-          <p>Select a skill badge to start practicing</p>
+          <h2>🏆 Badge Map</h2>
+          <p>Choose your next mastery challenge</p>
         </div>
 
         <div id="skill-domains-container">
           <!-- Skill domains will be loaded here dynamically -->
-          <div style="text-align: center; padding: 40px; color: #999;">
-            Loading badges...
+          <div style="text-align: center; padding: 60px; color: #999;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
+            <p>Loading your badge map...</p>
           </div>
         </div>
       </section>
@@ -520,13 +661,13 @@
             <p class="stat-sublabel">Total completed</p>
           </div>
 
-          <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);">
+          <div class="stat-card streak">
             <h4>Current Streak</h4>
             <p class="stat-value">🔥 <span id="streak-count-stat">0</span></p>
             <p class="stat-sublabel">Days in a row</p>
           </div>
 
-          <div class="stat-card" style="background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);">
+          <div class="stat-card xp">
             <h4>Total XP</h4>
             <p class="stat-value" id="total-xp">0</p>
             <p class="stat-sublabel">Experience points</p>
@@ -536,28 +677,30 @@
         <div class="sidebar-section">
           <h3><span>📈</span> Progress Tools</h3>
 
-          <a href="/my-speed-progress.html" class="progress-link">
+          <a href="/my-speed-progress.html" class="progress-tool-link">
             <i class="fas fa-tachometer-alt"></i> Speed Progress
           </a>
 
-          <a href="/my-celeration-charts.html" class="progress-link">
+          <a href="/my-celeration-charts.html" class="progress-tool-link">
             <i class="fas fa-chart-line"></i> Celeration Charts
           </a>
 
-          <a href="/learning-curves.html" class="progress-link">
+          <a href="/learning-curves.html" class="progress-tool-link">
             <i class="fas fa-chart-area"></i> Learning Curves
           </a>
 
-          <a href="/fact-fluency-practice.html" class="progress-link">
+          <a href="/fact-fluency-practice.html" class="progress-tool-link">
             <i class="fas fa-bolt"></i> Fact Fluency
           </a>
         </div>
       </aside>
     </main>
 
-    <!-- FOOTER -->
+    <!-- FOOTER - CONSISTENT WITH CHAT -->
     <footer class="main-footer">
-      &copy; 2025 MathMatrix AI - Powered by Claude Sonnet 3.5
+      © 2025 MATHMATIX AI. All rights reserved.
+      <a href="/privacy-policy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
     </footer>
   </div>
 
@@ -593,9 +736,10 @@
       } catch (error) {
         console.error('Error loading badge map:', error);
         document.getElementById('skill-domains-container').innerHTML = `
-          <div style="text-align: center; padding: 40px; color: #e74c3c;">
-            <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>
-            <p>Failed to load badges. Please try refreshing the page.</p>
+          <div style="text-align: center; padding: 60px; color: #e74c3c;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+            <p style="font-size: 16px; font-weight: 600;">Failed to load badge map</p>
+            <p style="font-size: 14px; color: #999;">Please try refreshing the page.</p>
           </div>
         `;
       }
@@ -618,7 +762,16 @@
       const container = document.getElementById('skill-domains-container');
 
       if (!domains || domains.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #999;">No badges available yet. Complete the screener to unlock skills!</p>';
+        container.innerHTML = `
+          <div style="text-align: center; padding: 60px;">
+            <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
+            <p style="color: #666; font-size: 16px; font-weight: 600;">No badges available yet</p>
+            <p style="color: #999; font-size: 14px;">Complete the screener to unlock your skill badges!</p>
+            <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+              Take Screener <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        `;
         return;
       }
 
@@ -643,7 +796,7 @@
                   <div class="badge-progress">
                     <div class="badge-progress-fill" style="width: ${badge.progress || 0}%"></div>
                   </div>
-                  <div class="badge-stats">${badge.problemsCorrect || 0}/${badge.requiredProblems || 10} problems</div>
+                  <div class="badge-stats">${badge.problemsCorrect || 0}/${badge.requiredProblems || 10} problems · ${Math.round(badge.progress || 0)}%</div>
                 ` : '<div class="badge-stats">🔒 Complete prerequisites first</div>'}
               </div>
             `).join('')}
@@ -696,21 +849,21 @@
         if (!container) return;
 
         if (!data.quests || data.quests.length === 0) {
-          container.innerHTML = '<div style="text-align: center; color: #999; font-size: 13px;">No quests today</div>';
+          container.innerHTML = '<div style="text-align: center; color: #999; font-size: 12px; padding: 10px;">No quests today</div>';
           return;
         }
 
         container.innerHTML = data.quests.slice(0, 3).map(quest => `
           <div class="quest-item">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <strong style="font-size: 12px;">${quest.name}</strong>
-              <span style="font-size: 11px; color: #FFC107;">${quest.xpReward} XP</span>
+              <span style="font-size: 11px; color: #FFC107; font-weight: 700;">${quest.xpReward} XP</span>
             </div>
-            <div style="font-size: 11px; color: #666; margin-bottom: 6px;">${quest.description}</div>
+            <div style="font-size: 11px; color: #666; margin-bottom: 8px;">${quest.description}</div>
             <div style="height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden;">
-              <div style="height: 100%; background: #4CAF50; width: ${quest.progress}%; transition: width 0.3s;"></div>
+              <div style="height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); width: ${quest.progress}%; transition: width 0.3s;"></div>
             </div>
-            <div style="font-size: 10px; color: #999; margin-top: 2px;">${quest.current}/${quest.target}</div>
+            <div style="font-size: 10px; color: #999; margin-top: 4px; font-weight: 600;">${quest.current}/${quest.target}</div>
           </div>
         `).join('');
 
@@ -734,21 +887,21 @@
         if (!container) return;
 
         if (!data.challenges || data.challenges.length === 0) {
-          container.innerHTML = '<div style="text-align: center; color: #999; font-size: 13px;">No challenges this week</div>';
+          container.innerHTML = '<div style="text-align: center; color: #999; font-size: 12px; padding: 10px;">No challenges this week</div>';
           return;
         }
 
         container.innerHTML = data.challenges.slice(0, 2).map(challenge => `
-          <div class="quest-item" style="border-left-color: #764ba2;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <div class="quest-item">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <strong style="font-size: 12px;">${challenge.name}</strong>
-              <span style="font-size: 11px; color: #764ba2;">${challenge.xpReward} XP</span>
+              <span style="font-size: 11px; color: #FFA500; font-weight: 700;">${challenge.xpReward} XP</span>
             </div>
-            <div style="font-size: 11px; color: #666; margin-bottom: 6px;">${challenge.description}</div>
+            <div style="font-size: 11px; color: #666; margin-bottom: 8px;">${challenge.description}</div>
             <div style="height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden;">
-              <div style="height: 100%; background: #764ba2; width: ${challenge.progress}%; transition: width 0.3s;"></div>
+              <div style="height: 100%; background: linear-gradient(90deg, #FFD93D 0%, #FFA500 100%); width: ${challenge.progress}%; transition: width 0.3s;"></div>
             </div>
-            <div style="font-size: 10px; color: #999; margin-top: 2px;">${challenge.current}/${challenge.target}</div>
+            <div style="font-size: 10px; color: #999; margin-top: 4px; font-weight: 600;">${challenge.current}/${challenge.target}</div>
           </div>
         `).join('');
 
