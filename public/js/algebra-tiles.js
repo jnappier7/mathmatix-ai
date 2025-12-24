@@ -14,6 +14,9 @@ class AlgebraTiles {
     this.tileIdCounter = 0;
     this.draggedTile = null;
     this.gridSize = 20; // Snap-to-grid size in pixels
+    this.selectedTiles = new Set(); // BUGFIX: Initialize selectedTiles for multiselect
+    this.selectionBox = null; // For drag-to-select rectangle
+    this.isDraggingSelection = false;
 
     this.init();
   }
@@ -451,21 +454,104 @@ class AlgebraTiles {
           element.classList.add('dragging');
         }
       });
+    } else if (e.target === this.workspace || e.target.id === 'workspaceGrid') {
+      // Clicked on empty workspace - start selection rectangle
+      const rect = this.workspace.getBoundingClientRect();
+      this.selectionBox = {
+        startX: e.clientX - rect.left,
+        startY: e.clientY - rect.top,
+        currentX: e.clientX - rect.left,
+        currentY: e.clientY - rect.top,
+        element: null
+      };
+
+      // Create visual selection box
+      const selectionRect = document.createElement('div');
+      selectionRect.className = 'selection-rectangle';
+      selectionRect.style.position = 'absolute';
+      selectionRect.style.border = '2px dashed #667eea';
+      selectionRect.style.background = 'rgba(102, 126, 234, 0.1)';
+      selectionRect.style.pointerEvents = 'none';
+      selectionRect.style.zIndex = '1000';
+      this.workspace.appendChild(selectionRect);
+      this.selectionBox.element = selectionRect;
+      this.isDraggingSelection = true;
+
+      // Clear previous selection if no modifier key
+      if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        this.selectedTiles.clear();
+        document.querySelectorAll('.workspace-tile.selected').forEach(el => {
+          el.classList.remove('selected');
+        });
+      }
     }
   }
 
   onMouseMove(e) {
-    if (this.draggedTile) {
-      const deltaX = e.clientX - this.draggedTile.offsetX - this.draggedTile.initialPositions.get(this.draggedTile.ids[0]).x;
-      const deltaY = e.clientY - this.draggedTile.offsetY - this.draggedTile.initialPositions.get(this.draggedTile.ids[0]).y;
+    // Use requestAnimationFrame for smooth dragging
+    if (!this.rafScheduled) {
+      this.rafScheduled = true;
+      requestAnimationFrame(() => {
+        this.rafScheduled = false;
+        this.handleMouseMove(e);
+      });
+    }
+    this.lastMouseEvent = e;
+  }
 
-      // Move all dragged tiles together
+  handleMouseMove(e) {
+    const event = this.lastMouseEvent || e;
+
+    if (this.draggedTile) {
+      const deltaX = event.clientX - this.draggedTile.offsetX - this.draggedTile.initialPositions.get(this.draggedTile.ids[0]).x;
+      const deltaY = event.clientY - this.draggedTile.offsetY - this.draggedTile.initialPositions.get(this.draggedTile.ids[0]).y;
+
+      // Move all dragged tiles together (optimized)
       this.draggedTile.ids.forEach(id => {
         const element = document.querySelector(`[data-tile-id="${id}"]`);
         const initialPos = this.draggedTile.initialPositions.get(id);
         if (element && initialPos) {
-          element.style.left = `${initialPos.x + deltaX}px`;
-          element.style.top = `${initialPos.y + deltaY}px`;
+          element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        }
+      });
+    } else if (this.isDraggingSelection && this.selectionBox) {
+      // Update selection rectangle
+      const rect = this.workspace.getBoundingClientRect();
+      this.selectionBox.currentX = event.clientX - rect.left;
+      this.selectionBox.currentY = event.clientY - rect.top;
+
+      const left = Math.min(this.selectionBox.startX, this.selectionBox.currentX);
+      const top = Math.min(this.selectionBox.startY, this.selectionBox.currentY);
+      const width = Math.abs(this.selectionBox.currentX - this.selectionBox.startX);
+      const height = Math.abs(this.selectionBox.currentY - this.selectionBox.startY);
+
+      if (this.selectionBox.element) {
+        this.selectionBox.element.style.left = `${left}px`;
+        this.selectionBox.element.style.top = `${top}px`;
+        this.selectionBox.element.style.width = `${width}px`;
+        this.selectionBox.element.style.height = `${height}px`;
+      }
+
+      // Highlight tiles within selection
+      this.tiles.forEach(tile => {
+        const element = document.querySelector(`[data-tile-id="${tile.id}"]`);
+        if (!element) return;
+
+        const tileRect = element.getBoundingClientRect();
+        const workspaceRect = this.workspace.getBoundingClientRect();
+        const tileLeft = tileRect.left - workspaceRect.left;
+        const tileTop = tileRect.top - workspaceRect.top;
+        const tileRight = tileLeft + tileRect.width;
+        const tileBottom = tileTop + tileRect.height;
+
+        // Check if tile intersects with selection box
+        const intersects = !(tileRight < left || tileLeft > left + width ||
+                            tileBottom < top || tileTop > top + height);
+
+        if (intersects) {
+          element.classList.add('selecting');
+        } else {
+          element.classList.remove('selecting');
         }
       });
     }
@@ -473,19 +559,32 @@ class AlgebraTiles {
 
   onMouseUp(e) {
     if (this.draggedTile) {
-      // Update positions for all dragged tiles
+      // Update positions for all dragged tiles (convert transform to position)
       this.draggedTile.ids.forEach(id => {
         const element = document.querySelector(`[data-tile-id="${id}"]`);
         const tile = this.tiles.find(t => t.id === id);
+        const initialPos = this.draggedTile.initialPositions.get(id);
 
-        if (element && tile) {
-          const x = parseInt(element.style.left);
-          const y = parseInt(element.style.top);
+        if (element && tile && initialPos) {
+          // Extract translate values from transform
+          const transform = element.style.transform;
+          const match = transform.match(/translate\(([^,]+)px,\s*([^)]+)px\)/);
 
-          tile.x = this.snapToGrid(x);
-          tile.y = this.snapToGrid(y);
+          if (match) {
+            const deltaX = parseFloat(match[1]);
+            const deltaY = parseFloat(match[2]);
+
+            tile.x = this.snapToGrid(initialPos.x + deltaX);
+            tile.y = this.snapToGrid(initialPos.y + deltaY);
+          } else {
+            // Fallback to current position
+            tile.x = this.snapToGrid(parseInt(element.style.left) || tile.x);
+            tile.y = this.snapToGrid(parseInt(element.style.top) || tile.y);
+          }
+
           element.style.left = `${tile.x}px`;
           element.style.top = `${tile.y}px`;
+          element.style.transform = ''; // Clear transform
           element.classList.remove('dragging');
         }
       });
@@ -499,6 +598,22 @@ class AlgebraTiles {
       this.draggedTile = null;
       this.checkForCancellation();
       this.checkForZeroPairs(); // Magic zero-pair animation!
+    } else if (this.isDraggingSelection && this.selectionBox) {
+      // Finalize selection rectangle
+      document.querySelectorAll('.workspace-tile.selecting').forEach(el => {
+        const tileId = parseInt(el.dataset.tileId);
+        this.selectedTiles.add(tileId);
+        el.classList.remove('selecting');
+        el.classList.add('selected');
+      });
+
+      // Remove selection rectangle
+      if (this.selectionBox.element) {
+        this.selectionBox.element.remove();
+      }
+
+      this.selectionBox = null;
+      this.isDraggingSelection = false;
     }
   }
 
@@ -702,7 +817,6 @@ class AlgebraTiles {
   // ============================================
 
   buildAlgebraTiles(input) {
-    const parsed = this.parseAlgebraExpression(input);
     this.clearWorkspace();
 
     // Auto-select mat based on input
@@ -711,13 +825,25 @@ class AlgebraTiles {
       // Has equals sign → Equation mat
       matSelector.value = 'equation';
       this.setMat('equation');
+
+      // Parse and layout left and right sides separately
+      const [leftSide, rightSide] = input.split('=').map(s => s.trim());
+      const leftTiles = this.parseAlgebraExpression(leftSide);
+      const rightTiles = this.parseAlgebraExpression(rightSide);
+
+      this.layoutTilesInZone(leftTiles, 'left');
+      this.layoutTilesInZone(rightTiles, 'right');
     } else if (input.includes('*') || input.includes('(')) {
       // Has multiplication → Multiplication mat
       matSelector.value = 'multiplication';
       this.setMat('multiplication');
+      const parsed = this.parseAlgebraExpression(input);
+      this.layoutTiles(parsed);
+    } else {
+      // Simple expression
+      const parsed = this.parseAlgebraExpression(input);
+      this.layoutTiles(parsed);
     }
-
-    this.layoutTiles(parsed);
   }
 
   parseAlgebraExpression(equation) {
@@ -926,6 +1052,48 @@ class AlgebraTiles {
       count++;
 
       if (count % maxPerRow === 0) {
+        currentX = startX;
+        currentY += spacing;
+      }
+    }
+  }
+
+  // NEW: Layout tiles in specific zones (left/right for equation mat)
+  layoutTilesInZone(tileTypes, zone) {
+    // Get workspace dimensions to calculate zone boundaries
+    const workspaceWidth = this.workspace.offsetWidth || 800;
+    const workspaceHeight = this.workspace.offsetHeight || 600;
+
+    // Define zone parameters
+    let startX, endX;
+    if (zone === 'left') {
+      startX = workspaceWidth * 0.08; // 8% from left (inside left box)
+      endX = workspaceWidth * 0.42;   // 42% from left (before equals sign at 50%)
+    } else if (zone === 'right') {
+      startX = workspaceWidth * 0.58; // 58% from left (after equals sign)
+      endX = workspaceWidth * 0.92;   // 92% from left (inside right box)
+    } else {
+      // Default to center
+      startX = 50;
+      endX = workspaceWidth - 50;
+    }
+
+    const startY = 80;  // Below the zone labels
+    const spacing = 70;  // Space between tiles
+    const maxWidth = endX - startX;
+    const tilesPerRow = Math.floor(maxWidth / spacing);
+
+    let currentX = startX;
+    let currentY = startY;
+    let count = 0;
+
+    for (const type of tileTypes) {
+      this.addTile(type, currentX, currentY);
+
+      currentX += spacing;
+      count++;
+
+      if (count % tilesPerRow === 0) {
         currentX = startX;
         currentY += spacing;
       }

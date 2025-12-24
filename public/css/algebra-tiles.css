@@ -1165,3 +1165,42 @@
   z-index: 100;
   opacity: 0.9;
 }
+
+/* ===== DRAG-TO-SELECT STATES ===== */
+.workspace-tile.selecting {
+  outline: 2px dashed #667eea;
+  outline-offset: 2px;
+  background: rgba(102, 126, 234, 0.1);
+  z-index: 45;
+  transition: background 0.1s ease, outline 0.1s ease;
+}
+
+.selection-rectangle {
+  position: absolute;
+  border: 2px dashed #667eea;
+  background: rgba(102, 126, 234, 0.15);
+  pointer-events: none;
+  z-index: 1000;
+  animation: selectionPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes selectionPulse {
+  0%, 100% {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+  }
+  50% {
+    border-color: #764ba2;
+    background: rgba(118, 75, 162, 0.15);
+  }
+}
+
+/* Smooth transforms for dragging */
+.workspace-tile {
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease;
+  will-change: transform;
+}
+
+.workspace-tile.dragging {
+  transition: none !important; /* Disable transitions during drag for smoothness */
+}
