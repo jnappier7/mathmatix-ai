@@ -9,755 +9,792 @@
   <link rel="stylesheet" href="/css/dailyQuests.css">
   <link rel="stylesheet" href="/css/weeklyChallenges.css">
   <style>
+    /* FIXED 3-COLUMN LAYOUT - NO PAGE SCROLL */
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      overflow: hidden; /* Prevent page scroll */
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .badge-map-container {
-      max-width: 1400px;
+    /* Page layout: Header | Content | Footer */
+    .page-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Header navbar */
+    .main-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .main-header-content {
+      max-width: 1600px;
       margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .main-header h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .main-header-nav {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .main-header-nav a, .main-header-nav button {
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .main-header-nav a:hover, .main-header-nav button:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* 3-COLUMN GRID LAYOUT */
+    .main-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 300px 1fr 320px;
+      gap: 0;
+      overflow: hidden;
+      background: #f5f7fa;
+    }
+
+    /* Left sidebar: Engagement */
+    .left-sidebar {
       background: white;
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
-    .header {
+    /* Center column: Badge map */
+    .center-content {
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    /* Right sidebar: Stats/Progress */
+    .right-sidebar {
+      background: white;
+      border-left: 1px solid #e0e0e0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Footer */
+    .main-footer {
+      background: #2d3748;
+      color: white;
+      padding: 12px 20px;
       text-align: center;
-      margin-bottom: 40px;
-      padding-bottom: 30px;
-      border-bottom: 2px solid #e0e0e0;
+      font-size: 13px;
+      flex-shrink: 0;
     }
 
-    .header h1 {
-      font-size: 42px;
+    /* Sidebar sections */
+    .sidebar-section {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .sidebar-section:last-child {
+      border-bottom: none;
+    }
+
+    .sidebar-section h3 {
+      margin: 0 0 15px 0;
+      font-size: 16px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Ability indicator (compact for sidebar) */
+    .ability-compact {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .ability-compact-label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .ability-compact-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .ability-compact-fill {
+      height: 100%;
+      background: white;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .ability-compact-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* Quest/Challenge cards */
+    .widget-card-compact {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .widget-card-compact h4 {
       margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #667eea;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .widget-card-compact .quest-item {
+      font-size: 13px;
+      padding: 8px;
+      background: white;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      border-left: 3px solid #667eea;
+    }
+
+    .widget-card-compact .quest-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Badge map header */
+    .badge-map-header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .badge-map-header h2 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .header p {
-      font-size: 18px;
+    .badge-map-header p {
+      margin: 0;
       color: #666;
-      margin: 5px 0;
+      font-size: 15px;
     }
 
-    .ability-indicator {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 20px 0;
-      gap: 15px;
-    }
-
-    .ability-bar {
-      flex: 1;
-      max-width: 600px;
-      height: 40px;
-      background: #f0f0f0;
-      border-radius: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .ability-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 50%, #FFC107 75%, #FF5722 100%);
-      border-radius: 20px;
-      transition: width 0.5s ease;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 15px;
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .ability-label {
-      font-size: 16px;
-      color: #666;
-      font-weight: 500;
-    }
-
-    .skill-domains {
-      display: grid;
-      gap: 30px;
-    }
-
+    /* Domain sections */
     .domain {
-      background: #f8f9fa;
-      border-radius: 15px;
-      padding: 25px;
-      transition: all 0.3s ease;
-    }
-
-    .domain:hover {
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     .domain-header {
       display: flex;
       align-items: center;
-      gap: 15px;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #e0e0e0;
+      gap: 12px;
+      margin-bottom: 15px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f0f0;
     }
 
     .domain-icon {
-      font-size: 32px;
-      width: 60px;
-      height: 60px;
+      font-size: 24px;
+      width: 45px;
+      height: 45px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 15px;
-      background: white;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      background: #f8f9fa;
     }
 
-    .domain-title {
-      flex: 1;
-    }
-
-    .domain-title h2 {
-      margin: 0 0 5px 0;
-      font-size: 24px;
+    .domain-title h3 {
+      margin: 0;
+      font-size: 18px;
       color: #333;
     }
 
     .domain-title p {
-      margin: 0;
-      font-size: 14px;
+      margin: 3px 0 0 0;
+      font-size: 12px;
       color: #666;
     }
 
     .badge-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
     }
 
     .badge-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 15px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid #e0e0e0;
-      position: relative;
-      overflow: hidden;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
     }
 
     .badge-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       border-color: #667eea;
+      background: white;
     }
 
     .badge-card.locked {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
     .badge-card.locked:hover {
       transform: none;
       box-shadow: none;
-      border-color: #e0e0e0;
+      border-color: transparent;
     }
 
     .badge-card.in-progress {
       border-color: #FFC107;
-      background: linear-gradient(to bottom, white 0%, #fff9e6 100%);
+      background: #fff9e6;
     }
 
     .badge-card.completed {
       border-color: #4CAF50;
-      background: linear-gradient(to bottom, white 0%, #e8f5e9 100%);
+      background: #e8f5e9;
+    }
+
+    .badge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .badge-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+      margin: 0;
     }
 
     .badge-tier {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 24px;
+      font-size: 18px;
     }
 
     .badge-tier.bronze { color: #CD7F32; }
     .badge-tier.silver { color: #C0C0C0; }
     .badge-tier.gold { color: #FFD700; }
 
-    .badge-header {
-      margin-bottom: 15px;
-    }
-
-    .badge-name {
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
-      margin: 0 0 5px 0;
-    }
-
-    .badge-skill {
+    .badge-description {
       font-size: 12px;
       color: #666;
-      margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .badge-progress {
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .badge-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 3px;
+      transition: width 0.3s ease;
     }
 
     .badge-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin: 15px 0;
-      padding: 15px 0;
-      border-top: 1px solid #e0e0e0;
-      border-bottom: 1px solid #e0e0e0;
+      font-size: 11px;
+      color: #999;
     }
 
-    .stat {
+    /* Right sidebar stats */
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 12px;
       text-align: center;
     }
 
-    .stat-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #667eea;
+    .stat-card h4 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      opacity: 0.9;
     }
 
-    .stat-label {
+    .stat-card .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .stat-card .stat-sublabel {
       font-size: 11px;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      opacity: 0.8;
+      margin-top: 4px;
     }
 
-    .badge-description {
-      font-size: 14px;
-      color: #666;
-      line-height: 1.5;
-      margin: 10px 0;
-    }
-
-    .badge-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .progress-link {
+      display: block;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      text-decoration: none;
+      color: #333;
       font-size: 13px;
       font-weight: 500;
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 8px;
-    }
-
-    .badge-status.available {
-      background: #e3f2fd;
-      color: #1976d2;
-    }
-
-    .badge-status.locked {
-      background: #fafafa;
-      color: #9e9e9e;
-    }
-
-    .badge-status.in-progress {
-      background: #fff9e6;
-      color: #f57c00;
-    }
-
-    .badge-status.completed {
-      background: #e8f5e9;
-      color: #388e3c;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: #f0f0f0;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      border-radius: 4px;
-      transition: width 0.5s ease;
-    }
-
-    .loading {
+      transition: all 0.2s;
       text-align: center;
-      padding: 60px 20px;
-      color: #666;
     }
 
-    .loading i {
-      font-size: 48px;
-      margin-bottom: 20px;
-      color: #667eea;
-      animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .filter-tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-
-    .filter-tab {
-      padding: 10px 20px;
-      border-radius: 25px;
-      border: 2px solid #e0e0e0;
-      background: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .filter-tab:hover {
-      border-color: #667eea;
-      background: #f0f4ff;
-    }
-
-    .filter-tab.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .progress-link:hover {
+      background: #667eea;
       color: white;
-      border-color: transparent;
+      transform: translateX(3px);
     }
 
-    .back-button {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .progress-link i {
+      margin-right: 6px;
     }
 
-    .back-button:hover {
-      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-      transform: translateY(-2px);
+    /* Scrollbar styling */
+    .left-sidebar::-webkit-scrollbar,
+    .center-content::-webkit-scrollbar,
+    .right-sidebar::-webkit-scrollbar {
+      width: 8px;
     }
 
-    .recommended-badge {
-      position: relative;
+    .left-sidebar::-webkit-scrollbar-track,
+    .center-content::-webkit-scrollbar-track,
+    .right-sidebar::-webkit-scrollbar-track {
+      background: #f1f1f1;
     }
 
-    .recommended-badge::before {
-      content: "RECOMMENDED";
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+    .left-sidebar::-webkit-scrollbar-thumb,
+    .center-content::-webkit-scrollbar-thumb,
+    .right-sidebar::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
     }
 
-    /* Engagement Widgets */
-    .engagement-section {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin: 30px 0;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 15px;
-    }
-
-    @media (max-width: 768px) {
-      .engagement-section {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .widget-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .widget-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #e0e0e0;
-    }
-
-    .widget-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .widget-link {
-      font-size: 12px;
-      color: #667eea;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-
-    .widget-link:hover {
-      color: #764ba2;
-    }
-
-    .mini-quest {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    .mini-quest.completed {
-      background: #e8f5e9;
-      opacity: 0.8;
-    }
-
-    .mini-quest-icon {
-      font-size: 20px;
-    }
-
-    .mini-quest-content {
-      flex: 1;
-    }
-
-    .mini-quest-name {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 2px;
-    }
-
-    .mini-quest-progress {
-      font-size: 12px;
-      color: #666;
-    }
-
-    .mini-quest-check {
-      color: #4CAF50;
-      font-size: 20px;
-    }
-
-    .streak-badge-mini {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-      color: white;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .mini-challenge {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      font-size: 14px;
-      border-left: 4px solid #667eea;
-    }
-
-    .mini-challenge.completed {
-      background: #e8f5e9;
-      border-left-color: #4CAF50;
-    }
-
-    .mini-challenge.hard {
-      border-left-color: #f44336;
-    }
-
-    .mini-challenge.medium {
-      border-left-color: #FF9800;
-    }
-
-    .mini-challenge.easy {
-      border-left-color: #4CAF50;
-    }
-
-    .challenge-timer-mini {
-      font-size: 12px;
-      color: #666;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 10px;
+    .left-sidebar::-webkit-scrollbar-thumb:hover,
+    .center-content::-webkit-scrollbar-thumb:hover,
+    .right-sidebar::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
   </style>
 </head>
 <body>
-  <button class="back-button" onclick="window.location.href='/chat.html'">
-    <i class="fas fa-arrow-left"></i> Back to Chat
-  </button>
+  <div class="page-layout">
+    <!-- HEADER NAVBAR -->
+    <header class="main-header">
+      <div class="main-header-content">
+        <h1>🏆 MathMatrix - Badge Map</h1>
+        <nav class="main-header-nav">
+          <a href="/chat.html"><i class="fas fa-comments"></i> Chat</a>
+          <a href="/screener.html"><i class="fas fa-crosshairs"></i> Screener</a>
+          <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </nav>
+      </div>
+    </header>
 
-  <div class="badge-map-container">
-    <div class="header">
-      <h1>🏆 Badge Map</h1>
-      <p>Choose your next mastery challenge</p>
-
-      <div class="ability-indicator">
-        <span class="ability-label">Your Ability Level:</span>
-        <div class="ability-bar">
-          <div class="ability-fill" id="ability-fill">
-            <span id="theta-display">θ = 0.0</span>
+    <!-- 3-COLUMN CONTENT -->
+    <main class="main-content">
+      <!-- LEFT SIDEBAR: Engagement -->
+      <aside class="left-sidebar">
+        <div class="sidebar-section">
+          <div class="ability-compact">
+            <div class="ability-compact-label">Your Ability Level</div>
+            <div class="ability-compact-bar">
+              <div class="ability-compact-fill" id="ability-fill"></div>
+            </div>
+            <div class="ability-compact-value" id="theta-display">θ = 0.0</div>
           </div>
         </div>
-      </div>
 
-      <!-- Daily Engagement -->
-      <div class="engagement-section">
-        <!-- Daily Quests -->
-        <div class="widget-card">
-          <div class="widget-header">
-            <div class="widget-title">
-              <span>🎯</span>
-              <span>Today's Quests</span>
-              <span class="streak-badge-mini" id="streak-display" style="display: none;">
-                🔥 <span id="streak-count">0</span>
-              </span>
-            </div>
-            <a href="/daily-quests-widget.html" class="widget-link">View All →</a>
-          </div>
+        <div class="sidebar-section">
+          <h3><span>🎯</span> Today's Quests</h3>
           <div id="mini-quests-container">
-            <div style="text-align: center; padding: 20px; color: #999;">
+            <div style="text-align: center; padding: 20px; color: #999; font-size: 13px;">
               Loading quests...
             </div>
           </div>
+          <a href="/daily-quests-widget.html" class="progress-link" style="margin-top: 12px;">
+            View All Quests →
+          </a>
         </div>
 
-        <!-- Weekly Challenges -->
-        <div class="widget-card">
-          <div class="widget-header">
-            <div class="widget-title">
-              <span>⚡</span>
-              <span>Weekly Challenges</span>
-            </div>
-            <a href="/weekly-challenges.html" class="widget-link">View All →</a>
-          </div>
+        <div class="sidebar-section">
+          <h3><span>⚡</span> Weekly Challenges</h3>
           <div id="mini-challenges-container">
-            <div style="text-align: center; padding: 20px; color: #999;">
+            <div style="text-align: center; padding: 20px; color: #999; font-size: 13px;">
               Loading challenges...
             </div>
           </div>
-          <div class="challenge-timer-mini" id="challenge-timer">
-            <i class="fas fa-clock"></i>
-            <span id="time-remaining">7 days remaining</span>
+          <div id="challenge-timer" style="margin-top: 10px; text-align: center; font-size: 12px; color: #666;">
+            <i class="fas fa-clock"></i> <span id="time-remaining">Loading...</span>
+          </div>
+          <a href="/weekly-challenges.html" class="progress-link" style="margin-top: 12px;">
+            View All Challenges →
+          </a>
+        </div>
+      </aside>
+
+      <!-- CENTER: Badge Map -->
+      <section class="center-content">
+        <div class="badge-map-header">
+          <h2>Choose Your Next Mastery Challenge</h2>
+          <p>Select a skill badge to start practicing</p>
+        </div>
+
+        <div id="skill-domains-container">
+          <!-- Skill domains will be loaded here dynamically -->
+          <div style="text-align: center; padding: 40px; color: #999;">
+            Loading badges...
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Fact Fluency Blaster Link -->
-      <div style="margin-top: 30px; text-align: center;">
-        <button onclick="window.location.href='/fact-fluency-blaster.html'"
-                style="background: linear-gradient(45deg, #00d4ff, #7b2ff7);
-                       color: white;
-                       padding: 15px 30px;
-                       font-size: 18px;
-                       font-weight: bold;
-                       border: none;
-                       border-radius: 12px;
-                       cursor: pointer;
-                       box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
-                       transition: all 0.3s ease;">
-          🚀 M∆THBL∆ST Fact Fluency - Master Your Math Facts!
-        </button>
-        <p style="color: #666; margin-top: 10px; font-size: 14px;">
-          Build automaticity with addition, subtraction, multiplication & division
-        </p>
+      <!-- RIGHT SIDEBAR: Progress & Stats -->
+      <aside class="right-sidebar">
+        <div class="sidebar-section">
+          <h3><span>📊</span> Your Stats</h3>
 
-        <!-- Progress Tracking Links -->
-        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
-          <button onclick="window.location.href='/my-speed-progress.html'"
-                  style="background: white;
-                         color: #667eea;
-                         padding: 10px 20px;
-                         font-size: 14px;
-                         font-weight: 600;
-                         border: 2px solid #667eea;
-                         border-radius: 8px;
-                         cursor: pointer;
-                         transition: all 0.3s ease;">
-            📊 My Speed Progress
-          </button>
-          <button onclick="window.location.href='/my-celeration-charts.html'"
-                  style="background: white;
-                         color: #667eea;
-                         padding: 10px 20px;
-                         font-size: 14px;
-                         font-weight: 600;
-                         border: 2px solid #667eea;
-                         border-radius: 8px;
-                         cursor: pointer;
-                         transition: all 0.3s ease;">
-            📈 Celeration Charts (Scientist Mode)
-          </button>
-          <button onclick="window.location.href='/learning-curves.html'"
-                  style="background: white;
-                         color: #667eea;
-                         padding: 10px 20px;
-                         font-size: 14px;
-                         font-weight: 600;
-                         border: 2px solid #667eea;
-                         border-radius: 8px;
-                         cursor: pointer;
-                         transition: all 0.3s ease;">
-            📉 Learning Curves
-          </button>
+          <div class="stat-card">
+            <h4>Badges Earned</h4>
+            <p class="stat-value" id="badges-earned">0</p>
+            <p class="stat-sublabel">Total completed</p>
+          </div>
+
+          <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);">
+            <h4>Current Streak</h4>
+            <p class="stat-value">🔥 <span id="streak-count-stat">0</span></p>
+            <p class="stat-sublabel">Days in a row</p>
+          </div>
+
+          <div class="stat-card" style="background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);">
+            <h4>Total XP</h4>
+            <p class="stat-value" id="total-xp">0</p>
+            <p class="stat-sublabel">Experience points</p>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <div class="filter-tabs">
-      <div class="filter-tab active" data-filter="all">All Badges</div>
-      <div class="filter-tab" data-filter="available">Available</div>
-      <div class="filter-tab" data-filter="in-progress">In Progress</div>
-      <div class="filter-tab" data-filter="completed">Completed</div>
-      <div class="filter-tab" data-filter="locked">Locked</div>
-    </div>
+        <div class="sidebar-section">
+          <h3><span>📈</span> Progress Tools</h3>
 
-    <div id="badge-content">
-      <div class="loading">
-        <div><i class="fas fa-spinner"></i></div>
-        <p>Loading your badge map...</p>
-      </div>
-    </div>
+          <a href="/my-speed-progress.html" class="progress-link">
+            <i class="fas fa-tachometer-alt"></i> Speed Progress
+          </a>
+
+          <a href="/my-celeration-charts.html" class="progress-link">
+            <i class="fas fa-chart-line"></i> Celeration Charts
+          </a>
+
+          <a href="/learning-curves.html" class="progress-link">
+            <i class="fas fa-chart-area"></i> Learning Curves
+          </a>
+
+          <a href="/fact-fluency-practice.html" class="progress-link">
+            <i class="fas fa-bolt"></i> Fact Fluency
+          </a>
+        </div>
+      </aside>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+      &copy; 2025 MathMatrix AI - Powered by Claude Sonnet 3.5
+    </footer>
   </div>
 
-  <script src="/js/storage-utils.js"></script>
-  <script src="/js/auto-logout.js"></script>
-  <script src="/js/badgeMap.js"></script>
-
   <script>
-    // Load daily quests mini widget
-    async function loadMiniQuests() {
+    // Load user data and populate badges
+    async function loadBadgeMap() {
+      try {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+          window.location.href = '/login.html';
+          return;
+        }
+
+        // Fetch badge map data
+        const response = await fetch('/api/mastery/badge-map', {
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) throw new Error('Failed to load badge map');
+
+        const data = await response.json();
+
+        // Update ability display
+        updateAbilityDisplay(data.averageTheta || 0);
+
+        // Update stats
+        document.getElementById('badges-earned').textContent = data.badgesEarned || 0;
+        document.getElementById('total-xp').textContent = (data.totalXP || 0).toLocaleString();
+
+        // Render skill domains
+        renderSkillDomains(data.skillDomains || []);
+
+      } catch (error) {
+        console.error('Error loading badge map:', error);
+        document.getElementById('skill-domains-container').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #e74c3c;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>
+            <p>Failed to load badges. Please try refreshing the page.</p>
+          </div>
+        `;
+      }
+    }
+
+    function updateAbilityDisplay(theta) {
+      const thetaDisplay = document.getElementById('theta-display');
+      const abilityFill = document.getElementById('ability-fill');
+
+      if (thetaDisplay && abilityFill) {
+        thetaDisplay.textContent = `θ = ${theta.toFixed(2)}`;
+
+        // Map theta (-3 to +3) to percentage (0 to 100%)
+        const percentage = Math.max(0, Math.min(100, ((theta + 3) / 6) * 100));
+        abilityFill.style.width = `${percentage}%`;
+      }
+    }
+
+    function renderSkillDomains(domains) {
+      const container = document.getElementById('skill-domains-container');
+
+      if (!domains || domains.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999;">No badges available yet. Complete the screener to unlock skills!</p>';
+        return;
+      }
+
+      container.innerHTML = domains.map(domain => `
+        <div class="domain">
+          <div class="domain-header">
+            <div class="domain-icon">${domain.icon || '📚'}</div>
+            <div class="domain-title">
+              <h3>${domain.name}</h3>
+              <p>${domain.description || ''}</p>
+            </div>
+          </div>
+          <div class="badge-grid">
+            ${(domain.badges || []).map(badge => `
+              <div class="badge-card ${badge.status}" onclick="selectBadge('${badge.badgeId}')">
+                <div class="badge-header">
+                  <h4 class="badge-name">${badge.name}</h4>
+                  <span class="badge-tier ${badge.tier}">${getTierIcon(badge.tier)}</span>
+                </div>
+                <div class="badge-description">${badge.description || ''}</div>
+                ${badge.status !== 'locked' ? `
+                  <div class="badge-progress">
+                    <div class="badge-progress-fill" style="width: ${badge.progress || 0}%"></div>
+                  </div>
+                  <div class="badge-stats">${badge.problemsCorrect || 0}/${badge.requiredProblems || 10} problems</div>
+                ` : '<div class="badge-stats">🔒 Complete prerequisites first</div>'}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getTierIcon(tier) {
+      const icons = {
+        bronze: '🥉',
+        silver: '🥈',
+        gold: '🥇'
+      };
+      return icons[tier] || '⭐';
+    }
+
+    async function selectBadge(badgeId) {
+      try {
+        const response = await fetch('/api/mastery/select-badge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ badgeId })
+        });
+
+        if (response.ok) {
+          window.location.href = '/mastery-mode.html';
+        } else {
+          alert('Failed to select badge. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error selecting badge:', error);
+        alert('An error occurred. Please try again.');
+      }
+    }
+
+    // Load daily quests
+    async function loadDailyQuests() {
       try {
         const response = await fetch('/api/daily-quests');
+        if (!response.ok) return;
+
         const data = await response.json();
 
-        if (data.success) {
-          const container = document.getElementById('mini-quests-container');
+        // Update streak
+        const streakStat = document.getElementById('streak-count-stat');
+        if (streakStat) streakStat.textContent = data.currentStreak || 0;
 
-          if (data.quests.length === 0) {
-            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">No quests available</div>';
-            return;
-          }
+        const container = document.getElementById('mini-quests-container');
+        if (!container) return;
 
-          // Show streak if > 0
-          if (data.streak > 0) {
-            document.getElementById('streak-display').style.display = 'inline-flex';
-            document.getElementById('streak-count').textContent = data.streak;
-          }
-
-          // Show max 3 quests
-          const questsToShow = data.quests.slice(0, 3);
-          container.innerHTML = questsToShow.map(quest => `
-            <div class="mini-quest ${quest.completed ? 'completed' : ''}">
-              <div class="mini-quest-icon">${quest.icon}</div>
-              <div class="mini-quest-content">
-                <div class="mini-quest-name">${quest.name}</div>
-                <div class="mini-quest-progress">${quest.progress}/${quest.targetCount} ${quest.completed ? '✓ Complete' : ''}</div>
-              </div>
-              ${quest.completed ? '<div class="mini-quest-check">✓</div>' : ''}
-            </div>
-          `).join('');
+        if (!data.quests || data.quests.length === 0) {
+          container.innerHTML = '<div style="text-align: center; color: #999; font-size: 13px;">No quests today</div>';
+          return;
         }
+
+        container.innerHTML = data.quests.slice(0, 3).map(quest => `
+          <div class="quest-item">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <strong style="font-size: 12px;">${quest.name}</strong>
+              <span style="font-size: 11px; color: #FFC107;">${quest.xpReward} XP</span>
+            </div>
+            <div style="font-size: 11px; color: #666; margin-bottom: 6px;">${quest.description}</div>
+            <div style="height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden;">
+              <div style="height: 100%; background: #4CAF50; width: ${quest.progress}%; transition: width 0.3s;"></div>
+            </div>
+            <div style="font-size: 10px; color: #999; margin-top: 2px;">${quest.current}/${quest.target}</div>
+          </div>
+        `).join('');
+
       } catch (error) {
-        console.error('Error loading mini quests:', error);
+        console.error('Error loading quests:', error);
       }
     }
 
-    // Load weekly challenges mini widget
-    async function loadMiniChallenges() {
+    // Load weekly challenges
+    async function loadWeeklyChallenges() {
       try {
         const response = await fetch('/api/weekly-challenges');
+        if (!response.ok) return;
+
         const data = await response.json();
 
-        if (data.success) {
-          const container = document.getElementById('mini-challenges-container');
+        // Update timer
+        updateChallengeTimer(data.weekStart);
 
-          if (data.challenges.length === 0) {
-            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">No challenges this week</div>';
-            return;
-          }
+        const container = document.getElementById('mini-challenges-container');
+        if (!container) return;
 
-          // Show max 3 challenges
-          const challengesToShow = data.challenges.slice(0, 3);
-          container.innerHTML = challengesToShow.map(challenge => `
-            <div class="mini-challenge ${challenge.difficulty} ${challenge.completed ? 'completed' : ''}">
-              <div class="mini-quest-icon">${challenge.icon}</div>
-              <div class="mini-quest-content">
-                <div class="mini-quest-name">${challenge.name}</div>
-                <div class="mini-quest-progress">${challenge.progress}/${challenge.targetCount} • ${challenge.difficulty.toUpperCase()}</div>
-              </div>
-              ${challenge.completed ? '<div class="mini-quest-check">✓</div>' : ''}
-            </div>
-          `).join('');
-
-          // Update timer
-          if (data.hoursRemaining !== undefined) {
-            const days = Math.floor(data.hoursRemaining / 24);
-            const hours = data.hoursRemaining % 24;
-            let timeText = '';
-            if (days > 0) timeText = `${days} day${days > 1 ? 's' : ''} remaining`;
-            else if (hours > 0) timeText = `${hours} hour${hours > 1 ? 's' : ''} remaining`;
-            else timeText = 'Less than 1 hour!';
-
-            document.getElementById('time-remaining').textContent = timeText;
-          }
+        if (!data.challenges || data.challenges.length === 0) {
+          container.innerHTML = '<div style="text-align: center; color: #999; font-size: 13px;">No challenges this week</div>';
+          return;
         }
+
+        container.innerHTML = data.challenges.slice(0, 2).map(challenge => `
+          <div class="quest-item" style="border-left-color: #764ba2;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <strong style="font-size: 12px;">${challenge.name}</strong>
+              <span style="font-size: 11px; color: #764ba2;">${challenge.xpReward} XP</span>
+            </div>
+            <div style="font-size: 11px; color: #666; margin-bottom: 6px;">${challenge.description}</div>
+            <div style="height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden;">
+              <div style="height: 100%; background: #764ba2; width: ${challenge.progress}%; transition: width 0.3s;"></div>
+            </div>
+            <div style="font-size: 10px; color: #999; margin-top: 2px;">${challenge.current}/${challenge.target}</div>
+          </div>
+        `).join('');
+
       } catch (error) {
-        console.error('Error loading mini challenges:', error);
+        console.error('Error loading challenges:', error);
       }
     }
 
-    // Load both on page load
+    function updateChallengeTimer(weekStart) {
+      if (!weekStart) return;
+
+      const timerElement = document.getElementById('time-remaining');
+      if (!timerElement) return;
+
+      function update() {
+        const now = new Date();
+        const start = new Date(weekStart);
+        const nextMonday = new Date(start);
+        nextMonday.setDate(nextMonday.getDate() + 7);
+
+        const diff = nextMonday - now;
+        if (diff <= 0) {
+          timerElement.textContent = 'Resetting...';
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+        timerElement.textContent = `${days}d ${hours}h remaining`;
+      }
+
+      update();
+      setInterval(update, 60000); // Update every minute
+    }
+
+    function logout() {
+      localStorage.removeItem('userId');
+      window.location.href = '/login.html';
+    }
+
+    // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
-      loadMiniQuests();
-      loadMiniChallenges();
+      loadBadgeMap();
+      loadDailyQuests();
+      loadWeeklyChallenges();
     });
   </script>
 </body>
