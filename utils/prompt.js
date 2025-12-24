@@ -6,6 +6,7 @@ const { generateAntiGamingPrompt } = require('./antiGaming');
 const { generateDOKGatingPrompt } = require('./dokGating');
 const { generateAlternativeReasoningPrompt } = require('./alternativeReasoning');
 const { generateMasteryModePrompt } = require('./masteryPrompt');
+const { generateTeachingStrategiesPrompt } = require('./teachingStrategies');
 
 /**
  * Build skill mastery context for AI prompt
@@ -289,6 +290,8 @@ ${generateAlternativeReasoningPrompt()}
 ${generateAntiGamingPrompt()}
 
 ${generateDOKGatingPrompt()}
+
+${generateTeachingStrategiesPrompt(masteryContext?.currentPhase, masteryContext?.assessmentData)}
 
 ${recommendAssessmentModality(userProfile.learningProfile || {}, 'default').length > 0 ?
   generateMultimodalPrompt(recommendAssessmentModality(userProfile.learningProfile || {}, 'default')) : ''}
