@@ -447,6 +447,39 @@ const userSchema = new Schema({
       longestStreak: { type: Number, default: 0 },
       lastPracticeDate: { type: Date }
     }
+  },
+
+  /* Daily Quests & Streak System */
+  dailyQuests: {
+    // Current quests (reset daily)
+    quests: [{
+      id: String,
+      templateId: String,
+      name: String,
+      description: String,
+      icon: String,
+      target: String,           // 'problemsCorrect', 'skillsPracticed', etc.
+      targetCount: Number,
+      progress: { type: Number, default: 0 },
+      completed: { type: Boolean, default: false },
+      xpReward: Number,
+      bonusMultiplier: { type: Number, default: 1.0 },
+      completedAt: Date
+    }],
+
+    // Metadata
+    lastRefreshDate: Date,
+    currentStreak: { type: Number, default: 0 },
+    longestStreak: { type: Number, default: 0 },
+    lastPracticeDate: Date,
+    totalQuestsCompleted: { type: Number, default: 0 },
+
+    // Daily progress tracking (resets each day)
+    todayProgress: {
+      type: Map,
+      of: Schema.Types.Mixed,
+      default: () => new Map()
+    }
   }
 }, { timestamps: true });
 
