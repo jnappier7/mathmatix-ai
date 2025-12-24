@@ -80,6 +80,7 @@ const factFluencyRoutes = require('./routes/factFluency');  // M∆THBL∆ST Fac
 const dailyQuestsRoutes = require('./routes/dailyQuests');  // Daily Quests & Streak System
 const weeklyChallengesRoutes = require('./routes/weeklyChallenges');  // Weekly Challenges System
 const learningCurveRoutes = require('./routes/learningCurve');  // Learning Curve Visualization & IRT Transparency
+const celerationRoutes = require('./routes/celeration');  // Standard Celeration Charts (Precision Teaching)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -208,6 +209,7 @@ app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆
 app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak System for mastery mode
 app.use('/api', isAuthenticated, weeklyChallengesRoutes); // Weekly Challenges System for engagement
 app.use('/api', isAuthenticated, learningCurveRoutes); // Learning Curve Visualization & IRT transparency
+app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Charts for fact fluency
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {

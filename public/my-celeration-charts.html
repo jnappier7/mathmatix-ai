@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Celeration Charts - Scientist Mode</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/css/celeration.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .page-header h1 {
+      margin: 0 0 10px 0;
+      font-size: 32px;
+      color: #333;
+    }
+
+    .page-header p {
+      margin: 0;
+      font-size: 16px;
+      color: #666;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 20px;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: #f0f0f0;
+      transform: translateX(-5px);
+    }
+
+    .mode-toggle {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .toggle-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+
+    .toggle-button:hover {
+      background: #f0f0f0;
+    }
+
+    .toggle-button.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .family-selector {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .family-selector h3 {
+      margin: 0 0 15px 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .family-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .family-button {
+      padding: 10px 20px;
+      background: #f0f0f0;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .family-button:hover {
+      background: #e0e0e0;
+    }
+
+    .family-button.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .scientist-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <a href="/my-speed-progress.html" class="back-button">← Back to Simple View</a>
+
+    <div class="page-header">
+      <h1>🔬 Scientist Mode <span class="scientist-badge">ADVANCED</span></h1>
+      <p>Standard Celeration Charts show your learning rate using Precision Teaching methodology</p>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div class="mode-toggle">
+      <a href="/my-speed-progress.html" class="toggle-button">📊 Simple View</a>
+      <a href="/my-celeration-charts.html" class="toggle-button active">🔬 Scientist Mode</a>
+    </div>
+
+    <!-- Family Selector -->
+    <div id="familySelector" class="family-selector"></div>
+
+    <!-- Celeration Chart -->
+    <div id="celerationContainer">
+      <div class="celeration-canvas-container">
+        <canvas id="celerationCanvas" width="1200" height="600"></canvas>
+      </div>
+      <div id="celerationStats"></div>
+    </div>
+  </div>
+
+  <script src="/js/celerationChart.js"></script>
+  <script>
+    let currentFamily = null;
+    let availableFamilies = [];
+
+    async function loadFamilies() {
+      try {
+        const response = await fetch('/api/celeration/overview');
+        const data = await response.json();
+
+        if (!data.success || data.families.length === 0) {
+          document.getElementById('celerationContainer').innerHTML = `
+            <div class="no-data-message">
+              <h3>No Data Yet</h3>
+              <p>Complete at least 2 practice sessions to see your celeration charts!</p>
+            </div>
+          `;
+          return;
+        }
+
+        availableFamilies = data.families;
+        renderFamilySelector(data.families);
+
+        // Load first family by default
+        if (data.families.length > 0) {
+          loadFamily(data.families[0].operation, data.families[0].familyName);
+        }
+      } catch (error) {
+        console.error('Error loading families:', error);
+      }
+    }
+
+    function renderFamilySelector(families) {
+      const container = document.getElementById('familySelector');
+
+      container.innerHTML = `
+        <h3>Select a Fact Family:</h3>
+        <div class="family-buttons">
+          ${families.map(family => `
+            <button
+              class="family-button"
+              data-operation="${family.operation}"
+              data-family="${family.familyName}"
+              onclick="loadFamily('${family.operation}', '${family.familyName}')"
+            >
+              ${family.displayName}
+              ${family.atAim ? '✓' : ''}
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    async function loadFamily(operation, familyName) {
+      currentFamily = { operation, familyName };
+
+      // Update active button
+      document.querySelectorAll('.family-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const activeBtn = document.querySelector(`[data-operation="${operation}"][data-family="${familyName}"]`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+
+      // Load celeration chart
+      if (!celerationChart) {
+        celerationChart = new CelerationChart('celerationCanvas');
+      }
+      await celerationChart.loadData(operation, familyName);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFamilies();
+    });
+  </script>
+</body>
+</html>
