@@ -74,6 +74,7 @@ const masteryRoutes = require('./routes/mastery');  // Mastery mode (placement +
 const masteryChatRoutes = require('./routes/masteryChat');  // Mastery mode chat endpoint
 const teacherResourceRoutes = require('./routes/teacherResources');
 const settingsRoutes = require('./routes/settings');
+const emailRoutes = require('./routes/email');  // Email service for parent reports and notifications
 const gradeWorkRoutes = require('./routes/gradeWork');
 const quarterlyGrowthRoutes = require('./routes/quarterlyGrowth');  // Quarterly growth tracking and retention
 const factFluencyRoutes = require('./routes/factFluency');  // M∆THBL∆ST Fact Fluency game
@@ -203,6 +204,7 @@ app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive
 app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placement → interview → badges)
 app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, masteryChatRoutes); // Mastery mode dedicated chat
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
+app.use('/api/email', isAuthenticated, emailRoutes); // Email service for parent reports and notifications
 app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes); // AI grading for student work
 app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Quarterly growth tracking and retention analytics
 app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆ST Fact Fluency - Math facts practice game

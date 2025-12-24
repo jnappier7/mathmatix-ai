@@ -457,6 +457,89 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // --- Email Report Handlers ---
+    const testEmailBtn = document.getElementById("test-email-btn");
+    const sendWeeklyReportBtn = document.getElementById("send-weekly-report-btn");
+    const emailStatusMessage = document.getElementById("email-status-message");
+
+    if (testEmailBtn) {
+        testEmailBtn.addEventListener("click", async () => {
+            try {
+                emailStatusMessage.textContent = "Sending test email...";
+                emailStatusMessage.style.color = "#666";
+                testEmailBtn.disabled = true;
+
+                const response = await fetch('/api/email/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})  // Will use current user's email
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    emailStatusMessage.textContent = "✅ Test email sent! Check your inbox.";
+                    emailStatusMessage.style.color = "#27ae60";
+                } else {
+                    emailStatusMessage.textContent = `❌ ${data.message}`;
+                    emailStatusMessage.style.color = "#e74c3c";
+                }
+
+                testEmailBtn.disabled = false;
+                setTimeout(() => {
+                    emailStatusMessage.textContent = '';
+                }, 5000);
+            } catch (error) {
+                console.error("Error sending test email:", error);
+                emailStatusMessage.textContent = "❌ Error: Email not configured on server";
+                emailStatusMessage.style.color = "#e74c3c";
+                testEmailBtn.disabled = false;
+            }
+        });
+    }
+
+    if (sendWeeklyReportBtn) {
+        sendWeeklyReportBtn.addEventListener("click", async () => {
+            if (!selectedChild) {
+                emailStatusMessage.textContent = "⚠️ Please select a child first";
+                emailStatusMessage.style.color = "#f39c12";
+                return;
+            }
+
+            try {
+                emailStatusMessage.textContent = "Generating and sending report...";
+                emailStatusMessage.style.color = "#666";
+                sendWeeklyReportBtn.disabled = true;
+
+                const response = await fetch('/api/email/weekly-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ studentId: selectedChild._id })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    emailStatusMessage.textContent = "✅ Weekly report sent! Check your inbox.";
+                    emailStatusMessage.style.color = "#27ae60";
+                } else {
+                    emailStatusMessage.textContent = `❌ ${data.message}`;
+                    emailStatusMessage.style.color = "#e74c3c";
+                }
+
+                sendWeeklyReportBtn.disabled = false;
+                setTimeout(() => {
+                    emailStatusMessage.textContent = '';
+                }, 5000);
+            } catch (error) {
+                console.error("Error sending weekly report:", error);
+                emailStatusMessage.textContent = "❌ Error: Email not configured on server";
+                emailStatusMessage.style.color = "#e74c3c";
+                sendWeeklyReportBtn.disabled = false;
+            }
+        });
+    }
+
     // Initial load
     const parentUser = await loadParentUser();
     if (parentUser) {
