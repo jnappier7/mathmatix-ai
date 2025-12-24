@@ -1,558 +1,1086 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard - M∆THM∆TIΧ AI</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="/css/teacher-live-feed.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
-	<style>
-        /* Resource Grid - Responsive */
-        .resources-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-            padding: 15px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard - MATHMATIX AI</title>
+  <link rel="stylesheet" href="/css/teacher-live-feed.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <style>
+    /* ============================================
+       MATHMATIX AI - TEACHER DASHBOARD
+       Fixed 3-Column Layout with Teacher Branding
+       ============================================ */
 
-        /* Resource Cards */
-        .resource-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            gap: 15px;
-        }
-        .resource-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .resource-icon { font-size: 48px; color: #12B3B3; width: 60px; text-align: center; flex-shrink: 0; }
-        .resource-info { flex: 1; min-width: 0; }
-        .resource-info h4 { margin: 0 0 8px 0; font-size: 1.1em; color: #333; word-wrap: break-word; }
-        .resource-meta { font-size: 0.85em; color: #666; margin: 5px 0; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
-        .resource-type { background: #e8f9f8; color: #12B3B3; padding: 2px 8px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
-        .resource-description { font-size: 0.9em; color: #666; margin: 8px 0; }
-        .resource-stats { font-size: 0.85em; color: #999; margin: 8px 0; }
-        .resource-keywords { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
-        .keyword-tag { background: #f0f0f0; color: #666; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; }
-        .resource-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-        .btn-icon {
-            background: #f0f0f0;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-width: 40px;
-            min-height: 40px; /* Touch-friendly size */
-        }
-        .btn-icon:hover { background: #12B3B3; color: white; }
-        .btn-icon.btn-danger:hover { background: #ff4e4e; color: white; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* Schedule iframe container - responsive */
-        .schedule-iframe-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0;
-            overflow: hidden;
-            max-width: 100%;
-            border-radius: 8px;
-        }
-        .schedule-iframe-container iframe {
-            border: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      background: #f8f9fa;
+    }
 
-        /* Dashboard tabs - mobile responsive */
-        .dashboard-tabs {
-            display: flex;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            gap: 5px;
-            padding-bottom: 5px;
-        }
-        .dashboard-tabs::-webkit-scrollbar {
-            height: 4px;
-        }
-        .dashboard-tabs::-webkit-scrollbar-thumb {
-            background: #12B3B3;
-            border-radius: 4px;
-        }
+    /* ============================================
+       PAGE LAYOUT - FIXED STRUCTURE
+       ============================================ */
 
-        /* Modal improvements for mobile */
-        .modal-content {
-            max-height: 90vh;
-            overflow-y: auto;
-            margin: 20px;
-        }
+    .page-layout {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-        /* Form inputs - touch-friendly */
-        input[type="text"],
-        input[type="file"],
-        textarea,
-        select {
-            min-height: 44px; /* iOS recommended touch target */
-        }
+    /* ============================================
+       HEADER - MATHMATIX BRANDED (Green Teacher Theme)
+       ============================================ */
 
-        /* Mobile Responsive Breakpoints */
-        @media (max-width: 768px) {
-            /* Stack resource grid on mobile */
-            .resources-grid {
-                grid-template-columns: 1fr;
-                padding: 10px;
-                gap: 15px;
-            }
+    .main-header {
+      background: linear-gradient(135deg, #27ae60 0%, #16a085 100%);
+      color: white;
+      padding: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+      z-index: 100;
+    }
 
-            /* Adjust resource card layout for mobile */
-            .resource-card {
-                flex-direction: column;
-                padding: 15px;
-            }
+    .main-header-content {
+      max-width: 100%;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
 
-            .resource-icon {
-                width: 100%;
-                font-size: 36px;
-                margin-bottom: 10px;
-            }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-            .resource-actions {
-                flex-direction: row;
-                justify-content: space-between;
-            }
+    .logo-container {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-            .resource-meta {
-                flex-direction: column;
-                gap: 3px;
-                align-items: flex-start;
-            }
+    .logo-glasses {
+      width: 50px;
+      height: 50px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g fill="none" stroke="white" stroke-width="3"><circle cx="25" cy="50" r="18"/><circle cx="75" cy="50" r="18"/><path d="M 43 50 Q 50 45 57 50"/><text x="20" y="55" font-size="14" fill="white" font-family="Georgia">∫</text><text x="68" y="55" font-size="12" fill="white" font-family="Georgia">dy</text></g></svg>');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
 
-            /* Dashboard tabs scroll on mobile */
-            .dashboard-tabs {
-                flex-wrap: nowrap;
-                justify-content: flex-start;
-            }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
-            .tab-btn {
-                white-space: nowrap;
-                flex-shrink: 0;
-                font-size: 0.9em;
-                padding: 10px 15px;
-            }
+    .brand-name {
+      font-size: 1.5em;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0;
+      line-height: 1;
+    }
 
-            /* Modal full-screen on mobile */
-            .modal-content {
-                width: 95%;
-                max-width: 95%;
-                margin: 10px auto;
-                max-height: 95vh;
-            }
+    .brand-tagline {
+      font-size: 0.75em;
+      opacity: 0.95;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
 
-            /* Schedule iframe - adjust aspect ratio for mobile */
-            .schedule-iframe-container {
-                padding-bottom: 75%; /* Taller on mobile for better visibility */
-            }
+    .mode-indicator {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
 
-            /* Touch-friendly buttons */
-            .btn, .submit-btn, button {
-                min-height: 44px;
-                padding: 12px 20px;
-            }
+    .main-header-nav {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
 
-            /* Header adjustments */
-            .dashboard-panel-header {
-                font-size: 1em;
-                padding: 12px 15px;
-                flex-wrap: wrap;
-            }
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
 
-            .dashboard-panel-header > div {
-                margin-top: 10px !important;
-                width: 100%;
-            }
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+    }
 
-            /* Form buttons stack on mobile */
-            .form-buttons {
-                flex-direction: column;
-            }
+    /* ============================================
+       3-COLUMN CONTENT LAYOUT
+       ============================================ */
 
-            .form-buttons button {
-                width: 100%;
-            }
-        }
+    .main-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 300px 1fr 280px;
+      gap: 0;
+      overflow: hidden;
+      background: #f8f9fa;
+    }
 
-        @media (max-width: 480px) {
-            /* Extra small screens */
-            .resource-info h4 {
-                font-size: 1em;
-            }
+    .left-sidebar,
+    .center-content,
+    .right-sidebar {
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 20px;
+      background: #f8f9fa;
+    }
 
-            .resource-icon {
-                font-size: 32px;
-            }
+    /* Teacher-themed scrollbars (green) */
+    .left-sidebar::-webkit-scrollbar,
+    .center-content::-webkit-scrollbar,
+    .right-sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
 
-            .btn-icon {
-                padding: 10px;
-                min-width: 44px;
-                min-height: 44px;
-            }
+    .left-sidebar::-webkit-scrollbar-track,
+    .center-content::-webkit-scrollbar-track,
+    .right-sidebar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
 
-            /* Hide some meta info on very small screens to save space */
-            .resource-stats {
-                font-size: 0.8em;
-            }
-        }
+    .left-sidebar::-webkit-scrollbar-thumb,
+    .center-content::-webkit-scrollbar-thumb,
+    .right-sidebar::-webkit-scrollbar-thumb {
+      background: #27ae60;
+      border-radius: 4px;
+    }
 
-        /* Landscape mobile optimization */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .schedule-iframe-container {
-                padding-bottom: 50%; /* Better aspect ratio for landscape */
-            }
-        }
-    </style>
+    .left-sidebar::-webkit-scrollbar-thumb:hover,
+    .center-content::-webkit-scrollbar-thumb:hover,
+    .right-sidebar::-webkit-scrollbar-thumb:hover {
+      background: #16a085;
+    }
+
+    /* ============================================
+       PANELS AND CARDS
+       ============================================ */
+
+    .dashboard-panel {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e9ecef;
+    }
+
+    .flex-panel-content {
+      display: flex;
+      flex-direction: column;
+      height: calc(100% - 40px);
+    }
+
+    .dashboard-panel-header {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #27ae60;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #27ae60, #16a085);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #16a085, #0e7c61);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #7f8c8d, #6c7a89);
+      transform: translateY(-2px);
+    }
+
+    .btn-tertiary {
+      background: transparent;
+      border: 2px solid #27ae60;
+      color: #27ae60;
+    }
+
+    .btn-tertiary:hover {
+      background: #27ae60;
+      color: white;
+    }
+
+    .submit-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .cancel-btn {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .main-action-btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    /* ============================================
+       TABS
+       ============================================ */
+
+    .dashboard-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 10px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      color: #7f8c8d;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      background: #f8f9fa;
+      color: #27ae60;
+    }
+
+    .tab-btn.active {
+      background: #27ae60;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* ============================================
+       TABLES
+       ============================================ */
+
+    .table-scroll-container {
+      max-height: 500px;
+      overflow-y: auto;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      flex: 1;
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    .user-table thead {
+      background: linear-gradient(135deg, #27ae60, #16a085);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .user-table th,
+    .user-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .user-table th {
+      font-weight: 600;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .user-table tbody tr:hover {
+      background: #f0fdf4;
+    }
+
+    /* ============================================
+       FORMS
+       ============================================ */
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 5px;
+      font-size: 0.9em;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="file"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 0.95em;
+      transition: border-color 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #27ae60;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: normal;
+    }
+
+    /* ============================================
+       RESOURCES GRID
+       ============================================ */
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+      padding: 15px;
+    }
+
+    .resource-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      gap: 15px;
+      border-left: 4px solid #27ae60;
+    }
+
+    .resource-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15);
+    }
+
+    .resource-icon {
+      font-size: 48px;
+      color: #27ae60;
+      width: 60px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .resource-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .resource-info h4 {
+      margin: 0 0 8px 0;
+      font-size: 1.1em;
+      color: #333;
+      word-wrap: break-word;
+    }
+
+    .resource-meta {
+      font-size: 0.85em;
+      color: #666;
+      margin: 5px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .resource-type {
+      background: #d5f4e6;
+      color: #16a085;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .resource-description {
+      font-size: 0.9em;
+      color: #666;
+      margin: 8px 0;
+    }
+
+    .resource-stats {
+      font-size: 0.85em;
+      color: #999;
+      margin: 8px 0;
+    }
+
+    .resource-keywords {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .keyword-tag {
+      background: #f0f0f0;
+      color: #666;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+    }
+
+    .resource-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-icon {
+      background: #f0f0f0;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 40px;
+      min-height: 40px;
+    }
+
+    .btn-icon:hover {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-icon.btn-danger:hover {
+      background: #e74c3c;
+      color: white;
+    }
+
+    /* ============================================
+       SCHEDULE IFRAME
+       ============================================ */
+
+    .schedule-iframe-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    .schedule-iframe-container iframe {
+      border: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ============================================
+       MODALS
+       ============================================ */
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      position: relative;
+      margin: 20px;
+    }
+
+    .modal-close-button {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.5em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close-button:hover {
+      background: #16a085;
+      transform: rotate(90deg);
+    }
+
+    .modal-content h2 {
+      color: #27ae60;
+      margin-bottom: 20px;
+    }
+
+    .modal-content h3 {
+      color: #27ae60;
+      margin: 20px 0 15px 0;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+
+    .main-footer {
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      padding: 15px 20px;
+      font-size: 0.85em;
+      flex-shrink: 0;
+    }
+
+    .main-footer a {
+      color: #27ae60;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .main-footer a:hover {
+      color: #16a085;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+
+    @media (max-width: 1200px) {
+      .main-content {
+        grid-template-columns: 250px 1fr 250px;
+      }
+
+      .resources-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 968px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .left-sidebar,
+      .right-sidebar {
+        display: none;
+      }
+
+      .resource-card {
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      .resource-actions {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-tabs {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+      }
+
+      .tab-btn {
+        font-size: 0.9em;
+        padding: 10px 15px;
+      }
+
+      .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 10px auto;
+      }
+    }
+  </style>
 </head>
-<body class="landing-page-body">
-    <header class="landing-header">
-        <div class="header-logo-container">
-            <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+<body>
+  <div class="page-layout">
+    <!-- ============================================
+         HEADER - MATHMATIX BRANDED (Teacher Mode)
+         ============================================ -->
+    <header class="main-header">
+      <div class="main-header-content">
+        <div class="brand-section">
+          <div class="logo-container">
+            <div class="logo-glasses"></div>
+          </div>
+          <div class="brand-text">
+            <h1 class="brand-name">MATHMATIX AI</h1>
+            <p class="brand-tagline">Unlock the Pattern. Learn for Life.</p>
+          </div>
+          <div class="mode-indicator">
+            <i class="fas fa-chalkboard-teacher"></i> Teacher Dashboard
+          </div>
         </div>
-        <nav class="landing-nav">
-            <h1>Teacher Dashboard</h1>
-            <button id="logoutBtn" class="btn btn-tertiary logout-button">Log Out</button>
+        <nav class="main-header-nav">
+          <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </nav>
+      </div>
     </header>
 
-    <main class="admin-page-wrapper">
-        <div class="admin-main-content">
-            <!-- Live Activity Feed Sidebar -->
-            <div class="admin-widget-sidebar">
-                <div id="live-feed-panel" class="dashboard-panel card-style-1">
-                    <div class="live-feed-header">
-                        <h2>
-                            <span class="live-indicator"></span>
-                            Live Activity
-                        </h2>
-                        <div class="feed-controls">
-                            <button class="feed-control-btn" id="refresh-feed-btn" title="Refresh">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                            <button class="feed-control-btn" id="pause-feed-btn" title="Pause Updates">
-                                <i class="fas fa-pause"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="feed-filter-bar">
-                        <button class="filter-btn active" data-filter="all">All Activity</button>
-                        <button class="filter-btn" data-filter="struggling">⚠️ Struggling</button>
-                        <button class="filter-btn" data-filter="milestones">✨ Milestones</button>
-                    </div>
-
-                    <div class="activity-feed-container" id="activity-feed">
-                        <div class="feed-loading">Loading activity...</div>
-                    </div>
-                </div>
+    <!-- ============================================
+         3-COLUMN CONTENT
+         ============================================ -->
+    <main class="main-content">
+      <!-- LEFT SIDEBAR - Live Activity Feed -->
+      <aside class="left-sidebar">
+        <div id="live-feed-panel" class="dashboard-panel">
+          <div class="live-feed-header">
+            <h2>
+              <span class="live-indicator"></span>
+              Live Activity
+            </h2>
+            <div class="feed-controls">
+              <button class="feed-control-btn" id="refresh-feed-btn" title="Refresh">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+              <button class="feed-control-btn" id="pause-feed-btn" title="Pause Updates">
+                <i class="fas fa-pause"></i>
+              </button>
             </div>
-            <div class="admin-central-content">
-                <!-- Tab Navigation -->
-                <div class="dashboard-tabs">
-                    <button class="tab-btn active" data-tab="students">
-                        <i class="fas fa-users"></i> My Students
-                    </button>
-                    <button class="tab-btn" data-tab="curriculum">
-                        <i class="fas fa-book"></i> Curriculum
-                    </button>
-                    <button class="tab-btn" data-tab="schedule">
-                        <i class="fas fa-calendar-alt"></i> Schedule
-                    </button>
-                    <button class="tab-btn" data-tab="resources">
-                        <i class="fas fa-file-upload"></i> Resources
-                    </button>
-                </div>
+          </div>
 
-                <!-- Students Tab -->
-                <div class="tab-content active" id="students-tab">
-                    <div class="dashboard-panel flex-panel-content card-style-1">
-                        <div class="dashboard-panel-header">My Assigned Students</div>
-                        <div id="student-list" class="table-scroll-container"> Loading students...
-                        </div>
-                    </div>
-                </div>
+          <div class="feed-filter-bar">
+            <button class="filter-btn active" data-filter="all">All Activity</button>
+            <button class="filter-btn" data-filter="struggling">⚠️ Struggling</button>
+            <button class="filter-btn" data-filter="milestones">✨ Milestones</button>
+          </div>
 
-                <!-- Curriculum Tab -->
-                <div class="tab-content" id="curriculum-tab">
-                    <div class="dashboard-panel flex-panel-content card-style-1">
-                        <div class="dashboard-panel-header">
-                            Curriculum Management
-                            <div style="float: right; margin-top: -5px;">
-                                <button id="sync-common-curriculum-btn" class="btn btn-primary">
-                                    <i class="fas fa-sync"></i> Sync Common Curriculum
-                                </button>
-                                <button id="upload-curriculum-btn" class="btn btn-secondary" style="margin-left: 5px;">
-                                    <i class="fas fa-upload"></i> Upload CSV
-                                </button>
-                            </div>
-                        </div>
-                        <div id="curriculum-content" class="table-scroll-container">
-                            Loading curriculum...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Schedule Tab -->
-                <div class="tab-content" id="schedule-tab">
-                    <div class="dashboard-panel flex-panel-content card-style-1">
-                        <div class="dashboard-panel-header">
-                            <i class="fas fa-calendar-alt"></i> Tentative Schedule
-                        </div>
-                        <div style="padding: 20px;">
-                            <div class="schedule-iframe-container">
-                                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Resources Tab -->
-                <div class="tab-content" id="resources-tab">
-                    <div class="dashboard-panel flex-panel-content card-style-1">
-                        <div class="dashboard-panel-header">
-                            <i class="fas fa-file-upload"></i> Student Resources
-                            <div style="float: right; margin-top: -5px;">
-                                <button id="upload-resource-btn" class="btn btn-primary">
-                                    <i class="fas fa-upload"></i> Upload File
-                                </button>
-                            </div>
-                        </div>
-                        <div style="padding: 20px; background: #f0f7ff; border-radius: 6px; margin: 15px; border-left: 4px solid #2196F3;">
-                            <p style="margin: 0; font-size: 0.9em; color: #555;">
-                                <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
-                                <strong>Smart Resource Detection:</strong> Upload files with clear names like "Module 6.2 Practice" or "Unit 3 Quiz".
-                                When students mention them in chat, the AI will automatically fetch and analyze the file!
-                            </p>
-                        </div>
-                        <div id="resources-list" class="table-scroll-container">
-                            Loading resources...
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="admin-widget-sidebar">
-                <div class="dashboard-panel card-style-1">
-                    <div class="dashboard-panel-header">Performance Reports</div>
-                    <p>Generate detailed student performance reports.</p>
-                    <button class="main-action-btn btn btn-secondary" style="margin-top: 10px;">Generate Report</button>
-                </div>
-            </div>
+          <div class="activity-feed-container" id="activity-feed">
+            <div class="feed-loading">Loading activity...</div>
+          </div>
         </div>
+      </aside>
+
+      <!-- CENTER CONTENT - Tabs with Students/Curriculum/Schedule/Resources -->
+      <section class="center-content">
+        <!-- Tab Navigation -->
+        <div class="dashboard-tabs">
+          <button class="tab-btn active" data-tab="students">
+            <i class="fas fa-users"></i> My Students
+          </button>
+          <button class="tab-btn" data-tab="curriculum">
+            <i class="fas fa-book"></i> Curriculum
+          </button>
+          <button class="tab-btn" data-tab="schedule">
+            <i class="fas fa-calendar-alt"></i> Schedule
+          </button>
+          <button class="tab-btn" data-tab="resources">
+            <i class="fas fa-file-upload"></i> Resources
+          </button>
+        </div>
+
+        <!-- Students Tab -->
+        <div class="tab-content active" id="students-tab">
+          <div class="dashboard-panel flex-panel-content">
+            <div class="dashboard-panel-header">My Assigned Students</div>
+            <div id="student-list" class="table-scroll-container">
+              Loading students...
+            </div>
+          </div>
+        </div>
+
+        <!-- Curriculum Tab -->
+        <div class="tab-content" id="curriculum-tab">
+          <div class="dashboard-panel flex-panel-content">
+            <div class="dashboard-panel-header">
+              Curriculum Management
+              <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button id="sync-common-curriculum-btn" class="btn btn-primary">
+                  <i class="fas fa-sync"></i> Sync Common Curriculum
+                </button>
+                <button id="upload-curriculum-btn" class="btn btn-secondary">
+                  <i class="fas fa-upload"></i> Upload CSV
+                </button>
+              </div>
+            </div>
+            <div id="curriculum-content" class="table-scroll-container">
+              Loading curriculum...
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule Tab -->
+        <div class="tab-content" id="schedule-tab">
+          <div class="dashboard-panel flex-panel-content">
+            <div class="dashboard-panel-header">
+              <i class="fas fa-calendar-alt"></i> Tentative Schedule
+            </div>
+            <div style="padding: 20px;">
+              <div class="schedule-iframe-container">
+                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resources Tab -->
+        <div class="tab-content" id="resources-tab">
+          <div class="dashboard-panel flex-panel-content">
+            <div class="dashboard-panel-header">
+              <i class="fas fa-file-upload"></i> Student Resources
+              <button id="upload-resource-btn" class="btn btn-primary" style="margin-top: 10px;">
+                <i class="fas fa-upload"></i> Upload File
+              </button>
+            </div>
+            <div style="padding: 20px; background: #f0fdf4; border-radius: 6px; margin: 15px; border-left: 4px solid #27ae60;">
+              <p style="margin: 0; font-size: 0.9em; color: #555;">
+                <i class="fas fa-lightbulb" style="color: #FFC107;"></i>
+                <strong>Smart Resource Detection:</strong> Upload files with clear names like "Module 6.2 Practice" or "Unit 3 Quiz".
+                When students mention them in chat, the AI will automatically fetch and analyze the file!
+              </p>
+            </div>
+            <div id="resources-list" class="table-scroll-container">
+              Loading resources...
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT SIDEBAR - Quick Actions -->
+      <aside class="right-sidebar">
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">Performance Reports</div>
+          <p>Generate detailed student performance reports.</p>
+          <button class="btn btn-secondary main-action-btn">
+            <i class="fas fa-chart-bar"></i> Generate Report
+          </button>
+        </div>
+      </aside>
     </main>
-    <footer>
-        <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
-        <p class="edtech-pledge">Proud member of the EdTech Equity Pledge.</p>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="main-footer">
+      © 2025 MATHMATIX AI. All rights reserved. | <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a>
     </footer>
+  </div>
 
-    <div id="iep-editor-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span id="iepModalCloseBtn" class="modal-close-button">&times;</span>
-            <div id="iep-editor-content">
-                <h2>IEP Details for <span id="iep-student-name"></span></h2>
-                <input type="hidden" id="current-iep-student-id">
+  <!-- MODALS (unchanged functionality) -->
 
-                <h3>Accommodations</h3>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" id="extendedTime" /> Extended Time</label>
-                    <label><input type="checkbox" id="simplifiedInstructions" /> Simplified Instructions</label>
-                    <label><input type="checkbox" id="iepFrequentCheckIns" /> Frequent Check-ins</label>
-                    <label><input type="checkbox" id="visualSupport" /> Visual Support</label>
-                    <label><input type="checkbox" id="chunking" /> Chunking (Break down tasks)</label>
-                    <label><input type="checkbox" id="reducedDistraction" /> Reduced Distraction</label>
-                    <label><input type="checkbox" id="mathAnxiety" /> Math Anxiety Support</label>
-                </div>
+  <!-- IEP Editor Modal -->
+  <div id="iep-editor-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span id="iepModalCloseBtn" class="modal-close-button">&times;</span>
+      <div id="iep-editor-content">
+        <h2>IEP Details for <span id="iep-student-name"></span></h2>
+        <input type="hidden" id="current-iep-student-id">
 
-                <label for="readingLevel">Reading Level (Lexile or Grade Level):</label>
-                <input type="number" id="readingLevel" placeholder="e.g., 900 (Lexile) or 6 (Grade Level)" />
-
-                <label for="preferredScaffolds">Preferred Scaffolds (comma-separated):</label>
-                <input type="text" id="preferredScaffolds" placeholder="e.g., hints, examples, graphic organizers" />
-
-                <h3>IEP Goals (SMART Goals)</h3>
-                <ul id="iep-goals-list">
-                    </ul>
-                <button id="add-iep-goal-btn" class="submit-btn btn-primary">Add New Goal</button>
-
-                <div class="form-buttons">
-                    <button id="save-iep-btn" class="submit-btn btn-primary">Save IEP</button>
-                    <button id="cancel-iep-edit-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
-                    <button id="close-iep-modal-btn" class="submit-btn cancel-btn btn-tertiary">Close</button>
-                </div>
-            </div>
+        <h3>Accommodations</h3>
+        <div class="checkbox-group">
+          <label><input type="checkbox" id="extendedTime" /> Extended Time</label>
+          <label><input type="checkbox" id="simplifiedInstructions" /> Simplified Instructions</label>
+          <label><input type="checkbox" id="iepFrequentCheckIns" /> Frequent Check-ins</label>
+          <label><input type="checkbox" id="visualSupport" /> Visual Support</label>
+          <label><input type="checkbox" id="chunking" /> Chunking (Break down tasks)</label>
+          <label><input type="checkbox" id="reducedDistraction" /> Reduced Distraction</label>
+          <label><input type="checkbox" id="mathAnxiety" /> Math Anxiety Support</label>
         </div>
-    </div>
-    <div id="conversation-history-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span id="conversationModalCloseBtn" class="modal-close-button">&times;</span>
-            <div id="conversation-history-content">
-                <h2>Conversation History for <span id="history-student-name"></span></h2>
-                <div id="conversations-list">
-                    Loading conversation summaries...
-                </div>
-                <div class="form-buttons">
-                    <button id="close-history-modal-btn" class="submit-btn cancel-btn btn-tertiary">Close</button>
-                </div>
-            </div>
+
+        <label for="readingLevel">Reading Level (Lexile or Grade Level):</label>
+        <input type="number" id="readingLevel" placeholder="e.g., 900 (Lexile) or 6 (Grade Level)" />
+
+        <label for="preferredScaffolds">Preferred Scaffolds (comma-separated):</label>
+        <input type="text" id="preferredScaffolds" placeholder="e.g., hints, examples, graphic organizers" />
+
+        <h3>IEP Goals (SMART Goals)</h3>
+        <ul id="iep-goals-list"></ul>
+        <button id="add-iep-goal-btn" class="btn btn-primary">Add New Goal</button>
+
+        <div class="form-buttons">
+          <button id="save-iep-btn" class="btn btn-primary">Save IEP</button>
+          <button id="cancel-iep-edit-btn" class="btn cancel-btn">Cancel</button>
+          <button id="close-iep-modal-btn" class="btn cancel-btn">Close</button>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Common Curriculum Sync Modal -->
-    <div id="sync-curriculum-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px;">
-            <span id="syncCurriculumModalCloseBtn" class="modal-close-button">&times;</span>
-            <div id="sync-curriculum-modal-content">
-                <h2><i class="fas fa-sync"></i> Sync Common Curriculum</h2>
-                <p>Import your curriculum schedule directly from Common Curriculum. All lesson videos, PDFs, and resources will be automatically extracted.</p>
-
-                <form id="sync-curriculum-form">
-                    <label for="cc-url">Common Curriculum Schedule URL *</label>
-                    <input type="url" id="cc-url" required placeholder="https://www.commoncurriculum.com/sites/tentative-schedule">
-                    <p style="font-size: 0.85em; color: #666; margin-top: -10px;">
-                        Paste your schedule URL from Common Curriculum
-                    </p>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label for="cc-name">Curriculum Name *</label>
-                            <input type="text" id="cc-name" required placeholder="e.g., Algebra 1">
-                        </div>
-                        <div>
-                            <label for="cc-school-year">School Year</label>
-                            <input type="text" id="cc-school-year" placeholder="e.g., 2024-2025">
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label for="cc-course-level">Course Level</label>
-                            <input type="text" id="cc-course-level" placeholder="e.g., Algebra 1">
-                        </div>
-                        <div>
-                            <label for="cc-grade-level">Grade Level</label>
-                            <input type="text" id="cc-grade-level" placeholder="e.g., 8th Grade">
-                        </div>
-                    </div>
-
-                    <div class="form-buttons" style="margin-top: 20px;">
-                        <button type="submit" class="submit-btn btn-primary">
-                            <i class="fas fa-download"></i> Import Curriculum
-                        </button>
-                        <button type="button" id="cancel-sync-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
-                    </div>
-                </form>
-            </div>
+  <!-- Conversation History Modal -->
+  <div id="conversation-history-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span id="conversationModalCloseBtn" class="modal-close-button">&times;</span>
+      <div id="conversation-history-content">
+        <h2>Conversation History for <span id="history-student-name"></span></h2>
+        <div id="conversations-list">
+          Loading conversation summaries...
         </div>
-    </div>
-
-    <!-- CSV Upload Modal -->
-    <div id="upload-curriculum-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px;">
-            <span id="uploadCurriculumModalCloseBtn" class="modal-close-button">&times;</span>
-            <div id="upload-curriculum-modal-content">
-                <h2><i class="fas fa-upload"></i> Upload Curriculum CSV</h2>
-                <p>Upload a CSV file with your curriculum schedule. Expected columns: Week, Topic, Start Date, End Date, Standards, Objectives</p>
-
-                <form id="upload-curriculum-form" enctype="multipart/form-data">
-                    <label for="csv-file">CSV File *</label>
-                    <input type="file" id="csv-file" accept=".csv" required>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label for="csv-name">Curriculum Name *</label>
-                            <input type="text" id="csv-name" required placeholder="e.g., Geometry">
-                        </div>
-                        <div>
-                            <label for="csv-school-year">School Year</label>
-                            <input type="text" id="csv-school-year" placeholder="e.g., 2024-2025">
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label for="csv-course-level">Course Level</label>
-                            <input type="text" id="csv-course-level" placeholder="e.g., Geometry">
-                        </div>
-                        <div>
-                            <label for="csv-grade-level">Grade Level</label>
-                            <input type="text" id="csv-grade-level" placeholder="e.g., 9th Grade">
-                        </div>
-                    </div>
-
-                    <div class="form-buttons" style="margin-top: 20px;">
-                        <button type="submit" class="submit-btn btn-primary">
-                            <i class="fas fa-upload"></i> Upload & Import
-                        </button>
-                        <button type="button" id="cancel-upload-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
-                    </div>
-                </form>
-            </div>
+        <div class="form-buttons">
+          <button id="close-history-modal-btn" class="btn cancel-btn">Close</button>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Upload Resource Modal -->
-    <div id="upload-resource-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px;">
-            <span id="close-upload-resource-modal" class="modal-close-button">&times;</span>
+  <!-- Common Curriculum Sync Modal -->
+  <div id="sync-curriculum-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span id="syncCurriculumModalCloseBtn" class="modal-close-button">&times;</span>
+      <div id="sync-curriculum-modal-content">
+        <h2><i class="fas fa-sync"></i> Sync Common Curriculum</h2>
+        <p>Import your curriculum schedule directly from Common Curriculum. All lesson videos, PDFs, and resources will be automatically extracted.</p>
+
+        <form id="sync-curriculum-form">
+          <label for="cc-url">Common Curriculum Schedule URL *</label>
+          <input type="url" id="cc-url" required placeholder="https://www.commoncurriculum.com/sites/tentative-schedule">
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div>
-                <h2><i class="fas fa-upload"></i> Upload Student Resource</h2>
-                <p>Upload files that students can reference in chat. Use clear, descriptive names!</p>
-
-                <form id="upload-resource-form" enctype="multipart/form-data">
-                    <label for="resource-file">File * (PDF, Word, PowerPoint, Images)</label>
-                    <input type="file" id="resource-file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.webp" required>
-
-                    <label for="resource-name">Display Name *</label>
-                    <input type="text" id="resource-name" name="displayName" required placeholder="e.g., Module 6.2 Practice Sheet">
-                    <p style="font-size: 0.85em; color: #666; margin-top: -10px;">
-                        Students will reference this by name in chat
-                    </p>
-
-                    <label for="resource-description">Description (Optional)</label>
-                    <textarea id="resource-description" name="description" rows="2" placeholder="Brief description of what this resource contains..."></textarea>
-
-                    <label for="resource-keywords">Keywords (Optional, comma-separated)</label>
-                    <input type="text" id="resource-keywords" name="keywords" placeholder="e.g., quadratic, equations, practice">
-
-                    <label for="resource-category">Category</label>
-                    <select id="resource-category" name="category">
-                        <option value="worksheet">Worksheet</option>
-                        <option value="practice">Practice Problems</option>
-                        <option value="homework">Homework</option>
-                        <option value="notes">Notes/Handout</option>
-                        <option value="quiz">Quiz</option>
-                        <option value="test">Test</option>
-                        <option value="other">Other</option>
-                    </select>
-
-                    <div class="form-buttons" style="margin-top: 20px;">
-                        <button type="submit" class="submit-btn btn-primary">
-                            <i class="fas fa-upload"></i> Upload Resource
-                        </button>
-                        <button type="button" id="cancel-resource-upload-btn" class="submit-btn cancel-btn btn-tertiary">Cancel</button>
-                    </div>
-                </form>
+              <label for="cc-name">Curriculum Name *</label>
+              <input type="text" id="cc-name" required placeholder="e.g., Algebra 1">
             </div>
-        </div>
-    </div>
+            <div>
+              <label for="cc-school-year">School Year</label>
+              <input type="text" id="cc-school-year" placeholder="e.g., 2024-2025">
+            </div>
+          </div>
 
-    <script src="/js/logout.js"></script>
-    <script src="/js/storage-utils.js"></script>
-    <script src="/js/auto-logout.js"></script>
-    <script src="/js/teacher-live-feed.js"></script>
-    <script src="/js/teacher-dashboard.js"></script>
-    <script src="/js/teacher-curriculum.js"></script>
-    <script src="/js/teacher-resources.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+              <label for="cc-course-level">Course Level</label>
+              <input type="text" id="cc-course-level" placeholder="e.g., Algebra 1">
+            </div>
+            <div>
+              <label for="cc-grade-level">Grade Level</label>
+              <input type="text" id="cc-grade-level" placeholder="e.g., 8th Grade">
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-download"></i> Import Curriculum
+            </button>
+            <button type="button" id="cancel-sync-btn" class="btn cancel-btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSV Upload Modal -->
+  <div id="upload-curriculum-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span id="uploadCurriculumModalCloseBtn" class="modal-close-button">&times;</span>
+      <div id="upload-curriculum-modal-content">
+        <h2><i class="fas fa-upload"></i> Upload Curriculum CSV</h2>
+        <p>Upload a CSV file with your curriculum schedule. Expected columns: Week, Topic, Start Date, End Date, Standards, Objectives</p>
+
+        <form id="upload-curriculum-form" enctype="multipart/form-data">
+          <label for="csv-file">CSV File *</label>
+          <input type="file" id="csv-file" accept=".csv" required>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+              <label for="csv-name">Curriculum Name *</label>
+              <input type="text" id="csv-name" required placeholder="e.g., Geometry">
+            </div>
+            <div>
+              <label for="csv-school-year">School Year</label>
+              <input type="text" id="csv-school-year" placeholder="e.g., 2024-2025">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+              <label for="csv-course-level">Course Level</label>
+              <input type="text" id="csv-course-level" placeholder="e.g., Geometry">
+            </div>
+            <div>
+              <label for="csv-grade-level">Grade Level</label>
+              <input type="text" id="csv-grade-level" placeholder="e.g., 9th Grade">
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-upload"></i> Upload & Import
+            </button>
+            <button type="button" id="cancel-upload-btn" class="btn cancel-btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Resource Modal -->
+  <div id="upload-resource-modal" class="modal-overlay">
+    <div class="modal-content">
+      <span id="close-upload-resource-modal" class="modal-close-button">&times;</span>
+      <div>
+        <h2><i class="fas fa-upload"></i> Upload Student Resource</h2>
+        <p>Upload files that students can reference in chat. Use clear, descriptive names!</p>
+
+        <form id="upload-resource-form" enctype="multipart/form-data">
+          <label for="resource-file">File * (PDF, Word, PowerPoint, Images)</label>
+          <input type="file" id="resource-file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.webp" required>
+
+          <label for="resource-name">Display Name *</label>
+          <input type="text" id="resource-name" name="displayName" required placeholder="e.g., Module 6.2 Practice Sheet">
+
+          <label for="resource-description">Description (Optional)</label>
+          <textarea id="resource-description" name="description" rows="2" placeholder="Brief description of what this resource contains..."></textarea>
+
+          <label for="resource-keywords">Keywords (Optional, comma-separated)</label>
+          <input type="text" id="resource-keywords" name="keywords" placeholder="e.g., quadratic, equations, practice">
+
+          <label for="resource-category">Category</label>
+          <select id="resource-category" name="category">
+            <option value="worksheet">Worksheet</option>
+            <option value="practice">Practice Problems</option>
+            <option value="homework">Homework</option>
+            <option value="notes">Notes/Handout</option>
+            <option value="quiz">Quiz</option>
+            <option value="test">Test</option>
+            <option value="other">Other</option>
+          </select>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-upload"></i> Upload Resource
+            </button>
+            <button type="button" id="cancel-resource-upload-btn" class="btn cancel-btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/logout.js"></script>
+  <script src="/js/storage-utils.js"></script>
+  <script src="/js/auto-logout.js"></script>
+  <script src="/js/teacher-live-feed.js"></script>
+  <script src="/js/teacher-dashboard.js"></script>
+  <script src="/js/teacher-curriculum.js"></script>
+  <script src="/js/teacher-resources.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
