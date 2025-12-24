@@ -1,4 +1,4 @@
-// utils/openaiClient.js - MODIFIED (OpenAI primary, Claude fallback, with retry logic)
+// utils/openaiClient.js - MODIFIED (Claude primary, GPT fallback, with retry logic)
 
 const OpenAI = require("openai");
 const Anthropic = require("@anthropic-ai/sdk"); // For Claude fallback
@@ -46,105 +46,151 @@ async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
 }
 
 /**
- * Centralized function to call the primary LLM (OpenAI) with a fallback (Claude).
- * @param {string} model - The primary model name (e.g., "gpt-4o", "gpt-3.5-turbo").
+ * Centralized function to call the LLM with intelligent routing.
+ * PRIMARY: Claude Sonnet 3.5 (best teaching & reasoning)
+ * FALLBACK: GPT-4o-mini (fast & cheap backup)
+ * @param {string} model - The model name (e.g., "claude-3-5-sonnet-20241022", "gpt-4o-mini")
  * @param {Array<Object>} messages - Array of message objects for the AI.
  * @param {Object} options - Additional options like temperature, max_tokens.
  * @returns {Promise<Object>} The completion object from the AI.
  */
-async function callLLM(primaryModel, messages, options = {}) {
-    // Attempt with primary model (OpenAI)
-    try {
-        console.log(`LOG: Calling primary model (${primaryModel})`);
-        const completion = await retryWithExponentialBackoff(() =>
-            openai.chat.completions.create({
-                model: primaryModel,
-                messages: messages,
-                temperature: options.temperature || 0.7,
-                max_tokens: options.max_tokens,
-                stream: options.stream || false,
-            })
-        );
-        return completion;
-    } catch (openAiError) {
-        console.warn(`WARN: Primary model (${primaryModel}) failed:`, openAiError.message);
-        console.warn('Attempting fallback to Anthropic Claude-3 Haiku...');
+async function callLLM(model, messages, options = {}) {
+    // Detect if this is a Claude or OpenAI model
+    const isClaudeModel = model.startsWith('claude-');
 
-        // Attempt with fallback model (Anthropic Claude-3 Haiku)
-        if (anthropic) {
-            try {
-                // Convert messages to Anthropic format (user/assistant)
-                const anthropicMessages = messages.map(msg => {
-                    if (msg.role === 'system') {
-                        // System message needs to be handled differently in Anthropic API (via system parameter)
-                        // Or prepended to the first user message. For simplicity here, we'll assume it's handled by prompt.js
-                        // and Anthropic messages are just user/assistant
-                        return { role: 'user', content: msg.content }; // Anthropic 'system' role is a top-level parameter
+    if (isClaudeModel && anthropic) {
+        // PRIMARY PATH: Try Claude first
+        try {
+            console.log(`LOG: Calling primary model (${model})`);
+
+            // Convert messages to Anthropic format
+            const anthropicMessages = messages.filter(msg => msg.role !== 'system').map(msg => ({
+                role: msg.role === 'assistant' ? 'assistant' : 'user',
+                content: msg.content
+            }));
+
+            // Extract system message
+            const systemMessage = messages.find(msg => msg.role === 'system')?.content;
+
+            const completion = await retryWithExponentialBackoff(() =>
+                anthropic.messages.create({
+                    model: model,
+                    max_tokens: options.max_tokens || 4000, // Claude supports up to 8k, use 4k default
+                    temperature: options.temperature || 0.7,
+                    messages: anthropicMessages,
+                    system: systemMessage
+                })
+            );
+
+            // Convert to OpenAI format for consistency
+            return {
+                choices: [{
+                    message: {
+                        content: completion.content[0].text,
+                        role: 'assistant'
                     }
-                    return {
-                        role: msg.role === 'assistant' ? 'assistant' : 'user',
-                        content: msg.content
-                    };
-                }).filter(msg => msg.role !== 'system'); // Filter out system messages if they are handled as a top-level param
+                }]
+            };
 
-                // For Anthropic, system messages are a separate parameter, not part of 'messages' array
-                const systemMessage = messages.find(msg => msg.role === 'system')?.content;
+        } catch (claudeError) {
+            console.warn(`WARN: Primary model (${model}) failed:`, claudeError.message);
+            console.warn('Attempting fallback to GPT-4o-mini...');
 
-                console.log('LOG: Calling Anthropic Claude-3 Haiku');
+            // FALLBACK: Try GPT
+            try {
+                const fallbackModel = 'gpt-4o-mini';
+                console.log(`LOG: Calling fallback model (${fallbackModel})`);
                 const completion = await retryWithExponentialBackoff(() =>
-                    anthropic.messages.create({
-                        model: "claude-3-haiku-20240307", // Specific Claude model
-                        max_tokens: options.max_tokens || 1000, // Claude requires max_tokens
+                    openai.chat.completions.create({
+                        model: fallbackModel,
+                        messages: messages,
                         temperature: options.temperature || 0.7,
-                        messages: anthropicMessages,
-                        system: systemMessage // Pass system prompt as a dedicated parameter
+                        max_tokens: options.max_tokens,
+                        stream: options.stream || false,
                     })
                 );
-
-                // Convert Anthropic response to a format similar to OpenAI for consistency
-                return {
-                    choices: [{
-                        message: {
-                            content: completion.content[0].text,
-                            role: 'assistant'
-                        }
-                    }]
-                };
-
-            } catch (claudeError) {
-                console.error("ERROR: Fallback model (Claude-3 Haiku) also failed:", claudeError.message);
-                throw new Error("Both primary and fallback AI models failed to generate a response.");
+                return completion;
+            } catch (gptError) {
+                console.error("ERROR: Fallback model (GPT-4o-mini) also failed:", gptError.message);
+                throw new Error("Both primary (Claude) and fallback (GPT) AI models failed.");
             }
-        } else {
-            console.warn("WARN: Anthropic API Key not found. Fallback not available.");
-            throw openAiError; // Re-throw original OpenAI error if no Claude key
+        }
+
+    } else {
+        // OpenAI model requested (or no Anthropic key)
+        try {
+            console.log(`LOG: Calling OpenAI model (${model})`);
+            const completion = await retryWithExponentialBackoff(() =>
+                openai.chat.completions.create({
+                    model: model,
+                    messages: messages,
+                    temperature: options.temperature || 0.7,
+                    max_tokens: options.max_tokens,
+                    stream: options.stream || false,
+                })
+            );
+            return completion;
+        } catch (openAiError) {
+            console.error(`ERROR: OpenAI model (${model}) failed:`, openAiError.message);
+            throw openAiError;
         }
     }
 }
 
 /**
  * Streaming version of callLLM - returns a stream object for real-time responses
- * @param {string} model - The primary model name (e.g., "gpt-4o-mini")
+ * Supports both Claude and OpenAI streaming
+ * @param {string} model - The model name (e.g., "claude-3-5-sonnet-20241022", "gpt-4o-mini")
  * @param {Array<Object>} messages - Array of message objects for the AI
  * @param {Object} options - Additional options like temperature, max_tokens
- * @returns {Promise<Stream>} The stream object from OpenAI
+ * @returns {Promise<Stream>} The stream object
  */
-async function callLLMStream(primaryModel, messages, options = {}) {
-    try {
-        console.log(`LOG: Calling primary model with streaming (${primaryModel})`);
-        const stream = await openai.chat.completions.create({
-            model: primaryModel,
-            messages: messages,
-            temperature: options.temperature || 0.7,
-            max_tokens: options.max_tokens,
-            stream: true, // Enable streaming
-        });
-        return stream;
-    } catch (openAiError) {
-        console.error(`ERROR: Streaming failed for ${primaryModel}:`, openAiError.message);
-        // For streaming, we don't fallback to Claude as it uses a different streaming API
-        // Instead, we throw and let the caller handle fallback to non-streaming
-        throw openAiError;
+async function callLLMStream(model, messages, options = {}) {
+    const isClaudeModel = model.startsWith('claude-');
+
+    if (isClaudeModel && anthropic) {
+        // Claude streaming
+        try {
+            console.log(`LOG: Calling Claude streaming (${model})`);
+
+            // Convert messages to Anthropic format
+            const anthropicMessages = messages.filter(msg => msg.role !== 'system').map(msg => ({
+                role: msg.role === 'assistant' ? 'assistant' : 'user',
+                content: msg.content
+            }));
+
+            const systemMessage = messages.find(msg => msg.role === 'system')?.content;
+
+            const stream = await anthropic.messages.create({
+                model: model,
+                max_tokens: options.max_tokens || 4000,
+                temperature: options.temperature || 0.7,
+                messages: anthropicMessages,
+                system: systemMessage,
+                stream: true
+            });
+
+            return stream;
+        } catch (claudeError) {
+            console.error(`ERROR: Claude streaming failed for ${model}:`, claudeError.message);
+            throw claudeError;
+        }
+    } else {
+        // OpenAI streaming
+        try {
+            console.log(`LOG: Calling OpenAI streaming (${model})`);
+            const stream = await openai.chat.completions.create({
+                model: model,
+                messages: messages,
+                temperature: options.temperature || 0.7,
+                max_tokens: options.max_tokens,
+                stream: true,
+            });
+            return stream;
+        } catch (openAiError) {
+            console.error(`ERROR: OpenAI streaming failed for ${model}:`, openAiError.message);
+            throw openAiError;
+        }
     }
 }
 
