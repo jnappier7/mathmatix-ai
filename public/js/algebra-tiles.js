@@ -437,11 +437,14 @@ class AlgebraTiles {
         ? Array.from(this.selectedTiles)
         : [tileId];
 
+      // Get workspace bounds for correct offset calculation
+      const workspaceRect = this.workspace.getBoundingClientRect();
+
       this.draggedTile = {
         element: e.target,
         ids: tilesToDrag,
-        offsetX: e.clientX - e.target.offsetLeft,
-        offsetY: e.clientY - e.target.offsetTop,
+        startX: e.clientX,
+        startY: e.clientY,
         initialPositions: new Map()
       };
 
@@ -503,14 +506,14 @@ class AlgebraTiles {
     const event = this.lastMouseEvent || e;
 
     if (this.draggedTile) {
-      const deltaX = event.clientX - this.draggedTile.offsetX - this.draggedTile.initialPositions.get(this.draggedTile.ids[0]).x;
-      const deltaY = event.clientY - this.draggedTile.offsetY - this.draggedTile.initialPositions.get(this.draggedTile.ids[0]).y;
+      // Calculate how far the mouse has moved since drag started
+      const deltaX = event.clientX - this.draggedTile.startX;
+      const deltaY = event.clientY - this.draggedTile.startY;
 
       // Move all dragged tiles together (optimized)
       this.draggedTile.ids.forEach(id => {
         const element = document.querySelector(`[data-tile-id="${id}"]`);
-        const initialPos = this.draggedTile.initialPositions.get(id);
-        if (element && initialPos) {
+        if (element) {
           element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
         }
       });
@@ -720,16 +723,20 @@ class AlgebraTiles {
       ['positive-counter', 'negative-counter'] // Number line counters
     ];
 
-    const tilesToRemove = new Set();
+    const pairsToAnimate = [];
 
     for (const [posType, negType] of pairs) {
-      const posTiles = this.tiles.filter(t => t.type === posType && !tilesToRemove.has(t.id));
-      const negTiles = this.tiles.filter(t => t.type === negType && !tilesToRemove.has(t.id));
+      const posTiles = this.tiles.filter(t => t.type === posType);
+      const negTiles = this.tiles.filter(t => t.type === negType);
 
       // Check each positive tile against negative tiles
       posTiles.forEach(posTile => {
         negTiles.forEach(negTile => {
-          if (tilesToRemove.has(posTile.id) || tilesToRemove.has(negTile.id)) return;
+          // Skip if already paired
+          if (pairsToAnimate.some(p => p.tile1.id === posTile.id || p.tile2.id === posTile.id ||
+                                        p.tile1.id === negTile.id || p.tile2.id === negTile.id)) {
+            return;
+          }
 
           // Calculate distance
           const dx = posTile.x - negTile.x;
@@ -737,14 +744,17 @@ class AlgebraTiles {
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < pairDistance) {
-            // They're close! Create zero pair animation
-            this.animateZeroPair(posTile, negTile);
-            tilesToRemove.add(posTile.id);
-            tilesToRemove.add(negTile.id);
+            // They're close! Add to pairs to animate
+            pairsToAnimate.push({ tile1: posTile, tile2: negTile });
           }
         });
       });
     }
+
+    // Animate all pairs found
+    pairsToAnimate.forEach(pair => {
+      this.animateZeroPair(pair.tile1, pair.tile2);
+    });
   }
 
   animateZeroPair(tile1, tile2) {
