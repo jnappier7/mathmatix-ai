@@ -708,16 +708,17 @@
     // Load user data and populate badges
     async function loadBadgeMap() {
       try {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-          window.location.href = '/login.html';
-          return;
-        }
-
-        // Fetch badge map data
+        // Fetch badge map data (server-side session auth will verify user)
         const response = await fetch('/api/mastery/badge-map', {
           headers: { 'Content-Type': 'application/json' }
         });
+
+        // If unauthorized (401), redirect to login
+        if (response.status === 401) {
+          console.warn('[Badge Map] Session expired - redirecting to login');
+          window.location.href = '/login.html';
+          return;
+        }
 
         if (!response.ok) throw new Error('Failed to load badge map');
 
