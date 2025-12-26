@@ -148,9 +148,11 @@ function estimateDifficulty(pValues, gradeLevel) {
 function gradeToTheta(grade) {
   const mapping = {
     'K': -2.5, '1': -2.0, '2': -1.5, '3': -1.0, '4': -0.5,
-    '5': 0.0, '6': 0.5, '7': 1.0, '8': 1.5, '9': 2.0, '10': 2.5
+    '5': 0.0, '6': 0.5, '7': 1.0, '8': 1.5, '9': 2.0, '10': 2.5,
+    '11': 2.6, '12': 2.7, '13+': 2.8,
+    'HS': 2.2, 'College': 2.7, 'calc-1': 2.8
   };
-  return mapping[grade] || 0;
+  return mapping[String(grade)] || 0;
 }
 
 /**
@@ -245,33 +247,48 @@ function parseRow(row) {
   const gradeLevel = row['Grade_Level'] || row['Grade'] || '';
   problem.metadata.gradeLevel = gradeLevel;
 
-  // Extract difficulty data from additional columns
-  // Look for columns with numeric p-values (0.0 to 1.0)
-  const pValues = [];
-  const allColumns = Object.keys(row);
+  // Check if CSV has pre-calibrated Difficulty and Discrimination
+  const csvDifficulty = parseFloat(row['Difficulty']);
+  const csvDiscrimination = parseFloat(row['Discrimination']);
 
-  // Skip known text columns
-  const skipColumns = ['ID', 'Question_Text', 'Option_A', 'Option_B', 'Option_C', 'Option_D',
-                       'Correct_Answer', 'Skill_Standard', 'Grade_Level'];
+  if (!isNaN(csvDifficulty) && csvDifficulty >= -3 && csvDifficulty <= 3) {
+    // Use calibrated difficulty from CSV
+    problem.irtParameters.difficulty = csvDifficulty;
+    problem.irtParameters.calibrationConfidence = 'expert';
+  } else {
+    // Extract difficulty data from additional columns
+    // Look for columns with numeric p-values (0.0 to 1.0)
+    const pValues = [];
+    const allColumns = Object.keys(row);
 
-  for (const col of allColumns) {
-    if (!skipColumns.includes(col)) {
-      const value = parseFloat(row[col]);
-      // If it's a valid p-value (between 0 and 1)
-      if (!isNaN(value) && value >= 0 && value <= 1) {
-        pValues.push(value);
+    // Skip known text columns
+    const skipColumns = ['ID', 'Question_Text', 'Option_A', 'Option_B', 'Option_C', 'Option_D',
+                         'Correct_Answer', 'Skill_Standard', 'Grade_Level', 'Difficulty', 'Discrimination'];
+
+    for (const col of allColumns) {
+      if (!skipColumns.includes(col)) {
+        const value = parseFloat(row[col]);
+        // If it's a valid p-value (between 0 and 1)
+        if (!isNaN(value) && value >= 0 && value <= 1) {
+          pValues.push(value);
+        }
       }
+    }
+
+    // Estimate IRT parameters from p-values
+    const grade = gradeLevel || extractGrade(standardCode);
+    problem.irtParameters.difficulty = estimateDifficulty(pValues, grade);
+    problem.irtParameters.discrimination = estimateDiscrimination(pValues);
+
+    // Store raw p-values for reference
+    if (pValues.length > 0) {
+      problem.metadata.pValues = pValues;
     }
   }
 
-  // Estimate IRT parameters from p-values
-  const grade = gradeLevel || extractGrade(standardCode);
-  problem.irtParameters.difficulty = estimateDifficulty(pValues, grade);
-  problem.irtParameters.discrimination = estimateDiscrimination(pValues);
-
-  // Store raw p-values for reference
-  if (pValues.length > 0) {
-    problem.metadata.pValues = pValues;
+  if (!isNaN(csvDiscrimination) && csvDiscrimination > 0) {
+    // Use calibrated discrimination from CSV
+    problem.irtParameters.discrimination = csvDiscrimination;
   }
 
   return problem;
