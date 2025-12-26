@@ -17,7 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
           console.log("LOG: Logout fetch response:", res.status, res.statusText);
           if (res.ok) {
             console.log("LOG: Logout successful, redirecting.");
-            localStorage.clear(); // Clear all localStorage items related to session
+            // Use StorageUtils to safely clear storage (prevents tracking prevention errors)
+            if (window.StorageUtils) {
+              StorageUtils.local.clear();
+              StorageUtils.session.clear();
+            }
             window.location.href = '/login.html';
           } else {
             const errorText = await res.text();

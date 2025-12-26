@@ -100,10 +100,12 @@ async function startScreener() {
       if (response.status === 401) {
         console.error('Authentication failed - redirecting to login');
         // Clear any stale mastery mode flags
-        sessionStorage.removeItem('masteryModeActive');
-        sessionStorage.removeItem('masteryPhase');
-        sessionStorage.removeItem('activeBadgeId');
-        sessionStorage.removeItem('screenerResults');
+        if (window.StorageUtils) {
+          StorageUtils.session.removeItem('masteryModeActive');
+          StorageUtils.session.removeItem('masteryPhase');
+          StorageUtils.session.removeItem('activeBadgeId');
+          StorageUtils.session.removeItem('screenerResults');
+        }
         alert('Your session has expired. Please log in again.');
         window.location.href = '/login.html';
         return;
@@ -277,15 +279,21 @@ async function handleCompletion(data) {
     const report = completeData.report;
 
     // Save results to sessionStorage for chat to access
-    sessionStorage.setItem('screenerResults', JSON.stringify(report));
-    sessionStorage.setItem('screenerJustCompleted', 'true');
+    if (window.StorageUtils) {
+      StorageUtils.session.setItem('screenerResults', JSON.stringify(report));
+      StorageUtils.session.setItem('screenerJustCompleted', 'true');
+    }
 
     // Check if in Mastery Mode
-    const masteryModeActive = sessionStorage.getItem('masteryModeActive');
+    const masteryModeActive = window.StorageUtils
+      ? StorageUtils.session.getItem('masteryModeActive')
+      : null;
 
     if (masteryModeActive === 'true') {
       // Mastery mode: Set phase for interview
-      sessionStorage.setItem('masteryPhase', 'interview');
+      if (window.StorageUtils) {
+        StorageUtils.session.setItem('masteryPhase', 'interview');
+      }
 
       // Show brief completion message
       displayResults(report);

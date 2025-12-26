@@ -953,8 +953,9 @@
   </script>
 
   <!-- Auth & Session Scripts -->
-  <script src="/js/logout.js"></script>
+  <!-- Load storage utilities FIRST to prevent tracking prevention errors -->
   <script src="/js/storage-utils.js"></script>
+  <script src="/js/logout.js"></script>
   <script src="/js/auto-logout.js"></script>
 </body>
 </html>

@@ -1364,8 +1364,12 @@ document.addEventListener("DOMContentLoaded", () => {
     async function getWelcomeMessage() {
         try {
             // Check if user just completed screener
-            const screenerJustCompleted = sessionStorage.getItem('screenerJustCompleted');
-            const screenerResults = sessionStorage.getItem('screenerResults');
+            const screenerJustCompleted = window.StorageUtils
+                ? StorageUtils.session.getItem('screenerJustCompleted')
+                : null;
+            const screenerResults = window.StorageUtils
+                ? StorageUtils.session.getItem('screenerResults')
+                : null;
 
             if (screenerJustCompleted === 'true' && screenerResults) {
                 // User just finished screener - provide personalized welcome
@@ -1381,13 +1385,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 appendMessage(message, "ai");
 
                 // Clear the flag so this only shows once
-                sessionStorage.removeItem('screenerJustCompleted');
+                if (window.StorageUtils) {
+                    StorageUtils.session.removeItem('screenerJustCompleted');
+                }
                 return;
             }
 
             // Check if user just selected a badge to work on
-            const activeBadgeId = sessionStorage.getItem('activeBadgeId');
-            const masteryPhase = sessionStorage.getItem('masteryPhase');
+            const activeBadgeId = window.StorageUtils
+                ? StorageUtils.session.getItem('activeBadgeId')
+                : null;
+            const masteryPhase = window.StorageUtils
+                ? StorageUtils.session.getItem('masteryPhase')
+                : null;
 
             if (activeBadgeId && masteryPhase) {
                 // Fetch active badge details from backend
@@ -1436,7 +1446,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             appendMessage(message, "ai");
 
                             // Clear the flag so this only shows once
-                            sessionStorage.removeItem('activeBadgeId');
+                            if (window.StorageUtils) {
+                                StorageUtils.session.removeItem('activeBadgeId');
+                            }
                             return;
                         }
                     }

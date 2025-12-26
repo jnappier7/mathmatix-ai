@@ -25,7 +25,9 @@ async function initializeBadgeProgress() {
 async function checkActiveBadge() {
   try {
     // Only show badge widget during mastery mode, not during normal tutoring
-    const masteryPhase = sessionStorage.getItem('masteryPhase');
+    const masteryPhase = window.StorageUtils
+      ? StorageUtils.session.getItem('masteryPhase')
+      : null;
     if (!masteryPhase) {
       // Not in mastery mode - hide widget if it exists
       hideBadgeWidget();
