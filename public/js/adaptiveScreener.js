@@ -163,6 +163,14 @@ async function loadNextProblem() {
       return;
     }
 
+    // Validate response data
+    if (!data.problem) {
+      throw new Error('No problem data received from server');
+    }
+    if (!data.session) {
+      throw new Error('No session data received from server');
+    }
+
     // Update state
     state.currentProblem = data.problem;
     state.questionStartTime = Date.now();
