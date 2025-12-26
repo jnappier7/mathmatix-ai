@@ -156,11 +156,17 @@ function processResponse(session, response) {
   session.questionCount++;
 
   // Estimate ability using all responses so far
-  const abilityEstimate = estimateAbility(session.responses.map(r => ({
+  const responsesForEstimation = session.responses.map(r => ({
     difficulty: r.difficulty,
     discrimination: r.discrimination,
     correct: r.correct
-  })));
+  }));
+
+  // DEBUG: Log what we're passing to estimateAbility
+  console.log(`[DEBUG] Estimating ability with ${responsesForEstimation.length} responses:`,
+    responsesForEstimation.map(r => `d=${r.difficulty}, a=${r.discrimination}, c=${r.correct}`).join('; '));
+
+  const abilityEstimate = estimateAbility(responsesForEstimation);
 
   const previousTheta = session.theta;
   session.theta = abilityEstimate.theta;

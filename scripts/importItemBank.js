@@ -281,8 +281,11 @@ function parseRow(row) {
     problem.answer = parseFloat(problem.answer);
   }
 
-  // Extract standard/skill code
-  const standardCode = row['Skill_Standard'] || row['Standard'] || row['Code'] || row['Skill'] || '';
+  // Extract standard/skill code and clean it
+  let standardCode = row['Skill_Standard'] || row['Standard'] || row['Code'] || row['Skill'] || '';
+
+  // Strip any parenthetical descriptions: "1.G.A.1 (Geometry)" → "1.G.A.1"
+  standardCode = standardCode.split(/[\s(]/)[0].trim();
 
   // Try multiple formats for SKILL_MAP lookup
   // Format 1: "6.EE.A.5" → "6EEA5" → "6EE5" (remove dots, then single cluster letters)
