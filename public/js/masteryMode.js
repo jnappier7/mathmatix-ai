@@ -30,10 +30,37 @@ function initializeMasteryMode() {
     masteryModeBtn: document.getElementById('mastery-mode-btn')
   };
 
-  // Start mastery journey - check progression through phases
+  // Update button appearance based on current state
+  updateMasteryModeButton();
+
+  // Toggle mastery mode on button click
   elements.masteryModeBtn?.addEventListener('click', async () => {
     console.log('Mastery Mode button clicked!');
 
+    // Check if user is currently in mastery mode
+    const currentlyInMasteryMode = window.StorageUtils
+      ? StorageUtils.session.getItem('masteryModeActive') === 'true'
+      : false;
+
+    if (currentlyInMasteryMode) {
+      // User wants to exit mastery mode and return to regular chat
+      const confirmExit = confirm(
+        '🎓 Exit Mastery Mode?\n\n' +
+        'You will return to regular tutoring chat. Your mastery progress is saved and you can resume anytime.\n\n' +
+        'Click OK to exit, or Cancel to stay in Mastery Mode.'
+      );
+
+      if (confirmExit) {
+        exitMasteryMode();
+        updateMasteryModeButton();
+
+        // Reload to clear any mastery-specific UI elements
+        window.location.reload();
+      }
+      return;
+    }
+
+    // User wants to enter mastery mode
     try {
       // Check if user has completed the placement screener
       const userResponse = await fetch('/user', { credentials: 'include' });
@@ -77,6 +104,29 @@ function initializeMasteryMode() {
   });
 
   console.log('Mastery Mode button initialized');
+}
+
+/**
+ * Update mastery mode button appearance based on current state
+ */
+function updateMasteryModeButton() {
+  if (!elements.masteryModeBtn) return;
+
+  const inMasteryMode = window.StorageUtils
+    ? StorageUtils.session.getItem('masteryModeActive') === 'true'
+    : false;
+
+  if (inMasteryMode) {
+    // Show "Exit" state
+    elements.masteryModeBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> <span class="mobile-hide">Exit Mastery</span>';
+    elements.masteryModeBtn.title = 'Exit Mastery Mode';
+    elements.masteryModeBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  } else {
+    // Show "Enter" state
+    elements.masteryModeBtn.innerHTML = '<i class="fas fa-trophy"></i> <span class="mobile-hide">Mastery Mode</span>';
+    elements.masteryModeBtn.title = 'Enter Mastery Mode';
+    elements.masteryModeBtn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+  }
 }
 
 // Initialize when DOM is ready
@@ -298,6 +348,12 @@ if (typeof module !== 'undefined' && module.exports) {
     startAIInterviewProbe,
     showBadgeEarning,
     completePhase,
-    exitMasteryMode
+    exitMasteryMode,
+    updateMasteryModeButton
   };
+}
+
+// Make updateMasteryModeButton available globally for other scripts
+if (typeof window !== 'undefined') {
+  window.updateMasteryModeButton = updateMasteryModeButton;
 }

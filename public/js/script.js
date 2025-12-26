@@ -1363,6 +1363,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getWelcomeMessage() {
         try {
+            // Check if currently in mastery mode
+            const inMasteryMode = window.StorageUtils
+                ? StorageUtils.session.getItem('masteryModeActive') === 'true'
+                : false;
+
             // Check if user just completed screener
             const screenerJustCompleted = window.StorageUtils
                 ? StorageUtils.session.getItem('screenerJustCompleted')
@@ -1371,7 +1376,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? StorageUtils.session.getItem('screenerResults')
                 : null;
 
-            if (screenerJustCompleted === 'true' && screenerResults) {
+            // Only show screener results if in mastery mode
+            if (inMasteryMode && screenerJustCompleted === 'true' && screenerResults) {
                 // User just finished screener - provide personalized welcome
                 const results = JSON.parse(screenerResults);
 
@@ -1391,7 +1397,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Check if user just selected a badge to work on
+            // Check if user just selected a badge to work on (only in mastery mode)
             const activeBadgeId = window.StorageUtils
                 ? StorageUtils.session.getItem('activeBadgeId')
                 : null;
@@ -1399,7 +1405,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? StorageUtils.session.getItem('masteryPhase')
                 : null;
 
-            if (activeBadgeId && masteryPhase) {
+            // Only show badge welcome if in mastery mode
+            if (inMasteryMode && activeBadgeId && masteryPhase) {
                 // Fetch active badge details from backend
                 try {
                     const badgeResponse = await fetch('/api/mastery/active-badge', {
@@ -1460,7 +1467,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Check if user is in any mastery mode phase
             // If so, skip the normal welcome message (they're in a structured journey)
-            if (masteryPhase) {
+            if (inMasteryMode && masteryPhase) {
                 // User is in mastery mode - no generic welcome needed
                 console.log('[Chat] User in mastery mode, skipping generic welcome');
                 return;
