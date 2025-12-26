@@ -92,7 +92,17 @@ const SKILL_MAP = {
   '7NS2': 'multiplying-dividing-integers',
   '7NS3': 'rational-numbers',
   '8NS1': 'irrational-numbers',
-  '8NS2': 'rational-approximations'
+  '8NS2': 'rational-approximations',
+
+  // High School & Beyond
+  'Stats': 'statistics',
+  'PreCalc': 'precalculus',
+  'Calc 1': 'derivatives',
+  'Calc 2': 'integration',
+  'FinLit': 'financial-literacy',
+  'HS-Alg1': 'linear-equations',
+  'HS-Alg2': 'quadratics',
+  'College Alg': 'polynomials'
 };
 
 // ============================================================================
@@ -240,7 +250,14 @@ function parseRow(row) {
 
   // Extract standard/skill code
   const standardCode = row['Skill_Standard'] || row['Standard'] || row['Code'] || row['Skill'] || '';
-  problem.skillId = SKILL_MAP[standardCode] || standardCode.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+
+  // Try multiple formats for SKILL_MAP lookup
+  // Format 1: "6.EE.A.5" → "6EEA5" → "6EE5" (remove dots, then single cluster letters)
+  let compactCode = standardCode.replace(/\./g, ''); // "6.EE.A.5" → "6EEA5"
+  compactCode = compactCode.replace(/([A-Z]{2,})([A-Z])(\d)/, '$1$3'); // "6EEA5" → "6EE5"
+
+  // Try SKILL_MAP with both original and compact formats
+  problem.skillId = SKILL_MAP[standardCode] || SKILL_MAP[compactCode] || standardCode.toLowerCase().replace(/[^a-z0-9-]/g, '-');
   problem.metadata.standardCode = standardCode;
 
   // Extract grade level
