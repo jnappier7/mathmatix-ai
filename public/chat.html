@@ -244,14 +244,14 @@
 
         <div class="form-group" id="password-change-section" style="display: none;">
           <label>Change Password</label>
-          <div id="password-change-form">
-            <input type="password" id="current-password" class="form-input" placeholder="Current Password" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-            <input type="password" id="new-password" class="form-input" placeholder="New Password (min 6 characters)" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-            <input type="password" id="confirm-new-password" class="form-input" placeholder="Confirm New Password" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-            <button id="change-password-btn" class="btn btn-primary" style="width: 100%; margin-top: 5px;">
+          <form id="password-change-form" autocomplete="off">
+            <input type="password" id="current-password" name="current-password" autocomplete="current-password" class="form-input" placeholder="Current Password" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="password" id="new-password" name="new-password" autocomplete="new-password" class="form-input" placeholder="New Password (min 6 characters)" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="password" id="confirm-new-password" name="confirm-password" autocomplete="new-password" class="form-input" placeholder="Confirm New Password" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <button type="button" id="change-password-btn" class="btn btn-primary" style="width: 100%; margin-top: 5px;">
               <i class="fas fa-key"></i> Update Password
             </button>
-          </div>
+          </form>
           <p class="setting-description">Change your account password. Make sure to use a strong password that you can remember.</p>
         </div>
 

@@ -1145,4 +1145,48 @@ router.post('/misconception-addressed', isAuthenticated, async (req, res) => {
   }
 });
 
+/**
+ * Get badge map data for visualization
+ * GET /api/mastery/badge-map
+ */
+router.get('/badge-map', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get all available badges
+    const availableBadges = await Skill.find({ isBadge: true }).lean();
+
+    // Build badge map with user progress
+    const badgeMap = availableBadges.map(badge => {
+      const userProgress = user.skillMastery?.get(badge.skillId) || {};
+
+      return {
+        badgeId: badge.skillId,
+        name: badge.name,
+        description: badge.description,
+        gradeLevel: badge.gradeLevel,
+        prerequisites: badge.prerequisites || [],
+        status: userProgress.status || 'locked',
+        progress: userProgress.masteryScore || 0,
+        earned: userProgress.status === 'mastered',
+        earnedDate: userProgress.masteredDate
+      };
+    });
+
+    res.json({
+      badges: badgeMap,
+      userLevel: user.level || 1,
+      userXP: user.xp || 0
+    });
+
+  } catch (error) {
+    console.error('Error fetching badge map:', error);
+    res.status(500).json({ error: 'Failed to load badge map' });
+  }
+});
+
 module.exports = router;
