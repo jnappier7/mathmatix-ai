@@ -305,6 +305,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     // Check if answer is correct
     const isCorrect = problem.checkAnswer(answer);
 
+    // Capture previous theta for logging
+    const previousTheta = session.theta;
+
     // Process response
     const response = {
       problemId: problem.problemId,
@@ -320,16 +323,29 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     const result = processResponse(session, response);
 
     // CTO REVIEW FIX: Update session in database
+    // Mark ALL modified fields including theta, standardError, confidence
+    session.markModified('theta');
+    session.markModified('standardError');
+    session.markModified('confidence');
+    session.markModified('cumulativeInformation');
     session.markModified('responses'); // Ensure nested arrays are saved
     session.markModified('testedSkills');
     session.markModified('testedSkillCategories');
+    session.markModified('questionCount');
+    session.markModified('converged');
+    session.markModified('plateaued');
+    session.markModified('frontier');
     await session.save();
+
+    console.log(`[Screener] Q${session.questionCount} Result: ${response.correct ? 'CORRECT' : 'INCORRECT'} | Theta: ${previousTheta.toFixed(2)} → ${session.theta.toFixed(2)} (Δ${(session.theta - previousTheta).toFixed(2)}) | SE: ${session.standardError.toFixed(3)}`);
 
     // Determine next action
     if (result.action === 'continue') {
-      // Continue screening - NO FEEDBACK DURING SCREENER (prevents negative momentum)
+      // Continue screening - NO FEEDBACK TEXT (prevents negative momentum)
+      // But DO send correct flag for client-side tracking
       res.json({
         nextAction: 'continue',
+        correct: isCorrect,  // Track correctness without showing feedback
         progress: {
           current: session.questionCount,
           min: session.minQuestions,
@@ -337,7 +353,7 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
           max: session.maxQuestions,
           percentComplete: Math.round((session.questionCount / session.targetQuestions) * 100)
         }
-        // DO NOT send: correct, feedback, theta, standardError (student shouldn't see these)
+        // DO NOT send: feedback text, theta, standardError (student shouldn't see these)
       });
 
     } else if (result.action === 'interview') {

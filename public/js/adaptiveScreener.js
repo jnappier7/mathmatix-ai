@@ -240,14 +240,18 @@ async function submitAnswer() {
 
     const data = await response.json();
 
-    // Show feedback
-    showFeedback(data.correct, data.feedback);
-
-    // Store response
+    // Track correctness behind the scenes (even though we don't show feedback)
+    // This is used for analytics and final report
     state.responses.push({
-      correct: data.correct,
+      correct: data.correct,  // Backend always sends this for tracking
       responseTime
     });
+
+    // Backend intentionally doesn't send feedback TEXT during screener (prevents negative momentum)
+    // Only show feedback UI if provided (typically only at completion)
+    if (data.feedback !== undefined) {
+      showFeedback(data.correct, data.feedback);
+    }
 
     // Update theta if available
     if (data.session) {
@@ -255,6 +259,9 @@ async function submitAnswer() {
       state.confidence = data.session.confidence;
       updateProgress(data.session);
       updateAperture(data.session.confidence);
+    } else if (data.progress) {
+      // Use progress data if session not available
+      updateProgressFromProblem(data.progress);
     }
 
     // Wait for user to see feedback, then proceed

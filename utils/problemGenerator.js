@@ -49,16 +49,24 @@ const TEMPLATES = {
     baseDiscrimination: 1.2,
 
     generate: (targetDifficulty = -0.5) => {
+      // Scale complexity with target difficulty
       const useNegatives = targetDifficulty > -0.3;
-      const useLargeNumbers = targetDifficulty > 0;
+      const useLargeNumbers = targetDifficulty > 0.2;
 
-      const a = useNegatives ? random(-20, 20) : random(1, 20);
-      const b = useNegatives ? random(-20, 20) : random(1, 20);
+      // Scale number ranges based on difficulty
+      const maxNum = Math.max(5, Math.min(20, Math.floor(10 + targetDifficulty * 10)));
+
+      const a = useNegatives ? random(-maxNum, maxNum) : random(1, maxNum);
+      const b = useNegatives ? random(-maxNum, maxNum) : random(1, maxNum);
       const answer = a + b;
 
-      const difficulty = -0.5
-        + (useNegatives ? 0.3 : 0)
-        + (Math.abs(a) > 15 || Math.abs(b) > 15 ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (useNegatives) difficulty += 0.15;
+      if (Math.abs(a) > 15 || Math.abs(b) > 15) difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `${a} + ${b}`,
@@ -76,15 +84,21 @@ const TEMPLATES = {
     baseDiscrimination: 1.3,
 
     generate: (targetDifficulty = -0.3) => {
+      // Scale complexity with target difficulty
       const useNegatives = targetDifficulty > 0;
+      const maxNum = Math.max(5, Math.min(30, Math.floor(12 + targetDifficulty * 10)));
 
-      const a = useNegatives ? random(-20, 20) : random(1, 30);
-      const b = useNegatives ? random(-20, 20) : random(1, 20);
+      const a = useNegatives ? random(-maxNum, maxNum) : random(1, maxNum);
+      const b = useNegatives ? random(-maxNum, maxNum) : random(1, Math.min(maxNum, 20));
       const answer = a - b;
 
-      const difficulty = -0.3
-        + (useNegatives ? 0.4 : 0)
-        + (a < b ? 0.2 : 0);  // Negative result harder
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (useNegatives) difficulty += 0.2;
+      if (a < b) difficulty += 0.15;  // Negative result harder
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `${a} - ${b}`,
@@ -102,10 +116,12 @@ const TEMPLATES = {
     baseDiscrimination: 1.4,
 
     generate: (targetDifficulty = 0.0) => {
+      // Scale complexity with target difficulty
       const useNegatives = targetDifficulty > 0.3;
       const useLargeNumbers = targetDifficulty > 0.8;
 
-      const maxFactor = useLargeNumbers ? 15 : 12;
+      // Scale factor ranges based on difficulty
+      const maxFactor = useLargeNumbers ? 15 : Math.max(6, Math.min(12, Math.floor(8 + targetDifficulty * 4)));
       let a = random(2, maxFactor);
       let b = random(2, maxFactor);
 
@@ -116,9 +132,13 @@ const TEMPLATES = {
 
       const answer = a * b;
 
-      const difficulty = 0.0
-        + (useNegatives ? 0.4 : 0)
-        + (useLargeNumbers ? 0.5 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (useNegatives) difficulty += 0.2;
+      if (useLargeNumbers) difficulty += 0.15;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `${a} × ${b}`,
@@ -140,16 +160,24 @@ const TEMPLATES = {
     baseDiscrimination: 1.3,
 
     generate: (targetDifficulty = 0.2) => {
+      // Scale complexity with target difficulty
       const useNegatives = targetDifficulty > 0.5;
       const variable = randomChoice(['x', 'y', 'n', 'm', 't']);
 
-      const constant = useNegatives ? random(-15, 15) : random(1, 20);
-      const answer = useNegatives ? random(-15, 15) : random(1, 20);
+      // Scale number ranges based on difficulty (-1.0 to 2.0 range)
+      const maxNum = Math.max(5, Math.min(20, Math.floor(10 + targetDifficulty * 5)));
+
+      const constant = useNegatives ? random(-maxNum, maxNum) : random(1, maxNum);
+      const answer = useNegatives ? random(-maxNum, maxNum) : random(1, maxNum);
       const sum = answer + constant;
 
-      const difficulty = 0.2
-        + (constant < 0 ? 0.3 : 0)
-        + (sum < 0 ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (constant < 0) difficulty += 0.15;
+      if (sum < 0) difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `${variable} + ${constant} = ${sum}`,
@@ -167,16 +195,24 @@ const TEMPLATES = {
     baseDiscrimination: 1.3,
 
     generate: (targetDifficulty = 0.3) => {
+      // Scale complexity with target difficulty
       const useNegatives = targetDifficulty > 0.6;
       const variable = randomChoice(['x', 'y', 'n', 'm']);
 
-      const constant = useNegatives ? random(-15, 15) : random(1, 20);
-      const answer = useNegatives ? random(-15, 15) : random(1, 20);
+      // Scale number ranges based on difficulty
+      const maxNum = Math.max(5, Math.min(20, Math.floor(10 + targetDifficulty * 5)));
+
+      const constant = useNegatives ? random(-maxNum, maxNum) : random(1, maxNum);
+      const answer = useNegatives ? random(-maxNum, maxNum) : random(1, maxNum);
       const result = answer - constant;
 
-      const difficulty = 0.3
-        + (constant < 0 ? 0.3 : 0)
-        + (result < 0 ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (constant < 0) difficulty += 0.15;
+      if (result < 0) difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `${variable} - ${constant} = ${result}`,
@@ -194,11 +230,14 @@ const TEMPLATES = {
     baseDiscrimination: 1.4,
 
     generate: (targetDifficulty = 0.5) => {
+      // Scale complexity with target difficulty
       const useNegatives = targetDifficulty > 0.8;
       const variable = randomChoice(['x', 'y', 'n']);
 
-      let coeff = random(2, 10);
-      let answer = random(1, 12);
+      // Scale coefficient ranges based on difficulty
+      const maxCoeff = Math.max(3, Math.min(10, Math.floor(5 + targetDifficulty * 3)));
+      let coeff = random(2, maxCoeff);
+      let answer = random(1, Math.max(6, Math.min(12, Math.floor(8 + targetDifficulty * 2))));
 
       if (useNegatives && Math.random() < 0.5) {
         coeff = -coeff;
@@ -206,9 +245,13 @@ const TEMPLATES = {
 
       const result = coeff * answer;
 
-      const difficulty = 0.5
-        + (coeff < 0 ? 0.3 : 0)
-        + (coeff > 6 ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (coeff < 0) difficulty += 0.15;
+      if (Math.abs(coeff) > 6) difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `${coeff}${variable} = ${result}`,
@@ -227,12 +270,20 @@ const TEMPLATES = {
 
     generate: (targetDifficulty = 0.6) => {
       const variable = randomChoice(['x', 'y', 'n']);
-      const divisor = random(2, 10);
-      const quotient = random(1, 15);
+
+      // Scale divisor ranges based on difficulty
+      const maxDivisor = Math.max(3, Math.min(10, Math.floor(5 + targetDifficulty * 3)));
+      const divisor = random(2, maxDivisor);
+      const quotient = random(1, Math.max(8, Math.min(15, Math.floor(10 + targetDifficulty * 3))));
 
       const answer = divisor * quotient;  // Ensure clean division
 
-      const difficulty = 0.6 + (divisor > 6 ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (divisor > 6) difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `${variable}/${divisor} = ${quotient}`,
@@ -254,12 +305,15 @@ const TEMPLATES = {
     baseDiscrimination: 1.5,
 
     generate: (targetDifficulty = 1.0) => {
+      // Scale complexity with target difficulty
       const useNegatives = targetDifficulty > 1.3;
       const variable = randomChoice(['x', 'y', 'n']);
 
-      let coeff = random(2, 8);
+      // Scale coefficient ranges based on difficulty
+      const maxCoeff = Math.max(2, Math.min(8, Math.floor(4 + targetDifficulty * 2)));
+      let coeff = random(2, maxCoeff);
       let constant = useNegatives ? random(-12, 12) : random(-10, 10);
-      let answer = random(1, 10);
+      let answer = random(1, Math.max(6, Math.min(10, Math.floor(8 + targetDifficulty))));
 
       if (useNegatives && Math.random() < 0.3) {
         coeff = -coeff;
@@ -267,10 +321,14 @@ const TEMPLATES = {
 
       const result = coeff * answer + constant;
 
-      const difficulty = 1.0
-        + (coeff < 0 ? 0.3 : 0)
-        + (constant < 0 ? 0.2 : 0)
-        + (coeff > 5 ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (coeff < 0) difficulty += 0.15;
+      if (constant < 0) difficulty += 0.1;
+      if (Math.abs(coeff) > 5) difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       // Format: 3x + 5 = 14 or 3x - 5 = 4
       const sign = constant >= 0 ? '+' : '';
@@ -299,15 +357,21 @@ const TEMPLATES = {
       const variable = randomChoice(['x', 'y', 'n']);
       const useThreeTerms = targetDifficulty > 1.0;
 
-      const coeff1 = random(1, 8);
-      const coeff2 = random(1, 8);
+      // Scale coefficient ranges based on difficulty
+      const maxCoeff = Math.max(3, Math.min(8, Math.floor(5 + targetDifficulty * 2)));
+      const coeff1 = random(1, maxCoeff);
+      const coeff2 = random(1, maxCoeff);
       const coeff3 = useThreeTerms ? random(-5, 5) : 0;
 
       const answer = coeff1 + coeff2 + coeff3;
 
-      const difficulty = 0.7
-        + (useThreeTerms ? 0.3 : 0)
-        + (coeff3 < 0 ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (useThreeTerms) difficulty += 0.15;
+      if (coeff3 < 0) difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       let content;
       if (useThreeTerms) {
@@ -342,31 +406,38 @@ const TEMPLATES = {
     generate: (targetDifficulty = 0.8) => {
       const useParentheses = targetDifficulty > 1.0;
 
+      // Scale number ranges based on difficulty
+      const maxNum = Math.max(5, Math.min(15, Math.floor(8 + targetDifficulty * 4)));
+
       if (useParentheses) {
         // (a + b) × c
-        const a = random(2, 10);
-        const b = random(2, 10);
-        const c = random(2, 6);
+        const a = random(2, maxNum);
+        const b = random(2, maxNum);
+        const c = random(2, Math.min(6, Math.floor(4 + targetDifficulty)));
         const answer = (a + b) * c;
+
+        // Calculate difficulty, centered on target
+        let difficulty = targetDifficulty + 0.15;
+        difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
         return {
           content: `(${a} + ${b}) × ${c}`,
           answer,
-          difficulty: 1.1,
+          difficulty,
           discrimination: 1.4,
           estimatedTime: 25
         };
       } else {
         // a + b × c
-        const a = random(2, 15);
-        const b = random(2, 8);
-        const c = random(2, 8);
+        const a = random(2, maxNum);
+        const b = random(2, Math.min(8, Math.floor(6 + targetDifficulty)));
+        const c = random(2, Math.min(8, Math.floor(6 + targetDifficulty)));
         const answer = a + (b * c);
 
         return {
           content: `${a} + ${b} × ${c}`,
           answer,
-          difficulty: 0.8,
+          difficulty: targetDifficulty,
           discrimination: 1.4,
           estimatedTime: 20
         };
@@ -385,9 +456,12 @@ const TEMPLATES = {
 
     generate: (targetDifficulty = 1.2) => {
       const variable = randomChoice(['x', 'y', 'n']);
-      const coeff = random(2, 6);
-      const term1 = random(1, 10);
-      const term2 = random(1, 10);
+
+      // Scale coefficient ranges based on difficulty
+      const maxCoeff = Math.max(2, Math.min(6, Math.floor(3 + targetDifficulty)));
+      const coeff = random(2, maxCoeff);
+      const term1 = random(1, Math.max(5, Math.min(10, Math.floor(6 + targetDifficulty * 2))));
+      const term2 = random(1, Math.max(5, Math.min(10, Math.floor(6 + targetDifficulty * 2))));
 
       const result1 = coeff * term1;
       const result2 = coeff * term2;
@@ -395,7 +469,12 @@ const TEMPLATES = {
       const sign = Math.random() < 0.5 ? '+' : '-';
       const term2Display = sign === '+' ? term2 : -term2;
 
-      const difficulty = 1.2 + (sign === '-' ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (sign === '-') difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `Expand: ${coeff}(${term1}${variable} ${sign} ${term2})`,
@@ -420,13 +499,20 @@ const TEMPLATES = {
     generate: (targetDifficulty = 1.5) => {
       const variable = randomChoice(['x', 'y']);
 
+      // Scale coefficient ranges based on difficulty
       // 2(x + 3) = 14  →  x = 4
-      const coeff = random(2, 5);
-      const inner = random(2, 8);
-      const answer = random(1, 10);
+      const maxCoeff = Math.max(2, Math.min(5, Math.floor(3 + targetDifficulty * 0.5)));
+      const coeff = random(2, maxCoeff);
+      const inner = random(2, Math.max(5, Math.min(8, Math.floor(4 + targetDifficulty))));
+      const answer = random(1, Math.max(6, Math.min(10, Math.floor(8 + targetDifficulty * 0.5))));
       const result = coeff * (answer + inner);
 
-      const difficulty = 1.5 + (coeff > 3 ? 0.2 : 0);
+      // Calculate difficulty based on features, centered on target
+      let difficulty = targetDifficulty;
+      if (coeff > 3) difficulty += 0.1;
+
+      // Clamp to reasonable range around target
+      difficulty = Math.max(targetDifficulty - 0.3, Math.min(targetDifficulty + 0.3, difficulty));
 
       return {
         content: `${coeff}(${variable} + ${inner}) = ${result}`,
