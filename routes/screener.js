@@ -327,9 +327,11 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
 
     // Determine next action
     if (result.action === 'continue') {
-      // Continue screening - NO FEEDBACK DURING SCREENER (prevents negative momentum)
+      // Continue screening - NO FEEDBACK TEXT (prevents negative momentum)
+      // But DO send correct flag for client-side tracking
       res.json({
         nextAction: 'continue',
+        correct: isCorrect,  // Track correctness without showing feedback
         progress: {
           current: session.questionCount,
           min: session.minQuestions,
@@ -337,7 +339,7 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
           max: session.maxQuestions,
           percentComplete: Math.round((session.questionCount / session.targetQuestions) * 100)
         }
-        // DO NOT send: correct, feedback, theta, standardError (student shouldn't see these)
+        // DO NOT send: feedback text, theta, standardError (student shouldn't see these)
       });
 
     } else if (result.action === 'interview') {
