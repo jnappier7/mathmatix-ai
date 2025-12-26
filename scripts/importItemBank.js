@@ -105,6 +105,39 @@ const SKILL_MAP = {
   'College Alg': 'polynomials'
 };
 
+// Domain-based fallback for unmapped standards
+const DOMAIN_MAP = {
+  'G': 'geometry',
+  'MD': 'measurement',
+  'NBT': 'place-value',
+  'NF': 'fractions',
+  'OA': 'operations',
+  'CC': 'counting',
+  'NS': 'number-system',
+  'EE': 'expressions-equations',
+  'RP': 'ratios-proportions',
+  'SP': 'statistics-probability',
+  'F': 'functions',
+  'APR': 'polynomials',
+  'CED': 'equations',
+  'REI': 'solving-equations',
+  'SSE': 'expressions',
+  'BF': 'functions',
+  'IF': 'functions',
+  'LE': 'linear-functions',
+  'TF': 'trigonometry',
+  'C': 'circles',
+  'CO': 'congruence',
+  'GMD': 'volume',
+  'GPE': 'coordinate-geometry',
+  'SRT': 'similarity',
+  'CN': 'complex-numbers',
+  'RN': 'real-numbers',
+  'VM': 'vectors',
+  'CP': 'probability',
+  'ID': 'statistics'
+};
+
 // ============================================================================
 // DIFFICULTY CONVERSION
 // ============================================================================
@@ -253,11 +286,22 @@ function parseRow(row) {
 
   // Try multiple formats for SKILL_MAP lookup
   // Format 1: "6.EE.A.5" → "6EEA5" → "6EE5" (remove dots, then single cluster letters)
-  let compactCode = standardCode.replace(/\./g, ''); // "6.EE.A.5" → "6EEA5"
-  compactCode = compactCode.replace(/([A-Z]{2,})([A-Z])(\d)/, '$1$3'); // "6EEA5" → "6EE5"
+  // Also handles single-letter domains: "1.G.A.1" → "1GA1" → "1G1"
+  let compactCode = standardCode.replace(/\./g, ''); // "6.EE.A.5" → "6EEA5", "1.G.A.1" → "1GA1"
+  compactCode = compactCode.replace(/([A-Z]+)([A-Z])(\d+)$/, '$1$3'); // "6EEA5" → "6EE5", "1GA1" → "1G1"
 
   // Try SKILL_MAP with both original and compact formats
-  problem.skillId = SKILL_MAP[standardCode] || SKILL_MAP[compactCode] || standardCode.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  // If not found, use domain-based fallback (e.g., "1.G.A.1" → "geometry")
+  let skillId = SKILL_MAP[standardCode] || SKILL_MAP[compactCode];
+
+  if (!skillId) {
+    // Extract domain code (e.g., "1GA1" → "G", "7NSA1" → "NS")
+    const domainMatch = compactCode.match(/\d*([A-Z]+)/);
+    const domain = domainMatch ? domainMatch[1] : null;
+    skillId = domain && DOMAIN_MAP[domain] ? DOMAIN_MAP[domain] : standardCode.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+  }
+
+  problem.skillId = skillId;
   problem.metadata.standardCode = standardCode;
 
   // Extract grade level
