@@ -1009,7 +1009,9 @@ class MathmatixWhiteboard {
         };
 
         try {
-            localStorage.setItem('whiteboardLayout', JSON.stringify(layout));
+            if (window.StorageUtils) {
+                StorageUtils.local.setItem('whiteboardLayout', JSON.stringify(layout));
+            }
         } catch (e) {
             console.warn('Failed to save whiteboard layout:', e);
         }
@@ -1019,7 +1021,9 @@ class MathmatixWhiteboard {
         if (!this.panel) return;
 
         try {
-            const saved = localStorage.getItem('whiteboardLayout');
+            const saved = window.StorageUtils
+                ? StorageUtils.local.getItem('whiteboardLayout')
+                : null;
             if (!saved) return;
 
             const layout = JSON.parse(saved);
@@ -1052,7 +1056,9 @@ class MathmatixWhiteboard {
         if (!this.panel) return;
 
         // Clear saved layout
-        localStorage.removeItem('whiteboardLayout');
+        if (window.StorageUtils) {
+            StorageUtils.local.removeItem('whiteboardLayout');
+        }
 
         // Reset to default position and size
         this.panel.style.width = '650px';

@@ -56,14 +56,18 @@ function initializeMasteryMode() {
       if (assessmentCompleted) {
         // User already completed placement - skip straight to badge selection
         console.log('[Mastery Mode] User already completed placement screener, skipping to badges');
-        sessionStorage.setItem('masteryModeActive', 'true');
-        sessionStorage.setItem('masteryPhase', 'badges');
+        if (window.StorageUtils) {
+          StorageUtils.session.setItem('masteryModeActive', 'true');
+          StorageUtils.session.setItem('masteryPhase', 'badges');
+        }
         window.location.href = '/badge-map.html';
       } else {
         // User needs placement - redirect to screener
         console.log('[Mastery Mode] User needs placement screener');
-        sessionStorage.setItem('masteryModeActive', 'true');
-        sessionStorage.setItem('masteryPhase', 'placement');
+        if (window.StorageUtils) {
+          StorageUtils.session.setItem('masteryModeActive', 'true');
+          StorageUtils.session.setItem('masteryPhase', 'placement');
+        }
         window.location.href = '/screener.html';
       }
     } catch (error) {
@@ -90,8 +94,12 @@ if (document.readyState === 'loading') {
  * Check if returning from screener and should start interview
  */
 async function checkMasteryPhaseOnLoad() {
-  const masteryActive = sessionStorage.getItem('masteryModeActive');
-  const currentPhase = sessionStorage.getItem('masteryPhase');
+  const masteryActive = window.StorageUtils
+    ? StorageUtils.session.getItem('masteryModeActive')
+    : null;
+  const currentPhase = window.StorageUtils
+    ? StorageUtils.session.getItem('masteryPhase')
+    : null;
 
   if (masteryActive === 'true') {
     if (currentPhase === 'interview') {
@@ -111,7 +119,10 @@ async function startAIInterviewProbe() {
   console.log('Starting AI Interview Probe...');
 
   // Get screener results from session storage
-  const screenerResults = JSON.parse(sessionStorage.getItem('screenerResults') || '{}');
+  const screenerResultsStr = window.StorageUtils
+    ? StorageUtils.session.getItem('screenerResults')
+    : null;
+  const screenerResults = JSON.parse(screenerResultsStr || '{}');
 
   if (!screenerResults || !screenerResults.theta) {
     console.error('No screener results found');
@@ -242,10 +253,14 @@ Reply with the name of the badge you'd like to pursue, or say "show me all" to s
  */
 function completePhase(phase) {
   if (phase === 'placement') {
-    sessionStorage.setItem('masteryPhase', 'interview');
+    if (window.StorageUtils) {
+      StorageUtils.session.setItem('masteryPhase', 'interview');
+    }
     // Results are passed via screener completion
   } else if (phase === 'interview') {
-    sessionStorage.setItem('masteryPhase', 'badges');
+    if (window.StorageUtils) {
+      StorageUtils.session.setItem('masteryPhase', 'badges');
+    }
     masteryState.interviewComplete = true;
   }
 }
@@ -254,9 +269,11 @@ function completePhase(phase) {
  * Exit mastery mode
  */
 function exitMasteryMode() {
-  sessionStorage.removeItem('masteryModeActive');
-  sessionStorage.removeItem('masteryPhase');
-  sessionStorage.removeItem('screenerResults');
+  if (window.StorageUtils) {
+    StorageUtils.session.removeItem('masteryModeActive');
+    StorageUtils.session.removeItem('masteryPhase');
+    StorageUtils.session.removeItem('screenerResults');
+  }
   masteryState.currentPhase = null;
   masteryState.screenerResults = null;
   masteryState.interviewComplete = false;

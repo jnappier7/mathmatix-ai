@@ -75,10 +75,12 @@ async function initialize() {
       if (response.status === 401) {
         console.error('Authentication failed - redirecting to login');
         // Clear any stale mastery mode flags
-        sessionStorage.removeItem('masteryModeActive');
-        sessionStorage.removeItem('masteryPhase');
-        sessionStorage.removeItem('activeBadgeId');
-        sessionStorage.removeItem('screenerResults');
+        if (window.StorageUtils) {
+          StorageUtils.session.removeItem('masteryModeActive');
+          StorageUtils.session.removeItem('masteryPhase');
+          StorageUtils.session.removeItem('activeBadgeId');
+          StorageUtils.session.removeItem('screenerResults');
+        }
         window.location.href = '/login.html';
         return;
       }
@@ -327,8 +329,10 @@ async function selectBadge(badgeId) {
     const data = await response.json();
 
     // Store badge info in sessionStorage
-    sessionStorage.setItem('activeBadgeId', badgeId);
-    sessionStorage.setItem('masteryPhase', 'badge-earning');
+    if (window.StorageUtils) {
+      StorageUtils.session.setItem('activeBadgeId', badgeId);
+      StorageUtils.session.setItem('masteryPhase', 'badge-earning');
+    }
 
     // Redirect to mastery mode interface to begin badge work
     window.location.href = '/mastery-chat.html';
