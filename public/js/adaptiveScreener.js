@@ -167,21 +167,29 @@ async function loadNextProblem() {
     if (!data.problem) {
       throw new Error('No problem data received from server');
     }
-    if (!data.session) {
-      throw new Error('No session data received from server');
-    }
 
     // Update state
     state.currentProblem = data.problem;
     state.questionStartTime = Date.now();
     state.questionCount = data.problem.questionNumber;
-    state.theta = data.session.theta;
-    state.confidence = data.session.confidence;
+
+    // Session data (theta/confidence) is not exposed to students for security
+    // We only track progress which is visible
+    if (data.session) {
+      state.theta = data.session.theta;
+      state.confidence = data.session.confidence;
+    }
 
     // Update UI
     displayProblem(data.problem);
-    updateProgress(data.session);
-    updateAperture(data.session.confidence);
+
+    // Use problem progress instead of session data
+    if (data.problem.progress) {
+      updateProgressFromProblem(data.problem.progress);
+    } else if (data.session) {
+      updateProgress(data.session);
+      updateAperture(data.session.confidence);
+    }
 
     // Clear previous answer and feedback
     elements.answerInput.value = '';
