@@ -302,6 +302,13 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'Problem not found' });
     }
 
+    // DEBUG: Log problem IRT parameters to diagnose NaN issue
+    console.log(`[DEBUG] Problem ${problemId} IRT params:`, {
+      difficulty: problem.irtParameters?.difficulty,
+      discrimination: problem.irtParameters?.discrimination,
+      hasIrtParameters: !!problem.irtParameters
+    });
+
     // Check if answer is correct
     const isCorrect = problem.checkAnswer(answer);
 
