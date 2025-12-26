@@ -240,12 +240,15 @@ async function submitAnswer() {
 
     const data = await response.json();
 
-    // Show feedback
-    showFeedback(data.correct, data.feedback);
+    // Backend intentionally doesn't send feedback during screener (prevents negative momentum)
+    // Only show feedback if provided
+    if (data.feedback !== undefined) {
+      showFeedback(data.correct, data.feedback);
+    }
 
     // Store response
     state.responses.push({
-      correct: data.correct,
+      correct: data.correct !== undefined ? data.correct : null,
       responseTime
     });
 
@@ -255,6 +258,9 @@ async function submitAnswer() {
       state.confidence = data.session.confidence;
       updateProgress(data.session);
       updateAperture(data.session.confidence);
+    } else if (data.progress) {
+      // Use progress data if session not available
+      updateProgressFromProblem(data.progress);
     }
 
     // Wait for user to see feedback, then proceed
