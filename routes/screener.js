@@ -132,10 +132,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
 
     // ADAPTIVE SKILL SELECTION - Use FULL curriculum from database (not hardcoded!)
     // Query all skills from database with estimated difficulty ranges
-    // Exclude skills with irtDifficulty=0 (can't estimate theta from problems with no difficulty)
-    const allSkills = await Skill.find({
-      irtDifficulty: { $ne: 0, $exists: true }
-    }).select('skillId name category irtDifficulty').lean();
+    const allSkills = await Skill.find({}).select('skillId name category irtDifficulty').lean();
 
     // If no IRT difficulty in database, use category-based estimates
     const categoryDifficultyMap = {
