@@ -350,7 +350,27 @@ function displayProblem(problem) {
 }
 
 /**
- * Update progress indicators
+ * Update progress from problem data (when session data is not exposed)
+ */
+function updateProgressFromProblem(progress) {
+  const { current, target, percentComplete } = progress;
+
+  // Update progress text
+  if (elements.questionCount) {
+    elements.questionCount.textContent = `${current} / ${target}`;
+  }
+
+  // Students don't see theta/confidence for privacy
+  if (elements.thetaDisplay) {
+    elements.thetaDisplay.textContent = 'Finding your level...';
+  }
+  if (elements.confidenceBadge) {
+    elements.confidenceBadge.textContent = `${percentComplete}% Complete`;
+  }
+}
+
+/**
+ * Update progress indicators (legacy - when session data available)
  */
 function updateProgress(session) {
   // Adaptive progress display (15-25 questions based on confidence)
