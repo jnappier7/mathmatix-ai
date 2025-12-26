@@ -240,17 +240,18 @@ async function submitAnswer() {
 
     const data = await response.json();
 
-    // Backend intentionally doesn't send feedback during screener (prevents negative momentum)
-    // Only show feedback if provided
+    // Track correctness behind the scenes (even though we don't show feedback)
+    // This is used for analytics and final report
+    state.responses.push({
+      correct: data.correct,  // Backend always sends this for tracking
+      responseTime
+    });
+
+    // Backend intentionally doesn't send feedback TEXT during screener (prevents negative momentum)
+    // Only show feedback UI if provided (typically only at completion)
     if (data.feedback !== undefined) {
       showFeedback(data.correct, data.feedback);
     }
-
-    // Store response
-    state.responses.push({
-      correct: data.correct !== undefined ? data.correct : null,
-      responseTime
-    });
 
     // Update theta if available
     if (data.session) {
