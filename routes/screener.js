@@ -305,6 +305,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     // Check if answer is correct
     const isCorrect = problem.checkAnswer(answer);
 
+    // Capture previous theta for logging
+    const previousTheta = session.theta;
+
     // Process response
     const response = {
       problemId: problem.problemId,
@@ -320,10 +323,21 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     const result = processResponse(session, response);
 
     // CTO REVIEW FIX: Update session in database
+    // Mark ALL modified fields including theta, standardError, confidence
+    session.markModified('theta');
+    session.markModified('standardError');
+    session.markModified('confidence');
+    session.markModified('cumulativeInformation');
     session.markModified('responses'); // Ensure nested arrays are saved
     session.markModified('testedSkills');
     session.markModified('testedSkillCategories');
+    session.markModified('questionCount');
+    session.markModified('converged');
+    session.markModified('plateaued');
+    session.markModified('frontier');
     await session.save();
+
+    console.log(`[Screener] Q${session.questionCount} Result: ${response.correct ? 'CORRECT' : 'INCORRECT'} | Theta: ${previousTheta.toFixed(2)} → ${session.theta.toFixed(2)} (Δ${(session.theta - previousTheta).toFixed(2)}) | SE: ${session.standardError.toFixed(3)}`);
 
     // Determine next action
     if (result.action === 'continue') {
