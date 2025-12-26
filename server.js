@@ -339,6 +339,9 @@ app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
 app.get("/canvas.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "canvas.html")));
 
+// Redirect old fact-fluency URL to correct one
+app.get("/fact-fluency-practice.html", (req, res) => res.redirect(301, "/fact-fluency-blaster.html"));
+
 // Fallback for 404
 app.get("*", (req, res) => {
   res.status(404).send(`Cannot GET ${req.path}`);
