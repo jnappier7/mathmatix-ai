@@ -86,9 +86,19 @@ async function seedSkills() {
         continue;
       }
 
-      // Get sample problem to estimate difficulty
-      const sampleProblem = await Problem.findOne({ skillId }).lean();
-      const difficulty = sampleProblem?.irtParameters?.difficulty || 0;
+      // Get ALL problems for this skill to calculate average difficulty
+      const skillProblems = await Problem.find({ skillId }).lean();
+
+      // Calculate average IRT difficulty
+      const difficulties = skillProblems
+        .map(p => p.irtParameters?.difficulty)
+        .filter(d => d !== undefined && d !== null && !isNaN(d));
+
+      const avgDifficulty = difficulties.length > 0
+        ? difficulties.reduce((sum, d) => sum + d, 0) / difficulties.length
+        : 0;
+
+      const sampleProblem = skillProblems[0];
       const gradeLevel = sampleProblem?.metadata?.gradeLevel || '';
 
       // Create skill name from skillId
@@ -108,7 +118,8 @@ async function seedSkills() {
         category: categorizeSkill(skillId),
         prerequisites: [],
         standardsAlignment: [sampleProblem?.metadata?.standardCode].filter(Boolean),
-        difficultyLevel: Math.min(10, Math.max(1, Math.round((difficulty + 3) * 1.67))) // Convert theta (-3 to +3) to 1-10
+        difficultyLevel: Math.min(10, Math.max(1, Math.round((avgDifficulty + 3) * 1.67))), // Convert theta (-3 to +3) to 1-10
+        irtDifficulty: avgDifficulty // Save average IRT difficulty for screener
       });
 
       created++;

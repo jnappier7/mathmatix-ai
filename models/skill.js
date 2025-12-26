@@ -143,6 +143,14 @@ const skillSchema = new mongoose.Schema({
     default: 5
   },
 
+  // IRT difficulty parameter (theta scale: -3 to +3)
+  irtDifficulty: {
+    type: Number,
+    min: -3,
+    max: 3,
+    default: 0
+  },
+
   // Adaptive Fluency Engine: Expected time for mastery-level performance
   fluencyMetadata: {
     // Base time in seconds for a neurotypical student at mastery level
