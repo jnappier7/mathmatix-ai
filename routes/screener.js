@@ -37,47 +37,80 @@ const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 const LRU_EXCLUSION_WINDOW = 100;
 
 /**
- * Calculate adaptive progress percentage based on confidence, not just question count
+ * Calculate adaptive progress with confidence metrics for UI visualization
  *
  * PHILOSOPHY: For adaptive tests, progress should reflect "how confident we are"
- * not "how many questions answered". This prevents percentages over 100% and
- * provides meaningful feedback to students.
+ * not "how many questions answered". This allows showing a confidence meter with
+ * a visual indicator when confidence threshold is achieved.
  *
  * ALGORITHM:
  * - Phase 1 (Questions 1 to min): Linear progress 0% → 50% (building baseline)
  * - Phase 2 (After min): Confidence-based progress 50% → 100% (refining estimate)
  *
+ * UI VISUALIZATION:
+ * - Show progress bar with confidence meter
+ * - Display marker/threshold line when confidenceAchieved = true
+ * - Color-code: gathering (yellow) → confident (green)
+ *
  * @param {Object} session - Current screener session
- * @returns {Number} Progress percentage (0-100, never exceeds 100)
+ * @returns {Object} Progress metrics including percentage and confidence state
  */
 function calculateAdaptiveProgress(session) {
-  const { questionCount, minQuestions, standardError, seThresholdAcceptable } = session;
+  const { questionCount, minQuestions, standardError, seThresholdAcceptable, seThresholdStringent } = session;
 
   // Phase 1: Before minimum questions, show linear progress toward 50%
+  let percentComplete;
   if (questionCount < minQuestions) {
-    return Math.round((questionCount / minQuestions) * 50);
+    percentComplete = Math.round((questionCount / minQuestions) * 50);
+  } else {
+    // Phase 2: After minimum, show confidence-based progress from 50% to 100%
+    const startingSE = 1.0;  // Typical starting SE after min questions
+    const targetSE = seThresholdAcceptable;  // Target SE for completion (0.30)
+
+    // Clamp SE to reasonable range
+    const currentSE = Math.max(targetSE, Math.min(startingSE, standardError));
+
+    // Calculate how much confidence we've gained (inverse of SE reduction)
+    const confidenceGained = startingSE - currentSE;
+    const totalConfidenceNeeded = startingSE - targetSE;
+    const confidenceRatio = confidenceGained / totalConfidenceNeeded;
+
+    // Map confidence to 50%-100% range
+    const confidenceProgress = 50 + (confidenceRatio * 50);
+    percentComplete = Math.min(100, Math.round(confidenceProgress));
   }
 
-  // Phase 2: After minimum, show confidence-based progress from 50% to 100%
-  // SE starts high (e.g., 1.0+) and drops toward threshold (e.g., 0.30)
-  // Progress = 50% + (confidence gained / total needed) * 50%
+  // Determine confidence level for UI styling
+  let confidenceLevel, confidenceAchieved, confidenceDescription;
 
-  const startingSE = 1.0;  // Typical starting SE after min questions
-  const targetSE = seThresholdAcceptable;  // Target SE for completion (0.30)
+  if (questionCount < minQuestions) {
+    // Still gathering baseline
+    confidenceLevel = 'gathering';
+    confidenceAchieved = false;
+    confidenceDescription = 'Building baseline';
+  } else if (standardError <= seThresholdStringent) {
+    // High confidence achieved
+    confidenceLevel = 'high';
+    confidenceAchieved = true;
+    confidenceDescription = 'High confidence';
+  } else if (standardError <= seThresholdAcceptable) {
+    // Acceptable confidence achieved
+    confidenceLevel = 'medium';
+    confidenceAchieved = true;
+    confidenceDescription = 'Confident';
+  } else {
+    // Still refining estimate
+    confidenceLevel = 'low';
+    confidenceAchieved = false;
+    confidenceDescription = 'Refining estimate';
+  }
 
-  // Clamp SE to reasonable range
-  const currentSE = Math.max(targetSE, Math.min(startingSE, standardError));
-
-  // Calculate how much confidence we've gained (inverse of SE reduction)
-  const confidenceGained = startingSE - currentSE;
-  const totalConfidenceNeeded = startingSE - targetSE;
-  const confidenceRatio = confidenceGained / totalConfidenceNeeded;
-
-  // Map confidence to 50%-100% range
-  const confidenceProgress = 50 + (confidenceRatio * 50);
-
-  // Cap at 100%
-  return Math.min(100, Math.round(confidenceProgress));
+  return {
+    percentComplete,
+    confidenceLevel,      // 'gathering' | 'low' | 'medium' | 'high'
+    confidenceAchieved,   // Boolean: true when SE <= acceptable threshold
+    confidenceDescription // Human-readable status
+  };
 }
 
 /**
@@ -441,6 +474,9 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       await problem.save();
     }
 
+    // Calculate progress with confidence metrics for UI
+    const progressMetrics = calculateAdaptiveProgress(session);
+
     res.json({
       problem: {
         problemId: problem.problemId,
@@ -455,7 +491,10 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
           min: session.minQuestions,
           target: session.targetQuestions,
           max: session.maxQuestions,
-          percentComplete: calculateAdaptiveProgress(session)
+          percentComplete: progressMetrics.percentComplete,
+          confidenceLevel: progressMetrics.confidenceLevel,
+          confidenceAchieved: progressMetrics.confidenceAchieved,
+          confidenceDescription: progressMetrics.confidenceDescription
         }
       }
       // DO NOT expose session theta/SE/confidence to students - teacher/admin only
@@ -547,6 +586,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
 
     // Determine next action
     if (result.action === 'continue') {
+      // Calculate progress with confidence metrics for UI
+      const progressMetrics = calculateAdaptiveProgress(session);
+
       // Continue screening - NO FEEDBACK TEXT (prevents negative momentum)
       // But DO send correct flag for client-side tracking
       res.json({
@@ -557,7 +599,10 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
           min: session.minQuestions,
           target: session.targetQuestions,
           max: session.maxQuestions,
-          percentComplete: calculateAdaptiveProgress(session)
+          percentComplete: progressMetrics.percentComplete,
+          confidenceLevel: progressMetrics.confidenceLevel,
+          confidenceAchieved: progressMetrics.confidenceAchieved,
+          confidenceDescription: progressMetrics.confidenceDescription
         }
         // DO NOT send: feedback text, theta, standardError (student shouldn't see these)
       });
