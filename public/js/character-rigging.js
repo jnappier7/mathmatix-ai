@@ -26,6 +26,11 @@ class CharacterRiggingPortal {
         this.currentRefinementSegment = null;
         this.refinementPoints = [];
 
+        // Undo/Redo history
+        this.history = [];
+        this.historyIndex = -1;
+        this.maxHistorySize = 50;
+
         this.init();
     }
 
@@ -104,6 +109,8 @@ class CharacterRiggingPortal {
 
         // Action buttons
         document.getElementById('remove-bg-btn')?.addEventListener('click', () => this.removeBackground());
+        document.getElementById('undo-btn')?.addEventListener('click', () => this.undo());
+        document.getElementById('redo-btn')?.addEventListener('click', () => this.redo());
         document.getElementById('clear-points-btn')?.addEventListener('click', () => this.clearAllPoints());
         document.getElementById('segment-btn')?.addEventListener('click', () => this.segmentCharacter());
         document.getElementById('load-template-btn')?.addEventListener('click', () => this.showTemplateModal());
@@ -112,6 +119,17 @@ class CharacterRiggingPortal {
         document.getElementById('resolve-overlaps-btn')?.addEventListener('click', () => this.resolveOverlaps());
         document.getElementById('refine-mode-btn')?.addEventListener('click', () => this.enterRefinementMode());
         document.getElementById('my-sessions-btn')?.addEventListener('click', () => this.showSessionsModal());
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                this.undo();
+            } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+                e.preventDefault();
+                this.redo();
+            }
+        });
 
         // Modal controls
         document.getElementById('close-sessions-modal')?.addEventListener('click', () => this.hideModal('sessions-modal'));
@@ -352,6 +370,7 @@ class CharacterRiggingPortal {
         };
 
         this.rigPoints.push(point);
+        this.saveToHistory();
         this.redrawCanvas();
         this.updatePointsList();
         this.saveRigData();
@@ -365,6 +384,7 @@ class CharacterRiggingPortal {
             conn => conn.from !== point.id && conn.to !== point.id
         );
 
+        this.saveToHistory();
         this.redrawCanvas();
         this.updatePointsList();
         this.saveRigData();
@@ -392,6 +412,7 @@ class CharacterRiggingPortal {
             segmentName
         });
 
+        this.saveToHistory();
         this.redrawCanvas();
         this.saveRigData();
 
@@ -828,6 +849,75 @@ class CharacterRiggingPortal {
 
     hideModal(modalId) {
         document.getElementById(modalId)?.classList.remove('active');
+    }
+
+    saveToHistory() {
+        // Remove any history after current index (for redo)
+        this.history = this.history.slice(0, this.historyIndex + 1);
+
+        // Save current state
+        const state = {
+            rigPoints: JSON.parse(JSON.stringify(this.rigPoints)),
+            boneConnections: JSON.parse(JSON.stringify(this.boneConnections))
+        };
+
+        this.history.push(state);
+
+        // Limit history size
+        if (this.history.length > this.maxHistorySize) {
+            this.history.shift();
+        } else {
+            this.historyIndex++;
+        }
+
+        this.updateUndoRedoButtons();
+    }
+
+    undo() {
+        if (this.historyIndex <= 0) {
+            this.showToast('Nothing to undo', 'info');
+            return;
+        }
+
+        this.historyIndex--;
+        this.restoreState(this.history[this.historyIndex]);
+        this.updateUndoRedoButtons();
+        this.showToast('Undo successful', 'info');
+    }
+
+    redo() {
+        if (this.historyIndex >= this.history.length - 1) {
+            this.showToast('Nothing to redo', 'info');
+            return;
+        }
+
+        this.historyIndex++;
+        this.restoreState(this.history[this.historyIndex]);
+        this.updateUndoRedoButtons();
+        this.showToast('Redo successful', 'info');
+    }
+
+    restoreState(state) {
+        this.rigPoints = JSON.parse(JSON.stringify(state.rigPoints));
+        this.boneConnections = JSON.parse(JSON.stringify(state.boneConnections));
+        this.redrawCanvas();
+        this.updatePointsList();
+        this.saveRigData();
+    }
+
+    updateUndoRedoButtons() {
+        const undoBtn = document.getElementById('undo-btn');
+        const redoBtn = document.getElementById('redo-btn');
+
+        if (undoBtn) {
+            undoBtn.disabled = this.historyIndex <= 0;
+            undoBtn.style.opacity = this.historyIndex <= 0 ? '0.5' : '1';
+        }
+
+        if (redoBtn) {
+            redoBtn.disabled = this.historyIndex >= this.history.length - 1;
+            redoBtn.style.opacity = this.historyIndex >= this.history.length - 1 ? '0.5' : '1';
+        }
     }
 
     async removeBackground() {
