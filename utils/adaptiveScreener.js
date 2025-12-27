@@ -105,14 +105,14 @@ function initializeSession(options = {}) {
     startTime: Date.now(),
     endTime: null,
 
-    // Completion criteria (like ALEKS: 20-30 questions adaptive)
-    minQuestions: 15,       // Minimum for reliable estimate
-    targetQuestions: 20,    // Target for most students
-    maxQuestions: 25,       // Hard cap to prevent fatigue
-    seThresholdStringent: 0.25,  // Ideal confidence (early stop)
+    // Completion criteria (TRULY ADAPTIVE - stops when confident, not at fixed count)
+    minQuestions: 8,        // Minimum for basic reliability (can stop earlier if very confident)
+    targetQuestions: 15,    // Soft target for typical students
+    maxQuestions: 30,       // Hard cap to prevent fatigue (should rarely hit this)
+    seThresholdStringent: 0.25,  // High confidence (early stop after min questions)
     seThresholdAcceptable: 0.30,  // Acceptable confidence (normal stop)
-    seThresholdFallback: 0.35,    // Minimum at max questions
-    minInformationGain: 0.05,     // Stop if gains < this for 3 questions
+    seThresholdFallback: 0.40,    // Minimum at max questions (relaxed since max is higher)
+    minInformationGain: 0.08,     // Stop if gains < this for 3 questions (more aggressive)
 
     // Skill coverage tracking
     testedSkills: [],
@@ -177,8 +177,55 @@ function processResponse(session, response) {
   session.cumulativeInformation = informationBefore + questionInfo;
 
   // Track skill coverage
-  if (!session.testedSkills.includes(response.skillId)) {
-    session.testedSkills.push(response.skillId);
+  session.testedSkills.push(response.skillId);
+
+  // Track category coverage for diversity balancing
+  if (response.skillCategory) {
+    // Map specific skill category to broad category
+    const categoryToBroadCategory = (category) => {
+      // Number operations (Elementary K-5)
+      if (['counting-cardinality', 'number-recognition', 'addition-subtraction', 'multiplication-division',
+           'place-value', 'arrays', 'decimals', 'fractions', 'number-system', 'operations'].includes(category)) {
+        return 'number-operations';
+      }
+      // Algebra (Middle School through High School)
+      if (['integers-rationals', 'scientific-notation', 'ratios-proportions', 'percent',
+           'expressions', 'equations', 'linear-equations', 'systems', 'inequalities',
+           'polynomials', 'factoring', 'quadratics', 'radicals', 'rational-expressions',
+           'complex-numbers', 'exponentials-logarithms', 'sequences-series', 'conics',
+           'functions', 'graphing', 'coordinate-plane'].includes(category)) {
+        return 'algebra';
+      }
+      // Geometry
+      if (['shapes-geometry', 'measurement', 'area-perimeter', 'volume', 'angles',
+           'pythagorean-theorem', 'transformations', 'geometry', 'trigonometry',
+           'identities', 'polar-coordinates', 'vectors', 'matrices'].includes(category)) {
+        return 'geometry';
+      }
+      // Advanced (Calculus, Statistics, etc.)
+      if (['limits', 'derivatives', 'integration', 'series-tests', 'taylor-series',
+           'parametric-polar', 'differential-equations', 'multivariable', 'vector-calculus',
+           'statistics', 'probability', 'advanced'].includes(category)) {
+        return 'advanced';
+      }
+      // Default
+      return 'number-operations';
+    };
+
+    const broadCategory = categoryToBroadCategory(response.skillCategory);
+
+    // Initialize category tracking if not exists
+    if (!session.testedSkillCategories) {
+      session.testedSkillCategories = {
+        'number-operations': 0,
+        'algebra': 0,
+        'geometry': 0,
+        'advanced': 0
+      };
+    }
+
+    // Increment category counter
+    session.testedSkillCategories[broadCategory] = (session.testedSkillCategories[broadCategory] || 0) + 1;
   }
 
   // Update response history with theta after
@@ -333,12 +380,48 @@ function determineNextAction(session) {
     };
   }
 
-  // CONTINUE SCREENING: Calculate next difficulty (use theta directly, not jump-based)
-  // This allows maximum information selection to work properly
+  // 6. Very early stopping for extremely clear cases (5 questions minimum)
+  // - Perfect streak of 5+ at high difficulty (theta > 1.5)
+  // - Or perfect failure of 5+ at low difficulty (theta < -1.5)
+  if (session.questionCount >= 5) {
+    const last5 = session.responses.slice(-5);
+    const allCorrect = last5.every(r => r.correct);
+    const allIncorrect = last5.every(r => !r.correct);
+    const avgDifficulty = last5.reduce((sum, r) => sum + r.difficulty, 0) / last5.length;
+
+    // Advanced student: 5 correct in a row at high difficulty
+    if (allCorrect && avgDifficulty > 1.0 && session.theta > 1.5 && session.standardError <= 0.35) {
+      return {
+        action: 'interview',
+        reason: 'very-advanced',
+        message: 'Exceptional! You\'re performing at an advanced level. Let\'s verify your mastery.',
+        theta: session.theta,
+        confidence: session.confidence,
+        standardError: session.standardError,
+        percentile: thetaToPercentile(session.theta)
+      };
+    }
+
+    // Struggling student: 5 incorrect in a row at low difficulty
+    if (allIncorrect && avgDifficulty < -0.5 && session.theta < -1.5 && session.standardError <= 0.35) {
+      return {
+        action: 'interview',
+        reason: 'foundational-needs',
+        message: 'I have a clear sense of where to start. Let\'s explore the foundations together.',
+        theta: session.theta,
+        confidence: session.confidence,
+        standardError: session.standardError,
+        percentile: thetaToPercentile(session.theta)
+      };
+    }
+  }
+
+  // CONTINUE SCREENING
+  // Note: Target difficulty is calculated in the route handler using dampened jumps
+  // to prevent wild swings between question difficulties
   return {
     action: 'continue',
     reason: 'gathering-data',
-    targetDifficulty: session.theta,  // Next problem should target current theta estimate
     theta: session.theta,
     standardError: session.standardError,
     confidence: session.confidence,
