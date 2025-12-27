@@ -474,6 +474,13 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       await problem.save();
     }
 
+    // AUTO-FIX: If problem has options but wrong answerType, fix it
+    if (problem.options && problem.options.length > 0 && problem.answerType !== 'multiple-choice') {
+      console.log(`[Screener Fix] Problem ${problem.problemId} has options but answerType="${problem.answerType}". Auto-fixing to "multiple-choice"`);
+      problem.answerType = 'multiple-choice';
+      await problem.save();
+    }
+
     // Calculate progress with confidence metrics for UI
     const progressMetrics = calculateAdaptiveProgress(session);
 
