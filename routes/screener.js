@@ -37,6 +37,50 @@ const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 const LRU_EXCLUSION_WINDOW = 100;
 
 /**
+ * Calculate adaptive progress percentage based on confidence, not just question count
+ *
+ * PHILOSOPHY: For adaptive tests, progress should reflect "how confident we are"
+ * not "how many questions answered". This prevents percentages over 100% and
+ * provides meaningful feedback to students.
+ *
+ * ALGORITHM:
+ * - Phase 1 (Questions 1 to min): Linear progress 0% → 50% (building baseline)
+ * - Phase 2 (After min): Confidence-based progress 50% → 100% (refining estimate)
+ *
+ * @param {Object} session - Current screener session
+ * @returns {Number} Progress percentage (0-100, never exceeds 100)
+ */
+function calculateAdaptiveProgress(session) {
+  const { questionCount, minQuestions, standardError, seThresholdAcceptable } = session;
+
+  // Phase 1: Before minimum questions, show linear progress toward 50%
+  if (questionCount < minQuestions) {
+    return Math.round((questionCount / minQuestions) * 50);
+  }
+
+  // Phase 2: After minimum, show confidence-based progress from 50% to 100%
+  // SE starts high (e.g., 1.0+) and drops toward threshold (e.g., 0.30)
+  // Progress = 50% + (confidence gained / total needed) * 50%
+
+  const startingSE = 1.0;  // Typical starting SE after min questions
+  const targetSE = seThresholdAcceptable;  // Target SE for completion (0.30)
+
+  // Clamp SE to reasonable range
+  const currentSE = Math.max(targetSE, Math.min(startingSE, standardError));
+
+  // Calculate how much confidence we've gained (inverse of SE reduction)
+  const confidenceGained = startingSE - currentSE;
+  const totalConfidenceNeeded = startingSE - targetSE;
+  const confidenceRatio = confidenceGained / totalConfidenceNeeded;
+
+  // Map confidence to 50%-100% range
+  const confidenceProgress = 50 + (confidenceRatio * 50);
+
+  // Cap at 100%
+  return Math.min(100, Math.round(confidenceProgress));
+}
+
+/**
  * POST /api/screener/start
  * Initialize a new adaptive screener session
  */
@@ -411,7 +455,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
           min: session.minQuestions,
           target: session.targetQuestions,
           max: session.maxQuestions,
-          percentComplete: Math.round(((session.questionCount + 1) / session.targetQuestions) * 100)
+          percentComplete: calculateAdaptiveProgress(session)
         }
       }
       // DO NOT expose session theta/SE/confidence to students - teacher/admin only
@@ -513,7 +557,7 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
           min: session.minQuestions,
           target: session.targetQuestions,
           max: session.maxQuestions,
-          percentComplete: Math.round((session.questionCount / session.targetQuestions) * 100)
+          percentComplete: calculateAdaptiveProgress(session)
         }
         // DO NOT send: feedback text, theta, standardError (student shouldn't see these)
       });
