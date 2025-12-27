@@ -22,6 +22,9 @@ class CharacterRiggingPortal {
         this.showLabels = true;
         this.isConnectingBone = false;
         this.boneStartPoint = null;
+        this.refinementMode = false;
+        this.currentRefinementSegment = null;
+        this.refinementPoints = [];
 
         this.init();
     }
@@ -100,11 +103,14 @@ class CharacterRiggingPortal {
         });
 
         // Action buttons
+        document.getElementById('remove-bg-btn')?.addEventListener('click', () => this.removeBackground());
         document.getElementById('clear-points-btn')?.addEventListener('click', () => this.clearAllPoints());
         document.getElementById('segment-btn')?.addEventListener('click', () => this.segmentCharacter());
         document.getElementById('load-template-btn')?.addEventListener('click', () => this.showTemplateModal());
         document.getElementById('download-parts-btn')?.addEventListener('click', () => this.downloadParts());
         document.getElementById('back-to-rigging-btn')?.addEventListener('click', () => this.showSection('rigging'));
+        document.getElementById('resolve-overlaps-btn')?.addEventListener('click', () => this.resolveOverlaps());
+        document.getElementById('refine-mode-btn')?.addEventListener('click', () => this.enterRefinementMode());
         document.getElementById('my-sessions-btn')?.addEventListener('click', () => this.showSessionsModal());
 
         // Modal controls
@@ -228,6 +234,13 @@ class CharacterRiggingPortal {
         const rect = this.canvas.getBoundingClientRect();
         const x = (e.clientX - rect.left - this.panX) / this.zoom;
         const y = (e.clientY - rect.top - this.panY) / this.zoom;
+
+        // If in refinement mode, add refinement points
+        if (this.refinementMode) {
+            this.refinementPoints.push({ x, y });
+            this.redrawCanvas();
+            return;
+        }
 
         // Check if clicking on existing point for bone connection
         const clickedPoint = this.findPointAtPosition(x, y);
@@ -462,7 +475,52 @@ class CharacterRiggingPortal {
         // Draw rigging points
         this.drawRigPoints();
 
+        // Draw refinement points if in refinement mode
+        if (this.refinementMode && this.refinementPoints && this.refinementPoints.length > 0) {
+            this.drawRefinementPoints();
+        }
+
         this.ctx.restore();
+    }
+
+    drawRefinementPoints() {
+        // Draw polygon outline
+        if (this.refinementPoints.length > 1) {
+            this.ctx.strokeStyle = '#00ffff';
+            this.ctx.lineWidth = 3 / this.zoom;
+            this.ctx.beginPath();
+
+            this.refinementPoints.forEach((point, index) => {
+                if (index === 0) {
+                    this.ctx.moveTo(point.x, point.y);
+                } else {
+                    this.ctx.lineTo(point.x, point.y);
+                }
+            });
+
+            // Close the polygon if we have enough points
+            if (this.refinementPoints.length > 2) {
+                this.ctx.closePath();
+            }
+
+            this.ctx.stroke();
+        }
+
+        // Draw refinement points
+        this.refinementPoints.forEach((point, index) => {
+            this.ctx.fillStyle = '#00ffff';
+            this.ctx.beginPath();
+            this.ctx.arc(point.x, point.y, 6 / this.zoom, 0, 2 * Math.PI);
+            this.ctx.fill();
+
+            // Draw point number
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.strokeStyle = '#000000';
+            this.ctx.lineWidth = 2 / this.zoom;
+            this.ctx.font = `${12 / this.zoom}px Arial`;
+            this.ctx.strokeText(String(index + 1), point.x + 10 / this.zoom, point.y);
+            this.ctx.fillText(String(index + 1), point.x + 10 / this.zoom, point.y);
+        });
     }
 
     drawBones() {
@@ -770,6 +828,162 @@ class CharacterRiggingPortal {
 
     hideModal(modalId) {
         document.getElementById(modalId)?.classList.remove('active');
+    }
+
+    async removeBackground() {
+        if (!this.currentSessionId) return;
+
+        this.showLoading('Removing background...');
+
+        try {
+            const response = await fetch('/api/character-rigging/remove-background', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId: this.currentSessionId })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Background removal failed');
+            }
+
+            if (data.hadBackground) {
+                this.showToast('Background removed successfully!', 'success');
+                // Reload the image to show the result
+                await this.loadCharacterImage();
+            } else {
+                this.showToast('No solid background detected', 'info');
+            }
+
+        } catch (error) {
+            console.error('Background removal error:', error);
+            this.showToast(error.message, 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async resolveOverlaps() {
+        if (!this.currentSessionId) return;
+
+        this.showLoading('Resolving overlaps...');
+
+        try {
+            const response = await fetch('/api/character-rigging/resolve-overlaps', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId: this.currentSessionId })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Overlap resolution failed');
+            }
+
+            if (data.overlaps.length > 0) {
+                this.showToast(`Resolved ${data.overlaps.length} overlapping regions`, 'success');
+                // Reload segments to show resolved versions
+                this.showSection('results');
+            } else {
+                this.showToast('No overlaps detected', 'info');
+            }
+
+        } catch (error) {
+            console.error('Overlap resolution error:', error);
+            this.showToast(error.message, 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    enterRefinementMode() {
+        this.showToast('Refinement Mode: Click around a segment to draw custom boundary', 'info');
+
+        // Create a modal to select which segment to refine
+        const segmentsList = document.getElementById('segmented-parts-grid');
+        if (!segmentsList) return;
+
+        const segments = Array.from(segmentsList.querySelectorAll('.part-card'));
+
+        segments.forEach((card, index) => {
+            card.style.cursor = 'pointer';
+            card.onclick = () => this.startRefinement(index);
+        });
+    }
+
+    startRefinement(segmentIndex) {
+        this.refinementMode = true;
+        this.currentRefinementSegment = segmentIndex;
+        this.refinementPoints = [];
+
+        this.showToast('Click to place boundary points. Press Enter to finish, Escape to cancel.', 'info');
+
+        // Switch to rigging section with the original image
+        this.showSection('rigging');
+
+        // Add keyboard listeners
+        const keyHandler = (e) => {
+            if (e.key === 'Enter' && this.refinementPoints.length >= 3) {
+                this.finishRefinement();
+                document.removeEventListener('keydown', keyHandler);
+            } else if (e.key === 'Escape') {
+                this.cancelRefinement();
+                document.removeEventListener('keydown', keyHandler);
+            }
+        };
+
+        document.addEventListener('keydown', keyHandler);
+    }
+
+    async finishRefinement() {
+        if (!this.currentSessionId || this.refinementPoints.length < 3) return;
+
+        this.showLoading('Refining segment mask...');
+
+        try {
+            // Get segment name from results
+            const segmentCards = document.querySelectorAll('.part-card');
+            const segmentName = segmentCards[this.currentRefinementSegment]?.querySelector('h3')?.textContent;
+
+            if (!segmentName) {
+                throw new Error('Segment not found');
+            }
+
+            const response = await fetch('/api/character-rigging/refine-mask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: this.currentSessionId,
+                    segmentName: segmentName,
+                    maskPoints: this.refinementPoints
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Mask refinement failed');
+            }
+
+            this.showToast('Segment mask refined successfully!', 'success');
+            this.cancelRefinement();
+            this.showSection('results');
+
+        } catch (error) {
+            console.error('Refinement error:', error);
+            this.showToast(error.message, 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    cancelRefinement() {
+        this.refinementMode = false;
+        this.currentRefinementSegment = null;
+        this.refinementPoints = [];
+        this.redrawCanvas();
     }
 
     showSection(sectionName) {

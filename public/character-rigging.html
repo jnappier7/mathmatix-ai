@@ -62,6 +62,9 @@
         <div class="rigging-header">
           <h2 id="current-character-name">Character Rigging</h2>
           <div class="rigging-controls">
+            <button class="btn btn-secondary" id="remove-bg-btn" title="Auto-remove solid background">
+              <i class="fas fa-magic"></i> Remove Background
+            </button>
             <button class="btn btn-secondary" id="load-template-btn" title="Load preset rigging points">
               <i class="fas fa-download"></i> Load Template
             </button>
@@ -185,6 +188,12 @@
           <div class="results-actions">
             <button class="btn btn-secondary" id="back-to-rigging-btn">
               <i class="fas fa-arrow-left"></i> Back to Rigging
+            </button>
+            <button class="btn btn-secondary" id="resolve-overlaps-btn" title="Resolve overlapping body parts">
+              <i class="fas fa-compress-arrows-alt"></i> Resolve Overlaps
+            </button>
+            <button class="btn btn-secondary" id="refine-mode-btn" title="Manually refine segment boundaries">
+              <i class="fas fa-pen"></i> Refine Masks
             </button>
             <button class="btn btn-primary" id="download-parts-btn">
               <i class="fas fa-download"></i> Download All Parts
