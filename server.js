@@ -82,6 +82,7 @@ const dailyQuestsRoutes = require('./routes/dailyQuests');  // Daily Quests & St
 const weeklyChallengesRoutes = require('./routes/weeklyChallenges');  // Weekly Challenges System
 const learningCurveRoutes = require('./routes/learningCurve');  // Learning Curve Visualization & IRT Transparency
 const celerationRoutes = require('./routes/celeration');  // Standard Celeration Charts (Precision Teaching)
+const characterRiggingRoutes = require('./routes/characterRigging');  // Character Rigging Portal for animation
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -212,6 +213,7 @@ app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak Sy
 app.use('/api', isAuthenticated, weeklyChallengesRoutes); // Weekly Challenges System for engagement
 app.use('/api', isAuthenticated, learningCurveRoutes); // Learning Curve Visualization & IRT transparency
 app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Charts for fact fluency
+app.use('/api/character-rigging', isAuthenticated, characterRiggingRoutes); // Character Rigging Portal for animation
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
