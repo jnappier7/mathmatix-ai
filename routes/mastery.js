@@ -1189,4 +1189,450 @@ router.get('/badge-map', isAuthenticated, async (req, res) => {
   }
 });
 
+// ============================================================================
+// MASTER MODE: 4-PILLAR MASTERY TRACKING
+// ============================================================================
+
+const {
+  updateSkillMastery,
+  calculateMasteryScore,
+  calculateMasteryState,
+  checkTierUpgrade,
+  performRetentionCheck,
+  getSkillsDueForRetention,
+  calculatePillarProgress,
+  getMasteryMessage
+} = require('../utils/masteryEngine');
+
+const { detectStrategyBadge, getAllStrategyBadges } = require('../utils/strategyBadges');
+const { checkAllHabitBadges, getAllHabitBadges, updateStreakTracking } = require('../utils/habitBadges');
+
+/**
+ * Record problem attempt and update 4-pillar mastery tracking
+ * POST /api/mastery/record-mastery-attempt
+ */
+router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
+  try {
+    const { skillId, correct, hintUsed, problemContext, responseTime, problemId } = req.body;
+
+    if (!skillId) {
+      return res.status(400).json({ error: 'Missing skillId' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get skill data
+    let skillMastery = user.skillMastery.get(skillId);
+    if (!skillMastery) {
+      // Initialize skill mastery if not exists
+      const { initializeSkillMastery } = require('../utils/masteryEngine');
+      skillMastery = initializeSkillMastery(skillId);
+      skillMastery.status = 'ready';
+    }
+
+    // Store old tier for upgrade detection
+    const oldTier = skillMastery.currentTier || 'none';
+
+    // Update skill mastery with attempt data
+    const updatedSkill = updateSkillMastery(skillMastery, {
+      correct,
+      hintUsed,
+      problemContext,
+      responseTime
+    });
+
+    // Recalculate state
+    updatedSkill.status = calculateMasteryState(updatedSkill, user.skillMastery);
+
+    // Update user's skill mastery
+    user.skillMastery.set(skillId, updatedSkill);
+
+    // Update streak tracking
+    updateStreakTracking(user);
+
+    // Check for tier upgrade
+    const tierUpgrade = checkTierUpgrade(oldTier, updatedSkill.currentTier);
+
+    // Save user
+    await user.save();
+
+    // Calculate pillar progress for UI
+    const pillarProgress = calculatePillarProgress(updatedSkill.pillars || {});
+
+    res.json({
+      success: true,
+      skillMastery: {
+        skillId,
+        status: updatedSkill.status,
+        masteryScore: updatedSkill.masteryScore,
+        currentTier: updatedSkill.currentTier,
+        pillars: pillarProgress,
+        message: getMasteryMessage(updatedSkill.status, updatedSkill.currentTier)
+      },
+      tierUpgrade: tierUpgrade.upgraded ? tierUpgrade : null
+    });
+
+  } catch (error) {
+    console.error('Error recording mastery attempt:', error);
+    res.status(500).json({ error: 'Failed to record mastery attempt' });
+  }
+});
+
+/**
+ * Get detailed mastery status for a skill
+ * GET /api/mastery/skill-mastery/:skillId
+ */
+router.get('/skill-mastery/:skillId', isAuthenticated, async (req, res) => {
+  try {
+    const { skillId } = req.params;
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const skillMastery = user.skillMastery.get(skillId);
+    if (!skillMastery) {
+      return res.status(404).json({ error: 'Skill mastery not found' });
+    }
+
+    // Calculate pillar progress
+    const pillarProgress = calculatePillarProgress(skillMastery.pillars || {});
+
+    res.json({
+      success: true,
+      skillMastery: {
+        skillId,
+        status: skillMastery.status,
+        masteryScore: skillMastery.masteryScore,
+        currentTier: skillMastery.currentTier,
+        totalAttempts: skillMastery.totalAttempts,
+        consecutiveCorrect: skillMastery.consecutiveCorrect,
+        lastPracticed: skillMastery.lastPracticed,
+        pillars: {
+          accuracy: {
+            correct: skillMastery.pillars?.accuracy?.correct || 0,
+            total: skillMastery.pillars?.accuracy?.total || 0,
+            percentage: Math.round((skillMastery.pillars?.accuracy?.percentage || 0) * 100),
+            progress: pillarProgress.accuracy
+          },
+          independence: {
+            hintsUsed: skillMastery.pillars?.independence?.hintsUsed || 0,
+            hintsAvailable: skillMastery.pillars?.independence?.hintsAvailable || 15,
+            progress: pillarProgress.independence
+          },
+          transfer: {
+            contextsAttempted: skillMastery.pillars?.transfer?.contextsAttempted || [],
+            contextsRequired: skillMastery.pillars?.transfer?.contextsRequired || 3,
+            progress: pillarProgress.transfer
+          },
+          retention: {
+            checks: skillMastery.pillars?.retention?.retentionChecks || [],
+            nextCheck: skillMastery.pillars?.retention?.nextRetentionCheck,
+            progress: pillarProgress.retention
+          }
+        },
+        message: getMasteryMessage(skillMastery.status, skillMastery.currentTier)
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching skill mastery:', error);
+    res.status(500).json({ error: 'Failed to fetch skill mastery' });
+  }
+});
+
+/**
+ * Check for strategy and habit badge detection
+ * POST /api/mastery/check-badge-detection
+ */
+router.post('/check-badge-detection', isAuthenticated, async (req, res) => {
+  try {
+    const { attemptHistory } = req.body;
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Detect strategy badges
+    const newStrategyBadges = detectStrategyBadge(
+      user._id,
+      attemptHistory || [],
+      user.strategyBadges || []
+    );
+
+    // Detect habit badges
+    const newHabitBadges = checkAllHabitBadges(user, attemptHistory || []);
+
+    // Award new badges
+    if (newStrategyBadges.length > 0) {
+      user.strategyBadges.push(...newStrategyBadges);
+    }
+
+    if (newHabitBadges.length > 0) {
+      user.habitBadges.push(...newHabitBadges);
+    }
+
+    // Save if badges were awarded
+    if (newStrategyBadges.length > 0 || newHabitBadges.length > 0) {
+      await user.save();
+    }
+
+    res.json({
+      success: true,
+      newBadges: {
+        strategy: newStrategyBadges,
+        habit: newHabitBadges
+      },
+      totalNewBadges: newStrategyBadges.length + newHabitBadges.length
+    });
+
+  } catch (error) {
+    console.error('Error checking badge detection:', error);
+    res.status(500).json({ error: 'Failed to check badge detection' });
+  }
+});
+
+/**
+ * Get all strategy badges (earned and available)
+ * GET /api/mastery/badges/strategy
+ */
+router.get('/badges/strategy', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const allStrategyBadges = getAllStrategyBadges();
+    const earnedBadgeIds = (user.strategyBadges || []).map(b => b.badgeId);
+
+    const badges = allStrategyBadges.map(badge => ({
+      ...badge,
+      earned: earnedBadgeIds.includes(badge.badgeId),
+      earnedDate: user.strategyBadges?.find(b => b.badgeId === badge.badgeId)?.earnedDate
+    }));
+
+    res.json({
+      success: true,
+      badges,
+      earnedCount: earnedBadgeIds.length,
+      totalCount: allStrategyBadges.length
+    });
+
+  } catch (error) {
+    console.error('Error fetching strategy badges:', error);
+    res.status(500).json({ error: 'Failed to fetch strategy badges' });
+  }
+});
+
+/**
+ * Get all habit badges (earned and available)
+ * GET /api/mastery/badges/habit
+ */
+router.get('/badges/habit', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const allHabitBadges = getAllHabitBadges();
+    const earnedBadgeIds = (user.habitBadges || []).map(b => b.badgeId);
+
+    const badges = allHabitBadges.map(badge => {
+      const earnedBadge = user.habitBadges?.find(b => b.badgeId === badge.badgeId);
+      return {
+        ...badge,
+        earned: earnedBadgeIds.includes(badge.badgeId),
+        earnedDate: earnedBadge?.earnedDate,
+        count: earnedBadge?.count || 0,
+        currentStreak: earnedBadge?.currentStreak || 0,
+        bestStreak: earnedBadge?.bestStreak || 0
+      };
+    });
+
+    res.json({
+      success: true,
+      badges,
+      earnedCount: earnedBadgeIds.length,
+      totalCount: allHabitBadges.length,
+      currentStreak: user.dailyQuests?.currentStreak || 0,
+      longestStreak: user.dailyQuests?.longestStreak || 0
+    });
+
+  } catch (error) {
+    console.error('Error fetching habit badges:', error);
+    res.status(500).json({ error: 'Failed to fetch habit badges' });
+  }
+});
+
+/**
+ * Get skills due for retention check
+ * GET /api/mastery/retention-checks-due
+ */
+router.get('/retention-checks-due', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const skillsDue = getSkillsDueForRetention(user.skillMastery);
+
+    // Get skill details
+    const skillIds = skillsDue.map(s => s.skillId);
+    const skills = await Skill.find({ skillId: { $in: skillIds } }).lean();
+
+    const enrichedSkillsDue = skillsDue.map(({ skillId, skill }) => {
+      const skillData = skills.find(s => s.skillId === skillId);
+      return {
+        skillId,
+        skillName: skillData?.displayName || skillId,
+        currentTier: skill.currentTier,
+        daysSinceLastPractice: Math.floor(
+          (new Date() - new Date(skill.lastPracticed)) / (1000 * 60 * 60 * 24)
+        ),
+        lastAccuracy: skill.pillars?.accuracy?.percentage || 0,
+        nextRetentionCheck: skill.pillars?.retention?.nextRetentionCheck
+      };
+    });
+
+    res.json({
+      success: true,
+      skillsDue: enrichedSkillsDue,
+      count: skillsDue.length
+    });
+
+  } catch (error) {
+    console.error('Error fetching retention checks:', error);
+    res.status(500).json({ error: 'Failed to fetch retention checks' });
+  }
+});
+
+/**
+ * Perform retention check for a skill
+ * POST /api/mastery/retention-check
+ */
+router.post('/retention-check', isAuthenticated, async (req, res) => {
+  try {
+    const { skillId, correct, total } = req.body;
+
+    if (!skillId || typeof correct !== 'number' || typeof total !== 'number') {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const skillMastery = user.skillMastery.get(skillId);
+    if (!skillMastery) {
+      return res.status(404).json({ error: 'Skill mastery not found' });
+    }
+
+    const accuracy = correct / total;
+
+    // Perform retention check
+    const updatedSkill = performRetentionCheck(skillMastery, {
+      correct,
+      total,
+      accuracy
+    });
+
+    // Update user
+    user.skillMastery.set(skillId, updatedSkill);
+    await user.save();
+
+    res.json({
+      success: true,
+      passed: accuracy >= 0.80,
+      accuracy: Math.round(accuracy * 100),
+      newStatus: updatedSkill.status,
+      message: updatedSkill.status === 're-fragile' ?
+        "Time for a quick refresh! You've got this—just needs a tune-up." :
+        "Retention check passed! Skill is still solid."
+    });
+
+  } catch (error) {
+    console.error('Error performing retention check:', error);
+    res.status(500).json({ error: 'Failed to perform retention check' });
+  }
+});
+
+/**
+ * Get complete Master Mode dashboard data
+ * GET /api/mastery/dashboard
+ */
+router.get('/dashboard', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Count badges by tier
+    const skillBadgeTiers = {
+      bronze: 0,
+      silver: 0,
+      gold: 0,
+      diamond: 0
+    };
+
+    for (const [skillId, skill] of user.skillMastery.entries()) {
+      if (skill.currentTier && skill.currentTier !== 'none') {
+        skillBadgeTiers[skill.currentTier]++;
+      }
+    }
+
+    // Get retention checks due
+    const skillsDue = getSkillsDueForRetention(user.skillMastery);
+
+    // Calculate overall mastery percentage
+    const masteredSkills = Array.from(user.skillMastery.values()).filter(
+      s => s.status === 'mastered'
+    ).length;
+    const totalSkills = user.skillMastery.size;
+
+    res.json({
+      success: true,
+      dashboard: {
+        skillBadges: {
+          tiers: skillBadgeTiers,
+          total: Object.values(skillBadgeTiers).reduce((a, b) => a + b, 0)
+        },
+        strategyBadges: {
+          earned: (user.strategyBadges || []).length,
+          total: getAllStrategyBadges().length
+        },
+        habitBadges: {
+          earned: (user.habitBadges || []).length,
+          total: getAllHabitBadges().length
+        },
+        mastery: {
+          masteredSkills,
+          totalSkills,
+          percentage: totalSkills > 0 ? Math.round((masteredSkills / totalSkills) * 100) : 0
+        },
+        streaks: {
+          current: user.dailyQuests?.currentStreak || 0,
+          longest: user.dailyQuests?.longestStreak || 0
+        },
+        retentionChecks: {
+          due: skillsDue.length
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching dashboard:', error);
+    res.status(500).json({ error: 'Failed to fetch dashboard' });
+  }
+});
+
 module.exports = router;
