@@ -31,6 +31,99 @@ class CharacterRiggingProcessor {
     }
 
     /**
+     * Detect if image has a solid background color
+     */
+    detectSolidBackground(imageData) {
+        const width = imageData.width;
+        const height = imageData.height;
+        const data = imageData.data;
+
+        // Sample pixels from corners and edges
+        const samplePoints = [
+            [0, 0], [width - 1, 0], [0, height - 1], [width - 1, height - 1], // Corners
+            [Math.floor(width / 2), 0], [Math.floor(width / 2), height - 1], // Top/bottom middle
+            [0, Math.floor(height / 2)], [width - 1, Math.floor(height / 2)] // Left/right middle
+        ];
+
+        const colors = [];
+        for (const [x, y] of samplePoints) {
+            const idx = (y * width + x) * 4;
+            colors.push({
+                r: data[idx],
+                g: data[idx + 1],
+                b: data[idx + 2],
+                a: data[idx + 3]
+            });
+        }
+
+        // Check if all sampled colors are similar
+        const firstColor = colors[0];
+        const tolerance = 30;
+
+        const isSimilar = colors.every(color => {
+            return Math.abs(color.r - firstColor.r) <= tolerance &&
+                   Math.abs(color.g - firstColor.g) <= tolerance &&
+                   Math.abs(color.b - firstColor.b) <= tolerance &&
+                   Math.abs(color.a - firstColor.a) <= tolerance;
+        });
+
+        if (isSimilar) {
+            return firstColor;
+        }
+
+        return null;
+    }
+
+    /**
+     * Remove solid background from image
+     */
+    async removeBackground(imageBuffer) {
+        const image = await this.loadImageFromBuffer(imageBuffer);
+        const canvas = createCanvas(image.width, image.height);
+        const ctx = canvas.getContext('2d');
+
+        ctx.drawImage(image, 0, 0);
+        const imageData = ctx.getImageData(0, 0, image.width, image.height);
+
+        // Detect background color
+        const bgColor = this.detectSolidBackground(imageData);
+
+        if (!bgColor) {
+            // No solid background detected, return original
+            return {
+                buffer: imageBuffer,
+                hadBackground: false
+            };
+        }
+
+        // Remove background by making similar pixels transparent
+        const data = imageData.data;
+        const tolerance = 40; // Slightly higher tolerance for edge pixels
+
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+
+            const colorDiff = Math.abs(r - bgColor.r) +
+                             Math.abs(g - bgColor.g) +
+                             Math.abs(b - bgColor.b);
+
+            if (colorDiff <= tolerance) {
+                data[i + 3] = 0; // Make transparent
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+
+        return {
+            buffer: canvas.toBuffer('image/png'),
+            hadBackground: true,
+            backgroundColor: bgColor
+        };
+    }
+
+    /**
      * Calculate bounding box for a set of points with padding
      */
     calculateBoundingBox(points, padding = 20) {
@@ -106,6 +199,159 @@ class CharacterRiggingProcessor {
             queue.push([x - 1, y]);
             queue.push([x, y + 1]);
             queue.push([x, y - 1]);
+        }
+
+        return pixels;
+    }
+
+    /**
+     * Detect overlapping regions between segments
+     */
+    detectOverlaps(segments) {
+        const overlaps = [];
+
+        for (let i = 0; i < segments.length; i++) {
+            for (let j = i + 1; j < segments.length; j++) {
+                const seg1 = segments[i];
+                const seg2 = segments[j];
+
+                // Check if bounding boxes overlap
+                const bounds1 = seg1.bounds;
+                const bounds2 = seg2.bounds;
+
+                const overlapX = Math.max(0, Math.min(bounds1.x + bounds1.width, bounds2.x + bounds2.width) - Math.max(bounds1.x, bounds2.x));
+                const overlapY = Math.max(0, Math.min(bounds1.y + bounds1.height, bounds2.y + bounds2.height) - Math.max(bounds1.y, bounds2.y));
+
+                if (overlapX > 0 && overlapY > 0) {
+                    overlaps.push({
+                        segment1: seg1.name,
+                        segment2: seg2.name,
+                        overlapArea: overlapX * overlapY,
+                        overlapPercent: (overlapX * overlapY) / Math.min(bounds1.width * bounds1.height, bounds2.width * bounds2.height) * 100
+                    });
+                }
+            }
+        }
+
+        return overlaps;
+    }
+
+    /**
+     * Resolve overlapping segments by assigning pixels to the nearest rigging point
+     */
+    async resolveOverlaps(image, segments) {
+        if (segments.length < 2) return segments;
+
+        // Create a full canvas
+        const fullCanvas = createCanvas(image.width, image.height);
+        const fullCtx = fullCanvas.getContext('2d');
+        fullCtx.drawImage(image, 0, 0);
+        const imageData = fullCtx.getImageData(0, 0, image.width, image.height);
+
+        // Build a pixel ownership map based on distance to nearest rigging point
+        const pixelOwnership = new Map();
+
+        for (const segment of segments) {
+            const segmentPixels = this.getSegmentPixels(segment);
+
+            for (const pixelKey of segmentPixels) {
+                const [x, y] = pixelKey.split(',').map(Number);
+
+                // Find distance to nearest rigging point in this segment
+                let minDist = Infinity;
+                for (const point of segment.points) {
+                    const dist = Math.sqrt(Math.pow(x - point.x, 2) + Math.pow(y - point.y, 2));
+                    minDist = Math.min(minDist, dist);
+                }
+
+                // Check if this pixel is claimed by another segment
+                const existing = pixelOwnership.get(pixelKey);
+                if (!existing || existing.distance > minDist) {
+                    pixelOwnership.set(pixelKey, {
+                        segment: segment.name,
+                        distance: minDist
+                    });
+                }
+            }
+        }
+
+        // Rebuild segments based on pixel ownership
+        const resolvedSegments = [];
+
+        for (const segment of segments) {
+            const ownedPixels = new Set();
+
+            for (const [pixelKey, ownership] of pixelOwnership.entries()) {
+                if (ownership.segment === segment.name) {
+                    ownedPixels.add(pixelKey);
+                }
+            }
+
+            if (ownedPixels.size > 0) {
+                const pixelArray = Array.from(ownedPixels).map(key => {
+                    const [x, y] = key.split(',').map(Number);
+                    return { x, y };
+                });
+
+                const xs = pixelArray.map(p => p.x);
+                const ys = pixelArray.map(p => p.y);
+                const minX = Math.min(...xs);
+                const maxX = Math.max(...xs);
+                const minY = Math.min(...ys);
+                const maxY = Math.max(...ys);
+
+                const width = maxX - minX + 1;
+                const height = maxY - minY + 1;
+
+                const outputCanvas = createCanvas(width, height);
+                const outputCtx = outputCanvas.getContext('2d');
+                const outputImageData = outputCtx.createImageData(width, height);
+
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const srcX = x + minX;
+                        const srcY = y + minY;
+                        const key = `${srcX},${srcY}`;
+
+                        if (ownedPixels.has(key)) {
+                            const srcIdx = (srcY * image.width + srcX) * 4;
+                            const dstIdx = (y * width + x) * 4;
+
+                            outputImageData.data[dstIdx] = imageData.data[srcIdx];
+                            outputImageData.data[dstIdx + 1] = imageData.data[srcIdx + 1];
+                            outputImageData.data[dstIdx + 2] = imageData.data[srcIdx + 2];
+                            outputImageData.data[dstIdx + 3] = imageData.data[srcIdx + 3];
+                        }
+                    }
+                }
+
+                outputCtx.putImageData(outputImageData, 0, 0);
+
+                resolvedSegments.push({
+                    ...segment,
+                    imageData: outputCanvas.toBuffer('image/png'),
+                    bounds: { x: minX, y: minY, width, height },
+                    overlapResolved: true
+                });
+            }
+        }
+
+        return resolvedSegments;
+    }
+
+    /**
+     * Get pixel coordinates for a segment
+     */
+    getSegmentPixels(segment) {
+        const pixels = new Set();
+        const bounds = segment.bounds;
+
+        // This is a simplified version - in practice, we'd decode the imageData
+        // For now, assume all pixels in bounds belong to segment
+        for (let y = bounds.y; y < bounds.y + bounds.height; y++) {
+            for (let x = bounds.x; x < bounds.x + bounds.width; x++) {
+                pixels.add(`${x},${y}`);
+            }
         }
 
         return pixels;

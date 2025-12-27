@@ -254,6 +254,190 @@ router.post('/segment', async (req, res) => {
 });
 
 /**
+ * POST /api/character-rigging/remove-background
+ * Automatically remove solid background from character image
+ */
+router.post('/remove-background', async (req, res) => {
+    try {
+        const { sessionId } = req.body;
+
+        if (!req.user) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
+
+        const rig = await CharacterRig.findOne({
+            sessionId,
+            userId: req.user._id
+        });
+
+        if (!rig) {
+            return res.status(404).json({ error: 'Rigging session not found' });
+        }
+
+        // Remove background
+        const result = await riggingProcessor.removeBackground(rig.imageBuffer);
+
+        if (result.hadBackground) {
+            // Update the image buffer with background removed
+            rig.imageBuffer = result.buffer;
+            await rig.save();
+
+            res.json({
+                success: true,
+                message: 'Background removed successfully',
+                hadBackground: true,
+                backgroundColor: result.backgroundColor
+            });
+        } else {
+            res.json({
+                success: true,
+                message: 'No solid background detected',
+                hadBackground: false
+            });
+        }
+
+    } catch (error) {
+        console.error('Background removal error:', error);
+        res.status(500).json({
+            error: 'Failed to remove background',
+            details: error.message
+        });
+    }
+});
+
+/**
+ * POST /api/character-rigging/resolve-overlaps
+ * Resolve overlapping segments by assigning pixels to nearest rigging points
+ */
+router.post('/resolve-overlaps', async (req, res) => {
+    try {
+        const { sessionId } = req.body;
+
+        if (!req.user) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
+
+        const rig = await CharacterRig.findOne({
+            sessionId,
+            userId: req.user._id
+        });
+
+        if (!rig) {
+            return res.status(404).json({ error: 'Rigging session not found' });
+        }
+
+        if (!rig.segmentedParts || rig.segmentedParts.length === 0) {
+            return res.status(400).json({ error: 'No segments found. Please segment the character first.' });
+        }
+
+        // Detect overlaps
+        const overlaps = riggingProcessor.detectOverlaps(rig.segmentedParts);
+
+        if (overlaps.length === 0) {
+            return res.json({
+                success: true,
+                message: 'No overlaps detected',
+                overlaps: []
+            });
+        }
+
+        // Load image for overlap resolution
+        const image = await riggingProcessor.loadImageFromBuffer(rig.imageBuffer);
+
+        // Resolve overlaps
+        const resolvedSegments = await riggingProcessor.resolveOverlaps(image, rig.segmentedParts);
+
+        // Update segments
+        rig.segmentedParts = resolvedSegments;
+        await rig.save();
+
+        res.json({
+            success: true,
+            message: 'Overlaps resolved successfully',
+            overlaps: overlaps,
+            resolvedCount: resolvedSegments.length
+        });
+
+    } catch (error) {
+        console.error('Overlap resolution error:', error);
+        res.status(500).json({
+            error: 'Failed to resolve overlaps',
+            details: error.message
+        });
+    }
+});
+
+/**
+ * POST /api/character-rigging/refine-mask
+ * Manually refine a segment mask with custom boundary points
+ */
+router.post('/refine-mask', async (req, res) => {
+    try {
+        const { sessionId, segmentName, maskPoints } = req.body;
+
+        if (!req.user) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
+
+        if (!maskPoints || maskPoints.length < 3) {
+            return res.status(400).json({ error: 'At least 3 mask points are required' });
+        }
+
+        const rig = await CharacterRig.findOne({
+            sessionId,
+            userId: req.user._id
+        });
+
+        if (!rig) {
+            return res.status(404).json({ error: 'Rigging session not found' });
+        }
+
+        // Find the segment to refine
+        const segmentIndex = rig.segmentedParts.findIndex(s => s.name === segmentName);
+
+        if (segmentIndex === -1) {
+            return res.status(404).json({ error: 'Segment not found' });
+        }
+
+        // Load image
+        const image = await riggingProcessor.loadImageFromBuffer(rig.imageBuffer);
+
+        // Calculate bounding box for mask points
+        const bounds = riggingProcessor.calculateBoundingBox(maskPoints, 10);
+
+        if (!bounds) {
+            return res.status(400).json({ error: 'Invalid mask points' });
+        }
+
+        // Extract segment with custom mask
+        const segmentBuffer = await riggingProcessor.extractSegment(image, bounds, maskPoints);
+
+        // Update segment
+        rig.segmentedParts[segmentIndex].imageData = segmentBuffer;
+        rig.segmentedParts[segmentIndex].bounds = bounds;
+        rig.segmentedParts[segmentIndex].method = 'manual-refined';
+
+        await rig.save();
+
+        res.json({
+            success: true,
+            message: 'Segment mask refined successfully',
+            segment: {
+                name: segmentName,
+                bounds: bounds
+            }
+        });
+
+    } catch (error) {
+        console.error('Mask refinement error:', error);
+        res.status(500).json({
+            error: 'Failed to refine mask',
+            details: error.message
+        });
+    }
+});
+
+/**
  * GET /api/character-rigging/preview/:sessionId
  * Get a preview image showing rigging points and bones
  */
