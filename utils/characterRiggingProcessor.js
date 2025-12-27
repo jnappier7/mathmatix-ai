@@ -50,7 +50,178 @@ class CharacterRiggingProcessor {
     }
 
     /**
+     * Flood fill algorithm to find connected region from a start point
+     */
+    floodFill(imageData, startX, startY, width, height, visited = new Set()) {
+        const queue = [[Math.floor(startX), Math.floor(startY)]];
+        const pixels = [];
+        const tolerance = 50; // Color tolerance for flood fill
+
+        // Get the start pixel color and alpha
+        const startIdx = (Math.floor(startY) * width + Math.floor(startX)) * 4;
+        const startR = imageData.data[startIdx];
+        const startG = imageData.data[startIdx + 1];
+        const startB = imageData.data[startIdx + 2];
+        const startA = imageData.data[startIdx + 3];
+
+        // If starting on transparent pixel, we need to find opaque pixels nearby
+        const checkTransparency = startA < 128;
+
+        const isWithinBounds = (x, y) => x >= 0 && x < width && y >= 0 && y < height;
+
+        const isSimilarColor = (idx) => {
+            const r = imageData.data[idx];
+            const g = imageData.data[idx + 1];
+            const b = imageData.data[idx + 2];
+            const a = imageData.data[idx + 3];
+
+            // If we're looking for transparent areas, check alpha
+            if (checkTransparency) {
+                return a < 128; // Transparent
+            }
+
+            // For opaque pixels, check if alpha is high enough and color is similar
+            if (a < 128) return false; // Skip transparent pixels
+
+            const colorDiff = Math.abs(r - startR) + Math.abs(g - startG) + Math.abs(b - startB);
+            return colorDiff <= tolerance;
+        };
+
+        while (queue.length > 0) {
+            const [x, y] = queue.shift();
+            const key = `${x},${y}`;
+
+            if (visited.has(key) || !isWithinBounds(x, y)) continue;
+            visited.add(key);
+
+            const idx = (y * width + x) * 4;
+
+            if (!checkTransparency && !isSimilarColor(idx)) continue;
+            if (checkTransparency && imageData.data[idx + 3] >= 128) continue;
+
+            pixels.push({ x, y });
+
+            // Add neighbors (4-directional)
+            queue.push([x + 1, y]);
+            queue.push([x - 1, y]);
+            queue.push([x, y + 1]);
+            queue.push([x, y - 1]);
+        }
+
+        return pixels;
+    }
+
+    /**
+     * Extract connected region around rigging points using flood fill
+     */
+    async extractSegmentFloodFill(image, rigPoints) {
+        // Create a canvas to analyze the image
+        const fullCanvas = createCanvas(image.width, image.height);
+        const fullCtx = fullCanvas.getContext('2d');
+        fullCtx.drawImage(image, 0, 0);
+        const imageData = fullCtx.getImageData(0, 0, image.width, image.height);
+
+        // Collect all pixels that belong to this segment
+        const visited = new Set();
+        const allSegmentPixels = new Set();
+
+        // Start flood fill from each rigging point
+        for (const point of rigPoints) {
+            const pixels = this.floodFill(imageData, point.x, point.y, image.width, image.height, visited);
+            pixels.forEach(p => allSegmentPixels.add(`${p.x},${p.y}`));
+        }
+
+        // If we got very few pixels, the rigging points might be on transparent areas
+        // Try expanding outward from the points
+        if (allSegmentPixels.size < 100) {
+            for (const point of rigPoints) {
+                // Sample pixels in a small radius to find opaque pixels
+                for (let radius = 5; radius <= 50; radius += 5) {
+                    const angles = 8;
+                    for (let i = 0; i < angles; i++) {
+                        const angle = (i / angles) * Math.PI * 2;
+                        const x = Math.floor(point.x + Math.cos(angle) * radius);
+                        const y = Math.floor(point.y + Math.sin(angle) * radius);
+
+                        if (x >= 0 && x < image.width && y >= 0 && y < image.height) {
+                            const idx = (y * image.width + x) * 4;
+                            const alpha = imageData.data[idx + 3];
+
+                            // If we found an opaque pixel, flood fill from there
+                            if (alpha >= 128 && !visited.has(`${x},${y}`)) {
+                                const pixels = this.floodFill(imageData, x, y, image.width, image.height, visited);
+                                pixels.forEach(p => allSegmentPixels.add(`${p.x},${p.y}`));
+
+                                if (allSegmentPixels.size > 100) break;
+                            }
+                        }
+                    }
+                    if (allSegmentPixels.size > 100) break;
+                }
+            }
+        }
+
+        // Convert set back to array of pixels
+        const pixelArray = Array.from(allSegmentPixels).map(key => {
+            const [x, y] = key.split(',').map(Number);
+            return { x, y };
+        });
+
+        if (pixelArray.length === 0) {
+            // Fallback to bounding box if flood fill failed
+            return null;
+        }
+
+        // Calculate tight bounding box
+        const xs = pixelArray.map(p => p.x);
+        const ys = pixelArray.map(p => p.y);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+        const minY = Math.min(...ys);
+        const maxY = Math.max(...ys);
+
+        const width = maxX - minX + 1;
+        const height = maxY - minY + 1;
+
+        // Create output canvas
+        const outputCanvas = createCanvas(width, height);
+        const outputCtx = outputCanvas.getContext('2d');
+
+        // Create a mask of which pixels to include
+        const mask = new Set(allSegmentPixels);
+
+        // Copy only the pixels in the mask
+        const outputImageData = outputCtx.createImageData(width, height);
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const srcX = x + minX;
+                const srcY = y + minY;
+                const key = `${srcX},${srcY}`;
+
+                if (mask.has(key)) {
+                    const srcIdx = (srcY * image.width + srcX) * 4;
+                    const dstIdx = (y * width + x) * 4;
+
+                    outputImageData.data[dstIdx] = imageData.data[srcIdx];
+                    outputImageData.data[dstIdx + 1] = imageData.data[srcIdx + 1];
+                    outputImageData.data[dstIdx + 2] = imageData.data[srcIdx + 2];
+                    outputImageData.data[dstIdx + 3] = imageData.data[srcIdx + 3];
+                }
+            }
+        }
+
+        outputCtx.putImageData(outputImageData, 0, 0);
+
+        return {
+            buffer: outputCanvas.toBuffer('image/png'),
+            bounds: { x: minX, y: minY, width, height }
+        };
+    }
+
+    /**
      * Extract a segment from the original image based on bounding box
+     * This is the fallback method if flood fill doesn't work well
      */
     async extractSegment(image, bounds, segmentPoints) {
         const canvas = createCanvas(bounds.width, bounds.height);
@@ -132,6 +303,7 @@ class CharacterRiggingProcessor {
 
     /**
      * Segment the character image based on rigging points and bone connections
+     * Uses intelligent flood-fill for pixel-perfect cuts on transparent backgrounds
      */
     async segmentCharacter(imageBuffer, rigPoints, boneConnections) {
         const image = await this.loadImageFromBuffer(imageBuffer);
@@ -143,26 +315,60 @@ class CharacterRiggingProcessor {
         for (const [partName, points] of Object.entries(bodyParts)) {
             if (points.length === 0) continue;
 
-            // Create convex hull for better segmentation
-            const hull = points.length > 2 ? this.createConvexHull(points) : points;
-
-            // Calculate bounding box
-            const bounds = this.calculateBoundingBox(hull, 30);
-
-            if (!bounds) continue;
-
             try {
-                // Extract the segment
-                const segmentBuffer = await this.extractSegment(image, bounds, hull);
+                // Try flood fill segmentation first (best for transparent backgrounds)
+                const floodFillResult = await this.extractSegmentFloodFill(image, points);
 
-                segments.push({
-                    name: partName,
-                    imageData: segmentBuffer,
-                    bounds: bounds,
-                    points: points.map(p => ({ x: p.x, y: p.y, label: p.label }))
-                });
+                if (floodFillResult && floodFillResult.buffer) {
+                    // Flood fill succeeded - use pixel-perfect cut
+                    segments.push({
+                        name: partName,
+                        imageData: floodFillResult.buffer,
+                        bounds: floodFillResult.bounds,
+                        points: points.map(p => ({ x: p.x, y: p.y, label: p.label })),
+                        method: 'flood-fill'
+                    });
+                } else {
+                    // Fallback to convex hull method
+                    console.log(`Flood fill failed for ${partName}, using convex hull fallback`);
+
+                    const hull = points.length > 2 ? this.createConvexHull(points) : points;
+                    const bounds = this.calculateBoundingBox(hull, 30);
+
+                    if (bounds) {
+                        const segmentBuffer = await this.extractSegment(image, bounds, hull);
+
+                        segments.push({
+                            name: partName,
+                            imageData: segmentBuffer,
+                            bounds: bounds,
+                            points: points.map(p => ({ x: p.x, y: p.y, label: p.label })),
+                            method: 'convex-hull'
+                        });
+                    }
+                }
             } catch (error) {
                 console.error(`Failed to extract segment ${partName}:`, error);
+
+                // Last resort fallback
+                try {
+                    const hull = points.length > 2 ? this.createConvexHull(points) : points;
+                    const bounds = this.calculateBoundingBox(hull, 30);
+
+                    if (bounds) {
+                        const segmentBuffer = await this.extractSegment(image, bounds, hull);
+
+                        segments.push({
+                            name: partName,
+                            imageData: segmentBuffer,
+                            bounds: bounds,
+                            points: points.map(p => ({ x: p.x, y: p.y, label: p.label })),
+                            method: 'convex-hull-fallback'
+                        });
+                    }
+                } catch (fallbackError) {
+                    console.error(`All segmentation methods failed for ${partName}:`, fallbackError);
+                }
             }
         }
 
