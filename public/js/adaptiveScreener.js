@@ -206,11 +206,17 @@ async function loadNextProblem() {
 /**
  * Submit the current answer
  */
-async function submitAnswer() {
-  const answer = elements.answerInput.value.trim();
+async function submitAnswer(answerValue) {
+  // For multiple choice, answerValue is passed directly
+  // For fill-in, read from input field
+  const answer = (answerValue !== undefined)
+    ? String(answerValue).trim()
+    : elements.answerInput?.value?.trim() || '';
 
   if (!answer) {
-    elements.answerInput.focus();
+    if (elements.answerInput) {
+      elements.answerInput.focus();
+    }
     return;
   }
 
