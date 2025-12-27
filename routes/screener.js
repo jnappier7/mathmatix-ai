@@ -134,6 +134,8 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     // Query all skills from database with estimated difficulty ranges
     const allSkills = await Skill.find({}).select('skillId name category irtDifficulty').lean();
 
+    console.log(`[DEBUG] Queried ${allSkills.length} skills from database`);
+
     // If no IRT difficulty in database, use category-based estimates
     const categoryDifficultyMap = {
       // Elementary (K-5)
@@ -211,8 +213,14 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       });
     }
 
+    console.log(`[DEBUG] Built ${candidateSkills.length} candidate skills`);
+    console.log(`[DEBUG] Target difficulty: ${targetDifficulty.toFixed(2)}`);
+    console.log(`[DEBUG] Tested skills so far: [${session.testedSkills.join(', ')}]`);
+
     // Filter out skills tested 3+ times (ensure diversity)
     const fresherSkills = candidateSkills.filter(s => s.testCount < 3);
+    console.log(`[DEBUG] After filtering (testCount < 3): ${fresherSkills.length} fresher skills`);
+
     if (fresherSkills.length > 0) {
       candidateSkills = fresherSkills;
     }
