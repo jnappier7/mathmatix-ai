@@ -354,6 +354,58 @@ async function handleCompletion(data) {
 function displayProblem(problem) {
   elements.questionNumber.textContent = `Question ${problem.questionNumber}`;
   elements.problemText.textContent = problem.content;
+
+  // Handle multiple choice vs fill-in
+  const answerSection = document.querySelector('.answer-section');
+
+  if (problem.answerType === 'multiple-choice' && problem.options && problem.options.length > 0) {
+    // Render multiple choice buttons
+    answerSection.innerHTML = `
+      <div class="multiple-choice-options" id="mc-options">
+        ${problem.options.map(opt => `
+          <button class="mc-option" data-option="${opt.label}">
+            <span class="option-label">${opt.label}</span>
+            <span class="option-text">${opt.text}</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+
+    // Add click handlers for multiple choice
+    document.querySelectorAll('.mc-option').forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Remove previous selection
+        document.querySelectorAll('.mc-option').forEach(b => b.classList.remove('selected'));
+        // Mark this as selected
+        this.classList.add('selected');
+        // Auto-submit after selection
+        setTimeout(() => submitAnswer(this.dataset.option), 300);
+      });
+    });
+  } else {
+    // Render fill-in input
+    answerSection.innerHTML = `
+      <input
+        type="text"
+        id="answer-input"
+        class="answer-input"
+        placeholder="Type your answer..."
+        autocomplete="off"
+        autofocus
+      />
+      <button class="btn btn-primary" id="submit-btn">
+        Submit <i class="fas fa-arrow-right"></i>
+      </button>
+    `;
+
+    // Re-attach submit button handler
+    elements.answerInput = document.getElementById('answer-input');
+    elements.submitBtn = document.getElementById('submit-btn');
+    elements.submitBtn.addEventListener('click', () => submitAnswer(elements.answerInput.value));
+    elements.answerInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') submitAnswer(elements.answerInput.value);
+    });
+  }
 }
 
 /**

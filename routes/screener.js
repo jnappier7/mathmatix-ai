@@ -263,6 +263,9 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
         problemId: problem.problemId,
         content: problem.content,
         skillId: problem.skillId,
+        answerType: problem.answerType,
+        options: problem.options,
+        correctOption: problem.correctOption,
         questionNumber: session.questionCount + 1,
         progress: {
           current: session.questionCount + 1,
