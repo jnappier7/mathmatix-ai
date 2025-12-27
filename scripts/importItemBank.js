@@ -262,6 +262,9 @@ function parseRow(row) {
       { label: 'C', text: optionC || '' },
       { label: 'D', text: optionD || '' }
     ].filter(opt => opt.text); // Remove empty options
+
+    // Set answer type to multiple choice
+    problem.answerType = 'multiple-choice';
   }
 
   // Extract correct answer
