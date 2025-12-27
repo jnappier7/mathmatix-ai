@@ -41,6 +41,7 @@ const screenerSessionSchema = new mongoose.Schema({
         problemId: String,
         skillId: String,
         difficulty: Number,
+        discrimination: Number,  // IRT discrimination parameter (α)
         correct: Boolean,
         responseTime: Number,
         theta: Number,
