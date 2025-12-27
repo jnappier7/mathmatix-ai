@@ -86,14 +86,53 @@ const badgeSchema = new Schema({
   score:      { type: Number }
 }, { _id: false });
 
+// ★ MASTER MODE: Strategy Badges ★
+const strategyBadgeSchema = new Schema({
+  badgeId: { type: String, required: true },
+  badgeName: { type: String, required: true },
+  category: { type: String },  // 'algebra', 'geometry', 'meta', etc.
+  earnedDate: { type: Date, default: Date.now },
+  triggerContext: {
+    problemIds: [String],
+    detectionReason: String
+  }
+}, { _id: false });
+
+// ★ MASTER MODE: Habits Badges ★
+const habitBadgeSchema = new Schema({
+  badgeId: { type: String, required: true },
+  badgeName: { type: String, required: true },
+  category: {
+    type: String,
+    enum: ['consistency', 'resilience', 'efficiency', 'metacognition']
+  },
+  earnedDate: { type: Date, default: Date.now },
+  count: { type: Number, default: 1 },  // For re-earnable badges
+  currentStreak: { type: Number, default: 0 },  // For streak badges
+  bestStreak: { type: Number, default: 0 },
+  metadata: Schema.Types.Mixed  // Flexible for different badge types
+}, { _id: false });
+
+// ★ MASTER MODE: Meta/Challenge Badges ★
+const metaBadgeSchema = new Schema({
+  badgeId: { type: String, required: true },
+  badgeName: { type: String, required: true },
+  category: {
+    type: String,
+    enum: ['milestone', 'community', 'event', 'ultra-rare']
+  },
+  earnedDate: { type: Date, default: Date.now },
+  specialData: Schema.Types.Mixed  // Flexible for special badges
+}, { _id: false });
+
 /* ---------- SKILL MASTERY TRACKING ---------- */
 const skillMasterySchema = new Schema({
   status: {
     type: String,
-    enum: ['locked', 'ready', 'learning', 'mastered', 'needs-review'],
+    enum: ['locked', 'ready', 'learning', 'practicing', 'mastered', 're-fragile', 'needs-review'],
     default: 'locked'
   },
-  masteryScore: { type: Number, min: 0, max: 1, default: 0 },
+  masteryScore: { type: Number, min: 0, max: 100, default: 0 },  // Changed to 0-100 scale
   lastPracticed: { type: Date },
   consecutiveCorrect: { type: Number, default: 0 },
   totalAttempts: { type: Number, default: 0 },
@@ -101,6 +140,52 @@ const skillMasterySchema = new Schema({
   masteredDate: { type: Date },
   strugglingAreas: [String],  // Specific concepts within this skill
   notes: String,  // AI observations about student's understanding
+
+  // ★ MASTER MODE: 4 Pillars of Mastery ★
+  pillars: {
+    // Pillar 1: Accuracy
+    accuracy: {
+      correct: { type: Number, default: 0 },
+      total: { type: Number, default: 0 },
+      percentage: { type: Number, min: 0, max: 1, default: 0 },  // 0-1 scale
+      threshold: { type: Number, default: 0.90 }  // 90% required for mastery
+    },
+
+    // Pillar 2: Independence
+    independence: {
+      hintsUsed: { type: Number, default: 0 },
+      hintsAvailable: { type: Number, default: 15 },  // Total hints allowed
+      hintThreshold: { type: Number, default: 3 },    // Max 3 hints for mastery
+      autoStepUsed: { type: Boolean, default: false } // Auto-pause mastery if true
+    },
+
+    // Pillar 3: Transfer
+    transfer: {
+      contextsAttempted: [String],  // ['numeric', 'graphical', 'word-problem', 'real-world']
+      contextsRequired: { type: Number, default: 3 },  // Minimum 3 contexts
+      formatVariety: { type: Boolean, default: false }
+    },
+
+    // Pillar 4: Retention
+    retention: {
+      lastPracticed: { type: Date },
+      retentionChecks: [{
+        checkDate: { type: Date },
+        daysSinceLastPractice: { type: Number },
+        accuracy: { type: Number },
+        passed: { type: Boolean }  // ≥80% to pass
+      }],
+      nextRetentionCheck: { type: Date },
+      failed: { type: Boolean, default: false }  // Triggers re-fragile state
+    }
+  },
+
+  // Current badge tier for this skill
+  currentTier: {
+    type: String,
+    enum: ['none', 'bronze', 'silver', 'gold', 'diamond'],
+    default: 'none'
+  },
 
   // Adaptive Fluency Engine: Time-based performance tracking
   fluencyTracking: {
@@ -356,17 +441,34 @@ const userSchema = new Schema({
 
   badges: { type: [badgeSchema], default: [] },
 
+  // ★ MASTER MODE: Badge Collections ★
+  strategyBadges: { type: [strategyBadgeSchema], default: [] },
+  habitBadges: { type: [habitBadgeSchema], default: [] },
+  metaBadges: { type: [metaBadgeSchema], default: [] },
+
   /* Mastery Mode Progress */
   masteryProgress: {
     activeBadge: {
       badgeId: String,
       badgeName: String,
       skillId: String,
+      tier: { type: String, enum: ['bronze', 'silver', 'gold', 'diamond'] },  // Current tier being worked on
       startedAt: Date,
       problemsCompleted: { type: Number, default: 0 },
       problemsCorrect: { type: Number, default: 0 },
       requiredProblems: Number,
-      requiredAccuracy: Number
+      requiredAccuracy: Number,
+      currentPhase: String,
+      phaseHistory: [String],
+      hintsUsed: { type: Number, default: 0 },
+
+      // 4-Pillar Progress for active badge
+      pillarProgress: {
+        accuracy: { type: Number, default: 0 },      // 0-100
+        independence: { type: Number, default: 0 },  // 0-100
+        transfer: { type: Number, default: 0 },      // 0-100
+        retention: { type: Number, default: 0 }      // 0-100
+      }
     },
     attempts: [{
       badgeId: String,
