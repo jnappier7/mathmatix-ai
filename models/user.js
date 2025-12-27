@@ -133,6 +133,7 @@ const skillMasterySchema = new Schema({
     default: 'locked'
   },
   masteryScore: { type: Number, min: 0, max: 100, default: 0 },  // Changed to 0-100 scale
+  masteryType: { type: String, enum: ['verified', 'inferred', 'fragile-inferred'], default: 'verified' },
   lastPracticed: { type: Date },
   consecutiveCorrect: { type: Number, default: 0 },
   totalAttempts: { type: Number, default: 0 },
@@ -140,6 +141,14 @@ const skillMasterySchema = new Schema({
   masteredDate: { type: Date },
   strugglingAreas: [String],  // Specific concepts within this skill
   notes: String,  // AI observations about student's understanding
+
+  // ★ INFERENCE TRACKING ★
+  inferredFrom: String,  // SkillId that triggered inference
+  inferredDate: { type: Date },
+  inferredTier: Number,  // Tier of skill that triggered inference
+  explicitlyFailed: { type: Boolean, default: false },  // Failed when directly tested
+  failureDate: { type: Date },
+  failureContext: Schema.Types.Mixed,  // Context where failure occurred
 
   // ★ MASTER MODE: 4 Pillars of Mastery ★
   pillars: {
@@ -445,6 +454,33 @@ const userSchema = new Schema({
   strategyBadges: { type: [strategyBadgeSchema], default: [] },
   habitBadges: { type: [habitBadgeSchema], default: [] },
   metaBadges: { type: [metaBadgeSchema], default: [] },
+
+  // ★ MASTER MODE: Pattern Badge Progress ★
+  patternProgress: {
+    type: Map,
+    of: new Schema({
+      patternId: String,
+      currentTier: { type: Number, default: 0 },
+      highestTierReached: { type: Number, default: 0 },
+      tierUpgradeHistory: [{
+        fromTier: Number,
+        toTier: Number,
+        upgradeDate: Date
+      }],
+      milestonesCompleted: [{
+        milestoneId: String,
+        completedDate: Date,
+        masteryType: { type: String, enum: ['verified', 'inferred'] }
+      }],
+      lastPracticed: Date,
+      status: {
+        type: String,
+        enum: ['locked', 'in-progress', 'ready-for-upgrade', 'mastered'],
+        default: 'locked'
+      }
+    }, { _id: false }),
+    default: () => new Map()
+  },
 
   /* Mastery Mode Progress */
   masteryProgress: {

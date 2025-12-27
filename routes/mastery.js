@@ -1635,4 +1635,258 @@ router.get('/dashboard', isAuthenticated, async (req, res) => {
   }
 });
 
+// ============================================================================
+// MASTER MODE: PATTERN BADGES (Abstraction-Based Progression)
+// ============================================================================
+
+const {
+  getAllPatternBadges,
+  getPatternBadge,
+  getVisibleTiers,
+  getCurrentTier,
+  getNextMilestone,
+  calculatePatternProgress,
+  getPatternStatus
+} = require('../utils/patternBadges');
+
+const {
+  inferMasteryFromHigherTier,
+  applyInferredMastery,
+  shouldTriggerInference,
+  preventInferenceCascade,
+  getInferenceSummary
+} = require('../utils/masteryInference');
+
+/**
+ * Get pattern badge map (dynamic, based on grade level)
+ * GET /api/mastery/pattern-badges
+ */
+router.get('/pattern-badges', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Parse grade level to number (e.g., "9th Grade" → 9)
+    const gradeMatch = user.gradeLevel?.match(/(\d+)/);
+    const gradeLevel = gradeMatch ? parseInt(gradeMatch[1]) : 9;  // Default to 9th
+
+    const allPatterns = getAllPatternBadges();
+
+    // Build pattern badge map
+    const patternBadges = allPatterns.map(pattern => {
+      const currentTier = getCurrentTier(pattern.patternId, user.skillMastery);
+      const visibleTiers = getVisibleTiers(pattern.patternId, gradeLevel);
+      const nextMilestone = getNextMilestone(pattern.patternId, currentTier, user.skillMastery);
+      const progress = calculatePatternProgress(pattern.patternId, currentTier, user.skillMastery);
+      const status = getPatternStatus(pattern.patternId, currentTier, user.skillMastery);
+
+      // Get user's pattern progress
+      const userProgress = user.patternProgress?.get(pattern.patternId) || {
+        currentTier: 0,
+        status: 'locked'
+      };
+
+      return {
+        patternId: pattern.patternId,
+        name: pattern.name,
+        description: pattern.description,
+        icon: pattern.icon,
+        color: pattern.color,
+        currentTier,
+        highestTierReached: userProgress.highestTierReached || currentTier,
+        visibleTiers: visibleTiers.map(tier => ({
+          tier: tier.tier,
+          name: tier.name,
+          description: tier.description,
+          gradeRange: tier.gradeRange,
+          milestoneCount: tier.milestones.length
+        })),
+        nextMilestone: nextMilestone ? {
+          milestoneId: nextMilestone.milestoneId,
+          name: nextMilestone.name,
+          description: nextMilestone.description,
+          requiredAccuracy: nextMilestone.requiredAccuracy,
+          requiredProblems: nextMilestone.requiredProblems
+        } : null,
+        progress,
+        status,
+        lastPracticed: userProgress.lastPracticed
+      };
+    });
+
+    // Get inference summary
+    const inferenceSummary = getInferenceSummary(user.skillMastery);
+
+    res.json({
+      success: true,
+      patternBadges,
+      gradeLevel,
+      inferenceSummary
+    });
+
+  } catch (error) {
+    console.error('Error fetching pattern badges:', error);
+    res.status(500).json({ error: 'Failed to fetch pattern badges' });
+  }
+});
+
+/**
+ * Get detailed pattern status
+ * GET /api/mastery/pattern/:patternId
+ */
+router.get('/pattern/:patternId', isAuthenticated, async (req, res) => {
+  try {
+    const { patternId } = req.params;
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const pattern = getPatternBadge(patternId);
+    if (!pattern) {
+      return res.status(404).json({ error: 'Pattern not found' });
+    }
+
+    const currentTier = getCurrentTier(patternId, user.skillMastery);
+    const userProgress = user.patternProgress?.get(patternId);
+
+    // Get all milestones across all tiers with completion status
+    const allMilestones = [];
+    for (const tier of pattern.tiers) {
+      for (const milestone of tier.milestones) {
+        const completed = milestone.skillIds.every(skillId => {
+          const mastery = user.skillMastery.get(skillId);
+          return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
+        });
+
+        const masteryType = milestone.skillIds.some(skillId => {
+          const mastery = user.skillMastery.get(skillId);
+          return mastery && mastery.masteryType === 'inferred';
+        }) ? 'inferred' : 'verified';
+
+        allMilestones.push({
+          tier: tier.tier,
+          tierName: tier.name,
+          milestoneId: milestone.milestoneId,
+          name: milestone.name,
+          description: milestone.description,
+          completed,
+          masteryType: completed ? masteryType : null,
+          completedDate: userProgress?.milestonesCompleted?.find(m => m.milestoneId === milestone.milestoneId)?.completedDate
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      pattern: {
+        patternId: pattern.patternId,
+        name: pattern.name,
+        description: pattern.description,
+        icon: pattern.icon,
+        color: pattern.color,
+        currentTier,
+        highestTierReached: userProgress?.highestTierReached || 0,
+        status: userProgress?.status || 'locked',
+        tiers: pattern.tiers.length,
+        milestones: allMilestones,
+        tierUpgradeHistory: userProgress?.tierUpgradeHistory || []
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching pattern details:', error);
+    res.status(500).json({ error: 'Failed to fetch pattern details' });
+  }
+});
+
+/**
+ * Update pattern progress after skill mastery
+ * POST /api/mastery/update-pattern-progress
+ */
+router.post('/update-pattern-progress', isAuthenticated, async (req, res) => {
+  try {
+    const { skillId } = req.body;
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get skill to determine pattern
+    const skill = await Skill.findOne({ skillId }).lean();
+    if (!skill || !skill.patternId || !skill.tier) {
+      return res.json({ success: true, message: 'Skill not part of pattern system' });
+    }
+
+    const patternId = skill.patternId;
+    const skillMastery = user.skillMastery.get(skillId);
+
+    // Check if should trigger inference
+    if (shouldTriggerInference(skillMastery)) {
+      const allSkills = await Skill.find().lean();
+      let inferences = inferMasteryFromHigherTier(skillId, user.skillMastery, allSkills);
+
+      // Prevent inference cascade (max 2 tier gap)
+      inferences = preventInferenceCascade(inferences, 2);
+
+      // Apply inferences
+      const updates = applyInferredMastery(user.skillMastery, inferences);
+
+      console.log(`Inferred ${updates.length} skills from mastery of ${skillId}`);
+    }
+
+    // Update pattern progress
+    let patternProgress = user.patternProgress.get(patternId);
+    if (!patternProgress) {
+      patternProgress = {
+        patternId,
+        currentTier: 0,
+        highestTierReached: 0,
+        tierUpgradeHistory: [],
+        milestonesCompleted: [],
+        status: 'locked'
+      };
+    }
+
+    // Recalculate current tier
+    const newTier = getCurrentTier(patternId, user.skillMastery);
+    const oldTier = patternProgress.currentTier;
+
+    if (newTier > oldTier) {
+      // Tier upgrade!
+      patternProgress.currentTier = newTier;
+      patternProgress.highestTierReached = Math.max(newTier, patternProgress.highestTierReached || 0);
+      patternProgress.tierUpgradeHistory.push({
+        fromTier: oldTier,
+        toTier: newTier,
+        upgradeDate: new Date()
+      });
+    }
+
+    patternProgress.lastPracticed = new Date();
+    patternProgress.status = getPatternStatus(patternId, newTier, user.skillMastery);
+
+    user.patternProgress.set(patternId, patternProgress);
+    await user.save();
+
+    res.json({
+      success: true,
+      patternId,
+      oldTier,
+      newTier,
+      tierUpgraded: newTier > oldTier,
+      status: patternProgress.status,
+      message: newTier > oldTier ? `Pattern tier upgraded: ${oldTier} → ${newTier}` : 'Pattern progress updated'
+    });
+
+  } catch (error) {
+    console.error('Error updating pattern progress:', error);
+    res.status(500).json({ error: 'Failed to update pattern progress' });
+  }
+});
+
 module.exports = router;
