@@ -19,7 +19,7 @@ const User = require('../models/user');
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const ScreenerSession = require('../models/screenerSession'); // CTO REVIEW FIX: Persistent session storage
-const { initializeSession, processResponse, generateReport, identifyInterviewSkills } = require('../utils/adaptiveScreener');
+const { initializeSession, processResponse, generateReport, identifyInterviewSkills, calculateJumpSize } = require('../utils/adaptiveScreener');
 const { generateProblem } = require('../utils/problemGenerator');
 const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 
@@ -35,6 +35,83 @@ const { awardBadgesForSkills } = require('../utils/badgeAwarder');
  * - Allows old problems to resurface for spaced repetition (pedagogically sound)
  */
 const LRU_EXCLUSION_WINDOW = 100;
+
+/**
+ * Calculate adaptive progress with confidence metrics for UI visualization
+ *
+ * PHILOSOPHY: For adaptive tests, progress should reflect "how confident we are"
+ * not "how many questions answered". This allows showing a confidence meter with
+ * a visual indicator when confidence threshold is achieved.
+ *
+ * ALGORITHM:
+ * - Phase 1 (Questions 1 to min): Linear progress 0% → 50% (building baseline)
+ * - Phase 2 (After min): Confidence-based progress 50% → 100% (refining estimate)
+ *
+ * UI VISUALIZATION:
+ * - Show progress bar with confidence meter
+ * - Display marker/threshold line when confidenceAchieved = true
+ * - Color-code: gathering (yellow) → confident (green)
+ *
+ * @param {Object} session - Current screener session
+ * @returns {Object} Progress metrics including percentage and confidence state
+ */
+function calculateAdaptiveProgress(session) {
+  const { questionCount, minQuestions, standardError, seThresholdAcceptable, seThresholdStringent } = session;
+
+  // Phase 1: Before minimum questions, show linear progress toward 50%
+  let percentComplete;
+  if (questionCount < minQuestions) {
+    percentComplete = Math.round((questionCount / minQuestions) * 50);
+  } else {
+    // Phase 2: After minimum, show confidence-based progress from 50% to 100%
+    const startingSE = 1.0;  // Typical starting SE after min questions
+    const targetSE = seThresholdAcceptable;  // Target SE for completion (0.30)
+
+    // Clamp SE to reasonable range
+    const currentSE = Math.max(targetSE, Math.min(startingSE, standardError));
+
+    // Calculate how much confidence we've gained (inverse of SE reduction)
+    const confidenceGained = startingSE - currentSE;
+    const totalConfidenceNeeded = startingSE - targetSE;
+    const confidenceRatio = confidenceGained / totalConfidenceNeeded;
+
+    // Map confidence to 50%-100% range
+    const confidenceProgress = 50 + (confidenceRatio * 50);
+    percentComplete = Math.min(100, Math.round(confidenceProgress));
+  }
+
+  // Determine confidence level for UI styling
+  let confidenceLevel, confidenceAchieved, confidenceDescription;
+
+  if (questionCount < minQuestions) {
+    // Still gathering baseline
+    confidenceLevel = 'gathering';
+    confidenceAchieved = false;
+    confidenceDescription = 'Building baseline';
+  } else if (standardError <= seThresholdStringent) {
+    // High confidence achieved
+    confidenceLevel = 'high';
+    confidenceAchieved = true;
+    confidenceDescription = 'High confidence';
+  } else if (standardError <= seThresholdAcceptable) {
+    // Acceptable confidence achieved
+    confidenceLevel = 'medium';
+    confidenceAchieved = true;
+    confidenceDescription = 'Confident';
+  } else {
+    // Still refining estimate
+    confidenceLevel = 'low';
+    confidenceAchieved = false;
+    confidenceDescription = 'Refining estimate';
+  }
+
+  return {
+    percentComplete,
+    confidenceLevel,      // 'gathering' | 'low' | 'medium' | 'high'
+    confidenceAchieved,   // Boolean: true when SE <= acceptable threshold
+    confidenceDescription // Human-readable status
+  };
+}
 
 /**
  * POST /api/screener/start
@@ -120,14 +197,30 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'Session not found or expired' });
     }
 
-    // Determine target difficulty
+    // Determine target difficulty using DAMPENED JUMPS (not raw theta!)
     let targetDifficulty;
     if (session.questionCount === 0) {
       // First question: medium difficulty
       targetDifficulty = 0;
     } else {
-      // Use current theta estimate
-      targetDifficulty = session.theta;
+      // Get last response to determine jump direction
+      const lastResponse = session.responses[session.responses.length - 1];
+      const lastDifficulty = lastResponse.difficulty;
+      const wasCorrect = lastResponse.correct;
+
+      // Calculate dampened jump size based on correctness, question count, and SE
+      const jumpSize = calculateJumpSize(wasCorrect, session.questionCount, session.standardError);
+
+      // Apply jump to previous difficulty (not raw theta!)
+      targetDifficulty = lastDifficulty + jumpSize;
+
+      // Bound jumps to reasonable range to prevent wild swings
+      // Allow theta to influence bounds, but don't jump to theta directly
+      const lowerBound = Math.min(session.theta - 1.0, lastDifficulty - 1.5);
+      const upperBound = Math.max(session.theta + 1.0, lastDifficulty + 1.5);
+      targetDifficulty = Math.max(lowerBound, Math.min(upperBound, targetDifficulty));
+
+      console.log(`[Screener Jump] Q${session.questionCount}: ${wasCorrect ? 'CORRECT' : 'INCORRECT'} at d=${lastDifficulty.toFixed(2)} → jump ${jumpSize.toFixed(2)} → target ${targetDifficulty.toFixed(2)} (θ=${session.theta.toFixed(2)}, SE=${session.standardError.toFixed(2)})`);
     }
 
     // ADAPTIVE SKILL SELECTION - Use FULL curriculum from database (not hardcoded!)
@@ -135,6 +228,37 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     const allSkills = await Skill.find({}).select('skillId name category irtDifficulty').lean();
 
     console.log(`[DEBUG] Queried ${allSkills.length} skills from database`);
+
+    // Map specific skill categories to broad categories for diversity tracking
+    const categoryToBroadCategory = (category) => {
+      // Number operations (Elementary K-5)
+      if (['counting-cardinality', 'number-recognition', 'addition-subtraction', 'multiplication-division',
+           'place-value', 'arrays', 'decimals', 'fractions', 'number-system', 'operations'].includes(category)) {
+        return 'number-operations';
+      }
+      // Algebra (Middle School through High School)
+      if (['integers-rationals', 'scientific-notation', 'ratios-proportions', 'percent',
+           'expressions', 'equations', 'linear-equations', 'systems', 'inequalities',
+           'polynomials', 'factoring', 'quadratics', 'radicals', 'rational-expressions',
+           'complex-numbers', 'exponentials-logarithms', 'sequences-series', 'conics',
+           'functions', 'graphing', 'coordinate-plane'].includes(category)) {
+        return 'algebra';
+      }
+      // Geometry
+      if (['shapes-geometry', 'measurement', 'area-perimeter', 'volume', 'angles',
+           'pythagorean-theorem', 'transformations', 'geometry', 'trigonometry',
+           'identities', 'polar-coordinates', 'vectors', 'matrices'].includes(category)) {
+        return 'geometry';
+      }
+      // Advanced (Calculus, Statistics, etc.)
+      if (['limits', 'derivatives', 'integration', 'series-tests', 'taylor-series',
+           'parametric-polar', 'differential-equations', 'multivariable', 'vector-calculus',
+           'statistics', 'probability', 'advanced'].includes(category)) {
+        return 'advanced';
+      }
+      // Default
+      return 'number-operations';
+    };
 
     // If no IRT difficulty in database, use category-based estimates
     const categoryDifficultyMap = {
@@ -197,25 +321,93 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       // Count how many times this skill has been tested
       const testCount = session.testedSkills.filter(s => s === skill.skillId).length;
 
+      // Calculate recency penalty (skills tested recently should be heavily penalized)
+      let recencyPenalty = 0;
+      const skillIndices = session.testedSkills
+        .map((s, idx) => s === skill.skillId ? idx : -1)
+        .filter(idx => idx >= 0);
+
+      if (skillIndices.length > 0) {
+        // Most recent test gets highest penalty
+        const mostRecentIndex = Math.max(...skillIndices);
+        const questionsSinceLastTest = session.testedSkills.length - mostRecentIndex;
+
+        // Exponential decay: recently tested skills get massive penalty
+        // Just tested (1 question ago) = 50 penalty, 2 ago = 25, 3 ago = 12.5, etc.
+        recencyPenalty = 50 * Math.pow(0.5, questionsSinceLastTest - 1);
+      }
+
+      // Calculate category balance penalty
+      const broadCategory = categoryToBroadCategory(skill.category);
+      const categoryTestCount = session.testedSkillCategories[broadCategory] || 0;
+      const categoryPenalty = categoryTestCount * 5; // 5 points per category test
+
       // Calculate distance from target difficulty
       const difficultyDistance = Math.abs(estimatedDifficulty - targetDifficulty);
 
-      // Prefer untested or less-tested skills near target difficulty
+      // Scoring formula:
+      // - Difficulty match is most important (10x weight)
+      // - Recency penalty is severe for just-tested skills (exponential)
+      // - Category balancing encourages diversity (5x per category test)
+      // - Test count provides base repetition penalty (exponential: 2^testCount)
+      const score = (difficultyDistance * 10) +
+                    recencyPenalty +
+                    categoryPenalty +
+                    (Math.pow(2, testCount) - 1);  // Exponential: 0, 1, 3, 7, 15, 31...
+
       candidateSkills.push({
         skillId: skill.skillId,
         difficulty: estimatedDifficulty,
         category: skill.category,
+        broadCategory,
         testCount,
+        recencyPenalty,
+        categoryPenalty,
         difficultyDistance,
-        // Lower score = better candidate
-        // Weight: difficulty match is most important, then test count
-        score: difficultyDistance * 10 + testCount * 3
+        score
       });
     }
 
     console.log(`[DEBUG] Built ${candidateSkills.length} candidate skills`);
     console.log(`[DEBUG] Target difficulty: ${targetDifficulty.toFixed(2)}`);
     console.log(`[DEBUG] Tested skills so far: [${session.testedSkills.join(', ')}]`);
+    console.log(`[DEBUG] Category counts:`, session.testedSkillCategories);
+
+    // SKILL CLUSTERING: Group skills by difficulty bins to prevent wild jumps
+    // Test 2-3 skills at similar difficulty before moving to next level
+    const DIFFICULTY_BIN_SIZE = 0.7; // Skills within 0.7 difficulty are "similar level"
+    const MIN_SKILLS_PER_BIN = 2;     // Test at least 2 skills before jumping
+
+    // Determine current difficulty bin (if we've tested any skills)
+    let currentBin = null;
+    if (session.responses.length > 0) {
+      const recentDifficulties = session.responses.slice(-3).map(r => r.difficulty);
+      const avgRecentDifficulty = recentDifficulties.reduce((a, b) => a + b, 0) / recentDifficulties.length;
+      currentBin = {
+        center: avgRecentDifficulty,
+        min: avgRecentDifficulty - DIFFICULTY_BIN_SIZE / 2,
+        max: avgRecentDifficulty + DIFFICULTY_BIN_SIZE / 2
+      };
+
+      // Count how many skills we've tested in this bin
+      const skillsInCurrentBin = session.responses.filter(r =>
+        r.difficulty >= currentBin.min && r.difficulty <= currentBin.max
+      ).length;
+
+      console.log(`[DEBUG] Current difficulty bin: [${currentBin.min.toFixed(2)}, ${currentBin.max.toFixed(2)}], tested ${skillsInCurrentBin} skills in bin`);
+
+      // If we've tested fewer than MIN_SKILLS_PER_BIN in current bin, prefer skills in this bin
+      if (skillsInCurrentBin < MIN_SKILLS_PER_BIN) {
+        const skillsInBin = candidateSkills.filter(s =>
+          s.difficulty >= currentBin.min && s.difficulty <= currentBin.max && s.testCount === 0
+        );
+
+        if (skillsInBin.length > 0) {
+          console.log(`[DEBUG] Clustering: Staying in current bin, ${skillsInBin.length} untested skills available`);
+          candidateSkills = skillsInBin; // Focus on current difficulty level
+        }
+      }
+    }
 
     // Filter out skills tested 3+ times (ensure diversity)
     const fresherSkills = candidateSkills.filter(s => s.testCount < 3);
@@ -229,11 +421,35 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     candidateSkills.sort((a, b) => a.score - b.score);
 
     if (candidateSkills.length === 0) {
-      console.error('[Screener] No candidate skills found! Using fallback.');
-      selectedSkillId = 'one-step-equations-addition';
+      console.error('[Screener] No candidate skills found! Using intelligent fallback.');
+
+      // Fallback: Rotate through different skill categories to maintain diversity
+      const fallbackSkillsByCategory = {
+        'number-operations': ['addition-subtraction', 'multiplication-division', 'fractions'],
+        'algebra': ['one-step-equations-addition', 'linear-equations', 'expressions'],
+        'geometry': ['shapes-geometry', 'area-perimeter', 'pythagorean-theorem'],
+        'advanced': ['quadratics', 'functions', 'limits']
+      };
+
+      // Find the least-tested category
+      let leastTestedCategory = 'algebra'; // default
+      let minCount = Infinity;
+      for (const [category, count] of Object.entries(session.testedSkillCategories)) {
+        if (count < minCount) {
+          minCount = count;
+          leastTestedCategory = category;
+        }
+      }
+
+      // Pick a skill from the least-tested category
+      const fallbackOptions = fallbackSkillsByCategory[leastTestedCategory] || fallbackSkillsByCategory['algebra'];
+      selectedSkillId = fallbackOptions[session.questionCount % fallbackOptions.length];
+
+      console.log(`[Screener Fallback] Using "${selectedSkillId}" from least-tested category "${leastTestedCategory}" (count=${minCount})`);
     } else {
       selectedSkillId = candidateSkills[0].skillId;
-      console.log(`[Screener Q${session.questionCount + 1}] Target θ=${targetDifficulty.toFixed(2)} → Selected "${selectedSkillId}" (difficulty=${candidateSkills[0].difficulty.toFixed(2)}, distance=${candidateSkills[0].difficultyDistance.toFixed(2)})`);
+      const selected = candidateSkills[0];
+      console.log(`[Screener Q${session.questionCount + 1}] Target d=${targetDifficulty.toFixed(2)} → "${selectedSkillId}" (d=${selected.difficulty.toFixed(2)}, Δ=${selected.difficultyDistance.toFixed(2)}, score=${selected.score.toFixed(1)} [diff=${(selected.difficultyDistance * 10).toFixed(1)} + recency=${selected.recencyPenalty.toFixed(1)} + cat=${selected.categoryPenalty.toFixed(1)} + tests=${(Math.pow(2, selected.testCount) - 1).toFixed(1)}])`);
     }
 
     // Try to find existing problem in database
@@ -258,6 +474,9 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       await problem.save();
     }
 
+    // Calculate progress with confidence metrics for UI
+    const progressMetrics = calculateAdaptiveProgress(session);
+
     res.json({
       problem: {
         problemId: problem.problemId,
@@ -272,7 +491,10 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
           min: session.minQuestions,
           target: session.targetQuestions,
           max: session.maxQuestions,
-          percentComplete: Math.round(((session.questionCount + 1) / session.targetQuestions) * 100)
+          percentComplete: progressMetrics.percentComplete,
+          confidenceLevel: progressMetrics.confidenceLevel,
+          confidenceAchieved: progressMetrics.confidenceAchieved,
+          confidenceDescription: progressMetrics.confidenceDescription
         }
       }
       // DO NOT expose session theta/SE/confidence to students - teacher/admin only
@@ -313,6 +535,10 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'Problem not found' });
     }
 
+    // Get skill to retrieve category for diversity tracking
+    const skill = await Skill.findOne({ skillId: problem.skillId }).select('category').lean();
+    const skillCategory = skill?.category || 'unknown';
+
     // DEBUG: Log problem IRT parameters to diagnose NaN issue
     console.log(`[DEBUG] Problem ${problemId} IRT params:`, {
       difficulty: problem.irtParameters?.difficulty,
@@ -330,6 +556,7 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     const response = {
       problemId: problem.problemId,
       skillId: problem.skillId,
+      skillCategory: skillCategory,  // Pass category for diversity tracking
       difficulty: problem.irtParameters.difficulty,
       discrimination: problem.irtParameters.discrimination,
       correct: isCorrect,
@@ -359,6 +586,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
 
     // Determine next action
     if (result.action === 'continue') {
+      // Calculate progress with confidence metrics for UI
+      const progressMetrics = calculateAdaptiveProgress(session);
+
       // Continue screening - NO FEEDBACK TEXT (prevents negative momentum)
       // But DO send correct flag for client-side tracking
       res.json({
@@ -369,7 +599,10 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
           min: session.minQuestions,
           target: session.targetQuestions,
           max: session.maxQuestions,
-          percentComplete: Math.round((session.questionCount / session.targetQuestions) * 100)
+          percentComplete: progressMetrics.percentComplete,
+          confidenceLevel: progressMetrics.confidenceLevel,
+          confidenceAchieved: progressMetrics.confidenceAchieved,
+          confidenceDescription: progressMetrics.confidenceDescription
         }
         // DO NOT send: feedback text, theta, standardError (student shouldn't see these)
       });
