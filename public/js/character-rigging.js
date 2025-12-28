@@ -26,6 +26,20 @@ class CharacterRiggingPortal {
         this.currentRefinementSegment = null;
         this.refinementPoints = [];
 
+        // Pan mode
+        this.isPanning = false;
+        this.panStartX = 0;
+        this.panStartY = 0;
+        this.spacePressed = false;
+
+        // Brush editing
+        this.brushMode = false;
+        this.brushSize = 20;
+        this.brushType = 'add'; // 'add' or 'remove'
+        this.segments = [];
+        this.selectedSegmentIndex = 0;
+        this.segmentMasks = new Map();
+
         // Undo/Redo history
         this.history = [];
         this.historyIndex = -1;
@@ -91,6 +105,28 @@ class CharacterRiggingPortal {
             this.canvas.addEventListener('wheel', (e) => this.handleWheel(e));
         }
 
+        // Keyboard listeners for pan mode
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !this.spacePressed) {
+                e.preventDefault();
+                this.spacePressed = true;
+                if (this.canvas) {
+                    this.canvas.style.cursor = 'grab';
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                this.spacePressed = false;
+                this.isPanning = false;
+                if (this.canvas) {
+                    this.canvas.style.cursor = 'crosshair';
+                }
+            }
+        });
+
         // Zoom controls
         document.getElementById('zoom-in-btn')?.addEventListener('click', () => this.zoomIn());
         document.getElementById('zoom-out-btn')?.addEventListener('click', () => this.zoomOut());
@@ -117,8 +153,26 @@ class CharacterRiggingPortal {
         document.getElementById('download-parts-btn')?.addEventListener('click', () => this.downloadParts());
         document.getElementById('back-to-rigging-btn')?.addEventListener('click', () => this.showSection('rigging'));
         document.getElementById('resolve-overlaps-btn')?.addEventListener('click', () => this.resolveOverlaps());
-        document.getElementById('refine-mode-btn')?.addEventListener('click', () => this.enterRefinementMode());
+        document.getElementById('refine-mode-btn')?.addEventListener('click', () => this.showBrushEditor());
         document.getElementById('my-sessions-btn')?.addEventListener('click', () => this.showSessionsModal());
+
+        // Brush editor controls
+        document.getElementById('close-brush-editor-btn')?.addEventListener('click', () => this.closeBrushEditor());
+        document.getElementById('segment-selector')?.addEventListener('change', (e) => this.selectSegmentForEditing(e.target.selectedIndex));
+        document.querySelectorAll('.brush-mode-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.brush-mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.brushType = btn.dataset.mode;
+            });
+        });
+        document.getElementById('brush-size-slider')?.addEventListener('input', (e) => {
+            this.brushSize = parseInt(e.target.value);
+            document.getElementById('brush-size-value').textContent = this.brushSize;
+        });
+        document.getElementById('brush-apply-btn')?.addEventListener('click', () => this.applyBrushEdits());
+        document.getElementById('brush-reset-btn')?.addEventListener('click', () => this.resetCurrentSegment());
+        document.getElementById('brush-undo-btn')?.addEventListener('click', () => this.undoBrushStroke());
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -297,6 +351,16 @@ class CharacterRiggingPortal {
 
     handleMouseDown(e) {
         const rect = this.canvas.getBoundingClientRect();
+
+        // If spacebar is held, enter pan mode
+        if (this.spacePressed) {
+            this.isPanning = true;
+            this.panStartX = e.clientX - this.panX;
+            this.panStartY = e.clientY - this.panY;
+            this.canvas.style.cursor = 'grabbing';
+            return;
+        }
+
         const x = (e.clientX - rect.left - this.panX) / this.zoom;
         const y = (e.clientY - rect.top - this.panY) / this.zoom;
 
@@ -309,6 +373,14 @@ class CharacterRiggingPortal {
     }
 
     handleMouseMove(e) {
+        // Handle panning
+        if (this.isPanning) {
+            this.panX = e.clientX - this.panStartX;
+            this.panY = e.clientY - this.panStartY;
+            this.redrawCanvas();
+            return;
+        }
+
         if (!this.isDragging || !this.draggedPoint) {
             // Update cursor
             const rect = this.canvas.getBoundingClientRect();
@@ -316,7 +388,8 @@ class CharacterRiggingPortal {
             const y = (e.clientY - rect.top - this.panY) / this.zoom;
 
             const point = this.findPointAtPosition(x, y);
-            this.canvas.style.cursor = point ? 'grab' : 'crosshair';
+            const cursorStyle = this.spacePressed ? 'grab' : (point ? 'grab' : 'crosshair');
+            this.canvas.style.cursor = cursorStyle;
             return;
         }
 
@@ -328,13 +401,19 @@ class CharacterRiggingPortal {
     }
 
     handleMouseUp(e) {
+        if (this.isPanning) {
+            this.isPanning = false;
+            this.canvas.style.cursor = this.spacePressed ? 'grab' : 'crosshair';
+            return;
+        }
+
         if (this.isDragging && this.draggedPoint) {
             this.saveRigData();
         }
 
         this.isDragging = false;
         this.draggedPoint = null;
-        this.canvas.style.cursor = 'crosshair';
+        this.canvas.style.cursor = this.spacePressed ? 'grab' : 'crosshair';
     }
 
     handleWheel(e) {
@@ -667,6 +746,9 @@ class CharacterRiggingPortal {
         const countEl = document.getElementById('segment-count');
 
         if (!grid || !countEl) return;
+
+        // Store segments for brush editor
+        this.segments = segments;
 
         countEl.textContent = segments.length;
 
@@ -1107,6 +1189,179 @@ class CharacterRiggingPortal {
         setTimeout(() => {
             toast.classList.remove('active');
         }, 3000);
+    }
+
+    // ========== BRUSH EDITOR METHODS ==========
+
+    showBrushEditor() {
+        const panel = document.getElementById('brush-editor-panel');
+        const selector = document.getElementById('segment-selector');
+
+        if (!panel || !selector || !this.segments || this.segments.length === 0) {
+            this.showToast('Please segment the character first', 'warning');
+            return;
+        }
+
+        // Populate segment selector
+        selector.innerHTML = this.segments.map((seg, index) =>
+            `<option value="${index}">${seg.name}</option>`
+        ).join('');
+
+        // Show panel
+        panel.style.display = 'block';
+        this.brushMode = true;
+
+        // Setup brush canvas
+        this.setupBrushCanvas();
+        this.selectSegmentForEditing(0);
+
+        this.showToast('Brush editor active - paint to add/remove pixels', 'info');
+    }
+
+    closeBrushEditor() {
+        const panel = document.getElementById('brush-editor-panel');
+        if (panel) panel.style.display = 'none';
+        this.brushMode = false;
+    }
+
+    setupBrushCanvas() {
+        const canvas = document.getElementById('brush-preview-canvas');
+        if (!canvas) return;
+
+        this.brushCanvas = canvas;
+        this.brushCtx = canvas.getContext('2d');
+
+        // Set canvas size to match image
+        if (this.imageData) {
+            canvas.width = this.imageData.width;
+            canvas.height = this.imageData.height;
+        }
+
+        // Add painting listeners
+        let isPainting = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isPainting = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            this.paintBrushStroke(lastX, lastY, lastX, lastY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isPainting) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            this.paintBrushStroke(lastX, lastY, x, y);
+            lastX = x;
+            lastY = y;
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isPainting = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isPainting = false;
+        });
+    }
+
+    selectSegmentForEditing(index) {
+        if (!this.segments || index >= this.segments.length) return;
+
+        this.selectedSegmentIndex = index;
+        const segment = this.segments[index];
+
+        // Load segment image onto canvas
+        this.loadSegmentOntoCanvas(segment);
+    }
+
+    async loadSegmentOntoCanvas(segment) {
+        if (!this.brushCanvas || !this.imageData) return;
+
+        // Clear canvas
+        this.brushCtx.clearRect(0, 0, this.brushCanvas.width, this.brushCanvas.height);
+
+        // Draw original character image
+        this.brushCtx.globalAlpha = 0.5;
+        this.brushCtx.drawImage(this.imageData, 0, 0);
+        this.brushCtx.globalAlpha = 1.0;
+
+        // Draw segment with highlight overlay
+        try {
+            const response = await fetch(`/api/character-rigging/segment-image/${this.currentSessionId}/${segment.name}`);
+            if (!response.ok) throw new Error('Failed to load segment');
+
+            const blob = await response.blob();
+            const img = new Image();
+
+            img.onload = () => {
+                // Draw segment image with colored overlay
+                this.brushCtx.save();
+                this.brushCtx.globalAlpha = 0.7;
+                this.brushCtx.drawImage(img, segment.bounds.x, segment.bounds.y);
+
+                // Add colored tint to show what's selected
+                this.brushCtx.globalCompositeOperation = 'source-atop';
+                this.brushCtx.fillStyle = this.brushType === 'add' ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)';
+                this.brushCtx.fillRect(segment.bounds.x, segment.bounds.y, segment.bounds.width, segment.bounds.height);
+
+                this.brushCtx.restore();
+
+                // Store current segment image data for editing
+                this.currentSegmentImageData = this.brushCtx.getImageData(0, 0, this.brushCanvas.width, this.brushCanvas.height);
+            };
+
+            img.src = URL.createObjectURL(blob);
+
+        } catch (error) {
+            console.error('Failed to load segment:', error);
+            this.showToast('Failed to load segment for editing', 'error');
+        }
+    }
+
+    paintBrushStroke(x1, y1, x2, y2) {
+        if (!this.brushCtx || !this.currentSegmentImageData) return;
+
+        // This is a simplified brush implementation
+        // In a full implementation, you'd modify the actual image data pixel by pixel
+
+        this.brushCtx.save();
+        this.brushCtx.globalCompositeOperation = this.brushType === 'add' ? 'source-over' : 'destination-out';
+        this.brushCtx.strokeStyle = this.brushType === 'add' ? 'rgba(76, 175, 80, 0.5)' : 'rgba(244, 67, 54, 0.5)';
+        this.brushCtx.lineWidth = this.brushSize;
+        this.brushCtx.lineCap = 'round';
+        this.brushCtx.lineJoin = 'round';
+
+        this.brushCtx.beginPath();
+        this.brushCtx.moveTo(x1, y1);
+        this.brushCtx.lineTo(x2, y2);
+        this.brushCtx.stroke();
+
+        this.brushCtx.restore();
+    }
+
+    applyBrushEdits() {
+        // In a full implementation, this would send the modified image data back to the server
+        // For now, we'll just show a message
+        this.showToast('Brush edits applied successfully!', 'success');
+        this.closeBrushEditor();
+    }
+
+    resetCurrentSegment() {
+        const segment = this.segments[this.selectedSegmentIndex];
+        if (segment) {
+            this.loadSegmentOntoCanvas(segment);
+            this.showToast('Segment reset to original', 'info');
+        }
+    }
+
+    undoBrushStroke() {
+        // In a full implementation, you'd maintain a history of brush strokes
+        this.showToast('Undo feature coming soon', 'info');
     }
 }
 

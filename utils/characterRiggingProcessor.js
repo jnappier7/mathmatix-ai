@@ -144,11 +144,12 @@ class CharacterRiggingProcessor {
 
     /**
      * Flood fill algorithm to find connected region from a start point
+     * Now with distance constraints and lower tolerance for precise segmentation
      */
-    floodFill(imageData, startX, startY, width, height, visited = new Set()) {
+    floodFill(imageData, startX, startY, width, height, visited = new Set(), maxDistance = 200, isHeadSegment = false) {
         const queue = [[Math.floor(startX), Math.floor(startY)]];
         const pixels = [];
-        const tolerance = 50; // Color tolerance for flood fill
+        const tolerance = 15; // Much lower color tolerance for precise cuts
 
         // Get the start pixel color and alpha
         const startIdx = (Math.floor(startY) * width + Math.floor(startX)) * 4;
@@ -161,6 +162,24 @@ class CharacterRiggingProcessor {
         const checkTransparency = startA < 128;
 
         const isWithinBounds = (x, y) => x >= 0 && x < width && y >= 0 && y < height;
+
+        // Check if pixel is within max distance from start point
+        // For head segments, be more lenient going upward to catch the top of the head
+        const isWithinDistance = (x, y) => {
+            const dx = x - startX;
+            const dy = y - startY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (isHeadSegment && dy < 0) {
+                // Going upward from head point - allow 2x distance to catch full head
+                return distance <= maxDistance * 2;
+            } else if (isHeadSegment && dy > 30) {
+                // Going downward from head point - restrict heavily to stop at neck
+                return distance <= maxDistance * 0.5;
+            }
+
+            return distance <= maxDistance;
+        };
 
         const isSimilarColor = (idx) => {
             const r = imageData.data[idx];
@@ -180,17 +199,48 @@ class CharacterRiggingProcessor {
             return colorDiff <= tolerance;
         };
 
+        // Check for strong edges (color discontinuity) that should stop flood fill
+        const isStrongEdge = (x, y) => {
+            if (!isWithinBounds(x, y)) return true;
+
+            const idx = (y * width + x) * 4;
+            const r = imageData.data[idx];
+            const g = imageData.data[idx + 1];
+            const b = imageData.data[idx + 2];
+
+            // Check neighbors for sharp color changes
+            const neighbors = [
+                [x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]
+            ];
+
+            for (const [nx, ny] of neighbors) {
+                if (isWithinBounds(nx, ny)) {
+                    const nIdx = (ny * width + nx) * 4;
+                    const nr = imageData.data[nIdx];
+                    const ng = imageData.data[nIdx + 1];
+                    const nb = imageData.data[nIdx + 2];
+
+                    const edgeDiff = Math.abs(r - nr) + Math.abs(g - ng) + Math.abs(b - nb);
+                    if (edgeDiff > 80) return true; // Strong edge detected
+                }
+            }
+            return false;
+        };
+
         while (queue.length > 0) {
             const [x, y] = queue.shift();
             const key = `${x},${y}`;
 
-            if (visited.has(key) || !isWithinBounds(x, y)) continue;
+            if (visited.has(key) || !isWithinBounds(x, y) || !isWithinDistance(x, y)) continue;
             visited.add(key);
 
             const idx = (y * width + x) * 4;
 
             if (!checkTransparency && !isSimilarColor(idx)) continue;
             if (checkTransparency && imageData.data[idx + 3] >= 128) continue;
+
+            // Don't cross strong edges
+            if (isStrongEdge(x, y)) continue;
 
             pixels.push({ x, y });
 
@@ -360,20 +410,37 @@ class CharacterRiggingProcessor {
     /**
      * Extract connected region around rigging points using flood fill
      */
-    async extractSegmentFloodFill(image, rigPoints) {
+    async extractSegmentFloodFill(image, rigPoints, segmentName = '') {
         // Create a canvas to analyze the image
         const fullCanvas = createCanvas(image.width, image.height);
         const fullCtx = fullCanvas.getContext('2d');
         fullCtx.drawImage(image, 0, 0);
         const imageData = fullCtx.getImageData(0, 0, image.width, image.height);
 
+        // Determine appropriate max distance based on segment type
+        let maxDistance = 150; // Default
+        const lowerName = segmentName.toLowerCase();
+        const isHeadSegment = lowerName.includes('head');
+
+        if (isHeadSegment) {
+            maxDistance = 90; // Medium distance for head, directional logic will handle up/down
+        } else if (lowerName.includes('neck')) {
+            maxDistance = 60; // Very small for neck
+        } else if (lowerName.includes('hand') || lowerName.includes('foot')) {
+            maxDistance = 70; // Small for extremities
+        } else if (lowerName.includes('arm') || lowerName.includes('leg')) {
+            maxDistance = 120; // Medium for limbs
+        } else if (lowerName.includes('torso') || lowerName.includes('body')) {
+            maxDistance = 180; // Larger for torso
+        }
+
         // Collect all pixels that belong to this segment
         const visited = new Set();
         const allSegmentPixels = new Set();
 
-        // Start flood fill from each rigging point
+        // Start flood fill from each rigging point with distance constraint
         for (const point of rigPoints) {
-            const pixels = this.floodFill(imageData, point.x, point.y, image.width, image.height, visited);
+            const pixels = this.floodFill(imageData, point.x, point.y, image.width, image.height, visited, maxDistance, isHeadSegment);
             pixels.forEach(p => allSegmentPixels.add(`${p.x},${p.y}`));
         }
 
@@ -395,7 +462,7 @@ class CharacterRiggingProcessor {
 
                             // If we found an opaque pixel, flood fill from there
                             if (alpha >= 128 && !visited.has(`${x},${y}`)) {
-                                const pixels = this.floodFill(imageData, x, y, image.width, image.height, visited);
+                                const pixels = this.floodFill(imageData, x, y, image.width, image.height, visited, maxDistance, isHeadSegment);
                                 pixels.forEach(p => allSegmentPixels.add(`${p.x},${p.y}`));
 
                                 if (allSegmentPixels.size > 100) break;
@@ -563,7 +630,7 @@ class CharacterRiggingProcessor {
 
             try {
                 // Try flood fill segmentation first (best for transparent backgrounds)
-                const floodFillResult = await this.extractSegmentFloodFill(image, points);
+                const floodFillResult = await this.extractSegmentFloodFill(image, points, partName);
 
                 if (floodFillResult && floodFillResult.buffer) {
                     // Flood fill succeeded - use pixel-perfect cut
@@ -676,6 +743,7 @@ class CharacterRiggingProcessor {
     groupByDefaultSegments(rigPoints) {
         const bodyParts = {
             head: [],
+            neck: [],
             torso: [],
             leftArm: [],
             rightArm: [],
@@ -686,8 +754,10 @@ class CharacterRiggingProcessor {
         rigPoints.forEach(point => {
             const label = point.label.toLowerCase();
 
-            if (label.includes('head') || label.includes('neck')) {
+            if (label.includes('head')) {
                 bodyParts.head.push(point);
+            } else if (label.includes('neck')) {
+                bodyParts.neck.push(point);
             } else if (label.includes('left') && (label.includes('shoulder') || label.includes('elbow') || label.includes('wrist') || label.includes('hand'))) {
                 bodyParts.leftArm.push(point);
             } else if (label.includes('right') && (label.includes('shoulder') || label.includes('elbow') || label.includes('wrist') || label.includes('hand'))) {
@@ -696,7 +766,7 @@ class CharacterRiggingProcessor {
                 bodyParts.leftLeg.push(point);
             } else if (label.includes('right') && (label.includes('hip') || label.includes('knee') || label.includes('ankle') || label.includes('foot'))) {
                 bodyParts.rightLeg.push(point);
-            } else {
+            } else if (label.includes('shoulder') || label.includes('chest') || label.includes('spine') || label.includes('hip')) {
                 bodyParts.torso.push(point);
             }
         });
