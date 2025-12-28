@@ -65,6 +65,12 @@
             <button class="btn btn-secondary" id="remove-bg-btn" title="Auto-remove solid background">
               <i class="fas fa-magic"></i> Remove Background
             </button>
+            <button class="btn btn-secondary" id="undo-btn" title="Undo last action (Ctrl+Z)">
+              <i class="fas fa-undo"></i> Undo
+            </button>
+            <button class="btn btn-secondary" id="redo-btn" title="Redo (Ctrl+Y)">
+              <i class="fas fa-redo"></i> Redo
+            </button>
             <button class="btn btn-secondary" id="load-template-btn" title="Load preset rigging points">
               <i class="fas fa-download"></i> Load Template
             </button>
@@ -137,10 +143,36 @@
               <h4>Instructions</h4>
               <ul class="instruction-list">
                 <li><i class="fas fa-mouse-pointer"></i> Click on the image to add rigging points</li>
-                <li><i class="fas fa-link"></i> Click between points to create bones</li>
+                <li><i class="fas fa-link"></i> Shift+Click between points to create bones</li>
                 <li><i class="fas fa-trash"></i> Right-click a point to delete it</li>
                 <li><i class="fas fa-arrows-alt"></i> Drag points to reposition</li>
+                <li><i class="fas fa-undo"></i> Ctrl+Z to undo, Ctrl+Y to redo</li>
               </ul>
+            </div>
+
+            <div class="tool-section rigging-guide">
+              <h4><i class="fas fa-lightbulb"></i> Rigging Guide</h4>
+              <div class="guide-content">
+                <p><strong>For best results:</strong></p>
+                <ol class="guide-steps">
+                  <li><strong>Remove Background First</strong> - Use "Remove Background" button before adding points</li>
+                  <li><strong>Start with joints</strong> - Head → Neck → Shoulders → Elbows → Wrists</li>
+                  <li><strong>Avoid overlaps</strong> - Place points ON the body part, not on edges</li>
+                  <li><strong>Use both sides</strong> - Add left_shoulder AND right_shoulder for symmetric parts</li>
+                  <li><strong>Create bones</strong> - Shift+Click between connected joints</li>
+                </ol>
+                <p><strong>For this character:</strong></p>
+                <ul class="character-tips">
+                  <li>✓ Head: Center of glasses/face</li>
+                  <li>✓ Neck: Where collar meets</li>
+                  <li>✓ Shoulders: Where suit meets arms</li>
+                  <li>✓ Elbows: Bend point of arms</li>
+                  <li>✓ Wrists: Where hands begin</li>
+                  <li>✓ Hips: Where pants meet torso</li>
+                  <li>✓ Knees: Middle of leg</li>
+                  <li>✓ Ankles: Where feet meet legs</li>
+                </ul>
+              </div>
             </div>
 
             <div class="tool-section points-list-section">
