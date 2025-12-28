@@ -4,15 +4,19 @@
 
 /* Main Workspace Layout */
 #rigging-workspace {
-    padding: 20px;
+    padding: 10px;
     max-width: 100%;
     margin: 0 auto;
+    height: calc(100vh - 80px);
+    overflow: hidden;
 }
 
 /* Workflow Sections */
 .workflow-section {
     display: none;
     animation: fadeIn 0.3s ease-in-out;
+    height: 100%;
+    overflow: hidden;
 }
 
 .workflow-section.active {
@@ -31,45 +35,48 @@
 }
 
 .section-content {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Upload Section */
 .upload-card {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 60px 40px;
+    padding: 40px 30px;
     border-radius: 20px;
     text-align: center;
     color: white;
     max-width: 600px;
-    margin: 40px auto;
+    margin: 20px auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .upload-icon {
-    font-size: 80px;
-    margin-bottom: 20px;
+    font-size: 60px;
+    margin-bottom: 15px;
     opacity: 0.9;
 }
 
 .upload-card h2 {
-    font-size: 32px;
-    margin-bottom: 10px;
+    font-size: 28px;
+    margin-bottom: 8px;
 }
 
 .upload-card p {
-    font-size: 16px;
+    font-size: 14px;
     opacity: 0.9;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .upload-area {
     background: rgba(255, 255, 255, 0.15);
     border: 3px dashed rgba(255, 255, 255, 0.5);
     border-radius: 15px;
-    padding: 40px;
-    margin: 30px 0;
+    padding: 30px;
+    margin: 20px 0;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -82,39 +89,40 @@
 }
 
 .upload-area i {
-    font-size: 60px;
+    font-size: 50px;
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     opacity: 0.8;
 }
 
 .upload-area p {
-    margin: 10px 0;
+    margin: 8px 0;
 }
 
 .upload-hint {
-    font-size: 14px;
+    font-size: 13px;
     opacity: 0.7;
 }
 
 .character-name-input {
     text-align: left;
+    margin-top: 15px;
 }
 
 .character-name-input label {
     display: block;
-    margin-bottom: 8px;
-    font-size: 14px;
+    margin-bottom: 6px;
+    font-size: 13px;
 }
 
 .character-name-input input {
     width: 100%;
-    padding: 12px;
+    padding: 10px;
     border-radius: 8px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     background: rgba(255, 255, 255, 0.9);
     color: #333;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 /* Rigging Section */
@@ -122,55 +130,63 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 20px;
+    margin-bottom: 10px;
+    padding: 12px 15px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
+    border-radius: 8px;
     color: white;
+    flex-shrink: 0;
 }
 
 .rigging-header h2 {
     margin: 0;
-    font-size: 24px;
+    font-size: 18px;
 }
 
 .rigging-controls {
     display: flex;
-    gap: 10px;
+    gap: 8px;
+}
+
+.rigging-controls .btn {
+    padding: 8px 12px;
+    font-size: 13px;
 }
 
 .rigging-workspace-container {
     display: flex;
-    gap: 20px;
-    height: calc(100vh - 250px);
-    min-height: 600px;
+    gap: 15px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 /* Left Sidebar - Tools */
 .rigging-tools {
-    width: 300px;
+    width: 280px;
     background: white;
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 8px;
+    padding: 12px;
     overflow-y: auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
 .rigging-tools h3 {
-    margin: 0 0 20px 0;
-    font-size: 20px;
+    margin: 0 0 12px 0;
+    font-size: 16px;
     color: #333;
     border-bottom: 2px solid #667eea;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
 }
 
 .tool-section {
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 }
 
 .tool-section h4 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
+    margin: 0 0 8px 0;
+    font-size: 12px;
     color: #666;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -179,20 +195,20 @@
 .point-type-selector {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 5px;
 }
 
 .point-type-btn {
-    padding: 10px;
-    border: 2px solid #e0e0e0;
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
     background: white;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 12px;
+    font-size: 11px;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
 }
 
 .point-type-btn:hover {
@@ -208,18 +224,18 @@
 
 .side-selector {
     display: flex;
-    gap: 8px;
+    gap: 5px;
 }
 
 .side-btn {
     flex: 1;
-    padding: 10px;
-    border: 2px solid #e0e0e0;
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
     background: white;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .side-btn:hover {
@@ -240,17 +256,18 @@
 }
 
 .instruction-list li {
-    padding: 8px 0;
-    font-size: 13px;
+    padding: 4px 0;
+    font-size: 11px;
     color: #555;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .instruction-list i {
     color: #667eea;
-    width: 20px;
+    width: 16px;
+    font-size: 10px;
 }
 
 .points-list-section {
@@ -262,39 +279,41 @@
 .rigging-guide {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
 }
 
 .rigging-guide h4 {
     color: white !important;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: 12px;
 }
 
 .guide-content {
-    font-size: 12px;
-    line-height: 1.6;
+    font-size: 10px;
+    line-height: 1.4;
 }
 
 .guide-content p {
-    margin: 10px 0 5px 0;
+    margin: 6px 0 3px 0;
     font-weight: 600;
 }
 
 .guide-steps {
     list-style: none;
     padding-left: 0;
-    margin: 5px 0;
+    margin: 3px 0;
 }
 
 .guide-steps li {
-    padding: 5px 0;
-    padding-left: 20px;
+    padding: 2px 0;
+    padding-left: 15px;
     position: relative;
+    font-size: 10px;
 }
 
 .guide-steps li::before {
@@ -302,17 +321,18 @@
     position: absolute;
     left: 0;
     font-weight: bold;
+    font-size: 10px;
 }
 
 .character-tips {
     list-style: none;
     padding-left: 0;
-    margin: 5px 0 0 0;
+    margin: 3px 0 0 0;
 }
 
 .character-tips li {
-    padding: 3px 0;
-    font-size: 11px;
+    padding: 2px 0;
+    font-size: 9px;
 }
 
 .points-list {
