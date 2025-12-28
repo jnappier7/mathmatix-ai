@@ -522,6 +522,76 @@ const TEMPLATES = {
         estimatedTime: 45
       };
     }
+  },
+
+  // =========================================================================
+  // ELEMENTARY SKILLS
+  // =========================================================================
+
+  'addition-within-10': {
+    skillId: 'addition-within-10',
+    baseDifficulty: -1.5,  // Very easy (elementary)
+    baseDiscrimination: 1.0,
+
+    generate: (targetDifficulty = -1.5) => {
+      // For young students, keep numbers small (0-10)
+      const a = random(0, 10);
+      const b = random(0, 10 - a);  // Ensure sum stays within 10
+      const answer = a + b;
+
+      // Difficulty barely varies for this skill
+      const difficulty = targetDifficulty;
+
+      return {
+        content: `${a} + ${b}`,
+        answer,
+        difficulty,
+        discrimination: 1.0,
+        estimatedTime: 5
+      };
+    }
+  },
+
+  'probability-basics': {
+    skillId: 'probability-basics',
+    baseDifficulty: 0.5,  // Medium difficulty
+    baseDiscrimination: 1.3,
+
+    generate: (targetDifficulty = 0.5) => {
+      const scenarios = [
+        {
+          question: 'A bag contains 3 red marbles and 2 blue marbles. What is the probability of picking a red marble?',
+          numerator: 3,
+          denominator: 5
+        },
+        {
+          question: 'A fair coin is flipped. What is the probability of getting heads?',
+          numerator: 1,
+          denominator: 2
+        },
+        {
+          question: 'A standard die is rolled. What is the probability of rolling an even number?',
+          numerator: 3,
+          denominator: 6
+        },
+        {
+          question: 'A bag contains 4 green balls and 6 yellow balls. What is the probability of picking a green ball?',
+          numerator: 4,
+          denominator: 10
+        }
+      ];
+
+      const scenario = randomChoice(scenarios);
+      const answer = (scenario.numerator / scenario.denominator).toFixed(2);
+
+      return {
+        content: scenario.question,
+        answer: parseFloat(answer),
+        difficulty: targetDifficulty,
+        discrimination: 1.3,
+        estimatedTime: 15
+      };
+    }
   }
 };
 
