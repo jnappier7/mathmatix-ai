@@ -1159,32 +1159,25 @@ router.get('/badge-map', isAuthenticated, async (req, res) => {
 
     // Check if user has completed the screener
     const assessmentCompleted = user.learningProfile?.assessmentCompleted || false;
-    const theta = user.learningProfile?.abilityEstimate?.theta || 0;
 
-    // Get all available badges
-    const availableBadges = await Skill.find({ isBadge: true }).lean();
+    // Get user's theta estimate
+    let theta = user.learningProfile?.abilityEstimate?.theta;
 
-    // Build badge map with user progress
-    const badgeMap = availableBadges.map(badge => {
-      const userProgress = user.skillMastery?.get(badge.skillId) || {};
+    // MIGRATION: Handle old format where theta was stored as string in initialPlacement
+    if (theta === undefined && user.learningProfile?.initialPlacement) {
+      const match = user.learningProfile.initialPlacement.match(/Theta:\s*([-\d.]+)/);
+      if (match) {
+        theta = parseFloat(match[1]);
+      }
+    }
 
-      return {
-        badgeId: badge.skillId,
-        name: badge.name,
-        description: badge.description,
-        gradeLevel: badge.gradeLevel,
-        domain: badge.domain || 'other',
-        tier: badge.tier || 'bronze',
-        requiredTheta: badge.requiredTheta || 0,
-        requiredProblems: badge.requiredProblems || 10,
-        prerequisites: badge.prerequisites || [],
-        status: userProgress.status || 'locked',
-        progress: userProgress.masteryScore || 0,
-        problemsCorrect: userProgress.correctCount || 0,
-        earned: userProgress.status === 'mastered',
-        earnedDate: userProgress.masteredDate
-      };
-    });
+    // Default to 0 if still undefined
+    if (theta === undefined || isNaN(theta)) {
+      theta = 0;
+    }
+
+    // Use the same badge generation logic as /available-badges endpoint
+    const badgeMap = await generateAvailableBadges(theta, user);
 
     // Organize badges by domain for the frontend
     const domainConfig = {
@@ -1217,8 +1210,8 @@ router.get('/badge-map', isAuthenticated, async (req, res) => {
       badges: domainMap[domainKey]
     }));
 
-    // Count badges earned
-    const badgesEarned = badgeMap.filter(b => b.earned).length;
+    // Count badges earned (check for 'completed' status instead of 'earned' property)
+    const badgesEarned = badgeMap.filter(b => b.status === 'completed').length;
 
     res.json({
       assessmentCompleted,
