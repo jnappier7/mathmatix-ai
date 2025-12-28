@@ -761,3 +761,183 @@
         display: none;
     }
 }
+
+/* Canvas Pan Hint */
+.canvas-hint {
+    font-size: 11px;
+    color: #888;
+    margin-left: auto;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.canvas-hint i {
+    margin-right: 4px;
+    color: #4CAF50;
+}
+
+/* Brush Editor Panel */
+.brush-editor-panel {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.brush-editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brush-editor-header h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brush-editor-header h3 i {
+    color: #667eea;
+}
+
+.brush-editor-content {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+}
+
+.brush-control-group {
+    margin-bottom: 20px;
+}
+
+.brush-control-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.segment-selector {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.segment-selector:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.brush-mode-btns {
+    display: flex;
+    gap: 10px;
+}
+
+.brush-mode-btn {
+    flex: 1;
+    padding: 10px;
+    transition: all 0.2s;
+}
+
+.brush-mode-btn.active {
+    background: #667eea;
+    border-color: #667eea;
+    transform: scale(1.05);
+}
+
+.brush-mode-btn[data-mode="add"].active {
+    background: #4CAF50;
+    border-color: #4CAF50;
+}
+
+.brush-mode-btn[data-mode="remove"].active {
+    background: #f44336;
+    border-color: #f44336;
+}
+
+.brush-size-slider {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.brush-size-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #667eea;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.brush-size-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #667eea;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.brush-preview-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#brush-preview-canvas {
+    width: 100%;
+    height: 500px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: crosshair;
+}
+
+.brush-preview-info {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid #667eea;
+}
+
+.brush-preview-info p {
+    margin: 6px 0;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.brush-preview-info i {
+    margin-right: 6px;
+    color: #667eea;
+}
+
+.brush-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.brush-actions .btn {
+    flex: 1;
+}
