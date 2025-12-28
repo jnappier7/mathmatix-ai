@@ -1157,6 +1157,10 @@ router.get('/badge-map', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Check if user has completed the screener
+    const assessmentCompleted = user.learningProfile?.assessmentCompleted || false;
+    const theta = user.learningProfile?.abilityEstimate?.theta || 0;
+
     // Get all available badges
     const availableBadges = await Skill.find({ isBadge: true }).lean();
 
@@ -1169,18 +1173,60 @@ router.get('/badge-map', isAuthenticated, async (req, res) => {
         name: badge.name,
         description: badge.description,
         gradeLevel: badge.gradeLevel,
+        domain: badge.domain || 'other',
+        tier: badge.tier || 'bronze',
+        requiredTheta: badge.requiredTheta || 0,
+        requiredProblems: badge.requiredProblems || 10,
         prerequisites: badge.prerequisites || [],
         status: userProgress.status || 'locked',
         progress: userProgress.masteryScore || 0,
+        problemsCorrect: userProgress.correctCount || 0,
         earned: userProgress.status === 'mastered',
         earnedDate: userProgress.masteredDate
       };
     });
 
+    // Organize badges by domain for the frontend
+    const domainConfig = {
+      'number-sense': { name: 'Number Sense', icon: '🔢', description: 'Understanding numbers and operations' },
+      'algebra': { name: 'Algebra', icon: '📐', description: 'Expressions, equations, and patterns' },
+      'geometry': { name: 'Geometry', icon: '📏', description: 'Shapes, angles, and spatial reasoning' },
+      'measurement': { name: 'Measurement', icon: '📊', description: 'Units, conversions, and data' },
+      'statistics': { name: 'Statistics & Probability', icon: '📈', description: 'Data analysis and chance' },
+      'ratios': { name: 'Ratios & Proportions', icon: '⚖️', description: 'Relationships between quantities' },
+      'challenge': { name: 'Challenges', icon: '⚡', description: 'Speed, streaks, and special achievements' },
+      'meta': { name: 'Master Badges', icon: '👑', description: 'Complete domain mastery achievements' },
+      'other': { name: 'Other Skills', icon: '📚', description: 'Additional math skills' }
+    };
+
+    // Group badges by domain
+    const domainMap = {};
+    badgeMap.forEach(badge => {
+      const domainKey = badge.domain || 'other';
+      if (!domainMap[domainKey]) {
+        domainMap[domainKey] = [];
+      }
+      domainMap[domainKey].push(badge);
+    });
+
+    // Convert to array format for frontend
+    const skillDomains = Object.keys(domainMap).map(domainKey => ({
+      name: domainConfig[domainKey]?.name || domainKey,
+      icon: domainConfig[domainKey]?.icon || '📚',
+      description: domainConfig[domainKey]?.description || '',
+      badges: domainMap[domainKey]
+    }));
+
+    // Count badges earned
+    const badgesEarned = badgeMap.filter(b => b.earned).length;
+
     res.json({
-      badges: badgeMap,
-      userLevel: user.level || 1,
-      userXP: user.xp || 0
+      assessmentCompleted,
+      averageTheta: theta,
+      skillDomains,
+      badgesEarned,
+      totalXP: user.xp || 0,
+      userLevel: user.level || 1
     });
 
   } catch (error) {

@@ -731,8 +731,8 @@
         document.getElementById('badges-earned').textContent = data.badgesEarned || 0;
         document.getElementById('total-xp').textContent = (data.totalXP || 0).toLocaleString();
 
-        // Render skill domains
-        renderSkillDomains(data.skillDomains || []);
+        // Render skill domains (pass assessmentCompleted status)
+        renderSkillDomains(data.skillDomains || [], data.assessmentCompleted);
 
       } catch (error) {
         console.error('Error loading badge map:', error);
@@ -759,20 +759,36 @@
       }
     }
 
-    function renderSkillDomains(domains) {
+    function renderSkillDomains(domains, assessmentCompleted) {
       const container = document.getElementById('skill-domains-container');
 
       if (!domains || domains.length === 0) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 60px;">
-            <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
-            <p style="color: #666; font-size: 16px; font-weight: 600;">No badges available yet</p>
-            <p style="color: #999; font-size: 14px;">Complete the screener to unlock your skill badges!</p>
-            <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
-              Take Screener <i class="fas fa-arrow-right"></i>
-            </a>
-          </div>
-        `;
+        // Check if user has completed the screener
+        if (!assessmentCompleted) {
+          // User has NOT completed the screener - show "Take Screener" message
+          container.innerHTML = `
+            <div style="text-align: center; padding: 60px;">
+              <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
+              <p style="color: #666; font-size: 16px; font-weight: 600;">No badges available yet</p>
+              <p style="color: #999; font-size: 14px;">Complete the screener to unlock your skill badges!</p>
+              <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                Take Screener <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          `;
+        } else {
+          // User HAS completed the screener but no badges available - show different message
+          container.innerHTML = `
+            <div style="text-align: center; padding: 60px;">
+              <i class="fas fa-check-circle" style="font-size: 48px; color: #4CAF50; margin-bottom: 20px;"></i>
+              <p style="color: #666; font-size: 16px; font-weight: 600;">Screener completed!</p>
+              <p style="color: #999; font-size: 14px;">No skill badges are configured yet. Check back soon!</p>
+              <a href="/chat.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                Continue Learning <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          `;
+        }
         return;
       }
 
