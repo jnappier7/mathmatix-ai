@@ -4,6 +4,8 @@
 const gameState = {
     user: null,
     selectedOperation: null,
+    selectedFamily: null,
+    familyDisplayName: null,
     problems: [],
     currentProblemIndex: 0,
     score: 0,
@@ -15,12 +17,16 @@ const gameState = {
     currentLane: 'center', // left, center, right
     gameRunning: false,
     platformInterval: null,
-    nextPlatformSet: null
+    nextPlatformSet: null,
+    startTime: null,
+    families: null
 };
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     await loadUser();
+    await loadFamilies();
+    checkURLParams();
     initializeEventListeners();
 });
 
@@ -37,6 +43,39 @@ async function loadUser() {
         }
     } catch (error) {
         console.error('Error loading user:', error);
+    }
+}
+
+// Load fact families
+async function loadFamilies() {
+    try {
+        const response = await fetch('/api/fact-fluency/families');
+        const data = await response.json();
+        if (data.success) {
+            gameState.families = data.families;
+        }
+    } catch (error) {
+        console.error('Error loading families:', error);
+    }
+}
+
+// Check URL parameters for direct launch from mastery grid
+function checkURLParams() {
+    const params = new URLSearchParams(window.location.search);
+    const operation = params.get('operation');
+    const familyName = params.get('family');
+
+    if (operation && familyName) {
+        // Launched from mastery grid - skip selection and start directly
+        gameState.selectedOperation = operation;
+        gameState.selectedFamily = familyName;
+
+        const family = gameState.families[operation]?.find(f => f.familyName === familyName);
+        if (family) {
+            gameState.familyDisplayName = family.displayName;
+            showScreen('game');
+            startRun();
+        }
     }
 }
 
@@ -113,6 +152,7 @@ function moveLane(direction) {
 async function startRun() {
     resetGame();
     gameState.gameRunning = true;
+    gameState.startTime = Date.now();
 
     // Generate problems
     await generateProblems();
@@ -130,15 +170,24 @@ async function startRun() {
 // Generate problems
 async function generateProblems() {
     try {
+        const requestBody = {
+            operation: gameState.selectedOperation,
+            count: 100,
+            includeTraps: true
+        };
+
+        // If practicing a specific family (from mastery grid), use that
+        if (gameState.selectedFamily) {
+            requestBody.familyName = gameState.selectedFamily;
+        } else {
+            // Otherwise generate mixed problems from all families
+            requestBody.mixed = true;
+        }
+
         const response = await fetch('/api/fact-fluency/generate-problems', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                operation: gameState.selectedOperation,
-                mixed: true,
-                count: 100,
-                includeTraps: true
-            })
+            body: JSON.stringify(requestBody)
         });
 
         const data = await response.json();
@@ -311,7 +360,7 @@ function updateHUD() {
 }
 
 // End game
-function endGame(reason) {
+async function endGame(reason) {
     gameState.gameRunning = false;
     clearInterval(gameState.platformInterval);
 
@@ -319,10 +368,42 @@ function endGame(reason) {
     const char = document.getElementById('runnerChar');
     char.classList.add('falling');
 
+    // Record session if practicing a specific family
+    if (gameState.selectedFamily && gameState.startTime) {
+        await recordSession();
+    }
+
     // Show game over after fall animation
     setTimeout(() => {
         showGameOver(reason);
     }, 1000);
+}
+
+// Record session to backend
+async function recordSession() {
+    try {
+        const durationSeconds = Math.floor((Date.now() - gameState.startTime) / 1000);
+
+        const response = await fetch('/api/fact-fluency/record-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: gameState.selectedOperation,
+                familyName: gameState.selectedFamily,
+                displayName: gameState.familyDisplayName,
+                durationSeconds,
+                problemsAttempted: gameState.attempted,
+                problemsCorrect: gameState.correct
+            })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            console.log('Session recorded', data);
+        }
+    } catch (error) {
+        console.error('Error recording session:', error);
+    }
 }
 
 // Show game over screen

@@ -997,6 +997,44 @@
     font-weight: bold;
 }
 
+/* Game Mode Buttons */
+.fact-modes {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.mode-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mode-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.mode-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.fact-card.mastered .mode-btn {
+    background: rgba(46, 213, 115, 0.2);
+    border-color: rgba(46, 213, 115, 0.5);
+}
+
+.fact-card.active .mode-btn {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: rgba(0, 212, 255, 0.5);
+}
+
 /* Legend */
 .grid-legend {
     display: flex;
