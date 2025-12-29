@@ -777,6 +777,19 @@
     .pattern-comparison { background: #ff9800; }
     .pattern-uncertainty { background: #e91e63; }
     .pattern-accumulation { background: #795548; }
+
+    /* ARCADE CARD - FLOATING UPPER RIGHT */
+    .arcade-floating-card {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      width: 280px;
+      z-index: 50;
+    }
+
+    .center-content {
+      position: relative;
+    }
   </style>
 </head>
 <body>
@@ -855,6 +868,21 @@
 
       <!-- CENTER: Badge Map -->
       <section class="center-content">
+        <!-- ARCADE CARD - FLOATING UPPER RIGHT -->
+        <div class="arcade-floating-card">
+          <a href="/mastery-arcade.html" class="featured-game-card" style="background: linear-gradient(135deg, #ff00ff 0%, #00ffff 100%); margin-bottom: 0;">
+            <div class="featured-game-badge">🎮 ARCADE</div>
+            <div class="featured-game-icon">🕹️</div>
+            <h3 class="featured-game-title">M∆STERY.∆RC∆DE</h3>
+            <p class="featured-game-subtitle">Two arcade games • Master facts • Build streaks</p>
+            <div class="featured-game-cta">
+              <i class="fas fa-gamepad"></i>
+              <span>Enter Arcade</span>
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </a>
+        </div>
+
         <div class="badge-map-header">
           <h2>🏆 Badge Map</h2>
           <p>Choose your next mastery challenge</p>
@@ -909,37 +937,6 @@
             <p class="stat-value" id="total-xp">0</p>
             <p class="stat-sublabel">Experience points</p>
           </div>
-        </div>
-
-        <!-- ARCADE GAMES -->
-        <div class="sidebar-section" style="background: linear-gradient(135deg, rgba(255,107,107,0.05) 0%, rgba(255,142,83,0.05) 100%);">
-          <h3 style="color: #FF6B6B; font-size: 16px; margin: 0 0 16px 0; text-align: center;">🎮 M∆STERY.∆RC∆DE</h3>
-
-          <!-- Math Blast Shooter -->
-          <a href="/fact-fluency-blaster.html" class="featured-game-card" style="margin-bottom: 16px;">
-            <div class="featured-game-badge">🔥 NEW</div>
-            <div class="featured-game-icon">🚀</div>
-            <h3 class="featured-game-title">M∆THBL∆ST</h3>
-            <p class="featured-game-subtitle">Shoot asteroids with correct answers</p>
-            <div class="featured-game-cta">
-              <i class="fas fa-crosshairs"></i>
-              <span>Play Shooter</span>
-              <i class="fas fa-rocket"></i>
-            </div>
-          </a>
-
-          <!-- Number Run -->
-          <a href="/number-run.html" class="featured-game-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-            <div class="featured-game-badge">🔥 NEW</div>
-            <div class="featured-game-icon">🏃</div>
-            <h3 class="featured-game-title">NUMBER RUN</h3>
-            <p class="featured-game-subtitle">Endless runner - jump to correct answers</p>
-            <div class="featured-game-cta" style="color: #667eea;">
-              <i class="fas fa-running"></i>
-              <span>Play Runner</span>
-              <i class="fas fa-bolt"></i>
-            </div>
-          </a>
         </div>
 
         <div class="sidebar-section">

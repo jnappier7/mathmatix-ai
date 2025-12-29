@@ -421,11 +421,28 @@ router.post('/', isAuthenticated, async (req, res) => {
 
                 console.log(`📊 Badge Progress: ${activeBadge.badgeName} - ${activeBadge.problemsCompleted}/${activeBadge.requiredProblems} (${activeBadge.problemsCorrect} correct)`);
 
-                // Check if badge is complete
+                // Check if badge is complete and AUTO-AWARD
                 const accuracy = activeBadge.problemsCorrect / activeBadge.problemsCompleted;
                 if (activeBadge.problemsCompleted >= activeBadge.requiredProblems &&
                     accuracy >= activeBadge.requiredAccuracy) {
-                    console.log(`🎖️ Badge ${activeBadge.badgeName} earned!`);
+
+                    // Award the badge if not already earned
+                    if (!user.badges) user.badges = [];
+                    const alreadyEarned = user.badges.find(b => b.badgeId === activeBadge.badgeId);
+
+                    if (!alreadyEarned) {
+                        user.badges.push({
+                            badgeId: activeBadge.badgeId,
+                            earnedDate: new Date(),
+                            score: Math.round(accuracy * 100)
+                        });
+
+                        // Award XP bonus for earning badge
+                        const badgeXpBonus = 500;
+                        user.xp = (user.xp || 0) + badgeXpBonus;
+
+                        console.log(`🎖️ BADGE EARNED: ${activeBadge.badgeName} (${Math.round(accuracy * 100)}% accuracy) - Awarded ${badgeXpBonus} bonus XP`);
+                    }
                 }
 
                 user.markModified('masteryProgress');
