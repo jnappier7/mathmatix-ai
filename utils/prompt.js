@@ -297,7 +297,7 @@ ${recommendAssessmentModality(userProfile.learningProfile || {}, 'default').leng
   generateMultimodalPrompt(recommendAssessmentModality(userProfile.learningProfile || {}, 'default')) : ''}
 
 ${masteryContext ? `
-${generateMasteryModePrompt(masteryContext)}
+${generateMasteryModePrompt(masteryContext, userProfile)}
 
 **NOTE:** The mastery mode above OVERRIDES other contexts. Stay focused on ${masteryContext.skillId} only.
 ` : ''}
