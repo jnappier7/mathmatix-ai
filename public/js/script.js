@@ -1736,7 +1736,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const textNode = document.createElement('span');
         textNode.className = 'message-text';
         
-        if (sender === 'ai' && typeof marked === 'function') {
+        if (sender === 'ai' && typeof marked !== 'undefined' && marked.parse) {
             const protectedText = text.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
             textNode.innerHTML = dirtyHtml.replace(/@@LATEX_OPEN@@/g, '\\(').replace(/@@LATEX_CLOSE@@/g, '\\)').replace(/@@DLATEX_OPEN@@/g, '\\[').replace(/@@DLATEX_CLOSE@@/g, '\\]');
@@ -2099,8 +2099,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageRef.textNode.textContent = newText;
 
         // Re-parse markdown if it's an AI message
-        if (messageRef.bubble.classList.contains('ai') && typeof marked === 'function') {
-            const protectedText = newText.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
+        if (messageRef.bubble.classList.contains('ai') && typeof marked !== 'undefined' && marked.parse) {
+            const protectedText = newText.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\)/g, '@@DLATEX_CLOSE@@');
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
             messageRef.textNode.innerHTML = dirtyHtml.replace(/@@LATEX_OPEN@@/g, '\\(').replace(/@@LATEX_CLOSE@@/g, '\\)').replace(/@@DLATEX_OPEN@@/g, '\\[').replace(/@@DLATEX_CLOSE@@/g, '\\]');
         }
