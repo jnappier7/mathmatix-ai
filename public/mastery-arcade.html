@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M∆STERY.∆RC∆DE | MathMatrix.AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/masteryArcade.css">
+    <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="main-header-content">
+            <div class="brand-section">
+                <div class="logo-container">
+                    <a href="/dashboard.html">
+                        <img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI Logo" class="main-logo" />
+                    </a>
+                </div>
+                <div class="brand-text">
+                    <div class="brand-name">MATHMATIX AI</div>
+                    <div class="brand-tagline">Personalized AI Math Tutoring</div>
+                </div>
+                <div class="mode-indicator arcade-mode">
+                    🎮 M∆STERY.∆RC∆DE
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="user-display">
+                    <span id="userName">Student</span>
+                    <span class="level-badge">Level <span id="userLevel">1</span></span>
+                </div>
+                <button id="backBtn" class="btn-secondary">← Back to M∆STERY.MODE</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="arcade-hub">
+        <!-- Arcade Title -->
+        <div class="arcade-title">
+            <div class="title-glow">M∆STERY.∆RC∆DE</div>
+            <div class="subtitle">Choose Your Game Mode</div>
+        </div>
+
+        <!-- Game Selection Grid -->
+        <div class="game-grid">
+            <!-- Math Blast Card -->
+            <div class="game-cabinet blaster-cabinet">
+                <div class="cabinet-screen">
+                    <div class="screen-glow"></div>
+                    <div class="game-preview">
+                        <div class="preview-icon">🚀</div>
+                        <div class="preview-asteroids">
+                            <span class="mini-asteroid">12</span>
+                            <span class="mini-asteroid">8</span>
+                            <span class="mini-asteroid">15</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cabinet-marquee">
+                    <h2>M∆THBL∆ST</h2>
+                    <p class="game-tagline">SHOOTER MODE</p>
+                </div>
+                <div class="cabinet-info">
+                    <p>🎯 Shoot asteroids with correct answers</p>
+                    <p>💥 Build combos & streaks</p>
+                    <p>🔥 Master facts at lightning speed</p>
+                </div>
+                <a href="/fact-fluency-blaster.html" class="insert-coin">
+                    <span class="coin-text">INSERT COIN</span>
+                    <span class="coin-arrow">→</span>
+                </a>
+            </div>
+
+            <!-- Number Run Card -->
+            <div class="game-cabinet runner-cabinet">
+                <div class="cabinet-screen">
+                    <div class="screen-glow"></div>
+                    <div class="game-preview runner-preview">
+                        <div class="preview-icon">🏃</div>
+                        <div class="preview-lanes">
+                            <div class="lane-marker"></div>
+                            <div class="lane-marker"></div>
+                            <div class="lane-marker"></div>
+                        </div>
+                        <div class="preview-platforms">
+                            <span class="mini-platform">5</span>
+                            <span class="mini-platform">12</span>
+                            <span class="mini-platform">7</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cabinet-marquee runner-marquee">
+                    <h2>M∆TH.R∆CE</h2>
+                    <p class="game-tagline">ENDLESS RUNNER</p>
+                </div>
+                <div class="cabinet-info">
+                    <p>⬅️➡️ Switch lanes with arrow keys</p>
+                    <p>🎯 Land on correct answer platforms</p>
+                    <p>⚡ Speed increases with streak</p>
+                </div>
+                <a href="/number-run.html" class="insert-coin runner-coin">
+                    <span class="coin-text">INSERT COIN</span>
+                    <span class="coin-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Arcade Stats -->
+        <div class="arcade-stats">
+            <div class="stat-display">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-content">
+                    <div class="stat-label">HIGH SCORES</div>
+                    <div class="stat-value" id="totalMastered">0</div>
+                    <div class="stat-sublabel">Facts M∆stered</div>
+                </div>
+            </div>
+            <div class="stat-display">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-content">
+                    <div class="stat-label">CURRENT STREAK</div>
+                    <div class="stat-value" id="currentStreak">0</div>
+                    <div class="stat-sublabel">Days in a row</div>
+                </div>
+            </div>
+            <div class="stat-display">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-content">
+                    <div class="stat-label">TOTAL PL∆YS</div>
+                    <div class="stat-value" id="totalSessions">0</div>
+                    <div class="stat-sublabel">Sessions completed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Start Note -->
+        <div class="arcade-note">
+            <p>💡 <strong>Pro Tip:</strong> Both games practice the same fact families. Choose your style!</p>
+            <p>🚀 <strong>Quick Start:</strong> Never played before? Try M∆THBL∆ST placement test to find your level.</p>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        © 2025 MATHMATIX AI. All rights reserved.
+        <a href="/privacy-policy.html">Privacy Policy</a> |
+        <a href="/terms.html">Terms of Use</a>
+    </footer>
+
+    <script src="js/masteryArcade.js"></script>
+</body>
+</html>
