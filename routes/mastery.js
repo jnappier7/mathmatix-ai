@@ -588,7 +588,23 @@ async function generateAvailableBadges(theta, user) {
     };
   });
 
-  return badges;
+  // FILTER: Hide badges that are too far below student's level
+  // Only show badges if:
+  // 1. Already earned (show accomplishments)
+  // 2. Within reasonable range: theta >= (requiredTheta - 1.5)
+  // This prevents 7th graders from seeing dozens of 1st-2nd grade badges
+  const filteredBadges = badges.filter(badge => {
+    // Always show earned badges
+    if (badge.status === 'completed') {
+      return true;
+    }
+
+    // Show badges within 1.5 theta below current level
+    // Example: theta=2.0 student sees badges with requiredTheta >= 0.5
+    return theta >= (badge.requiredTheta - 1.5);
+  });
+
+  return filteredBadges;
 }
 
 /**
