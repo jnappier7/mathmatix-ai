@@ -58,15 +58,13 @@
 
     .logo-container {
       display: flex;
-      flex-direction: column;
       align-items: center;
     }
 
-    .logo-glasses {
-      width: 50px;
+    .main-logo {
       height: 50px;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="10" y="35" width="35" height="30" rx="5" fill="none" stroke="%23000" stroke-width="3"/><rect x="55" y="35" width="35" height="30" rx="5" fill="none" stroke="%23000" stroke-width="3"/><line x1="45" y1="50" x2="55" y2="50" stroke="%23000" stroke-width="3"/><text x="22" y="55" font-family="Arial" font-size="20" fill="%23000">∫</text><text x="67" y="55" font-family="Arial" font-size="20" fill="%23000">dy</text></svg>') no-repeat center;
-      background-size: contain;
+      width: auto;
+      margin-right: 12px;
     }
 
     .brand-text {
@@ -533,6 +531,114 @@
       text-align: center;
     }
 
+    /* FEATURED MATH BLAST CARD */
+    .featured-game-card {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(255, 107, 107, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .featured-game-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .featured-game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(255, 107, 107, 0.4);
+    }
+
+    .featured-game-icon {
+      font-size: 48px;
+      text-align: center;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .featured-game-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: white;
+      margin: 0 0 8px 0;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-game-subtitle {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.95);
+      margin: 0 0 16px 0;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-game-cta {
+      background: white;
+      color: #FF6B6B;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+      transition: all 0.2s;
+    }
+
+    .featured-game-card:hover .featured-game-cta {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .featured-game-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 1;
+    }
+
     /* Scrollbar styling */
     .left-sidebar::-webkit-scrollbar,
     .center-content::-webkit-scrollbar,
@@ -558,6 +664,119 @@
     .right-sidebar::-webkit-scrollbar-thumb:hover {
       background: #667eea;
     }
+
+    /* PATTERN BADGES - Circular Icon Design */
+    #pattern-badges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .pattern-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 15px;
+      border-radius: 12px;
+      background: white;
+    }
+
+    .pattern-badge:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .pattern-badge-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+    }
+
+    .pattern-badge:hover .pattern-badge-circle {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      transform: scale(1.05);
+    }
+
+    .pattern-badge-icon {
+      font-size: 48px;
+      color: white;
+    }
+
+    .pattern-badge-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pattern-badge-tier {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .pattern-badge-progress {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .pattern-badge-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    .pattern-badge-status {
+      font-size: 10px;
+      font-weight: 600;
+      margin-top: 6px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .pattern-badge-status.locked {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .pattern-badge-status.in-progress {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .pattern-badge-status.mastered {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    /* Individual Pattern Colors */
+    .pattern-equivalence { background: #2196f3; }
+    .pattern-scaling { background: #4caf50; }
+    .pattern-change { background: #ff5722; }
+    .pattern-structure { background: #9c27b0; }
+    .pattern-space { background: #00bcd4; }
+    .pattern-comparison { background: #ff9800; }
+    .pattern-uncertainty { background: #e91e63; }
+    .pattern-accumulation { background: #795548; }
   </style>
 </head>
 <body>
@@ -567,7 +786,7 @@
       <div class="main-header-content">
         <div class="brand-section">
           <div class="logo-container">
-            <div class="logo-glasses"></div>
+            <img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI Logo" class="main-logo" />
           </div>
           <div class="brand-text">
             <h1 class="brand-name">MATHMATIX AI</h1>
@@ -641,6 +860,24 @@
           <p>Choose your next mastery challenge</p>
         </div>
 
+        <!-- PATTERN BADGES: K-12 Continuous Growth -->
+        <div id="pattern-badges-container">
+          <h3 style="font-size: 20px; font-weight: 700; color: #333; margin: 20px 0 15px 0;">
+            📐 Mathematical Patterns (K-12)
+          </h3>
+          <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+            These patterns grow with you from Grade 1 through Calculus
+          </p>
+          <div id="pattern-badges-grid">
+            <!-- Pattern badges will be loaded here dynamically -->
+            <div style="text-align: center; padding: 40px; color: #999;">
+              <i class="fas fa-spinner fa-spin" style="font-size: 36px; color: #667eea; margin-bottom: 15px;"></i>
+              <p>Loading pattern badges...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SKILL BADGES: Traditional System -->
         <div id="skill-domains-container">
           <!-- Skill domains will be loaded here dynamically -->
           <div style="text-align: center; padding: 60px; color: #999;">
@@ -674,6 +911,21 @@
           </div>
         </div>
 
+        <!-- FEATURED: MATH BLAST GAME -->
+        <div class="sidebar-section" style="background: linear-gradient(135deg, rgba(255,107,107,0.05) 0%, rgba(255,142,83,0.05) 100%);">
+          <a href="/fact-fluency-practice.html" class="featured-game-card">
+            <div class="featured-game-badge">🔥 HOT</div>
+            <div class="featured-game-icon">🎮</div>
+            <h3 class="featured-game-title">Math Blast!</h3>
+            <p class="featured-game-subtitle">Master facts at lightning speed</p>
+            <div class="featured-game-cta">
+              <i class="fas fa-rocket"></i>
+              <span>Play Now</span>
+              <i class="fas fa-bolt"></i>
+            </div>
+          </a>
+        </div>
+
         <div class="sidebar-section">
           <h3><span>📈</span> Progress Tools</h3>
 
@@ -687,10 +939,6 @@
 
           <a href="/learning-curves.html" class="progress-tool-link">
             <i class="fas fa-chart-area"></i> Learning Curves
-          </a>
-
-          <a href="/fact-fluency-practice.html" class="progress-tool-link">
-            <i class="fas fa-bolt"></i> Fact Fluency
           </a>
         </div>
       </aside>
@@ -731,8 +979,8 @@
         document.getElementById('badges-earned').textContent = data.badgesEarned || 0;
         document.getElementById('total-xp').textContent = (data.totalXP || 0).toLocaleString();
 
-        // Render skill domains
-        renderSkillDomains(data.skillDomains || []);
+        // Render skill domains (pass assessmentCompleted status)
+        renderSkillDomains(data.skillDomains || [], data.assessmentCompleted);
 
       } catch (error) {
         console.error('Error loading badge map:', error);
@@ -759,20 +1007,36 @@
       }
     }
 
-    function renderSkillDomains(domains) {
+    function renderSkillDomains(domains, assessmentCompleted) {
       const container = document.getElementById('skill-domains-container');
 
       if (!domains || domains.length === 0) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 60px;">
-            <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
-            <p style="color: #666; font-size: 16px; font-weight: 600;">No badges available yet</p>
-            <p style="color: #999; font-size: 14px;">Complete the screener to unlock your skill badges!</p>
-            <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
-              Take Screener <i class="fas fa-arrow-right"></i>
-            </a>
-          </div>
-        `;
+        // Check if user has completed the screener
+        if (!assessmentCompleted) {
+          // User has NOT completed the screener - show "Take Screener" message
+          container.innerHTML = `
+            <div style="text-align: center; padding: 60px;">
+              <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
+              <p style="color: #666; font-size: 16px; font-weight: 600;">No badges available yet</p>
+              <p style="color: #999; font-size: 14px;">Complete the screener to unlock your skill badges!</p>
+              <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                Take Screener <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          `;
+        } else {
+          // User HAS completed the screener but no badges available - show different message
+          container.innerHTML = `
+            <div style="text-align: center; padding: 60px;">
+              <i class="fas fa-check-circle" style="font-size: 48px; color: #4CAF50; margin-bottom: 20px;"></i>
+              <p style="color: #666; font-size: 16px; font-weight: 600;">Screener completed!</p>
+              <p style="color: #999; font-size: 14px;">No skill badges are configured yet. Check back soon!</p>
+              <a href="/chat.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                Continue Learning <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          `;
+        }
         return;
       }
 
@@ -824,12 +1088,108 @@
         });
 
         if (response.ok) {
-          window.location.href = '/mastery-mode.html';
+          window.location.href = '/mastery-chat.html';
         } else {
           alert('Failed to select badge. Please try again.');
         }
       } catch (error) {
         console.error('Error selecting badge:', error);
+        alert('An error occurred. Please try again.');
+      }
+    }
+
+    // Load pattern badges
+    async function loadPatternBadges() {
+      try {
+        const response = await fetch('/api/mastery/pattern-badges');
+
+        if (response.status === 401) {
+          console.warn('[Pattern Badges] Session expired');
+          return;
+        }
+
+        if (!response.ok) throw new Error('Failed to load pattern badges');
+
+        const data = await response.json();
+        renderPatternBadges(data.patternBadges || []);
+
+      } catch (error) {
+        console.error('Error loading pattern badges:', error);
+        document.getElementById('pattern-badges-grid').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #999;">
+            <p>Pattern badges will be available soon!</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderPatternBadges(patterns) {
+      const container = document.getElementById('pattern-badges-grid');
+
+      if (!patterns || patterns.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #999;">
+            <p>Complete the screener to unlock pattern badges!</p>
+          </div>
+        `;
+        return;
+      }
+
+      const iconMap = {
+        'equivalence': 'fa-balance-scale',
+        'scaling': 'fa-chart-line',
+        'change': 'fa-mountain',
+        'structure': 'fa-cubes',
+        'space': 'fa-cube',
+        'comparison': 'fa-sort-amount-up',
+        'uncertainty': 'fa-dice',
+        'accumulation': 'fa-layer-group'
+      };
+
+      container.innerHTML = patterns.map(pattern => `
+        <div class="pattern-badge" onclick="selectPattern('${pattern.patternId}')">
+          <div class="pattern-badge-circle pattern-${pattern.patternId}">
+            <i class="fas ${iconMap[pattern.patternId] || 'fa-star'} pattern-badge-icon"></i>
+          </div>
+          <div class="pattern-badge-name">${pattern.name}</div>
+          <div class="pattern-badge-tier">Tier ${pattern.currentTier || 0}</div>
+          ${pattern.progress !== undefined ? `
+            <div class="pattern-badge-progress">
+              <div class="pattern-badge-progress-fill" style="width: ${pattern.progress}%"></div>
+            </div>
+          ` : ''}
+          <div class="pattern-badge-status ${pattern.status || 'locked'}">
+            ${getPatternStatusText(pattern.status, pattern.currentTier)}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getPatternStatusText(status, tier) {
+      if (!tier || tier === 0) return '🔒 Locked';
+      if (status === 'mastered') return '✅ Mastered';
+      if (status === 'in-progress') return '🚀 Learning';
+      return '⭐ Available';
+    }
+
+    async function selectPattern(patternId) {
+      try {
+        const response = await fetch('/api/mastery/select-pattern', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ patternId })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Pattern selected:', data);
+          window.location.href = '/mastery-chat.html';
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to select pattern. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error selecting pattern:', error);
         alert('An error occurred. Please try again.');
       }
     }
@@ -946,6 +1306,7 @@
 
     // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
+      loadPatternBadges();  // Load pattern badges first
       loadBadgeMap();
       loadDailyQuests();
       loadWeeklyChallenges();

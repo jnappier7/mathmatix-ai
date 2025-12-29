@@ -588,7 +588,23 @@ async function generateAvailableBadges(theta, user) {
     };
   });
 
-  return badges;
+  // FILTER: Hide badges that are too far below student's level
+  // Only show badges if:
+  // 1. Already earned (show accomplishments)
+  // 2. Within reasonable range: theta >= (requiredTheta - 1.5)
+  // This prevents 7th graders from seeing dozens of 1st-2nd grade badges
+  const filteredBadges = badges.filter(badge => {
+    // Always show earned badges
+    if (badge.status === 'completed') {
+      return true;
+    }
+
+    // Show badges within 1.5 theta below current level
+    // Example: theta=2.0 student sees badges with requiredTheta >= 0.5
+    return theta >= (badge.requiredTheta - 1.5);
+  });
+
+  return filteredBadges;
 }
 
 /**
@@ -1157,30 +1173,69 @@ router.get('/badge-map', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Get all available badges
-    const availableBadges = await Skill.find({ isBadge: true }).lean();
+    // Check if user has completed the screener
+    const assessmentCompleted = user.learningProfile?.assessmentCompleted || false;
 
-    // Build badge map with user progress
-    const badgeMap = availableBadges.map(badge => {
-      const userProgress = user.skillMastery?.get(badge.skillId) || {};
+    // Get user's theta estimate
+    let theta = user.learningProfile?.abilityEstimate?.theta;
 
-      return {
-        badgeId: badge.skillId,
-        name: badge.name,
-        description: badge.description,
-        gradeLevel: badge.gradeLevel,
-        prerequisites: badge.prerequisites || [],
-        status: userProgress.status || 'locked',
-        progress: userProgress.masteryScore || 0,
-        earned: userProgress.status === 'mastered',
-        earnedDate: userProgress.masteredDate
-      };
+    // MIGRATION: Handle old format where theta was stored as string in initialPlacement
+    if (theta === undefined && user.learningProfile?.initialPlacement) {
+      const match = user.learningProfile.initialPlacement.match(/Theta:\s*([-\d.]+)/);
+      if (match) {
+        theta = parseFloat(match[1]);
+      }
+    }
+
+    // Default to 0 if still undefined
+    if (theta === undefined || isNaN(theta)) {
+      theta = 0;
+    }
+
+    // Use the same badge generation logic as /available-badges endpoint
+    const badgeMap = await generateAvailableBadges(theta, user);
+
+    // Organize badges by domain for the frontend
+    const domainConfig = {
+      'number-sense': { name: 'Number Sense', icon: '🔢', description: 'Understanding numbers and operations' },
+      'algebra': { name: 'Algebra', icon: '📐', description: 'Expressions, equations, and patterns' },
+      'geometry': { name: 'Geometry', icon: '📏', description: 'Shapes, angles, and spatial reasoning' },
+      'measurement': { name: 'Measurement', icon: '📊', description: 'Units, conversions, and data' },
+      'statistics': { name: 'Statistics & Probability', icon: '📈', description: 'Data analysis and chance' },
+      'ratios': { name: 'Ratios & Proportions', icon: '⚖️', description: 'Relationships between quantities' },
+      'challenge': { name: 'Challenges', icon: '⚡', description: 'Speed, streaks, and special achievements' },
+      'meta': { name: 'Master Badges', icon: '👑', description: 'Complete domain mastery achievements' },
+      'other': { name: 'Other Skills', icon: '📚', description: 'Additional math skills' }
+    };
+
+    // Group badges by domain
+    const domainMap = {};
+    badgeMap.forEach(badge => {
+      const domainKey = badge.domain || 'other';
+      if (!domainMap[domainKey]) {
+        domainMap[domainKey] = [];
+      }
+      domainMap[domainKey].push(badge);
     });
 
+    // Convert to array format for frontend
+    const skillDomains = Object.keys(domainMap).map(domainKey => ({
+      name: domainConfig[domainKey]?.name || domainKey,
+      icon: domainConfig[domainKey]?.icon || '📚',
+      description: domainConfig[domainKey]?.description || '',
+      badges: domainMap[domainKey]
+    }));
+
+    // Count badges earned (check for 'completed' status instead of 'earned' property)
+    const badgesEarned = badgeMap.filter(b => b.status === 'completed').length;
+
     res.json({
-      badges: badgeMap,
-      userLevel: user.level || 1,
-      userXP: user.xp || 0
+      assessmentCompleted,
+      averageTheta: theta,
+      skillDomains,
+      badgesEarned,
+      totalXP: user.xp || 0,
+      userLevel: user.level || 1
     });
 
   } catch (error) {
@@ -1886,6 +1941,95 @@ router.post('/update-pattern-progress', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('Error updating pattern progress:', error);
     res.status(500).json({ error: 'Failed to update pattern progress' });
+  }
+});
+
+/**
+ * Select a pattern badge to work on
+ * POST /api/mastery/select-pattern
+ */
+router.post('/select-pattern', isAuthenticated, async (req, res) => {
+  try {
+    const { patternId } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const pattern = getPatternBadge(patternId);
+    if (!pattern) {
+      return res.status(404).json({ error: 'Pattern not found' });
+    }
+
+    // Get current tier and next milestone
+    const currentTier = getCurrentTier(patternId, user.skillMastery);
+    const nextMilestone = getNextMilestone(patternId, currentTier, user.skillMastery);
+
+    if (!nextMilestone) {
+      return res.status(400).json({ error: 'No available milestones for this pattern' });
+    }
+
+    // Find the tier containing this milestone
+    const tier = pattern.tiers.find(t =>
+      t.milestones.some(m => m.milestoneId === nextMilestone.milestoneId)
+    );
+
+    if (!tier) {
+      return res.status(404).json({ error: 'Tier not found' });
+    }
+
+    // Set up active badge with pattern milestone info
+    if (!user.masteryProgress) {
+      user.masteryProgress = { activeBadge: null, attempts: [] };
+    }
+
+    user.masteryProgress.activeBadge = {
+      badgeId: `${patternId}-${nextMilestone.milestoneId}`,
+      badgeName: `${pattern.name}: ${nextMilestone.name}`,
+      skillId: nextMilestone.skillIds[0],  // Primary skill
+      tier: tier.tier,
+      description: nextMilestone.description,
+      startedAt: new Date(),
+      problemsCompleted: 0,
+      problemsCorrect: 0,
+      requiredProblems: nextMilestone.requiredProblems || 10,
+      requiredAccuracy: nextMilestone.requiredAccuracy || 0.80,
+      currentPhase: 'launch',
+      phaseHistory: [],
+      hintsUsed: 0,
+      misconceptionsAddressed: [],
+      // Pattern-specific fields
+      isPatternBadge: true,
+      patternId: patternId,
+      milestoneId: nextMilestone.milestoneId,
+      tierName: tier.name,
+      allSkillIds: nextMilestone.skillIds
+    };
+
+    await user.save();
+
+    res.json({
+      success: true,
+      pattern: {
+        patternId,
+        name: pattern.name,
+        icon: pattern.icon,
+        color: pattern.color
+      },
+      milestone: {
+        milestoneId: nextMilestone.milestoneId,
+        name: nextMilestone.name,
+        description: nextMilestone.description,
+        tier: tier.tier,
+        tierName: tier.name
+      },
+      message: `Started working on ${pattern.name}: ${nextMilestone.name}!`
+    });
+
+  } catch (error) {
+    console.error('Error selecting pattern:', error);
+    res.status(500).json({ error: 'Failed to select pattern badge' });
   }
 });
 
