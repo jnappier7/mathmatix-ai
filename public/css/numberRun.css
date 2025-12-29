@@ -1,0 +1,517 @@
+/* Number Run - Endless Runner Math Game */
+
+.runner-container {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 2rem;
+    color: white;
+}
+
+/* Game Screen Management */
+.game-screen {
+    display: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.game-screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Start Screen */
+.start-content {
+    text-align: center;
+    padding: 3rem;
+}
+
+.start-content h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #00d4ff, #7b2ff7, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.start-content h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #b8b8d1;
+    margin-bottom: 3rem;
+}
+
+.info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+}
+
+.info-card h3 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.info-card ul {
+    padding-left: 1.5rem;
+    line-height: 1.8;
+}
+
+.info-card li {
+    margin-bottom: 0.5rem;
+}
+
+/* Operation Select */
+.operation-select {
+    margin: 3rem 0;
+}
+
+.operation-select h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #00d4ff;
+}
+
+.op-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.op-btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.op-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.op-btn.selected {
+    background: linear-gradient(45deg, #00d4ff, #7b2ff7);
+    border-color: transparent;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+/* Game Screen - HUD */
+.game-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.problem-display {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #00d4ff;
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+}
+
+.hud-right {
+    display: flex;
+    gap: 2rem;
+}
+
+.stat {
+    font-size: 1.3rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+.stat span {
+    color: #00ff87;
+}
+
+/* Runner Track */
+.runner-track {
+    position: relative;
+    height: 500px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+    border-radius: 20px;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+/* Lanes */
+.lanes {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    pointer-events: none;
+}
+
+.lane {
+    flex: 1;
+    border-left: 2px dashed rgba(255, 255, 255, 0.2);
+    border-right: 2px dashed rgba(255, 255, 255, 0.2);
+}
+
+/* Runner Character */
+.runner-char {
+    position: absolute;
+    bottom: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 4rem;
+    z-index: 10;
+    transition: left 0.2s ease;
+    animation: running 0.5s steps(2) infinite;
+}
+
+@keyframes running {
+    0% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+.runner-char.lane-left {
+    left: 16.67%;
+}
+
+.runner-char.lane-center {
+    left: 50%;
+}
+
+.runner-char.lane-right {
+    left: 83.33%;
+}
+
+.runner-char.falling {
+    animation: fall 1s ease-in forwards;
+}
+
+@keyframes fall {
+    0% { transform: translateX(-50%) translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateX(-50%) translateY(500px) rotate(360deg); opacity: 0; }
+}
+
+/* Platforms Container */
+.platforms-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+}
+
+/* Individual Platform */
+.platform {
+    position: absolute;
+    width: 28%;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: platformMove 3s linear forwards;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.platform .answer {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.platform.correct {
+    background: linear-gradient(135deg, #00ff87 0%, #00d4ff 100%);
+    box-shadow: 0 0 40px rgba(0, 255, 135, 0.6);
+}
+
+.platform.wrong {
+    background: linear-gradient(135deg, #ff6b6b 0%, #c44569 100%);
+}
+
+.platform.passed {
+    opacity: 0.3;
+}
+
+@keyframes platformMove {
+    0% { top: -100px; }
+    100% { top: 600px; }
+}
+
+/* Hit effect */
+.platform.hit {
+    animation: platformHit 0.3s ease-out;
+}
+
+@keyframes platformHit {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); box-shadow: 0 0 50px rgba(0, 255, 135, 1); }
+}
+
+/* Game Over Screen */
+.gameover-content {
+    text-align: center;
+    padding: 3rem;
+}
+
+.gameover-content h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #ff6b6b;
+}
+
+.gameover-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    color: #b8b8d1;
+}
+
+.final-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-card h3 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.stat-big {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #00ff87;
+}
+
+.gameover-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #00d4ff, #7b2ff7);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary.large {
+    padding: 1.5rem 3rem;
+    font-size: 1.3rem;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Header/Footer Reuse */
+.main-header {
+    background: white;
+    border-bottom: 3px solid #764ba2;
+    padding: 15px 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    flex-shrink: 0;
+    z-index: 100;
+}
+
+.main-header-content {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.main-logo {
+    height: 50px;
+    width: auto;
+    margin-right: 12px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #000;
+    margin: 0;
+    line-height: 1;
+}
+
+.brand-tagline {
+    font-size: 11px;
+    color: #666;
+    margin: 2px 0 0 0;
+    font-weight: 400;
+}
+
+.mode-indicator {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.user-display .level-badge {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.main-footer {
+    background: #1a1a1a;
+    color: white;
+    padding: 12px 30px;
+    text-align: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.main-footer a {
+    color: #667eea;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.main-footer a:hover {
+    text-decoration: underline;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.runner-container {
+    flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .runner-track {
+        height: 400px;
+    }
+
+    .runner-char {
+        font-size: 3rem;
+    }
+
+    .problem-display {
+        font-size: 2rem;
+    }
+
+    .platform {
+        height: 60px;
+    }
+
+    .platform .answer {
+        font-size: 1.8rem;
+    }
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Run | MathMatrix.AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/numberRun.css">
+    <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="main-header-content">
+            <div class="brand-section">
+                <div class="logo-container">
+                    <a href="/dashboard.html">
+                        <img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI Logo" class="main-logo" />
+                    </a>
+                </div>
+                <div class="brand-text">
+                    <div class="brand-name">MATHMATIX AI</div>
+                    <div class="brand-tagline">Personalized AI Math Tutoring</div>
+                </div>
+                <div class="mode-indicator">
+                    🏃 NUMBER RUN
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="user-display">
+                    <span id="userName">Student</span>
+                    <span class="level-badge">Level <span id="userLevel">1</span></span>
+                </div>
+                <button id="backBtn" class="btn-secondary">← Back to Dashboard</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="runner-container">
+        <!-- Start Screen -->
+        <div id="startScreen" class="game-screen active">
+            <div class="start-content">
+                <h1>🏃 NUMBER RUN</h1>
+                <h2>Endless Math Runner</h2>
+                <p class="subtitle">Jump to the correct answer. Don't fall!</p>
+
+                <div class="info-cards">
+                    <div class="info-card">
+                        <h3>How to Play:</h3>
+                        <ul>
+                            <li><strong>⬅️ Left Arrow:</strong> Move to left lane</li>
+                            <li><strong>➡️ Right Arrow:</strong> Move to right lane</li>
+                            <li><strong>🎯 Goal:</strong> Land on platforms with correct answers</li>
+                            <li><strong>💀 Miss:</strong> Fall off track, game over!</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Speed System:</h3>
+                        <ul>
+                            <li>✓ Correct answers = faster speed</li>
+                            <li>✓ Build streaks for high scores</li>
+                            <li>✓ Speed caps at Level 10</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="operation-select">
+                    <h3>Choose Operation:</h3>
+                    <div class="op-buttons">
+                        <button class="op-btn" data-operation="addition">Addition +</button>
+                        <button class="op-btn" data-operation="subtraction">Subtraction −</button>
+                        <button class="op-btn" data-operation="multiplication">Multiplication ×</button>
+                        <button class="op-btn" data-operation="division">Division ÷</button>
+                    </div>
+                </div>
+
+                <button id="startRunBtn" class="btn-primary large" disabled>Start Run 🚀</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="game-screen">
+            <div class="game-hud">
+                <div class="hud-left">
+                    <div class="problem-display" id="currentProblem">5 + 3 = ?</div>
+                </div>
+                <div class="hud-right">
+                    <div class="stat">Score: <span id="score">0</span></div>
+                    <div class="stat">Streak: <span id="streak">0</span>🔥</div>
+                    <div class="stat">Speed: <span id="speed">1</span>x</div>
+                </div>
+            </div>
+
+            <div class="runner-track">
+                <!-- Character -->
+                <div class="runner-char" id="runnerChar">🏃</div>
+
+                <!-- Lanes for platforms -->
+                <div class="lanes" id="lanes">
+                    <div class="lane lane-left"></div>
+                    <div class="lane lane-center"></div>
+                    <div class="lane lane-right"></div>
+                </div>
+
+                <!-- Platforms container -->
+                <div class="platforms-container" id="platformsContainer">
+                    <!-- Platforms spawn here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="game-screen">
+            <div class="gameover-content">
+                <h1>💀 Game Over!</h1>
+                <h2 id="gameOverReason">You missed the platform!</h2>
+
+                <div class="final-stats">
+                    <div class="stat-card">
+                        <h3>Final Score</h3>
+                        <div class="stat-big" id="finalScore">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Max Streak</h3>
+                        <div class="stat-big" id="finalStreak">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Accuracy</h3>
+                        <div class="stat-big" id="finalAccuracy">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Problems</h3>
+                        <div class="stat-big" id="finalProblems">0</div>
+                    </div>
+                </div>
+
+                <div class="gameover-actions">
+                    <button id="playAgainBtn" class="btn-primary">Play Again</button>
+                    <button id="changeOpBtn" class="btn-secondary">Change Operation</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        © 2025 MATHMATIX AI. All rights reserved.
+        <a href="/privacy-policy.html">Privacy Policy</a> |
+        <a href="/terms.html">Terms of Use</a>
+    </footer>
+
+    <script src="js/numberRun.js"></script>
+</body>
+</html>
