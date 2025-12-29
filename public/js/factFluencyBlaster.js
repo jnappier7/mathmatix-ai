@@ -40,6 +40,132 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkPlacementStatus();
 });
 
+// ===== MASTERY GRID FUNCTIONS =====
+
+async function showMasteryGrid() {
+    showScreen('masteryGrid');
+    await loadProgress();
+    populateMasteryGrid();
+}
+
+function populateMasteryGrid() {
+    const addSubGrid = document.getElementById('addSubGrid');
+    const multDivGrid = document.getElementById('multDivGrid');
+
+    if (!gameState.families || !gameState.progress) return;
+
+    // Clear grids
+    addSubGrid.innerHTML = '';
+    multDivGrid.innerHTML = '';
+
+    // Get next recommended family
+    const nextFamily = getNextRecommendedFamily();
+
+    // Populate Addition/Subtraction Grid
+    const addFamilies = gameState.families.addition || [];
+    addFamilies.forEach((addFamily, index) => {
+        const subFamily = gameState.families.subtraction?.[index];
+        if (!subFamily) return;
+
+        const addKey = `addition-${addFamily.familyName}`;
+        const subKey = `subtraction-${subFamily.familyName}`;
+        const addData = gameState.progress.factFamilies?.[addKey] || {};
+        const subData = gameState.progress.factFamilies?.[subKey] || {};
+
+        const isMastered = addData.mastered && subData.mastered;
+        const isRecommended = (nextFamily?.operation === 'addition' && nextFamily?.familyName === addFamily.familyName) ||
+                              (nextFamily?.operation === 'subtraction' && nextFamily?.familyName === subFamily.familyName);
+
+        const card = createFactCard(
+            addFamily.displayName,
+            subFamily.displayName,
+            isMastered,
+            isRecommended,
+            () => startPracticeSession('addition', addFamily.familyName)
+        );
+
+        addSubGrid.appendChild(card);
+    });
+
+    // Populate Multiplication/Division Grid
+    const multFamilies = gameState.families.multiplication || [];
+    multFamilies.forEach((multFamily, index) => {
+        const divFamily = gameState.families.division?.[index];
+        if (!divFamily) return;
+
+        const multKey = `multiplication-${multFamily.familyName}`;
+        const divKey = `division-${divFamily.familyName}`;
+        const multData = gameState.progress.factFamilies?.[multKey] || {};
+        const divData = gameState.progress.factFamilies?.[divKey] || {};
+
+        const isMastered = multData.mastered && divData.mastered;
+        const isRecommended = (nextFamily?.operation === 'multiplication' && nextFamily?.familyName === multFamily.familyName) ||
+                              (nextFamily?.operation === 'division' && nextFamily?.familyName === divFamily.familyName);
+
+        const card = createFactCard(
+            multFamily.displayName,
+            divFamily.displayName,
+            isMastered,
+            isRecommended,
+            () => startPracticeSession('multiplication', multFamily.familyName)
+        );
+
+        multDivGrid.appendChild(card);
+    });
+}
+
+function createFactCard(name1, name2, mastered, recommended, onClick) {
+    const card = document.createElement('div');
+    card.className = 'fact-card';
+
+    if (mastered) {
+        card.classList.add('mastered');
+    } else if (recommended) {
+        card.classList.add('active');
+    } else {
+        card.classList.add('locked');
+    }
+
+    const statusText = mastered ? '✓ Mastered' : recommended ? '→ Next' : 'Locked';
+
+    card.innerHTML = `
+        <div class="fact-name">${name1}</div>
+        <div class="fact-pair">${name2}</div>
+        <div class="fact-status">${statusText}</div>
+    `;
+
+    if (!mastered || recommended) {
+        card.addEventListener('click', onClick);
+    }
+
+    return card;
+}
+
+function getNextRecommendedFamily() {
+    // Use placement recommendation if available
+    if (gameState.progress?.placement?.recommendedOperation && gameState.progress?.placement?.recommendedLevel) {
+        return {
+            operation: gameState.progress.placement.recommendedOperation,
+            familyName: gameState.progress.placement.recommendedLevel
+        };
+    }
+
+    // Otherwise find first non-mastered family
+    const operations = ['addition', 'subtraction', 'multiplication', 'division'];
+    for (const operation of operations) {
+        const families = gameState.families[operation] || [];
+        for (const family of families) {
+            const key = `${operation}-${family.familyName}`;
+            const data = gameState.progress.factFamilies?.[key];
+            if (!data || !data.mastered) {
+                return { operation, familyName: family.familyName };
+            }
+        }
+    }
+
+    return null;
+}
+
 // Load current user
 async function loadUser() {
     try {
@@ -85,12 +211,8 @@ async function loadFamilies() {
 // Check placement status and show appropriate screen
 function checkPlacementStatus() {
     if (gameState.progress && gameState.progress.placement && gameState.progress.placement.completed) {
-        // Placement already completed, go to recommended level
-        showScreen('game');
-        startPracticeSession(
-            gameState.progress.placement.recommendedOperation,
-            gameState.progress.placement.recommendedLevel
-        );
+        // Placement already completed, show mastery grid (landing page)
+        showMasteryGrid();
     } else {
         // Show placement intro
         showScreen('placement');
@@ -182,6 +304,7 @@ function showScreen(screenName) {
         'placementTest': 'placementTestScreen',
         'placementBreak': 'placementBreakScreen',
         'placementResults': 'placementResultsScreen',
+        'masteryGrid': 'masteryGridScreen',
         'game': 'gameScreen',
         'results': 'resultsScreen',
         'progress': 'progressScreen'
@@ -395,8 +518,8 @@ async function finishPlacement() {
             // Reload progress
             await loadProgress();
 
-            // Show results
-            showPlacementResults();
+            // Redirect to mastery grid instead of placement results
+            showMasteryGrid();
         } else {
             throw new Error(data.error || 'Failed to save placement results');
         }

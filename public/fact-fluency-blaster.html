@@ -147,6 +147,51 @@
             </div>
         </div>
 
+        <!-- Mastery Grid Screen (Landing Page after Placement) -->
+        <div id="masteryGridScreen" class="game-screen">
+            <div class="grid-container">
+                <h1>🎯 Math Fact Mastery Grid</h1>
+                <p class="grid-subtitle">Click any fact family to practice</p>
+
+                <div class="operation-grids">
+                    <!-- Addition/Subtraction Grid -->
+                    <div class="operation-section">
+                        <h2 class="operation-title">
+                            <span class="op-symbol">+</span> Addition & Subtraction <span class="op-symbol">−</span>
+                        </h2>
+                        <div id="addSubGrid" class="fact-grid">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <!-- Multiplication/Division Grid -->
+                    <div class="operation-section">
+                        <h2 class="operation-title">
+                            <span class="op-symbol">×</span> Multiplication & Division <span class="op-symbol">÷</span>
+                        </h2>
+                        <div id="multDivGrid" class="fact-grid">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-legend">
+                    <div class="legend-item">
+                        <div class="legend-box locked"></div>
+                        <span>Not Started</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box active"></div>
+                        <span>Recommended Next</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box mastered"></div>
+                        <span>Mastered</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Game Screen -->
         <div id="gameScreen" class="game-screen">
             <div class="game-header">
