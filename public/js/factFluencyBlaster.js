@@ -83,7 +83,9 @@ function populateMasteryGrid() {
             subFamily.displayName,
             isMastered,
             isRecommended,
-            () => startPracticeSession('addition', addFamily.familyName)
+            () => startPracticeSession('addition', addFamily.familyName),
+            'addition',
+            addFamily.familyName
         );
 
         addSubGrid.appendChild(card);
@@ -109,14 +111,16 @@ function populateMasteryGrid() {
             divFamily.displayName,
             isMastered,
             isRecommended,
-            () => startPracticeSession('multiplication', multFamily.familyName)
+            () => startPracticeSession('multiplication', multFamily.familyName),
+            'multiplication',
+            multFamily.familyName
         );
 
         multDivGrid.appendChild(card);
     });
 }
 
-function createFactCard(name1, name2, mastered, recommended, onClick) {
+function createFactCard(name1, name2, mastered, recommended, onClick, operation, familyName) {
     const card = document.createElement('div');
     card.className = 'fact-card';
 
@@ -134,10 +138,33 @@ function createFactCard(name1, name2, mastered, recommended, onClick) {
         <div class="fact-name">${name1}</div>
         <div class="fact-pair">${name2}</div>
         <div class="fact-status">${statusText}</div>
+        <div class="fact-modes">
+            <button class="mode-btn shooter-btn" title="Play in Shooter Mode">🚀</button>
+            <button class="mode-btn runner-btn" title="Play in Runner Mode">🏃</button>
+        </div>
     `;
 
     if (!mastered || recommended) {
+        // Shooter button
+        card.querySelector('.shooter-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            onClick();
+        });
+
+        // Runner button
+        card.querySelector('.runner-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.location.href = `/number-run.html?operation=${operation}&family=${familyName}`;
+        });
+
+        // Card click defaults to shooter
         card.addEventListener('click', onClick);
+    } else {
+        // Disable buttons for locked cards
+        card.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = '0.3';
+        });
     }
 
     return card;
