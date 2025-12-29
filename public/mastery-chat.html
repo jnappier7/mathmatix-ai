@@ -235,6 +235,188 @@
             font-size: 18px;
         }
 
+        /* PROBLEM DISPLAY INTERFACE */
+        #problem-display-container {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(18, 179, 179, 0.3);
+        }
+
+        .phase-indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .phase-badge {
+            background: linear-gradient(135deg, #12B3B3, #16D9D9);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .phase-badge.i-do { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .phase-badge.we-do { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .phase-badge.you-do { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .phase-badge.mastery-check { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+        .problem-number {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        #problem-statement {
+            font-size: 20px;
+            color: white;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid #12B3B3;
+        }
+
+        #problem-statement .math-expression {
+            font-size: 24px;
+            font-weight: 600;
+            color: #16D9D9;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .answer-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #problem-answer-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 14px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        #problem-answer-input:focus {
+            outline: none;
+            border-color: #12B3B3;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        #submit-answer-btn {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            border: none;
+            color: #0f3460;
+            padding: 14px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        #submit-answer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
+        }
+
+        #submit-answer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hint-btn, .skip-btn, .next-problem-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .hint-btn:hover, .skip-btn:hover, .next-problem-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #12B3B3;
+        }
+
+        .hint-btn { border-color: #FFC107; color: #FFC107; }
+        .hint-btn:hover { background: rgba(255, 193, 7, 0.2); }
+
+        .next-problem-btn {
+            background: linear-gradient(135deg, #12B3B3, #16D9D9);
+            border: none;
+            color: white;
+        }
+        .next-problem-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(18, 179, 179, 0.4);
+        }
+
+        #feedback-display {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #feedback-display.correct {
+            background: rgba(67, 233, 123, 0.2);
+            border: 2px solid #43e97b;
+            color: #43e97b;
+        }
+
+        #feedback-display.incorrect {
+            background: rgba(245, 87, 108, 0.2);
+            border: 2px solid #f5576c;
+            color: #f5576c;
+        }
+
+        #feedback-display.hint {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #FFC107;
+            color: #FFC107;
+        }
+
+        .feedback-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .feedback-text {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
         @media (max-width: 1200px) {
             .mastery-container {
                 grid-template-columns: 1fr 300px;
@@ -293,6 +475,44 @@
 
         <!-- Chat Section (Center) -->
         <div class="chat-section">
+            <!-- Problem Display Area -->
+            <div id="problem-display-container" style="display: none;">
+                <div class="phase-indicator">
+                    <span class="phase-badge" id="current-phase">Launch</span>
+                    <span class="problem-number" id="problem-counter">Problem 1 of 5</span>
+                </div>
+
+                <div id="problem-statement">
+                    <p>Loading problem...</p>
+                </div>
+
+                <div class="answer-area">
+                    <input
+                        type="text"
+                        id="problem-answer-input"
+                        placeholder="Type your answer here..."
+                        autocomplete="off"
+                    >
+                    <button id="submit-answer-btn">
+                        <i class="fas fa-check"></i> Submit
+                    </button>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="hint-btn" id="request-hint-btn">
+                        <i class="fas fa-lightbulb"></i> Get Hint
+                    </button>
+                    <button class="next-problem-btn" id="next-problem-btn" style="display: none;">
+                        <i class="fas fa-arrow-right"></i> Next Problem
+                    </button>
+                </div>
+
+                <div id="feedback-display">
+                    <span class="feedback-icon"></span>
+                    <span class="feedback-text"></span>
+                </div>
+            </div>
+
             <div id="mastery-chat-box">
                 <!-- Messages will appear here -->
             </div>
@@ -415,8 +635,11 @@
 
                 updateProgress(completed, badge.requiredProblems);
 
-                // Send welcome message
-                appendMessage('ai', `Welcome to ${badge.badgeName}! Let's start working on ${badge.skillId.replace(/-/g, ' ')}. Ready to begin?`);
+                // Send welcome message and start practice
+                appendMessage('ai', `Welcome to ${badge.badgeName}! Let's start working on ${badge.skillId.replace(/-/g, ' ')}.`);
+
+                // Auto-start practice after a brief delay
+                setTimeout(() => startPractice(), 1500);
 
             } catch (error) {
                 console.error('Initialization error:', error);
@@ -524,7 +747,260 @@
             }
         }
 
+        // ============================================================================
+        // PROBLEM-SOLVING INTERFACE
+        // ============================================================================
+
+        let currentProblem = null;
+        let currentPhase = 'launch';
+
+        // Load next problem from backend
+        async function loadNextProblem() {
+            try {
+                const badge = currentUser.masteryProgress.activeBadge;
+                const response = await fetch('/api/mastery/next-phase-problem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        skillId: badge.skillId,
+                        currentPhase: currentPhase,
+                        tier: badge.tier || 1
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load problem');
+                }
+
+                const data = await response.json();
+                currentProblem = data.problem;
+                currentPhase = data.phase || currentPhase;
+
+                displayProblem(currentProblem);
+                updatePhaseDisplay(currentPhase);
+
+                // Show problem container, hide next button
+                document.getElementById('problem-display-container').style.display = 'block';
+                document.getElementById('next-problem-btn').style.display = 'none';
+                document.getElementById('feedback-display').style.display = 'none';
+                document.getElementById('submit-answer-btn').disabled = false;
+                document.getElementById('problem-answer-input').value = '';
+
+            } catch (error) {
+                console.error('Error loading problem:', error);
+                appendMessage('ai', 'Having trouble loading the next problem. Let me try again...');
+            }
+        }
+
+        // Display problem in UI
+        function displayProblem(problem) {
+            const problemStatement = document.getElementById('problem-statement');
+
+            if (problem.type === 'multiple-choice') {
+                let html = `<p>${problem.question}</p>`;
+                html += '<div style="margin-top: 15px;">';
+                problem.choices.forEach((choice, idx) => {
+                    html += `<div style="margin: 8px 0;">
+                        <strong>${String.fromCharCode(65 + idx)}.</strong> ${choice}
+                    </div>`;
+                });
+                html += '</div>';
+                problemStatement.innerHTML = html;
+                document.getElementById('problem-answer-input').placeholder = 'Type A, B, C, or D...';
+            } else if (problem.type === 'expression' || problem.type === 'equation') {
+                problemStatement.innerHTML = `
+                    <p>${problem.question}</p>
+                    ${problem.expression ? `<div class="math-expression">${problem.expression}</div>` : ''}
+                `;
+                document.getElementById('problem-answer-input').placeholder = 'Type your answer...';
+            } else {
+                problemStatement.innerHTML = `<p>${problem.question || problem.problem || 'Solve this problem'}</p>`;
+                document.getElementById('problem-answer-input').placeholder = 'Type your answer...';
+            }
+
+            // Update problem counter
+            const badge = currentUser.masteryProgress.activeBadge;
+            const completed = (badge.problemsCompleted || 0) + 1;
+            document.getElementById('problem-counter').textContent = `Problem ${completed} of ${badge.requiredProblems}`;
+        }
+
+        // Update phase display
+        function updatePhaseDisplay(phase) {
+            const phaseBadge = document.getElementById('current-phase');
+            const phaseNames = {
+                'launch': 'Launch',
+                'i-do': 'I Do (Watch)',
+                'we-do': 'We Do (Together)',
+                'you-do': 'You Do (Practice)',
+                'mastery-check': 'Mastery Check'
+            };
+
+            phaseBadge.textContent = phaseNames[phase] || phase;
+            phaseBadge.className = 'phase-badge ' + phase;
+        }
+
+        // Submit answer
+        async function submitAnswer() {
+            const answerInput = document.getElementById('problem-answer-input');
+            const answer = answerInput.value.trim();
+
+            if (!answer) {
+                alert('Please enter an answer');
+                return;
+            }
+
+            if (!currentProblem) {
+                alert('No active problem');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/mastery/record-phase-attempt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        problemId: currentProblem.id || currentProblem.problemId,
+                        studentAnswer: answer,
+                        phase: currentPhase
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit answer');
+                }
+
+                const result = await response.json();
+
+                // Update current user progress
+                if (result.masteryProgress) {
+                    currentUser.masteryProgress = result.masteryProgress;
+
+                    const badge = currentUser.masteryProgress.activeBadge;
+                    const completed = badge.problemsCompleted || 0;
+                    const correct = badge.problemsCorrect || 0;
+                    const accuracy = completed > 0 ? Math.round((correct / completed) * 100) : 0;
+
+                    updateProgress(completed, badge.requiredProblems);
+                    document.getElementById('sidebar-problems').textContent = `${completed}/${badge.requiredProblems}`;
+                    document.getElementById('sidebar-accuracy').textContent = `${accuracy}%`;
+                }
+
+                displayFeedback(result.correct, result.feedback, result.correctAnswer);
+
+                // Disable submit button after answer
+                document.getElementById('submit-answer-btn').disabled = true;
+
+                // Check if badge is complete
+                if (result.badgeComplete) {
+                    setTimeout(() => showBadgeCompletion(result), 2000);
+                } else {
+                    // Show next problem button
+                    document.getElementById('next-problem-btn').style.display = 'inline-block';
+                }
+
+            } catch (error) {
+                console.error('Error submitting answer:', error);
+                alert('Error submitting answer. Please try again.');
+            }
+        }
+
+        // Display feedback
+        function displayFeedback(isCorrect, feedback, correctAnswer) {
+            const feedbackDisplay = document.getElementById('feedback-display');
+            const icon = feedbackDisplay.querySelector('.feedback-icon');
+            const text = feedbackDisplay.querySelector('.feedback-text');
+
+            feedbackDisplay.className = '';
+            feedbackDisplay.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+            icon.innerHTML = isCorrect ? '✅' : '❌';
+
+            let feedbackText = feedback || (isCorrect ? 'Correct!' : 'Not quite right.');
+            if (!isCorrect && correctAnswer) {
+                feedbackText += ` The correct answer is: ${correctAnswer}`;
+            }
+
+            text.textContent = feedbackText;
+            feedbackDisplay.style.display = 'flex';
+            feedbackDisplay.style.alignItems = 'center';
+        }
+
+        // Request hint
+        async function requestHint() {
+            if (!currentProblem) {
+                alert('No active problem');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/mastery/request-hint', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        problemId: currentProblem.id || currentProblem.problemId,
+                        currentAnswer: document.getElementById('problem-answer-input').value.trim(),
+                        phase: currentPhase
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to get hint');
+                }
+
+                const result = await response.json();
+
+                // Display hint in feedback area
+                const feedbackDisplay = document.getElementById('feedback-display');
+                const icon = feedbackDisplay.querySelector('.feedback-icon');
+                const text = feedbackDisplay.querySelector('.feedback-text');
+
+                feedbackDisplay.className = 'hint';
+                icon.innerHTML = '💡';
+                text.textContent = result.hint || 'Try breaking the problem into smaller steps.';
+                feedbackDisplay.style.display = 'flex';
+                feedbackDisplay.style.alignItems = 'center';
+
+            } catch (error) {
+                console.error('Error requesting hint:', error);
+                appendMessage('ai', 'Let me help you with that... ' + (error.message || 'Try thinking about what the problem is asking.'));
+            }
+        }
+
+        // Show badge completion
+        function showBadgeCompletion(result) {
+            const badge = currentUser.masteryProgress.activeBadge;
+
+            // Hide problem display
+            document.getElementById('problem-display-container').style.display = 'none';
+
+            // Show completion message
+            appendMessage('ai', `🎉 Congratulations! You've earned the ${badge.badgeName} badge!`);
+            appendMessage('ai', `You completed ${badge.problemsCompleted} problems with ${Math.round((badge.problemsCorrect / badge.problemsCompleted) * 100)}% accuracy.`);
+            appendMessage('ai', 'Redirecting you back to the Badge Map...');
+
+            // Redirect after 3 seconds
+            setTimeout(() => {
+                window.location.href = '/badge-map.html';
+            }, 3000);
+        }
+
+        // Start practicing - load first problem
+        function startPractice() {
+            appendMessage('ai', 'Great! Let\'s begin with your first problem.');
+            setTimeout(() => loadNextProblem(), 1000);
+        }
+
         // Event listeners
+        document.getElementById('submit-answer-btn').addEventListener('click', submitAnswer);
+        document.getElementById('problem-answer-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitAnswer();
+        });
+        document.getElementById('request-hint-btn').addEventListener('click', requestHint);
+        document.getElementById('next-problem-btn').addEventListener('click', loadNextProblem);
+
         document.getElementById('mastery-send-btn').addEventListener('click', sendMessage);
         document.getElementById('mastery-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();

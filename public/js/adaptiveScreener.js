@@ -71,7 +71,7 @@ elements.answerInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') submitAnswer();
 });
 elements.continueBtn.addEventListener('click', () => {
-  window.location.href = '/chat.html';  // Move to interview phase
+  window.location.href = '/badge-map.html';  // Move to badge selection
 });
 elements.retakeBtn.addEventListener('click', () => {
   window.location.reload();
@@ -116,7 +116,7 @@ async function startScreener() {
       // Handle "already completed" case (403 Forbidden)
       if (error.alreadyCompleted) {
         alert(error.message || 'You have already completed the placement assessment.');
-        window.location.href = '/chat.html';
+        window.location.href = '/badge-map.html';
         return;
       }
 
@@ -335,7 +335,7 @@ async function handleCompletion(data) {
 
       // Auto-redirect after 3 seconds
       setTimeout(() => {
-        window.location.href = '/chat.html';
+        window.location.href = '/badge-map.html';
       }, 3000);
 
     } else {

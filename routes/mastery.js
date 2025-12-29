@@ -1944,4 +1944,93 @@ router.post('/update-pattern-progress', isAuthenticated, async (req, res) => {
   }
 });
 
+/**
+ * Select a pattern badge to work on
+ * POST /api/mastery/select-pattern
+ */
+router.post('/select-pattern', isAuthenticated, async (req, res) => {
+  try {
+    const { patternId } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const pattern = getPatternBadge(patternId);
+    if (!pattern) {
+      return res.status(404).json({ error: 'Pattern not found' });
+    }
+
+    // Get current tier and next milestone
+    const currentTier = getCurrentTier(patternId, user.skillMastery);
+    const nextMilestone = getNextMilestone(patternId, currentTier, user.skillMastery);
+
+    if (!nextMilestone) {
+      return res.status(400).json({ error: 'No available milestones for this pattern' });
+    }
+
+    // Find the tier containing this milestone
+    const tier = pattern.tiers.find(t =>
+      t.milestones.some(m => m.milestoneId === nextMilestone.milestoneId)
+    );
+
+    if (!tier) {
+      return res.status(404).json({ error: 'Tier not found' });
+    }
+
+    // Set up active badge with pattern milestone info
+    if (!user.masteryProgress) {
+      user.masteryProgress = { activeBadge: null, attempts: [] };
+    }
+
+    user.masteryProgress.activeBadge = {
+      badgeId: `${patternId}-${nextMilestone.milestoneId}`,
+      badgeName: `${pattern.name}: ${nextMilestone.name}`,
+      skillId: nextMilestone.skillIds[0],  // Primary skill
+      tier: tier.tier,
+      description: nextMilestone.description,
+      startedAt: new Date(),
+      problemsCompleted: 0,
+      problemsCorrect: 0,
+      requiredProblems: nextMilestone.requiredProblems || 10,
+      requiredAccuracy: nextMilestone.requiredAccuracy || 0.80,
+      currentPhase: 'launch',
+      phaseHistory: [],
+      hintsUsed: 0,
+      misconceptionsAddressed: [],
+      // Pattern-specific fields
+      isPatternBadge: true,
+      patternId: patternId,
+      milestoneId: nextMilestone.milestoneId,
+      tierName: tier.name,
+      allSkillIds: nextMilestone.skillIds
+    };
+
+    await user.save();
+
+    res.json({
+      success: true,
+      pattern: {
+        patternId,
+        name: pattern.name,
+        icon: pattern.icon,
+        color: pattern.color
+      },
+      milestone: {
+        milestoneId: nextMilestone.milestoneId,
+        name: nextMilestone.name,
+        description: nextMilestone.description,
+        tier: tier.tier,
+        tierName: tier.name
+      },
+      message: `Started working on ${pattern.name}: ${nextMilestone.name}!`
+    });
+
+  } catch (error) {
+    console.error('Error selecting pattern:', error);
+    res.status(500).json({ error: 'Failed to select pattern badge' });
+  }
+});
+
 module.exports = router;

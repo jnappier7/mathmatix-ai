@@ -1090,7 +1090,7 @@
         });
 
         if (response.ok) {
-          window.location.href = '/mastery-mode.html';
+          window.location.href = '/mastery-chat.html';
         } else {
           alert('Failed to select badge. Please try again.');
         }
@@ -1174,10 +1174,26 @@
       return '⭐ Available';
     }
 
-    function selectPattern(patternId) {
-      console.log('Selected pattern:', patternId);
-      // TODO: Navigate to pattern detail view or start working on pattern
-      alert(`Pattern badge system coming soon! You selected: ${patternId}`);
+    async function selectPattern(patternId) {
+      try {
+        const response = await fetch('/api/mastery/select-pattern', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ patternId })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Pattern selected:', data);
+          window.location.href = '/mastery-chat.html';
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to select pattern. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error selecting pattern:', error);
+        alert('An error occurred. Please try again.');
+      }
     }
 
     // Load daily quests
