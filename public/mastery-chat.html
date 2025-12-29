@@ -757,16 +757,10 @@
         // Load next problem from backend
         async function loadNextProblem() {
             try {
-                const badge = currentUser.masteryProgress.activeBadge;
                 const response = await fetch('/api/mastery/next-phase-problem', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        skillId: badge.skillId,
-                        currentPhase: currentPhase,
-                        tier: badge.tier || 1
-                    })
+                    credentials: 'include'
                 });
 
                 if (!response.ok) {
