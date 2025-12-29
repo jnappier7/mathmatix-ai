@@ -1159,23 +1159,29 @@
         'accumulation': 'fa-layer-group'
       };
 
-      container.innerHTML = patterns.map(pattern => `
-        <div class="pattern-badge" onclick="selectPattern('${pattern.patternId}')">
-          <div class="pattern-badge-circle pattern-${pattern.patternId}">
-            <i class="fas ${iconMap[pattern.patternId] || 'fa-star'} pattern-badge-icon"></i>
-          </div>
-          <div class="pattern-badge-name">${pattern.name}</div>
-          <div class="pattern-badge-tier">Tier ${pattern.currentTier || 0}</div>
-          ${pattern.progress !== undefined ? `
-            <div class="pattern-badge-progress">
-              <div class="pattern-badge-progress-fill" style="width: ${pattern.progress}%"></div>
+      container.innerHTML = patterns.map(pattern => {
+        const isLocked = !pattern.currentTier || pattern.currentTier === 0;
+        const clickHandler = isLocked ? '' : `onclick="selectPattern('${pattern.patternId}')"`;
+        const cursorStyle = isLocked ? 'cursor: not-allowed; opacity: 0.5;' : 'cursor: pointer;';
+
+        return `
+          <div class="pattern-badge" ${clickHandler} style="${cursorStyle}">
+            <div class="pattern-badge-circle pattern-${pattern.patternId}">
+              <i class="fas ${iconMap[pattern.patternId] || 'fa-star'} pattern-badge-icon"></i>
             </div>
-          ` : ''}
-          <div class="pattern-badge-status ${pattern.status || 'locked'}">
-            ${getPatternStatusText(pattern.status, pattern.currentTier)}
+            <div class="pattern-badge-name">${pattern.name}</div>
+            <div class="pattern-badge-tier">Tier ${pattern.currentTier || 0}</div>
+            ${pattern.progress !== undefined && !isLocked ? `
+              <div class="pattern-badge-progress">
+                <div class="pattern-badge-progress-fill" style="width: ${pattern.progress}%"></div>
+              </div>
+            ` : ''}
+            <div class="pattern-badge-status ${pattern.status || 'locked'}">
+              ${getPatternStatusText(pattern.status, pattern.currentTier)}
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function getPatternStatusText(status, tier) {
