@@ -533,6 +533,114 @@
       text-align: center;
     }
 
+    /* FEATURED MATH BLAST CARD */
+    .featured-game-card {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(255, 107, 107, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .featured-game-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .featured-game-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(255, 107, 107, 0.4);
+    }
+
+    .featured-game-icon {
+      font-size: 48px;
+      text-align: center;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .featured-game-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: white;
+      margin: 0 0 8px 0;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-game-subtitle {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.95);
+      margin: 0 0 16px 0;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-game-cta {
+      background: white;
+      color: #FF6B6B;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+      transition: all 0.2s;
+    }
+
+    .featured-game-card:hover .featured-game-cta {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .featured-game-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 1;
+    }
+
     /* Scrollbar styling */
     .left-sidebar::-webkit-scrollbar,
     .center-content::-webkit-scrollbar,
@@ -805,6 +913,21 @@
           </div>
         </div>
 
+        <!-- FEATURED: MATH BLAST GAME -->
+        <div class="sidebar-section" style="background: linear-gradient(135deg, rgba(255,107,107,0.05) 0%, rgba(255,142,83,0.05) 100%);">
+          <a href="/fact-fluency-practice.html" class="featured-game-card">
+            <div class="featured-game-badge">🔥 HOT</div>
+            <div class="featured-game-icon">🎮</div>
+            <h3 class="featured-game-title">Math Blast!</h3>
+            <p class="featured-game-subtitle">Master facts at lightning speed</p>
+            <div class="featured-game-cta">
+              <i class="fas fa-rocket"></i>
+              <span>Play Now</span>
+              <i class="fas fa-bolt"></i>
+            </div>
+          </a>
+        </div>
+
         <div class="sidebar-section">
           <h3><span>📈</span> Progress Tools</h3>
 
@@ -818,10 +941,6 @@
 
           <a href="/learning-curves.html" class="progress-tool-link">
             <i class="fas fa-chart-area"></i> Learning Curves
-          </a>
-
-          <a href="/fact-fluency-practice.html" class="progress-tool-link">
-            <i class="fas fa-bolt"></i> Fact Fluency
           </a>
         </div>
       </aside>
