@@ -214,14 +214,14 @@ async function startOperationPlacement() {
     gameState.placement.correct = 0;
     gameState.placement.currentProblemIndex = 0;
 
-    // Generate mixed problems for this operation
+    // Generate MIXED problems from ALL families for this operation (not just one random family)
     const response = await fetch('/api/fact-fluency/generate-problems', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             operation,
-            familyName: gameState.families[operation][Math.floor(Math.random() * gameState.families[operation].length)].familyName,
-            count: 100  // Generate plenty of problems
+            mixed: true,  // Use mixed problems from all families
+            count: 100    // Generate plenty of problems
         })
     });
 
@@ -371,21 +371,38 @@ function showBreakScreen(completedOperation, accuracy) {
 
 async function finishPlacement() {
     // Save placement results
-    const response = await fetch('/api/fact-fluency/placement', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            results: gameState.placement.results
-        })
-    });
+    try {
+        const response = await fetch('/api/fact-fluency/placement', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                results: gameState.placement.results
+            })
+        });
 
-    const data = await response.json();
-    if (data.success) {
-        // Reload progress
-        await loadProgress();
+        if (!response.ok) {
+            // Handle auth or server errors
+            if (response.status === 401) {
+                alert('Session expired. Please log in again.');
+                window.location.href = '/login.html';
+                return;
+            }
+            throw new Error(`Server error: ${response.status}`);
+        }
 
-        // Show results
-        showPlacementResults();
+        const data = await response.json();
+        if (data.success) {
+            // Reload progress
+            await loadProgress();
+
+            // Show results
+            showPlacementResults();
+        } else {
+            throw new Error(data.error || 'Failed to save placement results');
+        }
+    } catch (error) {
+        console.error('Error finishing placement:', error);
+        alert('Unable to save your results. Please try again or contact support.');
     }
 }
 

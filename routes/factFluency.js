@@ -139,6 +139,31 @@ function generateProblems(operation, familyConfig, count = 20) {
   return problems;
 }
 
+// Generate MIXED problems from ALL families for an operation (for placement tests)
+function generateMixedProblems(operation, count = 100) {
+  const problems = [];
+  const families = FACT_FAMILIES[operation];
+
+  if (!families || families.length === 0) return problems;
+
+  // Generate equal number of problems from each family
+  const problemsPerFamily = Math.ceil(count / families.length);
+
+  families.forEach(family => {
+    const familyProblems = generateProblems(operation, family, problemsPerFamily);
+    problems.push(...familyProblems);
+  });
+
+  // Shuffle the problems to mix them up
+  for (let i = problems.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [problems[i], problems[j]] = [problems[j], problems[i]];
+  }
+
+  // Return exactly the requested count
+  return problems.slice(0, count);
+}
+
 // GET /api/fact-fluency/families - Get all fact families
 router.get('/families', async (req, res) => {
   try {
@@ -296,14 +321,24 @@ router.post('/placement', async (req, res) => {
 // POST /api/fact-fluency/generate-problems - Generate practice problems
 router.post('/generate-problems', async (req, res) => {
   try {
-    const { operation, familyName, count = 20 } = req.body;
+    const { operation, familyName, count = 20, mixed = false } = req.body;
 
-    const familyConfig = FACT_FAMILIES[operation]?.find(f => f.familyName === familyName);
-    if (!familyConfig) {
-      return res.status(400).json({ success: false, error: 'Invalid fact family' });
+    let problems;
+
+    if (mixed) {
+      // Generate mixed problems from ALL families for this operation (placement test)
+      if (!FACT_FAMILIES[operation]) {
+        return res.status(400).json({ success: false, error: 'Invalid operation' });
+      }
+      problems = generateMixedProblems(operation, count);
+    } else {
+      // Generate problems for a specific family (practice mode)
+      const familyConfig = FACT_FAMILIES[operation]?.find(f => f.familyName === familyName);
+      if (!familyConfig) {
+        return res.status(400).json({ success: false, error: 'Invalid fact family' });
+      }
+      problems = generateProblems(operation, familyConfig, count);
     }
-
-    const problems = generateProblems(operation, familyConfig, count);
 
     res.json({ success: true, problems });
   } catch (error) {
