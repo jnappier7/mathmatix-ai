@@ -24,6 +24,8 @@ const gameState = {
         startTime: null,
         attempted: 0,
         correct: 0,
+        streak: 0,
+        maxStreak: 0,
         responses: [],
         timer: null
     },
@@ -228,22 +230,7 @@ function initializeEventListeners() {
         if (e.key === 'Enter') submitPlacementAnswer();
     });
 
-    // Game Screen
-    document.getElementById('gameAnswer').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') submitGameAnswer();
-    });
-    document.getElementById('gameAnswer').addEventListener('input', () => {
-        // Auto-submit if answer looks complete (for single digit answers)
-        const input = document.getElementById('gameAnswer');
-        if (input.value.length >= 1 && !input.value.includes('-')) {
-            // Small delay to allow double-digit entry
-            setTimeout(() => {
-                if (input.value.length > 0) {
-                    submitGameAnswer();
-                }
-            }, 300);
-        }
-    });
+    // Game Screen - shooter mode uses click handlers on asteroids (no text input)
     document.getElementById('endSessionBtn').addEventListener('click', endPracticeSession);
 
     // Results Screen
@@ -579,18 +566,21 @@ async function startPracticeSession(operation, familyName) {
         startTime: Date.now(),
         attempted: 0,
         correct: 0,
+        streak: 0,
+        maxStreak: 0,
         responses: [],
         timer: null
     };
 
-    // Generate problems
+    // Generate problems with trap answers for shooter mode
     const response = await fetch('/api/fact-fluency/generate-problems', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             operation,
             familyName,
-            count: 50
+            count: 50,
+            includeTraps: true  // Request trap answers for multiple choice
         })
     });
 
@@ -607,26 +597,206 @@ async function startPracticeSession(operation, familyName) {
     document.getElementById('gameAccuracy').textContent = '100';
     document.getElementById('gameRate').textContent = '0';
     document.getElementById('gameTimer').textContent = '0';
+    document.getElementById('gameStreak').textContent = '0';
 
-    // Show first problem
-    displayGameProblem();
+    // Show first problem in shooter mode
+    displayShooterProblem();
 
     // Start timer
     gameState.practice.timer = setInterval(updateGameTimer, 1000);
+}
 
-    // Focus answer input
-    document.getElementById('gameAnswer').focus();
+// Display problem in shooter mode with multiple asteroids
+function displayShooterProblem() {
+    const problem = gameState.practice.problems[gameState.practice.currentProblemIndex];
+    if (!problem) return;
+
+    // Update problem prompt
+    document.getElementById('gameProblem').textContent = problem.problem + ' = ?';
+
+    // Create answer choices: 1 correct + 3 traps
+    const answers = [problem.answer, ...problem.trapAnswers];
+
+    // Shuffle answers
+    for (let i = answers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [answers[i], answers[j]] = [answers[j], answers[i]];
+    }
+
+    // Clear existing asteroids
+    const container = document.getElementById('asteroidsContainer');
+    container.innerHTML = '';
+
+    // Create asteroids at random positions
+    const positions = [
+        { top: '20%', left: '15%' },
+        { top: '20%', right: '15%' },
+        { bottom: '30%', left: '20%' },
+        { bottom: '30%', right: '20%' }
+    ];
+
+    answers.forEach((answer, index) => {
+        const asteroid = document.createElement('div');
+        asteroid.className = 'asteroid';
+        asteroid.style.top = positions[index].top || 'auto';
+        asteroid.style.bottom = positions[index].bottom || 'auto';
+        asteroid.style.left = positions[index].left || 'auto';
+        asteroid.style.right = positions[index].right || 'auto';
+
+        // Add slight random offset for variety
+        const offsetX = (Math.random() - 0.5) * 40;
+        const offsetY = (Math.random() - 0.5) * 40;
+        asteroid.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+
+        const answerDisplay = document.createElement('div');
+        answerDisplay.className = 'answer-display';
+        answerDisplay.textContent = answer;
+        asteroid.appendChild(answerDisplay);
+
+        // Add click handler
+        asteroid.addEventListener('click', () => handleAsteroidClick(answer, asteroid, problem.answer));
+
+        container.appendChild(asteroid);
+    });
 }
 
 function displayGameProblem() {
-    const problem = gameState.practice.problems[gameState.practice.currentProblemIndex];
-    if (problem) {
-        document.getElementById('gameProblem').textContent = problem.problem;
-        document.getElementById('gameAnswer').value = '';
+    // Legacy function - keeping for compatibility
+    displayShooterProblem();
+}
 
-        // Reset asteroid animation
-        const asteroid = document.getElementById('asteroid');
-        asteroid.classList.remove('explode', 'shake');
+// Handle clicking an asteroid in shooter mode
+function handleAsteroidClick(selectedAnswer, asteroidElement, correctAnswer) {
+    // Prevent multiple clicks
+    const container = document.getElementById('asteroidsContainer');
+    const allAsteroids = container.querySelectorAll('.asteroid');
+    allAsteroids.forEach(a => a.style.pointerEvents = 'none');
+
+    // Fire laser beam
+    fireLaser(asteroidElement);
+
+    // Check if correct
+    const correct = selectedAnswer === correctAnswer;
+    const problem = gameState.practice.problems[gameState.practice.currentProblemIndex];
+
+    gameState.practice.attempted++;
+
+    if (correct) {
+        gameState.practice.correct++;
+        gameState.practice.streak++;
+        if (gameState.practice.streak > gameState.practice.maxStreak) {
+            gameState.practice.maxStreak = gameState.practice.streak;
+        }
+
+        // Explosion effect
+        asteroidElement.classList.add('explode');
+        showFeedback(true);
+        playSound('correct');
+
+        // Update streak display
+        const streakEl = document.getElementById('gameStreak');
+        streakEl.textContent = gameState.practice.streak;
+        if (gameState.practice.streak >= 5) {
+            streakEl.classList.add('high-streak');
+        }
+    } else {
+        gameState.practice.streak = 0; // Reset streak on miss
+
+        // Wrong hit effect
+        asteroidElement.classList.add('wrong-hit');
+        spawnDebris(asteroidElement);
+        showFeedback(false, correctAnswer);
+        playSound('incorrect');
+
+        // Reset streak display
+        const streakEl = document.getElementById('gameStreak');
+        streakEl.textContent = '0';
+        streakEl.classList.remove('high-streak');
+    }
+
+    // Record response
+    gameState.practice.responses.push({
+        problem: problem.problem,
+        answer: correctAnswer,
+        userAnswer: selectedAnswer,
+        correct,
+        responseTime: Date.now() - gameState.practice.startTime
+    });
+
+    // Update stats
+    updateGameStats();
+
+    // Move to next problem after delay
+    gameState.practice.currentProblemIndex++;
+    if (gameState.practice.currentProblemIndex < gameState.practice.problems.length) {
+        setTimeout(() => {
+            displayShooterProblem();
+        }, correct ? 800 : 1200);
+    } else {
+        // Out of problems, end session
+        setTimeout(() => endPracticeSession(), 1500);
+    }
+}
+
+// Fire laser beam from ship to asteroid
+function fireLaser(targetAsteroid) {
+    const ship = document.querySelector('.shooter-ship');
+    const spaceBackground = document.querySelector('.space-background');
+
+    if (!ship || !targetAsteroid) return;
+
+    const shipRect = ship.getBoundingClientRect();
+    const targetRect = targetAsteroid.getBoundingClientRect();
+    const spaceRect = spaceBackground.getBoundingClientRect();
+
+    const laser = document.createElement('div');
+    laser.className = 'laser-beam';
+
+    // Position laser at ship location (relative to space background)
+    const shipX = shipRect.left + shipRect.width / 2 - spaceRect.left;
+    const shipY = shipRect.top - spaceRect.top;
+
+    laser.style.left = `${shipX}px`;
+    laser.style.bottom = `${spaceRect.height - shipY}px`;
+
+    spaceBackground.appendChild(laser);
+
+    // Remove laser after animation
+    setTimeout(() => laser.remove(), 300);
+}
+
+// Spawn debris particles from wrong asteroid
+function spawnDebris(asteroidElement) {
+    const spaceBackground = document.querySelector('.space-background');
+    const asteroidRect = asteroidElement.getBoundingClientRect();
+    const spaceRect = spaceBackground.getBoundingClientRect();
+
+    // Create 5-8 debris particles
+    const count = 5 + Math.floor(Math.random() * 4);
+    for (let i = 0; i < count; i++) {
+        const debris = document.createElement('div');
+        debris.className = 'debris';
+
+        // Position at asteroid center (relative to space background)
+        const centerX = asteroidRect.left + asteroidRect.width / 2 - spaceRect.left;
+        const centerY = asteroidRect.top + asteroidRect.height / 2 - spaceRect.top;
+
+        debris.style.left = `${centerX}px`;
+        debris.style.top = `${centerY}px`;
+
+        // Random direction
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 50 + Math.random() * 50;
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+
+        debris.style.setProperty('--debris-x', `${dx}px`);
+        debris.style.setProperty('--debris-y', `${dy}px`);
+
+        spaceBackground.appendChild(debris);
+
+        // Remove after animation
+        setTimeout(() => debris.remove(), 1500);
     }
 }
 
@@ -674,24 +844,19 @@ function submitGameAnswer() {
 
 function showFeedback(correct, correctAnswer) {
     const feedback = document.getElementById('feedbackDisplay');
-    const asteroid = document.getElementById('asteroid');
 
     if (correct) {
-        feedback.textContent = '✓ Correct!';
+        feedback.textContent = '💥 BLAST! +1 Streak!';
         feedback.className = 'feedback-display correct';
-        asteroid.classList.add('explode');
-        playSound('correct');
     } else {
-        feedback.textContent = `✗ Incorrect (${correctAnswer})`;
+        feedback.textContent = `✗ Miss! Correct: ${correctAnswer}`;
         feedback.className = 'feedback-display incorrect';
-        asteroid.classList.add('shake');
-        playSound('incorrect');
     }
 
     setTimeout(() => {
         feedback.textContent = '';
         feedback.className = 'feedback-display';
-    }, 800);
+    }, correct ? 800 : 1200);
 }
 
 function updateGameStats() {

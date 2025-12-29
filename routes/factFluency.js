@@ -75,8 +75,63 @@ const MASTERY_CRITERIA = {
   minRateHigh: 60        // 60 digits correct per minute (grades 9+)
 };
 
+// Generate trap answers (distractors) for multiple choice
+function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3) {
+  const traps = new Set();
+
+  while (traps.size < count) {
+    let trap;
+    const trapType = Math.floor(Math.random() * 5);
+
+    if (operation === 'addition') {
+      switch(trapType) {
+        case 0: trap = correctAnswer + 1; break; // Off by one
+        case 1: trap = correctAnswer - 1; break; // Off by one
+        case 2: trap = num1 - num2; break; // Wrong operation (subtraction)
+        case 3: trap = num1 * num2; break; // Wrong operation (multiplication)
+        case 4: trap = Math.abs(num1 - num2); break; // Absolute difference
+        default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+      }
+    } else if (operation === 'subtraction') {
+      switch(trapType) {
+        case 0: trap = correctAnswer + 1; break; // Off by one
+        case 1: trap = correctAnswer - 1; break; // Off by one
+        case 2: trap = num1 + num2; break; // Wrong operation (addition)
+        case 3: trap = num2 - num1; break; // Reversed operands
+        case 4: trap = -(num1 - num2); break; // Sign error
+        default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+      }
+    } else if (operation === 'multiplication') {
+      switch(trapType) {
+        case 0: trap = correctAnswer + num1; break; // Added instead of multiplied
+        case 1: trap = correctAnswer + num2; break; // Added instead of multiplied
+        case 2: trap = num1 + num2; break; // Wrong operation
+        case 3: trap = correctAnswer + 1; break; // Off by one
+        case 4: trap = correctAnswer - num2; break; // Common mistake
+        default: trap = correctAnswer + Math.floor(Math.random() * 10) + 1;
+      }
+    } else if (operation === 'division') {
+      switch(trapType) {
+        case 0: trap = correctAnswer + 1; break; // Off by one
+        case 1: trap = correctAnswer - 1; break; // Off by one
+        case 2: trap = num1 - num2; break; // Subtracted instead
+        case 3: trap = num1; break; // Forgot to divide
+        case 4: trap = num2; break; // Used divisor
+        default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+      }
+    }
+
+    // Ensure trap is positive, different from correct answer, and reasonable
+    if (trap > 0 && trap !== correctAnswer && trap < 200 && !traps.has(trap)) {
+      traps.add(trap);
+    }
+  }
+
+  return Array.from(traps);
+}
+
 // Generate problems for a specific fact family
-function generateProblems(operation, familyConfig, count = 20) {
+function generateProblems(operation, familyConfig, count = 20, includeTraps = false) {
   const problems = [];
   const { familyName, range, addend, subtrahend, factor, divisor, special } = familyConfig;
 
@@ -133,14 +188,21 @@ function generateProblems(operation, familyConfig, count = 20) {
       problem = `${num1} ÷ ${num2}`;
     }
 
-    problems.push({ problem, answer });
+    const problemData = { problem, answer };
+
+    // Generate trap answers if requested (for shooter mode)
+    if (includeTraps) {
+      problemData.trapAnswers = generateTrapAnswers(operation, num1, num2, answer, 3);
+    }
+
+    problems.push(problemData);
   }
 
   return problems;
 }
 
 // Generate MIXED problems from ALL families for an operation (for placement tests)
-function generateMixedProblems(operation, count = 100) {
+function generateMixedProblems(operation, count = 100, includeTraps = false) {
   const problems = [];
   const families = FACT_FAMILIES[operation];
 
@@ -150,7 +212,7 @@ function generateMixedProblems(operation, count = 100) {
   const problemsPerFamily = Math.ceil(count / families.length);
 
   families.forEach(family => {
-    const familyProblems = generateProblems(operation, family, problemsPerFamily);
+    const familyProblems = generateProblems(operation, family, problemsPerFamily, includeTraps);
     problems.push(...familyProblems);
   });
 
@@ -321,7 +383,7 @@ router.post('/placement', async (req, res) => {
 // POST /api/fact-fluency/generate-problems - Generate practice problems
 router.post('/generate-problems', async (req, res) => {
   try {
-    const { operation, familyName, count = 20, mixed = false } = req.body;
+    const { operation, familyName, count = 20, mixed = false, includeTraps = false } = req.body;
 
     let problems;
 
@@ -330,14 +392,14 @@ router.post('/generate-problems', async (req, res) => {
       if (!FACT_FAMILIES[operation]) {
         return res.status(400).json({ success: false, error: 'Invalid operation' });
       }
-      problems = generateMixedProblems(operation, count);
+      problems = generateMixedProblems(operation, count, includeTraps);
     } else {
       // Generate problems for a specific family (practice mode)
       const familyConfig = FACT_FAMILIES[operation]?.find(f => f.familyName === familyName);
       if (!familyConfig) {
         return res.status(400).json({ success: false, error: 'Invalid fact family' });
       }
-      problems = generateProblems(operation, familyConfig, count);
+      problems = generateProblems(operation, familyConfig, count, includeTraps);
     }
 
     res.json({ success: true, problems });

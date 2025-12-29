@@ -350,14 +350,33 @@
     gap: 2rem;
 }
 
+/* Problem Header */
+.problem-header {
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.problem-prompt {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #00d4ff;
+    text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(0, 212, 255, 0.6); }
+    50% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.9); }
+}
+
 /* Space Background */
 .space-background {
     position: relative;
-    height: 400px;
+    height: 450px;
     background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
     border-radius: 20px;
     overflow: hidden;
-    margin: 2rem 0;
+    margin: 1.5rem 0;
 }
 
 .stars {
@@ -380,50 +399,144 @@
     50% { opacity: 1; }
 }
 
+/* Shooter Ship */
+.shooter-ship {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3rem;
+    animation: shipHover 2s ease-in-out infinite;
+    z-index: 10;
+}
+
+@keyframes shipHover {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+/* Asteroids Container */
+.asteroids-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* Individual Asteroid with Answer */
 .asteroid {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 300px;
+    width: 140px;
+    height: 140px;
     background: radial-gradient(circle at 30% 30%, #ff6b6b, #ee5a6f, #c44569);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 50px rgba(255, 107, 107, 0.5);
-    animation: float 3s ease-in-out infinite;
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+    cursor: crosshair;
+    transition: all 0.2s ease;
+    animation: asteroidFloat 3s ease-in-out infinite;
 }
 
-@keyframes float {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-    50% { transform: translate(-50%, -50%) translateY(-20px); }
+.asteroid:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 50px rgba(255, 107, 107, 0.8);
 }
 
-.asteroid .problem-display {
-    font-size: 3rem;
+.asteroid .answer-display {
+    font-size: 2.5rem;
+    font-weight: bold;
     color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    user-select: none;
 }
 
+@keyframes asteroidFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+/* Laser Beam Effect */
+.laser-beam {
+    position: absolute;
+    width: 4px;
+    height: 0;
+    background: linear-gradient(to top, #00ff87, #00d4ff);
+    box-shadow: 0 0 10px #00ff87, 0 0 20px #00d4ff;
+    animation: fireLaser 0.3s ease-out;
+    z-index: 5;
+}
+
+@keyframes fireLaser {
+    0% { height: 0; opacity: 1; }
+    100% { height: 100%; opacity: 0.5; }
+}
+
+/* Explosion Effect */
 .asteroid.explode {
-    animation: explode 0.5s ease-out forwards;
+    animation: explode 0.6s ease-out forwards;
 }
 
 @keyframes explode {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        background: radial-gradient(circle at 30% 30%, #ff6b6b, #ee5a6f, #c44569);
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.8;
+        background: radial-gradient(circle at 50% 50%, #ffff00, #ff8c00, #ff0000);
+        box-shadow: 0 0 80px rgba(255, 140, 0, 1);
+    }
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
 }
 
-.asteroid.shake {
-    animation: shake 0.3s ease-in-out;
+/* Wrong Hit - Debris Effect */
+.asteroid.wrong-hit {
+    animation: wrongShake 0.5s ease-in-out;
+    background: radial-gradient(circle at 30% 30%, #666, #555, #444);
 }
 
-@keyframes shake {
-    0%, 100% { transform: translate(-50%, -50%) translateX(0); }
-    25% { transform: translate(-50%, -50%) translateX(-10px); }
-    75% { transform: translate(-50%, -50%) translateX(10px); }
+@keyframes wrongShake {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px) rotate(-5deg); }
+    20%, 40%, 60%, 80% { transform: translateX(10px) rotate(5deg); }
+}
+
+/* Debris Particles */
+.debris {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #666;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: debris 1.5s ease-out forwards;
+}
+
+@keyframes debris {
+    0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    100% {
+        transform: translate(var(--debris-x), var(--debris-y)) scale(0);
+        opacity: 0;
+    }
+}
+
+/* Combo Streak Indicator */
+.stat-value.combo {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.stat-value.combo.high-streak {
+    color: #ff6b6b;
+    animation: pulse 0.5s ease-in-out infinite;
 }
 
 /* Answer Area */

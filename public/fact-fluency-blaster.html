@@ -214,6 +214,10 @@
 
                 <div class="game-stats">
                     <div class="stat">
+                        <span class="stat-label">Streak:</span>
+                        <span id="gameStreak" class="stat-value combo">0</span>🔥
+                    </div>
+                    <div class="stat">
                         <span class="stat-label">Time:</span>
                         <span id="gameTimer" class="stat-value">0</span>s
                     </div>
@@ -230,18 +234,25 @@
                 <button id="endSessionBtn" class="btn-secondary">End Session</button>
             </div>
 
-            <!-- Space-themed game area -->
+            <!-- Problem Display (centered above space) -->
+            <div class="problem-header">
+                <div class="problem-prompt" id="gameProblem">7 + 3 = ?</div>
+            </div>
+
+            <!-- Space-themed game area with multiple asteroids -->
             <div class="space-background">
                 <div class="stars"></div>
-                <div class="asteroid" id="asteroid">
-                    <div class="problem-display" id="gameProblem">7 + 3</div>
+                <div class="shooter-ship">🚀</div>
+
+                <!-- Multiple asteroids for shooter mode -->
+                <div class="asteroids-container" id="asteroidsContainer">
+                    <!-- Asteroids will be dynamically added here -->
                 </div>
             </div>
 
             <div class="answer-area">
-                <input type="number" id="gameAnswer" class="answer-input-game" placeholder="Type answer..." autocomplete="off">
                 <div class="aim-line">
-                    <div class="aim-line-label">Fluency Aim:</div>
+                    <div class="aim-line-label">Click the correct asteroid to BLAST it! 💥</div>
                     <div class="aim-line-bar">
                         <div id="fluencyProgress" class="fluency-progress"></div>
                         <span class="aim-marker">🎯</span>
