@@ -764,6 +764,30 @@ router.post('/record-badge-attempt', isAuthenticated, async (req, res) => {
       activeBadge.problemsCompleted >= activeBadge.requiredProblems &&
       accuracy >= activeBadge.requiredAccuracy;
 
+    // AUTO-COMPLETE BADGE: If requirements met, automatically award the badge
+    let badgeEarned = false;
+    if (meetsRequirements) {
+      if (!user.badges) user.badges = [];
+
+      const alreadyEarned = user.badges.find(b => b.badgeId === activeBadge.badgeId);
+      if (!alreadyEarned) {
+        user.badges.push({
+          badgeId: activeBadge.badgeId,
+          earnedDate: new Date(),
+          score: Math.round(accuracy * 100)
+        });
+
+        // Award XP bonus
+        const xpBonus = 500;
+        user.xp = (user.xp || 0) + xpBonus;
+
+        console.log(`🎖️ BADGE EARNED: ${activeBadge.badgeName} (${Math.round(accuracy * 100)}% accuracy)`);
+        badgeEarned = true;
+
+        await user.save();
+      }
+    }
+
     res.json({
       success: true,
       progress: {
@@ -773,7 +797,9 @@ router.post('/record-badge-attempt', isAuthenticated, async (req, res) => {
         requiredAccuracy: activeBadge.requiredAccuracy,
         currentAccuracy: accuracy,
         meetsRequirements
-      }
+      },
+      badgeEarned,
+      badgeEarnedMessage: badgeEarned ? `🎉 Congratulations! You earned the ${activeBadge.badgeName} badge!` : null
     });
 
   } catch (error) {
