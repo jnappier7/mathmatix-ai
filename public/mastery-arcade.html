@@ -1,155 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M∆STERY.∆RC∆DE | MathMatrix.AI</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/masteryArcade.css">
-    <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M∆STERY.∆RC∆DE | MATHMATIX AI</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .arcade-header {
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .arcade-header h1 {
+      margin: 0;
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .arcade-header p {
+      margin: 10px 0 0 0;
+      font-size: 18px;
+      opacity: 0.95;
+    }
+
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+
+    .back-link:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateX(-5px);
+    }
+
+    .games-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      padding: 60px 40px;
+      flex-wrap: wrap;
+    }
+
+    .game-card {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #FF6B6B, #FF8E53);
+    }
+
+    .game-card.runner::before {
+      background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    }
+
+    .game-icon {
+      font-size: 80px;
+      text-align: center;
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .game-title {
+      font-size: 32px;
+      font-weight: 800;
+      text-align: center;
+      margin: 0 0 10px 0;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .game-card.runner .game-title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .game-subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+
+    .game-features {
+      list-style: none;
+      padding: 0;
+      margin: 24px 0;
+    }
+
+    .game-features li {
+      padding: 8px 0;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .game-features li i {
+      color: #FF6B6B;
+      width: 20px;
+    }
+
+    .game-card.runner .game-features li i {
+      color: #667eea;
+    }
+
+    .play-button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .game-card.runner .play-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .play-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .new-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #FF3B7F;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+
+    footer {
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    footer a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .games-container {
+        flex-direction: column;
+      }
+
+      .game-card {
+        width: 90%;
+        max-width: 500px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header class="main-header">
-        <div class="main-header-content">
-            <div class="brand-section">
-                <div class="logo-container">
-                    <a href="/dashboard.html">
-                        <img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI Logo" class="main-logo" />
-                    </a>
-                </div>
-                <div class="brand-text">
-                    <div class="brand-name">MATHMATIX AI</div>
-                    <div class="brand-tagline">Personalized AI Math Tutoring</div>
-                </div>
-                <div class="mode-indicator arcade-mode">
-                    🎮 M∆STERY.∆RC∆DE
-                </div>
-            </div>
+  <a href="/badge-map.html" class="back-link">
+    <i class="fas fa-arrow-left"></i> Back to Badges
+  </a>
 
-            <div class="header-actions">
-                <div class="user-display">
-                    <span id="userName">Student</span>
-                    <span class="level-badge">Level <span id="userLevel">1</span></span>
-                </div>
-                <button id="backBtn" class="btn-secondary">← Back to M∆STERY.MODE</button>
-            </div>
-        </div>
-    </header>
+  <header class="arcade-header">
+    <h1>🎮 M∆STERY.∆RC∆DE 🎮</h1>
+    <p>Master math facts through fast-paced games</p>
+  </header>
 
-    <main class="arcade-hub">
-        <!-- Arcade Title -->
-        <div class="arcade-title">
-            <div class="title-glow">M∆STERY.∆RC∆DE</div>
-            <div class="subtitle">Choose Your Game Mode</div>
-        </div>
+  <div class="games-container">
+    <!-- Math Blast Shooter -->
+    <a href="/fact-fluency-blaster.html" class="game-card shooter">
+      <div class="new-badge">🔥 NEW</div>
+      <div class="game-icon">🚀</div>
+      <h2 class="game-title">M∆THBL∆ST</h2>
+      <p class="game-subtitle">Asteroid Shooter - Destroy problems with correct answers</p>
+      <ul class="game-features">
+        <li><i class="fas fa-rocket"></i> Shoot asteroids with math facts</li>
+        <li><i class="fas fa-trophy"></i> Earn XP and track fluency</li>
+        <li><i class="fas fa-chart-line"></i> Build speed and accuracy</li>
+        <li><i class="fas fa-gamepad"></i> Keyboard controls (WASD + Spacebar)</li>
+      </ul>
+      <div class="play-button">
+        <i class="fas fa-crosshairs"></i>
+        <span>Play Shooter</span>
+        <i class="fas fa-rocket"></i>
+      </div>
+    </a>
 
-        <!-- Game Selection Grid -->
-        <div class="game-grid">
-            <!-- Math Blast Card -->
-            <div class="game-cabinet blaster-cabinet">
-                <div class="cabinet-screen">
-                    <div class="screen-glow"></div>
-                    <div class="game-preview">
-                        <div class="preview-icon">🚀</div>
-                        <div class="preview-asteroids">
-                            <span class="mini-asteroid">12</span>
-                            <span class="mini-asteroid">8</span>
-                            <span class="mini-asteroid">15</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="cabinet-marquee">
-                    <h2>M∆THBL∆ST</h2>
-                    <p class="game-tagline">SHOOTER MODE</p>
-                </div>
-                <div class="cabinet-info">
-                    <p>🎯 Shoot asteroids with correct answers</p>
-                    <p>💥 Build combos & streaks</p>
-                    <p>🔥 Master facts at lightning speed</p>
-                </div>
-                <a href="/fact-fluency-blaster.html" class="insert-coin">
-                    <span class="coin-text">INSERT COIN</span>
-                    <span class="coin-arrow">→</span>
-                </a>
-            </div>
+    <!-- Number Run -->
+    <a href="/number-run.html" class="game-card runner">
+      <div class="new-badge">🔥 NEW</div>
+      <div class="game-icon">🏃</div>
+      <h2 class="game-title">NUMBER RUN</h2>
+      <p class="game-subtitle">Endless Runner - Jump to correct answers</p>
+      <ul class="game-features">
+        <li><i class="fas fa-running"></i> Jump over obstacles</li>
+        <li><i class="fas fa-brain"></i> Quick mental math practice</li>
+        <li><i class="fas fa-infinity"></i> Endless progression</li>
+        <li><i class="fas fa-keyboard"></i> Simple controls (Spacebar to jump)</li>
+      </ul>
+      <div class="play-button">
+        <i class="fas fa-play"></i>
+        <span>Play Runner</span>
+        <i class="fas fa-bolt"></i>
+      </div>
+    </a>
+  </div>
 
-            <!-- Number Run Card -->
-            <div class="game-cabinet runner-cabinet">
-                <div class="cabinet-screen">
-                    <div class="screen-glow"></div>
-                    <div class="game-preview runner-preview">
-                        <div class="preview-icon">🏃</div>
-                        <div class="preview-lanes">
-                            <div class="lane-marker"></div>
-                            <div class="lane-marker"></div>
-                            <div class="lane-marker"></div>
-                        </div>
-                        <div class="preview-platforms">
-                            <span class="mini-platform">5</span>
-                            <span class="mini-platform">12</span>
-                            <span class="mini-platform">7</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="cabinet-marquee runner-marquee">
-                    <h2>M∆TH.R∆CE</h2>
-                    <p class="game-tagline">ENDLESS RUNNER</p>
-                </div>
-                <div class="cabinet-info">
-                    <p>⬅️➡️ Switch lanes with arrow keys</p>
-                    <p>🎯 Land on correct answer platforms</p>
-                    <p>⚡ Speed increases with streak</p>
-                </div>
-                <a href="/number-run.html" class="insert-coin runner-coin">
-                    <span class="coin-text">INSERT COIN</span>
-                    <span class="coin-arrow">→</span>
-                </a>
-            </div>
-        </div>
+  <footer>
+    © 2025 MATHMATIX AI. All rights reserved.
+    <a href="/privacy.html">Privacy Policy</a> |
+    <a href="/terms.html">Terms of Use</a>
+  </footer>
 
-        <!-- Arcade Stats -->
-        <div class="arcade-stats">
-            <div class="stat-display">
-                <div class="stat-icon">🏆</div>
-                <div class="stat-content">
-                    <div class="stat-label">HIGH SCORES</div>
-                    <div class="stat-value" id="totalMastered">0</div>
-                    <div class="stat-sublabel">Facts M∆stered</div>
-                </div>
-            </div>
-            <div class="stat-display">
-                <div class="stat-icon">🔥</div>
-                <div class="stat-content">
-                    <div class="stat-label">CURRENT STREAK</div>
-                    <div class="stat-value" id="currentStreak">0</div>
-                    <div class="stat-sublabel">Days in a row</div>
-                </div>
-            </div>
-            <div class="stat-display">
-                <div class="stat-icon">⚡</div>
-                <div class="stat-content">
-                    <div class="stat-label">TOTAL PL∆YS</div>
-                    <div class="stat-value" id="totalSessions">0</div>
-                    <div class="stat-sublabel">Sessions completed</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Start Note -->
-        <div class="arcade-note">
-            <p>💡 <strong>Pro Tip:</strong> Both games practice the same fact families. Choose your style!</p>
-            <p>🚀 <strong>Quick Start:</strong> Never played before? Try M∆THBL∆ST placement test to find your level.</p>
-        </div>
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="main-footer">
-        © 2025 MATHMATIX AI. All rights reserved.
-        <a href="/privacy-policy.html">Privacy Policy</a> |
-        <a href="/terms.html">Terms of Use</a>
-    </footer>
-
-    <script src="js/masteryArcade.js"></script>
+  <!-- Auth Scripts -->
+  <script src="/js/storage-utils.js"></script>
+  <script src="/js/logout.js"></script>
+  <script src="/js/auto-logout.js"></script>
 </body>
 </html>
