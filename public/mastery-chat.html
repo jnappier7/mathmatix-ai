@@ -42,16 +42,63 @@
             font-size: 48px;
         }
 
+        .badge-details {
+            flex: 1;
+        }
+
+        .pattern-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
+        .pattern-breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pattern-breadcrumb-separator {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .pattern-badge-mini {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
         .badge-details h2 {
             margin: 0;
-            font-size: 24px;
-            color: #12B3B3;
+            font-size: 28px;
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
 
         .badge-details p {
-            margin: 5px 0 0 0;
-            opacity: 0.8;
+            margin: 6px 0 0 0;
+            opacity: 0.85;
+            font-size: 14px;
         }
+
+        /* Pattern colors for mini badges */
+        .pattern-equivalence { background: #2196f3; }
+        .pattern-scaling { background: #4caf50; }
+        .pattern-change { background: #ff5722; }
+        .pattern-structure { background: #9c27b0; }
+        .pattern-space { background: #00bcd4; }
+        .pattern-comparison { background: #ff9800; }
+        .pattern-uncertainty { background: #e91e63; }
+        .pattern-accumulation { background: #795548; }
 
         .progress-bar-container {
             flex: 1;
@@ -446,6 +493,22 @@
             <div class="badge-info">
                 <div class="badge-icon" id="badge-icon">🏅</div>
                 <div class="badge-details">
+                    <div class="pattern-breadcrumb" id="pattern-breadcrumb" style="display: none;">
+                        <div class="pattern-breadcrumb-item">
+                            <div class="pattern-badge-mini" id="pattern-mini-badge">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span id="pattern-name">Pattern</span>
+                        </div>
+                        <span class="pattern-breadcrumb-separator">→</span>
+                        <div class="pattern-breadcrumb-item">
+                            <span id="tier-name">Tier 1</span>
+                        </div>
+                        <span class="pattern-breadcrumb-separator">→</span>
+                        <div class="pattern-breadcrumb-item">
+                            <span id="milestone-name">Milestone</span>
+                        </div>
+                    </div>
                     <h2 id="badge-name">Loading...</h2>
                     <p id="badge-skill">Skill: Loading...</p>
                 </div>
@@ -613,10 +676,45 @@
                 const tierEmoji = { bronze: '🥉', silver: '🥈', gold: '🥇', platinum: '💎' };
                 const tierNames = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold', platinum: 'Platinum' };
 
-                // Header
-                document.getElementById('badge-icon').textContent = tierEmoji[badge.tier] || '🏅';
-                document.getElementById('badge-name').textContent = badge.badgeName;
-                document.getElementById('badge-skill').textContent = `Skill: ${badge.skillId.replace(/-/g, ' ')}`;
+                // Check if this is a pattern-based badge (has pattern, tier, milestone data)
+                const isPatternBased = badge.patternId && badge.tierNum && badge.milestoneName;
+
+                if (isPatternBased) {
+                    // Show breadcrumb for pattern-based navigation
+                    const breadcrumb = document.getElementById('pattern-breadcrumb');
+                    breadcrumb.style.display = 'flex';
+
+                    // Pattern icon map
+                    const patternIcons = {
+                        'equivalence': 'fa-balance-scale',
+                        'scaling': 'fa-chart-line',
+                        'change': 'fa-mountain',
+                        'structure': 'fa-cubes',
+                        'space': 'fa-cube',
+                        'comparison': 'fa-sort-amount-up',
+                        'uncertainty': 'fa-dice',
+                        'accumulation': 'fa-layer-group'
+                    };
+
+                    // Update breadcrumb elements
+                    const miniBadge = document.getElementById('pattern-mini-badge');
+                    miniBadge.className = `pattern-badge-mini pattern-${badge.patternId}`;
+                    miniBadge.innerHTML = `<i class="fas ${patternIcons[badge.patternId] || 'fa-star'}"></i>`;
+
+                    document.getElementById('pattern-name').textContent = badge.patternName || badge.patternId;
+                    document.getElementById('tier-name').textContent = `Tier ${badge.tierNum}`;
+                    document.getElementById('milestone-name').textContent = badge.milestoneName;
+
+                    // Header
+                    document.getElementById('badge-icon').textContent = tierEmoji[badge.tierNum] || '🏅';
+                    document.getElementById('badge-name').textContent = badge.milestoneName;
+                    document.getElementById('badge-skill').textContent = badge.description || `${badge.patternName} - Tier ${badge.tierNum}`;
+                } else {
+                    // Traditional badge system - use old display
+                    document.getElementById('badge-icon').textContent = tierEmoji[badge.tier] || '🏅';
+                    document.getElementById('badge-name').textContent = badge.badgeName;
+                    document.getElementById('badge-skill').textContent = `Skill: ${badge.skillId.replace(/-/g, ' ')}`;
+                }
 
                 // Sidebar - Current Badge
                 document.getElementById('sidebar-badge-name').textContent = badge.badgeName;
