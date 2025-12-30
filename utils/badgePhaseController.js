@@ -270,18 +270,32 @@ async function generatePhaseProblem(phase, badge, user) {
     }
 
     if (!skill) {
-        // If no skill found, create a fallback error with helpful message
-        const skillContext = badge.isPatternBadge
-            ? `pattern milestone "${badge.milestoneName}" (skills: ${badge.allSkillIds?.join(', ')})`
-            : `skill "${badge.skillId}"`;
+        // FALLBACK: Create temporary skill object for pattern-based milestones
+        // This allows UX to work while skills are being configured
+        if (badge.isPatternBadge) {
+            console.warn(`[FALLBACK] No skills found for milestone "${badge.milestoneName}". Using fallback skill generator.`);
 
-        throw new Error(`Skill not found for ${skillContext}. Skills may need to be configured in the database.`);
+            skill = {
+                skillId: badge.milestoneId || `${badge.patternId}-fallback`,
+                name: badge.milestoneName,
+                description: badge.description || `Practice ${badge.milestoneName}`,
+                pattern: badge.patternId,
+                tier: badge.tierNum,
+                difficulty: 0.0,  // Baseline
+                problemType: 'algebra-basic',  // Generic type
+                generatorFunction: 'generateBasicAlgebraProblem'
+            };
+        } else {
+            // Legacy badge - this is a real error
+            throw new Error(`Skill not found: ${badge.skillId}`);
+        }
     }
 
-    let difficulty = badge.requiredTheta || 0;
+    let difficulty = skill.difficulty || badge.requiredTheta || 0;
     let problemOptions = {
         difficulty,
-        fluencyModifier: user.fluencyProfile
+        fluencyModifier: user.fluencyProfile,
+        isFallback: !skill.difficulty  // Flag fallback problems
     };
 
     // Adjust difficulty based on phase
