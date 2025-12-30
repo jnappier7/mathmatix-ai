@@ -255,10 +255,27 @@ Frame it positively: "Let's see how well you truly understand this..."`,
  * Generate next problem based on phase
  */
 async function generatePhaseProblem(phase, badge, user) {
-    const skill = await Skill.findOne({ skillId: badge.skillId }).lean();
+    let skill = null;
+
+    // For pattern-based badges, try to find any available skill from the milestone
+    if (badge.isPatternBadge && badge.allSkillIds && badge.allSkillIds.length > 0) {
+        // Try each skill ID until we find one that exists
+        for (const skillId of badge.allSkillIds) {
+            skill = await Skill.findOne({ skillId }).lean();
+            if (skill) break;
+        }
+    } else if (badge.skillId) {
+        // Legacy badge system - single skillId
+        skill = await Skill.findOne({ skillId: badge.skillId }).lean();
+    }
 
     if (!skill) {
-        throw new Error('Skill not found');
+        // If no skill found, create a fallback error with helpful message
+        const skillContext = badge.isPatternBadge
+            ? `pattern milestone "${badge.milestoneName}" (skills: ${badge.allSkillIds?.join(', ')})`
+            : `skill "${badge.skillId}"`;
+
+        throw new Error(`Skill not found for ${skillContext}. Skills may need to be configured in the database.`);
     }
 
     let difficulty = badge.requiredTheta || 0;
