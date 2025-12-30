@@ -1,0 +1,1278 @@
+[
+  {
+    "skillId": "fact-families",
+    "displayName": "Fact Families",
+    "description": "Understand related addition and subtraction facts within a family",
+    "category": "addition-subtraction",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": ["addition", "subtraction"],
+    "enables": ["missing-addend"],
+    "standardsAlignment": ["1.OA.6", "2.OA.2"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Related facts: 3+5=8, 5+3=8, 8-5=3, 8-3=5",
+        "Inverse relationships",
+        "Commutative property",
+        "Part-part-whole understanding"
+      ],
+      "commonMistakes": [
+        "Not recognizing all four related facts",
+        "Confusing operations",
+        "Order errors"
+      ],
+      "teachingTips": [
+        "Use fact family triangles",
+        "Connect to real-world: objects in/out",
+        "Visual models with counters"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "related-facts",
+    "displayName": "Related Facts",
+    "description": "Identify and use relationships between addition and subtraction",
+    "category": "addition-subtraction",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": ["addition", "subtraction"],
+    "enables": ["fact-families"],
+    "standardsAlignment": ["1.OA.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Addition and subtraction are inverse operations",
+        "Using known facts to derive new ones",
+        "Fact fluency strategies"
+      ],
+      "commonMistakes": [
+        "Not seeing the relationship",
+        "Computing instead of reasoning"
+      ],
+      "teachingTips": [
+        "Number bonds",
+        "Part-whole diagrams",
+        "Think-addition for subtraction"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "missing-addend",
+    "displayName": "Missing Addend",
+    "description": "Find the unknown addend in addition equations like 5 + __ = 12",
+    "category": "addition-subtraction",
+    "course": "Grade 1-2 Math",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": ["fact-families"],
+    "enables": ["one-step-equations"],
+    "standardsAlignment": ["1.OA.8", "2.OA.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Use subtraction to find missing addend",
+        "Part-whole understanding",
+        "Early algebraic thinking",
+        "Boxes or blanks as placeholders"
+      ],
+      "commonMistakes": [
+        "Adding instead of subtracting",
+        "Not understanding what's being asked",
+        "Order confusion"
+      ],
+      "teachingTips": [
+        "Count up strategy",
+        "Number line jumps",
+        "Think: What do I add to get to...?"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "unknown-addend",
+    "displayName": "Unknown Addend Problems",
+    "description": "Solve word problems with unknown addends",
+    "category": "addition-subtraction",
+    "course": "Grade 1-2 Math",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": ["missing-addend"],
+    "enables": ["one-step-equations"],
+    "standardsAlignment": ["1.OA.8"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "balance-scales",
+    "displayName": "Balance Scales",
+    "description": "Maintain equality on both sides of a balance",
+    "category": "equations",
+    "course": "Grade 2-3 Math",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": ["fact-families"],
+    "enables": ["equality-concept"],
+    "standardsAlignment": ["2.OA.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Both sides must be equal",
+        "Visual representation of equations",
+        "Balance maintained when same added/removed from both sides",
+        "Equal sign means 'the same as'"
+      ],
+      "commonMistakes": [
+        "Thinking equals means 'answer'",
+        "Not maintaining balance",
+        "One-directional thinking"
+      ],
+      "teachingTips": [
+        "Physical balance scales",
+        "Use manipulatives",
+        "Visual diagrams"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "equality-concept",
+    "displayName": "Equality Concept",
+    "description": "Understand the meaning of the equal sign as a relation of equivalence",
+    "category": "equations",
+    "course": "Grade 1-3 Math",
+    "quarter": 1,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": ["balance-scales", "one-step-equations"],
+    "standardsAlignment": ["1.OA.7"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "missing-number-problems",
+    "displayName": "Missing Number Problems",
+    "description": "Solve problems with boxes or blanks representing unknown numbers",
+    "category": "equations",
+    "course": "Grade 1-2 Math",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": ["equality-concept"],
+    "enables": ["blank-as-variable"],
+    "standardsAlignment": ["1.OA.8"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "blank-as-variable",
+    "displayName": "Blanks as Proto-Variables",
+    "description": "Use boxes or blanks as placeholders for unknown values (early algebra)",
+    "category": "equations",
+    "course": "Grade 2-3 Math",
+    "quarter": 3,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": ["missing-number-problems"],
+    "enables": ["one-step-equations"],
+    "standardsAlignment": ["2.OA.1"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Placeholder for unknown value",
+        "Can represent any number",
+        "Foundation for variables",
+        "Solving for the unknown"
+      ],
+      "commonMistakes": [
+        "Guessing instead of reasoning",
+        "Not checking the answer",
+        "Confusion with labels"
+      ],
+      "teachingTips": [
+        "Progress from concrete to abstract",
+        "Use consistent notation",
+        "Connect to real situations"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "one-step-equations",
+    "displayName": "One-Step Equations",
+    "description": "Solve one-step linear equations using inverse operations",
+    "category": "equations",
+    "course": "Grade 6-7 Math",
+    "quarter": 3,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["blank-as-variable", "equality-concept"],
+    "enables": ["two-step-equations"],
+    "standardsAlignment": ["6.EE.7", "7.EE.4"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Inverse operations undo each other",
+        "Isolate the variable",
+        "Balance method: same to both sides",
+        "Check your solution"
+      ],
+      "commonMistakes": [
+        "Using wrong inverse operation",
+        "Not doing same to both sides",
+        "Arithmetic errors"
+      ],
+      "teachingTips": [
+        "Balance scale model",
+        "Think: what operation is done to x?",
+        "Always check by substituting back"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "one-step-addition",
+    "displayName": "One-Step Addition Equations",
+    "description": "Solve equations of the form x + a = b",
+    "category": "equations",
+    "course": "Grade 6 Math",
+    "quarter": 3,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["one-step-equations"],
+    "enables": ["two-step-equations"],
+    "standardsAlignment": ["6.EE.7"],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "one-step-subtraction",
+    "displayName": "One-Step Subtraction Equations",
+    "description": "Solve equations of the form x - a = b",
+    "category": "equations",
+    "course": "Grade 6 Math",
+    "quarter": 3,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["one-step-equations"],
+    "enables": ["two-step-equations"],
+    "standardsAlignment": ["6.EE.7"],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "one-step-multiplication",
+    "displayName": "One-Step Multiplication Equations",
+    "description": "Solve equations of the form ax = b",
+    "category": "equations",
+    "course": "Grade 6 Math",
+    "quarter": 3,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["one-step-equations"],
+    "enables": ["two-step-equations"],
+    "standardsAlignment": ["6.EE.7"],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "one-step-division",
+    "displayName": "One-Step Division Equations",
+    "description": "Solve equations of the form x/a = b",
+    "category": "equations",
+    "course": "Grade 6 Math",
+    "quarter": 3,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["one-step-equations"],
+    "enables": ["two-step-equations"],
+    "standardsAlignment": ["6.EE.7"],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "two-step-equations",
+    "displayName": "Two-Step Equations",
+    "description": "Solve two-step linear equations like 2x + 3 = 11",
+    "category": "equations",
+    "course": "Grade 7-8 Math",
+    "quarter": 3,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["one-step-equations"],
+    "enables": ["multi-step-equations"],
+    "standardsAlignment": ["7.EE.4", "8.EE.7"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Undo operations in reverse order (PEMDAS backwards)",
+        "Typically: undo addition/subtraction first, then multiplication/division",
+        "Maintain balance",
+        "Can clear fractions/decimals first"
+      ],
+      "commonMistakes": [
+        "Wrong order of operations",
+        "Arithmetic errors",
+        "Not simplifying completely"
+      ],
+      "teachingTips": [
+        "Think: peel the onion",
+        "Work systematically",
+        "Always check your answer"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "multi-step-equations",
+    "displayName": "Multi-Step Equations",
+    "description": "Solve equations requiring combining like terms and distribution",
+    "category": "equations",
+    "course": "Grade 8 Math / Algebra 1",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["two-step-equations", "combining-like-terms"],
+    "enables": ["equations-with-variables-both-sides"],
+    "standardsAlignment": ["8.EE.7", "A.REI.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Simplify both sides first",
+        "Combine like terms",
+        "Distribute when needed",
+        "Then solve like two-step"
+      ],
+      "commonMistakes": [
+        "Not distributing correctly",
+        "Combining unlike terms",
+        "Sign errors"
+      ],
+      "teachingTips": [
+        "Organize work vertically",
+        "Color-code like terms",
+        "Check solutions"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "equations-with-distribution",
+    "displayName": "Equations with Distribution",
+    "description": "Solve equations requiring the distributive property",
+    "category": "equations",
+    "course": "Grade 8 Math / Algebra 1",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["distributive-property", "two-step-equations"],
+    "enables": ["multi-step-equations"],
+    "standardsAlignment": ["8.EE.7"],
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "equations-with-variables-both-sides",
+    "displayName": "Variables on Both Sides",
+    "description": "Solve equations with variables on both sides like 3x + 2 = x + 10",
+    "category": "equations",
+    "course": "Grade 8 Math / Algebra 1",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": ["multi-step-equations"],
+    "enables": ["systems-substitution"],
+    "standardsAlignment": ["8.EE.7", "A.REI.3"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Get all variables to one side",
+        "Get constants to the other side",
+        "Simplify then solve",
+        "Special cases: no solution, infinite solutions"
+      ],
+      "commonMistakes": [
+        "Not moving all variables to same side",
+        "Sign errors when subtracting",
+        "Missing special cases"
+      ],
+      "teachingTips": [
+        "Choose simpler side for variables",
+        "Check for contradictions or identities",
+        "Graph to verify"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "systems-substitution",
+    "displayName": "Systems by Substitution",
+    "description": "Solve systems of equations using substitution method",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Equivalence Pattern - Tier 3",
+    "prerequisites": ["equations-with-variables-both-sides"],
+    "enables": ["systems-elimination"],
+    "standardsAlignment": ["A.REI.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Solve one equation for one variable",
+        "Substitute into other equation",
+        "Solve for remaining variable",
+        "Back-substitute to find other variable"
+      ],
+      "commonMistakes": [
+        "Not substituting correctly",
+        "Arithmetic errors",
+        "Not solving for both variables"
+      ],
+      "teachingTips": [
+        "Choose equation with isolated variable",
+        "Use parentheses when substituting",
+        "Always check in both original equations"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 4.0
+    }
+  },
+  {
+    "skillId": "systems-elimination",
+    "displayName": "Systems by Elimination",
+    "description": "Solve systems of equations by adding or subtracting equations",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Equivalence Pattern - Tier 3",
+    "prerequisites": ["systems-substitution"],
+    "enables": ["systems-graphing"],
+    "standardsAlignment": ["A.REI.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Line up equations vertically",
+        "Multiply to create opposite coefficients",
+        "Add or subtract to eliminate one variable",
+        "Solve and back-substitute"
+      ],
+      "commonMistakes": [
+        "Not multiplying entire equation",
+        "Sign errors",
+        "Forgetting to find both variables"
+      ],
+      "teachingTips": [
+        "Choose easier variable to eliminate",
+        "Check your multiplication",
+        "Verify in both equations"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 4.0
+    }
+  },
+  {
+    "skillId": "systems-graphing",
+    "displayName": "Systems by Graphing",
+    "description": "Solve systems by graphing and finding intersection points",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Equivalence Pattern - Tier 3",
+    "prerequisites": ["graph-linear-equations", "systems-substitution"],
+    "enables": ["systems-special-cases"],
+    "standardsAlignment": ["A.REI.6"],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Graph both equations on same axes",
+        "Intersection point is the solution",
+        "Parallel lines = no solution",
+        "Same line = infinite solutions"
+      ],
+      "commonMistakes": [
+        "Graphing errors",
+        "Reading intersection incorrectly",
+        "Not recognizing parallel/coincident lines"
+      ],
+      "teachingTips": [
+        "Use technology when helpful",
+        "Check algebraically",
+        "Visual understanding crucial"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4.0
+    }
+  },
+  {
+    "skillId": "systems-special-cases",
+    "displayName": "Special Cases in Systems",
+    "description": "Identify and understand no solution and infinite solution cases",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Equivalence Pattern - Tier 3",
+    "prerequisites": ["systems-graphing"],
+    "enables": [],
+    "standardsAlignment": ["A.REI.6"],
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4.0
+    }
+  },
+  {
+    "skillId": "addition",
+    "displayName": "Addition",
+    "description": "Add whole numbers fluently",
+    "category": "addition-subtraction",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": ["counting-up"],
+    "enables": ["multi-digit-addition", "addition-subtraction-word-problems"],
+    "standardsAlignment": ["1.OA.6", "2.NBT.5"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "subtraction",
+    "displayName": "Subtraction",
+    "description": "Subtract whole numbers fluently",
+    "category": "addition-subtraction",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": ["counting-down"],
+    "enables": ["multi-digit-addition", "addition-subtraction-word-problems"],
+    "standardsAlignment": ["1.OA.6", "2.NBT.5"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "counting-up",
+    "displayName": "Counting Forward",
+    "description": "Count forward from any number",
+    "category": "counting-cardinality",
+    "course": "Kindergarten-Grade 1",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": ["counting"],
+    "enables": ["addition", "skip-counting"],
+    "standardsAlignment": ["K.CC.2", "1.NBT.1"],
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "counting-down",
+    "displayName": "Counting Backward",
+    "description": "Count backward from any number",
+    "category": "counting-cardinality",
+    "course": "Kindergarten-Grade 1",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": ["counting"],
+    "enables": ["subtraction"],
+    "standardsAlignment": ["K.CC.2", "1.NBT.1"],
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "counting",
+    "displayName": "Counting",
+    "description": "Count objects to determine quantity",
+    "category": "counting-cardinality",
+    "course": "Kindergarten",
+    "quarter": 1,
+    "unit": "Accumulation Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": ["counting-up", "counting-down", "counting-by-groups"],
+    "standardsAlignment": ["K.CC.4", "K.CC.5"],
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "counting-by-groups",
+    "displayName": "Counting by Groups",
+    "description": "Count equal groups to find total",
+    "category": "counting-cardinality",
+    "course": "Grade 1-2 Math",
+    "quarter": 2,
+    "unit": "Accumulation Pattern - Tier 1",
+    "prerequisites": ["counting"],
+    "enables": ["skip-counting", "multiplication-basics"],
+    "standardsAlignment": ["1.OA.5", "2.OA.4"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "skip-counting",
+    "displayName": "Skip Counting",
+    "description": "Count by 2s, 5s, 10s, etc.",
+    "category": "counting-cardinality",
+    "course": "Grade 1-2 Math",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": ["counting-up", "counting-by-groups"],
+    "enables": ["multiplication-concepts"],
+    "standardsAlignment": ["1.NBT.5", "2.NBT.2"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "multiplication-concepts",
+    "displayName": "Multiplication Concepts",
+    "description": "Understand multiplication as equal groups",
+    "category": "multiplication-division",
+    "course": "Grade 2-3 Math",
+    "quarter": 3,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": ["skip-counting"],
+    "enables": ["multiplication-as-groups", "multiply-fractions"],
+    "standardsAlignment": ["2.OA.4", "3.OA.1"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "multiplication-as-groups",
+    "displayName": "Multiplication as Groups Of",
+    "description": "Interpret 3 × 4 as 3 groups of 4 objects",
+    "category": "multiplication-division",
+    "course": "Grade 2-3 Math",
+    "quarter": 3,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": ["multiplication-concepts"],
+    "enables": ["multiply-fractions"],
+    "standardsAlignment": ["3.OA.1"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "multiplication-basics",
+    "displayName": "Basic Multiplication",
+    "description": "Multiply single-digit numbers fluently",
+    "category": "multiplication-division",
+    "course": "Grade 3 Math",
+    "quarter": 2,
+    "unit": "Accumulation Pattern - Tier 1",
+    "prerequisites": ["repeated-addition"],
+    "enables": ["multi-digit-multiplication"],
+    "standardsAlignment": ["3.OA.7"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.0
+    }
+  },
+  {
+    "skillId": "repeated-addition",
+    "displayName": "Repeated Addition",
+    "description": "Add equal groups (introduction to multiplication)",
+    "category": "multiplication-division",
+    "course": "Grade 2-3 Math",
+    "quarter": 3,
+    "unit": "Accumulation Pattern - Tier 1",
+    "prerequisites": ["addition", "counting-by-groups"],
+    "enables": ["multiplication-basics"],
+    "standardsAlignment": ["2.OA.4"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "fraction-concepts",
+    "displayName": "Fraction Concepts",
+    "description": "Understand fractions as parts of a whole",
+    "category": "fractions",
+    "course": "Grade 3 Math",
+    "quarter": 4,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": ["fractions-as-parts", "add-fractions"],
+    "standardsAlignment": ["3.NF.1"],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "fractions-as-parts",
+    "displayName": "Fractions as Parts",
+    "description": "Understand 1/4 as one part of four equal pieces",
+    "category": "fractions",
+    "course": "Grade 3 Math",
+    "quarter": 4,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": ["fraction-concepts"],
+    "enables": ["add-fractions"],
+    "standardsAlignment": ["3.NF.1"],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "add-fractions",
+    "displayName": "Adding Fractions",
+    "description": "Add fractions with like and unlike denominators",
+    "category": "fractions",
+    "course": "Grade 4-5 Math",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": ["fractions-as-parts"],
+    "enables": ["subtract-fractions"],
+    "standardsAlignment": ["4.NF.3", "5.NF.1"],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "subtract-fractions",
+    "displayName": "Subtracting Fractions",
+    "description": "Subtract fractions with like and unlike denominators",
+    "category": "fractions",
+    "course": "Grade 4-5 Math",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": ["add-fractions"],
+    "enables": ["multiply-fractions"],
+    "standardsAlignment": ["4.NF.3", "5.NF.1"],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "multiply-fractions",
+    "displayName": "Multiplying Fractions",
+    "description": "Multiply fractions by fractions",
+    "category": "fractions",
+    "course": "Grade 5 Math",
+    "quarter": 3,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": ["subtract-fractions"],
+    "enables": ["divide-fractions"],
+    "standardsAlignment": ["5.NF.4"],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "divide-fractions",
+    "displayName": "Dividing Fractions",
+    "description": "Divide fractions by fractions using reciprocals",
+    "category": "fractions",
+    "course": "Grade 6 Math",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 1",
+    "prerequisites": ["multiply-fractions"],
+    "enables": ["rational-expressions"],
+    "standardsAlignment": ["6.NS.1"],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "combining-like-terms",
+    "displayName": "Combining Like Terms",
+    "description": "Simplify expressions by combining like terms",
+    "category": "expressions",
+    "course": "Grade 6-7 Math",
+    "quarter": 3,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": [],
+    "enables": ["simplify-expressions", "multi-step-equations"],
+    "standardsAlignment": ["6.EE.3", "7.EE.1"],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "simplify-expressions",
+    "displayName": "Simplifying Expressions",
+    "description": "Use properties to generate equivalent expressions",
+    "category": "expressions",
+    "course": "Grade 6-7 Math",
+    "quarter": 3,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": ["combining-like-terms"],
+    "enables": ["factoring-gcf"],
+    "standardsAlignment": ["6.EE.3"],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "distributive-property",
+    "displayName": "Distributive Property",
+    "description": "Apply the distributive property to expand and factor expressions",
+    "category": "expressions",
+    "course": "Grade 7 Math",
+    "quarter": 3,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": ["simplify-expressions"],
+    "enables": ["expanding-expressions", "factoring-gcf"],
+    "standardsAlignment": ["7.EE.1"],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "expanding-expressions",
+    "displayName": "Expanding Expressions",
+    "description": "Expand expressions using the distributive property",
+    "category": "expressions",
+    "course": "Grade 7-8 Math",
+    "quarter": 3,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": ["distributive-property"],
+    "enables": ["factoring-gcf"],
+    "standardsAlignment": ["7.EE.1"],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "place-value",
+    "displayName": "Place Value",
+    "description": "Understand place value in whole numbers",
+    "category": "place-value",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": ["decompose-numbers", "expanded-form"],
+    "standardsAlignment": ["1.NBT.2", "2.NBT.1"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "decompose-numbers",
+    "displayName": "Number Decomposition",
+    "description": "Break numbers into tens and ones",
+    "category": "place-value",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": ["place-value"],
+    "enables": ["compose-numbers", "expanded-form"],
+    "standardsAlignment": ["1.NBT.2"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "compose-numbers",
+    "displayName": "Number Composition",
+    "description": "Combine parts to make wholes",
+    "category": "place-value",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": ["decompose-numbers"],
+    "enables": ["regrouping"],
+    "standardsAlignment": ["1.NBT.2"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "expanded-form",
+    "displayName": "Expanded Form",
+    "description": "Write numbers in expanded form",
+    "category": "place-value",
+    "course": "Grade 2-3 Math",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": ["place-value", "decompose-numbers"],
+    "enables": [],
+    "standardsAlignment": ["2.NBT.3"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "regrouping",
+    "displayName": "Regrouping",
+    "description": "Regroup ones as tens, tens as hundreds, etc.",
+    "category": "place-value",
+    "course": "Grade 2 Math",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": ["compose-numbers"],
+    "enables": ["multi-digit-addition"],
+    "standardsAlignment": ["2.NBT.7"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "multi-digit-addition",
+    "displayName": "Multi-Digit Addition",
+    "description": "Add multi-digit numbers with regrouping",
+    "category": "addition-subtraction",
+    "course": "Grade 2-3 Math",
+    "quarter": 2,
+    "unit": "Accumulation Pattern - Tier 1",
+    "prerequisites": ["addition", "regrouping"],
+    "enables": [],
+    "standardsAlignment": ["2.NBT.7", "3.NBT.2"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "part-part-whole",
+    "displayName": "Part-Part-Whole",
+    "description": "Understand relationship between parts and whole",
+    "category": "addition-subtraction",
+    "course": "Grade 1 Math",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": ["addition-as-joining"],
+    "standardsAlignment": ["1.OA.1"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "addition-as-joining",
+    "displayName": "Addition as Joining",
+    "description": "Understand addition as putting parts together",
+    "category": "addition-subtraction",
+    "course": "Grade 1 Math",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": ["part-part-whole"],
+    "enables": ["addition"],
+    "standardsAlignment": ["1.OA.1"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "adding-groups",
+    "displayName": "Adding Groups",
+    "description": "Add equal groups to find total",
+    "category": "addition-subtraction",
+    "course": "Grade 2 Math",
+    "quarter": 2,
+    "unit": "Accumulation Pattern - Tier 1",
+    "prerequisites": ["addition", "counting-by-groups"],
+    "enables": ["repeated-addition"],
+    "standardsAlignment": ["2.OA.4"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "compare-numbers",
+    "displayName": "Comparing Numbers",
+    "description": "Compare numbers using greater than, less than, equal to",
+    "category": "number-recognition",
+    "course": "Kindergarten-Grade 1",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": ["comparing-numbers", "greater-less-than"],
+    "standardsAlignment": ["K.CC.6", "1.NBT.3"],
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "comparing-numbers",
+    "displayName": "Comparing Whole Numbers",
+    "description": "Compare multi-digit whole numbers",
+    "category": "number-recognition",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": ["compare-numbers"],
+    "enables": ["ordering-numbers"],
+    "standardsAlignment": ["1.NBT.3", "2.NBT.4"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "greater-less-than",
+    "displayName": "Greater Than / Less Than",
+    "description": "Use >, <, = to compare numbers",
+    "category": "number-recognition",
+    "course": "Grade 1 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": ["compare-numbers"],
+    "enables": ["comparing-numbers"],
+    "standardsAlignment": ["1.NBT.3"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "equal-to",
+    "displayName": "Equal To",
+    "description": "Understand the equal sign as meaning 'the same as'",
+    "category": "number-recognition",
+    "course": "Kindergarten-Grade 1",
+    "quarter": 1,
+    "unit": "Equivalence Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": ["equality-concept"],
+    "standardsAlignment": ["K.CC.6"],
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 15,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "ordering-numbers",
+    "displayName": "Ordering Numbers",
+    "description": "Put numbers in order from least to greatest",
+    "category": "number-recognition",
+    "course": "Grade 1-2 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": ["comparing-numbers"],
+    "enables": ["number-order"],
+    "standardsAlignment": ["1.NBT.3"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "number-order",
+    "displayName": "Number Order",
+    "description": "Understand order relationships among numbers",
+    "category": "number-recognition",
+    "course": "Grade 1 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": ["ordering-numbers"],
+    "enables": [],
+    "standardsAlignment": ["1.NBT.3"],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "rounding",
+    "displayName": "Rounding",
+    "description": "Round numbers to the nearest ten, hundred, etc.",
+    "category": "number-recognition",
+    "course": "Grade 3 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": ["place-value"],
+    "enables": ["rounding-to-nearest-ten"],
+    "standardsAlignment": ["3.NBT.1"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.0
+    }
+  },
+  {
+    "skillId": "rounding-to-nearest-ten",
+    "displayName": "Rounding to Nearest Ten",
+    "description": "Round numbers to the nearest ten",
+    "category": "number-recognition",
+    "course": "Grade 3 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": ["rounding"],
+    "enables": [],
+    "standardsAlignment": ["3.NBT.1"],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  }
+]
