@@ -600,9 +600,9 @@
         <!-- Progress Section (Right) -->
         <div class="progress-section">
             <div class="progress-card">
-                <h3><i class="fas fa-trophy"></i> Current Badge</h3>
+                <h3><i class="fas fa-trophy"></i> Current Milestone</h3>
                 <div class="stat-row">
-                    <span>Badge:</span>
+                    <span id="sidebar-label-name">Milestone:</span>
                     <span class="stat-value" id="sidebar-badge-name">Loading...</span>
                 </div>
                 <div class="stat-row">
@@ -610,7 +610,7 @@
                     <span class="stat-value" id="sidebar-badge-tier">-</span>
                 </div>
                 <div class="stat-row">
-                    <span>Skill:</span>
+                    <span id="sidebar-label-pattern">Pattern:</span>
                     <span class="stat-value" id="sidebar-skill-name">-</span>
                 </div>
             </div>
@@ -716,10 +716,20 @@
                     document.getElementById('badge-skill').textContent = `Skill: ${badge.skillId.replace(/-/g, ' ')}`;
                 }
 
-                // Sidebar - Current Badge
-                document.getElementById('sidebar-badge-name').textContent = badge.badgeName;
-                document.getElementById('sidebar-badge-tier').textContent = tierNames[badge.tier] || 'Standard';
-                document.getElementById('sidebar-skill-name').textContent = badge.skillId.replace(/-/g, ' ');
+                // Sidebar - Current Badge (updated for pattern-based system)
+                if (isPatternBased) {
+                    document.getElementById('sidebar-label-name').textContent = 'Milestone:';
+                    document.getElementById('sidebar-label-pattern').textContent = 'Pattern:';
+                    document.getElementById('sidebar-badge-name').textContent = badge.milestoneName;
+                    document.getElementById('sidebar-badge-tier').textContent = `Tier ${badge.tierNum}`;
+                    document.getElementById('sidebar-skill-name').textContent = badge.patternName;
+                } else {
+                    document.getElementById('sidebar-label-name').textContent = 'Badge:';
+                    document.getElementById('sidebar-label-pattern').textContent = 'Skill:';
+                    document.getElementById('sidebar-badge-name').textContent = badge.badgeName;
+                    document.getElementById('sidebar-badge-tier').textContent = tierNames[badge.tier] || 'Standard';
+                    document.getElementById('sidebar-skill-name').textContent = badge.skillId.replace(/-/g, ' ');
+                }
 
                 // Sidebar - Progress
                 const completed = badge.problemsCompleted || 0;
@@ -734,7 +744,11 @@
                 updateProgress(completed, badge.requiredProblems);
 
                 // Send welcome message and start practice
-                appendMessage('ai', `Welcome to ${badge.badgeName}! Let's start working on ${badge.skillId.replace(/-/g, ' ')}.`);
+                if (isPatternBased) {
+                    appendMessage('ai', `Welcome! You're working on ${badge.milestoneName} in the ${badge.patternName} pattern (Tier ${badge.tierNum}). Let's master this together!`);
+                } else {
+                    appendMessage('ai', `Welcome to ${badge.badgeName}! Let's start working on ${badge.skillId.replace(/-/g, ' ')}.`);
+                }
 
                 // Auto-start practice after a brief delay
                 setTimeout(() => startPractice(), 1500);
