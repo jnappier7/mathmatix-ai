@@ -376,6 +376,14 @@ const PATTERN_BADGES = {
             skillIds: ['compare-numbers', 'difference-word-problems'],
             requiredAccuracy: 0.85,
             requiredProblems: 12
+          },
+          {
+            milestoneId: 'change-word-problems',
+            name: 'Change Story Problems',
+            description: 'Solve word problems involving change scenarios',
+            skillIds: ['addition-subtraction-word-problems', 'result-unknown', 'change-unknown'],
+            requiredAccuracy: 0.85,
+            requiredProblems: 15
           }
         ]
       },
@@ -519,6 +527,14 @@ const PATTERN_BADGES = {
             skillIds: ['part-part-whole', 'addition-as-joining'],
             requiredAccuracy: 0.80,
             requiredProblems: 12
+          },
+          {
+            milestoneId: 'number-bonds',
+            name: 'Number Bonds',
+            description: 'Build fluency with number relationships and bonds',
+            skillIds: ['number-bonds', 'make-ten', 'doubles-near-doubles'],
+            requiredAccuracy: 0.85,
+            requiredProblems: 15
           }
         ]
       },
@@ -551,6 +567,14 @@ const PATTERN_BADGES = {
             skillIds: ['factoring-quadratics', 'factoring-gcf', 'factoring-difference-squares'],
             requiredAccuracy: 0.85,
             requiredProblems: 15
+          },
+          {
+            milestoneId: 'order-of-operations',
+            name: 'Order of Operations',
+            description: 'Apply PEMDAS/GEMDAS to evaluate expressions',
+            skillIds: ['order-of-operations', 'evaluate-expressions', 'nested-operations'],
+            requiredAccuracy: 0.85,
+            requiredProblems: 12
           }
         ]
       },
@@ -654,6 +678,14 @@ const PATTERN_BADGES = {
             skillIds: ['area-rectangles', 'perimeter', 'area-perimeter-word-problems'],
             requiredAccuracy: 0.85,
             requiredProblems: 12
+          },
+          {
+            milestoneId: 'symmetry-basics',
+            name: 'Symmetry',
+            description: 'Identify and create symmetric shapes',
+            skillIds: ['line-symmetry', 'symmetry-shapes', 'create-symmetry'],
+            requiredAccuracy: 0.80,
+            requiredProblems: 10
           }
         ]
       },
@@ -789,6 +821,14 @@ const PATTERN_BADGES = {
             skillIds: ['rounding', 'rounding-to-nearest-ten'],
             requiredAccuracy: 0.80,
             requiredProblems: 10
+          },
+          {
+            milestoneId: 'estimation',
+            name: 'Estimation',
+            description: 'Estimate sums, differences, and reasonableness',
+            skillIds: ['estimation', 'estimate-sums', 'check-reasonableness'],
+            requiredAccuracy: 0.80,
+            requiredProblems: 12
           }
         ]
       },

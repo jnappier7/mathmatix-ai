@@ -255,16 +255,47 @@ Frame it positively: "Let's see how well you truly understand this..."`,
  * Generate next problem based on phase
  */
 async function generatePhaseProblem(phase, badge, user) {
-    const skill = await Skill.findOne({ skillId: badge.skillId }).lean();
+    let skill = null;
 
-    if (!skill) {
-        throw new Error('Skill not found');
+    // For pattern-based badges, try to find any available skill from the milestone
+    if (badge.isPatternBadge && badge.allSkillIds && badge.allSkillIds.length > 0) {
+        // Try each skill ID until we find one that exists
+        for (const skillId of badge.allSkillIds) {
+            skill = await Skill.findOne({ skillId }).lean();
+            if (skill) break;
+        }
+    } else if (badge.skillId) {
+        // Legacy badge system - single skillId
+        skill = await Skill.findOne({ skillId: badge.skillId }).lean();
     }
 
-    let difficulty = badge.requiredTheta || 0;
+    if (!skill) {
+        // FALLBACK: Create temporary skill object for pattern-based milestones
+        // This allows UX to work while skills are being configured
+        if (badge.isPatternBadge) {
+            console.warn(`[FALLBACK] No skills found for milestone "${badge.milestoneName}". Using fallback skill generator.`);
+
+            skill = {
+                skillId: badge.milestoneId || `${badge.patternId}-fallback`,
+                name: badge.milestoneName,
+                description: badge.description || `Practice ${badge.milestoneName}`,
+                pattern: badge.patternId,
+                tier: badge.tierNum,
+                difficulty: 0.0,  // Baseline
+                problemType: 'algebra-basic',  // Generic type
+                generatorFunction: 'generateBasicAlgebraProblem'
+            };
+        } else {
+            // Legacy badge - this is a real error
+            throw new Error(`Skill not found: ${badge.skillId}`);
+        }
+    }
+
+    let difficulty = skill.difficulty || badge.requiredTheta || 0;
     let problemOptions = {
         difficulty,
-        fluencyModifier: user.fluencyProfile
+        fluencyModifier: user.fluencyProfile,
+        isFallback: !skill.difficulty  // Flag fallback problems
     };
 
     // Adjust difficulty based on phase
