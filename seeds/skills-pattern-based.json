@@ -4549,5 +4549,1272 @@
       "fluencyType": "conceptual",
       "toleranceFactor": 3.5
     }
+  },
+  {
+    "skillId": "slope-from-two-points",
+    "displayName": "Finding Slope from Two Points",
+    "description": "Calculate slope given two coordinate points using the slope formula",
+    "category": "linear-functions",
+    "course": "Grade 8 Math",
+    "quarter": 3,
+    "unit": "Change Pattern - Tier 2",
+    "prerequisites": [
+      "slope-concepts",
+      "coordinate-plane"
+    ],
+    "enables": [
+      "slope-intercept-form",
+      "point-slope-form"
+    ],
+    "standardsAlignment": [
+      "8.EE.6",
+      "8.F.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Slope formula: m = (y₂-y₁)/(x₂-x₁)",
+        "Order matters: subtract in same order",
+        "Rise over run from coordinates",
+        "Horizontal line: m = 0, Vertical: undefined",
+        "Can use either point as (x₁,y₁)"
+      ],
+      "commonMistakes": [
+        "Subtracting in wrong order: (y₁-y₂)/(x₂-x₁)",
+        "Mixing up x and y coordinates",
+        "Dividing by zero for vertical lines",
+        "Not simplifying fraction"
+      ],
+      "teachingTips": [
+        "Emphasize: subtract y's, subtract x's, same order",
+        "Label points: (x₁,y₁) and (x₂,y₂) first",
+        "Plot points and verify with rise/run counting",
+        "Practice with all slope types: positive, negative, zero, undefined",
+        "Connect to rate of change interpretation"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "linear-word-problems",
+    "displayName": "Linear Growth Word Problems",
+    "description": "Solve real-world problems involving constant rate of change",
+    "category": "linear-functions",
+    "course": "Grade 8 Math",
+    "quarter": 3,
+    "unit": "Change Pattern - Tier 2",
+    "prerequisites": [
+      "slope-concepts",
+      "graph-linear-equations"
+    ],
+    "enables": [
+      "linear-modeling",
+      "slope-intercept-applications"
+    ],
+    "standardsAlignment": [
+      "8.F.4",
+      "8.F.5"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Identify starting value (y-intercept)",
+        "Identify rate of change (slope)",
+        "Write equation: y = mx + b",
+        "Use equation to predict or find values",
+        "Interpret in context"
+      ],
+      "commonMistakes": [
+        "Confusing rate and starting value",
+        "Wrong variable for time/amount",
+        "Not including units",
+        "Misreading the question"
+      ],
+      "teachingTips": [
+        "Highlight: starting amount and how it changes",
+        "Table of values helps see pattern",
+        "Real contexts: phone plans, rental fees, savings",
+        "Graph to visualize the situation",
+        "Check: does answer make sense?"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "rate-of-change-problems",
+    "displayName": "Rate of Change Problems",
+    "description": "Calculate and interpret average rate of change from tables, graphs, and situations",
+    "category": "linear-functions",
+    "course": "Grade 8 Math",
+    "quarter": 3,
+    "unit": "Change Pattern - Tier 2",
+    "prerequisites": [
+      "slope-from-two-points",
+      "rate-problems"
+    ],
+    "enables": [
+      "linear-modeling",
+      "average-rate-of-change"
+    ],
+    "standardsAlignment": [
+      "8.F.4",
+      "8.F.5"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Rate of change = change in output / change in input",
+        "For linear: rate of change = slope",
+        "Units: y-units per x-unit",
+        "Can find from table, graph, or equation",
+        "Interpret meaning in context"
+      ],
+      "commonMistakes": [
+        "Confusing which variable changes",
+        "Wrong order in subtraction",
+        "Missing or wrong units",
+        "Not connecting to slope"
+      ],
+      "teachingTips": [
+        "Connect to slope and unit rates",
+        "Real rates: mph, $/hour, degrees/minute",
+        "From table: pick any two points",
+        "Graph: use slope triangles",
+        "Meaning: \"for every increase of 1 in x, y changes by...\""
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "evaluate-expressions",
+    "displayName": "Evaluating Algebraic Expressions",
+    "description": "Substitute values and evaluate expressions using order of operations (GEMS)",
+    "category": "expressions",
+    "course": "Grade 6-7 Math",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": [
+      "order-of-operations",
+      "integer-operations"
+    ],
+    "enables": [
+      "nested-operations",
+      "simplifying-expressions"
+    ],
+    "standardsAlignment": [
+      "6.EE.2c",
+      "7.EE.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Substitute given values for variables",
+        "Follow GEMS order: Grouping, Exponents, Multiply/Divide, Add/Subtract",
+        "Work step-by-step, show each step",
+        "Parentheses for negative substitutions",
+        "Check by substituting back"
+      ],
+      "commonMistakes": [
+        "Not using parentheses for negative values",
+        "Order of operations errors (not following GEMS)",
+        "Arithmetic errors with negatives",
+        "Forgetting exponents apply to what's directly before"
+      ],
+      "teachingTips": [
+        "Write expression, substitute with parentheses",
+        "GEMS reminder: Grouping → Exponents → M/D → A/S",
+        "Example: 3x² - 5 when x = -2: 3(-2)² - 5 = 3(4) - 5 = 12 - 5 = 7",
+        "Practice with different values",
+        "Real contexts: formulas (distance, area, etc.)"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "nested-operations",
+    "displayName": "Nested Operations and Complex GEMS",
+    "description": "Evaluate complex expressions with multiple grouping symbols and operations",
+    "category": "expressions",
+    "course": "Grade 7-8 Math",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": [
+      "evaluate-expressions",
+      "order-of-operations"
+    ],
+    "enables": [
+      "simplifying-complex-expressions"
+    ],
+    "standardsAlignment": [
+      "7.EE.1",
+      "8.EE.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Work from innermost grouping outward",
+        "Types of grouping: ( ), [ ], { }, fraction bars",
+        "GEMS applies at each level",
+        "Clear step-by-step work prevents errors",
+        "Absolute value acts as grouping"
+      ],
+      "commonMistakes": [
+        "Not working from inside out",
+        "Mixing up which grouping to do first",
+        "Skipping steps and making errors",
+        "Mishandling negative signs"
+      ],
+      "teachingTips": [
+        "Circle or highlight innermost grouping first",
+        "Work one level at a time",
+        "Example: 3[2(5-3)² + 4] → 3[2(2)² + 4] → 3[2(4) + 4] → 3[12] → 36",
+        "Fraction bar groups numerator and denominator",
+        "Practice with increasing complexity"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "factoring-quadratics",
+    "displayName": "Factoring Quadratic Expressions",
+    "description": "Factor quadratic expressions of the form x² + bx + c and ax² + bx + c",
+    "category": "expressions",
+    "course": "Grade 8-9 Math",
+    "quarter": 4,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": [
+      "distributive-property",
+      "integer-operations"
+    ],
+    "enables": [
+      "solving-by-factoring",
+      "factoring-difference-squares"
+    ],
+    "standardsAlignment": [
+      "A-SSE.2",
+      "A-SSE.3a"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Factor x² + bx + c into (x + p)(x + q) where p·q = c and p + q = b",
+        "Check: FOIL to verify",
+        "For ax² + bx + c: find factors of ac that add to b",
+        "Look for GCF first",
+        "Some quadratics are prime (cannot be factored)"
+      ],
+      "commonMistakes": [
+        "Sign errors with negative factors",
+        "Not checking by multiplying back",
+        "Forgetting to factor out GCF first",
+        "Assuming all quadratics can be factored"
+      ],
+      "teachingTips": [
+        "List factor pairs of c, find pair that adds to b",
+        "Practice pattern: (x + 3)(x + 5) = x² + 8x + 15",
+        "Use algebra tiles or area model for visual",
+        "Always verify by FOILing",
+        "Connect to solving equations later"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "factoring-difference-squares",
+    "displayName": "Factoring Difference of Squares",
+    "description": "Factor expressions in the form a² - b² into (a+b)(a-b)",
+    "category": "expressions",
+    "course": "Grade 8-9 Math",
+    "quarter": 4,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": [
+      "factoring-quadratics",
+      "perfect-squares"
+    ],
+    "enables": [
+      "solving-by-factoring",
+      "advanced-factoring"
+    ],
+    "standardsAlignment": [
+      "A-SSE.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Pattern: a² - b² = (a + b)(a - b)",
+        "Both terms must be perfect squares",
+        "Must be subtraction (difference)",
+        "Can combine with other factoring techniques",
+        "Sum of squares a² + b² does NOT factor (over reals)"
+      ],
+      "commonMistakes": [
+        "Trying to factor sum of squares",
+        "Sign errors in factors",
+        "Not recognizing perfect squares",
+        "Forgetting to check for GCF first"
+      ],
+      "teachingTips": [
+        "Identify perfect squares: 4, 9, 16, 25, x², 4x², etc.",
+        "Pattern recognition is key",
+        "Example: x² - 25 = (x + 5)(x - 5)",
+        "Check: multiply back using FOIL",
+        "Real: geometric area problems"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "plotting-points",
+    "displayName": "Plotting Points on Coordinate Plane",
+    "description": "Plot ordered pairs accurately on the coordinate plane",
+    "category": "coordinate-geometry",
+    "course": "Grade 6-7 Math",
+    "quarter": 2,
+    "unit": "Space Pattern - Tier 2",
+    "prerequisites": [
+      "coordinate-plane"
+    ],
+    "enables": [
+      "quadrants",
+      "graph-linear-equations"
+    ],
+    "standardsAlignment": [
+      "6.NS.6b",
+      "6.NS.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Ordered pair: (x, y) - order matters!",
+        "Start at origin (0, 0)",
+        "Move horizontally x units, then vertically y units",
+        "Right/up are positive, left/down are negative",
+        "Be precise with placement"
+      ],
+      "commonMistakes": [
+        "Reversing x and y coordinates",
+        "Going up/down first instead of left/right",
+        "Imprecise plotting",
+        "Not starting from origin"
+      ],
+      "teachingTips": [
+        "Mnemonic: \"along the hall, up the stairs\"",
+        "Practice all four quadrants",
+        "Use graph paper for accuracy",
+        "Label axes and scale",
+        "Connect to real: maps, battleship game"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "quadrants",
+    "displayName": "Quadrants and Coordinate Plane Regions",
+    "description": "Identify and work with the four quadrants of the coordinate plane",
+    "category": "coordinate-geometry",
+    "course": "Grade 6-7 Math",
+    "quarter": 2,
+    "unit": "Space Pattern - Tier 2",
+    "prerequisites": [
+      "plotting-points",
+      "coordinate-plane"
+    ],
+    "enables": [
+      "graph-linear-equations",
+      "transformations"
+    ],
+    "standardsAlignment": [
+      "6.NS.6b",
+      "6.NS.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Quadrant I: (+, +) upper right",
+        "Quadrant II: (-, +) upper left",
+        "Quadrant III: (-, -) lower left",
+        "Quadrant IV: (+, -) lower right",
+        "Axes are NOT in quadrants",
+        "Sign patterns determine quadrant"
+      ],
+      "commonMistakes": [
+        "Numbering quadrants incorrectly",
+        "Thinking axes are in quadrants",
+        "Not recognizing sign patterns",
+        "Roman numeral confusion"
+      ],
+      "teachingTips": [
+        "Counter-clockwise from upper right: I, II, III, IV",
+        "Sign chart: I(+,+), II(-,+), III(-,-), IV(+,-)",
+        "Practice: which quadrant contains each point?",
+        "Real: GPS coordinates, map sections",
+        "Connect to transformations later"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "distance-formula",
+    "displayName": "Distance Formula",
+    "description": "Find distance between two points using the distance formula",
+    "category": "coordinate-geometry",
+    "course": "Grade 8 Math",
+    "quarter": 4,
+    "unit": "Space Pattern - Tier 2",
+    "prerequisites": [
+      "plotting-points",
+      "pythagorean-theorem"
+    ],
+    "enables": [
+      "midpoint-formula",
+      "circles"
+    ],
+    "standardsAlignment": [
+      "8.G.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Distance formula: d = √[(x₂-x₁)² + (y₂-y₁)²]",
+        "Derived from Pythagorean theorem",
+        "Order of points doesn't matter",
+        "Horizontal: d = |x₂-x₁|, Vertical: d = |y₂-y₁|",
+        "Always get positive distance"
+      ],
+      "commonMistakes": [
+        "Forgetting square root",
+        "Sign errors in subtraction",
+        "Not squaring before adding",
+        "Mixing up x and y"
+      ],
+      "teachingTips": [
+        "Show derivation from Pythagorean theorem",
+        "Plot points first to visualize",
+        "Horizontal/vertical cases first (simpler)",
+        "Check: distance matches diagonal on graph",
+        "Real: map distances, GPS navigation"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "midpoint-formula",
+    "displayName": "Midpoint Formula",
+    "description": "Find the midpoint between two coordinate points",
+    "category": "coordinate-geometry",
+    "course": "Grade 8 Math",
+    "quarter": 4,
+    "unit": "Space Pattern - Tier 2",
+    "prerequisites": [
+      "plotting-points",
+      "distance-formula"
+    ],
+    "enables": [
+      "line-segments",
+      "coordinate-proofs"
+    ],
+    "standardsAlignment": [
+      "8.G.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Midpoint formula: M = ((x₁+x₂)/2, (y₁+y₂)/2)",
+        "Average the x-coordinates, average the y-coordinates",
+        "Midpoint is exactly halfway between points",
+        "Can verify: distance from each endpoint equal",
+        "Works in all quadrants"
+      ],
+      "commonMistakes": [
+        "Adding instead of averaging (forgetting division by 2)",
+        "Subtracting instead of adding",
+        "Writing as two numbers instead of ordered pair",
+        "Mixing up coordinates"
+      ],
+      "teachingTips": [
+        "Remember: AVERAGE of x's and y's",
+        "Plot points and verify midpoint visually",
+        "Horizontal/vertical cases first",
+        "Check: midpoint is between the two points",
+        "Real: center of a segment, halfway point on map"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "one-step-inequalities",
+    "displayName": "Solving One-Step Inequalities",
+    "description": "Solve and graph one-step inequalities",
+    "category": "inequalities",
+    "course": "Grade 6-7 Math",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 2",
+    "prerequisites": [
+      "solving-inequalities",
+      "inequality-notation"
+    ],
+    "enables": [
+      "two-step-inequalities",
+      "graphing-inequalities"
+    ],
+    "standardsAlignment": [
+      "6.EE.8",
+      "7.EE.4b"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Use inverse operations like equations",
+        "Solutions are ranges of values",
+        "Flip inequality when multiplying/dividing by negative",
+        "Test values to check solution",
+        "Graph on number line"
+      ],
+      "commonMistakes": [
+        "Not flipping inequality sign when using negatives",
+        "Treating like equals sign",
+        "Wrong direction on number line graph",
+        "Not checking solution"
+      ],
+      "teachingTips": [
+        "Start with addition/subtraction (no flipping)",
+        "Emphasize: flip ONLY for multiply/divide by negative",
+        "Test multiple values from solution set",
+        "Number line: open circle for < or >, closed for ≤ or ≥",
+        "Real contexts: budgets, limits, ranges"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "two-step-inequalities",
+    "displayName": "Solving Two-Step Inequalities",
+    "description": "Solve inequalities requiring two operations",
+    "category": "inequalities",
+    "course": "Grade 7-8 Math",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 2",
+    "prerequisites": [
+      "one-step-inequalities"
+    ],
+    "enables": [
+      "multi-step-inequalities",
+      "compound-inequalities"
+    ],
+    "standardsAlignment": [
+      "7.EE.4b"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Undo operations in reverse order (like equations)",
+        "Undo addition/subtraction first, then multiply/divide",
+        "Flip inequality if multiply/divide by negative",
+        "Solution is still a range",
+        "Graph and test solution"
+      ],
+      "commonMistakes": [
+        "Forgetting to flip when dividing by negative",
+        "Operating on one side only",
+        "Order of operations errors",
+        "Not simplifying completely"
+      ],
+      "teachingTips": [
+        "Same steps as two-step equations",
+        "Watch for negative coefficients",
+        "Example: -2x + 5 > 11 → -2x > 6 → x < -3 (flipped!)",
+        "Always graph solution on number line",
+        "Verify with test values"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "multi-step-inequalities",
+    "displayName": "Multi-Step Inequalities",
+    "description": "Solve complex inequalities with variables on both sides",
+    "category": "inequalities",
+    "course": "Grade 8 Math",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 2",
+    "prerequisites": [
+      "two-step-inequalities",
+      "combining-like-terms"
+    ],
+    "enables": [
+      "compound-inequalities",
+      "absolute-value-inequalities"
+    ],
+    "standardsAlignment": [
+      "8.EE.7"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Simplify each side first",
+        "Get variables on one side",
+        "Solve like multi-step equation",
+        "Remember: flip for multiply/divide by negative",
+        "Infinite solutions or no solution possible"
+      ],
+      "commonMistakes": [
+        "Not simplifying first",
+        "Forgetting to flip inequality",
+        "Errors with distributive property",
+        "Not recognizing special cases"
+      ],
+      "teachingTips": [
+        "Clear systematic steps",
+        "Combine like terms before moving variables",
+        "Move smaller variable term to other side",
+        "Check solution with test values",
+        "Graph final answer"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "graphing-inequalities",
+    "displayName": "Graphing Inequalities on Number Line",
+    "description": "Graph solution sets of inequalities using number lines",
+    "category": "inequalities",
+    "course": "Grade 6-8 Math",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 2",
+    "prerequisites": [
+      "one-step-inequalities",
+      "inequality-notation"
+    ],
+    "enables": [
+      "compound-inequalities",
+      "coordinate-plane-inequalities"
+    ],
+    "standardsAlignment": [
+      "6.EE.8",
+      "7.EE.4b"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Open circle for < or > (not included)",
+        "Closed circle for ≤ or ≥ (included)",
+        "Shade/arrow in direction of solutions",
+        "Left for less than, right for greater than",
+        "Can represent infinite solutions"
+      ],
+      "commonMistakes": [
+        "Wrong type of circle (open vs closed)",
+        "Shading wrong direction",
+        "Not using proper inequality notation",
+        "Confusing < and ≤"
+      ],
+      "teachingTips": [
+        "Mnemonic: open circle looks like \"oh no, not included\"",
+        "Test a value to verify shading direction",
+        "Practice reading graphs back to inequalities",
+        "Use different colors for compound inequalities",
+        "Real: acceptable ranges, speed limits, age restrictions"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "inequality-notation",
+    "displayName": "Inequality Notation and Symbols",
+    "description": "Understand and use inequality symbols and interval notation",
+    "category": "inequalities",
+    "course": "Grade 6-7 Math",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 2",
+    "prerequisites": [
+      "comparing-numbers"
+    ],
+    "enables": [
+      "one-step-inequalities",
+      "graphing-inequalities"
+    ],
+    "standardsAlignment": [
+      "6.EE.5",
+      "6.EE.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "< means less than, > means greater than",
+        "≤ means less than or equal to, ≥ means greater than or equal to",
+        "Point of symbol points to smaller value",
+        "Can write solutions multiple ways: x > 3 or (3, ∞)",
+        "Read and write compound inequalities"
+      ],
+      "commonMistakes": [
+        "Reversing < and >",
+        "Confusing ≤ with <",
+        "Writing interval notation incorrectly",
+        "Not understanding \"or equal to\" part"
+      ],
+      "teachingTips": [
+        "Symbol points to smaller number like arrow",
+        "Alligator eats bigger number visual",
+        "Practice reading: \"x is less than 5\"",
+        "Number line connection",
+        "Real: age requirements, weight limits, temperature ranges"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "measures-of-center",
+    "displayName": "Comparing Measures of Center",
+    "description": "Choose and compare appropriate measures of center (mean, median, mode)",
+    "category": "statistics",
+    "course": "Grade 6-7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "mean",
+      "median",
+      "mode"
+    ],
+    "enables": [
+      "iqr",
+      "data-analysis"
+    ],
+    "standardsAlignment": [
+      "6.SP.3",
+      "6.SP.5c",
+      "7.SP.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Mean: affected by outliers, best for symmetric data",
+        "Median: resistant to outliers, best for skewed data",
+        "Mode: for categorical or most frequent",
+        "Different measures give different perspectives",
+        "Choose based on data distribution and question"
+      ],
+      "commonMistakes": [
+        "Always using mean without considering outliers",
+        "Not recognizing when data is skewed",
+        "Confusing the three measures",
+        "Not considering context"
+      ],
+      "teachingTips": [
+        "Show same data set with outlier: mean shifts, median stable",
+        "Real: home prices (median better), test scores (mean ok)",
+        "Visual: dot plots or histograms show distribution shape",
+        "Discuss: when is each measure most useful?",
+        "Practice identifying skewed vs symmetric data"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "iqr",
+    "displayName": "Interquartile Range (IQR)",
+    "description": "Find and interpret the interquartile range as a measure of spread",
+    "category": "statistics",
+    "course": "Grade 6-7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "median",
+      "range"
+    ],
+    "enables": [
+      "box-plots",
+      "outliers"
+    ],
+    "standardsAlignment": [
+      "6.SP.5c",
+      "7.SP.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Q1: median of lower half, Q3: median of upper half",
+        "IQR = Q3 - Q1",
+        "Measures spread of middle 50% of data",
+        "Not affected by outliers",
+        "Larger IQR = more spread out data"
+      ],
+      "commonMistakes": [
+        "Not ordering data first",
+        "Including median in both halves",
+        "Subtracting wrong direction",
+        "Confusing IQR with range"
+      ],
+      "teachingTips": [
+        "Order data, find median, split in half at median",
+        "Find median of each half (Q1 and Q3)",
+        "IQR is distance between quartiles",
+        "Visualize with box plot",
+        "Real: understanding variability in test scores, prices"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "standard-deviation",
+    "displayName": "Standard Deviation",
+    "description": "Understand standard deviation as a measure of spread",
+    "category": "statistics",
+    "course": "Grade 7-8 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "mean",
+      "measures-of-center"
+    ],
+    "enables": [
+      "normal-distribution",
+      "data-analysis"
+    ],
+    "standardsAlignment": [
+      "7.SP.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Measures typical distance from the mean",
+        "Larger SD = more spread out data",
+        "Affected by outliers (like mean)",
+        "Units are same as original data",
+        "Most data falls within 1-2 SD of mean"
+      ],
+      "commonMistakes": [
+        "Confusing with variance",
+        "Not understanding units",
+        "Thinking all SD calculations are same",
+        "Misinterpreting what SD tells us"
+      ],
+      "teachingTips": [
+        "Use technology to calculate (formula is complex)",
+        "Focus on interpretation, not calculation",
+        "Compare: small SD = data clustered, large SD = data scattered",
+        "Visual: dot plots with different SDs",
+        "Real: quality control, test score consistency"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "histograms",
+    "displayName": "Histograms",
+    "description": "Create and interpret histograms to display numerical data",
+    "category": "data-displays",
+    "course": "Grade 6-7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "frequency-tables",
+      "bar-graphs"
+    ],
+    "enables": [
+      "data-displays",
+      "data-analysis"
+    ],
+    "standardsAlignment": [
+      "6.SP.4",
+      "6.SP.5"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Shows distribution of numerical data",
+        "Bars represent ranges (bins), not individual values",
+        "No gaps between bars (continuous data)",
+        "Height shows frequency",
+        "Shape: symmetric, skewed left/right, uniform"
+      ],
+      "commonMistakes": [
+        "Gaps between bars like bar graph",
+        "Not using equal interval widths",
+        "Confusing with bar graphs",
+        "Incorrect bin boundaries"
+      ],
+      "teachingTips": [
+        "Contrast with bar graphs (categorical)",
+        "Choose appropriate bin width",
+        "Describe shape, center, spread, outliers",
+        "Use technology for large datasets",
+        "Real: test scores, heights, ages"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "box-plots",
+    "displayName": "Box Plots (Box-and-Whisker)",
+    "description": "Create and interpret box plots using five-number summary",
+    "category": "data-displays",
+    "course": "Grade 6-7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "median",
+      "iqr"
+    ],
+    "enables": [
+      "data-displays",
+      "comparing-distributions"
+    ],
+    "standardsAlignment": [
+      "6.SP.4",
+      "6.SP.5"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Five-number summary: min, Q1, median, Q3, max",
+        "Box shows middle 50% (IQR)",
+        "Whiskers extend to min and max",
+        "Easy to compare multiple datasets",
+        "Shows spread and outliers"
+      ],
+      "commonMistakes": [
+        "Not ordering data first",
+        "Confusing quartiles",
+        "Incorrect scale",
+        "Missing outliers"
+      ],
+      "teachingTips": [
+        "Calculate five-number summary first",
+        "Draw scale, plot five numbers, construct box",
+        "Box shows IQR, line in box is median",
+        "Compare parallel box plots easily",
+        "Real: comparing test scores, salaries, temperatures"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "data-displays",
+    "displayName": "Choosing Appropriate Data Displays",
+    "description": "Select and create appropriate data displays for different data types",
+    "category": "data-displays",
+    "course": "Grade 6-8 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "histograms",
+      "box-plots",
+      "bar-graphs"
+    ],
+    "enables": [
+      "data-analysis",
+      "statistical-reasoning"
+    ],
+    "standardsAlignment": [
+      "6.SP.4",
+      "7.SP.4",
+      "8.SP.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Categorical data: bar graphs, circle graphs",
+        "Numerical data: histograms, box plots, dot plots",
+        "Comparison: side-by-side or stacked displays",
+        "Time trends: line graphs",
+        "Choose based on data type and question"
+      ],
+      "commonMistakes": [
+        "Using histogram for categorical data",
+        "Wrong display for the question asked",
+        "Misleading scales or labels",
+        "Too many categories"
+      ],
+      "teachingTips": [
+        "Decision tree: categorical or numerical? one set or comparing?",
+        "Practice: match data to best display type",
+        "Critique misleading graphs",
+        "Create multiple displays for same data",
+        "Real: news articles, reports, presentations"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "sequence-patterns",
+    "displayName": "Sequence Patterns",
+    "description": "Identify and extend patterns in arithmetic sequences",
+    "category": "sequences",
+    "course": "Grade 7-8 Math",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 2",
+    "prerequisites": [
+      "number-patterns",
+      "integer-operations"
+    ],
+    "enables": [
+      "arithmetic-sequences",
+      "explicit-formulas"
+    ],
+    "standardsAlignment": [
+      "8.F.1",
+      "8.F.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Sequence: ordered list of numbers",
+        "Common difference: constant change between terms",
+        "Extend by adding common difference",
+        "Find missing terms using pattern",
+        "Real-world patterns: growth, savings, seating"
+      ],
+      "commonMistakes": [
+        "Not identifying common difference correctly",
+        "Assuming all sequences are arithmetic",
+        "Arithmetic errors when extending",
+        "Confusing term number with term value"
+      ],
+      "teachingTips": [
+        "Find differences between consecutive terms",
+        "Use tables: term number and term value",
+        "Visual: number line showing jumps",
+        "Real: saving /week, ticket numbers, seating rows",
+        "Connect to linear functions later"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "exponential-patterns",
+    "displayName": "Exponential Patterns",
+    "description": "Identify and extend geometric (exponential) sequences",
+    "category": "sequences",
+    "course": "Grade 8 Math",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 2",
+    "prerequisites": [
+      "sequence-patterns",
+      "exponents"
+    ],
+    "enables": [
+      "geometric-sequences",
+      "exponential-functions"
+    ],
+    "standardsAlignment": [
+      "8.F.1",
+      "8.F.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Common ratio: multiply by constant each time",
+        "Growth: ratio > 1, Decay: 0 < ratio < 1",
+        "Exponential growth increases rapidly",
+        "Find pattern by dividing consecutive terms",
+        "Different from linear (additive) patterns"
+      ],
+      "commonMistakes": [
+        "Adding instead of multiplying",
+        "Not identifying the common ratio",
+        "Confusing with arithmetic sequences",
+        "Calculation errors with large numbers"
+      ],
+      "teachingTips": [
+        "Find ratio: divide term by previous term",
+        "Visual: dramatic growth curves vs linear",
+        "Real: bacteria doubling, compound interest, viral spread",
+        "Compare: arithmetic adds, geometric multiplies",
+        "Connect to exponential functions"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "arithmetic-series",
+    "displayName": "Arithmetic Series Basics",
+    "description": "Find sums of arithmetic sequences",
+    "category": "sequences",
+    "course": "Grade 8 Math",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 2",
+    "prerequisites": [
+      "arithmetic-sequences",
+      "sequence-patterns"
+    ],
+    "enables": [
+      "series-formulas",
+      "summation-notation"
+    ],
+    "standardsAlignment": [
+      "8.F.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Series: sum of sequence terms",
+        "Arithmetic series has pattern in partial sums",
+        "Can add terms directly for short sequences",
+        "Pair terms from ends: first+last, second+second-to-last",
+        "Foundation for formula: sum = n(first+last)/2"
+      ],
+      "commonMistakes": [
+        "Confusing sequence with series",
+        "Arithmetic errors in adding",
+        "Not pairing terms efficiently",
+        "Counting terms wrong"
+      ],
+      "teachingTips": [
+        "Start with small examples: 1+2+3+...+10",
+        "Gauss story: pairing 1+10, 2+9, 3+8...",
+        "Visual: area under stairs",
+        "Real: total savings over time, stacking blocks",
+        "Build toward formula understanding"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "geometric-series",
+    "displayName": "Geometric Series Basics",
+    "description": "Find sums of geometric sequences (finite)",
+    "category": "sequences",
+    "course": "Grade 8 Math",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 2",
+    "prerequisites": [
+      "geometric-sequences",
+      "exponential-patterns"
+    ],
+    "enables": [
+      "series-formulas",
+      "infinite-series"
+    ],
+    "standardsAlignment": [
+      "8.F.5"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Sum of geometric sequence terms",
+        "Grows rapidly with common ratio > 1",
+        "Can calculate directly for short sequences",
+        "Pattern in partial sums",
+        "Real applications: compound growth"
+      ],
+      "commonMistakes": [
+        "Arithmetic errors with repeated multiplication",
+        "Confusing with arithmetic series",
+        "Not identifying common ratio correctly",
+        "Calculation errors with large numbers"
+      ],
+      "teachingTips": [
+        "Start with small examples: 1+2+4+8+16",
+        "Calculator helpful for larger sums",
+        "Visual: exponential growth pattern",
+        "Real: investment growth, population doubling",
+        "Foundation for geometric series formula later"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
   }
 ]
