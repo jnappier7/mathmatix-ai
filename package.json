@@ -10,6 +10,7 @@
     "seed:test": "node scripts/seedTestData.js",
     "seed:skills": "node scripts/seed-pattern-skills.js",
     "analyze:skills": "node scripts/analyze-skill-coverage.js",
+    "analyze:date-issues": "node scripts/find-date-issues.js",
     "migrate:remap-patterns": "node scripts/remap-problems-to-patterns.js",
     "cron:weekly-digest": "node scripts/weeklyDigest.js",
     "cron:archive": "node scripts/archiveOldConversations.js",
