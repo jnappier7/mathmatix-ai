@@ -216,6 +216,59 @@ function generateFractionMultiplication(difficulty) {
   };
 }
 
+function generateFractionDivision(difficulty) {
+  const maxNumerator = difficulty < 0 ? 5 : difficulty < 1 ? 8 : 12;
+  const maxDenominator = difficulty < 0 ? 6 : difficulty < 1 ? 10 : 15;
+
+  const num1 = randomInt(1, maxNumerator);
+  const denom1 = randomInt(2, maxDenominator);
+  const num2 = randomInt(1, maxNumerator);
+  const denom2 = randomInt(2, maxDenominator);
+
+  // Dividing by a fraction = multiply by reciprocal
+  const resultNum = num1 * denom2;
+  const resultDenom = denom1 * num2;
+
+  const simplified = simplifyFraction(resultNum, resultDenom);
+  const answerStr = `${simplified.num}/${simplified.denom}`;
+
+  const wrong1 = `${resultNum}/${resultDenom}`; // Unsimplified
+  const wrong2 = `${num1 * num2}/${denom1 * denom2}`; // Multiply instead
+  const wrong3 = `${num1 * num2}/${denom2 * denom1}`; // Wrong reciprocal
+
+  const options = [
+    { label: 'A', text: String(answerStr) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ].sort(() => Math.random() - 0.5);
+
+  const correctLabel = options.find(o => o.text === answerStr).label;
+
+  return {
+    problemId: `prob_frac_div_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'divide-fractions',
+    content: `Divide: ${num1}/${denom1} ÷ ${num2}/${denom2}`,
+    answer: answerStr,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3, // Division is slightly harder
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['fractions', 'division']
+    },
+    isActive: true
+  };
+}
+
 async function generateProblems() {
   try {
     console.log('🔍 Connecting to MongoDB...');
@@ -251,10 +304,19 @@ async function generateProblems() {
       }
     }
 
+    // Generate 24 division problems (4 at each difficulty)
+    for (const diff of difficulties) {
+      for (let i = 0; i < 4; i++) {
+        problems.push(generateFractionDivision(diff));
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+    }
+
     console.log(`Generated ${problems.length} problems total:\n`);
     console.log(`  - add-fractions: 30 problems`);
     console.log(`  - subtract-fractions: 30 problems`);
-    console.log(`  - multiply-fractions: 24 problems\n`);
+    console.log(`  - multiply-fractions: 24 problems`);
+    console.log(`  - divide-fractions: 24 problems\n`);
 
     console.log('Saving to database...\n');
 
