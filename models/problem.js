@@ -224,7 +224,13 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
     case 'multiple-choice':
       // For multiple choice, userAnswer is the letter (A, B, C, D)
       // Compare to correctOption, not answer
-      return String(userAnswer).trim().toUpperCase() === String(this.correctOption).trim().toUpperCase();
+      const userLetter = String(userAnswer).trim().toUpperCase();
+      const correctLetter = String(this.correctOption).trim().toUpperCase();
+
+      // DEBUG logging
+      console.log(`[MC Answer Check] User: "${userLetter}" | Correct: "${correctLetter}" | Match: ${userLetter === correctLetter}`);
+
+      return userLetter === correctLetter;
 
     default:
       return false;
