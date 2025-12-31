@@ -92,7 +92,10 @@ function initializeEventListeners() {
     });
 
     // Start run
-    document.getElementById('startRunBtn').addEventListener('click', startRun);
+    document.getElementById('startRunBtn').addEventListener('click', () => {
+        showScreen('game');
+        startRun();
+    });
 
     // Play again
     document.getElementById('playAgainBtn').addEventListener('click', () => {
