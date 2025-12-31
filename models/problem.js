@@ -36,6 +36,12 @@ const problemSchema = new mongoose.Schema({
     required: true
   },
 
+  // Optional SVG diagram for visual problems (geometry, graphs, etc.)
+  svg: {
+    type: String,
+    required: false
+  },
+
   // Correct answer (for auto-validation)
   answer: {
     type: mongoose.Schema.Types.Mixed,  // Can be number, string, or array
@@ -216,7 +222,15 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
       return String(userAnswer).trim() === String(this.answer).trim();
 
     case 'multiple-choice':
-      return String(userAnswer).trim() === String(this.answer).trim();
+      // For multiple choice, userAnswer is the letter (A, B, C, D)
+      // Compare to correctOption, not answer
+      const userLetter = String(userAnswer).trim().toUpperCase();
+      const correctLetter = String(this.correctOption).trim().toUpperCase();
+
+      // DEBUG logging
+      console.log(`[MC Answer Check] User: "${userLetter}" | Correct: "${correctLetter}" | Match: ${userLetter === correctLetter}`);
+
+      return userLetter === correctLetter;
 
     default:
       return false;

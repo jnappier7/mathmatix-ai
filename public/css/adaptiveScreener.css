@@ -660,12 +660,19 @@
   background: rgba(218, 165, 32, 0.3);
 }
 
-/* Multiple Choice Options */
+/* Multiple Choice Options - 2x2 Grid Layout */
 .multiple-choice-options {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   width: 100%;
+}
+
+/* Mobile: Stack vertically on small screens */
+@media (max-width: 640px) {
+  .multiple-choice-options {
+    grid-template-columns: 1fr;
+  }
 }
 
 .mc-option {
