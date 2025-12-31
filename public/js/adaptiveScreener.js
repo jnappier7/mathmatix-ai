@@ -370,6 +370,16 @@ function displayProblem(problem) {
   let content = String(problem.content);
   elements.problemText.textContent = content;
 
+  // Display SVG diagram if available
+  const svgContainer = document.getElementById('problem-svg-container');
+  if (problem.svg) {
+    svgContainer.innerHTML = problem.svg;
+    svgContainer.style.display = 'block';
+  } else {
+    svgContainer.innerHTML = '';
+    svgContainer.style.display = 'none';
+  }
+
   // Handle multiple choice vs fill-in
   const answerSection = document.querySelector('.answer-section');
 
