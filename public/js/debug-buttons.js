@@ -51,11 +51,11 @@ setTimeout(() => {
 
     if (resourcesBtn) {
         console.log('📚 Resources button exists and has', resourcesBtn.onclick ? 'onclick handler' : 'NO onclick handler');
-        console.log('   Event listeners count:', getEventListeners ? getEventListeners(resourcesBtn) : 'Cannot check (DevTools only)');
+        console.log('   Event listeners count:', typeof getEventListeners !== 'undefined' ? getEventListeners(resourcesBtn) : 'Cannot check (DevTools only)');
     }
 
     if (graphBtn) {
         console.log('📊 Graph button exists and has', graphBtn.onclick ? 'onclick handler' : 'NO onclick handler');
-        console.log('   Event listeners count:', getEventListeners ? getEventListeners(graphBtn) : 'Cannot check (DevTools only)');
+        console.log('   Event listeners count:', typeof getEventListeners !== 'undefined' ? getEventListeners(graphBtn) : 'Cannot check (DevTools only)');
     }
 }, 1000);
