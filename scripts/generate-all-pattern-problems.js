@@ -322,17 +322,247 @@ function generateCombiningLikeTerms(difficulty) {
   };
 }
 
+function generateTwoStepEquations(difficulty) {
+  const a = randomInt(2, 10);
+  const b = randomInt(1, 20);
+  const x = randomInt(2, 15);
+  const result = a * x + b;
+
+  const answer = x;
+  const wrong1 = (result - b);  // Forgot to divide
+  const wrong2 = (result / a);   // Forgot to subtract
+  const wrong3 = answer + randomInt(1, 5);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_2step_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'two-step-equations',
+    content: `Solve for x: ${a}x + ${b} = ${result}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.4, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2,
+    metadata: { estimatedTime: 50, source: 'template', tags: ['equations', 'algebra'] },
+    isActive: true
+  };
+}
+
+function generateSlope(difficulty) {
+  const x1 = randomInt(-5, 5);
+  const y1 = randomInt(-5, 5);
+  const x2 = randomInt(-5, 5);
+  const y2 = randomInt(-5, 5);
+
+  if (x2 === x1) { x2 = x1 + 1; } // Avoid undefined slope
+
+  const rise = y2 - y1;
+  const run = x2 - x1;
+  const gcdVal = Math.abs(gcd(rise, run));
+  const simplifiedRise = rise / gcdVal;
+  const simplifiedRun = run / gcdVal;
+
+  const answer = simplifiedRun === 1 ? String(simplifiedRise) : `${simplifiedRise}/${simplifiedRun}`;
+
+  const wrong1 = `${y2}/${x2}`;
+  const wrong2 = `${run}/${rise}`;  // Inverted
+  const wrong3 = String(simplifiedRise + simplifiedRun);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_slope_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'slope',
+    content: `Find the slope between (${x1}, ${y1}) and (${x2}, ${y2})`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: { difficulty: difficulty, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2,
+    metadata: { estimatedTime: 45, source: 'template', tags: ['graphing', 'linear-equations'] },
+    isActive: true
+  };
+}
+
+function gcd(a, b) {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+function generateRatios(difficulty) {
+  const a = randomInt(1, 12);
+  const b = randomInt(1, 12);
+  const gcdVal = gcd(a, b);
+  const simplified_a = a / gcdVal;
+  const simplified_b = b / gcdVal;
+
+  const answer = `${simplified_a}:${simplified_b}`;
+  const wrong1 = `${a}:${b}`;
+  const wrong2 = `${b}:${a}`;
+  const wrong3 = `${simplified_b}:${simplified_a}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_ratio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'ratios',
+    content: `Simplify the ratio: ${a}:${b}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: { difficulty: difficulty, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2,
+    metadata: { estimatedTime: 35, source: 'template', tags: ['ratios', 'proportional-reasoning'] },
+    isActive: true
+  };
+}
+
+function generatePercentOfNumber(difficulty) {
+  const percent = randomChoice([10, 20, 25, 50, 75]);
+  const number = randomInt(20, 200);
+  const answer = (percent / 100) * number;
+
+  const wrong1 = number + percent;
+  const wrong2 = answer * 2;
+  const wrong3 = number - percent;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_pct_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'percent-of-a-number',
+    content: `What is ${percent}% of ${number}?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: { difficulty: difficulty, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2,
+    metadata: { estimatedTime: 40, source: 'template', tags: ['percent', 'proportional-reasoning'] },
+    isActive: true
+  };
+}
+
+function generateAreaRectangles(difficulty) {
+  const length = randomInt(3, 20);
+  const width = randomInt(2, 15);
+  const answer = length * width;
+
+  const wrong1 = 2 * (length + width); // Perimeter
+  const wrong2 = length + width;
+  const wrong3 = answer + randomInt(5, 15);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_area_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'area-rectangles',
+    content: `Find the area of a rectangle with length ${length} and width ${width}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: { difficulty: difficulty, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 1,
+    metadata: { estimatedTime: 30, source: 'template', tags: ['geometry', 'area'] },
+    isActive: true
+  };
+}
+
+function generateQuadraticFunctions(difficulty) {
+  const a = randomChoice([1, 2, -1, -2]);
+  const h = randomInt(-3, 3);
+  const k = randomInt(-5, 5);
+
+  const answer = `y = ${a}(x - ${h})² + ${k}`;
+  const wrong1 = `y = ${a}(x + ${h})² + ${k}`;
+  const wrong2 = `y = ${a}(x - ${h})² - ${k}`;
+  const wrong3 = `y = ${-a}(x - ${h})² + ${k}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer).replace('--', '+').replace('- -', '+ ') },
+    { label: 'B', text: String(wrong1).replace('--', '+').replace('- -', '+ ') },
+    { label: 'C', text: String(wrong2).replace('--', '+').replace('- -', '+ ') },
+    { label: 'D', text: String(wrong3).replace('--', '+').replace('- -', '+ ') }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer).replace('--', '+').replace('- -', '+ ')).label;
+
+  return {
+    problemId: `prob_quad_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'quadratic-functions',
+    content: `Vertex form of parabola with vertex (${h}, ${k}) and a = ${a}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: { difficulty: difficulty + 0.8, discrimination: 1.5, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3,
+    metadata: { estimatedTime: 60, source: 'template', tags: ['quadratics', 'functions'] },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
 
 const GENERATORS = {
+  // K-5 (Tier 1)
   'addition': generateAddition,
   'subtraction': generateSubtraction,
   'multiplication-basics': generateMultiplicationBasics,
   'place-value': generatePlaceValue,
+
+  // 6-8 (Tier 2)
   'one-step-equations': generateOneStepEquation,
-  'combining-like-terms': generateCombiningLikeTerms
+  'two-step-equations': generateTwoStepEquations,
+  'combining-like-terms': generateCombiningLikeTerms,
+  'ratios': generateRatios,
+  'percent-of-a-number': generatePercentOfNumber,
+  'area-rectangles': generateAreaRectangles,
+
+  // 9-12 (Tier 3)
+  'slope': generateSlope,
+  'quadratic-functions': generateQuadraticFunctions
 };
 
 async function generateAllProblems() {
@@ -358,7 +588,7 @@ async function generateAllProblems() {
     // Generate problems for skills that have generators
     const problems = [];
     const difficulties = [-1.5, -1, -0.5, 0, 0.5, 1, 1.5];
-    const problemsPerDifficulty = 5;
+    const problemsPerDifficulty = 11; // Increased to reach ~1000 total problems
 
     console.log('Generating problems...\n');
 
