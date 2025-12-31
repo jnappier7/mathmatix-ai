@@ -502,7 +502,11 @@ function generateReport(session) {
 
   // Performance summary
   const correctCount = session.responses.filter(r => r.correct).length;
-  const accuracy = correctCount / session.responses.length;
+  const totalQuestions = session.responses.length;
+  const accuracy = totalQuestions > 0 ? correctCount / totalQuestions : 0;
+
+  // DEBUG: Log accuracy calculation
+  console.log(`[Screener Report] Correct: ${correctCount}/${totalQuestions} = ${(accuracy * 100).toFixed(1)}%`);
 
   return {
     // Ability estimate
@@ -514,6 +518,7 @@ function generateReport(session) {
     // Performance
     questionsAnswered: session.questionCount,
     correctCount,
+    totalQuestions,
     accuracy: Math.round(accuracy * 100),
 
     // Time
