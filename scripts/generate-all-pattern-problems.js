@@ -28,6 +28,186 @@ function shuffle(array) {
 }
 
 // ============================================================================
+// SVG HELPER FUNCTIONS FOR VISUAL DIAGRAMS
+// ============================================================================
+
+/**
+ * Generate SVG for a labeled triangle
+ * @param {number} base - Base length
+ * @param {number} height - Height
+ * @param {object} labels - {a, b, c} side labels or null
+ */
+function generateTriangleSVG(base, height, labels = null) {
+  const scale = 15; // pixels per unit
+  const padding = 40;
+  const width = base * scale + padding * 2;
+  const svgHeight = height * scale + padding * 2;
+
+  // Triangle points (base on bottom)
+  const x1 = padding;
+  const y1 = svgHeight - padding;
+  const x2 = padding + base * scale;
+  const y2 = svgHeight - padding;
+  const x3 = padding + (base * scale) / 2;
+  const y3 = svgHeight - padding - height * scale;
+
+  const labelA = labels?.a || base;
+  const labelB = labels?.b || '';
+  const labelC = labels?.c || '';
+
+  return `<svg width="${width}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">
+    <!-- Triangle -->
+    <polygon points="${x1},${y1} ${x2},${y2} ${x3},${y3}"
+             fill="none" stroke="#667eea" stroke-width="3"/>
+
+    <!-- Base label -->
+    <text x="${(x1 + x2) / 2}" y="${y1 + 25}"
+          text-anchor="middle" font-size="16" font-weight="600" fill="#333">
+      ${labelA}
+    </text>
+
+    <!-- Height line (if showing height) -->
+    ${height && labels?.showHeight ? `
+      <line x1="${x3}" y1="${y3}" x2="${x3}" y2="${y1}"
+            stroke="#764ba2" stroke-width="2" stroke-dasharray="5,5"/>
+      <text x="${x3 - 25}" y="${(y1 + y3) / 2}"
+            text-anchor="middle" font-size="16" font-weight="600" fill="#333">
+        ${height}
+      </text>
+    ` : ''}
+
+    <!-- Vertices -->
+    <circle cx="${x1}" cy="${y1}" r="4" fill="#667eea"/>
+    <circle cx="${x2}" cy="${y2}" r="4" fill="#667eea"/>
+    <circle cx="${x3}" cy="${y3}" r="4" fill="#667eea"/>
+  </svg>`;
+}
+
+/**
+ * Generate SVG for a labeled rectangle
+ * @param {number} length - Length
+ * @param {number} width - Width
+ */
+function generateRectangleSVG(length, width) {
+  const scale = 20;
+  const padding = 50;
+  const svgWidth = length * scale + padding * 2;
+  const svgHeight = width * scale + padding * 2;
+
+  const x = padding;
+  const y = padding;
+  const rectWidth = length * scale;
+  const rectHeight = width * scale;
+
+  return `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">
+    <!-- Rectangle -->
+    <rect x="${x}" y="${y}" width="${rectWidth}" height="${rectHeight}"
+          fill="#e6f2ff" stroke="#667eea" stroke-width="3"/>
+
+    <!-- Length label (bottom) -->
+    <text x="${x + rectWidth / 2}" y="${y + rectHeight + 30}"
+          text-anchor="middle" font-size="16" font-weight="600" fill="#333">
+      ${length}
+    </text>
+
+    <!-- Width label (right side) -->
+    <text x="${x + rectWidth + 30}" y="${y + rectHeight / 2}"
+          text-anchor="middle" font-size="16" font-weight="600" fill="#333"
+          transform="rotate(90, ${x + rectWidth + 30}, ${y + rectHeight / 2})">
+      ${width}
+    </text>
+
+    <!-- Corners -->
+    <circle cx="${x}" cy="${y}" r="4" fill="#667eea"/>
+    <circle cx="${x + rectWidth}" cy="${y}" r="4" fill="#667eea"/>
+    <circle cx="${x}" cy="${y + rectHeight}" r="4" fill="#667eea"/>
+    <circle cx="${x + rectWidth}" cy="${y + rectHeight}" r="4" fill="#667eea"/>
+  </svg>`;
+}
+
+/**
+ * Generate SVG for coordinate plane with a point
+ * @param {number} x - X coordinate
+ * @param {number} y - Y coordinate
+ */
+function generateCoordinatePlaneSVG(x, y) {
+  const scale = 30;
+  const padding = 60;
+  const gridSize = 10;
+  const svgWidth = gridSize * scale + padding * 2;
+  const svgHeight = gridSize * scale + padding * 2;
+
+  const originX = padding + (gridSize / 2) * scale;
+  const originY = padding + (gridSize / 2) * scale;
+
+  const pointX = originX + x * scale;
+  const pointY = originY - y * scale;
+
+  return `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">
+    <!-- Grid lines -->
+    ${Array.from({length: gridSize + 1}, (_, i) => {
+      const pos = padding + i * scale;
+      return `<line x1="${pos}" y1="${padding}" x2="${pos}" y2="${svgHeight - padding}"
+                    stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="${padding}" y1="${pos}" x2="${svgWidth - padding}" y2="${pos}"
+                    stroke="#e2e8f0" stroke-width="1"/>`;
+    }).join('')}
+
+    <!-- Axes -->
+    <line x1="${padding}" y1="${originY}" x2="${svgWidth - padding}" y2="${originY}"
+          stroke="#333" stroke-width="2"/>
+    <line x1="${originX}" y1="${padding}" x2="${originX}" y2="${svgHeight - padding}"
+          stroke="#333" stroke-width="2"/>
+
+    <!-- Axis labels -->
+    <text x="${svgWidth - padding + 15}" y="${originY + 5}" font-size="14" font-weight="600">x</text>
+    <text x="${originX - 5}" y="${padding - 10}" font-size="14" font-weight="600">y</text>
+
+    <!-- Point -->
+    <circle cx="${pointX}" cy="${pointY}" r="6" fill="#667eea" stroke="white" stroke-width="2"/>
+    <text x="${pointX + 12}" y="${pointY - 8}" font-size="14" font-weight="600" fill="#667eea">
+      (${x}, ${y})
+    </text>
+  </svg>`;
+}
+
+/**
+ * Generate SVG for an angle with arc
+ * @param {number} degrees - Angle in degrees
+ */
+function generateAngleSVG(degrees) {
+  const svgWidth = 300;
+  const svgHeight = 250;
+  const originX = 80;
+  const originY = svgHeight - 60;
+  const radius = 100;
+
+  const radians = (degrees * Math.PI) / 180;
+  const endX = originX + radius * Math.cos(radians);
+  const endY = originY - radius * Math.sin(radians);
+
+  return `<svg width="${svgWidth}" height="${svgHeight}" xmlns="http://www.w3.org/2000/svg">
+    <!-- Angle rays -->
+    <line x1="${originX}" y1="${originY}" x2="${originX + radius}" y2="${originY}"
+          stroke="#667eea" stroke-width="3"/>
+    <line x1="${originX}" y1="${originY}" x2="${endX}" y2="${endY}"
+          stroke="#667eea" stroke-width="3"/>
+
+    <!-- Arc -->
+    <path d="M ${originX + 40} ${originY} A 40 40 0 0 1 ${originX + 40 * Math.cos(radians)} ${originY - 40 * Math.sin(radians)}"
+          fill="none" stroke="#764ba2" stroke-width="2"/>
+
+    <!-- Angle label -->
+    <text x="${originX + 50}" y="${originY - 10}" font-size="18" font-weight="600" fill="#764ba2">
+      ${degrees}°
+    </text>
+
+    <!-- Vertex -->
+    <circle cx="${originX}" cy="${originY}" r="5" fill="#667eea"/>
+  </svg>`;
+}
+
+// ============================================================================
 // EARLY FOUNDATIONS (PreK-2) GENERATORS
 // ============================================================================
 
@@ -901,6 +1081,7 @@ function generateAreaTriangles(difficulty) {
     problemId: `prob_areatri_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     skillId: 'area-triangles',
     content: `Find the area of a triangle with base ${base} and height ${height}`,
+    svg: generateTriangleSVG(base, height, { showHeight: true }),
     answer: String(answer),
     correctOption: correctLabel,
     answerType: 'multiple-choice',
@@ -1888,7 +2069,8 @@ function generateAngleMeasurement(difficulty) {
   return {
     problemId: `prob_angle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     skillId: 'angle-measurement',
-    content: `An ${angleType} angle measures ${angle}°. What is its measure?`,
+    content: `What is the measure of this angle?`,
+    svg: generateAngleSVG(angle),
     answer: String(answer),
     correctOption: correctLabel,
     answerType: 'multiple-choice',
@@ -2159,7 +2341,8 @@ function generateReadingGraphs(difficulty) {
   return {
     problemId: `prob_graph_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     skillId: 'reading-graphs',
-    content: `A point is located ${x} units ${x >= 0 ? 'right' : 'left'} and ${y} units ${y >= 0 ? 'up' : 'down'} from the origin. What are its coordinates?`,
+    content: `What are the coordinates of the point shown on the graph?`,
+    svg: generateCoordinatePlaneSVG(x, y),
     answer: answer,
     correctOption: correctLabel,
     answerType: 'multiple-choice',
