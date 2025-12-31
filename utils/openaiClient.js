@@ -49,7 +49,7 @@ async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
  * Centralized function to call the LLM with intelligent routing.
  * PRIMARY: Claude Sonnet 3.5 (best teaching & reasoning)
  * FALLBACK: GPT-4o-mini (fast & cheap backup)
- * @param {string} model - The model name (e.g., "claude-3-5-sonnet-20240620", "gpt-4o-mini")
+ * @param {string} model - The model name (e.g., "claude-3-5-sonnet-20241022", "gpt-4o-mini")
  * @param {Array<Object>} messages - Array of message objects for the AI.
  * @param {Object} options - Additional options like temperature, max_tokens.
  * @returns {Promise<Object>} The completion object from the AI.
@@ -140,7 +140,7 @@ async function callLLM(model, messages, options = {}) {
 /**
  * Streaming version of callLLM - returns a stream object for real-time responses
  * Supports both Claude and OpenAI streaming
- * @param {string} model - The model name (e.g., "claude-3-5-sonnet-20240620", "gpt-4o-mini")
+ * @param {string} model - The model name (e.g., "claude-3-5-sonnet-20241022", "gpt-4o-mini")
  * @param {Array<Object>} messages - Array of message objects for the AI
  * @param {Object} options - Additional options like temperature, max_tokens
  * @returns {Promise<Stream>} The stream object

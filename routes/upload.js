@@ -11,7 +11,7 @@ const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
-const PRIMARY_UPLOAD_AI_MODEL = "claude-3-5-sonnet-20240620"; // Best for analyzing student work (stable June 2024)
+const PRIMARY_UPLOAD_AI_MODEL = "claude-3-5-sonnet-20241022"; // Best for analyzing student work (Sonnet 3.5 v2 - Oct 2024)
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
