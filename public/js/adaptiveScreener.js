@@ -342,6 +342,11 @@ async function handleCompletion(data) {
       // Normal screener mode
       displayResults(report);
       switchScreen('results');
+
+      // Auto-redirect to badge map after 5 seconds (give time to see results)
+      setTimeout(() => {
+        window.location.href = '/badge-map.html';
+      }, 5000);
     }
 
   } catch (error) {
@@ -359,7 +364,11 @@ async function handleCompletion(data) {
  */
 function displayProblem(problem) {
   elements.questionNumber.textContent = `Question ${problem.questionNumber}`;
-  elements.problemText.textContent = problem.content;
+
+  // BUGFIX: Ensure problem content is displayed as text, not interpreted as date
+  // If content contains fractions (e.g., "1/2"), display as plain text
+  let content = String(problem.content);
+  elements.problemText.textContent = content;
 
   // Handle multiple choice vs fill-in
   const answerSection = document.querySelector('.answer-section');

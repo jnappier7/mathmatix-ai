@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 
 // Fact family definitions (Morningside-style build-up sequence)
@@ -237,9 +238,9 @@ router.get('/families', async (req, res) => {
 });
 
 // GET /api/fact-fluency/progress - Get user's fact fluency progress
-router.get('/progress', async (req, res) => {
+router.get('/progress', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
@@ -270,10 +271,10 @@ router.get('/progress', async (req, res) => {
 });
 
 // POST /api/fact-fluency/placement - Complete placement test
-router.post('/placement', async (req, res) => {
+router.post('/placement', isAuthenticated, async (req, res) => {
   try {
     const { results } = req.body; // Array of {operation, rate, accuracy}
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -410,10 +411,10 @@ router.post('/generate-problems', async (req, res) => {
 });
 
 // POST /api/fact-fluency/record-session - Record practice session results
-router.post('/record-session', async (req, res) => {
+router.post('/record-session', isAuthenticated, async (req, res) => {
   try {
     const { operation, familyName, displayName, durationSeconds, problemsAttempted, problemsCorrect } = req.body;
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -548,9 +549,9 @@ router.post('/record-session', async (req, res) => {
 });
 
 // GET /api/fact-fluency/next-level - Get recommended next level
-router.get('/next-level', async (req, res) => {
+router.get('/next-level', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
