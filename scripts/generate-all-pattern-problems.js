@@ -1008,7 +1008,7 @@ function generateLimits(difficulty) {
     answerType: 'multiple-choice',
     options: options,
     irtParameters: { difficulty: difficulty + 1.0, discrimination: 1.6, calibrationConfidence: 'expert', attemptsCount: 0 },
-    dokLevel: 4,
+    dokLevel: 3,
     metadata: { estimatedTime: 60, source: 'template', tags: ['calculus', 'limits'] },
     isActive: true
   };
@@ -1041,7 +1041,7 @@ function generateDerivatives(difficulty) {
     answerType: 'multiple-choice',
     options: options,
     irtParameters: { difficulty: difficulty + 1.2, discrimination: 1.7, calibrationConfidence: 'expert', attemptsCount: 0 },
-    dokLevel: 4,
+    dokLevel: 3,
     metadata: { estimatedTime: 55, source: 'template', tags: ['calculus', 'derivatives'] },
     isActive: true
   };
@@ -1076,7 +1076,7 @@ function generateIntegrals(difficulty) {
     answerType: 'multiple-choice',
     options: options,
     irtParameters: { difficulty: difficulty + 1.3, discrimination: 1.7, calibrationConfidence: 'expert', attemptsCount: 0 },
-    dokLevel: 4,
+    dokLevel: 3,
     metadata: { estimatedTime: 65, source: 'template', tags: ['calculus', 'integrals'] },
     isActive: true
   };
