@@ -488,7 +488,7 @@ function generateTwoStepEquations(difficulty) {
 function generateSlope(difficulty) {
   const x1 = randomInt(-5, 5);
   const y1 = randomInt(-5, 5);
-  const x2 = randomInt(-5, 5);
+  let x2 = randomInt(-5, 5);
   const y2 = randomInt(-5, 5);
 
   if (x2 === x1) { x2 = x1 + 1; } // Avoid undefined slope
