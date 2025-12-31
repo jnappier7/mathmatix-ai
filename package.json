@@ -12,6 +12,7 @@
     "analyze:skills": "node scripts/analyze-skill-coverage.js",
     "analyze:date-issues": "node scripts/find-date-issues.js",
     "analyze:decimal-conversions": "node scripts/check-decimal-conversions.js",
+    "analyze:all-decimals": "node scripts/find-all-decimal-problems.js",
     "migrate:remap-patterns": "node scripts/remap-problems-to-patterns.js",
     "cron:weekly-digest": "node scripts/weeklyDigest.js",
     "cron:archive": "node scripts/archiveOldConversations.js",
