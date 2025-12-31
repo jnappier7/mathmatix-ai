@@ -374,28 +374,41 @@ function displayProblem(problem) {
   const answerSection = document.querySelector('.answer-section');
 
   if (problem.answerType === 'multiple-choice' && problem.options && problem.options.length > 0) {
-    // Render multiple choice buttons
+    // Render multiple choice buttons with submit button
+    // BUGFIX: Use String() to prevent date interpretation of fractions
     answerSection.innerHTML = `
       <div class="multiple-choice-options" id="mc-options">
         ${problem.options.map(opt => `
-          <button class="mc-option" data-option="${opt.label}">
-            <span class="option-label">${opt.label}</span>
-            <span class="option-text">${opt.text}</span>
+          <button class="mc-option" data-option="${String(opt.label)}">
+            <span class="option-label">${String(opt.label)}</span>
+            <span class="option-text">${String(opt.text)}</span>
           </button>
         `).join('')}
       </div>
+      <button class="btn btn-primary" id="submit-btn" disabled>
+        Submit <i class="fas fa-arrow-right"></i>
+      </button>
     `;
 
     // Add click handlers for multiple choice
+    const submitBtn = document.getElementById('submit-btn');
     document.querySelectorAll('.mc-option').forEach(btn => {
       btn.addEventListener('click', function() {
         // Remove previous selection
         document.querySelectorAll('.mc-option').forEach(b => b.classList.remove('selected'));
         // Mark this as selected
         this.classList.add('selected');
-        // Auto-submit after selection
-        setTimeout(() => submitAnswer(this.dataset.option), 300);
+        // Enable submit button
+        submitBtn.disabled = false;
       });
+    });
+
+    // Add submit button handler
+    submitBtn.addEventListener('click', () => {
+      const selectedOption = document.querySelector('.mc-option.selected');
+      if (selectedOption) {
+        submitAnswer(selectedOption.dataset.option);
+      }
     });
   } else {
     // Render fill-in input
