@@ -2135,6 +2135,324 @@ function generateTransformations(difficulty) {
 }
 
 // ============================================================================
+// DATA & GRAPHING GENERATORS (Tier 1-2)
+// ============================================================================
+
+function generateReadingGraphs(difficulty) {
+  const x = randomInt(-5, 5);
+  const y = randomInt(-5, 5);
+
+  const answer = `(${x}, ${y})`;
+  const wrong1 = `(${y}, ${x})`; // Reversed coordinates
+  const wrong2 = `(${x + 1}, ${y})`;
+  const wrong3 = `(${x}, ${y + 1})`;
+
+  const options = shuffle([
+    { label: 'A', text: answer },
+    { label: 'B', text: wrong1 },
+    { label: 'C', text: wrong2 },
+    { label: 'D', text: wrong3 }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_graph_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'reading-graphs',
+    content: `A point is located ${x} units ${x >= 0 ? 'right' : 'left'} and ${y} units ${y >= 0 ? 'up' : 'down'} from the origin. What are its coordinates?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['graphing', 'coordinate-plane']
+    },
+    isActive: true
+  };
+}
+
+function generateReadingTables(difficulty) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
+  const values = [randomInt(10, 50), randomInt(10, 50), randomInt(10, 50), randomInt(10, 50), randomInt(10, 50)];
+
+  const targetMonth = randomChoice(months);
+  const targetIndex = months.indexOf(targetMonth);
+  const answer = values[targetIndex];
+
+  const wrong1 = values[(targetIndex + 1) % 5];
+  const wrong2 = values[(targetIndex + 2) % 5];
+  const wrong3 = answer + randomInt(5, 15);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  const tableData = months.map((m, i) => `${m}: ${values[i]}`).join(', ');
+
+  return {
+    problemId: `prob_table_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'reading-tables',
+    content: `The table shows monthly sales: ${tableData}. How many sales were in ${targetMonth}?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.2,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['data', 'tables']
+    },
+    isActive: true
+  };
+}
+
+function generateScatterplots(difficulty) {
+  const correlationTypes = [
+    { type: 'positive', description: 'as x increases, y increases', answer: 'Positive correlation' },
+    { type: 'negative', description: 'as x increases, y decreases', answer: 'Negative correlation' },
+    { type: 'none', description: 'x and y have no clear relationship', answer: 'No correlation' }
+  ];
+
+  const selected = randomChoice(correlationTypes);
+  const answer = selected.answer;
+
+  const options = shuffle([
+    { label: 'A', text: 'Positive correlation' },
+    { label: 'B', text: 'Negative correlation' },
+    { label: 'C', text: 'No correlation' },
+    { label: 'D', text: 'Perfect correlation' }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_scatter_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'scatterplots',
+    content: `A scatterplot shows that ${selected.description}. What type of correlation is this?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['statistics', 'scatterplots', 'correlation']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// WORD PROBLEM GENERATORS (Tier 2-3)
+// ============================================================================
+
+function generatePythagoreanWordProblems(difficulty) {
+  const scenarios = [
+    {
+      context: 'ladder',
+      setup: (a, c) => `A ${c}-foot ladder leans against a wall. The base is ${a} feet from the wall.`,
+      question: 'How high up the wall does the ladder reach?'
+    },
+    {
+      context: 'diagonal',
+      setup: (a, b) => `A rectangle has length ${a} feet and width ${b} feet.`,
+      question: 'What is the length of the diagonal?'
+    },
+    {
+      context: 'distance',
+      setup: (a, b) => `You walk ${a} blocks north and ${b} blocks east.`,
+      question: 'How far are you from your starting point?'
+    }
+  ];
+
+  const scenario = randomChoice(scenarios);
+  const a = randomInt(3, 12);
+  const b = randomInt(3, 12);
+  const c = Math.sqrt(a * a + b * b);
+
+  let answer, content;
+  if (scenario.context === 'ladder') {
+    const hyp = randomInt(13, 20);
+    const base = randomInt(5, 12);
+    const height = Math.sqrt(hyp * hyp - base * base);
+    answer = height.toFixed(1);
+    content = scenario.setup(base, hyp) + ' ' + scenario.question;
+  } else {
+    answer = c.toFixed(1);
+    content = scenario.setup(a, b) + ' ' + scenario.question;
+  }
+
+  const answerNum = parseFloat(answer);
+  const wrong1 = (a + b).toFixed(1);
+  const wrong2 = (answerNum * 1.2).toFixed(1);
+  const wrong3 = (answerNum * 0.8).toFixed(1);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_pythword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'pythagorean-word-problems',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 60,
+      source: 'template',
+      tags: ['geometry', 'pythagorean-theorem', 'word-problems']
+    },
+    isActive: true
+  };
+}
+
+function generateTrigWordProblems(difficulty) {
+  const scenarios = [
+    {
+      type: 'angle-of-elevation',
+      setup: (distance, height) => `You stand ${distance} meters from a building that is ${height} meters tall.`,
+      question: 'What is the angle of elevation to the top?'
+    },
+    {
+      type: 'shadow',
+      setup: (height, angle) => `A ${height}-meter tree casts a shadow when the sun is at ${angle}°.`,
+      question: 'How long is the shadow?'
+    }
+  ];
+
+  const scenario = randomChoice(scenarios);
+
+  if (scenario.type === 'angle-of-elevation') {
+    const distance = randomInt(10, 30);
+    const height = randomInt(20, 50);
+    const angleRad = Math.atan(height / distance);
+    const angleDeg = angleRad * (180 / Math.PI);
+    const answer = angleDeg.toFixed(1);
+
+    const wrong1 = (angleDeg + 10).toFixed(1);
+    const wrong2 = (angleDeg - 10).toFixed(1);
+    const wrong3 = (90 - angleDeg).toFixed(1);
+
+    const options = shuffle([
+      { label: 'A', text: String(answer) },
+      { label: 'B', text: String(wrong1) },
+      { label: 'C', text: String(wrong2) },
+      { label: 'D', text: String(wrong3) }
+    ]);
+
+    const correctLabel = options.find(o => o.text === String(answer)).label;
+
+    return {
+      problemId: `prob_trigword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      skillId: 'trig-word-problems',
+      content: scenario.setup(distance, height) + ' ' + scenario.question,
+      answer: String(answer),
+      correctOption: correctLabel,
+      answerType: 'multiple-choice',
+      options: options,
+      irtParameters: {
+        difficulty: difficulty + 0.7,
+        discrimination: 1.6,
+        calibrationConfidence: 'expert',
+        attemptsCount: 0
+      },
+      dokLevel: 3,
+      metadata: {
+        estimatedTime: 70,
+        source: 'template',
+        tags: ['trigonometry', 'word-problems', 'angle-of-elevation']
+      },
+      isActive: true
+    };
+  } else {
+    // shadow problem
+    const height = randomInt(5, 15);
+    const angle = randomInt(30, 60);
+    const angleRad = angle * (Math.PI / 180);
+    const shadow = height / Math.tan(angleRad);
+    const answer = shadow.toFixed(1);
+
+    const wrong1 = (shadow * 1.3).toFixed(1);
+    const wrong2 = (shadow * 0.7).toFixed(1);
+    const wrong3 = height.toFixed(1);
+
+    const options = shuffle([
+      { label: 'A', text: String(answer) },
+      { label: 'B', text: String(wrong1) },
+      { label: 'C', text: String(wrong2) },
+      { label: 'D', text: String(wrong3) }
+    ]);
+
+    const correctLabel = options.find(o => o.text === String(answer)).label;
+
+    return {
+      problemId: `prob_trigword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      skillId: 'trig-word-problems',
+      content: scenario.setup(height, angle) + ' ' + scenario.question,
+      answer: String(answer),
+      correctOption: correctLabel,
+      answerType: 'multiple-choice',
+      options: options,
+      irtParameters: {
+        difficulty: difficulty + 0.7,
+        discrimination: 1.6,
+        calibrationConfidence: 'expert',
+        attemptsCount: 0
+      },
+      dokLevel: 3,
+      metadata: {
+        estimatedTime: 70,
+        source: 'template',
+        tags: ['trigonometry', 'word-problems']
+      },
+      isActive: true
+    };
+  }
+}
+
+// ============================================================================
 // TIER 3 (9-12) PROOF & LOGIC GENERATORS
 // ============================================================================
 
@@ -2509,6 +2827,9 @@ const GENERATORS = {
   'circles': generateCircles,
   'surface-area': generateSurfaceArea,
   'transformations': generateTransformations,
+  'reading-graphs': generateReadingGraphs,
+  'reading-tables': generateReadingTables,
+  'scatterplots': generateScatterplots,
 
   // 6-8 (Tier 2) - Middle School
   'one-step-equations': generateOneStepEquation,
@@ -2521,6 +2842,7 @@ const GENERATORS = {
   'integers': generateIntegers,
   'proportions': generateProportions,
   'pythagorean-theorem': generatePythagorean,
+  'pythagorean-word-problems': generatePythagoreanWordProblems,
   'one-step-inequalities': generateOneStepInequality,
   'two-step-inequalities': generateTwoStepInequality,
   'absolute-value': generateAbsoluteValue,
@@ -2533,6 +2855,7 @@ const GENERATORS = {
   'exponential-functions': generateExponentialFunctions,
   'logarithms': generateLogarithms,
   'trigonometry': generateTrigonometry,
+  'trig-word-problems': generateTrigWordProblems,
   'conditional-statements': generateConditionalStatements,
   'logical-reasoning': generateLogicalReasoning,
   'geometric-proofs': generateGeometricProofs,
