@@ -481,14 +481,44 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       recentProblemIds  // Bounded array size (max 100 items) instead of O(N)
     );
 
-    // If no problem found, generate one
+    // If no problem found at target difficulty, try to generate or find any problem for this skill
     if (!problem) {
-      console.log(`[Screener] No problem found in DB, generating for ${selectedSkillId} at difficulty ${targetDifficulty.toFixed(2)}`);
-      const generated = generateProblem(selectedSkillId, { difficulty: targetDifficulty });
+      console.log(`[Screener] No problem found at difficulty ${targetDifficulty.toFixed(2)} for ${selectedSkillId}`);
 
-      // Optionally save to database for future use
-      problem = new Problem(generated);
-      await problem.save();
+      try {
+        // Try to generate a problem
+        console.log(`[Screener] Attempting to generate problem...`);
+        const generated = generateProblem(selectedSkillId, { difficulty: targetDifficulty });
+        problem = new Problem(generated);
+        await problem.save();
+        console.log(`[Screener] ✓ Generated and saved problem`);
+      } catch (genError) {
+        // Generation failed (no template) - find ANY existing problem for this skill
+        console.log(`[Screener] Generation failed: ${genError.message}`);
+        console.log(`[Screener] Falling back to ANY problem for skill ${selectedSkillId}`);
+
+        problem = await Problem.findOne({
+          skillId: selectedSkillId,
+          isActive: true,
+          problemId: { $nin: recentProblemIds }
+        });
+
+        if (!problem) {
+          // Even fallback failed - try without excluding recent problems
+          console.log(`[Screener] No unused problems found, allowing repeats...`);
+          problem = await Problem.findOne({
+            skillId: selectedSkillId,
+            isActive: true
+          });
+        }
+
+        if (!problem) {
+          // Absolute last resort - throw error
+          throw new Error(`No problems available for skill: ${selectedSkillId}`);
+        }
+
+        console.log(`[Screener] ✓ Found fallback problem at difficulty ${problem.irtParameters?.difficulty || 0}`);
+      }
     }
 
     // AUTO-FIX: If problem has options but wrong answerType, fix it
