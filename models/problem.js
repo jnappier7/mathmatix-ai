@@ -161,6 +161,45 @@ const problemSchema = new mongoose.Schema({
 problemSchema.index({ skillId: 1, 'irtParameters.difficulty': 1 });
 problemSchema.index({ 'irtParameters.difficulty': 1, isActive: 1 });
 
+// Helper function to compare two fractions for equivalence
+function compareFractions(userFraction, correctFraction) {
+  // First try exact string match (fastest path)
+  if (String(userFraction).trim() === String(correctFraction).trim()) {
+    return true;
+  }
+
+  // Parse both fractions
+  const parseResult1 = parseFraction(userFraction);
+  const parseResult2 = parseFraction(correctFraction);
+
+  // If either parse failed, fall back to string comparison
+  if (!parseResult1 || !parseResult2) {
+    return String(userFraction).trim() === String(correctFraction).trim();
+  }
+
+  // Compare as decimals (handles equivalent fractions like 1/2 = 2/4)
+  const decimal1 = parseResult1.numerator / parseResult1.denominator;
+  const decimal2 = parseResult2.numerator / parseResult2.denominator;
+
+  // Use small epsilon for floating point comparison
+  return Math.abs(decimal1 - decimal2) < 0.0001;
+}
+
+// Helper function to parse a fraction string
+function parseFraction(input) {
+  const str = String(input).trim();
+  const match = str.match(/^(-?\d+)\/(\d+)$/);
+
+  if (!match) return null;
+
+  const numerator = parseInt(match[1], 10);
+  const denominator = parseInt(match[2], 10);
+
+  if (denominator === 0) return null;
+
+  return { numerator, denominator };
+}
+
 // Instance method: Check if answer is correct
 problemSchema.methods.checkAnswer = function(userAnswer) {
   switch (this.answerType) {
@@ -169,8 +208,8 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
       return parseFloat(userAnswer) === parseFloat(this.answer);
 
     case 'fraction':
-      // TODO: Implement fraction comparison
-      return String(userAnswer).trim() === String(this.answer).trim();
+      // Compare fractions by reducing to decimal OR comparing reduced forms
+      return compareFractions(userAnswer, this.answer);
 
     case 'expression':
       // TODO: Implement algebraic equivalence
