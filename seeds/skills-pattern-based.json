@@ -4102,5 +4102,452 @@
       "fluencyType": "reflex",
       "toleranceFactor": 1.5
     }
+  },
+  {
+    "skillId": "ratio-concepts",
+    "displayName": "Ratio Concepts",
+    "description": "Understand and apply ratio concepts to compare quantities",
+    "category": "ratios-proportions",
+    "course": "Grade 6-7 Math",
+    "quarter": 1,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [
+      "ratios",
+      "multiplication-facts"
+    ],
+    "enables": [
+      "solve-proportions",
+      "rate-problems",
+      "percent-of-a-number"
+    ],
+    "standardsAlignment": [
+      "6.RP.1",
+      "6.RP.3",
+      "7.RP.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Ratio compares two quantities",
+        "Can write as a:b, a to b, or a/b",
+        "Order matters in ratios",
+        "Equivalent ratios maintain same relationship",
+        "Part-to-part vs part-to-whole comparisons"
+      ],
+      "commonMistakes": [
+        "Reversing the order of ratio",
+        "Adding ratios incorrectly",
+        "Confusing ratios with fractions",
+        "Not recognizing equivalent ratios"
+      ],
+      "teachingTips": [
+        "Use tape diagrams to visualize ratio relationships",
+        "Real contexts: recipes, mixtures, maps",
+        "Practice multiple representations",
+        "Connect to scaling and proportional thinking",
+        "Ratio tables to find equivalent ratios"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "solve-proportions",
+    "displayName": "Solving Proportions",
+    "description": "Solve proportions using cross-multiplication and equivalent ratios",
+    "category": "ratios-proportions",
+    "course": "Grade 7-8 Math",
+    "quarter": 1,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [
+      "ratio-concepts",
+      "ratios"
+    ],
+    "enables": [
+      "similar-figures",
+      "scale-factor",
+      "percent-problems"
+    ],
+    "standardsAlignment": [
+      "7.RP.2",
+      "7.RP.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Proportion: two equal ratios",
+        "Cross-multiplication: a/b = c/d → ad = bc",
+        "Can also use equivalent ratios",
+        "Check solution makes sense in context",
+        "Unit rates are special proportions"
+      ],
+      "commonMistakes": [
+        "Setting up proportion incorrectly",
+        "Computational errors in cross-multiplication",
+        "Not labeling units",
+        "Forgetting to check reasonableness"
+      ],
+      "teachingTips": [
+        "Set up with labels: cats/dogs = cats/dogs",
+        "Show both cross-multiplication and scaling methods",
+        "Real problems: scale drawings, recipes, unit conversion",
+        "Verify: plug answer back into original proportion",
+        "Connect to percent problems"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "rate-problems",
+    "displayName": "Rate Problems",
+    "description": "Solve real-world problems involving rates and unit rates",
+    "category": "ratios-proportions",
+    "course": "Grade 6-7 Math",
+    "quarter": 1,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [
+      "unit-rates",
+      "ratio-concepts"
+    ],
+    "enables": [
+      "slope-concepts",
+      "proportional-relationships"
+    ],
+    "standardsAlignment": [
+      "6.RP.2",
+      "6.RP.3",
+      "7.RP.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Rate: ratio comparing different units",
+        "Unit rate: rate with denominator of 1",
+        "Common rates: speed (mi/hr), price ($/item), density",
+        "Find unit rate to compare and solve",
+        "Set up and solve proportions for rates"
+      ],
+      "commonMistakes": [
+        "Incorrect units or missing units",
+        "Division in wrong direction",
+        "Not simplifying to unit rate",
+        "Mixing up numerator and denominator"
+      ],
+      "teachingTips": [
+        "Always write units with numbers",
+        "Better buy problems: price per unit",
+        "Speed/distance/time relationships",
+        "Dimensional analysis for complex conversions",
+        "Connect to slope (rate of change) later"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "percent-of-a-number",
+    "displayName": "Finding Percent of a Number",
+    "description": "Calculate percent of a quantity in real-world situations",
+    "category": "percent",
+    "course": "Grade 6-7 Math",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [
+      "percent-basics",
+      "decimal-multiplication"
+    ],
+    "enables": [
+      "percent-change",
+      "percent-applications"
+    ],
+    "standardsAlignment": [
+      "6.RP.3c",
+      "7.RP.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Convert percent to decimal: 25% = 0.25",
+        "Multiply: percent × whole = part",
+        "Part/Whole/Percent triangle relationship",
+        "Common percents: 10%, 25%, 50%, 75%",
+        "Mental math for benchmark percents"
+      ],
+      "commonMistakes": [
+        "Using percent without converting to decimal",
+        "Multiplying by wrong number",
+        "Confusing part and whole",
+        "Calculator errors"
+      ],
+      "teachingTips": [
+        "Connect to \"per hundred\"",
+        "Mental math: 10% = divide by 10, 50% = half",
+        "Real contexts: tips, sales tax, discounts",
+        "Double number line or bar model",
+        "Check: answer should be less than whole (for <100%)"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "percent-change",
+    "displayName": "Percent Change",
+    "description": "Calculate percent increase and decrease",
+    "category": "percent",
+    "course": "Grade 7-8 Math",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [
+      "percent-of-a-number"
+    ],
+    "enables": [
+      "exponential-growth-decay",
+      "percent-applications"
+    ],
+    "standardsAlignment": [
+      "7.RP.3",
+      "7.EE.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Percent change = (new - original) / original × 100%",
+        "Positive result = increase, negative = decrease",
+        "Amount of change vs percent change",
+        "Original value is the reference (denominator)",
+        "Cannot exceed 100% decrease"
+      ],
+      "commonMistakes": [
+        "Using new value as denominator instead of original",
+        "Forgetting to multiply by 100 for percent",
+        "Confusing increase with decrease",
+        "Not distinguishing amount vs percent change"
+      ],
+      "teachingTips": [
+        "Always identify original vs new first",
+        "Formula: change/original × 100%",
+        "Real: population growth, price changes, inflation",
+        "Double number line shows scaling",
+        "Connect to multiplying by growth factor (1.05 for 5% increase)"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "slope-concepts",
+    "displayName": "Slope Concepts",
+    "description": "Understand slope as rate of change and steepness",
+    "category": "linear-functions",
+    "course": "Grade 7-8 Math",
+    "quarter": 3,
+    "unit": "Change Pattern - Tier 2",
+    "prerequisites": [
+      "slope",
+      "rate-problems"
+    ],
+    "enables": [
+      "slope-intercept-form",
+      "linear-functions"
+    ],
+    "standardsAlignment": [
+      "8.EE.6",
+      "8.F.3",
+      "8.F.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Slope measures rate of change",
+        "Slope = rise/run = Δy/Δx",
+        "Positive slope: increases left to right",
+        "Negative slope: decreases left to right",
+        "Zero slope: horizontal, undefined: vertical",
+        "Steeper slope = faster rate of change"
+      ],
+      "commonMistakes": [
+        "Confusing rise and run",
+        "Subtraction order errors: (y2-y1)/(x2-x1)",
+        "Not recognizing zero vs undefined slope",
+        "Sign errors with negative slopes"
+      ],
+      "teachingTips": [
+        "Connect to real rates: speed, cost per item",
+        "Staircase analogy: rise = up/down, run = across",
+        "Always go from left point to right point",
+        "Slope triangles on coordinate plane",
+        "Compare slopes: steeper = larger absolute value"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "graph-linear-equations",
+    "displayName": "Graphing Linear Equations",
+    "description": "Graph linear equations using multiple methods",
+    "category": "linear-functions",
+    "course": "Grade 8 Math",
+    "quarter": 3,
+    "unit": "Change Pattern - Tier 2",
+    "prerequisites": [
+      "slope-concepts",
+      "coordinate-plane"
+    ],
+    "enables": [
+      "slope-intercept-form",
+      "systems-graphing"
+    ],
+    "standardsAlignment": [
+      "8.EE.6",
+      "8.F.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Table of values method: choose x, find y",
+        "Intercepts method: find x and y intercepts",
+        "Slope-intercept: plot b, use m for next points",
+        "All solutions lie on the line",
+        "Need at least 2 points, use 3 to check"
+      ],
+      "commonMistakes": [
+        "Not using ruler for straight line",
+        "Plotting only 2 points without checking",
+        "Arithmetic errors in table",
+        "Not extending line through entire grid"
+      ],
+      "teachingTips": [
+        "Choose easy x values including 0",
+        "Plot at least 3 points to verify",
+        "Use graph paper or technology",
+        "Label axes and scale",
+        "Write equation next to graphed line"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "scale-factor",
+    "displayName": "Scale Factor",
+    "description": "Use scale factors to enlarge or reduce figures proportionally",
+    "category": "similarity",
+    "course": "Grade 7-9 Math",
+    "quarter": 3,
+    "unit": "Scaling Pattern - Tier 3",
+    "prerequisites": [
+      "solve-proportions",
+      "similar-figures"
+    ],
+    "enables": [
+      "dilations",
+      "similar-triangles"
+    ],
+    "standardsAlignment": [
+      "7.G.1",
+      "G-SRT.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Scale factor = ratio of corresponding lengths",
+        "k > 1: enlargement, 0 < k < 1: reduction",
+        "All linear measurements scale by k",
+        "Area scales by k²",
+        "Volume scales by k³",
+        "Used in maps, models, blueprints"
+      ],
+      "commonMistakes": [
+        "Confusing scale factor with actual measurements",
+        "Not applying to all dimensions",
+        "Thinking area scales by k instead of k²",
+        "Setting up ratio backwards"
+      ],
+      "teachingTips": [
+        "Find k: new length / original length",
+        "Apply same k to all dimensions",
+        "Real: model cars, maps (1:100 scale)",
+        "Visualize: photo enlargement maintains proportions",
+        "Connection to dilations in coordinate plane"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "similar-figures",
+    "displayName": "Similar Figures",
+    "description": "Identify and work with similar figures using proportional relationships",
+    "category": "similarity",
+    "course": "Grade 7-9 Math",
+    "quarter": 3,
+    "unit": "Scaling Pattern - Tier 3",
+    "prerequisites": [
+      "solve-proportions",
+      "ratio-concepts"
+    ],
+    "enables": [
+      "scale-factor",
+      "similar-triangles"
+    ],
+    "standardsAlignment": [
+      "7.G.1",
+      "G-SRT.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Similar: same shape, different size",
+        "Corresponding angles are congruent",
+        "Corresponding sides are proportional",
+        "Symbol: ~ (similar to)",
+        "Scale factor relates corresponding sides"
+      ],
+      "commonMistakes": [
+        "Confusing similar with congruent",
+        "Not matching corresponding parts correctly",
+        "Setting up proportions incorrectly",
+        "Forgetting angle relationships"
+      ],
+      "teachingTips": [
+        "Identify corresponding vertices carefully",
+        "Use similarity statement: △ABC ~ △DEF",
+        "Proportion: AB/DE = BC/EF = AC/DF",
+        "Real: shadows, indirect measurement",
+        "Visual: nested figures, photo scaling"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
   }
 ]
