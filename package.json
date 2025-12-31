@@ -9,6 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:test": "node scripts/seedTestData.js",
     "seed:skills": "node scripts/seed-pattern-skills.js",
+    "generate:fraction-problems": "node scripts/generate-fraction-problems.js",
     "analyze:skills": "node scripts/analyze-skill-coverage.js",
     "analyze:date-issues": "node scripts/find-date-issues.js",
     "analyze:decimal-conversions": "node scripts/check-decimal-conversions.js",
