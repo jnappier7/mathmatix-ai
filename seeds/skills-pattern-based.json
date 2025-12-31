@@ -2718,5 +2718,1389 @@
       "fluencyType": "conceptual",
       "toleranceFactor": 3.5
     }
+  },
+  {
+    "skillId": "likely-unlikely",
+    "displayName": "Likely and Unlikely Events",
+    "description": "Describe events as likely or unlikely based on experience",
+    "category": "probability",
+    "course": "Grade K-2 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": [
+      "probability-language"
+    ],
+    "standardsAlignment": [
+      "K.MD.2",
+      "1.MD.4",
+      "2.MD.9"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Likely means it will probably happen",
+        "Unlikely means it will probably not happen",
+        "Some events are certain (always happen)",
+        "Some events are impossible (never happen)",
+        "Use everyday experiences to make predictions"
+      ],
+      "commonMistakes": [
+        "Confusing \"likely\" with \"certain\"",
+        "Not understanding that unlikely things can still happen",
+        "Basing predictions on wishes rather than reality"
+      ],
+      "teachingTips": [
+        "Use everyday examples: Will it rain? Will you eat lunch today?",
+        "Sort event cards into likely/unlikely piles",
+        "Connect to weather, daily routines, familiar games",
+        "Use picture cards showing different scenarios",
+        "Discuss: certain, likely, unlikely, impossible"
+      ]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "probability-language",
+    "displayName": "Probability Vocabulary",
+    "description": "Use probability vocabulary: certain, likely, unlikely, impossible",
+    "category": "probability",
+    "course": "Grade 1-3 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [
+      "likely-unlikely"
+    ],
+    "enables": [
+      "simple-probability"
+    ],
+    "standardsAlignment": [
+      "2.MD.9",
+      "3.MD.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Certain: will definitely happen (100%)",
+        "Likely: good chance of happening",
+        "Unlikely: not much chance of happening",
+        "Impossible: cannot happen (0%)",
+        "Use precise words to describe chance"
+      ],
+      "commonMistakes": [
+        "Using \"maybe\" for everything",
+        "Thinking unlikely means impossible",
+        "Not understanding degrees of likelihood"
+      ],
+      "teachingTips": [
+        "Create probability word wall with examples",
+        "Number line: impossible → unlikely → likely → certain",
+        "Spinner activities: which color is most/least likely?",
+        "Real contexts: weather, birthdays, coin flips",
+        "Vocabulary games and sorting activities"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "simple-probability",
+    "displayName": "Simple Probability",
+    "description": "Find probability of simple events using outcomes",
+    "category": "probability",
+    "course": "Grade 3-5 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [
+      "probability-language"
+    ],
+    "enables": [
+      "probability-fractions"
+    ],
+    "standardsAlignment": [
+      "3.MD.4",
+      "5.MD.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Count favorable outcomes",
+        "Count total possible outcomes",
+        "Equal likelihood of outcomes",
+        "More favorable outcomes = more likely",
+        "Simple experiments: spinners, dice, coins"
+      ],
+      "commonMistakes": [
+        "Not counting all possible outcomes",
+        "Assuming all outcomes are equally likely when they are not",
+        "Confusing \"outcomes\" with \"events\""
+      ],
+      "teachingTips": [
+        "Use concrete materials: spinners, dice, colored cubes",
+        "List all possible outcomes before calculating",
+        "Experiments: flip coins, draw from bags",
+        "Connect to fractions: 1 out of 4 = 1/4",
+        "Start with equally likely outcomes only"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "probability-fractions",
+    "displayName": "Probability as Fractions",
+    "description": "Express probability as fractions (favorable/total)",
+    "category": "probability",
+    "course": "Grade 4-5 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [
+      "simple-probability",
+      "fractions-basics"
+    ],
+    "enables": [
+      "data-collection"
+    ],
+    "standardsAlignment": [
+      "5.MD.2",
+      "7.SP.5"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Probability = favorable outcomes / total outcomes",
+        "Numerator = number of ways event can happen",
+        "Denominator = total number of possible outcomes",
+        "Probability is always between 0 and 1",
+        "Can simplify probability fractions"
+      ],
+      "commonMistakes": [
+        "Putting total in numerator and favorable in denominator",
+        "Not simplifying fractions",
+        "Counting outcomes incorrectly",
+        "Thinking probability can be greater than 1"
+      ],
+      "teachingTips": [
+        "Use fraction notation: P(red) = 3/8",
+        "Visual: shade favorable outcomes on diagrams",
+        "Connect to real fractions: 3/8 of the spinner is red",
+        "Practice with spinners, bags of colored objects",
+        "Compare probabilities by comparing fractions"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "data-collection",
+    "displayName": "Collecting and Organizing Data",
+    "description": "Collect and organize data in tables and charts",
+    "category": "data",
+    "course": "Grade 1-3 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": [
+      "tally-charts",
+      "frequency-tables"
+    ],
+    "standardsAlignment": [
+      "1.MD.4",
+      "2.MD.10",
+      "3.MD.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Ask a question to investigate",
+        "Collect information (data) to answer it",
+        "Organize data so it is easy to read",
+        "Use tables, lists, or charts",
+        "Count and record responses"
+      ],
+      "commonMistakes": [
+        "Unclear or confusing categories",
+        "Not recording all responses",
+        "Messy or disorganized data",
+        "Asking questions that cannot be answered with data"
+      ],
+      "teachingTips": [
+        "Start with class surveys: favorite color, pet, lunch",
+        "Model clear recording methods",
+        "Use concrete objects before abstract recording",
+        "Question of the day chart",
+        "Emphasize accurate, organized recording"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "tally-charts",
+    "displayName": "Tally Charts",
+    "description": "Use tally marks to collect and display data",
+    "category": "data",
+    "course": "Grade 1-3 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [
+      "data-collection"
+    ],
+    "enables": [
+      "frequency-tables"
+    ],
+    "standardsAlignment": [
+      "1.MD.4",
+      "2.MD.10"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "One tally mark for each item counted",
+        "Group tallies by fives: |||| ",
+        "Cross through four marks for fifth",
+        "Easy to count and compare quickly",
+        "Useful for real-time data collection"
+      ],
+      "commonMistakes": [
+        "Not crossing the fifth tally",
+        "Irregular spacing making counting hard",
+        "Forgetting to label categories",
+        "Counting errors when reading tallies"
+      ],
+      "teachingTips": [
+        "Practice making tally marks correctly",
+        "Count by fives, then add remaining",
+        "Use for live data: vehicles passing, birds at feeder",
+        "Compare to other recording methods",
+        "Transition to frequency tables"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "frequency-tables",
+    "displayName": "Frequency Tables",
+    "description": "Create and interpret frequency tables",
+    "category": "data",
+    "course": "Grade 2-4 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [
+      "data-collection",
+      "tally-charts"
+    ],
+    "enables": [
+      "bar-graphs"
+    ],
+    "standardsAlignment": [
+      "2.MD.10",
+      "3.MD.3",
+      "4.MD.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Frequency = how many times each value occurs",
+        "Table has categories and frequencies",
+        "Can add totals",
+        "Easy to see most/least common",
+        "Foundation for graphs"
+      ],
+      "commonMistakes": [
+        "Confusing category names with frequencies",
+        "Not aligning numbers with categories",
+        "Calculation errors in totals",
+        "Missing categories or data"
+      ],
+      "teachingTips": [
+        "Convert tally charts to frequency tables",
+        "Practice reading and creating tables",
+        "Ask: Which has most? Least? How many total?",
+        "Real data from class or school",
+        "Bridge to bar graphs and pictographs"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "identify-shapes",
+    "displayName": "Identifying 2D and 3D Shapes",
+    "description": "Identify and name common 2D and 3D shapes",
+    "category": "geometry",
+    "course": "Grade K-2 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": [
+      "classify-shapes",
+      "2d-shapes",
+      "3d-shapes"
+    ],
+    "standardsAlignment": [
+      "K.G.1",
+      "K.G.2",
+      "1.G.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Recognize shapes in different orientations and sizes",
+        "2D shapes: circle, square, triangle, rectangle",
+        "3D shapes: sphere, cube, cylinder, cone",
+        "Find shapes in the environment",
+        "Name shapes correctly"
+      ],
+      "commonMistakes": [
+        "Thinking a tilted square is not a square",
+        "Confusing 2D and 3D shapes",
+        "Calling all quadrilaterals \"squares\"",
+        "Not recognizing shapes in different sizes"
+      ],
+      "teachingTips": [
+        "Use real objects and manipulatives",
+        "Shape hunts in classroom and outside",
+        "Sort shape cards in different ways",
+        "Trace 2D shapes, build with 3D shapes",
+        "Emphasize: size and orientation don't change the shape"
+      ]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "classify-shapes",
+    "displayName": "Classifying Shapes by Properties",
+    "description": "Sort and classify shapes based on their attributes",
+    "category": "geometry",
+    "course": "Grade K-2 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "identify-shapes"
+    ],
+    "enables": [
+      "2d-shapes",
+      "3d-shapes"
+    ],
+    "standardsAlignment": [
+      "K.G.4",
+      "1.G.1",
+      "2.G.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Attributes: number of sides, corners, faces",
+        "Sort by one or more attributes",
+        "Same shape can belong to multiple categories",
+        "Compare and contrast shapes",
+        "Use describing words: curved, straight, flat, solid"
+      ],
+      "commonMistakes": [
+        "Focusing only on one attribute",
+        "Thinking shapes can only belong to one group",
+        "Confusing sides with corners",
+        "Not using precise vocabulary"
+      ],
+      "teachingTips": [
+        "Venn diagrams for sorting",
+        "Guess my rule games",
+        "Compare: How are these alike/different?",
+        "Build vocabulary through discussion",
+        "Use yes/no sorting mats"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "2d-shapes",
+    "displayName": "2D Shapes and Attributes",
+    "description": "Understand properties of 2D shapes: sides, vertices, angles",
+    "category": "geometry",
+    "course": "Grade 1-3 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "identify-shapes",
+      "classify-shapes"
+    ],
+    "enables": [
+      "area-rectangles",
+      "perimeter"
+    ],
+    "standardsAlignment": [
+      "1.G.1",
+      "2.G.1",
+      "3.G.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Sides: straight edges",
+        "Vertices: corners where sides meet",
+        "Angles: space between sides",
+        "Closed shapes: sides connect",
+        "Properties: triangles have 3 sides, quadrilaterals have 4"
+      ],
+      "commonMistakes": [
+        "Counting curves as sides",
+        "Missing vertices or counting them twice",
+        "Not recognizing irregular versions of shapes",
+        "Confusing sides with angles"
+      ],
+      "teachingTips": [
+        "Count sides and vertices systematically",
+        "Build shapes with straws, toothpicks, geoboards",
+        "Draw shapes on dot paper",
+        "Compare regular and irregular versions",
+        "Create shape posters with properties"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "3d-shapes",
+    "displayName": "3D Shapes and Attributes",
+    "description": "Understand properties of 3D shapes: faces, edges, vertices",
+    "category": "geometry",
+    "course": "Grade 1-3 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "identify-shapes",
+      "classify-shapes"
+    ],
+    "enables": [
+      "volume-basic"
+    ],
+    "standardsAlignment": [
+      "1.G.1",
+      "2.G.1",
+      "3.MD.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Faces: flat surfaces",
+        "Edges: where two faces meet",
+        "Vertices: where edges meet (corners)",
+        "Common 3D shapes: cube, sphere, cylinder, cone, pyramid",
+        "Connection between 2D faces and 3D shapes"
+      ],
+      "commonMistakes": [
+        "Confusing faces with edges",
+        "Calling a sphere a \"circle\"",
+        "Not counting hidden faces",
+        "Mixing up 2D and 3D vocabulary"
+      ],
+      "teachingTips": [
+        "Handle real 3D objects",
+        "Trace faces to see 2D shapes",
+        "Build with blocks, clay, nets",
+        "Count faces, edges, vertices on models",
+        "Real-world: find 3D shapes in environment"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "spatial-relationships",
+    "displayName": "Spatial Relationships",
+    "description": "Describe position using spatial vocabulary: above, below, beside, in front of, behind",
+    "category": "geometry",
+    "course": "Grade K-1 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [],
+    "enables": [
+      "position-words"
+    ],
+    "standardsAlignment": [
+      "K.G.1",
+      "1.G.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Above/below: vertical position",
+        "Beside/next to: horizontal position",
+        "In front of/behind: depth position",
+        "Inside/outside: containment",
+        "Relative positions change based on perspective"
+      ],
+      "commonMistakes": [
+        "Confusing left and right with other positions",
+        "Not considering perspective or point of view",
+        "Using vague language instead of precise terms"
+      ],
+      "teachingTips": [
+        "Act out positions with students",
+        "Simon Says with position words",
+        "Describe classroom arrangements",
+        "Use toys or blocks to model positions",
+        "Read books with spatial language"
+      ]
+    },
+    "difficultyLevel": 1,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "position-words",
+    "displayName": "Position Words and Directions",
+    "description": "Use positional vocabulary to give and follow directions",
+    "category": "geometry",
+    "course": "Grade K-2 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "spatial-relationships"
+    ],
+    "enables": [
+      "coordinate-plane"
+    ],
+    "standardsAlignment": [
+      "K.G.1",
+      "1.G.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Precise vocabulary: left, right, up, down",
+        "Near/far: distance relationships",
+        "Between: position relative to two objects",
+        "Combine position words for complex directions",
+        "Follow multi-step positional instructions"
+      ],
+      "commonMistakes": [
+        "Left-right confusion",
+        "Not following directions in correct sequence",
+        "Unclear or ambiguous descriptions"
+      ],
+      "teachingTips": [
+        "Treasure hunt with position clues",
+        "Build structures following positional directions",
+        "Grid games: describe how to get from point to point",
+        "Practice giving and receiving directions",
+        "Connect to maps and navigation"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "area-rectangles",
+    "displayName": "Area of Rectangles",
+    "description": "Find area by counting squares or using length × width",
+    "category": "measurement",
+    "course": "Grade 3-4 Math",
+    "quarter": 4,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "2d-shapes",
+      "multiplication-basics"
+    ],
+    "enables": [
+      "area-perimeter-word-problems"
+    ],
+    "standardsAlignment": [
+      "3.MD.5",
+      "3.MD.6",
+      "3.MD.7"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Area measures space inside a shape",
+        "Count unit squares to find area",
+        "Formula: A = length × width",
+        "Units are square units (sq cm, sq ft, etc.)",
+        "Rectangular arrays connect to multiplication"
+      ],
+      "commonMistakes": [
+        "Using perimeter formula instead",
+        "Forgetting to write square units",
+        "Multiplying wrong dimensions",
+        "Not understanding what area measures"
+      ],
+      "teachingTips": [
+        "Build rectangles with square tiles",
+        "Connect to arrays and multiplication",
+        "Real contexts: covering a floor, painting a wall",
+        "Visual: fill in rectangles on grid paper",
+        "Emphasize SQUARE units"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "perimeter",
+    "displayName": "Perimeter",
+    "description": "Find perimeter by adding all side lengths",
+    "category": "measurement",
+    "course": "Grade 3-4 Math",
+    "quarter": 4,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "2d-shapes",
+      "addition"
+    ],
+    "enables": [
+      "area-perimeter-word-problems"
+    ],
+    "standardsAlignment": [
+      "3.MD.8",
+      "4.MD.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Perimeter is distance around a shape",
+        "Add all side lengths",
+        "For rectangles: P = 2l + 2w or P = 2(l+w)",
+        "Units are linear units (cm, ft, etc.)",
+        "Can find missing side if perimeter is known"
+      ],
+      "commonMistakes": [
+        "Using area formula instead",
+        "Not adding all sides",
+        "Using square units instead of linear units",
+        "Confusing perimeter with area"
+      ],
+      "teachingTips": [
+        "Walk around the shape: measure each side",
+        "Use string or tape to measure perimeter",
+        "Real contexts: fencing, framing, borders",
+        "Compare: shapes with same area can have different perimeters",
+        "Label all sides before adding"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "area-perimeter-word-problems",
+    "displayName": "Area and Perimeter Word Problems",
+    "description": "Solve real-world problems involving area and perimeter",
+    "category": "measurement",
+    "course": "Grade 3-5 Math",
+    "quarter": 4,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "area-rectangles",
+      "perimeter"
+    ],
+    "enables": [
+      "volume-word-problems"
+    ],
+    "standardsAlignment": [
+      "3.MD.8",
+      "4.MD.3",
+      "5.MD.5"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Identify whether problem asks for area or perimeter",
+        "Look for keywords: around (perimeter), cover (area)",
+        "Draw and label diagrams",
+        "Include units in answer",
+        "Check reasonableness"
+      ],
+      "commonMistakes": [
+        "Finding area when perimeter is needed (or vice versa)",
+        "Missing information or assuming square dimensions",
+        "Calculation errors",
+        "Wrong units or missing units"
+      ],
+      "teachingTips": [
+        "Highlight: What does the problem ask for?",
+        "Always draw and label a picture",
+        "Real projects: design a garden, plan a room",
+        "Compare: when do we need area vs perimeter?",
+        "Multi-step: find one measure to find the other"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "line-symmetry",
+    "displayName": "Line Symmetry",
+    "description": "Identify lines of symmetry in shapes and figures",
+    "category": "geometry",
+    "course": "Grade 3-5 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "2d-shapes"
+    ],
+    "enables": [
+      "symmetry-shapes",
+      "create-symmetry"
+    ],
+    "standardsAlignment": [
+      "4.G.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Line of symmetry divides shape into two identical halves",
+        "Each half is mirror image of the other",
+        "Some shapes have multiple lines of symmetry",
+        "Some shapes have no lines of symmetry",
+        "Test with folding or mirror"
+      ],
+      "commonMistakes": [
+        "Drawing diagonal when not actually symmetrical",
+        "Missing some lines of symmetry",
+        "Confusing rotational symmetry with line symmetry",
+        "Not testing both sides match exactly"
+      ],
+      "teachingTips": [
+        "Fold paper cutouts to test symmetry",
+        "Use mirrors to check",
+        "Explore symmetry in letters, shapes, nature",
+        "Draw one half, partner completes other half",
+        "Count lines of symmetry in regular polygons"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "symmetry-shapes",
+    "displayName": "Symmetric Shapes",
+    "description": "Work with and analyze symmetric shapes",
+    "category": "geometry",
+    "course": "Grade 3-5 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "line-symmetry"
+    ],
+    "enables": [
+      "create-symmetry"
+    ],
+    "standardsAlignment": [
+      "4.G.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Regular polygons have multiple lines of symmetry",
+        "Rectangle: 2 lines, Square: 4 lines",
+        "Circle: infinite lines of symmetry",
+        "Analyze symmetry patterns",
+        "Symmetry in art and nature"
+      ],
+      "commonMistakes": [
+        "Assuming all quadrilaterals have symmetry",
+        "Not recognizing all lines of symmetry",
+        "Confusing similar shapes with symmetric shapes"
+      ],
+      "teachingTips": [
+        "Chart: shape and number of symmetry lines",
+        "Pattern block explorations",
+        "Symmetry in architecture, logos, nature",
+        "Create designs with symmetry",
+        "Geoboard activities"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "create-symmetry",
+    "displayName": "Creating Symmetric Figures",
+    "description": "Create symmetric figures by completing the other half",
+    "category": "geometry",
+    "course": "Grade 3-5 Math",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 1",
+    "prerequisites": [
+      "line-symmetry",
+      "symmetry-shapes"
+    ],
+    "enables": [
+      "transformations"
+    ],
+    "standardsAlignment": [
+      "4.G.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Reflect points across line of symmetry",
+        "Each point and its reflection are same distance from line",
+        "Complete symmetric patterns",
+        "Create original symmetric designs",
+        "Use grid paper for accuracy"
+      ],
+      "commonMistakes": [
+        "Not measuring distance from line correctly",
+        "Orientation errors in reflection",
+        "Making designs that are not actually symmetric",
+        "Inconsistent spacing"
+      ],
+      "teachingTips": [
+        "Start with simple shapes on grid paper",
+        "Count squares from line of symmetry",
+        "Use coordinate grids for precision",
+        "Create butterfly art, kaleidoscopes",
+        "Check work by folding or using mirror"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "addition-subtraction-word-problems",
+    "displayName": "Addition and Subtraction Word Problems",
+    "description": "Solve word problems involving addition and subtraction situations",
+    "category": "word-problems",
+    "course": "Grade 1-3 Math",
+    "quarter": 2,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": [
+      "addition",
+      "subtraction"
+    ],
+    "enables": [
+      "difference-word-problems",
+      "result-unknown",
+      "change-unknown"
+    ],
+    "standardsAlignment": [
+      "1.OA.1",
+      "1.OA.2",
+      "2.OA.1",
+      "3.OA.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Understand problem context and what is happening",
+        "Identify what is changing (increasing or decreasing)",
+        "Decide which operation to use",
+        "Write number sentence to match story",
+        "Check if answer makes sense"
+      ],
+      "commonMistakes": [
+        "Adding when should subtract (or vice versa)",
+        "Not reading carefully",
+        "Choosing operation based on keywords only",
+        "Not answering the question asked"
+      ],
+      "teachingTips": [
+        "Act out problems with objects or students",
+        "Draw pictures to show the action",
+        "Identify: start amount, change, end amount",
+        "Underline question being asked",
+        "Use consistent problem-solving routine"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "difference-word-problems",
+    "displayName": "Difference Word Problems",
+    "description": "Solve compare problems to find the difference between quantities",
+    "category": "word-problems",
+    "course": "Grade 1-3 Math",
+    "quarter": 2,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": [
+      "addition-subtraction-word-problems"
+    ],
+    "enables": [
+      "comparison-bar-models"
+    ],
+    "standardsAlignment": [
+      "1.OA.1",
+      "2.OA.1",
+      "3.OA.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Compare two quantities to find how many more/less",
+        "Difference = larger - smaller",
+        "Can use subtraction or addition to solve",
+        "Bar models show comparison clearly",
+        "Keywords: more than, fewer than, difference"
+      ],
+      "commonMistakes": [
+        "Adding instead of subtracting",
+        "Subtracting smaller from larger incorrectly",
+        "Confusing which quantity is larger",
+        "Not understanding \"more\" vs \"less\""
+      ],
+      "teachingTips": [
+        "Line up objects to show comparison",
+        "Bar model diagrams: draw and compare bars",
+        "Use comparison language: How many more? How many fewer?",
+        "Practice identifying larger/smaller amount",
+        "Connect to real comparisons: heights, ages, collections"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "result-unknown",
+    "displayName": "Result Unknown Problems",
+    "description": "Solve problems where the ending amount is unknown",
+    "category": "word-problems",
+    "course": "Grade 1-2 Math",
+    "quarter": 2,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": [
+      "addition-subtraction-word-problems"
+    ],
+    "enables": [
+      "change-unknown"
+    ],
+    "standardsAlignment": [
+      "1.OA.1",
+      "2.OA.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Start amount is known",
+        "Change amount is known",
+        "Find the ending result",
+        "Addition: joining, putting together → result grows",
+        "Subtraction: separating, taking away → result shrinks"
+      ],
+      "commonMistakes": [
+        "Confusing start and result",
+        "Wrong operation choice",
+        "Not showing all parts clearly"
+      ],
+      "teachingTips": [
+        "Use part-part-whole diagrams",
+        "Start-change-result charts",
+        "Act out with objects: start with some, add/remove more",
+        "Number sentences match the action",
+        "Most common problem type - build fluency"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "change-unknown",
+    "displayName": "Change Unknown Problems",
+    "description": "Solve problems where the amount of change is unknown",
+    "category": "word-problems",
+    "course": "Grade 2-3 Math",
+    "quarter": 2,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": [
+      "result-unknown",
+      "missing-addend"
+    ],
+    "enables": [
+      "start-unknown"
+    ],
+    "standardsAlignment": [
+      "2.OA.1",
+      "3.OA.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Start amount is known",
+        "Ending result is known",
+        "Find how much changed",
+        "Can use subtraction or missing addend",
+        "Think: What was added/removed to get from start to end?"
+      ],
+      "commonMistakes": [
+        "Subtracting wrong direction",
+        "Confusing start and end amounts",
+        "Not understanding what changed",
+        "Adding when should subtract"
+      ],
+      "teachingTips": [
+        "Draw diagrams showing before and after",
+        "Use missing addend strategy: start + ? = end",
+        "Count up from start to end",
+        "Real contexts: grew taller, saved money, lost items",
+        "Connect to fact families"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "estimation",
+    "displayName": "Estimation",
+    "description": "Estimate sums and differences using rounding and mental math",
+    "category": "estimation",
+    "course": "Grade 2-4 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": [
+      "rounding",
+      "place-value"
+    ],
+    "enables": [
+      "estimate-sums",
+      "check-reasonableness"
+    ],
+    "standardsAlignment": [
+      "3.NBT.1",
+      "4.NBT.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Estimation gives approximate answer",
+        "Round numbers to make mental math easier",
+        "Not exact, but close enough",
+        "Useful for quick checking",
+        "Multiple strategies possible"
+      ],
+      "commonMistakes": [
+        "Thinking estimate must be exact",
+        "Rounding all numbers same way regardless of context",
+        "Not understanding when estimation is appropriate",
+        "Over-complicated estimation strategies"
+      ],
+      "teachingTips": [
+        "When do we need exact vs approximate answers?",
+        "Round to nearest 10, 100, etc. for easier computation",
+        "Benchmark numbers: 25, 50, 75, 100",
+        "Real contexts: shopping, time, distance",
+        "Compare estimate to exact answer"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "estimate-sums",
+    "displayName": "Estimating Sums and Differences",
+    "description": "Use rounding to estimate sums and differences before calculating",
+    "category": "estimation",
+    "course": "Grade 3-4 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": [
+      "estimation",
+      "rounding"
+    ],
+    "enables": [
+      "check-reasonableness"
+    ],
+    "standardsAlignment": [
+      "3.NBT.1",
+      "4.NBT.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Round each number first",
+        "Add or subtract the rounded numbers mentally",
+        "Result is an estimate, not exact",
+        "Helps check if exact answer is reasonable",
+        "Front-end estimation: use leading digits"
+      ],
+      "commonMistakes": [
+        "Rounding after calculating instead of before",
+        "Using exact calculation when estimate requested",
+        "Inconsistent rounding (mixing tens and hundreds)",
+        "Not showing estimation work"
+      ],
+      "teachingTips": [
+        "Estimate BEFORE calculating exact answer",
+        "Use compatible numbers (easy to work with)",
+        "Round to same place value",
+        "Compare: Is 48+33 closer to 70 or 90?",
+        "Mental math strategies"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "check-reasonableness",
+    "displayName": "Checking Reasonableness",
+    "description": "Use estimation to determine if answers are reasonable",
+    "category": "estimation",
+    "course": "Grade 3-5 Math",
+    "quarter": 1,
+    "unit": "Comparison Pattern - Tier 1",
+    "prerequisites": [
+      "estimation",
+      "estimate-sums"
+    ],
+    "enables": [
+      "mental-math-strategies"
+    ],
+    "standardsAlignment": [
+      "3.NBT.1",
+      "4.NBT.3",
+      "5.NBT.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Compare exact answer to estimate",
+        "Ask: Is this answer sensible?",
+        "Estimation catches big errors",
+        "Look at magnitude (size) of answer",
+        "Use number sense to verify"
+      ],
+      "commonMistakes": [
+        "Skipping reasonableness check",
+        "Not recognizing unreasonable answers",
+        "Accepting calculator errors without questioning",
+        "Not using place value understanding"
+      ],
+      "teachingTips": [
+        "Always estimate before calculating",
+        "Check: Is answer way too big or too small?",
+        "Decimal point errors show up clearly",
+        "Real contexts make reasonableness obvious",
+        "Develop habit of questioning answers"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "number-bonds",
+    "displayName": "Number Bonds",
+    "description": "Build fluency with number relationships and part-whole understanding",
+    "category": "number-sense",
+    "course": "Grade K-2 Math",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": [
+      "addition",
+      "subtraction"
+    ],
+    "enables": [
+      "make-ten",
+      "fact-fluency"
+    ],
+    "standardsAlignment": [
+      "K.OA.3",
+      "1.OA.6",
+      "2.OA.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Numbers can be broken into parts",
+        "Understand part-part-whole relationships",
+        "Number bonds for 5, 10, 20",
+        "Automatic recall of number combinations",
+        "Foundation for addition and subtraction"
+      ],
+      "commonMistakes": [
+        "Not seeing inverse relationships",
+        "Memorizing without understanding",
+        "Difficulty decomposing numbers flexibly"
+      ],
+      "teachingTips": [
+        "Use number bond diagrams: circle with two parts",
+        "Build with manipulatives: 8 = 5+3, 8 = 6+2, etc.",
+        "Practice: What goes with 7 to make 10?",
+        "Games: number bond flash cards, matching",
+        "Connect to fact families"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 8,
+      "fluencyType": "reflex",
+      "toleranceFactor": 1.5
+    }
+  },
+  {
+    "skillId": "make-ten",
+    "displayName": "Make Ten Strategy",
+    "description": "Use make-ten strategy to add numbers efficiently",
+    "category": "mental-math",
+    "course": "Grade 1-2 Math",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": [
+      "number-bonds",
+      "addition"
+    ],
+    "enables": [
+      "mental-addition-strategies"
+    ],
+    "standardsAlignment": [
+      "1.OA.6",
+      "2.OA.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Break apart one addend to make 10 first",
+        "Example: 8+5 → 8+2+3 → 10+3 → 13",
+        "Ten is a friendly landmark number",
+        "Makes mental math easier",
+        "Builds place value understanding"
+      ],
+      "commonMistakes": [
+        "Breaking apart wrong number",
+        "Losing track of remaining part",
+        "Not seeing when strategy is helpful",
+        "Calculation errors when decomposing"
+      ],
+      "teachingTips": [
+        "Use ten frames to visualize",
+        "Practice number bonds to 10 first",
+        "Explicit steps: What do I need to make 10?",
+        "Model thinking aloud",
+        "Connect to compensation strategy"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 12,
+      "fluencyType": "process",
+      "toleranceFactor": 2
+    }
+  },
+  {
+    "skillId": "doubles-near-doubles",
+    "displayName": "Doubles and Near Doubles",
+    "description": "Use doubles facts and near doubles strategy for mental addition",
+    "category": "mental-math",
+    "course": "Grade 1-2 Math",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 1",
+    "prerequisites": [
+      "addition",
+      "number-bonds"
+    ],
+    "enables": [
+      "mental-addition-strategies"
+    ],
+    "standardsAlignment": [
+      "1.OA.6",
+      "2.OA.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Doubles: 1+1, 2+2, 3+3, ... 10+10",
+        "Near doubles: use known double ±1",
+        "Example: 7+8 → think 7+7=14, so 7+8=15",
+        "Efficient mental math strategy",
+        "Doubles facts are anchor facts"
+      ],
+      "commonMistakes": [
+        "Not knowing doubles facts fluently",
+        "Adding 2 instead of 1 for near doubles",
+        "Confusing which fact to start with",
+        "Not recognizing near doubles situations"
+      ],
+      "teachingTips": [
+        "Master doubles facts first",
+        "Visual: domino patterns, mirror images",
+        "Chant doubles: \"6+6=12, 7+7=14...\"",
+        "Near doubles: \"If I know this double, I know...\"",
+        "Real contexts: pairs of socks, eyes, hands"
+      ]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 10,
+      "fluencyType": "reflex",
+      "toleranceFactor": 1.5
+    }
   }
 ]
