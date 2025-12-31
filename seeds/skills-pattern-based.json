@@ -7,9 +7,17 @@
     "course": "Grade 1-2 Math",
     "quarter": 1,
     "unit": "Equivalence Pattern - Tier 1",
-    "prerequisites": ["addition", "subtraction"],
-    "enables": ["missing-addend"],
-    "standardsAlignment": ["1.OA.6", "2.OA.2"],
+    "prerequisites": [
+      "addition",
+      "subtraction"
+    ],
+    "enables": [
+      "missing-addend"
+    ],
+    "standardsAlignment": [
+      "1.OA.6",
+      "2.OA.2"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Related facts: 3+5=8, 5+3=8, 8-5=3, 8-3=5",
@@ -32,7 +40,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -43,9 +51,16 @@
     "course": "Grade 1-2 Math",
     "quarter": 1,
     "unit": "Equivalence Pattern - Tier 1",
-    "prerequisites": ["addition", "subtraction"],
-    "enables": ["fact-families"],
-    "standardsAlignment": ["1.OA.6"],
+    "prerequisites": [
+      "addition",
+      "subtraction"
+    ],
+    "enables": [
+      "fact-families"
+    ],
+    "standardsAlignment": [
+      "1.OA.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Addition and subtraction are inverse operations",
@@ -77,9 +92,16 @@
     "course": "Grade 1-2 Math",
     "quarter": 2,
     "unit": "Equivalence Pattern - Tier 1",
-    "prerequisites": ["fact-families"],
-    "enables": ["one-step-equations"],
-    "standardsAlignment": ["1.OA.8", "2.OA.1"],
+    "prerequisites": [
+      "fact-families"
+    ],
+    "enables": [
+      "one-step-equations"
+    ],
+    "standardsAlignment": [
+      "1.OA.8",
+      "2.OA.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Use subtraction to find missing addend",
@@ -102,7 +124,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -113,9 +135,15 @@
     "course": "Grade 1-2 Math",
     "quarter": 2,
     "unit": "Equivalence Pattern - Tier 1",
-    "prerequisites": ["missing-addend"],
-    "enables": ["one-step-equations"],
-    "standardsAlignment": ["1.OA.8"],
+    "prerequisites": [
+      "missing-addend"
+    ],
+    "enables": [
+      "one-step-equations"
+    ],
+    "standardsAlignment": [
+      "1.OA.8"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 35,
@@ -131,9 +159,15 @@
     "course": "Grade 2-3 Math",
     "quarter": 2,
     "unit": "Equivalence Pattern - Tier 1",
-    "prerequisites": ["fact-families"],
-    "enables": ["equality-concept"],
-    "standardsAlignment": ["2.OA.1"],
+    "prerequisites": [
+      "fact-families"
+    ],
+    "enables": [
+      "equality-concept"
+    ],
+    "standardsAlignment": [
+      "2.OA.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Both sides must be equal",
@@ -168,13 +202,18 @@
     "quarter": 1,
     "unit": "Equivalence Pattern - Tier 1",
     "prerequisites": [],
-    "enables": ["balance-scales", "one-step-equations"],
-    "standardsAlignment": ["1.OA.7"],
+    "enables": [
+      "balance-scales",
+      "one-step-equations"
+    ],
+    "standardsAlignment": [
+      "1.OA.7"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -185,14 +224,20 @@
     "course": "Grade 1-2 Math",
     "quarter": 2,
     "unit": "Equivalence Pattern - Tier 1",
-    "prerequisites": ["equality-concept"],
-    "enables": ["blank-as-variable"],
-    "standardsAlignment": ["1.OA.8"],
+    "prerequisites": [
+      "equality-concept"
+    ],
+    "enables": [
+      "blank-as-variable"
+    ],
+    "standardsAlignment": [
+      "1.OA.8"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -203,9 +248,15 @@
     "course": "Grade 2-3 Math",
     "quarter": 3,
     "unit": "Equivalence Pattern - Tier 1",
-    "prerequisites": ["missing-number-problems"],
-    "enables": ["one-step-equations"],
-    "standardsAlignment": ["2.OA.1"],
+    "prerequisites": [
+      "missing-number-problems"
+    ],
+    "enables": [
+      "one-step-equations"
+    ],
+    "standardsAlignment": [
+      "2.OA.1"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Placeholder for unknown value",
@@ -228,7 +279,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -239,9 +290,17 @@
     "course": "Grade 6-7 Math",
     "quarter": 3,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["blank-as-variable", "equality-concept"],
-    "enables": ["two-step-equations"],
-    "standardsAlignment": ["6.EE.7", "7.EE.4"],
+    "prerequisites": [
+      "blank-as-variable",
+      "equality-concept"
+    ],
+    "enables": [
+      "two-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.7",
+      "7.EE.4"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Inverse operations undo each other",
@@ -275,9 +334,15 @@
     "course": "Grade 6 Math",
     "quarter": 3,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["one-step-equations"],
-    "enables": ["two-step-equations"],
-    "standardsAlignment": ["6.EE.7"],
+    "prerequisites": [
+      "one-step-equations"
+    ],
+    "enables": [
+      "two-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.7"
+    ],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -293,9 +358,15 @@
     "course": "Grade 6 Math",
     "quarter": 3,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["one-step-equations"],
-    "enables": ["two-step-equations"],
-    "standardsAlignment": ["6.EE.7"],
+    "prerequisites": [
+      "one-step-equations"
+    ],
+    "enables": [
+      "two-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.7"
+    ],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -311,9 +382,15 @@
     "course": "Grade 6 Math",
     "quarter": 3,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["one-step-equations"],
-    "enables": ["two-step-equations"],
-    "standardsAlignment": ["6.EE.7"],
+    "prerequisites": [
+      "one-step-equations"
+    ],
+    "enables": [
+      "two-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.7"
+    ],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -329,9 +406,15 @@
     "course": "Grade 6 Math",
     "quarter": 3,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["one-step-equations"],
-    "enables": ["two-step-equations"],
-    "standardsAlignment": ["6.EE.7"],
+    "prerequisites": [
+      "one-step-equations"
+    ],
+    "enables": [
+      "two-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.7"
+    ],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -347,9 +430,16 @@
     "course": "Grade 7-8 Math",
     "quarter": 3,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["one-step-equations"],
-    "enables": ["multi-step-equations"],
-    "standardsAlignment": ["7.EE.4", "8.EE.7"],
+    "prerequisites": [
+      "one-step-equations"
+    ],
+    "enables": [
+      "multi-step-equations"
+    ],
+    "standardsAlignment": [
+      "7.EE.4",
+      "8.EE.7"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Undo operations in reverse order (PEMDAS backwards)",
@@ -372,7 +462,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 40,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -383,9 +473,17 @@
     "course": "Grade 8 Math / Algebra 1",
     "quarter": 2,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["two-step-equations", "combining-like-terms"],
-    "enables": ["equations-with-variables-both-sides"],
-    "standardsAlignment": ["8.EE.7", "A.REI.3"],
+    "prerequisites": [
+      "two-step-equations",
+      "combining-like-terms"
+    ],
+    "enables": [
+      "equations-with-variables-both-sides"
+    ],
+    "standardsAlignment": [
+      "8.EE.7",
+      "A.REI.3"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Simplify both sides first",
@@ -419,14 +517,21 @@
     "course": "Grade 8 Math / Algebra 1",
     "quarter": 2,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["distributive-property", "two-step-equations"],
-    "enables": ["multi-step-equations"],
-    "standardsAlignment": ["8.EE.7"],
+    "prerequisites": [
+      "distributive-property",
+      "two-step-equations"
+    ],
+    "enables": [
+      "multi-step-equations"
+    ],
+    "standardsAlignment": [
+      "8.EE.7"
+    ],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 45,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -437,9 +542,16 @@
     "course": "Grade 8 Math / Algebra 1",
     "quarter": 2,
     "unit": "Equivalence Pattern - Tier 2",
-    "prerequisites": ["multi-step-equations"],
-    "enables": ["systems-substitution"],
-    "standardsAlignment": ["8.EE.7", "A.REI.3"],
+    "prerequisites": [
+      "multi-step-equations"
+    ],
+    "enables": [
+      "systems-substitution"
+    ],
+    "standardsAlignment": [
+      "8.EE.7",
+      "A.REI.3"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Get all variables to one side",
@@ -473,9 +585,15 @@
     "course": "Algebra 1",
     "quarter": 4,
     "unit": "Equivalence Pattern - Tier 3",
-    "prerequisites": ["equations-with-variables-both-sides"],
-    "enables": ["systems-elimination"],
-    "standardsAlignment": ["A.REI.6"],
+    "prerequisites": [
+      "equations-with-variables-both-sides"
+    ],
+    "enables": [
+      "systems-elimination"
+    ],
+    "standardsAlignment": [
+      "A.REI.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Solve one equation for one variable",
@@ -498,7 +616,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 60,
       "fluencyType": "procedural",
-      "toleranceFactor": 4.0
+      "toleranceFactor": 4
     }
   },
   {
@@ -509,9 +627,15 @@
     "course": "Algebra 1",
     "quarter": 4,
     "unit": "Equivalence Pattern - Tier 3",
-    "prerequisites": ["systems-substitution"],
-    "enables": ["systems-graphing"],
-    "standardsAlignment": ["A.REI.6"],
+    "prerequisites": [
+      "systems-substitution"
+    ],
+    "enables": [
+      "systems-graphing"
+    ],
+    "standardsAlignment": [
+      "A.REI.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Line up equations vertically",
@@ -534,7 +658,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 60,
       "fluencyType": "procedural",
-      "toleranceFactor": 4.0
+      "toleranceFactor": 4
     }
   },
   {
@@ -545,9 +669,16 @@
     "course": "Algebra 1",
     "quarter": 4,
     "unit": "Equivalence Pattern - Tier 3",
-    "prerequisites": ["graph-linear-equations", "systems-substitution"],
-    "enables": ["systems-special-cases"],
-    "standardsAlignment": ["A.REI.6"],
+    "prerequisites": [
+      "graph-linear-equations",
+      "systems-substitution"
+    ],
+    "enables": [
+      "systems-special-cases"
+    ],
+    "standardsAlignment": [
+      "A.REI.6"
+    ],
     "teachingGuidance": {
       "coreConcepts": [
         "Graph both equations on same axes",
@@ -570,7 +701,7 @@
     "fluencyMetadata": {
       "baseFluencyTime": 55,
       "fluencyType": "conceptual",
-      "toleranceFactor": 4.0
+      "toleranceFactor": 4
     }
   },
   {
@@ -581,14 +712,18 @@
     "course": "Algebra 1",
     "quarter": 4,
     "unit": "Equivalence Pattern - Tier 3",
-    "prerequisites": ["systems-graphing"],
+    "prerequisites": [
+      "systems-graphing"
+    ],
     "enables": [],
-    "standardsAlignment": ["A.REI.6"],
+    "standardsAlignment": [
+      "A.REI.6"
+    ],
     "difficultyLevel": 8,
     "fluencyMetadata": {
       "baseFluencyTime": 50,
       "fluencyType": "conceptual",
-      "toleranceFactor": 4.0
+      "toleranceFactor": 4
     }
   },
   {
@@ -599,9 +734,17 @@
     "course": "Grade 1-2 Math",
     "quarter": 1,
     "unit": "Change Pattern - Tier 1",
-    "prerequisites": ["counting-up"],
-    "enables": ["multi-digit-addition", "addition-subtraction-word-problems"],
-    "standardsAlignment": ["1.OA.6", "2.NBT.5"],
+    "prerequisites": [
+      "counting-up"
+    ],
+    "enables": [
+      "multi-digit-addition",
+      "addition-subtraction-word-problems"
+    ],
+    "standardsAlignment": [
+      "1.OA.6",
+      "2.NBT.5"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
@@ -617,9 +760,17 @@
     "course": "Grade 1-2 Math",
     "quarter": 1,
     "unit": "Change Pattern - Tier 1",
-    "prerequisites": ["counting-down"],
-    "enables": ["multi-digit-addition", "addition-subtraction-word-problems"],
-    "standardsAlignment": ["1.OA.6", "2.NBT.5"],
+    "prerequisites": [
+      "counting-down"
+    ],
+    "enables": [
+      "multi-digit-addition",
+      "addition-subtraction-word-problems"
+    ],
+    "standardsAlignment": [
+      "1.OA.6",
+      "2.NBT.5"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
@@ -635,14 +786,22 @@
     "course": "Kindergarten-Grade 1",
     "quarter": 1,
     "unit": "Change Pattern - Tier 1",
-    "prerequisites": ["counting"],
-    "enables": ["addition", "skip-counting"],
-    "standardsAlignment": ["K.CC.2", "1.NBT.1"],
+    "prerequisites": [
+      "counting"
+    ],
+    "enables": [
+      "addition",
+      "skip-counting"
+    ],
+    "standardsAlignment": [
+      "K.CC.2",
+      "1.NBT.1"
+    ],
     "difficultyLevel": 1,
     "fluencyMetadata": {
       "baseFluencyTime": 15,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -653,14 +812,21 @@
     "course": "Kindergarten-Grade 1",
     "quarter": 1,
     "unit": "Change Pattern - Tier 1",
-    "prerequisites": ["counting"],
-    "enables": ["subtraction"],
-    "standardsAlignment": ["K.CC.2", "1.NBT.1"],
+    "prerequisites": [
+      "counting"
+    ],
+    "enables": [
+      "subtraction"
+    ],
+    "standardsAlignment": [
+      "K.CC.2",
+      "1.NBT.1"
+    ],
     "difficultyLevel": 1,
     "fluencyMetadata": {
       "baseFluencyTime": 15,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -672,8 +838,15 @@
     "quarter": 1,
     "unit": "Accumulation Pattern - Tier 1",
     "prerequisites": [],
-    "enables": ["counting-up", "counting-down", "counting-by-groups"],
-    "standardsAlignment": ["K.CC.4", "K.CC.5"],
+    "enables": [
+      "counting-up",
+      "counting-down",
+      "counting-by-groups"
+    ],
+    "standardsAlignment": [
+      "K.CC.4",
+      "K.CC.5"
+    ],
     "difficultyLevel": 1,
     "fluencyMetadata": {
       "baseFluencyTime": 15,
@@ -689,9 +862,17 @@
     "course": "Grade 1-2 Math",
     "quarter": 2,
     "unit": "Accumulation Pattern - Tier 1",
-    "prerequisites": ["counting"],
-    "enables": ["skip-counting", "multiplication-basics"],
-    "standardsAlignment": ["1.OA.5", "2.OA.4"],
+    "prerequisites": [
+      "counting"
+    ],
+    "enables": [
+      "skip-counting",
+      "multiplication-basics"
+    ],
+    "standardsAlignment": [
+      "1.OA.5",
+      "2.OA.4"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
@@ -707,14 +888,22 @@
     "course": "Grade 1-2 Math",
     "quarter": 2,
     "unit": "Scaling Pattern - Tier 1",
-    "prerequisites": ["counting-up", "counting-by-groups"],
-    "enables": ["multiplication-concepts"],
-    "standardsAlignment": ["1.NBT.5", "2.NBT.2"],
+    "prerequisites": [
+      "counting-up",
+      "counting-by-groups"
+    ],
+    "enables": [
+      "multiplication-concepts"
+    ],
+    "standardsAlignment": [
+      "1.NBT.5",
+      "2.NBT.2"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -725,14 +914,22 @@
     "course": "Grade 2-3 Math",
     "quarter": 3,
     "unit": "Scaling Pattern - Tier 1",
-    "prerequisites": ["skip-counting"],
-    "enables": ["multiplication-as-groups", "multiply-fractions"],
-    "standardsAlignment": ["2.OA.4", "3.OA.1"],
+    "prerequisites": [
+      "skip-counting"
+    ],
+    "enables": [
+      "multiplication-as-groups",
+      "multiply-fractions"
+    ],
+    "standardsAlignment": [
+      "2.OA.4",
+      "3.OA.1"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -743,14 +940,20 @@
     "course": "Grade 2-3 Math",
     "quarter": 3,
     "unit": "Scaling Pattern - Tier 1",
-    "prerequisites": ["multiplication-concepts"],
-    "enables": ["multiply-fractions"],
-    "standardsAlignment": ["3.OA.1"],
+    "prerequisites": [
+      "multiplication-concepts"
+    ],
+    "enables": [
+      "multiply-fractions"
+    ],
+    "standardsAlignment": [
+      "3.OA.1"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -761,14 +964,20 @@
     "course": "Grade 3 Math",
     "quarter": 2,
     "unit": "Accumulation Pattern - Tier 1",
-    "prerequisites": ["repeated-addition"],
-    "enables": ["multi-digit-multiplication"],
-    "standardsAlignment": ["3.OA.7"],
+    "prerequisites": [
+      "repeated-addition"
+    ],
+    "enables": [
+      "multi-digit-multiplication"
+    ],
+    "standardsAlignment": [
+      "3.OA.7"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 2.0
+      "toleranceFactor": 2
     }
   },
   {
@@ -779,14 +988,21 @@
     "course": "Grade 2-3 Math",
     "quarter": 3,
     "unit": "Accumulation Pattern - Tier 1",
-    "prerequisites": ["addition", "counting-by-groups"],
-    "enables": ["multiplication-basics"],
-    "standardsAlignment": ["2.OA.4"],
+    "prerequisites": [
+      "addition",
+      "counting-by-groups"
+    ],
+    "enables": [
+      "multiplication-basics"
+    ],
+    "standardsAlignment": [
+      "2.OA.4"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -798,8 +1014,13 @@
     "quarter": 4,
     "unit": "Scaling Pattern - Tier 1",
     "prerequisites": [],
-    "enables": ["fractions-as-parts", "add-fractions"],
-    "standardsAlignment": ["3.NF.1"],
+    "enables": [
+      "fractions-as-parts",
+      "add-fractions"
+    ],
+    "standardsAlignment": [
+      "3.NF.1"
+    ],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -815,9 +1036,15 @@
     "course": "Grade 3 Math",
     "quarter": 4,
     "unit": "Scaling Pattern - Tier 1",
-    "prerequisites": ["fraction-concepts"],
-    "enables": ["add-fractions"],
-    "standardsAlignment": ["3.NF.1"],
+    "prerequisites": [
+      "fraction-concepts"
+    ],
+    "enables": [
+      "add-fractions"
+    ],
+    "standardsAlignment": [
+      "3.NF.1"
+    ],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -833,14 +1060,21 @@
     "course": "Grade 4-5 Math",
     "quarter": 2,
     "unit": "Scaling Pattern - Tier 1",
-    "prerequisites": ["fractions-as-parts"],
-    "enables": ["subtract-fractions"],
-    "standardsAlignment": ["4.NF.3", "5.NF.1"],
+    "prerequisites": [
+      "fractions-as-parts"
+    ],
+    "enables": [
+      "subtract-fractions"
+    ],
+    "standardsAlignment": [
+      "4.NF.3",
+      "5.NF.1"
+    ],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 35,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -851,14 +1085,21 @@
     "course": "Grade 4-5 Math",
     "quarter": 2,
     "unit": "Scaling Pattern - Tier 1",
-    "prerequisites": ["add-fractions"],
-    "enables": ["multiply-fractions"],
-    "standardsAlignment": ["4.NF.3", "5.NF.1"],
+    "prerequisites": [
+      "add-fractions"
+    ],
+    "enables": [
+      "multiply-fractions"
+    ],
+    "standardsAlignment": [
+      "4.NF.3",
+      "5.NF.1"
+    ],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 35,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -869,14 +1110,20 @@
     "course": "Grade 5 Math",
     "quarter": 3,
     "unit": "Scaling Pattern - Tier 1",
-    "prerequisites": ["subtract-fractions"],
-    "enables": ["divide-fractions"],
-    "standardsAlignment": ["5.NF.4"],
+    "prerequisites": [
+      "subtract-fractions"
+    ],
+    "enables": [
+      "divide-fractions"
+    ],
+    "standardsAlignment": [
+      "5.NF.4"
+    ],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 35,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -887,14 +1134,20 @@
     "course": "Grade 6 Math",
     "quarter": 2,
     "unit": "Scaling Pattern - Tier 1",
-    "prerequisites": ["multiply-fractions"],
-    "enables": ["rational-expressions"],
-    "standardsAlignment": ["6.NS.1"],
+    "prerequisites": [
+      "multiply-fractions"
+    ],
+    "enables": [
+      "rational-expressions"
+    ],
+    "standardsAlignment": [
+      "6.NS.1"
+    ],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 40,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -906,13 +1159,19 @@
     "quarter": 3,
     "unit": "Structure Pattern - Tier 2",
     "prerequisites": [],
-    "enables": ["simplify-expressions", "multi-step-equations"],
-    "standardsAlignment": ["6.EE.3", "7.EE.1"],
+    "enables": [
+      "simplify-expressions",
+      "multi-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.3",
+      "7.EE.1"
+    ],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 35,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -923,14 +1182,20 @@
     "course": "Grade 6-7 Math",
     "quarter": 3,
     "unit": "Structure Pattern - Tier 2",
-    "prerequisites": ["combining-like-terms"],
-    "enables": ["factoring-gcf"],
-    "standardsAlignment": ["6.EE.3"],
+    "prerequisites": [
+      "combining-like-terms"
+    ],
+    "enables": [
+      "factoring-gcf"
+    ],
+    "standardsAlignment": [
+      "6.EE.3"
+    ],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 35,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -941,14 +1206,21 @@
     "course": "Grade 7 Math",
     "quarter": 3,
     "unit": "Structure Pattern - Tier 2",
-    "prerequisites": ["simplify-expressions"],
-    "enables": ["expanding-expressions", "factoring-gcf"],
-    "standardsAlignment": ["7.EE.1"],
+    "prerequisites": [
+      "simplify-expressions"
+    ],
+    "enables": [
+      "expanding-expressions",
+      "factoring-gcf"
+    ],
+    "standardsAlignment": [
+      "7.EE.1"
+    ],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 40,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -959,14 +1231,20 @@
     "course": "Grade 7-8 Math",
     "quarter": 3,
     "unit": "Structure Pattern - Tier 2",
-    "prerequisites": ["distributive-property"],
-    "enables": ["factoring-gcf"],
-    "standardsAlignment": ["7.EE.1"],
+    "prerequisites": [
+      "distributive-property"
+    ],
+    "enables": [
+      "factoring-gcf"
+    ],
+    "standardsAlignment": [
+      "7.EE.1"
+    ],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 40,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -978,13 +1256,19 @@
     "quarter": 1,
     "unit": "Structure Pattern - Tier 1",
     "prerequisites": [],
-    "enables": ["decompose-numbers", "expanded-form"],
-    "standardsAlignment": ["1.NBT.2", "2.NBT.1"],
+    "enables": [
+      "decompose-numbers",
+      "expanded-form"
+    ],
+    "standardsAlignment": [
+      "1.NBT.2",
+      "2.NBT.1"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -995,14 +1279,21 @@
     "course": "Grade 1-2 Math",
     "quarter": 1,
     "unit": "Structure Pattern - Tier 1",
-    "prerequisites": ["place-value"],
-    "enables": ["compose-numbers", "expanded-form"],
-    "standardsAlignment": ["1.NBT.2"],
+    "prerequisites": [
+      "place-value"
+    ],
+    "enables": [
+      "compose-numbers",
+      "expanded-form"
+    ],
+    "standardsAlignment": [
+      "1.NBT.2"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1013,14 +1304,20 @@
     "course": "Grade 1-2 Math",
     "quarter": 1,
     "unit": "Structure Pattern - Tier 1",
-    "prerequisites": ["decompose-numbers"],
-    "enables": ["regrouping"],
-    "standardsAlignment": ["1.NBT.2"],
+    "prerequisites": [
+      "decompose-numbers"
+    ],
+    "enables": [
+      "regrouping"
+    ],
+    "standardsAlignment": [
+      "1.NBT.2"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1031,9 +1328,14 @@
     "course": "Grade 2-3 Math",
     "quarter": 1,
     "unit": "Structure Pattern - Tier 1",
-    "prerequisites": ["place-value", "decompose-numbers"],
+    "prerequisites": [
+      "place-value",
+      "decompose-numbers"
+    ],
     "enables": [],
-    "standardsAlignment": ["2.NBT.3"],
+    "standardsAlignment": [
+      "2.NBT.3"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
@@ -1049,14 +1351,20 @@
     "course": "Grade 2 Math",
     "quarter": 2,
     "unit": "Structure Pattern - Tier 1",
-    "prerequisites": ["compose-numbers"],
-    "enables": ["multi-digit-addition"],
-    "standardsAlignment": ["2.NBT.7"],
+    "prerequisites": [
+      "compose-numbers"
+    ],
+    "enables": [
+      "multi-digit-addition"
+    ],
+    "standardsAlignment": [
+      "2.NBT.7"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1067,9 +1375,15 @@
     "course": "Grade 2-3 Math",
     "quarter": 2,
     "unit": "Accumulation Pattern - Tier 1",
-    "prerequisites": ["addition", "regrouping"],
+    "prerequisites": [
+      "addition",
+      "regrouping"
+    ],
     "enables": [],
-    "standardsAlignment": ["2.NBT.7", "3.NBT.2"],
+    "standardsAlignment": [
+      "2.NBT.7",
+      "3.NBT.2"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1086,13 +1400,17 @@
     "quarter": 2,
     "unit": "Structure Pattern - Tier 1",
     "prerequisites": [],
-    "enables": ["addition-as-joining"],
-    "standardsAlignment": ["1.OA.1"],
+    "enables": [
+      "addition-as-joining"
+    ],
+    "standardsAlignment": [
+      "1.OA.1"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1103,14 +1421,20 @@
     "course": "Grade 1 Math",
     "quarter": 1,
     "unit": "Structure Pattern - Tier 1",
-    "prerequisites": ["part-part-whole"],
-    "enables": ["addition"],
-    "standardsAlignment": ["1.OA.1"],
+    "prerequisites": [
+      "part-part-whole"
+    ],
+    "enables": [
+      "addition"
+    ],
+    "standardsAlignment": [
+      "1.OA.1"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
       "fluencyType": "conceptual",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1121,9 +1445,16 @@
     "course": "Grade 2 Math",
     "quarter": 2,
     "unit": "Accumulation Pattern - Tier 1",
-    "prerequisites": ["addition", "counting-by-groups"],
-    "enables": ["repeated-addition"],
-    "standardsAlignment": ["2.OA.4"],
+    "prerequisites": [
+      "addition",
+      "counting-by-groups"
+    ],
+    "enables": [
+      "repeated-addition"
+    ],
+    "standardsAlignment": [
+      "2.OA.4"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
@@ -1140,8 +1471,14 @@
     "quarter": 1,
     "unit": "Comparison Pattern - Tier 1",
     "prerequisites": [],
-    "enables": ["comparing-numbers", "greater-less-than"],
-    "standardsAlignment": ["K.CC.6", "1.NBT.3"],
+    "enables": [
+      "comparing-numbers",
+      "greater-less-than"
+    ],
+    "standardsAlignment": [
+      "K.CC.6",
+      "1.NBT.3"
+    ],
     "difficultyLevel": 1,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
@@ -1157,9 +1494,16 @@
     "course": "Grade 1-2 Math",
     "quarter": 1,
     "unit": "Comparison Pattern - Tier 1",
-    "prerequisites": ["compare-numbers"],
-    "enables": ["ordering-numbers"],
-    "standardsAlignment": ["1.NBT.3", "2.NBT.4"],
+    "prerequisites": [
+      "compare-numbers"
+    ],
+    "enables": [
+      "ordering-numbers"
+    ],
+    "standardsAlignment": [
+      "1.NBT.3",
+      "2.NBT.4"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
@@ -1175,9 +1519,15 @@
     "course": "Grade 1 Math",
     "quarter": 1,
     "unit": "Comparison Pattern - Tier 1",
-    "prerequisites": ["compare-numbers"],
-    "enables": ["comparing-numbers"],
-    "standardsAlignment": ["1.NBT.3"],
+    "prerequisites": [
+      "compare-numbers"
+    ],
+    "enables": [
+      "comparing-numbers"
+    ],
+    "standardsAlignment": [
+      "1.NBT.3"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
@@ -1194,8 +1544,12 @@
     "quarter": 1,
     "unit": "Equivalence Pattern - Tier 1",
     "prerequisites": [],
-    "enables": ["equality-concept"],
-    "standardsAlignment": ["K.CC.6"],
+    "enables": [
+      "equality-concept"
+    ],
+    "standardsAlignment": [
+      "K.CC.6"
+    ],
     "difficultyLevel": 1,
     "fluencyMetadata": {
       "baseFluencyTime": 15,
@@ -1211,9 +1565,15 @@
     "course": "Grade 1-2 Math",
     "quarter": 1,
     "unit": "Comparison Pattern - Tier 1",
-    "prerequisites": ["comparing-numbers"],
-    "enables": ["number-order"],
-    "standardsAlignment": ["1.NBT.3"],
+    "prerequisites": [
+      "comparing-numbers"
+    ],
+    "enables": [
+      "number-order"
+    ],
+    "standardsAlignment": [
+      "1.NBT.3"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
@@ -1229,9 +1589,13 @@
     "course": "Grade 1 Math",
     "quarter": 1,
     "unit": "Comparison Pattern - Tier 1",
-    "prerequisites": ["ordering-numbers"],
+    "prerequisites": [
+      "ordering-numbers"
+    ],
     "enables": [],
-    "standardsAlignment": ["1.NBT.3"],
+    "standardsAlignment": [
+      "1.NBT.3"
+    ],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 20,
@@ -1247,14 +1611,20 @@
     "course": "Grade 3 Math",
     "quarter": 1,
     "unit": "Comparison Pattern - Tier 1",
-    "prerequisites": ["place-value"],
-    "enables": ["rounding-to-nearest-ten"],
-    "standardsAlignment": ["3.NBT.1"],
+    "prerequisites": [
+      "place-value"
+    ],
+    "enables": [
+      "rounding-to-nearest-ten"
+    ],
+    "standardsAlignment": [
+      "3.NBT.1"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
-      "toleranceFactor": 3.0
+      "toleranceFactor": 3
     }
   },
   {
@@ -1265,14 +1635,1088 @@
     "course": "Grade 3 Math",
     "quarter": 1,
     "unit": "Comparison Pattern - Tier 1",
-    "prerequisites": ["rounding"],
+    "prerequisites": [
+      "rounding"
+    ],
     "enables": [],
-    "standardsAlignment": ["3.NBT.1"],
+    "standardsAlignment": [
+      "3.NBT.1"
+    ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 25,
       "fluencyType": "procedural",
       "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "ratios",
+    "displayName": "Understanding Ratios",
+    "description": "Understand ratio concepts and use ratio language",
+    "category": "ratios-proportions",
+    "course": "Grade 6 Math",
+    "quarter": 1,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [],
+    "enables": [
+      "unit-rates",
+      "equivalent-ratios"
+    ],
+    "standardsAlignment": [
+      "6.RP.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Part-to-part vs part-to-whole",
+        "Ratio notation: a:b, a to b, a/b",
+        "Order matters",
+        "Context interpretation"
+      ],
+      "commonMistakes": [
+        "Confusing ratios with fractions",
+        "Wrong order",
+        "Adding ratios incorrectly"
+      ],
+      "teachingTips": [
+        "Real-world contexts: recipes, mixtures",
+        "Visual models: tape diagrams",
+        "Multiple representations"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "exponential-functions",
+    "displayName": "Understanding Exponential Functions",
+    "description": "Identify and evaluate exponential functions f(x) = a·b^x",
+    "category": "exponential",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Change Pattern - Tier 3",
+    "prerequisites": [
+      "exponent-rules-multiplication",
+      "function-notation"
+    ],
+    "enables": [
+      "exponential-growth-decay",
+      "exponential-equations"
+    ],
+    "standardsAlignment": [
+      "F-IF.7e",
+      "F-LE.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Form: f(x) = a·b^x where b > 0",
+        "a is initial value, b is growth/decay factor",
+        "Growth if b > 1, decay if 0 < b < 1",
+        "Exponential change vs linear change"
+      ],
+      "commonMistakes": [
+        "Confusing with polynomial functions",
+        "Not understanding rapid growth",
+        "Evaluating exponents incorrectly",
+        "Mixing up growth factor and rate"
+      ],
+      "teachingTips": [
+        "Graph to show rapid increase/decrease",
+        "Compare table of values: linear vs exponential",
+        "Real-world: population growth, compound interest, radioactive decay",
+        "Use calculator for large exponents"
+      ],
+      "exampleTypes": [
+        "f(x) = 2^x",
+        "f(x) = 100(1.05)^x",
+        "f(x) = 50(0.5)^x"
+      ],
+      "connectionsToPriorKnowledge": [
+        "Exponent rules",
+        "Function evaluation"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "limits",
+    "displayName": "Limits (Algebraic)",
+    "description": "Evaluate limits using algebraic techniques",
+    "category": "limits",
+    "course": "Calculus 1",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 4",
+    "prerequisites": [
+      "limits-intuitive"
+    ],
+    "enables": [
+      "derivatives-definition",
+      "continuity"
+    ],
+    "standardsAlignment": [
+      "AP Calc AB 1.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Direct substitution",
+        "Factoring",
+        "Conjugates",
+        "L'Hôpital's rule preview"
+      ],
+      "commonMistakes": [
+        "0/0 indeterminate",
+        "Algebraic errors",
+        "Not simplifying first"
+      ],
+      "teachingTips": [
+        "Multiple strategies",
+        "Indeterminate form recognition",
+        "Epsilon-delta intuition"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "derivatives",
+    "displayName": "Derivative from Definition",
+    "description": "Find derivatives using limit definition",
+    "category": "derivatives",
+    "course": "Calculus 1",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 4",
+    "prerequisites": [
+      "limits-algebraic"
+    ],
+    "enables": [
+      "power-rule",
+      "tangent-lines"
+    ],
+    "standardsAlignment": [
+      "AP Calc AB 2.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "f'(x) = lim[h→0] (f(x+h) - f(x))/h",
+        "Instantaneous rate of change",
+        "Slope of tangent line"
+      ],
+      "commonMistakes": [
+        "Algebraic simplification errors",
+        "Not canceling h",
+        "Confusing with secant slope"
+      ],
+      "teachingTips": [
+        "Start with linear, power functions",
+        "Geometric meaning",
+        "Alternative forms of definition"
+      ]
+    },
+    "difficultyLevel": 9,
+    "fluencyMetadata": {
+      "baseFluencyTime": 70,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "coordinate-plane",
+    "displayName": "Coordinate Plane Basics",
+    "description": "Plot and identify points using ordered pairs",
+    "category": "graphing",
+    "prerequisites": [
+      "integer-addition"
+    ],
+    "enables": [
+      "graphing-linear-equations",
+      "distance-formula"
+    ],
+    "standardsAlignment": [
+      "6.NS.6",
+      "6.NS.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Ordered pair (x, y) where x is horizontal, y is vertical",
+        "Four quadrants, x and y axes",
+        "Origin is (0, 0)"
+      ],
+      "commonMistakes": [
+        "Reversing x and y coordinates",
+        "Going up/down first instead of left/right",
+        "Not understanding negative coordinates"
+      ],
+      "teachingTips": [
+        "Remember: 'along the hallway, up the stairs'",
+        "Practice all four quadrants",
+        "Use graph paper",
+        "Connect to real maps, battleship game"
+      ],
+      "exampleTypes": [
+        "Plot (3, 4)",
+        "Plot (-2, 5)",
+        "What point is shown?",
+        "Quadrant identification"
+      ],
+      "connectionsToPriorKnowledge": [
+        "Number lines",
+        "Integers"
+      ]
+    },
+    "difficultyLevel": 3,
+    "unit": "Space Pattern - Tier 2",
+    "course": "Mathematics"
+  },
+  {
+    "skillId": "slope",
+    "displayName": "Understanding Slope",
+    "description": "Calculate and interpret slope as rate of change",
+    "category": "graphing",
+    "prerequisites": [
+      "graphing-linear-equations",
+      "ratios-and-rates"
+    ],
+    "enables": [
+      "slope-intercept-form",
+      "writing-equations"
+    ],
+    "standardsAlignment": [
+      "8.EE.6"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Slope = rise/run = change in y / change in x",
+        "Positive slope rises left to right",
+        "Negative slope falls left to right",
+        "Zero slope is horizontal, undefined slope is vertical"
+      ],
+      "commonMistakes": [
+        "Reversing rise and run",
+        "Subtracting in wrong order",
+        "Confusing positive and negative slope"
+      ],
+      "teachingTips": [
+        "Use stairs or ramp analogy",
+        "Always start from left point",
+        "Count rise (up/down) then run (left/right)",
+        "Connect to real rates: speed, cost per item"
+      ],
+      "exampleTypes": [
+        "Find slope from two points",
+        "Find slope from graph",
+        "Interpret slope in context"
+      ],
+      "connectionsToPriorKnowledge": [
+        "Ratios",
+        "Graphing",
+        "Integers"
+      ]
+    },
+    "difficultyLevel": 6,
+    "unit": "Space Pattern - Tier 2",
+    "course": "Mathematics"
+  },
+  {
+    "skillId": "simplify-rational-expressions",
+    "displayName": "Simplifying Rational Expressions",
+    "description": "Factor and simplify rational expressions by canceling common factors",
+    "category": "rational",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 3",
+    "prerequisites": [
+      "factoring-trinomials"
+    ],
+    "enables": [
+      "multiply-rational-expressions",
+      "add-subtract-rational-expressions",
+      "rational-equations"
+    ],
+    "standardsAlignment": [
+      "A-APR.7"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Factor numerator and denominator completely",
+        "Cancel common FACTORS (not terms)",
+        "State domain restrictions (values that make denominator zero)",
+        "Simplified form has no common factors"
+      ],
+      "commonMistakes": [
+        "Canceling terms instead of factors",
+        "Forgetting to state domain restrictions",
+        "Not factoring completely before simplifying"
+      ],
+      "teachingTips": [
+        "Emphasize: can only cancel FACTORS, never terms",
+        "Factor completely first, then look for common factors",
+        "Always state what values x cannot equal",
+        "Check work by multiplying factors back"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "multiply-rational-expressions",
+    "displayName": "Multiplying Rational Expressions",
+    "description": "Multiply rational expressions by multiplying numerators and denominators",
+    "category": "rational",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 3",
+    "prerequisites": [
+      "simplify-rational-expressions"
+    ],
+    "enables": [
+      "divide-rational-expressions",
+      "rational-equations"
+    ],
+    "standardsAlignment": [
+      "A-APR.7"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Factor all expressions first",
+        "Multiply numerators together, multiply denominators together",
+        "Cancel common factors before multiplying",
+        "Simplify the result"
+      ],
+      "commonMistakes": [
+        "Multiplying without factoring first",
+        "Not canceling common factors",
+        "Forgetting domain restrictions"
+      ],
+      "teachingTips": [
+        "Factor FIRST, then cancel, then multiply (less work)",
+        "Show connection to multiplying numeric fractions",
+        "State restrictions from all denominators"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "divide-rational-expressions",
+    "displayName": "Dividing Rational Expressions",
+    "description": "Divide rational expressions by multiplying by the reciprocal",
+    "category": "rational",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 3",
+    "prerequisites": [
+      "multiply-rational-expressions"
+    ],
+    "enables": [
+      "rational-equations"
+    ],
+    "standardsAlignment": [
+      "A-APR.7"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Keep-Change-Flip: keep first, change ÷ to ×, flip second",
+        "Multiply by reciprocal of divisor",
+        "Factor, cancel, then multiply",
+        "Restrictions from all original denominators"
+      ],
+      "commonMistakes": [
+        "Flipping the wrong fraction",
+        "Not changing division to multiplication",
+        "Forgetting restrictions from the flipped fraction"
+      ],
+      "teachingTips": [
+        "Emphasize: same as numeric fractions",
+        "Keep-Change-Flip method",
+        "Check: division is multiplication by reciprocal"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "add-subtract-rational-expressions",
+    "displayName": "Adding and Subtracting Rational Expressions",
+    "description": "Add and subtract rational expressions using common denominators",
+    "category": "rational",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 3",
+    "prerequisites": [
+      "simplify-rational-expressions"
+    ],
+    "enables": [
+      "rational-equations"
+    ],
+    "standardsAlignment": [
+      "A-APR.7"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Find LCD (Least Common Denominator)",
+        "Rewrite each fraction with LCD",
+        "Combine numerators, keep common denominator",
+        "Simplify the result"
+      ],
+      "commonMistakes": [
+        "Adding denominators",
+        "Not finding LCD correctly",
+        "Sign errors when subtracting",
+        "Not simplifying final answer"
+      ],
+      "teachingTips": [
+        "LCD is LCM of denominator polynomials",
+        "Factor denominators to find LCD",
+        "Distribute carefully when rewriting with LCD",
+        "Combine ONLY numerators, denominator stays same"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 70,
+      "fluencyType": "procedural",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "congruence",
+    "displayName": "Triangle Congruence (SSS, SAS, ASA)",
+    "description": "Prove triangles congruent using postulates",
+    "category": "congruence",
+    "course": "Geometry",
+    "quarter": 2,
+    "unit": "Space Pattern - Tier 3",
+    "prerequisites": [
+      "triangle-classification"
+    ],
+    "enables": [
+      "cpctc",
+      "congruence-proofs"
+    ],
+    "standardsAlignment": [
+      "G-CO.7",
+      "G-CO.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "SSS: three sides congruent",
+        "SAS: two sides and included angle",
+        "ASA: two angles and included side",
+        "Correspondence of vertices"
+      ],
+      "commonMistakes": [
+        "Confusing SSA (not valid) with SAS",
+        "Not marking given information",
+        "Incorrect correspondence statement",
+        "Not identifying included angle/side"
+      ],
+      "teachingTips": [
+        "Use color coding for corresponding parts",
+        "Physical models and manipulatives",
+        "Practice marking diagrams systematically",
+        "Emphasize 'included' terminology"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "similarity",
+    "displayName": "Similar Figures and Scale Factor",
+    "description": "Understand similarity, find scale factors, and solve proportions",
+    "category": "similarity",
+    "course": "Geometry",
+    "quarter": 4,
+    "unit": "Space Pattern - Tier 3",
+    "prerequisites": [
+      "ratios-proportions",
+      "corresponding-parts"
+    ],
+    "enables": [
+      "similar-triangle-theorems",
+      "dilation"
+    ],
+    "standardsAlignment": [
+      "G-SRT.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Same shape, different size",
+        "Corresponding angles congruent",
+        "Corresponding sides proportional",
+        "Scale factor = ratio of corresponding sides"
+      ],
+      "commonMistakes": [
+        "Confusing similarity with congruence",
+        "Setting up proportions incorrectly",
+        "Not matching corresponding parts",
+        "Scale factor calculation errors"
+      ],
+      "teachingTips": [
+        "Visual: photo enlargement/reduction",
+        "Practice identifying corresponding parts",
+        "Use color coding",
+        "Real-world: models, maps, scale drawings"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "solving-inequalities",
+    "displayName": "Solving Inequalities",
+    "description": "Solve and graph inequalities including compound inequalities",
+    "category": "expressions-equations",
+    "course": "Grade 7 Math",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 2",
+    "prerequisites": [
+      "solving-equations-7th"
+    ],
+    "enables": [
+      "graphing-inequalities"
+    ],
+    "standardsAlignment": [
+      "7.EE.4b"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Same steps as equations",
+        "Flip inequality when multiplying/dividing by negative",
+        "Open vs closed circles",
+        "Infinite solutions"
+      ],
+      "commonMistakes": [
+        "Forgetting to flip",
+        "Wrong circle type",
+        "Direction errors on graph"
+      ],
+      "teachingTips": [
+        "Test a value",
+        "Number line graphs",
+        "Real: budgets, constraints"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "arithmetic-sequences",
+    "displayName": "Arithmetic Sequences and Series",
+    "description": "Identify patterns, find terms, and sum arithmetic sequences",
+    "category": "sequences",
+    "course": "Algebra 2",
+    "quarter": 3,
+    "unit": "Accumulation Pattern - Tier 2",
+    "prerequisites": [
+      "linear-functions"
+    ],
+    "enables": [
+      "geometric-sequences",
+      "sigma-notation"
+    ],
+    "standardsAlignment": [
+      "F-BF.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Common difference d",
+        "a_n = a_1 + (n-1)d",
+        "Sum: S_n = n(a_1 + a_n)/2",
+        "Linear growth"
+      ],
+      "commonMistakes": [
+        "Confusing n and n-1",
+        "Arithmetic errors in formulas",
+        "Not identifying d correctly"
+      ],
+      "teachingTips": [
+        "Pattern recognition",
+        "Real-world: salary increases, seating arrangements",
+        "Visual: linear graphs"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "geometric-sequences",
+    "displayName": "Geometric Sequences and Series",
+    "description": "Work with geometric sequences and find sums, including infinite series",
+    "category": "sequences",
+    "course": "Algebra 2",
+    "quarter": 3,
+    "unit": "Accumulation Pattern - Tier 2",
+    "prerequisites": [
+      "sequences-series-arithmetic",
+      "exponential-functions-basics"
+    ],
+    "enables": [
+      "infinite-series",
+      "financial-applications"
+    ],
+    "standardsAlignment": [
+      "F-BF.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Common ratio r",
+        "a_n = a_1 · r^(n-1)",
+        "Sum: S_n = a_1(1-r^n)/(1-r)",
+        "Infinite sum: |r| < 1"
+      ],
+      "commonMistakes": [
+        "Confusing with arithmetic",
+        "Sign errors with r",
+        "Not checking |r| < 1 for infinite"
+      ],
+      "teachingTips": [
+        "Exponential growth pattern",
+        "Real-world: investments, population, fractals",
+        "Infinite series: bouncing ball"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "definite-integrals",
+    "displayName": "Definite Integrals and FTC",
+    "description": "Evaluate definite integrals using Fundamental Theorem of Calculus",
+    "category": "integrals",
+    "course": "Calculus 1",
+    "quarter": 3,
+    "unit": "Accumulation Pattern - Tier 4",
+    "prerequisites": [
+      "indefinite-integrals"
+    ],
+    "enables": [
+      "area-under-curve",
+      "accumulation-functions"
+    ],
+    "standardsAlignment": [
+      "AP Calc AB 4.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "∫[a to b] f(x)dx = F(b) - F(a)",
+        "Signed area",
+        "Properties of definite integrals"
+      ],
+      "commonMistakes": [
+        "F(a) - F(b) instead of F(b) - F(a)",
+        "Forgetting negative area",
+        "Bounds errors"
+      ],
+      "teachingTips": [
+        "Net area concept",
+        "Leibniz notation",
+        "Geometric interpretation"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "function-composition",
+    "displayName": "Function Notation and Composition",
+    "description": "Evaluate and compose functions using proper notation",
+    "category": "functions",
+    "course": "Algebra 2",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 3",
+    "prerequisites": [
+      "function-basics"
+    ],
+    "enables": [
+      "inverse-functions",
+      "transformations"
+    ],
+    "standardsAlignment": [
+      "F-BF.1c",
+      "F-IF.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "f(x) notation",
+        "Composition (f ∘ g)(x) = f(g(x))",
+        "Domain and range",
+        "Function operations"
+      ],
+      "commonMistakes": [
+        "Confusing f(x+2) with f(x) + 2",
+        "Order matters in composition",
+        "Not checking domain restrictions"
+      ],
+      "teachingTips": [
+        "Use machines metaphor",
+        "Practice multi-step compositions",
+        "Connect to real-world transformations"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "mean",
+    "displayName": "Mean (Average)",
+    "description": "Calculate and interpret the mean of a data set",
+    "category": "statistics",
+    "course": "Grade 6-7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "addition",
+      "division"
+    ],
+    "enables": [
+      "measures-of-center"
+    ],
+    "standardsAlignment": [
+      "6.SP.3",
+      "6.SP.5c"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Mean = sum of all values ÷ count",
+        "Sensitive to outliers",
+        "Best for symmetric distributions",
+        "Also called average or arithmetic mean"
+      ],
+      "commonMistakes": [
+        "Division errors (wrong count)",
+        "Not adding all values",
+        "Confusing mean with median"
+      ],
+      "teachingTips": [
+        "Connect to \"fair share\" concept",
+        "Show how outliers affect mean",
+        "Real data sets from students lives",
+        "Use calculator for large datasets"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "median",
+    "displayName": "Median",
+    "description": "Find the median (middle value) of a data set",
+    "category": "statistics",
+    "course": "Grade 6-7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "ordering-numbers"
+    ],
+    "enables": [
+      "measures-of-center"
+    ],
+    "standardsAlignment": [
+      "6.SP.3",
+      "6.SP.5c"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Order values from least to greatest",
+        "Odd count: middle value",
+        "Even count: average of two middle values",
+        "Not affected by outliers"
+      ],
+      "commonMistakes": [
+        "Not ordering values first",
+        "Picking wrong middle for even count",
+        "Confusing median with mean"
+      ],
+      "teachingTips": [
+        "Always order FIRST",
+        "Cross off from both ends to find middle",
+        "Show resistance to outliers",
+        "Real: home prices, test scores"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "mode",
+    "displayName": "Mode",
+    "description": "Identify the mode (most frequent value) of a data set",
+    "category": "statistics",
+    "course": "Grade 6-7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [],
+    "enables": [
+      "measures-of-center"
+    ],
+    "standardsAlignment": [
+      "6.SP.3",
+      "6.SP.5c"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Mode = most frequently occurring value",
+        "Can have no mode, one mode, or multiple modes",
+        "Best for categorical data",
+        "Not affected by extreme values"
+      ],
+      "commonMistakes": [
+        "Confusing frequency with the value",
+        "Thinking there must always be one mode",
+        "Finding the highest value instead of most frequent"
+      ],
+      "teachingTips": [
+        "Tally charts or frequency tables help",
+        "Show examples with multiple modes",
+        "Real: favorite colors, shoe sizes"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 2.5
+    }
+  },
+  {
+    "skillId": "range",
+    "displayName": "Range",
+    "description": "Calculate the range (spread) of a data set",
+    "category": "statistics",
+    "course": "Grade 6-7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 2",
+    "prerequisites": [
+      "subtraction"
+    ],
+    "enables": [
+      "iqr"
+    ],
+    "standardsAlignment": [
+      "6.SP.3",
+      "6.SP.5c"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Range = maximum value - minimum value",
+        "Measures spread or variability",
+        "Sensitive to outliers",
+        "Simple but limited measure"
+      ],
+      "commonMistakes": [
+        "Subtracting in wrong order (getting negative)",
+        "Not identifying true max/min",
+        "Confusing range with other measures"
+      ],
+      "teachingTips": [
+        "Show on number line",
+        "Connect to everyday language (\"range of temperatures\")",
+        "Discuss limitations (only uses 2 values)"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 20,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
+  },
+  {
+    "skillId": "translations",
+    "displayName": "Translations",
+    "description": "Perform and describe translations (slides) on the coordinate plane",
+    "category": "transformations",
+    "course": "Grade 8 Math / Geometry",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 3",
+    "prerequisites": [
+      "coordinate-plane"
+    ],
+    "enables": [
+      "congruence"
+    ],
+    "standardsAlignment": [
+      "8.G.1",
+      "8.G.2",
+      "8.G.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Translation slides a figure without rotation or flipping",
+        "Every point moves the same distance and direction",
+        "Preserves size, shape, and orientation",
+        "Notation: (x,y) → (x+a, y+b)"
+      ],
+      "commonMistakes": [
+        "Moving different points different amounts",
+        "Confusing horizontal and vertical shifts",
+        "Sign errors in coordinates"
+      ],
+      "teachingTips": [
+        "Use graph paper or coordinate plane",
+        "Show with tracing paper",
+        "Real: sliding objects, video game sprites",
+        "Connect to vector notation"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "reflections",
+    "displayName": "Reflections",
+    "description": "Perform and describe reflections (flips) over lines",
+    "category": "transformations",
+    "course": "Grade 8 Math / Geometry",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 3",
+    "prerequisites": [
+      "coordinate-plane"
+    ],
+    "enables": [
+      "congruence"
+    ],
+    "standardsAlignment": [
+      "8.G.1",
+      "8.G.2",
+      "8.G.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Reflection flips a figure over a line (line of reflection)",
+        "Each point and its image are equidistant from the line",
+        "Preserves size and shape, reverses orientation",
+        "Common lines: x-axis, y-axis, y=x"
+      ],
+      "commonMistakes": [
+        "Not preserving distance to line of reflection",
+        "Orientation errors",
+        "Confusing which axis is line of reflection"
+      ],
+      "teachingTips": [
+        "Use mirrors or tracing paper",
+        "Count squares from line of reflection",
+        "Real: mirror images, symmetry in nature",
+        "Practice all common reflection lines"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "rotations",
+    "displayName": "Rotations",
+    "description": "Perform and describe rotations (turns) around a point",
+    "category": "transformations",
+    "course": "Grade 8 Math / Geometry",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 3",
+    "prerequisites": [
+      "coordinate-plane",
+      "angle-measurement"
+    ],
+    "enables": [
+      "congruence"
+    ],
+    "standardsAlignment": [
+      "8.G.1",
+      "8.G.2",
+      "8.G.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Rotation turns a figure around a center point",
+        "Specified by center, angle, and direction (clockwise/counterclockwise)",
+        "Preserves size and shape",
+        "Common rotations: 90°, 180°, 270° about origin"
+      ],
+      "commonMistakes": [
+        "Wrong direction of rotation",
+        "Angle errors",
+        "Not rotating all points same amount",
+        "Forgetting which point is the center"
+      ],
+      "teachingTips": [
+        "Use tracing paper to physically rotate",
+        "Start with 90° and 180° rotations",
+        "Real: clock hands, spinning objects",
+        "Patterns for 90° rotations: (x,y) → (-y,x)"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
     }
   }
 ]
