@@ -229,6 +229,23 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
 
     console.log(`[DEBUG] Queried ${allSkills.length} skills from database`);
 
+    // Filter to only include skills that have either:
+    // 1. Existing problems in the database
+    // 2. Problem generation templates
+    const { TEMPLATES } = require('../utils/problemGenerator');
+    const templateSkillIds = Object.keys(TEMPLATES);
+
+    // Get list of skill IDs that have problems in the database
+    const skillsWithProblems = await Problem.distinct('skillId');
+
+    // Combine: skills that have templates OR problems
+    const availableSkillIds = new Set([...templateSkillIds, ...skillsWithProblems]);
+
+    // Filter allSkills to only include available skills
+    const filteredSkills = allSkills.filter(skill => availableSkillIds.has(skill.skillId));
+
+    console.log(`[DEBUG] Filtered to ${filteredSkills.length} skills with problems or templates (${allSkills.length - filteredSkills.length} pattern-based skills skipped until problems are generated)`);
+
     // Map specific skill categories to broad categories for diversity tracking
     const categoryToBroadCategory = (category) => {
       // Number operations (Elementary K-5)
@@ -314,7 +331,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
 
     // Build candidate skills with estimated difficulties
     let candidateSkills = [];
-    for (const skill of allSkills) {
+    for (const skill of filteredSkills) {
       // Use IRT difficulty if available, otherwise category estimate
       const estimatedDifficulty = skill.irtDifficulty || categoryDifficultyMap[skill.category] || 0;
 
