@@ -28,6 +28,328 @@ function shuffle(array) {
 }
 
 // ============================================================================
+// EARLY FOUNDATIONS (PreK-2) GENERATORS
+// ============================================================================
+
+function generateCounting(difficulty) {
+  const start = randomInt(1, 20);
+  const count = difficulty < 0 ? 3 : 5;
+  const answer = start + count;
+
+  const wrong1 = start + count - 1;
+  const wrong2 = start + count + 1;
+  const wrong3 = start + count + 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_count_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'counting',
+    content: `Count from ${start}: ${start}, ${start + 1}, ${start + 2}, ...  What comes after ${start + count - 1}?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 15,
+      source: 'template',
+      tags: ['counting', 'number-sense']
+    },
+    isActive: true
+  };
+}
+
+function generateSkipCounting(difficulty) {
+  const skipBy = randomChoice([2, 5, 10]);
+  const start = skipBy;
+  const steps = difficulty < 0 ? 2 : 3;
+  const answer = start + (skipBy * steps);
+
+  const wrong1 = answer + skipBy;
+  const wrong2 = answer - skipBy;
+  const wrong3 = answer + 1;
+
+  const sequence = [];
+  for (let i = 0; i < steps; i++) {
+    sequence.push(start + (skipBy * i));
+  }
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_skip_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'skip-counting',
+    content: `Count by ${skipBy}s: ${sequence.join(', ')}, ... What comes next?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.3,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 20,
+      source: 'template',
+      tags: ['skip-counting', 'patterns']
+    },
+    isActive: true
+  };
+}
+
+function generateCompareNumbers(difficulty) {
+  const a = difficulty < 0 ? randomInt(1, 20) : randomInt(10, 100);
+  const b = difficulty < 0 ? randomInt(1, 20) : randomInt(10, 100);
+
+  const answer = a > b ? '>' : a < b ? '<' : '=';
+
+  const options = shuffle([
+    { label: 'A', text: String('>') },
+    { label: 'B', text: String('<') },
+    { label: 'C', text: String('=') }
+  ]);
+
+  // Add a fourth option
+  options.push({ label: 'D', text: String('cannot compare') });
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_comp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'compare-numbers',
+    content: `Compare: ${a} ___ ${b}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.4,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 20,
+      source: 'template',
+      tags: ['comparing', 'number-sense']
+    },
+    isActive: true
+  };
+}
+
+function generateOrderingNumbers(difficulty) {
+  const nums = [];
+  const range = difficulty < 0 ? 20 : 50;
+
+  for (let i = 0; i < 3; i++) {
+    nums.push(randomInt(1, range));
+  }
+
+  const sorted = [...nums].sort((a, b) => a - b);
+  const answer = sorted.join(', ');
+
+  // Generate wrong orderings
+  const reversed = [...sorted].reverse().join(', ');
+  const shuffled1 = [sorted[1], sorted[0], sorted[2]].join(', ');
+  const shuffled2 = [sorted[2], sorted[1], sorted[0]].join(', ');
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(reversed) },
+    { label: 'C', text: String(shuffled1) },
+    { label: 'D', text: String(shuffled2) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'ordering-numbers',
+    content: `Order from least to greatest: ${nums.join(', ')}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.2,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['ordering', 'number-sense']
+    },
+    isActive: true
+  };
+}
+
+function generateRounding(difficulty) {
+  const num = difficulty < 0 ? randomInt(11, 99) : randomInt(101, 999);
+  const roundTo = difficulty < 0 ? 10 : 100;
+  const answer = Math.round(num / roundTo) * roundTo;
+
+  const wrong1 = answer + roundTo;
+  const wrong2 = answer - roundTo;
+  const wrong3 = num;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_round_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'rounding',
+    content: `Round ${num} to the nearest ${roundTo}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['rounding', 'estimation']
+    },
+    isActive: true
+  };
+}
+
+function generateFactFamilies(difficulty) {
+  const a = randomInt(2, 10);
+  const b = randomInt(2, 10);
+  const sum = a + b;
+
+  const question = randomChoice([
+    { content: `${a} + ${b} = ${sum}. What is ${sum} - ${a}?`, answer: b },
+    { content: `${sum} - ${a} = ${b}. What is ${a} + ${b}?`, answer: sum },
+    { content: `${a} + ${b} = ${sum}. What is ${sum} - ${b}?`, answer: a }
+  ]);
+
+  const answer = question.answer;
+  const wrong1 = answer + randomInt(1, 5);
+  const wrong2 = answer - randomInt(1, 3);
+  const wrong3 = sum;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_fact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'fact-families',
+    content: question.content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['fact-families', 'inverse-operations']
+    },
+    isActive: true
+  };
+}
+
+function generateMoneyMath(difficulty) {
+  const dollars1 = randomInt(1, 10);
+  const cents1 = randomChoice([0, 25, 50, 75]);
+  const dollars2 = randomInt(1, 10);
+  const cents2 = randomChoice([0, 25, 50, 75]);
+
+  const total1 = dollars1 + (cents1 / 100);
+  const total2 = dollars2 + (cents2 / 100);
+  const answer = (total1 + total2).toFixed(2);
+
+  const wrong1 = (parseFloat(answer) + 1).toFixed(2);
+  const wrong2 = (parseFloat(answer) - 0.50).toFixed(2);
+  const wrong3 = (dollars1 + dollars2).toFixed(2); // Forgot cents
+
+  const options = shuffle([
+    { label: 'A', text: String('$' + answer) },
+    { label: 'B', text: String('$' + wrong1) },
+    { label: 'C', text: String('$' + wrong2) },
+    { label: 'D', text: String('$' + wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String('$' + answer)).label;
+
+  return {
+    problemId: `prob_money_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'money-math',
+    content: `$${dollars1}.${cents1.toString().padStart(2, '0')} + $${dollars2}.${cents2.toString().padStart(2, '0')} = ?`,
+    answer: String('$' + answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['money', 'decimals', 'real-world']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
 // TIER 1 (K-5) GENERATORS
 // ============================================================================
 
@@ -1087,6 +1409,15 @@ function generateIntegrals(difficulty) {
 // ============================================================================
 
 const GENERATORS = {
+  // Early Foundations (PreK-2)
+  'counting': generateCounting,
+  'skip-counting': generateSkipCounting,
+  'compare-numbers': generateCompareNumbers,
+  'ordering-numbers': generateOrderingNumbers,
+  'rounding': generateRounding,
+  'fact-families': generateFactFamilies,
+  'money-math': generateMoneyMath,
+
   // K-5 (Tier 1) - Elementary
   'addition': generateAddition,
   'subtraction': generateSubtraction,
