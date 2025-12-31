@@ -5816,5 +5816,1363 @@
       "fluencyType": "conceptual",
       "toleranceFactor": 3.5
     }
+  },
+  {
+    "skillId": "quadratic-functions",
+    "displayName": "Quadratic Functions",
+    "description": "Understand and analyze quadratic functions and their key features",
+    "category": "quadratics",
+    "course": "Algebra 2",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 3",
+    "prerequisites": [
+      "factoring-quadratics",
+      "graphing-linear-equations"
+    ],
+    "enables": [
+      "graph-quadratic-functions",
+      "quadratic-applications"
+    ],
+    "standardsAlignment": [
+      "F-IF.4",
+      "F-IF.7a"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Standard form: f(x) = ax² + bx + c",
+        "Parabola shape: opens up if a > 0, down if a < 0",
+        "Vertex: maximum or minimum point",
+        "Axis of symmetry: vertical line through vertex",
+        "U-shaped curve (parabola)"
+      ],
+      "commonMistakes": [
+        "Confusing vertex form with standard form",
+        "Not identifying direction parabola opens",
+        "Thinking all quadratics cross x-axis",
+        "Forgetting axis of symmetry"
+      ],
+      "teachingTips": [
+        "Start with simple: y = x², y = -x², y = 2x²",
+        "Vertex form y = a(x-h)² + k shows vertex (h,k)",
+        "Completing square connects forms",
+        "Real: projectile motion, profit models, area problems",
+        "Connect to factoring for x-intercepts"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "graph-quadratic-functions",
+    "displayName": "Graphing Quadratic Functions",
+    "description": "Graph parabolas and identify key features from equations",
+    "category": "quadratics",
+    "course": "Algebra 2",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 3",
+    "prerequisites": [
+      "quadratic-functions",
+      "coordinate-plane"
+    ],
+    "enables": [
+      "quadratic-applications",
+      "systems-quadratic"
+    ],
+    "standardsAlignment": [
+      "F-IF.7a",
+      "F-BF.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Find vertex: x = -b/2a, then substitute for y",
+        "Find y-intercept: set x = 0",
+        "Find x-intercepts: factor or quadratic formula",
+        "Plot vertex and intercepts, sketch parabola",
+        "Use symmetry to plot additional points"
+      ],
+      "commonMistakes": [
+        "Not finding vertex correctly",
+        "Sketching wrong direction",
+        "Not using symmetry",
+        "Inaccurate parabola shape"
+      ],
+      "teachingTips": [
+        "Vertex first, then intercepts",
+        "Mirror points across axis of symmetry",
+        "Table of values around vertex",
+        "Technology to verify",
+        "Real: maximize area, projectile paths"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "exponential-growth",
+    "displayName": "Exponential Growth",
+    "description": "Model and analyze exponential growth situations",
+    "category": "exponential",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Change Pattern - Tier 3",
+    "prerequisites": [
+      "exponential-functions",
+      "exponential-patterns"
+    ],
+    "enables": [
+      "exponential-decay",
+      "logarithms"
+    ],
+    "standardsAlignment": [
+      "F-IF.7e",
+      "F-LE.1",
+      "F-LE.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Growth form: y = a(1 + r)ᵗ where r > 0",
+        "Base > 1 means growth",
+        "Rapid increase over time",
+        "Percent increase per time period",
+        "Compound interest: A = P(1 + r/n)ⁿᵗ"
+      ],
+      "commonMistakes": [
+        "Confusing growth rate with base",
+        "Not converting percent to decimal",
+        "Linear thinking for exponential situations",
+        "Calculation errors with exponents"
+      ],
+      "teachingTips": [
+        "Real: population, bacteria, compound interest, viral spread",
+        "Graph shows J-curve (rapid increase)",
+        "Compare to linear: exponential eventually faster",
+        "Doubling time concept",
+        "Calculator proficiency essential"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "exponential-decay",
+    "displayName": "Exponential Decay",
+    "description": "Model and analyze exponential decay situations",
+    "category": "exponential",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Change Pattern - Tier 3",
+    "prerequisites": [
+      "exponential-growth",
+      "exponential-functions"
+    ],
+    "enables": [
+      "logarithms",
+      "half-life"
+    ],
+    "standardsAlignment": [
+      "F-IF.7e",
+      "F-LE.1",
+      "F-LE.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Decay form: y = a(1 - r)ᵗ where 0 < r < 1",
+        "Base between 0 and 1 means decay",
+        "Approaches zero but never reaches it",
+        "Percent decrease per time period",
+        "Half-life: time for half to remain"
+      ],
+      "commonMistakes": [
+        "Using negative exponents incorrectly",
+        "Not recognizing decay vs growth",
+        "Thinking value reaches zero",
+        "Percent conversion errors"
+      ],
+      "teachingTips": [
+        "Real: radioactive decay, depreciation, drug elimination, cooling",
+        "Graph approaches x-axis (asymptote at y = 0)",
+        "Half-life problems: A = A₀(1/2)^(t/h)",
+        "Compare to growth: same structure, different base",
+        "Connect to negative exponents later"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "average-rate-of-change",
+    "displayName": "Average Rate of Change",
+    "description": "Calculate and interpret average rate of change for any function",
+    "category": "functions",
+    "course": "Algebra 2 / Pre-Calculus",
+    "quarter": 3,
+    "unit": "Change Pattern - Tier 3",
+    "prerequisites": [
+      "rate-of-change-problems",
+      "function-notation"
+    ],
+    "enables": [
+      "instantaneous-rate",
+      "derivatives"
+    ],
+    "standardsAlignment": [
+      "F-IF.6"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "AROC = [f(b) - f(a)] / (b - a)",
+        "Same as slope between two points",
+        "For nonlinear: varies over different intervals",
+        "Secant line slope",
+        "Foundation for derivative (instantaneous rate)"
+      ],
+      "commonMistakes": [
+        "Subtracting in wrong order",
+        "Confusing with instantaneous rate",
+        "Not evaluating function correctly",
+        "Units errors"
+      ],
+      "teachingTips": [
+        "Connect to slope formula",
+        "For linear functions: constant (equals slope)",
+        "For nonlinear: changes based on interval",
+        "Real: average velocity, average cost per unit",
+        "Visual: secant line on graph"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "parent-functions",
+    "displayName": "Parent Functions",
+    "description": "Identify and analyze parent functions and their characteristics",
+    "category": "functions",
+    "course": "Algebra 2 / Pre-Calculus",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 3",
+    "prerequisites": [
+      "function-composition",
+      "quadratic-functions"
+    ],
+    "enables": [
+      "function-families",
+      "function-transformations"
+    ],
+    "standardsAlignment": [
+      "F-IF.7",
+      "F-BF.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Parent functions: simplest form of each family",
+        "Linear: f(x) = x",
+        "Quadratic: f(x) = x²",
+        "Cubic: f(x) = x³",
+        "Square root: f(x) = √x",
+        "Absolute value: f(x) = |x|",
+        "Exponential: f(x) = bˣ",
+        "Reciprocal: f(x) = 1/x"
+      ],
+      "commonMistakes": [
+        "Confusing parent with transformed versions",
+        "Not recognizing function families",
+        "Incomplete knowledge of characteristics",
+        "Mixing up domains and ranges"
+      ],
+      "teachingTips": [
+        "Create function family chart with graphs",
+        "Key features: domain, range, intercepts, symmetry, end behavior",
+        "Each parent is building block for family",
+        "Memorize graphs of all parent functions",
+        "Connect to real-world models"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "function-families",
+    "displayName": "Function Families",
+    "description": "Understand and classify functions into families",
+    "category": "functions",
+    "course": "Algebra 2 / Pre-Calculus",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 3",
+    "prerequisites": [
+      "parent-functions"
+    ],
+    "enables": [
+      "function-transformations",
+      "analyzing-functions"
+    ],
+    "standardsAlignment": [
+      "F-IF.7",
+      "F-BF.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Function family shares common characteristics",
+        "Transformations create family from parent",
+        "Polynomial family: linear, quadratic, cubic, quartic",
+        "Radical family: square root, cube root",
+        "Rational family: reciprocal and variations",
+        "Recognize family from equation or graph"
+      ],
+      "commonMistakes": [
+        "Not identifying underlying parent",
+        "Confusing families",
+        "Missing transformations",
+        "Incomplete family understanding"
+      ],
+      "teachingTips": [
+        "Compare: what do all quadratics have in common?",
+        "Practice identifying family from equation",
+        "Visual: overlay transformed functions on parent",
+        "Key question: what is the parent function?",
+        "Build function library"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "function-transformations",
+    "displayName": "Function Transformations",
+    "description": "Apply and identify transformations of functions (shifts, stretches, reflections)",
+    "category": "functions",
+    "course": "Algebra 2 / Pre-Calculus",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 3",
+    "prerequisites": [
+      "parent-functions",
+      "function-families"
+    ],
+    "enables": [
+      "vertical-shift",
+      "horizontal-shift",
+      "graphing-transformations"
+    ],
+    "standardsAlignment": [
+      "F-BF.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Four main transformations: shifts, stretches, compressions, reflections",
+        "Vertical shift: f(x) + k (up if k > 0)",
+        "Horizontal shift: f(x - h) (right if h > 0)",
+        "Vertical stretch/compression: a·f(x)",
+        "Reflections: -f(x) over x-axis, f(-x) over y-axis",
+        "Combined: y = a·f(b(x - h)) + k"
+      ],
+      "commonMistakes": [
+        "Horizontal shift direction confusion",
+        "Forgetting negative sign means reflection",
+        "Order of transformations matters",
+        "Not starting from parent function"
+      ],
+      "teachingTips": [
+        "Start with parent, apply one transformation at a time",
+        "Horizontal: opposite of what you think (x - 3 goes right!)",
+        "Use graphing technology to verify",
+        "Practice describing transformations from equation",
+        "Reverse: write equation from transformed graph"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "vertical-shift",
+    "displayName": "Vertical Shifts",
+    "description": "Apply and identify vertical shifts of functions",
+    "category": "transformations",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 3",
+    "prerequisites": [
+      "function-transformations",
+      "parent-functions"
+    ],
+    "enables": [
+      "combined-transformations"
+    ],
+    "standardsAlignment": [
+      "F-BF.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "f(x) + k shifts graph up k units (k > 0)",
+        "f(x) + k shifts graph down |k| units (k < 0)",
+        "Adds k to every y-value",
+        "Changes y-intercept and range",
+        "Does not affect x-intercepts horizontally"
+      ],
+      "commonMistakes": [
+        "Confusing with horizontal shift",
+        "Wrong direction for negative k",
+        "Thinking it affects domain",
+        "Not adjusting all points"
+      ],
+      "teachingTips": [
+        "Simple: just move graph up or down",
+        "Check: what happens to (0, 0) on parent?",
+        "Every point moves same vertical distance",
+        "Real: baseline adjustments, offset",
+        "Easiest transformation to visualize"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "horizontal-shift",
+    "displayName": "Horizontal Shifts",
+    "description": "Apply and identify horizontal shifts of functions",
+    "category": "transformations",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 3",
+    "prerequisites": [
+      "function-transformations",
+      "parent-functions"
+    ],
+    "enables": [
+      "combined-transformations"
+    ],
+    "standardsAlignment": [
+      "F-BF.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "f(x - h) shifts graph RIGHT h units (h > 0)",
+        "f(x + h) shifts graph LEFT h units",
+        "Opposite of what you expect!",
+        "Affects x-values (domain)",
+        "Think: what makes inside zero?"
+      ],
+      "commonMistakes": [
+        "Direction: x - 3 goes RIGHT (most common error!)",
+        "Confusing with vertical shift",
+        "Not adjusting x-intercepts",
+        "Sign errors"
+      ],
+      "teachingTips": [
+        "Memory: opposite of sign! x - h → right",
+        "Test: plug in x-values to see shift",
+        "Ask: what x makes (x - 3) = 0? x = 3 (shift right 3)",
+        "Every point moves same horizontal distance",
+        "Practice until direction becomes automatic"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "systems-of-inequalities",
+    "displayName": "Systems of Inequalities",
+    "description": "Solve systems of linear inequalities algebraically and graphically",
+    "category": "inequalities",
+    "course": "Algebra 2",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 3",
+    "prerequisites": [
+      "graphing-inequalities",
+      "multi-step-inequalities"
+    ],
+    "enables": [
+      "graphing-systems-inequalities",
+      "linear-programming"
+    ],
+    "standardsAlignment": [
+      "A-REI.12"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Solution is region satisfying all inequalities",
+        "Graph each inequality on same plane",
+        "Overlap region is solution set",
+        "May be bounded or unbounded",
+        "Test points to verify solution region"
+      ],
+      "commonMistakes": [
+        "Shading wrong side of boundary",
+        "Not recognizing overlap region",
+        "Solid vs dashed line errors",
+        "Missing constraints"
+      ],
+      "teachingTips": [
+        "Graph one inequality at a time",
+        "Different shading patterns or colors",
+        "Test point in overlap to verify",
+        "Real: feasible regions, constraints",
+        "Foundation for linear programming"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "graphing-systems-inequalities",
+    "displayName": "Graphing Systems of Inequalities",
+    "description": "Graph solution regions for systems of inequalities on coordinate plane",
+    "category": "inequalities",
+    "course": "Algebra 2",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 3",
+    "prerequisites": [
+      "systems-of-inequalities",
+      "graphing-linear-equations"
+    ],
+    "enables": [
+      "linear-programming"
+    ],
+    "standardsAlignment": [
+      "A-REI.12"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Graph boundary line for each inequality",
+        "Dashed for < or >, solid for ≤ or ≥",
+        "Shade appropriate half-plane",
+        "Solution is overlapping shaded region",
+        "Vertices are intersection points of boundaries"
+      ],
+      "commonMistakes": [
+        "Wrong line style (solid/dashed)",
+        "Shading wrong side",
+        "Not finding overlap correctly",
+        "Inaccurate graphing"
+      ],
+      "teachingTips": [
+        "Rewrite in slope-intercept form first",
+        "Test (0,0) if not on boundary to determine shading",
+        "Use different colors for clarity",
+        "Label solution region",
+        "Technology for complex systems"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 65,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "linear-programming",
+    "displayName": "Linear Programming",
+    "description": "Use linear programming to optimize under constraints",
+    "category": "optimization",
+    "course": "Algebra 2",
+    "quarter": 3,
+    "unit": "Comparison Pattern - Tier 3",
+    "prerequisites": [
+      "systems-of-inequalities",
+      "graphing-systems-inequalities"
+    ],
+    "enables": [
+      "optimization-problems"
+    ],
+    "standardsAlignment": [
+      "A-CED.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Maximize or minimize objective function",
+        "Subject to constraints (inequalities)",
+        "Feasible region contains all possible solutions",
+        "Optimal solution at vertex of feasible region",
+        "Test all vertices to find maximum/minimum"
+      ],
+      "commonMistakes": [
+        "Not identifying all constraints",
+        "Missing vertices",
+        "Evaluating objective function incorrectly",
+        "Not checking all vertices"
+      ],
+      "teachingTips": [
+        "Real: maximize profit, minimize cost",
+        "Step 1: Define variables and write inequalities",
+        "Step 2: Graph feasible region",
+        "Step 3: Find vertices",
+        "Step 4: Evaluate objective function at each vertex",
+        "Applications: business, manufacturing, resource allocation"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "absolute-value-inequalities",
+    "displayName": "Absolute Value Inequalities",
+    "description": "Solve and graph absolute value inequalities",
+    "category": "inequalities",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Comparison Pattern - Tier 3",
+    "prerequisites": [
+      "multi-step-inequalities",
+      "absolute-value"
+    ],
+    "enables": [
+      "compound-inequalities"
+    ],
+    "standardsAlignment": [
+      "A-REI.11"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "|x| < a means -a < x < a (between)",
+        "|x| > a means x < -a or x > a (outside)",
+        "Rewrite as compound inequality",
+        "Solve compound, graph solution",
+        "Two separate regions for \"or\""
+      ],
+      "commonMistakes": [
+        "Confusing < with > cases",
+        "Not writing compound correctly",
+        "Forgetting \"or\" vs \"and\"",
+        "Sign errors when solving"
+      ],
+      "teachingTips": [
+        "Visualize: distance from zero",
+        "|x| < 3 means within 3 of zero",
+        "|x| > 3 means more than 3 from zero",
+        "Solve each piece of compound",
+        "Graph: < gives interval, > gives two rays"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "dilations",
+    "displayName": "Dilations",
+    "description": "Perform and analyze dilations (size transformations) on the coordinate plane",
+    "category": "transformations",
+    "course": "Geometry / Algebra 2",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 3",
+    "prerequisites": [
+      "scale-factor",
+      "similar-figures"
+    ],
+    "enables": [
+      "similarity-transformations",
+      "composite-transformations"
+    ],
+    "standardsAlignment": [
+      "G-SRT.1",
+      "G-SRT.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Dilation changes size, not shape",
+        "Scale factor k from center point",
+        "k > 1: enlargement, 0 < k < 1: reduction",
+        "Multiply coordinates by k: (x,y) → (kx, ky) from origin",
+        "Produces similar figures"
+      ],
+      "commonMistakes": [
+        "Not using center of dilation",
+        "Adding instead of multiplying",
+        "Confusing scale factor with actual size",
+        "Sign errors with negative k"
+      ],
+      "teachingTips": [
+        "Start with origin as center (simplest)",
+        "Distance from center changes by factor k",
+        "Angles stay same (similarity)",
+        "Real: photo enlargement, maps, scale models",
+        "Connect to scale factor and similar figures"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "geometric-proofs",
+    "displayName": "Geometric Proofs",
+    "description": "Write formal proofs using postulates, theorems, and logical reasoning",
+    "category": "geometry",
+    "course": "Geometry",
+    "quarter": 4,
+    "unit": "Space Pattern - Tier 3",
+    "prerequisites": [
+      "congruence",
+      "similarity"
+    ],
+    "enables": [
+      "coordinate-proofs",
+      "indirect-proofs"
+    ],
+    "standardsAlignment": [
+      "G-CO.9",
+      "G-CO.10",
+      "G-SRT.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Two-column proof: statements and reasons",
+        "Given information starts proof",
+        "Each step justified by definition, postulate, or theorem",
+        "Conclusion matches what you're proving",
+        "Logical flow from given to prove"
+      ],
+      "commonMistakes": [
+        "Missing steps in logic",
+        "Not justifying each step",
+        "Assuming what you're trying to prove",
+        "Incorrect theorem application"
+      ],
+      "teachingTips": [
+        "Start with given, work toward goal",
+        "Mark diagrams with given information",
+        "Build theorem/postulate library",
+        "Practice identifying needed theorems",
+        "Paragraph proofs as alternative format"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 70,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "fundamental-counting-principle",
+    "displayName": "Fundamental Counting Principle",
+    "description": "Use multiplication to count outcomes in multi-stage events",
+    "category": "counting",
+    "course": "Algebra 2 / Statistics",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 3",
+    "prerequisites": [
+      "probability-fractions",
+      "multiplication"
+    ],
+    "enables": [
+      "counting-methods",
+      "permutations"
+    ],
+    "standardsAlignment": [
+      "S-CP.9"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Multiply number of choices at each stage",
+        "If event A has m outcomes and event B has n outcomes, total = m × n",
+        "Extends to multiple stages",
+        "Order matters in sequence",
+        "Foundation for permutations and combinations"
+      ],
+      "commonMistakes": [
+        "Adding instead of multiplying",
+        "Not identifying all stages",
+        "Overcounting or undercounting",
+        "Missing constraints"
+      ],
+      "teachingTips": [
+        "Tree diagrams for small examples",
+        "Example: outfit with 3 shirts, 2 pants = 3 × 2 = 6",
+        "Real: passwords, license plates, menu choices",
+        "Build from 2 stages to many stages",
+        "Check with listing for simple cases"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "counting-methods",
+    "displayName": "Counting Methods",
+    "description": "Apply various counting techniques to complex situations",
+    "category": "counting",
+    "course": "Algebra 2 / Statistics",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 3",
+    "prerequisites": [
+      "fundamental-counting-principle"
+    ],
+    "enables": [
+      "permutations",
+      "combinations"
+    ],
+    "standardsAlignment": [
+      "S-CP.9"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Choose method based on situation",
+        "List for small counts",
+        "Fundamental counting principle for sequences",
+        "Tree diagrams for visualization",
+        "Permutations when order matters",
+        "Combinations when order doesn't matter"
+      ],
+      "commonMistakes": [
+        "Wrong method for situation",
+        "Not recognizing whether order matters",
+        "Overcounting repeated items",
+        "Missing restrictions"
+      ],
+      "teachingTips": [
+        "Key question: does order matter?",
+        "Practice categorizing problems",
+        "Start simple, build complexity",
+        "Real: committee formation, passwords, seating",
+        "Verify with small examples"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "permutations",
+    "displayName": "Permutations",
+    "description": "Calculate permutations when order matters",
+    "category": "counting",
+    "course": "Algebra 2 / Statistics",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 3",
+    "prerequisites": [
+      "fundamental-counting-principle",
+      "counting-methods"
+    ],
+    "enables": [
+      "combinations",
+      "probability-counting"
+    ],
+    "standardsAlignment": [
+      "S-CP.9"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Permutation: arrangement where order matters",
+        "n! = n × (n-1) × (n-2) × ... × 1",
+        "nPr = n!/(n-r)! for r objects from n",
+        "Different arrangements of same items",
+        "Use when order is important"
+      ],
+      "commonMistakes": [
+        "Using when order doesn't matter",
+        "Factorial calculation errors",
+        "Not simplifying nPr formula",
+        "Confusing with combinations"
+      ],
+      "teachingTips": [
+        "Start with simple: how many ways to arrange ABC?",
+        "Calculator has nPr function",
+        "Real: race positions, lock combinations (actually permutations!), passwords",
+        "Factorial grows very fast",
+        "Compare: 5P3 vs 5C3 for same problem"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "combinations",
+    "displayName": "Combinations",
+    "description": "Calculate combinations when order does not matter",
+    "category": "counting",
+    "course": "Algebra 2 / Statistics",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 3",
+    "prerequisites": [
+      "permutations",
+      "counting-methods"
+    ],
+    "enables": [
+      "probability-counting",
+      "binomial-theorem"
+    ],
+    "standardsAlignment": [
+      "S-CP.9"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Combination: selection where order doesn't matter",
+        "nCr = n!/(r!(n-r)!) for r objects from n",
+        "Smaller than permutations (divides by r!)",
+        "{AB, BA} is same combination but different permutations",
+        "Use when order is not important"
+      ],
+      "commonMistakes": [
+        "Using when order matters",
+        "Not simplifying factorial expressions",
+        "Calculator input errors",
+        "Confusing with permutations"
+      ],
+      "teachingTips": [
+        "Key: ABC and BAC are same combination",
+        "Calculator has nCr or C(n,r) function",
+        "Real: committees, teams, lottery, pizza toppings",
+        "nCr always ≤ nPr for same n, r",
+        "Pascal's triangle connection"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "compound-probability",
+    "displayName": "Compound Probability",
+    "description": "Calculate probability of compound events using AND and OR",
+    "category": "probability",
+    "course": "Algebra 2 / Statistics",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 3",
+    "prerequisites": [
+      "probability-fractions",
+      "combinations"
+    ],
+    "enables": [
+      "conditional-probability",
+      "probability-distributions"
+    ],
+    "standardsAlignment": [
+      "S-CP.2",
+      "S-CP.8"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "AND (intersection): multiply probabilities",
+        "OR (union): add probabilities, subtract overlap",
+        "P(A and B) = P(A) × P(B) if independent",
+        "P(A or B) = P(A) + P(B) - P(A and B)",
+        "Mutually exclusive: P(A and B) = 0"
+      ],
+      "commonMistakes": [
+        "Adding when should multiply",
+        "Multiplying when should add",
+        "Forgetting to subtract overlap",
+        "Assuming independence incorrectly"
+      ],
+      "teachingTips": [
+        "AND = multiply, OR = add (with adjustment)",
+        "Venn diagrams for OR problems",
+        "Tree diagrams for AND sequences",
+        "Real: multiple coin flips, drawing cards",
+        "Check: probability between 0 and 1"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "conditional-probability",
+    "displayName": "Conditional Probability",
+    "description": "Calculate and interpret conditional probability",
+    "category": "probability",
+    "course": "Algebra 2 / Statistics",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 3",
+    "prerequisites": [
+      "compound-probability",
+      "probability-fractions"
+    ],
+    "enables": [
+      "bayes-theorem",
+      "independence"
+    ],
+    "standardsAlignment": [
+      "S-CP.3",
+      "S-CP.5",
+      "S-CP.6"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "P(A|B): probability of A given B has occurred",
+        "Formula: P(A|B) = P(A and B) / P(B)",
+        "Restricts sample space to condition",
+        "Two-way tables useful",
+        "Independent if P(A|B) = P(A)"
+      ],
+      "commonMistakes": [
+        "Confusing P(A|B) with P(B|A)",
+        "Not restricting to correct sample space",
+        "Calculation errors with formula",
+        "Assuming independence"
+      ],
+      "teachingTips": [
+        "Read: probability of A given B",
+        "Two-way frequency tables help visualize",
+        "Example: P(rain|cloudy) vs P(cloudy|rain)",
+        "Real: medical testing, quality control",
+        "Independence: events don't affect each other"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 65,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "sigma-notation",
+    "displayName": "Sigma Notation (Summation Notation)",
+    "description": "Read and write sums using sigma (Σ) notation",
+    "category": "series",
+    "course": "Algebra 2 / Pre-Calculus",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 3",
+    "prerequisites": [
+      "arithmetic-series",
+      "geometric-series"
+    ],
+    "enables": [
+      "summation-notation",
+      "series-formulas"
+    ],
+    "standardsAlignment": [
+      "F-BF.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Σ (sigma) means sum",
+        "Σ(i=1 to n) aᵢ = a₁ + a₂ + ... + aₙ",
+        "Index variable (often i, k, or n)",
+        "Lower limit to upper limit",
+        "Substitute each index value"
+      ],
+      "commonMistakes": [
+        "Not understanding index variable",
+        "Wrong limits of summation",
+        "Not substituting correctly",
+        "Confusing notation with formula"
+      ],
+      "teachingTips": [
+        "Expand first few terms to understand",
+        "Example: Σ(i=1 to 4) i² = 1² + 2² + 3² + 4² = 30",
+        "Index is placeholder, can use any letter",
+        "Connect to sequence term formulas",
+        "Compact way to write long sums"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 50,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "summation-notation",
+    "displayName": "Working with Summation Notation",
+    "description": "Evaluate and manipulate expressions in summation notation",
+    "category": "series",
+    "course": "Pre-Calculus",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 3",
+    "prerequisites": [
+      "sigma-notation"
+    ],
+    "enables": [
+      "series-formulas",
+      "definite-integrals"
+    ],
+    "standardsAlignment": [
+      "F-BF.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Σc·aᵢ = c·Σaᵢ (constant multiple)",
+        "Σ(aᵢ + bᵢ) = Σaᵢ + Σbᵢ (sum of sums)",
+        "Change index limits",
+        "Evaluate finite sums",
+        "Properties simplify calculations"
+      ],
+      "commonMistakes": [
+        "Distributing Σ incorrectly",
+        "Not using properties",
+        "Index shift errors",
+        "Calculation mistakes"
+      ],
+      "teachingTips": [
+        "Master sigma notation first",
+        "Properties mirror algebraic properties",
+        "Practice expanding and condensing",
+        "Calculator can evaluate",
+        "Foundation for calculus (Riemann sums)"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 55,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "finite-series",
+    "displayName": "Finite Series",
+    "description": "Find sums of finite arithmetic and geometric series",
+    "category": "series",
+    "course": "Algebra 2 / Pre-Calculus",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 3",
+    "prerequisites": [
+      "arithmetic-series",
+      "geometric-series",
+      "sigma-notation"
+    ],
+    "enables": [
+      "series-formulas",
+      "infinite-series"
+    ],
+    "standardsAlignment": [
+      "F-BF.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Finite: definite number of terms",
+        "Arithmetic series: Sₙ = n(a₁ + aₙ)/2",
+        "Geometric series: Sₙ = a₁(1 - rⁿ)/(1 - r)",
+        "Identify series type first",
+        "Use appropriate formula"
+      ],
+      "commonMistakes": [
+        "Using wrong formula",
+        "Not identifying series type",
+        "Calculation errors with formulas",
+        "Counting terms incorrectly"
+      ],
+      "teachingTips": [
+        "Identify: arithmetic or geometric?",
+        "Find needed values: a₁, n, d or r",
+        "Apply formula carefully",
+        "Check with small examples",
+        "Real: loan payments, savings plans"
+      ]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "series-formulas",
+    "displayName": "Series Formulas",
+    "description": "Apply and derive formulas for arithmetic and geometric series",
+    "category": "series",
+    "course": "Pre-Calculus",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 3",
+    "prerequisites": [
+      "finite-series",
+      "summation-notation"
+    ],
+    "enables": [
+      "infinite-series",
+      "riemann-sums"
+    ],
+    "standardsAlignment": [
+      "F-BF.2"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Arithmetic: Sₙ = n/2(2a₁ + (n-1)d) or n(a₁ + aₙ)/2",
+        "Geometric: Sₙ = a₁(1-rⁿ)/(1-r) for r ≠ 1",
+        "Derive formulas, don't just memorize",
+        "Understand why formulas work",
+        "Special sums: Σi, Σi², Σi³"
+      ],
+      "commonMistakes": [
+        "Plugging into wrong formula",
+        "Not deriving when helpful",
+        "Algebraic errors",
+        "Not checking reasonableness"
+      ],
+      "teachingTips": [
+        "Derive arithmetic: pair first+last, etc.",
+        "Derive geometric: multiply by r, subtract",
+        "Practice recognizing which formula",
+        "Understand formula structure",
+        "Connect to sigma notation"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 65,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.5
+    }
+  },
+  {
+    "skillId": "riemann-sums",
+    "displayName": "Riemann Sums",
+    "description": "Approximate area under curves using Riemann sums",
+    "category": "area-approximation",
+    "course": "Pre-Calculus / Calculus",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 3",
+    "prerequisites": [
+      "summation-notation",
+      "functions"
+    ],
+    "enables": [
+      "area-approximation",
+      "definite-integrals"
+    ],
+    "standardsAlignment": [
+      "Calculus prep"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Approximate area with rectangles",
+        "Left endpoint, right endpoint, midpoint methods",
+        "Width of rectangles: Δx = (b-a)/n",
+        "Sum areas of rectangles",
+        "More rectangles = better approximation"
+      ],
+      "commonMistakes": [
+        "Wrong rectangle heights",
+        "Not calculating Δx correctly",
+        "Summation errors",
+        "Not understanding which endpoint to use"
+      ],
+      "teachingTips": [
+        "Visual: draw rectangles under curve",
+        "Start with few rectangles, increase",
+        "Left: underestimate (increasing), overestimate (decreasing)",
+        "Foundation for definite integral",
+        "Technology helps with many rectangles"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 70,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
+  },
+  {
+    "skillId": "area-approximation",
+    "displayName": "Area Approximation Methods",
+    "description": "Use various methods to approximate area under curves",
+    "category": "area-approximation",
+    "course": "Pre-Calculus / Calculus",
+    "quarter": 4,
+    "unit": "Accumulation Pattern - Tier 3",
+    "prerequisites": [
+      "riemann-sums"
+    ],
+    "enables": [
+      "definite-integrals",
+      "fundamental-theorem"
+    ],
+    "standardsAlignment": [
+      "Calculus prep"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Riemann sums: left, right, midpoint",
+        "Trapezoidal rule: average of left and right",
+        "Increasing number of subdivisions improves accuracy",
+        "Exact area is limit as n → ∞",
+        "Foundation for integration"
+      ],
+      "commonMistakes": [
+        "Mixing up methods",
+        "Calculation errors",
+        "Not increasing subdivisions enough",
+        "Missing the limit concept"
+      ],
+      "teachingTips": [
+        "Compare different methods on same function",
+        "Visualize: rectangles vs trapezoids",
+        "Error decreases with more subdivisions",
+        "Connect to definite integral concept",
+        "Real: distance from velocity, total growth"
+      ]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {
+      "baseFluencyTime": 70,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 4
+    }
   }
 ]
