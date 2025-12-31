@@ -658,6 +658,464 @@ function generateOrderOfOperations(difficulty) {
   };
 }
 
+function generateSimplifyFractions(difficulty) {
+  const num = randomInt(2, 20);
+  const denom = randomInt(2, 20);
+  const gcdVal = gcd(num, denom);
+  const simplifiedNum = num / gcdVal;
+  const simplifiedDenom = denom / gcdVal;
+
+  const answer = gcdVal === 1 ? `${num}/${denom}` : `${simplifiedNum}/${simplifiedDenom}`;
+  const wrong1 = `${num}/${denom}`; // Not simplified
+  const wrong2 = `${simplifiedNum + 1}/${simplifiedDenom}`;
+  const wrong3 = `${simplifiedNum}/${simplifiedDenom + 1}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_simpl_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'simplify-fractions',
+    content: `Simplify: ${num}/${denom}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['fractions', 'simplifying']
+    },
+    isActive: true
+  };
+}
+
+function generateEquivalentFractions(difficulty) {
+  const num = randomInt(1, 10);
+  const denom = randomInt(2, 10);
+  const multiplier = randomInt(2, 5);
+  const newNum = num * multiplier;
+  const newDenom = denom * multiplier;
+
+  const answer = `${newNum}/${newDenom}`;
+  const wrong1 = `${newNum + 1}/${newDenom}`;
+  const wrong2 = `${newNum}/${newDenom + 1}`;
+  const wrong3 = `${num + multiplier}/${denom + multiplier}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_equiv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'equivalent-fractions',
+    content: `Which fraction is equivalent to ${num}/${denom}?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['fractions', 'equivalent']
+    },
+    isActive: true
+  };
+}
+
+function generateComparingFractions(difficulty) {
+  const num1 = randomInt(1, 10);
+  const denom1 = randomInt(2, 12);
+  const num2 = randomInt(1, 10);
+  const denom2 = randomInt(2, 12);
+
+  const val1 = num1 / denom1;
+  const val2 = num2 / denom2;
+  const answer = val1 > val2 ? '>' : val1 < val2 ? '<' : '=';
+
+  const options = shuffle([
+    { label: 'A', text: String('>') },
+    { label: 'B', text: String('<') },
+    { label: 'C', text: String('=') }
+  ]);
+
+  options.push({ label: 'D', text: String('cannot compare') });
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_compfrac_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'comparing-fractions',
+    content: `Compare: ${num1}/${denom1} ___ ${num2}/${denom2}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['fractions', 'comparing']
+    },
+    isActive: true
+  };
+}
+
+function generateMixedNumbers(difficulty) {
+  const whole = randomInt(1, 5);
+  const num = randomInt(1, 8);
+  const denom = randomInt(2, 10);
+
+  const improperNum = whole * denom + num;
+  const answer = `${improperNum}/${denom}`;
+
+  const wrong1 = `${whole + num}/${denom}`;
+  const wrong2 = `${improperNum}/${denom + 1}`;
+  const wrong3 = `${whole}/${denom}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_mixed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'mixed-numbers',
+    content: `Convert to a fraction greater than 1: ${whole} ${num}/${denom}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['fractions', 'mixed-numbers']
+    },
+    isActive: true
+  };
+}
+
+function generatePerimeter(difficulty) {
+  const length = randomInt(3, 15);
+  const width = randomInt(2, 10);
+  const answer = 2 * (length + width);
+
+  const wrong1 = length * width; // Area instead
+  const wrong2 = length + width;
+  const wrong3 = answer + randomInt(2, 8);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_perim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'perimeter',
+    content: `Find the perimeter of a rectangle with length ${length} and width ${width}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['geometry', 'perimeter']
+    },
+    isActive: true
+  };
+}
+
+function generateAreaTriangles(difficulty) {
+  const base = randomInt(4, 20);
+  const height = randomInt(3, 15);
+  const answer = (base * height) / 2;
+
+  const wrong1 = base * height; // Forgot to divide by 2
+  const wrong2 = base + height;
+  const wrong3 = Math.round(answer / 2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_areatri_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'area-triangles',
+    content: `Find the area of a triangle with base ${base} and height ${height}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['geometry', 'area', 'triangles']
+    },
+    isActive: true
+  };
+}
+
+function generateVolume(difficulty) {
+  const length = randomInt(2, 10);
+  const width = randomInt(2, 10);
+  const height = randomInt(2, 10);
+  const answer = length * width * height;
+
+  const wrong1 = 2 * (length + width + height); // Perimeter-like thinking
+  const wrong2 = length * width; // Just area
+  const wrong3 = answer + randomInt(5, 20);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_vol_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'volume',
+    content: `Find the volume of a rectangular prism: l=${length}, w=${width}, h=${height}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['geometry', 'volume']
+    },
+    isActive: true
+  };
+}
+
+function generateMean(difficulty) {
+  const nums = [];
+  const count = difficulty < 0 ? 3 : 5;
+  let sum = 0;
+
+  for (let i = 0; i < count; i++) {
+    const n = randomInt(1, 20);
+    nums.push(n);
+    sum += n;
+  }
+
+  const answer = (sum / count).toFixed(1);
+  const wrong1 = (sum / (count + 1)).toFixed(1);
+  const wrong2 = String(Math.max(...nums));
+  const wrong3 = String(sum);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_mean_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'mean',
+    content: `Find the mean: ${nums.join(', ')}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['statistics', 'mean', 'average']
+    },
+    isActive: true
+  };
+}
+
+function generateMedian(difficulty) {
+  const nums = [];
+  const count = difficulty < 0 ? 3 : 5;
+
+  for (let i = 0; i < count; i++) {
+    nums.push(randomInt(1, 30));
+  }
+
+  const sorted = [...nums].sort((a, b) => a - b);
+  const midIndex = Math.floor(sorted.length / 2);
+  const answer = sorted.length % 2 === 0
+    ? ((sorted[midIndex - 1] + sorted[midIndex]) / 2).toFixed(1)
+    : String(sorted[midIndex]);
+
+  const wrong1 = String(sorted[0]);
+  const wrong2 = String(sorted[sorted.length - 1]);
+  const sum = sorted.reduce((a, b) => a + b, 0);
+  const wrong3 = (sum / count).toFixed(1);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_median_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'median',
+    content: `Find the median: ${nums.join(', ')}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['statistics', 'median']
+    },
+    isActive: true
+  };
+}
+
+function generateMode(difficulty) {
+  const value = randomInt(1, 15);
+  const nums = [value, value]; // Mode appears twice
+
+  const count = difficulty < 0 ? 3 : 5;
+  for (let i = 0; i < count - 2; i++) {
+    let other = randomInt(1, 15);
+    while (other === value) other = randomInt(1, 15);
+    nums.push(other);
+  }
+
+  nums.sort(() => Math.random() - 0.5); // Shuffle
+
+  const answer = String(value);
+  const wrong1 = String(nums[0]);
+  const wrong2 = String(Math.max(...nums));
+  const wrong3 = String(Math.min(...nums));
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_mode_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'mode',
+    content: `Find the mode: ${nums.join(', ')}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['statistics', 'mode']
+    },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // TIER 2 (6-8) GENERATORS
 // ============================================================================
@@ -1405,6 +1863,615 @@ function generateIntegrals(difficulty) {
 }
 
 // ============================================================================
+// K-5 & TIER 2 (6-8) ADDITIONAL GEOMETRY GENERATORS
+// ============================================================================
+
+function generateAngleMeasurement(difficulty) {
+  const angle = randomInt(10, 170);
+  const answer = angle;
+
+  const wrong1 = 180 - angle;
+  const wrong2 = angle + randomInt(5, 20);
+  const wrong3 = angle - randomInt(5, 20);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  const angleType = angle < 90 ? 'acute' : angle === 90 ? 'right' : angle < 180 ? 'obtuse' : 'straight';
+
+  return {
+    problemId: `prob_angle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'angle-measurement',
+    content: `An ${angleType} angle measures ${angle}°. What is its measure?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['geometry', 'angles']
+    },
+    isActive: true
+  };
+}
+
+function generateClassifyTriangles(difficulty) {
+  const triangleTypes = [
+    { sides: 'all equal', name: 'Equilateral' },
+    { sides: 'two equal', name: 'Isosceles' },
+    { sides: 'all different', name: 'Scalene' }
+  ];
+
+  const selected = randomChoice(triangleTypes);
+  const answer = selected.name;
+
+  const options = shuffle([
+    { label: 'A', text: 'Equilateral' },
+    { label: 'B', text: 'Isosceles' },
+    { label: 'C', text: 'Scalene' },
+    { label: 'D', text: 'Right' }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_tri_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'classify-triangles',
+    content: `A triangle has ${selected.sides} sides. What type of triangle is it?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['geometry', 'triangles']
+    },
+    isActive: true
+  };
+}
+
+function generateClassifyQuadrilaterals(difficulty) {
+  const quadTypes = [
+    { description: '4 equal sides and 4 right angles', name: 'Square' },
+    { description: 'opposite sides parallel and equal', name: 'Parallelogram' },
+    { description: '4 right angles and opposite sides equal', name: 'Rectangle' },
+    { description: '4 equal sides but no right angles', name: 'Rhombus' }
+  ];
+
+  const selected = randomChoice(quadTypes);
+  const answer = selected.name;
+
+  const options = shuffle([
+    { label: 'A', text: 'Square' },
+    { label: 'B', text: 'Rectangle' },
+    { label: 'C', text: 'Parallelogram' },
+    { label: 'D', text: 'Rhombus' }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_quad_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'classify-quadrilaterals',
+    content: `A quadrilateral has ${selected.description}. What is it?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['geometry', 'quadrilaterals']
+    },
+    isActive: true
+  };
+}
+
+function generateCircles(difficulty) {
+  const radius = randomInt(2, 12);
+  const isCircumference = randomChoice([true, false]);
+
+  let answer, content;
+
+  if (isCircumference) {
+    answer = (2 * Math.PI * radius).toFixed(2);
+    content = `Find the circumference of a circle with radius ${radius}. Use π ≈ 3.14`;
+  } else {
+    answer = (Math.PI * radius * radius).toFixed(2);
+    content = `Find the area of a circle with radius ${radius}. Use π ≈ 3.14`;
+  }
+
+  const answerNum = parseFloat(answer);
+  const wrong1 = (answerNum * 1.5).toFixed(2);
+  const wrong2 = (answerNum * 0.5).toFixed(2);
+  const wrong3 = (answerNum + 10).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_circle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'circles',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['geometry', 'circles']
+    },
+    isActive: true
+  };
+}
+
+function generateSurfaceArea(difficulty) {
+  const length = randomInt(2, 10);
+  const width = randomInt(2, 10);
+  const height = randomInt(2, 10);
+
+  const answer = 2 * (length * width + length * height + width * height);
+  const wrong1 = length * width * height; // volume instead
+  const wrong2 = answer - randomInt(10, 30);
+  const wrong3 = answer + randomInt(10, 30);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_sa_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'surface-area',
+    content: `Find the surface area of a rectangular prism with length ${length}, width ${width}, and height ${height}.`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['geometry', 'surface-area', '3d-shapes']
+    },
+    isActive: true
+  };
+}
+
+function generateTransformations(difficulty) {
+  const transformTypes = [
+    { type: 'translation', description: 'slides a figure without rotating or flipping it', name: 'Translation' },
+    { type: 'reflection', description: 'flips a figure over a line', name: 'Reflection' },
+    { type: 'rotation', description: 'turns a figure around a point', name: 'Rotation' }
+  ];
+
+  const selected = randomChoice(transformTypes);
+  const answer = selected.name;
+
+  const options = shuffle([
+    { label: 'A', text: 'Translation' },
+    { label: 'B', text: 'Reflection' },
+    { label: 'C', text: 'Rotation' },
+    { label: 'D', text: 'Dilation' }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_trans_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'transformations',
+    content: `Which transformation ${selected.description}?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['geometry', 'transformations']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// TIER 3 (9-12) PROOF & LOGIC GENERATORS
+// ============================================================================
+
+function generateConditionalStatements(difficulty) {
+  const statements = [
+    {
+      if: 'a number is divisible by 10',
+      then: 'it is divisible by 5',
+      converse: 'If a number is divisible by 5, then it is divisible by 10',
+      inverse: 'If a number is not divisible by 10, then it is not divisible by 5',
+      contrapositive: 'If a number is not divisible by 5, then it is not divisible by 10'
+    },
+    {
+      if: 'an angle is a right angle',
+      then: 'it measures 90°',
+      converse: 'If an angle measures 90°, then it is a right angle',
+      inverse: 'If an angle is not a right angle, then it does not measure 90°',
+      contrapositive: 'If an angle does not measure 90°, then it is not a right angle'
+    }
+  ];
+
+  const selected = randomChoice(statements);
+  const questionTypes = ['converse', 'inverse', 'contrapositive'];
+  const questionType = randomChoice(questionTypes);
+
+  const answer = selected[questionType];
+  const originalStatement = `If ${selected.if}, then ${selected.then}`;
+
+  const allOptions = [selected.converse, selected.inverse, selected.contrapositive, originalStatement];
+  const options = shuffle([
+    { label: 'A', text: allOptions[0] },
+    { label: 'B', text: allOptions[1] },
+    { label: 'C', text: allOptions[2] },
+    { label: 'D', text: allOptions[3] }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_cond_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'conditional-statements',
+    content: `What is the ${questionType} of: "${originalStatement}"?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 60,
+      source: 'template',
+      tags: ['logic', 'conditional-statements', 'proofs']
+    },
+    isActive: true
+  };
+}
+
+function generateLogicalReasoning(difficulty) {
+  const reasoningProblems = [
+    {
+      premises: 'All squares are rectangles. ABCD is a square.',
+      conclusion: 'ABCD is a rectangle',
+      wrongConclusions: ['ABCD is not a rectangle', 'All rectangles are squares', 'ABCD is a circle']
+    },
+    {
+      premises: 'If two angles are vertical angles, they are equal. Angles 1 and 2 are vertical angles.',
+      conclusion: 'Angles 1 and 2 are equal',
+      wrongConclusions: ['Angles 1 and 2 are not equal', 'All angles are vertical angles', 'Vertical angles are not equal']
+    }
+  ];
+
+  const selected = randomChoice(reasoningProblems);
+  const answer = selected.conclusion;
+
+  const options = shuffle([
+    { label: 'A', text: selected.conclusion },
+    { label: 'B', text: selected.wrongConclusions[0] },
+    { label: 'C', text: selected.wrongConclusions[1] },
+    { label: 'D', text: selected.wrongConclusions[2] }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_logic_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'logical-reasoning',
+    content: `Given: ${selected.premises} What can you conclude?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['logic', 'deductive-reasoning', 'proofs']
+    },
+    isActive: true
+  };
+}
+
+function generateGeometricProofs(difficulty) {
+  const proofProblems = [
+    {
+      given: 'Triangle ABC with AB = BC',
+      prove: 'Triangle ABC is isosceles',
+      reason: 'A triangle with two equal sides is isosceles',
+      wrongReasons: [
+        'A triangle with all equal sides is isosceles',
+        'All triangles are isosceles',
+        'Triangles cannot be isosceles'
+      ]
+    },
+    {
+      given: 'Angles 1 and 2 are supplementary, angle 1 = 90°',
+      prove: 'Angle 2 = 90°',
+      reason: 'Supplementary angles sum to 180°, so 180° - 90° = 90°',
+      wrongReasons: [
+        'Supplementary angles are always equal',
+        'All angles equal 90°',
+        'Supplementary angles sum to 90°'
+      ]
+    }
+  ];
+
+  const selected = randomChoice(proofProblems);
+  const answer = selected.reason;
+
+  const options = shuffle([
+    { label: 'A', text: selected.reason },
+    { label: 'B', text: selected.wrongReasons[0] },
+    { label: 'C', text: selected.wrongReasons[1] },
+    { label: 'D', text: selected.wrongReasons[2] }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_proof_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'geometric-proofs',
+    content: `Given: ${selected.given}. Prove: ${selected.prove}. Which reason completes the proof?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.6,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 70,
+      source: 'template',
+      tags: ['geometry', 'proofs', 'reasoning']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// TIER 2 (6-8) ADDITIONAL GENERATORS - Inequalities & Absolute Value
+// ============================================================================
+
+function generateOneStepInequality(difficulty) {
+  const operations = ['+', '-', '×', '÷'];
+  const op = randomChoice(operations);
+  const inequalities = ['<', '>', '≤', '≥'];
+  const ineq = randomChoice(inequalities);
+
+  let a, b, x;
+
+  if (op === '+') {
+    b = randomInt(1, 20);
+    x = randomInt(1, 30);
+    a = x + b;
+  } else if (op === '-') {
+    b = randomInt(1, 20);
+    x = randomInt(b + 1, 30);
+    a = x - b;
+  } else if (op === '×') {
+    b = randomInt(2, 12);
+    x = randomInt(2, 10);
+    a = x * b;
+  } else { // ÷
+    b = randomInt(2, 12);
+    x = randomInt(2, 10);
+    a = x * b;
+  }
+
+  const answer = `x ${ineq} ${x}`;
+  const wrong1 = `x ${ineq} ${x + randomInt(1, 5)}`;
+  const wrong2 = `x ${ineq} ${x - randomInt(1, 5)}`;
+  const wrongIneq = ineq === '<' ? '>' : ineq === '>' ? '<' : ineq === '≤' ? '≥' : '≤';
+  const wrong3 = `x ${wrongIneq} ${x}`;
+
+  const options = shuffle([
+    { label: 'A', text: answer },
+    { label: 'B', text: wrong1 },
+    { label: 'C', text: wrong2 },
+    { label: 'D', text: wrong3 }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  const equation = op === '+' ? `x + ${b} ${ineq} ${a}` :
+                   op === '-' ? `x - ${b} ${ineq} ${a}` :
+                   op === '×' ? `${b}x ${ineq} ${a}` :
+                   `x ÷ ${b} ${ineq} ${x}`;
+
+  return {
+    problemId: `prob_1stepineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-inequalities',
+    content: `Solve for x: ${equation}`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['inequalities', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateTwoStepInequality(difficulty) {
+  const a = randomInt(2, 8);
+  const b = randomInt(1, 20);
+  const x = randomInt(1, 15);
+  const c = a * x + b;
+  const inequalities = ['<', '>', '≤', '≥'];
+  const ineq = randomChoice(inequalities);
+
+  const answer = `x ${ineq} ${x}`;
+  const wrong1 = `x ${ineq} ${x + randomInt(1, 5)}`;
+  const wrong2 = `x ${ineq} ${Math.floor((c - b) / 2)}`;
+  const wrongIneq = ineq === '<' ? '>' : ineq === '>' ? '<' : ineq === '≤' ? '≥' : '≤';
+  const wrong3 = `x ${wrongIneq} ${x}`;
+
+  const options = shuffle([
+    { label: 'A', text: answer },
+    { label: 'B', text: wrong1 },
+    { label: 'C', text: wrong2 },
+    { label: 'D', text: wrong3 }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_2stepineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'two-step-inequalities',
+    content: `Solve for x: ${a}x + ${b} ${ineq} ${c}`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['inequalities', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateAbsoluteValue(difficulty) {
+  const c = randomInt(1, 20);
+  const x1 = c;
+  const x2 = -c;
+
+  const answer = `x = ${x1} or x = ${x2}`;
+  const wrong1 = `x = ${x1}`;
+  const wrong2 = `x = ${x2}`;
+  const wrong3 = `x = ${randomInt(1, 20)}`;
+
+  const options = shuffle([
+    { label: 'A', text: answer },
+    { label: 'B', text: wrong1 },
+    { label: 'C', text: wrong2 },
+    { label: 'D', text: wrong3 }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_absval_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'absolute-value',
+    content: `Solve for x: |x| = ${c}`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['absolute-value', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
 
@@ -1426,6 +2493,22 @@ const GENERATORS = {
   'place-value': generatePlaceValue,
   'decimals': generateDecimals,
   'order-of-operations': generateOrderOfOperations,
+  'simplify-fractions': generateSimplifyFractions,
+  'equivalent-fractions': generateEquivalentFractions,
+  'comparing-fractions': generateComparingFractions,
+  'mixed-numbers': generateMixedNumbers,
+  'perimeter': generatePerimeter,
+  'area-triangles': generateAreaTriangles,
+  'volume': generateVolume,
+  'mean': generateMean,
+  'median': generateMedian,
+  'mode': generateMode,
+  'angle-measurement': generateAngleMeasurement,
+  'classify-triangles': generateClassifyTriangles,
+  'classify-quadrilaterals': generateClassifyQuadrilaterals,
+  'circles': generateCircles,
+  'surface-area': generateSurfaceArea,
+  'transformations': generateTransformations,
 
   // 6-8 (Tier 2) - Middle School
   'one-step-equations': generateOneStepEquation,
@@ -1438,6 +2521,9 @@ const GENERATORS = {
   'integers': generateIntegers,
   'proportions': generateProportions,
   'pythagorean-theorem': generatePythagorean,
+  'one-step-inequalities': generateOneStepInequality,
+  'two-step-inequalities': generateTwoStepInequality,
+  'absolute-value': generateAbsoluteValue,
 
   // 9-12 (Tier 3) - High School
   'slope': generateSlope,
@@ -1447,6 +2533,9 @@ const GENERATORS = {
   'exponential-functions': generateExponentialFunctions,
   'logarithms': generateLogarithms,
   'trigonometry': generateTrigonometry,
+  'conditional-statements': generateConditionalStatements,
+  'logical-reasoning': generateLogicalReasoning,
+  'geometric-proofs': generateGeometricProofs,
 
   // Calculus (Calc 1-3)
   'limits': generateLimits,
