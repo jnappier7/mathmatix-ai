@@ -8,6 +8,7 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:test": "node scripts/seedTestData.js",
+    "seed:skills": "node scripts/seed-pattern-skills.js",
     "cron:weekly-digest": "node scripts/weeklyDigest.js",
     "cron:archive": "node scripts/archiveOldConversations.js",
     "migrate:parent-teacher": "node scripts/migrateParentTeacherBug.js"
