@@ -4897,14 +4897,33 @@ async function generateAllProblems() {
     console.log(`Skills with generators: ${skillsWithGenerators.length}`);
     console.log(`Skills needing generators: ${skillsWithoutGenerators.length}\n`);
 
+    // Check which skills already have problems
+    console.log('Checking for existing problems...\n');
+    const existingCounts = await Problem.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: '$skillId', count: { $sum: 1 } } }
+    ]);
+    const existingCountMap = new Map(existingCounts.map(e => [e._id, e.count]));
+
     // Generate problems for skills that have generators
     const problems = [];
     const difficulties = [-1.5, -1, -0.5, 0, 0.5, 1, 1.5];
-    const problemsPerDifficulty = 11; // Increased to reach ~1000 total problems
+    const problemsPerDifficulty = 11; // 7 difficulties × 11 = 77 problems per skill
+    const expectedProblemsPerSkill = difficulties.length * problemsPerDifficulty;
 
     console.log('Generating problems...\n');
 
+    let skippedCount = 0;
     for (const skill of skillsWithGenerators) {
+      const existingCount = existingCountMap.get(skill.skillId) || 0;
+
+      // Skip if skill already has enough problems
+      if (existingCount >= expectedProblemsPerSkill) {
+        console.log(`⏭️  ${skill.skillId}: Skipped (already has ${existingCount} problems)`);
+        skippedCount++;
+        continue;
+      }
+
       const generator = GENERATORS[skill.skillId];
       let count = 0;
 
@@ -4916,22 +4935,30 @@ async function generateAllProblems() {
         }
       }
 
-      console.log(`✓ ${skill.skillId}: ${count} problems`);
+      console.log(`✓ ${skill.skillId}: ${count} problems generated (had ${existingCount})`);
+    }
+
+    if (skippedCount > 0) {
+      console.log(`\n⏭️  Skipped ${skippedCount} skills that already have problems`);
     }
 
     console.log(`\n📊 Total: ${problems.length} problems generated\n`);
 
-    console.log('Saving to database...\n');
-    const result = await Problem.insertMany(problems);
-    console.log(`✅ Successfully saved ${result.length} problems!\n`);
+    if (problems.length === 0) {
+      console.log('✓ All skills already have problems. Nothing to generate!\n');
+    } else {
+      console.log('Saving to database...\n');
+      const result = await Problem.insertMany(problems);
+      console.log(`✅ Successfully saved ${result.length} problems!\n`);
 
-    // Show sample
-    console.log('Sample problems:\n');
-    problems.slice(0, 3).forEach(p => {
-      console.log(`${p.content}`);
-      console.log(`Options: ${p.options.map(o => `${o.label}: ${o.text}`).join(', ')}`);
-      console.log(`Answer: ${p.answer} (${p.correctOption})\n`);
-    });
+      // Show sample
+      console.log('Sample problems:\n');
+      problems.slice(0, 3).forEach(p => {
+        console.log(`${p.content}`);
+        console.log(`Options: ${p.options.map(o => `${o.label}: ${o.text}`).join(', ')}`);
+        console.log(`Answer: ${p.answer} (${p.correctOption})\n`);
+      });
+    }
 
     console.log('Skills still needing generators:\n');
     skillsWithoutGenerators.slice(0, 20).forEach(s => {
