@@ -6297,6 +6297,544 @@ function generateArithmeticSequences(difficulty) {
   };
 }
 
+function generateMultiplyDecimals(difficulty) {
+  const a = (randomInt(10, 50) / 10).toFixed(1);
+  const b = (randomInt(10, 50) / 10).toFixed(1);
+  const answer = (parseFloat(a) * parseFloat(b)).toFixed(2);
+
+  const content = `${a} × ${b} = ?`;
+
+  const wrong1 = (parseFloat(a) + parseFloat(b)).toFixed(2);
+  const wrong2 = (parseFloat(answer) * 10).toFixed(2);
+  const wrong3 = (parseFloat(answer) / 10).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_decmult_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multiply-decimals',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['decimals', 'multiplication']
+    },
+    isActive: true
+  };
+}
+
+function generateDivideDecimals(difficulty) {
+  const divisor = (randomInt(2, 9) / 10).toFixed(1);
+  const quotient = randomInt(2, 9);
+  const dividend = (parseFloat(divisor) * quotient).toFixed(1);
+  const answer = quotient;
+
+  const content = `${dividend} ÷ ${divisor} = ?`;
+
+  const wrong1 = quotient * 10;
+  const wrong2 = quotient / 10;
+  const wrong3 = parseFloat(dividend) - parseFloat(divisor);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_decdiv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'divide-decimals',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['decimals', 'division']
+    },
+    isActive: true
+  };
+}
+
+function generateCircumference(difficulty) {
+  const radius = randomInt(3, 10);
+  const answer = (2 * Math.PI * radius).toFixed(2);
+
+  const content = `Find the circumference of a circle with radius ${radius} cm. Use π ≈ 3.14`;
+
+  const wrong1 = (Math.PI * radius * radius).toFixed(2);
+  const wrong2 = (2 * radius).toFixed(2);
+  const wrong3 = (Math.PI * radius).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_circum_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'circumference',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['geometry', 'circles', 'circumference']
+    },
+    isActive: true
+  };
+}
+
+function generateAreaCircles(difficulty) {
+  const radius = randomInt(3, 10);
+  const answer = (Math.PI * radius * radius).toFixed(2);
+
+  const content = `Find the area of a circle with radius ${radius} cm. Use π ≈ 3.14`;
+
+  const wrong1 = (2 * Math.PI * radius).toFixed(2);
+  const wrong2 = (Math.PI * radius).toFixed(2);
+  const wrong3 = (radius * radius).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_areacir_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'area-circles',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['geometry', 'circles', 'area']
+    },
+    isActive: true
+  };
+}
+
+function generateEvaluateExpressions(difficulty) {
+  const x = randomInt(2, 8);
+  const coef = randomInt(2, 6);
+  const constant = randomInt(1, 10);
+  const answer = coef * x + constant;
+
+  const content = `Evaluate ${coef}x + ${constant} when x = ${x}`;
+
+  const wrong1 = coef + x + constant;
+  const wrong2 = coef * (x + constant);
+  const wrong3 = answer - constant;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_evalexp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'evaluate-expressions',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['algebra', 'expressions', 'substitution']
+    },
+    isActive: true
+  };
+}
+
+function generateSimplifyExpressions(difficulty) {
+  const coef1 = randomInt(2, 7);
+  const coef2 = randomInt(2, 7);
+  const totalCoef = coef1 + coef2;
+
+  const content = `Simplify: ${coef1}x + ${coef2}x`;
+  const answer = `${totalCoef}x`;
+
+  const wrong1 = `${coef1 * coef2}x`;
+  const wrong2 = `${coef1}x${coef2}`;
+  const wrong3 = `${totalCoef}x^2`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_simpexp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'simplify-expressions',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.1,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['algebra', 'expressions', 'simplification']
+    },
+    isActive: true
+  };
+}
+
+function generatePlottingPoints(difficulty) {
+  const x = randomInt(-5, 5);
+  const y = randomInt(-5, 5);
+
+  const content = `What are the coordinates of a point that is ${Math.abs(x)} units ${x >= 0 ? 'right' : 'left'} of the origin and ${Math.abs(y)} units ${y >= 0 ? 'up' : 'down'}?`;
+  const answer = `(${x}, ${y})`;
+
+  const wrong1 = `(${y}, ${x})`;
+  const wrong2 = `(${-x}, ${y})`;
+  const wrong3 = `(${x}, ${-y})`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_plotpt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'plotting-points',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.1,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['coordinate-plane', 'graphing', 'points']
+    },
+    isActive: true
+  };
+}
+
+function generateGraphLinearEquations(difficulty) {
+  const slope = randomInt(1, 5);
+  const yIntercept = randomInt(-5, 5);
+  const x = randomInt(1, 4);
+  const y = slope * x + yIntercept;
+
+  const content = `For the line y = ${slope}x + ${yIntercept}, what is y when x = ${x}?`;
+  const answer = y;
+
+  const wrong1 = slope * x;
+  const wrong2 = slope + x + yIntercept;
+  const wrong3 = y + slope;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_graphlin_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'graph-linear-equations',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.1,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['graphing', 'linear-equations', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateQuartiles(difficulty) {
+  const data = [12, 15, 18, 20, 22, 25, 28, 30, 32].sort((a, b) => a - b);
+  const q1Index = Math.floor(data.length / 4);
+  const q3Index = Math.floor((3 * data.length) / 4);
+  const q1 = data[q1Index];
+  const q3 = data[q3Index];
+
+  const content = `For the data set {12, 15, 18, 20, 22, 25, 28, 30, 32}, what is Q1 (first quartile)?`;
+  const answer = q1;
+
+  const wrong1 = q3;
+  const wrong2 = data[Math.floor(data.length / 2)];
+  const wrong3 = data[0];
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_quart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'quartiles',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['statistics', 'quartiles', 'data-analysis']
+    },
+    isActive: true
+  };
+}
+
+function generateDivisibilityRules(difficulty) {
+  const divisors = [2, 3, 4, 5, 9, 10];
+  const divisor = divisors[randomInt(0, divisors.length - 1)];
+  const multiplier = randomInt(5, 20);
+  const number = divisor * multiplier;
+
+  const content = `Is ${number} divisible by ${divisor}?`;
+  const answer = 'Yes';
+
+  const wrong1 = 'No';
+  const wrong2 = 'Sometimes';
+  const wrong3 = 'Cannot determine';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_divrul_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'divisibility-rules',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.1,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['number-theory', 'divisibility', 'integers']
+    },
+    isActive: true
+  };
+}
+
+function generateGeometricSequences(difficulty) {
+  const first = randomInt(2, 5);
+  const ratio = randomInt(2, 4);
+  const n = randomInt(4, 6);
+  const answer = first * Math.pow(ratio, n - 1);
+
+  const content = `In a geometric sequence where the first term is ${first} and the common ratio is ${ratio}, what is the ${n}th term?`;
+
+  const wrong1 = first + ratio * (n - 1);
+  const wrong2 = first * ratio * n;
+  const wrong3 = answer / ratio;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_geomseq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'geometric-sequences',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['sequences', 'geometric', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateFunctionNotation(difficulty) {
+  const a = randomInt(2, 6);
+  const b = randomInt(1, 9);
+  const x = randomInt(2, 7);
+  const answer = a * x + b;
+
+  const content = `If f(x) = ${a}x + ${b}, find f(${x})`;
+
+  const wrong1 = a * x;
+  const wrong2 = a + x + b;
+  const wrong3 = answer - b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_funcnot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'function-notation',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.1,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['functions', 'function-notation', 'algebra']
+    },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -6378,6 +6916,11 @@ const GENERATORS = {
   'comparing-decimals': generateComparingDecimals,
   'improper-fractions': generateImproperFractions,
   'unit-conversion': generateUnitConversion,
+  'multiply-decimals': generateMultiplyDecimals,
+  'divide-decimals': generateDivideDecimals,
+  'circumference': generateCircumference,
+  'area-circles': generateAreaCircles,
+  'divisibility-rules': generateDivisibilityRules,
 
   // 6-8 (Tier 2) - Middle School
   'one-step-equations': generateOneStepEquation,
@@ -6404,6 +6947,10 @@ const GENERATORS = {
   'scientific-notation': generateScientificNotation,
   'percent-increase': generatePercentIncrease,
   'percent-decrease': generatePercentDecrease,
+  'evaluate-expressions': generateEvaluateExpressions,
+  'simplify-expressions': generateSimplifyExpressions,
+  'plotting-points': generatePlottingPoints,
+  'quartiles': generateQuartiles,
 
   // 9-12 (Tier 3) - High School
   'multi-step-equations': generateMultiStepEquations,
@@ -6438,6 +6985,9 @@ const GENERATORS = {
   'similar-triangles': generateSimilarTriangles,
   'domain-range': generateDomainRange,
   'arithmetic-sequences': generateArithmeticSequences,
+  'graph-linear-equations': generateGraphLinearEquations,
+  'geometric-sequences': generateGeometricSequences,
+  'function-notation': generateFunctionNotation,
 
   // Calculus (Calc 1-3)
   'limits': generateLimits,
