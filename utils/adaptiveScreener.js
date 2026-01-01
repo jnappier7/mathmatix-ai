@@ -54,8 +54,21 @@ function calculateJumpSize(isCorrect, questionNumber, standardError) {
     return Math.max(0.3, Math.min(jumpSize, 1.5));
 
   } else {
-    // DOWNWARD STEP (consistent, gentle)
-    return -0.5;  // Always step down half a difficulty level
+    // DOWNWARD STEP (dampened with confidence, like upward jumps)
+    // High confidence (low SE) → smaller adjustment (might be careless error)
+    // Low confidence (high SE) → larger adjustment (still calibrating)
+    const baseStep = -0.7;
+
+    // Dampening: Higher confidence (lower SE) = smaller drops
+    const confidenceDampen = Math.max(standardError, 0.3);
+
+    // Later in test = smaller drops (more confident in ability estimate)
+    const timeDampen = Math.pow(0.9, questionNumber - 1);
+
+    const stepSize = baseStep * confidenceDampen * timeDampen;
+
+    // Minimum drop of 0.2, maximum of 0.7
+    return Math.max(-0.7, Math.min(stepSize, -0.2));
   }
 }
 

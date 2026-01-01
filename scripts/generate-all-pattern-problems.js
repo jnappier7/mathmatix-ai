@@ -2973,6 +2973,616 @@ function generateAbsoluteValue(difficulty) {
 }
 
 // ============================================================================
+// WORD PROBLEM GENERATORS (Elementary K-5)
+// ============================================================================
+
+function generateAdditionWordProblems(difficulty) {
+  const scenarios = [
+    { template: 'Sarah has {a} apples. She gets {b} more. How many does she have now?', operation: '+' },
+    { template: 'There are {a} birds in a tree. {b} more birds land. How many birds are there?', operation: '+' },
+    { template: 'Tom scores {a} points. Then he scores {b} more points. What is his total?', operation: '+' }
+  ];
+
+  const scenario = randomChoice(scenarios);
+  const a = randomInt(5, 30);
+  const b = randomInt(5, 25);
+  const answer = a + b;
+
+  const content = scenario.template.replace('{a}', a).replace('{b}', b);
+
+  const wrong1 = Math.abs(a - b);
+  const wrong2 = answer + randomInt(1, 5);
+  const wrong3 = answer - randomInt(1, 5);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_addword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'addition-subtraction-word-problems',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['word-problems', 'addition', 'application']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// MISSING NUMBER / ALGEBRAIC THINKING GENERATORS
+// ============================================================================
+
+function generateMissingAddend(difficulty) {
+  const sum = randomInt(10, 50);
+  const known = randomInt(3, sum - 2);
+  const answer = sum - known;
+
+  const wrong1 = sum + known;
+  const wrong2 = answer + randomInt(1, 5);
+  const wrong3 = answer - randomInt(1, 5);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_missadd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'missing-addend',
+    content: `${known} + ? = ${sum}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.8,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['algebraic-thinking', 'missing-number', 'addition']
+    },
+    isActive: true
+  };
+}
+
+function generateBalanceScales(difficulty) {
+  const x = randomInt(3, 15);
+  const a = randomInt(2, 10);
+  const total = x + a;
+
+  const answer = x;
+  const wrong1 = total;
+  const wrong2 = a;
+  const wrong3 = total - a + randomInt(1, 3);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_balance_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'balance-scales',
+    content: `A balance scale shows ${a} blocks on one side and ${total} blocks total. How many blocks are on the other side?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.7,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['algebraic-thinking', 'equality', 'visual-models']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// ADVANCED EQUATION GENERATORS (Middle/High School)
+// ============================================================================
+
+function generateMultiStepEquations(difficulty) {
+  const a = randomInt(2, 8);
+  const b = randomInt(1, 15);
+  const c = randomInt(1, 10);
+  const x = randomInt(2, 12);
+  const result = a * x + b - c;
+
+  const answer = x;
+  const wrong1 = Math.round((result - b + c) / a);
+  const wrong2 = Math.round((result - b) / a);
+  const wrong3 = Math.round(result / a - b + c);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_multistep_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multi-step-equations',
+    content: `Solve for x: ${a}x + ${b} - ${c} = ${result}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 60,
+      source: 'template',
+      tags: ['equations', 'multi-step', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateDistributiveProperty(difficulty) {
+  const a = randomInt(2, 6);
+  const b = randomInt(1, 10);
+  const c = randomInt(1, 8);
+  const x = randomInt(2, 10);
+  const result = a * (x + b) + c;
+
+  const answer = x;
+  const wrong1 = Math.round((result - c) / a - b);
+  const wrong2 = Math.round((result - a * b) / a - c);
+  const wrong3 = Math.round(result / a - b - c);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_dist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'equations-with-distribution',
+    content: `Solve for x: ${a}(x + ${b}) + ${c} = ${result}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.7,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 70,
+      source: 'template',
+      tags: ['equations', 'distributive-property', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateVariablesBothSides(difficulty) {
+  const a = randomInt(3, 8);
+  const b = randomInt(1, a - 1);
+  const c = randomInt(5, 20);
+  const d = randomInt(1, c - 1);
+
+  // (a-b)x = d - c, so x = (d-c)/(a-b)
+  const x = Math.round((d - c) / (a - b));
+  const leftSide = a * x + c;
+
+  const answer = x;
+  const wrong1 = -x;
+  const wrong2 = Math.round((c - d) / (a - b));
+  const wrong3 = Math.round(leftSide / a);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_bothsides_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'equations-with-variables-both-sides',
+    content: `Solve for x: ${a}x + ${c} = ${b}x + ${d}`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 65,
+      source: 'template',
+      tags: ['equations', 'variables-both-sides', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// SYSTEMS OF EQUATIONS GENERATORS (High School)
+// ============================================================================
+
+function generateSystemsSubstitution(difficulty) {
+  const x = randomInt(2, 8);
+  const y = randomInt(2, 8);
+  const a = randomInt(2, 5);
+  const b = randomInt(2, 5);
+
+  // y = ax + b format
+  const eq1b = a * x + b;
+  const c = randomInt(2, 4);
+  const d = randomInt(2, 4);
+  const eq2result = c * x + d * y;
+
+  const answer = `x = ${x}, y = ${eq1b}`;
+  const wrong1 = `x = ${eq1b}, y = ${x}`;
+  const wrong2 = `x = ${x + 1}, y = ${eq1b}`;
+  const wrong3 = `x = ${x}, y = ${eq1b + 1}`;
+
+  const options = shuffle([
+    { label: 'A', text: answer },
+    { label: 'B', text: wrong1 },
+    { label: 'C', text: wrong2 },
+    { label: 'D', text: wrong3 }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_syssub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'systems-substitution',
+    content: `Solve using substitution: y = ${a}x + ${b}; ${c}x + ${d}y = ${eq2result}`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 1.0,
+      discrimination: 1.6,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 90,
+      source: 'template',
+      tags: ['systems', 'substitution', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateSystemsElimination(difficulty) {
+  const x = randomInt(2, 8);
+  const y = randomInt(2, 8);
+  const a = randomInt(2, 5);
+  const b = randomInt(2, 5);
+  const c = randomInt(2, 5);
+  const d = -b; // Set up for easy elimination
+
+  const eq1 = a * x + b * y;
+  const eq2 = c * x + d * y;
+
+  const answer = `x = ${x}, y = ${y}`;
+  const wrong1 = `x = ${y}, y = ${x}`;
+  const wrong2 = `x = ${x + 1}, y = ${y}`;
+  const wrong3 = `x = ${x}, y = ${y - 1}`;
+
+  const options = shuffle([
+    { label: 'A', text: answer },
+    { label: 'B', text: wrong1 },
+    { label: 'C', text: wrong2 },
+    { label: 'D', text: wrong3 }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  return {
+    problemId: `prob_syselim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'systems-elimination',
+    content: `Solve using elimination: ${a}x + ${b}y = ${eq1}; ${c}x - ${Math.abs(d)}y = ${eq2}`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 1.1,
+      discrimination: 1.6,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 90,
+      source: 'template',
+      tags: ['systems', 'elimination', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// COORDINATE PLANE GENERATOR
+// ============================================================================
+
+function generateCoordinatePlane(difficulty) {
+  const x = randomInt(-8, 8);
+  const y = randomInt(-8, 8);
+
+  const answer = `(${x}, ${y})`;
+  const wrong1 = `(${y}, ${x})`;
+  const wrong2 = `(${-x}, ${y})`;
+  const wrong3 = `(${x}, ${-y})`;
+
+  const options = shuffle([
+    { label: 'A', text: answer },
+    { label: 'B', text: wrong1 },
+    { label: 'C', text: wrong2 },
+    { label: 'D', text: wrong3 }
+  ]);
+
+  const correctLabel = options.find(o => o.text === answer).label;
+
+  const quadrant = x > 0 && y > 0 ? 'I' : x < 0 && y > 0 ? 'II' : x < 0 && y < 0 ? 'III' : 'IV';
+
+  return {
+    problemId: `prob_coord_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'coordinate-plane',
+    content: `A point is in quadrant ${quadrant}, ${Math.abs(x)} units ${x > 0 ? 'right' : 'left'} and ${Math.abs(y)} units ${y > 0 ? 'up' : 'down'} from origin. What are its coordinates?`,
+    answer: answer,
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['coordinate-plane', 'graphing']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// ONE-STEP OPERATION GENERATORS (Elementary algebra readiness)
+// ============================================================================
+
+function generateOneStepAddition(difficulty) {
+  const x = randomInt(1, 20);
+  const b = randomInt(1, 30);
+  const answer = x + b;
+
+  const wrong1 = answer + randomInt(1, 5);
+  const wrong2 = answer - randomInt(1, 5);
+  const wrong3 = x - b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_1add_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-addition',
+    content: `${x} + ${b} = ?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 20,
+      source: 'template',
+      tags: ['addition', 'basic-operations']
+    },
+    isActive: true
+  };
+}
+
+function generateOneStepSubtraction(difficulty) {
+  const x = randomInt(10, 50);
+  const b = randomInt(1, x - 1);
+  const answer = x - b;
+
+  const wrong1 = x + b;
+  const wrong2 = answer + randomInt(1, 5);
+  const wrong3 = answer - randomInt(1, 5);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_1sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-subtraction',
+    content: `${x} - ${b} = ?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.9,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 20,
+      source: 'template',
+      tags: ['subtraction', 'basic-operations']
+    },
+    isActive: true
+  };
+}
+
+function generateOneStepMultiplication(difficulty) {
+  const x = randomInt(2, 12);
+  const b = randomInt(2, 12);
+  const answer = x * b;
+
+  const wrong1 = x + b;
+  const wrong2 = answer + x;
+  const wrong3 = answer - b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_1mul_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-multiplication',
+    content: `${x} × ${b} = ?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.7,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['multiplication', 'basic-operations']
+    },
+    isActive: true
+  };
+}
+
+function generateOneStepDivision(difficulty) {
+  const b = randomInt(2, 12);
+  const x = randomInt(2, 10);
+  const dividend = x * b;
+  const answer = x;
+
+  const wrong1 = b;
+  const wrong2 = answer + randomInt(1, 3);
+  const wrong3 = dividend;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_1div_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-division',
+    content: `${dividend} ÷ ${b} = ?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.6,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['division', 'basic-operations']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
 
@@ -2987,10 +3597,17 @@ const GENERATORS = {
   'money-math': generateMoneyMath,
 
   // K-5 (Tier 1) - Elementary
+  'one-step-addition': generateOneStepAddition,
+  'one-step-subtraction': generateOneStepSubtraction,
+  'one-step-multiplication': generateOneStepMultiplication,
+  'one-step-division': generateOneStepDivision,
   'addition': generateAddition,
   'subtraction': generateSubtraction,
   'multiplication-basics': generateMultiplicationBasics,
   'division-basics': generateDivision,
+  'addition-subtraction-word-problems': generateAdditionWordProblems,
+  'missing-addend': generateMissingAddend,
+  'balance-scales': generateBalanceScales,
   'place-value': generatePlaceValue,
   'decimals': generateDecimals,
   'order-of-operations': generateOrderOfOperations,
@@ -3018,6 +3635,7 @@ const GENERATORS = {
   'one-step-equations': generateOneStepEquation,
   'two-step-equations': generateTwoStepEquations,
   'combining-like-terms': generateCombiningLikeTerms,
+  'coordinate-plane': generateCoordinatePlane,
   'ratios': generateRatios,
   'percent-of-a-number': generatePercentOfNumber,
   'area-rectangles': generateAreaRectangles,
@@ -3031,6 +3649,11 @@ const GENERATORS = {
   'absolute-value': generateAbsoluteValue,
 
   // 9-12 (Tier 3) - High School
+  'multi-step-equations': generateMultiStepEquations,
+  'equations-with-distribution': generateDistributiveProperty,
+  'equations-with-variables-both-sides': generateVariablesBothSides,
+  'systems-substitution': generateSystemsSubstitution,
+  'systems-elimination': generateSystemsElimination,
   'slope': generateSlope,
   'quadratic-functions': generateQuadraticFunctions,
   'systems-of-equations': generateSystemsOfEquations,
