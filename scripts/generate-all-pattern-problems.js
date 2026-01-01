@@ -4763,6 +4763,516 @@ function generateAngles(difficulty) {
 }
 
 // ============================================================================
+// DATA AND STATISTICS
+// ============================================================================
+
+function generateRange(difficulty) {
+  const numbers = [randomInt(10, 50), randomInt(5, 40), randomInt(15, 60), randomInt(8, 45)];
+  const answer = Math.max(...numbers) - Math.min(...numbers);
+
+  const content = `Find the range of: ${numbers.join(', ')}`;
+
+  const wrong1 = Math.max(...numbers);
+  const wrong2 = Math.min(...numbers);
+  const wrong3 = answer + randomInt(1, 5);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_range_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'range',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.3,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['statistics', 'range', 'data-analysis']
+    },
+    isActive: true
+  };
+}
+
+function generateOutliers(difficulty) {
+  const normalRange = randomInt(20, 30);
+  const outlier = randomInt(80, 100);
+  const numbers = [normalRange, normalRange + 2, normalRange + 5, outlier, normalRange + 3];
+
+  const content = `Which number is an outlier? ${numbers.join(', ')}`;
+  const answer = outlier;
+
+  const wrong1 = normalRange;
+  const wrong2 = normalRange + 5;
+  const wrong3 = normalRange + 3;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_outlier_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'outliers',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['statistics', 'outliers', 'data-analysis']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// DECIMALS AND PERCENTS
+// ============================================================================
+
+function generateDecimalAddition(difficulty) {
+  const a = (randomInt(10, 99) / 10).toFixed(1);
+  const b = (randomInt(10, 99) / 10).toFixed(1);
+  const answer = (parseFloat(a) + parseFloat(b)).toFixed(1);
+
+  const content = `${a} + ${b} = ?`;
+
+  const wrong1 = (parseFloat(answer) + 0.1).toFixed(1);
+  const wrong2 = (parseFloat(answer) - 0.1).toFixed(1);
+  const wrong3 = (parseInt(a) + parseInt(b)).toFixed(1);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_decadd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'decimal-addition',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['decimals', 'addition']
+    },
+    isActive: true
+  };
+}
+
+function generateDecimalSubtraction(difficulty) {
+  const a = (randomInt(30, 99) / 10).toFixed(1);
+  const b = (randomInt(10, 50) / 10).toFixed(1);
+  const answer = (parseFloat(a) - parseFloat(b)).toFixed(1);
+
+  const content = `${a} - ${b} = ?`;
+
+  const wrong1 = (parseFloat(answer) + 0.1).toFixed(1);
+  const wrong2 = (parseFloat(a) + parseFloat(b)).toFixed(1);
+  const wrong3 = (parseFloat(answer) - 0.1).toFixed(1);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_decsub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'decimal-subtraction',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.1,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['decimals', 'subtraction']
+    },
+    isActive: true
+  };
+}
+
+function generatePercentToDecimal(difficulty) {
+  const percent = randomChoice([25, 50, 75, 10, 20, 30, 40, 60, 80, 90]);
+  const answer = (percent / 100).toFixed(2);
+
+  const content = `Convert ${percent}% to a decimal`;
+
+  const wrong1 = String(percent);
+  const wrong2 = (percent / 10).toFixed(1);
+  const wrong3 = String(percent / 1000);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_pctdec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'percent-to-decimal',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['percent', 'decimals', 'conversion']
+    },
+    isActive: true
+  };
+}
+
+function generateDecimalToPercent(difficulty) {
+  const decimal = randomChoice([0.25, 0.5, 0.75, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 0.9]);
+  const answer = (decimal * 100).toFixed(0);
+
+  const content = `Convert ${decimal} to a percent`;
+
+  const wrong1 = decimal.toFixed(2);
+  const wrong2 = (decimal * 10).toFixed(1);
+  const wrong3 = (parseFloat(answer) / 10).toFixed(1);
+
+  const options = shuffle([
+    { label: 'A', text: String(`${answer}%`) },
+    { label: 'B', text: String(`${wrong1}%`) },
+    { label: 'C', text: String(`${wrong2}%`) },
+    { label: 'D', text: String(`${wrong3}%`) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(`${answer}%`)).label;
+
+  return {
+    problemId: `prob_decpct_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'decimal-to-percent',
+    content: content,
+    answer: String(`${answer}%`),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['percent', 'decimals', 'conversion']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// ALGEBRA 2 AND POLYNOMIALS
+// ============================================================================
+
+function generateFactoringQuadratics(difficulty) {
+  const a = randomInt(1, 5);
+  const b = randomInt(1, 5);
+  const sum = a + b;
+  const product = a * b;
+
+  const content = `Factor: x² + ${sum}x + ${product}`;
+  const answer = `(x + ${a})(x + ${b})`;
+
+  const wrong1 = `(x + ${sum})(x + ${product})`;
+  const wrong2 = `(x + ${a + 1})(x + ${b - 1})`;
+  const wrong3 = `x(x + ${sum})`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_factor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'factoring-quadratics',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.7,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['algebra', 'factoring', 'quadratics']
+    },
+    isActive: true
+  };
+}
+
+function generatePolynomialAddition(difficulty) {
+  const a1 = randomInt(2, 8);
+  const b1 = randomInt(2, 8);
+  const a2 = randomInt(2, 8);
+  const b2 = randomInt(2, 8);
+
+  const sumA = a1 + a2;
+  const sumB = b1 + b2;
+
+  const content = `Simplify: (${a1}x + ${b1}) + (${a2}x + ${b2})`;
+  const answer = `${sumA}x + ${sumB}`;
+
+  const wrong1 = `${a1 * a2}x + ${b1 * b2}`;
+  const wrong2 = `${sumA}x`;
+  const wrong3 = `${sumA}x² + ${sumB}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_polyadd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'polynomial-addition',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['algebra', 'polynomials', 'addition']
+    },
+    isActive: true
+  };
+}
+
+function generatePolynomialSubtraction(difficulty) {
+  const a1 = randomInt(5, 12);
+  const b1 = randomInt(5, 12);
+  const a2 = randomInt(2, 8);
+  const b2 = randomInt(2, 8);
+
+  const diffA = a1 - a2;
+  const diffB = b1 - b2;
+
+  const content = `Simplify: (${a1}x + ${b1}) - (${a2}x + ${b2})`;
+  const answer = `${diffA}x + ${diffB}`;
+
+  const wrong1 = `${a1 + a2}x + ${b1 + b2}`;
+  const wrong2 = `${diffA}x - ${diffB}`;
+  const wrong3 = `${diffA}x`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_polysub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'polynomial-subtraction',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['algebra', 'polynomials', 'subtraction']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// NEGATIVE NUMBERS
+// ============================================================================
+
+function generateNegativeNumberAddition(difficulty) {
+  const a = randomInt(-20, -1);
+  const b = randomInt(-20, -1);
+  const answer = a + b;
+
+  const content = `${a} + (${b}) = ?`;
+
+  const wrong1 = Math.abs(a) + Math.abs(b);
+  const wrong2 = a - b;
+  const wrong3 = answer + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_negadd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'negative-number-addition',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.1,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['integers', 'negative-numbers', 'addition']
+    },
+    isActive: true
+  };
+}
+
+function generateNegativeNumberSubtraction(difficulty) {
+  const a = randomInt(5, 20);
+  const b = randomInt(-20, -5);
+  const answer = a - b;
+
+  const content = `${a} - (${b}) = ?`;
+
+  const wrong1 = a + b;
+  const wrong2 = Math.abs(a - Math.abs(b));
+  const wrong3 = answer - 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_negsub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'negative-number-subtraction',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['integers', 'negative-numbers', 'subtraction']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
 
@@ -4804,6 +5314,10 @@ const GENERATORS = {
   'balance-scales': generateBalanceScales,
   'place-value': generatePlaceValue,
   'decimals': generateDecimals,
+  'decimal-addition': generateDecimalAddition,
+  'decimal-subtraction': generateDecimalSubtraction,
+  'percent-to-decimal': generatePercentToDecimal,
+  'decimal-to-percent': generateDecimalToPercent,
   'order-of-operations': generateOrderOfOperations,
   'simplify-fractions': generateSimplifyFractions,
   'equivalent-fractions': generateEquivalentFractions,
@@ -4821,6 +5335,8 @@ const GENERATORS = {
   'mean': generateMean,
   'median': generateMedian,
   'mode': generateMode,
+  'range': generateRange,
+  'outliers': generateOutliers,
   'angle-measurement': generateAngleMeasurement,
   'angles': generateAngles,
   'line-segments': generateLineSegments,
@@ -4843,6 +5359,8 @@ const GENERATORS = {
   'area-rectangles': generateAreaRectangles,
   'exponents': generateExponents,
   'integers': generateIntegers,
+  'negative-number-addition': generateNegativeNumberAddition,
+  'negative-number-subtraction': generateNegativeNumberSubtraction,
   'proportions': generateProportions,
   'pythagorean-theorem': generatePythagorean,
   'pythagorean-word-problems': generatePythagoreanWordProblems,
@@ -4861,8 +5379,11 @@ const GENERATORS = {
   'systems-special-cases': generateSystemsSpecialCases,
   'slope': generateSlope,
   'quadratic-functions': generateQuadraticFunctions,
+  'factoring-quadratics': generateFactoringQuadratics,
   'systems-of-equations': generateSystemsOfEquations,
   'polynomials': generatePolynomials,
+  'polynomial-addition': generatePolynomialAddition,
+  'polynomial-subtraction': generatePolynomialSubtraction,
   'exponential-functions': generateExponentialFunctions,
   'logarithms': generateLogarithms,
   'trigonometry': generateTrigonometry,
