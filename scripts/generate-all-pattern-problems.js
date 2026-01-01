@@ -3583,6 +3583,616 @@ function generateOneStepDivision(difficulty) {
 }
 
 // ============================================================================
+// FRACTION OPERATIONS
+// ============================================================================
+
+function generateAddFractions(difficulty) {
+  const denom = randomChoice([2, 3, 4, 5, 6, 8, 10, 12]);
+  const num1 = randomInt(1, denom - 1);
+  const num2 = randomInt(1, denom - num1);
+  const answer = num1 + num2;
+
+  const wrong1 = num1 * num2; // Common error: multiply numerators
+  const wrong2 = answer + 1;
+  const wrong3 = Math.abs(num1 - num2);
+
+  const options = shuffle([
+    { label: 'A', text: String(`${answer}/${denom}`) },
+    { label: 'B', text: String(`${wrong1}/${denom}`) },
+    { label: 'C', text: String(`${wrong2}/${denom}`) },
+    { label: 'D', text: String(`${wrong3}/${denom}`) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(`${answer}/${denom}`)).label;
+
+  return {
+    problemId: `prob_addfrac_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'add-fractions',
+    content: `${num1}/${denom} + ${num2}/${denom} = ?`,
+    answer: String(`${answer}/${denom}`),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.3,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['fractions', 'addition', 'same-denominator']
+    },
+    isActive: true
+  };
+}
+
+function generateSubtractFractions(difficulty) {
+  const denom = randomChoice([2, 3, 4, 5, 6, 8, 10, 12]);
+  const num1 = randomInt(3, denom);
+  const num2 = randomInt(1, num1 - 1);
+  const answer = num1 - num2;
+
+  const wrong1 = num1 + num2; // Common error: add instead
+  const wrong2 = answer + 1;
+  const wrong3 = num2 - num1 < 0 ? num1 - num2 + 1 : num2 - num1;
+
+  const options = shuffle([
+    { label: 'A', text: String(`${answer}/${denom}`) },
+    { label: 'B', text: String(`${wrong1}/${denom}`) },
+    { label: 'C', text: String(`${wrong2}/${denom}`) },
+    { label: 'D', text: String(`${wrong3}/${denom}`) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(`${answer}/${denom}`)).label;
+
+  return {
+    problemId: `prob_subfrac_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'subtract-fractions',
+    content: `${num1}/${denom} - ${num2}/${denom} = ?`,
+    answer: String(`${answer}/${denom}`),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['fractions', 'subtraction', 'same-denominator']
+    },
+    isActive: true
+  };
+}
+
+function generateMultiplyFractions(difficulty) {
+  const num1 = randomInt(1, 5);
+  const denom1 = randomInt(num1 + 1, 8);
+  const num2 = randomInt(1, 5);
+  const denom2 = randomInt(num2 + 1, 8);
+
+  const answerNum = num1 * num2;
+  const answerDenom = denom1 * denom2;
+
+  const wrong1Num = num1 + num2; // Common error: add numerators
+  const wrong1Denom = denom1 + denom2;
+  const wrong2Num = num1 * num2;
+  const wrong2Denom = denom1; // Forgot to multiply denominator
+  const wrong3Num = num1;
+  const wrong3Denom = denom1 * denom2; // Only multiplied denominator
+
+  const options = shuffle([
+    { label: 'A', text: String(`${answerNum}/${answerDenom}`) },
+    { label: 'B', text: String(`${wrong1Num}/${wrong1Denom}`) },
+    { label: 'C', text: String(`${wrong2Num}/${wrong2Denom}`) },
+    { label: 'D', text: String(`${wrong3Num}/${wrong3Denom}`) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(`${answerNum}/${answerDenom}`)).label;
+
+  return {
+    problemId: `prob_mulfrac_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multiply-fractions',
+    content: `${num1}/${denom1} × ${num2}/${denom2} = ?`,
+    answer: String(`${answerNum}/${answerDenom}`),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['fractions', 'multiplication']
+    },
+    isActive: true
+  };
+}
+
+function generateDivideFractions(difficulty) {
+  const num1 = randomInt(1, 4);
+  const denom1 = randomInt(num1 + 1, 6);
+  const num2 = randomInt(1, 4);
+  const denom2 = randomInt(num2 + 1, 6);
+
+  // Division = multiply by reciprocal
+  const answerNum = num1 * denom2;
+  const answerDenom = denom1 * num2;
+
+  const wrong1Num = num1 * num2; // Multiplied instead of dividing
+  const wrong1Denom = denom1 * denom2;
+  const wrong2Num = num1;
+  const wrong2Denom = denom1; // Didn't do anything
+  const wrong3Num = denom1 * denom2; // Flipped everything
+  const wrong3Denom = num1 * num2;
+
+  const options = shuffle([
+    { label: 'A', text: String(`${answerNum}/${answerDenom}`) },
+    { label: 'B', text: String(`${wrong1Num}/${wrong1Denom}`) },
+    { label: 'C', text: String(`${wrong2Num}/${wrong2Denom}`) },
+    { label: 'D', text: String(`${wrong3Num}/${wrong3Denom}`) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(`${answerNum}/${answerDenom}`)).label;
+
+  return {
+    problemId: `prob_divfrac_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'divide-fractions',
+    content: `${num1}/${denom1} ÷ ${num2}/${denom2} = ?`,
+    answer: String(`${answerNum}/${answerDenom}`),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['fractions', 'division', 'reciprocal']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// COUNTING VARIATIONS
+// ============================================================================
+
+function generateCountingUp(difficulty) {
+  const start = randomInt(1, 50);
+  const steps = randomInt(3, 6);
+  const answer = start + steps;
+
+  const sequence = [];
+  for (let i = 0; i < steps; i++) {
+    sequence.push(start + i);
+  }
+
+  const content = `Count up: ${sequence.join(', ')}, ___`;
+
+  const wrong1 = answer - 1;
+  const wrong2 = answer + 1;
+  const wrong3 = start + steps * 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_countup_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'counting-up',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.2,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['counting', 'sequences', 'patterns']
+    },
+    isActive: true
+  };
+}
+
+function generateCountingDown(difficulty) {
+  const start = randomInt(20, 70);
+  const steps = randomInt(3, 6);
+  const answer = start - steps;
+
+  const sequence = [];
+  for (let i = 0; i < steps; i++) {
+    sequence.push(start - i);
+  }
+
+  const content = `Count down: ${sequence.join(', ')}, ___`;
+
+  const wrong1 = answer + 1;
+  const wrong2 = answer - 1;
+  const wrong3 = start - steps * 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_countdown_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'counting-down',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.1,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['counting', 'sequences', 'patterns']
+    },
+    isActive: true
+  };
+}
+
+function generateCountingByGroups(difficulty) {
+  const groupSize = randomChoice([2, 3, 5, 10]);
+  const numGroups = randomInt(3, 6);
+  const answer = groupSize * numGroups;
+
+  const content = `How many total? ${numGroups} groups of ${groupSize}`;
+
+  const wrong1 = groupSize + numGroups; // Added instead
+  const wrong2 = answer - groupSize;
+  const wrong3 = answer + groupSize;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_countgroups_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'counting-by-groups',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.9,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['counting', 'multiplication-readiness', 'groups']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// MULTIPLICATION CONCEPTS
+// ============================================================================
+
+function generateMultiplicationAsGroups(difficulty) {
+  const groupSize = randomInt(2, 9);
+  const numGroups = randomInt(2, 8);
+  const answer = groupSize * numGroups;
+
+  const content = `${numGroups} groups of ${groupSize} = ?`;
+
+  const wrong1 = groupSize + numGroups;
+  const wrong2 = answer - 1;
+  const wrong3 = answer + groupSize;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_mulgroups_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multiplication-as-groups',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.8,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['multiplication', 'conceptual', 'groups']
+    },
+    isActive: true
+  };
+}
+
+function generateRepeatedAddition(difficulty) {
+  const addend = randomInt(2, 10);
+  const times = randomInt(3, 6);
+  const answer = addend * times;
+
+  const additionString = Array(times).fill(addend).join(' + ');
+  const content = `${additionString} = ?`;
+
+  const wrong1 = addend + times;
+  const wrong2 = answer - addend;
+  const wrong3 = answer + addend;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_repadd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'repeated-addition',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.7,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['multiplication', 'addition', 'patterns']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// ADDITIONAL ALGEBRA CONCEPTS
+// ============================================================================
+
+function generateUnknownAddend(difficulty) {
+  const total = randomInt(10, 30);
+  const known = randomInt(3, total - 2);
+  const answer = total - known;
+
+  const content = `${known} + ? = ${total}`;
+
+  const wrong1 = known + total;
+  const wrong2 = answer + 1;
+  const wrong3 = answer - 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_unknadd_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'unknown-addend',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.6,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['algebra', 'missing-addend', 'subtraction']
+    },
+    isActive: true
+  };
+}
+
+function generateSolvingInequalities(difficulty) {
+  const a = randomInt(2, 8);
+  const b = randomInt(5, 25);
+  const answer = Math.floor(b / a);
+
+  const content = `Solve: ${a}x < ${b}`;
+
+  const wrong1 = answer + 1;
+  const wrong2 = b - a;
+  const wrong3 = answer - 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(`x < ${answer}`) },
+    { label: 'B', text: String(`x < ${wrong1}`) },
+    { label: 'C', text: String(`x < ${wrong2}`) },
+    { label: 'D', text: String(`x > ${answer}`) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(`x < ${answer}`)).label;
+
+  return {
+    problemId: `prob_solveineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'solving-inequalities',
+    content: content,
+    answer: String(`x < ${answer}`),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['inequalities', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateRelatedFacts(difficulty) {
+  const a = randomInt(3, 12);
+  const b = randomInt(2, 12);
+  const sum = a + b;
+
+  const content = `If ${a} + ${b} = ${sum}, then ${sum} - ${a} = ?`;
+  const answer = b;
+
+  const wrong1 = a;
+  const wrong2 = sum;
+  const wrong3 = sum - b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_relfact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'related-facts',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.8,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['fact-families', 'inverse-operations']
+    },
+    isActive: true
+  };
+}
+
+function generateSystemsGraphing(difficulty) {
+  // Simplified version: identify intersection point
+  const x = randomInt(-5, 5);
+  const y = randomInt(-5, 5);
+
+  const content = `Two lines intersect at point (${x}, ${y}). What is the solution to the system?`;
+  const answer = `(${x}, ${y})`;
+
+  const wrong1 = `(${y}, ${x})`; // Swapped coordinates
+  const wrong2 = `(${x + 1}, ${y})`;
+  const wrong3 = `(${x}, ${y + 1})`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_sysgraph_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'systems-graphing',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['systems', 'graphing', 'coordinate-plane']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
 
@@ -3590,10 +4200,14 @@ const GENERATORS = {
   // Early Foundations (PreK-2)
   'counting': generateCounting,
   'skip-counting': generateSkipCounting,
+  'counting-up': generateCountingUp,
+  'counting-down': generateCountingDown,
+  'counting-by-groups': generateCountingByGroups,
   'compare-numbers': generateCompareNumbers,
   'ordering-numbers': generateOrderingNumbers,
   'rounding': generateRounding,
   'fact-families': generateFactFamilies,
+  'related-facts': generateRelatedFacts,
   'money-math': generateMoneyMath,
 
   // K-5 (Tier 1) - Elementary
@@ -3604,9 +4218,12 @@ const GENERATORS = {
   'addition': generateAddition,
   'subtraction': generateSubtraction,
   'multiplication-basics': generateMultiplicationBasics,
+  'multiplication-as-groups': generateMultiplicationAsGroups,
+  'repeated-addition': generateRepeatedAddition,
   'division-basics': generateDivision,
   'addition-subtraction-word-problems': generateAdditionWordProblems,
   'missing-addend': generateMissingAddend,
+  'unknown-addend': generateUnknownAddend,
   'balance-scales': generateBalanceScales,
   'place-value': generatePlaceValue,
   'decimals': generateDecimals,
@@ -3614,6 +4231,10 @@ const GENERATORS = {
   'simplify-fractions': generateSimplifyFractions,
   'equivalent-fractions': generateEquivalentFractions,
   'comparing-fractions': generateComparingFractions,
+  'add-fractions': generateAddFractions,
+  'subtract-fractions': generateSubtractFractions,
+  'multiply-fractions': generateMultiplyFractions,
+  'divide-fractions': generateDivideFractions,
   'mixed-numbers': generateMixedNumbers,
   'perimeter': generatePerimeter,
   'area-triangles': generateAreaTriangles,
@@ -3652,8 +4273,10 @@ const GENERATORS = {
   'multi-step-equations': generateMultiStepEquations,
   'equations-with-distribution': generateDistributiveProperty,
   'equations-with-variables-both-sides': generateVariablesBothSides,
+  'solving-inequalities': generateSolvingInequalities,
   'systems-substitution': generateSystemsSubstitution,
   'systems-elimination': generateSystemsElimination,
+  'systems-graphing': generateSystemsGraphing,
   'slope': generateSlope,
   'quadratic-functions': generateQuadraticFunctions,
   'systems-of-equations': generateSystemsOfEquations,
