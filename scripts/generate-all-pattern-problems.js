@@ -5794,6 +5794,509 @@ function generateProportionWordProblems(difficulty) {
   };
 }
 
+function generatePercentIncrease(difficulty) {
+  const original = randomInt(20, 100);
+  const percent = randomInt(10, 50);
+  const increase = (original * percent) / 100;
+  const answer = original + increase;
+
+  const content = `A shirt costs $${original}. If the price increases by ${percent}%, what is the new price?`;
+
+  const wrong1 = original + percent;
+  const wrong2 = increase;
+  const wrong3 = original - increase;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_pctinc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'percent-increase',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['percents', 'word-problems', 'increase']
+    },
+    isActive: true
+  };
+}
+
+function generatePercentDecrease(difficulty) {
+  const original = randomInt(50, 200);
+  const percent = randomInt(10, 40);
+  const decrease = (original * percent) / 100;
+  const answer = original - decrease;
+
+  const content = `A jacket costs $${original}. During a sale, it's ${percent}% off. What is the sale price?`;
+
+  const wrong1 = original + decrease;
+  const wrong2 = decrease;
+  const wrong3 = original - percent;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_pctdec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'percent-decrease',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['percents', 'word-problems', 'decrease']
+    },
+    isActive: true
+  };
+}
+
+function generateImproperFractions(difficulty) {
+  const whole = randomInt(2, 5);
+  const numerator = randomInt(1, 4);
+  const denominator = randomInt(2, 6);
+  const improper = (whole * denominator + numerator);
+
+  const content = `Convert ${whole} ${numerator}/${denominator} to an improper fraction`;
+  const answer = `${improper}/${denominator}`;
+
+  const wrong1 = `${numerator}/${whole * denominator}`;
+  const wrong2 = `${whole + numerator}/${denominator}`;
+  const wrong3 = `${improper}/${denominator * 2}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_impfrac_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'improper-fractions',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.1,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['fractions', 'conversion', 'improper-fractions']
+    },
+    isActive: true
+  };
+}
+
+function generateUnitConversion(difficulty) {
+  const conversions = [
+    { from: 'feet', to: 'inches', factor: 12 },
+    { from: 'yards', to: 'feet', factor: 3 },
+    { from: 'meters', to: 'centimeters', factor: 100 },
+    { from: 'kilometers', to: 'meters', factor: 1000 },
+    { from: 'hours', to: 'minutes', factor: 60 }
+  ];
+
+  const conv = conversions[randomInt(0, conversions.length - 1)];
+  const value = randomInt(2, 10);
+  const answer = value * conv.factor;
+
+  const content = `Convert ${value} ${conv.from} to ${conv.to}`;
+
+  const wrong1 = value / conv.factor;
+  const wrong2 = value + conv.factor;
+  const wrong3 = answer / 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_unitconv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'unit-conversion',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['measurement', 'conversion', 'units']
+    },
+    isActive: true
+  };
+}
+
+function generateEstimation(difficulty) {
+  const a = randomInt(18, 52);
+  const b = randomInt(18, 52);
+  const sum = a + b;
+  const roundedA = Math.round(a / 10) * 10;
+  const roundedB = Math.round(b / 10) * 10;
+  const answer = roundedA + roundedB;
+
+  const content = `Estimate ${a} + ${b} by rounding to the nearest 10`;
+
+  const wrong1 = sum;
+  const wrong2 = roundedA + b;
+  const wrong3 = a + roundedB;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_est_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'estimation',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.2,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['estimation', 'rounding', 'mental-math']
+    },
+    isActive: true
+  };
+}
+
+function generateComparingDecimals(difficulty) {
+  const a = (randomInt(10, 99) / 10).toFixed(1);
+  const b = (randomInt(10, 99) / 10).toFixed(1);
+
+  const content = `Which is greater: ${a} or ${b}?`;
+  const answer = parseFloat(a) > parseFloat(b) ? a : b;
+
+  const wrong1 = parseFloat(a) < parseFloat(b) ? a : b;
+  const wrong2 = 'They are equal';
+  const wrong3 = (parseFloat(a) + parseFloat(b)).toFixed(1);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_compdec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'comparing-decimals',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.1,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['decimals', 'comparison', 'number-sense']
+    },
+    isActive: true
+  };
+}
+
+function generateDistanceRateTime(difficulty) {
+  const rate = randomInt(30, 70);
+  const time = randomInt(2, 5);
+  const distance = rate * time;
+
+  const content = `A car travels at ${rate} mph for ${time} hours. How far does it travel?`;
+  const answer = distance;
+
+  const wrong1 = rate + time;
+  const wrong2 = rate / time;
+  const wrong3 = distance + rate;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_drt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'distance-rate-time',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['word-problems', 'distance', 'rate', 'time']
+    },
+    isActive: true
+  };
+}
+
+function generateInteriorAngles(difficulty) {
+  const sides = randomInt(3, 8);
+  const sumFormula = (sides - 2) * 180;
+
+  const content = `What is the sum of interior angles of a ${sides}-sided polygon?`;
+  const answer = sumFormula;
+
+  const wrong1 = sides * 180;
+  const wrong2 = (sides - 1) * 180;
+  const wrong3 = (sides + 1) * 180;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_intang_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'interior-angles',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['geometry', 'polygons', 'angles']
+    },
+    isActive: true
+  };
+}
+
+function generateSimilarTriangles(difficulty) {
+  const scale = randomInt(2, 4);
+  const side1 = randomInt(3, 8);
+  const side2 = side1 * scale;
+
+  const content = `Two triangles are similar. If one side is ${side1} cm and the corresponding side in the other triangle is ${side2} cm, what is the scale factor?`;
+  const answer = scale;
+
+  const wrong1 = side2 - side1;
+  const wrong2 = side2 + side1;
+  const wrong3 = side2 / 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_simtri_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'similar-triangles',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['geometry', 'triangles', 'similarity', 'scale-factor']
+    },
+    isActive: true
+  };
+}
+
+function generateDomainRange(difficulty) {
+  const inputs = [1, 2, 3, 4];
+  const multiplier = randomInt(2, 5);
+  const outputs = inputs.map(x => x * multiplier);
+
+  const content = `For the function f(x) = ${multiplier}x, what is the range when the domain is {1, 2, 3, 4}?`;
+  const answer = `{${outputs.join(', ')}}`;
+
+  const wrong1 = `{${inputs.join(', ')}}`;
+  const wrong2 = `{${outputs.map(x => x + 1).join(', ')}}`;
+  const wrong3 = `{${outputs.map(x => x * 2).join(', ')}}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_domran_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'domain-range',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['functions', 'domain', 'range', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateArithmeticSequences(difficulty) {
+  const first = randomInt(2, 10);
+  const diff = randomInt(2, 7);
+  const n = randomInt(5, 8);
+  const answer = first + (n - 1) * diff;
+
+  const content = `In an arithmetic sequence where the first term is ${first} and the common difference is ${diff}, what is the ${n}th term?`;
+
+  const wrong1 = first * n;
+  const wrong2 = first + n * diff;
+  const wrong3 = answer - diff;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_arithseq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'arithmetic-sequences',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['sequences', 'patterns', 'algebra']
+    },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -5871,6 +6374,10 @@ const GENERATORS = {
   'reading-tables': generateReadingTables,
   'scatterplots': generateScatterplots,
   'square-roots': generateSquareRoots,
+  'estimation': generateEstimation,
+  'comparing-decimals': generateComparingDecimals,
+  'improper-fractions': generateImproperFractions,
+  'unit-conversion': generateUnitConversion,
 
   // 6-8 (Tier 2) - Middle School
   'one-step-equations': generateOneStepEquation,
@@ -5895,6 +6402,8 @@ const GENERATORS = {
   'prime-factorization': generatePrimeFactorization,
   'basic-probability': generateBasicProbability,
   'scientific-notation': generateScientificNotation,
+  'percent-increase': generatePercentIncrease,
+  'percent-decrease': generatePercentDecrease,
 
   // 9-12 (Tier 3) - High School
   'multi-step-equations': generateMultiStepEquations,
@@ -5924,6 +6433,11 @@ const GENERATORS = {
   'perpendicular-lines': generatePerpendicularLines,
   'ratio-word-problems': generateRatioWordProblems,
   'proportion-word-problems': generateProportionWordProblems,
+  'distance-rate-time': generateDistanceRateTime,
+  'interior-angles': generateInteriorAngles,
+  'similar-triangles': generateSimilarTriangles,
+  'domain-range': generateDomainRange,
+  'arithmetic-sequences': generateArithmeticSequences,
 
   // Calculus (Calc 1-3)
   'limits': generateLimits,
