@@ -2973,6 +2973,179 @@ function generateAbsoluteValue(difficulty) {
 }
 
 // ============================================================================
+// ONE-STEP OPERATION GENERATORS (Elementary algebra readiness)
+// ============================================================================
+
+function generateOneStepAddition(difficulty) {
+  const x = randomInt(1, 20);
+  const b = randomInt(1, 30);
+  const answer = x + b;
+
+  const wrong1 = answer + randomInt(1, 5);
+  const wrong2 = answer - randomInt(1, 5);
+  const wrong3 = x - b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_1add_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-addition',
+    content: `${x} + ${b} = ?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 20,
+      source: 'template',
+      tags: ['addition', 'basic-operations']
+    },
+    isActive: true
+  };
+}
+
+function generateOneStepSubtraction(difficulty) {
+  const x = randomInt(10, 50);
+  const b = randomInt(1, x - 1);
+  const answer = x - b;
+
+  const wrong1 = x + b;
+  const wrong2 = answer + randomInt(1, 5);
+  const wrong3 = answer - randomInt(1, 5);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_1sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-subtraction',
+    content: `${x} - ${b} = ?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.9,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 20,
+      source: 'template',
+      tags: ['subtraction', 'basic-operations']
+    },
+    isActive: true
+  };
+}
+
+function generateOneStepMultiplication(difficulty) {
+  const x = randomInt(2, 12);
+  const b = randomInt(2, 12);
+  const answer = x * b;
+
+  const wrong1 = x + b;
+  const wrong2 = answer + x;
+  const wrong3 = answer - b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_1mul_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-multiplication',
+    content: `${x} × ${b} = ?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.7,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['multiplication', 'basic-operations']
+    },
+    isActive: true
+  };
+}
+
+function generateOneStepDivision(difficulty) {
+  const b = randomInt(2, 12);
+  const x = randomInt(2, 10);
+  const dividend = x * b;
+  const answer = x;
+
+  const wrong1 = b;
+  const wrong2 = answer + randomInt(1, 3);
+  const wrong3 = dividend;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_1div_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'one-step-division',
+    content: `${dividend} ÷ ${b} = ?`,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.6,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['division', 'basic-operations']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
 
@@ -2987,6 +3160,10 @@ const GENERATORS = {
   'money-math': generateMoneyMath,
 
   // K-5 (Tier 1) - Elementary
+  'one-step-addition': generateOneStepAddition,
+  'one-step-subtraction': generateOneStepSubtraction,
+  'one-step-multiplication': generateOneStepMultiplication,
+  'one-step-division': generateOneStepDivision,
   'addition': generateAddition,
   'subtraction': generateSubtraction,
   'multiplication-basics': generateMultiplicationBasics,

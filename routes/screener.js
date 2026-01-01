@@ -331,7 +331,21 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
 
     // Build candidate skills with estimated difficulties
     let candidateSkills = [];
+
+    // Get count of actual problems for each skill (not just templates)
+    const problemCounts = await Problem.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: '$skillId', count: { $sum: 1 } } }
+    ]);
+    const problemCountMap = new Map(problemCounts.map(p => [p._id, p.count]));
+
     for (const skill of filteredSkills) {
+      // BUGFIX: Skip skills with no actual problems (even if they have templates)
+      const actualProblemCount = problemCountMap.get(skill.skillId) || 0;
+      if (actualProblemCount === 0) {
+        continue; // Skip this skill - can't select it with no problems
+      }
+
       // Use IRT difficulty if available, otherwise category estimate
       const estimatedDifficulty = skill.irtDifficulty || categoryDifficultyMap[skill.category] || 0;
 
