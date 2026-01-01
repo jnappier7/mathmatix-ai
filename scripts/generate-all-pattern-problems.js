@@ -4193,6 +4193,576 @@ function generateSystemsGraphing(difficulty) {
 }
 
 // ============================================================================
+// MORE ELEMENTARY CONCEPTS
+// ============================================================================
+
+function generateEqualityConcept(difficulty) {
+  const a = randomInt(5, 20);
+  const b = randomInt(1, 10);
+
+  const content = `Which symbol makes this true? ${a} ___ ${a}`;
+  const answer = '=';
+
+  const options = shuffle([
+    { label: 'A', text: String('=') },
+    { label: 'B', text: String('>') },
+    { label: 'C', text: String('<') },
+    { label: 'D', text: String('≠') }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_eqconcept_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'equality-concept',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.3,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['equality', 'comparison', 'symbols']
+    },
+    isActive: true
+  };
+}
+
+function generateMissingNumberProblems(difficulty) {
+  const a = randomInt(5, 15);
+  const b = randomInt(1, 10);
+  const sum = a + b;
+
+  const content = `___ + ${b} = ${sum}`;
+  const answer = a;
+
+  const wrong1 = sum - a;
+  const wrong2 = a + 1;
+  const wrong3 = sum + b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_missnum_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'missing-number-problems',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.7,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['missing-number', 'algebra-readiness']
+    },
+    isActive: true
+  };
+}
+
+function generateBlankAsVariable(difficulty) {
+  const a = randomInt(3, 12);
+  const b = randomInt(2, 10);
+  const answer = a + b;
+
+  const content = `If ☐ = ${a}, what is ☐ + ${b}?`;
+
+  const wrong1 = a - b;
+  const wrong2 = answer + 1;
+  const wrong3 = b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_blankvar_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'blank-as-variable',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['variables', 'substitution', 'algebra-readiness']
+    },
+    isActive: true
+  };
+}
+
+function generateMultiplicationConcepts(difficulty) {
+  const a = randomInt(2, 9);
+  const b = randomInt(2, 9);
+  const answer = a * b;
+
+  const content = `${a} × ${b} means ${a} groups of ${b}. What is the total?`;
+
+  const wrong1 = a + b;
+  const wrong2 = answer - 1;
+  const wrong3 = answer + a;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_mulconcept_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multiplication-concepts',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.8,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['multiplication', 'conceptual']
+    },
+    isActive: true
+  };
+}
+
+function generateFractionConcepts(difficulty) {
+  const denom = randomChoice([2, 3, 4, 5, 8]);
+  const num = randomInt(1, denom - 1);
+
+  const content = `What fraction is shaded if ${num} out of ${denom} parts are shaded?`;
+  const answer = `${num}/${denom}`;
+
+  const wrong1 = `${denom}/${num}`;
+  const wrong2 = `${num + 1}/${denom}`;
+  const wrong3 = `${num}/${denom + 1}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_fracconcept_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'fraction-concepts',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['fractions', 'conceptual', 'parts-whole']
+    },
+    isActive: true
+  };
+}
+
+function generateFractionsAsParts(difficulty) {
+  const total = randomChoice([4, 6, 8, 10, 12]);
+  const shaded = randomInt(1, total - 1);
+
+  const content = `A circle is divided into ${total} equal parts. ${shaded} parts are shaded. What fraction is shaded?`;
+  const answer = `${shaded}/${total}`;
+
+  const wrong1 = `${total - shaded}/${total}`;
+  const wrong2 = `${shaded}/${total - shaded}`;
+  const wrong3 = `${total}/${shaded}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_fracparts_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'fractions-as-parts',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.4,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['fractions', 'parts-whole', 'visual']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// ADVANCED SYSTEMS AND SPECIAL CASES
+// ============================================================================
+
+function generateSystemsSpecialCases(difficulty) {
+  const type = randomChoice(['no-solution', 'infinite']);
+
+  let content, answer;
+  if (type === 'no-solution') {
+    content = 'Two parallel lines form a system. How many solutions exist?';
+    answer = '0 (no solution)';
+  } else {
+    content = 'Two identical lines form a system. How many solutions exist?';
+    answer = 'Infinite';
+  }
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('1 solution') },
+    { label: 'C', text: String(type === 'no-solution' ? 'Infinite' : '0 (no solution)') },
+    { label: 'D', text: String('2 solutions') }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_sysspecial_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'systems-special-cases',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['systems', 'special-cases', 'parallel-lines']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// WORD PROBLEMS - MORE TYPES
+// ============================================================================
+
+function generateMultiplicationWordProblems(difficulty) {
+  const scenarios = [
+    { template: 'A book has {a} pages. Sarah reads {b} books. How many total pages?', operation: '*' },
+    { template: 'Each box has {a} apples. There are {b} boxes. How many apples total?', operation: '*' },
+    { template: 'A ticket costs ${a}. How much for {b} tickets?', operation: '*' }
+  ];
+
+  const scenario = randomChoice(scenarios);
+  const a = randomInt(3, 12);
+  const b = randomInt(2, 10);
+  const answer = a * b;
+
+  const content = scenario.template.replace('{a}', a).replace('{b}', b);
+
+  const wrong1 = a + b;
+  const wrong2 = answer - a;
+  const wrong3 = answer + b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_mulword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multiplication-word-problems',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.4,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['word-problems', 'multiplication', 'application']
+    },
+    isActive: true
+  };
+}
+
+function generateDivisionWordProblems(difficulty) {
+  const scenarios = [
+    { template: '{a} cookies divided equally among {b} friends. How many each?', operation: '/' },
+    { template: 'A rope {a} feet long is cut into {b} equal pieces. How long is each piece?', operation: '/' },
+    { template: '{a} students sit in {b} equal rows. How many per row?', operation: '/' }
+  ];
+
+  const scenario = randomChoice(scenarios);
+  const b = randomInt(2, 8);
+  const answer = randomInt(2, 10);
+  const a = b * answer;
+
+  const content = scenario.template.replace('{a}', a).replace('{b}', b);
+
+  const wrong1 = a - b;
+  const wrong2 = answer + 1;
+  const wrong3 = b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_divword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'division-word-problems',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.3,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['word-problems', 'division', 'application']
+    },
+    isActive: true
+  };
+}
+
+function generateFractionWordProblems(difficulty) {
+  const scenarios = [
+    { template: 'Sarah ate {num}/{denom} of a pizza. What fraction is left?', operation: 'subtract' },
+    { template: 'A recipe uses {num}/{denom} cup of sugar. How much is that?', operation: 'identify' }
+  ];
+
+  const scenario = randomChoice(scenarios);
+  const denom = randomChoice([2, 3, 4, 5, 8]);
+  const num = randomInt(1, denom - 1);
+
+  let content, answer;
+  if (scenario.operation === 'subtract') {
+    content = scenario.template.replace('{num}', num).replace('{denom}', denom);
+    answer = `${denom - num}/${denom}`;
+  } else {
+    content = scenario.template.replace('{num}', num).replace('{denom}', denom);
+    answer = `${num}/${denom}`;
+  }
+
+  const wrong1 = `${num + 1}/${denom}`;
+  const wrong2 = `${num}/${denom + 1}`;
+  const wrong3 = `${denom}/${num}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_fracword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'fraction-word-problems',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['word-problems', 'fractions', 'application']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
+// GEOMETRY - MORE CONCEPTS
+// ============================================================================
+
+function generateLineSegments(difficulty) {
+  const length = randomInt(5, 20);
+
+  const content = `A line segment AB has length ${length} cm. What is the distance from A to B?`;
+  const answer = length;
+
+  const wrong1 = length * 2;
+  const wrong2 = length - 1;
+  const wrong3 = length / 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(`${answer} cm`) },
+    { label: 'B', text: String(`${wrong1} cm`) },
+    { label: 'C', text: String(`${wrong2} cm`) },
+    { label: 'D', text: String(`${Math.floor(wrong3)} cm`) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(`${answer} cm`)).label;
+
+  return {
+    problemId: `prob_lineseg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'line-segments',
+    content: content,
+    answer: String(`${answer} cm`),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.9,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['geometry', 'measurement', 'distance']
+    },
+    isActive: true
+  };
+}
+
+function generateAngles(difficulty) {
+  const angle = randomChoice([30, 45, 60, 90, 120, 135, 150]);
+
+  let type;
+  if (angle < 90) type = 'acute';
+  else if (angle === 90) type = 'right';
+  else type = 'obtuse';
+
+  const content = `An angle measures ${angle}°. What type of angle is this?`;
+  const answer = type;
+
+  const allTypes = ['acute', 'right', 'obtuse', 'straight'];
+  const wrong = allTypes.filter(t => t !== type).slice(0, 3);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong[0]) },
+    { label: 'C', text: String(wrong[1]) },
+    { label: 'D', text: String(wrong[2]) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_angles_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'angles',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.6,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['geometry', 'angles', 'classification']
+    },
+    isActive: true
+  };
+}
+
+// ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
 
@@ -4209,6 +4779,9 @@ const GENERATORS = {
   'fact-families': generateFactFamilies,
   'related-facts': generateRelatedFacts,
   'money-math': generateMoneyMath,
+  'equality-concept': generateEqualityConcept,
+  'missing-number-problems': generateMissingNumberProblems,
+  'blank-as-variable': generateBlankAsVariable,
 
   // K-5 (Tier 1) - Elementary
   'one-step-addition': generateOneStepAddition,
@@ -4218,10 +4791,14 @@ const GENERATORS = {
   'addition': generateAddition,
   'subtraction': generateSubtraction,
   'multiplication-basics': generateMultiplicationBasics,
+  'multiplication-concepts': generateMultiplicationConcepts,
   'multiplication-as-groups': generateMultiplicationAsGroups,
   'repeated-addition': generateRepeatedAddition,
   'division-basics': generateDivision,
   'addition-subtraction-word-problems': generateAdditionWordProblems,
+  'multiplication-word-problems': generateMultiplicationWordProblems,
+  'division-word-problems': generateDivisionWordProblems,
+  'fraction-word-problems': generateFractionWordProblems,
   'missing-addend': generateMissingAddend,
   'unknown-addend': generateUnknownAddend,
   'balance-scales': generateBalanceScales,
@@ -4231,6 +4808,8 @@ const GENERATORS = {
   'simplify-fractions': generateSimplifyFractions,
   'equivalent-fractions': generateEquivalentFractions,
   'comparing-fractions': generateComparingFractions,
+  'fraction-concepts': generateFractionConcepts,
+  'fractions-as-parts': generateFractionsAsParts,
   'add-fractions': generateAddFractions,
   'subtract-fractions': generateSubtractFractions,
   'multiply-fractions': generateMultiplyFractions,
@@ -4243,6 +4822,8 @@ const GENERATORS = {
   'median': generateMedian,
   'mode': generateMode,
   'angle-measurement': generateAngleMeasurement,
+  'angles': generateAngles,
+  'line-segments': generateLineSegments,
   'classify-triangles': generateClassifyTriangles,
   'classify-quadrilaterals': generateClassifyQuadrilaterals,
   'circles': generateCircles,
@@ -4277,6 +4858,7 @@ const GENERATORS = {
   'systems-substitution': generateSystemsSubstitution,
   'systems-elimination': generateSystemsElimination,
   'systems-graphing': generateSystemsGraphing,
+  'systems-special-cases': generateSystemsSpecialCases,
   'slope': generateSlope,
   'quadratic-functions': generateQuadraticFunctions,
   'systems-of-equations': generateSystemsOfEquations,
