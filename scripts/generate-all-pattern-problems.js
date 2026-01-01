@@ -7431,6 +7431,600 @@ function generateVertexForm(difficulty) {
   };
 }
 
+function generateQuadraticFormula(difficulty) {
+  const a = randomInt(1, 3);
+  const b = randomInt(-6, 6);
+  const c = randomInt(-5, 5);
+
+  const discriminant = b * b - 4 * a * c;
+  const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+  const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+
+  const content = `Use the quadratic formula to solve ${a}x² + ${b}x + ${c} = 0. What is one solution? (Round to 2 decimals if needed)`;
+  const answer = x1.toFixed(2);
+
+  const wrong1 = x2.toFixed(2);
+  const wrong2 = (-b / (2 * a)).toFixed(2);
+  const wrong3 = (Math.sqrt(discriminant)).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_quadform_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'quadratic-formula',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 60,
+      source: 'template',
+      tags: ['quadratics', 'quadratic-formula', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateCompletingTheSquare(difficulty) {
+  const b = randomInt(2, 10) * 2; // Even number for easier computation
+  const halfB = b / 2;
+  const constant = halfB * halfB;
+
+  const content = `Complete the square for x² + ${b}x. What constant should be added?`;
+  const answer = constant;
+
+  const wrong1 = b;
+  const wrong2 = halfB;
+  const wrong3 = b * b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_complete_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'completing-the-square',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['quadratics', 'completing-the-square', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateDiscriminant(difficulty) {
+  const a = randomInt(1, 3);
+  const b = randomInt(-6, 6);
+  const c = randomInt(-5, 5);
+  const discriminant = b * b - 4 * a * c;
+
+  const content = `For the equation ${a}x² + ${b}x + ${c} = 0, what is the discriminant?`;
+  const answer = discriminant;
+
+  const wrong1 = b * b;
+  const wrong2 = 4 * a * c;
+  const wrong3 = -discriminant;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_disc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'discriminant',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['quadratics', 'discriminant', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateUnitCircle(difficulty) {
+  const angles = [
+    { deg: 0, rad: '0', cos: '1', sin: '0' },
+    { deg: 90, rad: 'π/2', cos: '0', sin: '1' },
+    { deg: 180, rad: 'π', cos: '-1', sin: '0' },
+    { deg: 270, rad: '3π/2', cos: '0', sin: '-1' }
+  ];
+
+  const angle = angles[randomInt(0, angles.length - 1)];
+  const askFor = randomInt(0, 1) === 0 ? 'cos' : 'sin';
+  const answer = angle[askFor];
+
+  const content = `On the unit circle, what is ${askFor}(${angle.rad})?`;
+
+  const wrong1 = angle[askFor === 'cos' ? 'sin' : 'cos'];
+  const wrong2 = String(-parseFloat(answer));
+  const wrong3 = '1/2';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_unitcir_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'unit-circle',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['trigonometry', 'unit-circle', 'special-angles']
+    },
+    isActive: true
+  };
+}
+
+function generateRationalFunctions(difficulty) {
+  const num = randomInt(2, 8);
+  const denom = randomInt(2, 8);
+
+  const content = `For f(x) = ${num}/(x + ${denom}), what value of x makes the denominator zero (vertical asymptote)?`;
+  const answer = -denom;
+
+  const wrong1 = denom;
+  const wrong2 = num;
+  const wrong3 = 0;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_ratfunc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'rational-functions',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['rational-functions', 'asymptotes', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generatePiecewiseFunctions(difficulty) {
+  const a = randomInt(2, 5);
+  const b = randomInt(1, 5);
+  const x = randomInt(-3, -1);
+
+  const content = `For f(x) = {${a}x if x < 0, ${b} if x ≥ 0}, what is f(${x})?`;
+  const answer = a * x;
+
+  const wrong1 = b;
+  const wrong2 = a + x;
+  const wrong3 = -answer;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_piecewise_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'piecewise-functions',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['piecewise-functions', 'functions', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateSectorArea(difficulty) {
+  const radius = randomInt(5, 12);
+  const angleDeg = randomInt(30, 180);
+  const angleRad = (angleDeg * Math.PI) / 180;
+  const area = 0.5 * radius * radius * angleRad;
+
+  const content = `Find the area of a sector with radius ${radius} cm and central angle ${angleDeg}°. Use π ≈ 3.14`;
+  const answer = area.toFixed(2);
+
+  const wrong1 = (Math.PI * radius * radius).toFixed(2);
+  const wrong2 = (radius * angleRad).toFixed(2);
+  const wrong3 = (0.5 * radius * angleDeg).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_sector_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'sector-area',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['geometry', 'circles', 'sectors', 'area']
+    },
+    isActive: true
+  };
+}
+
+function generateArcLength(difficulty) {
+  const radius = randomInt(5, 15);
+  const angleDeg = randomInt(60, 180);
+  const angleRad = (angleDeg * Math.PI) / 180;
+  const arcLength = radius * angleRad;
+
+  const content = `Find the arc length of a circle with radius ${radius} cm and central angle ${angleDeg}°. Use π ≈ 3.14`;
+  const answer = arcLength.toFixed(2);
+
+  const wrong1 = (2 * Math.PI * radius).toFixed(2);
+  const wrong2 = (radius + angleRad).toFixed(2);
+  const wrong3 = (0.5 * radius * angleRad).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_arclen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'arc-length',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['geometry', 'circles', 'arc-length']
+    },
+    isActive: true
+  };
+}
+
+function generateChainRule(difficulty) {
+  const outer = randomInt(2, 5);
+  const inner = randomInt(2, 4);
+  const x = randomInt(1, 3);
+
+  const content = `If f(x) = (${inner}x)^${outer}, find f'(${x}) using the chain rule`;
+  const answer = outer * Math.pow(inner * x, outer - 1) * inner;
+
+  const wrong1 = outer * Math.pow(inner * x, outer - 1);
+  const wrong2 = outer * Math.pow(inner * x, outer);
+  const wrong3 = Math.pow(inner * x, outer - 1);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_chain_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'chain-rule',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['calculus', 'derivatives', 'chain-rule']
+    },
+    isActive: true
+  };
+}
+
+function generateProductRule(difficulty) {
+  const a = randomInt(2, 5);
+  const b = randomInt(2, 5);
+
+  const content = `If f(x) = ${a}x · x^${b}, find f'(x) using the product rule`;
+  const answer = `${a}x^${b} + ${a * b}x^${b}`;
+
+  const wrong1 = `${a}x^${b + 1}`;
+  const wrong2 = `${a * b}x^${b - 1}`;
+  const wrong3 = `${a}x^${b - 1}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'product-rule',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['calculus', 'derivatives', 'product-rule']
+    },
+    isActive: true
+  };
+}
+
+function generateQuotientRule(difficulty) {
+  const a = randomInt(2, 5);
+  const b = randomInt(2, 5);
+
+  const content = `If f(x) = x^${a} / x^${b}, what is f'(x)?`;
+  const answer = `${a - b}x^${a - b - 1}`;
+
+  const wrong1 = `${a}x^${a - 1} / ${b}x^${b - 1}`;
+  const wrong2 = `x^${a - b}`;
+  const wrong3 = `x^${a - b - 1}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_quot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'quotient-rule',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['calculus', 'derivatives', 'quotient-rule']
+    },
+    isActive: true
+  };
+}
+
+function generateRecursiveSequences(difficulty) {
+  const first = randomInt(2, 5);
+  const add = randomInt(2, 5);
+
+  const content = `A sequence is defined by a₁ = ${first} and aₙ = aₙ₋₁ + ${add}. What is a₃?`;
+  const a2 = first + add;
+  const a3 = a2 + add;
+  const answer = a3;
+
+  const wrong1 = first + add * 3;
+  const wrong2 = a2;
+  const wrong3 = first * 3;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_recseq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'recursive-sequences',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['sequences', 'recursive', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateAbsoluteValueEquations(difficulty) {
+  const value = randomInt(3, 10);
+
+  const content = `Solve |x| = ${value}. What is one solution?`;
+  const answer = value;
+
+  const wrong1 = -value;
+  const wrong2 = 0;
+  const wrong3 = value * 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_abseq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'absolute-value-equations',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['absolute-value', 'equations', 'algebra']
+    },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -7552,6 +8146,7 @@ const GENERATORS = {
   'inequalities-on-number-line': generateInequalitiesOnNumberLine,
   'interquartile-range': generateInterquartileRange,
   'box-plots': generateBoxPlots,
+  'absolute-value-equations': generateAbsoluteValueEquations,
 
   // 9-12 (Tier 3) - High School
   'multi-step-equations': generateMultiStepEquations,
@@ -7597,11 +8192,23 @@ const GENERATORS = {
   'permutations': generatePermutations,
   'combinations': generateCombinations,
   'vertex-form': generateVertexForm,
+  'quadratic-formula': generateQuadraticFormula,
+  'completing-the-square': generateCompletingTheSquare,
+  'discriminant': generateDiscriminant,
+  'unit-circle': generateUnitCircle,
+  'rational-functions': generateRationalFunctions,
+  'piecewise-functions': generatePiecewiseFunctions,
+  'sector-area': generateSectorArea,
+  'arc-length': generateArcLength,
+  'recursive-sequences': generateRecursiveSequences,
 
   // Calculus (Calc 1-3)
   'limits': generateLimits,
   'derivatives': generateDerivatives,
-  'integrals': generateIntegrals
+  'integrals': generateIntegrals,
+  'chain-rule': generateChainRule,
+  'product-rule': generateProductRule,
+  'quotient-rule': generateQuotientRule
 };
 
 async function generateAllProblems() {
