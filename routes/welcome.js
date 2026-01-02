@@ -65,7 +65,8 @@ router.get('/', async (req, res) => {
         
         messagesForAI.push({ role: "user", content: userMessagePart });
 
-        const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 80 });
+        // Use Claude Sonnet 3.5 for natural, engaging welcome messages
+        const completion = await callLLM("claude-3-5-sonnet-20241022", messagesForAI, { max_tokens: 80 });
         const initialWelcomeMessage = completion.choices[0].message.content.trim();
 
         res.json({ greeting: initialWelcomeMessage, voiceId: voiceIdForWelcome });

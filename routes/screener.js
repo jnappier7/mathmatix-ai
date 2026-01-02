@@ -22,6 +22,7 @@ const ScreenerSession = require('../models/screenerSession'); // CTO REVIEW FIX:
 const { initializeSession, processResponse, generateReport, identifyInterviewSkills, calculateJumpSize } = require('../utils/adaptiveScreener');
 const { generateProblem } = require('../utils/problemGenerator');
 const { awardBadgesForSkills } = require('../utils/badgeAwarder');
+const { generateInterviewQuestions, evaluateResponse } = require('../utils/dynamicInterviewGenerator');
 
 /**
  * CTO REVIEW FIX: LRU (Least Recently Used) Strategy for Problem Exclusion
@@ -937,5 +938,380 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Failed to complete screener' });
   }
 });
+
+// ============================================================================
+// INTERVIEW PHASE ENDPOINTS
+// ============================================================================
+
+/**
+ * GET /api/screener/interview-questions
+ * Generate interview questions for identified frontier skills
+ */
+router.get('/interview-questions', async (req, res) => {
+  const { sessionId } = req.query;
+
+  if (!sessionId) {
+    return res.status(400).json({ error: 'Session ID required' });
+  }
+
+  try {
+    // Get session from database
+    const session = await ScreenerSession.findBySessionId(sessionId);
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    if (session.phase !== 'interview') {
+      return res.status(400).json({ error: 'Session not in interview phase' });
+    }
+
+    // Check if questions already generated
+    if (session.interviewQuestions && session.interviewQuestions.length > 0) {
+      console.log(`[Interview] Returning ${session.interviewQuestions.length} existing questions`);
+      return res.json({
+        questions: session.interviewQuestions.map(q => ({
+          questionId: q.questionId,
+          type: q.type,
+          question: q.question,
+          baseProblem: q.baseProblem,
+          skillId: q.skillId,
+          rubric: q.rubric
+        })),
+        sessionId: session.sessionId
+      });
+    }
+
+    // Identify frontier skills to probe
+    const interviewSkills = identifyInterviewSkills(session.toObject(), []);
+    console.log(`[Interview] Identified ${interviewSkills.length} frontier skills to probe`);
+
+    if (interviewSkills.length === 0) {
+      return res.status(400).json({ error: 'No frontier skills identified for interview' });
+    }
+
+    // Store interview skills
+    session.interviewSkills = interviewSkills;
+    session.interviewStartTime = new Date();
+
+    // Generate questions for top 3 frontier skills
+    const questionsToGenerate = interviewSkills.slice(0, 3);
+    const allQuestions = [];
+
+    for (const frontierSkill of questionsToGenerate) {
+      // Fetch full skill object
+      const skill = await Skill.findOne({ skillId: frontierSkill.skillId }).lean();
+
+      if (!skill) {
+        console.warn(`[Interview] Skill not found: ${frontierSkill.skillId}`);
+        continue;
+      }
+
+      // Generate interview questions for this skill
+      const questions = await generateInterviewQuestions(skill, session.theta, {
+        responses: session.responses,
+        theta: session.theta,
+        standardError: session.standardError
+      });
+
+      // Add questionId and store
+      for (const question of questions) {
+        const questionWithId = {
+          questionId: `interview_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          ...question
+        };
+        allQuestions.push(questionWithId);
+      }
+    }
+
+    console.log(`[Interview] Generated ${allQuestions.length} interview questions`);
+
+    // Save questions to session
+    session.interviewQuestions = allQuestions;
+    await session.save();
+
+    // Return questions (without responses/evaluation)
+    res.json({
+      questions: allQuestions.map(q => ({
+        questionId: q.questionId,
+        type: q.type,
+        question: q.question,
+        baseProblem: q.baseProblem,
+        skillId: q.skillId,
+        rubric: q.rubric
+      })),
+      sessionId: session.sessionId
+    });
+
+  } catch (error) {
+    console.error('[Interview] Error generating questions:', error);
+    res.status(500).json({ error: 'Failed to generate interview questions' });
+  }
+});
+
+/**
+ * POST /api/screener/interview-answer
+ * Submit and analyze interview answer
+ */
+router.post('/interview-answer', async (req, res) => {
+  const { sessionId, questionId, answer } = req.body;
+
+  if (!sessionId || !questionId || !answer) {
+    return res.status(400).json({ error: 'Session ID, question ID, and answer required' });
+  }
+
+  try {
+    // Get session
+    const session = await ScreenerSession.findBySessionId(sessionId);
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    if (session.phase !== 'interview') {
+      return res.status(400).json({ error: 'Session not in interview phase' });
+    }
+
+    // Find the question
+    const questionIndex = session.interviewQuestions.findIndex(q => q.questionId === questionId);
+    if (questionIndex === -1) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    const question = session.interviewQuestions[questionIndex];
+
+    // Check if already answered
+    if (question.response) {
+      return res.status(400).json({ error: 'Question already answered' });
+    }
+
+    // Get skill for evaluation
+    const skill = await Skill.findOne({ skillId: question.skillId }).lean();
+    if (!skill) {
+      return res.status(404).json({ error: 'Skill not found' });
+    }
+
+    // Evaluate response using Claude
+    console.log(`[Interview] Evaluating response for question ${questionId}`);
+    const evaluation = await evaluateResponse(question, answer, skill);
+
+    // Update question with response and evaluation
+    session.interviewQuestions[questionIndex].response = answer;
+    session.interviewQuestions[questionIndex].evaluation = evaluation;
+    session.interviewQuestions[questionIndex].answeredAt = new Date();
+
+    // Mark as modified for Mongoose
+    session.markModified('interviewQuestions');
+    await session.save();
+
+    // Check if interview is complete (all questions answered)
+    const answeredCount = session.interviewQuestions.filter(q => q.response).length;
+    const totalQuestions = session.interviewQuestions.length;
+    const complete = answeredCount >= totalQuestions;
+
+    console.log(`[Interview] Progress: ${answeredCount}/${totalQuestions} questions answered`);
+
+    // Return feedback and next question
+    const nextUnanswered = session.interviewQuestions.find(q => !q.response);
+
+    res.json({
+      evaluation: {
+        rating: evaluation.rating,
+        strengths: evaluation.strengths,
+        areasForGrowth: evaluation.areasForGrowth
+      },
+      progress: {
+        answered: answeredCount,
+        total: totalQuestions
+      },
+      complete,
+      nextQuestion: nextUnanswered ? {
+        questionId: nextUnanswered.questionId,
+        type: nextUnanswered.type,
+        question: nextUnanswered.question,
+        baseProblem: nextUnanswered.baseProblem,
+        skillId: nextUnanswered.skillId,
+        rubric: nextUnanswered.rubric
+      } : null
+    });
+
+  } catch (error) {
+    console.error('[Interview] Error submitting answer:', error);
+    res.status(500).json({ error: 'Failed to submit interview answer' });
+  }
+});
+
+/**
+ * POST /api/screener/interview-complete
+ * Finalize interview and update user profile
+ */
+router.post('/interview-complete', async (req, res) => {
+  const { sessionId } = req.body;
+
+  if (!sessionId) {
+    return res.status(400).json({ error: 'Session ID required' });
+  }
+
+  try {
+    // Get session
+    const session = await ScreenerSession.findBySessionId(sessionId);
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    if (session.phase !== 'interview') {
+      return res.status(400).json({ error: 'Session not in interview phase' });
+    }
+
+    // Verify all questions answered
+    const unansweredQuestions = session.interviewQuestions.filter(q => !q.response);
+    if (unansweredQuestions.length > 0) {
+      return res.status(400).json({
+        error: 'Interview not complete',
+        unansweredCount: unansweredQuestions.length
+      });
+    }
+
+    // Mark interview phase as complete
+    session.phase = 'complete';
+    session.interviewEndTime = new Date();
+
+    // Analyze interview results to refine pattern mastery
+    const patternMastery = analyzePatternMastery(session);
+
+    // Get user
+    const user = await User.findById(session.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update user profile with refined results
+    user.learningProfile = user.learningProfile || {};
+    user.learningProfile.assessmentCompleted = true;
+    user.learningProfile.assessmentDate = new Date();
+    user.learningProfile.abilityEstimate = {
+      theta: session.theta,
+      standardError: session.standardError,
+      percentile: thetaToPercentile(session.theta),
+      confidence: session.confidence
+    };
+
+    // Store pattern mastery from interview
+    user.learningProfile.patternMastery = patternMastery;
+
+    // Award badges based on demonstrated mastery
+    const skillsToAward = [];
+    for (const question of session.interviewQuestions) {
+      if (question.evaluation?.rating === 'excellent' || question.evaluation?.rating === 'good') {
+        if (!skillsToAward.includes(question.skillId)) {
+          skillsToAward.push(question.skillId);
+        }
+      }
+    }
+
+    let earnedBadges = [];
+    if (skillsToAward.length > 0) {
+      earnedBadges = await awardBadgesForSkills(user._id, skillsToAward);
+      console.log(`[Interview] Awarded ${earnedBadges.length} badges based on interview performance`);
+    }
+
+    // Save session and user
+    await session.save();
+    await user.save();
+
+    // Generate final report
+    const report = generateReport(session.toObject());
+
+    console.log(`[Interview] Complete for user ${user._id} - Theta: ${session.theta.toFixed(2)}, Badges: ${earnedBadges.length}`);
+
+    res.json({
+      success: true,
+      report: {
+        accuracy: report.accuracy,
+        questionsAnswered: report.questionsAnswered,
+        duration: report.duration,
+        interviewQuestionsAnswered: session.interviewQuestions.length
+      },
+      patternMastery,
+      earnedBadges: earnedBadges.map(b => ({
+        badgeId: b.badgeId,
+        displayName: b.displayName,
+        category: b.category
+      })),
+      message: earnedBadges.length > 0
+        ? `Assessment complete! You earned ${earnedBadges.length} badge${earnedBadges.length > 1 ? 's' : ''} based on your interview performance!`
+        : 'Assessment complete! Your learning path has been customized.'
+    });
+
+  } catch (error) {
+    console.error('[Interview] Error completing interview:', error);
+    res.status(500).json({ error: 'Failed to complete interview' });
+  }
+});
+
+/**
+ * Helper: Analyze pattern mastery from interview responses
+ */
+function analyzePatternMastery(session) {
+  const patternMastery = {};
+
+  // Group questions by skill/pattern
+  const skillEvaluations = {};
+
+  for (const question of session.interviewQuestions) {
+    if (!question.evaluation) continue;
+
+    const skillId = question.skillId;
+    if (!skillEvaluations[skillId]) {
+      skillEvaluations[skillId] = [];
+    }
+    skillEvaluations[skillId].push(question.evaluation);
+  }
+
+  // Determine mastery level for each skill
+  for (const [skillId, evaluations] of Object.entries(skillEvaluations)) {
+    const ratings = evaluations.map(e => e.rating);
+    const understandingLevels = evaluations.map(e => e.understandingLevel);
+
+    // Calculate mastery level
+    const excellentCount = ratings.filter(r => r === 'excellent').length;
+    const goodCount = ratings.filter(r => r === 'good').length;
+    const deepUnderstanding = understandingLevels.filter(u => u === 'deep').length;
+
+    let level = 'learning';
+    let confidence = 0.5;
+
+    if (excellentCount >= evaluations.length * 0.67) {
+      level = 'mastered';
+      confidence = 0.9;
+    } else if (excellentCount + goodCount >= evaluations.length * 0.67) {
+      level = 'mastered';
+      confidence = 0.75;
+    } else if (deepUnderstanding >= evaluations.length * 0.5) {
+      level = 'mastered';
+      confidence = 0.7;
+    } else if (ratings.includes('needs_work') || understandingLevels.includes('misconception')) {
+      level = 'learning';
+      confidence = 0.4;
+    }
+
+    patternMastery[skillId] = { level, confidence };
+  }
+
+  return patternMastery;
+}
+
+/**
+ * Helper: Convert theta to percentile
+ */
+function thetaToPercentile(theta) {
+  // Standard normal CDF approximation
+  // θ ~ N(0, 1) in IRT
+  const z = theta;
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp(-z * z / 2);
+  const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+
+  const percentile = z >= 0 ? (1 - p) * 100 : p * 100;
+  return Math.round(percentile);
+}
 
 module.exports = router;

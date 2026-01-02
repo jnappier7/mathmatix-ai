@@ -2150,7 +2150,7 @@ router.get('/mastery-map', isAuthenticated, async (req, res) => {
     }
 
     // Check if assessment completed
-    const assessmentCompleted = user.screenerCompleted || false;
+    const assessmentCompleted = user.learningProfile?.assessmentCompleted || false;
 
     if (!assessmentCompleted) {
       return res.json({
