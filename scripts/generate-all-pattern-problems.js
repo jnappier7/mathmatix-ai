@@ -9989,6 +9989,447 @@ function generateMakeTen(difficulty) {
   };
 }
 
+function generateMultiDigitAddition(difficulty) {
+  const a = randomInt(100, 500);
+  const b = randomInt(100, 500);
+  const sum = a + b;
+
+  const content = `What is ${a} + ${b}?`;
+  const answer = sum;
+
+  const wrong1 = sum + 10;
+  const wrong2 = sum - 10;
+  const wrong3 = a + b + 100;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_multidigit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multi-digit-addition',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['addition', 'multi-digit', 'arithmetic']
+    },
+    isActive: true
+  };
+}
+
+function generateNumberBonds(difficulty) {
+  const whole = randomInt(5, 15);
+  const part1 = randomInt(1, whole - 1);
+  const part2 = whole - part1;
+
+  const content = `${whole} can be split into ${part1} and ___?`;
+  const answer = part2;
+
+  const wrong1 = part1;
+  const wrong2 = whole;
+  const wrong3 = part2 + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_numberbonds_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'number-bonds',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.8,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['number-bonds', 'part-whole', 'number-sense']
+    },
+    isActive: true
+  };
+}
+
+function generateNumberOrder(difficulty) {
+  const nums = [randomInt(10, 30), randomInt(10, 30), randomInt(10, 30)];
+  const sorted = [...nums].sort((a, b) => a - b);
+
+  const content = `Put these numbers in order from smallest to largest: ${nums.join(', ')}`;
+  const answer = sorted.join(', ');
+
+  const wrong1 = [...sorted].reverse().join(', ');
+  const wrong2 = nums.join(', ');
+  const wrong3 = [sorted[1], sorted[0], sorted[2]].join(', ');
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_numorder_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'number-order',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 0.9,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['ordering', 'number-sense', 'comparison']
+    },
+    isActive: true
+  };
+}
+
+function generatePartPartWhole(difficulty) {
+  const whole = randomInt(10, 20);
+  const part1 = randomInt(3, whole - 3);
+  const part2 = whole - part1;
+
+  const content = `The whole is ${whole}. One part is ${part1}. What is the other part?`;
+  const answer = part2;
+
+  const wrong1 = part1;
+  const wrong2 = whole;
+  const wrong3 = part1 + part2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_partpartwhole_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'part-part-whole',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['part-whole', 'number-sense', 'subtraction']
+    },
+    isActive: true
+  };
+}
+
+function generatePositionWords(difficulty) {
+  const content = `The cat is _____ the box. (The cat is inside)`;
+  const answer = 'in';
+
+  const wrong1 = 'on';
+  const wrong2 = 'under';
+  const wrong3 = 'beside';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_position_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'position-words',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.5,
+      discrimination: 0.7,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['spatial', 'vocabulary', 'position']
+    },
+    isActive: true
+  };
+}
+
+function generateProbabilityLanguage(difficulty) {
+  const content = `Flipping a coin will land on heads or tails. This event is:`;
+  const answer = 'certain';
+
+  const wrong1 = 'impossible';
+  const wrong2 = 'unlikely';
+  const wrong3 = 'maybe';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_problang_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'probability-language',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 0.9,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['probability', 'vocabulary', 'likelihood']
+    },
+    isActive: true
+  };
+}
+
+function generateRegrouping(difficulty) {
+  const a = randomInt(20, 50);
+  const b = randomInt(20, 50);
+  const sum = a + b;
+
+  const content = `Solve ${a} + ${b} using regrouping`;
+  const answer = sum;
+
+  const wrong1 = sum + 10;
+  const wrong2 = sum - 10;
+  const wrong3 = a + b - 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_regroup_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'regrouping',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['addition', 'regrouping', 'place-value']
+    },
+    isActive: true
+  };
+}
+
+function generateResultUnknown(difficulty) {
+  const a = randomInt(5, 15);
+  const b = randomInt(1, 10);
+  const result = a + b;
+
+  const content = `${a} + ${b} = ?`;
+  const answer = result;
+
+  const wrong1 = a;
+  const wrong2 = b;
+  const wrong3 = result + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_resultunk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'result-unknown',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 0.8,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['addition', 'basic', 'result']
+    },
+    isActive: true
+  };
+}
+
+function generateRoundingToNearestTen(difficulty) {
+  const num = randomInt(12, 98);
+  const rounded = Math.round(num / 10) * 10;
+
+  const content = `Round ${num} to the nearest ten`;
+  const answer = rounded;
+
+  const wrong1 = num;
+  const wrong2 = rounded + 10;
+  const wrong3 = rounded - 10;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_roundten_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'rounding-to-nearest-ten',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.3,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['rounding', 'estimation', 'place-value']
+    },
+    isActive: true
+  };
+}
+
+function generateSequencePatterns(difficulty) {
+  const start = randomInt(2, 10);
+  const step = randomInt(2, 5);
+  const seq = [start, start + step, start + step * 2];
+  const next = start + step * 3;
+
+  const content = `What comes next in the pattern? ${seq.join(', ')}, ___`;
+  const answer = next;
+
+  const wrong1 = next + step;
+  const wrong2 = next - step;
+  const wrong3 = start;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_seqpattern_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'sequence-patterns',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['patterns', 'sequences', 'number-sense']
+    },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -10096,6 +10537,16 @@ const GENERATORS = {
   'area-circles': generateAreaCircles,
   'divisibility-rules': generateDivisibilityRules,
   'reciprocals': generateReciprocals,
+  'multi-digit-addition': generateMultiDigitAddition,
+  'number-bonds': generateNumberBonds,
+  'number-order': generateNumberOrder,
+  'part-part-whole': generatePartPartWhole,
+  'position-words': generatePositionWords,
+  'probability-language': generateProbabilityLanguage,
+  'regrouping': generateRegrouping,
+  'result-unknown': generateResultUnknown,
+  'rounding-to-nearest-ten': generateRoundingToNearestTen,
+  'sequence-patterns': generateSequencePatterns,
   'rounding-decimals': generateRoundingDecimals,
 
   // 6-8 (Tier 2) - Middle School
