@@ -2300,7 +2300,7 @@ router.post('/select-milestone', isAuthenticated, async (req, res) => {
       badgeId: `${patternId}-${milestoneId}`,
       badgeName: milestone.name,
       skillId: milestone.skillIds[0],
-      tier: tierNum,
+      // Note: 'tier' field removed - pattern badges use tierNum/tierName instead
 
       // Pattern-specific
       isPatternBadge: true,
