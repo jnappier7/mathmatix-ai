@@ -399,29 +399,38 @@ router.post('/placement', isAuthenticated, async (req, res) => {
 
 // POST /api/fact-fluency/generate-problems - Generate practice problems
 router.post('/generate-problems', async (req, res) => {
+  const startTime = Date.now();
   try {
     const { operation, familyName, count = 20, mixed = false, includeTraps = false } = req.body;
+    console.log(`[generate-problems] Request: operation=${operation}, familyName=${familyName}, count=${count}, mixed=${mixed}, includeTraps=${includeTraps}`);
 
     let problems;
 
     if (mixed) {
       // Generate mixed problems from ALL families for this operation (placement test)
       if (!FACT_FAMILIES[operation]) {
+        console.log(`[generate-problems] Invalid operation: ${operation}`);
         return res.status(400).json({ success: false, error: 'Invalid operation' });
       }
+      console.log(`[generate-problems] Generating mixed problems for ${operation}`);
       problems = generateMixedProblems(operation, count, includeTraps);
     } else {
       // Generate problems for a specific family (practice mode)
       const familyConfig = FACT_FAMILIES[operation]?.find(f => f.familyName === familyName);
       if (!familyConfig) {
+        console.log(`[generate-problems] Invalid family: ${operation}/${familyName}`);
         return res.status(400).json({ success: false, error: 'Invalid fact family' });
       }
+      console.log(`[generate-problems] Generating problems for ${operation}/${familyName}`);
       problems = generateProblems(operation, familyConfig, count, includeTraps);
     }
 
+    const elapsed = Date.now() - startTime;
+    console.log(`[generate-problems] Generated ${problems?.length || 0} problems in ${elapsed}ms`);
     res.json({ success: true, problems });
   } catch (error) {
-    console.error('Error generating problems:', error);
+    const elapsed = Date.now() - startTime;
+    console.error(`[generate-problems] Error after ${elapsed}ms:`, error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
