@@ -1245,6 +1245,9 @@ function getCurrentTier(patternId, userSkillMastery) {
   const pattern = PATTERN_BADGES[patternId];
   if (!pattern) return 0;
 
+  // Handle case where skillMastery might be empty or null
+  if (!userSkillMastery) return 0;
+
   // Find highest tier where at least 50% of milestones are mastered
   let currentTier = 0;
 
@@ -1253,7 +1256,8 @@ function getCurrentTier(patternId, userSkillMastery) {
     const masteredCount = milestones.filter(milestone => {
       // Check if any skillId in this milestone is mastered
       return milestone.skillIds.some(skillId => {
-        const mastery = userSkillMastery.get(skillId);
+        // Handle both Map and Object types
+        const mastery = userSkillMastery.get?.(skillId) || userSkillMastery[skillId];
         return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
       });
     }).length;
@@ -1283,7 +1287,8 @@ function getNextMilestone(patternId, currentTier, userSkillMastery) {
   // Find first incomplete milestone
   for (const milestone of tier.milestones) {
     const completed = milestone.skillIds.every(skillId => {
-      const mastery = userSkillMastery.get(skillId);
+      // Handle both Map and Object types
+      const mastery = userSkillMastery?.get?.(skillId) || userSkillMastery?.[skillId];
       return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
     });
 
@@ -1309,7 +1314,8 @@ function calculatePatternProgress(patternId, currentTier, userSkillMastery) {
   const milestones = tier.milestones;
   const completedCount = milestones.filter(milestone => {
     return milestone.skillIds.every(skillId => {
-      const mastery = userSkillMastery.get(skillId);
+      // Handle both Map and Object types
+      const mastery = userSkillMastery?.get?.(skillId) || userSkillMastery?.[skillId];
       return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
     });
   }).length;
