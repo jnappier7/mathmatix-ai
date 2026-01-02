@@ -239,23 +239,27 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
 
 // Static method: Find problem at target difficulty
 problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficulty, excludeIds = []) {
-  // Find problems within ±0.3 difficulty of target
-  const problems = await this.find({
-    skillId,
-    isActive: true,
-    problemId: { $nin: excludeIds },
-    'irtParameters.difficulty': {
-      $gte: targetDifficulty - 0.3,
-      $lte: targetDifficulty + 0.3
-    }
-  }).sort({ 'irtParameters.discrimination': -1 }); // Prefer high discrimination
+  // Try progressively wider difficulty windows before expensive aggregation
+  const windows = [0.3, 0.5, 0.8, 1.2];
 
-  if (problems.length > 0) {
-    // Return random problem from the set
-    return problems[Math.floor(Math.random() * problems.length)];
+  for (const window of windows) {
+    const problems = await this.find({
+      skillId,
+      isActive: true,
+      problemId: { $nin: excludeIds },
+      'irtParameters.difficulty': {
+        $gte: targetDifficulty - window,
+        $lte: targetDifficulty + window
+      }
+    }).sort({ 'irtParameters.discrimination': -1 }); // Prefer high discrimination
+
+    if (problems.length > 0) {
+      // Return random problem from the set
+      return problems[Math.floor(Math.random() * problems.length)];
+    }
   }
 
-  // If no problems found, widen search using aggregation
+  // Last resort: expensive aggregation to find closest match across entire skill
   const results = await this.aggregate([
     {
       $match: {
