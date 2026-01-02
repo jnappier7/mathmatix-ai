@@ -314,32 +314,18 @@ router.post('/placement', isAuthenticated, async (req, res) => {
       const families = FACT_FAMILIES[operation];
 
       // Determine how many families to mark as mastered based on placement performance
-      // IMPROVED: Prioritize accuracy over speed for initial placement
-      // Fluency (speed) will be developed through practice, but accuracy shows understanding
+      // MORNINGSIDE STANDARDS: Require BOTH accuracy AND speed for mastery
       let startingFamilyIndex = 0;
 
-      if (accuracy >= 98 && rate >= targetRate) {
-        // Excellent: High accuracy + full speed → skip first 70% of families
-        startingFamilyIndex = Math.floor(families.length * 0.7);
-      } else if (accuracy >= 95 && rate >= targetRate) {
-        // Very Good: Meeting Morningside standards → skip first 60% of families
+      if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate) {
+        // Excellent performance - skip first 60% of families
         startingFamilyIndex = Math.floor(families.length * 0.6);
-      } else if (accuracy >= 98) {
-        // High accuracy but slower speed → skip first 50% of families
-        // Accuracy shows mastery; speed will improve with practice
-        startingFamilyIndex = Math.floor(families.length * 0.5);
-      } else if (accuracy >= 95 && rate >= targetRate * 0.75) {
-        // Good: Meeting accuracy + decent speed → skip first 40% of families
+      } else if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate * 0.75) {
+        // Good performance - skip first 40% of families
         startingFamilyIndex = Math.floor(families.length * 0.4);
-      } else if (accuracy >= 90) {
-        // Strong accuracy, any speed → skip first 30% of families
-        startingFamilyIndex = Math.floor(families.length * 0.3);
       } else if (accuracy >= 85 && rate >= targetRate * 0.5) {
-        // Fair: Decent accuracy + speed → skip first 20% of families
+        // Fair performance - skip first 20% of families
         startingFamilyIndex = Math.floor(families.length * 0.2);
-      } else if (accuracy >= 80) {
-        // Basic accuracy → skip first 10% of families
-        startingFamilyIndex = Math.floor(families.length * 0.1);
       }
       // Otherwise start at 0 (first family)
 
@@ -364,24 +350,15 @@ router.post('/placement', isAuthenticated, async (req, res) => {
     });
 
     // Set recommended starting point for lowest performing operation
-    // Use same improved logic as family mastery calculation
     const lowestOpFamilies = FACT_FAMILIES[lowestPerformance.operation];
     let recommendedFamilyIndex = 0;
 
-    if (lowestPerformance.accuracy >= 98 && lowestPerformance.rate >= targetRate) {
-      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.7);
-    } else if (lowestPerformance.accuracy >= 95 && lowestPerformance.rate >= targetRate) {
+    if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.6);
-    } else if (lowestPerformance.accuracy >= 98) {
-      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.5);
-    } else if (lowestPerformance.accuracy >= 95 && lowestPerformance.rate >= targetRate * 0.75) {
+    } else if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate * 0.75) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.4);
-    } else if (lowestPerformance.accuracy >= 90) {
-      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.3);
     } else if (lowestPerformance.accuracy >= 85 && lowestPerformance.rate >= targetRate * 0.5) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.2);
-    } else if (lowestPerformance.accuracy >= 80) {
-      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.1);
     }
 
     user.factFluencyProgress.placement = {
