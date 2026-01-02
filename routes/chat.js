@@ -232,8 +232,22 @@ router.post('/', isAuthenticated, async (req, res) => {
                 let fullResponseBuffer = '';
 
                 // Stream chunks to client as they arrive
+                // Handle both Claude and OpenAI streaming formats
+                const isClaudeModel = PRIMARY_CHAT_MODEL.startsWith('claude-');
+
                 for await (const chunk of stream) {
-                    const content = chunk.choices[0]?.delta?.content || '';
+                    let content = '';
+
+                    if (isClaudeModel) {
+                        // Claude streaming format: events with type 'content_block_delta'
+                        if (chunk.type === 'content_block_delta' && chunk.delta?.text) {
+                            content = chunk.delta.text;
+                        }
+                    } else {
+                        // OpenAI streaming format: choices[0].delta.content
+                        content = chunk.choices[0]?.delta?.content || '';
+                    }
+
                     if (content) {
                         fullResponseBuffer += content;
 
