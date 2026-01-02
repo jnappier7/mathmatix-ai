@@ -37,6 +37,47 @@ const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 const LRU_EXCLUSION_WINDOW = 100;
 
 /**
+ * Map grade level to starting theta (ability estimate)
+ *
+ * Uses a Bayesian prior approach: start students slightly below their grade level
+ * to build confidence with early success, then adapt upward.
+ *
+ * @param {String|Number} grade - Student's grade level (K-12+)
+ * @returns {Number} Starting theta estimate
+ */
+function gradeToTheta(grade) {
+  // Handle null/undefined
+  if (!grade) return 0;
+
+  // Parse grade (handle 'K', 'kindergarten', numbers)
+  let g;
+  if (typeof grade === 'string') {
+    const lower = grade.toLowerCase();
+    if (lower === 'k' || lower.includes('kinder')) {
+      g = 0;
+    } else {
+      g = parseInt(grade, 10);
+    }
+  } else {
+    g = grade;
+  }
+
+  // Default to average if parsing failed
+  if (Number.isNaN(g)) return 0;
+
+  // Map grade to theta based on curriculum progression
+  // Conservative: Start one level below to build confidence
+  // θ scale: -3 (very basic) to +3 (very advanced), 0 = middle school average
+
+  if (g <= 0) return -2.5;  // Kindergarten: foundations
+  if (g <= 2) return -2.0;  // K-2: early elementary
+  if (g <= 5) return -1.0;  // 3-5: elementary mastery
+  if (g <= 8) return 0;     // 6-8: middle school
+  if (g <= 12) return 1.0;  // 9-12: high school
+  return 2.0;               // College+: advanced
+}
+
+/**
  * Calculate adaptive progress with confidence metrics for UI visualization
  *
  * PHILOSOPHY: For adaptive tests, progress should reflect "how confident we are"
@@ -148,10 +189,14 @@ router.post('/start', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Initialize screener session
+    // Initialize screener session with grade-based starting point
+    // This provides a Bayesian prior for faster convergence
+    const startingTheta = gradeToTheta(user.gradeLevel);
+    console.log(`[Screener Start] Grade ${user.gradeLevel} → Starting θ=${startingTheta.toFixed(2)}`);
+
     const sessionData = initializeSession({
       userId: user._id.toString(),
-      startingTheta: 0  // Start at average ability
+      startingTheta
     });
 
     // CTO REVIEW FIX: Store session in database (prevents data loss on restart)
@@ -448,6 +493,34 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
 
     // Sort by score (lower is better) and pick best match
     candidateSkills.sort((a, b) => a.score - b.score);
+
+    // CONTENT BALANCING: When multiple skills have similar scores, prefer least-covered category
+    // This ensures balanced coverage across math domains (algebra, geometry, etc.)
+    if (candidateSkills.length > 1) {
+      const bestScore = candidateSkills[0].score;
+      const scoreThreshold = 2.0;  // Skills within 2 points are "similar enough"
+
+      // Find all skills with similar scores to the best
+      const similarSkills = candidateSkills.filter(s => s.score <= bestScore + scoreThreshold);
+
+      if (similarSkills.length > 1) {
+        // Find least-covered category
+        const categoryCounts = session.testedSkillCategories;
+        const leastCoveredCount = Math.min(...Object.values(categoryCounts));
+
+        // Prefer skills from least-covered categories
+        const balancedSkills = similarSkills.filter(s => {
+          const category = s.category || 'algebra';  // Default if missing
+          return categoryCounts[category] === leastCoveredCount;
+        });
+
+        if (balancedSkills.length > 0) {
+          // Replace candidates with balanced selection
+          candidateSkills = balancedSkills;
+          console.log(`[Content Balance] Selected from least-covered category (count=${leastCoveredCount}), ${balancedSkills.length} options`);
+        }
+      }
+    }
 
     // BUGFIX: Declare selectedSkillId before use
     let selectedSkillId;
