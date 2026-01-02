@@ -272,6 +272,14 @@ function spawnPlatformSet() {
     const lanes = ['left', 'center', 'right'];
     const container = document.getElementById('platformsContainer');
 
+    if (!container) {
+        console.error('[Number Run] ERROR: platformsContainer element not found in DOM!');
+        endGame('Game error - missing container');
+        return;
+    }
+
+    console.log('[Number Run] Creating 3 platforms with answers:', answers);
+
     lanes.forEach((lane, index) => {
         const platform = document.createElement('div');
         platform.className = 'platform';
@@ -292,6 +300,7 @@ function spawnPlatformSet() {
         answerDisplay.textContent = answers[index];
         platform.appendChild(answerDisplay);
 
+        console.log(`[Number Run] Appending platform: lane=${lane}, answer=${answers[index]}, left=${lanePositions[lane]}, duration=${duration}s`);
         container.appendChild(platform);
 
         // Check collision when platform reaches character position
