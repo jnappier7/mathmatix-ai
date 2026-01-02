@@ -273,7 +273,7 @@ router.get('/progress', isAuthenticated, async (req, res) => {
 // POST /api/fact-fluency/placement - Complete placement test
 router.post('/placement', isAuthenticated, async (req, res) => {
   try {
-    const { results } = req.body; // Array of {operation, rate, accuracy}
+    const { results } = req.body; // Array of {operation, rate, accuracy, medianResponseTime, avgResponseTime}
     const user = await User.findById(req.user._id);
 
     if (!user) {
@@ -310,21 +310,30 @@ router.post('/placement', isAuthenticated, async (req, res) => {
 
     // For each operation in placement results, mark families as mastered based on performance
     results.forEach(result => {
-      const { operation, rate, accuracy } = result;
+      const { operation, rate, accuracy, medianResponseTime } = result;
       const families = FACT_FAMILIES[operation];
 
       // Determine how many families to mark as mastered based on placement performance
-      // MORNINGSIDE STANDARDS: Require BOTH accuracy AND speed for mastery
+      // MORNINGSIDE STANDARDS: Require accuracy + fluency (measured by BOTH rate AND response time)
       let startingFamilyIndex = 0;
 
-      if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate) {
-        // Excellent performance - skip first 60% of families
+      // Calculate fluency from median response time (< 2000ms = fluent, < 3000ms = developing)
+      const isFluent = medianResponseTime && medianResponseTime < 2000;  // < 2 seconds per problem
+      const isDeveloping = medianResponseTime && medianResponseTime < 3000;  // < 3 seconds per problem
+
+      console.log(`[Placement] ${operation}: ${accuracy}% accuracy, ${rate}/min rate, median: ${medianResponseTime}ms ${isFluent ? '(FLUENT)' : isDeveloping ? '(DEVELOPING)' : '(SLOW)'}`);
+
+      if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate && isFluent) {
+        // Excellent: High accuracy + rate + fast individual responses = TRUE mastery
         startingFamilyIndex = Math.floor(families.length * 0.6);
-      } else if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate * 0.75) {
-        // Good performance - skip first 40% of families
+      } else if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate * 0.75 && isFluent) {
+        // Good: High accuracy + decent rate + fast responses
         startingFamilyIndex = Math.floor(families.length * 0.4);
+      } else if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate * 0.75 && isDeveloping) {
+        // Fair: High accuracy + decent rate + moderate speed
+        startingFamilyIndex = Math.floor(families.length * 0.3);
       } else if (accuracy >= 85 && rate >= targetRate * 0.5) {
-        // Fair performance - skip first 20% of families
+        // Basic: Decent accuracy + rate (regardless of response time)
         startingFamilyIndex = Math.floor(families.length * 0.2);
       }
       // Otherwise start at 0 (first family)
@@ -353,10 +362,16 @@ router.post('/placement', isAuthenticated, async (req, res) => {
     const lowestOpFamilies = FACT_FAMILIES[lowestPerformance.operation];
     let recommendedFamilyIndex = 0;
 
-    if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate) {
+    // Use same fluency criteria as above
+    const lowestIsFluent = lowestPerformance.medianResponseTime && lowestPerformance.medianResponseTime < 2000;
+    const lowestIsDeveloping = lowestPerformance.medianResponseTime && lowestPerformance.medianResponseTime < 3000;
+
+    if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate && lowestIsFluent) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.6);
-    } else if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate * 0.75) {
+    } else if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate * 0.75 && lowestIsFluent) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.4);
+    } else if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate * 0.75 && lowestIsDeveloping) {
+      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.3);
     } else if (lowestPerformance.accuracy >= 85 && lowestPerformance.rate >= targetRate * 0.5) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.2);
     }
@@ -414,7 +429,7 @@ router.post('/generate-problems', async (req, res) => {
 // POST /api/fact-fluency/record-session - Record practice session results
 router.post('/record-session', isAuthenticated, async (req, res) => {
   try {
-    const { operation, familyName, displayName, durationSeconds, problemsAttempted, problemsCorrect } = req.body;
+    const { operation, familyName, displayName, durationSeconds, problemsAttempted, problemsCorrect, medianResponseTime, avgResponseTime } = req.body;
     const user = await User.findById(req.user._id);
 
     if (!user) {
@@ -448,8 +463,11 @@ router.post('/record-session', isAuthenticated, async (req, res) => {
       else if (grade >= 6) targetRate = MASTERY_CRITERIA.minRateMiddle;
     }
 
-    // Check if mastery achieved this session
-    const masteryAchieved = accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate;
+    // Check if mastery achieved this session (accuracy + rate + fluency)
+    const isFluent = medianResponseTime && medianResponseTime < 2000;  // < 2 seconds per problem
+    const masteryAchieved = accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate && isFluent;
+
+    console.log(`[Practice] ${operation}-${familyName}: ${accuracy}%, ${rate}/min, median: ${medianResponseTime}ms ${isFluent ? '(FLUENT)' : '(NEEDS PRACTICE)'} → Mastery: ${masteryAchieved}`);
 
     // Get or create fact family record
     const familyKey = `${operation}-${familyName}`;
@@ -483,7 +501,9 @@ router.post('/record-session', isAuthenticated, async (req, res) => {
       problemsCorrect,
       rate,
       accuracy,
-      masteryAchieved
+      masteryAchieved,
+      medianResponseTime,  // Individual response time (ms)
+      avgResponseTime      // Average response time (ms)
     });
     if (familyData.sessions.length > 10) {
       familyData.sessions = familyData.sessions.slice(-10);

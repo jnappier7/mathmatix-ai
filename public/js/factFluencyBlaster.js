@@ -13,7 +13,9 @@ const gameState = {
         attempted: 0,
         correct: 0,
         results: [],
-        timer: null
+        timer: null,
+        problemStartTime: null,  // Track when current problem was shown
+        responseTimes: []         // Track individual response times (ms)
     },
     practice: {
         operation: null,
@@ -27,7 +29,9 @@ const gameState = {
         streak: 0,
         maxStreak: 0,
         responses: [],
-        timer: null
+        timer: null,
+        problemStartTime: null,  // Track when current problem was shown
+        responseTimes: []         // Track individual response times (ms)
     },
     progress: null,
     families: null
@@ -403,6 +407,9 @@ function displayPlacementProblem() {
     if (problem) {
         document.getElementById('placementProblem').textContent = problem.problem;
         document.getElementById('placementAnswer').value = '';
+
+        // Track when problem is displayed for response time measurement
+        gameState.placement.problemStartTime = Date.now();
     }
 }
 
@@ -412,10 +419,21 @@ function submitPlacementAnswer() {
 
     if (isNaN(answer)) return;
 
-    gameState.placement.attempted++;
+    // Calculate response time (milliseconds)
+    const responseTime = gameState.placement.problemStartTime
+        ? Date.now() - gameState.placement.problemStartTime
+        : null;
 
-    if (answer === problem.answer) {
+    gameState.placement.attempted++;
+    const isCorrect = answer === problem.answer;
+
+    if (isCorrect) {
         gameState.placement.correct++;
+
+        // Only track response times for CORRECT answers (fluency measure)
+        if (responseTime !== null) {
+            gameState.placement.responseTimes.push(responseTime);
+        }
     }
 
     // Update UI
@@ -463,13 +481,29 @@ function finishOperationPlacement() {
         : 0;
     const rate = Math.round((gameState.placement.correct / 60) * 60); // Digits per minute
 
+    // Calculate median response time (more robust than average)
+    const medianResponseTime = gameState.placement.responseTimes.length > 0
+        ? calculateMedian(gameState.placement.responseTimes)
+        : null;
+
+    // Calculate average response time
+    const avgResponseTime = gameState.placement.responseTimes.length > 0
+        ? Math.round(gameState.placement.responseTimes.reduce((sum, t) => sum + t, 0) / gameState.placement.responseTimes.length)
+        : null;
+
     gameState.placement.results.push({
         operation,
         attempted: gameState.placement.attempted,
         correct: gameState.placement.correct,
         accuracy,
-        rate
+        rate,
+        responseTimes: [...gameState.placement.responseTimes],  // Copy array
+        medianResponseTime,  // Milliseconds
+        avgResponseTime      // Milliseconds
     });
+
+    // Reset for next operation
+    gameState.placement.responseTimes = [];
 
     // Move to next operation or finish
     gameState.placement.currentOperation++;
@@ -480,6 +514,16 @@ function finishOperationPlacement() {
         // All operations complete
         finishPlacement();
     }
+}
+
+// Helper: Calculate median of array
+function calculateMedian(arr) {
+    if (arr.length === 0) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0
+        ? Math.round((sorted[mid - 1] + sorted[mid]) / 2)
+        : sorted[mid];
 }
 
 function showBreakScreen(completedOperation, accuracy) {
@@ -638,6 +682,9 @@ function displayShooterProblem() {
     const problem = gameState.practice.problems[gameState.practice.currentProblemIndex];
     if (!problem) return;
 
+    // Track when problem is displayed for response time measurement
+    gameState.practice.problemStartTime = Date.now();
+
     // Update problem prompt
     document.getElementById('gameProblem').textContent = problem.problem + ' = ?';
 
@@ -706,6 +753,11 @@ function handleAsteroidClick(selectedAnswer, asteroidElement, correctAnswer) {
     const correct = selectedAnswer === correctAnswer;
     const problem = gameState.practice.problems[gameState.practice.currentProblemIndex];
 
+    // Calculate individual response time for this problem
+    const responseTime = gameState.practice.problemStartTime
+        ? Date.now() - gameState.practice.problemStartTime
+        : null;
+
     gameState.practice.attempted++;
 
     if (correct) {
@@ -713,6 +765,11 @@ function handleAsteroidClick(selectedAnswer, asteroidElement, correctAnswer) {
         gameState.practice.streak++;
         if (gameState.practice.streak > gameState.practice.maxStreak) {
             gameState.practice.maxStreak = gameState.practice.streak;
+        }
+
+        // Track response time for CORRECT answers only (fluency measure)
+        if (responseTime !== null) {
+            gameState.practice.responseTimes.push(responseTime);
         }
 
         // Explosion effect
@@ -741,13 +798,13 @@ function handleAsteroidClick(selectedAnswer, asteroidElement, correctAnswer) {
         streakEl.classList.remove('high-streak');
     }
 
-    // Record response
+    // Record response (keep for backwards compatibility)
     gameState.practice.responses.push({
         problem: problem.problem,
         answer: correctAnswer,
         userAnswer: selectedAnswer,
         correct,
-        responseTime: Date.now() - gameState.practice.startTime
+        responseTime: responseTime || (Date.now() - gameState.practice.startTime)
     });
 
     // Update stats
@@ -934,6 +991,14 @@ async function endPracticeSession() {
         ? Math.round((gameState.practice.correct / durationSeconds) * 60)
         : 0;
 
+    // Calculate response time metrics
+    const medianResponseTime = gameState.practice.responseTimes.length > 0
+        ? calculateMedian(gameState.practice.responseTimes)
+        : null;
+    const avgResponseTime = gameState.practice.responseTimes.length > 0
+        ? Math.round(gameState.practice.responseTimes.reduce((sum, t) => sum + t, 0) / gameState.practice.responseTimes.length)
+        : null;
+
     // Save session to backend
     const response = await fetch('/api/fact-fluency/record-session', {
         method: 'POST',
@@ -944,7 +1009,10 @@ async function endPracticeSession() {
             displayName: gameState.practice.displayName,
             durationSeconds,
             problemsAttempted: gameState.practice.attempted,
-            problemsCorrect: gameState.practice.correct
+            problemsCorrect: gameState.practice.correct,
+            responseTimes: gameState.practice.responseTimes,  // Individual response times
+            medianResponseTime,  // Milliseconds
+            avgResponseTime      // Milliseconds
         })
     });
 
