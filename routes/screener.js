@@ -552,7 +552,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
         skillId: problem.skillId,
         answerType: problem.answerType,
         options: problem.options,
-        correctOption: problem.correctOption,
+        // SECURITY: Never send correctOption to client - validates server-side only
         questionNumber: session.questionCount + 1,
         progress: {
           current: session.questionCount + 1,
