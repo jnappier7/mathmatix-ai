@@ -9,10 +9,11 @@
 
 const mongoose = require('mongoose');
 const Problem = require('../models/problem');
+require('dotenv').config();
 
 async function auditAnswerFormats() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mathmatix');
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/mathmatix_dev');
     console.log('Connected to MongoDB');
 
     // Find all problems
