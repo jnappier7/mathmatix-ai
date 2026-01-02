@@ -340,11 +340,9 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     const problemCountMap = new Map(problemCounts.map(p => [p._id, p.count]));
 
     for (const skill of filteredSkills) {
-      // BUGFIX: Skip skills with no actual problems (even if they have templates)
+      // Note: Skills can have templates OR database problems (or both)
+      // We allow template-only skills since generateProblem() can create on-demand
       const actualProblemCount = problemCountMap.get(skill.skillId) || 0;
-      if (actualProblemCount === 0) {
-        continue; // Skip this skill - can't select it with no problems
-      }
 
       // Use IRT difficulty if available, otherwise category estimate
       const estimatedDifficulty = skill.irtDifficulty || categoryDifficultyMap[skill.category] || 0;
@@ -451,6 +449,9 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     // Sort by score (lower is better) and pick best match
     candidateSkills.sort((a, b) => a.score - b.score);
 
+    // BUGFIX: Declare selectedSkillId before use
+    let selectedSkillId;
+
     if (candidateSkills.length === 0) {
       console.error('[Screener] No candidate skills found! Using intelligent fallback.');
 
@@ -552,7 +553,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
         skillId: problem.skillId,
         answerType: problem.answerType,
         options: problem.options,
-        correctOption: problem.correctOption,
+        // SECURITY: Never send correctOption to client - validates server-side only
         questionNumber: session.questionCount + 1,
         progress: {
           current: session.questionCount + 1,

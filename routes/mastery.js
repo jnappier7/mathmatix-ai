@@ -999,9 +999,12 @@ router.get('/next-phase-problem', isAuthenticated, async (req, res) => {
     const activeBadge = user.masteryProgress.activeBadge;
     const problem = await generatePhaseProblem(activeBadge.currentPhase, activeBadge, user);
 
+    // SECURITY: Strip correctOption and answer before sending to client
+    const { correctOption, answer, ...clientProblem } = problem;
+
     res.json({
       success: true,
-      problem,
+      problem: clientProblem,
       phase: activeBadge.currentPhase,
       phaseGuidance: problem.phaseGuidance
     });
