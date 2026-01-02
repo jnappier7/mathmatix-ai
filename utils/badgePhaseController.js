@@ -16,6 +16,7 @@
 const { generateProblem } = require('./problemGenerator');
 const { reason } = require('./llmGateway');
 const Skill = require('../models/skill');
+const Problem = require('../models/problem');
 
 // ============================================================================
 // PHASE MANAGEMENT
@@ -332,7 +333,37 @@ async function generatePhaseProblem(phase, badge, user) {
             break;
     }
 
-    const problem = generateProblem(skill.skillId, problemOptions);
+    // Try to fetch problem from database first
+    let problem = null;
+
+    try {
+        // Find problems matching the skill and difficulty range
+        const targetDifficulty = problemOptions.difficulty;
+        const difficultyTolerance = 0.5;
+
+        const dbProblems = await Problem.find({
+            skillId: skill.skillId,
+            'irtParameters.difficulty': {
+                $gte: targetDifficulty - difficultyTolerance,
+                $lte: targetDifficulty + difficultyTolerance
+            },
+            isActive: true
+        }).limit(10).lean();
+
+        if (dbProblems && dbProblems.length > 0) {
+            // Randomly select one of the matching problems
+            problem = dbProblems[Math.floor(Math.random() * dbProblems.length)];
+            console.log(`[Phase Problem] Using DB problem for ${skill.skillId} at difficulty ${targetDifficulty}`);
+        }
+    } catch (error) {
+        console.warn(`[Phase Problem] Error fetching from DB for ${skill.skillId}:`, error.message);
+    }
+
+    // Fallback to template generation if no DB problems found
+    if (!problem) {
+        console.log(`[Phase Problem] No DB problems found, using template for ${skill.skillId}`);
+        problem = generateProblem(skill.skillId, problemOptions);
+    }
 
     return {
         ...problem,
