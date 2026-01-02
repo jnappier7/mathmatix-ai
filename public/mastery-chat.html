@@ -931,25 +931,41 @@
                 document.getElementById('problem-answer-input').placeholder = 'Type your answer...';
             }
 
-            // Update problem counter
+            // Update problem counter (only show in you-do/mastery-check phases)
             const badge = currentUser.masteryProgress.activeBadge;
-            const completed = (badge.problemsCompleted || 0) + 1;
-            document.getElementById('problem-counter').textContent = `Problem ${completed} of ${badge.requiredProblems}`;
+            const problemCounter = document.getElementById('problem-counter');
+
+            if (currentPhase === 'you-do' || currentPhase === 'mastery-check') {
+                const completed = (badge.problemsCompleted || 0) + 1;
+                problemCounter.textContent = `Problem ${completed} of ${badge.requiredProblems}`;
+                problemCounter.style.display = 'inline-block';
+            } else {
+                problemCounter.style.display = 'none';
+            }
         }
 
-        // Update phase display
+        // Update phase display (student-facing)
         function updatePhaseDisplay(phase) {
             const phaseBadge = document.getElementById('current-phase');
+            const progressContainer = document.querySelector('.progress-bar-container');
+
             const phaseNames = {
-                'launch': 'Launch',
-                'i-do': 'I Do (Watch)',
-                'we-do': 'We Do (Together)',
-                'you-do': 'You Do (Practice)',
-                'mastery-check': 'Mastery Check'
+                'launch': '📚 Learning the concept',
+                'i-do': '📚 Learning the concept',
+                'we-do': '💪 Practicing together',
+                'you-do': '⭐ Prove your mastery',
+                'mastery-check': '⭐ Prove your mastery'
             };
 
             phaseBadge.textContent = phaseNames[phase] || phase;
             phaseBadge.className = 'phase-badge ' + phase;
+
+            // Only show progress bar during "you-do" and "mastery-check" phases
+            if (phase === 'you-do' || phase === 'mastery-check') {
+                progressContainer.style.display = 'block';
+            } else {
+                progressContainer.style.display = 'none';
+            }
         }
 
         // Submit answer
