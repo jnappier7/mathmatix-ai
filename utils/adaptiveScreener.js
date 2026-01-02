@@ -17,7 +17,7 @@
  * @module adaptiveScreener
  */
 
-const { estimateAbility, hasConverged, hasPlateaued, thetaToPercentile, calculateInformation } = require('./irt');
+const { estimateAbility, estimateAbilityMAP, hasConverged, hasPlateaued, thetaToPercentile, calculateInformation } = require('./irt');
 
 // ===========================================================================
 // DAMPENING CONVERGENCE ("THE WAVE")
@@ -97,6 +97,10 @@ function initializeSession(options = {}) {
     standardError: Infinity,
     confidence: 0,  // 0 to 1
     cumulativeInformation: 0,  // Track total information gathered
+
+    // Bayesian prior (for MAP estimation in early questions)
+    priorMean: startingTheta,  // Grade-based starting point
+    priorSD: 1.25,             // Wide prior allows data to dominate quickly
 
     // Response history
     responses: [],
@@ -179,7 +183,25 @@ function processResponse(session, response) {
   console.log(`[DEBUG] Estimating ability with ${responsesForEstimation.length} responses:`,
     responsesForEstimation.map(r => `d=${r.difficulty}, a=${r.discrimination}, c=${r.correct}`).join('; '));
 
-  const abilityEstimate = estimateAbility(responsesForEstimation);
+  // HYBRID APPROACH: Use MAP (Bayesian) early, transition to MLE once sufficient data
+  // MAP stabilizes early estimates with grade-based prior, MLE maximizes precision later
+  let abilityEstimate;
+
+  if (session.questionCount <= 10) {
+    // Early questions: Use MAP with grade-based prior
+    abilityEstimate = estimateAbilityMAP(responsesForEstimation, {
+      priorMean: session.priorMean,
+      priorSD: session.priorSD,
+      initialTheta: session.theta
+    });
+    console.log(`[Screener] Using MAP estimation (Q${session.questionCount}) with prior μ=${session.priorMean.toFixed(2)}`);
+  } else {
+    // Later questions: Pure MLE (data-driven)
+    abilityEstimate = estimateAbility(responsesForEstimation, {
+      initialTheta: session.theta
+    });
+    console.log(`[Screener] Using MLE estimation (Q${session.questionCount})`);
+  }
 
   const previousTheta = session.theta;
   session.theta = abilityEstimate.theta;

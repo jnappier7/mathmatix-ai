@@ -156,6 +156,102 @@ function estimateAbility(responses, options = {}) {
 }
 
 /**
+ * Estimate ability using Maximum A Posteriori (MAP) estimation
+ *
+ * MAP = MLE + Bayesian Prior
+ * Uses Newton-Raphson with a normal prior N(μ, σ²) to stabilize early estimates
+ *
+ * Best for: First 5-10 questions when SE is high
+ * Transitions to: MLE once sufficient information gathered
+ *
+ * @param {Array} responses - Array of {difficulty, discrimination, correct}
+ * @param {Object} options - { priorMean, priorSD, initialTheta, maxIterations, tolerance }
+ * @returns {Object} { theta, standardError, converged, iterations }
+ */
+function estimateAbilityMAP(responses, options = {}) {
+  const {
+    priorMean = 0,           // Center of prior distribution (typically grade-based)
+    priorSD = 1.25,          // Width of prior (1.25 allows ±2.5 range with 95% confidence)
+    initialTheta = priorMean,
+    maxIterations = 25,
+    tolerance = 0.001
+  } = options;
+
+  // Edge case: no responses yet, return prior
+  if (!responses || responses.length === 0) {
+    return {
+      theta: priorMean,
+      standardError: priorSD,
+      converged: false,
+      iterations: 0
+    };
+  }
+
+  let theta = initialTheta;
+  const priorVariance = priorSD ** 2;
+  const priorPrecision = 1 / priorVariance;  // Information from prior
+  let converged = false;
+  let iterations = 0;
+
+  for (let i = 0; i < maxIterations; i++) {
+    iterations++;
+
+    // Calculate first and second derivatives (with prior terms)
+    let firstDerivative = 0;
+    let secondDerivative = 0;
+
+    // Likelihood terms (same as MLE)
+    for (const response of responses) {
+      const { difficulty, discrimination, correct } = response;
+      const p = probabilityCorrect(theta, difficulty, discrimination);
+      const q = 1 - p;
+
+      firstDerivative += discrimination * (correct - p);
+      secondDerivative -= discrimination * discrimination * p * q;
+    }
+
+    // Add prior terms (pulls estimate toward priorMean)
+    firstDerivative += -(theta - priorMean) / priorVariance;  // Prior gradient
+    secondDerivative += -priorPrecision;                       // Prior curvature
+
+    // Newton-Raphson update
+    if (Math.abs(secondDerivative) < 1e-10) {
+      break;
+    }
+
+    const delta = firstDerivative / secondDerivative;
+    theta -= delta;
+
+    // Check convergence
+    if (Math.abs(delta) < tolerance) {
+      converged = true;
+      break;
+    }
+
+    // Prevent theta from exploding
+    theta = Math.max(-4, Math.min(4, theta));
+  }
+
+  // Calculate posterior standard error (combines data information + prior information)
+  const dataInformation = calculateInformation(theta, responses);
+  const posteriorPrecision = dataInformation + priorPrecision;
+  const standardError = posteriorPrecision > 0 ? 1 / Math.sqrt(posteriorPrecision) : Infinity;
+
+  // Final NaN check
+  if (isNaN(theta)) {
+    console.warn('[IRT MAP] Theta calculation resulted in NaN, resetting to prior mean');
+    theta = priorMean;
+  }
+
+  return {
+    theta: Math.round(theta * 100) / 100,
+    standardError: Math.round(standardError * 100) / 100,
+    converged,
+    iterations
+  };
+}
+
+/**
  * Calculate Fisher Information at a given theta
  *
  * I(θ) = Σ α² * P(θ) * (1 - P(θ))
@@ -346,6 +442,7 @@ module.exports = {
   probabilityCorrect,
   logLikelihood,
   estimateAbility,
+  estimateAbilityMAP,  // Bayesian estimation for early questions
   calculateInformation,
 
   // Adaptive selection
