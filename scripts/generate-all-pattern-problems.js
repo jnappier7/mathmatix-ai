@@ -9419,7 +9419,7 @@ function generateClassifyShapes(difficulty) {
 
 function generateComparingNumbers(difficulty) {
   const a = randomInt(1, 20);
-  const b = randomInt(1, 20);
+  let b = randomInt(1, 20);
   while (b === a) b = randomInt(1, 20);
 
   const content = `Which number is greater: ${a} or ${b}?`;
@@ -9818,7 +9818,7 @@ function generateExpandedForm(difficulty) {
 
 function generateGreaterLessThan(difficulty) {
   const a = randomInt(1, 20);
-  const b = randomInt(1, 20);
+  let b = randomInt(1, 20);
   while (b === a) b = randomInt(1, 20);
 
   const symbol = a > b ? '>' : '<';
@@ -10430,6 +10430,1514 @@ function generateSequencePatterns(difficulty) {
   };
 }
 
+// BATCH 15-23: Data, Algebra, Geometry, Advanced Topics
+
+function generateDataCollection(difficulty) {
+  const content = `What is the best way to collect data about favorite sports?`;
+  const answer = 'survey';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('guessing') },
+    { label: 'C', text: String('assuming') },
+    { label: 'D', text: String('ignoring') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_datacoll_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'data-collection',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty, discrimination: 0.9, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['data', 'statistics'] },
+    isActive: true
+  };
+}
+
+function generateDataDisplays(difficulty) {
+  const content = `Which display is best for showing how data changes over time?`;
+  const answer = 'line graph';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('pie chart') },
+    { label: 'C', text: String('tally chart') },
+    { label: 'D', text: String('frequency table') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_datadisplay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'data-displays',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.2, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['data', 'graphs'] },
+    isActive: true
+  };
+}
+
+function generateFrequencyTables(difficulty) {
+  const content = `In a frequency table, if 'Red: 5' appears, what does 5 represent?`;
+  const answer = 'how many times red appeared';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('the color value') },
+    { label: 'C', text: String('the percentage') },
+    { label: 'D', text: String('the average') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_freqtable_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'frequency-tables',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['data', 'frequency'] },
+    isActive: true
+  };
+}
+
+function generateHistograms(difficulty) {
+  const content = `In a histogram, what do the heights of bars represent?`;
+  const answer = 'frequency of data in each interval';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('the mean') },
+    { label: 'C', text: String('individual data points') },
+    { label: 'D', text: String('percentages') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_histogram_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'histograms',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['data', 'histogram'] },
+    isActive: true
+  };
+}
+
+function generateIQR(difficulty) {
+  const data = [10, 12, 15, 18, 20];
+  const q1 = 12, q3 = 18, iqr = q3 - q1;
+  const content = `For data {10, 12, 15, 18, 20}, Q1=12 and Q3=18. What is the IQR?`;
+  const answer = iqr;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(q1) },
+    { label: 'C', text: String(q3) },
+    { label: 'D', text: String(10) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_iqr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'iqr',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['statistics', 'iqr', 'quartiles'] },
+    isActive: true
+  };
+}
+
+function generateMeasuresOfCenter(difficulty) {
+  const content = `Which measure of center is most affected by outliers?`;
+  const answer = 'mean';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('median') },
+    { label: 'C', text: String('mode') },
+    { label: 'D', text: String('range') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_measofcenter_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'measures-of-center',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['statistics', 'center'] },
+    isActive: true
+  };
+}
+
+function generateTallyCharts(difficulty) {
+  const content = `In a tally chart, |||| represents how many?`;
+  const answer = 5;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(4) },
+    { label: 'C', text: String(6) },
+    { label: 'D', text: String(10) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_tally_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'tally-charts',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty - 0.5, discrimination: 0.8, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 1, metadata: { estimatedTime: 30, source: 'template', tags: ['data', 'tally'] },
+    isActive: true
+  };
+}
+
+function generateLinearWordProblems(difficulty) {
+  const rate = randomInt(2, 5);
+  const time = randomInt(3, 8);
+  const distance = rate * time;
+  const content = `A car travels ${rate} miles per hour. How far does it go in ${time} hours?`;
+  const answer = distance;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(rate + time) },
+    { label: 'C', text: String(rate) },
+    { label: 'D', text: String(distance + rate) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_linword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'linear-word-problems',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['linear', 'word-problems'] },
+    isActive: true
+  };
+}
+
+function generateRateOfChangeProblems(difficulty) {
+  const content = `If y = 3x + 2, what is the rate of change?`;
+  const answer = 3;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(2) },
+    { label: 'C', text: String(5) },
+    { label: 'D', text: String(1) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_ratechange_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'rate-of-change-problems',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['rate', 'slope'] },
+    isActive: true
+  };
+}
+
+function generateRateProblems(difficulty) {
+  const miles = randomInt(50, 200);
+  const hours = randomInt(2, 5);
+  const rate = miles / hours;
+  const content = `A train travels ${miles} miles in ${hours} hours. What is the rate in miles per hour?`;
+  const answer = rate;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(miles) },
+    { label: 'C', text: String(hours) },
+    { label: 'D', text: String(miles + hours) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_rate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'rate-problems',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['rate', 'division'] },
+    isActive: true
+  };
+}
+
+function generateDistributiveProperty(difficulty) {
+  const a = randomInt(2, 5);
+  const b = randomInt(2, 8);
+  const c = randomInt(2, 8);
+  const content = `Expand ${a}(${b} + ${c})`;
+  const answer = `${a * b} + ${a * c}`;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(`${a * b} + ${c}`) },
+    { label: 'C', text: String(`${a} + ${b * c}`) },
+    { label: 'D', text: String(`${a + b + c}`) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_distrib_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'distributive-property',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['algebra', 'distributive'] },
+    isActive: true
+  };
+}
+
+function generateExpandingExpressions(difficulty) {
+  const a = randomInt(2, 4);
+  const b = randomInt(2, 6);
+  const content = `Expand ${a}(x + ${b})`;
+  const answer = `${a}x + ${a * b}`;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(`${a}x + ${b}`) },
+    { label: 'C', text: String(`x + ${a * b}`) },
+    { label: 'D', text: String(`${a + b}x`) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_expand_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'expanding-expressions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['algebra', 'expanding'] },
+    isActive: true
+  };
+}
+
+function generateGraphingInequalities(difficulty) {
+  const content = `For x < 5, which point is NOT a solution?`;
+  const answer = 6;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(4) },
+    { label: 'C', text: String(3) },
+    { label: 'D', text: String(2) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_graphineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'graphing-inequalities',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['inequalities', 'graphing'] },
+    isActive: true
+  };
+}
+
+function generateInequalityNotation(difficulty) {
+  const content = `How do you write "x is at least 10" in inequality notation?`;
+  const answer = 'x ≥ 10';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('x > 10') },
+    { label: 'C', text: String('x ≤ 10') },
+    { label: 'D', text: String('x < 10') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_ineqnot_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'inequality-notation',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['inequalities', 'notation'] },
+    isActive: true
+  };
+}
+
+function generateMultiStepInequalities(difficulty) {
+  const content = `Solve: 2x + 3 < 11`;
+  const answer = 'x < 4';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('x > 4') },
+    { label: 'C', text: String('x < 7') },
+    { label: 'D', text: String('x > 7') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_multistepineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multi-step-inequalities',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['inequalities', 'multi-step'] },
+    isActive: true
+  };
+}
+
+function generateSlopeConcepts(difficulty) {
+  const content = `What does slope measure in a line?`;
+  const answer = 'steepness and direction';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('y-intercept') },
+    { label: 'C', text: String('x-intercept') },
+    { label: 'D', text: String('length') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_slopeconc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'slope-concepts',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.2, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['slope', 'concepts'] },
+    isActive: true
+  };
+}
+
+function generateSlopeFromTwoPoints(difficulty) {
+  const x1 = randomInt(1, 5), y1 = randomInt(2, 8);
+  const x2 = randomInt(6, 10), y2 = y1 + randomInt(3, 8);
+  const slope = (y2 - y1) / (x2 - x1);
+  const content = `Find the slope between (${x1}, ${y1}) and (${x2}, ${y2})`;
+  const answer = slope.toFixed(1);
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String((y2 - y1).toFixed(1)) },
+    { label: 'C', text: String((x2 - x1).toFixed(1)) },
+    { label: 'D', text: String((slope * 2).toFixed(1)) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_slopetwopts_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'slope-from-two-points',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['slope', 'coordinates'] },
+    isActive: true
+  };
+}
+
+function generateSolveProportions(difficulty) {
+  const a = randomInt(2, 5);
+  const b = randomInt(6, 12);
+  const c = randomInt(2, 5);
+  const x = (b * c) / a;
+  const content = `Solve the proportion: ${a}/${b} = ${c}/x`;
+  const answer = x;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(b * c) },
+    { label: 'C', text: String(a * c) },
+    { label: 'D', text: String(a * b) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_proportion_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'solve-proportions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['proportions', 'ratios'] },
+    isActive: true
+  };
+}
+
+function generateSystemsOfInequalities(difficulty) {
+  const content = `Which point satisfies both x > 2 AND y < 5?`;
+  const answer = '(3, 4)';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('(1, 4)') },
+    { label: 'C', text: String('(3, 6)') },
+    { label: 'D', text: String('(1, 6)') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_sysineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'systems-of-inequalities',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['systems', 'inequalities'] },
+    isActive: true
+  };
+}
+
+function generateGraphingSystemsInequalities(difficulty) {
+  const content = `When graphing y ≤ 3, do you shade above or below the line y = 3?`;
+  const answer = 'below';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('above') },
+    { label: 'C', text: String('on the line') },
+    { label: 'D', text: String('nowhere') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_graphsysineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'graphing-systems-inequalities',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['graphing', 'systems', 'inequalities'] },
+    isActive: true
+  };
+}
+
+function generateAreaPerimeterWordProblems(difficulty) {
+  const l = randomInt(5, 12);
+  const w = randomInt(3, 8);
+  const area = l * w;
+  const content = `A rectangle has length ${l} and width ${w}. What is the area?`;
+  const answer = area;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(2 * (l + w)) },
+    { label: 'C', text: String(l + w) },
+    { label: 'D', text: String(l * w * 2) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_areaperim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'area-perimeter-word-problems',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['area', 'perimeter', 'word-problems'] },
+    isActive: true
+  };
+}
+
+function generateCongruence(difficulty) {
+  const content = `Two triangles are congruent if they have:`;
+  const answer = 'same shape and same size';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('same shape only') },
+    { label: 'C', text: String('same size only') },
+    { label: 'D', text: String('different shapes') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_congruence_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'congruence',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.2, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['geometry', 'congruence'] },
+    isActive: true
+  };
+}
+
+function generateDilations(difficulty) {
+  const scale = 2;
+  const orig = 3;
+  const result = orig * scale;
+  const content = `A segment of length ${orig} is dilated by scale factor ${scale}. What is the new length?`;
+  const answer = result;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(orig) },
+    { label: 'C', text: String(scale) },
+    { label: 'D', text: String(orig + scale) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_dilation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'dilations',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['transformations', 'dilations'] },
+    isActive: true
+  };
+}
+
+function generateDistanceFormula(difficulty) {
+  const x1 = 0, y1 = 0, x2 = 3, y2 = 4;
+  const dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+  const content = `Find the distance between (${x1}, ${y1}) and (${x2}, ${y2})`;
+  const answer = dist;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(7) },
+    { label: 'C', text: String(3) },
+    { label: 'D', text: String(4) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_distance_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'distance-formula',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['distance', 'coordinates'] },
+    isActive: true
+  };
+}
+
+function generateLineSymmetry(difficulty) {
+  const content = `How many lines of symmetry does a square have?`;
+  const answer = 4;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(2) },
+    { label: 'C', text: String(8) },
+    { label: 'D', text: String(1) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_linesym_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'line-symmetry',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.2, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['geometry', 'symmetry'] },
+    isActive: true
+  };
+}
+
+function generateMidpointFormula(difficulty) {
+  const x1 = 2, y1 = 4, x2 = 8, y2 = 10;
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  const content = `Find the midpoint between (${x1}, ${y1}) and (${x2}, ${y2})`;
+  const answer = `(${mx}, ${my})`;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(`(${x2}, ${y2})`) },
+    { label: 'C', text: String(`(${x1}, ${y1})`) },
+    { label: 'D', text: String(`(${x2 - x1}, ${y2 - y1})`) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_midpoint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'midpoint-formula',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['midpoint', 'coordinates'] },
+    isActive: true
+  };
+}
+
+function generateReflections(difficulty) {
+  const content = `Reflecting a point across the x-axis changes:`;
+  const answer = 'the sign of y';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('the sign of x') },
+    { label: 'C', text: String('both x and y') },
+    { label: 'D', text: String('neither x nor y') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_reflect_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'reflections',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['transformations', 'reflections'] },
+    isActive: true
+  };
+}
+
+function generateRotations(difficulty) {
+  const content = `Rotating 90° clockwise around the origin takes (2, 3) to:`;
+  const answer = '(3, -2)';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('(-3, 2)') },
+    { label: 'C', text: String('(-2, -3)') },
+    { label: 'D', text: String('(2, -3)') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_rotation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'rotations',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 55, source: 'template', tags: ['transformations', 'rotations'] },
+    isActive: true
+  };
+}
+
+function generateScaleFactor(difficulty) {
+  const orig = 4;
+  const scale = 3;
+  const result = orig * scale;
+  const content = `A side of length ${orig} is scaled by factor ${scale}. What is the new length?`;
+  const answer = result;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(orig) },
+    { label: 'C', text: String(scale) },
+    { label: 'D', text: String(orig + scale) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_scalefactor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'scale-factor',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['scaling', 'proportions'] },
+    isActive: true
+  };
+}
+
+function generateSimilarFigures(difficulty) {
+  const content = `Two figures are similar if they have:`;
+  const answer = 'same shape, different size';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('same shape and size') },
+    { label: 'C', text: String('different shapes') },
+    { label: 'D', text: String('same perimeter') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_similarfig_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'similar-figures',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['geometry', 'similarity'] },
+    isActive: true
+  };
+}
+
+function generatePercentChange(difficulty) {
+  const orig = 50;
+  const newVal = 60;
+  const change = ((newVal - orig) / orig) * 100;
+  const content = `What is the percent change from ${orig} to ${newVal}?`;
+  const answer = `${change}%`;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('10%') },
+    { label: 'C', text: String('50%') },
+    { label: 'D', text: String('60%') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_pctchange_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'percent-change',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['percent', 'change'] },
+    isActive: true
+  };
+}
+
+function generateRatioConcepts(difficulty) {
+  const content = `The ratio 3:5 means:`;
+  const answer = '3 parts to 5 parts';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('3 + 5') },
+    { label: 'C', text: String('3 × 5') },
+    { label: 'D', text: String('3 ÷ 5') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_ratioconc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'ratio-concepts',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.2, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['ratios', 'concepts'] },
+    isActive: true
+  };
+}
+
+function generateSimilarity(difficulty) {
+  const content = `If two triangles are similar, their corresponding angles are:`;
+  const answer = 'equal';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('different') },
+    { label: 'C', text: String('complementary') },
+    { label: 'D', text: String('supplementary') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_similarity_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'similarity',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['geometry', 'similarity'] },
+    isActive: true
+  };
+}
+
+function generateSpatialRelationships(difficulty) {
+  const content = `What is the relationship between perpendicular lines?`;
+  const answer = 'they form 90° angles';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('they are parallel') },
+    { label: 'C', text: String('they never meet') },
+    { label: 'D', text: String('they are curved') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_spatial_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'spatial-relationships',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['geometry', 'spatial'] },
+    isActive: true
+  };
+}
+
+function generateSymmetryShapes(difficulty) {
+  const content = `Which letter has vertical line symmetry?`;
+  const answer = 'A';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('F') },
+    { label: 'C', text: String('J') },
+    { label: 'D', text: String('P') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_symshapes_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'symmetry-shapes',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.1, discrimination: 0.9, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['geometry', 'symmetry'] },
+    isActive: true
+  };
+}
+
+function generateTranslations(difficulty) {
+  const content = `Translating (3, 4) by vector (2, -1) gives:`;
+  const answer = '(5, 3)';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('(1, 5)') },
+    { label: 'C', text: String('(5, 5)') },
+    { label: 'D', text: String('(3, 4)') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_translation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'translations',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['transformations', 'translations'] },
+    isActive: true
+  };
+}
+
+function generateVerticalShift(difficulty) {
+  const content = `f(x) + 3 shifts the graph of f(x):`;
+  const answer = 'up 3 units';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('down 3 units') },
+    { label: 'C', text: String('left 3 units') },
+    { label: 'D', text: String('right 3 units') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_vertshift_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'vertical-shift',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['functions', 'transformations'] },
+    isActive: true
+  };
+}
+
+function generateHorizontalShift(difficulty) {
+  const content = `f(x - 2) shifts the graph of f(x):`;
+  const answer = 'right 2 units';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('left 2 units') },
+    { label: 'C', text: String('up 2 units') },
+    { label: 'D', text: String('down 2 units') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_horizshift_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'horizontal-shift',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['functions', 'transformations'] },
+    isActive: true
+  };
+}
+
+function generateAbsoluteValueInequalities(difficulty) {
+  const content = `Solve: |x| < 5`;
+  const answer = '-5 < x < 5';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('x > 5') },
+    { label: 'C', text: String('x < -5') },
+    { label: 'D', text: String('x = 5') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_absineq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'absolute-value-inequalities',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.8, discrimination: 1.4, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['absolute-value', 'inequalities'] },
+    isActive: true
+  };
+}
+
+function generateAddSubtractRationalExpressions(difficulty) {
+  const content = `Simplify: 1/x + 2/x`;
+  const answer = '3/x';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('3/2x') },
+    { label: 'C', text: String('1/x') },
+    { label: 'D', text: String('2/x') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_addsubrational_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'add-subtract-rational-expressions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['rational', 'expressions'] },
+    isActive: true
+  };
+}
+
+function generateDivideRationalExpressions(difficulty) {
+  const content = `Simplify: (x/2) ÷ (x/4)`;
+  const answer = '2';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('x²/8') },
+    { label: 'C', text: String('1/2') },
+    { label: 'D', text: String('x/8') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_divrational_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'divide-rational-expressions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.8, discrimination: 1.4, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['rational', 'division'] },
+    isActive: true
+  };
+}
+
+function generateMultiplyRationalExpressions(difficulty) {
+  const content = `Simplify: (2/x) × (x/3)`;
+  const answer = '2/3';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('2x²/3') },
+    { label: 'C', text: String('2/3x') },
+    { label: 'D', text: String('x/3') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_multrational_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multiply-rational-expressions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['rational', 'multiplication'] },
+    isActive: true
+  };
+}
+
+function generateSimplifyRationalExpressions(difficulty) {
+  const content = `Simplify: (2x + 4)/2`;
+  const answer = 'x + 2';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('2x + 2') },
+    { label: 'C', text: String('x + 4') },
+    { label: 'D', text: String('2x + 4') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_simprational_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'simplify-rational-expressions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['rational', 'simplify'] },
+    isActive: true
+  };
+}
+
+function generateExponentialDecay(difficulty) {
+  const content = `Which function represents exponential decay?`;
+  const answer = 'y = 100(0.5)^x';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('y = 100(2)^x') },
+    { label: 'C', text: String('y = 100x') },
+    { label: 'D', text: String('y = 100 + x') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_expdecay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'exponential-decay',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['exponential', 'decay'] },
+    isActive: true
+  };
+}
+
+function generateExponentialGrowth(difficulty) {
+  const content = `Which function represents exponential growth?`;
+  const answer = 'y = 50(1.2)^x';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('y = 50(0.8)^x') },
+    { label: 'C', text: String('y = 50x') },
+    { label: 'D', text: String('y = 50 - x') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_expgrowth_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'exponential-growth',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['exponential', 'growth'] },
+    isActive: true
+  };
+}
+
+function generateExponentialPatterns(difficulty) {
+  const content = `What is the next term in the exponential pattern: 2, 6, 18, 54, ___?`;
+  const answer = 162;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(108) },
+    { label: 'C', text: String(72) },
+    { label: 'D', text: String(60) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_exppattern_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'exponential-patterns',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['exponential', 'patterns'] },
+    isActive: true
+  };
+}
+
+function generateFactoringDifferenceSquares(difficulty) {
+  const content = `Factor: x² - 9`;
+  const answer = '(x + 3)(x - 3)';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('(x - 3)²') },
+    { label: 'C', text: String('(x + 9)(x - 1)') },
+    { label: 'D', text: String('x² - 9') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_diffsquares_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'factoring-difference-squares',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['factoring', 'algebra'] },
+    isActive: true
+  };
+}
+
+function generateFunctionComposition(difficulty) {
+  const content = `If f(x) = 2x and g(x) = x + 1, what is f(g(3))?`;
+  const answer = 8;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(6) },
+    { label: 'C', text: String(7) },
+    { label: 'D', text: String(4) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_funccomp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'function-composition',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 55, source: 'template', tags: ['functions', 'composition'] },
+    isActive: true
+  };
+}
+
+function generateFunctionFamilies(difficulty) {
+  const content = `Which is the parent function for quadratics?`;
+  const answer = 'y = x²';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('y = x') },
+    { label: 'C', text: String('y = |x|') },
+    { label: 'D', text: String('y = 2^x') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_funcfam_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'function-families',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['functions', 'families'] },
+    isActive: true
+  };
+}
+
+function generateFunctionTransformations(difficulty) {
+  const content = `f(x) = |x - 2| + 3 is the parent function |x| translated:`;
+  const answer = 'right 2, up 3';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('left 2, up 3') },
+    { label: 'C', text: String('right 2, down 3') },
+    { label: 'D', text: String('left 2, down 3') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_functrans_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'function-transformations',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['functions', 'transformations'] },
+    isActive: true
+  };
+}
+
+function generateGraphQuadraticFunctions(difficulty) {
+  const content = `The graph of y = x² - 4 has its vertex at:`;
+  const answer = '(0, -4)';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('(0, 4)') },
+    { label: 'C', text: String('(-4, 0)') },
+    { label: 'D', text: String('(4, 0)') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_graphquad_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'graph-quadratic-functions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['quadratics', 'graphing'] },
+    isActive: true
+  };
+}
+
+function generateLinearProgramming(difficulty) {
+  const content = `In linear programming, the optimal solution occurs at:`;
+  const answer = 'a vertex of the feasible region';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('the center') },
+    { label: 'C', text: String('any point') },
+    { label: 'D', text: String('outside the region') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_linprog_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'linear-programming',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.9, discrimination: 1.4, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['linear-programming', 'optimization'] },
+    isActive: true
+  };
+}
+
+function generateParentFunctions(difficulty) {
+  const content = `What is the parent function for linear equations?`;
+  const answer = 'y = x';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('y = x²') },
+    { label: 'C', text: String('y = |x|') },
+    { label: 'D', text: String('y = 1/x') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_parent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'parent-functions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['functions', 'parent'] },
+    isActive: true
+  };
+}
+
+function generateQuadrants(difficulty) {
+  const content = `Point (-3, 5) is in which quadrant?`;
+  const answer = 'II';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('I') },
+    { label: 'C', text: String('III') },
+    { label: 'D', text: String('IV') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_quadrants_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'quadrants',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.2, discrimination: 0.9, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 1, metadata: { estimatedTime: 35, source: 'template', tags: ['coordinates', 'quadrants'] },
+    isActive: true
+  };
+}
+
+function generateNestedOperations(difficulty) {
+  const content = `Evaluate: 3 × (2 + (5 - 1))`;
+  const answer = 18;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(12) },
+    { label: 'C', text: String(21) },
+    { label: 'D', text: String(15) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_nested_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'nested-operations',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['order-of-operations', 'nested'] },
+    isActive: true
+  };
+}
+
+function generateArithmeticSeries(difficulty) {
+  const content = `Find the sum of the first 5 terms of: 2, 5, 8, 11, 14`;
+  const answer = 40;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(35) },
+    { label: 'C', text: String(45) },
+    { label: 'D', text: String(50) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_arithseries_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'arithmetic-series',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['series', 'arithmetic'] },
+    isActive: true
+  };
+}
+
+function generateCompoundProbability(difficulty) {
+  const content = `Rolling a 6 on a die AND flipping heads has probability:`;
+  const answer = '1/12';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('1/6') },
+    { label: 'C', text: String('1/2') },
+    { label: 'D', text: String('1/3') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_compprob_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'compound-probability',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 55, source: 'template', tags: ['probability', 'compound'] },
+    isActive: true
+  };
+}
+
+function generateConditionalProbability(difficulty) {
+  const content = `P(A|B) represents the probability of A given that:`;
+  const answer = 'B has occurred';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('A has occurred') },
+    { label: 'C', text: String('neither occurred') },
+    { label: 'D', text: String('both occurred') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_condprob_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'conditional-probability',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 55, source: 'template', tags: ['probability', 'conditional'] },
+    isActive: true
+  };
+}
+
+function generateCountingMethods(difficulty) {
+  const content = `How many ways can you arrange 3 books on a shelf?`;
+  const answer = 6;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(3) },
+    { label: 'C', text: String(9) },
+    { label: 'D', text: String(12) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_counting_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'counting-methods',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.5, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['counting', 'permutations'] },
+    isActive: true
+  };
+}
+
+function generateFiniteSeries(difficulty) {
+  const content = `What is Σ(i) from i=1 to 4?`;
+  const answer = 10;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(4) },
+    { label: 'C', text: String(16) },
+    { label: 'D', text: String(6) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_finiteseries_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'finite-series',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['series', 'summation'] },
+    isActive: true
+  };
+}
+
+function generateFundamentalCountingPrinciple(difficulty) {
+  const content = `If you have 3 shirts and 4 pants, how many outfits can you make?`;
+  const answer = 12;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(7) },
+    { label: 'C', text: String(3) },
+    { label: 'D', text: String(4) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_fundcount_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'fundamental-counting-principle',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.1, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 45, source: 'template', tags: ['counting', 'multiplication'] },
+    isActive: true
+  };
+}
+
+function generateGeometricSeries(difficulty) {
+  const content = `Find the sum: 2 + 4 + 8 + 16`;
+  const answer = 30;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(32) },
+    { label: 'C', text: String(28) },
+    { label: 'D', text: String(24) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_geomseries_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'geometric-series',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 55, source: 'template', tags: ['series', 'geometric'] },
+    isActive: true
+  };
+}
+
+function generateProbabilityFractions(difficulty) {
+  const content = `What is the probability of rolling a 3 on a standard die?`;
+  const answer = '1/6';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('1/3') },
+    { label: 'C', text: String('1/2') },
+    { label: 'D', text: String('3/6') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_probfrac_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'probability-fractions',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.3, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['probability', 'fractions'] },
+    isActive: true
+  };
+}
+
+function generateSeriesFormulas(difficulty) {
+  const content = `The sum of the first n integers is given by:`;
+  const answer = 'n(n+1)/2';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('n²') },
+    { label: 'C', text: String('2n') },
+    { label: 'D', text: String('n + 1') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_seriesform_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'series-formulas',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 55, source: 'template', tags: ['series', 'formulas'] },
+    isActive: true
+  };
+}
+
+function generateSigmaNotation(difficulty) {
+  const content = `What does Σ represent in mathematics?`;
+  const answer = 'summation';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('product') },
+    { label: 'C', text: String('difference') },
+    { label: 'D', text: String('division') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_sigma_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'sigma-notation',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.4, discrimination: 1.0, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 40, source: 'template', tags: ['notation', 'summation'] },
+    isActive: true
+  };
+}
+
+function generateSimpleProbability(difficulty) {
+  const content = `Flipping a fair coin has what probability of landing heads?`;
+  const answer = '1/2';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('1/4') },
+    { label: 'C', text: String('1') },
+    { label: 'D', text: String('0') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_simpleprob_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'simple-probability',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.1, discrimination: 0.9, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 1, metadata: { estimatedTime: 35, source: 'template', tags: ['probability', 'basic'] },
+    isActive: true
+  };
+}
+
+function generateSummationNotation(difficulty) {
+  const content = `Evaluate: Σ(2i) from i=1 to 3`;
+  const answer = 12;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(6) },
+    { label: 'C', text: String(9) },
+    { label: 'D', text: String(18) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_summation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'summation-notation',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.6, discrimination: 1.2, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 2, metadata: { estimatedTime: 50, source: 'template', tags: ['summation', 'notation'] },
+    isActive: true
+  };
+}
+
+function generateAreaApproximation(difficulty) {
+  const content = `Riemann sums are used to approximate:`;
+  const answer = 'area under a curve';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('slope') },
+    { label: 'C', text: String('derivative') },
+    { label: 'D', text: String('limit') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_areaapprox_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'area-approximation',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.8, discrimination: 1.4, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['calculus', 'integration'] },
+    isActive: true
+  };
+}
+
+function generateAverageRateOfChange(difficulty) {
+  const content = `For f(x) = x², what is the average rate of change from x=1 to x=3?`;
+  const answer = 4;
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(2) },
+    { label: 'C', text: String(8) },
+    { label: 'D', text: String(6) }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_avgratechange_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'average-rate-of-change',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.7, discrimination: 1.3, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['calculus', 'rate-of-change'] },
+    isActive: true
+  };
+}
+
+function generateRiemannSums(difficulty) {
+  const content = `A left Riemann sum uses the ____ of each subinterval:`;
+  const answer = 'left endpoint';
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String('right endpoint') },
+    { label: 'C', text: String('midpoint') },
+    { label: 'D', text: String('maximum') }
+  ]);
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+  return {
+    problemId: `prob_riemann_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'riemann-sums',
+    content, answer: String(answer), correctOption: correctLabel,
+    answerType: 'multiple-choice', options,
+    irtParameters: { difficulty: difficulty + 0.9, discrimination: 1.4, calibrationConfidence: 'expert', attemptsCount: 0 },
+    dokLevel: 3, metadata: { estimatedTime: 60, source: 'template', tags: ['calculus', 'riemann', 'integration'] },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -10586,6 +12094,44 @@ const GENERATORS = {
   'point-slope-form': generatePointSlopeForm,
   'standard-deviation': generateStandardDeviation,
   'variance': generateVariance,
+  'data-collection': generateDataCollection,
+  'data-displays': generateDataDisplays,
+  'frequency-tables': generateFrequencyTables,
+  'histograms': generateHistograms,
+  'iqr': generateIQR,
+  'measures-of-center': generateMeasuresOfCenter,
+  'tally-charts': generateTallyCharts,
+  'linear-word-problems': generateLinearWordProblems,
+  'rate-of-change-problems': generateRateOfChangeProblems,
+  'rate-problems': generateRateProblems,
+  'distributive-property': generateDistributiveProperty,
+  'expanding-expressions': generateExpandingExpressions,
+  'graphing-inequalities': generateGraphingInequalities,
+  'inequality-notation': generateInequalityNotation,
+  'multi-step-inequalities': generateMultiStepInequalities,
+  'slope-concepts': generateSlopeConcepts,
+  'slope-from-two-points': generateSlopeFromTwoPoints,
+  'solve-proportions': generateSolveProportions,
+  'systems-of-inequalities': generateSystemsOfInequalities,
+  'graphing-systems-inequalities': generateGraphingSystemsInequalities,
+  'area-perimeter-word-problems': generateAreaPerimeterWordProblems,
+  'congruence': generateCongruence,
+  'dilations': generateDilations,
+  'distance-formula': generateDistanceFormula,
+  'line-symmetry': generateLineSymmetry,
+  'midpoint-formula': generateMidpointFormula,
+  'reflections': generateReflections,
+  'rotations': generateRotations,
+  'scale-factor': generateScaleFactor,
+  'similar-figures': generateSimilarFigures,
+  'percent-change': generatePercentChange,
+  'ratio-concepts': generateRatioConcepts,
+  'similarity': generateSimilarity,
+  'spatial-relationships': generateSpatialRelationships,
+  'symmetry-shapes': generateSymmetryShapes,
+  'translations': generateTranslations,
+  'vertical-shift': generateVerticalShift,
+  'horizontal-shift': generateHorizontalShift,
 
   // 9-12 (Tier 3) - High School
   'multi-step-equations': generateMultiStepEquations,
@@ -10649,6 +12195,35 @@ const GENERATORS = {
   'exponential-equations': generateExponentialEquations,
   'polynomial-long-division': generatePolynomialLongDivision,
   'trigonometric-identities': generateTrigonometricIdentities,
+  'absolute-value-inequalities': generateAbsoluteValueInequalities,
+  'add-subtract-rational-expressions': generateAddSubtractRationalExpressions,
+  'divide-rational-expressions': generateDivideRationalExpressions,
+  'multiply-rational-expressions': generateMultiplyRationalExpressions,
+  'simplify-rational-expressions': generateSimplifyRationalExpressions,
+  'exponential-decay': generateExponentialDecay,
+  'exponential-growth': generateExponentialGrowth,
+  'exponential-patterns': generateExponentialPatterns,
+  'factoring-difference-squares': generateFactoringDifferenceSquares,
+  'function-composition': generateFunctionComposition,
+  'function-families': generateFunctionFamilies,
+  'function-transformations': generateFunctionTransformations,
+  'graph-quadratic-functions': generateGraphQuadraticFunctions,
+  'linear-programming': generateLinearProgramming,
+  'parent-functions': generateParentFunctions,
+  'quadrants': generateQuadrants,
+  'nested-operations': generateNestedOperations,
+  'arithmetic-series': generateArithmeticSeries,
+  'compound-probability': generateCompoundProbability,
+  'conditional-probability': generateConditionalProbability,
+  'counting-methods': generateCountingMethods,
+  'finite-series': generateFiniteSeries,
+  'fundamental-counting-principle': generateFundamentalCountingPrinciple,
+  'geometric-series': generateGeometricSeries,
+  'probability-fractions': generateProbabilityFractions,
+  'series-formulas': generateSeriesFormulas,
+  'sigma-notation': generateSigmaNotation,
+  'simple-probability': generateSimpleProbability,
+  'summation-notation': generateSummationNotation,
 
   // Calculus (Calc 1-3)
   'limits': generateLimits,
@@ -10668,7 +12243,10 @@ const GENERATORS = {
   'implicit-differentiation': generateImplicitDifferentiation,
   'related-rates': generateRelatedRates,
   'parametric-equations': generateParametricEquations,
-  'polar-coordinates': generatePolarCoordinates
+  'polar-coordinates': generatePolarCoordinates,
+  'area-approximation': generateAreaApproximation,
+  'average-rate-of-change': generateAverageRateOfChange,
+  'riemann-sums': generateRiemannSums
 };
 
 async function generateAllProblems() {
