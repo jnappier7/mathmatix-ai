@@ -27,7 +27,7 @@ async function deduplicateProblems() {
       {
         $sort: { count: -1 }
       }
-    ]);
+    ]).allowDiskUse(true);
 
     console.log(`Found ${duplicates.length} sets of duplicate problems`);
     console.log(`Total duplicates to remove: ${duplicates.reduce((sum, dup) => sum + (dup.count - 1), 0)}\n`);
@@ -83,7 +83,7 @@ async function deduplicateProblems() {
       {
         $match: { count: { $gt: 1 } }
       }
-    ]);
+    ]).allowDiskUse(true);
 
     console.log(`✅ Remaining duplicate content: ${remainingDuplicates.length}\n`);
 
