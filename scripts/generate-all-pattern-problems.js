@@ -8025,6 +8025,551 @@ function generateAbsoluteValueEquations(difficulty) {
   };
 }
 
+function generateStandardDeviation(difficulty) {
+  const data = [10, 12, 14, 16, 18];
+  const mean = data.reduce((a, b) => a + b) / data.length;
+  const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length;
+  const stdDev = Math.sqrt(variance);
+
+  const content = `For the data set {10, 12, 14, 16, 18}, what is the standard deviation? (Round to 2 decimals)`;
+  const answer = stdDev.toFixed(2);
+
+  const wrong1 = variance.toFixed(2);
+  const wrong2 = mean.toFixed(2);
+  const wrong3 = (stdDev * 2).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_stddev_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'standard-deviation',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 60,
+      source: 'template',
+      tags: ['statistics', 'standard-deviation', 'data-analysis']
+    },
+    isActive: true
+  };
+}
+
+function generateVariance(difficulty) {
+  const data = [5, 10, 15];
+  const mean = data.reduce((a, b) => a + b) / data.length;
+  const variance = data.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / data.length;
+
+  const content = `For the data set {5, 10, 15}, what is the variance? (Round to 2 decimals)`;
+  const answer = variance.toFixed(2);
+
+  const wrong1 = Math.sqrt(variance).toFixed(2);
+  const wrong2 = mean.toFixed(2);
+  const wrong3 = (variance / 2).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_var_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'variance',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['statistics', 'variance', 'data-analysis']
+    },
+    isActive: true
+  };
+}
+
+function generateMatrices(difficulty) {
+  const a11 = randomInt(1, 5);
+  const a12 = randomInt(1, 5);
+  const b11 = randomInt(1, 5);
+  const b12 = randomInt(1, 5);
+
+  const content = `Add matrices [[${a11}, ${a12}]] + [[${b11}, ${b12}]]. What is the first element?`;
+  const answer = a11 + b11;
+
+  const wrong1 = a11 * b11;
+  const wrong2 = a12 + b12;
+  const wrong3 = a11 + b12;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_matrix_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'matrices',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['matrices', 'linear-algebra', 'matrix-addition']
+    },
+    isActive: true
+  };
+}
+
+function generateVectors(difficulty) {
+  const x1 = randomInt(1, 8);
+  const y1 = randomInt(1, 8);
+  const x2 = randomInt(1, 8);
+  const y2 = randomInt(1, 8);
+
+  const content = `Add vectors (${x1}, ${y1}) + (${x2}, ${y2}). What is the x-component?`;
+  const answer = x1 + x2;
+
+  const wrong1 = y1 + y2;
+  const wrong2 = x1 * x2;
+  const wrong3 = x1 + y1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_vector_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'vectors',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['vectors', 'vector-addition', 'linear-algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateSlopeInterceptForm(difficulty) {
+  const m = randomInt(1, 5);
+  const b = randomInt(-8, 8);
+
+  const content = `A line has slope ${m} and y-intercept ${b}. Write the equation in slope-intercept form`;
+  const answer = `y = ${m}x + ${b}`;
+
+  const wrong1 = `y = ${b}x + ${m}`;
+  const wrong2 = `y = ${m}x - ${b}`;
+  const wrong3 = `x = ${m}y + ${b}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_slopeint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'slope-intercept-form',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['linear-equations', 'slope-intercept', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generatePointSlopeForm(difficulty) {
+  const m = randomInt(2, 6);
+  const x1 = randomInt(1, 5);
+  const y1 = randomInt(1, 8);
+
+  const content = `Write the equation of a line with slope ${m} passing through (${x1}, ${y1}) in point-slope form`;
+  const answer = `y - ${y1} = ${m}(x - ${x1})`;
+
+  const wrong1 = `y + ${y1} = ${m}(x + ${x1})`;
+  const wrong2 = `y = ${m}x + ${y1}`;
+  const wrong3 = `y - ${y1} = ${m}x - ${x1}`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_ptslope_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'point-slope-form',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['linear-equations', 'point-slope', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateRadianConversion(difficulty) {
+  const degrees = [30, 45, 60, 90, 180];
+  const deg = degrees[randomInt(0, degrees.length - 1)];
+  const rad = (deg * Math.PI / 180).toFixed(4);
+
+  const content = `Convert ${deg}° to radians (use π ≈ 3.14)`;
+  const answer = rad;
+
+  const wrong1 = (deg / 180).toFixed(4);
+  const wrong2 = (deg * 180 / Math.PI).toFixed(4);
+  const wrong3 = (deg / Math.PI).toFixed(4);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_radconv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'radian-conversion',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.2,
+      discrimination: 1.2,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['trigonometry', 'radians', 'conversion']
+    },
+    isActive: true
+  };
+}
+
+function generateSineCosineLaw(difficulty) {
+  const a = randomInt(5, 12);
+  const b = randomInt(5, 12);
+  const C = 90;
+
+  const c = Math.sqrt(a * a + b * b);
+
+  const content = `In a right triangle with sides a=${a}, b=${b}, and C=90°, find the hypotenuse c using the Pythagorean theorem`;
+  const answer = c.toFixed(2);
+
+  const wrong1 = (a + b).toFixed(2);
+  const wrong2 = (a * b).toFixed(2);
+  const wrong3 = Math.abs(a - b).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_lawsine_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'sine-cosine-law',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['trigonometry', 'law-of-sines', 'triangles']
+    },
+    isActive: true
+  };
+}
+
+function generateComplexNumbers(difficulty) {
+  const a = randomInt(1, 8);
+  const b = randomInt(1, 8);
+  const c = randomInt(1, 8);
+  const d = randomInt(1, 8);
+
+  const content = `Add complex numbers (${a} + ${b}i) + (${c} + ${d}i). What is the real part?`;
+  const answer = a + c;
+
+  const wrong1 = b + d;
+  const wrong2 = a * c;
+  const wrong3 = a + b + c + d;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_complex_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'complex-numbers',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['complex-numbers', 'algebra', 'imaginary']
+    },
+    isActive: true
+  };
+}
+
+function generateLogarithmicEquations(difficulty) {
+  const base = randomInt(2, 5);
+  const power = randomInt(2, 4);
+  const result = Math.pow(base, power);
+
+  const content = `Solve for x: log_${base}(x) = ${power}`;
+  const answer = result;
+
+  const wrong1 = base * power;
+  const wrong2 = base + power;
+  const wrong3 = power;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_logeq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'logarithmic-equations',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['logarithms', 'equations', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generateExponentialEquations(difficulty) {
+  const base = randomInt(2, 5);
+  const power = randomInt(2, 4);
+  const result = Math.pow(base, power);
+
+  const content = `Solve for x: ${base}^x = ${result}`;
+  const answer = power;
+
+  const wrong1 = result;
+  const wrong2 = base;
+  const wrong3 = power + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_expeq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'exponential-equations',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['exponential', 'equations', 'algebra']
+    },
+    isActive: true
+  };
+}
+
+function generatePolynomialLongDivision(difficulty) {
+  const divisor = randomInt(2, 5);
+  const quotient = randomInt(2, 6);
+  const dividend = divisor * quotient;
+
+  const content = `Divide x² by x. What is the quotient?`;
+  const answer = 'x';
+
+  const wrong1 = 'x²';
+  const wrong2 = '1';
+  const wrong3 = '2x';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_polydiv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'polynomial-long-division',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['polynomials', 'division', 'algebra']
+    },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -8147,6 +8692,10 @@ const GENERATORS = {
   'interquartile-range': generateInterquartileRange,
   'box-plots': generateBoxPlots,
   'absolute-value-equations': generateAbsoluteValueEquations,
+  'slope-intercept-form': generateSlopeInterceptForm,
+  'point-slope-form': generatePointSlopeForm,
+  'standard-deviation': generateStandardDeviation,
+  'variance': generateVariance,
 
   // 9-12 (Tier 3) - High School
   'multi-step-equations': generateMultiStepEquations,
@@ -8201,6 +8750,14 @@ const GENERATORS = {
   'sector-area': generateSectorArea,
   'arc-length': generateArcLength,
   'recursive-sequences': generateRecursiveSequences,
+  'matrices': generateMatrices,
+  'vectors': generateVectors,
+  'radian-conversion': generateRadianConversion,
+  'sine-cosine-law': generateSineCosineLaw,
+  'complex-numbers': generateComplexNumbers,
+  'logarithmic-equations': generateLogarithmicEquations,
+  'exponential-equations': generateExponentialEquations,
+  'polynomial-long-division': generatePolynomialLongDivision,
 
   // Calculus (Calc 1-3)
   'limits': generateLimits,
