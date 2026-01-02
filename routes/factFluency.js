@@ -79,8 +79,11 @@ const MASTERY_CRITERIA = {
 // Generate trap answers (distractors) for multiple choice
 function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3) {
   const traps = new Set();
+  const MAX_ATTEMPTS = 100;  // Prevent infinite loops
+  let attempts = 0;
 
-  while (traps.size < count) {
+  while (traps.size < count && attempts < MAX_ATTEMPTS) {
+    attempts++;
     let trap;
     const trapType = Math.floor(Math.random() * 5);
 
@@ -126,6 +129,20 @@ function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3) {
     if (trap > 0 && trap !== correctAnswer && trap < 200 && !traps.has(trap)) {
       traps.add(trap);
     }
+  }
+
+  // SAFETY NET: If we still don't have enough traps (edge cases like 0×0),
+  // fill with simple sequential offsets
+  let fallbackOffset = 1;
+  while (traps.size < count) {
+    const fallbackTrap = Math.max(1, Math.abs(correctAnswer) + fallbackOffset);
+    if (fallbackTrap !== correctAnswer && !traps.has(fallbackTrap) && fallbackTrap < 200) {
+      traps.add(fallbackTrap);
+    }
+    fallbackOffset++;
+
+    // Absolute safety: if we've tried 50 offsets, just break
+    if (fallbackOffset > 50) break;
   }
 
   return Array.from(traps);
