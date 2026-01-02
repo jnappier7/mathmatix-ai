@@ -79,7 +79,7 @@ const PATTERN_BADGES = {
             milestoneId: 'one-step-equations',
             name: 'One-Step Equations',
             description: 'Solve x + 5 = 12 using inverse operations',
-            skillIds: ['one-step-equations', 'one-step-addition', 'one-step-subtraction', 'one-step-multiplication', 'one-step-division'],
+            skillIds: ['one-step-equations', 'one-step-addition', 'one-step-subtraction', 'one-step-multiplication', 'one-step-division', 'one-step-equations-addition', 'one-step-equations-multiplication'],
             requiredAccuracy: 0.85,
             requiredProblems: 12
           },
@@ -365,7 +365,7 @@ const PATTERN_BADGES = {
             milestoneId: 'addition-subtraction',
             name: 'Addition/Subtraction as Change',
             description: 'Understand adding as increasing, subtracting as decreasing',
-            skillIds: ['addition', 'subtraction', 'addition-subtraction-word-problems'],
+            skillIds: ['addition', 'subtraction', 'addition-subtraction-word-problems', 'integer-addition', 'integer-subtraction'],
             requiredAccuracy: 0.85,
             requiredProblems: 15
           },
@@ -572,7 +572,7 @@ const PATTERN_BADGES = {
             milestoneId: 'order-of-operations',
             name: 'Order of Operations',
             description: 'Apply PEMDAS/GEMDAS to evaluate expressions',
-            skillIds: ['order-of-operations', 'evaluate-expressions', 'nested-operations'],
+            skillIds: ['order-of-operations', 'evaluate-expressions', 'nested-operations', 'numerical-expressions-exponents'],
             requiredAccuracy: 0.85,
             requiredProblems: 12
           }
@@ -953,7 +953,7 @@ const PATTERN_BADGES = {
             milestoneId: 'simple-probability',
             name: 'Simple Probability',
             description: 'Find probability of simple events',
-            skillIds: ['simple-probability', 'probability-fractions'],
+            skillIds: ['simple-probability', 'probability-fractions', 'probability-basics', 'statistics-probability'],
             requiredAccuracy: 0.80,
             requiredProblems: 12
           },
