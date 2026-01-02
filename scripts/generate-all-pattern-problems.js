@@ -9114,6 +9114,881 @@ function generateRelatedRates(difficulty) {
   };
 }
 
+function generate2DShapes(difficulty) {
+  const shapes = ['circle', 'square', 'triangle', 'rectangle'];
+  const shape = randomChoice(shapes);
+
+  const content = `Which shape is this? 🔵`;
+  const answer = 'circle';
+
+  const options = shuffle([
+    { label: 'A', text: String('circle') },
+    { label: 'B', text: String('square') },
+    { label: 'C', text: String('triangle') },
+    { label: 'D', text: String('rectangle') }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_2dshapes_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: '2d-shapes',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.5,
+      discrimination: 0.8,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['geometry', '2d-shapes', 'identification']
+    },
+    isActive: true
+  };
+}
+
+function generate3DShapes(difficulty) {
+  const content = `Which 3D shape looks like a ball?`;
+  const answer = 'sphere';
+
+  const wrong1 = 'cube';
+  const wrong2 = 'cylinder';
+  const wrong3 = 'cone';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_3dshapes_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: '3d-shapes',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.5,
+      discrimination: 0.8,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['geometry', '3d-shapes', 'identification']
+    },
+    isActive: true
+  };
+}
+
+function generateAddingGroups(difficulty) {
+  const groups = randomInt(2, 4);
+  const perGroup = randomInt(2, 5);
+  const total = groups * perGroup;
+
+  const content = `There are ${groups} groups with ${perGroup} items in each group. How many items are there in total?`;
+  const answer = total;
+
+  const wrong1 = groups + perGroup;
+  const wrong2 = total + 1;
+  const wrong3 = total - 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_addgroups_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'adding-groups',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['multiplication', 'groups', 'early-math']
+    },
+    isActive: true
+  };
+}
+
+function generateAdditionAsJoining(difficulty) {
+  const a = randomInt(1, 5);
+  const b = randomInt(1, 5);
+  const sum = a + b;
+
+  const content = `Sara has ${a} apples. She gets ${b} more apples. How many apples does she have now?`;
+  const answer = sum;
+
+  const wrong1 = a;
+  const wrong2 = b;
+  const wrong3 = sum + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_addjoin_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'addition-as-joining',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.5,
+      discrimination: 0.9,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['addition', 'word-problems', 'joining']
+    },
+    isActive: true
+  };
+}
+
+function generateChangeUnknown(difficulty) {
+  const start = randomInt(5, 10);
+  const end = randomInt(start + 1, start + 5);
+  const change = end - start;
+
+  const content = `Tim had ${start} toys. Now he has ${end} toys. How many toys did he get?`;
+  const answer = change;
+
+  const wrong1 = end;
+  const wrong2 = start;
+  const wrong3 = change + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_changeunk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'change-unknown',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['subtraction', 'word-problems', 'change']
+    },
+    isActive: true
+  };
+}
+
+function generateCheckReasonableness(difficulty) {
+  const a = randomInt(10, 20);
+  const b = randomInt(1, 5);
+  const correctAnswer = a + b;
+  const wrongAnswer = a + b + 10;
+
+  const content = `${a} + ${b} = ?. Which answer is more reasonable?`;
+  const answer = correctAnswer;
+
+  const wrong1 = wrongAnswer;
+  const wrong2 = a;
+  const wrong3 = b;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_checkreason_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'check-reasonableness',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['reasoning', 'estimation', 'addition']
+    },
+    isActive: true
+  };
+}
+
+function generateClassifyShapes(difficulty) {
+  const content = `Which shapes have 4 sides?`;
+  const answer = 'squares and rectangles';
+
+  const wrong1 = 'circles and triangles';
+  const wrong2 = 'only circles';
+  const wrong3 = 'only triangles';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_classshapes_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'classify-shapes',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 0.9,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['geometry', 'classification', 'shapes']
+    },
+    isActive: true
+  };
+}
+
+function generateComparingNumbers(difficulty) {
+  const a = randomInt(1, 20);
+  const b = randomInt(1, 20);
+  while (b === a) b = randomInt(1, 20);
+
+  const content = `Which number is greater: ${a} or ${b}?`;
+  const answer = Math.max(a, b);
+
+  const wrong1 = Math.min(a, b);
+  const wrong2 = a + b;
+  const wrong3 = Math.abs(a - b);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_compnum_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'comparing-numbers',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.5,
+      discrimination: 0.8,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['number-sense', 'comparison', 'ordering']
+    },
+    isActive: true
+  };
+}
+
+function generateComposeNumbers(difficulty) {
+  const target = randomInt(5, 10);
+  const part1 = randomInt(1, target - 1);
+  const part2 = target - part1;
+
+  const content = `What two numbers make ${target}? ${part1} and ___`;
+  const answer = part2;
+
+  const wrong1 = part1;
+  const wrong2 = target;
+  const wrong3 = part2 + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_compose_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'compose-numbers',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['number-sense', 'composition', 'part-whole']
+    },
+    isActive: true
+  };
+}
+
+function generateCreateSymmetry(difficulty) {
+  const content = `If you fold a heart shape in half, are both sides the same?`;
+  const answer = 'yes';
+
+  const wrong1 = 'no';
+  const wrong2 = 'sometimes';
+  const wrong3 = 'only the top';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_createsym_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'create-symmetry',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 0.9,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['geometry', 'symmetry', 'visual']
+    },
+    isActive: true
+  };
+}
+
+function generateDecomposeNumbers(difficulty) {
+  const whole = randomInt(5, 10);
+  const part1 = randomInt(1, whole - 1);
+  const part2 = whole - part1;
+
+  const content = `Break apart ${whole} into two numbers: ${part1} and ___`;
+  const answer = part2;
+
+  const wrong1 = part1;
+  const wrong2 = whole;
+  const wrong3 = part2 + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_decompose_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'decompose-numbers',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['number-sense', 'decomposition', 'part-whole']
+    },
+    isActive: true
+  };
+}
+
+function generateDifferenceWordProblems(difficulty) {
+  const bigger = randomInt(8, 15);
+  const smaller = randomInt(3, bigger - 1);
+  const diff = bigger - smaller;
+
+  const content = `Jake has ${bigger} marbles. Emma has ${smaller} marbles. How many more marbles does Jake have?`;
+  const answer = diff;
+
+  const wrong1 = bigger;
+  const wrong2 = smaller;
+  const wrong3 = bigger + smaller;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_diffword_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'difference-word-problems',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 1.1,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['subtraction', 'word-problems', 'comparison']
+    },
+    isActive: true
+  };
+}
+
+function generateDoublesNearDoubles(difficulty) {
+  const base = randomInt(3, 8);
+  const double = base * 2;
+
+  const content = `What is double ${base}?`;
+  const answer = double;
+
+  const wrong1 = base + 1;
+  const wrong2 = base * 3;
+  const wrong3 = double + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_doubles_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'doubles-near-doubles',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 0.9,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['multiplication', 'doubles', 'mental-math']
+    },
+    isActive: true
+  };
+}
+
+function generateEqualTo(difficulty) {
+  const value = randomInt(5, 15);
+
+  const content = `Which number is equal to ${value}?`;
+  const answer = value;
+
+  const wrong1 = value + 1;
+  const wrong2 = value - 1;
+  const wrong3 = value + 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_equalto_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'equal-to',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.5,
+      discrimination: 0.7,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 25,
+      source: 'template',
+      tags: ['equality', 'number-sense', 'comparison']
+    },
+    isActive: true
+  };
+}
+
+function generateEstimateSums(difficulty) {
+  const a = randomInt(15, 25);
+  const b = randomInt(15, 25);
+  const exactSum = a + b;
+  const estimate = Math.round(exactSum / 10) * 10;
+
+  const content = `About how much is ${a} + ${b}? (Round to nearest 10)`;
+  const answer = estimate;
+
+  const wrong1 = exactSum;
+  const wrong2 = estimate + 10;
+  const wrong3 = estimate - 10;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_estimatesums_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'estimate-sums',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['estimation', 'addition', 'rounding']
+    },
+    isActive: true
+  };
+}
+
+function generateExpandedForm(difficulty) {
+  const num = randomInt(10, 99);
+  const tens = Math.floor(num / 10) * 10;
+  const ones = num % 10;
+
+  const content = `What is ${num} in expanded form?`;
+  const answer = `${tens} + ${ones}`;
+
+  const wrong1 = `${tens} + ${tens}`;
+  const wrong2 = `${ones} + ${ones}`;
+  const wrong3 = `${num} + 0`;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_expanded_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'expanded-form',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 0.5,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['place-value', 'expanded-form', 'number-sense']
+    },
+    isActive: true
+  };
+}
+
+function generateGreaterLessThan(difficulty) {
+  const a = randomInt(1, 20);
+  const b = randomInt(1, 20);
+  while (b === a) b = randomInt(1, 20);
+
+  const symbol = a > b ? '>' : '<';
+
+  const content = `Which symbol goes between ${a} ___ ${b}?`;
+  const answer = symbol;
+
+  const wrong1 = symbol === '>' ? '<' : '>';
+  const wrong2 = '=';
+  const wrong3 = '+';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_greaterless_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'greater-less-than',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 0.9,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['comparison', 'inequality', 'number-sense']
+    },
+    isActive: true
+  };
+}
+
+function generateIdentifyShapes(difficulty) {
+  const content = `Which shape has 3 sides?`;
+  const answer = 'triangle';
+
+  const wrong1 = 'circle';
+  const wrong2 = 'square';
+  const wrong3 = 'rectangle';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_identshapes_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'identify-shapes',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.5,
+      discrimination: 0.8,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 30,
+      source: 'template',
+      tags: ['geometry', 'shapes', 'identification']
+    },
+    isActive: true
+  };
+}
+
+function generateLikelyUnlikely(difficulty) {
+  const content = `Is it likely or unlikely that the sun will rise tomorrow?`;
+  const answer = 'likely';
+
+  const wrong1 = 'unlikely';
+  const wrong2 = 'impossible';
+  const wrong3 = 'never';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_likelyunlikely_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'likely-unlikely',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 0.9,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 1,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['probability', 'likelihood', 'reasoning']
+    },
+    isActive: true
+  };
+}
+
+function generateMakeTen(difficulty) {
+  const part1 = randomInt(1, 9);
+  const part2 = 10 - part1;
+
+  const content = `What number makes 10 with ${part1}?`;
+  const answer = part2;
+
+  const wrong1 = part1;
+  const wrong2 = 10;
+  const wrong3 = part2 + 1;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_maketen_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'make-ten',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty - 1.0,
+      discrimination: 1.0,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['number-sense', 'make-ten', 'addition']
+    },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -9134,6 +10009,26 @@ const GENERATORS = {
   'equality-concept': generateEqualityConcept,
   'missing-number-problems': generateMissingNumberProblems,
   'blank-as-variable': generateBlankAsVariable,
+  '2d-shapes': generate2DShapes,
+  '3d-shapes': generate3DShapes,
+  'adding-groups': generateAddingGroups,
+  'addition-as-joining': generateAdditionAsJoining,
+  'change-unknown': generateChangeUnknown,
+  'check-reasonableness': generateCheckReasonableness,
+  'classify-shapes': generateClassifyShapes,
+  'comparing-numbers': generateComparingNumbers,
+  'compose-numbers': generateComposeNumbers,
+  'create-symmetry': generateCreateSymmetry,
+  'decompose-numbers': generateDecomposeNumbers,
+  'difference-word-problems': generateDifferenceWordProblems,
+  'doubles-near-doubles': generateDoublesNearDoubles,
+  'equal-to': generateEqualTo,
+  'estimate-sums': generateEstimateSums,
+  'expanded-form': generateExpandedForm,
+  'greater-less-than': generateGreaterLessThan,
+  'identify-shapes': generateIdentifyShapes,
+  'likely-unlikely': generateLikelyUnlikely,
+  'make-ten': generateMakeTen,
 
   // K-5 (Tier 1) - Elementary
   'one-step-addition': generateOneStepAddition,
