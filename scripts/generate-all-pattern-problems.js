@@ -9419,7 +9419,7 @@ function generateClassifyShapes(difficulty) {
 
 function generateComparingNumbers(difficulty) {
   const a = randomInt(1, 20);
-  const b = randomInt(1, 20);
+  let b = randomInt(1, 20);
   while (b === a) b = randomInt(1, 20);
 
   const content = `Which number is greater: ${a} or ${b}?`;
@@ -9818,7 +9818,7 @@ function generateExpandedForm(difficulty) {
 
 function generateGreaterLessThan(difficulty) {
   const a = randomInt(1, 20);
-  const b = randomInt(1, 20);
+  let b = randomInt(1, 20);
   while (b === a) b = randomInt(1, 20);
 
   const symbol = a > b ? '>' : '<';
