@@ -8570,6 +8570,550 @@ function generatePolynomialLongDivision(difficulty) {
   };
 }
 
+function generateIntegrationByParts(difficulty) {
+  const content = `Which formula represents integration by parts?`;
+  const answer = '∫udv = uv - ∫vdu';
+
+  const wrong1 = '∫udv = uv + ∫vdu';
+  const wrong2 = '∫udv = ∫vdu';
+  const wrong3 = '∫udv = uv';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_intparts_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'integration-by-parts',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.7,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 60,
+      source: 'template',
+      tags: ['calculus', 'integration', 'integration-by-parts']
+    },
+    isActive: true
+  };
+}
+
+function generateTrigonometricIdentities(difficulty) {
+  const content = `What is sin²(x) + cos²(x) equal to?`;
+  const answer = '1';
+
+  const wrong1 = '0';
+  const wrong2 = 'sin(2x)';
+  const wrong3 = '2';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_trigid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'trigonometric-identities',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.3,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 35,
+      source: 'template',
+      tags: ['trigonometry', 'identities', 'pythagorean-identity']
+    },
+    isActive: true
+  };
+}
+
+function generateParametricEquations(difficulty) {
+  const t = randomInt(1, 5);
+  const x = 2 * t;
+  const y = 3 * t;
+
+  const content = `For parametric equations x = 2t, y = 3t, what is x when t = ${t}?`;
+  const answer = x;
+
+  const wrong1 = y;
+  const wrong2 = 2 + t;
+  const wrong3 = 3 * x;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_param_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'parametric-equations',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 40,
+      source: 'template',
+      tags: ['parametric-equations', 'algebra', 'calculus']
+    },
+    isActive: true
+  };
+}
+
+function generatePolarCoordinates(difficulty) {
+  const r = randomInt(3, 10);
+  const theta = 0;
+
+  const content = `Convert polar coordinates (r=${r}, θ=0°) to Cartesian. What is x?`;
+  const answer = r;
+
+  const wrong1 = 0;
+  const wrong2 = -r;
+  const wrong3 = r / 2;
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_polar_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'polar-coordinates',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.4,
+      discrimination: 1.3,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 2,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['polar-coordinates', 'coordinate-systems', 'trigonometry']
+    },
+    isActive: true
+  };
+}
+
+function generateDefiniteIntegrals(difficulty) {
+  const content = `∫₀² 2x dx = ?`;
+  const answer = '4';
+
+  const wrong1 = '2';
+  const wrong2 = 'x²';
+  const wrong3 = '8';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_defint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'definite-integrals',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['calculus', 'integrals', 'definite-integrals']
+    },
+    isActive: true
+  };
+}
+
+function generateIndefiniteIntegrals(difficulty) {
+  const content = `∫3x² dx = ?`;
+  const answer = 'x³ + C';
+
+  const wrong1 = '3x²';
+  const wrong2 = '6x';
+  const wrong3 = 'x³';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_indefint_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'indefinite-integrals',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.5,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 45,
+      source: 'template',
+      tags: ['calculus', 'integrals', 'indefinite-integrals']
+    },
+    isActive: true
+  };
+}
+
+function generateSeriesConvergence(difficulty) {
+  const content = `Does the series ∑(1/n) from n=1 to ∞ converge?`;
+  const answer = 'No';
+
+  const wrong1 = 'Yes';
+  const wrong2 = 'Sometimes';
+  const wrong3 = 'Cannot determine';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_serconv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'series-convergence',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.7,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['calculus', 'series', 'convergence']
+    },
+    isActive: true
+  };
+}
+
+function generateTaylorSeries(difficulty) {
+  const content = `What is the first term of the Taylor series for e^x centered at x=0?`;
+  const answer = '1';
+
+  const wrong1 = 'x';
+  const wrong2 = 'e';
+  const wrong3 = '0';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_taylor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'taylor-series',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.8,
+      discrimination: 1.6,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 60,
+      source: 'template',
+      tags: ['calculus', 'series', 'taylor-series']
+    },
+    isActive: true
+  };
+}
+
+function generateMultivariableCalculus(difficulty) {
+  const content = `What is ∂/∂x(x²y)?`;
+  const answer = '2xy';
+
+  const wrong1 = 'x²';
+  const wrong2 = '2x';
+  const wrong3 = 'y';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_multivar_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'multivariable-calculus',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.7,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['calculus', 'multivariable', 'partial-derivatives']
+    },
+    isActive: true
+  };
+}
+
+function generateDifferentialEquations(difficulty) {
+  const content = `Solve dy/dx = 2x. What is y?`;
+  const answer = 'x² + C';
+
+  const wrong1 = '2x';
+  const wrong2 = 'x²';
+  const wrong3 = '2';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_diffeq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'differential-equations',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.7,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['calculus', 'differential-equations', 'odes']
+    },
+    isActive: true
+  };
+}
+
+function generateLimitsContinuity(difficulty) {
+  const content = `lim(x→2) (x² - 4)/(x - 2) = ?`;
+  const answer = '4';
+
+  const wrong1 = '0';
+  const wrong2 = '2';
+  const wrong3 = 'undefined';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_limcont_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'limits-continuity',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.4,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 50,
+      source: 'template',
+      tags: ['calculus', 'limits', 'continuity']
+    },
+    isActive: true
+  };
+}
+
+function generateImplicitDifferentiation(difficulty) {
+  const content = `For x² + y² = 25, find dy/dx using implicit differentiation`;
+  const answer = '-x/y';
+
+  const wrong1 = 'x/y';
+  const wrong2 = '-y/x';
+  const wrong3 = '2x';
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_impldiff_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'implicit-differentiation',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.6,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 55,
+      source: 'template',
+      tags: ['calculus', 'differentiation', 'implicit']
+    },
+    isActive: true
+  };
+}
+
+function generateRelatedRates(difficulty) {
+  const r = randomInt(3, 8);
+  const drdt = randomInt(2, 5);
+  const dAdt = 2 * Math.PI * r * drdt;
+
+  const content = `A circle's radius grows at ${drdt} cm/s. When r=${r} cm, how fast is the area growing? (Use A=πr²)`;
+  const answer = dAdt.toFixed(2);
+
+  const wrong1 = (Math.PI * r * r).toFixed(2);
+  const wrong2 = (2 * r * drdt).toFixed(2);
+  const wrong3 = (Math.PI * drdt).toFixed(2);
+
+  const options = shuffle([
+    { label: 'A', text: String(answer) },
+    { label: 'B', text: String(wrong1) },
+    { label: 'C', text: String(wrong2) },
+    { label: 'D', text: String(wrong3) }
+  ]);
+
+  const correctLabel = options.find(o => o.text === String(answer)).label;
+
+  return {
+    problemId: `prob_relrate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    skillId: 'related-rates',
+    content: content,
+    answer: String(answer),
+    correctOption: correctLabel,
+    answerType: 'multiple-choice',
+    options: options,
+    irtParameters: {
+      difficulty: difficulty + 0.7,
+      discrimination: 1.5,
+      calibrationConfidence: 'expert',
+      attemptsCount: 0
+    },
+    dokLevel: 3,
+    metadata: {
+      estimatedTime: 60,
+      source: 'template',
+      tags: ['calculus', 'related-rates', 'applications']
+    },
+    isActive: true
+  };
+}
+
 // ============================================================================
 // MAIN GENERATION FUNCTION
 // ============================================================================
@@ -8758,6 +9302,7 @@ const GENERATORS = {
   'logarithmic-equations': generateLogarithmicEquations,
   'exponential-equations': generateExponentialEquations,
   'polynomial-long-division': generatePolynomialLongDivision,
+  'trigonometric-identities': generateTrigonometricIdentities,
 
   // Calculus (Calc 1-3)
   'limits': generateLimits,
@@ -8765,7 +9310,19 @@ const GENERATORS = {
   'integrals': generateIntegrals,
   'chain-rule': generateChainRule,
   'product-rule': generateProductRule,
-  'quotient-rule': generateQuotientRule
+  'quotient-rule': generateQuotientRule,
+  'integration-by-parts': generateIntegrationByParts,
+  'definite-integrals': generateDefiniteIntegrals,
+  'indefinite-integrals': generateIndefiniteIntegrals,
+  'series-convergence': generateSeriesConvergence,
+  'taylor-series': generateTaylorSeries,
+  'multivariable-calculus': generateMultivariableCalculus,
+  'differential-equations': generateDifferentialEquations,
+  'limits-continuity': generateLimitsContinuity,
+  'implicit-differentiation': generateImplicitDifferentiation,
+  'related-rates': generateRelatedRates,
+  'parametric-equations': generateParametricEquations,
+  'polar-coordinates': generatePolarCoordinates
 };
 
 async function generateAllProblems() {
