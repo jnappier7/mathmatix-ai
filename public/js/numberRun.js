@@ -66,15 +66,28 @@ function checkURLParams() {
     const familyName = params.get('family');
 
     if (operation && familyName) {
+        console.log('[Number Run] URL params detected:', { operation, familyName });
+
         // Launched from mastery grid - skip selection and start directly
         gameState.selectedOperation = operation;
         gameState.selectedFamily = familyName;
 
+        // Check if families loaded
+        if (!gameState.families) {
+            console.error('[Number Run] Families not loaded yet - cannot start game');
+            alert('Failed to load game data. Please try again.');
+            return;
+        }
+
         const family = gameState.families[operation]?.find(f => f.familyName === familyName);
         if (family) {
             gameState.familyDisplayName = family.displayName;
+            console.log('[Number Run] Starting game with family:', family.displayName);
             showScreen('game');
             startRun();
+        } else {
+            console.error('[Number Run] Family not found:', { operation, familyName });
+            alert('Failed to load game configuration. Please try again.');
         }
     }
 }
@@ -187,6 +200,8 @@ async function generateProblems() {
             requestBody.mixed = true;
         }
 
+        console.log('[Number Run] Generating problems:', requestBody);
+
         const response = await fetch('/api/fact-fluency/generate-problems', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -194,11 +209,17 @@ async function generateProblems() {
         });
 
         const data = await response.json();
+        console.log('[Number Run] Problems response:', { success: data.success, count: data.problems?.length });
+
         if (data.success) {
             gameState.problems = data.problems;
+        } else {
+            console.error('[Number Run] Failed to generate problems:', data);
+            alert('Failed to generate math problems. Please try again.');
         }
     } catch (error) {
-        console.error('Error generating problems:', error);
+        console.error('[Number Run] Error generating problems:', error);
+        alert('Error loading game. Please try again.');
     }
 }
 
@@ -212,13 +233,19 @@ function displayCurrentProblem() {
 
 // Spawn a set of 3 platforms (one per lane)
 function spawnPlatformSet() {
-    if (!gameState.gameRunning) return;
+    if (!gameState.gameRunning) {
+        console.log('[Number Run] spawnPlatformSet called but game not running');
+        return;
+    }
 
     const problem = gameState.problems[gameState.currentProblemIndex];
     if (!problem) {
+        console.log('[Number Run] No more problems available');
         endGame('No more problems!');
         return;
     }
+
+    console.log('[Number Run] Spawning platform set for problem:', problem.problem);
 
     // Create 3 answers: 1 correct + 2 traps (or random if not enough traps)
     const answers = [problem.answer];
