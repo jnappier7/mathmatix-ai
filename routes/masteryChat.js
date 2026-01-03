@@ -9,6 +9,12 @@ const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM, callLLMStream } = require("../utils/llmGateway");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
+const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
+const {
+  initializeLessonPhase,
+  getPhasePrompt,
+  PHASES
+} = require('../utils/lessonPhaseManager');
 
 const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reasoning (Sonnet 3.5 v2 - Oct 2024)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -68,6 +74,35 @@ router.post('/', isAuthenticated, async (req, res) => {
             await user.save();
         }
 
+        // ========== LESSON PHASE MANAGEMENT (Gradual Release) ==========
+        // Initialize lesson phase state on first message
+        const isFirstMessage = masteryConversation.messages.length === 0;
+        const activeBadge = user.masteryProgress.activeBadge;
+
+        if (isFirstMessage) {
+            // Select intelligent warmup based on prerequisites
+            const warmupData = selectWarmupSkill(
+                activeBadge.skillId,
+                user.toObject()
+            );
+
+            // Initialize structured lesson phases (WARMUP → I DO → WE DO → CHECK-IN → YOU DO → MASTERY)
+            const phaseState = initializeLessonPhase(activeBadge.skillId, warmupData);
+
+            // Store phase state in activeBadge for persistence
+            activeBadge.phaseState = phaseState;
+
+            console.log(`📚 [Lesson] Starting structured lesson: ${activeBadge.badgeName || activeBadge.skillId}`);
+            console.log(`   Warmup: ${warmupData.skillName}`);
+            console.log(`   Phase: ${phaseState.currentPhase}`);
+        }
+
+        // Get current phase state (or default to warmup if missing)
+        const phaseState = activeBadge.phaseState || {
+            currentPhase: PHASES.WARMUP,
+            skillId: activeBadge.skillId
+        };
+
         // Add user message to conversation
         masteryConversation.messages.push({
             role: 'user',
@@ -85,13 +120,14 @@ router.post('/', isAuthenticated, async (req, res) => {
         // Build mastery context from active badge
         const masteryContext = {
             mode: 'badge-earning',
-            badgeName: user.masteryProgress.activeBadge.badgeName,
-            skillId: user.masteryProgress.activeBadge.skillId,
-            tier: user.masteryProgress.activeBadge.tier,
-            problemsCompleted: user.masteryProgress.activeBadge.problemsCompleted || 0,
-            problemsCorrect: user.masteryProgress.activeBadge.problemsCorrect || 0,
-            requiredProblems: user.masteryProgress.activeBadge.requiredProblems,
-            requiredAccuracy: user.masteryProgress.activeBadge.requiredAccuracy
+            badgeName: activeBadge.badgeName,
+            skillId: activeBadge.skillId,
+            tier: activeBadge.tier,
+            problemsCompleted: activeBadge.problemsCompleted || 0,
+            problemsCorrect: activeBadge.problemsCorrect || 0,
+            requiredProblems: activeBadge.requiredProblems,
+            requiredAccuracy: activeBadge.requiredAccuracy,
+            currentPhase: phaseState.currentPhase  // Add current phase to context
         };
 
         // Generate system prompt (mastery mode - no curriculum, no uploads)
@@ -107,6 +143,15 @@ router.post('/', isAuthenticated, async (req, res) => {
             null            // fluencyContext
         );
 
+        // Add phase-specific instructional guidance (WARMUP → I DO → WE DO → YOU DO → MASTERY)
+        const phasePrompt = getPhasePrompt(
+            phaseState,
+            activeBadge.badgeName || activeBadge.skillId
+        );
+
+        // Combine base system prompt with phase-specific instructions
+        const fullSystemPrompt = systemPrompt + '\n\n' + phasePrompt;
+
         // Prepare conversation history for AI
         const recentHistory = masteryConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
         const conversationForAI = recentHistory.map(msg => ({
@@ -116,7 +161,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 
         // Add system prompt to messages array (OpenAI format)
         const messagesForAI = [
-            { role: 'system', content: systemPrompt },
+            { role: 'system', content: fullSystemPrompt },
             ...conversationForAI
         ];
 
@@ -158,11 +203,17 @@ router.post('/', isAuthenticated, async (req, res) => {
                 masteryConversation.lastActivity = new Date();
                 await masteryConversation.save();
 
+                // Save updated phase state
+                user.masteryProgress.activeBadge.phaseState = phaseState;
+                user.markModified('masteryProgress');
+                await user.save();
+
                 // Send completion event
                 res.write(`data: ${JSON.stringify({
                     done: true,
                     fullText: fullResponse,
-                    voiceId: currentTutor.voiceId
+                    voiceId: currentTutor.voiceId,
+                    currentPhase: phaseState.currentPhase
                 })}\n\n`);
                 res.end();
             } catch (error) {
@@ -184,9 +235,15 @@ router.post('/', isAuthenticated, async (req, res) => {
             masteryConversation.lastActivity = new Date();
             await masteryConversation.save();
 
+            // Save updated phase state
+            user.masteryProgress.activeBadge.phaseState = phaseState;
+            user.markModified('masteryProgress');
+            await user.save();
+
             res.json({
                 text: aiResponse,
                 voiceId: currentTutor.voiceId,
+                currentPhase: phaseState.currentPhase,
                 masteryProgress: {
                     badgeName: masteryContext.badgeName,
                     progress: `${masteryContext.problemsCompleted}/${masteryContext.requiredProblems}`,
