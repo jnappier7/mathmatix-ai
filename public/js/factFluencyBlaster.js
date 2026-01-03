@@ -148,7 +148,8 @@ function createFactCard(name1, name2, mastered, recommended, onClick, operation,
         </div>
     `;
 
-    if (!mastered || recommended) {
+    if (mastered || recommended) {
+        // Enable buttons for mastered and recommended cards
         // Shooter button
         card.querySelector('.shooter-btn').addEventListener('click', (e) => {
             e.stopPropagation();
