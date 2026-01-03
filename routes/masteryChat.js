@@ -22,6 +22,106 @@ const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reas
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
+// ============================================================================
+// HELPER FUNCTIONS - Answer Tracking & Mastery Completion
+// ============================================================================
+
+/**
+ * Parse AI response for answer result markers and update progress counters
+ * Looks for: <ANSWER_RESULT correct="true|false" problem="N"/>
+ */
+async function trackAnswerResults(aiResponse, user, phaseState) {
+    const currentPhase = phaseState.currentPhase;
+
+    // Only track in YOU_DO and MASTERY_CHECK phases
+    if (currentPhase !== PHASES.YOU_DO && currentPhase !== PHASES.MASTERY_CHECK) {
+        return;
+    }
+
+    // Parse answer result markers
+    const markerRegex = /<ANSWER_RESULT\s+correct="(true|false)"\s+problem="(\d+)"\s*\/>/gi;
+    const matches = [...aiResponse.matchAll(markerRegex)];
+
+    if (matches.length === 0) {
+        return; // No answers to track
+    }
+
+    const activeBadge = user.masteryProgress.activeBadge;
+
+    for (const match of matches) {
+        const correct = match[1] === 'true';
+        const problemNum = parseInt(match[2]);
+
+        // Increment counters
+        activeBadge.problemsCompleted = (activeBadge.problemsCompleted || 0) + 1;
+        if (correct) {
+            activeBadge.problemsCorrect = (activeBadge.problemsCorrect || 0) + 1;
+        }
+
+        console.log(`[Answer Tracked] Problem ${problemNum}: ${correct ? 'Correct' : 'Incorrect'}`);
+        console.log(`   Progress: ${activeBadge.problemsCompleted}/${activeBadge.requiredProblems} (${activeBadge.problemsCorrect} correct)`);
+    }
+
+    user.markModified('masteryProgress');
+}
+
+/**
+ * Remove answer tracking markers from AI response before showing to student
+ * Removes: <ANSWER_RESULT correct="true|false" problem="N"/>
+ */
+function cleanResponseMarkers(aiResponse) {
+    return aiResponse.replace(/<ANSWER_RESULT\s+correct="(true|false)"\s+problem="(\d+)"\s*\/>/gi, '').trim();
+}
+
+/**
+ * Check if mastery has been achieved and unlock skill if successful
+ * Returns: { completed: boolean, success: boolean, skillUnlocked: boolean }
+ */
+async function checkMasteryCompletion(user, activeBadge) {
+    const problemsCompleted = activeBadge.problemsCompleted || 0;
+    const problemsCorrect = activeBadge.problemsCorrect || 0;
+    const requiredProblems = activeBadge.requiredProblems || 6;
+    const requiredAccuracy = activeBadge.requiredAccuracy || 0.80;
+
+    // Not done yet
+    if (problemsCompleted < requiredProblems) {
+        return { completed: false, success: false, skillUnlocked: false };
+    }
+
+    // Calculate accuracy
+    const accuracy = problemsCorrect / problemsCompleted;
+    const success = accuracy >= requiredAccuracy;
+
+    console.log(`[Mastery Check] Completed: ${problemsCompleted}/${requiredProblems}`);
+    console.log(`   Accuracy: ${Math.round(accuracy * 100)}% (required: ${Math.round(requiredAccuracy * 100)}%)`);
+    console.log(`   Result: ${success ? 'PASSED ✓' : 'FAILED ✗'}`);
+
+    if (success) {
+        // Unlock skill on skill map
+        const skillId = activeBadge.skillId;
+
+        if (!user.skillMastery) {
+            user.skillMastery = new Map();
+        }
+
+        user.skillMastery.set(skillId, {
+            status: 'mastered',
+            masteredDate: new Date(),
+            accuracy: accuracy,
+            attempts: problemsCompleted
+        });
+
+        user.markModified('skillMastery');
+        await user.save();
+
+        console.log(`[Skill Unlocked] ${skillId} → ⭐ Mastered!`);
+
+        return { completed: true, success: true, skillUnlocked: true };
+    }
+
+    return { completed: true, success: false, skillUnlocked: false };
+}
+
 /**
  * POST /api/mastery/chat
  * Handle chat messages in mastery mode (badge earning sessions)
@@ -247,17 +347,31 @@ router.post('/', isAuthenticated, async (req, res) => {
                 masteryConversation.lastActivity = new Date();
                 await masteryConversation.save();
 
+                // ========== TRACK ANSWER RESULTS (YOU_DO / MASTERY_CHECK) ==========
+                await trackAnswerResults(fullResponse, user, phaseState);
+
+                // Clean markers from response before showing to student
+                const cleanedResponse = cleanResponseMarkers(fullResponse);
+
+                // Update saved message with cleaned version
+                masteryConversation.messages[masteryConversation.messages.length - 1].content = cleanedResponse;
+
                 // Save updated phase state
                 user.masteryProgress.activeBadge.phaseState = phaseState;
                 user.markModified('masteryProgress');
                 await user.save();
 
+                // Check for mastery completion
+                const masteryResult = await checkMasteryCompletion(user, activeBadge);
+
                 // Send completion event
                 res.write(`data: ${JSON.stringify({
                     done: true,
-                    fullText: fullResponse,
+                    fullText: cleanedResponse,
                     voiceId: currentTutor.voiceId,
-                    currentPhase: phaseState.currentPhase
+                    currentPhase: phaseState.currentPhase,
+                    masteryCompleted: masteryResult.completed,
+                    masterySuccess: masteryResult.success
                 })}\n\n`);
                 res.end();
             } catch (error) {
@@ -279,20 +393,34 @@ router.post('/', isAuthenticated, async (req, res) => {
             masteryConversation.lastActivity = new Date();
             await masteryConversation.save();
 
+            // ========== TRACK ANSWER RESULTS (YOU_DO / MASTERY_CHECK) ==========
+            await trackAnswerResults(aiResponse, user, phaseState);
+
+            // Clean markers from response before showing to student
+            const cleanedResponse = cleanResponseMarkers(aiResponse);
+
+            // Update saved message with cleaned version
+            masteryConversation.messages[masteryConversation.messages.length - 1].content = cleanedResponse;
+
             // Save updated phase state
             user.masteryProgress.activeBadge.phaseState = phaseState;
             user.markModified('masteryProgress');
             await user.save();
 
+            // Check for mastery completion
+            const masteryResult = await checkMasteryCompletion(user, activeBadge);
+
             res.json({
-                text: aiResponse,
+                text: cleanedResponse,
                 voiceId: currentTutor.voiceId,
                 currentPhase: phaseState.currentPhase,
+                masteryCompleted: masteryResult.completed,
+                masterySuccess: masteryResult.success,
                 masteryProgress: {
                     badgeName: masteryContext.badgeName,
-                    progress: `${masteryContext.problemsCompleted}/${masteryContext.requiredProblems}`,
-                    accuracy: masteryContext.problemsCompleted > 0
-                        ? Math.round((masteryContext.problemsCorrect / masteryContext.problemsCompleted) * 100)
+                    progress: `${activeBadge.problemsCompleted || 0}/${masteryContext.requiredProblems}`,
+                    accuracy: (activeBadge.problemsCompleted || 0) > 0
+                        ? Math.round((activeBadge.problemsCorrect / activeBadge.problemsCompleted) * 100)
                         : 0
                 }
             });

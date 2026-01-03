@@ -478,6 +478,14 @@ Which works better for you?"
 - ✗ Incorrect: "Not quite. What if you tried... [gentle hint]"
 - Stuck: "What's the first step we always take?"
 
+**CRITICAL - Problem Tracking:**
+After evaluating each student answer, include this marker:
+<ANSWER_RESULT correct="true" problem="1"/>  (if correct)
+<ANSWER_RESULT correct="false" problem="1"/>  (if incorrect)
+
+This marker MUST be on its own line and will be parsed by the system to track progress.
+Do NOT show this marker to the student - it's for system tracking only.
+
 **What You're Assessing:**
 - Consistent accuracy (75%+)
 - Speed and confidence
@@ -502,6 +510,14 @@ Which works better for you?"
 - Consistent correct responses
 - Confident, quick execution
 - Can explain their reasoning
+
+**CRITICAL - Problem Tracking:**
+After evaluating each student answer, include this marker:
+<ANSWER_RESULT correct="true" problem="1"/>  (if correct)
+<ANSWER_RESULT correct="false" problem="1"/>  (if incorrect)
+
+This marker MUST be on its own line and will be parsed by the system to track progress.
+Do NOT show this marker to the student - it's for system tracking only.
 
 **What You're Deciding:**
 - Has student mastered this skill?
