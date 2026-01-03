@@ -303,12 +303,6 @@ function spawnPlatformSet() {
             platform.remove();
         }, duration * 1000);
     });
-
-    // Move to next problem quickly after platforms pass
-    setTimeout(() => {
-        gameState.currentProblemIndex++;
-        displayCurrentProblem();
-    }, 1000); // Fast 1 second transition to next problem
 }
 
 // Check collision
@@ -363,6 +357,12 @@ function handleCorrectHit(platform) {
 
     // Update HUD
     updateHUD();
+
+    // Advance to next problem after a short delay
+    setTimeout(() => {
+        gameState.currentProblemIndex++;
+        displayCurrentProblem();
+    }, 600);
 }
 
 // Handle wrong hit
