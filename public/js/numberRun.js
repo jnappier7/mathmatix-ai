@@ -196,6 +196,11 @@ async function generateProblems() {
         const data = await response.json();
         if (data.success) {
             gameState.problems = data.problems;
+            // Debug: Check first few problems for trapAnswers
+            console.log('Generated problems:', gameState.problems.length);
+            console.log('First problem:', gameState.problems[0]);
+            console.log('Second problem:', gameState.problems[1]);
+            console.log('Third problem:', gameState.problems[2]);
         }
     } catch (error) {
         console.error('Error generating problems:', error);
@@ -227,11 +232,22 @@ function spawnPlatformSet() {
         answers.push(problem.trapAnswers[0], problem.trapAnswers[1]);
     } else {
         // Fallback: generate random wrong answers
-        while (answers.length < 3) {
-            const wrong = problem.answer + Math.floor(Math.random() * 10) - 5;
-            if (wrong > 0 && wrong !== problem.answer && !answers.includes(wrong)) {
+        console.warn('Missing trapAnswers for problem:', problem);
+        let attempts = 0;
+        while (answers.length < 3 && attempts < 50) {
+            attempts++;
+            // Generate wrong answers in a wider range
+            const offset = Math.floor(Math.random() * 20) - 10;
+            const wrong = problem.answer + (offset === 0 ? 1 : offset);
+            if (wrong > 0 && wrong !== problem.answer && !answers.includes(wrong) && wrong < 200) {
                 answers.push(wrong);
             }
+        }
+        // Emergency fallback if still not enough answers
+        if (answers.length < 3) {
+            console.error('Failed to generate enough wrong answers, using simple offsets');
+            if (answers.length === 1) answers.push(problem.answer + 1);
+            if (answers.length === 2) answers.push(problem.answer + 2);
         }
     }
 

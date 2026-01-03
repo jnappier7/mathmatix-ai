@@ -618,6 +618,11 @@ async function startPracticeSession(operation, familyName) {
     const data = await response.json();
     if (data.success) {
         gameState.practice.problems = data.problems;
+        // Debug: Check first few problems for trapAnswers
+        console.log('Generated problems:', gameState.practice.problems.length);
+        console.log('First problem:', gameState.practice.problems[0]);
+        console.log('Second problem:', gameState.practice.problems[1]);
+        console.log('Third problem:', gameState.practice.problems[2]);
     }
 
     // Update UI
