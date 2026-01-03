@@ -1,7 +1,26 @@
 /**
- * SKILL MAP - Visual Knowledge Graph
- * D3.js force-directed graph visualization
+ * SKILL MAP - Visual Knowledge Graph / Constellation System
+ * D3.js force-directed graph with 3-zoom levels
  */
+
+// Pattern Configuration (enable/disable for phased rollout)
+const PATTERN_CONFIG = {
+    equivalence: { enabled: true, priority: 1, name: 'Equivalence' },
+    scaling: { enabled: false, priority: 2, name: 'Scaling' },
+    change: { enabled: false, priority: 3, name: 'Change' },
+    structure: { enabled: false, priority: 4, name: 'Structure' },
+    space: { enabled: false, priority: 5, name: 'Space' },
+    comparison: { enabled: false, priority: 6, name: 'Comparison' },
+    uncertainty: { enabled: false, priority: 7, name: 'Uncertainty' },
+    accumulation: { enabled: false, priority: 8, name: 'Accumulation' }
+};
+
+// Zoom level thresholds
+const ZOOM_LEVELS = {
+    WORLD: { min: 0, max: 1.0, name: 'world' },
+    REGION: { min: 1.0, max: 2.5, name: 'region' },
+    NODE: { min: 2.5, max: 4.0, name: 'node' }
+};
 
 // State
 const state = {
@@ -9,7 +28,11 @@ const state = {
     simulation: null,
     showClusters: true,
     showLabels: true,
-    selectedNode: null
+    selectedNode: null,
+    currentZoom: 1.0,
+    zoomLevel: 'world',
+    focusedPattern: null,
+    focusedNode: null
 };
 
 // DOM Elements
@@ -27,6 +50,51 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadGraphData();
     initializeEventListeners();
 });
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Get current zoom level name based on zoom scale
+ */
+function getZoomLevelName(zoom) {
+    if (zoom < ZOOM_LEVELS.REGION.min) return 'world';
+    if (zoom < ZOOM_LEVELS.NODE.min) return 'region';
+    return 'node';
+}
+
+/**
+ * Check if pattern is enabled
+ */
+function isPatternEnabled(patternId) {
+    return PATTERN_CONFIG[patternId]?.enabled || false;
+}
+
+/**
+ * Check if edge should be visible at current zoom level
+ */
+function shouldShowEdge(edge, currentZoom, focusedPattern, focusedNode) {
+    const zoomLevel = getZoomLevelName(currentZoom);
+
+    // World view: hide all edges
+    if (zoomLevel === 'world') return false;
+
+    // Region view: show edges within focused pattern only
+    if (zoomLevel === 'region') {
+        if (!focusedPattern) return true; // Show all if no focus
+        return edge.source.pattern === focusedPattern &&
+               edge.target.pattern === focusedPattern;
+    }
+
+    // Node view: show edges connected to focused node only
+    if (zoomLevel === 'node' && focusedNode) {
+        return edge.source.id === focusedNode.id ||
+               edge.target.id === focusedNode.id;
+    }
+
+    return true;
+}
 
 // Load graph data from API
 async function loadGraphData() {
@@ -81,17 +149,28 @@ function initializeGraph(data) {
     const width = graphContainer.clientWidth;
     const height = graphContainer.clientHeight;
 
-    // Create SVG
+    // Create SVG with zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([0.5, 4.0])
+        .on('zoom', (event) => {
+            g.attr('transform', event.transform);
+
+            // Track zoom level
+            state.currentZoom = event.transform.k;
+            const newZoomLevel = getZoomLevelName(state.currentZoom);
+
+            if (newZoomLevel !== state.zoomLevel) {
+                state.zoomLevel = newZoomLevel;
+                console.log(`[Zoom] Transitioned to ${newZoomLevel} view (${state.currentZoom.toFixed(2)}x)`);
+                updateEdgeVisibility();
+            }
+        });
+
     const svg = d3.select('#graph-container')
         .append('svg')
         .attr('width', width)
         .attr('height', height)
-        .call(d3.zoom()
-            .scaleExtent([0.2, 4])
-            .on('zoom', (event) => {
-                g.attr('transform', event.transform);
-            })
-        );
+        .call(zoom);
 
     const g = svg.append('g');
 
@@ -142,7 +221,14 @@ function initializeGraph(data) {
     const node = nodesGroup.selectAll('.node')
         .data(data.nodes)
         .join('g')
-        .attr('class', d => `node ${d.state}`)
+        .attr('class', d => {
+            const classes = ['node', d.state];
+            // Mark nodes from disabled patterns
+            if (!isPatternEnabled(d.pattern)) {
+                classes.push('pattern-disabled');
+            }
+            return classes.join(' ');
+        })
         .call(d3.drag()
             .on('start', dragstarted)
             .on('drag', dragged)
@@ -150,9 +236,20 @@ function initializeGraph(data) {
         )
         .on('click', (event, d) => {
             event.stopPropagation();
+
+            // Check if pattern is enabled
+            if (!isPatternEnabled(d.pattern)) {
+                showDisabledPatternMessage(d.patternName);
+                return;
+            }
+
             showNodeDetail(d);
         })
-        .on('mouseover', (event, d) => highlightConnections(d, link))
+        .on('mouseover', (event, d) => {
+            if (isPatternEnabled(d.pattern)) {
+                highlightConnections(d, link);
+            }
+        })
         .on('mouseout', () => unhighlightConnections(link));
 
     // Add circles to nodes
@@ -276,7 +373,14 @@ function hideNodeDetail() {
 
 // Focus camera on a specific pattern cluster
 function focusOnPattern(patternId) {
-    if (!state.graphData || !state.svg) return;
+    if (!state.graphData) return;
+
+    // Check if pattern is enabled
+    if (!isPatternEnabled(patternId)) {
+        const patternName = PATTERN_CONFIG[patternId]?.name || patternId;
+        showDisabledPatternMessage(patternName);
+        return;
+    }
 
     const patternNodes = state.graphData.nodes.filter(n => n.pattern === patternId);
 
@@ -286,20 +390,14 @@ function focusOnPattern(patternId) {
     const centerX = d3.mean(patternNodes, d => d.x);
     const centerY = d3.mean(patternNodes, d => d.y);
 
-    const width = graphContainer.clientWidth;
-    const height = graphContainer.clientHeight;
+    // Update focused pattern state
+    state.focusedPattern = patternId;
+    state.focusedNode = null;
 
-    // Calculate zoom and pan to center this pattern
-    const scale = 1.5;
-    const x = width / 2 - centerX * scale;
-    const y = height / 2 - centerY * scale;
+    // Fly to region view (zoom 1.5x)
+    flyTo(centerX, centerY, 1.5);
 
-    state.svg.transition()
-        .duration(750)
-        .call(
-            d3.zoom().transform,
-            d3.zoomIdentity.translate(x, y).scale(scale)
-        );
+    console.log(`[Focus] Zoomed to ${patternId} pattern`);
 }
 
 // Reset zoom to fit all nodes
@@ -382,4 +480,74 @@ function initializeEventListeners() {
             hideNodeDetail();
         }
     });
+}
+
+// ============================================================================
+// CONSTELLATION SYSTEM FUNCTIONS
+// ============================================================================
+
+/**
+ * Update edge visibility based on current zoom level
+ */
+function updateEdgeVisibility() {
+    if (!state.link) return;
+
+    state.link.style('opacity', d => {
+        const shouldShow = shouldShowEdge(d, state.currentZoom, state.focusedPattern, state.focusedNode);
+        return shouldShow ? 1 : 0;
+    });
+}
+
+/**
+ * Show message when clicking disabled pattern
+ */
+function showDisabledPatternMessage(patternName) {
+    // Create temporary toast notification
+    const toast = document.createElement('div');
+    toast.className = 'disabled-pattern-toast';
+    toast.innerHTML = `
+        <div class="toast-icon">🔒</div>
+        <div class="toast-content">
+            <strong>${patternName} Pattern</strong>
+            <p>Coming Soon! Focus on Equivalence first.</p>
+        </div>
+    `;
+    document.body.appendChild(toast);
+
+    // Animate in
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+/**
+ * Smooth camera transition (Prezi-style flyTo)
+ */
+function flyTo(targetX, targetY, targetZoom, durationMs = 750) {
+    if (!state.svg) return;
+
+    const width = graphContainer.clientWidth;
+    const height = graphContainer.clientHeight;
+
+    // Calculate transform
+    const x = width / 2 - targetX * targetZoom;
+    const y = height / 2 - targetY * targetZoom;
+
+    // Clamp zoom
+    const clampedZoom = Math.max(0.5, Math.min(4.0, targetZoom));
+
+    // Smooth transition
+    state.svg.transition()
+        .duration(durationMs)
+        .ease(d3.easeCubicInOut)
+        .call(
+            d3.zoom().transform,
+            d3.zoomIdentity.translate(x, y).scale(clampedZoom)
+        );
+
+    console.log(`[FlyTo] Moving to (${targetX.toFixed(0)}, ${targetY.toFixed(0)}) at ${clampedZoom.toFixed(2)}x zoom`);
 }
