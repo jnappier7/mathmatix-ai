@@ -225,6 +225,12 @@ function spawnPlatformSet() {
         return;
     }
 
+    console.log('🎯 Current problem:', problem);
+    console.log('   Problem text:', problem.problem);
+    console.log('   Correct answer:', problem.answer);
+    console.log('   Trap answers:', problem.trapAnswers);
+    console.log('   Missing number type:', problem.missingNumberType);
+
     // Create 3 answers: 1 correct + 2 traps (or random if not enough traps)
     const answers = [problem.answer];
 
@@ -251,11 +257,15 @@ function spawnPlatformSet() {
         }
     }
 
+    console.log('📊 Final answers before shuffle:', answers);
+
     // Shuffle answers
     for (let i = answers.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [answers[i], answers[j]] = [answers[j], answers[i]];
     }
+
+    console.log('📊 Final answers after shuffle:', answers);
 
     // Create platforms
     const lanes = ['left', 'center', 'right'];
