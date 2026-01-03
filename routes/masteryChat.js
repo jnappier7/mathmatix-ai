@@ -13,6 +13,8 @@ const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
 const {
   initializeLessonPhase,
   getPhasePrompt,
+  evaluatePhaseTransition,
+  transitionPhase,
   PHASES
 } = require('../utils/lessonPhaseManager');
 
@@ -97,10 +99,11 @@ router.post('/', isAuthenticated, async (req, res) => {
             console.log(`   Phase: ${phaseState.currentPhase}`);
         }
 
-        // Get current phase state (or default to warmup if missing)
+        // Get current phase state (or default to intro if missing)
         const phaseState = activeBadge.phaseState || {
-            currentPhase: PHASES.WARMUP,
-            skillId: activeBadge.skillId
+            currentPhase: PHASES.INTRO,
+            skillId: activeBadge.skillId,
+            studentChoice: null
         };
 
         // Add user message to conversation
@@ -110,6 +113,47 @@ router.post('/', isAuthenticated, async (req, res) => {
             timestamp: new Date(),
             responseTime: responseTime || null
         });
+
+        // ========== DETECT STUDENT CHOICE (INTRO Phase) ==========
+        // If in INTRO phase, detect student's choice from their message
+        if (phaseState.currentPhase === PHASES.INTRO) {
+            const messageLower = message.toLowerCase();
+
+            // Detect "test me" / "I'm ready" / "skip" / "2"
+            const wantsTest =
+                messageLower.includes('test') ||
+                messageLower.includes('ready') ||
+                messageLower.includes('skip') ||
+                messageLower.includes('know this') ||
+                messageLower.includes('prove') ||
+                messageLower.match(/\b2\b/);
+
+            // Detect "teach me" / "step by step" / "help" / "1"
+            const wantsLesson =
+                messageLower.includes('teach') ||
+                messageLower.includes('step') ||
+                messageLower.includes('help') ||
+                messageLower.includes('show') ||
+                messageLower.includes('guide') ||
+                messageLower.match(/\b1\b/);
+
+            // Set student choice
+            if (wantsTest && !wantsLesson) {
+                phaseState.studentChoice = 'test';
+                console.log('[INTRO] Student chose: Direct mastery test');
+            } else {
+                // Default to lesson (safer choice)
+                phaseState.studentChoice = 'lesson';
+                console.log('[INTRO] Student chose: Structured lesson');
+            }
+
+            // Evaluate and execute phase transition
+            const transition = evaluatePhaseTransition(phaseState);
+            if (transition.shouldTransition) {
+                transitionPhase(phaseState, transition.nextPhase, transition.rationale);
+                console.log(`[Phase Transition] ${PHASES.INTRO} → ${transition.nextPhase}`);
+            }
+        }
 
         // Get tutor config - Mr. Nappier is the default for mastery mode
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]

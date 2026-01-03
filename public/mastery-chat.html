@@ -749,15 +749,13 @@
 
                 updateProgress(completed, badge.requiredProblems);
 
-                // Send welcome message and start practice
-                if (isPatternBased) {
-                    appendMessage('ai', `Welcome! You're working on ${badge.milestoneName} in the ${badge.patternName} pattern (Tier ${badge.tierNum}). Let's master this together!`);
-                } else {
-                    appendMessage('ai', `Welcome to ${badge.badgeName}! Let's start working on ${badge.skillId.replace(/-/g, ' ')}.`);
-                }
-
-                // Auto-start practice after a brief delay
-                setTimeout(() => startPractice(), 1500);
+                // Auto-send first message to trigger INTRO phase (student choice)
+                setTimeout(() => {
+                    // Send a simple greeting to trigger AI's INTRO prompt
+                    const fakeEvent = { target: { value: 'Hi' } };
+                    document.getElementById('mastery-input').value = 'Hi';
+                    sendMessage();
+                }, 1500);
 
             } catch (error) {
                 console.error('Initialization error:', error);

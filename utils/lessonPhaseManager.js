@@ -12,6 +12,7 @@
  * Lesson phases following gradual release model
  */
 const PHASES = {
+  INTRO: 'intro',             // Student choice: lesson vs. direct test
   WARMUP: 'warmup',           // Prerequisite skill review
   I_DO: 'i-do',               // Teacher models with think-aloud
   WE_DO: 'we-do',             // Guided practice with scaffolding
@@ -45,10 +46,11 @@ const ASSESSMENT_SIGNALS = {
 function initializeLessonPhase(skillId, warmupData) {
   return {
     skillId,
-    currentPhase: PHASES.WARMUP,
+    currentPhase: PHASES.INTRO,  // Start with student choice
     warmupData,
     phaseHistory: [],
     assessmentData: {
+      intro: { attempts: 0, correct: 0, signals: [] },
       warmup: { attempts: 0, correct: 0, signals: [] },
       'i-do': { attempts: 0, correct: 0, signals: [] },
       'we-do': { attempts: 0, correct: 0, signals: [] },
@@ -56,7 +58,8 @@ function initializeLessonPhase(skillId, warmupData) {
     },
     transitionLog: [],
     startTime: new Date(),
-    readyForMastery: false
+    readyForMastery: false,
+    studentChoice: null  // 'lesson' or 'test'
   };
 }
 
@@ -128,6 +131,7 @@ function evaluatePhaseTransition(phaseState) {
 
   // Minimum attempts before considering transition
   const MIN_ATTEMPTS = {
+    intro: 1,       // Just needs student's choice
     warmup: 2,
     'i-do': 1,      // Just needs to observe modeling
     'we-do': 3,     // Practice with guidance
@@ -150,6 +154,23 @@ function evaluatePhaseTransition(phaseState) {
 
   // Phase-specific transition logic
   switch (currentPhase) {
+    case PHASES.INTRO:
+      // Student made their choice - transition based on studentChoice
+      if (phaseState.studentChoice === 'test') {
+        return {
+          shouldTransition: true,
+          nextPhase: PHASES.MASTERY_CHECK,
+          rationale: 'Student chose to skip lesson and go straight to mastery test'
+        };
+      } else {
+        // Default to lesson path (studentChoice === 'lesson' or null)
+        return {
+          shouldTransition: true,
+          nextPhase: PHASES.WARMUP,
+          rationale: 'Student chose structured lesson - starting with warmup'
+        };
+      }
+
     case PHASES.WARMUP:
       // If warmup is strong, skip I Do and go straight to We Do
       if (confidence >= 0.8 && accuracy >= 0.75) {
@@ -311,6 +332,39 @@ function getPhasePrompt(phaseState, skillName) {
 `;
 
   switch (phase) {
+    case PHASES.INTRO:
+      return baseInstructions + `
+## Internal Phase: INTRO (Student Choice)
+
+**Your Task:**
+1. Welcome the student to practice on: **${skillName}**
+2. Briefly explain what this skill involves (1 sentence with a concrete example)
+3. Give them TWO clear options:
+   - **Option 1**: "Teach me step-by-step" (full structured lesson)
+   - **Option 2**: "I'm ready - test me now!" (skip to mastery gate)
+4. Wait for their choice before proceeding
+
+**Example Opening:**
+"You're working on **${skillName}** - that means solving problems like [give specific example from this skill].
+
+How would you like to approach this?
+
+1️⃣ **Teach me step-by-step** - I'll guide you through warmup, examples, and practice
+2️⃣ **I'm ready - test me now!** - Skip straight to the mastery test
+
+Which works better for you?"
+
+**Listen For:**
+- "Teach me" / "Step by step" / "1" / "I need help" / "Show me how" → Route to WARMUP (full lesson)
+- "Test me" / "I know this" / "2" / "I'm ready" / "Skip" → Route to MASTERY_CHECK (direct assessment)
+- Uncertain responses → Recommend Option 1 (safer choice for learning)
+
+**CRITICAL**:
+- Detect their choice from natural language (don't require exact phrasing)
+- Mark phaseState.studentChoice = 'lesson' or 'test'
+- Be specific about what this skill covers (not generic)
+`;
+
     case PHASES.WARMUP:
       return baseInstructions + `
 ## Internal Phase: WARMUP (Prerequisite Review)
