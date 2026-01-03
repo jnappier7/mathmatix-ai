@@ -129,10 +129,10 @@ function createFactCard(name1, name2, mastered, recommended, onClick, operation,
     } else if (recommended) {
         card.classList.add('active');
     } else {
-        card.classList.add('locked');
+        card.classList.add('available');  // All families unlocked, just not mastered yet
     }
 
-    const statusText = mastered ? '✓ Mastered' : recommended ? '→ Next' : 'Locked';
+    const statusText = mastered ? '✓ Mastered' : recommended ? '→ Next' : 'Available';
 
     card.innerHTML = `
         <div class="fact-name">${name1}</div>
@@ -144,28 +144,21 @@ function createFactCard(name1, name2, mastered, recommended, onClick, operation,
         </div>
     `;
 
-    if (!mastered || recommended) {
-        // Shooter button
-        card.querySelector('.shooter-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            onClick();
-        });
+    // All cards are now clickable (unlocked)
+    // Shooter button
+    card.querySelector('.shooter-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        onClick();
+    });
 
-        // Runner button
-        card.querySelector('.runner-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            window.location.href = `/number-run.html?operation=${operation}&family=${familyName}`;
-        });
+    // Runner button
+    card.querySelector('.runner-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.location.href = `/number-run.html?operation=${operation}&family=${familyName}`;
+    });
 
-        // Card click defaults to shooter
-        card.addEventListener('click', onClick);
-    } else {
-        // Disable buttons for locked cards
-        card.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = '0.3';
-        });
-    }
+    // Card click defaults to shooter
+    card.addEventListener('click', onClick);
 
     return card;
 }

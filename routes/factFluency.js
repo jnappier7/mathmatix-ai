@@ -188,7 +188,55 @@ function generateProblems(operation, familyConfig, count = 20, includeTraps = fa
       problem = `${num1} ÷ ${num2}`;
     }
 
-    const problemData = { problem, answer };
+    // Randomly create missing number problems (30% chance)
+    let missingNumberType = null;
+    if (Math.random() < 0.3) {
+      const position = Math.floor(Math.random() * 2); // 0 = first number missing, 1 = second number missing
+
+      if (operation === 'addition') {
+        if (position === 0) {
+          problem = `___ + ${num2} = ${answer}`;
+          missingNumberType = 'addend1';
+          answer = num1; // The missing number is num1
+        } else {
+          problem = `${num1} + ___ = ${answer}`;
+          missingNumberType = 'addend2';
+          answer = num2; // The missing number is num2
+        }
+      } else if (operation === 'subtraction') {
+        if (position === 0) {
+          problem = `___ - ${num2} = ${answer}`;
+          missingNumberType = 'minuend';
+          answer = num1; // The missing number is num1
+        } else {
+          problem = `${num1} - ___ = ${answer}`;
+          missingNumberType = 'subtrahend';
+          answer = num2; // The missing number is num2
+        }
+      } else if (operation === 'multiplication') {
+        if (position === 0) {
+          problem = `___ × ${num2} = ${answer}`;
+          missingNumberType = 'factor1';
+          answer = num1; // The missing number is num1
+        } else {
+          problem = `${num1} × ___ = ${answer}`;
+          missingNumberType = 'factor2';
+          answer = num2; // The missing number is num2
+        }
+      } else if (operation === 'division') {
+        if (position === 0) {
+          problem = `___ ÷ ${num2} = ${answer}`;
+          missingNumberType = 'dividend';
+          answer = num1; // The missing number is num1
+        } else {
+          problem = `${num1} ÷ ___ = ${answer}`;
+          missingNumberType = 'divisor';
+          answer = num2; // The missing number is num2
+        }
+      }
+    }
+
+    const problemData = { problem, answer, missingNumberType };
 
     // Generate trap answers if requested (for shooter mode)
     if (includeTraps) {
