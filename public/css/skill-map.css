@@ -80,6 +80,43 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Highlight stat - mastered skills (proof of competence) */
+.stat-pill.stat-highlight {
+    background: rgba(0, 255, 135, 0.15);
+    border-color: rgba(0, 255, 135, 0.3);
+}
+
+.stat-pill.stat-highlight .stat-value {
+    color: #00ff87;
+    font-size: 1.5rem;
+}
+
+/* Hot stat - frontier nodes (urgent next steps) */
+.stat-pill.stat-hot {
+    background: rgba(255, 107, 0, 0.15);
+    border-color: rgba(255, 170, 0, 0.3);
+    animation: statPulse 2s ease-in-out infinite;
+}
+
+.stat-pill.stat-hot .stat-value {
+    color: #ff8800;
+}
+
+@keyframes statPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Subtle stat - total count */
+.stat-pill.stat-subtle {
+    opacity: 0.7;
 }
 
 .stat-icon {
@@ -493,7 +530,7 @@
             drop-shadow(0 0 12px rgba(255, 193, 7, 0.6));
 }
 
-/* Ready stars - pulsing blue (frontier) */
+/* Ready stars - default blue */
 .node.ready circle {
     fill: #00d4ff;
     stroke: #00e5ff;
@@ -503,11 +540,42 @@
     animation: starPulse 2s ease-in-out infinite;
 }
 
-/* Locked stars - dim dots */
+/* FRONTIER HOT - The 1-3 screaming "CLICK ME" nodes */
+.node.frontier-hot circle {
+    fill: #ff6b00;
+    stroke: #ffaa00;
+    filter: drop-shadow(0 0 15px rgba(255, 107, 0, 1.0))
+            drop-shadow(0 0 30px rgba(255, 170, 0, 1.0))
+            drop-shadow(0 0 45px rgba(255, 107, 0, 0.8));
+    animation: frontierScream 1.2s ease-in-out infinite;
+}
+
+@keyframes frontierScream {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.4);
+        opacity: 0.85;
+    }
+}
+
+/* Frontier dimmed - other ready nodes, less urgent */
+.node.frontier-dimmed circle {
+    fill: #00aaff;
+    stroke: #00ccff;
+    opacity: 0.5;
+    filter: drop-shadow(0 0 4px rgba(0, 170, 255, 0.5));
+    animation: none;
+}
+
+/* Locked stars - FUTURE (not yet accessible, faint, blurred) */
 .node.locked circle {
-    fill: rgba(255, 255, 255, 0.08);
-    stroke: rgba(255, 255, 255, 0.2);
-    filter: none;
+    fill: rgba(255, 255, 255, 0.04);
+    stroke: rgba(255, 255, 255, 0.12);
+    filter: blur(1px);
+    opacity: 0.4;
 }
 
 /* Unknown stars - barely visible */
@@ -1080,4 +1148,11 @@ body {
     font-family: 'Courier New', monospace;
     font-size: 0.85rem;
     font-weight: bold;
+}
+
+.hint-sub {
+    margin: 0.5rem 0 0 0;
+    color: #00d4ff;
+    font-size: 0.9rem;
+    font-weight: normal;
 }

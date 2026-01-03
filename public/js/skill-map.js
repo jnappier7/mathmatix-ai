@@ -33,7 +33,9 @@ const state = {
     zoomLevel: 'world',
     focusedPattern: null,
     focusedNode: null,
-    clusterCenters: {} // Store precomputed cluster centers
+    clusterCenters: {}, // Store precomputed cluster centers
+    frontierNodes: [], // Hot next recommendations (1-3 max)
+    progressZone: null // Center of student's current progress
 };
 
 // DOM Elements
@@ -205,6 +207,45 @@ function forceCluster() {
     return force;
 }
 
+/**
+ * Detect frontier nodes - the hot 1-3 recommendations
+ * These are ready nodes that unlock the most future skills
+ */
+function detectFrontierNodes(nodes, edges) {
+    const readyNodes = nodes.filter(n => n.state === 'ready' && isPatternEnabled(n.pattern));
+
+    if (readyNodes.length === 0) return [];
+
+    // Score each ready node by how many skills it unlocks
+    const scoredNodes = readyNodes.map(node => {
+        const unlocksCount = edges.filter(e => e.source.id === node.id).length;
+        return { node, unlocksCount };
+    });
+
+    // Sort by unlocks (descending), take top 3
+    scoredNodes.sort((a, b) => b.unlocksCount - a.unlocksCount);
+
+    return scoredNodes.slice(0, 3).map(s => s.node);
+}
+
+/**
+ * Calculate the center of student's progress zone
+ * This is the average position of mastered + ready nodes
+ */
+function calculateProgressZone(nodes) {
+    const progressNodes = nodes.filter(n =>
+        (n.state === 'mastered' || n.state === 'ready') &&
+        isPatternEnabled(n.pattern)
+    );
+
+    if (progressNodes.length === 0) return null;
+
+    const centerX = d3.mean(progressNodes, d => d.x);
+    const centerY = d3.mean(progressNodes, d => d.y);
+
+    return { x: centerX, y: centerY };
+}
+
 // Load graph data from API
 async function loadGraphData() {
     try {
@@ -218,10 +259,15 @@ async function loadGraphData() {
 
         state.graphData = data;
 
-        // Update stats
-        document.getElementById('masteredCount').textContent = data.meta.masteredCount || 0;
-        document.getElementById('readyCount').textContent = data.meta.readyCount || 0;
-        document.getElementById('totalSkills').textContent = data.meta.totalSkills || 0;
+        // Calculate stats
+        const masteredCount = data.nodes.filter(n => n.state === 'mastered').length;
+        const readyCount = data.nodes.filter(n => n.state === 'ready').length;
+        const totalSkills = data.nodes.length;
+
+        // Update stats with motivational language
+        document.getElementById('masteredCount').textContent = masteredCount;
+        document.getElementById('frontierCount').textContent = readyCount;
+        document.getElementById('totalSkills').textContent = totalSkills;
 
         // Populate pattern legend
         populatePatternLegend(data.clusters);
@@ -472,11 +518,23 @@ function initializeGraph(data) {
     state.hullsGroup = hullsGroup;
     state.labelsGroup = labelsGroup;
 
+    // Detect frontier nodes and progress zone
+    state.frontierNodes = detectFrontierNodes(data.nodes, data.edges);
+    state.progressZone = calculateProgressZone(data.nodes);
+
+    // Apply frontier highlighting
+    applyFrontierHighlighting();
+
     // Initialize cluster labels
     renderClusterLabels(labelsGroup, data);
 
     // Initialize breadcrumbs to world view
     updateBreadcrumbs();
+
+    // Auto-focus on student's progress zone after a brief delay
+    setTimeout(() => {
+        autoFocusOnProgress();
+    }, 1000);
 }
 
 // Update cluster hulls (convex hulls around pattern groups)
@@ -589,6 +647,41 @@ function updateClusterLabels() {
         .transition()
         .duration(400)
         .style('opacity', isWorldView ? 1 : 0);
+}
+
+/**
+ * Apply frontier highlighting to the 1-3 hot next nodes
+ */
+function applyFrontierHighlighting() {
+    if (!state.node || !state.frontierNodes) return;
+
+    // Add 'frontier-hot' class to recommended nodes
+    state.node.classed('frontier-hot', d =>
+        state.frontierNodes.some(fn => fn.id === d.id)
+    );
+
+    // Add 'frontier-dimmed' class to other ready nodes
+    state.node.classed('frontier-dimmed', d =>
+        d.state === 'ready' &&
+        !state.frontierNodes.some(fn => fn.id === d.id)
+    );
+
+    console.log(`[Frontier] Highlighted ${state.frontierNodes.length} hot nodes`);
+}
+
+/**
+ * Auto-focus camera on student's progress zone
+ */
+function autoFocusOnProgress() {
+    if (!state.progressZone) {
+        console.log('[Auto-focus] No progress zone found, staying at world view');
+        return;
+    }
+
+    // Zoom to progress zone (between world and region)
+    flyTo(state.progressZone.x, state.progressZone.y, 1.2, 1500);
+
+    console.log('[Auto-focus] Zoomed to progress zone');
 }
 
 // Highlight connections on hover
@@ -846,13 +939,25 @@ function showWelcomeHint() {
     const hasSeenHint = localStorage.getItem('skillMapHintSeen');
 
     if (!hasSeenHint) {
+        // Wait for auto-focus to complete, then show hint
         setTimeout(() => {
+            const masteredCount = state.graphData?.nodes.filter(n => n.state === 'mastered').length || 0;
+            const frontierCount = state.frontierNodes?.length || 0;
+
+            let message = '';
+            if (masteredCount > 0) {
+                message = `You've built ${masteredCount} skill${masteredCount > 1 ? 's' : ''}. Let's keep going.`;
+            } else {
+                message = 'Your math journey starts here. Click an orange node to begin.';
+            }
+
             const hint = document.createElement('div');
             hint.className = 'welcome-hint';
             hint.innerHTML = `
-                <div class="hint-icon">💡</div>
+                <div class="hint-icon">🌟</div>
                 <div class="hint-content">
-                    <strong>Pro Tip:</strong> Press <kbd>?</kbd> to see keyboard shortcuts
+                    <strong>${message}</strong>
+                    ${frontierCount > 0 ? `<p class="hint-sub">The ${frontierCount} orange node${frontierCount > 1 ? 's' : ''} are your best next step${frontierCount > 1 ? 's' : ''}.</p>` : ''}
                 </div>
             `;
             document.body.appendChild(hint);
@@ -860,15 +965,15 @@ function showWelcomeHint() {
             // Fade in
             setTimeout(() => hint.classList.add('show'), 10);
 
-            // Fade out after 5 seconds
+            // Fade out after 6 seconds
             setTimeout(() => {
                 hint.classList.remove('show');
                 setTimeout(() => hint.remove(), 500);
-            }, 5000);
+            }, 6000);
 
             // Mark as seen
             localStorage.setItem('skillMapHintSeen', 'true');
-        }, 2000); // Show after 2 seconds
+        }, 3000); // Show after auto-focus completes (1s delay + 1.5s animation + 0.5s buffer)
     }
 }
 
