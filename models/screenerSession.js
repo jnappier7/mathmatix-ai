@@ -133,6 +133,38 @@ const screenerSessionSchema = new mongoose.Schema({
         }
     },
 
+    // Interview phase data
+    interviewSkills: [{
+        skillId: String,
+        difficulty: Number,
+        reason: String  // 'failed-near-theta', 'slow-correct-near-theta', etc.
+    }],
+    interviewQuestions: [{
+        questionId: String,
+        type: String,  // 'explanation', 'transfer', 'misconception-probe', etc.
+        question: String,
+        baseProblem: String,
+        expectedAnswer: String,
+        skillId: String,
+        rubric: {
+            excellent: String,
+            good: String,
+            developing: String,
+            needs_work: String
+        },
+        response: String,
+        evaluation: {
+            rating: String,  // 'excellent', 'good', 'developing', 'needs_work'
+            strengths: String,
+            areasForGrowth: String,
+            understandingLevel: String,  // 'deep', 'surface', 'misconception'
+            rawEvaluation: String
+        },
+        answeredAt: Date
+    }],
+    interviewStartTime: Date,
+    interviewEndTime: Date,
+
     // Phase tracking
     phase: {
         type: String,

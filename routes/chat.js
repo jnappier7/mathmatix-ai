@@ -20,7 +20,7 @@ const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 const { detectAndFetchResource } = require('../utils/resourceDetector');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 
-const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20240620"; // Best teaching & reasoning (stable June 2024 - with GPT fallback)
+const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reasoning (Sonnet 3.5 v2 - Oct 2024)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
@@ -232,8 +232,22 @@ router.post('/', isAuthenticated, async (req, res) => {
                 let fullResponseBuffer = '';
 
                 // Stream chunks to client as they arrive
+                // Handle both Claude and OpenAI streaming formats
+                const isClaudeModel = PRIMARY_CHAT_MODEL.startsWith('claude-');
+
                 for await (const chunk of stream) {
-                    const content = chunk.choices[0]?.delta?.content || '';
+                    let content = '';
+
+                    if (isClaudeModel) {
+                        // Claude streaming format: events with type 'content_block_delta'
+                        if (chunk.type === 'content_block_delta' && chunk.delta?.text) {
+                            content = chunk.delta.text;
+                        }
+                    } else {
+                        // OpenAI streaming format: choices[0].delta.content
+                        content = chunk.choices[0]?.delta?.content || '';
+                    }
+
                     if (content) {
                         fullResponseBuffer += content;
 

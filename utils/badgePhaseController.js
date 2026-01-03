@@ -16,6 +16,7 @@
 const { generateProblem } = require('./problemGenerator');
 const { reason } = require('./llmGateway');
 const Skill = require('../models/skill');
+const Problem = require('../models/problem');
 
 // ============================================================================
 // PHASE MANAGEMENT
@@ -255,16 +256,47 @@ Frame it positively: "Let's see how well you truly understand this..."`,
  * Generate next problem based on phase
  */
 async function generatePhaseProblem(phase, badge, user) {
-    const skill = await Skill.findOne({ skillId: badge.skillId }).lean();
+    let skill = null;
 
-    if (!skill) {
-        throw new Error('Skill not found');
+    // For pattern-based badges, try to find any available skill from the milestone
+    if (badge.isPatternBadge && badge.allSkillIds && badge.allSkillIds.length > 0) {
+        // Try each skill ID until we find one that exists
+        for (const skillId of badge.allSkillIds) {
+            skill = await Skill.findOne({ skillId }).lean();
+            if (skill) break;
+        }
+    } else if (badge.skillId) {
+        // Legacy badge system - single skillId
+        skill = await Skill.findOne({ skillId: badge.skillId }).lean();
     }
 
-    let difficulty = badge.requiredTheta || 0;
+    if (!skill) {
+        // FALLBACK: Create temporary skill object for pattern-based milestones
+        // This allows UX to work while skills are being configured
+        if (badge.isPatternBadge) {
+            console.warn(`[FALLBACK] No skills found for milestone "${badge.milestoneName}". Using fallback skill generator.`);
+
+            skill = {
+                skillId: badge.milestoneId || `${badge.patternId}-fallback`,
+                name: badge.milestoneName,
+                description: badge.description || `Practice ${badge.milestoneName}`,
+                pattern: badge.patternId,
+                tier: badge.tierNum,
+                difficulty: 0.0,  // Baseline
+                problemType: 'algebra-basic',  // Generic type
+                generatorFunction: 'generateBasicAlgebraProblem'
+            };
+        } else {
+            // Legacy badge - this is a real error
+            throw new Error(`Skill not found: ${badge.skillId}`);
+        }
+    }
+
+    let difficulty = skill.difficulty || badge.requiredTheta || 0;
     let problemOptions = {
         difficulty,
-        fluencyModifier: user.fluencyProfile
+        fluencyModifier: user.fluencyProfile,
+        isFallback: !skill.difficulty  // Flag fallback problems
     };
 
     // Adjust difficulty based on phase
@@ -301,7 +333,37 @@ async function generatePhaseProblem(phase, badge, user) {
             break;
     }
 
-    const problem = generateProblem(skill.skillId, problemOptions);
+    // Try to fetch problem from database first
+    let problem = null;
+
+    try {
+        // Find problems matching the skill and difficulty range
+        const targetDifficulty = problemOptions.difficulty;
+        const difficultyTolerance = 0.5;
+
+        const dbProblems = await Problem.find({
+            skillId: skill.skillId,
+            'irtParameters.difficulty': {
+                $gte: targetDifficulty - difficultyTolerance,
+                $lte: targetDifficulty + difficultyTolerance
+            },
+            isActive: true
+        }).limit(10).lean();
+
+        if (dbProblems && dbProblems.length > 0) {
+            // Randomly select one of the matching problems
+            problem = dbProblems[Math.floor(Math.random() * dbProblems.length)];
+            console.log(`[Phase Problem] Using DB problem for ${skill.skillId} at difficulty ${targetDifficulty}`);
+        }
+    } catch (error) {
+        console.warn(`[Phase Problem] Error fetching from DB for ${skill.skillId}:`, error.message);
+    }
+
+    // Fallback to template generation if no DB problems found
+    if (!problem) {
+        console.log(`[Phase Problem] No DB problems found, using template for ${skill.skillId}`);
+        problem = generateProblem(skill.skillId, problemOptions);
+    }
 
     return {
         ...problem,

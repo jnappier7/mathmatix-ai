@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 
 // Weekly challenge templates
@@ -176,9 +177,9 @@ function generateWeeklyChallenges(user) {
 }
 
 // GET /api/weekly-challenges - Get current week's challenges
-router.get('/weekly-challenges', async (req, res) => {
+router.get('/weekly-challenges', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
@@ -229,10 +230,10 @@ router.get('/weekly-challenges', async (req, res) => {
 });
 
 // POST /api/weekly-challenges/update - Update challenge progress
-router.post('/weekly-challenges/update', async (req, res) => {
+router.post('/weekly-challenges/update', isAuthenticated, async (req, res) => {
   try {
     const { event, data } = req.body;
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user || !user.weeklyChallenges) {
       return res.json({ success: true, message: 'No challenges initialized yet' });

@@ -79,7 +79,7 @@ const PATTERN_BADGES = {
             milestoneId: 'one-step-equations',
             name: 'One-Step Equations',
             description: 'Solve x + 5 = 12 using inverse operations',
-            skillIds: ['one-step-equations', 'one-step-addition', 'one-step-subtraction', 'one-step-multiplication', 'one-step-division'],
+            skillIds: ['one-step-equations', 'one-step-addition', 'one-step-subtraction', 'one-step-multiplication', 'one-step-division', 'one-step-equations-addition', 'one-step-equations-multiplication'],
             requiredAccuracy: 0.85,
             requiredProblems: 12
           },
@@ -365,7 +365,7 @@ const PATTERN_BADGES = {
             milestoneId: 'addition-subtraction',
             name: 'Addition/Subtraction as Change',
             description: 'Understand adding as increasing, subtracting as decreasing',
-            skillIds: ['addition', 'subtraction', 'addition-subtraction-word-problems'],
+            skillIds: ['addition', 'subtraction', 'addition-subtraction-word-problems', 'integer-addition', 'integer-subtraction'],
             requiredAccuracy: 0.85,
             requiredProblems: 15
           },
@@ -376,6 +376,14 @@ const PATTERN_BADGES = {
             skillIds: ['compare-numbers', 'difference-word-problems'],
             requiredAccuracy: 0.85,
             requiredProblems: 12
+          },
+          {
+            milestoneId: 'change-word-problems',
+            name: 'Change Story Problems',
+            description: 'Solve word problems involving change scenarios',
+            skillIds: ['addition-subtraction-word-problems', 'result-unknown', 'change-unknown'],
+            requiredAccuracy: 0.85,
+            requiredProblems: 15
           }
         ]
       },
@@ -519,6 +527,14 @@ const PATTERN_BADGES = {
             skillIds: ['part-part-whole', 'addition-as-joining'],
             requiredAccuracy: 0.80,
             requiredProblems: 12
+          },
+          {
+            milestoneId: 'number-bonds',
+            name: 'Number Bonds',
+            description: 'Build fluency with number relationships and bonds',
+            skillIds: ['number-bonds', 'make-ten', 'doubles-near-doubles'],
+            requiredAccuracy: 0.85,
+            requiredProblems: 15
           }
         ]
       },
@@ -551,6 +567,14 @@ const PATTERN_BADGES = {
             skillIds: ['factoring-quadratics', 'factoring-gcf', 'factoring-difference-squares'],
             requiredAccuracy: 0.85,
             requiredProblems: 15
+          },
+          {
+            milestoneId: 'order-of-operations',
+            name: 'Order of Operations',
+            description: 'Apply PEMDAS/GEMDAS to evaluate expressions',
+            skillIds: ['order-of-operations', 'evaluate-expressions', 'nested-operations', 'numerical-expressions-exponents'],
+            requiredAccuracy: 0.85,
+            requiredProblems: 12
           }
         ]
       },
@@ -654,6 +678,14 @@ const PATTERN_BADGES = {
             skillIds: ['area-rectangles', 'perimeter', 'area-perimeter-word-problems'],
             requiredAccuracy: 0.85,
             requiredProblems: 12
+          },
+          {
+            milestoneId: 'symmetry-basics',
+            name: 'Symmetry',
+            description: 'Identify and create symmetric shapes',
+            skillIds: ['line-symmetry', 'symmetry-shapes', 'create-symmetry'],
+            requiredAccuracy: 0.80,
+            requiredProblems: 10
           }
         ]
       },
@@ -789,6 +821,14 @@ const PATTERN_BADGES = {
             skillIds: ['rounding', 'rounding-to-nearest-ten'],
             requiredAccuracy: 0.80,
             requiredProblems: 10
+          },
+          {
+            milestoneId: 'estimation',
+            name: 'Estimation',
+            description: 'Estimate sums, differences, and reasonableness',
+            skillIds: ['estimation', 'estimate-sums', 'check-reasonableness'],
+            requiredAccuracy: 0.80,
+            requiredProblems: 12
           }
         ]
       },
@@ -913,7 +953,7 @@ const PATTERN_BADGES = {
             milestoneId: 'simple-probability',
             name: 'Simple Probability',
             description: 'Find probability of simple events',
-            skillIds: ['simple-probability', 'probability-fractions'],
+            skillIds: ['simple-probability', 'probability-fractions', 'probability-basics', 'statistics-probability'],
             requiredAccuracy: 0.80,
             requiredProblems: 12
           },
@@ -1205,6 +1245,9 @@ function getCurrentTier(patternId, userSkillMastery) {
   const pattern = PATTERN_BADGES[patternId];
   if (!pattern) return 0;
 
+  // Handle case where skillMastery might be empty or null
+  if (!userSkillMastery) return 0;
+
   // Find highest tier where at least 50% of milestones are mastered
   let currentTier = 0;
 
@@ -1213,7 +1256,8 @@ function getCurrentTier(patternId, userSkillMastery) {
     const masteredCount = milestones.filter(milestone => {
       // Check if any skillId in this milestone is mastered
       return milestone.skillIds.some(skillId => {
-        const mastery = userSkillMastery.get(skillId);
+        // Handle both Map and Object types
+        const mastery = userSkillMastery.get?.(skillId) || userSkillMastery[skillId];
         return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
       });
     }).length;
@@ -1243,7 +1287,8 @@ function getNextMilestone(patternId, currentTier, userSkillMastery) {
   // Find first incomplete milestone
   for (const milestone of tier.milestones) {
     const completed = milestone.skillIds.every(skillId => {
-      const mastery = userSkillMastery.get(skillId);
+      // Handle both Map and Object types
+      const mastery = userSkillMastery?.get?.(skillId) || userSkillMastery?.[skillId];
       return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
     });
 
@@ -1269,7 +1314,8 @@ function calculatePatternProgress(patternId, currentTier, userSkillMastery) {
   const milestones = tier.milestones;
   const completedCount = milestones.filter(milestone => {
     return milestone.skillIds.every(skillId => {
-      const mastery = userSkillMastery.get(skillId);
+      // Handle both Map and Object types
+      const mastery = userSkillMastery?.get?.(skillId) || userSkillMastery?.[skillId];
       return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
     });
   }).length;

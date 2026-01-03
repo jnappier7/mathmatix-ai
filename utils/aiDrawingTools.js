@@ -129,6 +129,34 @@ function parseAIDrawingCommands(aiResponseText, canvasWidth = 450, canvasHeight 
     }
     cleanedText = cleanedText.replace(segmentRegex, '');
 
+    // --- CIRCLE COMMAND ---
+    // [CIRCLE:x,y,radius] or [CIRCLE:x,y,radius,color=#FF0000]
+    const circleRegex = /\[CIRCLE:(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,color=([#\w]+))?\]/g;
+
+    while ((match = circleRegex.exec(aiResponseText)) !== null) {
+        const centerX_coord = parseFloat(match[1]);
+        const centerY_coord = parseFloat(match[2]);
+        const radius_coord = parseFloat(match[3]);
+        const color = match[4] || '#12B3B3';
+
+        const centerX = canvasWidth / 2;
+        const centerY = canvasHeight / 2;
+        const gridSize = 30;
+
+        drawingSequence.push({
+            type: 'circle',
+            position: [
+                centerX + (centerX_coord * gridSize) - (radius_coord * gridSize),
+                centerY - (centerY_coord * gridSize) - (radius_coord * gridSize)
+            ],
+            radius: radius_coord * gridSize,
+            fill: 'transparent',
+            stroke: color,
+            strokeWidth: 2
+        });
+    }
+    cleanedText = cleanedText.replace(circleRegex, '');
+
     // --- TRIANGLE COMMAND ---
     // [TRIANGLE:x1,y1,x2,y2,x3,y3]
     const triangleRegex = /\[TRIANGLE:(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*)\]/g;

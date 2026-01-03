@@ -66,15 +66,28 @@ function checkURLParams() {
     const familyName = params.get('family');
 
     if (operation && familyName) {
+        console.log('[Number Run] URL params detected:', { operation, familyName });
+
         // Launched from mastery grid - skip selection and start directly
         gameState.selectedOperation = operation;
         gameState.selectedFamily = familyName;
 
+        // Check if families loaded
+        if (!gameState.families) {
+            console.error('[Number Run] Families not loaded yet - cannot start game');
+            alert('Failed to load game data. Please try again.');
+            return;
+        }
+
         const family = gameState.families[operation]?.find(f => f.familyName === familyName);
         if (family) {
             gameState.familyDisplayName = family.displayName;
+            console.log('[Number Run] Starting game with family:', family.displayName);
             showScreen('game');
             startRun();
+        } else {
+            console.error('[Number Run] Family not found:', { operation, familyName });
+            alert('Failed to load game configuration. Please try again.');
         }
     }
 }
@@ -163,11 +176,38 @@ async function startRun() {
     // Show first problem
     displayCurrentProblem();
 
-    // Start spawning platforms
+    // IMPORTANT: Give player time to read the problem before platforms appear
+    console.log('[Number Run] Starting in 3 seconds - Get ready!');
+
+    // Show countdown
+    await showCountdown();
+
+    // NOW start spawning platforms (with initial slow speed)
+    console.log('[Number Run] Go! Starting platform spawns');
     spawnPlatformSet();
     gameState.platformInterval = setInterval(() => {
         spawnPlatformSet();
     }, 3000 / gameState.speed); // Platforms spawn faster with speed
+}
+
+// Show 3-2-1 countdown before game starts
+async function showCountdown() {
+    const problemDisplay = document.getElementById('currentProblem');
+    const originalText = problemDisplay.textContent;
+
+    return new Promise(resolve => {
+        let count = 3;
+        const countdownInterval = setInterval(() => {
+            if (count > 0) {
+                problemDisplay.textContent = `Get Ready... ${count}`;
+                count--;
+            } else {
+                problemDisplay.textContent = originalText;
+                clearInterval(countdownInterval);
+                resolve();
+            }
+        }, 1000);
+    });
 }
 
 // Generate problems
@@ -187,6 +227,8 @@ async function generateProblems() {
             requestBody.mixed = true;
         }
 
+        console.log('[Number Run] Generating problems:', requestBody);
+
         const response = await fetch('/api/fact-fluency/generate-problems', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -194,6 +236,8 @@ async function generateProblems() {
         });
 
         const data = await response.json();
+        console.log('[Number Run] Problems response:', { success: data.success, count: data.problems?.length });
+
         if (data.success) {
             gameState.problems = data.problems;
             // Debug: Check first few problems for trapAnswers
@@ -203,7 +247,8 @@ async function generateProblems() {
             console.log('Third problem:', gameState.problems[2]);
         }
     } catch (error) {
-        console.error('Error generating problems:', error);
+        console.error('[Number Run] Error generating problems:', error);
+        alert('Error loading game. Please try again.');
     }
 }
 
@@ -217,10 +262,14 @@ function displayCurrentProblem() {
 
 // Spawn a set of 3 platforms (one per lane)
 function spawnPlatformSet() {
-    if (!gameState.gameRunning) return;
+    if (!gameState.gameRunning) {
+        console.log('[Number Run] spawnPlatformSet called but game not running');
+        return;
+    }
 
     const problem = gameState.problems[gameState.currentProblemIndex];
     if (!problem) {
+        console.log('[Number Run] No more problems available');
         endGame('No more problems!');
         return;
     }
@@ -271,6 +320,14 @@ function spawnPlatformSet() {
     const lanes = ['left', 'center', 'right'];
     const container = document.getElementById('platformsContainer');
 
+    if (!container) {
+        console.error('[Number Run] ERROR: platformsContainer element not found in DOM!');
+        endGame('Game error - missing container');
+        return;
+    }
+
+    console.log('[Number Run] Creating 3 platforms with answers:', answers);
+
     lanes.forEach((lane, index) => {
         const platform = document.createElement('div');
         platform.className = 'platform';
@@ -291,6 +348,7 @@ function spawnPlatformSet() {
         answerDisplay.textContent = answers[index];
         platform.appendChild(answerDisplay);
 
+        console.log(`[Number Run] Appending platform: lane=${lane}, answer=${answers[index]}, left=${lanePositions[lane]}, duration=${duration}s`);
         container.appendChild(platform);
 
         // Check collision when platform reaches character position (earlier for instant feedback)
@@ -349,10 +407,12 @@ function handleCorrectHit(platform) {
     platform.classList.add('hit');
     platform.classList.add('correct');
 
-    // Increase speed every 5 correct
-    if (gameState.correct % 5 === 0 && gameState.speed < 3) {
-        gameState.speed += 0.2;
+    // Gradually increase speed - slower ramp up for better playability
+    // Increase every 10 correct answers (instead of 5) with smaller increments
+    if (gameState.correct % 10 === 0 && gameState.speed < 1.8) {
+        gameState.speed += 0.1;  // Smaller increments (was 0.2)
         updatePlatformSpawnRate();
+        console.log(`[Number Run] Speed increased to ${gameState.speed.toFixed(1)}x`);
     }
 
     // Update HUD
@@ -458,7 +518,7 @@ function resetGame() {
     gameState.maxStreak = 0;
     gameState.attempted = 0;
     gameState.correct = 0;
-    gameState.speed = 1;
+    gameState.speed = 0.4;  // Start MUCH slower - give time to read problem
     gameState.currentLane = 'center';
     gameState.gameRunning = false;
 

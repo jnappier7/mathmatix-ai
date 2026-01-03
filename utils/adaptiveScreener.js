@@ -17,7 +17,7 @@
  * @module adaptiveScreener
  */
 
-const { estimateAbility, hasConverged, hasPlateaued, thetaToPercentile, calculateInformation } = require('./irt');
+const { estimateAbility, estimateAbilityMAP, hasConverged, hasPlateaued, thetaToPercentile, calculateInformation } = require('./irt');
 
 // ===========================================================================
 // DAMPENING CONVERGENCE ("THE WAVE")
@@ -54,8 +54,21 @@ function calculateJumpSize(isCorrect, questionNumber, standardError) {
     return Math.max(0.3, Math.min(jumpSize, 1.5));
 
   } else {
-    // DOWNWARD STEP (consistent, gentle)
-    return -0.5;  // Always step down half a difficulty level
+    // DOWNWARD STEP (dampened with confidence, like upward jumps)
+    // High confidence (low SE) → smaller adjustment (might be careless error)
+    // Low confidence (high SE) → larger adjustment (still calibrating)
+    const baseStep = -0.7;
+
+    // Dampening: Higher confidence (lower SE) = smaller drops
+    const confidenceDampen = Math.max(standardError, 0.3);
+
+    // Later in test = smaller drops (more confident in ability estimate)
+    const timeDampen = Math.pow(0.9, questionNumber - 1);
+
+    const stepSize = baseStep * confidenceDampen * timeDampen;
+
+    // Minimum drop of 0.2, maximum of 0.7
+    return Math.max(-0.7, Math.min(stepSize, -0.2));
   }
 }
 
@@ -84,6 +97,10 @@ function initializeSession(options = {}) {
     standardError: Infinity,
     confidence: 0,  // 0 to 1
     cumulativeInformation: 0,  // Track total information gathered
+
+    // Bayesian prior (for MAP estimation in early questions)
+    priorMean: startingTheta,  // Grade-based starting point
+    priorSD: 1.25,             // Wide prior allows data to dominate quickly
 
     // Response history
     responses: [],
@@ -166,7 +183,25 @@ function processResponse(session, response) {
   console.log(`[DEBUG] Estimating ability with ${responsesForEstimation.length} responses:`,
     responsesForEstimation.map(r => `d=${r.difficulty}, a=${r.discrimination}, c=${r.correct}`).join('; '));
 
-  const abilityEstimate = estimateAbility(responsesForEstimation);
+  // HYBRID APPROACH: Use MAP (Bayesian) early, transition to MLE once sufficient data
+  // MAP stabilizes early estimates with grade-based prior, MLE maximizes precision later
+  let abilityEstimate;
+
+  if (session.questionCount <= 10) {
+    // Early questions: Use MAP with grade-based prior
+    abilityEstimate = estimateAbilityMAP(responsesForEstimation, {
+      priorMean: session.priorMean,
+      priorSD: session.priorSD,
+      initialTheta: session.theta
+    });
+    console.log(`[Screener] Using MAP estimation (Q${session.questionCount}) with prior μ=${session.priorMean.toFixed(2)}`);
+  } else {
+    // Later questions: Pure MLE (data-driven)
+    abilityEstimate = estimateAbility(responsesForEstimation, {
+      initialTheta: session.theta
+    });
+    console.log(`[Screener] Using MLE estimation (Q${session.questionCount})`);
+  }
 
   const previousTheta = session.theta;
   session.theta = abilityEstimate.theta;
@@ -502,7 +537,11 @@ function generateReport(session) {
 
   // Performance summary
   const correctCount = session.responses.filter(r => r.correct).length;
-  const accuracy = correctCount / session.responses.length;
+  const totalQuestions = session.responses.length;
+  const accuracy = totalQuestions > 0 ? correctCount / totalQuestions : 0;
+
+  // DEBUG: Log accuracy calculation
+  console.log(`[Screener Report] Correct: ${correctCount}/${totalQuestions} = ${(accuracy * 100).toFixed(1)}%`);
 
   return {
     // Ability estimate
@@ -514,6 +553,7 @@ function generateReport(session) {
     // Performance
     questionsAnswered: session.questionCount,
     correctCount,
+    totalQuestions,
     accuracy: Math.round(accuracy * 100),
 
     // Time

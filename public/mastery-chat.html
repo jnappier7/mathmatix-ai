@@ -42,16 +42,63 @@
             font-size: 48px;
         }
 
+        .badge-details {
+            flex: 1;
+        }
+
+        .pattern-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
+        .pattern-breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pattern-breadcrumb-separator {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .pattern-badge-mini {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
         .badge-details h2 {
             margin: 0;
-            font-size: 24px;
-            color: #12B3B3;
+            font-size: 28px;
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
 
         .badge-details p {
-            margin: 5px 0 0 0;
-            opacity: 0.8;
+            margin: 6px 0 0 0;
+            opacity: 0.85;
+            font-size: 14px;
         }
+
+        /* Pattern colors for mini badges */
+        .pattern-equivalence { background: #2196f3; }
+        .pattern-scaling { background: #4caf50; }
+        .pattern-change { background: #ff5722; }
+        .pattern-structure { background: #9c27b0; }
+        .pattern-space { background: #00bcd4; }
+        .pattern-comparison { background: #ff9800; }
+        .pattern-uncertainty { background: #e91e63; }
+        .pattern-accumulation { background: #795548; }
 
         .progress-bar-container {
             flex: 1;
@@ -138,21 +185,27 @@
 
         .progress-card h3 {
             margin: 0 0 10px 0;
-            color: #12B3B3;
+            color: #fff;
             font-size: 16px;
+            font-weight: 600;
         }
 
         .stat-row {
             display: flex;
             justify-content: space-between;
             margin: 8px 0;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 14px;
         }
 
+        .stat-row span:first-child {
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+        }
+
         .stat-value {
-            font-weight: bold;
-            color: #fff;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
         }
 
         #mastery-chat-box {
@@ -446,6 +499,22 @@
             <div class="badge-info">
                 <div class="badge-icon" id="badge-icon">🏅</div>
                 <div class="badge-details">
+                    <div class="pattern-breadcrumb" id="pattern-breadcrumb" style="display: none;">
+                        <div class="pattern-breadcrumb-item">
+                            <div class="pattern-badge-mini" id="pattern-mini-badge">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span id="pattern-name">Pattern</span>
+                        </div>
+                        <span class="pattern-breadcrumb-separator">→</span>
+                        <div class="pattern-breadcrumb-item">
+                            <span id="tier-name">Tier 1</span>
+                        </div>
+                        <span class="pattern-breadcrumb-separator">→</span>
+                        <div class="pattern-breadcrumb-item">
+                            <span id="milestone-name">Milestone</span>
+                        </div>
+                    </div>
                     <h2 id="badge-name">Loading...</h2>
                     <p id="badge-skill">Skill: Loading...</p>
                 </div>
@@ -537,9 +606,9 @@
         <!-- Progress Section (Right) -->
         <div class="progress-section">
             <div class="progress-card">
-                <h3><i class="fas fa-trophy"></i> Current Badge</h3>
+                <h3><i class="fas fa-trophy"></i> Current Milestone</h3>
                 <div class="stat-row">
-                    <span>Badge:</span>
+                    <span id="sidebar-label-name">Milestone:</span>
                     <span class="stat-value" id="sidebar-badge-name">Loading...</span>
                 </div>
                 <div class="stat-row">
@@ -547,7 +616,7 @@
                     <span class="stat-value" id="sidebar-badge-tier">-</span>
                 </div>
                 <div class="stat-row">
-                    <span>Skill:</span>
+                    <span id="sidebar-label-pattern">Pattern:</span>
                     <span class="stat-value" id="sidebar-skill-name">-</span>
                 </div>
             </div>
@@ -613,15 +682,60 @@
                 const tierEmoji = { bronze: '🥉', silver: '🥈', gold: '🥇', platinum: '💎' };
                 const tierNames = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold', platinum: 'Platinum' };
 
-                // Header
-                document.getElementById('badge-icon').textContent = tierEmoji[badge.tier] || '🏅';
-                document.getElementById('badge-name').textContent = badge.badgeName;
-                document.getElementById('badge-skill').textContent = `Skill: ${badge.skillId.replace(/-/g, ' ')}`;
+                // Check if this is a pattern-based badge (has pattern, tier, milestone data)
+                const isPatternBased = badge.patternId && badge.tierNum && badge.milestoneName;
 
-                // Sidebar - Current Badge
-                document.getElementById('sidebar-badge-name').textContent = badge.badgeName;
-                document.getElementById('sidebar-badge-tier').textContent = tierNames[badge.tier] || 'Standard';
-                document.getElementById('sidebar-skill-name').textContent = badge.skillId.replace(/-/g, ' ');
+                if (isPatternBased) {
+                    // Show breadcrumb for pattern-based navigation
+                    const breadcrumb = document.getElementById('pattern-breadcrumb');
+                    breadcrumb.style.display = 'flex';
+
+                    // Pattern icon map
+                    const patternIcons = {
+                        'equivalence': 'fa-balance-scale',
+                        'scaling': 'fa-chart-line',
+                        'change': 'fa-mountain',
+                        'structure': 'fa-cubes',
+                        'space': 'fa-cube',
+                        'comparison': 'fa-sort-amount-up',
+                        'uncertainty': 'fa-dice',
+                        'accumulation': 'fa-layer-group'
+                    };
+
+                    // Update breadcrumb elements
+                    const miniBadge = document.getElementById('pattern-mini-badge');
+                    miniBadge.className = `pattern-badge-mini pattern-${badge.patternId}`;
+                    miniBadge.innerHTML = `<i class="fas ${patternIcons[badge.patternId] || 'fa-star'}"></i>`;
+
+                    document.getElementById('pattern-name').textContent = badge.patternName || badge.patternId;
+                    document.getElementById('tier-name').textContent = `Tier ${badge.tierNum}`;
+                    document.getElementById('milestone-name').textContent = badge.milestoneName;
+
+                    // Header
+                    document.getElementById('badge-icon').textContent = tierEmoji[badge.tierNum] || '🏅';
+                    document.getElementById('badge-name').textContent = badge.milestoneName;
+                    document.getElementById('badge-skill').textContent = badge.description || `${badge.patternName} - Tier ${badge.tierNum}`;
+                } else {
+                    // Traditional badge system - use old display
+                    document.getElementById('badge-icon').textContent = tierEmoji[badge.tier] || '🏅';
+                    document.getElementById('badge-name').textContent = badge.badgeName;
+                    document.getElementById('badge-skill').textContent = `Skill: ${badge.skillId.replace(/-/g, ' ')}`;
+                }
+
+                // Sidebar - Current Badge (updated for pattern-based system)
+                if (isPatternBased) {
+                    document.getElementById('sidebar-label-name').textContent = 'Milestone:';
+                    document.getElementById('sidebar-label-pattern').textContent = 'Pattern:';
+                    document.getElementById('sidebar-badge-name').textContent = badge.milestoneName;
+                    document.getElementById('sidebar-badge-tier').textContent = `Tier ${badge.tierNum}`;
+                    document.getElementById('sidebar-skill-name').textContent = badge.patternName;
+                } else {
+                    document.getElementById('sidebar-label-name').textContent = 'Badge:';
+                    document.getElementById('sidebar-label-pattern').textContent = 'Skill:';
+                    document.getElementById('sidebar-badge-name').textContent = badge.badgeName;
+                    document.getElementById('sidebar-badge-tier').textContent = tierNames[badge.tier] || 'Standard';
+                    document.getElementById('sidebar-skill-name').textContent = badge.skillId.replace(/-/g, ' ');
+                }
 
                 // Sidebar - Progress
                 const completed = badge.problemsCompleted || 0;
@@ -635,11 +749,13 @@
 
                 updateProgress(completed, badge.requiredProblems);
 
-                // Send welcome message and start practice
-                appendMessage('ai', `Welcome to ${badge.badgeName}! Let's start working on ${badge.skillId.replace(/-/g, ' ')}.`);
-
-                // Auto-start practice after a brief delay
-                setTimeout(() => startPractice(), 1500);
+                // Auto-send first message to trigger INTRO phase (student choice)
+                setTimeout(() => {
+                    // Send a simple greeting to trigger AI's INTRO prompt
+                    const fakeEvent = { target: { value: 'Hi' } };
+                    document.getElementById('mastery-input').value = 'Hi';
+                    sendMessage();
+                }, 1500);
 
             } catch (error) {
                 console.error('Initialization error:', error);
@@ -742,9 +858,8 @@
 
         // Exit mastery mode
         function exitMasteryMode() {
-            if (confirm('Exit mastery mode and return to regular chat?')) {
-                window.location.href = '/chat.html';
-            }
+            // Just redirect - chat.html auto-clears mastery state on load
+            window.location.href = '/chat.html';
         }
 
         // ============================================================================
@@ -757,16 +872,10 @@
         // Load next problem from backend
         async function loadNextProblem() {
             try {
-                const badge = currentUser.masteryProgress.activeBadge;
                 const response = await fetch('/api/mastery/next-phase-problem', {
-                    method: 'POST',
+                    method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        skillId: badge.skillId,
-                        currentPhase: currentPhase,
-                        tier: badge.tier || 1
-                    })
+                    credentials: 'include'
                 });
 
                 if (!response.ok) {
@@ -819,25 +928,41 @@
                 document.getElementById('problem-answer-input').placeholder = 'Type your answer...';
             }
 
-            // Update problem counter
+            // Update problem counter (only show in you-do/mastery-check phases)
             const badge = currentUser.masteryProgress.activeBadge;
-            const completed = (badge.problemsCompleted || 0) + 1;
-            document.getElementById('problem-counter').textContent = `Problem ${completed} of ${badge.requiredProblems}`;
+            const problemCounter = document.getElementById('problem-counter');
+
+            if (currentPhase === 'you-do' || currentPhase === 'mastery-check') {
+                const completed = (badge.problemsCompleted || 0) + 1;
+                problemCounter.textContent = `Problem ${completed} of ${badge.requiredProblems}`;
+                problemCounter.style.display = 'inline-block';
+            } else {
+                problemCounter.style.display = 'none';
+            }
         }
 
-        // Update phase display
+        // Update phase display (student-facing)
         function updatePhaseDisplay(phase) {
             const phaseBadge = document.getElementById('current-phase');
+            const progressContainer = document.querySelector('.progress-bar-container');
+
             const phaseNames = {
-                'launch': 'Launch',
-                'i-do': 'I Do (Watch)',
-                'we-do': 'We Do (Together)',
-                'you-do': 'You Do (Practice)',
-                'mastery-check': 'Mastery Check'
+                'launch': '📚 Learning the concept',
+                'i-do': '📚 Learning the concept',
+                'we-do': '💪 Practicing together',
+                'you-do': '⭐ Prove your mastery',
+                'mastery-check': '⭐ Prove your mastery'
             };
 
             phaseBadge.textContent = phaseNames[phase] || phase;
             phaseBadge.className = 'phase-badge ' + phase;
+
+            // Only show progress bar during "you-do" and "mastery-check" phases
+            if (phase === 'you-do' || phase === 'mastery-check') {
+                progressContainer.style.display = 'block';
+            } else {
+                progressContainer.style.display = 'none';
+            }
         }
 
         // Submit answer

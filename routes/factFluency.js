@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 
 // Fact family definitions (Morningside-style build-up sequence)
@@ -78,8 +79,11 @@ const MASTERY_CRITERIA = {
 // Generate trap answers (distractors) for multiple choice
 function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3, missingNumberType = null) {
   const traps = new Set();
+  const MAX_ATTEMPTS = 100;  // Prevent infinite loops
+  let attempts = 0;
 
-  while (traps.size < count) {
+  while (traps.size < count && attempts < MAX_ATTEMPTS) {
+    attempts++;
     let trap;
     const trapType = Math.floor(Math.random() * 5);
 
@@ -140,6 +144,20 @@ function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3, mi
     if (trap > 0 && trap !== correctAnswer && trap < 200 && !traps.has(trap)) {
       traps.add(trap);
     }
+  }
+
+  // SAFETY NET: If we still don't have enough traps (edge cases like 0×0),
+  // fill with simple sequential offsets
+  let fallbackOffset = 1;
+  while (traps.size < count) {
+    const fallbackTrap = Math.max(1, Math.abs(correctAnswer) + fallbackOffset);
+    if (fallbackTrap !== correctAnswer && !traps.has(fallbackTrap) && fallbackTrap < 200) {
+      traps.add(fallbackTrap);
+    }
+    fallbackOffset++;
+
+    // Absolute safety: if we've tried 50 offsets, just break
+    if (fallbackOffset > 50) break;
   }
 
   return Array.from(traps);
@@ -316,9 +334,9 @@ router.get('/families', async (req, res) => {
 });
 
 // GET /api/fact-fluency/progress - Get user's fact fluency progress
-router.get('/progress', async (req, res) => {
+router.get('/progress', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
@@ -349,10 +367,10 @@ router.get('/progress', async (req, res) => {
 });
 
 // POST /api/fact-fluency/placement - Complete placement test
-router.post('/placement', async (req, res) => {
+router.post('/placement', isAuthenticated, async (req, res) => {
   try {
-    const { results } = req.body; // Array of {operation, rate, accuracy}
-    const user = await User.findById(req.session.userId);
+    const { results } = req.body; // Array of {operation, rate, accuracy, medianResponseTime, avgResponseTime}
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -388,20 +406,30 @@ router.post('/placement', async (req, res) => {
 
     // For each operation in placement results, mark families as mastered based on performance
     results.forEach(result => {
-      const { operation, rate, accuracy } = result;
+      const { operation, rate, accuracy, medianResponseTime } = result;
       const families = FACT_FAMILIES[operation];
 
       // Determine how many families to mark as mastered based on placement performance
+      // MORNINGSIDE STANDARDS: Require accuracy + fluency (measured by BOTH rate AND response time)
       let startingFamilyIndex = 0;
 
-      if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate) {
-        // Excellent performance - skip first 60% of families
+      // Calculate fluency from median response time (< 2000ms = fluent, < 3000ms = developing)
+      const isFluent = medianResponseTime && medianResponseTime < 2000;  // < 2 seconds per problem
+      const isDeveloping = medianResponseTime && medianResponseTime < 3000;  // < 3 seconds per problem
+
+      console.log(`[Placement] ${operation}: ${accuracy}% accuracy, ${rate}/min rate, median: ${medianResponseTime}ms ${isFluent ? '(FLUENT)' : isDeveloping ? '(DEVELOPING)' : '(SLOW)'}`);
+
+      if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate && isFluent) {
+        // Excellent: High accuracy + rate + fast individual responses = TRUE mastery
         startingFamilyIndex = Math.floor(families.length * 0.6);
-      } else if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate * 0.75) {
-        // Good performance - skip first 40% of families
+      } else if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate * 0.75 && isFluent) {
+        // Good: High accuracy + decent rate + fast responses
         startingFamilyIndex = Math.floor(families.length * 0.4);
+      } else if (accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate * 0.75 && isDeveloping) {
+        // Fair: High accuracy + decent rate + moderate speed
+        startingFamilyIndex = Math.floor(families.length * 0.3);
       } else if (accuracy >= 85 && rate >= targetRate * 0.5) {
-        // Fair performance - skip first 20% of families
+        // Basic: Decent accuracy + rate (regardless of response time)
         startingFamilyIndex = Math.floor(families.length * 0.2);
       }
       // Otherwise start at 0 (first family)
@@ -430,10 +458,16 @@ router.post('/placement', async (req, res) => {
     const lowestOpFamilies = FACT_FAMILIES[lowestPerformance.operation];
     let recommendedFamilyIndex = 0;
 
-    if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate) {
+    // Use same fluency criteria as above
+    const lowestIsFluent = lowestPerformance.medianResponseTime && lowestPerformance.medianResponseTime < 2000;
+    const lowestIsDeveloping = lowestPerformance.medianResponseTime && lowestPerformance.medianResponseTime < 3000;
+
+    if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate && lowestIsFluent) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.6);
-    } else if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate * 0.75) {
+    } else if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate * 0.75 && lowestIsFluent) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.4);
+    } else if (lowestPerformance.accuracy >= MASTERY_CRITERIA.minAccuracy && lowestPerformance.rate >= targetRate * 0.75 && lowestIsDeveloping) {
+      recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.3);
     } else if (lowestPerformance.accuracy >= 85 && lowestPerformance.rate >= targetRate * 0.5) {
       recommendedFamilyIndex = Math.floor(lowestOpFamilies.length * 0.2);
     }
@@ -461,38 +495,47 @@ router.post('/placement', async (req, res) => {
 
 // POST /api/fact-fluency/generate-problems - Generate practice problems
 router.post('/generate-problems', async (req, res) => {
+  const startTime = Date.now();
   try {
     const { operation, familyName, count = 20, mixed = false, includeTraps = false } = req.body;
+    console.log(`[generate-problems] Request: operation=${operation}, familyName=${familyName}, count=${count}, mixed=${mixed}, includeTraps=${includeTraps}`);
 
     let problems;
 
     if (mixed) {
       // Generate mixed problems from ALL families for this operation (placement test)
       if (!FACT_FAMILIES[operation]) {
+        console.log(`[generate-problems] Invalid operation: ${operation}`);
         return res.status(400).json({ success: false, error: 'Invalid operation' });
       }
+      console.log(`[generate-problems] Generating mixed problems for ${operation}`);
       problems = generateMixedProblems(operation, count, includeTraps);
     } else {
       // Generate problems for a specific family (practice mode)
       const familyConfig = FACT_FAMILIES[operation]?.find(f => f.familyName === familyName);
       if (!familyConfig) {
+        console.log(`[generate-problems] Invalid family: ${operation}/${familyName}`);
         return res.status(400).json({ success: false, error: 'Invalid fact family' });
       }
+      console.log(`[generate-problems] Generating problems for ${operation}/${familyName}`);
       problems = generateProblems(operation, familyConfig, count, includeTraps);
     }
 
+    const elapsed = Date.now() - startTime;
+    console.log(`[generate-problems] Generated ${problems?.length || 0} problems in ${elapsed}ms`);
     res.json({ success: true, problems });
   } catch (error) {
-    console.error('Error generating problems:', error);
+    const elapsed = Date.now() - startTime;
+    console.error(`[generate-problems] Error after ${elapsed}ms:`, error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
 // POST /api/fact-fluency/record-session - Record practice session results
-router.post('/record-session', async (req, res) => {
+router.post('/record-session', isAuthenticated, async (req, res) => {
   try {
-    const { operation, familyName, displayName, durationSeconds, problemsAttempted, problemsCorrect } = req.body;
-    const user = await User.findById(req.session.userId);
+    const { operation, familyName, displayName, durationSeconds, problemsAttempted, problemsCorrect, medianResponseTime, avgResponseTime } = req.body;
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -525,8 +568,11 @@ router.post('/record-session', async (req, res) => {
       else if (grade >= 6) targetRate = MASTERY_CRITERIA.minRateMiddle;
     }
 
-    // Check if mastery achieved this session
-    const masteryAchieved = accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate;
+    // Check if mastery achieved this session (accuracy + rate + fluency)
+    const isFluent = medianResponseTime && medianResponseTime < 2000;  // < 2 seconds per problem
+    const masteryAchieved = accuracy >= MASTERY_CRITERIA.minAccuracy && rate >= targetRate && isFluent;
+
+    console.log(`[Practice] ${operation}-${familyName}: ${accuracy}%, ${rate}/min, median: ${medianResponseTime}ms ${isFluent ? '(FLUENT)' : '(NEEDS PRACTICE)'} → Mastery: ${masteryAchieved}`);
 
     // Get or create fact family record
     const familyKey = `${operation}-${familyName}`;
@@ -560,7 +606,9 @@ router.post('/record-session', async (req, res) => {
       problemsCorrect,
       rate,
       accuracy,
-      masteryAchieved
+      masteryAchieved,
+      medianResponseTime,  // Individual response time (ms)
+      avgResponseTime      // Average response time (ms)
     });
     if (familyData.sessions.length > 10) {
       familyData.sessions = familyData.sessions.slice(-10);
@@ -627,9 +675,9 @@ router.post('/record-session', async (req, res) => {
 });
 
 // GET /api/fact-fluency/next-level - Get recommended next level
-router.get('/next-level', async (req, res) => {
+router.get('/next-level', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
