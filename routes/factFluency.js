@@ -76,48 +76,63 @@ const MASTERY_CRITERIA = {
 };
 
 // Generate trap answers (distractors) for multiple choice
-function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3) {
+function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3, missingNumberType = null) {
   const traps = new Set();
 
   while (traps.size < count) {
     let trap;
     const trapType = Math.floor(Math.random() * 5);
 
-    if (operation === 'addition') {
+    // For missing number problems, use different trap strategies
+    if (missingNumberType && missingNumberType !== 'sum' && missingNumberType !== 'difference' &&
+        missingNumberType !== 'product' && missingNumberType !== 'quotient') {
+      // Missing operand (not missing answer)
       switch(trapType) {
         case 0: trap = correctAnswer + 1; break; // Off by one
         case 1: trap = correctAnswer - 1; break; // Off by one
-        case 2: trap = num1 - num2; break; // Wrong operation (subtraction)
-        case 3: trap = num1 * num2; break; // Wrong operation (multiplication)
-        case 4: trap = Math.abs(num1 - num2); break; // Absolute difference
+        case 2: trap = correctAnswer * 2; break; // Doubled the answer
+        case 3: trap = Math.max(1, correctAnswer - 2); break; // Off by two
+        case 4: trap = correctAnswer + Math.floor(Math.random() * 3) + 2; break; // Random nearby
         default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
       }
-    } else if (operation === 'subtraction') {
-      switch(trapType) {
-        case 0: trap = correctAnswer + 1; break; // Off by one
-        case 1: trap = correctAnswer - 1; break; // Off by one
-        case 2: trap = num1 + num2; break; // Wrong operation (addition)
-        case 3: trap = num2 - num1; break; // Reversed operands
-        case 4: trap = -(num1 - num2); break; // Sign error
-        default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
-      }
-    } else if (operation === 'multiplication') {
-      switch(trapType) {
-        case 0: trap = correctAnswer + num1; break; // Added instead of multiplied
-        case 1: trap = correctAnswer + num2; break; // Added instead of multiplied
-        case 2: trap = num1 + num2; break; // Wrong operation
-        case 3: trap = correctAnswer + 1; break; // Off by one
-        case 4: trap = correctAnswer - num2; break; // Common mistake
-        default: trap = correctAnswer + Math.floor(Math.random() * 10) + 1;
-      }
-    } else if (operation === 'division') {
-      switch(trapType) {
-        case 0: trap = correctAnswer + 1; break; // Off by one
-        case 1: trap = correctAnswer - 1; break; // Off by one
-        case 2: trap = num1 - num2; break; // Subtracted instead
-        case 3: trap = num1; break; // Forgot to divide
-        case 4: trap = num2; break; // Used divisor
-        default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+    } else {
+      // Standard problems or answer-missing problems (use original logic)
+      if (operation === 'addition') {
+        switch(trapType) {
+          case 0: trap = correctAnswer + 1; break; // Off by one
+          case 1: trap = correctAnswer - 1; break; // Off by one
+          case 2: trap = num1 - num2; break; // Wrong operation (subtraction)
+          case 3: trap = num1 * num2; break; // Wrong operation (multiplication)
+          case 4: trap = Math.abs(num1 - num2); break; // Absolute difference
+          default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+        }
+      } else if (operation === 'subtraction') {
+        switch(trapType) {
+          case 0: trap = correctAnswer + 1; break; // Off by one
+          case 1: trap = correctAnswer - 1; break; // Off by one
+          case 2: trap = num1 + num2; break; // Wrong operation (addition)
+          case 3: trap = num2 - num1; break; // Reversed operands
+          case 4: trap = -(num1 - num2); break; // Sign error
+          default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+        }
+      } else if (operation === 'multiplication') {
+        switch(trapType) {
+          case 0: trap = correctAnswer + num1; break; // Added instead of multiplied
+          case 1: trap = correctAnswer + num2; break; // Added instead of multiplied
+          case 2: trap = num1 + num2; break; // Wrong operation
+          case 3: trap = correctAnswer + 1; break; // Off by one
+          case 4: trap = correctAnswer - num2; break; // Common mistake
+          default: trap = correctAnswer + Math.floor(Math.random() * 10) + 1;
+        }
+      } else if (operation === 'division') {
+        switch(trapType) {
+          case 0: trap = correctAnswer + 1; break; // Off by one
+          case 1: trap = correctAnswer - 1; break; // Off by one
+          case 2: trap = num1 - num2; break; // Subtracted instead
+          case 3: trap = num1; break; // Forgot to divide
+          case 4: trap = num2; break; // Used divisor
+          default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+        }
       }
     }
 
@@ -256,7 +271,7 @@ function generateProblems(operation, familyConfig, count = 20, includeTraps = fa
 
     // Generate trap answers if requested (for shooter mode)
     if (includeTraps) {
-      problemData.trapAnswers = generateTrapAnswers(operation, num1, num2, answer, 3);
+      problemData.trapAnswers = generateTrapAnswers(operation, num1, num2, answer, 3, missingNumberType);
     }
 
     problems.push(problemData);
