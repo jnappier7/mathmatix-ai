@@ -43,6 +43,7 @@ const backBtn = document.getElementById('backBtn');
 const resetZoomBtn = document.getElementById('resetZoom');
 const toggleClustersBtn = document.getElementById('toggleClusters');
 const toggleLabelsBtn = document.getElementById('toggleLabels');
+const showHelpBtn = document.getElementById('showHelp');
 const closeDetailBtn = document.getElementById('closeDetail');
 const practiceBtn = document.getElementById('practiceBtn');
 
@@ -60,6 +61,7 @@ const nodeName = document.getElementById('nodeName');
 document.addEventListener('DOMContentLoaded', async () => {
     await loadGraphData();
     initializeEventListeners();
+    showWelcomeHint();
 });
 
 // ============================================================================
@@ -708,6 +710,7 @@ function initializeEventListeners() {
     resetZoomBtn.addEventListener('click', resetZoom);
     toggleClustersBtn.addEventListener('click', toggleClusters);
     toggleLabelsBtn.addEventListener('click', toggleLabels);
+    showHelpBtn.addEventListener('click', showKeyboardHelp);
     closeDetailBtn.addEventListener('click', hideNodeDetail);
     practiceBtn.addEventListener('click', startPractice);
 
@@ -715,12 +718,171 @@ function initializeEventListeners() {
     crumbWorld.addEventListener('click', zoomToWorld);
     crumbPattern.addEventListener('click', zoomToPatternFromBreadcrumb);
 
+    // Keyboard shortcuts
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+
     // Close detail panel when clicking outside
     document.addEventListener('click', (e) => {
         if (!nodeDetail.classList.contains('hidden') &&
             !nodeDetail.contains(e.target) &&
             !e.target.closest('.node')) {
             hideNodeDetail();
+        }
+    });
+}
+
+/**
+ * Handle keyboard shortcuts for navigation
+ */
+function handleKeyboardShortcuts(event) {
+    // Don't interfere with input fields
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        return;
+    }
+
+    switch(event.key) {
+        case 'Escape':
+            // ESC: Zoom out one level
+            if (state.focusedNode) {
+                // From node view → region view
+                hideNodeDetail();
+                zoomToPatternFromBreadcrumb();
+            } else if (state.focusedPattern) {
+                // From region view → world view
+                zoomToWorld();
+            } else {
+                // Already at world view, close any open panels
+                hideNodeDetail();
+            }
+            break;
+
+        case 'r':
+        case 'R':
+            // R: Reset to world view
+            if (!event.ctrlKey && !event.metaKey) {
+                resetZoom();
+            }
+            break;
+
+        case 'c':
+        case 'C':
+            // C: Toggle clusters
+            if (!event.ctrlKey && !event.metaKey) {
+                toggleClusters();
+            }
+            break;
+
+        case 'l':
+        case 'L':
+            // L: Toggle labels
+            if (!event.ctrlKey && !event.metaKey) {
+                toggleLabels();
+            }
+            break;
+
+        case '?':
+            // ?: Show keyboard shortcuts help
+            showKeyboardHelp();
+            break;
+    }
+}
+
+/**
+ * Show welcome hint on first visit
+ */
+function showWelcomeHint() {
+    // Check if user has seen the hint before
+    const hasSeenHint = localStorage.getItem('skillMapHintSeen');
+
+    if (!hasSeenHint) {
+        setTimeout(() => {
+            const hint = document.createElement('div');
+            hint.className = 'welcome-hint';
+            hint.innerHTML = `
+                <div class="hint-icon">💡</div>
+                <div class="hint-content">
+                    <strong>Pro Tip:</strong> Press <kbd>?</kbd> to see keyboard shortcuts
+                </div>
+            `;
+            document.body.appendChild(hint);
+
+            // Fade in
+            setTimeout(() => hint.classList.add('show'), 10);
+
+            // Fade out after 5 seconds
+            setTimeout(() => {
+                hint.classList.remove('show');
+                setTimeout(() => hint.remove(), 500);
+            }, 5000);
+
+            // Mark as seen
+            localStorage.setItem('skillMapHintSeen', 'true');
+        }, 2000); // Show after 2 seconds
+    }
+}
+
+/**
+ * Show keyboard shortcuts overlay
+ */
+function showKeyboardHelp() {
+    const helpHtml = `
+        <div class="keyboard-help-overlay" id="keyboardHelp">
+            <div class="keyboard-help-modal">
+                <div class="help-header">
+                    <h3>⌨️ Keyboard Shortcuts</h3>
+                    <button class="close-btn" onclick="document.getElementById('keyboardHelp').remove()">×</button>
+                </div>
+                <div class="help-content">
+                    <div class="shortcut-group">
+                        <h4>Navigation</h4>
+                        <div class="shortcut-item">
+                            <kbd>ESC</kbd>
+                            <span>Zoom out one level</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>R</kbd>
+                            <span>Reset to world view</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-group">
+                        <h4>View Options</h4>
+                        <div class="shortcut-item">
+                            <kbd>C</kbd>
+                            <span>Toggle cluster regions</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>L</kbd>
+                            <span>Toggle node labels</span>
+                        </div>
+                    </div>
+                    <div class="shortcut-group">
+                        <h4>Help</h4>
+                        <div class="shortcut-item">
+                            <kbd>?</kbd>
+                            <span>Show this help</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Remove existing help if present
+    const existing = document.getElementById('keyboardHelp');
+    if (existing) existing.remove();
+
+    // Add new help overlay
+    document.body.insertAdjacentHTML('beforeend', helpHtml);
+
+    // Close on ESC or click outside
+    const overlay = document.getElementById('keyboardHelp');
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+    document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape') {
+            overlay.remove();
+            document.removeEventListener('keydown', escHandler);
         }
     });
 }

@@ -873,3 +873,192 @@ body {
         transform: translateY(0);
     }
 }
+
+/* ===== KEYBOARD SHORTCUTS HELP ===== */
+
+.keyboard-help-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.keyboard-help-modal {
+    background: rgba(15, 12, 41, 0.98);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(0, 212, 255, 0.4);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(0, 212, 255, 0.2);
+    animation: slideInScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.help-header {
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    padding: 1.5rem;
+    border-radius: 14px 14px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.help-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.help-content {
+    padding: 2rem;
+}
+
+.shortcut-group {
+    margin-bottom: 2rem;
+}
+
+.shortcut-group:last-child {
+    margin-bottom: 0;
+}
+
+.shortcut-group h4 {
+    color: #00d4ff;
+    font-size: 1rem;
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.shortcut-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.shortcut-item kbd {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    min-width: 50px;
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: #b8b8d1;
+    font-size: 0.95rem;
+    flex: 1;
+    margin-left: 1rem;
+}
+
+/* ===== WELCOME HINT ===== */
+
+.welcome-hint {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(15, 12, 41, 0.95);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(0, 212, 255, 0.5);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(0, 212, 255, 0.3);
+    z-index: 9000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 350px;
+}
+
+.welcome-hint.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hint-icon {
+    font-size: 2rem;
+    line-height: 1;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.hint-content {
+    color: white;
+    font-size: 0.95rem;
+}
+
+.hint-content strong {
+    color: #00d4ff;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.hint-content kbd {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
