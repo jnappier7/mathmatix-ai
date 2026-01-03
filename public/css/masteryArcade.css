@@ -13,7 +13,7 @@ body {
 
 .arcade-hub {
     flex: 1;
-    padding: 3rem 2rem;
+    padding: 2rem 2rem;
     background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0f 100%);
     position: relative;
     overflow: hidden;
@@ -43,13 +43,13 @@ body {
 /* Arcade Title */
 .arcade-title {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
     position: relative;
     z-index: 1;
 }
 
 .title-glow {
-    font-size: 5rem;
+    font-size: 3.5rem;
     font-weight: 900;
     letter-spacing: 0.1em;
     background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff);
@@ -79,9 +79,9 @@ body {
 .game-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 4rem;
+    gap: 2rem;
     max-width: 1200px;
-    margin: 0 auto 4rem;
+    margin: 0 auto 2rem;
     padding: 0 2rem;
     position: relative;
     z-index: 1;
