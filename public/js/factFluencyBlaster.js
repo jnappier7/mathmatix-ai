@@ -133,10 +133,10 @@ function createFactCard(name1, name2, mastered, recommended, onClick, operation,
     } else if (recommended) {
         card.classList.add('active');
     } else {
-        card.classList.add('locked');
+        card.classList.add('available');  // All families unlocked, just not mastered yet
     }
 
-    const statusText = mastered ? '✓ Mastered' : recommended ? '→ Next' : 'Locked';
+    const statusText = mastered ? '✓ Mastered' : recommended ? '→ Next' : 'Available';
 
     card.innerHTML = `
         <div class="fact-name">${name1}</div>
@@ -148,29 +148,21 @@ function createFactCard(name1, name2, mastered, recommended, onClick, operation,
         </div>
     `;
 
-    if (mastered || recommended) {
-        // Enable buttons for mastered and recommended cards
-        // Shooter button
-        card.querySelector('.shooter-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            onClick();
-        });
+    // All cards are now clickable (unlocked)
+    // Shooter button
+    card.querySelector('.shooter-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        onClick();
+    });
 
-        // Runner button
-        card.querySelector('.runner-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            window.location.href = `/number-run.html?operation=${operation}&family=${familyName}`;
-        });
+    // Runner button
+    card.querySelector('.runner-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.location.href = `/number-run.html?operation=${operation}&family=${familyName}`;
+    });
 
-        // Card click defaults to shooter
-        card.addEventListener('click', onClick);
-    } else {
-        // Disable buttons for locked cards
-        card.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = '0.3';
-        });
-    }
+    // Card click defaults to shooter
+    card.addEventListener('click', onClick);
 
     return card;
 }
@@ -643,6 +635,7 @@ async function startPracticeSession(operation, familyName) {
         correct: 0,
         streak: 0,
         maxStreak: 0,
+        strikes: 0,  // Track wrong answers (3 strikes = game over)
         responses: [],
         timer: null
     };
@@ -662,6 +655,11 @@ async function startPracticeSession(operation, familyName) {
     const data = await response.json();
     if (data.success) {
         gameState.practice.problems = data.problems;
+        // Debug: Check first few problems for trapAnswers
+        console.log('Generated problems:', gameState.practice.problems.length);
+        console.log('First problem:', gameState.practice.problems[0]);
+        console.log('Second problem:', gameState.practice.problems[1]);
+        console.log('Third problem:', gameState.practice.problems[2]);
     }
 
     // Update UI
@@ -693,7 +691,21 @@ function displayShooterProblem() {
     document.getElementById('gameProblem').textContent = problem.problem + ' = ?';
 
     // Create answer choices: 1 correct + 3 traps
-    const answers = [problem.answer, ...problem.trapAnswers];
+    const answers = [problem.answer];
+
+    // Add trap answers with fallback if missing
+    if (problem.trapAnswers && problem.trapAnswers.length >= 3) {
+        answers.push(...problem.trapAnswers);
+    } else {
+        // Fallback: generate random wrong answers
+        console.warn('Missing trapAnswers for problem:', problem);
+        while (answers.length < 4) {
+            const wrong = problem.answer + Math.floor(Math.random() * 10) - 5;
+            if (wrong > 0 && wrong !== problem.answer && !answers.includes(wrong)) {
+                answers.push(wrong);
+            }
+        }
+    }
 
     // Shuffle answers
     for (let i = answers.length - 1; i > 0; i--) {
@@ -783,6 +795,7 @@ function handleAsteroidClick(selectedAnswer, asteroidElement, correctAnswer) {
         }
     } else {
         gameState.practice.streak = 0; // Reset streak on miss
+        gameState.practice.strikes++; // Increment strikes counter
 
         // Wrong hit effect
         asteroidElement.classList.add('wrong-hit');
@@ -794,6 +807,15 @@ function handleAsteroidClick(selectedAnswer, asteroidElement, correctAnswer) {
         const streakEl = document.getElementById('gameStreak');
         streakEl.textContent = '0';
         streakEl.classList.remove('high-streak');
+
+        // Check for 3 strikes game over
+        if (gameState.practice.strikes >= 3) {
+            setTimeout(() => {
+                alert('💀 3 Strikes - Game Over!');
+                endPracticeSession();
+            }, 800);
+            return;
+        }
     }
 
     // Record response (keep for backwards compatibility)
@@ -808,12 +830,12 @@ function handleAsteroidClick(selectedAnswer, asteroidElement, correctAnswer) {
     // Update stats
     updateGameStats();
 
-    // Move to next problem after delay
+    // Move to next problem after delay (faster for correct answers)
     gameState.practice.currentProblemIndex++;
     if (gameState.practice.currentProblemIndex < gameState.practice.problems.length) {
         setTimeout(() => {
             displayShooterProblem();
-        }, correct ? 800 : 1200);
+        }, correct ? 400 : 1000);  // Faster: 400ms for correct, 1000ms for wrong
     } else {
         // Out of problems, end session
         setTimeout(() => endPracticeSession(), 1500);

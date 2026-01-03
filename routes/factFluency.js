@@ -77,7 +77,7 @@ const MASTERY_CRITERIA = {
 };
 
 // Generate trap answers (distractors) for multiple choice
-function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3) {
+function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3, missingNumberType = null) {
   const traps = new Set();
   const MAX_ATTEMPTS = 100;  // Prevent infinite loops
   let attempts = 0;
@@ -87,41 +87,56 @@ function generateTrapAnswers(operation, num1, num2, correctAnswer, count = 3) {
     let trap;
     const trapType = Math.floor(Math.random() * 5);
 
-    if (operation === 'addition') {
+    // For missing number problems, use different trap strategies
+    if (missingNumberType && missingNumberType !== 'sum' && missingNumberType !== 'difference' &&
+        missingNumberType !== 'product' && missingNumberType !== 'quotient') {
+      // Missing operand (not missing answer)
       switch(trapType) {
         case 0: trap = correctAnswer + 1; break; // Off by one
         case 1: trap = correctAnswer - 1; break; // Off by one
-        case 2: trap = num1 - num2; break; // Wrong operation (subtraction)
-        case 3: trap = num1 * num2; break; // Wrong operation (multiplication)
-        case 4: trap = Math.abs(num1 - num2); break; // Absolute difference
+        case 2: trap = correctAnswer * 2; break; // Doubled the answer
+        case 3: trap = Math.max(1, correctAnswer - 2); break; // Off by two
+        case 4: trap = correctAnswer + Math.floor(Math.random() * 3) + 2; break; // Random nearby
         default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
       }
-    } else if (operation === 'subtraction') {
-      switch(trapType) {
-        case 0: trap = correctAnswer + 1; break; // Off by one
-        case 1: trap = correctAnswer - 1; break; // Off by one
-        case 2: trap = num1 + num2; break; // Wrong operation (addition)
-        case 3: trap = num2 - num1; break; // Reversed operands
-        case 4: trap = -(num1 - num2); break; // Sign error
-        default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
-      }
-    } else if (operation === 'multiplication') {
-      switch(trapType) {
-        case 0: trap = correctAnswer + num1; break; // Added instead of multiplied
-        case 1: trap = correctAnswer + num2; break; // Added instead of multiplied
-        case 2: trap = num1 + num2; break; // Wrong operation
-        case 3: trap = correctAnswer + 1; break; // Off by one
-        case 4: trap = correctAnswer - num2; break; // Common mistake
-        default: trap = correctAnswer + Math.floor(Math.random() * 10) + 1;
-      }
-    } else if (operation === 'division') {
-      switch(trapType) {
-        case 0: trap = correctAnswer + 1; break; // Off by one
-        case 1: trap = correctAnswer - 1; break; // Off by one
-        case 2: trap = num1 - num2; break; // Subtracted instead
-        case 3: trap = num1; break; // Forgot to divide
-        case 4: trap = num2; break; // Used divisor
-        default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+    } else {
+      // Standard problems or answer-missing problems (use original logic)
+      if (operation === 'addition') {
+        switch(trapType) {
+          case 0: trap = correctAnswer + 1; break; // Off by one
+          case 1: trap = correctAnswer - 1; break; // Off by one
+          case 2: trap = num1 - num2; break; // Wrong operation (subtraction)
+          case 3: trap = num1 * num2; break; // Wrong operation (multiplication)
+          case 4: trap = Math.abs(num1 - num2); break; // Absolute difference
+          default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+        }
+      } else if (operation === 'subtraction') {
+        switch(trapType) {
+          case 0: trap = correctAnswer + 1; break; // Off by one
+          case 1: trap = correctAnswer - 1; break; // Off by one
+          case 2: trap = num1 + num2; break; // Wrong operation (addition)
+          case 3: trap = num2 - num1; break; // Reversed operands
+          case 4: trap = -(num1 - num2); break; // Sign error
+          default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+        }
+      } else if (operation === 'multiplication') {
+        switch(trapType) {
+          case 0: trap = correctAnswer + num1; break; // Added instead of multiplied
+          case 1: trap = correctAnswer + num2; break; // Added instead of multiplied
+          case 2: trap = num1 + num2; break; // Wrong operation
+          case 3: trap = correctAnswer + 1; break; // Off by one
+          case 4: trap = correctAnswer - num2; break; // Common mistake
+          default: trap = correctAnswer + Math.floor(Math.random() * 10) + 1;
+        }
+      } else if (operation === 'division') {
+        switch(trapType) {
+          case 0: trap = correctAnswer + 1; break; // Off by one
+          case 1: trap = correctAnswer - 1; break; // Off by one
+          case 2: trap = num1 - num2; break; // Subtracted instead
+          case 3: trap = num1; break; // Forgot to divide
+          case 4: trap = num2; break; // Used divisor
+          default: trap = correctAnswer + Math.floor(Math.random() * 5) + 1;
+        }
       }
     }
 
@@ -206,11 +221,75 @@ function generateProblems(operation, familyConfig, count = 20, includeTraps = fa
       problem = `${num1} ÷ ${num2}`;
     }
 
-    const problemData = { problem, answer };
+    // Randomly create missing number problems (30% chance)
+    let missingNumberType = null;
+    if (Math.random() < 0.3) {
+      const position = Math.floor(Math.random() * 3); // 0 = first number, 1 = second number, 2 = answer missing
+
+      if (operation === 'addition') {
+        if (position === 0) {
+          problem = `___ + ${num2} = ${answer}`;
+          missingNumberType = 'addend1';
+          answer = num1; // The missing number is num1
+        } else if (position === 1) {
+          problem = `${num1} + ___ = ${answer}`;
+          missingNumberType = 'addend2';
+          answer = num2; // The missing number is num2
+        } else {
+          problem = `${num1} + ${num2} = ___`;
+          missingNumberType = 'sum';
+          // answer stays as original answer
+        }
+      } else if (operation === 'subtraction') {
+        if (position === 0) {
+          problem = `___ - ${num2} = ${answer}`;
+          missingNumberType = 'minuend';
+          answer = num1; // The missing number is num1
+        } else if (position === 1) {
+          problem = `${num1} - ___ = ${answer}`;
+          missingNumberType = 'subtrahend';
+          answer = num2; // The missing number is num2
+        } else {
+          problem = `${num1} - ${num2} = ___`;
+          missingNumberType = 'difference';
+          // answer stays as original answer
+        }
+      } else if (operation === 'multiplication') {
+        if (position === 0) {
+          problem = `___ × ${num2} = ${answer}`;
+          missingNumberType = 'factor1';
+          answer = num1; // The missing number is num1
+        } else if (position === 1) {
+          problem = `${num1} × ___ = ${answer}`;
+          missingNumberType = 'factor2';
+          answer = num2; // The missing number is num2
+        } else {
+          problem = `${num1} × ${num2} = ___`;
+          missingNumberType = 'product';
+          // answer stays as original answer
+        }
+      } else if (operation === 'division') {
+        if (position === 0) {
+          problem = `___ ÷ ${num2} = ${answer}`;
+          missingNumberType = 'dividend';
+          answer = num1; // The missing number is num1
+        } else if (position === 1) {
+          problem = `${num1} ÷ ___ = ${answer}`;
+          missingNumberType = 'divisor';
+          answer = num2; // The missing number is num2
+        } else {
+          problem = `${num1} ÷ ${num2} = ___`;
+          missingNumberType = 'quotient';
+          // answer stays as original answer
+        }
+      }
+    }
+
+    const problemData = { problem, answer, missingNumberType };
 
     // Generate trap answers if requested (for shooter mode)
     if (includeTraps) {
-      problemData.trapAnswers = generateTrapAnswers(operation, num1, num2, answer, 3);
+      problemData.trapAnswers = generateTrapAnswers(operation, num1, num2, answer, 3, missingNumberType);
     }
 
     problems.push(problemData);
