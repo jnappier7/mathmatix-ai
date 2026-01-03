@@ -32,7 +32,8 @@ const state = {
     currentZoom: 1.0,
     zoomLevel: 'world',
     focusedPattern: null,
-    focusedNode: null
+    focusedNode: null,
+    clusterCenters: {} // Store precomputed cluster centers
 };
 
 // DOM Elements
@@ -106,6 +107,101 @@ function shouldShowEdge(edge, currentZoom, focusedPattern, focusedNode) {
     return true;
 }
 
+/**
+ * Calculate stable cluster centers in a circular arrangement
+ */
+function calculateClusterCenters(clusters, width, height) {
+    const centers = {};
+    const radius = Math.min(width, height) * 0.35; // 35% of viewport
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    clusters.forEach((cluster, index) => {
+        // Arrange clusters in a circle
+        const angle = (index / clusters.length) * 2 * Math.PI - Math.PI / 2; // Start at top
+        centers[cluster.id] = {
+            x: centerX + radius * Math.cos(angle),
+            y: centerY + radius * Math.sin(angle),
+            color: cluster.color,
+            icon: cluster.icon,
+            name: cluster.name
+        };
+    });
+
+    return centers;
+}
+
+/**
+ * Initialize node positions based on cluster centers and tier
+ */
+function initializeNodePositions(nodes, clusterCenters) {
+    // Group nodes by pattern and tier
+    const nodesByPatternTier = {};
+
+    nodes.forEach(node => {
+        const key = `${node.pattern}-${node.tier}`;
+        if (!nodesByPatternTier[key]) {
+            nodesByPatternTier[key] = [];
+        }
+        nodesByPatternTier[key].push(node);
+    });
+
+    // Position nodes in a stable pattern within each cluster
+    Object.keys(nodesByPatternTier).forEach(key => {
+        const [pattern, tier] = key.split('-');
+        const patternNodes = nodesByPatternTier[key];
+        const clusterCenter = clusterCenters[pattern];
+
+        if (!clusterCenter) return;
+
+        // Arrange nodes in concentric rings by tier
+        const tierRadius = (parseInt(tier) - 1) * 60 + 40; // Inner tiers closer to center
+        const nodesInTier = patternNodes.length;
+
+        patternNodes.forEach((node, index) => {
+            const angle = (index / nodesInTier) * 2 * Math.PI;
+            node.x = clusterCenter.x + tierRadius * Math.cos(angle);
+            node.y = clusterCenter.y + tierRadius * Math.sin(angle);
+        });
+    });
+}
+
+/**
+ * Custom D3 force to pull nodes toward their cluster centers
+ */
+function forceCluster() {
+    let nodes;
+    let strength = 0.1;
+    let centersFunc = d => ({ x: 0, y: 0 });
+
+    function force(alpha) {
+        if (!nodes) return;
+
+        const k = alpha * strength;
+        nodes.forEach(node => {
+            const center = centersFunc(node);
+            if (!center) return;
+
+            node.vx += (center.x - node.x) * k;
+            node.vy += (center.y - node.y) * k;
+        });
+    }
+
+    force.initialize = function(_) {
+        nodes = _;
+    };
+
+    force.centers = function(_) {
+        return arguments.length ? (centersFunc = typeof _ === 'function' ? _ : () => _, force) : centersFunc;
+    };
+
+    force.strength = function(_) {
+        return arguments.length ? (strength = +_, force) : strength;
+    };
+
+    return force;
+}
+
 // Load graph data from API
 async function loadGraphData() {
     try {
@@ -159,6 +255,12 @@ function initializeGraph(data) {
     const width = graphContainer.clientWidth;
     const height = graphContainer.clientHeight;
 
+    // Calculate stable cluster centers
+    state.clusterCenters = calculateClusterCenters(data.clusters, width, height);
+
+    // Initialize node positions deterministically
+    initializeNodePositions(data.nodes, state.clusterCenters);
+
     // Create SVG with zoom behavior
     const zoom = d3.zoom()
         .scaleExtent([0.5, 4.0])
@@ -173,6 +275,7 @@ function initializeGraph(data) {
                 state.zoomLevel = newZoomLevel;
                 console.log(`[Zoom] Transitioned to ${newZoomLevel} view (${state.currentZoom.toFixed(2)}x)`);
                 updateEdgeVisibility();
+                updateClusterLabels(); // Update cluster labels on zoom change
             }
         });
 
@@ -186,6 +289,9 @@ function initializeGraph(data) {
 
     // Create cluster hulls group (drawn first, behind nodes)
     const hullsGroup = g.append('g').attr('class', 'hulls');
+
+    // Create cluster labels group
+    const labelsGroup = g.append('g').attr('class', 'cluster-labels');
 
     // Create links group
     const linksGroup = g.append('g').attr('class', 'links');
@@ -206,19 +312,24 @@ function initializeGraph(data) {
         .attr('d', 'M0,-5L10,0L0,5')
         .attr('fill', 'rgba(255, 255, 255, 0.4)');
 
-    // Create force simulation
+    // Create force simulation with weak forces (positions already initialized)
     state.simulation = d3.forceSimulation(data.nodes)
         .force('link', d3.forceLink(data.edges)
             .id(d => d.id)
-            .distance(80)
+            .distance(60)
+            .strength(0.3) // Weak link force
         )
         .force('charge', d3.forceManyBody()
-            .strength(-300)
+            .strength(-150) // Weaker repulsion
         )
-        .force('collision', d3.forceCollide().radius(30))
-        .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('x', d3.forceX(width / 2).strength(0.05))
-        .force('y', d3.forceY(height / 2).strength(0.05));
+        .force('collision', d3.forceCollide().radius(25))
+        // Add cluster forces to keep nodes near their pattern centers
+        .force('cluster', forceCluster()
+            .centers(d => state.clusterCenters[d.pattern])
+            .strength(0.4)
+        )
+        .alphaDecay(0.05) // Faster stabilization
+        .velocityDecay(0.4); // More damping
 
     // Draw links
     const link = linksGroup.selectAll('.link')
@@ -265,8 +376,17 @@ function initializeGraph(data) {
     // Add circles to nodes
     node.append('circle')
         .attr('r', d => {
-            // Size based on tier (higher tiers = slightly larger)
-            return 8 + (d.tier * 2);
+            // Size based on tier and state
+            let baseRadius = 8;
+
+            // Tier scaling (higher tiers slightly larger)
+            baseRadius += (d.tier - 1) * 1.5;
+
+            // State scaling (mastered and ready nodes slightly larger)
+            if (d.state === 'mastered') baseRadius += 2;
+            else if (d.state === 'ready') baseRadius += 1.5;
+
+            return Math.max(8, Math.min(baseRadius, 16)); // Clamp between 8-16
         })
         .attr('fill', d => d.color)
         .attr('stroke', d => d.color);
@@ -306,6 +426,10 @@ function initializeGraph(data) {
     state.link = link;
     state.labels = labels;
     state.hullsGroup = hullsGroup;
+    state.labelsGroup = labelsGroup;
+
+    // Initialize cluster labels
+    renderClusterLabels(labelsGroup, data);
 
     // Initialize breadcrumbs to world view
     updateBreadcrumbs();
@@ -320,7 +444,13 @@ function updateClusterHulls(hullsGroup, data) {
 
     hulls.enter()
         .append('path')
-        .attr('class', 'cluster-hull')
+        .attr('class', d => {
+            const classes = ['cluster-hull'];
+            if (!isPatternEnabled(d[0])) {
+                classes.push('pattern-disabled');
+            }
+            return classes.join(' ');
+        })
         .merge(hulls)
         .attr('d', d => {
             const points = d[1].map(node => [node.x, node.y]);
@@ -336,6 +466,85 @@ function updateClusterHulls(hullsGroup, data) {
         });
 
     hulls.exit().remove();
+}
+
+// Render cluster labels with mastery percentages
+function renderClusterLabels(labelsGroup, data) {
+    Object.keys(state.clusterCenters).forEach(patternId => {
+        const center = state.clusterCenters[patternId];
+        const patternNodes = data.nodes.filter(n => n.pattern === patternId);
+
+        // Calculate mastery percentage
+        const masteredNodes = patternNodes.filter(n => n.state === 'mastered').length;
+        const masteryPercent = patternNodes.length > 0
+            ? Math.round((masteredNodes / patternNodes.length) * 100)
+            : 0;
+
+        // Create label group
+        const labelGroup = labelsGroup.append('g')
+            .attr('class', `cluster-label cluster-label-${patternId}`)
+            .attr('transform', `translate(${center.x}, ${center.y})`)
+            .style('cursor', 'pointer')
+            .on('click', () => {
+                if (isPatternEnabled(patternId)) {
+                    focusOnPattern(patternId);
+                } else {
+                    showDisabledPatternMessage(center.name);
+                }
+            });
+
+        // Add pattern icon
+        labelGroup.append('text')
+            .attr('class', 'cluster-icon')
+            .attr('y', -20)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '2.5rem')
+            .style('opacity', 0.9)
+            .style('pointer-events', 'none')
+            .text(center.icon);
+
+        // Add pattern name
+        labelGroup.append('text')
+            .attr('class', 'cluster-name')
+            .attr('y', 15)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '1.2rem')
+            .style('font-weight', 'bold')
+            .style('fill', 'white')
+            .style('text-shadow', '2px 2px 4px rgba(0,0,0,0.8)')
+            .style('pointer-events', 'none')
+            .text(center.name);
+
+        // Add mastery percentage
+        labelGroup.append('text')
+            .attr('class', 'cluster-mastery')
+            .attr('y', 35)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '0.9rem')
+            .style('fill', masteryPercent > 0 ? '#00ff87' : '#888')
+            .style('text-shadow', '1px 1px 2px rgba(0,0,0,0.8)')
+            .style('pointer-events', 'none')
+            .text(`${masteryPercent}% mastered`);
+    });
+
+    // Set initial visibility based on zoom
+    updateClusterLabels();
+}
+
+// Update cluster label visibility based on zoom level
+function updateClusterLabels() {
+    if (!state.labelsGroup) return;
+
+    const zoomLevel = state.zoomLevel;
+    const isWorldView = zoomLevel === 'world';
+
+    // Show cluster labels only at world view with smooth fade
+    state.labelsGroup.selectAll('.cluster-label')
+        .classed('visible', isWorldView)
+        .style('pointer-events', isWorldView ? 'auto' : 'none')
+        .transition()
+        .duration(400)
+        .style('opacity', isWorldView ? 1 : 0);
 }
 
 // Highlight connections on hover

@@ -7,6 +7,37 @@
     overflow: hidden;
 }
 
+/* Starfield background effect */
+.skill-map-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(2px 2px at 60px 70px, rgba(255, 255, 255, 0.2), transparent),
+        radial-gradient(1px 1px at 50px 50px, rgba(255, 255, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(2px 2px at 90px 10px, rgba(255, 255, 255, 0.2), transparent);
+    background-size: 200px 200px;
+    background-position: 0 0, 40px 60px, 130px 270px, 70px 100px, 150px 50px;
+    opacity: 0.3;
+    animation: twinkleStars 200s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes twinkleStars {
+    0% {
+        background-position: 0 0, 40px 60px, 130px 270px, 70px 100px, 150px 50px;
+    }
+    100% {
+        background-position: -200px -200px, -160px -140px, -70px 70px, -130px -100px, -50px -150px;
+    }
+}
+
 /* Top Controls Bar */
 .map-controls {
     background: rgba(255, 255, 255, 0.05);
@@ -98,6 +129,7 @@
     height: calc(100vh - 300px);
     position: relative;
     cursor: grab;
+    z-index: 1;
 }
 
 #graph-container:active {
@@ -107,6 +139,17 @@
 #graph-container svg {
     width: 100%;
     height: 100%;
+}
+
+/* Ensure proper z-index layering */
+.breadcrumb-trail {
+    position: relative;
+    z-index: 10;
+}
+
+.map-controls {
+    position: relative;
+    z-index: 10;
 }
 
 /* Pattern Legend (8 Clusters) */
@@ -682,4 +725,151 @@ body {
     color: rgba(255, 255, 255, 0.3);
     font-size: 1rem;
     user-select: none;
+}
+
+/* ===== CLUSTER LABELS (WORLD VIEW) ===== */
+
+.cluster-label {
+    cursor: pointer;
+    transition: all 0.4s ease;
+    opacity: 0;
+}
+
+.cluster-label:hover .cluster-icon {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8));
+}
+
+.cluster-label:hover .cluster-name {
+    fill: #00d4ff;
+    transform: translateY(-2px);
+}
+
+.cluster-icon {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+}
+
+.cluster-name {
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.cluster-mastery {
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+/* Fade in cluster labels at world view */
+.cluster-label.visible {
+    opacity: 1;
+    animation: fadeInScale 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Enhanced node glows for premium feel */
+.node.mastered circle {
+    animation: starTwinklePremium 4s ease-in-out infinite;
+}
+
+.node.ready circle {
+    animation: starPulsePremium 2s ease-in-out infinite;
+}
+
+@keyframes starTwinklePremium {
+    0%, 100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9))
+                drop-shadow(0 0 16px rgba(0, 255, 135, 0.9))
+                drop-shadow(0 0 24px rgba(0, 255, 135, 0.5));
+    }
+    50% {
+        opacity: 0.85;
+        filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7))
+                drop-shadow(0 0 12px rgba(0, 255, 135, 0.7))
+                drop-shadow(0 0 20px rgba(0, 255, 135, 0.3));
+    }
+}
+
+@keyframes starPulsePremium {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 10px rgba(0, 212, 255, 1.0))
+                drop-shadow(0 0 20px rgba(0, 212, 255, 0.9))
+                drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
+    }
+    50% {
+        transform: scale(1.15);
+        filter: drop-shadow(0 0 12px rgba(0, 212, 255, 1.0))
+                drop-shadow(0 0 24px rgba(0, 212, 255, 1.0))
+                drop-shadow(0 0 36px rgba(0, 212, 255, 0.7));
+    }
+}
+
+/* Smooth transitions for all interactive elements */
+.control-btn,
+.pattern-item,
+.legend-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced hover states */
+.pattern-item:hover,
+.legend-item:hover {
+    transform: translateX(5px);
+}
+
+/* Smooth opacity transitions for edges */
+.link {
+    transition: opacity 0.4s ease, stroke-width 0.3s ease, stroke 0.3s ease;
+}
+
+/* Glass morphism effect for panels */
+.node-detail,
+.pattern-legend,
+.state-legend {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Subtle animations on page load */
+.pattern-legend,
+.state-legend {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.map-controls {
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
