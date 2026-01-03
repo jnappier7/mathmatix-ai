@@ -283,10 +283,10 @@ function spawnPlatformSet() {
 
         container.appendChild(platform);
 
-        // Check collision when platform reaches character position
+        // Check collision when platform reaches character position (earlier for instant feedback)
         setTimeout(() => {
             checkCollision(platform);
-        }, (duration * 0.65) * 1000); // Check at 65% of animation
+        }, (duration * 0.55) * 1000); // Check at 55% of animation for instant green flash
 
         // Remove platform after animation
         setTimeout(() => {
@@ -294,11 +294,11 @@ function spawnPlatformSet() {
         }, duration * 1000);
     });
 
-    // Move to next problem after platforms pass
+    // Move to next problem quickly after platforms pass
     setTimeout(() => {
         gameState.currentProblemIndex++;
         displayCurrentProblem();
-    }, (3 / gameState.speed) * 1000);
+    }, 1000); // Fast 1 second transition to next problem
 }
 
 // Check collision
