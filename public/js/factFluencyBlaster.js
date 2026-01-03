@@ -621,6 +621,9 @@ function showPlacementResults() {
 // ===== PRACTICE SESSION =====
 
 async function startPracticeSession(operation, familyName) {
+    // Switch to game screen
+    showScreen('game');
+
     // Get family config
     const family = gameState.families[operation].find(f => f.familyName === familyName);
     if (!family) {
