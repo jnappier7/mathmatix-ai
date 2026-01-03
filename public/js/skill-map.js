@@ -303,7 +303,9 @@ function initializeGraph(data) {
     const nodesGroup = g.append('g').attr('class', 'nodes');
 
     // Define arrow marker for links
-    svg.append('defs').append('marker')
+    const defs = svg.append('defs');
+
+    defs.append('marker')
         .attr('id', 'arrowhead')
         .attr('viewBox', '0 -5 10 10')
         .attr('refX', 20)
@@ -314,6 +316,21 @@ function initializeGraph(data) {
         .append('path')
         .attr('d', 'M0,-5L10,0L0,5')
         .attr('fill', 'rgba(255, 255, 255, 0.4)');
+
+    // Define gradient for edges (fades from source to target)
+    const edgeGradient = defs.append('linearGradient')
+        .attr('id', 'edge-gradient')
+        .attr('gradientUnits', 'userSpaceOnUse');
+
+    edgeGradient.append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', 'rgba(255, 255, 255, 0.3)')
+        .attr('stop-opacity', 1);
+
+    edgeGradient.append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', 'rgba(0, 212, 255, 0.5)')
+        .attr('stop-opacity', 1);
 
     // Create force simulation with weak forces (positions already initialized)
     state.simulation = d3.forceSimulation(data.nodes)
@@ -334,11 +351,12 @@ function initializeGraph(data) {
         .alphaDecay(0.05) // Faster stabilization
         .velocityDecay(0.4); // More damping
 
-    // Draw links
+    // Draw links with gradient
     const link = linksGroup.selectAll('.link')
         .data(data.edges)
         .join('line')
         .attr('class', 'link')
+        .attr('stroke', 'url(#edge-gradient)')
         .attr('marker-end', 'url(#arrowhead)');
 
     // Draw nodes
@@ -404,14 +422,31 @@ function initializeGraph(data) {
         })
         .style('display', state.showLabels ? 'block' : 'none');
 
+    // Track tick count for performance optimization
+    let tickCount = 0;
+    const MAX_TICKS = 300; // Stop after stabilization
+
     // Update positions on each tick
     state.simulation.on('tick', () => {
-        // Update links
+        tickCount++;
+
+        // Update links and gradient positions
         link
             .attr('x1', d => d.source.x)
             .attr('y1', d => d.source.y)
             .attr('x2', d => d.target.x)
-            .attr('y2', d => d.target.y);
+            .attr('y2', d => d.target.y)
+            .each(function(d) {
+                // Update gradient coordinates for this edge
+                const gradient = d3.select(this).attr('stroke');
+                if (gradient && gradient.includes('edge-gradient')) {
+                    d3.select('#edge-gradient')
+                        .attr('x1', d.source.x)
+                        .attr('y1', d.source.y)
+                        .attr('x2', d.target.x)
+                        .attr('y2', d.target.y);
+                }
+            });
 
         // Update nodes
         node.attr('transform', d => `translate(${d.x},${d.y})`);
@@ -419,6 +454,12 @@ function initializeGraph(data) {
         // Update cluster hulls
         if (state.showClusters) {
             updateClusterHulls(hullsGroup, data);
+        }
+
+        // Stop simulation after stabilization to save CPU
+        if (tickCount >= MAX_TICKS) {
+            state.simulation.stop();
+            console.log('[Performance] Simulation stopped after stabilization');
         }
     });
 
