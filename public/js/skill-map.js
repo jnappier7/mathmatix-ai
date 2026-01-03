@@ -833,13 +833,46 @@ function dragended(event, d) {
 }
 
 // Start practice session for selected node
-function startPractice() {
+async function startPractice() {
     if (!state.selectedNode) return;
 
     const node = state.selectedNode;
 
-    // Redirect to mastery practice with milestone selection
-    window.location.href = `/mastery-practice.html?pattern=${node.pattern}&tier=${node.tier}&milestone=${node.milestone}`;
+    // Disable button during request
+    practiceBtn.disabled = true;
+    practiceBtn.textContent = 'Loading...';
+
+    try {
+        // Call API to set up active badge for this skill
+        const response = await fetch('/api/mastery/start-skill-practice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                skillId: node.id,
+                pattern: node.pattern,
+                tier: node.tier,
+                milestone: node.milestone || node.milestoneName
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to start practice');
+        }
+
+        // Redirect to mastery chat (tutoring session)
+        window.location.href = data.redirect || '/mastery-chat.html';
+
+    } catch (error) {
+        console.error('Error starting practice:', error);
+        alert(`Failed to start practice: ${error.message}`);
+
+        // Re-enable button
+        practiceBtn.disabled = false;
+        practiceBtn.textContent = 'Start Practice';
+    }
 }
 
 // Event listeners
