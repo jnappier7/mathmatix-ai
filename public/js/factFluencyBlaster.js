@@ -705,26 +705,20 @@ function displayShooterProblem() {
     const container = document.getElementById('asteroidsContainer');
     container.innerHTML = '';
 
-    // Create asteroids at random positions
+    // Position 4 asteroids side-by-side horizontally
+    // Evenly spaced across the width: 10%, 32%, 54%, 76% from left
     const positions = [
-        { top: '20%', left: '15%' },
-        { top: '20%', right: '15%' },
-        { bottom: '30%', left: '20%' },
-        { bottom: '30%', right: '20%' }
+        { top: '25%', left: '10%' },
+        { top: '25%', left: '32%' },
+        { top: '25%', left: '54%' },
+        { top: '25%', left: '76%' }
     ];
 
     answers.forEach((answer, index) => {
         const asteroid = document.createElement('div');
         asteroid.className = 'asteroid';
-        asteroid.style.top = positions[index].top || 'auto';
-        asteroid.style.bottom = positions[index].bottom || 'auto';
-        asteroid.style.left = positions[index].left || 'auto';
-        asteroid.style.right = positions[index].right || 'auto';
-
-        // Add slight random offset for variety
-        const offsetX = (Math.random() - 0.5) * 40;
-        const offsetY = (Math.random() - 0.5) * 40;
-        asteroid.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+        asteroid.style.top = positions[index].top;
+        asteroid.style.left = positions[index].left;
 
         const answerDisplay = document.createElement('div');
         answerDisplay.className = 'answer-display';
