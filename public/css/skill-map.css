@@ -272,25 +272,54 @@
 
 /* Node Detail Panel */
 .node-detail {
-    position: absolute;
+    position: fixed;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(15, 12, 41, 0.95);
-    backdrop-filter: blur(15px);
+    right: 30px;
+    transform: translateY(-50%) translateX(450px);
+    background: rgba(15, 12, 41, 0.98);
+    backdrop-filter: blur(20px) saturate(180%);
     border: 3px solid #00d4ff;
     border-radius: 16px;
     padding: 0;
     width: 400px;
     max-width: 90vw;
     color: white;
-    box-shadow: 0 10px 50px rgba(0, 212, 255, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(0, 212, 255, 0.4);
     z-index: 1000;
-    transition: all 0.3s ease;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.node-detail:not(.hidden) {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
 }
 
 .node-detail.hidden {
-    display: none;
+    transform: translateY(-50%) translateX(450px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Backdrop overlay for detail panel */
+.node-detail-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.node-detail-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .detail-header {

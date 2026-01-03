@@ -39,6 +39,7 @@ const state = {
 // DOM Elements
 const graphContainer = document.getElementById('graph-container');
 const nodeDetail = document.getElementById('nodeDetail');
+const nodeDetailBackdrop = document.getElementById('nodeDetailBackdrop');
 const backBtn = document.getElementById('backBtn');
 const resetZoomBtn = document.getElementById('resetZoom');
 const toggleClustersBtn = document.getElementById('toggleClusters');
@@ -572,6 +573,11 @@ function showNodeDetail(node) {
     state.focusedNode = node;
     nodeDetail.classList.remove('hidden');
 
+    // Show backdrop with slight delay for smooth transition
+    setTimeout(() => {
+        nodeDetailBackdrop.classList.add('show');
+    }, 10);
+
     // Populate details
     document.getElementById('detailTitle').textContent = node.label;
     document.getElementById('detailPattern').textContent = `${node.patternName}`;
@@ -599,6 +605,7 @@ function showNodeDetail(node) {
 // Hide node detail panel
 function hideNodeDetail() {
     nodeDetail.classList.add('hidden');
+    nodeDetailBackdrop.classList.remove('show');
     state.selectedNode = null;
 }
 
@@ -720,6 +727,9 @@ function initializeEventListeners() {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboardShortcuts);
+
+    // Close detail panel when clicking backdrop
+    nodeDetailBackdrop.addEventListener('click', hideNodeDetail);
 
     // Close detail panel when clicking outside
     document.addEventListener('click', (e) => {
