@@ -683,6 +683,61 @@ router.post('/select-badge', isAuthenticated, async (req, res) => {
 });
 
 /**
+ * Start practice from skill map
+ * POST /api/mastery/start-skill-practice
+ * Accepts: { skillId, pattern, tier, milestone }
+ */
+router.post('/start-skill-practice', isAuthenticated, async (req, res) => {
+  try {
+    const { skillId, pattern, tier, milestone } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get skill details
+    const skill = await Skill.findOne({ skillId }).lean();
+
+    if (!skill) {
+      return res.status(404).json({ error: 'Skill not found' });
+    }
+
+    // Initialize masteryProgress if needed
+    if (!user.masteryProgress) {
+      user.masteryProgress = { activeBadge: null, attempts: [] };
+    }
+
+    // Set active badge for this skill practice
+    user.masteryProgress.activeBadge = {
+      badgeId: `skill-${skillId}`,
+      badgeName: skill.skillName || skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      skillId: skillId,
+      patternId: pattern,
+      tierNum: tier,
+      milestoneName: milestone,
+      startedAt: new Date(),
+      problemsCompleted: 0,
+      problemsCorrect: 0,
+      requiredProblems: 6, // 6 problems for proof gate
+      requiredAccuracy: 0.80 // 80% to pass
+    };
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: `Starting practice: ${skill.skillName || skillId}`,
+      redirect: '/mastery-chat.html'
+    });
+
+  } catch (error) {
+    console.error('Error starting skill practice:', error);
+    res.status(500).json({ error: 'Failed to start practice' });
+  }
+});
+
+/**
  * Start badge earning attempt
  * POST /api/mastery/start-badge
  */
