@@ -665,107 +665,297 @@
       background: #667eea;
     }
 
-    /* PATTERN BADGES - Circular Icon Design */
-    #pattern-badges-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .pattern-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      padding: 15px;
-      border-radius: 12px;
+    /* MODERN EXPANDABLE PATTERN CARDS */
+    .pattern-card {
       background: white;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
     }
 
-    .pattern-badge:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    .pattern-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     }
 
-    .pattern-badge-circle {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
+    .pattern-card.expanded {
+      border-color: #667eea;
+    }
+
+    .pattern-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 28px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    }
+
+    .pattern-card.locked .pattern-card-header {
+      cursor: not-allowed;
+      opacity: 0.6;
+      background: #f5f5f5;
+    }
+
+    .pattern-card-header:hover:not(.locked) {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    }
+
+    .pattern-card-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .pattern-card-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 12px;
-      position: relative;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
+      font-size: 36px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s;
     }
 
-    .pattern-badge:hover .pattern-badge-circle {
-      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    .pattern-card-header:hover .pattern-card-icon {
       transform: scale(1.05);
     }
 
-    .pattern-badge-icon {
-      font-size: 48px;
-      color: white;
+    .pattern-card-info {
+      flex: 1;
     }
 
-    .pattern-badge-name {
+    .pattern-card-name {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 0 6px 0;
+      color: #333;
+      letter-spacing: 0.5px;
+    }
+
+    .pattern-card-description {
       font-size: 14px;
+      color: #666;
+      margin: 0 0 12px 0;
+      line-height: 1.5;
+    }
+
+    .pattern-card-meta {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pattern-tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .pattern-progress-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .pattern-progress-mini-bar {
+      width: 120px;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .pattern-progress-mini-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .pattern-card-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pattern-expand-icon {
+      font-size: 24px;
+      color: #667eea;
+      transition: transform 0.3s ease;
+    }
+
+    .pattern-card.expanded .pattern-expand-icon {
+      transform: rotate(180deg);
+    }
+
+    .pattern-card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .pattern-card.expanded .pattern-card-body {
+      max-height: 2000px;
+    }
+
+    .pattern-card-content {
+      padding: 0 28px 28px 28px;
+    }
+
+    /* Tier sections within pattern card */
+    .tier-section {
+      margin-bottom: 24px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+
+    .tier-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .tier-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .tier-title {
+      font-size: 18px;
       font-weight: 700;
       color: #333;
-      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tier-icon {
+      font-size: 20px;
+    }
+
+    .tier-status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .pattern-badge-tier {
-      font-size: 11px;
-      color: #666;
-      margin-bottom: 8px;
+    .tier-status.locked { background: #ffebee; color: #c62828; }
+    .tier-status.active { background: #fff3e0; color: #f57c00; }
+    .tier-status.completed { background: #e8f5e9; color: #2e7d32; }
+
+    /* Milestone sections within tiers */
+    .milestones-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
     }
 
-    .pattern-badge-progress {
-      width: 100%;
+    .milestone-card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid #e0e0e0;
+      position: relative;
+    }
+
+    .milestone-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      border-color: #667eea;
+    }
+
+    .milestone-card.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .milestone-card.locked:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: #e0e0e0;
+    }
+
+    .milestone-card.in-progress {
+      border-color: #FFC107;
+      background: #fffbf0;
+    }
+
+    .milestone-card.completed {
+      border-color: #4CAF50;
+      background: #f1f8f4;
+    }
+
+    .milestone-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .milestone-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: #333;
+      margin: 0;
+    }
+
+    .milestone-icon {
+      font-size: 24px;
+    }
+
+    .milestone-description {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .milestone-progress {
       height: 6px;
       background: #e0e0e0;
       border-radius: 3px;
       overflow: hidden;
-      margin-top: 8px;
+      margin-bottom: 8px;
     }
 
-    .pattern-badge-progress-fill {
+    .milestone-progress-fill {
       height: 100%;
       background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
       border-radius: 3px;
-      transition: width 0.5s ease;
+      transition: width 0.3s ease;
     }
 
-    .pattern-badge-status {
-      font-size: 10px;
-      font-weight: 600;
-      margin-top: 6px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      display: inline-block;
-    }
-
-    .pattern-badge-status.locked {
-      background: #ffebee;
-      color: #c62828;
-    }
-
-    .pattern-badge-status.in-progress {
-      background: #fff3e0;
-      color: #f57c00;
-    }
-
-    .pattern-badge-status.mastered {
-      background: #e8f5e9;
-      color: #2e7d32;
+    .milestone-stats {
+      font-size: 11px;
+      color: #999;
+      font-weight: 500;
     }
 
     /* Individual Pattern Colors */
@@ -778,17 +968,12 @@
     .pattern-uncertainty { background: #e91e63; }
     .pattern-accumulation { background: #795548; }
 
-    /* ARCADE CARD - FLOATING UPPER RIGHT */
-    .arcade-floating-card {
-      position: absolute;
-      top: 25px;
-      right: 25px;
-      width: 280px;
-      z-index: 50;
-    }
-
-    .center-content {
-      position: relative;
+    .pattern-lock-message {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+      font-size: 14px;
+      font-style: italic;
     }
   </style>
 </head>
@@ -888,29 +1073,12 @@
           <p>Choose your next mastery challenge</p>
         </div>
 
-        <!-- PATTERN BADGES: K-12 Continuous Growth -->
-        <div id="pattern-badges-container">
-          <h3 style="font-size: 20px; font-weight: 700; color: #333; margin: 20px 0 15px 0;">
-            📐 Mathematical Patterns (K-12)
-          </h3>
-          <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
-            These patterns grow with you from Grade 1 through Calculus
-          </p>
-          <div id="pattern-badges-grid">
-            <!-- Pattern badges will be loaded here dynamically -->
-            <div style="text-align: center; padding: 40px; color: #999;">
-              <i class="fas fa-spinner fa-spin" style="font-size: 36px; color: #667eea; margin-bottom: 15px;"></i>
-              <p>Loading pattern badges...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- SKILL BADGES: Traditional System -->
-        <div id="skill-domains-container">
-          <!-- Skill domains will be loaded here dynamically -->
+        <!-- MODERN PATTERN-BASED MASTERY SYSTEM -->
+        <div id="pattern-cards-container">
+          <!-- Pattern cards will be loaded here dynamically -->
           <div style="text-align: center; padding: 60px; color: #999;">
             <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
-            <p>Loading your badge map...</p>
+            <p>Loading your mastery map...</p>
           </div>
         </div>
       </section>
@@ -966,22 +1134,23 @@
   </div>
 
   <script>
-    // Load user data and populate badges
-    async function loadBadgeMap() {
+    // Load user stats and ability data
+    async function loadUserStats() {
       try {
-        // Fetch badge map data (server-side session auth will verify user)
-        const response = await fetch('/api/mastery/badge-map', {
+        const response = await fetch('/api/mastery/user-stats', {
           headers: { 'Content-Type': 'application/json' }
         });
 
-        // If unauthorized (401), redirect to login
         if (response.status === 401) {
-          console.warn('[Badge Map] Session expired - redirecting to login');
+          console.warn('[User Stats] Session expired - redirecting to login');
           window.location.href = '/login.html';
           return;
         }
 
-        if (!response.ok) throw new Error('Failed to load badge map');
+        if (!response.ok) {
+          console.warn('Failed to load user stats');
+          return;
+        }
 
         const data = await response.json();
 
@@ -989,21 +1158,15 @@
         updateAbilityDisplay(data.averageTheta || 0);
 
         // Update stats
-        document.getElementById('badges-earned').textContent = data.badgesEarned || 0;
-        document.getElementById('total-xp').textContent = (data.totalXP || 0).toLocaleString();
-
-        // Render skill domains (pass assessmentCompleted status)
-        renderSkillDomains(data.skillDomains || [], data.assessmentCompleted);
+        if (document.getElementById('badges-earned')) {
+          document.getElementById('badges-earned').textContent = data.badgesEarned || 0;
+        }
+        if (document.getElementById('total-xp')) {
+          document.getElementById('total-xp').textContent = (data.totalXP || 0).toLocaleString();
+        }
 
       } catch (error) {
-        console.error('Error loading badge map:', error);
-        document.getElementById('skill-domains-container').innerHTML = `
-          <div style="text-align: center; padding: 60px; color: #e74c3c;">
-            <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
-            <p style="font-size: 16px; font-weight: 600;">Failed to load badge map</p>
-            <p style="font-size: 14px; color: #999;">Please try refreshing the page.</p>
-          </div>
-        `;
+        console.error('Error loading user stats:', error);
       }
     }
 
@@ -1020,131 +1183,60 @@
       }
     }
 
-    function renderSkillDomains(domains, assessmentCompleted) {
-      const container = document.getElementById('skill-domains-container');
+    // New unified pattern-based rendering
+    async function loadMasteryMap() {
+      try {
+        const response = await fetch('/api/mastery/mastery-map');
 
-      if (!domains || domains.length === 0) {
-        // Check if user has completed the screener
+        if (response.status === 401) {
+          console.warn('[Mastery Map] Session expired - redirecting to login');
+          window.location.href = '/login.html';
+          return;
+        }
+
+        if (!response.ok) throw new Error('Failed to load mastery map');
+
+        const data = await response.json();
+        renderPatternCards(data.patterns || [], data.assessmentCompleted);
+
+      } catch (error) {
+        console.error('Error loading mastery map:', error);
+        const container = document.getElementById('pattern-cards-container');
+        container.innerHTML = `
+          <div style="text-align: center; padding: 60px;">
+            <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
+            <p style="color: #666; font-size: 16px; font-weight: 600;">Complete the screener to unlock mastery mode!</p>
+            <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+              Take Screener <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        `;
+      }
+    }
+
+    function renderPatternCards(patterns, assessmentCompleted) {
+      const container = document.getElementById('pattern-cards-container');
+
+      if (!patterns || patterns.length === 0) {
         if (!assessmentCompleted) {
-          // User has NOT completed the screener - show "Take Screener" message
           container.innerHTML = `
             <div style="text-align: center; padding: 60px;">
               <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
-              <p style="color: #666; font-size: 16px; font-weight: 600;">No badges available yet</p>
-              <p style="color: #999; font-size: 14px;">Complete the screener to unlock your skill badges!</p>
+              <p style="color: #666; font-size: 16px; font-weight: 600;">Complete the screener to unlock mastery mode!</p>
               <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
                 Take Screener <i class="fas fa-arrow-right"></i>
               </a>
             </div>
           `;
         } else {
-          // User HAS completed the screener but no badges available - show different message
           container.innerHTML = `
             <div style="text-align: center; padding: 60px;">
               <i class="fas fa-check-circle" style="font-size: 48px; color: #4CAF50; margin-bottom: 20px;"></i>
               <p style="color: #666; font-size: 16px; font-weight: 600;">Screener completed!</p>
-              <p style="color: #999; font-size: 14px;">No skill badges are configured yet. Check back soon!</p>
-              <a href="/chat.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
-                Continue Learning <i class="fas fa-arrow-right"></i>
-              </a>
+              <p style="color: #999; font-size: 14px;">Your mastery map is being prepared. Check back soon!</p>
             </div>
           `;
         }
-        return;
-      }
-
-      container.innerHTML = domains.map(domain => `
-        <div class="domain">
-          <div class="domain-header">
-            <div class="domain-icon">${domain.icon || '📚'}</div>
-            <div class="domain-title">
-              <h3>${domain.name}</h3>
-              <p>${domain.description || ''}</p>
-            </div>
-          </div>
-          <div class="badge-grid">
-            ${(domain.badges || []).map(badge => `
-              <div class="badge-card ${badge.status}" onclick="selectBadge('${badge.badgeId}')">
-                <div class="badge-header">
-                  <h4 class="badge-name">${badge.name}</h4>
-                  <span class="badge-tier ${badge.tier}">${getTierIcon(badge.tier)}</span>
-                </div>
-                <div class="badge-description">${badge.description || ''}</div>
-                ${badge.status !== 'locked' ? `
-                  <div class="badge-progress">
-                    <div class="badge-progress-fill" style="width: ${badge.progress || 0}%"></div>
-                  </div>
-                  <div class="badge-stats">${badge.problemsCorrect || 0}/${badge.requiredProblems || 10} problems · ${Math.round(badge.progress || 0)}%</div>
-                ` : '<div class="badge-stats">🔒 Complete prerequisites first</div>'}
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function getTierIcon(tier) {
-      const icons = {
-        bronze: '🥉',
-        silver: '🥈',
-        gold: '🥇'
-      };
-      return icons[tier] || '⭐';
-    }
-
-    async function selectBadge(badgeId) {
-      try {
-        const response = await fetch('/api/mastery/select-badge', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ badgeId })
-        });
-
-        if (response.ok) {
-          window.location.href = '/mastery-chat.html';
-        } else {
-          alert('Failed to select badge. Please try again.');
-        }
-      } catch (error) {
-        console.error('Error selecting badge:', error);
-        alert('An error occurred. Please try again.');
-      }
-    }
-
-    // Load pattern badges
-    async function loadPatternBadges() {
-      try {
-        const response = await fetch('/api/mastery/pattern-badges');
-
-        if (response.status === 401) {
-          console.warn('[Pattern Badges] Session expired');
-          return;
-        }
-
-        if (!response.ok) throw new Error('Failed to load pattern badges');
-
-        const data = await response.json();
-        renderPatternBadges(data.patternBadges || []);
-
-      } catch (error) {
-        console.error('Error loading pattern badges:', error);
-        document.getElementById('pattern-badges-grid').innerHTML = `
-          <div style="text-align: center; padding: 40px; color: #999;">
-            <p>Pattern badges will be available soon!</p>
-          </div>
-        `;
-      }
-    }
-
-    function renderPatternBadges(patterns) {
-      const container = document.getElementById('pattern-badges-grid');
-
-      if (!patterns || patterns.length === 0) {
-        container.innerHTML = `
-          <div style="text-align: center; padding: 40px; color: #999;">
-            <p>Complete the screener to unlock pattern badges!</p>
-          </div>
-        `;
         return;
       }
 
@@ -1159,53 +1251,182 @@
         'accumulation': 'fa-layer-group'
       };
 
-      container.innerHTML = patterns.map(pattern => `
-        <div class="pattern-badge" onclick="selectPattern('${pattern.patternId}')">
-          <div class="pattern-badge-circle pattern-${pattern.patternId}">
-            <i class="fas ${iconMap[pattern.patternId] || 'fa-star'} pattern-badge-icon"></i>
-          </div>
-          <div class="pattern-badge-name">${pattern.name}</div>
-          <div class="pattern-badge-tier">Tier ${pattern.currentTier || 0}</div>
-          ${pattern.progress !== undefined ? `
-            <div class="pattern-badge-progress">
-              <div class="pattern-badge-progress-fill" style="width: ${pattern.progress}%"></div>
+      container.innerHTML = patterns.map(pattern => {
+        const isLocked = !pattern.currentTier || pattern.currentTier === 0;
+        const tierIcon = getTierIcon(pattern.currentTier);
+        const totalProgress = calculatePatternProgress(pattern);
+
+        return `
+          <div class="pattern-card ${isLocked ? 'locked' : ''}" id="pattern-${pattern.patternId}">
+            <div class="pattern-card-header" onclick="${isLocked ? '' : `togglePattern('${pattern.patternId}')`}">
+              <div class="pattern-card-left">
+                <div class="pattern-card-icon pattern-${pattern.patternId}">
+                  <i class="fas ${iconMap[pattern.patternId] || 'fa-star'}"></i>
+                </div>
+                <div class="pattern-card-info">
+                  <h3 class="pattern-card-name">${pattern.name}</h3>
+                  <p class="pattern-card-description">${pattern.description || 'Master this fundamental mathematical pattern'}</p>
+                  <div class="pattern-card-meta">
+                    <div class="pattern-tier-badge">
+                      ${tierIcon} Tier ${pattern.currentTier || 0}
+                    </div>
+                    ${!isLocked ? `
+                      <div class="pattern-progress-mini">
+                        <div class="pattern-progress-mini-bar">
+                          <div class="pattern-progress-mini-fill" style="width: ${totalProgress}%"></div>
+                        </div>
+                        <span>${Math.round(totalProgress)}%</span>
+                      </div>
+                    ` : '<span style="color: #c62828; font-size: 13px; font-weight: 600;">🔒 Complete screener to unlock</span>'}
+                  </div>
+                </div>
+              </div>
+              ${!isLocked ? `
+                <div class="pattern-card-right">
+                  <i class="fas fa-chevron-down pattern-expand-icon"></i>
+                </div>
+              ` : ''}
             </div>
-          ` : ''}
-          <div class="pattern-badge-status ${pattern.status || 'locked'}">
-            ${getPatternStatusText(pattern.status, pattern.currentTier)}
+            ${!isLocked ? `
+              <div class="pattern-card-body">
+                <div class="pattern-card-content">
+                  ${renderTiers(pattern)}
+                </div>
+              </div>
+            ` : ''}
           </div>
+        `;
+      }).join('');
+    }
+
+    function renderTiers(pattern) {
+      if (!pattern.tiers || pattern.tiers.length === 0) {
+        return '<p class="pattern-lock-message">No tiers available yet</p>';
+      }
+
+      return pattern.tiers.map((tier, tierIndex) => {
+        const tierStatus = getTierStatus(tier, pattern.currentTier, tierIndex + 1);
+
+        return `
+          <div class="tier-section">
+            <div class="tier-header">
+              <div class="tier-title">
+                <span class="tier-icon">${getTierIcon(tierIndex + 1)}</span>
+                <span>Tier ${tierIndex + 1}: ${tier.name || `Level ${tierIndex + 1}`}</span>
+              </div>
+              <div class="tier-status ${tierStatus}">${getTierStatusText(tierStatus)}</div>
+            </div>
+            ${renderMilestones(tier.milestones, pattern.patternId, tierIndex + 1, tierStatus)}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderMilestones(milestones, patternId, tierNum, tierStatus) {
+      if (!milestones || milestones.length === 0) {
+        return '<p style="color: #999; font-size: 13px; text-align: center; padding: 20px;">No milestones in this tier yet</p>';
+      }
+
+      return `
+        <div class="milestones-grid">
+          ${milestones.map(milestone => {
+            const isLocked = tierStatus === 'locked';
+            const clickHandler = isLocked ? '' : `onclick="selectMilestone('${patternId}', ${tierNum}, '${milestone.milestoneId}')"`;
+
+            return `
+              <div class="milestone-card ${milestone.status || (isLocked ? 'locked' : '')}" ${clickHandler}>
+                <div class="milestone-header">
+                  <h4 class="milestone-name">${milestone.name}</h4>
+                  <span class="milestone-icon">${getMilestoneIcon(milestone.status)}</span>
+                </div>
+                <div class="milestone-description">${milestone.description || ''}</div>
+                ${!isLocked ? `
+                  <div class="milestone-progress">
+                    <div class="milestone-progress-fill" style="width: ${milestone.progress || 0}%"></div>
+                  </div>
+                  <div class="milestone-stats">${milestone.problemsCorrect || 0}/${milestone.requiredProblems || 10} problems · ${Math.round(milestone.progress || 0)}%</div>
+                ` : '<div class="milestone-stats">🔒 Complete previous tier</div>'}
+              </div>
+            `;
+          }).join('')}
         </div>
-      `).join('');
+      `;
     }
 
-    function getPatternStatusText(status, tier) {
-      if (!tier || tier === 0) return '🔒 Locked';
-      if (status === 'mastered') return '✅ Mastered';
-      if (status === 'in-progress') return '🚀 Learning';
-      return '⭐ Available';
+    function getTierIcon(tierNum) {
+      const icons = ['🥉', '🥈', '🥇', '💎', '👑', '⭐'];
+      return icons[tierNum - 1] || '⭐';
     }
 
-    async function selectPattern(patternId) {
+    function getTierStatus(tier, currentTier, tierNum) {
+      if (tierNum > currentTier) return 'locked';
+      if (tierNum === currentTier) return 'active';
+      return 'completed';
+    }
+
+    function getTierStatusText(status) {
+      const texts = {
+        locked: '🔒 Locked',
+        active: '🚀 In Progress',
+        completed: '✅ Completed'
+      };
+      return texts[status] || 'Available';
+    }
+
+    function getMilestoneIcon(status) {
+      const icons = {
+        'locked': '🔒',
+        'in-progress': '🎯',
+        'completed': '✅'
+      };
+      return icons[status] || '⭐';
+    }
+
+    function calculatePatternProgress(pattern) {
+      if (!pattern.tiers || pattern.tiers.length === 0) return 0;
+
+      let totalMilestones = 0;
+      let completedMilestones = 0;
+
+      pattern.tiers.forEach(tier => {
+        if (tier.milestones) {
+          tier.milestones.forEach(milestone => {
+            totalMilestones++;
+            if (milestone.status === 'completed') completedMilestones++;
+          });
+        }
+      });
+
+      return totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
+    }
+
+    function togglePattern(patternId) {
+      const card = document.getElementById(`pattern-${patternId}`);
+      if (card) {
+        card.classList.toggle('expanded');
+      }
+    }
+
+    async function selectMilestone(patternId, tierNum, milestoneId) {
       try {
-        const response = await fetch('/api/mastery/select-pattern', {
+        const response = await fetch('/api/mastery/select-milestone', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ patternId })
+          body: JSON.stringify({ patternId, tierNum, milestoneId })
         });
 
         if (response.ok) {
-          const data = await response.json();
-          console.log('Pattern selected:', data);
           window.location.href = '/mastery-chat.html';
         } else {
           const error = await response.json();
-          alert(error.error || 'Failed to select pattern. Please try again.');
+          alert(error.error || 'Failed to select milestone. Please try again.');
         }
       } catch (error) {
-        console.error('Error selecting pattern:', error);
+        console.error('Error selecting milestone:', error);
         alert('An error occurred. Please try again.');
       }
     }
+
 
     // Load daily quests
     async function loadDailyQuests() {
@@ -1319,10 +1540,10 @@
 
     // Initialize page
     document.addEventListener('DOMContentLoaded', () => {
-      loadPatternBadges();  // Load pattern badges first
-      loadBadgeMap();
-      loadDailyQuests();
-      loadWeeklyChallenges();
+      loadMasteryMap();       // Load the new unified mastery map
+      loadUserStats();        // Load user stats for sidebar
+      loadDailyQuests();      // Load daily quests
+      loadWeeklyChallenges(); // Load weekly challenges
     });
   </script>
 

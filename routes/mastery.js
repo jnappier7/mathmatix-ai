@@ -683,6 +683,61 @@ router.post('/select-badge', isAuthenticated, async (req, res) => {
 });
 
 /**
+ * Start practice from skill map
+ * POST /api/mastery/start-skill-practice
+ * Accepts: { skillId, pattern, tier, milestone }
+ */
+router.post('/start-skill-practice', isAuthenticated, async (req, res) => {
+  try {
+    const { skillId, pattern, tier, milestone } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get skill details
+    const skill = await Skill.findOne({ skillId }).lean();
+
+    if (!skill) {
+      return res.status(404).json({ error: 'Skill not found' });
+    }
+
+    // Initialize masteryProgress if needed
+    if (!user.masteryProgress) {
+      user.masteryProgress = { activeBadge: null, attempts: [] };
+    }
+
+    // Set active badge for this skill practice
+    user.masteryProgress.activeBadge = {
+      badgeId: `skill-${skillId}`,
+      badgeName: skill.skillName || skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      skillId: skillId,
+      patternId: pattern,
+      tierNum: tier,
+      milestoneName: milestone,
+      startedAt: new Date(),
+      problemsCompleted: 0,
+      problemsCorrect: 0,
+      requiredProblems: 6, // 6 problems for proof gate
+      requiredAccuracy: 0.80 // 80% to pass
+    };
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: `Starting practice: ${skill.skillName || skillId}`,
+      redirect: '/mastery-chat.html'
+    });
+
+  } catch (error) {
+    console.error('Error starting skill practice:', error);
+    res.status(500).json({ error: 'Failed to start practice' });
+  }
+});
+
+/**
  * Start badge earning attempt
  * POST /api/mastery/start-badge
  */
@@ -999,9 +1054,12 @@ router.get('/next-phase-problem', isAuthenticated, async (req, res) => {
     const activeBadge = user.masteryProgress.activeBadge;
     const problem = await generatePhaseProblem(activeBadge.currentPhase, activeBadge, user);
 
+    // SECURITY: Strip correctOption and answer before sending to client
+    const { correctOption, answer, ...clientProblem } = problem;
+
     res.json({
       success: true,
-      problem,
+      problem: clientProblem,
       phase: activeBadge.currentPhase,
       phaseGuidance: problem.phaseGuidance
     });
@@ -2056,6 +2114,477 @@ router.post('/select-pattern', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('Error selecting pattern:', error);
     res.status(500).json({ error: 'Failed to select pattern badge' });
+  }
+});
+
+/**
+ * HELPER: Get pattern progress with overall completion percentage
+ */
+function getPatternProgress(patternId, skillMastery) {
+  const pattern = getPatternBadge(patternId);
+  if (!pattern) {
+    return { status: 'locked', overallProgress: 0 };
+  }
+
+  let totalMilestones = 0;
+  let completedMilestones = 0;
+
+  pattern.tiers.forEach(tier => {
+    tier.milestones.forEach(milestone => {
+      totalMilestones++;
+      const allSkillsMastered = milestone.skillIds.every(skillId => {
+        const mastery = skillMastery[skillId] || skillMastery.get?.(skillId);
+        return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
+      });
+      if (allSkillsMastered) {
+        completedMilestones++;
+      }
+    });
+  });
+
+  const overallProgress = totalMilestones > 0 ? (completedMilestones / totalMilestones) * 100 : 0;
+  const currentTier = getCurrentTier(patternId, skillMastery);
+  const status = getPatternStatus(patternId, currentTier, skillMastery);
+
+  return { status, overallProgress };
+}
+
+/**
+ * HELPER: Get milestone progress and status
+ */
+function getMilestoneProgress(patternId, milestoneId, skillMastery) {
+  const pattern = getPatternBadge(patternId);
+  if (!pattern) {
+    return { status: 'locked', progress: 0, problemsCorrect: 0 };
+  }
+
+  let milestone = null;
+  for (const tier of pattern.tiers) {
+    const found = tier.milestones.find(m => m.milestoneId === milestoneId);
+    if (found) {
+      milestone = found;
+      break;
+    }
+  }
+
+  if (!milestone) {
+    return { status: 'locked', progress: 0, problemsCorrect: 0 };
+  }
+
+  // Check how many skills are mastered
+  let totalSkills = milestone.skillIds.length;
+  let masteredSkills = 0;
+
+  milestone.skillIds.forEach(skillId => {
+    const mastery = skillMastery[skillId] || skillMastery.get?.(skillId);
+    if (mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred')) {
+      masteredSkills++;
+    }
+  });
+
+  const progress = totalSkills > 0 ? (masteredSkills / totalSkills) * 100 : 0;
+  const allSkillsMastered = masteredSkills === totalSkills;
+
+  return {
+    status: allSkillsMastered ? 'completed' : (masteredSkills > 0 ? 'in-progress' : 'pending'),
+    progress: progress,
+    problemsCorrect: masteredSkills  // Using skills mastered as proxy for problems correct
+  };
+}
+
+/**
+ * NEW UX: Get unified mastery map with full pattern hierarchy
+ * GET /api/mastery/mastery-map
+ */
+router.get('/mastery-map', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if assessment completed
+    const assessmentCompleted = user.learningProfile?.assessmentCompleted || false;
+
+    if (!assessmentCompleted) {
+      return res.json({
+        patterns: [],
+        assessmentCompleted: false
+      });
+    }
+
+    // Get all pattern badges
+    const allPatterns = getAllPatternBadges();
+    const skillMastery = user.skillMastery || {};
+
+    // Build full hierarchy for each pattern
+    const patterns = allPatterns.map(pattern => {
+      const currentTier = getCurrentTier(pattern.patternId, skillMastery);
+      const patternProgress = getPatternProgress(pattern.patternId, skillMastery);
+
+      // Build tiers with milestones
+      const tiers = pattern.tiers.map((tier, tierIndex) => {
+        const tierNum = tierIndex + 1;
+
+        // Build milestones for this tier
+        const milestones = tier.milestones.map(milestone => {
+          const milestoneProgress = getMilestoneProgress(
+            pattern.patternId,
+            milestone.milestoneId,
+            skillMastery
+          );
+
+          return {
+            milestoneId: milestone.milestoneId,
+            name: milestone.name,
+            description: milestone.description,
+            status: milestoneProgress.status,
+            progress: milestoneProgress.progress,
+            problemsCorrect: milestoneProgress.problemsCorrect,
+            requiredProblems: milestone.requiredProblems || 10,
+            skillIds: milestone.skillIds
+          };
+        });
+
+        return {
+          tierNum: tierNum,
+          name: tier.name,
+          description: tier.description,
+          milestones: milestones
+        };
+      });
+
+      return {
+        patternId: pattern.patternId,
+        name: pattern.name,
+        description: pattern.description,
+        icon: pattern.icon,
+        color: pattern.color,
+        currentTier: currentTier,
+        status: patternProgress.status,
+        progress: patternProgress.overallProgress,
+        tiers: tiers
+      };
+    });
+
+    res.json({
+      patterns: patterns,
+      assessmentCompleted: true
+    });
+
+  } catch (error) {
+    console.error('Error loading mastery map:', error);
+    res.status(500).json({ error: 'Failed to load mastery map' });
+  }
+});
+
+/**
+ * NEW UX: Select a specific milestone to work on
+ * POST /api/mastery/select-milestone
+ */
+router.post('/select-milestone', isAuthenticated, async (req, res) => {
+  try {
+    const { patternId, tierNum, milestoneId } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const pattern = getPatternBadge(patternId);
+    if (!pattern) {
+      return res.status(404).json({ error: 'Pattern not found' });
+    }
+
+    // Verify tier exists
+    const tier = pattern.tiers.find((t, idx) => idx + 1 === tierNum);
+    if (!tier) {
+      return res.status(404).json({ error: 'Tier not found' });
+    }
+
+    // Verify milestone exists in this tier
+    const milestone = tier.milestones.find(m => m.milestoneId === milestoneId);
+    if (!milestone) {
+      return res.status(404).json({ error: 'Milestone not found' });
+    }
+
+    // Check if tier is unlocked
+    const currentTier = getCurrentTier(patternId, user.skillMastery || {});
+    if (tierNum > currentTier) {
+      return res.status(403).json({ error: 'This tier is locked. Complete previous tier first.' });
+    }
+
+    // Get current milestone progress
+    const milestoneProgress = getMilestoneProgress(
+      patternId,
+      milestoneId,
+      user.skillMastery || {}
+    );
+
+    // Set up active badge with pattern milestone structure
+    if (!user.masteryProgress) {
+      user.masteryProgress = { activeBadge: null, attempts: [] };
+    }
+
+    user.masteryProgress.activeBadge = {
+      // New pattern-based structure
+      patternId: patternId,
+      patternName: pattern.name,
+      tierNum: tierNum,
+      tierName: tier.name,
+      milestoneId: milestoneId,
+      milestoneName: milestone.name,
+      description: milestone.description,
+
+      // Progress tracking
+      problemsCompleted: milestoneProgress.problemsCorrect || 0,
+      problemsCorrect: milestoneProgress.problemsCorrect || 0,
+      requiredProblems: milestone.requiredProblems || 10,
+      requiredAccuracy: milestone.requiredAccuracy || 0.80,
+      progress: milestoneProgress.progress || 0,
+
+      // Session data
+      startedAt: new Date(),
+      currentPhase: 'launch',
+      phaseHistory: [],
+      hintsUsed: 0,
+      misconceptionsAddressed: [],
+
+      // Legacy compatibility
+      badgeId: `${patternId}-${milestoneId}`,
+      badgeName: milestone.name,
+      skillId: milestone.skillIds[0],
+      // Note: 'tier' field removed - pattern badges use tierNum/tierName instead
+
+      // Pattern-specific
+      isPatternBadge: true,
+      allSkillIds: milestone.skillIds
+    };
+
+    await user.save();
+
+    res.json({
+      success: true,
+      activeBadge: user.masteryProgress.activeBadge
+    });
+
+  } catch (error) {
+    console.error('Error selecting milestone:', error);
+    res.status(500).json({ error: 'Failed to select milestone' });
+  }
+});
+
+/**
+ * NEW UX: Get lightweight user stats for sidebar
+ * GET /api/mastery/user-stats
+ */
+router.get('/user-stats', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Calculate average theta
+    const skillMastery = user.skillMastery || {};
+    const thetas = Object.values(skillMastery)
+      .map(skill => skill.theta)
+      .filter(theta => theta !== undefined && theta !== null);
+
+    const averageTheta = thetas.length > 0
+      ? thetas.reduce((sum, theta) => sum + theta, 0) / thetas.length
+      : 0;
+
+    // Count badges earned (milestones with 100% progress)
+    let badgesEarned = 0;
+    const allPatterns = getAllPatternBadges();
+
+    allPatterns.forEach(pattern => {
+      pattern.tiers.forEach(tier => {
+        tier.milestones.forEach(milestone => {
+          const progress = getMilestoneProgress(
+            pattern.patternId,
+            milestone.milestoneId,
+            skillMastery
+          );
+          if (progress.status === 'completed') {
+            badgesEarned++;
+          }
+        });
+      });
+    });
+
+    // Calculate total XP from engagement
+    const totalXP = (user.engagementMetrics?.totalXP || 0);
+
+    res.json({
+      averageTheta: averageTheta,
+      badgesEarned: badgesEarned,
+      totalXP: totalXP
+    });
+
+  } catch (error) {
+    console.error('Error loading user stats:', error);
+    res.status(500).json({ error: 'Failed to load user stats' });
+  }
+});
+
+/**
+ * NEW: Skill Graph/Tree Data for Visual Knowledge Map
+ * GET /api/mastery/skill-graph
+ *
+ * Returns a graph structure with nodes (skills) and edges (prerequisites)
+ * for D3.js force-directed visualization
+ */
+router.get('/skill-graph', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if assessment completed
+    const assessmentCompleted = user.learningProfile?.assessmentCompleted || false;
+
+    if (!assessmentCompleted) {
+      return res.json({
+        nodes: [],
+        edges: [],
+        clusters: [],
+        assessmentCompleted: false
+      });
+    }
+
+    const allPatterns = getAllPatternBadges();
+    const skillMastery = user.skillMastery || {};
+    const prerequisiteMapper = require('../utils/prerequisiteMapper');
+
+    const nodes = [];
+    const edges = [];
+    const clusters = [];
+    const skillToPatternMap = new Map();
+
+    // Build nodes from all pattern milestones
+    allPatterns.forEach((pattern, patternIndex) => {
+      // Add cluster metadata for this pattern
+      clusters.push({
+        id: pattern.patternId,
+        name: pattern.name,
+        color: pattern.color,
+        icon: pattern.icon,
+        index: patternIndex
+      });
+
+      // Extract skills from each tier's milestones
+      pattern.tiers.forEach((tier, tierIndex) => {
+        const tierNum = tierIndex + 1;
+
+        tier.milestones.forEach((milestone) => {
+          (milestone.skillIds || []).forEach((skillId) => {
+            // Skip if we've already added this skill
+            if (skillToPatternMap.has(skillId)) return;
+
+            // Track which pattern this skill belongs to
+            skillToPatternMap.set(skillId, {
+              patternId: pattern.patternId,
+              patternName: pattern.name,
+              tierNum: tierNum,
+              tierName: tier.name,
+              milestoneId: milestone.milestoneId,
+              milestoneName: milestone.name
+            });
+
+            // Get mastery status for this skill
+            const mastery = skillMastery?.get?.(skillId) || skillMastery?.[skillId] || {};
+            const status = mastery.status || 'locked';
+            const masteryScore = mastery.masteryScore || 0;
+
+            // Determine visual state
+            let nodeState = 'locked';
+            if (status === 'mastered') {
+              nodeState = 'mastered';
+            } else if (status === 'practicing' || status === 'learning') {
+              nodeState = 'developing';
+            } else if (status === 'ready') {
+              nodeState = 'ready';
+            }
+
+            nodes.push({
+              id: skillId,
+              label: skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+              pattern: pattern.patternId,
+              patternName: pattern.name,
+              color: pattern.color,
+              tier: tierNum,
+              tierName: tier.name,
+              milestone: milestone.milestoneId,
+              milestoneName: milestone.name,
+              state: nodeState,
+              status: status,
+              progress: masteryScore,
+              group: patternIndex  // For force-directed clustering
+            });
+          });
+        });
+      });
+    });
+
+    // Build edges from prerequisite relationships
+    nodes.forEach(node => {
+      const prereqData = prerequisiteMapper.SKILL_PREREQUISITES[node.id];
+
+      if (prereqData && prereqData.prerequisites) {
+        prereqData.prerequisites.forEach(prereqId => {
+          // Only add edge if both nodes exist in our graph
+          if (skillToPatternMap.has(prereqId)) {
+            edges.push({
+              source: prereqId,
+              target: node.id,
+              type: 'prerequisite'
+            });
+          }
+        });
+      }
+
+      // Also check for "enables" relationships (inverse of prerequisites)
+      if (prereqData && prereqData.enables) {
+        prereqData.enables.forEach(enabledId => {
+          // Only add if target exists and edge doesn't already exist
+          if (skillToPatternMap.has(enabledId)) {
+            const edgeExists = edges.some(e =>
+              e.source === node.id && e.target === enabledId
+            );
+            if (!edgeExists) {
+              edges.push({
+                source: node.id,
+                target: enabledId,
+                type: 'enables'
+              });
+            }
+          }
+        });
+      }
+    });
+
+    res.json({
+      nodes: nodes,
+      edges: edges,
+      clusters: clusters,
+      assessmentCompleted: true,
+      meta: {
+        totalSkills: nodes.length,
+        totalConnections: edges.length,
+        masteredCount: nodes.filter(n => n.state === 'mastered').length,
+        readyCount: nodes.filter(n => n.state === 'ready').length
+      }
+    });
+
+  } catch (error) {
+    console.error('Error loading skill graph:', error);
+    res.status(500).json({ error: 'Failed to load skill graph' });
   }
 });
 

@@ -27,7 +27,7 @@ const upload = multer({
     }),
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB per file
 });
-const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20240620"; // Best teaching & reasoning (stable June 2024 - with GPT fallback)
+const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reasoning (Sonnet 3.5 v2 - Oct 2024)
 
 router.post('/',
     isAuthenticated,

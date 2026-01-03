@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 
 // Daily quest templates
@@ -173,9 +174,9 @@ function calculateStreak(user) {
 }
 
 // GET /api/daily-quests - Get today's quests
-router.get('/daily-quests', async (req, res) => {
+router.get('/daily-quests', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
@@ -351,9 +352,9 @@ router.post('/daily-quests/update', async (req, res) => {
 });
 
 // GET /api/daily-quests/stats - Get quest statistics
-router.get('/daily-quests/stats', async (req, res) => {
+router.get('/daily-quests/stats', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }

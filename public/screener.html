@@ -61,6 +61,7 @@
                   <i class="fas fa-spinner fa-spin" style="margin-right: 10px; color: #667eea;"></i>
                   Preparing your personalized assessment...
                 </p>
+                <div id="problem-svg-container" style="display: none; text-align: center; margin: 20px 0;"></div>
               </div>
 
               <div class="answer-section">
@@ -102,6 +103,46 @@
         <div class="stat">
           <span class="stat-label">Confidence</span>
           <span class="stat-value" id="theta-display">Building baseline...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview Screen -->
+    <div class="screen" id="interview-screen">
+      <div class="interview-content">
+        <div class="interview-header">
+          <h2>Let's Explore Your Understanding</h2>
+          <p class="interview-subtitle">These questions help us understand not just what you know, but how you think about math.</p>
+          <div class="interview-progress">
+            <span id="interview-progress-text">Question 1 of 3</span>
+          </div>
+        </div>
+
+        <div id="interview-question-container" class="interview-question-container">
+          <div class="interview-question">
+            <div id="interview-base-problem" class="interview-base-problem" style="display: none;"></div>
+            <p id="interview-question-text" class="interview-question-text"></p>
+          </div>
+
+          <div class="interview-answer-section">
+            <label for="interview-answer">Your Answer:</label>
+            <textarea
+              id="interview-answer"
+              class="interview-answer-input"
+              rows="6"
+              placeholder="Explain your thinking in detail. Don't just give the answer - show how you arrived at it and why your approach works."
+            ></textarea>
+            <button id="interview-submit-btn" class="btn btn-primary interview-submit-btn">
+              Submit
+            </button>
+          </div>
+        </div>
+
+        <div id="interview-feedback-section" class="interview-feedback-section" style="display: none;">
+          <div id="interview-feedback-text" class="interview-feedback-text"></div>
+          <div class="interview-next-indicator">
+            <p>Loading next question...</p>
+          </div>
         </div>
       </div>
     </div>

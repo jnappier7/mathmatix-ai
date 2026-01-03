@@ -190,10 +190,27 @@ function parseRow(row) {
     problem.answer = correctAnswer;
   }
 
-  // Try to parse as number
-  if (problem.answer && !problem.options.length && !isNaN(parseFloat(problem.answer))) {
-    problem.answer = parseFloat(problem.answer);
-    problem.answerType = Number.isInteger(problem.answer) ? 'integer' : 'decimal';
+  // Detect answer type and parse appropriately
+  if (problem.answer && !problem.options.length) {
+    const answerStr = String(problem.answer).trim();
+
+    // Check for fraction (e.g., "1/2", "3/4", "-2/3")
+    // Must be: optional minus, digits, slash, digits (no decimals)
+    if (/^-?\d+\/\d+$/.test(answerStr)) {
+      problem.answer = answerStr; // Keep as string
+      problem.answerType = 'fraction';
+    }
+    // Check for number (integer or decimal)
+    else if (!isNaN(parseFloat(answerStr))) {
+      const numValue = parseFloat(answerStr);
+      problem.answer = numValue;
+      problem.answerType = Number.isInteger(numValue) ? 'integer' : 'decimal';
+    }
+    // Otherwise treat as expression/string
+    else {
+      problem.answer = answerStr;
+      problem.answerType = 'expression';
+    }
   }
 
   // Extract standard/skill code

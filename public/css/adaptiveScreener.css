@@ -171,19 +171,31 @@
 }
 
 .problem-text {
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 500;
   color: #2c3e50;
   text-align: center;
   line-height: 1.6;
   font-family: 'Georgia', 'Times New Roman', serif;
+  margin: 20px 0;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Answer Section */
 .answer-section {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 15px;
   margin-top: 30px;
+}
+
+/* For text input mode - make input and button side-by-side */
+.answer-section:has(.answer-input) {
+  flex-direction: row;
+  gap: 10px;
 }
 
 .answer-input {
@@ -648,26 +660,34 @@
   background: rgba(218, 165, 32, 0.3);
 }
 
-/* Multiple Choice Options */
+/* Multiple Choice Options - 2x2 Grid Layout */
 .multiple-choice-options {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   width: 100%;
+}
+
+/* Mobile: Stack vertically on small screens */
+@media (max-width: 640px) {
+  .multiple-choice-options {
+    grid-template-columns: 1fr;
+  }
 }
 
 .mc-option {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: 15px;
+  padding: 20px 24px;
   background: white;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
-  font-size: 16px;
+  font-size: 1.1rem;
+  min-height: 70px;
 }
 
 .mc-option:hover {
@@ -703,4 +723,204 @@
 
 .mc-option .option-text {
   flex: 1;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* ============================================================================
+   INTERVIEW SCREEN STYLES
+   ============================================================================ */
+
+.interview-content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.interview-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.interview-header h2 {
+  font-size: 2rem;
+  color: #667eea;
+  margin-bottom: 10px;
+}
+
+.interview-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.interview-progress {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.interview-question-container {
+  margin-bottom: 30px;
+}
+
+.interview-question {
+  background: #f8f9ff;
+  border-left: 4px solid #667eea;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+.interview-base-problem {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 15px;
+  font-style: italic;
+  padding: 10px;
+  background: white;
+  border-radius: 5px;
+}
+
+.interview-question-text {
+  font-size: 1.3rem;
+  color: #333;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.interview-answer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.interview-answer-section label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.interview-answer-input {
+  width: 100%;
+  padding: 15px;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+.interview-answer-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.interview-submit-btn {
+  align-self: flex-end;
+  padding: 12px 40px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.interview-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.interview-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.interview-feedback-section {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.interview-evaluation {
+  background: #f8f9ff;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+.rating {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.rating-excellent {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  color: white;
+}
+
+.rating-good {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.rating-developing {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: white;
+}
+
+.rating-needs_work {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+  color: white;
+}
+
+.strengths,
+.areas-for-growth {
+  margin: 15px 0;
+  padding: 15px;
+  border-radius: 8px;
+  line-height: 1.6;
+}
+
+.strengths {
+  background: rgba(17, 153, 142, 0.1);
+  border-left: 3px solid #11998e;
+}
+
+.areas-for-growth {
+  background: rgba(245, 87, 108, 0.1);
+  border-left: 3px solid #f5576c;
+}
+
+.interview-next-indicator {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.interview-next-indicator p {
+  margin: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }

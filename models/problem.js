@@ -36,6 +36,12 @@ const problemSchema = new mongoose.Schema({
     required: true
   },
 
+  // Optional SVG diagram for visual problems (geometry, graphs, etc.)
+  svg: {
+    type: String,
+    required: false
+  },
+
   // Correct answer (for auto-validation)
   answer: {
     type: mongoose.Schema.Types.Mixed,  // Can be number, string, or array
@@ -151,15 +157,61 @@ const problemSchema = new mongoose.Schema({
     reviewedBy: String,
     reviewDate: Date,
     notes: String
+  },
+
+  // Content hash for deduplication (auto-generated)
+  contentHash: {
+    type: String,
+    index: true
   }
 
 }, {
   timestamps: true
 });
 
-// Index for efficient adaptive selection
-problemSchema.index({ skillId: 1, 'irtParameters.difficulty': 1 });
-problemSchema.index({ 'irtParameters.difficulty': 1, isActive: 1 });
+// INDEXES FOR PERFORMANCE
+problemSchema.index({ skillId: 1, 'irtParameters.difficulty': 1 });  // Adaptive problem selection
+problemSchema.index({ skillId: 1, isActive: 1 });  // Active problems by skill
+problemSchema.index({ contentHash: 1 }, { unique: true, sparse: true });  // Prevent duplicates
+
+// Helper function to compare two fractions for equivalence
+function compareFractions(userFraction, correctFraction) {
+  // First try exact string match (fastest path)
+  if (String(userFraction).trim() === String(correctFraction).trim()) {
+    return true;
+  }
+
+  // Parse both fractions
+  const parseResult1 = parseFraction(userFraction);
+  const parseResult2 = parseFraction(correctFraction);
+
+  // If either parse failed, fall back to string comparison
+  if (!parseResult1 || !parseResult2) {
+    return String(userFraction).trim() === String(correctFraction).trim();
+  }
+
+  // Compare as decimals (handles equivalent fractions like 1/2 = 2/4)
+  const decimal1 = parseResult1.numerator / parseResult1.denominator;
+  const decimal2 = parseResult2.numerator / parseResult2.denominator;
+
+  // Use small epsilon for floating point comparison
+  return Math.abs(decimal1 - decimal2) < 0.0001;
+}
+
+// Helper function to parse a fraction string
+function parseFraction(input) {
+  const str = String(input).trim();
+  const match = str.match(/^(-?\d+)\/(\d+)$/);
+
+  if (!match) return null;
+
+  const numerator = parseInt(match[1], 10);
+  const denominator = parseInt(match[2], 10);
+
+  if (denominator === 0) return null;
+
+  return { numerator, denominator };
+}
 
 // Instance method: Check if answer is correct
 problemSchema.methods.checkAnswer = function(userAnswer) {
@@ -169,15 +221,23 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
       return parseFloat(userAnswer) === parseFloat(this.answer);
 
     case 'fraction':
-      // TODO: Implement fraction comparison
-      return String(userAnswer).trim() === String(this.answer).trim();
+      // Compare fractions by reducing to decimal OR comparing reduced forms
+      return compareFractions(userAnswer, this.answer);
 
     case 'expression':
       // TODO: Implement algebraic equivalence
       return String(userAnswer).trim() === String(this.answer).trim();
 
     case 'multiple-choice':
-      return String(userAnswer).trim() === String(this.answer).trim();
+      // For multiple choice, userAnswer is the letter (A, B, C, D)
+      // Compare to correctOption, not answer
+      const userLetter = String(userAnswer).trim().toUpperCase();
+      const correctLetter = String(this.correctOption).trim().toUpperCase();
+
+      // DEBUG logging
+      console.log(`[MC Answer Check] User: "${userLetter}" | Correct: "${correctLetter}" | Match: ${userLetter === correctLetter}`);
+
+      return userLetter === correctLetter;
 
     default:
       return false;
@@ -186,23 +246,27 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
 
 // Static method: Find problem at target difficulty
 problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficulty, excludeIds = []) {
-  // Find problems within ±0.3 difficulty of target
-  const problems = await this.find({
-    skillId,
-    isActive: true,
-    problemId: { $nin: excludeIds },
-    'irtParameters.difficulty': {
-      $gte: targetDifficulty - 0.3,
-      $lte: targetDifficulty + 0.3
-    }
-  }).sort({ 'irtParameters.discrimination': -1 }); // Prefer high discrimination
+  // Try progressively wider difficulty windows before expensive aggregation
+  const windows = [0.3, 0.5, 0.8, 1.2];
 
-  if (problems.length > 0) {
-    // Return random problem from the set
-    return problems[Math.floor(Math.random() * problems.length)];
+  for (const window of windows) {
+    const problems = await this.find({
+      skillId,
+      isActive: true,
+      problemId: { $nin: excludeIds },
+      'irtParameters.difficulty': {
+        $gte: targetDifficulty - window,
+        $lte: targetDifficulty + window
+      }
+    }).sort({ 'irtParameters.discrimination': -1 }); // Prefer high discrimination
+
+    if (problems.length > 0) {
+      // Return random problem from the set
+      return problems[Math.floor(Math.random() * problems.length)];
+    }
   }
 
-  // If no problems found, widen search using aggregation
+  // Last resort: expensive aggregation to find closest match across entire skill
   const results = await this.aggregate([
     {
       $match: {
@@ -239,5 +303,18 @@ problemSchema.statics.getBySkill = async function(skillId) {
   return await this.find({ skillId, isActive: true })
     .sort({ 'irtParameters.difficulty': 1 });
 };
+
+// PRE-SAVE HOOK: Generate content hash for deduplication
+const crypto = require('crypto');
+
+problemSchema.pre('save', function(next) {
+  // Only generate hash if content or skillId changed (or it's a new document)
+  if (this.isModified('content') || this.isModified('skillId') || this.isNew) {
+    // Hash based on skillId + content (case-insensitive, trimmed)
+    const hashInput = `${this.skillId}:${String(this.content).trim().toLowerCase()}`;
+    this.contentHash = crypto.createHash('sha256').update(hashInput).digest('hex');
+  }
+  next();
+});
 
 module.exports = mongoose.model('Problem', problemSchema);

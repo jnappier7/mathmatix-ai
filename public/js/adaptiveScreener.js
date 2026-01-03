@@ -15,7 +15,12 @@ const state = {
   questionCount: 0,
   theta: 0,
   confidence: 0,
-  responses: []
+  responses: [],
+
+  // Interview phase state
+  interviewQuestions: [],
+  currentInterviewIndex: 0,
+  interviewAnswers: []
 };
 
 // ============================================================================
@@ -75,6 +80,14 @@ elements.continueBtn.addEventListener('click', () => {
 });
 elements.retakeBtn.addEventListener('click', () => {
   window.location.reload();
+});
+
+// Interview submit button (added when DOM is ready)
+document.addEventListener('DOMContentLoaded', () => {
+  const interviewSubmitBtn = document.getElementById('interview-submit-btn');
+  if (interviewSubmitBtn) {
+    interviewSubmitBtn.addEventListener('click', submitInterviewAnswer);
+  }
 });
 
 // ============================================================================
@@ -288,11 +301,18 @@ async function submitAnswer(answerValue) {
 }
 
 /**
- * Handle screener completion
+ * Handle screener completion or transition to interview
  */
 async function handleCompletion(data) {
   try {
-    // Complete the screener
+    // Check if we should start interview phase
+    if (data.nextAction === 'interview') {
+      console.log('[Screener] Transitioning to interview phase');
+      await startInterview(data);
+      return;
+    }
+
+    // Otherwise, complete the screener
     const completeResponse = await fetch('/api/screener/complete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -342,12 +362,258 @@ async function handleCompletion(data) {
       // Normal screener mode
       displayResults(report);
       switchScreen('results');
+
+      // Auto-redirect to badge map after 5 seconds (give time to see results)
+      setTimeout(() => {
+        window.location.href = '/badge-map.html';
+      }, 5000);
     }
 
   } catch (error) {
     console.error('Error completing screener:', error);
     alert('Failed to complete assessment: ' + error.message);
   }
+}
+
+// ============================================================================
+// INTERVIEW PHASE HANDLERS
+// ============================================================================
+
+/**
+ * Start interview phase
+ */
+async function startInterview(data) {
+  try {
+    console.log('[Interview] Fetching interview questions');
+
+    // Fetch interview questions from backend
+    const response = await fetch(`/api/screener/interview-questions?sessionId=${state.sessionId}`, {
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch interview questions');
+    }
+
+    const interviewData = await response.json();
+    state.interviewQuestions = interviewData.questions;
+    state.currentInterviewIndex = 0;
+    state.interviewAnswers = [];
+
+    console.log(`[Interview] Loaded ${state.interviewQuestions.length} questions`);
+
+    // Show first question
+    displayInterviewQuestion(state.interviewQuestions[0]);
+    switchScreen('interview');
+
+  } catch (error) {
+    console.error('[Interview] Error starting interview:', error);
+    alert('Failed to start interview phase: ' + error.message);
+  }
+}
+
+/**
+ * Submit interview answer
+ */
+async function submitInterviewAnswer() {
+  const answerTextarea = document.getElementById('interview-answer');
+  const answer = answerTextarea.value.trim();
+
+  if (!answer) {
+    alert('Please provide an answer');
+    return;
+  }
+
+  const currentQuestion = state.interviewQuestions[state.currentInterviewIndex];
+
+  try {
+    console.log(`[Interview] Submitting answer for question ${state.currentInterviewIndex + 1}`);
+
+    // Disable submit button
+    const submitBtn = document.getElementById('interview-submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Analyzing...';
+
+    // Submit answer to backend
+    const response = await fetch('/api/screener/interview-answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        sessionId: state.sessionId,
+        questionId: currentQuestion.questionId,
+        answer
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit interview answer');
+    }
+
+    const data = await response.json();
+
+    // Store answer
+    state.interviewAnswers.push({
+      questionId: currentQuestion.questionId,
+      answer,
+      evaluation: data.evaluation
+    });
+
+    // Show feedback
+    displayInterviewFeedback(data.evaluation);
+
+    // Check if complete
+    if (data.complete) {
+      console.log('[Interview] All questions answered');
+      // Show completion button
+      setTimeout(() => {
+        completeInterview();
+      }, 3000);
+    } else if (data.nextQuestion) {
+      // Move to next question after delay
+      setTimeout(() => {
+        state.currentInterviewIndex++;
+        displayInterviewQuestion(data.nextQuestion);
+      }, 3000);
+    }
+
+  } catch (error) {
+    console.error('[Interview] Error submitting answer:', error);
+    alert('Failed to submit answer: ' + error.message);
+
+    // Re-enable submit button
+    const submitBtn = document.getElementById('interview-submit-btn');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit';
+  }
+}
+
+/**
+ * Complete interview and finalize assessment
+ */
+async function completeInterview() {
+  try {
+    console.log('[Interview] Finalizing interview');
+
+    const response = await fetch('/api/screener/interview-complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ sessionId: state.sessionId })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to complete interview');
+    }
+
+    const data = await response.json();
+
+    // Save results to sessionStorage
+    if (window.StorageUtils) {
+      StorageUtils.session.setItem('screenerResults', JSON.stringify(data.report));
+      StorageUtils.session.setItem('screenerJustCompleted', 'true');
+      StorageUtils.session.setItem('interviewCompleted', 'true');
+    }
+
+    console.log('[Interview] Complete! Earned badges:', data.earnedBadges.length);
+
+    // Redirect to badge map
+    window.location.href = '/badge-map.html';
+
+  } catch (error) {
+    console.error('[Interview] Error completing interview:', error);
+    alert('Failed to complete interview: ' + error.message);
+  }
+}
+
+/**
+ * Display interview question
+ */
+function displayInterviewQuestion(question) {
+  const questionContainer = document.getElementById('interview-question-container');
+  const questionText = document.getElementById('interview-question-text');
+  const baseProblem = document.getElementById('interview-base-problem');
+  const answerTextarea = document.getElementById('interview-answer');
+  const feedbackSection = document.getElementById('interview-feedback-section');
+  const submitBtn = document.getElementById('interview-submit-btn');
+  const progressText = document.getElementById('interview-progress-text');
+
+  // Update question text
+  questionText.textContent = question.question;
+
+  // Show base problem if available
+  if (question.baseProblem) {
+    baseProblem.textContent = `Problem: ${question.baseProblem}`;
+    baseProblem.style.display = 'block';
+  } else {
+    baseProblem.style.display = 'none';
+  }
+
+  // Clear previous answer and feedback
+  answerTextarea.value = '';
+  feedbackSection.style.display = 'none';
+  questionContainer.style.display = 'block';
+
+  // Update progress
+  const current = state.currentInterviewIndex + 1;
+  const total = state.interviewQuestions.length;
+  progressText.textContent = `Question ${current} of ${total}`;
+
+  // Enable submit button
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Submit';
+
+  // Focus on textarea
+  answerTextarea.focus();
+}
+
+/**
+ * Display interview feedback
+ */
+function displayInterviewFeedback(evaluation) {
+  const feedbackSection = document.getElementById('interview-feedback-section');
+  const feedbackText = document.getElementById('interview-feedback-text');
+  const questionContainer = document.getElementById('interview-question-container');
+
+  // Build feedback HTML
+  let feedbackHTML = `<div class="interview-evaluation">`;
+  feedbackHTML += `<div class="rating rating-${evaluation.rating}">${getRatingEmoji(evaluation.rating)} ${capitalizeFirst(evaluation.rating)}</div>`;
+
+  if (evaluation.strengths) {
+    feedbackHTML += `<div class="strengths"><strong>Strengths:</strong> ${evaluation.strengths}</div>`;
+  }
+
+  if (evaluation.areasForGrowth) {
+    feedbackHTML += `<div class="areas-for-growth"><strong>Areas for Growth:</strong> ${evaluation.areasForGrowth}</div>`;
+  }
+
+  feedbackHTML += `</div>`;
+
+  feedbackText.innerHTML = feedbackHTML;
+
+  // Hide question, show feedback
+  questionContainer.style.display = 'none';
+  feedbackSection.style.display = 'block';
+}
+
+/**
+ * Helper: Get rating emoji
+ */
+function getRatingEmoji(rating) {
+  const emojis = {
+    'excellent': '🌟',
+    'good': '✓',
+    'developing': '→',
+    'needs_work': '!'
+  };
+  return emojis[rating] || '•';
+}
+
+/**
+ * Helper: Capitalize first letter
+ */
+function capitalizeFirst(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).replace('_', ' ');
 }
 
 // ============================================================================
@@ -359,34 +625,61 @@ async function handleCompletion(data) {
  */
 function displayProblem(problem) {
   elements.questionNumber.textContent = `Question ${problem.questionNumber}`;
-  elements.problemText.textContent = problem.content;
+
+  // BUGFIX: Ensure problem content is displayed as text, not interpreted as date
+  // If content contains fractions (e.g., "1/2"), display as plain text
+  let content = String(problem.content);
+  elements.problemText.textContent = content;
+
+  // Display SVG diagram if available
+  const svgContainer = document.getElementById('problem-svg-container');
+  if (problem.svg) {
+    svgContainer.innerHTML = problem.svg;
+    svgContainer.style.display = 'block';
+  } else {
+    svgContainer.innerHTML = '';
+    svgContainer.style.display = 'none';
+  }
 
   // Handle multiple choice vs fill-in
   const answerSection = document.querySelector('.answer-section');
 
   if (problem.answerType === 'multiple-choice' && problem.options && problem.options.length > 0) {
-    // Render multiple choice buttons
+    // Render multiple choice buttons with submit button
+    // BUGFIX: Use String() to prevent date interpretation of fractions
     answerSection.innerHTML = `
       <div class="multiple-choice-options" id="mc-options">
         ${problem.options.map(opt => `
-          <button class="mc-option" data-option="${opt.label}">
-            <span class="option-label">${opt.label}</span>
-            <span class="option-text">${opt.text}</span>
+          <button class="mc-option" data-option="${String(opt.label)}">
+            <span class="option-label">${String(opt.label)}</span>
+            <span class="option-text">${String(opt.text)}</span>
           </button>
         `).join('')}
       </div>
+      <button class="btn btn-primary" id="submit-btn" disabled>
+        Submit <i class="fas fa-arrow-right"></i>
+      </button>
     `;
 
     // Add click handlers for multiple choice
+    const submitBtn = document.getElementById('submit-btn');
     document.querySelectorAll('.mc-option').forEach(btn => {
       btn.addEventListener('click', function() {
         // Remove previous selection
         document.querySelectorAll('.mc-option').forEach(b => b.classList.remove('selected'));
         // Mark this as selected
         this.classList.add('selected');
-        // Auto-submit after selection
-        setTimeout(() => submitAnswer(this.dataset.option), 300);
+        // Enable submit button
+        submitBtn.disabled = false;
       });
+    });
+
+    // Add submit button handler
+    submitBtn.addEventListener('click', () => {
+      const selectedOption = document.querySelector('.mc-option.selected');
+      if (selectedOption) {
+        submitAnswer(selectedOption.dataset.option);
+      }
     });
   } else {
     // Render fill-in input

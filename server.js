@@ -295,9 +295,7 @@ app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
 });
 
 
-// --- 9. STATIC FILE SERVING & HTML ROUTES ---
-app.use(express.static(path.join(__dirname, "public")));
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+// --- 9. HTML ROUTES (MUST BE BEFORE STATIC MIDDLEWARE) ---
 
 // Protected route for serving teacher resource files
 app.get('/uploads/teacher-resources/:teacherId/:filename', isAuthenticated, async (req, res) => {
@@ -326,23 +324,57 @@ app.get('/js/tutor-config-data.js', (req, res) => {
     res.sendFile(path.join(__dirname, 'utils', 'tutorConfig.js'));
 });
 
-// HTML file routes
+// Public HTML routes (unauthenticated pages)
 app.get("/", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 app.get("/login.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 app.get("/signup.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "signup.html")));
+app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public", "privacy.html")));
+app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
+
+// Protected HTML routes (require authentication)
 app.get("/complete-profile.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "complete-profile.html")));
 app.get("/pick-tutor.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "pick-tutor.html")));
 app.get("/chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "chat.html")));
+app.get("/canvas.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "canvas.html")));
+
+// Student-specific protected routes
+app.get("/badge-map.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "badge-map.html")));
+app.get("/screener.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "screener.html")));
+app.get("/mastery-chat.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "mastery-chat.html")));
+app.get("/mastery-arcade.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "mastery-arcade.html")));
+app.get("/fact-fluency-blaster.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "fact-fluency-blaster.html")));
+app.get("/number-run.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "number-run.html")));
+app.get("/learning-curves.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "learning-curves.html")));
+app.get("/my-celeration-charts.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "my-celeration-charts.html")));
+app.get("/my-speed-progress.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "my-speed-progress.html")));
+app.get("/progress.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "progress.html")));
+app.get("/student-dashboard.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "student-dashboard.html")));
+app.get("/weekly-challenges.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "weekly-challenges.html")));
+app.get("/daily-quests-widget.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "daily-quests-widget.html")));
+app.get("/calculator.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "calculator.html")));
+
+// Admin-specific protected routes
 app.get("/admin-dashboard.html", isAuthenticated, isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-dashboard.html")));
 app.get("/admin-upload.html", isAuthenticated, isAdmin, (req, res) => res.sendFile(path.join(__dirname, "public", "admin-upload.html")));
+
+// Teacher-specific protected routes
 app.get("/teacher-dashboard.html", isAuthenticated, isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-dashboard.html")));
+app.get("/teacher-celeration-dashboard.html", isAuthenticated, isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-celeration-dashboard.html")));
+app.get("/character-rigging.html", isAuthenticated, isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "character-rigging.html")));
+
+// Parent-specific protected routes
 app.get("/parent-dashboard.html", isAuthenticated, isParent, (req, res) => res.sendFile(path.join(__dirname, "public", "parent-dashboard.html")));
-app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public", "privacy.html")));
-app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
-app.get("/canvas.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "canvas.html")));
+
+// Upload page (authenticated users only)
+app.get("/upload.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "upload.html")));
 
 // Redirect old fact-fluency URL to correct one
 app.get("/fact-fluency-practice.html", (req, res) => res.redirect(301, "/fact-fluency-blaster.html"));
+
+// --- 10. STATIC FILE SERVING (AFTER ALL ROUTE DEFINITIONS) ---
+// IMPORTANT: This must come AFTER all HTML route definitions to ensure authentication checks run first
+app.use(express.static(path.join(__dirname, "public")));
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 
 // Fallback for 404
 app.get("*", (req, res) => {
@@ -350,14 +382,14 @@ app.get("*", (req, res) => {
 });
 
 
-// --- 10. SAFETY & SECURITY INITIALIZATION ---
+// --- 11. SAFETY & SECURITY INITIALIZATION ---
 const { scheduleCleanup } = require('./middleware/uploadSecurity');
 
 // Start auto-deletion scheduler for old uploads (30-day retention)
 scheduleCleanup();
 console.log('🛡️ Upload security: Auto-deletion scheduler initialized');
 
-// --- 11. SERVER LISTENER ---
+// --- 12. SERVER LISTENER ---
 app.listen(PORT, () => {
   console.log(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`);
 });

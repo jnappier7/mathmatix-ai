@@ -1376,7 +1376,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? StorageUtils.session.getItem('screenerResults')
                 : null;
 
-            // Only show screener results if in mastery mode
+            // Only show screener results if in mastery mode (before clearing)
             if (inMasteryMode && screenerJustCompleted === 'true' && screenerResults) {
                 // User just finished screener - provide personalized welcome
                 const results = JSON.parse(screenerResults);
@@ -1471,6 +1471,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 // User is in mastery mode - no generic welcome needed
                 console.log('[Chat] User in mastery mode, skipping generic welcome');
                 return;
+            }
+
+            // ========== AUTO-EXIT MASTERY MODE ==========
+            // If user navigated to chat.html (regular chat), auto-exit mastery mode
+            // This happens AFTER checking for mastery-specific welcomes above
+            if (inMasteryMode && window.StorageUtils) {
+                console.log('[Auto-Exit] Clearing mastery mode state (user returned to chat.html)');
+                StorageUtils.session.removeItem('masteryModeActive');
+                StorageUtils.session.removeItem('masteryPhase');
+                StorageUtils.session.removeItem('activeBadgeId');
+
+                // Update button appearance
+                if (window.updateMasteryModeButton) {
+                    window.updateMasteryModeButton();
+                }
             }
 
             // Check for last session to provide personalized greeting
@@ -1736,7 +1751,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const textNode = document.createElement('span');
         textNode.className = 'message-text';
         
-        if (sender === 'ai' && typeof marked === 'function') {
+        if (sender === 'ai' && typeof marked !== 'undefined' && marked.parse) {
             const protectedText = text.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
             textNode.innerHTML = dirtyHtml.replace(/@@LATEX_OPEN@@/g, '\\(').replace(/@@LATEX_CLOSE@@/g, '\\)').replace(/@@DLATEX_OPEN@@/g, '\\[').replace(/@@DLATEX_CLOSE@@/g, '\\]');
@@ -2099,8 +2114,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageRef.textNode.textContent = newText;
 
         // Re-parse markdown if it's an AI message
-        if (messageRef.bubble.classList.contains('ai') && typeof marked === 'function') {
-            const protectedText = newText.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
+        if (messageRef.bubble.classList.contains('ai') && typeof marked !== 'undefined' && marked.parse) {
+            const protectedText = newText.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\)/g, '@@DLATEX_CLOSE@@');
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
             messageRef.textNode.innerHTML = dirtyHtml.replace(/@@LATEX_OPEN@@/g, '\\(').replace(/@@LATEX_CLOSE@@/g, '\\)').replace(/@@DLATEX_OPEN@@/g, '\\[').replace(/@@DLATEX_CLOSE@@/g, '\\]');
         }
