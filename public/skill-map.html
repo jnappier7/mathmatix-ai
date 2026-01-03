@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Map | MathMatrix.AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/skill-map.css">
+    <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <!-- HEADER - MATHMATIX BRANDED -->
+    <header class="main-header">
+        <div class="main-header-content">
+            <div class="brand-section">
+                <div class="logo-container">
+                    <a href="/badge-map.html">
+                        <img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI Logo" class="main-logo" />
+                    </a>
+                </div>
+                <div class="brand-text">
+                    <div class="brand-name">MATHMATIX AI</div>
+                    <div class="brand-tagline">Personalized AI Math Tutoring</div>
+                </div>
+                <div class="mode-indicator">
+                    🗺️ Skill Map
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="user-display">
+                    <span id="userName">Student</span>
+                    <span class="level-badge">Level <span id="userLevel">1</span></span>
+                </div>
+                <button id="backBtn" class="btn-secondary">← Back to Badge Map</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="skill-map-container">
+        <!-- Top Bar with Controls -->
+        <div class="map-controls">
+            <div class="map-title">
+                <h1>🌌 Your Math Journey</h1>
+                <p class="subtitle">Explore the 8 patterns of mathematics. Click any region to dive deeper!</p>
+            </div>
+
+            <div class="map-stats">
+                <div class="stat-pill">
+                    <span class="stat-icon">✨</span>
+                    <span class="stat-value" id="masteredCount">0</span>
+                    <span class="stat-label">Mastered</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-value" id="readyCount">0</span>
+                    <span class="stat-label">Ready</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-icon">📊</span>
+                    <span class="stat-value" id="totalSkills">0</span>
+                    <span class="stat-label">Total Skills</span>
+                </div>
+            </div>
+
+            <div class="view-controls">
+                <button id="resetZoom" class="control-btn">🔍 Reset View</button>
+                <button id="toggleClusters" class="control-btn active">🎨 Show Regions</button>
+                <button id="toggleLabels" class="control-btn active">📝 Labels</button>
+            </div>
+        </div>
+
+        <!-- Main Graph Canvas -->
+        <div id="graph-container"></div>
+
+        <!-- Pattern Legend (8 Clusters) -->
+        <div class="pattern-legend">
+            <div class="legend-title">Math Patterns</div>
+            <div id="patternList"></div>
+        </div>
+
+        <!-- Node Detail Panel (shown on hover/click) -->
+        <div id="nodeDetail" class="node-detail hidden">
+            <div class="detail-header">
+                <h3 id="detailTitle"></h3>
+                <button id="closeDetail" class="close-btn">×</button>
+            </div>
+            <div class="detail-content">
+                <div class="detail-pattern">
+                    <span class="detail-label">Pattern:</span>
+                    <span id="detailPattern"></span>
+                </div>
+                <div class="detail-tier">
+                    <span class="detail-label">Tier:</span>
+                    <span id="detailTier"></span>
+                </div>
+                <div class="detail-milestone">
+                    <span class="detail-label">Milestone:</span>
+                    <span id="detailMilestone"></span>
+                </div>
+                <div class="detail-status">
+                    <span class="detail-label">Status:</span>
+                    <span id="detailStatus" class="status-badge"></span>
+                </div>
+                <div class="detail-progress">
+                    <div class="progress-bar-container">
+                        <div id="detailProgressBar" class="progress-bar"></div>
+                    </div>
+                    <span id="detailProgressText">0%</span>
+                </div>
+                <div class="detail-actions">
+                    <button id="practiceBtn" class="btn-primary">Start Practice</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend for Node States -->
+        <div class="state-legend">
+            <div class="legend-title">Skill Status</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-node mastered"></div>
+                    <span>Mastered</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-node developing"></div>
+                    <span>Developing</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-node ready"></div>
+                    <span>Ready to Practice</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-node locked"></div>
+                    <span>Locked</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        © 2025 MATHMATIX AI. All rights reserved.
+        <a href="/privacy-policy.html">Privacy Policy</a> |
+        <a href="/terms.html">Terms of Use</a>
+    </footer>
+
+    <script src="js/skill-map.js"></script>
+</body>
+</html>

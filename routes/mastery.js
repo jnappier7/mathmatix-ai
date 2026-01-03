@@ -2376,4 +2376,161 @@ router.get('/user-stats', isAuthenticated, async (req, res) => {
   }
 });
 
+/**
+ * NEW: Skill Graph/Tree Data for Visual Knowledge Map
+ * GET /api/mastery/skill-graph
+ *
+ * Returns a graph structure with nodes (skills) and edges (prerequisites)
+ * for D3.js force-directed visualization
+ */
+router.get('/skill-graph', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if assessment completed
+    const assessmentCompleted = user.learningProfile?.assessmentCompleted || false;
+
+    if (!assessmentCompleted) {
+      return res.json({
+        nodes: [],
+        edges: [],
+        clusters: [],
+        assessmentCompleted: false
+      });
+    }
+
+    const allPatterns = getAllPatternBadges();
+    const skillMastery = user.skillMastery || {};
+    const prerequisiteMapper = require('../utils/prerequisiteMapper');
+
+    const nodes = [];
+    const edges = [];
+    const clusters = [];
+    const skillToPatternMap = new Map();
+
+    // Build nodes from all pattern milestones
+    allPatterns.forEach((pattern, patternIndex) => {
+      // Add cluster metadata for this pattern
+      clusters.push({
+        id: pattern.patternId,
+        name: pattern.name,
+        color: pattern.color,
+        icon: pattern.icon,
+        index: patternIndex
+      });
+
+      // Extract skills from each tier's milestones
+      pattern.tiers.forEach((tier, tierIndex) => {
+        const tierNum = tierIndex + 1;
+
+        tier.milestones.forEach((milestone) => {
+          (milestone.skillIds || []).forEach((skillId) => {
+            // Skip if we've already added this skill
+            if (skillToPatternMap.has(skillId)) return;
+
+            // Track which pattern this skill belongs to
+            skillToPatternMap.set(skillId, {
+              patternId: pattern.patternId,
+              patternName: pattern.name,
+              tierNum: tierNum,
+              tierName: tier.name,
+              milestoneId: milestone.milestoneId,
+              milestoneName: milestone.name
+            });
+
+            // Get mastery status for this skill
+            const mastery = skillMastery?.get?.(skillId) || skillMastery?.[skillId] || {};
+            const status = mastery.status || 'locked';
+            const masteryScore = mastery.masteryScore || 0;
+
+            // Determine visual state
+            let nodeState = 'locked';
+            if (status === 'mastered') {
+              nodeState = 'mastered';
+            } else if (status === 'practicing' || status === 'learning') {
+              nodeState = 'developing';
+            } else if (status === 'ready') {
+              nodeState = 'ready';
+            }
+
+            nodes.push({
+              id: skillId,
+              label: skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+              pattern: pattern.patternId,
+              patternName: pattern.name,
+              color: pattern.color,
+              tier: tierNum,
+              tierName: tier.name,
+              milestone: milestone.milestoneId,
+              milestoneName: milestone.name,
+              state: nodeState,
+              status: status,
+              progress: masteryScore,
+              group: patternIndex  // For force-directed clustering
+            });
+          });
+        });
+      });
+    });
+
+    // Build edges from prerequisite relationships
+    nodes.forEach(node => {
+      const prereqData = prerequisiteMapper.SKILL_PREREQUISITES[node.id];
+
+      if (prereqData && prereqData.prerequisites) {
+        prereqData.prerequisites.forEach(prereqId => {
+          // Only add edge if both nodes exist in our graph
+          if (skillToPatternMap.has(prereqId)) {
+            edges.push({
+              source: prereqId,
+              target: node.id,
+              type: 'prerequisite'
+            });
+          }
+        });
+      }
+
+      // Also check for "enables" relationships (inverse of prerequisites)
+      if (prereqData && prereqData.enables) {
+        prereqData.enables.forEach(enabledId => {
+          // Only add if target exists and edge doesn't already exist
+          if (skillToPatternMap.has(enabledId)) {
+            const edgeExists = edges.some(e =>
+              e.source === node.id && e.target === enabledId
+            );
+            if (!edgeExists) {
+              edges.push({
+                source: node.id,
+                target: enabledId,
+                type: 'enables'
+              });
+            }
+          }
+        });
+      }
+    });
+
+    res.json({
+      nodes: nodes,
+      edges: edges,
+      clusters: clusters,
+      assessmentCompleted: true,
+      meta: {
+        totalSkills: nodes.length,
+        totalConnections: edges.length,
+        masteredCount: nodes.filter(n => n.state === 'mastered').length,
+        readyCount: nodes.filter(n => n.state === 'ready').length
+      }
+    });
+
+  } catch (error) {
+    console.error('Error loading skill graph:', error);
+    res.status(500).json({ error: 'Failed to load skill graph' });
+  }
+});
+
 module.exports = router;
