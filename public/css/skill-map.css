@@ -1149,3 +1149,10 @@ body {
     font-size: 0.85rem;
     font-weight: bold;
 }
+
+.hint-sub {
+    margin: 0.5rem 0 0 0;
+    color: #00d4ff;
+    font-size: 0.9rem;
+    font-weight: normal;
+}

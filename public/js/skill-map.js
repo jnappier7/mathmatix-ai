@@ -939,13 +939,25 @@ function showWelcomeHint() {
     const hasSeenHint = localStorage.getItem('skillMapHintSeen');
 
     if (!hasSeenHint) {
+        // Wait for auto-focus to complete, then show hint
         setTimeout(() => {
+            const masteredCount = state.graphData?.nodes.filter(n => n.state === 'mastered').length || 0;
+            const frontierCount = state.frontierNodes?.length || 0;
+
+            let message = '';
+            if (masteredCount > 0) {
+                message = `You've built ${masteredCount} skill${masteredCount > 1 ? 's' : ''}. Let's keep going.`;
+            } else {
+                message = 'Your math journey starts here. Click an orange node to begin.';
+            }
+
             const hint = document.createElement('div');
             hint.className = 'welcome-hint';
             hint.innerHTML = `
-                <div class="hint-icon">💡</div>
+                <div class="hint-icon">🌟</div>
                 <div class="hint-content">
-                    <strong>Pro Tip:</strong> Press <kbd>?</kbd> to see keyboard shortcuts
+                    <strong>${message}</strong>
+                    ${frontierCount > 0 ? `<p class="hint-sub">The ${frontierCount} orange node${frontierCount > 1 ? 's' : ''} are your best next step${frontierCount > 1 ? 's' : ''}.</p>` : ''}
                 </div>
             `;
             document.body.appendChild(hint);
@@ -953,15 +965,15 @@ function showWelcomeHint() {
             // Fade in
             setTimeout(() => hint.classList.add('show'), 10);
 
-            // Fade out after 5 seconds
+            // Fade out after 6 seconds
             setTimeout(() => {
                 hint.classList.remove('show');
                 setTimeout(() => hint.remove(), 500);
-            }, 5000);
+            }, 6000);
 
             // Mark as seen
             localStorage.setItem('skillMapHintSeen', 'true');
-        }, 2000); // Show after 2 seconds
+        }, 3000); // Show after auto-focus completes (1s delay + 1.5s animation + 0.5s buffer)
     }
 }
 
