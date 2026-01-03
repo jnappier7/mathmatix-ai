@@ -858,9 +858,8 @@
 
         // Exit mastery mode
         function exitMasteryMode() {
-            if (confirm('Exit mastery mode and return to regular chat?')) {
-                window.location.href = '/chat.html';
-            }
+            // Just redirect - chat.html auto-clears mastery state on load
+            window.location.href = '/chat.html';
         }
 
         // ============================================================================

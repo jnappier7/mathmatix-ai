@@ -1376,7 +1376,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? StorageUtils.session.getItem('screenerResults')
                 : null;
 
-            // Only show screener results if in mastery mode
+            // Only show screener results if in mastery mode (before clearing)
             if (inMasteryMode && screenerJustCompleted === 'true' && screenerResults) {
                 // User just finished screener - provide personalized welcome
                 const results = JSON.parse(screenerResults);
@@ -1471,6 +1471,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 // User is in mastery mode - no generic welcome needed
                 console.log('[Chat] User in mastery mode, skipping generic welcome');
                 return;
+            }
+
+            // ========== AUTO-EXIT MASTERY MODE ==========
+            // If user navigated to chat.html (regular chat), auto-exit mastery mode
+            // This happens AFTER checking for mastery-specific welcomes above
+            if (inMasteryMode && window.StorageUtils) {
+                console.log('[Auto-Exit] Clearing mastery mode state (user returned to chat.html)');
+                StorageUtils.session.removeItem('masteryModeActive');
+                StorageUtils.session.removeItem('masteryPhase');
+                StorageUtils.session.removeItem('activeBadgeId');
+
+                // Update button appearance
+                if (window.updateMasteryModeButton) {
+                    window.updateMasteryModeButton();
+                }
             }
 
             // Check for last session to provide personalized greeting
