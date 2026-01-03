@@ -176,11 +176,38 @@ async function startRun() {
     // Show first problem
     displayCurrentProblem();
 
-    // Start spawning platforms
+    // IMPORTANT: Give player time to read the problem before platforms appear
+    console.log('[Number Run] Starting in 3 seconds - Get ready!');
+
+    // Show countdown
+    await showCountdown();
+
+    // NOW start spawning platforms (with initial slow speed)
+    console.log('[Number Run] Go! Starting platform spawns');
     spawnPlatformSet();
     gameState.platformInterval = setInterval(() => {
         spawnPlatformSet();
     }, 3000 / gameState.speed); // Platforms spawn faster with speed
+}
+
+// Show 3-2-1 countdown before game starts
+async function showCountdown() {
+    const problemDisplay = document.getElementById('currentProblem');
+    const originalText = problemDisplay.textContent;
+
+    return new Promise(resolve => {
+        let count = 3;
+        const countdownInterval = setInterval(() => {
+            if (count > 0) {
+                problemDisplay.textContent = `Get Ready... ${count}`;
+                count--;
+            } else {
+                problemDisplay.textContent = originalText;
+                clearInterval(countdownInterval);
+                resolve();
+            }
+        }, 1000);
+    });
 }
 
 // Generate problems
@@ -365,10 +392,12 @@ function handleCorrectHit(platform) {
     platform.classList.add('hit');
     platform.classList.add('correct');
 
-    // Increase speed every 5 correct
-    if (gameState.correct % 5 === 0 && gameState.speed < 3) {
-        gameState.speed += 0.2;
+    // Gradually increase speed - slower ramp up for better playability
+    // Increase every 10 correct answers (instead of 5) with smaller increments
+    if (gameState.correct % 10 === 0 && gameState.speed < 1.8) {
+        gameState.speed += 0.1;  // Smaller increments (was 0.2)
         updatePlatformSpawnRate();
+        console.log(`[Number Run] Speed increased to ${gameState.speed.toFixed(1)}x`);
     }
 
     // Update HUD
@@ -468,7 +497,7 @@ function resetGame() {
     gameState.maxStreak = 0;
     gameState.attempted = 0;
     gameState.correct = 0;
-    gameState.speed = 1;
+    gameState.speed = 0.4;  // Start MUCH slower - give time to read problem
     gameState.currentLane = 'center';
     gameState.gameRunning = false;
 
