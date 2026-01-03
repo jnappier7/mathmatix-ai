@@ -45,6 +45,16 @@ const toggleLabelsBtn = document.getElementById('toggleLabels');
 const closeDetailBtn = document.getElementById('closeDetail');
 const practiceBtn = document.getElementById('practiceBtn');
 
+// Breadcrumb elements
+const crumbWorld = document.getElementById('crumbWorld');
+const crumbPattern = document.getElementById('crumbPattern');
+const crumbNode = document.getElementById('crumbNode');
+const separatorPattern = document.getElementById('separatorPattern');
+const separatorNode = document.getElementById('separatorNode');
+const patternIcon = document.getElementById('patternIcon');
+const patternName = document.getElementById('patternName');
+const nodeName = document.getElementById('nodeName');
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     await loadGraphData();
@@ -296,6 +306,9 @@ function initializeGraph(data) {
     state.link = link;
     state.labels = labels;
     state.hullsGroup = hullsGroup;
+
+    // Initialize breadcrumbs to world view
+    updateBreadcrumbs();
 }
 
 // Update cluster hulls (convex hulls around pattern groups)
@@ -345,6 +358,7 @@ function unhighlightConnections(link) {
 // Show node detail panel
 function showNodeDetail(node) {
     state.selectedNode = node;
+    state.focusedNode = node;
     nodeDetail.classList.remove('hidden');
 
     // Populate details
@@ -363,6 +377,12 @@ function showNodeDetail(node) {
 
     // Enable practice button for ready/developing nodes
     practiceBtn.disabled = (node.state === 'locked');
+
+    // Zoom to node view
+    flyTo(node.x, node.y, 3.0);
+
+    // Update breadcrumbs
+    updateBreadcrumbs();
 }
 
 // Hide node detail panel
@@ -397,6 +417,9 @@ function focusOnPattern(patternId) {
     // Fly to region view (zoom 1.5x)
     flyTo(centerX, centerY, 1.5);
 
+    // Update breadcrumbs
+    updateBreadcrumbs();
+
     console.log(`[Focus] Zoomed to ${patternId} pattern`);
 }
 
@@ -404,12 +427,19 @@ function focusOnPattern(patternId) {
 function resetZoom() {
     if (!state.svg) return;
 
+    // Clear focus state
+    state.focusedPattern = null;
+    state.focusedNode = null;
+
     state.svg.transition()
         .duration(750)
         .call(
             d3.zoom().transform,
             d3.zoomIdentity
         );
+
+    // Update breadcrumbs
+    updateBreadcrumbs();
 }
 
 // Toggle cluster hulls
@@ -471,6 +501,10 @@ function initializeEventListeners() {
     toggleLabelsBtn.addEventListener('click', toggleLabels);
     closeDetailBtn.addEventListener('click', hideNodeDetail);
     practiceBtn.addEventListener('click', startPractice);
+
+    // Breadcrumb navigation
+    crumbWorld.addEventListener('click', zoomToWorld);
+    crumbPattern.addEventListener('click', zoomToPatternFromBreadcrumb);
 
     // Close detail panel when clicking outside
     document.addEventListener('click', (e) => {
@@ -550,4 +584,82 @@ function flyTo(targetX, targetY, targetZoom, durationMs = 750) {
         );
 
     console.log(`[FlyTo] Moving to (${targetX.toFixed(0)}, ${targetY.toFixed(0)}) at ${clampedZoom.toFixed(2)}x zoom`);
+}
+
+// ============================================================================
+// BREADCRUMB NAVIGATION
+// ============================================================================
+
+/**
+ * Update breadcrumb trail based on current focus state
+ */
+function updateBreadcrumbs() {
+    // World crumb is always visible
+    crumbWorld.classList.remove('active');
+
+    if (!state.focusedPattern && !state.focusedNode) {
+        // World view - only world crumb active
+        crumbWorld.classList.add('active');
+        separatorPattern.style.display = 'none';
+        crumbPattern.style.display = 'none';
+        separatorNode.style.display = 'none';
+        crumbNode.style.display = 'none';
+    } else if (state.focusedPattern && !state.focusedNode) {
+        // Region view - world + pattern crumbs
+        separatorPattern.style.display = 'inline';
+        crumbPattern.style.display = 'inline-flex';
+        crumbPattern.classList.add('active');
+
+        const cluster = state.graphData.clusters.find(c => c.id === state.focusedPattern);
+        if (cluster) {
+            patternIcon.textContent = cluster.icon;
+            patternName.textContent = cluster.name;
+        }
+
+        separatorNode.style.display = 'none';
+        crumbNode.style.display = 'none';
+    } else if (state.focusedNode) {
+        // Node view - world + pattern + node crumbs
+        separatorPattern.style.display = 'inline';
+        crumbPattern.style.display = 'inline-flex';
+        crumbPattern.classList.remove('active');
+
+        const cluster = state.graphData.clusters.find(c => c.id === state.focusedNode.pattern);
+        if (cluster) {
+            patternIcon.textContent = cluster.icon;
+            patternName.textContent = cluster.name;
+        }
+
+        separatorNode.style.display = 'inline';
+        crumbNode.style.display = 'inline-flex';
+        crumbNode.classList.add('active');
+        nodeName.textContent = state.focusedNode.label;
+    }
+}
+
+/**
+ * Zoom to world view
+ */
+function zoomToWorld() {
+    state.focusedPattern = null;
+    state.focusedNode = null;
+
+    resetZoom();
+    updateBreadcrumbs();
+
+    console.log('[Breadcrumb] Zoomed to world view');
+}
+
+/**
+ * Zoom to pattern region view
+ */
+function zoomToPatternFromBreadcrumb() {
+    if (!state.focusedPattern && !state.focusedNode) return;
+
+    const patternId = state.focusedNode ? state.focusedNode.pattern : state.focusedPattern;
+    state.focusedNode = null;
+
+    focusOnPattern(patternId);
+
+    console.log('[Breadcrumb] Zoomed to pattern view');
 }

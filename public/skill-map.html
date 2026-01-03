@@ -71,6 +71,23 @@
             </div>
         </div>
 
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb-trail">
+            <span class="crumb" id="crumbWorld" data-level="world">
+                <span class="crumb-icon">🗺️</span>
+                <span class="crumb-text">All Patterns</span>
+            </span>
+            <span class="separator" id="separatorPattern" style="display: none;">›</span>
+            <span class="crumb" id="crumbPattern" data-level="pattern" style="display: none;">
+                <span class="crumb-icon" id="patternIcon"></span>
+                <span class="crumb-text" id="patternName"></span>
+            </span>
+            <span class="separator" id="separatorNode" style="display: none;">›</span>
+            <span class="crumb" id="crumbNode" data-level="node" style="display: none;">
+                <span class="crumb-text" id="nodeName"></span>
+            </span>
+        </div>
+
         <!-- Main Graph Canvas -->
         <div id="graph-container"></div>
 

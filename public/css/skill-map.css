@@ -633,3 +633,53 @@ body {
     font-size: 0.9rem;
     color: #b8b8d1;
 }
+
+/* ===== BREADCRUMB NAVIGATION ===== */
+
+.breadcrumb-trail {
+    background: rgba(15, 12, 41, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.crumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #b8b8d1;
+}
+
+.crumb:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.crumb.active {
+    color: #00d4ff;
+    font-weight: 500;
+}
+
+.crumb-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.crumb-text {
+    white-space: nowrap;
+}
+
+.separator {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+    user-select: none;
+}
