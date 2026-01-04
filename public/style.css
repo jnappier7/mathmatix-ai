@@ -297,6 +297,14 @@ input[type="checkbox"] {
     filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
 }
 
+/* Main logo (used in headers across arcade/admin pages) */
+.main-logo {
+    max-height: var(--logo-header-height); /* 50px */
+    width: auto;
+    display: block;
+    object-fit: contain;
+}
+
 
 .landing-nav {
     display: flex;
