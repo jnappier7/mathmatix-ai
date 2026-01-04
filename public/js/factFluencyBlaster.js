@@ -799,12 +799,24 @@ function fireLaser(targetAsteroid) {
     const laser = document.createElement('div');
     laser.className = 'laser-beam';
 
-    // Position laser at ship location (relative to space background)
+    // Calculate positions (relative to space background)
     const shipX = shipRect.left + shipRect.width / 2 - spaceRect.left;
-    const shipY = shipRect.top - spaceRect.top;
+    const shipY = shipRect.top + shipRect.height / 2 - spaceRect.top;
+    const targetX = targetRect.left + targetRect.width / 2 - spaceRect.left;
+    const targetY = targetRect.top + targetRect.height / 2 - spaceRect.top;
 
+    // Calculate angle from ship to target
+    const dx = targetX - shipX;
+    const dy = targetY - shipY;
+    const angle = Math.atan2(dy, dx);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Position and rotate laser from ship to target
     laser.style.left = `${shipX}px`;
-    laser.style.bottom = `${spaceRect.height - shipY}px`;
+    laser.style.top = `${shipY}px`;
+    laser.style.width = `${distance}px`;
+    laser.style.transform = `rotate(${angle}rad)`;
+    laser.style.transformOrigin = '0 50%';
 
     spaceBackground.appendChild(laser);
 
