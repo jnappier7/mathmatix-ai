@@ -36,7 +36,11 @@ router.post('/',
     validateUpload,
     async (req, res) => {
     try {
-        const { userId, message, fileCount } = req.body;
+        const { message, fileCount } = req.body;
+        const userId = req.user?._id;
+
+    if (!userId) return res.status(401).json({ message: "Not authenticated." });
+
         const files = req.files;
 
         if (!files || files.length === 0) {

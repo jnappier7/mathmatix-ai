@@ -94,7 +94,6 @@ async function sendTimeHeartbeat(isFinal = false) {
 
     try {
         const payload = {
-            userId: currentUser._id,
             activeSeconds: activeSeconds
         };
 
@@ -1525,7 +1524,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Normal welcome message flow (only for non-mastery sessions)
-            const res = await fetch(`/api/welcome-message?userId=${currentUser._id}`, {credentials: 'include'});
+            const res = await fetch(`/api/welcome-message`, {credentials: 'include'});
             const data = await res.json();
             if (data.greeting) appendMessage(data.greeting, "ai");
         } catch (error) {
@@ -2205,7 +2204,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             formData.append('message', messageText);
-            formData.append('userId', currentUser._id);
+        
             formData.append('fileCount', attachedFiles.length);
 
             // Add response time if captured
@@ -2219,7 +2218,28 @@ document.addEventListener("DOMContentLoaded", () => {
             response = await fetch("/api/chat-with-file", {
                 method: "POST",
                 body: formData,
-                credentials: 'include'
+     .clientX - modalOffsetX;
+                    let newY = e.clientY - modalOffsetY;
+
+                    // Keep modal within viewport
+                    newX = Math.max(0, Math.min(newX, window.innerWidth - modalContent.offsetWidth));
+                    newY = Math.max(0, Math.min(newY, window.innerHeight - modalContent.offsetHeight));
+
+                    modalContent.style.left = newX + 'px';
+                    modalContent.style.top = newY + 'px';
+                    modalContent.style.transform = 'none'; // Remove centering transform
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDraggingModal) {
+                    isDraggingModal = false;
+                    modalHeader.style.cursor = 'move';
+                }
+            });
+        }
+    }
+           credentials: 'include'
             });
         } else {
             // STREAMING PATH: Use real-time streaming responses
@@ -2227,7 +2247,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (USE_STREAMING) {
                 const payload = {
-                    userId: currentUser._id,
                     message: messageText
                 };
 
@@ -2326,7 +2345,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // NON-STREAMING FALLBACK (original behavior)
             const payload = {
-                userId: currentUser._id,
                 message: messageText
             };
 
@@ -2637,28 +2655,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.addEventListener('mousemove', (e) => {
                 if (isDraggingModal && modalContent) {
                     e.preventDefault();
-                    let newX = e.clientX - modalOffsetX;
-                    let newY = e.clientY - modalOffsetY;
-
-                    // Keep modal within viewport
-                    newX = Math.max(0, Math.min(newX, window.innerWidth - modalContent.offsetWidth));
-                    newY = Math.max(0, Math.min(newY, window.innerHeight - modalContent.offsetHeight));
-
-                    modalContent.style.left = newX + 'px';
-                    modalContent.style.top = newY + 'px';
-                    modalContent.style.transform = 'none'; // Remove centering transform
-                }
-            });
-
-            document.addEventListener('mouseup', () => {
-                if (isDraggingModal) {
-                    isDraggingModal = false;
-                    modalHeader.style.cursor = 'move';
-                }
-            });
-        }
-    }
-
+                    let newX = e
     if (closeEquationBtn) {
         closeEquationBtn.addEventListener('click', () => {
             if (equationModal) equationModal.classList.remove('is-visible');

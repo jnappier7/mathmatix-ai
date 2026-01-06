@@ -9,9 +9,9 @@ const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unifi
 const TUTOR_CONFIG = require("../utils/tutorConfig");
 
 router.get('/', async (req, res) => {
-    const userId = req.query.userId;
+    const userId = req.user?._id;
     if (!userId) {
-        return res.status(400).json({ error: "User ID is required." });
+        return res.status(400).json({ error: "Not authenticated." });
     }
 
     try {
@@ -73,7 +73,7 @@ router.get('/', async (req, res) => {
 
     } catch (error) {
         console.error("ERROR: Error generating personalized welcome message from AI:", error?.message || error);
-        const userName = req.query.userId ? (await User.findById(req.query.userId).lean())?.firstName : 'there';
+        const userName = user?.firstName || 'there';
         res.status(500).json({ greeting: `Hello ${userName}! How can I help you today?`, error: "Failed to load personalized welcome." });
     }
 });

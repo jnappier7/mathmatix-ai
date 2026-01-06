@@ -22,12 +22,10 @@ const characterRigSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+
     },
     sessionId: {
         type: String,
-        required: true,
-        unique: true,
         default: () => `rig-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     },
     characterName: {
