@@ -4479,9 +4479,47 @@ body:not(.landing-page-body) {
     .work-snippet-body {
         flex-direction: column;
     }
-    
+
     .work-snippet-thumbnail {
         width: 100%;
         height: 160px;
     }
+}
+
+/* ============================================
+   SCROLLABLE FORM PAGES FIX
+   Fix for pick-tutor and complete-profile pages
+   ============================================ */
+
+/* Allow pick-tutor page to scroll when content overflows */
+body.landing-page-body:has(.pick-tutor-main) {
+    overflow-y: auto;
+}
+
+body.landing-page-body:has(.pick-tutor-main) main {
+    overflow: visible;
+}
+
+.pick-tutor-main {
+    overflow: visible;
+}
+
+/* Allow complete-profile page to scroll when content overflows */
+body.landing-page-body:has(.profile-container) {
+    overflow-y: auto;
+}
+
+body.landing-page-body:has(.profile-container) main {
+    overflow: visible;
+}
+
+/* Scrollable form wrapper for long forms */
+.scrollable-form-wrapper {
+    max-height: none;
+    overflow: visible;
+}
+
+/* Ensure login-page-wrapper allows scrolling for long forms */
+.login-page-wrapper {
+    overflow: visible;
 }

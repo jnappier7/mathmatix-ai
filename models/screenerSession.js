@@ -36,6 +36,16 @@ const screenerSessionSchema = new mongoose.Schema({
         default: 0
     },
 
+    // Bayesian prior (for MAP estimation in early questions)
+    priorMean: {
+        type: Number,
+        default: 0
+    },
+    priorSD: {
+        type: Number,
+        default: 1.25
+    },
+
     // Response history
     responses: [{
         problemId: String,
