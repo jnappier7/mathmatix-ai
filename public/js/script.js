@@ -125,7 +125,8 @@ async function sendTimeHeartbeat(isFinal = false) {
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
 function generateSpeakableText(text) {
-    if (!text || !window.MathLive) return text.replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
+    if (!text) return '';
+    if (!window.MathLive) return text.replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
     const latexRegex = /(\\\(|\\\[|\$\$)([\s\S]+?)(\\\)|\\\]|\$\$)/g;
     let result = '';
     let lastIndex = 0;
@@ -1155,7 +1156,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ============================================
+  // ============================================
     // ANIMATED TUTOR AVATAR SYSTEM
     // ============================================
 
@@ -1319,6 +1320,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateTutorAvatar();
         updateGamificationDisplay();
     }
+
     
     async function fetchAndDisplayParentCode() {
         if (currentUser.role === 'student' && studentLinkCodeValue) {
@@ -2218,28 +2220,7 @@ document.addEventListener("DOMContentLoaded", () => {
             response = await fetch("/api/chat-with-file", {
                 method: "POST",
                 body: formData,
-     .clientX - modalOffsetX;
-                    let newY = e.clientY - modalOffsetY;
-
-                    // Keep modal within viewport
-                    newX = Math.max(0, Math.min(newX, window.innerWidth - modalContent.offsetWidth));
-                    newY = Math.max(0, Math.min(newY, window.innerHeight - modalContent.offsetHeight));
-
-                    modalContent.style.left = newX + 'px';
-                    modalContent.style.top = newY + 'px';
-                    modalContent.style.transform = 'none'; // Remove centering transform
-                }
-            });
-
-            document.addEventListener('mouseup', () => {
-                if (isDraggingModal) {
-                    isDraggingModal = false;
-                    modalHeader.style.cursor = 'move';
-                }
-            });
-        }
-    }
-           credentials: 'include'
+                credentials: 'include'
             });
         } else {
             // STREAMING PATH: Use real-time streaming responses
@@ -2653,28 +2634,50 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             document.addEventListener('mousemove', (e) => {
-                if (isDraggingModal && modalContent) {
-                    e.preventDefault();
-                    let newX = e
-    if (closeEquationBtn) {
-        closeEquationBtn.addEventListener('click', () => {
-            if (equationModal) equationModal.classList.remove('is-visible');
-        });
-    }
+                if (!isDraggingModal || !modalContent) return;
 
-    if (cancelEquationBtn) {
-        cancelEquationBtn.addEventListener('click', () => {
-            if (equationModal) equationModal.classList.remove('is-visible');
-        });
-    }
+                e.preventDefault();
 
-    if (insertLatexBtn) {
-        insertLatexBtn.addEventListener('click', () => {
-            if (mathEditor && userInput) {
-                userInput.value += ` \\(${mathEditor.value}\\) `;
+                let newX = e.clientX - modalOffsetX;
+                let newY = e.clientY - modalOffsetY;
+
+                // Keep modal within viewport
+                newX = Math.max(0, Math.min(newX, window.innerWidth - modalContent.offsetWidth));
+                newY = Math.max(0, Math.min(newY, window.innerHeight - modalContent.offsetHeight));
+
+                modalContent.style.left = newX + 'px';
+                modalContent.style.top = newY + 'px';
+                modalContent.style.transform = 'none'; // Remove centering transform once dragged
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDraggingModal) {
+                    isDraggingModal = false;
+                    if (modalHeader) modalHeader.style.cursor = 'move';
+                }
+            });
+        }
+
+        if (closeEquationBtn) {
+            closeEquationBtn.addEventListener('click', () => {
                 equationModal.classList.remove('is-visible');
-            }
-        });
+            });
+        }
+
+        if (cancelEquationBtn) {
+            cancelEquationBtn.addEventListener('click', () => {
+                equationModal.classList.remove('is-visible');
+            });
+        }
+
+        if (insertLatexBtn) {
+            insertLatexBtn.addEventListener('click', () => {
+                if (mathEditor && userInput) {
+                    userInput.value += ` \\(${mathEditor.value}\\) `;
+                    equationModal.classList.remove('is-visible');
+                }
+            });
+        }
     }
     
     if (closeWhiteboardBtn) {
