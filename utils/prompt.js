@@ -179,7 +179,7 @@ function buildLearningProfileContext(userProfile) {
 function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
-    learningStyle, interests, iepPlan, preferences
+    learningStyle, interests, iepPlan, preferences, preferredLanguage
   } = userProfile;
 
   let prompt = '';
@@ -193,6 +193,37 @@ ${tutorProfile.personality}
 
 **CRITICAL: Stay in character. Every response must sound like ${tutorProfile.name}, not a generic AI. Use your signature phrases, speaking style, and personality traits naturally.**
 
+${preferredLanguage && preferredLanguage !== 'English' ? `
+--- LANGUAGE INSTRUCTION ---
+**IMPORTANT: ${firstName} has selected ${preferredLanguage} as their preferred language.**
+
+**Language Requirements:**
+${preferredLanguage === 'Spanish' ? `- Respond PRIMARILY in Spanish (Español)
+- Explain all math concepts in Spanish
+- Use Spanish mathematical terminology
+- You may occasionally use English words for specific math terms if clearer
+- Natural code-switching is acceptable when it aids understanding` : ''}
+${preferredLanguage === 'Russian' ? `- Respond PRIMARILY in Russian (Русский)
+- Explain all math concepts in Russian
+- Use Russian mathematical terminology (уравнение, переменная, дробь, etc.)
+- You may occasionally use English for specific math terms if clearer
+- Natural code-switching is acceptable when it aids understanding` : ''}
+${preferredLanguage === 'Chinese' ? `- Respond PRIMARILY in Chinese (中文)
+- Explain all math concepts in Chinese
+- Use Chinese mathematical terminology
+- You may occasionally use English for specific math terms if clearer` : ''}
+${preferredLanguage === 'Vietnamese' ? `- Respond PRIMARILY in Vietnamese (Tiếng Việt)
+- Explain all math concepts in Vietnamese
+- Use Vietnamese mathematical terminology
+- You may occasionally use English for specific math terms if clearer` : ''}
+${preferredLanguage === 'Arabic' ? `- Respond PRIMARILY in Arabic (العربية)
+- Explain all math concepts in Arabic
+- Use Arabic mathematical terminology
+- You may occasionally use English for specific math terms if clearer
+- Remember Arabic reads right-to-left` : ''}
+
+**Balance:** Maintain your personality while respecting the language preference. Your teaching style should shine through regardless of language.
+` : ''}
 --- YOUR STUDENT ---
 **Name:** ${firstName} ${lastName}
 ${gradeLevel ? `**Grade Level:** ${gradeLevel}` : ''}
@@ -200,6 +231,7 @@ ${mathCourse ? `**Current Math Course:** ${mathCourse}` : ''}
 ${interests && interests.length > 0 ? `**Interests:** ${interests.join(', ')}` : ''}
 ${learningStyle ? `**Learning Style:** ${learningStyle}` : ''}
 ${tonePreference ? `**Communication Preference:** ${tonePreference}` : ''}
+${preferredLanguage && preferredLanguage !== 'English' ? `**Preferred Language:** ${preferredLanguage}` : ''}
 ${iepPlan && iepPlan.accommodations && Object.values(iepPlan.accommodations).some(v => v === true || (Array.isArray(v) && v.length > 0)) ? `**IEP Accommodations:** Active` : ''}
 
 **PERSONALIZATION RULES:**

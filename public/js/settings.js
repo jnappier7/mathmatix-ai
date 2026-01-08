@@ -11,12 +11,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const currentPasswordInput = document.getElementById('current-password');
     const newPasswordInput = document.getElementById('new-password');
     const confirmNewPasswordInput = document.getElementById('confirm-new-password');
+    const preferredLanguageSelect = document.getElementById('preferredLanguageSetting');
 
     // Open settings modal
     if (openSettingsBtn && settingsModal) {
         openSettingsBtn.addEventListener('click', async () => {
             settingsModal.classList.add('is-visible');
             await checkPasswordChangeAvailability();
+            await loadLanguagePreference();
         });
     }
 
@@ -144,4 +146,56 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     });
+
+    // Load user's current language preference
+    async function loadLanguagePreference() {
+        try {
+            const response = await fetch('/user', { credentials: 'include' });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.user && data.user.preferredLanguage && preferredLanguageSelect) {
+                    preferredLanguageSelect.value = data.user.preferredLanguage;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading language preference:', error);
+        }
+    }
+
+    // Handle language preference change
+    if (preferredLanguageSelect) {
+        preferredLanguageSelect.addEventListener('change', async () => {
+            const newLanguage = preferredLanguageSelect.value;
+
+            try {
+                const response = await fetch('/api/user/settings', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ preferredLanguage: newLanguage })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Language preference updated:', newLanguage);
+
+                    // Show success message
+                    const originalHTML = preferredLanguageSelect.parentElement.querySelector('.setting-description').innerHTML;
+                    preferredLanguageSelect.parentElement.querySelector('.setting-description').innerHTML =
+                        `✅ Language updated to ${newLanguage}! This will take effect in your next tutoring session.`;
+
+                    setTimeout(() => {
+                        preferredLanguageSelect.parentElement.querySelector('.setting-description').innerHTML = originalHTML;
+                    }, 3000);
+                } else {
+                    alert('Failed to update language preference');
+                    await loadLanguagePreference(); // Reload to reset
+                }
+            } catch (error) {
+                console.error('Error updating language preference:', error);
+                alert('Error updating language preference');
+                await loadLanguagePreference(); // Reload to reset
+            }
+        });
+    }
 });
