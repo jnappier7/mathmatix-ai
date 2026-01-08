@@ -94,7 +94,6 @@ async function sendTimeHeartbeat(isFinal = false) {
 
     try {
         const payload = {
-            userId: currentUser._id,
             activeSeconds: activeSeconds
         };
 
@@ -104,7 +103,7 @@ async function sendTimeHeartbeat(isFinal = false) {
             navigator.sendBeacon('/api/chat/track-time', blob);
         } else {
             // Regular fetch for heartbeats
-            await fetch('/api/chat/track-time', {
+            await csrfFetch('/api/chat/track-time', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -126,7 +125,8 @@ async function sendTimeHeartbeat(isFinal = false) {
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
 function generateSpeakableText(text) {
-    if (!text || !window.MathLive) return text.replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
+    if (!text) return '';
+    if (!window.MathLive) return text.replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
     const latexRegex = /(\\\(|\\\[|\$\$)([\s\S]+?)(\\\)|\\\]|\$\$)/g;
     let result = '';
     let lastIndex = 0;
@@ -1156,7 +1156,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ============================================
+  // ============================================
     // ANIMATED TUTOR AVATAR SYSTEM
     // ============================================
 
@@ -1320,6 +1320,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateTutorAvatar();
         updateGamificationDisplay();
     }
+
     
     async function fetchAndDisplayParentCode() {
         if (currentUser.role === 'student' && studentLinkCodeValue) {
@@ -1335,7 +1336,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 // No code exists, generate one
                 try {
-                    const res = await fetch('/api/student/generate-link-code', {
+                    const res = await csrfFetch('/api/student/generate-link-code', {
                         method: 'POST',
                         credentials: 'include'
                     });
@@ -1525,7 +1526,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Normal welcome message flow (only for non-mastery sessions)
-            const res = await fetch(`/api/welcome-message?userId=${currentUser._id}`, {credentials: 'include'});
+            const res = await fetch(`/api/welcome-message`, {credentials: 'include'});
             const data = await res.json();
             if (data.greeting) appendMessage(data.greeting, "ai");
         } catch (error) {
@@ -2205,7 +2206,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             formData.append('message', messageText);
-            formData.append('userId', currentUser._id);
+        
             formData.append('fileCount', attachedFiles.length);
 
             // Add response time if captured
@@ -2216,7 +2217,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Clear files from UI immediately
             clearAllFiles();
 
-            response = await fetch("/api/chat-with-file", {
+            response = await csrfFetch("/api/chat-with-file", {
                 method: "POST",
                 body: formData,
                 credentials: 'include'
@@ -2227,7 +2228,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (USE_STREAMING) {
                 const payload = {
-                    userId: currentUser._id,
                     message: messageText
                 };
 
@@ -2236,7 +2236,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // Fetch with stream=true query parameter
-                response = await fetch("/api/chat?stream=true", {
+                response = await csrfFetch("/api/chat?stream=true", {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -2326,7 +2326,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // NON-STREAMING FALLBACK (original behavior)
             const payload = {
-                userId: currentUser._id,
                 message: messageText
             };
 
@@ -2334,7 +2333,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 payload.responseTime = responseTime;
             }
 
-            response = await fetch("/api/chat", {
+            response = await csrfFetch("/api/chat", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -2429,7 +2428,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const messageBubble = document.getElementById(messageId);
         const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
         try {
-            const response = await fetch('/api/speak', {
+            const response = await csrfFetch('/api/speak', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text, voiceId })
@@ -2635,49 +2634,50 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             document.addEventListener('mousemove', (e) => {
-                if (isDraggingModal && modalContent) {
-                    e.preventDefault();
-                    let newX = e.clientX - modalOffsetX;
-                    let newY = e.clientY - modalOffsetY;
+                if (!isDraggingModal || !modalContent) return;
 
-                    // Keep modal within viewport
-                    newX = Math.max(0, Math.min(newX, window.innerWidth - modalContent.offsetWidth));
-                    newY = Math.max(0, Math.min(newY, window.innerHeight - modalContent.offsetHeight));
+                e.preventDefault();
 
-                    modalContent.style.left = newX + 'px';
-                    modalContent.style.top = newY + 'px';
-                    modalContent.style.transform = 'none'; // Remove centering transform
-                }
+                let newX = e.clientX - modalOffsetX;
+                let newY = e.clientY - modalOffsetY;
+
+                // Keep modal within viewport
+                newX = Math.max(0, Math.min(newX, window.innerWidth - modalContent.offsetWidth));
+                newY = Math.max(0, Math.min(newY, window.innerHeight - modalContent.offsetHeight));
+
+                modalContent.style.left = newX + 'px';
+                modalContent.style.top = newY + 'px';
+                modalContent.style.transform = 'none'; // Remove centering transform once dragged
             });
 
             document.addEventListener('mouseup', () => {
                 if (isDraggingModal) {
                     isDraggingModal = false;
-                    modalHeader.style.cursor = 'move';
+                    if (modalHeader) modalHeader.style.cursor = 'move';
                 }
             });
         }
-    }
 
-    if (closeEquationBtn) {
-        closeEquationBtn.addEventListener('click', () => {
-            if (equationModal) equationModal.classList.remove('is-visible');
-        });
-    }
-
-    if (cancelEquationBtn) {
-        cancelEquationBtn.addEventListener('click', () => {
-            if (equationModal) equationModal.classList.remove('is-visible');
-        });
-    }
-
-    if (insertLatexBtn) {
-        insertLatexBtn.addEventListener('click', () => {
-            if (mathEditor && userInput) {
-                userInput.value += ` \\(${mathEditor.value}\\) `;
+        if (closeEquationBtn) {
+            closeEquationBtn.addEventListener('click', () => {
                 equationModal.classList.remove('is-visible');
-            }
-        });
+            });
+        }
+
+        if (cancelEquationBtn) {
+            cancelEquationBtn.addEventListener('click', () => {
+                equationModal.classList.remove('is-visible');
+            });
+        }
+
+        if (insertLatexBtn) {
+            insertLatexBtn.addEventListener('click', () => {
+                if (mathEditor && userInput) {
+                    userInput.value += ` \\(${mathEditor.value}\\) `;
+                    equationModal.classList.remove('is-visible');
+                }
+            });
+        }
     }
     
     if (closeWhiteboardBtn) {

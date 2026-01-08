@@ -9,10 +9,9 @@ const Conversation = require("../models/conversation"); // NEW: Use Conversation
 // POST /api/memory/recall
 // Fetches the most recent conversation summary for a given user.
 router.post("/recall", async (req, res) => {
-  const { userId } = req.body;
-
+  const userId = req.user?._id;
   if (!userId) {
-      return res.status(400).json({ message: "User ID is required." });
+      return res.status(401).json({ message: "Not authenticated." });
   }
 
   try {

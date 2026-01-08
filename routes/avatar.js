@@ -54,6 +54,10 @@ router.post('/', isAuthenticated, async (req, res) => { //
 // Frontend would call: GET /api/avatars/:userId
 router.get('/:userId', isAuthenticated, async (req, res) => { //
     try {
+        const requestedId = req.params.userId;
+if (requestedId !== req.user._id.toString()) {
+  return res.status(403).json({ message: "Forbidden." });
+}
         const { userId } = req.params; //
         const user = await User.findById(userId).select('avatar').lean(); // Fetch only avatar field
         

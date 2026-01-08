@@ -126,12 +126,13 @@ async function checkMasteryCompletion(user, activeBadge) {
  * POST /api/mastery/chat
  * Handle chat messages in mastery mode (badge earning sessions)
  */
-router.post('/', isAuthenticated, async (req, res) => {
-    const { userId, message, responseTime } = req.body;
+router.post("/", isAuthenticated, async (req, res) => {
+   const { message, responseTime } = req.body;
+const userId = req.user?._id;
 
-    if (!userId || !message) {
-        return res.status(400).json({ message: "User ID and message are required." });
-    }
+if (!userId) return res.status(401).json({ message: "Not authenticated." });
+if (!message) return res.status(400).json({ message: "Message is required." });
+
 
     if (message.length > MAX_MESSAGE_LENGTH) {
         return res.status(400).json({ message: `Message too long.` });

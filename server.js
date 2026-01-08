@@ -1,6 +1,9 @@
 // server.js
-console.log("✅✅✅ RUNNING MATHMATIX.AI SERVER ✅✅✅");
 require("dotenv").config();
+
+// Initialize logger early (before other imports)
+const logger = require('./utils/logger');
+logger.info('🚀 Starting MATHMATIX.AI Server');
 
 // --- 1. ENVIRONMENT VALIDATION ---
 const requiredEnvVars = [
@@ -19,7 +22,9 @@ const requiredEnvVars = [
 ];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 if (missingVars.length > 0) {
-  console.error(`❌ FATAL ERROR: Missing required environment variables: ${missingVars.join(', ')}`);
+  logger.error('❌ FATAL ERROR: Missing required environment variables', {
+    missing: missingVars
+  });
   process.exit(1);
 }
 
@@ -28,10 +33,12 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
 const MongoStore = require("connect-mongo");
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 const User = require('./models/user');
 
 // --- 3. CONFIGURATIONS ---
@@ -50,8 +57,11 @@ const {
   aiEndpointLimiter
 } = require("./middleware/auth");
 
+const { csrfProtection } = require("./middleware/csrf");
+
 const loginRoutes = require('./routes/login');
 const signupRoutes = require('./routes/signup');
+const passwordResetRoutes = require('./routes/passwordReset');
 const studentRoutes = require('./routes/student');
 const teacherRoutes = require('./routes/teacher');
 const adminRoutes = require('./routes/admin');
@@ -83,6 +93,7 @@ const weeklyChallengesRoutes = require('./routes/weeklyChallenges');  // Weekly 
 const learningCurveRoutes = require('./routes/learningCurve');  // Learning Curve Visualization & IRT Transparency
 const celerationRoutes = require('./routes/celeration');  // Standard Celeration Charts (Precision Teaching)
 const characterRiggingRoutes = require('./routes/characterRigging');  // Character Rigging Portal for animation
+const sessionRoutes = require('./routes/session');  // Session management and tracking
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -97,6 +108,7 @@ app.use(cors({
 }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -119,6 +131,76 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Security Headers with Helmet.js
+app.use(helmet({
+  // Content Security Policy - allows necessary external resources
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'", // Required for inline scripts in HTML pages
+        "'unsafe-eval'", // Required for MathLive and dynamic math rendering
+        "https://cdnjs.cloudflare.com", // Font Awesome
+        "https://cdn.jsdelivr.net", // Various CDN resources
+        "https://unpkg.com" // MathLive and other packages
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'", // Required for inline styles
+        "https://cdnjs.cloudflare.com", // Font Awesome
+        "https://fonts.googleapis.com" // Google Fonts
+      ],
+      fontSrc: [
+        "'self'",
+        "https://cdnjs.cloudflare.com", // Font Awesome
+        "https://fonts.gstatic.com", // Google Fonts
+        "data:" // Base64 fonts
+      ],
+      imgSrc: [
+        "'self'",
+        "data:", // Base64 images
+        "blob:", // Blob URLs for uploaded images
+        "https:" // Allow HTTPS images (user uploads, external resources)
+      ],
+      connectSrc: [
+        "'self'",
+        "https://api.anthropic.com", // Claude API
+        "https://api.openai.com", // OpenAI API
+        "https://api.mathpix.com", // Mathpix OCR
+        "https://api.elevenlabs.io" // ElevenLabs TTS
+      ],
+      mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
+      objectSrc: ["'none'"], // Disable plugins
+      frameSrc: ["'self'"], // Only allow same-origin iframes
+      upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
+    }
+  },
+  // Cross-Origin policies
+  crossOriginEmbedderPolicy: false, // Disabled for external CDN resources
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  // XSS Protection (legacy browsers)
+  xssFilter: true,
+  // Prevent MIME sniffing
+  noSniff: true,
+  // Hide X-Powered-By header
+  hidePoweredBy: true,
+  // Prevent clickjacking
+  frameguard: {
+    action: 'deny'
+  },
+  // HSTS - Force HTTPS in production
+  hsts: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true
+  },
+  // Referrer Policy
+  referrerPolicy: {
+    policy: 'strict-origin-when-cross-origin'
+  }
+}));
+
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 120,
@@ -128,23 +210,45 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
+// Strict rate limiting for authentication endpoints (prevent brute force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Only 5 attempts per 15 minutes
+  message: "Too many login/signup attempts from this IP. Please try again after 15 minutes.",
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false, // Count both successful and failed attempts
+});
+
+// CSRF Protection for all routes
+// Applies to POST, PUT, DELETE, PATCH requests
+// GET requests generate tokens for forms
+app.use(csrfProtection);
+
+// HTTP Request Logging
+app.use(logger.requestLogger);
+
 
 // --- 7. DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+  .then(() => logger.info("✅ Connected to MongoDB", { database: 'MongoDB' }))
+  .catch(err => {
+    logger.error("❌ MongoDB connection error", err);
+    process.exit(1); // Exit if database connection fails
+  });
 
 
 // --- 8. ROUTE DEFINITIONS ---
 
-app.use('/login', loginRoutes);
-app.use('/signup', signupRoutes);
+app.use('/login', authLimiter, loginRoutes);
+app.use('/signup', authLimiter, signupRoutes);
+app.use('/api/password-reset', authLimiter, passwordResetRoutes);
 app.post('/logout', isAuthenticated, handleLogout);
 
 // --- Google Auth Routes ---
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+app.get('/auth/google', authLimiter, passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/auth/google/callback', (req, res, next) => {
+app.get('/auth/google/callback', authLimiter, (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
         if (err) { return next(err); }
         if (!user) {
@@ -162,9 +266,9 @@ app.get('/auth/google/callback', (req, res, next) => {
 });
 
 // --- Microsoft Auth Routes (FIXED: ADDED MISSING ROUTES) ---
-app.get('/auth/microsoft', passport.authenticate('microsoft', { scope: ['user.read'] }));
+app.get('/auth/microsoft', authLimiter, passport.authenticate('microsoft', { scope: ['user.read'] }));
 
-app.get('/auth/microsoft/callback', (req, res, next) => {
+app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
     passport.authenticate('microsoft', (err, user, info) => {
         if (err) { return next(err); }
         if (!user) {
@@ -214,6 +318,7 @@ app.use('/api', isAuthenticated, weeklyChallengesRoutes); // Weekly Challenges S
 app.use('/api', isAuthenticated, learningCurveRoutes); // Learning Curve Visualization & IRT transparency
 app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Charts for fact fluency
 app.use('/api/character-rigging', isAuthenticated, characterRiggingRoutes); // Character Rigging Portal for animation
+app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (idle timeout, auto-save, summaries)
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
@@ -328,6 +433,8 @@ app.get('/js/tutor-config-data.js', (req, res) => {
 app.get("/", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 app.get("/login.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 app.get("/signup.html", ensureNotAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "signup.html")));
+app.get("/forgot-password.html", (req, res) => res.sendFile(path.join(__dirname, "public", "forgot-password.html")));
+app.get("/reset-password.html", (req, res) => res.sendFile(path.join(__dirname, "public", "reset-password.html")));
 app.get("/privacy.html", (req, res) => res.sendFile(path.join(__dirname, "public", "privacy.html")));
 app.get("/terms.html", (req, res) => res.sendFile(path.join(__dirname, "public", "terms.html")));
 
@@ -387,9 +494,15 @@ const { scheduleCleanup } = require('./middleware/uploadSecurity');
 
 // Start auto-deletion scheduler for old uploads (30-day retention)
 scheduleCleanup();
-console.log('🛡️ Upload security: Auto-deletion scheduler initialized');
+logger.info('🛡️ Upload security: Auto-deletion scheduler initialized', {
+  retention: '30 days',
+  service: 'upload-security'
+});
 
 // --- 12. SERVER LISTENER ---
 app.listen(PORT, () => {
-  console.log(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`);
+  logger.info(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`, {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development'
+  });
 });

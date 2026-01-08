@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const res = await fetch("/signup", {
+      const res = await csrfFetch("/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData)
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           if (shouldLogout) {
             // Logout and reload the page
-            fetch('/logout', { method: 'POST', credentials: 'include' })
+            csrfFetch('/logout', { method: 'POST', credentials: 'include' })
               .then(() => {
                 window.location.reload();
               })

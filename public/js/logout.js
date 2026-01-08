@@ -8,7 +8,17 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log(`LOG: Found logout button with ID: ${logoutBtn.id || logoutBtn.className}`);
       logoutBtn.addEventListener('click', async (event) => {
         event.preventDefault(); // Add this line to explicitly prevent any default behavior just in case
-        console.log("LOG: Logout button clicked. Initiating fetch POST to /logout.");
+        console.log("LOG: Logout button clicked.");
+
+        // Use session manager if available (handles auto-save and session summary)
+        if (window.sessionManager) {
+          console.log("LOG: Using session manager for logout.");
+          window.sessionManager.triggerLogout();
+          return;
+        }
+
+        // Fallback to direct logout if session manager not available
+        console.log("LOG: Initiating fetch POST to /logout.");
         try {
           const res = await fetch('/logout', {
             method: 'POST',

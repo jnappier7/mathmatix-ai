@@ -36,7 +36,11 @@ router.post('/',
     validateUpload,
     async (req, res) => {
     try {
-        const { userId, message, fileCount } = req.body;
+        const { message, fileCount } = req.body;
+        const userId = req.user?._id;
+
+    if (!userId) return res.status(401).json({ message: "Not authenticated." });
+
         const files = req.files;
 
         if (!files || files.length === 0) {
@@ -255,6 +259,13 @@ router.post('/',
         const savedUploads = [];
         const uploadsDir = path.join(__dirname, '../uploads');
 
+        // Ensure uploads directory exists
+        try {
+            await fs.mkdir(uploadsDir, { recursive: true });
+        } catch (mkdirErr) {
+            console.error('[chatWithFile] Failed to create uploads directory:', mkdirErr);
+        }
+
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             try {
@@ -264,8 +275,9 @@ router.post('/',
                 const storedFilename = `${userId}_${timestamp}_${sanitizedName}`;
                 const filePath = path.join(uploadsDir, storedFilename);
 
-                // Save file to disk
-                await fs.writeFile(filePath, file.buffer);
+                // Save file to disk (FIXED: read from file.path since using diskStorage, not file.buffer)
+                const fileBuffer = await fs.readFile(file.path);
+                await fs.writeFile(filePath, fileBuffer);
                 console.log(`[chatWithFile] Saved file to: ${filePath}`);
 
                 // Determine file type

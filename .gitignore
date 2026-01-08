@@ -4,6 +4,7 @@
 # Environment Variables
 .env
 .env.txt
+.env.test
 routes/vision-key.json
 
 # macOS
@@ -14,3 +15,11 @@ routes/vision-key.json
 
 uploads/
 import-log.txt
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+*.test.log

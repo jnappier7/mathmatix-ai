@@ -25,9 +25,10 @@ const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
 router.post('/', isAuthenticated, async (req, res) => {
-    const { userId, message, role, childId, responseTime } = req.body;
-    if (!userId || !message) return res.status(400).json({ message: "User ID and message are required." });
-    if (message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
+    const { message, role, childId, responseTime } = req.body;
+const userId = req.user?._id;
+if (!message) return res.status(400).json({ message: "Message is required." });
+ if (message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
 
     // Log response time if provided (from ghost timer)
     if (responseTime) {
@@ -207,7 +208,7 @@ router.post('/', isAuthenticated, async (req, res) => {
             console.log(`📊 [Adaptive] Fluency context: z=${avgFluencyZScore.toFixed(2)}, speed=${speedLevel}`);
         }
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor.name, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext);
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)
@@ -676,10 +677,12 @@ Focus on concrete observations from ${childName}'s actual work and provide pract
 // Track session time - receives heartbeat updates from frontend
 router.post('/track-time', isAuthenticated, async (req, res) => {
     try {
-        const { userId, activeSeconds } = req.body;
+        const { activeSeconds } = req.body;
+        const userId = req.user?._id;
 
-        if (!userId || activeSeconds === undefined) {
-            return res.status(400).json({ message: "userId and activeSeconds are required" });
+        if (!userId) return res.status(401).json({ message: "Not authenticated." });
+        if (activeSeconds === undefined) {
+            return res.status(400).json({ message: "activeSeconds is required" });
         }
 
         // Convert seconds to minutes (rounded)
@@ -720,54 +723,6 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
     } catch (error) {
         console.error("ERROR: Track time failed:", error);
         res.status(500).json({ message: "Failed to track time" });
-    }
-});
-
-// Add or remove emoji reaction to a message
-router.patch('/reaction', isAuthenticated, async (req, res) => {
-    try {
-        const { messageIndex, reaction } = req.body;
-        const userId = req.user._id;
-
-        if (messageIndex === undefined) {
-            return res.status(400).json({ message: "Message index is required" });
-        }
-
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // Get active conversation
-        const conversation = await Conversation.findById(user.activeConversationId);
-        if (!conversation) {
-            return res.status(404).json({ message: "No active conversation found" });
-        }
-
-        // Validate message index
-        if (messageIndex < 0 || messageIndex >= conversation.messages.length) {
-            return res.status(400).json({ message: "Invalid message index" });
-        }
-
-        // Update or clear reaction
-        if (reaction && reaction.trim()) {
-            conversation.messages[messageIndex].reaction = reaction;
-        } else {
-            conversation.messages[messageIndex].reaction = null;
-        }
-
-        conversation.markModified('messages');
-        await conversation.save();
-
-        res.json({
-            success: true,
-            messageIndex,
-            reaction: conversation.messages[messageIndex].reaction
-        });
-
-    } catch (error) {
-        console.error("ERROR: Update reaction failed:", error);
-        res.status(500).json({ message: "Failed to update reaction" });
     }
 });
 

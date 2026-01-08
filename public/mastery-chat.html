@@ -655,6 +655,11 @@
         </div>
     </div>
 
+    <!-- CSRF Protection -->
+    <script src="/js/csrf.js"></script>
+    <!-- Session Management -->
+    <script src="/js/sessionManager.js"></script>
+
     <script>
         let currentUser = null;
 
@@ -802,12 +807,11 @@
 
             try {
                 // Send to mastery chat API
-                const response = await fetch('/api/mastery/chat?stream=true', {
+                const response = await csrfFetch('/api/mastery/chat?stream=true', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
                     body: JSON.stringify({
-                        userId: currentUser._id,
                         message: message
                     })
                 });
@@ -981,7 +985,7 @@
             }
 
             try {
-                const response = await fetch('/api/mastery/record-phase-attempt', {
+                const response = await csrfFetch('/api/mastery/record-phase-attempt', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1001,6 +1005,10 @@
                 // Update current user progress
                 if (result.masteryProgress) {
                     currentUser.masteryProgress = result.masteryProgress;
+
+                    // Update mastery progress for session manager auto-save
+                    window.currentMasteryProgress = result.masteryProgress;
+                    localStorage.setItem('masteryProgress', JSON.stringify(result.masteryProgress));
 
                     const badge = currentUser.masteryProgress.activeBadge;
                     const completed = badge.problemsCompleted || 0;
@@ -1060,7 +1068,7 @@
             }
 
             try {
-                const response = await fetch('/api/mastery/request-hint', {
+                const response = await csrfFetch('/api/mastery/request-hint', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

@@ -162,7 +162,6 @@ const problemSchema = new mongoose.Schema({
   // Content hash for deduplication (auto-generated)
   contentHash: {
     type: String,
-    index: true
   }
 
 }, {
