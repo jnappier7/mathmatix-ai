@@ -199,6 +199,49 @@ router.get('/list', isAuthenticated, isTeacher, async (req, res) => {
     }
 });
 
+// STUDENT ACCESS: Get resources from student's connected teacher
+router.get('/my-teacher-resources', isAuthenticated, async (req, res) => {
+    try {
+        // Check if user is a student and has a connected teacher
+        if (req.user.role !== 'student') {
+            return res.status(403).json({ message: 'This endpoint is for students only' });
+        }
+
+        if (!req.user.teacherId) {
+            return res.status(404).json({
+                message: 'You are not connected to a teacher yet',
+                resources: []
+            });
+        }
+
+        // Fetch resources from the student's teacher
+        const resources = await TeacherResource.find({ teacherId: req.user.teacherId })
+            .sort({ uploadedAt: -1 })
+            .select('-extractedText'); // Don't send full extracted text
+
+        res.json({
+            success: true,
+            teacherId: req.user.teacherId,
+            resources: resources.map(r => ({
+                id: r._id,
+                displayName: r.displayName,
+                originalFilename: r.originalFilename,
+                fileType: r.fileType,
+                fileSize: r.fileSize,
+                category: r.category,
+                description: r.description,
+                keywords: r.keywords,
+                uploadedAt: r.uploadedAt,
+                publicUrl: r.publicUrl
+            }))
+        });
+
+    } catch (error) {
+        console.error('Error fetching teacher resources for student:', error);
+        res.status(500).json({ message: 'Failed to fetch teacher resources' });
+    }
+});
+
 // Search resources
 router.get('/search', isAuthenticated, isTeacher, async (req, res) => {
     try {
@@ -292,6 +335,48 @@ router.get('/:id', isAuthenticated, isTeacher, async (req, res) => {
     } catch (error) {
         console.error('Error fetching resource:', error);
         res.status(500).json({ message: 'Failed to fetch resource' });
+    }
+});
+
+// STUDENT ACCESS: Download/view a specific resource from their teacher
+router.get('/download/:id', isAuthenticated, async (req, res) => {
+    try {
+        const resource = await TeacherResource.findById(req.params.id);
+
+        if (!resource) {
+            return res.status(404).json({ message: 'Resource not found' });
+        }
+
+        // Authorization check: Allow teachers to access their own resources, students to access their teacher's resources
+        const isTeacher = req.user.role === 'teacher' && resource.teacherId.toString() === req.user._id.toString();
+        const isStudentOfTeacher = req.user.role === 'student' && req.user.teacherId && resource.teacherId.toString() === req.user.teacherId.toString();
+
+        if (!isTeacher && !isStudentOfTeacher) {
+            return res.status(403).json({ message: 'You do not have permission to access this resource' });
+        }
+
+        // Increment access count
+        resource.accessCount = (resource.accessCount || 0) + 1;
+        await resource.save();
+
+        // Serve the file
+        const filePath = path.join(uploadDir, resource.storedFilename);
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ message: 'File not found on server' });
+        }
+
+        // Set appropriate headers
+        res.setHeader('Content-Disposition', `attachment; filename="${resource.originalFilename}"`);
+        res.setHeader('Content-Type', resource.mimeType || 'application/octet-stream');
+
+        // Stream the file
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+
+    } catch (error) {
+        console.error('Error downloading resource:', error);
+        res.status(500).json({ message: 'Failed to download resource' });
     }
 });
 

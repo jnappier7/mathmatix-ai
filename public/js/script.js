@@ -103,7 +103,7 @@ async function sendTimeHeartbeat(isFinal = false) {
             navigator.sendBeacon('/api/chat/track-time', blob);
         } else {
             // Regular fetch for heartbeats
-            await fetch('/api/chat/track-time', {
+            await csrfFetch('/api/chat/track-time', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -1336,7 +1336,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 // No code exists, generate one
                 try {
-                    const res = await fetch('/api/student/generate-link-code', {
+                    const res = await csrfFetch('/api/student/generate-link-code', {
                         method: 'POST',
                         credentials: 'include'
                     });
@@ -2217,7 +2217,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Clear files from UI immediately
             clearAllFiles();
 
-            response = await fetch("/api/chat-with-file", {
+            response = await csrfFetch("/api/chat-with-file", {
                 method: "POST",
                 body: formData,
                 credentials: 'include'
@@ -2236,7 +2236,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 // Fetch with stream=true query parameter
-                response = await fetch("/api/chat?stream=true", {
+                response = await csrfFetch("/api/chat?stream=true", {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -2333,7 +2333,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 payload.responseTime = responseTime;
             }
 
-            response = await fetch("/api/chat", {
+            response = await csrfFetch("/api/chat", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -2428,7 +2428,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const messageBubble = document.getElementById(messageId);
         const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
         try {
-            const response = await fetch('/api/speak', {
+            const response = await csrfFetch('/api/speak', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text, voiceId })

@@ -370,6 +370,10 @@ const userSchema = new Schema({
   googleId:     { type: String, unique: true, sparse: true },
   microsoftId:  { type: String, unique: true, sparse: true },
 
+  /* Password Reset */
+  resetPasswordToken:   { type: String },
+  resetPasswordExpires: { type: Date },
+
   /* Profile */
   firstName: { type: String, trim: true, required: true },
   lastName:  { type: String, trim: true, required: true },
