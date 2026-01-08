@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('mathCourse').value = user.mathCourse || '';
             document.getElementById('learningStyle').value = user.learningStyle || '';
             document.getElementById('tonePreference').value = user.tonePreference || '';
+            document.getElementById('preferredLanguage').value = user.preferredLanguage || 'English';
             if (user.interests && Array.isArray(user.interests)) {
                 user.interests.forEach(interest => {
                     const checkbox = document.querySelector(`input[name='interests[]'][value='${interest}']`);
@@ -94,6 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             updates.mathCourse = mathCourseSection.style.display === 'block' ? formData.get('mathCourse') : '';
             updates.learningStyle = formData.get('learningStyle');
             updates.tonePreference = formData.get('tonePreference');
+            updates.preferredLanguage = formData.get('preferredLanguage');
             updates.interests = formData.getAll('interests[]');
         } else if (currentUser.role === 'parent') {
             updates.reportFrequency = formData.get('reportFrequency');
