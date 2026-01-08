@@ -229,7 +229,7 @@ async function generateProblems() {
 
         console.log('[Number Run] Generating problems:', requestBody);
 
-        const response = await fetch('/api/fact-fluency/generate-problems', {
+        const response = await csrfFetch('/api/fact-fluency/generate-problems', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
@@ -473,7 +473,7 @@ async function recordSession() {
     try {
         const durationSeconds = Math.floor((Date.now() - gameState.startTime) / 1000);
 
-        const response = await fetch('/api/fact-fluency/record-session', {
+        const response = await csrfFetch('/api/fact-fluency/record-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

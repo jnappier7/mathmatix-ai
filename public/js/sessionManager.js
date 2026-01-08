@@ -232,9 +232,9 @@ class SessionManager {
     // End session (generates summary)
     await this.endSession(reason);
 
-    // Perform logout
+    // Perform logout with CSRF token
     try {
-      await fetch('/logout', {
+      await csrfFetch('/logout', {
         method: 'POST',
         credentials: 'include'
       });
@@ -256,7 +256,7 @@ class SessionManager {
         if (masteryProgress) {
           this.sessionData.masteryProgress = masteryProgress;
 
-          const response = await fetch('/api/session/save-mastery', {
+          const response = await csrfFetch('/api/session/save-mastery', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -297,7 +297,7 @@ class SessionManager {
 
   async endSession(reason) {
     try {
-      const response = await fetch('/api/session/end', {
+      const response = await csrfFetch('/api/session/end', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

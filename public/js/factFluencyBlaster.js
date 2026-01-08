@@ -349,7 +349,7 @@ async function startOperationPlacement() {
     gameState.placement.currentProblemIndex = 0;
 
     // Generate MIXED problems from ALL families for this operation (not just one random family)
-    const response = await fetch('/api/fact-fluency/generate-problems', {
+    const response = await csrfFetch('/api/fact-fluency/generate-problems', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -546,7 +546,7 @@ function showBreakScreen(completedOperation, accuracy) {
 async function finishPlacement() {
     // Save placement results
     try {
-        const response = await fetch('/api/fact-fluency/placement', {
+        const response = await csrfFetch('/api/fact-fluency/placement', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -637,11 +637,13 @@ async function startPracticeSession(operation, familyName) {
         maxStreak: 0,
         strikes: 0,  // Track wrong answers (3 strikes = game over)
         responses: [],
-        timer: null
+        timer: null,
+        problemStartTime: null,  // Track when current problem was shown
+        responseTimes: []         // Track individual response times (ms) - FIXED: was missing!
     };
 
     // Generate problems with trap answers for shooter mode
-    const response = await fetch('/api/fact-fluency/generate-problems', {
+    const response = await csrfFetch('/api/fact-fluency/generate-problems', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1032,7 +1034,7 @@ async function endPracticeSession() {
         : null;
 
     // Save session to backend
-    const response = await fetch('/api/fact-fluency/record-session', {
+    const response = await csrfFetch('/api/fact-fluency/record-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
