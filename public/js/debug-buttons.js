@@ -50,12 +50,12 @@ setTimeout(() => {
     const graphBtn = document.getElementById('open-graphing-calc-btn');
 
     if (resourcesBtn) {
-        console.log('📚 Resources button exists and has', resourcesBtn.onclick ? 'onclick handler' : 'NO onclick handler');
-        console.log('   Event listeners count:', typeof getEventListeners !== 'undefined' ? getEventListeners(resourcesBtn) : 'Cannot check (DevTools only)');
+        console.log('📚 Resources button exists (handlers attached via addEventListener)');
+        console.log('   Event listeners:', typeof getEventListeners !== 'undefined' ? getEventListeners(resourcesBtn) : 'Use DevTools to inspect');
     }
 
     if (graphBtn) {
-        console.log('📊 Graph button exists and has', graphBtn.onclick ? 'onclick handler' : 'NO onclick handler');
-        console.log('   Event listeners count:', typeof getEventListeners !== 'undefined' ? getEventListeners(graphBtn) : 'Cannot check (DevTools only)');
+        console.log('📊 Graph button exists (handlers attached via addEventListener)');
+        console.log('   Event listeners:', typeof getEventListeners !== 'undefined' ? getEventListeners(graphBtn) : 'Use DevTools to inspect');
     }
 }, 1000);

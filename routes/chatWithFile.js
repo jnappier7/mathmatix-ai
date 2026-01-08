@@ -13,8 +13,8 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const pdfOcr = require('../utils/pdfOcr');
-const axios = require('axios');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
+const { anthropic, openai, retryWithExponentialBackoff } = require('../utils/openaiClient');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -155,26 +155,92 @@ router.post('/',
             visionUserMessage
         ];
 
-        // Call OpenAI directly with vision support
-        console.log('[chatWithFile] Calling GPT-4o-mini with vision...');
-        const completion = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
-            {
-                model: 'gpt-4o-mini', // FIXED: Use OpenAI model (was incorrectly using Claude model name)
-                messages: messagesForAI,
-                temperature: 0.7,
-                max_tokens: 400
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
+        // Call LLM with vision support (Claude primary, OpenAI fallback)
+        const isClaudeModel = PRIMARY_CHAT_MODEL.startsWith('claude-');
+        let aiResponseText;
 
-        let aiResponseText = completion.data.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
-        console.log('[chatWithFile] Received response from GPT-4o-mini');
+        if (isClaudeModel && anthropic) {
+            // PRIMARY: Try Claude vision API
+            try {
+                console.log(`[chatWithFile] Calling Claude vision API (${PRIMARY_CHAT_MODEL})...`);
+
+                // Convert to Claude format: extract system, convert images
+                const systemMessage = messagesForAI.find(m => m.role === 'system')?.content;
+                const userMessages = messagesForAI.filter(m => m.role !== 'system');
+
+                // Convert image formats from OpenAI to Claude
+                const claudeContent = [];
+                for (const item of visionUserMessage.content) {
+                    if (item.type === 'text') {
+                        claudeContent.push({ type: 'text', text: item.text });
+                    } else if (item.type === 'image_url') {
+                        // Extract base64 data from data URL
+                        const match = item.image_url.url.match(/^data:image\/(.*?);base64,(.*)$/);
+                        if (match) {
+                            const [, mediaType, base64Data] = match;
+                            claudeContent.push({
+                                type: 'image',
+                                source: {
+                                    type: 'base64',
+                                    media_type: `image/${mediaType}`,
+                                    data: base64Data
+                                }
+                            });
+                        }
+                    }
+                }
+
+                const completion = await retryWithExponentialBackoff(() =>
+                    anthropic.messages.create({
+                        model: PRIMARY_CHAT_MODEL,
+                        max_tokens: 400,
+                        temperature: 0.7,
+                        system: systemMessage,
+                        messages: [
+                            ...userMessages.slice(0, -1).map(m => ({ role: m.role, content: m.content })),
+                            { role: 'user', content: claudeContent }
+                        ]
+                    })
+                );
+
+                aiResponseText = completion.content[0]?.text?.trim() || "I'm not sure how to respond.";
+                console.log('[chatWithFile] Received response from Claude');
+
+            } catch (claudeError) {
+                console.warn(`[chatWithFile] Claude failed:`, claudeError.message);
+                console.warn('[chatWithFile] Falling back to GPT-4o-mini...');
+
+                // FALLBACK: Try OpenAI vision API
+                const fallbackModel = 'gpt-4o-mini';
+                const completion = await retryWithExponentialBackoff(() =>
+                    openai.chat.completions.create({
+                        model: fallbackModel,
+                        messages: messagesForAI,
+                        temperature: 0.7,
+                        max_tokens: 400
+                    })
+                );
+
+                aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+                console.log('[chatWithFile] Received response from GPT-4o-mini (fallback)');
+            }
+        } else {
+            // OpenAI model requested or no Anthropic key
+            const model = isClaudeModel ? 'gpt-4o-mini' : PRIMARY_CHAT_MODEL;
+            console.log(`[chatWithFile] Calling OpenAI vision API (${model})...`);
+
+            const completion = await retryWithExponentialBackoff(() =>
+                openai.chat.completions.create({
+                    model: model,
+                    messages: messagesForAI,
+                    temperature: 0.7,
+                    max_tokens: 400
+                })
+            );
+
+            aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+            console.log('[chatWithFile] Received response from OpenAI');
+        }
 
         // --- Step 3: Handle Post-Processing (XP, Unlocks, etc.) ---
         // (This logic is copied and adapted from your chat.js)
