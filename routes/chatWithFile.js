@@ -160,7 +160,7 @@ router.post('/',
         const completion = await axios.post(
             'https://api.openai.com/v1/chat/completions',
             {
-                model: PRIMARY_CHAT_MODEL,
+                model: 'gpt-4o-mini', // FIXED: Use OpenAI model (was incorrectly using Claude model name)
                 messages: messagesForAI,
                 temperature: 0.7,
                 max_tokens: 400
@@ -193,6 +193,13 @@ router.post('/',
         const savedUploads = [];
         const uploadsDir = path.join(__dirname, '../uploads');
 
+        // Ensure uploads directory exists
+        try {
+            await fs.mkdir(uploadsDir, { recursive: true });
+        } catch (mkdirErr) {
+            console.error('[chatWithFile] Failed to create uploads directory:', mkdirErr);
+        }
+
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             try {
@@ -202,8 +209,9 @@ router.post('/',
                 const storedFilename = `${userId}_${timestamp}_${sanitizedName}`;
                 const filePath = path.join(uploadsDir, storedFilename);
 
-                // Save file to disk
-                await fs.writeFile(filePath, file.buffer);
+                // Save file to disk (FIXED: read from file.path since using diskStorage, not file.buffer)
+                const fileBuffer = await fs.readFile(file.path);
+                await fs.writeFile(filePath, fileBuffer);
                 console.log(`[chatWithFile] Saved file to: ${filePath}`);
 
                 // Determine file type
