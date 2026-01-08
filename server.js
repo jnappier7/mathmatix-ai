@@ -143,7 +143,8 @@ app.use(helmet({
         "'unsafe-eval'", // Required for MathLive and dynamic math rendering
         "https://cdnjs.cloudflare.com", // Font Awesome
         "https://cdn.jsdelivr.net", // Various CDN resources
-        "https://unpkg.com" // MathLive and other packages
+        "https://unpkg.com", // MathLive and other packages
+        "https://www.desmos.com" // Desmos graphing calculator API
       ],
       styleSrc: [
         "'self'",

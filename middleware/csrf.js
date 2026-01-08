@@ -13,20 +13,34 @@ function generateToken() {
 }
 
 /**
+ * Routes that should be exempt from CSRF protection
+ * (typically read-only endpoints or heartbeat/ping endpoints)
+ */
+const CSRF_EXEMPT_ROUTES = [
+  '/api/session/heartbeat', // Session activity tracking (read-only)
+  '/api/chat/track-time'     // Time tracking heartbeat (read-only)
+];
+
+/**
  * Middleware to attach CSRF token to request
  * Generates token and sets it in cookie and makes it available to views
  */
 function csrfProtection(req, res, next) {
+  // Skip CSRF for exempt routes
+  if (CSRF_EXEMPT_ROUTES.includes(req.path)) {
+    return next();
+  }
+
   // Skip CSRF for GET, HEAD, OPTIONS requests (safe methods)
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
     // Generate token for forms on GET requests
     const token = generateToken();
 
-    // Set token in cookie (HttpOnly for security)
+    // Set token in cookie (NOT httpOnly - JavaScript needs to read it for double-submit pattern)
     res.cookie('_csrf', token, {
-      httpOnly: true,
+      httpOnly: false, // MUST be false so JavaScript can read it and send in header
       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'strict',
+      sameSite: 'strict', // Prevents CSRF attacks
       maxAge: 3600000 // 1 hour
     });
 
