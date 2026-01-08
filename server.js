@@ -1,6 +1,9 @@
 // server.js
-console.log("✅✅✅ RUNNING MATHMATIX.AI SERVER ✅✅✅");
 require("dotenv").config();
+
+// Initialize logger early (before other imports)
+const logger = require('./utils/logger');
+logger.info('🚀 Starting MATHMATIX.AI Server');
 
 // --- 1. ENVIRONMENT VALIDATION ---
 const requiredEnvVars = [
@@ -19,7 +22,9 @@ const requiredEnvVars = [
 ];
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
 if (missingVars.length > 0) {
-  console.error(`❌ FATAL ERROR: Missing required environment variables: ${missingVars.join(', ')}`);
+  logger.error('❌ FATAL ERROR: Missing required environment variables', {
+    missing: missingVars
+  });
   process.exit(1);
 }
 
@@ -138,11 +143,17 @@ app.use('/api/', apiLimiter);
 // GET requests generate tokens for forms
 app.use(csrfProtection);
 
+// HTTP Request Logging
+app.use(logger.requestLogger);
+
 
 // --- 7. DATABASE CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+  .then(() => logger.info("✅ Connected to MongoDB", { database: 'MongoDB' }))
+  .catch(err => {
+    logger.error("❌ MongoDB connection error", err);
+    process.exit(1); // Exit if database connection fails
+  });
 
 
 // --- 8. ROUTE DEFINITIONS ---
@@ -400,9 +411,15 @@ const { scheduleCleanup } = require('./middleware/uploadSecurity');
 
 // Start auto-deletion scheduler for old uploads (30-day retention)
 scheduleCleanup();
-console.log('🛡️ Upload security: Auto-deletion scheduler initialized');
+logger.info('🛡️ Upload security: Auto-deletion scheduler initialized', {
+  retention: '30 days',
+  service: 'upload-security'
+});
 
 // --- 12. SERVER LISTENER ---
 app.listen(PORT, () => {
-  console.log(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`);
+  logger.info(`🚀 M∆THM∆TIΧ AI is live on http://localhost:${PORT}`, {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development'
+  });
 });

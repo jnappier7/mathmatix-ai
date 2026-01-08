@@ -16,6 +16,10 @@ routes/vision-key.json
 uploads/
 import-log.txt
 
+# Logs
+logs/
+*.log
+
 # Testing
 coverage/
 *.test.log
