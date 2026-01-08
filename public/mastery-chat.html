@@ -655,6 +655,9 @@
         </div>
     </div>
 
+    <!-- CSRF Protection -->
+    <script src="/js/csrf.js"></script>
+
     <script>
         let currentUser = null;
 
@@ -802,7 +805,7 @@
 
             try {
                 // Send to mastery chat API
-                const response = await fetch('/api/mastery/chat?stream=true', {
+                const response = await csrfFetch('/api/mastery/chat?stream=true', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -980,7 +983,7 @@
             }
 
             try {
-                const response = await fetch('/api/mastery/record-phase-attempt', {
+                const response = await csrfFetch('/api/mastery/record-phase-attempt', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1059,7 +1062,7 @@
             }
 
             try {
-                const response = await fetch('/api/mastery/request-hint', {
+                const response = await csrfFetch('/api/mastery/request-hint', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

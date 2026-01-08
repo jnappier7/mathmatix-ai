@@ -6,7 +6,7 @@ document.getElementById("login-form").addEventListener("submit", async function 
   const password = document.getElementById("password").value; //
 
   try {
-    const res = await fetch("/login", {
+    const res = await csrfFetch("/login", {
       method: "POST", //
       headers: { "Content-Type": "application/json" }, //
       credentials: 'include', // IMPORTANT: Ensure session cookie is sent
@@ -74,7 +74,7 @@ if (forgotPasswordBtn) { // Check if the element exists
     if (!email) return; //
 
     try {
-      const res = await fetch("/api/reset-password", { //
+      const res = await csrfFetch("/api/reset-password", { //
         method: "POST", //
         headers: { "Content-Type": "application/json" }, //
         body: JSON.stringify({ email }) //
