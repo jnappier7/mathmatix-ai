@@ -5,12 +5,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const profileForm = document.getElementById('profile-form');
     const firstNameInput = document.getElementById('firstName');
     const lastNameInput = document.getElementById('lastName');
+    const dobInput = document.getElementById('dateOfBirth');
     const gradeSelect = document.getElementById('grade');
     const mathCourseSection = document.getElementById('math-course-section');
     const studentOnlyDiv = document.getElementById('studentOnly');
     const parentOnlyDiv = document.getElementById('parentOnly');
 
     let currentUser = null;
+
+    // Set max date for DOB to today (COPPA compliance)
+    if (dobInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dobInput.setAttribute('max', today);
+    }
 
     async function fetchCurrentUser() {
         try {
@@ -38,6 +45,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (user.role === 'student') {
             studentOnlyDiv.style.display = 'block';
             parentOnlyDiv.style.display = 'none';
+            if (dobInput && user.dateOfBirth) {
+                dobInput.value = user.dateOfBirth.split('T')[0]; // Format date for input
+            }
             gradeSelect.value = user.gradeLevel || '';
             document.getElementById('mathCourse').value = user.mathCourse || '';
             document.getElementById('learningStyle').value = user.learningStyle || '';
@@ -91,6 +101,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         updates.lastName = formData.get('lastName');
 
         if (currentUser.role === 'student') {
+            const dob = formData.get('dateOfBirth');
+            if (dob) {
+                // Calculate age for COPPA compliance check
+                const birthDate = new Date(dob);
+                const today = new Date();
+                let age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                // COPPA compliance: Under 13 requires parental consent
+                if (age < 13 && !currentUser.hasParentalConsent) {
+                    alert('Students under 13 require parental consent. Please have your parent or guardian create a parent account and link to your student account using your invite code: ' + (currentUser.inviteCode || '[loading...]'));
+                    return;
+                }
+
+                updates.dateOfBirth = dob;
+            }
             updates.gradeLevel = formData.get('grade');
             updates.mathCourse = mathCourseSection.style.display === 'block' ? formData.get('mathCourse') : '';
             updates.learningStyle = formData.get('learningStyle');
