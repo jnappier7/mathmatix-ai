@@ -217,7 +217,7 @@ Let's start with a question that will help me understand your reasoning process.
 async function triggerInterviewQuestion(results) {
   try {
     // Send message to AI requesting interview question
-    const response = await fetch('/api/mastery/interview-question', {
+    const response = await csrfFetch('/api/mastery/interview-question', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

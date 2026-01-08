@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playVoiceBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Playing…';
 
     try {
-      const resp = await fetch('/api/speak', {
+      const resp = await csrfFetch('/api/speak', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ text: t.voicePreview, voiceId: t.voiceId }),
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectTutorBtn.disabled = true;
     selectTutorBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
     try {
-      const res = await fetch('/api/user/settings', {
+      const res = await csrfFetch('/api/user/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ selectedTutorId }),

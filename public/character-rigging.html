@@ -368,10 +368,11 @@
 
   <!-- Scripts -->
   <script src="/js/character-rigging.js"></script>
+<script src="/js/csrf.js"></script>
   <script>
     // Logout functionality
     document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await fetch('/logout', { method: 'POST' });
+      await csrfFetch('/logout', { method: 'POST' });
       window.location.href = '/';
     });
 
@@ -380,6 +381,5 @@
       window.location.href = '/chat.html';
     });
   </script>
-<script src="/js/csrf.js"></script>
 </body>
 </html>

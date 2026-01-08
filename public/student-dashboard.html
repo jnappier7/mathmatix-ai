@@ -336,6 +336,7 @@
     </div>
   </main>
 
+<script src="/js/csrf.js"></script>
   <script>
     let currentUserId = null;
 
@@ -445,7 +446,7 @@
     // Logout
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       try {
-        await fetch('/logout', { method: 'POST' });
+        await csrfFetch('/logout', { method: 'POST' });
         window.location.href = '/login.html';
       } catch (error) {
         console.error('Logout error:', error);
@@ -456,7 +457,6 @@
     // Initialize on page load
     init();
   </script>
-<script src="/js/csrf.js"></script>
 <script src="/js/sessionManager.js"></script>
 </body>
 </html>

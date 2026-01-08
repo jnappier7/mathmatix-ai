@@ -102,7 +102,7 @@ async function startScreener() {
     elements.startBtn.disabled = true;
     elements.startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
 
-    const response = await fetch('/api/screener/start', {
+    const response = await csrfFetch('/api/screener/start', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include'
@@ -241,7 +241,7 @@ async function submitAnswer(answerValue) {
   elements.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
 
   try {
-    const response = await fetch('/api/screener/submit-answer', {
+    const response = await csrfFetch('/api/screener/submit-answer', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -313,7 +313,7 @@ async function handleCompletion(data) {
     }
 
     // Otherwise, complete the screener
-    const completeResponse = await fetch('/api/screener/complete', {
+    const completeResponse = await csrfFetch('/api/screener/complete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -435,7 +435,7 @@ async function submitInterviewAnswer() {
     submitBtn.textContent = 'Analyzing...';
 
     // Submit answer to backend
-    const response = await fetch('/api/screener/interview-answer', {
+    const response = await csrfFetch('/api/screener/interview-answer', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -495,7 +495,7 @@ async function completeInterview() {
   try {
     console.log('[Interview] Finalizing interview');
 
-    const response = await fetch('/api/screener/interview-complete', {
+    const response = await csrfFetch('/api/screener/interview-complete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

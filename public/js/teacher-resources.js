@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
 
-                const response = await fetch('/api/teacher-resources/upload', {
+                const response = await csrfFetch('/api/teacher-resources/upload', {
                     method: 'POST',
                     body: formData
                 });
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch(`/api/teacher-resources/${resourceId}`, {
+            const response = await csrfFetch(`/api/teacher-resources/${resourceId}`, {
                 method: 'DELETE'
             });
 

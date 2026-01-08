@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         try {
             // MODIFIED: Changed fetch URL to the correct backend endpoint.
-            const res = await fetch('/api/user/settings', {
+            const res = await csrfFetch('/api/user/settings', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updates)

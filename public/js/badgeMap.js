@@ -315,7 +315,7 @@ async function selectBadge(badgeId) {
     if (!confirmed) return;
 
     // Send selection to backend
-    const response = await fetch('/api/mastery/select-badge', {
+    const response = await csrfFetch('/api/mastery/select-badge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

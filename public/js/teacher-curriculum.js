@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             try {
-                const res = await fetch('/api/curriculum/teacher/curriculum/sync-common', {
+                const res = await csrfFetch('/api/curriculum/teacher/curriculum/sync-common', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('gradeLevel', document.getElementById('csv-grade-level').value);
                 formData.append('schoolYear', document.getElementById('csv-school-year').value);
 
-                const res = await fetch('/api/curriculum/teacher/curriculum/parse', {
+                const res = await csrfFetch('/api/curriculum/teacher/curriculum/parse', {
                     method: 'POST',
                     credentials: 'include',
                     body: formData
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!confirm('Are you sure you want to delete this curriculum? This cannot be undone.')) return;
 
                 try {
-                    const res = await fetch(`/api/curriculum/teacher/curriculum/${curriculum._id}`, {
+                    const res = await csrfFetch(`/api/curriculum/teacher/curriculum/${curriculum._id}`, {
                         method: 'DELETE',
                         credentials: 'include'
                     });
@@ -443,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             try {
-                const res = await fetch(`/api/curriculum/teacher/curriculum/${curriculum._id}`, {
+                const res = await csrfFetch(`/api/curriculum/teacher/curriculum/${curriculum._id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const resourceUrl = document.getElementById('resource-url').value.trim();
 
             try {
-                const res = await fetch(`/api/curriculum/teacher/curriculum/${curriculumId}/lesson/${lessonId}/resource`, {
+                const res = await csrfFetch(`/api/curriculum/teacher/curriculum/${curriculumId}/lesson/${lessonId}/resource`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -599,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm('Are you sure you want to remove this resource?')) return;
 
         try {
-            const res = await fetch(`/api/curriculum/teacher/curriculum/${curriculumId}/lesson/${lessonId}/resource`, {
+            const res = await csrfFetch(`/api/curriculum/teacher/curriculum/${curriculumId}/lesson/${lessonId}/resource`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

@@ -229,7 +229,7 @@ class FileUploadManager {
             formData.append('file', file);
 
             // Call OCR endpoint
-            const response = await fetch('/api/upload', {
+            const response = await csrfFetch('/api/upload', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include'

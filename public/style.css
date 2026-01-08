@@ -3203,7 +3203,7 @@ body:not(.landing-page-body) {
     padding-bottom: 3rem;       /* Adds space above the footer */
 }
 
-./* --- Toast Message --- */
+/* --- Toast Message --- */
 .toast-message {
     position: fixed;
     bottom: 20px;

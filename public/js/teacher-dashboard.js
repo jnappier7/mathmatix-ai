@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         const updatedIepPlan = getIepDataFromForm();
         try {
-            const response = await fetch(`/api/teacher/students/${studentId}/iep`, {
+            const response = await csrfFetch(`/api/teacher/students/${studentId}/iep`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedIepPlan)
@@ -279,7 +279,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (reason === null) return;
 
         try {
-            const response = await fetch(`/api/teacher/students/${studentId}/reset-assessment`, {
+            const response = await csrfFetch(`/api/teacher/students/${studentId}/reset-assessment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reason: reason || 'Teacher requested reset' })

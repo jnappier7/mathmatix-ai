@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Fallback to direct logout if session manager not available
         console.log("LOG: Initiating fetch POST to /logout.");
         try {
-          const res = await fetch('/logout', {
+          const res = await csrfFetch('/logout', {
             method: 'POST',
             credentials: 'include'
           });

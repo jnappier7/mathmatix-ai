@@ -248,7 +248,7 @@ class ShowYourWorkManager {
             }
 
             // Submit to grading endpoint
-            const response = await fetch('/api/grade-work', {
+            const response = await csrfFetch('/api/grade-work', {
                 method: 'POST',
                 credentials: 'include',
                 body: formData
