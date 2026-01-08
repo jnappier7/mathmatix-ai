@@ -6,10 +6,11 @@ const router = express.Router();
 const passport = require('passport'); // Import passport for authentication
 const User = require('../models/user'); // Ensure User model is accessible
 const { isAuthenticated } = require('../middleware/auth'); // For potentially checking if user is already logged in
+const { loginValidation, handleValidationErrors } = require('../middleware/validation');
 
 // POST /login - Local authentication strategy
 // Frontend calls this endpoint directly (e.g., fetch('/login', ...))
-router.post('/', (req, res, next) => {
+router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
     // Authenticate using the 'local' Passport strategy
     passport.authenticate('local', (err, user, info) => {
         if (err) {

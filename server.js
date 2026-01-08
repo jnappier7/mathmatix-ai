@@ -38,6 +38,7 @@ const session = require("express-session");
 const passport = require("passport");
 const MongoStore = require("connect-mongo");
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 const User = require('./models/user');
 
 // --- 3. CONFIGURATIONS ---
@@ -130,6 +131,76 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Security Headers with Helmet.js
+app.use(helmet({
+  // Content Security Policy - allows necessary external resources
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'", // Required for inline scripts in HTML pages
+        "'unsafe-eval'", // Required for MathLive and dynamic math rendering
+        "https://cdnjs.cloudflare.com", // Font Awesome
+        "https://cdn.jsdelivr.net", // Various CDN resources
+        "https://unpkg.com" // MathLive and other packages
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'", // Required for inline styles
+        "https://cdnjs.cloudflare.com", // Font Awesome
+        "https://fonts.googleapis.com" // Google Fonts
+      ],
+      fontSrc: [
+        "'self'",
+        "https://cdnjs.cloudflare.com", // Font Awesome
+        "https://fonts.gstatic.com", // Google Fonts
+        "data:" // Base64 fonts
+      ],
+      imgSrc: [
+        "'self'",
+        "data:", // Base64 images
+        "blob:", // Blob URLs for uploaded images
+        "https:" // Allow HTTPS images (user uploads, external resources)
+      ],
+      connectSrc: [
+        "'self'",
+        "https://api.anthropic.com", // Claude API
+        "https://api.openai.com", // OpenAI API
+        "https://api.mathpix.com", // Mathpix OCR
+        "https://api.elevenlabs.io" // ElevenLabs TTS
+      ],
+      mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
+      objectSrc: ["'none'"], // Disable plugins
+      frameSrc: ["'self'"], // Only allow same-origin iframes
+      upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
+    }
+  },
+  // Cross-Origin policies
+  crossOriginEmbedderPolicy: false, // Disabled for external CDN resources
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  // XSS Protection (legacy browsers)
+  xssFilter: true,
+  // Prevent MIME sniffing
+  noSniff: true,
+  // Hide X-Powered-By header
+  hidePoweredBy: true,
+  // Prevent clickjacking
+  frameguard: {
+    action: 'deny'
+  },
+  // HSTS - Force HTTPS in production
+  hsts: {
+    maxAge: 31536000, // 1 year
+    includeSubDomains: true,
+    preload: true
+  },
+  // Referrer Policy
+  referrerPolicy: {
+    policy: 'strict-origin-when-cross-origin'
+  }
+}));
+
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 120,
@@ -138,6 +209,16 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 app.use('/api/', apiLimiter);
+
+// Strict rate limiting for authentication endpoints (prevent brute force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Only 5 attempts per 15 minutes
+  message: "Too many login/signup attempts from this IP. Please try again after 15 minutes.",
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false, // Count both successful and failed attempts
+});
 
 // CSRF Protection for all routes
 // Applies to POST, PUT, DELETE, PATCH requests
@@ -159,15 +240,15 @@ mongoose.connect(process.env.MONGO_URI)
 
 // --- 8. ROUTE DEFINITIONS ---
 
-app.use('/login', loginRoutes);
-app.use('/signup', signupRoutes);
-app.use('/api/password-reset', passwordResetRoutes);
+app.use('/login', authLimiter, loginRoutes);
+app.use('/signup', authLimiter, signupRoutes);
+app.use('/api/password-reset', authLimiter, passwordResetRoutes);
 app.post('/logout', isAuthenticated, handleLogout);
 
 // --- Google Auth Routes ---
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+app.get('/auth/google', authLimiter, passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/auth/google/callback', (req, res, next) => {
+app.get('/auth/google/callback', authLimiter, (req, res, next) => {
     passport.authenticate('google', (err, user, info) => {
         if (err) { return next(err); }
         if (!user) {
@@ -185,9 +266,9 @@ app.get('/auth/google/callback', (req, res, next) => {
 });
 
 // --- Microsoft Auth Routes (FIXED: ADDED MISSING ROUTES) ---
-app.get('/auth/microsoft', passport.authenticate('microsoft', { scope: ['user.read'] }));
+app.get('/auth/microsoft', authLimiter, passport.authenticate('microsoft', { scope: ['user.read'] }));
 
-app.get('/auth/microsoft/callback', (req, res, next) => {
+app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
     passport.authenticate('microsoft', (err, user, info) => {
         if (err) { return next(err); }
         if (!user) {
