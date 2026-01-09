@@ -10,10 +10,14 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/llmGateway");
 const { openai } = require('../utils/openaiClient');
 const { processAIResponse } = require('../utils/chatBoardParser');
+const { retryWithExponentialBackoff } = require('../utils/openaiClient');
+const axios = require('axios');
 const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022";
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 // ============================================
 // VOICE PROCESSING ENDPOINT
@@ -173,22 +177,43 @@ router.post('/process', isAuthenticated, async (req, res) => {
         const boardContextData = boardParsed.boardContext;
 
         // ============================================
-        // STEP 4: TEXT-TO-SPEECH (OpenAI TTS)
+        // STEP 4: TEXT-TO-SPEECH (ElevenLabs with Tutor Voice)
         // ============================================
 
-        console.log('🔊 [Voice] Generating speech...');
+        console.log('🔊 [Voice] Generating speech with tutor voice...');
 
-        // Generate TTS audio
-        const speechResponse = await openai.audio.speech.create({
-            model: 'tts-1', // Fast, good quality (tts-1-hd for higher quality)
-            voice: 'alloy', // Options: alloy, echo, fable, onyx, nova, shimmer
-            input: aiResponseText,
-            response_format: 'mp3',
-            speed: 1.0
+        // Get tutor's voice ID
+        const tutorVoiceId = user.selectedTutorId?.voiceId || "2eFQnnNM32GDnZkCfkSm"; // Fallback to Mr. Nappier
+        console.log(`🎤 [Voice] Using tutor voice: ${tutorVoiceId}`);
+
+        if (!ELEVENLABS_API_KEY) {
+            throw new Error('ElevenLabs API key not configured');
+        }
+
+        // Generate TTS audio using ElevenLabs
+        const elevenLabsResponse = await retryWithExponentialBackoff(async () => {
+            return await axios.post(
+                `https://api.elevenlabs.io/v1/text-to-speech/${tutorVoiceId}`,
+                {
+                    text: aiResponseText,
+                    model_id: "eleven_monolingual_v1",
+                    voice_settings: {
+                        stability: 0.4,
+                        similarity_boost: 0.7
+                    }
+                },
+                {
+                    headers: {
+                        "xi-api-key": ELEVENLABS_API_KEY,
+                        "Content-Type": "application/json",
+                        "Accept": "audio/mpeg"
+                    },
+                    responseType: "arraybuffer"
+                }
+            );
         });
 
-        // Convert to buffer
-        const audioData = Buffer.from(await speechResponse.arrayBuffer());
+        const audioData = Buffer.from(elevenLabsResponse.data);
 
         // Save audio file
         const audioDir = path.join(__dirname, '../public/audio/voice');

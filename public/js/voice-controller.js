@@ -6,6 +6,13 @@
 /**
  * Phase 3.5: Real-Time Voice Chat
  * Conversational voice experience like OpenAI's GPT live voice
+ *
+ * Features:
+ * - OpenAI Whisper for speech-to-text transcription
+ * - ElevenLabs TTS with user's selected tutor voice
+ * - Board integration with voice commands
+ * - Disables old hands-free mode when active
+ * - Individual message playback still available
  */
 
 class VoiceController {
@@ -43,8 +50,6 @@ class VoiceController {
             sampleRate: 16000,
             channels: 1,
             vadThreshold: -50, // dB
-            useRealtimeAPI: true, // Use OpenAI Realtime API if available
-            voice: 'alloy', // OpenAI voice options: alloy, echo, fable, onyx, nova, shimmer
             enableBoardCommands: true // Allow voice commands for board actions
         };
 
@@ -306,6 +311,18 @@ class VoiceController {
 
     async startListening() {
         try {
+            // Disable old hands-free mode if active
+            if (window.recognition && window.isRecognizing) {
+                console.log('🎙️ [Voice] Disabling old hands-free mode...');
+                window.recognition.stop();
+                window.isRecognizing = false;
+
+                const micBtn = document.getElementById('mic-btn');
+                if (micBtn) {
+                    micBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+                }
+            }
+
             // Request microphone permission
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
@@ -463,9 +480,20 @@ class VoiceController {
                         window.appendMessage(data.response, 'ai', null, data.isMasteryQuiz);
                     }
 
-                    // Speak AI response
+                    // Speak AI response (ElevenLabs audio with tutor voice)
                     if (data.audioUrl) {
                         await this.playAIResponse(data.audioUrl);
+                    }
+                }
+
+                // Apply board context for spatial anchoring
+                if (data.boardContext && window.chatBoardController) {
+                    const messageElements = document.querySelectorAll('.message.ai');
+                    const latestMessage = messageElements[messageElements.length - 1];
+                    if (latestMessage) {
+                        window.chatBoardController.enhanceChatMessage(
+                            latestMessage, 'ai', data.boardContext
+                        );
                     }
                 }
 
