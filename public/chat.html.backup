@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M∆THM∆TIΧ AI Chat</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/whiteboard.css" />
@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="/css/ghostTimer.css" />
   <link rel="stylesheet" href="/css/badgeProgress.css" />
   <link rel="stylesheet" href="/css/algebra-tiles.css" />
-  <link rel="stylesheet" href="/css/sidebar-layout.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -39,16 +38,11 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
-  <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=e7bbcca459d54f07b0b4aaf35f4a6b96"></script>
+  <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
 </head>
 <body class="landing-page-body">
   <canvas id="confetti-canvas"></canvas>
   <header class="landing-header">
-    <!-- Mobile Drawer Toggle Buttons -->
-    <button id="left-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Leaderboard">
-      <i class="fas fa-bars"></i>
-    </button>
-
     <a href="/chat.html" class="header-logo-container" style="text-decoration: none; cursor: pointer;" title="Home">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </a>
@@ -68,114 +62,31 @@
       <button id="logoutBtn" class="btn btn-tertiary logout-button" title="Logout">
         <i class="fas fa-sign-out-alt"></i> <span class="mobile-hide">Logout</span>
       </button>
-
-      <!-- Mobile Progress Toggle Button -->
-      <button id="right-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Your Progress">
-        <i class="fas fa-user-circle"></i>
-      </button>
     </nav>
   </header>
 
-  <!-- Sidebar Toggle Button -->
-  <button id="sidebar-toggle" title="Toggle Sidebar">
-    <i class="fas fa-bars"></i>
-  </button>
-
-  <!-- Collapsible Sidebar -->
-  <aside id="app-sidebar">
-    <!-- Progress Section -->
-    <div class="sidebar-section">
-      <div class="sidebar-progress">
-        <div class="sidebar-progress-level">Level <span id="sidebar-level">1</span></div>
-        <div class="sidebar-progress-bar">
-          <div id="sidebar-progress-fill" class="sidebar-progress-fill" style="width: 0%;"></div>
+  <main id="app-layout-wrapper">
+    <aside class="widget-sidebar-left">
+      <div id="leaderboard-content" class="dashboard-panel card-style-1">
+        <div class="dashboard-panel-header">
+          <h2>Leaderboard</h2>
         </div>
-        <div class="sidebar-progress-xp" id="sidebar-xp">0 / 100 XP</div>
+        <div class="table-scroll-container">
+          <table id="leaderboardTable" class="user-table">
+            <thead><tr><th>Rank</th><th>Student</th><th>Level</th><th>XP</th></tr></thead>
+            <tbody>
+              </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+	  <div id="student-parent-link-display" class="dashboard-panel">
+		<h3>Share Progress</h3>
+		<p>Share this code with a parent or teacher to link accounts.</p>
+		<div id="student-link-code-value" title="Click to copy"></div>
+	  </div>
+    </aside>
 
-    <!-- Tools Section -->
-    <div class="sidebar-section">
-      <div class="sidebar-section-title">Tools</div>
-
-      <button id="sidebar-mastery-btn" class="sidebar-tool-btn special">
-        <i class="fas fa-trophy"></i>
-        <span>Mastery Mode</span>
-      </button>
-
-      <button id="sidebar-resources-btn" class="sidebar-tool-btn">
-        <i class="fas fa-book-open"></i>
-        <span>Resources</span>
-      </button>
-
-      <button id="sidebar-whiteboard-btn" class="sidebar-tool-btn">
-        <i class="fas fa-chalkboard"></i>
-        <span>Whiteboard</span>
-      </button>
-
-      <button id="sidebar-calculator-btn" class="sidebar-tool-btn">
-        <i class="fas fa-calculator"></i>
-        <span>Calculator</span>
-      </button>
-
-      <button id="sidebar-graphing-btn" class="sidebar-tool-btn">
-        <i class="fas fa-chart-line"></i>
-        <span>Graphing Calc</span>
-      </button>
-
-      <button id="sidebar-upload-btn" class="sidebar-tool-btn special">
-        <i class="fas fa-camera-retro"></i>
-        <span>Upload Work</span>
-      </button>
-
-      <button id="sidebar-algebra-btn" class="sidebar-tool-btn">
-        <i class="fas fa-th"></i>
-        <span>Algebra Tiles</span>
-      </button>
-    </div>
-
-    <!-- Leaderboard Section -->
-    <div class="sidebar-section">
-      <button class="leaderboard-toggle">
-        <span>Leaderboard</span>
-        <i class="fas fa-chevron-down"></i>
-      </button>
-
-      <div id="sidebar-leaderboard">
-        <table id="sidebar-leaderboard-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Name</th>
-              <th>Lvl</th>
-              <th>XP</th>
-            </tr>
-          </thead>
-          <tbody id="sidebar-leaderboard-body">
-            <!-- Populated by sidebar.js -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Parent Link Section -->
-    <div class="sidebar-section">
-      <div id="student-parent-link-display" style="padding: 0;">
-        <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; margin-bottom: 8px;">Share Progress</h3>
-        <p style="font-size: 11px; color: #666; margin-bottom: 8px;">Share this code with a parent or teacher to link accounts.</p>
-        <div id="student-link-code-value" title="Click to copy"></div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Floating Tutor Avatar -->
-  <div id="floating-tutor">
-    <div id="student-avatar"></div>
-  </div>
-
-  <!-- Main Content Area (Full Width) -->
-  <main id="app-layout-wrapper" class="sidebar-layout">
-    <div id="chat-container" class="dashboard-panel full-width">
+    <div id="chat-container" class="dashboard-panel">
       <div id="chat-messages-container"></div>
       <div id="thinking-indicator" style="display: none;">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -184,64 +95,30 @@
      <div id="input-container">
     <!-- Toolbar Above Message Box -->
     <div class="input-toolbar">
-      <!-- Primary Tools (Always visible on mobile) -->
-      <button id="mic-button" title="Voice Input" class="btn btn-tertiary toolbar-primary">
-        <i class="fas fa-microphone"></i>
-      </button>
-      <button id="camera-button" title="Show Your Work - Get Graded" class="btn btn-tertiary toolbar-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-        <i class="fas fa-camera-retro"></i>
-      </button>
-      <button id="attach-button" title="Upload Files" class="btn btn-tertiary toolbar-primary">
-        <i class="fas fa-paperclip"></i>
-      </button>
-      <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary toolbar-primary">
+      <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary">
         <i class="fas fa-square-root-variable"></i>
       </button>
-
-      <!-- Secondary Tools (Hidden on mobile, moved to More menu) -->
-      <button id="toggle-whiteboard-btn" title="Toggle Whiteboard" class="btn btn-tertiary toolbar-secondary">
+      <button id="toggle-whiteboard-btn" title="Toggle Whiteboard" class="btn btn-tertiary">
         <i class="fas fa-chalkboard"></i>
       </button>
-      <button id="toggle-calculator-btn" title="Scientific Calculator" class="btn btn-tertiary toolbar-secondary">
+      <button id="toggle-calculator-btn" title="Scientific Calculator" class="btn btn-tertiary">
         <i class="fas fa-calculator"></i>
       </button>
-      <button id="open-graphing-calc-btn" title="Graphing Calculator" class="btn btn-tertiary toolbar-secondary">
+      <button id="open-graphing-calc-btn" title="Graphing Calculator" class="btn btn-tertiary">
         <i class="fas fa-chart-line"></i>
       </button>
-      <button id="algebra-tiles-btn" title="Algebra Tiles" class="btn btn-tertiary toolbar-secondary" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+      <button id="attach-button" title="Upload Files" class="btn btn-tertiary">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <button id="camera-button" title="Show Your Work - Get Graded" class="btn btn-tertiary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <i class="fas fa-camera-retro"></i>
+      </button>
+      <button id="mic-button" title="Voice Input" class="btn btn-tertiary">
+        <i class="fas fa-microphone"></i>
+      </button>
+      <button id="algebra-tiles-btn" title="Algebra Tiles" class="btn btn-tertiary" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
         <i class="fas fa-th"></i>
       </button>
-
-      <!-- More Tools Button (Only on mobile) -->
-      <button id="more-tools-btn" title="More Tools" class="btn btn-tertiary toolbar-more">
-        <i class="fas fa-ellipsis-h"></i>
-      </button>
-    </div>
-
-    <!-- More Tools Menu (Mobile) -->
-    <div id="more-tools-menu" class="more-tools-menu" style="display: none;">
-      <div class="more-tools-header">
-        <span>More Tools</span>
-        <button id="close-more-tools" class="close-more-tools">&times;</button>
-      </div>
-      <div class="more-tools-grid">
-        <button class="more-tool-item" data-trigger="toggle-whiteboard-btn">
-          <i class="fas fa-chalkboard"></i>
-          <span>Whiteboard</span>
-        </button>
-        <button class="more-tool-item" data-trigger="toggle-calculator-btn">
-          <i class="fas fa-calculator"></i>
-          <span>Calculator</span>
-        </button>
-        <button class="more-tool-item" data-trigger="open-graphing-calc-btn">
-          <i class="fas fa-chart-line"></i>
-          <span>Graphing Calc</span>
-        </button>
-        <button class="more-tool-item" data-trigger="algebra-tiles-btn">
-          <i class="fas fa-th"></i>
-          <span>Algebra Tiles</span>
-        </button>
-      </div>
     </div>
 
     <!-- Inline Equation Palette (MS Word-like) -->
@@ -308,6 +185,19 @@
     </button>
 </div>
     </div>
+
+    <aside class="widget-sidebar-right">
+
+      <div id="xp-level-display" class="dashboard-panel card-style-1">
+        <div class="dashboard-panel-header">Your Progress</div>
+        <span id="level-badge">Level <span id="current-level">1</span></span>
+        <progress id="xp-progress-bar" value="0" max="100"></progress>
+        <span id="xp-text"><span id="current-xp">0</span> / <span id="xp-needed">100</span> XP</span>
+      </div>
+      <div id="avatar-container" class="dashboard-panel card-style-1">
+          <div id="student-avatar"></div>
+      </div>
+    </aside>
   </main>
   
   <footer>
@@ -886,7 +776,6 @@
   <script src="/js/chat-board-integration.js"></script>
   <script src="/js/voice-controller.js"></script>
   <script src="/js/floating-calculator.js"></script>
-  <script src="/js/sidebar.js"></script>
   <!-- PDF.js library for PDF preview and rendering -->
   <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
   <script type="module">
@@ -896,10 +785,6 @@
   </script>
   <script src="/js/debug-buttons.js"></script>
   <script src="/js/mobile-touch-fix.js"></script>
-  <script src="/js/mobile-drawer.js"></script>
-  <script src="/js/mobile-more-tools.js"></script>
-  <script src="/js/auto-expand-textarea.js"></script>
-  <script src="/js/chat-pinch-zoom.js"></script>
 <script src="/js/csrf.js"></script>
   <script src="/js/file-upload.js"></script>
   <script src="/js/student-resources.js"></script>
