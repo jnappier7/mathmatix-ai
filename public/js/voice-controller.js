@@ -493,6 +493,13 @@ class VoiceController {
                 });
 
                 console.log('📥 [Voice] Response received, status:', response.status);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('❌ [Voice] Server error:', errorData);
+                    throw new Error(errorData.message || errorData.error || 'Server error');
+                }
+
                 const data = await response.json();
                 console.log('📝 [Voice] Response data:', data);
 
@@ -545,7 +552,22 @@ class VoiceController {
                 name: error.name
             });
             this.updateUI('error');
-            alert('Failed to process voice input. Check console for details.');
+
+            // Show user-friendly error message
+            const errorMessage = error.message || 'Failed to process voice input';
+            if (this.statusText) {
+                this.statusText.textContent = errorMessage;
+                this.statusText.style.color = '#dc2626';
+            }
+
+            // Auto-hide error after 5 seconds
+            setTimeout(() => {
+                if (this.statusText) {
+                    this.statusText.textContent = 'Click to start voice chat';
+                    this.statusText.style.color = '';
+                }
+                this.updateUI('idle');
+            }, 5000);
         }
     }
 

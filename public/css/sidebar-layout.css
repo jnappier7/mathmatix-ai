@@ -273,6 +273,17 @@
     font-size: 18px;
 }
 
+/* Footer - Full width across entire viewport */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100vw !important;
+    margin: 0 !important;
+    z-index: 998;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     #app-sidebar {
