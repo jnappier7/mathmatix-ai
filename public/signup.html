@@ -87,6 +87,7 @@
     </p>
   </footer>
 
+  <script src="/js/csrf.js"></script>
   <script>
     const roleSelect = document.getElementById("role");
     const inviteCodeGroup = document.getElementById("inviteCodeGroup");
@@ -138,7 +139,7 @@
         signupMessage.style.display = 'none';
 
         try {
-            const response = await fetch('/signup', {
+            const response = await csrfFetch('/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -171,6 +172,5 @@
     });
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="/js/csrf.js"></script>
 </body>
 </html>
