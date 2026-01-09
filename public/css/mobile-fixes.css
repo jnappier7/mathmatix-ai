@@ -273,3 +273,51 @@ select,
         display: none !important;
     }
 }
+
+/* ============================================
+   PINCH-TO-ZOOM CHAT FONT SIZE
+   ============================================ */
+
+/* Chat messages container supports font scaling */
+#chat-messages-container {
+    /* Default scale is 1.0, adjusted by pinch-zoom script */
+    font-size: var(--chat-font-scale, 1em);
+}
+
+/* Ensure all message elements inherit the scaled size */
+#chat-messages-container .message,
+#chat-messages-container .message p,
+#chat-messages-container .message span,
+#chat-messages-container .message div {
+    /* Inherit from parent container */
+}
+
+/* Font scale indicator (created by JS) */
+#font-scale-indicator {
+    /* Styled via JS for dynamic positioning */
+}
+
+/* Pinch zoom hint (optional - shows on first visit) */
+.pinch-zoom-hint {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(18, 179, 179, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+    z-index: 1001;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeInOut 4s ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}

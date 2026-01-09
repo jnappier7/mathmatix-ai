@@ -2560,14 +2560,19 @@ form label, .password-label-row label {
 
 
 @media screen and (max-width: 767px) {
-    /* Adjustments for phones */
+    /* Adjustments for phones - LARGER BASE FONT */
     :root {
         --header-height: 60px;
         --page-horizontal-padding: 10px;
         --section-gap: 40px;
         --brand-h1-font-size: 2em;
         --brand-h3-font-size: 1.2em;
-        --brand-base-font-size: 0.95rem;
+        --brand-base-font-size: 1rem;
+    }
+
+    /* Increase base body font size on mobile */
+    body {
+        font-size: 16px;
     }
     h1 { font-size: var(--brand-h1-font-size); }
     h2 { font-size: 1.8em; }
@@ -2577,19 +2582,45 @@ form label, .password-label-row label {
         padding: 10px var(--page-horizontal-padding);
         border-radius: 0;
         box-shadow: none;
-        flex-direction: column; /* Stack logo and nav vertically on very small screens */
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
+        gap: 8px;
     }
+
+    /* Left drawer toggle */
+    #left-drawer-toggle {
+        grid-column: 1;
+        justify-self: start;
+    }
+
+    /* Center logo */
     .header-logo-container {
-        width: 100%; /* Take full width for centering */
-        justify-content: center; /* Center logo on small screens */
+        grid-column: 2;
+        justify-self: center;
+        display: flex;
+        justify-content: center;
     }
+
     .main-logo-hero {
-        max-height: 60px;
+        max-height: 50px;
     }
+
+    /* Right nav buttons */
     .landing-nav {
-        gap: 10px;
-        margin-top: 10px; /* Add margin after logo */
+        grid-column: 3;
+        justify-self: end;
+        gap: 8px;
+        margin-top: 0;
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    /* Hide text in nav buttons on mobile, keep icons */
+    .landing-nav .btn {
+        padding: 8px 10px;
+        min-width: 40px;
+        font-size: 1rem;
     }
     .btn-primary, .btn-primary-outline, .btn-secondary, .btn-tertiary {
         padding: 0.6rem 1rem;
@@ -2723,21 +2754,22 @@ form label, .password-label-row label {
         box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
     }
 
-    /* Send button more prominent */
+    /* Send button more prominent - LARGER */
     #send-button {
-        padding: 12px 20px;
-        font-size: 1rem;
-        min-height: 48px;
+        padding: 16px 24px;
+        font-size: 1.15rem;
+        min-height: 52px;
         border-radius: 12px;
         font-weight: 600;
     }
 
-    /* Messages optimized for mobile */
+    /* Messages optimized for mobile - LARGER TEXT */
     .message {
-        font-size: 0.95em;
-        padding: 12px 16px;
-        border-radius: 12px;
+        font-size: 1.1em;
+        padding: 14px 18px;
+        border-radius: 14px;
         max-width: 85%;
+        line-height: 1.5;
     }
 
     /* User messages align right */
@@ -2748,6 +2780,21 @@ form label, .password-label-row label {
     /* AI messages align left */
     .message.ai-message {
         margin-right: auto;
+    }
+
+    /* Message paragraphs */
+    .message p {
+        font-size: 1em;
+        margin-bottom: 0.75em;
+    }
+
+    /* Code blocks in messages */
+    .message code {
+        font-size: 0.95em;
+    }
+
+    .message pre code {
+        font-size: 0.9em;
     }
 
     /* Tutor selection mobile */
@@ -2776,16 +2823,22 @@ form label, .password-label-row label {
         width: 100%;
     }
 
-    /* Enhanced touch targets for all interactive elements */
+    /* Enhanced touch targets for all interactive elements - LARGER TEXT */
     .btn,
     button,
     a.btn,
     input[type="submit"],
     input[type="button"] {
-        min-height: 44px;
-        min-width: 44px;
-        padding: 12px 20px;
-        font-size: 1rem;
+        min-height: 48px;
+        min-width: 48px;
+        padding: 14px 22px;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* Toolbar buttons specifically */
+    .input-toolbar .btn {
+        font-size: 1.3rem;
     }
 
     /* Better spacing for mobile forms */
@@ -2825,7 +2878,7 @@ form label, .password-label-row label {
         min-height: 42px;
     }
 
-    /* Mobile modal improvements */
+    /* Mobile modal improvements - LARGER TEXT */
     .modal-content {
         width: 95%;
         max-width: 95%;
@@ -2833,12 +2886,23 @@ form label, .password-label-row label {
         margin: 5vh auto;
         padding: 20px;
         border-radius: 12px;
+        font-size: 1.05rem;
+    }
+
+    .modal-content h2,
+    .modal-content h3 {
+        font-size: 1.4rem;
+    }
+
+    .modal-content p,
+    .modal-content label {
+        font-size: 1rem;
     }
 
     .modal-close-button {
-        width: 44px;
-        height: 44px;
-        font-size: 28px;
+        width: 48px;
+        height: 48px;
+        font-size: 32px;
         top: 10px;
         right: 10px;
     }
@@ -2986,11 +3050,15 @@ form label, .password-label-row label {
         -webkit-overflow-scrolling: touch;
     }
 
-    /* Thinking indicator on mobile */
+    /* Thinking indicator on mobile - LARGER TEXT */
     #thinking-indicator {
         padding: 12px;
         margin: 8px 12px;
-        font-size: 0.9rem;
+        font-size: 1rem;
+    }
+
+    #thinking-indicator span:not(.dot) {
+        font-size: 1.05rem;
     }
 
     /* Fix for iOS Safari bottom bar overlap */
