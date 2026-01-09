@@ -289,14 +289,24 @@ class ChatBoardController {
         const obj = this.whiteboard.semanticObjects.get(targetObjectId);
         const fabricObj = obj.fabricObject;
 
-        // Create visual pointer (arrow or highlight)
-        const pointer = this.createPointerElement(fabricObj, anchorType);
+        // PHASE 2: Use enhanced visual pointer lines if available
+        let pointer = null;
+        const messageElement = document.getElementById(messageId);
+
+        if (this.whiteboard.phase2 && this.whiteboard.phase2.createPointerLine && messageElement) {
+            // Use Phase 2 enhanced pointer lines
+            pointer = this.whiteboard.phase2.createPointerLine(messageElement, targetObjectId, anchorType);
+        } else {
+            // Fallback to basic pointer
+            pointer = this.createPointerElementFallback(fabricObj, anchorType);
+        }
 
         // Store anchor
         this.activeAnchors.set(messageId, {
             targetObjectId: targetObjectId,
-            pointerId: pointer.id,
-            type: anchorType
+            pointerId: pointer ? pointer.path?.id || pointer.id : null,
+            type: anchorType,
+            pointerRef: pointer
         });
 
         // Add subtle highlight to object
@@ -307,8 +317,8 @@ class ChatBoardController {
         return pointer;
     }
 
-    createPointerElement(fabricObj, anchorType) {
-        // Create SVG arrow that points from chat area to board object
+    createPointerElementFallback(fabricObj, anchorType) {
+        // Fallback pointer (basic version)
         const pointer = document.createElement('div');
         pointer.className = 'spatial-anchor-pointer';
         pointer.style.cssText = `
@@ -323,7 +333,6 @@ class ChatBoardController {
         pointer.id = `pointer-${Date.now()}-${Math.random()}`;
 
         // Position calculation would happen here
-        // For now, just create the element structure
         document.body.appendChild(pointer);
 
         // Auto-remove after 3 seconds
