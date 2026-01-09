@@ -1785,7 +1785,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             settingsMenu: false,
                             zoomButtons: true
                         });
-                        calculator.setExpression({ latex: expression });
+                        // Handle multiple expressions separated by commas
+                        const expressions = expression.split(',').map(e => e.trim());
+                        expressions.forEach(expr => {
+                            if (expr) {
+                                calculator.setExpression({ latex: expr });
+                            }
+                        });
                     }
                 }, 100);
             }
@@ -2135,6 +2141,46 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!messageRef || !messageRef.bubble) return;
 
         messageRef.bubble.classList.remove('streaming');
+
+        // Handle Desmos graphs: [DESMOS:y=2x+3]
+        if (fullText && fullText.includes('[DESMOS:')) {
+            const desmosRegex = /\[DESMOS:([^\]]+)\]/g;
+            let match;
+            while ((match = desmosRegex.exec(fullText)) !== null) {
+                const expression = match[1].trim();
+                const desmosContainer = document.createElement('div');
+                const desmosId = 'desmos-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                desmosContainer.id = desmosId;
+                desmosContainer.className = 'desmos-graph';
+                desmosContainer.style.width = '100%';
+                desmosContainer.style.height = '400px';
+                desmosContainer.style.marginTop = '10px';
+                desmosContainer.style.borderRadius = '8px';
+                desmosContainer.style.border = '1px solid #e0e0e0';
+                messageRef.bubble.appendChild(desmosContainer);
+
+                setTimeout(() => {
+                    if (window.Desmos) {
+                        const calculator = Desmos.GraphingCalculator(document.getElementById(desmosId), {
+                            expressionsCollapsed: true,
+                            settingsMenu: false,
+                            zoomButtons: true
+                        });
+                        // Handle multiple expressions separated by commas
+                        const expressions = expression.split(',').map(e => e.trim());
+                        expressions.forEach(expr => {
+                            if (expr) {
+                                calculator.setExpression({ latex: expr });
+                            }
+                        });
+                    }
+                }, 100);
+            }
+            // Remove [DESMOS:...] tags from displayed text
+            if (messageRef.textNode) {
+                messageRef.textNode.innerHTML = messageRef.textNode.innerHTML.replace(desmosRegex, '');
+            }
+        }
 
         // Add audio playback button
         if (typeof playAudio === 'function') {

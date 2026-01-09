@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 changePasswordBtn.disabled = true;
                 changePasswordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
 
-                const response = await fetch('/api/settings/change-password', {
+                const response = await csrfFetch('/api/settings/change-password', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const newLanguage = preferredLanguageSelect.value;
 
             try {
-                const response = await fetch('/api/user/settings', {
+                const response = await csrfFetch('/api/user/settings', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',

@@ -3203,7 +3203,7 @@ body:not(.landing-page-body) {
     padding-bottom: 3rem;       /* Adds space above the footer */
 }
 
-./* --- Toast Message --- */
+/* --- Toast Message --- */
 .toast-message {
     position: fixed;
     bottom: 20px;
@@ -3321,16 +3321,29 @@ body:not(.landing-page-body) {
 .whiteboard-toolbar {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     padding: 12px;
     background: #f9f9f9;
     border-bottom: 1px solid #e0e0e0;
     flex-wrap: wrap;
+    max-height: 120px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.tool-btn {
-    width: 36px;
-    height: 36px;
+.toolbar-section {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 4px 8px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+}
+
+.toolbar-btn, .tool-btn {
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3340,18 +3353,52 @@ body:not(.landing-page-body) {
     cursor: pointer;
     transition: all 0.2s ease;
     color: var(--clr-text);
+    position: relative;
+    font-size: 16px;
 }
 
-.tool-btn:hover {
+.toolbar-btn:hover, .tool-btn:hover {
     border-color: var(--clr-primary-teal);
     transform: translateY(-2px);
     box-shadow: 0 3px 8px rgba(18, 179, 179, 0.2);
 }
 
-.tool-btn.active {
+.toolbar-btn.active, .tool-btn.active {
     background: var(--clr-primary-teal);
     border-color: var(--clr-primary-teal);
     color: white;
+}
+
+/* Tooltip for toolbar buttons */
+.toolbar-btn[data-tooltip]:hover::after,
+.tool-btn[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10000;
+    margin-bottom: 5px;
+    pointer-events: none;
+}
+
+.toolbar-btn[data-tooltip]:hover::before,
+.tool-btn[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    pointer-events: none;
 }
 
 .toolbar-divider {
@@ -3445,12 +3492,215 @@ body:not(.landing-page-body) {
 }
 
 /* --- Canvas Styling --- */
+.whiteboard-canvas-container {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    background: white;
+}
+
 #tutor-canvas {
     width: 100%;
-    flex: 1;
+    height: 100%;
     background-color: #ffffff;
-    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);
     cursor: crosshair;
+    display: block;
+}
+
+.canvas-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.canvas-mode-indicator {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Whiteboard Header Controls */
+.whiteboard-header {
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--clr-primary-teal), #0D9999);
+    color: white;
+    border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+    border-bottom: 2px solid var(--clr-primary-teal);
+    user-select: none;
+}
+
+.whiteboard-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.whiteboard-header-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.whiteboard-control-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.whiteboard-control-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Whiteboard Resize Handle */
+.whiteboard-resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, transparent 50%, var(--clr-primary-teal) 50%);
+    cursor: nwse-resize;
+    border-bottom-right-radius: var(--border-radius-base);
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.whiteboard-resize-handle:hover {
+    opacity: 1;
+}
+
+/* Whiteboard Dropdown Menus */
+.arrow-mode-dropdown,
+.background-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 2px solid var(--clr-primary-teal);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    margin-top: 5px;
+    min-width: 150px;
+}
+
+.arrow-mode-option,
+.bg-option {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    background: white;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 14px;
+    color: var(--clr-text);
+}
+
+.arrow-mode-option:hover,
+.bg-option:hover {
+    background: #f0f9f9;
+    color: var(--clr-primary-teal);
+}
+
+.arrow-mode-option:first-child,
+.bg-option:first-child {
+    border-radius: 4px 4px 0 0;
+}
+
+.arrow-mode-option:last-child,
+.bg-option:last-child {
+    border-radius: 0 0 4px 4px;
+}
+
+/* Color Picker and Stroke Controls */
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.color-display {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.color-display:hover {
+    transform: scale(1.1);
+}
+
+#color-picker {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.stroke-width-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.stroke-width-slider {
+    width: 80px;
+    accent-color: var(--clr-primary-teal);
+}
+
+/* Whiteboard Maximized State */
+#whiteboard-panel.maximized {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    border-radius: 0;
+}
+
+/* Whiteboard Minimized State */
+#whiteboard-panel.minimized .whiteboard-canvas-container,
+#whiteboard-panel.minimized .whiteboard-toolbar {
+    display: none;
+}
+
+#whiteboard-panel.minimized {
+    height: auto;
 }
 
 /* --- UI Overhaul Based on Design Notes --- */

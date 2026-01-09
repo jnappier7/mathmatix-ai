@@ -17,8 +17,8 @@
     </nav>
   </header>
 
-  <main class="login-page-wrapper">
-    <div class="profile-container scrollable-form-wrapper">
+  <main class="login-page-wrapper" style="min-height: calc(100vh - 140px); overflow-y: auto;">
+    <div class="profile-container" style="max-height: none; overflow: visible; margin: 2rem auto;">
       <h1>Complete Your Profile</h1>
       <p class="subtitle">Just a few more details to personalize your experience.</p>
 
@@ -30,6 +30,12 @@
         <input type="text" id="lastName" name="lastName" required />
 
         <div id="studentOnly" style="display:none;">
+          <label for="dateOfBirth">Date of Birth</label>
+          <input type="date" id="dateOfBirth" name="dateOfBirth" required max="" />
+          <p class="note" style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">
+            Required for COPPA compliance. Students under 13 require parental consent.
+          </p>
+
           <label for="grade">Grade Level</label>
           <select id="grade" name="grade">
             <option value="">Select your grade</option>
@@ -149,6 +155,7 @@
   </footer>
 
   <script src="/js/logout.js"></script>
+  <script src="/js/csrf.js"></script>
   <script src="/js/complete-profile.js"></script>
 </body>
 </html>

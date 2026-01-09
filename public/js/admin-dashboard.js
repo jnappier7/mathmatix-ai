@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     resetBtn.disabled = true;
                     resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-                    const response = await fetch(`/api/admin/students/${studentId}/reset-assessment`, {
+                    const response = await csrfFetch(`/api/admin/students/${studentId}/reset-assessment`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
@@ -359,7 +359,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     deleteBtn.disabled = true;
                     deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-                    const response = await fetch(`/api/admin/users/${userId}`, {
+                    const response = await csrfFetch(`/api/admin/users/${userId}`, {
                         method: 'DELETE',
                         credentials: 'include'
                     });
@@ -398,7 +398,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             
             try {
-                const res = await fetch("/api/admin/assign-teacher", {
+                const res = await csrfFetch("/api/admin/assign-teacher", {
                     method: "PATCH",
                     headers: { 'Content-Type': 'application/json', 'credentials': 'include' },
                     body: JSON.stringify({ studentIds: selectedIds, teacherId: teacherId || null })
@@ -450,12 +450,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             try {
                 const [profileRes, iepRes] = await Promise.all([
-                    fetch(`/api/admin/students/${studentId}/profile`, {
+                    csrfFetch(`/api/admin/students/${studentId}/profile`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json', 'credentials': 'include' },
                         body: JSON.stringify(profileData)
                     }),
-                    fetch(`/api/admin/students/${studentId}/iep`, {
+                    csrfFetch(`/api/admin/students/${studentId}/iep`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json', 'credentials': 'include' },
                         body: JSON.stringify(iepData)

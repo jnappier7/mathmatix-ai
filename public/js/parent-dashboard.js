@@ -328,7 +328,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (parentThinkingIndicator) parentThinkingIndicator.style.display = "flex";
 
             try {
-                const res = await fetch("/api/chat", { // Note: The parent chat endpoint is currently the main chat endpoint
+                const res = await csrfFetch("/api/chat", { // Note: The parent chat endpoint is currently the main chat endpoint
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: 'include',
@@ -367,7 +367,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (generateCodeBtn) {
         generateCodeBtn.addEventListener('click', async () => {
             try {
-                const res = await fetch("/api/parent/generate-invite-code", {
+                const res = await csrfFetch("/api/parent/generate-invite-code", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: 'include'
@@ -393,7 +393,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const studentLinkCode = studentLinkCodeInput.value.trim();
             linkStudentMessage.textContent = '';
             try {
-                const res = await fetch("/api/parent/link-to-student", {
+                const res = await csrfFetch("/api/parent/link-to-student", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: 'include',
@@ -431,7 +431,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             };
 
             try {
-                const res = await fetch("/api/parent/settings", {
+                const res = await csrfFetch("/api/parent/settings", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     credentials: 'include',
@@ -469,7 +469,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 emailStatusMessage.style.color = "#666";
                 testEmailBtn.disabled = true;
 
-                const response = await fetch('/api/email/test', {
+                const response = await csrfFetch('/api/email/test', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({})  // Will use current user's email
@@ -511,7 +511,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 emailStatusMessage.style.color = "#666";
                 sendWeeklyReportBtn.disabled = true;
 
-                const response = await fetch('/api/email/weekly-report', {
+                const response = await csrfFetch('/api/email/weekly-report', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ studentId: selectedChild._id })

@@ -14,8 +14,32 @@ class MathmatixWhiteboard {
         this.currentColor = '#000000';
         this.strokeWidth = 3;
         this.isDrawing = false;
-        this.mode = 'user'; // 'user', 'ai', 'collaborative'
+
+        // COGNITIVE WORKSPACE: Three-mode system
+        this.boardMode = 'student'; // 'teacher' (AI-driven), 'student' (student writes), 'collaborative' (turn-taking)
         this.arrowMode = 'end'; // 'none', 'start', 'end', 'both'
+
+        // AI Presence system
+        this.aiIsThinking = false;
+        this.aiCursorPosition = { x: 0, y: 0 };
+        this.aiAnimationQueue = [];
+
+        // Spatial regions for intelligent organization
+        this.regions = {
+            working: { x: 0, y: 0, width: 0.6, height: 1, label: 'Working Area' },
+            scratch: { x: 0.6, y: 0, width: 0.4, height: 0.7, label: 'Scratch Space' },
+            given: { x: 0, y: 0, width: 1, height: 0.15, label: 'Given' },
+            answer: { x: 0.6, y: 0.7, width: 0.4, height: 0.3, label: 'Answer', locked: true }
+        };
+
+        // Semantic objects (smart math entities)
+        this.semanticObjects = new Map(); // id -> { type, data, fabricObject }
+        this.objectIdCounter = 0;
+
+        // Time-based replay
+        this.timeline = [];
+        this.timelineIndex = 0;
+        this.isReplaying = false;
 
         // Panel state
         this.isDragging = false;
@@ -63,7 +87,8 @@ class MathmatixWhiteboard {
         this.canvas.on('mouse:down', (e) => this.onMouseDown(e));
         this.canvas.on('mouse:move', (e) => this.onMouseMove(e));
         this.canvas.on('mouse:up', (e) => this.onMouseUp(e));
-        this.canvas.on('object:added', () => this.onCanvasModified());
+        this.canvas.on('object:added', (e) => this.onObjectAdded(e));
+        this.canvas.on('object:modified', (e) => this.onObjectModified(e));
 
         // Resize observer
         const resizeObserver = new ResizeObserver(() => this.resizeCanvas());
@@ -71,6 +96,14 @@ class MathmatixWhiteboard {
 
         // Window resize
         window.addEventListener('resize', () => this.resizeCanvas());
+
+        // Mode enforcement: block student drawing in teacher mode
+        this.canvas.on('mouse:down', (e) => {
+            if (this.boardMode === 'teacher' && !this.aiIsDrawing) {
+                console.log('[Whiteboard] Teacher mode - student drawing disabled');
+                return false;
+            }
+        });
     }
 
     setupPanelControls() {
@@ -603,8 +636,30 @@ class MathmatixWhiteboard {
         this.historyStep = this.history.length - 1;
     }
 
-    onCanvasModified() {
-        this.saveState();
+    onObjectAdded(e) {
+        // Record to timeline for replay
+        if (!this.isReplaying) {
+            this.timeline.push({
+                timestamp: Date.now(),
+                action: 'add',
+                object: e.target.toJSON(),
+                mode: this.boardMode
+            });
+            this.saveState();
+        }
+    }
+
+    onObjectModified(e) {
+        // Record modifications to timeline
+        if (!this.isReplaying) {
+            this.timeline.push({
+                timestamp: Date.now(),
+                action: 'modify',
+                object: e.target.toJSON(),
+                mode: this.boardMode
+            });
+            this.saveState();
+        }
     }
 
     deleteSelected() {
@@ -905,11 +960,347 @@ class MathmatixWhiteboard {
     }
 
     // ============================================
-    // AI DRAWING METHODS
+    // MODE MANAGEMENT (Three-Mode System)
+    // ============================================
+
+    setBoardMode(mode) {
+        if (!['teacher', 'student', 'collaborative'].includes(mode)) {
+            console.error('[Whiteboard] Invalid mode:', mode);
+            return;
+        }
+
+        this.boardMode = mode;
+        this.updateModeIndicator();
+
+        // Update canvas interaction based on mode
+        if (mode === 'teacher') {
+            this.canvas.selection = false;
+            this.canvas.isDrawingMode = false;
+            console.log('🧠 Teacher Mode: AI controls the board');
+        } else if (mode === 'student') {
+            this.canvas.selection = true;
+            this.setTool('pen'); // Default to pen for student
+            console.log('✍️ Student Mode: You have control');
+        } else {
+            this.canvas.selection = true;
+            console.log('🤝 Collaborative Mode: Turn-taking enabled');
+        }
+    }
+
+    updateModeIndicator() {
+        const indicator = this.panel.querySelector('.canvas-mode-indicator');
+        if (!indicator) return;
+
+        const modeEmojis = {
+            'teacher': '🧠 Teacher Mode (AI Teaching)',
+            'student': '✍️ Student Mode (Your Turn)',
+            'collaborative': '🤝 Collaborative Mode'
+        };
+
+        indicator.textContent = modeEmojis[this.boardMode] || this.boardMode;
+        indicator.style.background = this.boardMode === 'teacher'
+            ? 'rgba(18, 179, 179, 0.9)'
+            : this.boardMode === 'student'
+            ? 'rgba(59, 130, 246, 0.9)'
+            : 'rgba(139, 92, 246, 0.9)';
+    }
+
+    // ============================================
+    // AI PRESENCE SYSTEM
+    // ============================================
+
+    showAIThinking() {
+        this.aiIsThinking = true;
+        // TODO: Add ghost cursor animation
+        console.log('👻 AI is thinking...');
+    }
+
+    hideAIThinking() {
+        this.aiIsThinking = false;
+    }
+
+    async moveAICursor(x, y, duration = 500) {
+        // Animate AI cursor to position
+        this.aiCursorPosition = { x, y };
+        // TODO: Add smooth cursor movement animation
+        await this.sleep(duration);
+    }
+
+    // ============================================
+    // SEMANTIC OBJECTS (Smart Math Entities)
+    // ============================================
+
+    createSemanticEquation(latex, x, y, options = {}) {
+        const id = `eq_${this.objectIdCounter++}`;
+
+        const text = new fabric.IText(latex, {
+            left: x,
+            top: y,
+            fontSize: options.fontSize || 24,
+            fill: options.color || this.currentColor,
+            fontFamily: options.handwritten ? 'Indie Flower, cursive' : 'Arial',
+            selectable: this.boardMode !== 'teacher',
+        });
+
+        this.canvas.add(text);
+
+        // Store semantic metadata
+        this.semanticObjects.set(id, {
+            type: 'equation',
+            latex: latex,
+            fabricObject: text,
+            region: this.getRegionAt(x, y),
+            createdBy: this.boardMode === 'teacher' ? 'ai' : 'student',
+            timestamp: Date.now()
+        });
+
+        return id;
+    }
+
+    highlightObject(id, color = '#ff6b6b', duration = 2000) {
+        const obj = this.semanticObjects.get(id);
+        if (!obj) return;
+
+        const fabricObj = obj.fabricObject;
+        const originalColor = fabricObj.fill;
+
+        // Add gentle halo effect
+        fabricObj.set('shadow', {
+            color: color,
+            blur: 15,
+            offsetX: 0,
+            offsetY: 0
+        });
+        this.canvas.renderAll();
+
+        // Fade out after duration
+        setTimeout(() => {
+            fabricObj.set('shadow', null);
+            this.canvas.renderAll();
+        }, duration);
+    }
+
+    addQuestionMark(objectId) {
+        const obj = this.semanticObjects.get(objectId);
+        if (!obj) return;
+
+        const fabricObj = obj.fabricObject;
+        const qMark = new fabric.Text('?', {
+            left: fabricObj.left + fabricObj.width + 10,
+            top: fabricObj.top,
+            fontSize: 28,
+            fill: '#ff6b6b',
+            fontWeight: 'bold',
+            selectable: false
+        });
+
+        this.canvas.add(qMark);
+        return qMark;
+    }
+
+    // ============================================
+    // SPATIAL INTELLIGENCE (Board Regions)
+    // ============================================
+
+    getRegionAt(x, y) {
+        const canvasWidth = this.canvas.width;
+        const canvasHeight = this.canvas.height;
+        const relX = x / canvasWidth;
+        const relY = y / canvasHeight;
+
+        for (const [name, region] of Object.entries(this.regions)) {
+            if (relX >= region.x && relX <= region.x + region.width &&
+                relY >= region.y && relY <= region.y + region.height) {
+                return name;
+            }
+        }
+        return 'working'; // default
+    }
+
+    getRegionBounds(regionName) {
+        const region = this.regions[regionName];
+        if (!region) return null;
+
+        return {
+            x: region.x * this.canvas.width,
+            y: region.y * this.canvas.height,
+            width: region.width * this.canvas.width,
+            height: region.height * this.canvas.height
+        };
+    }
+
+    moveToRegion(objectId, regionName) {
+        const obj = this.semanticObjects.get(objectId);
+        if (!obj) return;
+
+        const bounds = this.getRegionBounds(regionName);
+        if (!bounds) return;
+
+        // Animate object to region
+        obj.fabricObject.animate({
+            left: bounds.x + 20,
+            top: bounds.y + 20
+        }, {
+            duration: 500,
+            onChange: this.canvas.renderAll.bind(this.canvas)
+        });
+
+        obj.region = regionName;
+    }
+
+    showRegionGuides() {
+        // Visual overlay showing regions (for debugging/teaching)
+        Object.entries(this.regions).forEach(([name, region]) => {
+            const bounds = this.getRegionBounds(name);
+            const rect = new fabric.Rect({
+                left: bounds.x,
+                top: bounds.y,
+                width: bounds.width,
+                height: bounds.height,
+                fill: 'transparent',
+                stroke: '#12B3B3',
+                strokeWidth: 2,
+                strokeDashArray: [10, 5],
+                selectable: false,
+                evented: false,
+                opacity: 0.3
+            });
+
+            const label = new fabric.Text(region.label, {
+                left: bounds.x + 10,
+                top: bounds.y + 10,
+                fontSize: 14,
+                fill: '#666',
+                selectable: false,
+                evented: false
+            });
+
+            this.canvas.add(rect);
+            this.canvas.add(label);
+        });
+
+        this.canvas.renderAll();
+    }
+
+    // ============================================
+    // AI TEACHING BEHAVIORS (Strategic Intelligence)
+    // ============================================
+
+    async aiWritePartialStep(text, x, y, pauseAfter = true) {
+        // Teacher mode: AI writes, then pauses
+        this.setBoardMode('teacher');
+        this.showAIThinking();
+
+        // Simulate handwriting speed
+        const chars = text.split('');
+        let displayText = '';
+
+        const textObj = new fabric.IText('', {
+            left: x,
+            top: y,
+            fontSize: 24,
+            fill: '#2d3748',
+            fontFamily: 'Indie Flower, cursive', // Handwritten feel
+            selectable: false
+        });
+        this.canvas.add(textObj);
+
+        for (const char of chars) {
+            displayText += char;
+            textObj.set('text', displayText);
+            this.canvas.renderAll();
+            await this.sleep(50); // Typing speed
+        }
+
+        this.hideAIThinking();
+
+        if (pauseAfter) {
+            // Intentional pause - silence is teaching
+            await this.sleep(1500);
+        }
+
+        return textObj;
+    }
+
+    async aiDrawArrowToBlank(fromId, message = "Your turn") {
+        const obj = this.semanticObjects.get(fromId);
+        if (!obj) return;
+
+        const fabricObj = obj.fabricObject;
+
+        // Draw arrow pointing to blank space
+        const arrow = this.createArrow(
+            fabricObj.left + fabricObj.width + 20,
+            fabricObj.top + fabricObj.height / 2,
+            fabricObj.left + fabricObj.width + 100,
+            fabricObj.top + fabricObj.height / 2
+        );
+
+        this.canvas.add(arrow);
+
+        // Add prompt text
+        if (message) {
+            const prompt = new fabric.Text(message, {
+                left: fabricObj.left + fabricObj.width + 110,
+                top: fabricObj.top,
+                fontSize: 18,
+                fill: '#12B3B3',
+                fontStyle: 'italic',
+                selectable: false
+            });
+            this.canvas.add(prompt);
+        }
+
+        this.canvas.renderAll();
+
+        // Switch to student mode - invite them to write
+        this.setBoardMode('student');
+    }
+
+    async aiCircleWithQuestion(objectId, message = "Check this step") {
+        const obj = this.semanticObjects.get(objectId);
+        if (!obj) return;
+
+        const fabricObj = obj.fabricObject;
+
+        // Draw circle around the object
+        const circle = new fabric.Circle({
+            left: fabricObj.left - 10,
+            top: fabricObj.top - 10,
+            radius: Math.max(fabricObj.width, fabricObj.height) / 2 + 15,
+            fill: 'transparent',
+            stroke: '#ff6b6b',
+            strokeWidth: 3,
+            selectable: false
+        });
+
+        this.canvas.add(circle);
+
+        // Add question mark
+        this.addQuestionMark(objectId);
+
+        // Add message if provided
+        if (message) {
+            const text = new fabric.Text(message, {
+                left: fabricObj.left,
+                top: fabricObj.top + fabricObj.height + 20,
+                fontSize: 16,
+                fill: '#ff6b6b',
+                fontStyle: 'italic',
+                selectable: false
+            });
+            this.canvas.add(text);
+        }
+
+        this.canvas.renderAll();
+    }
+
+    // ============================================
+    // AI DRAWING METHODS (Enhanced)
     // ============================================
 
     async renderAIDrawing(sequence, delay = 300) {
-        this.mode = 'ai';
+        this.setBoardMode('teacher');
         this.show();
 
         for (const item of sequence) {
@@ -917,7 +1308,8 @@ class MathmatixWhiteboard {
             await this.sleep(delay);
         }
 
-        this.mode = 'collaborative';
+        // After teaching, invite collaboration
+        this.setBoardMode('collaborative');
     }
 
     renderDrawingItem(item) {
