@@ -564,6 +564,11 @@ class VoiceController {
     }
 
     async executeBoardActions(actions) {
+        if (!this.whiteboard) {
+            console.log('⚠️ Board actions skipped - whiteboard not available');
+            return;
+        }
+
         console.log('🎨 Executing board actions:', actions);
 
         for (const action of actions) {
@@ -687,11 +692,16 @@ class VoiceController {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize voice controller immediately (whiteboard optional)
+    window.voiceController = new VoiceController(null);
+    console.log('✅ Voice Controller initialized (whiteboard integration will connect when available)');
+
+    // Connect whiteboard when available
     const checkWhiteboard = setInterval(() => {
-        if (window.whiteboard && window.whiteboard.canvas) {
-            window.voiceController = new VoiceController(window.whiteboard);
+        if (window.whiteboard && window.whiteboard.canvas && window.voiceController) {
+            window.voiceController.whiteboard = window.whiteboard;
             clearInterval(checkWhiteboard);
-            console.log('✅ Voice Controller initialized');
+            console.log('✅ Whiteboard connected to Voice Controller');
         }
     }, 100);
 
