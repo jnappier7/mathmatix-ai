@@ -384,6 +384,7 @@ const userSchema = new Schema({
   /* Student-specific profile */
   gradeLevel: { type: String, trim: true },              // e.g., '7th Grade', '9th Grade', 'College'
   mathCourse: { type: String, trim: true },              // e.g., 'Algebra 1', 'Geometry', 'Pre-Calculus'
+  dateOfBirth: { type: Date },                           // For COPPA compliance (under 13 requires parental consent)
   tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual', 'motivational', 'Motivational'], default: 'encouraging' },
   learningStyle: { type: String, trim: true },           // 'Visual', 'Auditory', 'Kinesthetic'
   preferredLanguage: { type: String, enum: ['English', 'Spanish', 'Russian', 'Chinese', 'Vietnamese', 'Arabic'], default: 'English' }, // Student's preferred language for tutoring
