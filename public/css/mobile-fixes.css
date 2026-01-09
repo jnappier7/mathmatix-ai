@@ -122,3 +122,154 @@ select,
 .math-field {
     touch-action: auto;
 }
+
+/* ============================================
+   STREAMLINED MOBILE TOOLBAR
+   ============================================ */
+
+/* Hide More button on desktop */
+.toolbar-more {
+    display: none;
+}
+
+/* Mobile: Show only primary tools + More button */
+@media (max-width: 767px) {
+    /* Hide secondary tools on mobile */
+    .toolbar-secondary {
+        display: none !important;
+    }
+
+    /* Show More button on mobile */
+    .toolbar-more {
+        display: flex;
+    }
+
+    /* More Tools Menu - Bottom Sheet Style */
+    .more-tools-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--clr-bg-light);
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        padding: 20px;
+        padding-bottom: max(env(safe-area-inset-bottom), 20px);
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .more-tools-menu.active {
+        transform: translateY(0);
+    }
+
+    .more-tools-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--clr-primary-teal);
+    }
+
+    .more-tools-header span {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--clr-text);
+    }
+
+    .close-more-tools {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        color: var(--clr-text-dim);
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+
+    .close-more-tools:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--clr-text);
+    }
+
+    .more-tools-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .more-tool-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: var(--clr-bg-light);
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-height: 100px;
+        gap: 8px;
+    }
+
+    .more-tool-item:active {
+        transform: scale(0.95);
+        background: rgba(18, 179, 179, 0.05);
+        border-color: var(--clr-primary-teal);
+    }
+
+    .more-tool-item i {
+        font-size: 2rem;
+        color: var(--clr-primary-teal);
+    }
+
+    .more-tool-item span {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--clr-text);
+        text-align: center;
+    }
+
+    /* Overlay for More Tools menu */
+    .more-tools-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .more-tools-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* Desktop: Show all tools, hide More button */
+@media (min-width: 768px) {
+    .toolbar-secondary {
+        display: flex !important;
+    }
+
+    .toolbar-more {
+        display: none !important;
+    }
+
+    .more-tools-menu {
+        display: none !important;
+    }
+}
