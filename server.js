@@ -373,7 +373,7 @@ app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found.' });
 
         const allowedUpdates = [
-            'firstName', 'lastName', 'gradeLevel', 'mathCourse',
+            'firstName', 'lastName', 'gradeLevel', 'mathCourse', 'dateOfBirth',
             'tonePreference', 'learningStyle', 'interests', 'needsProfileCompletion',
             'selectedTutorId', 'reportFrequency', 'goalViewPreference',
             'parentTone', 'parentLanguage', 'preferences', 'preferredLanguage'
