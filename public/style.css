@@ -2335,64 +2335,125 @@ form label, .password-label-row label {
 
 /* --- 14. Mobile Drawers & Responsiveness --- */
 
-/* Drawers for mobile (hidden by default) */
+/* Drawer Overlay (shown when drawer is open) */
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 899;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.drawer-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Drawers for mobile (hidden by default on desktop, slide-in on mobile) */
 .drawer {
     position: fixed;
     top: 0;
     bottom: 0;
     width: 280px;
-    max-width: 80%;
+    max-width: 85%;
     overflow-y: auto;
     background: var(--clr-bg-light);
     box-shadow: var(--shadow-lg);
     transition: transform 0.3s ease;
     z-index: 900;
-    padding: var(--dashboard-panel-padding);
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: var(--dashboard-panel-padding);
+    gap: 20px;
     box-sizing: border-box;
 }
+
 .drawer.left {
     left: 0;
     transform: translateX(-100%);
-    border-right: 1px solid var(--clr-text-dim);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
+
 .drawer.right {
     right: 0;
     transform: translateX(100%);
-    border-left: 1px solid var(--clr-text-dim);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
 }
+
 .drawer.open {
     transform: translateX(0);
 }
 
-/* Drawer Toggles for Mobile */
-.drawer-toggle {
-    display: none;
-    position: fixed;
-    top: 15px;
-    width: 45px;
-    height: 45px;
+/* Drawer Header with Close Button */
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--clr-primary-teal);
+    margin-bottom: 10px;
+}
+
+.drawer-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--clr-text);
+}
+
+.drawer-close-btn {
+    background: none;
     border: none;
-    background: var(--clr-primary-teal);
-    color: var(--clr-bg-light);
-    font-size: 1.5rem;
-    z-index: 910;
-    border-radius: 50%;
-    box-shadow: var(--shadow-md);
+    font-size: 1.8rem;
+    color: var(--clr-text-dim);
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
 }
-.drawer-toggle:hover {
-    background: #109a9a;
+
+.drawer-close-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--clr-text);
 }
-.drawer-toggle.left {
-    left: 15px;
+
+/* Drawer Toggle Buttons (in header) */
+.drawer-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--clr-text);
+    cursor: pointer;
+    padding: 8px 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border-radius: 4px;
 }
-.drawer-toggle.right {
-    right: 15px;
+
+.drawer-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.drawer-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* Show drawer toggle buttons on mobile */
+@media (max-width: 767px) {
+    .drawer-toggle-btn {
+        display: flex;
+    }
 }
 
 
@@ -2499,14 +2560,19 @@ form label, .password-label-row label {
 
 
 @media screen and (max-width: 767px) {
-    /* Adjustments for phones */
+    /* Adjustments for phones - LARGER BASE FONT */
     :root {
         --header-height: 60px;
         --page-horizontal-padding: 10px;
         --section-gap: 40px;
         --brand-h1-font-size: 2em;
         --brand-h3-font-size: 1.2em;
-        --brand-base-font-size: 0.95rem;
+        --brand-base-font-size: 1rem;
+    }
+
+    /* Increase base body font size on mobile */
+    body {
+        font-size: 16px;
     }
     h1 { font-size: var(--brand-h1-font-size); }
     h2 { font-size: 1.8em; }
@@ -2516,19 +2582,45 @@ form label, .password-label-row label {
         padding: 10px var(--page-horizontal-padding);
         border-radius: 0;
         box-shadow: none;
-        flex-direction: column; /* Stack logo and nav vertically on very small screens */
+        display: grid;
+        grid-template-columns: auto 1fr auto;
         align-items: center;
+        gap: 8px;
     }
+
+    /* Left drawer toggle */
+    #left-drawer-toggle {
+        grid-column: 1;
+        justify-self: start;
+    }
+
+    /* Center logo */
     .header-logo-container {
-        width: 100%; /* Take full width for centering */
-        justify-content: center; /* Center logo on small screens */
+        grid-column: 2;
+        justify-self: center;
+        display: flex;
+        justify-content: center;
     }
+
     .main-logo-hero {
-        max-height: 60px;
+        max-height: 50px;
     }
+
+    /* Right nav buttons */
     .landing-nav {
-        gap: 10px;
-        margin-top: 10px; /* Add margin after logo */
+        grid-column: 3;
+        justify-self: end;
+        gap: 8px;
+        margin-top: 0;
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    /* Hide text in nav buttons on mobile, keep icons */
+    .landing-nav .btn {
+        padding: 8px 10px;
+        min-width: 40px;
+        font-size: 1rem;
     }
     .btn-primary, .btn-primary-outline, .btn-secondary, .btn-tertiary {
         padding: 0.6rem 1rem;
@@ -2587,39 +2679,122 @@ form label, .password-label-row label {
         font-size: 1em;
     }
 
-    /* Chat layout mobile */
+    /* Chat layout mobile - DOMINANT CHAT WINDOW */
     #app-layout-wrapper {
         padding: 0;
+        height: calc(100vh - var(--header-height));
+        overflow: hidden;
     }
+
     .admin-main-content {
-        gap: var(--dashboard-panel-padding);
+        gap: 0;
+        height: 100%;
     }
+
     .admin-widget-sidebar, .widget-sidebar-left, .widget-sidebar-right {
         display: none;
     }
+
     .drawer-toggle {
         display: flex;
     }
+
+    /* Make chat container fill available space */
     #chat-container {
-        padding: 10px;
+        padding: 0;
         min-width: unset;
         border-radius: 0;
         box-shadow: none;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--clr-bg-light);
     }
+
+    /* Chat messages take up most of the screen */
+    #chat-messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+        min-height: 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Input container sticky at bottom */
     #input-container {
-        padding-top: 5px;
+        flex-shrink: 0;
+        padding: 8px 12px;
+        padding-bottom: max(env(safe-area-inset-bottom), 12px);
+        background: var(--clr-bg-light);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
     }
+
+    /* Compact toolbar on mobile */
+    .input-toolbar {
+        margin-bottom: 8px;
+    }
+
+    /* Auto-expanding textarea */
     #user-input {
-        min-height: 40px;
-        font-size: 14px;
+        min-height: 44px;
+        max-height: 120px;
+        font-size: 16px; /* Prevents iOS zoom */
+        padding: 12px;
+        border-radius: 12px;
+        resize: none;
+        overflow-y: auto;
+        line-height: 1.4;
+        border: 1px solid rgba(0, 0, 0, 0.15);
     }
+
+    #user-input:focus {
+        outline: none;
+        border-color: var(--clr-primary-teal);
+        box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
+    }
+
+    /* Send button more prominent - LARGER */
     #send-button {
-        padding: 8px 15px;
-        font-size: 0.9rem;
+        padding: 16px 24px;
+        font-size: 1.15rem;
+        min-height: 52px;
+        border-radius: 12px;
+        font-weight: 600;
     }
+
+    /* Messages optimized for mobile - LARGER TEXT */
     .message {
-        font-size: 0.85em;
-        padding: 10px 14px;
+        font-size: 1.1em;
+        padding: 14px 18px;
+        border-radius: 14px;
+        max-width: 85%;
+        line-height: 1.5;
+    }
+
+    /* User messages align right */
+    .message.user-message {
+        margin-left: auto;
+    }
+
+    /* AI messages align left */
+    .message.ai-message {
+        margin-right: auto;
+    }
+
+    /* Message paragraphs */
+    .message p {
+        font-size: 1em;
+        margin-bottom: 0.75em;
+    }
+
+    /* Code blocks in messages */
+    .message code {
+        font-size: 0.95em;
+    }
+
+    .message pre code {
+        font-size: 0.9em;
     }
 
     /* Tutor selection mobile */
@@ -2646,6 +2821,264 @@ form label, .password-label-row label {
     }
     .tutor-actions-bar .btn {
         width: 100%;
+    }
+
+    /* Enhanced touch targets for all interactive elements - LARGER TEXT */
+    .btn,
+    button,
+    a.btn,
+    input[type="submit"],
+    input[type="button"] {
+        min-height: 48px;
+        min-width: 48px;
+        padding: 14px 22px;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* Toolbar buttons specifically */
+    .input-toolbar .btn {
+        font-size: 1.3rem;
+    }
+
+    /* Better spacing for mobile forms */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-input,
+    .form-select,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        min-height: 48px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+        padding: 12px 15px;
+    }
+
+    /* Improve mobile header navigation */
+    .landing-header {
+        height: auto;
+        min-height: 60px;
+        flex-wrap: wrap;
+    }
+
+    .landing-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        padding: 5px 0;
+    }
+
+    .landing-nav .btn {
+        padding: 10px 14px;
+        min-width: 42px;
+        min-height: 42px;
+    }
+
+    /* Mobile modal improvements - LARGER TEXT */
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        max-height: 90vh;
+        margin: 5vh auto;
+        padding: 20px;
+        border-radius: 12px;
+        font-size: 1.05rem;
+    }
+
+    .modal-content h2,
+    .modal-content h3 {
+        font-size: 1.4rem;
+    }
+
+    .modal-content p,
+    .modal-content label {
+        font-size: 1rem;
+    }
+
+    .modal-close-button {
+        width: 48px;
+        height: 48px;
+        font-size: 32px;
+        top: 10px;
+        right: 10px;
+    }
+
+    /* Better spacing for dashboard panels */
+    .dashboard-panel {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .dashboard-panel-header {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+
+    /* Improve table readability on mobile */
+    .user-table {
+        font-size: 0.9rem;
+    }
+
+    .user-table th,
+    .user-table td {
+        padding: 10px 8px;
+    }
+
+    /* Mobile-friendly progress bars */
+    progress {
+        height: 12px;
+        border-radius: 6px;
+    }
+
+    /* Better spacing for lists */
+    ul, ol {
+        padding-left: 20px;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    /* Improve code block readability */
+    pre,
+    code {
+        font-size: 0.85rem;
+        overflow-x: auto;
+    }
+
+    /* Mobile-friendly cards */
+    .card-style-1,
+    .card-style-2 {
+        margin-bottom: 16px;
+        border-radius: 12px;
+    }
+
+    /* Mobile Navigation Improvements */
+
+    /* Prevent horizontal scroll on mobile */
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Make header sticky on mobile for better navigation */
+    .landing-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--clr-bg-light);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Improve logo clickability on mobile */
+    .header-logo-container {
+        padding: 8px;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Hide footer on mobile chat page to maximize space */
+    body.landing-page-body footer {
+        display: none;
+    }
+
+    /* Show footer on other pages */
+    body:not(.landing-page-body) footer {
+        padding: 20px 15px;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+    body:not(.landing-page-body) footer a {
+        display: inline-block;
+        padding: 8px;
+        margin: 4px;
+    }
+
+    /* Improve chat message bubbles on mobile */
+    .message {
+        max-width: 95%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Better file attachment display on mobile */
+    .file-grid-container {
+        gap: 10px;
+    }
+
+    /* Improve equation display on mobile */
+    .math-editor-input,
+    .inline-math-field,
+    math-field {
+        font-size: 18px;
+        min-height: 44px;
+    }
+
+    /* Better whiteboard controls on mobile */
+    .whiteboard-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .whiteboard-controls button {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 10px;
+    }
+
+    /* Improve calculator display on mobile */
+    .calculator-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Better mastery mode display on mobile */
+    .arcade-hub {
+        padding: 1rem;
+    }
+
+    /* Smooth scrolling for mobile */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Thinking indicator on mobile - LARGER TEXT */
+    #thinking-indicator {
+        padding: 12px;
+        margin: 8px 12px;
+        font-size: 1rem;
+    }
+
+    #thinking-indicator span:not(.dot) {
+        font-size: 1.05rem;
+    }
+
+    /* Fix for iOS Safari bottom bar overlap */
+    #input-container {
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    /* Ensure proper height calculation including sticky header */
+    body.landing-page-body {
+        overflow: hidden;
+        height: 100vh;
+        height: 100dvh; /* Use dynamic viewport height on mobile */
+    }
+
+    /* Better backdrop blur support */
+    @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+        .modal-overlay {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
     }
 }
 
@@ -4729,9 +5162,101 @@ body:not(.landing-page-body) {
     .work-snippet-body {
         flex-direction: column;
     }
-    
+
     .work-snippet-thumbnail {
         width: 100%;
         height: 160px;
     }
+}
+
+/* ============================================
+   SCROLLABLE FORM PAGES FIX
+   Fix for pick-tutor and complete-profile pages
+   ============================================ */
+
+/* Allow pick-tutor page to scroll when content overflows */
+body.landing-page-body:has(.pick-tutor-main) {
+    overflow-y: auto;
+}
+
+body.landing-page-body:has(.pick-tutor-main) main {
+    overflow: visible;
+}
+
+.pick-tutor-main {
+    overflow: visible;
+}
+
+/* Allow complete-profile page to scroll when content overflows */
+body.landing-page-body:has(.profile-container) {
+    overflow-y: auto;
+}
+
+body.landing-page-body:has(.profile-container) main {
+    overflow: visible;
+}
+
+/* Scrollable form wrapper for long forms */
+.scrollable-form-wrapper {
+    max-height: none;
+    overflow: visible;
+}
+
+/* Ensure login-page-wrapper allows scrolling for long forms */
+.login-page-wrapper {
+    overflow: visible;
+}
+
+/* ============================================
+   MOBILE UTILITY CLASSES
+   ============================================ */
+
+/* Hide elements on mobile devices */
+@media (max-width: 767px) {
+    .mobile-hide {
+        display: none !important;
+    }
+
+    .desktop-hide {
+        display: block !important;
+    }
+}
+
+/* Show only on desktop */
+@media (min-width: 768px) {
+    .desktop-hide {
+        display: none !important;
+    }
+
+    .mobile-hide {
+        display: inline !important;
+    }
+}
+
+/* Mobile-specific spacing utilities */
+@media (max-width: 767px) {
+    .mobile-padding {
+        padding: 16px !important;
+    }
+
+    .mobile-margin {
+        margin: 16px !important;
+    }
+
+    .mobile-no-padding {
+        padding: 0 !important;
+    }
+
+    .mobile-no-margin {
+        margin: 0 !important;
+    }
+}
+
+/* Touch-friendly utilities */
+.touch-target {
+    min-width: 48px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }

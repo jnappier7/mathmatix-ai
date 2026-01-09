@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <title>M∆THM∆TIΧ AI Chat</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/whiteboard.css" />
@@ -39,11 +39,16 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
-  <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+  <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=e7bbcca459d54f07b0b4aaf35f4a6b96"></script>
 </head>
 <body class="landing-page-body">
   <canvas id="confetti-canvas"></canvas>
   <header class="landing-header">
+    <!-- Mobile Drawer Toggle Buttons -->
+    <button id="left-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Leaderboard">
+      <i class="fas fa-bars"></i>
+    </button>
+
     <a href="/chat.html" class="header-logo-container" style="text-decoration: none; cursor: pointer;" title="Home">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </a>
@@ -62,6 +67,11 @@
       </button>
       <button id="logoutBtn" class="btn btn-tertiary logout-button" title="Logout">
         <i class="fas fa-sign-out-alt"></i> <span class="mobile-hide">Logout</span>
+      </button>
+
+      <!-- Mobile Progress Toggle Button -->
+      <button id="right-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Your Progress">
+        <i class="fas fa-user-circle"></i>
       </button>
     </nav>
   </header>
@@ -174,30 +184,64 @@
      <div id="input-container">
     <!-- Toolbar Above Message Box -->
     <div class="input-toolbar">
-      <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary">
-        <i class="fas fa-square-root-variable"></i>
-      </button>
-      <button id="toggle-whiteboard-btn" title="Toggle Whiteboard" class="btn btn-tertiary">
-        <i class="fas fa-chalkboard"></i>
-      </button>
-      <button id="toggle-calculator-btn" title="Scientific Calculator" class="btn btn-tertiary">
-        <i class="fas fa-calculator"></i>
-      </button>
-      <button id="open-graphing-calc-btn" title="Graphing Calculator" class="btn btn-tertiary">
-        <i class="fas fa-chart-line"></i>
-      </button>
-      <button id="attach-button" title="Upload Files" class="btn btn-tertiary">
-        <i class="fas fa-paperclip"></i>
-      </button>
-      <button id="camera-button" title="Show Your Work - Get Graded" class="btn btn-tertiary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-        <i class="fas fa-camera-retro"></i>
-      </button>
-      <button id="mic-button" title="Voice Input" class="btn btn-tertiary">
+      <!-- Primary Tools (Always visible on mobile) -->
+      <button id="mic-button" title="Voice Input" class="btn btn-tertiary toolbar-primary">
         <i class="fas fa-microphone"></i>
       </button>
-      <button id="algebra-tiles-btn" title="Algebra Tiles" class="btn btn-tertiary" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+      <button id="camera-button" title="Show Your Work - Get Graded" class="btn btn-tertiary toolbar-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <i class="fas fa-camera-retro"></i>
+      </button>
+      <button id="attach-button" title="Upload Files" class="btn btn-tertiary toolbar-primary">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary toolbar-primary">
+        <i class="fas fa-square-root-variable"></i>
+      </button>
+
+      <!-- Secondary Tools (Hidden on mobile, moved to More menu) -->
+      <button id="toggle-whiteboard-btn" title="Toggle Whiteboard" class="btn btn-tertiary toolbar-secondary">
+        <i class="fas fa-chalkboard"></i>
+      </button>
+      <button id="toggle-calculator-btn" title="Scientific Calculator" class="btn btn-tertiary toolbar-secondary">
+        <i class="fas fa-calculator"></i>
+      </button>
+      <button id="open-graphing-calc-btn" title="Graphing Calculator" class="btn btn-tertiary toolbar-secondary">
+        <i class="fas fa-chart-line"></i>
+      </button>
+      <button id="algebra-tiles-btn" title="Algebra Tiles" class="btn btn-tertiary toolbar-secondary" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
         <i class="fas fa-th"></i>
       </button>
+
+      <!-- More Tools Button (Only on mobile) -->
+      <button id="more-tools-btn" title="More Tools" class="btn btn-tertiary toolbar-more">
+        <i class="fas fa-ellipsis-h"></i>
+      </button>
+    </div>
+
+    <!-- More Tools Menu (Mobile) -->
+    <div id="more-tools-menu" class="more-tools-menu" style="display: none;">
+      <div class="more-tools-header">
+        <span>More Tools</span>
+        <button id="close-more-tools" class="close-more-tools">&times;</button>
+      </div>
+      <div class="more-tools-grid">
+        <button class="more-tool-item" data-trigger="toggle-whiteboard-btn">
+          <i class="fas fa-chalkboard"></i>
+          <span>Whiteboard</span>
+        </button>
+        <button class="more-tool-item" data-trigger="toggle-calculator-btn">
+          <i class="fas fa-calculator"></i>
+          <span>Calculator</span>
+        </button>
+        <button class="more-tool-item" data-trigger="open-graphing-calc-btn">
+          <i class="fas fa-chart-line"></i>
+          <span>Graphing Calc</span>
+        </button>
+        <button class="more-tool-item" data-trigger="algebra-tiles-btn">
+          <i class="fas fa-th"></i>
+          <span>Algebra Tiles</span>
+        </button>
+      </div>
     </div>
 
     <!-- Inline Equation Palette (MS Word-like) -->
@@ -852,6 +896,10 @@
   </script>
   <script src="/js/debug-buttons.js"></script>
   <script src="/js/mobile-touch-fix.js"></script>
+  <script src="/js/mobile-drawer.js"></script>
+  <script src="/js/mobile-more-tools.js"></script>
+  <script src="/js/auto-expand-textarea.js"></script>
+  <script src="/js/chat-pinch-zoom.js"></script>
 <script src="/js/csrf.js"></script>
   <script src="/js/file-upload.js"></script>
   <script src="/js/student-resources.js"></script>
