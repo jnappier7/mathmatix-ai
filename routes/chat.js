@@ -19,6 +19,7 @@ const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 const { detectAndFetchResource } = require('../utils/resourceDetector');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
+const { processAIResponse } = require('../utils/chatBoardParser');
 
 const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reasoning (Sonnet 3.5 v2 - Oct 2024)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -280,6 +281,16 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         const dynamicDrawingSequence = drawingSequence;
         aiResponseText = cleanedText;
 
+        // BOARD-FIRST CHAT INTEGRATION: Parse board references and validate micro-chat
+        const boardParsed = processAIResponse(aiResponseText);
+        aiResponseText = boardParsed.text; // Cleaned text with [BOARD_REF:...] removed
+        const boardContext = boardParsed.boardContext; // { targetObjectId, type, allReferences }
+
+        // Log validation warnings (soft enforcement - we don't block messages)
+        if (boardParsed.validation.warning) {
+            console.warn(`[ChatBoard] AI message validation: ${boardParsed.validation.warning}`);
+        }
+
         const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
         let bonusXpAwarded = 0;
         let bonusXpReason = '';
@@ -493,7 +504,8 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             specialXpAwarded: specialXpAwardedMessage,
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
-            drawingSequence: dynamicDrawingSequence
+            drawingSequence: dynamicDrawingSequence,
+            boardContext: boardContext // Board-first chat integration: spatial anchoring data
         };
 
         if (useStreaming) {

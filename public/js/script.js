@@ -2334,6 +2334,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Finalize the message
                 finalizeStreamingMessage(messageRef, fullText);
 
+                // BOARD-FIRST CHAT INTEGRATION: Handle spatial anchoring for streaming messages
+                if (finalData && finalData.boardContext && window.chatBoardController && messageRef.bubble) {
+                    window.chatBoardController.enhanceChatMessage(messageRef.bubble, 'ai', finalData.boardContext);
+                    console.log('[ChatBoard] Enhanced streaming message with board context:', finalData.boardContext);
+                }
+
                 // Auto-start ghost timer if function exists
                 if (typeof autoStartGhostTimer === 'function') {
                     autoStartGhostTimer(fullText);
@@ -2406,6 +2412,16 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (e) { console.error("Failed to parse graph JSON:", e); }
         }
         appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+
+        // BOARD-FIRST CHAT INTEGRATION: Handle spatial anchoring if boardContext exists
+        if (data.boardContext && window.chatBoardController) {
+            const messageElements = document.querySelectorAll('.message.ai');
+            const latestMessage = messageElements[messageElements.length - 1];
+            if (latestMessage) {
+                window.chatBoardController.enhanceChatMessage(latestMessage, 'ai', data.boardContext);
+                console.log('[ChatBoard] Enhanced message with board context:', data.boardContext);
+            }
+        }
 
         if (data.drawingSequence) {
             renderDrawing(data.drawingSequence);
