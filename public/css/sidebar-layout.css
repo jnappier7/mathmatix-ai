@@ -29,7 +29,7 @@
 #sidebar-toggle {
     position: fixed;
     left: 20px;
-    top: 20px;
+    top: 90px; /* Below header to avoid logo overlap */
     z-index: 1001;
     width: 40px;
     height: 40px;
@@ -52,7 +52,7 @@
 }
 
 #sidebar-toggle.sidebar-open {
-    left: 260px;
+    left: 240px; /* Move with sidebar when open */
 }
 
 /* Sidebar Sections */
@@ -210,11 +210,11 @@
 #floating-tutor {
     position: fixed;
     bottom: 30px;
-    right: 120px; /* Leave space for voice orb */
-    width: 120px;
-    height: 120px;
+    right: 140px; /* Leave space for voice orb */
+    width: 180px;
+    height: 180px;
     background: white;
-    border-radius: 16px;
+    border-radius: 20px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     display: flex;
     align-items: center;
@@ -259,6 +259,20 @@
     margin: 0;
 }
 
+/* Icon-only header buttons */
+.btn.icon-only {
+    padding: 10px 14px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn.icon-only i {
+    margin: 0;
+    font-size: 18px;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     #app-sidebar {
@@ -278,9 +292,9 @@
     }
 
     #floating-tutor {
-        bottom: 160px;
+        bottom: 140px;
         right: 20px;
-        width: 80px;
-        height: 80px;
+        width: 120px;
+        height: 120px;
     }
 }
