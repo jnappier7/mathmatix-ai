@@ -279,9 +279,15 @@ class VoiceController {
     }
 
     setupEventListeners() {
-        if (!this.voiceButton) return;
+        if (!this.voiceButton) {
+            console.error('❌ [Voice] Voice button not found, cannot setup listeners');
+            return;
+        }
+
+        console.log('✅ [Voice] Setting up event listeners for voice button');
 
         this.voiceButton.addEventListener('click', () => {
+            console.log('🎤 [Voice] Orb clicked! isListening:', this.isListening);
             if (this.isListening) {
                 this.stopListening();
             } else {
@@ -313,7 +319,15 @@ class VoiceController {
     // ============================================
 
     async startListening() {
+        console.log('🎙️ [Voice] startListening() called');
+
         try {
+            // Resume AudioContext if suspended (required by browser autoplay policies)
+            if (this.audioContext && this.audioContext.state === 'suspended') {
+                console.log('🔊 [Voice] Resuming suspended AudioContext...');
+                await this.audioContext.resume();
+            }
+
             // Disable old hands-free mode if active
             if (window.recognition && window.isRecognizing) {
                 console.log('🎙️ [Voice] Disabling old hands-free mode...');
@@ -326,6 +340,8 @@ class VoiceController {
                 }
             }
 
+            console.log('🎤 [Voice] Requesting microphone permission...');
+
             // Request microphone permission
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
@@ -336,6 +352,8 @@ class VoiceController {
                     autoGainControl: true
                 }
             });
+
+            console.log('✅ [Voice] Microphone access granted!', stream);
 
             this.isListening = true;
             this.updateUI('listening');
@@ -354,7 +372,9 @@ class VoiceController {
             };
 
             this.mediaRecorder.onstop = async () => {
+                console.log('🛑 [Voice] Recording stopped, audio chunks:', audioChunks.length);
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                console.log('📦 [Voice] Audio blob size:', audioBlob.size, 'bytes');
                 await this.sendAudioToBackend(audioBlob);
 
                 // Stop all tracks
@@ -367,7 +387,7 @@ class VoiceController {
             // Start recording
             this.mediaRecorder.start();
 
-            console.log('🎙️ Started listening...');
+            console.log('🎙️ [Voice] MediaRecorder started! State:', this.mediaRecorder.state);
 
         } catch (error) {
             console.error('[Voice] Failed to start listening:', error);
@@ -441,6 +461,7 @@ class VoiceController {
     }
 
     async sendAudioToBackend(audioBlob) {
+        console.log('📤 [Voice] Sending audio to backend...', audioBlob.size, 'bytes');
         this.updateUI('thinking');
 
         try {
@@ -450,10 +471,20 @@ class VoiceController {
 
             reader.onloadend = async () => {
                 const base64Audio = reader.result.split(',')[1];
+                console.log('🔄 [Voice] Audio converted to base64, length:', base64Audio.length);
 
                 // Send to backend for transcription and AI response
-                const response = await csrfFetch('/api/voice/process', {
+                console.log('🌐 [Voice] Sending POST to /api/voice/process...');
+
+                // Use csrfFetch if available, otherwise use regular fetch
+                const fetchFn = window.csrfFetch || fetch;
+                if (!window.csrfFetch) {
+                    console.warn('⚠️ [Voice] csrfFetch not available, using regular fetch');
+                }
+
+                const response = await fetchFn('/api/voice/process', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         audio: base64Audio,
@@ -461,7 +492,9 @@ class VoiceController {
                     })
                 });
 
+                console.log('📥 [Voice] Response received, status:', response.status);
                 const data = await response.json();
+                console.log('📝 [Voice] Response data:', data);
 
                 if (data.transcription) {
                     console.log('📝 Transcription:', data.transcription);
@@ -505,8 +538,14 @@ class VoiceController {
             };
 
         } catch (error) {
-            console.error('[Voice] Failed to process audio:', error);
+            console.error('❌ [Voice] Failed to process audio:', error);
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                name: error.name
+            });
             this.updateUI('error');
+            alert('Failed to process voice input. Check console for details.');
         }
     }
 

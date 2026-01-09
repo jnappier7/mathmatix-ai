@@ -210,11 +210,11 @@
 #floating-tutor {
     position: fixed;
     bottom: 30px;
-    right: 140px; /* Leave space for voice orb */
-    width: 180px;
-    height: 180px;
+    right: 160px; /* Leave space for voice orb */
+    width: 240px;
+    height: 240px;
     background: white;
-    border-radius: 20px;
+    border-radius: 24px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     display: flex;
     align-items: center;
@@ -226,7 +226,7 @@
 }
 
 #floating-tutor:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 #floating-tutor-avatar {
@@ -294,7 +294,7 @@
     #floating-tutor {
         bottom: 140px;
         right: 20px;
-        width: 120px;
-        height: 120px;
+        width: 160px;
+        height: 160px;
     }
 }

@@ -17,7 +17,7 @@
     flex-direction: column;
     z-index: 1000;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
+    overflow: visible; /* Changed to visible to allow tooltips */
 }
 
 #whiteboard-panel.is-hidden {
@@ -250,8 +250,8 @@
     flex: 1;
     position: relative;
     background: #ffffff;
-    overflow: hidden;
-    border-radius: 0 0 16px 16px;
+    overflow: hidden; /* Keep overflow hidden for canvas only */
+    border-radius: 0 0 8px 8px;
 }
 
 #tutor-canvas {
