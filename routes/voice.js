@@ -35,8 +35,30 @@ router.post('/process', isAuthenticated, async (req, res) => {
     const { audio, boardContext } = req.body;
     const userId = req.user._id;
 
+    console.log('🎙️ [Voice] Received request from user:', userId);
+    console.log('🎙️ [Voice] Audio data size:', audio ? audio.length : 0, 'chars');
+    console.log('🎙️ [Voice] Board context present:', !!boardContext);
+
     if (!audio) {
+        console.error('❌ [Voice] No audio data provided');
         return res.status(400).json({ error: 'Audio data is required' });
+    }
+
+    // Check API keys early
+    if (!ELEVENLABS_API_KEY) {
+        console.error('❌ [Voice] ELEVENLABS_API_KEY not configured');
+        return res.status(500).json({
+            error: 'Voice chat not configured',
+            message: 'ElevenLabs API key is missing. Please configure ELEVENLABS_API_KEY environment variable.'
+        });
+    }
+
+    if (!process.env.OPENAI_API_KEY && !openai.apiKey) {
+        console.error('❌ [Voice] OpenAI API key not configured');
+        return res.status(500).json({
+            error: 'Voice chat not configured',
+            message: 'OpenAI API key is missing. Please configure OPENAI_API_KEY environment variable.'
+        });
     }
 
     try {
@@ -47,30 +69,53 @@ router.post('/process', isAuthenticated, async (req, res) => {
         console.log('🎙️ [Voice] Processing audio from user:', userId);
 
         // Decode base64 audio
-        const audioBuffer = Buffer.from(audio, 'base64');
+        let audioBuffer;
+        try {
+            audioBuffer = Buffer.from(audio, 'base64');
+            console.log('✅ [Voice] Audio decoded, size:', audioBuffer.length, 'bytes');
+        } catch (error) {
+            console.error('❌ [Voice] Failed to decode base64 audio:', error.message);
+            throw new Error('Invalid audio format');
+        }
 
         // Create temporary file for Whisper API
         const tempDir = path.join(__dirname, '../temp');
         if (!fs.existsSync(tempDir)) {
+            console.log('📁 [Voice] Creating temp directory:', tempDir);
             fs.mkdirSync(tempDir, { recursive: true });
         }
 
         const tempAudioPath = path.join(tempDir, `voice_${userId}_${Date.now()}.webm`);
         fs.writeFileSync(tempAudioPath, audioBuffer);
+        console.log('💾 [Voice] Saved temp audio file:', tempAudioPath);
 
-        console.log('📝 [Voice] Transcribing audio...');
+        console.log('📝 [Voice] Calling Whisper API for transcription...');
 
-        const transcription = await openai.audio.transcriptions.create({
-            file: fs.createReadStream(tempAudioPath),
-            model: 'whisper-1',
-            language: 'en', // Can be auto-detected by omitting this
-        });
+        let transcription;
+        try {
+            transcription = await openai.audio.transcriptions.create({
+                file: fs.createReadStream(tempAudioPath),
+                model: 'whisper-1',
+                language: 'en', // Can be auto-detected by omitting this
+            });
+        } catch (error) {
+            console.error('❌ [Voice] Whisper API error:', error.message);
+            console.error('Error details:', error.response?.data || error);
+            // Clean up temp file before throwing
+            if (fs.existsSync(tempAudioPath)) {
+                fs.unlinkSync(tempAudioPath);
+            }
+            throw new Error(`Whisper transcription failed: ${error.message}`);
+        }
 
         const userMessage = transcription.text;
         console.log('✅ [Voice] Transcription:', userMessage);
 
         // Clean up temp file
-        fs.unlinkSync(tempAudioPath);
+        if (fs.existsSync(tempAudioPath)) {
+            fs.unlinkSync(tempAudioPath);
+            console.log('🗑️ [Voice] Cleaned up temp audio file');
+        }
 
         if (!userMessage || userMessage.trim().length === 0) {
             return res.json({
@@ -187,40 +232,47 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         // Get tutor's voice ID
         const tutorVoiceId = user.selectedTutorId?.voiceId || "2eFQnnNM32GDnZkCfkSm"; // Fallback to Mr. Nappier
-        console.log(`🎤 [Voice] Using tutor voice: ${tutorVoiceId}`);
-
-        if (!ELEVENLABS_API_KEY) {
-            throw new Error('ElevenLabs API key not configured');
-        }
+        console.log(`🎤 [Voice] Using tutor voice ID: ${tutorVoiceId}`);
+        console.log(`📝 [Voice] TTS text length: ${ttsText.length} chars`);
 
         // Generate TTS audio using ElevenLabs
-        const elevenLabsResponse = await retryWithExponentialBackoff(async () => {
-            return await axios.post(
-                `https://api.elevenlabs.io/v1/text-to-speech/${tutorVoiceId}`,
-                {
-                    text: ttsText,  // Use cleaned text for TTS
-                    model_id: "eleven_monolingual_v1",
-                    voice_settings: {
-                        stability: 0.4,
-                        similarity_boost: 0.7
-                    }
-                },
-                {
-                    headers: {
-                        "xi-api-key": ELEVENLABS_API_KEY,
-                        "Content-Type": "application/json",
-                        "Accept": "audio/mpeg"
+        let elevenLabsResponse;
+        try {
+            elevenLabsResponse = await retryWithExponentialBackoff(async () => {
+                return await axios.post(
+                    `https://api.elevenlabs.io/v1/text-to-speech/${tutorVoiceId}`,
+                    {
+                        text: ttsText,  // Use cleaned text for TTS
+                        model_id: "eleven_monolingual_v1",
+                        voice_settings: {
+                            stability: 0.4,
+                            similarity_boost: 0.7
+                        }
                     },
-                    responseType: "arraybuffer"
-                }
-            );
-        });
+                    {
+                        headers: {
+                            "xi-api-key": ELEVENLABS_API_KEY,
+                            "Content-Type": "application/json",
+                            "Accept": "audio/mpeg"
+                        },
+                        responseType: "arraybuffer"
+                    }
+                );
+            });
+        } catch (error) {
+            console.error('❌ [Voice] ElevenLabs TTS error:', error.message);
+            console.error('Error response:', error.response?.data);
+            console.error('Error status:', error.response?.status);
+            throw new Error(`TTS generation failed: ${error.message}`);
+        }
 
         const audioData = Buffer.from(elevenLabsResponse.data);
+        console.log('✅ [Voice] TTS audio received, size:', audioData.length, 'bytes');
 
         // Save audio file
         const audioDir = path.join(__dirname, '../public/audio/voice');
         if (!fs.existsSync(audioDir)) {
+            console.log('📁 [Voice] Creating audio directory:', audioDir);
             fs.mkdirSync(audioDir, { recursive: true });
         }
 
@@ -230,7 +282,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         const audioUrl = `/audio/voice/${audioFilename}`;
 
-        console.log('✅ [Voice] Speech generated:', audioUrl);
+        console.log('✅ [Voice] Speech generated and saved:', audioUrl);
 
         // ============================================
         // STEP 5: SAVE TO CONVERSATION HISTORY
@@ -286,10 +338,24 @@ router.post('/process', isAuthenticated, async (req, res) => {
         cleanupOldAudioFiles(audioDir, 100);
 
     } catch (error) {
-        console.error('❌ [Voice] Error processing voice:', error);
+        console.error('❌ [Voice] FATAL ERROR processing voice:', error);
+        console.error('Error stack:', error.stack);
+
+        // Provide specific error message
+        let userMessage = 'Failed to process voice input';
+        if (error.message.includes('Whisper')) {
+            userMessage = 'Speech recognition failed. Please try speaking again.';
+        } else if (error.message.includes('TTS') || error.message.includes('ElevenLabs')) {
+            userMessage = 'Voice synthesis failed. Please try again.';
+        } else if (error.message.includes('API key')) {
+            userMessage = 'Voice feature is not configured. Please contact support.';
+        }
+
         res.status(500).json({
             error: 'Failed to process voice input',
-            message: error.message
+            message: userMessage,
+            details: error.message,
+            timestamp: new Date().toISOString()
         });
     }
 });
