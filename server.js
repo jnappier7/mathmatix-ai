@@ -70,6 +70,7 @@ const leaderboardRoutes = require('./routes/leaderboard');
 const chatRoutes = require('./routes/chat');
 const speakRoutes = require('./routes/speak');
 const voiceRoutes = require('./routes/voice');  // Real-time voice chat (GPT-style)
+const voiceTestRoutes = require('./routes/voice-test');  // Voice diagnostics
 const uploadRoutes = require('./routes/upload');
 const chatWithFileRoutes = require('./routes/chatWithFile'); 
 const welcomeRoutes = require('./routes/welcome');
@@ -297,6 +298,7 @@ app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderb
 app.use('/api/chat', isAuthenticated, aiEndpointLimiter, chatRoutes); // SECURITY FIX: Added per-user rate limiting
 app.use('/api/speak', isAuthenticated, speakRoutes);
 app.use('/api/voice', isAuthenticated, aiEndpointLimiter, voiceRoutes); // Real-time voice chat with Whisper + TTS
+app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (no rate limit on test endpoint)
 app.use('/api/upload', isAuthenticated, aiEndpointLimiter, uploadRoutes); // SECURITY FIX: Added per-user rate limiting
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, chatWithFileRoutes); // SECURITY FIX: Added per-user rate limiting 
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
