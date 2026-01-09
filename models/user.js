@@ -74,6 +74,7 @@ const userPreferencesSchema = new Schema({
   typingDelayMs:        { type: Number, default: 2000, min: 0, max: 5000 },
   typeOnWpm:            { type: Number, default: 60,   min: 10, max: 200 },
   autoplayTtsHandsFree: { type: Boolean, default: true },
+  voiceChatEnabled:     { type: Boolean, default: true },  // Show/hide voice chat orb
   theme: { type: String, enum: ['light', 'dark', 'high-contrast'], default: 'light' }
 }, { _id: false });
 

@@ -85,6 +85,9 @@ class VoiceController {
     // ============================================
 
     createVoiceUI() {
+        // Check user preference for voice chat enabled
+        const voiceEnabled = window.currentUser?.preferences?.voiceChatEnabled !== false; // Default to true
+
         // Create floating voice button (like GPT's orb)
         const voiceContainer = document.createElement('div');
         voiceContainer.id = 'voice-chat-container';
@@ -93,7 +96,7 @@ class VoiceController {
             bottom: 30px;
             right: 30px;
             z-index: 10001;
-            display: flex;
+            display: ${voiceEnabled ? 'flex' : 'none'};
             flex-direction: column;
             align-items: center;
             gap: 10px;
