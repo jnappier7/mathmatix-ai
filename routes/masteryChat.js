@@ -18,7 +18,7 @@ const {
   PHASES
 } = require('../utils/lessonPhaseManager');
 
-const PRIMARY_CHAT_MODEL = "claude-3-5-sonnet-20241022"; // Best teaching & reasoning (Sonnet 3.5 v2 - Oct 2024)
+const PRIMARY_CHAT_MODEL = "claude-sonnet-4-5-20250929"; // Best teaching & reasoning (Sonnet 4.5 - Jan 2025)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 

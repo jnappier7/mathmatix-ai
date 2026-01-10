@@ -25,9 +25,9 @@ const { generateSystemPrompt } = require('./prompt');
 // ============================================================================
 
 const DEFAULT_MODELS = {
-    chat: 'claude-3-5-sonnet-20241022',      // Best teaching & reasoning model (Sonnet 3.5 v2 - Oct 2024)
-    grading: 'claude-3-5-sonnet-20241022',   // Vision-capable, superior analysis
-    reasoning: 'claude-3-5-sonnet-20241022', // Top-tier complex problem solving
+    chat: 'claude-sonnet-4-5-20250929',      // Best teaching & reasoning model (Sonnet 4.5 - Jan 2025)
+    grading: 'claude-sonnet-4-5-20250929',   // Vision-capable, superior analysis
+    reasoning: 'claude-sonnet-4-5-20250929', // Top-tier complex problem solving
     embedding: 'text-embedding-3-small'      // Keep OpenAI for embeddings (specialized task)
 };
 
