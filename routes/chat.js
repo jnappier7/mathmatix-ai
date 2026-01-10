@@ -251,6 +251,20 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                     }
 
                     if (content) {
+                        // Smart spacing for Claude tokens: Add space after punctuation if next chunk doesn't start with space
+                        if (isClaudeModel && fullResponseBuffer.length > 0) {
+                            const lastChar = fullResponseBuffer[fullResponseBuffer.length - 1];
+                            const firstChar = content[0];
+                            const needsSpace = /[.!?:,;]/.test(lastChar) &&
+                                             firstChar !== ' ' &&
+                                             firstChar !== '\n' &&
+                                             !/^[.!?:,;)]/.test(firstChar); // Don't add space before punctuation
+
+                            if (needsSpace) {
+                                content = ' ' + content;
+                            }
+                        }
+
                         fullResponseBuffer += content;
 
                         // Send chunk to client via SSE
