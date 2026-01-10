@@ -236,6 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const stopAudioBtn = document.getElementById('stop-audio-btn');
     const fullscreenDropzone = document.getElementById('app-layout-wrapper');
     const studentLinkCodeValue = document.getElementById('student-link-code-value');
+    const shareProgressHeaderBtn = document.getElementById('share-progress-header-btn');
     const equationModal = document.getElementById('equation-modal');
     const openEquationBtn = document.getElementById('insert-equation-btn');
     const closeEquationBtn = document.getElementById('close-equation-modal');
@@ -2626,6 +2627,40 @@ document.addEventListener("DOMContentLoaded", () => {
     if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
+
+    // Share Progress button - copy link code to clipboard
+    if (shareProgressHeaderBtn) {
+        shareProgressHeaderBtn.addEventListener('click', async () => {
+            if (currentUser && currentUser.role === 'student') {
+                let code = currentUser.studentToParentLinkCode?.code;
+
+                // Generate code if it doesn't exist
+                if (!code) {
+                    try {
+                        const res = await csrfFetch('/api/student/generate-link-code', {
+                            method: 'POST',
+                            credentials: 'include'
+                        });
+                        const data = await res.json();
+                        if (data.success && data.code) {
+                            code = data.code;
+                            currentUser.studentToParentLinkCode = { code: data.code, parentLinked: false };
+                        }
+                    } catch (err) {
+                        console.error('Error generating parent link code:', err);
+                        showToast('Failed to generate share code', 2000);
+                        return;
+                    }
+                }
+
+                // Copy to clipboard
+                if (code) {
+                    navigator.clipboard.writeText(code);
+                    showToast(`Share code copied: ${code}`, 3000);
+                }
+            }
+        });
+    }
 
     // Settings toggle event listeners
     if (handsFreeToggle) {

@@ -277,11 +277,27 @@
 footer {
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: 0 !important;
+    right: 0 !important;
     width: 100vw !important;
-    margin: 0 !important;
-    z-index: 998;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    z-index: 1005; /* Above input container and tutor avatar */
+}
+
+/* Ensure chat container has space for footer */
+#chat-container {
+    margin-bottom: 80px !important; /* Space for footer */
+}
+
+/* Input container needs to be above footer */
+#input-container {
+    position: relative;
+    z-index: 1003 !important;
+    background: var(--clr-bg-light);
+    padding-bottom: 20px !important;
 }
 
 /* Mobile Responsive */

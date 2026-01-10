@@ -33,12 +33,14 @@ class VoiceController {
         this.vadAnalyzer = null;
         this.isSpeaking = false;
         this.silenceTimeout = null;
-        this.silenceThreshold = 500; // ms of silence before sending
+        this.silenceThreshold = 1500; // ms of silence before auto-sending (hands-free mode)
 
         // State
         this.isListening = false;
         this.isAISpeaking = false;
         this.mode = 'idle'; // 'idle', 'listening', 'thinking', 'speaking'
+        this.handsFreeMode = true; // GPT-style continuous conversation
+        this.currentAudio = null; // Track current playing audio for interruption
 
         // UI elements
         this.voiceButton = null;
@@ -118,7 +120,7 @@ class VoiceController {
         const statusText = document.createElement('div');
         statusText.id = 'voice-status';
         statusText.className = 'voice-status';
-        statusText.textContent = 'Click to start voice chat';
+        statusText.textContent = this.handsFreeMode ? 'Click to start (hands-free)' : 'Click to start voice chat';
 
         voiceContainer.appendChild(orbButton);
         voiceContainer.appendChild(statusText);
@@ -287,10 +289,19 @@ class VoiceController {
         console.log('✅ [Voice] Setting up event listeners for voice button');
 
         this.voiceButton.addEventListener('click', () => {
-            console.log('🎤 [Voice] Orb clicked! isListening:', this.isListening);
-            if (this.isListening) {
+            console.log('🎤 [Voice] Orb clicked! isListening:', this.isListening, 'isAISpeaking:', this.isAISpeaking);
+
+            // If AI is speaking, interrupt it and start listening
+            if (this.isAISpeaking) {
+                this.stopSpeaking();
+                this.startListening();
+            }
+            // If already listening in hands-free mode, stop
+            else if (this.isListening) {
                 this.stopListening();
-            } else {
+            }
+            // Otherwise, start listening
+            else {
                 this.startListening();
             }
         });
@@ -441,16 +452,28 @@ class VoiceController {
                 this.isSpeaking = true;
                 console.log('🗣️ Voice detected');
                 clearTimeout(this.silenceTimeout);
+
+                // Update status
+                if (this.statusText) {
+                    this.statusText.textContent = 'Listening...';
+                }
             } else if (!isSpeakingNow && this.isSpeaking) {
                 // Silence detected, start countdown
                 clearTimeout(this.silenceTimeout);
                 this.silenceTimeout = setTimeout(() => {
                     this.isSpeaking = false;
-                    console.log('🤫 Silence detected');
+                    console.log('🤫 Silence detected - auto-sending in hands-free mode');
 
-                    // Auto-stop if using continuous mode
-                    // this.stopListening();
+                    // Auto-stop if using hands-free mode
+                    if (this.handsFreeMode && this.isListening) {
+                        this.stopListening();
+                    }
                 }, this.silenceThreshold);
+
+                // Show countdown in status
+                if (this.statusText && this.handsFreeMode) {
+                    this.statusText.textContent = 'Processing...';
+                }
             }
 
             requestAnimationFrame(checkVolume);
@@ -580,25 +603,60 @@ class VoiceController {
         this.isAISpeaking = true;
 
         try {
+            // Stop any currently playing audio (interruption)
+            if (this.currentAudio) {
+                console.log('🛑 [Voice] Interrupting current audio');
+                this.currentAudio.pause();
+                this.currentAudio.currentTime = 0;
+            }
+
             const audio = new Audio(audioUrl);
+            this.currentAudio = audio;
 
             audio.onended = () => {
+                console.log('✅ [Voice] Audio playback ended');
                 this.isAISpeaking = false;
+                this.currentAudio = null;
                 this.updateUI('idle');
+
+                // Auto-restart listening in hands-free mode
+                if (this.handsFreeMode && !this.isListening) {
+                    console.log('🔄 [Voice] Auto-restarting listening (hands-free mode)');
+                    setTimeout(() => {
+                        if (!this.isListening) {
+                            this.startListening();
+                        }
+                    }, 500); // Small delay before restarting
+                }
             };
 
             audio.onerror = () => {
                 console.error('[Voice] Audio playback error');
                 this.isAISpeaking = false;
+                this.currentAudio = null;
                 this.updateUI('error');
             };
 
             await audio.play();
+            console.log('🔊 [Voice] Playing AI response');
 
         } catch (error) {
             console.error('[Voice] Failed to play audio:', error);
             this.isAISpeaking = false;
+            this.currentAudio = null;
             this.updateUI('error');
+        }
+    }
+
+    // Stop AI speaking (for interruption)
+    stopSpeaking() {
+        if (this.currentAudio) {
+            console.log('🛑 [Voice] Stopping AI speech (interrupted by user)');
+            this.currentAudio.pause();
+            this.currentAudio.currentTime = 0;
+            this.currentAudio = null;
+            this.isAISpeaking = false;
+            this.updateUI('idle');
         }
     }
 
@@ -711,7 +769,7 @@ class VoiceController {
             case 'speaking':
                 this.voiceButton.classList.add('speaking');
                 this.statusText.classList.add('speaking');
-                this.statusText.textContent = 'Speaking...';
+                this.statusText.textContent = this.handsFreeMode ? 'Speaking... (click to interrupt)' : 'Speaking...';
                 icon.className = 'fas fa-volume-up';
                 break;
 
@@ -724,7 +782,7 @@ class VoiceController {
 
             default: // idle
                 this.voiceButton.classList.add('idle');
-                this.statusText.textContent = 'Click to start voice chat';
+                this.statusText.textContent = this.handsFreeMode ? 'Click to start (hands-free)' : 'Click to start voice chat';
                 icon.className = 'fas fa-microphone';
         }
     }
