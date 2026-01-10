@@ -2271,30 +2271,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 credentials: 'include'
             });
         } else {
-            // STREAMING PATH: Use real-time streaming responses
-            const USE_STREAMING = true; // Feature flag - set to false to disable streaming
+            // Regular chat (no files)
+            const payload = {
+                message: messageText
+            };
 
-            if (USE_STREAMING) {
-                const payload = {
-                    message: messageText
-                };
-
-                if (responseTime !== null) {
-                    payload.responseTime = responseTime;
-                }
-
-                // Fetch without streaming - message appears all at once like real texting
-                response = await csrfFetch("/api/chat", {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    credentials: 'include'
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
-                }
+            if (responseTime !== null) {
+                payload.responseTime = responseTime;
             }
+
+            // Fetch without streaming - message appears all at once like real texting
+            response = await csrfFetch("/api/chat", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                credentials: 'include'
+            });
+        }
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
