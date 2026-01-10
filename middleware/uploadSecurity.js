@@ -24,7 +24,7 @@ async function verifyUploadAccess(req, res, next) {
         }
 
         // Find the upload record
-        const upload = await StudentUpload.findOne({ filename });
+        const upload = await StudentUpload.findOne({ storedFilename: filename });
 
         if (!upload) {
             return res.status(404).json({
@@ -185,11 +185,11 @@ async function cleanupOldUploads() {
 
         for (const upload of uploadsToDelete) {
             try {
-                // Delete file from disk
-                const filePath = path.join(__dirname, '..', 'uploads', upload.filename);
+                // Delete file from disk using the stored filePath or construct from storedFilename
+                const filePath = upload.filePath || path.join(__dirname, '..', 'uploads', upload.storedFilename);
                 if (fs.existsSync(filePath)) {
                     fs.unlinkSync(filePath);
-                    console.log(`[Upload Cleanup] Deleted file: ${upload.filename}`);
+                    console.log(`[Upload Cleanup] Deleted file: ${upload.storedFilename}`);
                 }
 
                 // Delete from database
