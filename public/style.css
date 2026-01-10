@@ -2759,6 +2759,14 @@ form label, .password-label-row label {
         box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
     }
 
+    /* Hide suggestion chips on mobile - saves space and reduces clutter */
+    #suggestion-chips-container {
+        display: none !important;
+        max-height: 0 !important;
+        opacity: 0 !important;
+        overflow: hidden !important;
+    }
+
     /* Send button more prominent - LARGER */
     #send-button {
         padding: 16px 24px;
