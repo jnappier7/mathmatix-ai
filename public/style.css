@@ -2365,7 +2365,7 @@ form label, .password-label-row label {
     background: var(--clr-bg-light);
     box-shadow: var(--shadow-lg);
     transition: transform 0.3s ease;
-    z-index: 900;
+    z-index: 1000; /* Increased from 900 to ensure it's above sticky header (z-index: 100) */
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -2453,6 +2453,18 @@ form label, .password-label-row label {
 @media (max-width: 767px) {
     .drawer-toggle-btn {
         display: flex;
+    }
+
+    /* Hide toggle buttons when their respective drawers are open */
+    .drawer.left.open ~ header #left-drawer-toggle,
+    body:has(.drawer.left.open) #left-drawer-toggle {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    body:has(.drawer.right.open) #right-drawer-toggle {
+        opacity: 0;
+        pointer-events: none;
     }
 }
 
