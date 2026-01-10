@@ -2283,8 +2283,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     payload.responseTime = responseTime;
                 }
 
-                // Fetch with stream=true query parameter
-                response = await csrfFetch("/api/chat?stream=true", {
+                // Fetch without streaming - message appears all at once like real texting
+                response = await csrfFetch("/api/chat", {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -2294,106 +2294,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!response.ok) {
                     throw new Error(`Server error: ${response.status}`);
                 }
-
-                // Create streaming message bubble
-                const messageRef = startStreamingMessage();
-                let fullText = '';
-                let finalData = null;
-
-                // Read SSE stream
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let buffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    buffer += decoder.decode(value, { stream: true });
-
-                    // Process SSE events (format: "data: {...}\n\n")
-                    const events = buffer.split('\n\n');
-                    buffer = events.pop(); // Keep incomplete event in buffer
-
-                    for (const event of events) {
-                        if (!event.trim() || !event.startsWith('data: ')) continue;
-
-                        try {
-                            const jsonData = JSON.parse(event.substring(6)); // Remove "data: " prefix
-
-                            if (jsonData.type === 'chunk') {
-                                fullText += jsonData.content;
-                                appendStreamingChunk(messageRef, jsonData.content);
-                            } else if (jsonData.type === 'complete') {
-                                finalData = jsonData.data;
-                            }
-                        } catch (e) {
-                            console.error('Error parsing SSE event:', e);
-                        }
-                    }
-                }
-
-                // Finalize the message
-                finalizeStreamingMessage(messageRef, fullText);
-
-                // BOARD-FIRST CHAT INTEGRATION: Handle spatial anchoring for streaming messages
-                if (finalData && finalData.boardContext && window.chatBoardController && messageRef.bubble) {
-                    window.chatBoardController.enhanceChatMessage(messageRef.bubble, 'ai', finalData.boardContext);
-                    console.log('[ChatBoard] Enhanced streaming message with board context:', finalData.boardContext);
-                }
-
-                // Auto-start ghost timer if function exists
-                if (typeof autoStartGhostTimer === 'function') {
-                    autoStartGhostTimer(fullText);
-                }
-
-                // Process final data (XP, drawings, etc.)
-                if (finalData) {
-                    if (finalData.drawingSequence) {
-                        renderDrawing(finalData.drawingSequence);
-                    }
-
-                    if (finalData.newlyUnlockedTutors && finalData.newlyUnlockedTutors.length > 0) {
-                        showTutorUnlockCelebration(finalData.newlyUnlockedTutors);
-                    }
-
-                    if (finalData.userXp !== undefined) {
-                        currentUser.level = finalData.userLevel;
-                        currentUser.xpForCurrentLevel = finalData.userXp;
-                        currentUser.xpForNextLevel = finalData.xpNeeded;
-                        updateGamificationDisplay();
-                    }
-
-                    if (finalData.specialXpAwarded) {
-                        const isLevelUp = finalData.specialXpAwarded.includes('LEVEL_UP');
-                        triggerXpAnimation(finalData.specialXpAwarded, isLevelUp, !isLevelUp);
-                    }
-                }
-
-                showThinkingIndicator(false);
-
-                // Show suggestions after AI response completes
-                setTimeout(() => showDefaultSuggestions(), 500);
-
-                return; // Exit early since streaming path is complete
             }
-
-            // NON-STREAMING FALLBACK (original behavior)
-            const payload = {
-                message: messageText
-            };
-
-            if (responseTime !== null) {
-                payload.responseTime = responseTime;
-            }
-
-            response = await csrfFetch("/api/chat", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                credentials: 'include'
-            });
-        }
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
