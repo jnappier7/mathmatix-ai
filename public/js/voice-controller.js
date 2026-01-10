@@ -308,6 +308,15 @@ class VoiceController {
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
+            // ESC to stop voice (works anytime - listening or speaking)
+            if (e.code === 'Escape') {
+                if (this.isListening) {
+                    this.stopListening();
+                } else if (this.isAISpeaking) {
+                    this.stopSpeaking();
+                }
+            }
+
             // Hold spacebar to talk (push-to-talk mode)
             if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
                 if (!this.isListening && !e.repeat) {

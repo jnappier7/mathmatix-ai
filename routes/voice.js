@@ -133,7 +133,6 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // Fetch user data and conversation history
         const user = await User.findById(userId)
             .populate('selectedTutorId')
-            .populate('skills')
             .lean();
 
         if (!user) {
