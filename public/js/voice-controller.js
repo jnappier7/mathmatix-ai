@@ -520,6 +520,8 @@ class VoiceController {
                 if (!response.ok) {
                     const errorData = await response.json();
                     console.error('❌ [Voice] Server error:', errorData);
+                    console.error('❌ [Voice] Error message:', errorData.message);
+                    console.error('❌ [Voice] Error details:', errorData.details);
                     throw new Error(errorData.message || errorData.error || 'Server error');
                 }
 
