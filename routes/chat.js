@@ -159,7 +159,7 @@ if (!message) return res.status(400).json({ message: "Message is required." });
 
         const recentMessagesForAI = activeConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
         let formattedMessagesForLLM = recentMessagesForAI
-            .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content)
+            .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content && msg.content.trim().length > 0)
             .map(msg => ({ role: msg.role, content: msg.content }));
 
         // If a resource was detected, inject it into the conversation
