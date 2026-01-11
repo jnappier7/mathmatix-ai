@@ -33,7 +33,8 @@ class VoiceController {
         this.vadAnalyzer = null;
         this.isSpeaking = false;
         this.silenceTimeout = null;
-        this.silenceThreshold = 1500; // ms of silence before auto-sending (hands-free mode)
+        this.silenceThreshold = 2500; // ms of silence before auto-sending (hands-free mode) - increased for better UX
+        this.minSpeechDuration = 500; // ms - minimum speech duration before enabling auto-stop
 
         // State
         this.isListening = false;
@@ -41,6 +42,7 @@ class VoiceController {
         this.mode = 'idle'; // 'idle', 'listening', 'thinking', 'speaking'
         this.handsFreeMode = true; // GPT-style continuous conversation
         this.currentAudio = null; // Track current playing audio for interruption
+        this.speechStartTime = null; // Track when user started speaking
 
         // UI elements
         this.voiceButton = null;
@@ -340,6 +342,9 @@ class VoiceController {
 
     async startListening() {
         console.log('🎙️ [Voice] startListening() called');
+        console.log('🎙️ [Voice] handsFreeMode:', this.handsFreeMode);
+        console.log('🎙️ [Voice] silenceThreshold:', this.silenceThreshold, 'ms');
+        console.log('🎙️ [Voice] minSpeechDuration:', this.minSpeechDuration, 'ms');
 
         try {
             // Resume AudioContext if suspended (required by browser autoplay policies)
@@ -419,7 +424,10 @@ class VoiceController {
     stopListening() {
         if (!this.isListening) return;
 
+        console.log('🎙️ [Voice] stopListening() called');
         this.isListening = false;
+        this.isSpeaking = false;
+        this.speechStartTime = null;
         this.updateUI('thinking');
 
         if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
@@ -459,6 +467,7 @@ class VoiceController {
             if (isSpeakingNow && !this.isSpeaking) {
                 // Started speaking
                 this.isSpeaking = true;
+                this.speechStartTime = Date.now();
                 console.log('🗣️ Voice detected');
                 clearTimeout(this.silenceTimeout);
 
@@ -467,11 +476,23 @@ class VoiceController {
                     this.statusText.textContent = 'Listening...';
                 }
             } else if (!isSpeakingNow && this.isSpeaking) {
-                // Silence detected, start countdown
+                // Silence detected - check if user spoke long enough before auto-stopping
+                const speechDuration = Date.now() - this.speechStartTime;
+
+                if (speechDuration < this.minSpeechDuration) {
+                    // Too brief - probably background noise, ignore it
+                    console.log(`⚠️ Speech too brief (${speechDuration}ms), ignoring...`);
+                    this.isSpeaking = false;
+                    this.speechStartTime = null;
+                    return;
+                }
+
+                // Real speech detected, start silence countdown
                 clearTimeout(this.silenceTimeout);
                 this.silenceTimeout = setTimeout(() => {
                     this.isSpeaking = false;
-                    console.log('🤫 Silence detected - auto-sending in hands-free mode');
+                    this.speechStartTime = null;
+                    console.log(`🤫 Silence detected after ${speechDuration}ms of speech - auto-sending`);
 
                     // Auto-stop if using hands-free mode
                     if (this.handsFreeMode && this.isListening) {
