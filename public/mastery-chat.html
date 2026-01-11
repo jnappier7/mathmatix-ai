@@ -6,22 +6,27 @@
     <title>Mastery Mode - MΔTHMΔTIΧ</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="/css/algebra-tiles.css">
+    <link rel="stylesheet" href="/css/whiteboard.css">
+    <link rel="stylesheet" href="/css/sidebar-layout.css">
+    <link rel="stylesheet" href="/css/mobile-fixes.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Mastery Mode Specific Styles - Different Feel, Same Brand */
+        /* Mastery Mode Specific Styles - Matching Main Chat Theme */
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
-            color: #fff;
+            background: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
         }
 
         .mastery-header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-bottom: 2px solid #12B3B3;
+            background: white;
+            border-bottom: 3px solid #764ba2;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
         }
 
         .badge-progress {
@@ -78,15 +83,15 @@
 
         .badge-details h2 {
             margin: 0;
-            font-size: 28px;
-            color: #fff;
+            font-size: 24px;
+            color: #333;
             font-weight: 800;
             letter-spacing: 0.5px;
         }
 
         .badge-details p {
             margin: 6px 0 0 0;
-            opacity: 0.85;
+            color: #666;
             font-size: 14px;
         }
 
@@ -109,7 +114,7 @@
         .progress-bar {
             width: 100%;
             height: 30px;
-            background: rgba(255, 255, 255, 0.1);
+            background: #e0e0e0;
             border-radius: 15px;
             overflow: hidden;
             position: relative;
@@ -117,28 +122,30 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #12B3B3, #16D9D9);
+            background: linear-gradient(90deg, #667eea, #764ba2);
             transition: width 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            color: white;
         }
 
         .exit-button {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid #fff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
             color: #fff;
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .exit-button:hover {
-            background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .mastery-container {
@@ -152,60 +159,68 @@
         }
 
         .whiteboard-section {
-            background: rgba(255, 255, 255, 0.05);
+            background: white;
             border-radius: 12px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .whiteboard-section h3 {
+            color: #667eea;
         }
 
         .chat-section {
-            background: rgba(255, 255, 255, 0.05);
+            background: white;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .progress-section {
-            background: rgba(255, 255, 255, 0.05);
+            background: white;
             border-radius: 12px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 20px;
             overflow-y: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .progress-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: #f8f9fa;
             border-radius: 8px;
             padding: 15px;
+            border: 1px solid #e0e0e0;
         }
 
         .progress-card h3 {
             margin: 0 0 10px 0;
-            color: #fff;
+            color: #333;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .stat-row {
             display: flex;
             justify-content: space-between;
             margin: 8px 0;
-            color: rgba(255, 255, 255, 0.6);
+            color: #666;
             font-size: 14px;
         }
 
         .stat-row span:first-child {
-            color: rgba(255, 255, 255, 0.5);
+            color: #888;
             font-weight: 400;
         }
 
         .stat-value {
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
+            color: #333;
         }
 
         #mastery-chat-box {
@@ -224,19 +239,22 @@
         }
 
         .message.user {
-            background: linear-gradient(135deg, #12B3B3, #16D9D9);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             align-self: flex-end;
             margin-left: auto;
+            color: white;
         }
 
         .message.ai {
-            background: rgba(255, 255, 255, 0.1);
+            background: #f0f0f0;
             align-self: flex-start;
+            color: #333;
         }
 
         .input-area {
             padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid #e0e0e0;
+            background: white;
         }
 
         .input-container {
@@ -246,55 +264,55 @@
 
         #mastery-input {
             flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: white;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
             padding: 12px;
-            color: #fff;
+            color: #333;
             font-size: 16px;
         }
 
         #mastery-input:focus {
             outline: none;
-            border-color: #12B3B3;
+            border-color: #667eea;
         }
 
         #mastery-send-btn {
-            background: linear-gradient(135deg, #12B3B3, #16D9D9);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
             color: #fff;
             padding: 12px 30px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             transition: all 0.3s ease;
         }
 
         #mastery-send-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(18, 179, 179, 0.4);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .whiteboard-placeholder {
             flex: 1;
-            background: rgba(255, 255, 255, 0.02);
-            border: 2px dashed rgba(255, 255, 255, 0.2);
+            background: #fafafa;
+            border: 2px dashed #d0d0d0;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 18px;
+            color: #999;
+            font-size: 16px;
         }
 
         /* PROBLEM DISPLAY INTERFACE */
         #problem-display-container {
-            background: rgba(255, 255, 255, 0.08);
+            background: #f8f9fa;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 15px;
-            border: 2px solid rgba(18, 179, 179, 0.3);
+            border: 2px solid #667eea;
         }
 
         .phase-indicator {
@@ -1150,5 +1168,9 @@
     <!-- Algebra Tiles Container -->
     <div id="algebraTilesContainer"></div>
     <script src="/js/algebra-tiles.js"></script>
+
+    <!-- Voice Controller for voice chat orb -->
+    <script src="/js/storage-utils.js"></script>
+    <script src="/js/voice-controller.js"></script>
 </body>
 </html>
