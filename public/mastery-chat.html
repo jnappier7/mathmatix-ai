@@ -1228,97 +1228,90 @@
     <script src="/js/storage-utils.js"></script>
     <script src="/js/voice-controller.js"></script>
 
-    <!-- Whiteboard Integration -->
+    <!-- Whiteboard Integration - Full MathmatixWhiteboard with AI Animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="/js/whiteboard.js"></script>
     <script>
-        // Initialize Mastery Whiteboard
+        // Initialize Full MathmatixWhiteboard System
         let masteryWhiteboard = null;
 
         function initializeMasteryWhiteboard() {
-            const canvas = document.getElementById('mastery-whiteboard-canvas');
-            const container = document.getElementById('mastery-whiteboard-container');
-
-            if (!canvas || !container || typeof fabric === 'undefined') {
-                console.log('[Whiteboard] Prerequisites not ready, skipping initialization');
+            if (typeof MathmatixWhiteboard === 'undefined' || typeof fabric === 'undefined') {
+                console.log('[Mastery Whiteboard] Prerequisites not ready');
                 return;
             }
 
-            // Initialize Fabric.js canvas
-            const fabricCanvas = new fabric.Canvas('mastery-whiteboard-canvas', {
-                isDrawingMode: false,
-                selection: false,
-                backgroundColor: '#ffffff',
-                width: container.clientWidth,
-                height: container.clientHeight
-            });
+            try {
+                // Initialize with FULL whiteboard system (1468 lines of elite features!)
+                masteryWhiteboard = new MathmatixWhiteboard(
+                    'mastery-whiteboard-canvas',
+                    'mastery-whiteboard-container'
+                );
 
-            masteryWhiteboard = fabricCanvas;
+                // Set to teacher mode for AI-driven animations
+                masteryWhiteboard.boardMode = 'teacher';
 
-            // Resize handler
-            const resizeWhiteboard = () => {
-                if (fabricCanvas && container) {
-                    fabricCanvas.setDimensions({
-                        width: container.clientWidth,
-                        height: container.clientHeight
-                    });
-                    fabricCanvas.renderAll();
-                }
-            };
-
-            window.addEventListener('resize', resizeWhiteboard);
-
-            // Tool buttons
-            document.getElementById('wb-clear')?.addEventListener('click', () => {
-                if (fabricCanvas) {
-                    fabricCanvas.clear();
-                    fabricCanvas.backgroundColor = '#ffffff';
-                    fabricCanvas.renderAll();
-                }
-            });
-
-            document.getElementById('wb-toggle')?.addEventListener('click', function() {
-                const section = document.querySelector('.whiteboard-section');
-                section.classList.toggle('hidden');
-                this.querySelector('i').className = section.classList.contains('hidden')
-                    ? 'fas fa-eye-slash'
-                    : 'fas fa-eye';
-            });
-
-            console.log('✅ Mastery Whiteboard initialized');
-        }
-
-        // Helper function to add content to whiteboard (can be called during lesson phases)
-        function addToWhiteboard(content) {
-            if (!masteryWhiteboard) {
-                console.warn('[Whiteboard] Not initialized yet');
-                return;
-            }
-
-            // Add text to whiteboard
-            if (typeof content === 'string') {
-                const text = new fabric.Text(content, {
-                    left: 50,
-                    top: 50 + (Math.random() * 100), // Slight randomization
-                    fontSize: 24,
-                    fill: '#667eea',
-                    fontFamily: 'Arial'
+                // Tool buttons
+                document.getElementById('wb-clear')?.addEventListener('click', () => {
+                    if (masteryWhiteboard) {
+                        masteryWhiteboard.clearCanvas();
+                    }
                 });
-                masteryWhiteboard.add(text);
-                masteryWhiteboard.renderAll();
+
+                document.getElementById('wb-toggle')?.addEventListener('click', function() {
+                    const section = document.querySelector('.whiteboard-section');
+                    section.classList.toggle('hidden');
+                    this.querySelector('i').className = section.classList.contains('hidden')
+                        ? 'fas fa-eye-slash'
+                        : 'fas fa-eye';
+                });
+
+                console.log('✅ ELITE Mastery Whiteboard initialized with AI features:');
+                console.log('   🎨 Drawing: pen, highlighter, eraser, select');
+                console.log('   📐 Shapes: line, arrow, rectangle, circle, triangle, text');
+                console.log('   🧮 Math: coordinate grid, graph functions, protractor');
+                console.log('   🤖 AI Animations: aiWritePartialStep, aiDrawArrowToBlank, aiCircleWithQuestion');
+                console.log('   ↩️  History: undo/redo with full state management');
+                console.log('   🎭 Modes: teacher (AI-driven), student, collaborative');
+
+            } catch (error) {
+                console.error('[Mastery Whiteboard] Init error:', error);
             }
         }
 
-        // Make whiteboard functions globally available for AI to use
-        window.masteryWhiteboard = masteryWhiteboard;
-        window.addToWhiteboard = addToWhiteboard;
+        // AI Helper Functions for Teaching Animations
+        async function aiTeachOnWhiteboard(text, x = 100, y = 100) {
+            if (!masteryWhiteboard) {
+                console.warn('[Whiteboard] Not initialized');
+                return;
+            }
+            // Use built-in AI typing animation (50ms per character)
+            await masteryWhiteboard.aiWritePartialStep(text, x, y, true);
+        }
 
-        // Initialize whiteboard after DOM is ready
+        async function aiCircle(message) {
+            if (!masteryWhiteboard) return;
+            // Circles last added object with message
+            const objects = masteryWhiteboard.canvas.getObjects();
+            if (objects.length > 0) {
+                const lastObj = objects[objects.length - 1];
+                // This would need objectId - placeholder for now
+                console.log('AI circling with message:', message);
+            }
+        }
+
+        // Make whiteboard globally available for AI to call
+        window.masteryWhiteboard = masteryWhiteboard;
+        window.aiTeachOnWhiteboard = aiTeachOnWhiteboard;
+        window.aiCircle = aiCircle;
+
+        // Initialize after DOM ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
-                setTimeout(initializeMasteryWhiteboard, 100);
+                setTimeout(initializeMasteryWhiteboard, 200);
             });
         } else {
-            setTimeout(initializeMasteryWhiteboard, 100);
+            setTimeout(initializeMasteryWhiteboard, 200);
         }
     </script>
 </body>
