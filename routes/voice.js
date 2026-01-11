@@ -181,14 +181,24 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // Build messages array for AI
         const messages = [
             { role: 'system', content: enhancedSystemPrompt + voiceInstructions },
-            ...conversationHistory.slice(-10).map(msg => ({
-                role: msg.role === 'user' ? 'user' : 'assistant',
-                content: msg.text
-            })),
+            ...conversationHistory.slice(-10)
+                .filter(msg => msg.text && msg.text.trim().length > 0) // Filter out null/empty messages
+                .map(msg => ({
+                    role: msg.role === 'user' ? 'user' : 'assistant',
+                    content: msg.text
+                })),
             { role: 'user', content: userMessage }
         ];
 
         console.log('🤖 [Voice] Generating AI response...');
+        console.log(`📝 [Voice] Message count: ${messages.length} (system + ${messages.length - 2} history + user)`);
+
+        // Validate all messages have content
+        const invalidMessages = messages.filter(m => !m.content || m.content.trim().length === 0);
+        if (invalidMessages.length > 0) {
+            console.error('❌ [Voice] Found messages with null/empty content:', invalidMessages);
+            throw new Error('Invalid message format: some messages have null or empty content');
+        }
 
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messages, {
             temperature: 0.7,
