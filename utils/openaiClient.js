@@ -58,30 +58,6 @@ async function callLLM(model, messages, options = {}) {
     // Detect if this is a Claude or OpenAI model
     const isClaudeModel = model.startsWith('claude-');
 
-    // If Claude model requested but API key not configured, fall back to GPT immediately
-    if (isClaudeModel && !anthropic) {
-        console.warn(`WARN: Claude model (${model}) requested but ANTHROPIC_API_KEY not configured.`);
-        console.warn('Falling back to GPT-4o-mini...');
-
-        const fallbackModel = 'gpt-4o-mini';
-        try {
-            console.log(`LOG: Calling fallback model (${fallbackModel})`);
-            const completion = await retryWithExponentialBackoff(() =>
-                openai.chat.completions.create({
-                    model: fallbackModel,
-                    messages: messages,
-                    temperature: options.temperature || 0.7,
-                    max_tokens: options.max_tokens,
-                    stream: options.stream || false,
-                })
-            );
-            return completion;
-        } catch (gptError) {
-            console.error("ERROR: Fallback model (GPT-4o-mini) failed:", gptError.message);
-            throw new Error("AI model failed. Please check API configuration.");
-        }
-    }
-
     if (isClaudeModel && anthropic) {
         // PRIMARY PATH: Try Claude first
         try {
@@ -141,7 +117,7 @@ async function callLLM(model, messages, options = {}) {
         }
 
     } else {
-        // OpenAI model requested
+        // OpenAI model requested (or no Anthropic key)
         try {
             console.log(`LOG: Calling OpenAI model (${model})`);
             const completion = await retryWithExponentialBackoff(() =>
@@ -171,28 +147,6 @@ async function callLLM(model, messages, options = {}) {
  */
 async function callLLMStream(model, messages, options = {}) {
     const isClaudeModel = model.startsWith('claude-');
-
-    // If Claude model requested but API key not configured, fall back to GPT immediately
-    if (isClaudeModel && !anthropic) {
-        console.warn(`WARN: Claude streaming model (${model}) requested but ANTHROPIC_API_KEY not configured.`);
-        console.warn('Falling back to GPT-4o-mini streaming...');
-
-        const fallbackModel = 'gpt-4o-mini';
-        try {
-            console.log(`LOG: Calling OpenAI streaming fallback (${fallbackModel})`);
-            const stream = await openai.chat.completions.create({
-                model: fallbackModel,
-                messages: messages,
-                temperature: options.temperature || 0.7,
-                max_tokens: options.max_tokens,
-                stream: true,
-            });
-            return stream;
-        } catch (gptError) {
-            console.error(`ERROR: Fallback streaming model (${fallbackModel}) failed:`, gptError.message);
-            throw new Error("AI streaming failed. Please check API configuration.");
-        }
-    }
 
     if (isClaudeModel && anthropic) {
         // Claude streaming
