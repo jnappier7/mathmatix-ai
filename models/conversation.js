@@ -109,6 +109,32 @@ const conversationSchema = new Schema({
 // Index for efficient querying of active sessions
 conversationSchema.index({ isActive: 1, lastActivity: -1 });
 
+// Pre-save hook to validate and clean messages
+conversationSchema.pre('save', function(next) {
+    if (this.messages && Array.isArray(this.messages)) {
+        const originalLength = this.messages.length;
+
+        // Filter out messages with undefined or empty content
+        this.messages = this.messages.filter((msg, index) => {
+            if (!msg.content || typeof msg.content !== 'string' || msg.content.trim() === '') {
+                console.warn(`[Conversation] Removing invalid message at index ${index} (conversationId: ${this._id}, userId: ${this.userId})`);
+                console.warn(`[Conversation] Invalid message details: role=${msg.role}, content=${msg.content}, timestamp=${msg.timestamp}`);
+                return false;
+            }
+            if (!msg.role || (msg.role !== 'user' && msg.role !== 'assistant' && msg.role !== 'system')) {
+                console.warn(`[Conversation] Removing message with invalid role at index ${index}: ${msg.role}`);
+                return false;
+            }
+            return true;
+        });
+
+        if (this.messages.length !== originalLength) {
+            console.warn(`[Conversation] Removed ${originalLength - this.messages.length} invalid messages from conversation ${this._id}`);
+        }
+    }
+    next();
+});
+
 const Conversation = mongoose.models.Conversation || mongoose.model('Conversation', conversationSchema);
 
 module.exports = Conversation;// JavaScript Document
