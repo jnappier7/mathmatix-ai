@@ -30,12 +30,13 @@ const { generateInterviewQuestions, evaluateResponse } = require('../utils/dynam
  * PROBLEM: Using $nin with all historical problemIds causes O(N) database queries
  * as students answer 1000+ problems over a school year.
  *
- * SOLUTION: Only exclude the LAST 100 problems (LRU window). This:
+ * SOLUTION: Only exclude the LAST 150 problems (LRU window). This:
  * - Prevents immediate repeats (boring for students)
  * - Keeps database query size bounded to O(1) constant
  * - Allows old problems to resurface for spaced repetition (pedagogically sound)
+ * - Increased from 100 to 150 to improve variety with larger item bank
  */
-const LRU_EXCLUSION_WINDOW = 100;
+const LRU_EXCLUSION_WINDOW = 150;
 
 /**
  * Map grade level to starting theta (ability estimate)
@@ -450,7 +451,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
 
     // SKILL CLUSTERING: Group skills by difficulty bins to prevent wild jumps
     // Test 2-3 skills at similar difficulty before moving to next level
-    const DIFFICULTY_BIN_SIZE = 0.7; // Skills within 0.7 difficulty are "similar level"
+    const DIFFICULTY_BIN_SIZE = 1.4; // Skills within 1.4 difficulty are "similar level" (DOUBLED for more variety)
     const MIN_SKILLS_PER_BIN = 2;     // Test at least 2 skills before jumping
 
     // Determine current difficulty bin (if we've tested any skills)
@@ -474,11 +475,11 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       // If we've tested fewer than MIN_SKILLS_PER_BIN in current bin, prefer skills in this bin
       if (skillsInCurrentBin < MIN_SKILLS_PER_BIN) {
         const skillsInBin = candidateSkills.filter(s =>
-          s.difficulty >= currentBin.min && s.difficulty <= currentBin.max && s.testCount === 0
+          s.difficulty >= currentBin.min && s.difficulty <= currentBin.max && s.testCount < 2
         );
 
         if (skillsInBin.length > 0) {
-          console.log(`[DEBUG] Clustering: Staying in current bin, ${skillsInBin.length} untested skills available`);
+          console.log(`[DEBUG] Clustering: Staying in current bin, ${skillsInBin.length} skills available (testCount < 2)`);
           candidateSkills = skillsInBin; // Focus on current difficulty level
         }
       }
