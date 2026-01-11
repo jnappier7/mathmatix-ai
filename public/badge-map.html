@@ -1408,6 +1408,15 @@
     }
 
     async function selectMilestone(patternId, tierNum, milestoneId) {
+      console.log('[Badge Map] Selecting milestone:', { patternId, tierNum, milestoneId });
+
+      // Check if csrfFetch is available
+      if (typeof csrfFetch === 'undefined') {
+        console.error('[Badge Map] csrfFetch is not defined. CSRF script may not be loaded.');
+        alert('System error: Security module not loaded. Please refresh the page.');
+        return;
+      }
+
       try {
         const response = await csrfFetch('/api/mastery/select-milestone', {
           method: 'POST',
@@ -1415,15 +1424,20 @@
           body: JSON.stringify({ patternId, tierNum, milestoneId })
         });
 
+        console.log('[Badge Map] Select milestone response:', response.status);
+
         if (response.ok) {
+          const data = await response.json();
+          console.log('[Badge Map] Milestone selected successfully:', data);
           window.location.href = '/mastery-chat.html';
         } else {
           const error = await response.json();
+          console.error('[Badge Map] Failed to select milestone:', error);
           alert(error.error || 'Failed to select milestone. Please try again.');
         }
       } catch (error) {
-        console.error('Error selecting milestone:', error);
-        alert('An error occurred. Please try again.');
+        console.error('[Badge Map] Error selecting milestone:', error);
+        alert('An error occurred while selecting the milestone. Please try again.');
       }
     }
 
@@ -1550,8 +1564,8 @@
   <!-- Auth & Session Scripts -->
   <!-- Load storage utilities FIRST to prevent tracking prevention errors -->
   <script src="/js/storage-utils.js"></script>
+  <script src="/js/csrf.js"></script>
   <script src="/js/logout.js"></script>
   <script src="/js/auto-logout.js"></script>
-<script src="/js/csrf.js"></script>
 </body>
 </html>

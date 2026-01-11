@@ -76,7 +76,8 @@ elements.answerInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') submitAnswer();
 });
 elements.continueBtn.addEventListener('click', () => {
-  window.location.href = '/badge-map.html';  // Move to badge selection
+  console.log('[Screener] Continue button clicked - starting interview');
+  startInterview();  // Start the interview phase
 });
 elements.retakeBtn.addEventListener('click', () => {
   window.location.reload();
@@ -129,7 +130,7 @@ async function startScreener() {
       // Handle "already completed" case (403 Forbidden)
       if (error.alreadyCompleted) {
         alert(error.message || 'You have already completed the placement assessment.');
-        window.location.href = '/badge-map.html';
+        window.location.href = '/skill-map.html';
         return;
       }
 
@@ -338,36 +339,21 @@ async function handleCompletion(data) {
       ? StorageUtils.session.getItem('masteryModeActive')
       : null;
 
-    if (masteryModeActive === 'true') {
-      // Mastery mode: Set phase for interview
-      if (window.StorageUtils) {
-        StorageUtils.session.setItem('masteryPhase', 'interview');
-      }
+    // Display results to user
+    displayResults(report);
+    switchScreen('results');
 
-      // Show brief completion message
-      displayResults(report);
-      switchScreen('results');
-
-      // Update continue button text for mastery mode
-      if (elements.continueBtn) {
-        elements.continueBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Continue to AI Interview';
-      }
-
-      // Auto-redirect after 3 seconds
-      setTimeout(() => {
-        window.location.href = '/badge-map.html';
-      }, 3000);
-
-    } else {
-      // Normal screener mode
-      displayResults(report);
-      switchScreen('results');
-
-      // Auto-redirect to badge map after 5 seconds (give time to see results)
-      setTimeout(() => {
-        window.location.href = '/badge-map.html';
-      }, 5000);
+    // Update continue button text to indicate interview phase
+    if (elements.continueBtn) {
+      elements.continueBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Continue to Interview';
     }
+
+    // Save flag indicating we should proceed to interview
+    if (window.StorageUtils) {
+      StorageUtils.session.setItem('screenerPhase', 'completed');
+    }
+
+    console.log('[Screener] Results displayed. User can now continue to interview.');
 
   } catch (error) {
     console.error('Error completing screener:', error);
@@ -518,7 +504,7 @@ async function completeInterview() {
     console.log('[Interview] Complete! Earned badges:', data.earnedBadges.length);
 
     // Redirect to badge map
-    window.location.href = '/badge-map.html';
+    window.location.href = '/skill-map.html';
 
   } catch (error) {
     console.error('[Interview] Error completing interview:', error);

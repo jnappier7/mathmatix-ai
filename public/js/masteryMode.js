@@ -87,7 +87,7 @@ function initializeMasteryMode() {
           StorageUtils.session.setItem('masteryModeActive', 'true');
           StorageUtils.session.setItem('masteryPhase', 'badges');
         }
-        window.location.href = '/badge-map.html';
+        window.location.href = '/skill-map.html';
       } else {
         // User needs placement - redirect to screener
         console.log('[Mastery Mode] User needs placement screener');
@@ -271,7 +271,7 @@ Redirecting you to the Badge Map...`, 'ai');
 
   // Redirect to badge map after short delay
   setTimeout(() => {
-    window.location.href = '/badge-map.html';
+    window.location.href = '/skill-map.html';
   }, 2000);
 }
 
