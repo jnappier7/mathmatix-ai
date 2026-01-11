@@ -62,11 +62,14 @@ router.post('/process', isAuthenticated, async (req, res) => {
     }
 
     try {
+        const startTime = Date.now();
+
         // ============================================
         // STEP 1: SPEECH-TO-TEXT (Whisper)
         // ============================================
 
         console.log('🎙️ [Voice] Processing audio from user:', userId);
+        const step1Start = Date.now();
 
         // Decode base64 audio
         let audioBuffer;
@@ -109,7 +112,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
         }
 
         const userMessage = transcription.text;
-        console.log('✅ [Voice] Transcription:', userMessage);
+        const step1Time = Date.now() - step1Start;
+        console.log(`✅ [Voice] Transcription (${step1Time}ms):`, userMessage);
 
         // Clean up temp file
         if (fs.existsSync(tempAudioPath)) {
@@ -190,6 +194,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
             { role: 'user', content: userMessage }
         ];
 
+        const step2Start = Date.now();
         console.log('🤖 [Voice] Generating AI response...');
         console.log(`📝 [Voice] Message count: ${messages.length} (system + ${messages.length - 2} history + user)`);
 
@@ -206,8 +211,9 @@ router.post('/process', isAuthenticated, async (req, res) => {
         });
 
         let aiResponseText = completion.choices[0].message.content.trim();
+        const step2Time = Date.now() - step2Start;
 
-        console.log('✅ [Voice] AI response:', aiResponseText);
+        console.log(`✅ [Voice] AI response (${step2Time}ms):`, aiResponseText);
 
         // ============================================
         // STEP 3: PARSE BOARD ACTIONS
@@ -236,6 +242,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // STEP 4: TEXT-TO-SPEECH (ElevenLabs with Tutor Voice)
         // ============================================
 
+        const step3Start = Date.now();
         console.log('🔊 [Voice] Generating speech with tutor voice...');
 
         // Get tutor's voice ID
@@ -275,7 +282,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
         }
 
         const audioData = Buffer.from(elevenLabsResponse.data);
-        console.log('✅ [Voice] TTS audio received, size:', audioData.length, 'bytes');
+        const step3Time = Date.now() - step3Start;
+        console.log(`✅ [Voice] TTS audio received (${step3Time}ms), size:`, audioData.length, 'bytes');
 
         // Save audio file
         const audioDir = path.join(__dirname, '../public/audio/voice');
@@ -333,6 +341,9 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // ============================================
         // STEP 6: RETURN RESPONSE
         // ============================================
+
+        const totalTime = Date.now() - startTime;
+        console.log(`⏱️  [Voice] Total processing time: ${totalTime}ms (Whisper: ${step1Time}ms, AI: ${step2Time}ms, TTS: ${step3Time}ms, Other: ${totalTime - step1Time - step2Time - step3Time}ms)`);
 
         res.json({
             transcription: userMessage,
