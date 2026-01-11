@@ -48,6 +48,15 @@
             drawer.classList.add('open');
             overlay.classList.add('active');
 
+            // Hide the toggle button when drawer is open
+            if (drawer === leftDrawer && leftToggle) {
+                leftToggle.style.opacity = '0';
+                leftToggle.style.pointerEvents = 'none';
+            } else if (drawer === rightDrawer && rightToggle) {
+                rightToggle.style.opacity = '0';
+                rightToggle.style.pointerEvents = 'none';
+            }
+
             // Prevent body scroll when drawer is open
             document.body.style.overflow = 'hidden';
         }
@@ -59,6 +68,15 @@
         function closeDrawer(drawer) {
             drawer.classList.remove('open');
             overlay.classList.remove('active');
+
+            // Show the toggle button again when drawer closes
+            if (drawer === leftDrawer && leftToggle) {
+                leftToggle.style.opacity = '';
+                leftToggle.style.pointerEvents = '';
+            } else if (drawer === rightDrawer && rightToggle) {
+                rightToggle.style.opacity = '';
+                rightToggle.style.pointerEvents = '';
+            }
 
             // Re-enable body scroll
             document.body.style.overflow = '';
