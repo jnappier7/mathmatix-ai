@@ -15,7 +15,7 @@
         <div class="main-header-content">
             <div class="brand-section">
                 <div class="logo-container">
-                    <a href="/badge-map.html">
+                    <a href="/chat.html">
                         <img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI Logo" class="main-logo" />
                     </a>
                 </div>
@@ -33,7 +33,8 @@
                     <span id="userName">Student</span>
                     <span class="level-badge">Level <span id="userLevel">1</span></span>
                 </div>
-                <button id="backBtn" class="btn-secondary">← Back to Badge Map</button>
+                <a href="/chat.html" class="btn-secondary">← Back to Chat</a>
+                <button onclick="logout()" class="btn-secondary">Logout</button>
             </div>
         </div>
     </header>
@@ -167,6 +168,8 @@
         <a href="/terms.html">Terms of Use</a>
     </footer>
 
+    <script src="js/storage-utils.js"></script>
+    <script src="js/logout.js"></script>
     <script src="js/skill-map.js"></script>
 </body>
 </html>
