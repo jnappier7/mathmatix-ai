@@ -294,16 +294,59 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .whiteboard-placeholder {
-            flex: 1;
-            background: #fafafa;
-            border: 2px dashed #d0d0d0;
-            border-radius: 8px;
+        /* Whiteboard Container */
+        .whiteboard-header-inline {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .whiteboard-tools-mini {
+            display: flex;
+            gap: 8px;
+        }
+
+        .wb-tool-btn {
+            background: #f8f9fa;
+            border: 1px solid #d0d0d0;
+            color: #666;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .wb-tool-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .mastery-whiteboard-container {
+            flex: 1;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            min-height: 400px;
+        }
+
+        #mastery-whiteboard-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .whiteboard-section.hidden .mastery-whiteboard-container {
+            display: none;
+        }
+
+        .whiteboard-section.hidden .whiteboard-header-inline {
+            border-bottom: none;
         }
 
         /* PROBLEM DISPLAY INTERFACE */
@@ -554,9 +597,21 @@
     <div class="mastery-container">
         <!-- Whiteboard Section (Left/Top) -->
         <div class="whiteboard-section">
-            <h3 style="margin-top: 0; color: #12B3B3;">Visual Teaching Board</h3>
-            <div class="whiteboard-placeholder">
-                <p><i class="fas fa-chalkboard"></i> Whiteboard will appear here as tutor teaches</p>
+            <div class="whiteboard-header-inline">
+                <h3 style="margin: 0; color: #667eea; font-size: 18px;">
+                    <i class="fas fa-chalkboard"></i> Teaching Board
+                </h3>
+                <div class="whiteboard-tools-mini">
+                    <button id="wb-clear" class="wb-tool-btn" title="Clear Board">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                    <button id="wb-toggle" class="wb-tool-btn" title="Hide/Show">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="mastery-whiteboard-container" class="mastery-whiteboard-container">
+                <canvas id="mastery-whiteboard-canvas"></canvas>
             </div>
         </div>
 
@@ -1172,5 +1227,99 @@
     <!-- Voice Controller for voice chat orb -->
     <script src="/js/storage-utils.js"></script>
     <script src="/js/voice-controller.js"></script>
+
+    <!-- Whiteboard Integration -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script>
+        // Initialize Mastery Whiteboard
+        let masteryWhiteboard = null;
+
+        function initializeMasteryWhiteboard() {
+            const canvas = document.getElementById('mastery-whiteboard-canvas');
+            const container = document.getElementById('mastery-whiteboard-container');
+
+            if (!canvas || !container || typeof fabric === 'undefined') {
+                console.log('[Whiteboard] Prerequisites not ready, skipping initialization');
+                return;
+            }
+
+            // Initialize Fabric.js canvas
+            const fabricCanvas = new fabric.Canvas('mastery-whiteboard-canvas', {
+                isDrawingMode: false,
+                selection: false,
+                backgroundColor: '#ffffff',
+                width: container.clientWidth,
+                height: container.clientHeight
+            });
+
+            masteryWhiteboard = fabricCanvas;
+
+            // Resize handler
+            const resizeWhiteboard = () => {
+                if (fabricCanvas && container) {
+                    fabricCanvas.setDimensions({
+                        width: container.clientWidth,
+                        height: container.clientHeight
+                    });
+                    fabricCanvas.renderAll();
+                }
+            };
+
+            window.addEventListener('resize', resizeWhiteboard);
+
+            // Tool buttons
+            document.getElementById('wb-clear')?.addEventListener('click', () => {
+                if (fabricCanvas) {
+                    fabricCanvas.clear();
+                    fabricCanvas.backgroundColor = '#ffffff';
+                    fabricCanvas.renderAll();
+                }
+            });
+
+            document.getElementById('wb-toggle')?.addEventListener('click', function() {
+                const section = document.querySelector('.whiteboard-section');
+                section.classList.toggle('hidden');
+                this.querySelector('i').className = section.classList.contains('hidden')
+                    ? 'fas fa-eye-slash'
+                    : 'fas fa-eye';
+            });
+
+            console.log('✅ Mastery Whiteboard initialized');
+        }
+
+        // Helper function to add content to whiteboard (can be called during lesson phases)
+        function addToWhiteboard(content) {
+            if (!masteryWhiteboard) {
+                console.warn('[Whiteboard] Not initialized yet');
+                return;
+            }
+
+            // Add text to whiteboard
+            if (typeof content === 'string') {
+                const text = new fabric.Text(content, {
+                    left: 50,
+                    top: 50 + (Math.random() * 100), // Slight randomization
+                    fontSize: 24,
+                    fill: '#667eea',
+                    fontFamily: 'Arial'
+                });
+                masteryWhiteboard.add(text);
+                masteryWhiteboard.renderAll();
+            }
+        }
+
+        // Make whiteboard functions globally available for AI to use
+        window.masteryWhiteboard = masteryWhiteboard;
+        window.addToWhiteboard = addToWhiteboard;
+
+        // Initialize whiteboard after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(initializeMasteryWhiteboard, 100);
+            });
+        } else {
+            setTimeout(initializeMasteryWhiteboard, 100);
+        }
+    </script>
 </body>
 </html>
