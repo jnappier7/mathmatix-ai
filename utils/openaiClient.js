@@ -14,6 +14,16 @@ if (process.env.ANTHROPIC_API_KEY) {
     anthropic = new Anthropic({
         apiKey: process.env.ANTHROPIC_API_KEY,
     });
+    console.log('✅ [Init] Anthropic client initialized successfully');
+} else {
+    console.warn('⚠️  [Init] ANTHROPIC_API_KEY not found - Claude models will not be available');
+}
+
+// Log OpenAI client status
+if (process.env.OPENAI_API_KEY) {
+    console.log('✅ [Init] OpenAI client initialized successfully');
+} else {
+    console.warn('⚠️  [Init] OPENAI_API_KEY not found - OpenAI models will not be available');
 }
 
 
@@ -93,8 +103,15 @@ async function callLLM(model, messages, options = {}) {
             };
 
         } catch (claudeError) {
-            console.warn(`WARN: Primary model (${model}) failed:`, claudeError.message);
-            console.warn('Attempting fallback to GPT-4o-mini...');
+            console.error(`❌ ERROR: Primary model (${model}) failed`);
+            console.error('Claude error details:', {
+                message: claudeError.message,
+                status: claudeError.status,
+                type: claudeError.type,
+                error: claudeError.error,
+                stack: claudeError.stack?.split('\n').slice(0, 3).join('\n')
+            });
+            console.warn('⚠️  Attempting fallback to GPT-4o-mini...');
 
             // FALLBACK: Try GPT
             try {
@@ -109,10 +126,19 @@ async function callLLM(model, messages, options = {}) {
                         stream: options.stream || false,
                     })
                 );
+                console.log('✅ Fallback to GPT succeeded');
                 return completion;
             } catch (gptError) {
-                console.error("ERROR: Fallback model (GPT-4o-mini) also failed:", gptError.message);
-                throw new Error("Both primary (Claude) and fallback (GPT) AI models failed.");
+                console.error("❌ ERROR: Fallback model (GPT-4o-mini) also failed");
+                console.error('GPT error details:', {
+                    message: gptError.message,
+                    status: gptError.status,
+                    type: gptError.type,
+                    error: gptError.error,
+                    code: gptError.code,
+                    stack: gptError.stack?.split('\n').slice(0, 3).join('\n')
+                });
+                throw new Error(`Both primary (Claude) and fallback (GPT) AI models failed. Claude: ${claudeError.message}, GPT: ${gptError.message}`);
             }
         }
 
