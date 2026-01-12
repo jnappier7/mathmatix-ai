@@ -113,9 +113,9 @@ async function callLLM(model, messages, options = {}) {
             });
             console.warn('⚠️  Attempting fallback to GPT-4o-mini...');
 
-            // FALLBACK: Try GPT-5-nano (cheaper than gpt-4o-mini)
+            // FALLBACK: Try GPT-4o-mini
             try {
-                const fallbackModel = 'gpt-5-nano';
+                const fallbackModel = 'gpt-4o-mini';
                 console.log(`LOG: Calling fallback model (${fallbackModel})`);
                 const completion = await retryWithExponentialBackoff(() =>
                     openai.chat.completions.create({

@@ -65,8 +65,8 @@ router.get('/', async (req, res) => {
         
         messagesForAI.push({ role: "user", content: userMessagePart });
 
-        // Use GPT-5-nano for natural, engaging welcome messages (ultra-cheap!)
-        const completion = await callLLM("gpt-5-nano", messagesForAI, { max_tokens: 80 });
+        // Use GPT-4o-mini for natural, engaging welcome messages
+        const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 80 });
         const initialWelcomeMessage = completion.choices[0].message.content.trim();
 
         res.json({ greeting: initialWelcomeMessage, voiceId: voiceIdForWelcome });

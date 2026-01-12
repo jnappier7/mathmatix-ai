@@ -3,7 +3,7 @@
 
 const { callLLM, anthropic, retryWithExponentialBackoff } = require('./openaiClient');
 
-const SUMMARY_MODEL = "gpt-5-nano"; // Ultra-cheap, fast model for summaries (80% cost savings!)
+const SUMMARY_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for summaries
 
 async function generateSummary(messageLog, studentProfile) {
     if (!messageLog || !Array.isArray(messageLog) || messageLog.length === 0) {
