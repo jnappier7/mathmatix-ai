@@ -17,6 +17,8 @@ class AlgebraTiles {
     this.selectedTiles = new Set(); // BUGFIX: Initialize selectedTiles for multiselect
     this.selectionBox = null; // For drag-to-select rectangle
     this.isDraggingSelection = false;
+    this.tileRotations = new Map(); // Store rotation angles for each tile ID
+    this.collisionPadding = 10; // Padding for collision detection
 
     this.init();
   }
@@ -262,7 +264,13 @@ class AlgebraTiles {
     document.querySelectorAll('.tile-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const tileType = btn.dataset.type;
-        this.addTile(tileType, 100, 100); // Add at default position
+        // Find empty position near center of workspace
+        const workspaceWidth = this.workspace.offsetWidth || 800;
+        const workspaceHeight = this.workspace.offsetHeight || 600;
+        const centerX = workspaceWidth / 2;
+        const centerY = workspaceHeight / 2;
+        const emptyPos = this.findEmptyPosition(centerX, centerY);
+        this.addTile(tileType, emptyPos.x, emptyPos.y);
       });
     });
 
@@ -294,6 +302,9 @@ class AlgebraTiles {
     this.workspace.addEventListener('touchstart', (e) => this.onTouchStart(e));
     document.addEventListener('touchmove', (e) => this.onTouchMove(e));
     document.addEventListener('touchend', (e) => this.onTouchEnd(e));
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => this.onKeyDown(e));
   }
 
   addTile(type, x, y) {
@@ -351,9 +362,16 @@ class AlgebraTiles {
     tileElement.dataset.tileId = tile.id;
     tileElement.style.left = `${tile.x}px`;
     tileElement.style.top = `${tile.y}px`;
+
+    // Apply rotation if exists
+    const rotation = this.tileRotations.get(tile.id) || 0;
+    if (rotation !== 0) {
+      tileElement.style.transform = `rotate(${rotation}deg)`;
+    }
+
     tileElement.innerHTML = this.getTileLabel(tile.type);
     tileElement.draggable = true;
-    tileElement.title = 'Drag to move, click to flip positive/negative';
+    tileElement.title = 'Drag to move | Click to flip | Select & press R to rotate | Delete to remove';
 
     // Add click handler for flipping positive/negative
     tileElement.addEventListener('click', (e) => {
@@ -514,7 +532,13 @@ class AlgebraTiles {
       this.draggedTile.ids.forEach(id => {
         const element = document.querySelector(`[data-tile-id="${id}"]`);
         if (element) {
-          element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+          // Combine translation with any existing rotation
+          const rotation = this.tileRotations.get(id) || 0;
+          if (rotation !== 0) {
+            element.style.transform = `translate(${deltaX}px, ${deltaY}px) rotate(${rotation}deg)`;
+          } else {
+            element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+          }
         }
       });
     } else if (this.isDraggingSelection && this.selectionBox) {
@@ -577,8 +601,19 @@ class AlgebraTiles {
             const deltaX = parseFloat(match[1]);
             const deltaY = parseFloat(match[2]);
 
-            tile.x = this.snapToGrid(initialPos.x + deltaX);
-            tile.y = this.snapToGrid(initialPos.y + deltaY);
+            let newX = this.snapToGrid(initialPos.x + deltaX);
+            let newY = this.snapToGrid(initialPos.y + deltaY);
+
+            // Check for collision with other tiles (excluding tiles being dragged)
+            if (this.hasCollision(newX, newY, id)) {
+              // Find nearby empty position
+              const emptyPos = this.findEmptyPosition(newX, newY);
+              newX = emptyPos.x;
+              newY = emptyPos.y;
+            }
+
+            tile.x = newX;
+            tile.y = newY;
           } else {
             // Fallback to current position
             tile.x = this.snapToGrid(parseInt(element.style.left) || tile.x);
@@ -587,7 +622,15 @@ class AlgebraTiles {
 
           element.style.left = `${tile.x}px`;
           element.style.top = `${tile.y}px`;
-          element.style.transform = ''; // Clear transform
+
+          // Restore rotation if exists
+          const rotation = this.tileRotations.get(id) || 0;
+          if (rotation !== 0) {
+            element.style.transform = `rotate(${rotation}deg)`;
+          } else {
+            element.style.transform = ''; // Clear transform
+          }
+
           element.classList.remove('dragging');
         }
       });
@@ -649,8 +692,173 @@ class AlgebraTiles {
     this.onMouseUp(e);
   }
 
+  onKeyDown(e) {
+    // Only handle keyboard if algebra tiles modal is open
+    const modal = document.getElementById('algebra-tiles-modal');
+    if (!modal || modal.style.display === 'none') return;
+
+    // Delete key - delete selected tiles
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault();
+      this.deleteSelectedTiles();
+    }
+
+    // R key - rotate selected tiles
+    if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      this.rotateSelectedTiles();
+    }
+
+    // Escape key - deselect all
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      this.deselectAll();
+    }
+  }
+
+  deleteSelectedTiles() {
+    if (this.selectedTiles.size === 0) return;
+
+    this.saveState(); // Save to history
+
+    // Remove all selected tiles
+    const tilesToDelete = Array.from(this.selectedTiles);
+    tilesToDelete.forEach(tileId => {
+      const element = document.querySelector(`[data-tile-id="${tileId}"]`);
+      if (element) element.remove();
+
+      // Remove from tiles array
+      this.tiles = this.tiles.filter(t => t.id !== tileId);
+
+      // Remove rotation data
+      this.tileRotations.delete(tileId);
+    });
+
+    // Clear selection
+    this.selectedTiles.clear();
+
+    // Update expression
+    this.updateExpression();
+
+    console.log('🗑️ Deleted selected tiles');
+  }
+
+  rotateSelectedTiles() {
+    if (this.selectedTiles.size === 0) return;
+
+    // Rotate each selected tile by 90 degrees
+    this.selectedTiles.forEach(tileId => {
+      const currentRotation = this.tileRotations.get(tileId) || 0;
+      const newRotation = (currentRotation + 90) % 360;
+      this.tileRotations.set(tileId, newRotation);
+
+      // Apply rotation to element
+      const element = document.querySelector(`[data-tile-id="${tileId}"]`);
+      if (element) {
+        element.style.transform = `rotate(${newRotation}deg)`;
+      }
+    });
+
+    console.log('🔄 Rotated selected tiles');
+  }
+
+  deselectAll() {
+    this.selectedTiles.clear();
+    document.querySelectorAll('.workspace-tile.selected').forEach(el => {
+      el.classList.remove('selected');
+    });
+  }
+
   snapToGrid(value) {
     return Math.round(value / this.gridSize) * this.gridSize;
+  }
+
+  /**
+   * Check if a position collides with existing tiles
+   * @param {number} x - X coordinate
+   * @param {number} y - Y coordinate
+   * @param {number} excludeTileId - Optional tile ID to exclude from collision check
+   * @returns {boolean} True if collision detected
+   */
+  hasCollision(x, y, excludeTileId = null) {
+    const tileSize = 60; // Approximate tile size
+    const padding = this.collisionPadding;
+
+    for (const tile of this.tiles) {
+      if (excludeTileId && tile.id === excludeTileId) continue;
+
+      const dx = Math.abs(tile.x - x);
+      const dy = Math.abs(tile.y - y);
+
+      // Check if tiles overlap (with padding)
+      if (dx < (tileSize + padding) && dy < (tileSize + padding)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Find the nearest empty position starting from (x, y)
+   * Uses spiral search pattern to find available spot
+   * @param {number} startX - Starting X coordinate
+   * @param {number} startY - Starting Y coordinate
+   * @returns {Object} { x, y } coordinates of empty spot
+   */
+  findEmptyPosition(startX, startY) {
+    // First check if starting position is empty
+    if (!this.hasCollision(startX, startY)) {
+      return { x: startX, y: startY };
+    }
+
+    const spacing = 70; // Space between tiles in grid
+    const maxAttempts = 100;
+
+    // Spiral search pattern
+    let x = startX;
+    let y = startY;
+    let dx = spacing;
+    let dy = 0;
+    let segmentLength = 1;
+    let segmentPassed = 0;
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      x += dx;
+      y += dy;
+      attempts++;
+
+      // Check if this position is empty
+      if (!this.hasCollision(x, y)) {
+        // Make sure it's within workspace bounds
+        const workspaceWidth = this.workspace.offsetWidth || 800;
+        const workspaceHeight = this.workspace.offsetHeight || 600;
+
+        if (x >= 30 && x <= workspaceWidth - 80 && y >= 30 && y <= workspaceHeight - 80) {
+          return { x: this.snapToGrid(x), y: this.snapToGrid(y) };
+        }
+      }
+
+      // Spiral logic
+      segmentPassed++;
+      if (segmentPassed === segmentLength) {
+        segmentPassed = 0;
+
+        // Turn 90 degrees
+        const temp = dx;
+        dx = -dy;
+        dy = temp;
+
+        // Increase segment length every 2 turns
+        if (dy === 0) {
+          segmentLength++;
+        }
+      }
+    }
+
+    // Fallback: return starting position (snapped to grid)
+    return { x: this.snapToGrid(startX), y: this.snapToGrid(startY) };
   }
 
   checkForCancellation() {
@@ -791,6 +999,8 @@ class AlgebraTiles {
         setTimeout(() => {
           // Remove from DOM and data
           this.tiles = this.tiles.filter(t => t.id !== tile1.id && t.id !== tile2.id);
+          this.tileRotations.delete(tile1.id);
+          this.tileRotations.delete(tile2.id);
           el1.remove();
           el2.remove();
           this.updateExpression();
@@ -1113,6 +1323,8 @@ class AlgebraTiles {
   clearWorkspace() {
     this.saveState(); // Save to history before clearing
     this.tiles = [];
+    this.tileRotations.clear(); // Clear rotation data
+    this.selectedTiles.clear(); // Clear selections
     this.renderWorkspace();
     this.updateExpression();
   }
@@ -1134,6 +1346,7 @@ class AlgebraTiles {
     const tileId = parseInt(tileElement.dataset.tileId);
     this.saveState(); // Save to history
     this.tiles = this.tiles.filter(t => t.id !== tileId);
+    this.tileRotations.delete(tileId); // Remove rotation data
     tileElement.remove();
     this.updateExpression();
   }
@@ -1186,7 +1399,13 @@ class AlgebraTiles {
     document.querySelectorAll('.tile-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const tileType = btn.dataset.type;
-        this.addTile(tileType, 100, 100);
+        // Find empty position near center of workspace
+        const workspaceWidth = this.workspace.offsetWidth || 800;
+        const workspaceHeight = this.workspace.offsetHeight || 600;
+        const centerX = workspaceWidth / 2;
+        const centerY = workspaceHeight / 2;
+        const emptyPos = this.findEmptyPosition(centerX, centerY);
+        this.addTile(tileType, emptyPos.x, emptyPos.y);
       });
     });
   }
