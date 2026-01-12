@@ -117,12 +117,17 @@ async function callLLM(model, messages, options = {}) {
             try {
                 const fallbackModel = 'gpt-4o-mini';
                 console.log(`LOG: Calling fallback model (${fallbackModel})`);
+
+                // CRITICAL FIX: Use max_completion_tokens for gpt-4o models
+                const tokenParam = options.max_tokens ?
+                    { max_completion_tokens: options.max_tokens } : {};
+
                 const completion = await retryWithExponentialBackoff(() =>
                     openai.chat.completions.create({
                         model: fallbackModel,
                         messages: messages,
                         temperature: options.temperature || 0.7,
-                        max_tokens: options.max_tokens,
+                        ...tokenParam,
                         stream: options.stream || false,
                     })
                 );
@@ -146,12 +151,21 @@ async function callLLM(model, messages, options = {}) {
         // OpenAI model requested (or no Anthropic key)
         try {
             console.log(`LOG: Calling OpenAI model (${model})`);
+
+            // CRITICAL FIX: Newer OpenAI models (gpt-4o, gpt-5, etc.) require max_completion_tokens
+            // Legacy models still use max_tokens
+            const tokenParam = options.max_tokens ?
+                (model.includes('gpt-5') || model.includes('gpt-4o') ?
+                    { max_completion_tokens: options.max_tokens } :
+                    { max_tokens: options.max_tokens })
+                : {};
+
             const completion = await retryWithExponentialBackoff(() =>
                 openai.chat.completions.create({
                     model: model,
                     messages: messages,
                     temperature: options.temperature || 0.7,
-                    max_tokens: options.max_tokens,
+                    ...tokenParam,
                     stream: options.stream || false,
                 })
             );
@@ -205,11 +219,19 @@ async function callLLMStream(model, messages, options = {}) {
         // OpenAI streaming
         try {
             console.log(`LOG: Calling OpenAI streaming (${model})`);
+
+            // CRITICAL FIX: Newer OpenAI models require max_completion_tokens
+            const tokenParam = options.max_tokens ?
+                (model.includes('gpt-5') || model.includes('gpt-4o') ?
+                    { max_completion_tokens: options.max_tokens } :
+                    { max_tokens: options.max_tokens })
+                : {};
+
             const stream = await openai.chat.completions.create({
                 model: model,
                 messages: messages,
                 temperature: options.temperature || 0.7,
-                max_tokens: options.max_tokens,
+                ...tokenParam,
                 stream: true,
             });
             return stream;

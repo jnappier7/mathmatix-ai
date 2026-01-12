@@ -963,7 +963,7 @@ a:hover {
 }
 
 .message {
-    max-width: 75%; /* Messages don't span full width */
+    max-width: 80%; /* IMPROVED: More room for message content */
     padding: 10px 15px;
     border-radius: 18px; /* More rounded bubbles */
     line-height: 1.5;
@@ -979,6 +979,8 @@ a:hover {
     background-color: var(--clr-primary-teal); /* Example: Primary teal background */
     color: white; /* Example: White text for user messages */
     border-bottom-right-radius: 4px; /* Slightly less rounded corner at the bottom right for user */
+    margin-left: 15%; /* IMPROVED: Better spacing from left edge */
+    margin-right: 5px; /* CRITICAL FIX: Prevent cutoff on right edge */
 }
 
 /* Styles for AI messages (left aligned) */
@@ -988,6 +990,8 @@ a:hover {
     color: var(--clr-text-primary); /* Example: Dark text for AI messages */
     border-bottom-left-radius: 4px; /* Slightly less rounded corner at the bottom left for AI */
     position: relative; /* For absolute positioning of reaction elements */
+    margin-right: 15%; /* IMPROVED: Better spacing from right edge */
+    margin-left: 5px; /* Prevent cutoff on left edge */
 }
 
 /* ===== EMOJI REACTION SYSTEM ===== */
@@ -2782,18 +2786,20 @@ form label, .password-label-row label {
         font-size: 1.1em;
         padding: 14px 18px;
         border-radius: 14px;
-        max-width: 85%;
+        max-width: 90%; /* IMPROVED: More room on mobile */
         line-height: 1.5;
     }
 
     /* User messages align right */
-    .message.user-message {
-        margin-left: auto;
+    .message.user-message, .message.user {
+        margin-left: 8%; /* Reduced aggressive right alignment on mobile */
+        margin-right: 5px; /* Prevent cutoff */
     }
 
     /* AI messages align left */
-    .message.ai-message {
-        margin-right: auto;
+    .message.ai-message, .message.ai {
+        margin-right: 8%; /* Better spacing on mobile */
+        margin-left: 5px; /* Prevent cutoff */
     }
 
     /* Message paragraphs */

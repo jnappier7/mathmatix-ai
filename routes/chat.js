@@ -82,9 +82,14 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             await user.save();
         }
 
+        // CRITICAL FIX: Validate user message before saving
+        if (!message || typeof message !== 'string' || message.trim() === '') {
+            return res.status(400).json({ message: "Message content is required and cannot be empty." });
+        }
+
         activeConversation.messages.push({
             role: 'user',
-            content: message,
+            content: message.trim(),
             timestamp: new Date(),
             responseTime: responseTime || null
         });
@@ -394,7 +399,13 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             console.log(`💡 Learning insight for ${user.firstName}: ${insight}`);
         }
 
-        activeConversation.messages.push({ role: 'assistant', content: aiResponseText });
+        // CRITICAL FIX: Validate AI response before saving
+        if (!aiResponseText || typeof aiResponseText !== 'string' || aiResponseText.trim() === '') {
+            console.error('[Chat] ERROR: AI response is empty or invalid, using fallback message');
+            aiResponseText = "I'm having trouble generating a response right now. Could you please rephrase your question?";
+        }
+
+        activeConversation.messages.push({ role: 'assistant', content: aiResponseText.trim() });
 
         // Real-time struggle detection and activity tracking
         const { detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
