@@ -1745,12 +1745,29 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!text && !graphData) return;
 
         if (!chatBox) return;
+
+        // Create message container with avatar
+        const messageContainer = document.createElement("div");
+        messageContainer.className = `message-container ${sender}`;
+
+        // Add avatar for AI messages
+        if (sender === 'ai' && currentUser && currentUser.selectedTutorId) {
+            const avatar = document.createElement("div");
+            avatar.className = "message-avatar";
+            const tutor = TUTOR_CONFIG[currentUser.selectedTutorId] || TUTOR_CONFIG.default;
+            avatar.innerHTML = `<img src="${tutor.imageUrl || '/images/default-tutor.png'}" alt="${tutor.name}" />`;
+            messageContainer.appendChild(avatar);
+        }
+
         const bubble = document.createElement("div");
         bubble.className = `message ${sender}`;
         bubble.id = `message-${Date.now()}-${Math.random()}`;
         bubble.dataset.messageIndex = messageIndexCounter++; // Track index for reactions
         if (isMasteryQuiz) { bubble.classList.add('mastery-quiz'); }
-        
+
+        // Add animation class for entrance
+        bubble.classList.add('message-enter');
+
         const textNode = document.createElement('span');
         textNode.className = 'message-text';
         
@@ -1934,7 +1951,17 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.appendChild(reactionContainer);
         }
 
-        chatBox.appendChild(bubble);
+        // Append bubble to messageContainer
+        messageContainer.appendChild(bubble);
+
+        // Append messageContainer to chatBox
+        chatBox.appendChild(messageContainer);
+
+        // Trigger entrance animation
+        setTimeout(() => {
+            bubble.classList.remove('message-enter');
+            bubble.classList.add('message-entered');
+        }, 10);
 
         // AUTO-START GHOST TIMER when AI asks a question
         if (sender === 'ai' && typeof autoStartGhostTimer === 'function') {
@@ -2437,6 +2464,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     function updateGamificationDisplay() {
+        // Sidebar progress display
+        const sidebarLevel = document.getElementById("sidebar-level");
+        const sidebarXp = document.getElementById("sidebar-xp");
+        const sidebarProgressFill = document.getElementById("sidebar-progress-fill");
+
+        if (sidebarLevel && currentUser.level) {
+            sidebarLevel.textContent = currentUser.level;
+        }
+
+        if (sidebarXp && currentUser.xpForCurrentLevel !== undefined && currentUser.xpForNextLevel !== undefined) {
+            sidebarXp.textContent = `${currentUser.xpForCurrentLevel} / ${currentUser.xpForNextLevel} XP`;
+        }
+
+        if (sidebarProgressFill && currentUser.xpForCurrentLevel !== undefined && currentUser.xpForNextLevel !== undefined) {
+            const percentage = (currentUser.xpForCurrentLevel / currentUser.xpForNextLevel) * 100;
+            sidebarProgressFill.style.width = `${Math.min(100, percentage)}%`;
+        }
+
+        // Also update any legacy elements if they exist
         const levelSpan = document.getElementById("current-level");
         const xpSpan = document.getElementById("current-xp");
         const xpBar = document.getElementById("xp-progress-bar");

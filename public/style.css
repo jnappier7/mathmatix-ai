@@ -973,25 +973,74 @@ a:hover {
     /* Base styles, will be overridden by .user and .ai */
 }
 
+/* Message Container with Avatar */
+.message-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.message-container.user {
+    justify-content: flex-end;
+}
+
+.message-container.ai {
+    justify-content: flex-start;
+}
+
+/* Avatar Styling */
+.message-avatar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+}
+
+.message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Message Animations */
+.message.message-enter {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+}
+
+.message.message-entered {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 /* Styles for user messages (right aligned) */
 .message.user {
     align-self: flex-end; /* Pushes message to the right */
-    background-color: var(--clr-primary-teal); /* Example: Primary teal background */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Modern gradient */
     color: white; /* Example: White text for user messages */
     border-bottom-right-radius: 4px; /* Slightly less rounded corner at the bottom right for user */
     margin-left: 15%; /* IMPROVED: Better spacing from left edge */
     margin-right: 5px; /* CRITICAL FIX: Prevent cutoff on right edge */
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 /* Styles for AI messages (left aligned) */
 .message.ai {
     align-self: flex-start; /* Pushes message to the left */
-    background-color: #e0e0e0; /* Example: Light gray background for AI */
+    background-color: #f5f5f5; /* Slightly lighter for modern look */
     color: var(--clr-text-primary); /* Example: Dark text for AI messages */
     border-bottom-left-radius: 4px; /* Slightly less rounded corner at the bottom left for AI */
     position: relative; /* For absolute positioning of reaction elements */
     margin-right: 15%; /* IMPROVED: Better spacing from right edge */
     margin-left: 5px; /* Prevent cutoff on left edge */
+    border: 1px solid #e0e0e0;
 }
 
 /* ===== EMOJI REACTION SYSTEM ===== */
