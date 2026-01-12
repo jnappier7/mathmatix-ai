@@ -24,6 +24,19 @@ const conversationSchema = new Schema({
         type: String,
         default: 'Math Session'
     },
+    topic: {
+        type: String,
+        default: null // e.g., "Fractions", "Linear Equations", "Geometry"
+    },
+    topicEmoji: {
+        type: String,
+        default: '📚' // Visual identifier for topic
+    },
+    conversationType: {
+        type: String,
+        enum: ['general', 'assessment', 'mastery', 'topic'],
+        default: 'general'
+    },
     startDate: {
         type: Date,
         default: Date.now
@@ -43,6 +56,14 @@ const conversationSchema = new Schema({
     isAssessmentComplete: {
         type: Boolean,
         default: false
+    },
+    assessmentResults: {
+        estimatedGrade: { type: String, default: null }, // "5th Grade", "8th Grade", etc.
+        skillLevel: { type: Number, default: null }, // 1-100 scale
+        strengths: [String], // ["Fractions", "Basic Algebra"]
+        weaknesses: [String], // ["Word Problems", "Geometry"]
+        recommendedStartingPoint: { type: String, default: null },
+        completedAt: { type: Date, default: null }
     },
     isMastery: {
         type: Boolean,
@@ -106,8 +127,10 @@ const conversationSchema = new Schema({
     }
 }, { timestamps: true }); // Mongoose adds createdAt and updatedAt
 
-// Index for efficient querying of active sessions
+// Indexes for efficient querying
 conversationSchema.index({ isActive: 1, lastActivity: -1 });
+conversationSchema.index({ userId: 1, topic: 1, isActive: 1 }); // For topic-based lookups
+conversationSchema.index({ userId: 1, conversationType: 1, isActive: 1 }); // For conversation type filtering
 
 // Pre-save hook to validate and clean messages
 conversationSchema.pre('save', function(next) {

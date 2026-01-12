@@ -53,9 +53,6 @@
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </a>
     <nav class="landing-nav">
-      <button id="mastery-mode-btn" class="btn btn-primary" title="Enter Mastery Mode" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); margin-right: 10px; display: none;">
-        <i class="fas fa-trophy"></i> <span class="mobile-hide">Mastery Mode</span>
-      </button>
       <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" style="display: none;">
         <i class="fas fa-stop-circle"></i> <span class="mobile-hide">Stop</span>
       </button>
@@ -97,44 +94,66 @@
       </div>
     </div>
 
+    <!-- My Sessions Section -->
+    <div class="sidebar-section">
+      <button class="sessions-toggle">
+        <span>My Sessions</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+
+      <div id="sidebar-sessions" class="sidebar-sessions-list">
+        <button id="new-topic-btn" class="sidebar-tool-btn special">
+          <i class="fas fa-plus-circle"></i>
+          <span>New Topic</span>
+        </button>
+        <div id="sessions-list">
+          <!-- Sessions will be loaded here dynamically -->
+          <button class="session-item active">
+            <span class="session-emoji">💬</span>
+            <span class="session-name">General Chat</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Tools Section -->
     <div class="sidebar-section">
-      <div class="sidebar-section-title">Tools</div>
-
-      <button id="sidebar-mastery-btn" class="sidebar-tool-btn special">
-        <i class="fas fa-trophy"></i>
-        <span>Mastery Mode</span>
+      <button class="tools-toggle">
+        <span>Tools</span>
+        <i class="fas fa-chevron-down"></i>
       </button>
 
-      <button id="sidebar-resources-btn" class="sidebar-tool-btn">
-        <i class="fas fa-book-open"></i>
-        <span>Resources</span>
-      </button>
+      <div id="sidebar-tools" class="sidebar-tools-list">
+        <button id="sidebar-resources-btn" class="sidebar-tool-btn">
+          <i class="fas fa-book-open"></i>
+          <span>Resources</span>
+        </button>
 
-      <button id="sidebar-whiteboard-btn" class="sidebar-tool-btn">
-        <i class="fas fa-chalkboard"></i>
-        <span>Whiteboard</span>
-      </button>
+        <button id="sidebar-whiteboard-btn" class="sidebar-tool-btn">
+          <i class="fas fa-chalkboard"></i>
+          <span>Whiteboard</span>
+        </button>
 
-      <button id="sidebar-calculator-btn" class="sidebar-tool-btn">
-        <i class="fas fa-calculator"></i>
-        <span>Calculator</span>
-      </button>
+        <button id="sidebar-calculator-btn" class="sidebar-tool-btn">
+          <i class="fas fa-calculator"></i>
+          <span>Calculator</span>
+        </button>
 
-      <button id="sidebar-graphing-btn" class="sidebar-tool-btn">
-        <i class="fas fa-chart-line"></i>
-        <span>Graphing Calc</span>
-      </button>
+        <button id="sidebar-graphing-btn" class="sidebar-tool-btn">
+          <i class="fas fa-chart-line"></i>
+          <span>Graphing Calc</span>
+        </button>
 
-      <button id="sidebar-upload-btn" class="sidebar-tool-btn special">
-        <i class="fas fa-camera-retro"></i>
-        <span>Upload Work</span>
-      </button>
+        <button id="sidebar-upload-btn" class="sidebar-tool-btn special">
+          <i class="fas fa-camera-retro"></i>
+          <span>Upload Work</span>
+        </button>
 
-      <button id="sidebar-algebra-btn" class="sidebar-tool-btn">
-        <i class="fas fa-th"></i>
-        <span>Algebra Tiles</span>
-      </button>
+        <button id="sidebar-algebra-btn" class="sidebar-tool-btn">
+          <i class="fas fa-th"></i>
+          <span>Algebra Tiles</span>
+        </button>
+      </div>
     </div>
 
     <!-- Leaderboard Section -->
@@ -849,6 +868,7 @@
   <script src="/js/floating-calculator.js"></script>
   <script src="/js/sidebar.js"></script>
   <script src="/js/draggable-tutor.js"></script>
+  <script src="/js/visualTeachingHandler.js"></script>
   <!-- PDF.js library for PDF preview and rendering -->
   <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
   <script type="module">
