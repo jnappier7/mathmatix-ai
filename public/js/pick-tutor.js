@@ -1,11 +1,14 @@
 // public/js/pick-tutor.js  –  FULL FILE (paste-ready)
 document.addEventListener('DOMContentLoaded', () => {
   let allTutors    = [];
+  let allAvatars   = [];
   let currentUser  = null;
   const tutorSelectionGrid = document.getElementById('tutor-selection-grid');
+  const avatarSelectionGrid = document.getElementById('avatar-selection-grid');
   const playVoiceBtn       = document.getElementById('play-voice-btn');
-  const selectTutorBtn     = document.getElementById('select-tutor-btn');
+  const completeSelectionBtn = document.getElementById('complete-selection-btn');
   let selectedTutorId      = null;
+  let selectedAvatarId     = null;
 
   /* -------- INITIAL DATA LOAD -------- */
   async function fetchData() {
@@ -39,10 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
         .filter(key => key !== 'default')
         .map(key => ({ id: key, ...tutorsData[key] }));
 
+      const avatarsData = window.AVATAR_CONFIG;
+      allAvatars = Object.keys(avatarsData)
+        .filter(key => key !== 'default')
+        .map(key => ({ id: key, ...avatarsData[key] }));
+
       renderTutors();
+      renderAvatars();
     } catch (err) {
       console.error('Error fetching initial data:', err);
       tutorSelectionGrid.innerHTML = `<p>Error loading tutors. Please refresh.</p>`;
+      avatarSelectionGrid.innerHTML = `<p>Error loading avatars. Please refresh.</p>`;
     }
   }
 
@@ -79,18 +89,67 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function renderAvatars() {
+    if (!avatarSelectionGrid || !currentUser) return;
+    avatarSelectionGrid.innerHTML = '';
+
+    allAvatars.forEach(avatar => {
+      const isUnlocked = avatar.unlocked || (currentUser.level >= (avatar.unlockLevel || 0));
+      const card = document.createElement('div');
+      card.classList.add('avatar-card', isUnlocked ? 'unlocked' : 'locked');
+      card.dataset.avatarId = avatar.id;
+
+      if (isUnlocked) {
+        card.innerHTML = `
+          <div class="avatar-card-image">
+            <img src="/images/avatars/${avatar.image}" alt="${avatar.name}" loading="lazy" onerror="this.src='/images/avatars/default.png'">
+          </div>
+          <h4 class="avatar-card-name">${avatar.name}</h4>
+          <p class="avatar-card-description">${avatar.description}</p>
+          ${avatar.rarity ? `<span class="avatar-rarity rarity-${avatar.rarity}">${avatar.rarity}</span>` : ''}`;
+      } else {
+        const unlockLabel = avatar.unlockLevel
+          ? `Unlocks at Level ${avatar.unlockLevel}`
+          : 'Keep playing to unlock!';
+        card.innerHTML = `
+          <div class="avatar-card-image locked-image">
+            <img src="/images/avatars/${avatar.image}" alt="Locked Avatar" loading="lazy" style="filter: brightness(0) opacity(0.3);" onerror="this.src='/images/avatars/default.png'">
+            <div class="lock-overlay"><i class="fas fa-lock fa-2x"></i></div>
+          </div>
+          <h4 class="avatar-card-name">?????</h4>
+          <p class="avatar-card-description"><i class="fas fa-lock"></i> ${unlockLabel}</p>`;
+      }
+      avatarSelectionGrid.appendChild(card);
+    });
+  }
+
   /* -------- INTERACTION HANDLERS -------- */
+  function checkBothSelected() {
+    if (selectedTutorId && selectedAvatarId) {
+      completeSelectionBtn.disabled = false;
+      completeSelectionBtn.innerHTML = '<i class="fas fa-rocket"></i> Let\'s Go!';
+    }
+  }
+
   tutorSelectionGrid.addEventListener('click', e => {
     const card = e.target.closest('.tutor-card');
     if (!card || card.classList.contains('locked')) return;
 
     document.querySelectorAll('.tutor-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
-    selectedTutorId    = card.dataset.tutorId;
-    playVoiceBtn.disabled   = false;
-    selectTutorBtn.disabled = false;
-    const tutorName = allTutors.find(t => t.id === selectedTutorId)?.name || 'Tutor';
-    selectTutorBtn.textContent = `✅ Select ${tutorName}`;
+    selectedTutorId = card.dataset.tutorId;
+    playVoiceBtn.disabled = false;
+    checkBothSelected();
+  });
+
+  avatarSelectionGrid.addEventListener('click', e => {
+    const card = e.target.closest('.avatar-card');
+    if (!card || card.classList.contains('locked')) return;
+
+    document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedAvatarId = card.dataset.avatarId;
+    checkBothSelected();
   });
 
   playVoiceBtn.addEventListener('click', async () => {
@@ -125,24 +184,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  selectTutorBtn.addEventListener('click', async () => {
-    if (!selectedTutorId) return;
+  completeSelectionBtn.addEventListener('click', async () => {
+    if (!selectedTutorId || !selectedAvatarId) return;
 
-    selectTutorBtn.disabled = true;
-    selectTutorBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+    completeSelectionBtn.disabled = true;
+    completeSelectionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
     try {
       const res = await csrfFetch('/api/user/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selectedTutorId }),
+        body: JSON.stringify({ selectedTutorId, selectedAvatarId }),
         credentials: 'include'
       });
       if (!res.ok) throw new Error(await res.text());
       window.location.href = '/chat.html';
     } catch (err) {
       console.error(err);
-      selectTutorBtn.disabled = false;
-      selectTutorBtn.textContent = 'Save Failed – Retry';
+      completeSelectionBtn.disabled = false;
+      completeSelectionBtn.innerHTML = '<i class="fas fa-times"></i> Save Failed – Retry';
     }
   });
 
