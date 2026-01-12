@@ -468,33 +468,212 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .arcade-hub {
+        padding: 1.5rem 1rem;
+    }
+
     .title-glow {
-        font-size: 3rem;
+        font-size: 2.5rem;
+        letter-spacing: 0.05em;
     }
 
     .subtitle {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        letter-spacing: 0.2em;
     }
 
     .game-grid {
         grid-template-columns: 1fr;
-        gap: 3rem;
-        padding: 0 1rem;
+        gap: 2.5rem;
+        padding: 0 0.5rem;
+    }
+
+    .game-cabinet {
+        padding: 1.5rem;
+        /* Enhanced touch interaction */
+        touch-action: manipulation;
     }
 
     .cabinet-screen {
-        height: 200px;
+        height: 220px; /* Slightly taller for better visuals */
     }
 
     .preview-icon {
-        font-size: 4rem;
+        font-size: 4.5rem;
+        margin-bottom: 1.5rem;
     }
 
+    /* Cabinet Marquee Mobile */
+    .cabinet-marquee {
+        padding: 0.8rem;
+    }
+
+    .cabinet-marquee h2 {
+        font-size: 2rem;
+        letter-spacing: 0.15em;
+    }
+
+    .game-tagline {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+    }
+
+    /* Cabinet Info Mobile */
+    .cabinet-info {
+        margin-bottom: 1.5rem;
+    }
+
+    .cabinet-info p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Insert Coin Button - Touch Optimized */
+    .insert-coin {
+        padding: 1.2rem 1.5rem;
+        font-size: 1.1rem;
+        letter-spacing: 0.15em;
+        min-height: 60px; /* Touch-friendly */
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .insert-coin:active {
+        transform: scale(0.98);
+    }
+
+    .coin-arrow {
+        margin-left: 0.8rem;
+        font-size: 1.3rem;
+    }
+
+    /* Arcade Stats Mobile */
     .arcade-stats {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin: 3rem auto;
+        padding: 0 1rem;
     }
 
-    .arcade-note {
+    .stat-display {
         padding: 1.5rem;
+        gap: 1.2rem;
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    .stat-sublabel {
+        font-size: 0.85rem;
+    }
+
+    /* Arcade Note Mobile */
+    .arcade-note {
+        padding: 1.3rem;
+        margin: 2.5rem 1rem 0;
+    }
+
+    .arcade-note p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Mini asteroids mobile */
+    .mini-asteroid {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .preview-asteroids {
+        gap: 1.5rem;
+    }
+
+    /* Mini platforms mobile */
+    .mini-platform {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.3rem;
+    }
+
+    .preview-platforms {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Runner preview mobile */
+    .lane-marker {
+        height: 150px;
+    }
+
+    .runner-preview {
+        padding: 1.5rem;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .arcade-hub {
+        padding: 1rem 0.5rem;
+    }
+
+    .title-glow {
+        font-size: 2rem;
+        letter-spacing: 0.05em;
+    }
+
+    .subtitle {
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+    }
+
+    .game-cabinet {
+        padding: 1rem;
+    }
+
+    .cabinet-screen {
+        height: 180px;
+    }
+
+    .preview-icon {
+        font-size: 3.5rem;
+    }
+
+    .cabinet-marquee h2 {
+        font-size: 1.6rem;
+    }
+
+    .insert-coin {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    .mini-asteroid {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .mini-platform {
+        padding: 0.6rem 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    .preview-platforms {
+        flex-direction: column;
+        gap: 0.8rem;
     }
 }
