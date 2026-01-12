@@ -67,14 +67,19 @@ function detectStruggle(recentMessages) {
         "what does", "how do i", "why", "can you explain again"
     ];
 
-    const recentUserText = userMessages.slice(-3).map(m => m.content.toLowerCase()).join(' ');
+    const recentUserText = userMessages.slice(-3)
+        .filter(m => m.content && typeof m.content === 'string')
+        .map(m => m.content.toLowerCase())
+        .join(' ');
     const hasStruggleKeywords = struggleKeywords.some(kw => recentUserText.includes(kw));
 
     // Check for repeated AI explanations (indicates struggle)
     const aiExplanationCount = aiMessages.slice(-3).filter(m =>
-        m.content.toLowerCase().includes('let me explain') ||
-        m.content.toLowerCase().includes('another way') ||
-        m.content.toLowerCase().includes('try again')
+        m.content && typeof m.content === 'string' && (
+            m.content.toLowerCase().includes('let me explain') ||
+            m.content.toLowerCase().includes('another way') ||
+            m.content.toLowerCase().includes('try again')
+        )
     ).length;
 
     const isStruggling = hasStruggleKeywords || aiExplanationCount >= 2;
@@ -131,6 +136,7 @@ function calculateProblemStats(messages) {
     let correct = 0;
 
     aiMessages.forEach(msg => {
+        if (!msg.content || typeof msg.content !== 'string') return;
         const content = msg.content.toLowerCase();
         if (content.includes('correct') || content.includes('exactly') || content.includes('great job') || content.includes('perfect')) {
             attempted++;
