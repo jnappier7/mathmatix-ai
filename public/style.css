@@ -1006,6 +1006,7 @@ a:hover {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center top; /* Focus on the face at the top of full-body images */
 }
 
 /* Message Animations */
