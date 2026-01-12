@@ -346,6 +346,18 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                 });
 
                 masteryConversation.lastActivity = new Date();
+
+                // CRITICAL FIX: Clean invalid messages before save
+                if (masteryConversation.messages && Array.isArray(masteryConversation.messages)) {
+                    const originalLength = masteryConversation.messages.length;
+                    masteryConversation.messages = masteryConversation.messages.filter(msg => {
+                        return msg.content && typeof msg.content === 'string' && msg.content.trim() !== '';
+                    });
+                    if (masteryConversation.messages.length !== originalLength) {
+                        console.warn(`[MasteryChat] Removed ${originalLength - masteryConversation.messages.length} invalid messages`);
+                    }
+                }
+
                 await masteryConversation.save();
 
                 // ========== TRACK ANSWER RESULTS (YOU_DO / MASTERY_CHECK) ==========
@@ -392,6 +404,18 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             });
 
             masteryConversation.lastActivity = new Date();
+
+            // CRITICAL FIX: Clean invalid messages before save
+            if (masteryConversation.messages && Array.isArray(masteryConversation.messages)) {
+                const originalLength = masteryConversation.messages.length;
+                masteryConversation.messages = masteryConversation.messages.filter(msg => {
+                    return msg.content && typeof msg.content === 'string' && msg.content.trim() !== '';
+                });
+                if (masteryConversation.messages.length !== originalLength) {
+                    console.warn(`[MasteryChat] Removed ${originalLength - masteryConversation.messages.length} invalid messages`);
+                }
+            }
+
             await masteryConversation.save();
 
             // ========== TRACK ANSWER RESULTS (YOU_DO / MASTERY_CHECK) ==========
