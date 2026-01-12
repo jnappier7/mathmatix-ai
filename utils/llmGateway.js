@@ -25,9 +25,9 @@ const { generateSystemPrompt } = require('./prompt');
 // ============================================================================
 
 const DEFAULT_MODELS = {
-    chat: 'gpt-4o-mini',                     // Fast, cost-effective teaching model
-    grading: 'gpt-4o-mini',                  // Vision-capable analysis
-    reasoning: 'gpt-4o-mini',                // Fast reasoning and problem solving
+    chat: 'gpt-5-nano',                      // Ultra-fast, ultra-cheap teaching model (80% cost savings!)
+    grading: 'gpt-5-nano',                   // Fast, cheap analysis
+    reasoning: 'gpt-5-nano',                 // Fast, cheap reasoning
     embedding: 'text-embedding-3-small'      // OpenAI embeddings (specialized task)
 };
 
