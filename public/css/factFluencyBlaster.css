@@ -819,14 +819,103 @@
     .answer-input-game {
         font-size: 1.5rem;
         width: 180px;
+        padding: 15px;
+        min-height: 48px; /* Touch-friendly */
     }
 
     .asteroid {
-        width: 200px;
-        height: 200px;
+        width: 220px; /* IMPROVED: Larger for easier touch */
+        height: 220px;
+        /* Better touch feedback */
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-tap-highlight-color: rgba(0, 212, 255, 0.3);
     }
 
     .asteroid .problem-display {
+        font-size: 2rem;
+    }
+
+    /* Enhanced touch feedback */
+    .asteroid:active {
+        transform: scale(1.1);
+        box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
+    }
+
+    /* Larger buttons for touch */
+    .btn-primary, .btn-secondary {
+        min-height: 52px;
+        font-size: 1.1rem;
+        padding: 14px 28px;
+        touch-action: manipulation;
+    }
+
+    /* Game mode buttons mobile */
+    .game-mode-btn {
+        min-height: 120px;
+        font-size: 1.1rem;
+        padding: 20px;
+    }
+
+    /* Start screen buttons */
+    .start-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .start-buttons button {
+        width: 100%;
+    }
+
+    /* Results screen mobile */
+    .results-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .result-card {
+        padding: 1.2rem;
+    }
+
+    /* Placement stats mobile */
+    .placement-stats {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+    }
+
+    /* Break message mobile */
+    .break-message {
+        font-size: 1.1rem;
+        padding: 1.5rem;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .asteroid {
+        width: 180px;
+        height: 180px;
+    }
+
+    .asteroid .problem-display {
+        font-size: 1.8rem;
+    }
+
+    .game-mode-btn {
+        min-height: 100px;
+        font-size: 1rem;
+    }
+
+    .placement-content h1 {
+        font-size: 1.6rem;
+    }
+
+    .problem-display {
         font-size: 2rem;
     }
 }
@@ -1085,13 +1174,66 @@
     }
 
     .fact-grid {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 0.8rem;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); /* IMPROVED: Larger for touch */
+        gap: 1rem;
+    }
+
+    /* Mastery grid cards - touch-friendly */
+    .fact-card {
+        min-height: 100px; /* Touch target */
+        padding: 12px;
+        touch-action: manipulation;
+    }
+
+    .fact-card .fact-name {
+        font-size: 1.1rem; /* Easier to read */
+    }
+
+    .fact-card .fact-status {
+        font-size: 0.8rem;
     }
 
     .grid-legend {
         flex-direction: column;
         gap: 1rem;
+    }
+
+    .legend-item {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    /* Grid header mobile */
+    .grid-container h1 {
+        font-size: 1.6rem;
+    }
+
+    .grid-subtitle {
+        font-size: 0.85rem;
+    }
+
+    /* Back button mobile */
+    .grid-back-btn {
+        font-size: 1rem;
+        padding: 12px 24px;
+        min-height: 48px;
+    }
+}
+
+/* Extra small screens for mastery grid */
+@media (max-width: 480px) {
+    .fact-grid {
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 0.8rem;
+    }
+
+    .fact-card {
+        min-height: 90px;
+        padding: 10px;
+    }
+
+    .fact-card .fact-name {
+        font-size: 0.95rem;
     }
 }
 

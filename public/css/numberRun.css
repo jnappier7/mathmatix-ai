@@ -493,6 +493,97 @@ body {
     flex: 1;
 }
 
+/* ============================================
+   MOBILE TOUCH CONTROLS
+   ============================================ */
+
+/* Mobile Control Buttons */
+.mobile-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 80px;
+    z-index: 1000;
+    padding: 0 20px;
+}
+
+.mobile-controls.visible {
+    display: flex;
+}
+
+.control-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    transition: all 0.15s ease;
+}
+
+.control-btn:active, .control-btn.active {
+    transform: scale(0.9);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.6);
+}
+
+.control-arrow {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.control-label {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Swipe Hint */
+.swipe-hint {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(102, 126, 234, 0.95);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 16px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 2000;
+}
+
+.swipe-hint.visible {
+    opacity: 1;
+}
+
+.swipe-hint.hidden {
+    display: none;
+}
+
+/* Character feedback animation */
+.runner-char {
+    transition: transform 0.15s ease;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .runner-track {
@@ -513,5 +604,125 @@ body {
 
     .platform .answer {
         font-size: 1.8rem;
+    }
+
+    /* Mobile-specific enhancements */
+    .start-content {
+        padding: 1.5rem;
+    }
+
+    .start-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .start-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .info-cards {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .op-buttons {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .op-btn {
+        padding: 16px;
+        font-size: 1rem;
+    }
+
+    .btn-primary.large {
+        font-size: 1.3rem;
+        padding: 18px 40px;
+    }
+
+    /* Make mobile controls more prominent on smaller screens */
+    .mobile-controls {
+        bottom: 15px;
+        gap: 60px;
+    }
+
+    .control-btn {
+        width: 80px;
+        height: 80px;
+        font-size: 1.8rem;
+    }
+
+    .control-arrow {
+        font-size: 2.2rem;
+    }
+
+    .control-label {
+        font-size: 0.65rem;
+    }
+
+    /* Game HUD mobile optimization */
+    .game-hud {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .hud-left, .hud-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .hud-right {
+        display: flex;
+        gap: 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Gameover screen mobile */
+    .gameover-content {
+        padding: 1.5rem;
+    }
+
+    .gameover-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .final-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .gameover-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .gameover-actions button {
+        width: 100%;
+        padding: 16px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .control-btn {
+        width: 70px;
+        height: 70px;
+    }
+
+    .control-arrow {
+        font-size: 2rem;
+    }
+
+    .mobile-controls {
+        gap: 40px;
+    }
+
+    .runner-track {
+        height: 350px;
+    }
+
+    .swipe-hint {
+        font-size: 1rem;
+        padding: 15px 30px;
     }
 }

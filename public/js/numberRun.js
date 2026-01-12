@@ -129,6 +129,9 @@ function initializeEventListeners() {
 
     // Keyboard controls
     document.addEventListener('keydown', handleKeyPress);
+
+    // Mobile touch controls
+    initializeTouchControls();
 }
 
 // Handle keyboard input
@@ -144,6 +147,8 @@ function handleKeyPress(e) {
 
 // Move to lane
 function moveLane(direction) {
+    if (!gameState.gameRunning) return;
+
     const char = document.getElementById('runnerChar');
 
     if (direction === 'left') {
@@ -162,6 +167,137 @@ function moveLane(direction) {
 
     // Update character position
     char.className = 'runner-char lane-' + gameState.currentLane;
+
+    // Add visual feedback for touch controls
+    addMoveFeedback(direction);
+}
+
+// Visual feedback for lane movement (brief highlight)
+function addMoveFeedback(direction) {
+    const char = document.getElementById('runnerChar');
+    char.style.transform = direction === 'left' ? 'scale(1.1) translateX(-5px)' : 'scale(1.1) translateX(5px)';
+    setTimeout(() => {
+        char.style.transform = 'scale(1)';
+    }, 150);
+}
+
+// Initialize mobile touch controls
+function initializeTouchControls() {
+    const moveLeftBtn = document.getElementById('moveLeftBtn');
+    const moveRightBtn = document.getElementById('moveRightBtn');
+    const runnerTrack = document.querySelector('.runner-track');
+    const swipeHint = document.getElementById('swipeHint');
+
+    // Button controls
+    if (moveLeftBtn && moveRightBtn) {
+        moveLeftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveLane('left');
+            moveLeftBtn.classList.add('active');
+        });
+
+        moveLeftBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            moveLeftBtn.classList.remove('active');
+        });
+
+        moveLeftBtn.addEventListener('click', () => {
+            moveLane('left');
+        });
+
+        moveRightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveLane('right');
+            moveRightBtn.classList.add('active');
+        });
+
+        moveRightBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            moveRightBtn.classList.remove('active');
+        });
+
+        moveRightBtn.addEventListener('click', () => {
+            moveLane('right');
+        });
+    }
+
+    // Swipe gestures
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    runnerTrack.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    });
+
+    runnerTrack.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+
+        // Require horizontal swipe to be dominant (not vertical scroll)
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+            if (deltaX > 0) {
+                // Swipe right
+                moveLane('right');
+            } else {
+                // Swipe left
+                moveLane('left');
+            }
+
+            // Hide swipe hint after first successful swipe
+            if (swipeHint && !swipeHint.classList.contains('hidden')) {
+                swipeHint.classList.add('hidden');
+                localStorage.setItem('numberRunSwipeHintShown', 'true');
+            }
+        }
+    }
+
+    // Show swipe hint only on first play
+    if (swipeHint) {
+        const hintShown = localStorage.getItem('numberRunSwipeHintShown');
+        if (!hintShown) {
+            // Show hint briefly after game starts
+            setTimeout(() => {
+                swipeHint.classList.add('visible');
+                setTimeout(() => {
+                    swipeHint.classList.remove('visible');
+                    swipeHint.classList.add('hidden');
+                }, 3000);
+            }, 2000);
+        } else {
+            swipeHint.classList.add('hidden');
+        }
+    }
+
+    // Show/hide controls based on game state
+    function updateControlsVisibility() {
+        const controls = document.getElementById('mobileControls');
+        const gameScreen = document.getElementById('gameScreen');
+
+        if (controls && gameScreen) {
+            // Show controls only when game is active
+            if (gameScreen.classList.contains('active') && gameState.gameRunning) {
+                controls.classList.add('visible');
+            } else {
+                controls.classList.remove('visible');
+            }
+        }
+    }
+
+    // Listen for game state changes
+    const originalShowScreen = showScreen;
+    window.showScreen = function(screenName) {
+        originalShowScreen(screenName);
+        updateControlsVisibility();
+    };
 }
 
 // Start run
