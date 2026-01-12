@@ -87,11 +87,11 @@ class AlgebraTiles {
                 <input
                   type="text"
                   id="equationInput"
-                  placeholder="Enter equation (e.g., 2x + 3 = 15)"
+                  placeholder="Enter equation (e.g., 2x^2 + 3x = 15)"
                   class="equation-input"
-                  title="Type an expression and click Build It!"
+                  title="Type an expression and press Enter or click Insert! Use x^2 for x squared."
                 />
-                <button id="buildItBtn" class="build-it-btn">🚀</button>
+                <button id="insertEquationBtn" class="build-it-btn">Insert</button>
                 <button id="clearWorkspaceBtn" class="clear-btn">Clear</button>
               </div>
 
@@ -179,10 +179,31 @@ class AlgebraTiles {
               <button id="sendToAIBtn" class="send-to-ai-btn">📤 Send to AI</button>
             </div>
 
-            <!-- RIGHT: Large workspace (bulk of space) -->
+            <!-- CENTER: Large workspace (bulk of space) -->
             <div class="algebra-tiles-workspace" id="tilesWorkspace">
               <div class="workspace-grid" id="workspaceGrid">
                 <!-- Tiles will be added here -->
+              </div>
+            </div>
+
+            <!-- RIGHT SIDEBAR: Control buttons -->
+            <div class="algebra-tiles-controls-right">
+              <div class="control-button-section">
+                <span class="control-label">Actions</span>
+                <button id="rotateSelectedBtn" class="control-btn" title="Rotate selected tiles (or press R)">
+                  <i class="fas fa-redo"></i>
+                  <span>Rotate</span>
+                </button>
+                <button id="clearAllBtn" class="control-btn" title="Clear all tiles">
+                  <i class="fas fa-broom"></i>
+                  <span>Clear All</span>
+                </button>
+              </div>
+
+              <!-- TRASH ZONE (moved to right side) -->
+              <div class="trash-zone-right" id="trashZoneRight">
+                <i class="fas fa-trash-alt"></i>
+                <span>Drag here to delete</span>
               </div>
             </div>
           </div>
@@ -221,8 +242,8 @@ class AlgebraTiles {
     document.getElementById('undoBtn').addEventListener('click', () => this.undo());
     document.getElementById('redoBtn').addEventListener('click', () => this.redo());
 
-    // Build It button
-    document.getElementById('buildItBtn').addEventListener('click', () => {
+    // Insert button
+    document.getElementById('insertEquationBtn').addEventListener('click', () => {
       this.buildFromEquation();
     });
 
@@ -236,27 +257,75 @@ class AlgebraTiles {
       this.sendToAI();
     });
 
-    // Trash zone drag events
-    const trashZone = document.getElementById('trashZone');
-    trashZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      trashZone.classList.add('drag-over');
+    // Right-side control buttons
+    document.getElementById('rotateSelectedBtn').addEventListener('click', () => {
+      this.rotateSelectedTiles();
     });
-    trashZone.addEventListener('dragleave', () => {
-      trashZone.classList.remove('drag-over');
-    });
-    trashZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      trashZone.classList.remove('drag-over');
-      if (this.draggedTile) {
-        this.deleteTile(this.draggedTile);
+
+    document.getElementById('clearAllBtn').addEventListener('click', () => {
+      if (confirm('Clear all tiles from workspace?')) {
+        this.clearWorkspace();
       }
     });
 
+    // Trash zone drag events (LEFT sidebar - keep for backwards compatibility)
+    const trashZone = document.getElementById('trashZone');
+    if (trashZone) {
+      trashZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        trashZone.classList.add('drag-over');
+      });
+      trashZone.addEventListener('dragleave', () => {
+        trashZone.classList.remove('drag-over');
+      });
+      trashZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        trashZone.classList.remove('drag-over');
+        if (this.draggedTile) {
+          this.deleteTile(this.draggedTile);
+        }
+      });
+    }
+
+    // Trash zone drag events (RIGHT sidebar)
+    const trashZoneRight = document.getElementById('trashZoneRight');
+    if (trashZoneRight) {
+      trashZoneRight.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        trashZoneRight.classList.add('drag-over');
+      });
+      trashZoneRight.addEventListener('dragleave', () => {
+        trashZoneRight.classList.remove('drag-over');
+      });
+      trashZoneRight.addEventListener('drop', (e) => {
+        e.preventDefault();
+        trashZoneRight.classList.remove('drag-over');
+        if (this.draggedTile) {
+          // Delete all dragged tiles
+          this.draggedTile.ids.forEach(tileId => {
+            const tileElement = document.querySelector(`[data-tile-id="${tileId}"]`);
+            if (tileElement) {
+              this.deleteTile(tileElement);
+            }
+          });
+          this.draggedTile = null;
+        }
+      });
+    }
+
     // Enter key in equation input
-    document.getElementById('equationInput').addEventListener('keypress', (e) => {
+    const equationInput = document.getElementById('equationInput');
+    equationInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         this.buildFromEquation();
+      }
+    });
+
+    // Escape key to clear/unfocus equation input
+    equationInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.target.value = '';
+        e.target.blur();
       }
     });
 
@@ -586,49 +655,61 @@ class AlgebraTiles {
 
   onMouseUp(e) {
     if (this.draggedTile) {
-      // Update positions for all dragged tiles (convert transform to position)
+      // Calculate final mouse position delta
+      const finalDeltaX = e.clientX - this.draggedTile.startX;
+      const finalDeltaY = e.clientY - this.draggedTile.startY;
+
+      // Update positions for all dragged tiles
       this.draggedTile.ids.forEach(id => {
         const element = document.querySelector(`[data-tile-id="${id}"]`);
         const tile = this.tiles.find(t => t.id === id);
         const initialPos = this.draggedTile.initialPositions.get(id);
 
         if (element && tile && initialPos) {
-          // Extract translate values from transform
-          const transform = element.style.transform;
-          const match = transform.match(/translate\(([^,]+)px,\s*([^)]+)px\)/);
+          // Calculate new position based on initial position plus mouse movement
+          let newX = this.snapToGrid(initialPos.x + finalDeltaX);
+          let newY = this.snapToGrid(initialPos.y + finalDeltaY);
 
-          if (match) {
-            const deltaX = parseFloat(match[1]);
-            const deltaY = parseFloat(match[2]);
+          // Check for collision with other tiles (excluding tiles being dragged)
+          const otherDraggedIds = this.draggedTile.ids.filter(otherId => otherId !== id);
+          let hasCollisionWithOthers = false;
 
-            let newX = this.snapToGrid(initialPos.x + deltaX);
-            let newY = this.snapToGrid(initialPos.y + deltaY);
+          for (const otherTile of this.tiles) {
+            // Skip if it's the current tile or another dragged tile
+            if (otherTile.id === id || otherDraggedIds.includes(otherTile.id)) continue;
 
-            // Check for collision with other tiles (excluding tiles being dragged)
-            if (this.hasCollision(newX, newY, id)) {
-              // Find nearby empty position
-              const emptyPos = this.findEmptyPosition(newX, newY);
-              newX = emptyPos.x;
-              newY = emptyPos.y;
+            const dx = Math.abs(otherTile.x - newX);
+            const dy = Math.abs(otherTile.y - newY);
+            const tileSize = 60;
+            const padding = this.collisionPadding;
+
+            if (dx < (tileSize + padding) && dy < (tileSize + padding)) {
+              hasCollisionWithOthers = true;
+              break;
             }
-
-            tile.x = newX;
-            tile.y = newY;
-          } else {
-            // Fallback to current position
-            tile.x = this.snapToGrid(parseInt(element.style.left) || tile.x);
-            tile.y = this.snapToGrid(parseInt(element.style.top) || tile.y);
           }
 
+          // If collision detected, find nearby empty position
+          if (hasCollisionWithOthers) {
+            const emptyPos = this.findEmptyPosition(newX, newY);
+            newX = emptyPos.x;
+            newY = emptyPos.y;
+          }
+
+          // Update tile data
+          tile.x = newX;
+          tile.y = newY;
+
+          // Update element position
           element.style.left = `${tile.x}px`;
           element.style.top = `${tile.y}px`;
 
-          // Restore rotation if exists
+          // Restore rotation if exists (clear translate transform)
           const rotation = this.tileRotations.get(id) || 0;
           if (rotation !== 0) {
             element.style.transform = `rotate(${rotation}deg)`;
           } else {
-            element.style.transform = ''; // Clear transform
+            element.style.transform = ''; // Clear transform completely
           }
 
           element.classList.remove('dragging');
@@ -694,8 +775,8 @@ class AlgebraTiles {
 
   onKeyDown(e) {
     // Only handle keyboard if algebra tiles modal is open
-    const modal = document.getElementById('algebra-tiles-modal');
-    if (!modal || modal.style.display === 'none') return;
+    const modal = document.getElementById('algebraTilesModal');
+    if (!modal || !modal.classList.contains('active')) return;
 
     // Delete key - delete selected tiles
     if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -1070,9 +1151,13 @@ class AlgebraTiles {
     // Remove spaces
     equation = equation.replace(/\s+/g, '');
 
+    // Convert x^2 to x² for easier parsing
+    equation = equation.replace(/x\^2/g, 'x²');
+    equation = equation.replace(/y\^2/g, 'y²');
+
     const tiles = [];
 
-    // Parse x² terms
+    // Parse x² terms (including x^2 notation)
     const x2Pattern = /([+-]?\d*)x²/g;
     let match;
     while ((match = x2Pattern.exec(equation)) !== null) {
