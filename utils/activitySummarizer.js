@@ -30,7 +30,7 @@ Example: "Sarah is solving linear equations (2x+3=7). Completed 3/5 problems cor
 
 Summary:`;
 
-        const response = await callLLM('gpt-4o-mini', [
+        const response = await callLLM('gpt-5-nano', [
             { role: 'system', content: 'You are a helpful assistant that creates concise, privacy-safe summaries of tutoring sessions for teachers.' },
             { role: 'user', content: summaryPrompt }
         ], {
@@ -175,7 +175,7 @@ ${messages.slice(-15).map(m => `${m.role}: ${m.content}`).join('\n')}
 
 Generate a concise teacher summary:`;
 
-        const response = await callLLM('gpt-4o-mini', [
+        const response = await callLLM('gpt-5-nano', [
             { role: 'system', content: 'You are creating session summaries for teachers to review student progress.' },
             { role: 'user', content: summaryPrompt }
         ], {

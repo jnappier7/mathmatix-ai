@@ -208,10 +208,10 @@ router.post('/',
 
             } catch (claudeError) {
                 console.warn(`[chatWithFile] Claude failed:`, claudeError.message);
-                console.warn('[chatWithFile] Falling back to GPT-4o-mini...');
+                console.warn('[chatWithFile] Falling back to GPT-5-nano...');
 
                 // FALLBACK: Try OpenAI vision API
-                const fallbackModel = 'gpt-4o-mini';
+                const fallbackModel = 'gpt-5-nano';
                 const completion = await retryWithExponentialBackoff(() =>
                     openai.chat.completions.create({
                         model: fallbackModel,
@@ -222,11 +222,11 @@ router.post('/',
                 );
 
                 aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
-                console.log('[chatWithFile] Received response from GPT-4o-mini (fallback)');
+                console.log('[chatWithFile] Received response from GPT-5-nano (fallback)');
             }
         } else {
             // OpenAI model requested or no Anthropic key
-            const model = isClaudeModel ? 'gpt-4o-mini' : PRIMARY_CHAT_MODEL;
+            const model = isClaudeModel ? 'gpt-5-nano' : PRIMARY_CHAT_MODEL;
             console.log(`[chatWithFile] Calling OpenAI vision API (${model})...`);
 
             const completion = await retryWithExponentialBackoff(() =>
