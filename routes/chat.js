@@ -441,6 +441,18 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         activeConversation.problemsCorrect = stats.correct;
         activeConversation.lastActivity = new Date();
 
+        // CRITICAL FIX: Clean invalid messages before save to prevent validation errors
+        // This removes any messages with undefined/empty content that may exist from previous bugs
+        if (activeConversation.messages && Array.isArray(activeConversation.messages)) {
+            const originalLength = activeConversation.messages.length;
+            activeConversation.messages = activeConversation.messages.filter(msg => {
+                return msg.content && typeof msg.content === 'string' && msg.content.trim() !== '';
+            });
+            if (activeConversation.messages.length !== originalLength) {
+                console.warn(`[Chat] Removed ${originalLength - activeConversation.messages.length} invalid messages before save`);
+            }
+        }
+
         await activeConversation.save();
 
         // Track badge progress if user has an active badge
@@ -745,6 +757,18 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
             if (conversation && conversation.isActive) {
                 conversation.activeMinutes = (conversation.activeMinutes || 0) + activeMinutes;
                 conversation.lastActivity = new Date();
+
+                // CRITICAL FIX: Clean invalid messages before save to prevent validation errors
+                if (conversation.messages && Array.isArray(conversation.messages)) {
+                    const originalLength = conversation.messages.length;
+                    conversation.messages = conversation.messages.filter(msg => {
+                        return msg.content && typeof msg.content === 'string' && msg.content.trim() !== '';
+                    });
+                    if (conversation.messages.length !== originalLength) {
+                        console.warn(`[Track-Time] Removed ${originalLength - conversation.messages.length} invalid messages before save`);
+                    }
+                }
+
                 await conversation.save();
             }
         }
