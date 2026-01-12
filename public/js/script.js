@@ -2350,6 +2350,16 @@ document.addEventListener("DOMContentLoaded", () => {
             renderDrawing(data.drawingSequence);
         }
 
+        // Execute visual teaching commands (whiteboard, algebra tiles, images, manipulatives)
+        if (data.visualCommands && window.visualTeachingHandler) {
+            try {
+                await window.visualTeachingHandler.executeCommands(data.visualCommands);
+                console.log('[VisualTeaching] Executed commands:', data.visualCommands);
+            } catch (error) {
+                console.error('[VisualTeaching] Failed to execute commands:', error);
+            }
+        }
+
         if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
             // Show dramatic unlock screen for each tutor
             showTutorUnlockCelebration(data.newlyUnlockedTutors);
