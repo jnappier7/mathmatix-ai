@@ -49,10 +49,10 @@
                     <div class="info-card">
                         <h3>How to Play:</h3>
                         <ul>
-                            <li><strong>⬅️ Left Arrow:</strong> Move to left lane</li>
-                            <li><strong>➡️ Right Arrow:</strong> Move to right lane</li>
+                            <li><strong>⬅️➡️ Arrows/Swipe/Tap:</strong> Move between lanes</li>
                             <li><strong>🎯 Goal:</strong> Land on platforms with correct answers</li>
                             <li><strong>💀 Miss:</strong> Fall off track, game over!</li>
+                            <li><strong>📱 Mobile:</strong> Swipe or use on-screen buttons</li>
                         </ul>
                     </div>
 
@@ -108,6 +108,23 @@
                 <div class="platforms-container" id="platformsContainer">
                     <!-- Platforms spawn here -->
                 </div>
+            </div>
+
+            <!-- Mobile Touch Controls -->
+            <div class="mobile-controls" id="mobileControls">
+                <button id="moveLeftBtn" class="control-btn control-left" aria-label="Move Left">
+                    <span class="control-arrow">◀</span>
+                    <span class="control-label">LEFT</span>
+                </button>
+                <button id="moveRightBtn" class="control-btn control-right" aria-label="Move Right">
+                    <span class="control-arrow">▶</span>
+                    <span class="control-label">RIGHT</span>
+                </button>
+            </div>
+
+            <!-- Swipe Hint (shows briefly on first play) -->
+            <div class="swipe-hint" id="swipeHint">
+                👆 Swipe or tap buttons to move
             </div>
         </div>
 
