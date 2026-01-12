@@ -132,7 +132,7 @@ ${phasePrompt}
             messages = messages.concat(conversationHistory);
         }
 
-        const completion = await callLLM("gpt-4o", messages, { temperature: 0.7, max_tokens: 500 });
+        const completion = await callLLM("gpt-5-nano", messages, { temperature: 0.7, max_tokens: 500 });
 
         const aiResponseText = completion.choices[0].message.content.trim();
 
@@ -227,7 +227,7 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
 5. Craft a natural, conversational response that builds confidence.
         `;
         
-        const aiHint = await callLLM("gpt-4o", [{ role: "system", content: systemPrompt + taskPrompt }], { temperature: 0.7, max_tokens: 150 }); // Using centralized LLM call
+        const aiHint = await callLLM("gpt-5-nano", [{ role: "system", content: systemPrompt + taskPrompt }], { temperature: 0.7, max_tokens: 150 }); // Using centralized LLM call
 
         res.json({ hint: aiHint.choices[0].message.content.trim() });
     } catch (error) {

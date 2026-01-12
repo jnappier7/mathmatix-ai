@@ -25,10 +25,10 @@ const { generateSystemPrompt } = require('./prompt');
 // ============================================================================
 
 const DEFAULT_MODELS = {
-    chat: 'claude-sonnet-4-5-20250929',      // Best teaching & reasoning model (Sonnet 4.5 - Jan 2025)
-    grading: 'claude-sonnet-4-5-20250929',   // Vision-capable, superior analysis
-    reasoning: 'claude-sonnet-4-5-20250929', // Top-tier complex problem solving
-    embedding: 'text-embedding-3-small'      // Keep OpenAI for embeddings (specialized task)
+    chat: 'gpt-5-nano',                      // Ultra-fast, ultra-cheap teaching model (80% cost savings!)
+    grading: 'gpt-5-nano',                   // Fast, cheap analysis
+    reasoning: 'gpt-5-nano',                 // Fast, cheap reasoning
+    embedding: 'text-embedding-3-small'      // OpenAI embeddings (specialized task)
 };
 
 // ============================================================================
