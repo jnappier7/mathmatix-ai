@@ -394,6 +394,9 @@ const userSchema = new Schema({
   teacherId:        { type: Schema.Types.ObjectId, ref: 'User' },
   selectedTutorId:  { type: String, trim: true },
 
+  /* Avatar selection (creature avatars like Blooket) */
+  selectedAvatarId: { type: String, trim: true }, // e.g., 'lion', 'dragon', 'panda'
+
   /* Parent linking (multi-parent support) */
   parentIds: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 

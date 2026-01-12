@@ -262,7 +262,7 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
         req.logIn(user, (err) => {
             if (err) { return next(err); }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
             res.redirect(dashboardMap[user.role] || '/login.html');
         });
@@ -282,7 +282,7 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
         req.logIn(user, (err) => {
             if (err) { return next(err); }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-            if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+            if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
             res.redirect(dashboardMap[user.role] || '/login.html');
         });
@@ -379,7 +379,7 @@ app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
         const allowedUpdates = [
             'firstName', 'lastName', 'gradeLevel', 'mathCourse',
             'tonePreference', 'learningStyle', 'interests', 'needsProfileCompletion',
-            'selectedTutorId', 'reportFrequency', 'goalViewPreference',
+            'selectedTutorId', 'selectedAvatarId', 'reportFrequency', 'goalViewPreference',
             'parentTone', 'parentLanguage', 'preferredLanguage', 'preferences'
         ];
 

@@ -1027,8 +1027,8 @@ a:hover {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Modern gradient */
     color: white; /* Example: White text for user messages */
     border-bottom-right-radius: 4px; /* Slightly less rounded corner at the bottom right for user */
-    margin-left: 15%; /* IMPROVED: Better spacing from left edge */
-    margin-right: 5px; /* CRITICAL FIX: Prevent cutoff on right edge */
+    margin-left: auto; /* FIXED: Use auto to prevent width overflow */
+    margin-right: 10px; /* INCREASED: More space to prevent cutoff */
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
@@ -1810,6 +1810,162 @@ form label, .password-label-row label {
 .tutor-actions-bar .btn-select:hover {
     background-color: #109a9a;
 }
+.tutor-actions-bar .btn-large {
+    min-width: 250px;
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    font-weight: 700;
+}
+
+/* ======================
+   AVATAR SELECTION STYLES
+   ====================== */
+.avatar-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin-bottom: 2rem;
+}
+
+.avatar-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 3px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    border-color: var(--clr-primary-teal);
+}
+
+.avatar-card.selected {
+    border-color: var(--clr-accent-hotpink);
+    box-shadow: 0 0 0 4px rgba(255, 51, 148, 0.2), 0 12px 24px rgba(255, 51, 148, 0.3);
+    transform: translateY(-8px) scale(1.05);
+    background: linear-gradient(135deg, #ffe0f0 0%, #ffd0e8 100%);
+}
+
+.avatar-card.locked {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background: linear-gradient(135deg, #d4d7dc 0%, #c1c5cc 100%);
+}
+
+.avatar-card.locked:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-card-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 3px solid var(--clr-primary-teal);
+    margin-bottom: 10px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-card-image.locked-image {
+    border-color: #999;
+    background: #e0e0e0;
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-size: 2rem;
+}
+
+.avatar-card-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--clr-text);
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.avatar-card-description {
+    font-size: 0.75rem;
+    color: var(--clr-text-dim);
+    text-align: center;
+    line-height: 1.3;
+    min-height: 32px;
+    margin-bottom: 5px;
+}
+
+.avatar-rarity {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-top: 5px;
+    letter-spacing: 0.5px;
+}
+
+.rarity-common {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #4caf50;
+}
+
+.rarity-uncommon {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #2196f3;
+}
+
+.rarity-rare {
+    background: #f3e5f5;
+    color: #6a1b9a;
+    border: 1px solid #9c27b0;
+}
+
+.rarity-epic {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ff9800;
+}
+
+.rarity-legendary {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #b8860b;
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+}
 
 /* --- Media Queries for Structural Changes --- */
 
@@ -2072,6 +2228,16 @@ form label, .password-label-row label {
     margin-bottom: 10px;
     z-index: 1000;
     animation: slideDown 0.2s ease;
+    /* ADDED: Make it draggable and resizable */
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    resize: both; /* Allow resizing */
 }
 
 @keyframes slideDown {
@@ -2092,6 +2258,8 @@ form label, .password-label-row label {
     margin-bottom: 10px;
     padding-bottom: 8px;
     border-bottom: 1px solid #eee;
+    cursor: move; /* ADDED: Indicate draggable */
+    user-select: none; /* ADDED: Prevent text selection while dragging */
 }
 
 .equation-palette-header span {
@@ -2151,6 +2319,7 @@ form label, .password-label-row label {
     gap: 10px;
     padding-top: 10px;
     border-top: 1px solid #eee;
+    flex-wrap: wrap; /* ADDED: Ensure button wraps on small screens */
 }
 
 .inline-math-field-container label {
@@ -2171,6 +2340,8 @@ form label, .password-label-row label {
 .btn-sm {
     padding: 6px 12px;
     font-size: 0.85em;
+    min-width: 70px; /* ADDED: Ensure button is always visible */
+    flex-shrink: 0; /* ADDED: Prevent button from shrinking */
 }
 
 /* Close Button (top-right 'x') */
@@ -2842,8 +3013,8 @@ form label, .password-label-row label {
 
     /* User messages align right */
     .message.user-message, .message.user {
-        margin-left: 8%; /* Reduced aggressive right alignment on mobile */
-        margin-right: 5px; /* Prevent cutoff */
+        margin-left: auto; /* FIXED: Use auto instead of percentage */
+        margin-right: 10px; /* INCREASED: More space to prevent cutoff */
     }
 
     /* AI messages align left */

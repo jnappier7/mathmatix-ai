@@ -2689,6 +2689,55 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Make inline equation palette draggable
+    if (inlineEquationPalette) {
+        const paletteHeader = document.querySelector('.equation-palette-header');
+        let isDraggingPalette = false;
+        let paletteOffsetX = 0;
+        let paletteOffsetY = 0;
+
+        if (paletteHeader) {
+            paletteHeader.addEventListener('mousedown', (e) => {
+                // Don't drag if clicking on close button
+                if (e.target.closest('.palette-close-btn')) return;
+
+                isDraggingPalette = true;
+                const rect = inlineEquationPalette.getBoundingClientRect();
+                paletteOffsetX = e.clientX - rect.left;
+                paletteOffsetY = e.clientY - rect.top;
+                paletteHeader.style.cursor = 'grabbing';
+
+                // Disable transform to allow free positioning
+                inlineEquationPalette.style.transform = 'none';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDraggingPalette) return;
+                e.preventDefault();
+
+                let newX = e.clientX - paletteOffsetX;
+                let newY = e.clientY - paletteOffsetY;
+
+                // Keep within viewport bounds
+                const maxX = window.innerWidth - inlineEquationPalette.offsetWidth;
+                const maxY = window.innerHeight - inlineEquationPalette.offsetHeight;
+
+                newX = Math.max(0, Math.min(newX, maxX));
+                newY = Math.max(0, Math.min(newY, maxY));
+
+                inlineEquationPalette.style.left = `${newX}px`;
+                inlineEquationPalette.style.top = `${newY}px`;
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDraggingPalette) {
+                    isDraggingPalette = false;
+                    paletteHeader.style.cursor = 'move';
+                }
+            });
+        }
+    }
+
     // Equation Modal with Draggable Functionality (kept for legacy support)
     let isDraggingModal = false;
     let modalOffsetX = 0;
