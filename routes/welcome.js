@@ -14,8 +14,10 @@ router.get('/', async (req, res) => {
         return res.status(400).json({ error: "Not authenticated." });
     }
 
+    let user = null; // CRITICAL FIX: Declare outside try block for catch block access
+
     try {
-        const user = await User.findById(userId).lean();
+        user = await User.findById(userId).lean();
         if (!user) {
             return res.status(404).json({ error: "User not found." });
         }

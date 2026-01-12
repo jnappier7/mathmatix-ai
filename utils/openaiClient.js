@@ -160,11 +160,17 @@ async function callLLM(model, messages, options = {}) {
                     { max_tokens: options.max_tokens })
                 : {};
 
+            // CRITICAL FIX: Some models (like gpt-5-nano) only support default temperature
+            // Don't pass temperature for these models
+            const temperatureParam = model.includes('nano') ?
+                {} :
+                { temperature: options.temperature || 0.7 };
+
             const completion = await retryWithExponentialBackoff(() =>
                 openai.chat.completions.create({
                     model: model,
                     messages: messages,
-                    temperature: options.temperature || 0.7,
+                    ...temperatureParam,
                     ...tokenParam,
                     stream: options.stream || false,
                 })
@@ -227,10 +233,15 @@ async function callLLMStream(model, messages, options = {}) {
                     { max_tokens: options.max_tokens })
                 : {};
 
+            // CRITICAL FIX: Some models (like gpt-5-nano) only support default temperature
+            const temperatureParam = model.includes('nano') ?
+                {} :
+                { temperature: options.temperature || 0.7 };
+
             const stream = await openai.chat.completions.create({
                 model: model,
                 messages: messages,
-                temperature: options.temperature || 0.7,
+                ...temperatureParam,
                 ...tokenParam,
                 stream: true,
             });
