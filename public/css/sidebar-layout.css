@@ -109,17 +109,29 @@
     background: linear-gradient(135deg, #5568d3 0%, #653996 100%);
 }
 
-/* Leaderboard in Sidebar */
+/* Collapsible Sections */
+#sidebar-sessions,
+#sidebar-tools,
 #sidebar-leaderboard {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
 }
 
+#sidebar-sessions.expanded {
+    max-height: 500px;
+}
+
+#sidebar-tools.expanded {
+    max-height: 600px;
+}
+
 #sidebar-leaderboard.expanded {
     max-height: 400px;
 }
 
+.sessions-toggle,
+.tools-toggle,
 .leaderboard-toggle {
     width: 100%;
     padding: 12px 15px;
@@ -136,16 +148,89 @@
     margin-bottom: 8px;
 }
 
+.sessions-toggle:hover,
+.tools-toggle:hover,
 .leaderboard-toggle:hover {
     background: #e0e0e0;
 }
 
+.sessions-toggle i,
+.tools-toggle i,
 .leaderboard-toggle i {
     transition: transform 0.3s ease;
 }
 
+.sessions-toggle.expanded i,
+.tools-toggle.expanded i,
 .leaderboard-toggle.expanded i {
     transform: rotate(180deg);
+}
+
+/* Session Items */
+#sessions-list {
+    margin-top: 8px;
+}
+
+.session-item {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    background: #f9f9f9;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    color: #333;
+    position: relative;
+}
+
+.session-item:hover {
+    background: #eeeeee;
+    transform: translateX(2px);
+}
+
+.session-item.active {
+    background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+    border-color: #667eea;
+}
+
+.session-emoji {
+    font-size: 18px;
+}
+
+.session-name {
+    flex: 1;
+    text-align: left;
+    font-weight: 500;
+}
+
+.session-delete {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.session-item:hover .session-delete {
+    opacity: 1;
+}
+
+.session-delete:hover {
+    background: #cc0000;
 }
 
 #sidebar-leaderboard-table {
