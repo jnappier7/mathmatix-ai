@@ -18,7 +18,7 @@ const {
   PHASES
 } = require('../utils/lessonPhaseManager');
 
-const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
+const PRIMARY_CHAT_MODEL = "gpt-5-nano"; // Ultra-fast, ultra-cheap teaching model (GPT-5 Nano - 80% cheaper!)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 

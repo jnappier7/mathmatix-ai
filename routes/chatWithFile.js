@@ -27,7 +27,7 @@ const upload = multer({
     }),
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB per file
 });
-const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
+const PRIMARY_CHAT_MODEL = "gpt-5-nano"; // Ultra-fast, ultra-cheap teaching model (GPT-5 Nano - 80% cheaper!)
 
 router.post('/',
     isAuthenticated,

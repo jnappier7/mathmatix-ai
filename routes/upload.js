@@ -11,7 +11,7 @@ const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
-const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for analyzing student work
+const PRIMARY_UPLOAD_AI_MODEL = "gpt-5-nano"; // Ultra-fast, ultra-cheap model for analyzing student work (GPT-5 Nano - 80% cheaper!)
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
