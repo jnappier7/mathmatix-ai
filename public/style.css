@@ -1027,7 +1027,7 @@ a:hover {
     color: white; /* Example: White text for user messages */
     border-bottom-right-radius: 4px; /* Slightly less rounded corner at the bottom right for user */
     margin-left: auto; /* FIXED: Use auto to prevent width overflow */
-    margin-right: 10px; /* INCREASED: More space to prevent cutoff */
+    margin-right: 20px; /* INCREASED AGAIN: Prevent cutoff on right edge */
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
@@ -3013,7 +3013,7 @@ form label, .password-label-row label {
     /* User messages align right */
     .message.user-message, .message.user {
         margin-left: auto; /* FIXED: Use auto instead of percentage */
-        margin-right: 10px; /* INCREASED: More space to prevent cutoff */
+        margin-right: 20px; /* INCREASED AGAIN: Prevent cutoff on right edge */
     }
 
     /* AI messages align left */
