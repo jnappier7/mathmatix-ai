@@ -18,7 +18,7 @@ const {
   PHASES
 } = require('../utils/lessonPhaseManager');
 
-const PRIMARY_CHAT_MODEL = "claude-sonnet-4-5-20250929"; // Best teaching & reasoning (Sonnet 4.5 - Jan 2025)
+const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
