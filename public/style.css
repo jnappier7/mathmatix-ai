@@ -2227,6 +2227,16 @@ form label, .password-label-row label {
     margin-bottom: 10px;
     z-index: 1000;
     animation: slideDown 0.2s ease;
+    /* ADDED: Make it draggable and resizable */
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    resize: both; /* Allow resizing */
 }
 
 @keyframes slideDown {
@@ -2247,6 +2257,8 @@ form label, .password-label-row label {
     margin-bottom: 10px;
     padding-bottom: 8px;
     border-bottom: 1px solid #eee;
+    cursor: move; /* ADDED: Indicate draggable */
+    user-select: none; /* ADDED: Prevent text selection while dragging */
 }
 
 .equation-palette-header span {
