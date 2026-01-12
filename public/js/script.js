@@ -1755,7 +1755,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const avatar = document.createElement("div");
             avatar.className = "message-avatar";
             const tutor = TUTOR_CONFIG[currentUser.selectedTutorId] || TUTOR_CONFIG.default;
-            avatar.innerHTML = `<img src="${tutor.imageUrl || '/images/default-tutor.png'}" alt="${tutor.name}" />`;
+            avatar.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}" />`;
             messageContainer.appendChild(avatar);
         }
 
