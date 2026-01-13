@@ -132,9 +132,17 @@ function generateSpeakableText(text) {
     let lastIndex = 0;
     text.replace(latexRegex, (match, openDelim, latexContent, closeDelim, offset) => {
         result += text.substring(lastIndex, offset);
-        const speakableMath = MathLive.convertLatexToSpeakableText(latexContent, {
+        let speakableMath = MathLive.convertLatexToSpeakableText(latexContent, {
             textToSpeechRules: 'sre', textToSpeechRulesOptions: { domain: 'mathspeak', ruleset: 'mathspeak-brief' }
         });
+        // Clean up unwanted TTS verbosity
+        speakableMath = speakableMath
+            .replace(/\bopen paren(thesis)?\b/gi, '')
+            .replace(/\bclosed? paren(thesis)?\b/gi, '')
+            .replace(/\bsubscript\b/gi, '')
+            .replace(/\bsuperscript\b/gi, '')
+            .replace(/\s+/g, ' ') // Collapse multiple spaces
+            .trim();
         result += ` ${speakableMath} `;
         lastIndex = offset + match.length;
     });
@@ -1756,6 +1764,21 @@ document.addEventListener("DOMContentLoaded", () => {
             avatar.className = "message-avatar";
             const tutor = TUTOR_CONFIG[currentUser.selectedTutorId] || TUTOR_CONFIG.default;
             avatar.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}" />`;
+            messageContainer.appendChild(avatar);
+        }
+
+        // Add avatar for user messages
+        if (sender === 'user' && currentUser && currentUser.selectedAvatarId && window.AVATAR_CONFIG) {
+            const avatar = document.createElement("div");
+            avatar.className = "message-avatar";
+            const avatarConfig = window.AVATAR_CONFIG[currentUser.selectedAvatarId];
+            if (avatarConfig) {
+                const avatarImage = avatarConfig.image || 'default-avatar.png';
+                avatar.innerHTML = `<img src="/images/avatars/${avatarImage}" alt="${avatarConfig.name}" />`;
+            } else {
+                // Fallback if avatar not found
+                avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
+            }
             messageContainer.appendChild(avatar);
         }
 

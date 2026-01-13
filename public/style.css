@@ -984,6 +984,7 @@ a:hover {
 
 .message-container.user {
     justify-content: flex-end;
+    flex-direction: row-reverse; /* Avatar on right side */
 }
 
 .message-container.ai {
