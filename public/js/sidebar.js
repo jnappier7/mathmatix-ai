@@ -358,15 +358,6 @@ class Sidebar {
             });
         }
 
-        // Graphing Calculator
-        const graphingBtn = document.getElementById('sidebar-graphing-btn');
-        if (graphingBtn) {
-            graphingBtn.addEventListener('click', () => {
-                const mainGraphingBtn = document.getElementById('open-graphing-calc-btn');
-                if (mainGraphingBtn) mainGraphingBtn.click();
-            });
-        }
-
         // Upload Work
         const uploadBtn = document.getElementById('sidebar-upload-btn');
         if (uploadBtn) {

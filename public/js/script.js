@@ -1780,44 +1780,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         bubble.appendChild(textNode);
 
-        // Handle Desmos graphs: [DESMOS:y=2x+3]
-        if (sender === 'ai' && text && text.includes('[DESMOS:')) {
-            const desmosRegex = /\[DESMOS:([^\]]+)\]/g;
-            let match;
-            while ((match = desmosRegex.exec(text)) !== null) {
-                const expression = match[1].trim();
-                const desmosContainer = document.createElement('div');
-                const desmosId = 'desmos-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-                desmosContainer.id = desmosId;
-                desmosContainer.className = 'desmos-graph';
-                desmosContainer.style.width = '100%';
-                desmosContainer.style.height = '400px';
-                desmosContainer.style.marginTop = '10px';
-                desmosContainer.style.borderRadius = '8px';
-                desmosContainer.style.border = '1px solid #e0e0e0';
-                bubble.appendChild(desmosContainer);
-
-                setTimeout(() => {
-                    if (window.Desmos) {
-                        const calculator = Desmos.GraphingCalculator(document.getElementById(desmosId), {
-                            expressionsCollapsed: true,
-                            settingsMenu: false,
-                            zoomButtons: true
-                        });
-                        // Handle multiple expressions separated by commas
-                        const expressions = expression.split(',').map(e => e.trim());
-                        expressions.forEach(expr => {
-                            if (expr) {
-                                calculator.setExpression({ latex: expr });
-                            }
-                        });
-                    }
-                }, 100);
-            }
-            // Remove [DESMOS:...] tags from displayed text
-            textNode.innerHTML = textNode.innerHTML.replace(desmosRegex, '');
-        }
-
         // Handle Visual Step Breadcrumbs: [STEPS]...[/STEPS]
         if (sender === 'ai' && text && text.includes('[STEPS]')) {
             const stepsRegex = /\[STEPS\]([\s\S]*?)\[\/STEPS\]/g;
@@ -2170,46 +2132,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!messageRef || !messageRef.bubble) return;
 
         messageRef.bubble.classList.remove('streaming');
-
-        // Handle Desmos graphs: [DESMOS:y=2x+3]
-        if (fullText && fullText.includes('[DESMOS:')) {
-            const desmosRegex = /\[DESMOS:([^\]]+)\]/g;
-            let match;
-            while ((match = desmosRegex.exec(fullText)) !== null) {
-                const expression = match[1].trim();
-                const desmosContainer = document.createElement('div');
-                const desmosId = 'desmos-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-                desmosContainer.id = desmosId;
-                desmosContainer.className = 'desmos-graph';
-                desmosContainer.style.width = '100%';
-                desmosContainer.style.height = '400px';
-                desmosContainer.style.marginTop = '10px';
-                desmosContainer.style.borderRadius = '8px';
-                desmosContainer.style.border = '1px solid #e0e0e0';
-                messageRef.bubble.appendChild(desmosContainer);
-
-                setTimeout(() => {
-                    if (window.Desmos) {
-                        const calculator = Desmos.GraphingCalculator(document.getElementById(desmosId), {
-                            expressionsCollapsed: true,
-                            settingsMenu: false,
-                            zoomButtons: true
-                        });
-                        // Handle multiple expressions separated by commas
-                        const expressions = expression.split(',').map(e => e.trim());
-                        expressions.forEach(expr => {
-                            if (expr) {
-                                calculator.setExpression({ latex: expr });
-                            }
-                        });
-                    }
-                }, 100);
-            }
-            // Remove [DESMOS:...] tags from displayed text
-            if (messageRef.textNode) {
-                messageRef.textNode.innerHTML = messageRef.textNode.innerHTML.replace(desmosRegex, '');
-            }
-        }
 
         // Add audio playback button
         if (typeof playAudio === 'function') {
@@ -3080,104 +3002,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error('Error saving reaction:', error);
             showToast('Failed to save reaction', 2000);
-        }
-    }
-
-    // ============================================
-    // DESMOS GRAPHING CALCULATOR MODAL
-    // ============================================
-    const openGraphingCalcBtn = document.getElementById('open-graphing-calc-btn');
-    const closeGraphingCalcBtn = document.getElementById('close-graphing-calc-modal');
-    const graphingCalcModal = document.getElementById('graphing-calc-modal');
-    const sendDesmosToAiBtn = document.getElementById('send-desmos-to-ai');
-    let desmosCalculator = null;
-
-    if (openGraphingCalcBtn && graphingCalcModal) {
-        openGraphingCalcBtn.addEventListener('click', () => {
-            graphingCalcModal.classList.add('is-visible');
-
-            // Initialize Desmos calculator on first open
-            if (!desmosCalculator && window.Desmos) {
-                const container = document.getElementById('desmos-calculator-container');
-                if (container) {
-                    desmosCalculator = Desmos.GraphingCalculator(container, {
-                        expressions: true,
-                        settingsMenu: true,
-                        zoomButtons: true,
-                        expressionsTopbar: true,
-                        border: false
-                    });
-                }
-            }
-        });
-
-        // Close modal on X button
-        if (closeGraphingCalcBtn) {
-            closeGraphingCalcBtn.addEventListener('click', () => {
-                graphingCalcModal.classList.remove('is-visible');
-            });
-        }
-
-        // Close modal on overlay click
-        graphingCalcModal.addEventListener('click', (e) => {
-            if (e.target === graphingCalcModal) {
-                graphingCalcModal.classList.remove('is-visible');
-            }
-        });
-
-        // Send Desmos graph to AI
-        if (sendDesmosToAiBtn) {
-            sendDesmosToAiBtn.addEventListener('click', async () => {
-                if (!desmosCalculator) {
-                    showToast('Please create a graph first', 2000);
-                    return;
-                }
-
-                try {
-                    // Get calculator state (all expressions)
-                    const state = desmosCalculator.getState();
-                    const expressions = state.expressions.list
-                        .filter(expr => expr.latex) // Only expressions with LaTeX
-                        .map(expr => expr.latex)
-                        .join('\n');
-
-                    if (!expressions) {
-                        showToast('No expressions to send', 2000);
-                        return;
-                    }
-
-                    // Capture screenshot
-                    const screenshotDataUrl = desmosCalculator.screenshot({
-                        width: 1200,
-                        height: 800,
-                        targetPixelRatio: 2
-                    });
-
-                    // Convert data URL to blob
-                    const response = await fetch(screenshotDataUrl);
-                    const blob = await response.blob();
-                    const file = new File([blob], `desmos-graph-${Date.now()}.png`, { type: 'image/png' });
-
-                    // Add file to attachments
-                    file.uploadId = `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                    attachedFiles.push(file);
-                    createFileCard(file);
-
-                    // Set message text with expressions
-                    const userInput = document.getElementById('user-input');
-                    if (userInput) {
-                        userInput.value = `Here's my graph:\n${expressions}`;
-                    }
-
-                    // Close modal
-                    graphingCalcModal.classList.remove('is-visible');
-
-                    showToast('Graph added to chat', 2000);
-                } catch (error) {
-                    console.error('Error sending Desmos to AI:', error);
-                    showToast('Failed to capture graph', 2000);
-                }
-            });
         }
     }
 

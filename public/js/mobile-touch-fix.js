@@ -17,7 +17,6 @@
         // Add touch support to specific buttons that might have issues
         const criticalButtons = [
             'open-resources-modal-btn',
-            'open-graphing-calc-btn',
             'toggle-calculator-btn',
             'toggle-whiteboard-btn',
             'attach-button',

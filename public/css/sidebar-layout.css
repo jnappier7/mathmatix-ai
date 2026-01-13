@@ -343,10 +343,14 @@
 #app-layout-wrapper.sidebar-layout {
     margin-left: 280px;
     transition: margin-left 0.3s ease;
+    /* Prevent content from overflowing when sidebar is open */
+    max-width: calc(100vw - 280px);
+    box-sizing: border-box;
 }
 
 #app-layout-wrapper.sidebar-layout.sidebar-collapsed {
     margin-left: 0;
+    max-width: 100vw;
 }
 
 /* Full width chat */
@@ -354,6 +358,14 @@
     width: 100%;
     max-width: 100%;
     margin: 0;
+}
+
+/* Ensure messages container doesn't overflow */
+#chat-messages-container {
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 /* Icon-only header buttons */
