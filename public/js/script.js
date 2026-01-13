@@ -1499,46 +1499,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Check for last session to provide personalized greeting
-            try {
-                const lastSessionRes = await fetch('/api/chat/last-session', {credentials: 'include'});
-                const lastSessionData = await lastSessionRes.json();
-
-                if (lastSessionData.hasLastSession) {
-                    // Build personalized greeting based on last session
-                    const firstName = currentUser.firstName || 'there';
-                    let greeting = `Welcome back, ${firstName}! `;
-
-                    // Add context from last session
-                    if (lastSessionData.currentTopic) {
-                        greeting += `Last time we were working on **${lastSessionData.currentTopic}**`;
-                        if (lastSessionData.strugglingWith) {
-                            greeting += ` and you were working through **${lastSessionData.strugglingWith}**`;
-                        }
-                        greeting += '. ';
-                    } else if (lastSessionData.summary) {
-                        // Fallback to summary if no currentTopic
-                        greeting += `${lastSessionData.summary} `;
-                    }
-
-                    greeting += '\n\nWhat would you like to do?';
-
-                    // Display greeting
-                    appendMessage(greeting, "ai");
-
-                    // Add action buttons
-                    addActionButtons();
-                    return;
-                }
-            } catch (error) {
-                console.log('[Chat] No last session found or error fetching:', error);
-                // Fall through to normal welcome
-            }
-
-            // Normal welcome message flow (only for non-mastery sessions)
+            // AI-generated personalized welcome message
             const res = await fetch(`/api/welcome-message`, {credentials: 'include'});
             const data = await res.json();
-            if (data.greeting) appendMessage(data.greeting, "ai");
+            if (data.greeting) {
+                appendMessage(data.greeting, "ai");
+                addActionButtons();
+            }
         } catch (error) {
             appendMessage("Hello! Let's solve some math problems.", "ai");
         }
