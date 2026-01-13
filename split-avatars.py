@@ -44,27 +44,26 @@ def split_avatars(input_path, output_dir):
     img = Image.open(input_path)
     width, height = img.size
 
-    # Calculate individual avatar dimensions
-    avatar_width = width // GRID_COLS
-    avatar_height = height // GRID_ROWS
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
 
     print(f"Image size: {width}x{height}")
     print(f"Grid: {GRID_COLS} cols x {GRID_ROWS} rows")
-    print(f"Each avatar: {avatar_width}x{avatar_height}")
     print()
-
-    # Create output directory
-    os.makedirs(output_dir, exist_ok=True)
 
     # Split and save each avatar
     count = 0
     for row in range(GRID_ROWS):
         for col in range(GRID_COLS):
-            # Calculate crop coordinates
-            left = col * avatar_width
-            top = row * avatar_height
-            right = left + avatar_width
-            bottom = top + avatar_height
+            # Calculate crop coordinates using proper rounding
+            # This ensures even distribution when dimensions don't divide evenly
+            left = round(col * width / GRID_COLS)
+            top = round(row * height / GRID_ROWS)
+            right = round((col + 1) * width / GRID_COLS)
+            bottom = round((row + 1) * height / GRID_ROWS)
+
+            avatar_w = right - left
+            avatar_h = bottom - top
 
             # Crop avatar
             avatar = img.crop((left, top, right, bottom))
@@ -74,7 +73,7 @@ def split_avatars(input_path, output_dir):
                 filename = f"{AVATAR_NAMES[count]}.png"
                 filepath = os.path.join(output_dir, filename)
                 avatar.save(filepath, 'PNG', optimize=True)
-                print(f"✅ Saved: {filename}")
+                print(f"✅ Saved: {filename} ({avatar_w}x{avatar_h}px)")
                 count += 1
 
     print(f"\n🎉 Successfully split {count} avatars into {output_dir}/")
