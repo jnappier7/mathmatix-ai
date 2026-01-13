@@ -132,9 +132,17 @@ function generateSpeakableText(text) {
     let lastIndex = 0;
     text.replace(latexRegex, (match, openDelim, latexContent, closeDelim, offset) => {
         result += text.substring(lastIndex, offset);
-        const speakableMath = MathLive.convertLatexToSpeakableText(latexContent, {
+        let speakableMath = MathLive.convertLatexToSpeakableText(latexContent, {
             textToSpeechRules: 'sre', textToSpeechRulesOptions: { domain: 'mathspeak', ruleset: 'mathspeak-brief' }
         });
+        // Clean up unwanted TTS verbosity
+        speakableMath = speakableMath
+            .replace(/\bopen paren(thesis)?\b/gi, '')
+            .replace(/\bclosed? paren(thesis)?\b/gi, '')
+            .replace(/\bsubscript\b/gi, '')
+            .replace(/\bsuperscript\b/gi, '')
+            .replace(/\s+/g, ' ') // Collapse multiple spaces
+            .trim();
         result += ` ${speakableMath} `;
         lastIndex = offset + match.length;
     });
