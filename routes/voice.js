@@ -136,12 +136,16 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         // Fetch user data and conversation history
         const user = await User.findById(userId)
-            .populate('selectedTutorId')
             .lean();
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+
+        // Load tutor configuration
+        const TUTOR_CONFIG = require('../utils/tutorConfig');
+        const selectedTutorId = user.selectedTutorId || 'default';
+        const tutorProfile = TUTOR_CONFIG[selectedTutorId] || TUTOR_CONFIG['default'];
 
         // Fetch conversation history
         const conversation = await Conversation.findOne({ userId })
@@ -164,8 +168,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
             boardContextPrompt = `\n\n**WHITEBOARD CONTEXT:** Board is currently empty. You can write equations and draw on the board using voice commands.\n`;
         }
 
-        // Generate system prompt
-        const systemPrompt = await generateSystemPrompt(user, conversationHistory);
+        // Generate system prompt with correct parameters
+        const systemPrompt = await generateSystemPrompt(user, tutorProfile);
         const enhancedSystemPrompt = systemPrompt + boardContextPrompt;
 
         // Add voice-specific instructions
@@ -186,10 +190,10 @@ router.post('/process', isAuthenticated, async (req, res) => {
         const messages = [
             { role: 'system', content: enhancedSystemPrompt + voiceInstructions },
             ...conversationHistory.slice(-10)
-                .filter(msg => msg.text && msg.text.trim().length > 0) // Filter out null/empty messages
+                .filter(msg => msg.content && msg.content.trim().length > 0) // Filter out null/empty messages
                 .map(msg => ({
                     role: msg.role === 'user' ? 'user' : 'assistant',
-                    content: msg.text
+                    content: msg.content
                 })),
             { role: 'user', content: userMessage }
         ];
@@ -245,8 +249,9 @@ router.post('/process', isAuthenticated, async (req, res) => {
         const step3Start = Date.now();
         console.log('🔊 [Voice] Generating speech with tutor voice...');
 
-        // Get tutor's voice ID
-        const tutorVoiceId = user.selectedTutorId?.voiceId || "2eFQnnNM32GDnZkCfkSm"; // Fallback to Mr. Nappier
+        // Get tutor's voice ID from tutor profile
+        const tutorVoiceId = tutorProfile.voiceId;
+        console.log(`🎤 [Voice] Using tutor: ${tutorProfile.name} (${selectedTutorId})`);
         console.log(`🎤 [Voice] Using tutor voice ID: ${tutorVoiceId}`);
         console.log(`📝 [Voice] TTS text length: ${ttsText.length} chars`);
 
@@ -311,7 +316,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
                 $push: {
                     messages: {
                         role: 'user',
-                        text: userMessage,
+                        content: userMessage,
                         timestamp: new Date(),
                         isVoiceInput: true
                     }
@@ -328,7 +333,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
                 $push: {
                     messages: {
                         role: 'assistant',
-                        text: aiResponseText,
+                        content: aiResponseText,
                         timestamp: new Date(),
                         isVoiceOutput: true,
                         audioUrl: audioUrl
