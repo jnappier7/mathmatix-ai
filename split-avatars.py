@@ -8,7 +8,7 @@ from PIL import Image
 import os
 
 # Configuration
-INPUT_IMAGE = 'avatar-grid.png'  # Place your composite image here
+INPUT_IMAGE = 'public/images/avatars/avitar-grid.png'  # Place your composite image here
 OUTPUT_DIR = 'public/images/avatars'
 GRID_COLS = 4
 GRID_ROWS = 5

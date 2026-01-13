@@ -21,19 +21,19 @@ window.AVATAR_CONFIG = {
     unlocked: true
   },
   'panda': {
-    name: '🐼 Panda',
+    name: '🏀 Basketball Player',
     image: 'panda.png',
-    category: 'cute',
+    category: 'sports',
     rarity: 'common',
-    description: 'Chill vibes, smart mind!',
+    description: 'Dunk on those math problems!',
     unlocked: true
   },
   'owl': {
-    name: '🦉 Owl',
+    name: '⚾ Baseball Player',
     image: 'owl.png',
-    category: 'wise',
+    category: 'sports',
     rarity: 'common',
-    description: 'Wise and thoughtful problem solver.',
+    description: 'Hit it out of the park!',
     unlocked: true
   },
   'fox': {
@@ -45,61 +45,61 @@ window.AVATAR_CONFIG = {
     unlocked: true
   },
   'tiger': {
-    name: '🐯 Tiger',
+    name: '🏈 Football Player',
     image: 'tiger.png',
-    category: 'wild',
+    category: 'sports',
     rarity: 'common',
-    description: 'Fierce focus and determination!',
+    description: 'Tackle tough problems head-on!',
     unlocked: true
   },
 
   // ===== UNLOCK AT LEVEL 5 =====
   'unicorn': {
-    name: '🦄 Unicorn',
+    name: '🏒 Hockey Player',
     image: 'unicorn.png',
-    category: 'fantasy',
+    category: 'sports',
     rarity: 'uncommon',
-    description: 'Magical math powers!',
+    description: 'Skate through challenges with speed!',
     unlockLevel: 5
   },
   'penguin': {
-    name: '🐧 Penguin',
+    name: '👨 Student One',
     image: 'penguin.png',
-    category: 'cute',
+    category: 'students',
     rarity: 'uncommon',
-    description: 'Cool under pressure!',
+    description: 'Steady and focused learner!',
     unlockLevel: 5
   },
   'wolf': {
-    name: '🐺 Wolf',
+    name: '👧 Student Two',
     image: 'wolf.png',
-    category: 'wild',
+    category: 'students',
     rarity: 'uncommon',
-    description: 'Pack mentality - never give up!',
+    description: 'Creative and curious!',
     unlockLevel: 5
   },
 
   // ===== UNLOCK AT LEVEL 10 =====
   'phoenix': {
-    name: '🔥 Phoenix',
+    name: '🔥 Fire Dragon',
     image: 'phoenix.png',
-    category: 'legendary',
+    category: 'fantasy',
     rarity: 'rare',
     description: 'Rise from mistakes stronger than before!',
     unlockLevel: 10
   },
   'shark': {
-    name: '🦈 Shark',
+    name: '👦 Student Three',
     image: 'shark.png',
-    category: 'ocean',
+    category: 'students',
     rarity: 'rare',
-    description: 'Swim through problems with precision!',
+    description: 'Sharp thinking and quick learning!',
     unlockLevel: 10
   },
   'eagle': {
     name: '🦅 Eagle',
     image: 'eagle.png',
-    category: 'wise',
+    category: 'wild',
     rarity: 'rare',
     description: 'Soar above challenges!',
     unlockLevel: 10
@@ -107,17 +107,17 @@ window.AVATAR_CONFIG = {
 
   // ===== UNLOCK AT LEVEL 15 =====
   'octopus': {
-    name: '🐙 Octopus',
+    name: '👾 Space Friend',
     image: 'octopus.png',
-    category: 'ocean',
+    category: 'space',
     rarity: 'rare',
     description: 'Multi-tasking master!',
     unlockLevel: 15
   },
   'raccoon': {
-    name: '🦝 Raccoon',
+    name: '👨 Student Four',
     image: 'raccoon.png',
-    category: 'clever',
+    category: 'students',
     rarity: 'rare',
     description: 'Find creative solutions!',
     unlockLevel: 15
@@ -125,11 +125,11 @@ window.AVATAR_CONFIG = {
 
   // ===== UNLOCK AT LEVEL 20+ (Epic/Legendary) =====
   'robot': {
-    name: '🤖 Robot',
+    name: '👨 Student Five',
     image: 'robot.png',
-    category: 'tech',
+    category: 'students',
     rarity: 'epic',
-    description: 'Calculate with precision!',
+    description: 'Precise and methodical!',
     unlockLevel: 20
   },
   'alien': {
@@ -141,27 +141,27 @@ window.AVATAR_CONFIG = {
     unlockLevel: 20
   },
   'ninja': {
-    name: '🥷 Ninja',
+    name: '👧 Student Six',
     image: 'ninja.png',
-    category: 'stealth',
+    category: 'students',
     rarity: 'epic',
-    description: 'Silent, swift, successful!',
+    description: 'Silent focus, swift success!',
     unlockLevel: 25
   },
   'wizard': {
-    name: '🧙 Wizard',
+    name: '👦 Student Seven',
     image: 'wizard.png',
-    category: 'magic',
+    category: 'students',
     rarity: 'legendary',
-    description: 'Master of mathematical spells!',
+    description: 'Master problem solver!',
     unlockLevel: 30
   },
   'dinosaur': {
-    name: '🦖 T-Rex',
+    name: '⚽ Soccer Star',
     image: 'dinosaur.png',
-    category: 'ancient',
+    category: 'sports',
     rarity: 'legendary',
-    description: 'Prehistoric power!',
+    description: 'Score goals in math!',
     unlockLevel: 30
   },
 
