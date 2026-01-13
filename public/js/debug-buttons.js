@@ -20,26 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { capture: true });
     }
 
-    // Check Graphing Calculator button
-    const graphBtn = document.getElementById('open-graphing-calc-btn');
-    console.log('📊 Graphing Calc Button:', graphBtn ? 'EXISTS ✅' : 'NOT FOUND ❌');
-    if (graphBtn) {
-        console.log('  - Display:', window.getComputedStyle(graphBtn).display);
-        console.log('  - Visibility:', window.getComputedStyle(graphBtn).visibility);
-        console.log('  - Pointer Events:', window.getComputedStyle(graphBtn).pointerEvents);
-        console.log('  - Z-Index:', window.getComputedStyle(graphBtn).zIndex);
-
-        // Add a test click handler
-        graphBtn.addEventListener('click', () => {
-            console.log('🎯 Graphing calc button CLICKED!');
-        }, { capture: true });
-    }
-
     // Check modals
     const resourcesModal = document.getElementById('resources-modal');
-    const graphModal = document.getElementById('graphing-calc-modal');
     console.log('📚 Resources Modal:', resourcesModal ? 'EXISTS ✅' : 'NOT FOUND ❌');
-    console.log('📊 Graphing Modal:', graphModal ? 'EXISTS ✅' : 'NOT FOUND ❌');
 });
 
 // Also check immediately (in case DOMContentLoaded already fired)
@@ -47,15 +30,9 @@ setTimeout(() => {
     console.log('🐛 Delayed Check (1 second after load)...');
 
     const resourcesBtn = document.getElementById('open-resources-modal-btn');
-    const graphBtn = document.getElementById('open-graphing-calc-btn');
 
     if (resourcesBtn) {
         console.log('📚 Resources button exists (handlers attached via addEventListener)');
         console.log('   Event listeners:', typeof getEventListeners !== 'undefined' ? getEventListeners(resourcesBtn) : 'Use DevTools to inspect');
-    }
-
-    if (graphBtn) {
-        console.log('📊 Graph button exists (handlers attached via addEventListener)');
-        console.log('   Event listeners:', typeof getEventListeners !== 'undefined' ? getEventListeners(graphBtn) : 'Use DevTools to inspect');
     }
 }, 1000);
