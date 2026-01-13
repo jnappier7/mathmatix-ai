@@ -2143,6 +2143,11 @@ form label, .password-label-row label {
     transition: opacity 0.3s ease;
 }
 
+/* Settings modal specific z-index */
+#settings-modal {
+    z-index: 1006;
+}
+
 /* This is the class JavaScript will add to show the modal */
 .modal-overlay.is-visible {
     display: flex; /* Change display to show the element */
