@@ -1795,9 +1795,34 @@ document.addEventListener("DOMContentLoaded", () => {
         textNode.className = 'message-text';
         
         if (sender === 'ai' && typeof marked !== 'undefined' && marked.parse) {
-            const protectedText = text.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
+            // Protect entire LaTeX blocks from markdown parsing
+            const latexBlocks = [];
+            let protectedText = text;
+
+            // Extract and protect display math \[...\]
+            protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
+                const index = latexBlocks.length;
+                latexBlocks.push(match);
+                return `@@LATEX_BLOCK_${index}@@`;
+            });
+
+            // Extract and protect inline math \(...\)
+            protectedText = protectedText.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
+                const index = latexBlocks.length;
+                latexBlocks.push(match);
+                return `@@LATEX_BLOCK_${index}@@`;
+            });
+
+            // Parse markdown with protected LaTeX
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
-            textNode.innerHTML = dirtyHtml.replace(/@@LATEX_OPEN@@/g, '\\(').replace(/@@LATEX_CLOSE@@/g, '\\)').replace(/@@DLATEX_OPEN@@/g, '\\[').replace(/@@DLATEX_CLOSE@@/g, '\\]');
+
+            // Restore LaTeX blocks
+            let finalHtml = dirtyHtml;
+            latexBlocks.forEach((block, index) => {
+                finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
+            });
+
+            textNode.innerHTML = finalHtml;
         } else {
             textNode.textContent = text;
         }
@@ -2136,9 +2161,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Re-parse markdown if it's an AI message
         if (messageRef.bubble.classList.contains('ai') && typeof marked !== 'undefined' && marked.parse) {
-            const protectedText = newText.replace(/\\\(/g, '@@LATEX_OPEN@@').replace(/\\\)/g, '@@LATEX_CLOSE@@').replace(/\\\[/g, '@@DLATEX_OPEN@@').replace(/\\\]/g, '@@DLATEX_CLOSE@@');
+            // Protect entire LaTeX blocks from markdown parsing
+            const latexBlocks = [];
+            let protectedText = newText;
+
+            // Extract and protect display math \[...\]
+            protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
+                const index = latexBlocks.length;
+                latexBlocks.push(match);
+                return `@@LATEX_BLOCK_${index}@@`;
+            });
+
+            // Extract and protect inline math \(...\)
+            protectedText = protectedText.replace(/\\\(([\s\S]*?)\\\)/g, (match) => {
+                const index = latexBlocks.length;
+                latexBlocks.push(match);
+                return `@@LATEX_BLOCK_${index}@@`;
+            });
+
+            // Parse markdown with protected LaTeX
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
-            messageRef.textNode.innerHTML = dirtyHtml.replace(/@@LATEX_OPEN@@/g, '\\(').replace(/@@LATEX_CLOSE@@/g, '\\)').replace(/@@DLATEX_OPEN@@/g, '\\[').replace(/@@DLATEX_CLOSE@@/g, '\\]');
+
+            // Restore LaTeX blocks
+            let finalHtml = dirtyHtml;
+            latexBlocks.forEach((block, index) => {
+                finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
+            });
+
+            messageRef.textNode.innerHTML = finalHtml;
         }
 
         // Re-render math if MathJax is available
