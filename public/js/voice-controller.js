@@ -494,14 +494,14 @@ class VoiceController {
                     this.speechStartTime = null;
                     console.log(`🤫 Silence detected after ${speechDuration}ms of speech - auto-sending`);
 
-                    // Auto-stop if using hands-free mode
-                    if (this.handsFreeMode && this.isListening) {
+                    // Auto-stop after silence (works in all modes now, not just hands-free)
+                    if (this.isListening) {
                         this.stopListening();
                     }
                 }, this.silenceThreshold);
 
                 // Show countdown in status
-                if (this.statusText && this.handsFreeMode) {
+                if (this.statusText) {
                     this.statusText.textContent = 'Processing...';
                 }
             }
