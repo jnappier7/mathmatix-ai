@@ -7,6 +7,7 @@ const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
 const TUTOR_CONFIG = require("../utils/tutorConfig");
+const { needsAssessment } = require('../services/chatService');
 
 router.get('/', async (req, res) => {
     const userId = req.user?._id;
@@ -52,16 +53,22 @@ router.get('/', async (req, res) => {
             }
         }
 
+        // Check if user needs skills assessment
+        const assessmentNeeded = await needsAssessment(userId);
+
         const systemPromptForWelcome = generateSystemPrompt(user, tutorNameForPrompt);
         let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
         let userMessagePart;
 
         // --- NATURAL WELCOME MESSAGE PROMPT ---
-        if (contextType !== 'none') {
+        if (assessmentNeeded) {
+            // First-time user or assessment needed - offer skills assessment
+            userMessagePart = `Write a warm, brief greeting for ${user.firstName} (1-2 sentences). Introduce yourself and suggest starting with a quick skills assessment to personalize their learning. Make it sound exciting and low-pressure, not like a test. Keep it conversational and friendly.`;
+        } else if (contextType !== 'none') {
              messagesForAI.push({ role: "system", content: `(Last session context: \n${lastContextForAI})` });
              userMessagePart = `Write a quick, casual greeting for ${user.firstName}. Keep it SHORT (1-2 sentences max). Sound natural, like you're texting. Sometimes reference last session, sometimes don't - mix it up. When you do reference it, vary your approach: don't always say "I remember how you..." or "I was thinking about..." Just dive in naturally. Then ask what they want to work on. BANNED PHRASES: "Great to see you", "Welcome back", "I remember how you solved", "I was thinking about how you", "that tricky problem", "Ready to dive into". Be creative.`;
         } else {
-            userMessagePart = `Write a quick, casual first-time greeting for ${user.firstName}. Keep it SHORT (1-2 sentences). Sound friendly and human, not robotic. Ask what they want to work on. NO canned phrases.`;
+            userMessagePart = `Write a quick, casual greeting for ${user.firstName}. Keep it SHORT (1-2 sentences). Sound friendly and human, not robotic. Ask what they want to work on. NO canned phrases.`;
         }
         // --- END OF REVISED PROMPT SECTION ---
         

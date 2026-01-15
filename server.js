@@ -97,6 +97,7 @@ const learningCurveRoutes = require('./routes/learningCurve');  // Learning Curv
 const celerationRoutes = require('./routes/celeration');  // Standard Celeration Charts (Precision Teaching)
 const characterRiggingRoutes = require('./routes/characterRigging');  // Character Rigging Portal for animation
 const sessionRoutes = require('./routes/session');  // Session management and tracking
+const feedbackRoutes = require('./routes/feedback');  // User feedback and bug reports
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -326,6 +327,7 @@ app.use('/api', isAuthenticated, learningCurveRoutes); // Learning Curve Visuali
 app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Charts for fact fluency
 app.use('/api/character-rigging', isAuthenticated, characterRiggingRoutes); // Character Rigging Portal for animation
 app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (idle timeout, auto-save, summaries)
+app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and bug reports for Alpha testing
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {

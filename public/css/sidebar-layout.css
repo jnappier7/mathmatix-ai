@@ -296,8 +296,8 @@
     position: fixed;
     bottom: 30px;
     right: 160px; /* Leave space for voice orb */
-    width: 240px;
-    height: 240px;
+    width: 360px;
+    height: 360px;
     background: white;
     border-radius: 24px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -307,9 +307,27 @@
     z-index: 1004; /* Above input container (1003) but below footer (1005) */
     overflow: hidden;
     border: 3px solid #667eea;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     cursor: grab;
     user-select: none; /* Prevent text selection while dragging */
+}
+
+#floating-tutor.collapsed {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+#floating-tutor.collapsed #student-avatar,
+#floating-tutor.collapsed #floating-tutor-avatar {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#floating-tutor.collapsed #tutor-collapse-btn {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #floating-tutor:active {
@@ -430,7 +448,7 @@ footer {
     #floating-tutor {
         bottom: 140px;
         right: 20px;
-        width: 160px;
-        height: 160px;
+        width: 220px;
+        height: 220px;
     }
 }
