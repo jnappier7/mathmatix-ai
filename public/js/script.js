@@ -150,6 +150,50 @@ function generateSpeakableText(text) {
     return result.replace(/\*\*(.+?)\*\*/g, '$1').replace(/_(.+?)_/g, '$1').replace(/`(.+?)`/g, '$1').replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
 }
 
+/**
+ * Show level-up video in a floating card with smooth animations
+ * @param {string} animationType - 'levelUp' or 'smallcele'
+ * @param {string} tutorId - Current tutor ID
+ */
+function showLevelUpVideoCard(animationType, tutorId) {
+    if (!tutorId) return;
+
+    // Create overlay container
+    const overlay = document.createElement('div');
+    overlay.className = 'levelup-video-overlay';
+
+    // Create card
+    const card = document.createElement('div');
+    card.className = 'levelup-video-card';
+
+    // Create video element
+    const video = document.createElement('video');
+    video.src = `/videos/${tutorId}_${animationType}.mp4`;
+    video.autoplay = true;
+    video.muted = false;
+    video.playsInline = true;
+
+    // When video ends, animate out
+    video.addEventListener('ended', () => {
+        card.classList.add('exiting');
+        setTimeout(() => {
+            overlay.remove();
+        }, 400); // Match cardExit animation duration
+    });
+
+    // Assemble and add to page
+    card.appendChild(video);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    // Start playing
+    video.play().catch(err => {
+        console.warn('Video autoplay failed:', err);
+        // Remove card if video fails to play
+        setTimeout(() => overlay.remove(), 500);
+    });
+}
+
 function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false, isBigCelebration = false) {
     const animationText = document.createElement('div');
     animationText.textContent = message;
@@ -157,14 +201,10 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false, isB
     if (isLevelUp) {
         animationText.classList.add('level-up-animation-text', 'animate-level-up');
 
-        // 🎬 Trigger tutor level-up animation based on milestone
-        if (typeof playTutorAnimation === 'function') {
-            if (isBigCelebration) {
-                playTutorAnimation('levelUp');  // Every 5 levels: bigger celebration
-            } else {
-                playTutorAnimation('smallcele'); // Regular level ups: small celebration
-            }
-            // Will automatically crossfade back to idle when animation ends
+        // 🎬 Show tutor level-up video in floating card based on milestone
+        if (currentUser && currentUser.selectedTutorId) {
+            const animationType = isBigCelebration ? 'levelUp' : 'smallcele';
+            showLevelUpVideoCard(animationType, currentUser.selectedTutorId);
         }
 
         if (typeof confetti === 'function') {
