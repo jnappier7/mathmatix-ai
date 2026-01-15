@@ -66,7 +66,17 @@ router.get('/', async (req, res) => {
         // Check if user needs skills assessment
         const assessmentNeeded = await needsAssessment(userId);
 
-        const systemPromptForWelcome = generateSystemPrompt(user, tutorNameForPrompt);
+        // Build conversation context if session has a specific topic/name
+        let conversationContextForPrompt = null;
+        if (activeConversation && (activeConversation.conversationName !== 'Math Session' || activeConversation.topic)) {
+            conversationContextForPrompt = {
+                conversationName: activeConversation.conversationName,
+                topic: activeConversation.topic,
+                topicEmoji: activeConversation.topicEmoji
+            };
+        }
+
+        const systemPromptForWelcome = generateSystemPrompt(user, tutorNameForPrompt, null, 'student', null, null, null, [], null, conversationContextForPrompt);
         let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
         let userMessagePart;
 

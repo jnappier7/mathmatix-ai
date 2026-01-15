@@ -176,7 +176,7 @@ function buildLearningProfileContext(userProfile) {
   return context;
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -999,6 +999,17 @@ ${curriculumContext}
 - Follow teacher's preferred terminology and methods
 - Watch for common mistakes the teacher has flagged
 - Apply the scaffolding approach the teacher prefers
+` : ''}
+
+${!masteryContext && conversationContext ? `--- SESSION CONTEXT ---
+${conversationContext.conversationName ? `**Session Name:** ${conversationContext.conversationName}` : ''}
+${conversationContext.topic ? `**Current Topic:** ${conversationContext.topic} ${conversationContext.topicEmoji || ''}` : ''}
+
+**IMPORTANT:** This session has a specific focus. ${firstName} has chosen to work on this topic:
+- DO NOT ask generic questions like "What would you like to work on today?"
+- Jump directly into helping with ${conversationContext.topic || conversationContext.conversationName || 'the specified topic'}
+- Stay focused on the session's purpose unless ${firstName} explicitly asks to switch topics
+- Reference the session context naturally in your responses
 ` : ''}
 
 ${!masteryContext && uploadContext ? `--- STUDENT'S PREVIOUS WORK (UPLOADED FILES) ---

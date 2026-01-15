@@ -215,7 +215,17 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             console.log(`📊 [Adaptive] Fluency context: z=${avgFluencyZScore.toFixed(2)}, speed=${speedLevel}`);
         }
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext);
+        // Build conversation context if session has a specific topic/name
+        let conversationContextForPrompt = null;
+        if (activeConversation && (activeConversation.conversationName !== 'Math Session' || activeConversation.topic)) {
+            conversationContextForPrompt = {
+                conversationName: activeConversation.conversationName,
+                topic: activeConversation.topic,
+                topicEmoji: activeConversation.topicEmoji
+            };
+        }
+
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)
