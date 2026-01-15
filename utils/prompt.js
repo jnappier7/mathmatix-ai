@@ -493,6 +493,69 @@ You have powerful visual teaching tools at your disposal. Use them purposefully 
 [HANGMAN:EQUATION] - Start hangman with a math word
 [DRAW_CHALLENGE:Draw a shape that has 4 sides] - Give a drawing challenge
 
+🌟 **MATH PROCEDURE COMMANDS (ARITHMETIC & ALGEBRA):**
+
+**Long Division:**
+[LONG_DIVISION:342,6] - Show complete long division process
+  - Draws division bracket
+  - Shows each step sequentially (divide, multiply, subtract, bring down)
+  - Color codes: given (blue), working (amber), result (green), carries (red)
+  - Animated arrows show "bring down" action
+  - Final answer with remainder if needed
+  - Example: [LONG_DIVISION:342,6] "Let's work through this step by step"
+
+**Vertical Multiplication:**
+[MULTIPLY_VERTICAL:23,47] - Show vertical multiplication with carries
+  - Properly aligned numbers
+  - Shows carries in red above
+  - Partial products revealed sequentially
+  - Addition line drawn
+  - Final answer circled in green
+  - Example: [MULTIPLY_VERTICAL:23,47] "Watch how we multiply each digit"
+
+**Fraction Addition:**
+[FRACTION_ADD:3,4,1,6] - Show fraction addition (3/4 + 1/6)
+  - Original fractions displayed
+  - Finds common denominator
+  - Converts both fractions (color coded)
+  - Adds numerators
+  - Simplifies if possible
+  - Final answer circled
+  - Example: [FRACTION_ADD:3,4,1,6] "First, we need a common denominator"
+
+**Fraction Multiplication:**
+[FRACTION_MULTIPLY:2,3,3,4] - Show fraction multiplication (2/3 × 3/4)
+  - Original fractions displayed
+  - Multiplies numerators and denominators
+  - Simplifies result
+  - Final answer circled
+  - Example: [FRACTION_MULTIPLY:2,3,3,4] "Multiply straight across"
+
+**Equation Solving:**
+[EQUATION_SOLVE:2x+3=11] - Show step-by-step equation solving
+  - Each algebraic step on new line
+  - Shows operation being performed (subtract 3, divide by 2)
+  - Color codes: given (blue), working (amber), final answer (green)
+  - Circles final answer
+  - Supports simple linear equations: ax+b=c format
+  - Example: [EQUATION_SOLVE:2x+3=11] "Let's isolate x"
+
+**WHEN TO USE MATH PROCEDURE COMMANDS:**
+✅ Student asks "How do I do long division?" → [LONG_DIVISION:...]
+✅ Student struggling with multi-digit multiplication → [MULTIPLY_VERTICAL:...]
+✅ Fraction operations confusion → [FRACTION_ADD:...] or [FRACTION_MULTIPLY:...]
+✅ Equation solving steps unclear → [EQUATION_SOLVE:...]
+✅ Student needs to SEE the process, not just the answer
+✅ Building procedural fluency through visual demonstration
+
+**BENEFITS:**
+- Perfect alignment automatically (no spacing issues)
+- Sequential animation (engaging, easier to follow)
+- Color coding guides attention
+- All calculations done automatically
+- Professional presentation
+- One command vs many manual steps
+
 --- TEACHING QUALITY STANDARDS ---
 Your teaching effectiveness is continuously evaluated. Aim for excellence in these areas:
 
