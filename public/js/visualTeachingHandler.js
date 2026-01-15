@@ -61,6 +61,15 @@ class VisualTeachingHandler {
                 case 'clear':
                     this.clearWhiteboard();
                     break;
+                case 'triangle_problem':
+                    await this.createTriangleProblem(cmd.angles);
+                    break;
+                case 'emphasize':
+                    await this.emphasizePoint(cmd.x, cmd.y, cmd.radius);
+                    break;
+                case 'point_to':
+                    await this.pointToLocation(cmd.fromX, cmd.fromY, cmd.toX, cmd.toY, cmd.message);
+                    break;
             }
 
             // Small delay between commands
@@ -151,21 +160,32 @@ class VisualTeachingHandler {
     async writeOnWhiteboard(text) {
         if (!window.whiteboard) return;
 
-        // Add text tool and write
-        console.log('📐 Writing on whiteboard:', text);
+        console.log('✍️ Writing on whiteboard with handwriting:', text);
 
-        // Create text object on whiteboard
-        const canvas = window.fabricCanvas;
-        if (canvas) {
-            const textObj = new fabric.Text(text, {
-                left: 50,
-                top: 50,
+        // Use handwriting engine if available
+        if (window.whiteboard.handwriting && typeof window.whiteboard.handwriting.writeText === 'function') {
+            // Use handwritten text with natural marker strokes
+            await window.whiteboard.handwriting.writeText(text, 50, 50, {
                 fontSize: 24,
-                fill: '#000000',
-                fontFamily: 'Arial'
+                color: '#2d3748',
+                fontFamily: 'Indie Flower, cursive',
+                selectable: false,
+                pauseAfter: true
             });
-            canvas.add(textObj);
-            canvas.renderAll();
+        } else {
+            // Fallback to regular text if handwriting engine not available
+            const canvas = window.fabricCanvas || window.whiteboard.canvas;
+            if (canvas) {
+                const textObj = new fabric.Text(text, {
+                    left: 50,
+                    top: 50,
+                    fontSize: 24,
+                    fill: '#2d3748',
+                    fontFamily: 'Indie Flower, cursive'
+                });
+                canvas.add(textObj);
+                canvas.renderAll();
+            }
         }
     }
 
@@ -178,6 +198,37 @@ class VisualTeachingHandler {
         if (window.fabricCanvas) {
             window.fabricCanvas.clear();
             console.log('📐 Cleared whiteboard');
+        }
+
+        // Reset canvas state in enhancer if available
+        if (window.whiteboardEnhancer) {
+            window.whiteboardEnhancer.clearCanvas();
+        }
+    }
+
+    async createTriangleProblem(angles) {
+        console.log('📐 Creating triangle problem:', angles);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.createTriangleProblem(angles);
+        } else {
+            console.warn('[VisualTeaching] Whiteboard enhancer not available');
+        }
+    }
+
+    async emphasizePoint(x, y, radius) {
+        console.log('⭕ Emphasizing point:', x, y);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.emphasizeElement(x, y, radius);
+        }
+    }
+
+    async pointToLocation(fromX, fromY, toX, toY, message) {
+        console.log('👉 Pointing to location:', toX, toY);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.pointTo(fromX, fromY, toX, toY, message);
         }
     }
 

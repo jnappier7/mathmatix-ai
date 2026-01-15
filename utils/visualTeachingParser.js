@@ -64,6 +64,50 @@ function parseVisualTeaching(aiResponseText) {
         cleanedText = cleanedText.replace(/\[WHITEBOARD_CLEAR\]/g, '');
     }
 
+    // --- ENHANCED GEOMETRY COMMANDS ---
+    // [TRIANGLE_PROBLEM:A=30,B=70,C=?] - Create perfectly formatted triangle with angles
+    const triangleProblemRegex = /\[TRIANGLE_PROBLEM:A=([^,]+),B=([^,]+),C=([^\]]+)\]/g;
+    while ((match = triangleProblemRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'triangle_problem',
+            angles: {
+                A: match[1] === '?' ? '?' : parseFloat(match[1]),
+                B: match[2] === '?' ? '?' : parseFloat(match[2]),
+                C: match[3] === '?' ? '?' : parseFloat(match[3])
+            },
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(triangleProblemRegex, '');
+
+    // [EMPHASIZE:x,y,radius] - Draw attention circle around point
+    const emphasizeRegex = /\[EMPHASIZE:(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,(\d+))?\]/g;
+    while ((match = emphasizeRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'emphasize',
+            x: parseFloat(match[1]),
+            y: parseFloat(match[2]),
+            radius: match[3] ? parseInt(match[3]) : 30,
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(emphasizeRegex, '');
+
+    // [POINT_TO:fromX,fromY,toX,toY,message] - Draw arrow with message
+    const pointToRegex = /\[POINT_TO:(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,([^\]]+))?\]/g;
+    while ((match = pointToRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'point_to',
+            fromX: parseFloat(match[1]),
+            fromY: parseFloat(match[2]),
+            toX: parseFloat(match[3]),
+            toY: parseFloat(match[4]),
+            message: match[5] || '',
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(pointToRegex, '');
+
     // --- ALGEBRA TILES COMMANDS ---
     // [ALGEBRA_TILES:expression] - Show algebra tiles for an expression
     const algebraTilesRegex = /\[ALGEBRA_TILES:([^\]]+)\]/g;

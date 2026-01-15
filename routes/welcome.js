@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     let user = null; // CRITICAL FIX: Declare outside try block for catch block access
 
     try {
-        user = await User.findById(userId).lean();
+        user = await User.findById(userId); // Removed .lean() so we can modify and save user
         if (!user) {
             return res.status(404).json({ error: "User not found." });
         }
@@ -30,15 +30,25 @@ router.get('/', async (req, res) => {
         const voiceIdForWelcome = currentTutor.voiceId;
         const tutorNameForPrompt = currentTutor.name;
 
+        // Load or create active conversation to save welcome message
+        let activeConversation;
+        if (user.activeConversationId) {
+            activeConversation = await Conversation.findById(user.activeConversationId);
+        }
+        // Create new conversation if needed (following same pattern as chat.js)
+        if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
+            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+            user.activeConversationId = activeConversation._id;
+            await user.save();
+        }
+
         let lastContextForAI = null;
         let contextType = 'none';
 
-        if (user.activeConversationId) {
-            const activeConversation = await Conversation.findById(user.activeConversationId).lean();
-            if (activeConversation && activeConversation.messages && activeConversation.messages.length > 0) {
-                lastContextForAI = activeConversation.messages.slice(-6).map(msg => `${msg.role}: ${msg.content}`).join('\n');
-                contextType = 'recent_messages';
-            }
+        // Use existing conversation for context (no need to reload)
+        if (activeConversation && activeConversation.messages && activeConversation.messages.length > 0) {
+            lastContextForAI = activeConversation.messages.slice(-6).map(msg => `${msg.role}: ${msg.content}`).join('\n');
+            contextType = 'recent_messages';
         }
 
         if (!lastContextForAI) {
@@ -56,7 +66,17 @@ router.get('/', async (req, res) => {
         // Check if user needs skills assessment
         const assessmentNeeded = await needsAssessment(userId);
 
-        const systemPromptForWelcome = generateSystemPrompt(user, tutorNameForPrompt);
+        // Build conversation context if session has a specific topic/name
+        let conversationContextForPrompt = null;
+        if (activeConversation && (activeConversation.conversationName !== 'Math Session' || activeConversation.topic)) {
+            conversationContextForPrompt = {
+                conversationName: activeConversation.conversationName,
+                topic: activeConversation.topic,
+                topicEmoji: activeConversation.topicEmoji
+            };
+        }
+
+        const systemPromptForWelcome = generateSystemPrompt(user, tutorNameForPrompt, null, 'student', null, null, null, [], null, conversationContextForPrompt);
         let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
         let userMessagePart;
 
@@ -77,6 +97,15 @@ router.get('/', async (req, res) => {
         // Use GPT-4o-mini for natural, engaging welcome messages
         const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 80 });
         const initialWelcomeMessage = completion.choices[0].message.content.trim();
+
+        // Save welcome message to conversation history for AI context
+        activeConversation.messages.push({
+            role: 'assistant',
+            content: initialWelcomeMessage,
+            timestamp: new Date()
+        });
+        activeConversation.lastActivity = new Date();
+        await activeConversation.save();
 
         res.json({ greeting: initialWelcomeMessage, voiceId: voiceIdForWelcome });
 
