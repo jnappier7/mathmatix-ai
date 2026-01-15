@@ -20,7 +20,7 @@ const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 const { parseVisualTeaching } = require('../utils/visualTeachingParser');
 const { detectAndFetchResource } = require('../utils/resourceDetector');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
-const { processAIResponse } = require('../utils/chatBoardParser');
+const { processAIResponse, truncateIfNeeded } = require('../utils/chatBoardParser');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -311,9 +311,17 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         aiResponseText = boardParsed.text; // Cleaned text with [BOARD_REF:...] removed
         const boardContext = boardParsed.boardContext; // { targetObjectId, type, allReferences }
 
-        // Log validation warnings (soft enforcement - we don't block messages)
+        // ENFORCE micro-chat limit: Truncate messages that are extremely long
         if (boardParsed.validation.warning) {
             console.warn(`[ChatBoard] AI message validation: ${boardParsed.validation.warning}`);
+
+            // Only truncate if message is VERY excessive (>200 chars)
+            // Messages between 100-200 chars get warnings but pass through
+            if (!boardParsed.validation.isValid && boardParsed.validation.length > 200) {
+                const originalText = aiResponseText;
+                aiResponseText = truncateIfNeeded(aiResponseText, 150); // Truncate to 150 chars
+                console.warn(`[ChatBoard] ENFORCED TRUNCATION: ${originalText.length} chars -> ${aiResponseText.length} chars`);
+            }
         }
 
         const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
