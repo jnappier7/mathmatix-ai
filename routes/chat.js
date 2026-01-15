@@ -311,14 +311,15 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         aiResponseText = boardParsed.text; // Cleaned text with [BOARD_REF:...] removed
         const boardContext = boardParsed.boardContext; // { targetObjectId, type, allReferences }
 
-        // ENFORCE micro-chat limit: Truncate messages that are too long
+        // ENFORCE micro-chat limit: Truncate messages that are extremely long
         if (boardParsed.validation.warning) {
             console.warn(`[ChatBoard] AI message validation: ${boardParsed.validation.warning}`);
 
-            // If message significantly exceeds limit (>150 chars), truncate it
-            if (!boardParsed.validation.isValid && boardParsed.validation.length > 150) {
+            // Only truncate if message is VERY excessive (>200 chars)
+            // Messages between 100-200 chars get warnings but pass through
+            if (!boardParsed.validation.isValid && boardParsed.validation.length > 200) {
                 const originalText = aiResponseText;
-                aiResponseText = truncateIfNeeded(aiResponseText, 100);
+                aiResponseText = truncateIfNeeded(aiResponseText, 150); // Truncate to 150 chars
                 console.warn(`[ChatBoard] ENFORCED TRUNCATION: ${originalText.length} chars -> ${aiResponseText.length} chars`);
             }
         }
