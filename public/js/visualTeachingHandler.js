@@ -61,6 +61,15 @@ class VisualTeachingHandler {
                 case 'clear':
                     this.clearWhiteboard();
                     break;
+                case 'triangle_problem':
+                    await this.createTriangleProblem(cmd.angles);
+                    break;
+                case 'emphasize':
+                    await this.emphasizePoint(cmd.x, cmd.y, cmd.radius);
+                    break;
+                case 'point_to':
+                    await this.pointToLocation(cmd.fromX, cmd.fromY, cmd.toX, cmd.toY, cmd.message);
+                    break;
             }
 
             // Small delay between commands
@@ -189,6 +198,37 @@ class VisualTeachingHandler {
         if (window.fabricCanvas) {
             window.fabricCanvas.clear();
             console.log('📐 Cleared whiteboard');
+        }
+
+        // Reset canvas state in enhancer if available
+        if (window.whiteboardEnhancer) {
+            window.whiteboardEnhancer.clearCanvas();
+        }
+    }
+
+    async createTriangleProblem(angles) {
+        console.log('📐 Creating triangle problem:', angles);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.createTriangleProblem(angles);
+        } else {
+            console.warn('[VisualTeaching] Whiteboard enhancer not available');
+        }
+    }
+
+    async emphasizePoint(x, y, radius) {
+        console.log('⭕ Emphasizing point:', x, y);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.emphasizeElement(x, y, radius);
+        }
+    }
+
+    async pointToLocation(fromX, fromY, toX, toY, message) {
+        console.log('👉 Pointing to location:', toX, toY);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.pointTo(fromX, fromY, toX, toY, message);
         }
     }
 
