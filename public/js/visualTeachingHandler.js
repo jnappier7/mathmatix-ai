@@ -70,6 +70,21 @@ class VisualTeachingHandler {
                 case 'point_to':
                     await this.pointToLocation(cmd.fromX, cmd.fromY, cmd.toX, cmd.toY, cmd.message);
                     break;
+                case 'long_division':
+                    await this.showLongDivision(cmd.dividend, cmd.divisor);
+                    break;
+                case 'multiply_vertical':
+                    await this.showMultiplyVertical(cmd.num1, cmd.num2);
+                    break;
+                case 'fraction_add':
+                    await this.showFractionAdd(cmd.n1, cmd.d1, cmd.n2, cmd.d2);
+                    break;
+                case 'fraction_multiply':
+                    await this.showFractionMultiply(cmd.n1, cmd.d1, cmd.n2, cmd.d2);
+                    break;
+                case 'equation_solve':
+                    await this.solveEquation(cmd.equation);
+                    break;
             }
 
             // Small delay between commands
@@ -229,6 +244,56 @@ class VisualTeachingHandler {
 
         if (window.whiteboardEnhancer) {
             await window.whiteboardEnhancer.pointTo(fromX, fromY, toX, toY, message);
+        }
+    }
+
+    async showLongDivision(dividend, divisor) {
+        console.log('🔢 Long Division:', dividend, '÷', divisor);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.showLongDivision(dividend, divisor);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
+        }
+    }
+
+    async showMultiplyVertical(num1, num2) {
+        console.log('🔢 Vertical Multiplication:', num1, '×', num2);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.showVerticalMultiplication(num1, num2);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
+        }
+    }
+
+    async showFractionAdd(n1, d1, n2, d2) {
+        console.log('🔢 Fraction Addition:', `${n1}/${d1} + ${n2}/${d2}`);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.showFractionAddition(n1, d1, n2, d2);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
+        }
+    }
+
+    async showFractionMultiply(n1, d1, n2, d2) {
+        console.log('🔢 Fraction Multiplication:', `${n1}/${d1} × ${n2}/${d2}`);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.showFractionMultiplication(n1, d1, n2, d2);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
+        }
+    }
+
+    async solveEquation(equation) {
+        console.log('🔢 Solving Equation:', equation);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.solveEquation(equation);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
         }
     }
 
