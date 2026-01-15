@@ -151,21 +151,32 @@ class VisualTeachingHandler {
     async writeOnWhiteboard(text) {
         if (!window.whiteboard) return;
 
-        // Add text tool and write
-        console.log('📐 Writing on whiteboard:', text);
+        console.log('✍️ Writing on whiteboard with handwriting:', text);
 
-        // Create text object on whiteboard
-        const canvas = window.fabricCanvas;
-        if (canvas) {
-            const textObj = new fabric.Text(text, {
-                left: 50,
-                top: 50,
+        // Use handwriting engine if available
+        if (window.whiteboard.handwriting && typeof window.whiteboard.handwriting.writeText === 'function') {
+            // Use handwritten text with natural marker strokes
+            await window.whiteboard.handwriting.writeText(text, 50, 50, {
                 fontSize: 24,
-                fill: '#000000',
-                fontFamily: 'Arial'
+                color: '#2d3748',
+                fontFamily: 'Indie Flower, cursive',
+                selectable: false,
+                pauseAfter: true
             });
-            canvas.add(textObj);
-            canvas.renderAll();
+        } else {
+            // Fallback to regular text if handwriting engine not available
+            const canvas = window.fabricCanvas || window.whiteboard.canvas;
+            if (canvas) {
+                const textObj = new fabric.Text(text, {
+                    left: 50,
+                    top: 50,
+                    fontSize: 24,
+                    fill: '#2d3748',
+                    fontFamily: 'Indie Flower, cursive'
+                });
+                canvas.add(textObj);
+                canvas.renderAll();
+            }
         }
     }
 
