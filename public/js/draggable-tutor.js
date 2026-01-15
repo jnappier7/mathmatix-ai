@@ -12,6 +12,8 @@
     let initialY = 0;
     let xOffset = 0;
     let yOffset = 0;
+    let isCollapsed = false;
+    let collapseBtn = null;
 
     function initDraggableTutor() {
         tutorCard = document.getElementById('floating-tutor');
@@ -26,6 +28,48 @@
         // Make it grabbable
         tutorCard.style.cursor = 'grab';
 
+        // Add collapse button
+        collapseBtn = document.createElement('button');
+        collapseBtn.id = 'tutor-collapse-btn';
+        collapseBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+        collapseBtn.setAttribute('title', 'Minimize tutor');
+        collapseBtn.style.cssText = `
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        `;
+
+        collapseBtn.addEventListener('mouseenter', () => {
+            collapseBtn.style.background = 'rgba(102, 126, 234, 1)';
+            collapseBtn.style.transform = 'scale(1.1)';
+        });
+
+        collapseBtn.addEventListener('mouseleave', () => {
+            collapseBtn.style.background = 'rgba(102, 126, 234, 0.9)';
+            collapseBtn.style.transform = 'scale(1)';
+        });
+
+        collapseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleCollapse();
+        });
+
+        tutorCard.appendChild(collapseBtn);
+
         // Add event listeners
         tutorCard.addEventListener('mousedown', dragStart);
         document.addEventListener('mousemove', drag);
@@ -35,6 +79,39 @@
         tutorCard.addEventListener('touchstart', dragStart);
         document.addEventListener('touchmove', drag);
         document.addEventListener('touchend', dragEnd);
+
+        // Restore collapsed state
+        restoreCollapsedState();
+    }
+
+    function toggleCollapse() {
+        isCollapsed = !isCollapsed;
+
+        if (isCollapsed) {
+            tutorCard.classList.add('collapsed');
+            collapseBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
+            collapseBtn.setAttribute('title', 'Expand tutor');
+            tutorCard.style.width = '60px';
+            tutorCard.style.height = '60px';
+            tutorCard.style.borderRadius = '50%';
+        } else {
+            tutorCard.classList.remove('collapsed');
+            collapseBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            collapseBtn.setAttribute('title', 'Minimize tutor');
+            tutorCard.style.width = '240px';
+            tutorCard.style.height = '240px';
+            tutorCard.style.borderRadius = '24px';
+        }
+
+        // Save state
+        localStorage.setItem('tutorCollapsed', isCollapsed);
+    }
+
+    function restoreCollapsedState() {
+        const saved = localStorage.getItem('tutorCollapsed');
+        if (saved === 'true') {
+            toggleCollapse();
+        }
     }
 
     function dragStart(e) {
@@ -110,10 +187,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             initDraggableTutor();
             restorePosition();
+            restoreCollapsedState();
         });
     } else {
         initDraggableTutor();
         restorePosition();
+        restoreCollapsedState();
     }
 
     console.log('✅ Draggable tutor module loaded');

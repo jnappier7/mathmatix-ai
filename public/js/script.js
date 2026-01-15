@@ -3045,5 +3045,63 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    /**
+     * Update chat display when switching sessions
+     * Called by sidebar.js when user clicks on a session
+     */
+    window.updateChatForSession = function(conversation, messages) {
+        console.log('[updateChatForSession] Switching to conversation:', conversation);
+
+        // Clear current chat
+        if (chatBox) {
+            chatBox.innerHTML = '';
+            messageIndexCounter = 0; // Reset message counter
+        }
+
+        // Display session header if it's a topic-based conversation
+        if (conversation.conversationType === 'topic' && conversation.topic) {
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'session-header';
+            headerDiv.style.cssText = `
+                text-align: center;
+                padding: 20px;
+                margin: 20px 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 12px;
+                color: white;
+            `;
+            headerDiv.innerHTML = `
+                <h2 style="margin: 0; font-size: 1.5em;">
+                    ${conversation.topicEmoji || '📚'} ${conversation.name || conversation.topic}
+                </h2>
+            `;
+            chatBox.appendChild(headerDiv);
+        }
+
+        // Load and display messages
+        if (messages && messages.length > 0) {
+            messages.forEach(msg => {
+                const sender = msg.role === 'user' ? 'user' : 'ai';
+                appendMessage(msg.content, sender);
+            });
+
+            // Scroll to bottom
+            setTimeout(() => {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 100);
+        } else {
+            // No messages yet - show welcome message
+            if (conversation.conversationType === 'topic') {
+                appendMessage(
+                    `Welcome to your ${conversation.topic || 'topic'} session! 📚\n\n` +
+                    `I'm here to help you learn and practice. What would you like to work on?`,
+                    'ai'
+                );
+            }
+        }
+
+        console.log('[updateChatForSession] Loaded', messages?.length || 0, 'messages');
+    };
+
     initializeApp();
 });

@@ -307,9 +307,27 @@
     z-index: 1004; /* Above input container (1003) but below footer (1005) */
     overflow: hidden;
     border: 3px solid #667eea;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     cursor: grab;
     user-select: none; /* Prevent text selection while dragging */
+}
+
+#floating-tutor.collapsed {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+#floating-tutor.collapsed #student-avatar,
+#floating-tutor.collapsed #floating-tutor-avatar {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#floating-tutor.collapsed #tutor-collapse-btn {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #floating-tutor:active {
