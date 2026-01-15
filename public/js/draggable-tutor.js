@@ -98,8 +98,8 @@
             tutorCard.classList.remove('collapsed');
             collapseBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
             collapseBtn.setAttribute('title', 'Minimize tutor');
-            tutorCard.style.width = '240px';
-            tutorCard.style.height = '240px';
+            tutorCard.style.width = '360px';
+            tutorCard.style.height = '360px';
             tutorCard.style.borderRadius = '24px';
         }
 
