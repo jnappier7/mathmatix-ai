@@ -150,16 +150,20 @@ function generateSpeakableText(text) {
     return result.replace(/\*\*(.+?)\*\*/g, '$1').replace(/_(.+?)_/g, '$1').replace(/`(.+?)`/g, '$1').replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
 }
 
-function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
+function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false, isBigCelebration = false) {
     const animationText = document.createElement('div');
     animationText.textContent = message;
     animationText.classList.add('xp-animation-text');
     if (isLevelUp) {
         animationText.classList.add('level-up-animation-text', 'animate-level-up');
 
-        // 🎬 Trigger tutor level-up animation with smooth crossfade
+        // 🎬 Trigger tutor level-up animation based on milestone
         if (typeof playTutorAnimation === 'function') {
-            playTutorAnimation('levelUp');
+            if (isBigCelebration) {
+                playTutorAnimation('levelUp');  // Every 5 levels: bigger celebration
+            } else {
+                playTutorAnimation('smallcele'); // Regular level ups: small celebration
+            }
             // Will automatically crossfade back to idle when animation ends
         }
 
@@ -2336,7 +2340,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data.specialXpAwarded) {
             const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
-            triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
+            if (isLevelUp) {
+                // Extract level number from message like "LEVEL_UP! New level: 5"
+                const levelMatch = data.specialXpAwarded.match(/New level: (\d+)/);
+                const newLevel = levelMatch ? parseInt(levelMatch[1]) : 0;
+                const isBigCelebration = newLevel % 5 === 0;
+                triggerXpAnimation(data.specialXpAwarded, isLevelUp, false, isBigCelebration);
+            } else {
+                triggerXpAnimation(data.specialXpAwarded, false, true, false);
+            }
         }
 
     } catch (error) {
