@@ -262,13 +262,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (iepRes.ok) {
                 const iepPlan = await iepRes.json();
-                studentIepForm.elements.extendedTime.checked = !!iepPlan?.accommodations?.extendedTime;
-                studentIepForm.elements.simplifiedInstructions.checked = !!iepPlan?.accommodations?.simplifiedInstructions;
-                studentIepForm.elements.frequentCheckIns.checked = !!iepPlan?.accommodations?.frequentCheckIns;
-                studentIepForm.elements.visualSupport.checked = !!iepPlan?.accommodations?.visualSupport;
-                studentIepForm.elements.chunking.checked = !!iepPlan?.accommodations?.chunking;
-                studentIepForm.elements.reducedDistraction.checked = !!iepPlan?.accommodations?.reducedDistraction;
-                studentIepForm.elements.mathAnxiety.checked = !!iepPlan?.accommodations?.mathAnxiety;
+                const accom = iepPlan?.accommodations || {};
+
+                // Load standard accommodations
+                studentIepForm.elements.extendedTime.checked = !!accom.extendedTime;
+                studentIepForm.elements.reducedDistraction.checked = !!accom.reducedDistraction;
+                studentIepForm.elements.calculatorAllowed.checked = !!accom.calculatorAllowed;
+                studentIepForm.elements.audioReadAloud.checked = !!accom.audioReadAloud;
+                studentIepForm.elements.chunkedAssignments.checked = !!accom.chunkedAssignments;
+                studentIepForm.elements.breaksAsNeeded.checked = !!accom.breaksAsNeeded;
+                studentIepForm.elements.digitalMultiplicationChart.checked = !!accom.digitalMultiplicationChart;
+                studentIepForm.elements.largePrintHighContrast.checked = !!accom.largePrintHighContrast;
+                studentIepForm.elements.mathAnxietySupport.checked = !!accom.mathAnxietySupport;
+
+                // Load custom accommodations
+                studentIepForm.elements.customAccommodations.value = (accom.custom || []).join('\n');
+
+                // Load other fields
                 studentIepForm.elements.readingLevel.value = iepPlan?.readingLevel || '';
                 studentIepForm.elements.preferredScaffolds.value = (iepPlan?.preferredScaffolds || []).join(', ');
                 if(iepGoalsList) iepGoalsList.textContent = 'IEP Goals feature not yet implemented.';
@@ -430,16 +440,29 @@ document.addEventListener("DOMContentLoaded", async () => {
                 interests: studentProfileForm.elements.interests.value.split(',').map(s => s.trim()).filter(Boolean)
             };
 
+            // Build accommodations object
+            const accommodations = {
+                extendedTime: studentIepForm.elements.extendedTime.checked,
+                reducedDistraction: studentIepForm.elements.reducedDistraction.checked,
+                calculatorAllowed: studentIepForm.elements.calculatorAllowed.checked,
+                audioReadAloud: studentIepForm.elements.audioReadAloud.checked,
+                chunkedAssignments: studentIepForm.elements.chunkedAssignments.checked,
+                breaksAsNeeded: studentIepForm.elements.breaksAsNeeded.checked,
+                digitalMultiplicationChart: studentIepForm.elements.digitalMultiplicationChart.checked,
+                largePrintHighContrast: studentIepForm.elements.largePrintHighContrast.checked,
+                mathAnxietySupport: studentIepForm.elements.mathAnxietySupport.checked,
+            };
+
+            // Add custom accommodations array
+            const customAccomText = studentIepForm.elements.customAccommodations.value.trim();
+            if (customAccomText) {
+                accommodations.custom = customAccomText.split('\n').map(s => s.trim()).filter(Boolean);
+            } else {
+                accommodations.custom = [];
+            }
+
             const iepData = {
-                accommodations: {
-                    extendedTime: studentIepForm.elements.extendedTime.checked,
-                    simplifiedInstructions: studentIepForm.elements.simplifiedInstructions.checked,
-                    frequentCheckIns: studentIepForm.elements.frequentCheckIns.checked,
-                    visualSupport: studentIepForm.elements.visualSupport.checked,
-                    chunking: studentIepForm.elements.chunking.checked,
-                    reducedDistraction: studentIepForm.elements.reducedDistraction.checked,
-                    mathAnxiety: studentIepForm.elements.mathAnxiety.checked,
-                },
+                accommodations,
                 readingLevel: studentIepForm.elements.readingLevel.value,
                 preferredScaffolds: studentIepForm.elements.preferredScaffolds.value.split(',').map(s => s.trim()).filter(Boolean),
                 goals: []

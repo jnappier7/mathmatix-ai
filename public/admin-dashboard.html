@@ -706,13 +706,16 @@
         <form id="studentIepForm">
           <div class="modal-form-group checkbox-group">
             <label><input type="checkbox" id="extendedTime" name="extendedTime"> Extended Time</label>
-            <label><input type="checkbox" id="simplifiedInstructions" name="simplifiedInstructions"> Simplified Instructions</label>
-            <label><input type="checkbox" id="frequentCheckIns" name="frequentCheckIns"> Frequent Check-ins</label>
-            <label><input type="checkbox" id="visualSupport" name="visualSupport"> Visual Support</label>
-            <label><input type="checkbox" id="chunking" name="chunking"> Chunking Information</label>
             <label><input type="checkbox" id="reducedDistraction" name="reducedDistraction"> Reduced Distraction</label>
-            <label><input type="checkbox" id="mathAnxiety" name="mathAnxiety"> Math Anxiety</label>
+            <label><input type="checkbox" id="calculatorAllowed" name="calculatorAllowed"> Calculator Allowed</label>
+            <label><input type="checkbox" id="audioReadAloud" name="audioReadAloud"> Audio Read-Aloud</label>
+            <label><input type="checkbox" id="chunkedAssignments" name="chunkedAssignments"> Chunked Assignments</label>
+            <label><input type="checkbox" id="breaksAsNeeded" name="breaksAsNeeded"> Breaks as Needed</label>
+            <label><input type="checkbox" id="digitalMultiplicationChart" name="digitalMultiplicationChart"> Digital Multiplication Chart</label>
+            <label><input type="checkbox" id="largePrintHighContrast" name="largePrintHighContrast"> Large Print / High Contrast</label>
+            <label><input type="checkbox" id="mathAnxietySupport" name="mathAnxietySupport"> Math Anxiety Support</label>
           </div>
+          <div class="modal-form-group"><label for="customAccommodations">Custom Accommodations (one per line):</label><textarea id="customAccommodations" name="customAccommodations" rows="3" placeholder="Enter any additional accommodations..."></textarea></div>
           <div class="modal-form-group"><label for="readingLevel">Reading Level (Grade):</label><input type="number" id="readingLevel" name="readingLevel" min="0" max="12" step="0.5"></div>
           <div class="modal-form-group"><label for="preferredScaffolds">Preferred Scaffolds (comma-separated):</label><input type="text" id="preferredScaffolds" name="preferredScaffolds"></div>
           <div class="modal-form-group" id="iepGoalsDisplay"><label>IEP Goals:</label><div id="iepGoalsList"></div></div>
