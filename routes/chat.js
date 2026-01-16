@@ -206,13 +206,17 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                             : avgFluencyZScore > 1.0 ? 'slow'
                             : 'normal';
 
+            // Check for IEP extended time accommodation
+            const hasExtendedTime = user.iepPlan?.accommodations?.extendedTime || false;
+
             fluencyContext = {
                 fluencyZScore: avgFluencyZScore,
                 speedLevel,
-                readSpeedModifier: user.learningProfile?.fluencyBaseline?.readSpeedModifier || 1.0
+                readSpeedModifier: user.learningProfile?.fluencyBaseline?.readSpeedModifier || 1.0,
+                iepExtendedTime: hasExtendedTime
             };
 
-            console.log(`📊 [Adaptive] Fluency context: z=${avgFluencyZScore.toFixed(2)}, speed=${speedLevel}`);
+            console.log(`📊 [Adaptive] Fluency context: z=${avgFluencyZScore.toFixed(2)}, speed=${speedLevel}${hasExtendedTime ? ', IEP Extended Time (1.5x)' : ''}`);
         }
 
         // Build conversation context if session has a specific topic/name
@@ -415,6 +419,65 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             console.log(`💡 Learning insight for ${user.firstName}: ${insight}`);
         }
 
+        // IEP GOAL PROGRESS TRACKING: Parse AI IEP goal progress tags
+        // Format: <IEP_GOAL_PROGRESS:goal-description,+5> or <IEP_GOAL_PROGRESS:0,+5> (using index)
+        const iepGoalProgressMatch = aiResponseText.match(/<IEP_GOAL_PROGRESS:([^,]+),([+-]\d+)>/);
+        if (iepGoalProgressMatch && user.iepPlan && user.iepPlan.goals) {
+            const goalIdentifier = iepGoalProgressMatch[1].trim();
+            const progressChange = parseInt(iepGoalProgressMatch[2], 10);
+
+            // Find the goal by description (partial match) or by index
+            let targetGoal = null;
+            let goalIndex = -1;
+
+            // Try to find by index first (if it's a number)
+            const goalIndexNum = parseInt(goalIdentifier, 10);
+            if (!isNaN(goalIndexNum) && goalIndexNum >= 0 && goalIndexNum < user.iepPlan.goals.length) {
+                targetGoal = user.iepPlan.goals[goalIndexNum];
+                goalIndex = goalIndexNum;
+            } else {
+                // Find by description (partial match, case insensitive)
+                for (let i = 0; i < user.iepPlan.goals.length; i++) {
+                    const goal = user.iepPlan.goals[i];
+                    if (goal.description && goal.description.toLowerCase().includes(goalIdentifier.toLowerCase())) {
+                        targetGoal = goal;
+                        goalIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (targetGoal && targetGoal.status === 'active') {
+                // Update progress
+                const oldProgress = targetGoal.currentProgress || 0;
+                const newProgress = Math.max(0, Math.min(100, oldProgress + progressChange));
+                targetGoal.currentProgress = newProgress;
+
+                // Add to history
+                if (!targetGoal.history) {
+                    targetGoal.history = [];
+                }
+                targetGoal.history.push({
+                    date: new Date(),
+                    editorId: userId,
+                    field: 'currentProgress',
+                    from: oldProgress,
+                    to: newProgress
+                });
+
+                // Check if goal is completed
+                if (newProgress >= 100 && targetGoal.status === 'active') {
+                    targetGoal.status = 'completed';
+                    console.log(`🎯 IEP Goal COMPLETED for ${user.firstName}: ${targetGoal.description}`);
+                }
+
+                user.markModified('iepPlan');
+                aiResponseText = aiResponseText.replace(iepGoalProgressMatch[0], '').trim();
+
+                console.log(`📊 IEP Goal progress updated for ${user.firstName}: "${targetGoal.description}" ${oldProgress}% → ${newProgress}% (${progressChange > 0 ? '+' : ''}${progressChange}%)`);
+            }
+        }
+
         // CRITICAL FIX: Validate AI response before saving
         if (!aiResponseText || typeof aiResponseText !== 'string' || aiResponseText.trim() === '') {
             console.error('[Chat] ERROR: AI response is empty or invalid, using fallback message');
@@ -549,6 +612,16 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
         const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
 
+        // Prepare IEP accommodation features for frontend
+        const iepFeatures = user.iepPlan?.accommodations ? {
+            autoReadAloud: user.iepPlan.accommodations.audioReadAloud || false,
+            showCalculator: user.iepPlan.accommodations.calculatorAllowed || false,
+            useHighContrast: user.iepPlan.accommodations.largePrintHighContrast || false,
+            extendedTimeMultiplier: user.iepPlan.accommodations.extendedTime ? 1.5 : 1.0,
+            mathAnxietySupport: user.iepPlan.accommodations.mathAnxietySupport || false,
+            chunkedAssignments: user.iepPlan.accommodations.chunkedAssignments || false
+        } : null;
+
         const responseData = {
             text: aiResponseText,
             userXp: userXpInCurrentLevel,
@@ -559,7 +632,8 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             newlyUnlockedTutors: tutorsJustUnlocked,
             drawingSequence: dynamicDrawingSequence,
             visualCommands: visualCommands, // Visual teaching: whiteboard, algebra tiles, images
-            boardContext: boardContext // Board-first chat integration: spatial anchoring data
+            boardContext: boardContext, // Board-first chat integration: spatial anchoring data
+            iepFeatures: iepFeatures // IEP accommodations for frontend to auto-enable features
         };
 
         if (useStreaming) {
