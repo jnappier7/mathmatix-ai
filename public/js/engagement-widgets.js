@@ -160,10 +160,47 @@ window.trackProblemAttempt = function(correct) {
         sessionStats.currentStreak++;
         updateStreakCounter(sessionStats.currentStreak);
     } else {
+        // Don't break streak immediately - show warning first
+        if (sessionStats.currentStreak > 0) {
+            showStreakWarning();
+        }
         sessionStats.currentStreak = 0;
         updateStreakCounter(0);
     }
     updateSessionStats();
+};
+
+/**
+ * Show warning when streak is about to break
+ * Gives student a chance to contest if AI misjudged
+ */
+function showStreakWarning() {
+    const counter = document.getElementById('streak-counter');
+    if (!counter) return;
+
+    // Flash red briefly as warning
+    const originalBg = counter.style.background;
+    counter.style.background = 'linear-gradient(135deg, #FF6B6B 0%, #FF3B3B 100%)';
+    counter.style.transform = 'translateX(-50%) scale(0.9)';
+
+    setTimeout(() => {
+        counter.style.background = originalBg;
+        counter.style.transform = 'translateX(-50%) scale(1)';
+    }, 600);
+}
+
+/**
+ * Restore last streak (undo incorrect evaluation)
+ * Can be called if student contests the AI's judgment
+ */
+window.restoreStreak = function(streakValue) {
+    sessionStats.currentStreak = streakValue;
+    updateStreakCounter(streakValue);
+
+    // Show notification
+    if (typeof window.showXpNotification === 'function') {
+        window.showXpNotification(0, '🔥 Streak Restored!');
+    }
 };
 
 // ============================================
