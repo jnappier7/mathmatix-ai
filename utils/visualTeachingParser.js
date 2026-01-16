@@ -64,6 +64,114 @@ function parseVisualTeaching(aiResponseText) {
         cleanedText = cleanedText.replace(/\[WHITEBOARD_CLEAR\]/g, '');
     }
 
+    // --- ENHANCED GEOMETRY COMMANDS ---
+    // [TRIANGLE_PROBLEM:A=30,B=70,C=?] - Create perfectly formatted triangle with angles
+    const triangleProblemRegex = /\[TRIANGLE_PROBLEM:A=([^,]+),B=([^,]+),C=([^\]]+)\]/g;
+    while ((match = triangleProblemRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'triangle_problem',
+            angles: {
+                A: match[1] === '?' ? '?' : parseFloat(match[1]),
+                B: match[2] === '?' ? '?' : parseFloat(match[2]),
+                C: match[3] === '?' ? '?' : parseFloat(match[3])
+            },
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(triangleProblemRegex, '');
+
+    // [EMPHASIZE:x,y,radius] - Draw attention circle around point
+    const emphasizeRegex = /\[EMPHASIZE:(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,(\d+))?\]/g;
+    while ((match = emphasizeRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'emphasize',
+            x: parseFloat(match[1]),
+            y: parseFloat(match[2]),
+            radius: match[3] ? parseInt(match[3]) : 30,
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(emphasizeRegex, '');
+
+    // [POINT_TO:fromX,fromY,toX,toY,message] - Draw arrow with message
+    const pointToRegex = /\[POINT_TO:(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,([^\]]+))?\]/g;
+    while ((match = pointToRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'point_to',
+            fromX: parseFloat(match[1]),
+            fromY: parseFloat(match[2]),
+            toX: parseFloat(match[3]),
+            toY: parseFloat(match[4]),
+            message: match[5] || '',
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(pointToRegex, '');
+
+    // --- MATH PROCEDURE COMMANDS ---
+    // [LONG_DIVISION:dividend,divisor] - Show long division process
+    const longDivRegex = /\[LONG_DIVISION:(\d+),(\d+)\]/g;
+    while ((match = longDivRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'long_division',
+            dividend: parseInt(match[1]),
+            divisor: parseInt(match[2]),
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(longDivRegex, '');
+
+    // [MULTIPLY_VERTICAL:num1,num2] - Show vertical multiplication
+    const multiplyVertRegex = /\[MULTIPLY_VERTICAL:(\d+),(\d+)\]/g;
+    while ((match = multiplyVertRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'multiply_vertical',
+            num1: parseInt(match[1]),
+            num2: parseInt(match[2]),
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(multiplyVertRegex, '');
+
+    // [FRACTION_ADD:n1,d1,n2,d2] - Show fraction addition
+    const fractionAddRegex = /\[FRACTION_ADD:(\d+),(\d+),(\d+),(\d+)\]/g;
+    while ((match = fractionAddRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'fraction_add',
+            n1: parseInt(match[1]),
+            d1: parseInt(match[2]),
+            n2: parseInt(match[3]),
+            d2: parseInt(match[4]),
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(fractionAddRegex, '');
+
+    // [FRACTION_MULTIPLY:n1,d1,n2,d2] - Show fraction multiplication
+    const fractionMultRegex = /\[FRACTION_MULTIPLY:(\d+),(\d+),(\d+),(\d+)\]/g;
+    while ((match = fractionMultRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'fraction_multiply',
+            n1: parseInt(match[1]),
+            d1: parseInt(match[2]),
+            n2: parseInt(match[3]),
+            d2: parseInt(match[4]),
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(fractionMultRegex, '');
+
+    // [EQUATION_SOLVE:equation] - Show equation solving steps
+    const equationSolveRegex = /\[EQUATION_SOLVE:([^\]]+)\]/g;
+    while ((match = equationSolveRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'equation_solve',
+            equation: match[1],
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(equationSolveRegex, '');
+
     // --- ALGEBRA TILES COMMANDS ---
     // [ALGEBRA_TILES:expression] - Show algebra tiles for an expression
     const algebraTilesRegex = /\[ALGEBRA_TILES:([^\]]+)\]/g;

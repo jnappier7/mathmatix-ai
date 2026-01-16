@@ -1333,36 +1333,67 @@ class MathmatixWhiteboard {
                 break;
 
             case 'line':
-                const line = new fabric.Line(item.points, {
-                    stroke: item.color || '#000',
-                    strokeWidth: item.width || 2,
-                    selectable: false,
-                });
-                this.canvas.add(line);
+                // Use hand-drawn line if handwriting engine available
+                if (this.handwriting && item.points.length === 4) {
+                    this.handwriting.drawHandDrawnArrow(
+                        item.points[0], item.points[1],
+                        item.points[2], item.points[3],
+                        {
+                            color: item.color || '#333',
+                            strokeWidth: item.width || 2,
+                            wobbleIntensity: 0.02
+                        }
+                    );
+                } else {
+                    const line = new fabric.Line(item.points, {
+                        stroke: item.color || '#333',
+                        strokeWidth: item.width || 2,
+                        selectable: false,
+                        strokeLineCap: 'round',
+                        strokeLineJoin: 'round'
+                    });
+                    this.canvas.add(line);
+                }
                 break;
 
             case 'text':
+                // Use handwritten text style
                 const text = new fabric.Text(item.content, {
                     left: item.position[0],
                     top: item.position[1],
-                    fontSize: item.fontSize || 16,
-                    fill: item.color || '#000',
+                    fontSize: item.fontSize || 20,
+                    fill: item.color || '#2d3748',
+                    fontFamily: 'Indie Flower, cursive',
                     selectable: false,
                 });
                 this.canvas.add(text);
                 break;
 
             case 'circle':
-                const circle = new fabric.Circle({
-                    left: item.position[0],
-                    top: item.position[1],
-                    radius: item.radius,
-                    fill: item.fill || 'transparent',
-                    stroke: item.stroke || '#000',
-                    strokeWidth: item.strokeWidth || 2,
-                    selectable: false,
-                });
-                this.canvas.add(circle);
+                // Use hand-drawn circle if handwriting engine available and circle is large enough
+                if (this.handwriting && item.radius > 10) {
+                    const centerX = item.position[0] + item.radius;
+                    const centerY = item.position[1] + item.radius;
+                    this.handwriting.drawHandDrawnCircle(
+                        centerX, centerY, item.radius,
+                        {
+                            color: item.stroke || '#12B3B3',
+                            strokeWidth: item.strokeWidth || 2,
+                            wobbleIntensity: 0.08
+                        }
+                    );
+                } else {
+                    const circle = new fabric.Circle({
+                        left: item.position[0],
+                        top: item.position[1],
+                        radius: item.radius,
+                        fill: item.fill || 'transparent',
+                        stroke: item.stroke || '#12B3B3',
+                        strokeWidth: item.strokeWidth || 2,
+                        selectable: false,
+                    });
+                    this.canvas.add(circle);
+                }
                 break;
 
             case 'rectangle':

@@ -2563,6 +2563,68 @@ form label, .password-label-row label {
     100% { opacity: 0; transform: scale(0.9) translateY(-50px); }
 }
 
+/* Level-Up Video Card Overlay */
+.levelup-video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.levelup-video-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.98));
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    max-width: 500px;
+    width: 90%;
+    opacity: 0;
+    transform: scale(0.7) translateY(30px);
+    animation: cardEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.levelup-video-card.exiting {
+    animation: cardExit 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+@keyframes cardEnter {
+    0% {
+        opacity: 0;
+        transform: scale(0.7) translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes cardExit {
+    0% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-30px);
+    }
+}
+
+.levelup-video-card video {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    display: block;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
 
 /* --- 14. Mobile Drawers & Responsiveness --- */
 

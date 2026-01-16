@@ -61,6 +61,30 @@ class VisualTeachingHandler {
                 case 'clear':
                     this.clearWhiteboard();
                     break;
+                case 'triangle_problem':
+                    await this.createTriangleProblem(cmd.angles);
+                    break;
+                case 'emphasize':
+                    await this.emphasizePoint(cmd.x, cmd.y, cmd.radius);
+                    break;
+                case 'point_to':
+                    await this.pointToLocation(cmd.fromX, cmd.fromY, cmd.toX, cmd.toY, cmd.message);
+                    break;
+                case 'long_division':
+                    await this.showLongDivision(cmd.dividend, cmd.divisor);
+                    break;
+                case 'multiply_vertical':
+                    await this.showMultiplyVertical(cmd.num1, cmd.num2);
+                    break;
+                case 'fraction_add':
+                    await this.showFractionAdd(cmd.n1, cmd.d1, cmd.n2, cmd.d2);
+                    break;
+                case 'fraction_multiply':
+                    await this.showFractionMultiply(cmd.n1, cmd.d1, cmd.n2, cmd.d2);
+                    break;
+                case 'equation_solve':
+                    await this.solveEquation(cmd.equation);
+                    break;
             }
 
             // Small delay between commands
@@ -151,21 +175,32 @@ class VisualTeachingHandler {
     async writeOnWhiteboard(text) {
         if (!window.whiteboard) return;
 
-        // Add text tool and write
-        console.log('📐 Writing on whiteboard:', text);
+        console.log('✍️ Writing on whiteboard with handwriting:', text);
 
-        // Create text object on whiteboard
-        const canvas = window.fabricCanvas;
-        if (canvas) {
-            const textObj = new fabric.Text(text, {
-                left: 50,
-                top: 50,
+        // Use handwriting engine if available
+        if (window.whiteboard.handwriting && typeof window.whiteboard.handwriting.writeText === 'function') {
+            // Use handwritten text with natural marker strokes
+            await window.whiteboard.handwriting.writeText(text, 50, 50, {
                 fontSize: 24,
-                fill: '#000000',
-                fontFamily: 'Arial'
+                color: '#2d3748',
+                fontFamily: 'Indie Flower, cursive',
+                selectable: false,
+                pauseAfter: true
             });
-            canvas.add(textObj);
-            canvas.renderAll();
+        } else {
+            // Fallback to regular text if handwriting engine not available
+            const canvas = window.fabricCanvas || window.whiteboard.canvas;
+            if (canvas) {
+                const textObj = new fabric.Text(text, {
+                    left: 50,
+                    top: 50,
+                    fontSize: 24,
+                    fill: '#2d3748',
+                    fontFamily: 'Indie Flower, cursive'
+                });
+                canvas.add(textObj);
+                canvas.renderAll();
+            }
         }
     }
 
@@ -178,6 +213,87 @@ class VisualTeachingHandler {
         if (window.fabricCanvas) {
             window.fabricCanvas.clear();
             console.log('📐 Cleared whiteboard');
+        }
+
+        // Reset canvas state in enhancer if available
+        if (window.whiteboardEnhancer) {
+            window.whiteboardEnhancer.clearCanvas();
+        }
+    }
+
+    async createTriangleProblem(angles) {
+        console.log('📐 Creating triangle problem:', angles);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.createTriangleProblem(angles);
+        } else {
+            console.warn('[VisualTeaching] Whiteboard enhancer not available');
+        }
+    }
+
+    async emphasizePoint(x, y, radius) {
+        console.log('⭕ Emphasizing point:', x, y);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.emphasizeElement(x, y, radius);
+        }
+    }
+
+    async pointToLocation(fromX, fromY, toX, toY, message) {
+        console.log('👉 Pointing to location:', toX, toY);
+
+        if (window.whiteboardEnhancer) {
+            await window.whiteboardEnhancer.pointTo(fromX, fromY, toX, toY, message);
+        }
+    }
+
+    async showLongDivision(dividend, divisor) {
+        console.log('🔢 Long Division:', dividend, '÷', divisor);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.showLongDivision(dividend, divisor);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
+        }
+    }
+
+    async showMultiplyVertical(num1, num2) {
+        console.log('🔢 Vertical Multiplication:', num1, '×', num2);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.showVerticalMultiplication(num1, num2);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
+        }
+    }
+
+    async showFractionAdd(n1, d1, n2, d2) {
+        console.log('🔢 Fraction Addition:', `${n1}/${d1} + ${n2}/${d2}`);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.showFractionAddition(n1, d1, n2, d2);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
+        }
+    }
+
+    async showFractionMultiply(n1, d1, n2, d2) {
+        console.log('🔢 Fraction Multiplication:', `${n1}/${d1} × ${n2}/${d2}`);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.showFractionMultiplication(n1, d1, n2, d2);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
+        }
+    }
+
+    async solveEquation(equation) {
+        console.log('🔢 Solving Equation:', equation);
+
+        if (window.mathProcedures) {
+            await window.mathProcedures.solveEquation(equation);
+        } else {
+            console.warn('[VisualTeaching] Math Procedures module not available');
         }
     }
 
