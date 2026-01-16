@@ -152,16 +152,35 @@ function generateSpeakableText(text) {
 
 /**
  * Show level-up celebration modal with tutor video
+ * Uses smallcele for regular levels, levelUp for milestone levels (every 5)
  */
 function showLevelUpCelebration() {
     const modal = document.getElementById('levelup-celebration-modal');
     const video = document.getElementById('celebration-tutor-video');
+    const titleEl = document.getElementById('celebration-title');
+    const subtitleEl = document.getElementById('celebration-subtitle');
 
     if (!modal || !video || !currentUser || !currentUser.selectedTutorId) return;
 
-    // Get the tutor's level-up video
+    // Get the tutor ID
     const tutorId = currentUser.selectedTutorId;
-    const videoPath = `/videos/${tutorId}_levelUp.mp4`;
+
+    // Determine which video to use based on level milestone
+    const currentLevel = currentUser.level || 1;
+    const isMilestone = currentLevel % 5 === 0;
+    const videoType = isMilestone ? 'levelUp' : 'smallcele';
+    const videoPath = `/videos/${tutorId}_${videoType}.mp4`;
+
+    // Update celebration text based on milestone
+    if (titleEl && subtitleEl) {
+        if (isMilestone) {
+            titleEl.textContent = `LEVEL ${currentLevel}!`;
+            subtitleEl.textContent = "🎉 Milestone Achievement! 🎉";
+        } else {
+            titleEl.textContent = "LEVEL UP!";
+            subtitleEl.textContent = "You're getting stronger!";
+        }
+    }
 
     // Set video source
     video.src = videoPath;
