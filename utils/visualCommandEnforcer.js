@@ -2,25 +2,54 @@
 // VISUAL COMMAND ENFORCER
 // Automatically inject visual commands when AI gives text explanations
 // for procedural questions that REQUIRE visual demonstrations
+// INCLUDES ANTI-CHEAT SAFEGUARDS
 // ============================================
 
 const { hasVisualCommands } = require('./visualTeachingParser');
+const {
+    detectCheatAttempt,
+    determineVisualMode,
+    shouldNotVisualize,
+    generateAntiCheatResponse
+} = require('./antiCheatSafeguards');
 
 /**
  * Enforce visual teaching for procedural questions
  * If student asks "how do I..." and AI doesn't use visual commands,
  * auto-inject the appropriate command
  *
+ * ANTI-CHEAT: Prevents solving homework, shows partial work only
+ *
  * @param {string} studentMessage - The student's question
  * @param {string} aiResponse - The AI's response text
+ * @param {string} conversationHistory - Optional conversation context
  * @returns {string} Enhanced AI response with visual commands injected
  */
-function enforceVisualTeaching(studentMessage, aiResponse) {
+function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory = '') {
     // Skip if AI already used visual commands
     if (hasVisualCommands(aiResponse)) {
         console.log('[VisualEnforcer] AI already used visual commands ✓');
         return aiResponse;
     }
+
+    // ANTI-CHEAT CHECK: Detect homework/cheat attempts
+    const cheatCheck = detectCheatAttempt(studentMessage, conversationHistory);
+    if (cheatCheck.isCheatAttempt) {
+        console.warn(`[VisualEnforcer] 🚫 Cheat attempt detected: ${cheatCheck.reason}`);
+        // Don't inject visual commands for direct homework requests
+        // Instead, redirect to teaching mode
+        return generateAntiCheatResponse(cheatCheck);
+    }
+
+    // Check if this problem type should NOT be visualized (word problems, proofs)
+    if (shouldNotVisualize(studentMessage)) {
+        console.log('[VisualEnforcer] Problem type should not be auto-visualized');
+        return aiResponse;
+    }
+
+    // Determine visual mode: 'partial' (teaching), 'example', or 'full'
+    const visualMode = determineVisualMode(studentMessage, cheatCheck);
+    console.log(`[VisualEnforcer] Visual mode: ${visualMode}`);
 
     const lowerMessage = studentMessage.toLowerCase();
     const lowerResponse = aiResponse.toLowerCase();
@@ -29,8 +58,9 @@ function enforceVisualTeaching(studentMessage, aiResponse) {
     if (isLongDivisionQuestion(lowerMessage)) {
         const numbers = extractDivisionNumbers(studentMessage, aiResponse);
         if (numbers) {
-            console.log(`[VisualEnforcer] 🎯 Auto-injecting LONG_DIVISION: ${numbers.dividend} ÷ ${numbers.divisor}`);
-            return `[LONG_DIVISION:${numbers.dividend},${numbers.divisor}] ${shortenResponse(aiResponse)}`;
+            const modeFlag = visualMode === 'partial' ? ':PARTIAL' : '';
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting LONG_DIVISION (${visualMode}): ${numbers.dividend} ÷ ${numbers.divisor}`);
+            return `[LONG_DIVISION:${numbers.dividend},${numbers.divisor}${modeFlag}] ${getTeachingPrompt('division', visualMode)}`;
         }
     }
 
@@ -38,8 +68,9 @@ function enforceVisualTeaching(studentMessage, aiResponse) {
     if (isMultiplicationQuestion(lowerMessage)) {
         const numbers = extractMultiplicationNumbers(studentMessage, aiResponse);
         if (numbers) {
-            console.log(`[VisualEnforcer] 🎯 Auto-injecting MULTIPLY_VERTICAL: ${numbers.num1} × ${numbers.num2}`);
-            return `[MULTIPLY_VERTICAL:${numbers.num1},${numbers.num2}] ${shortenResponse(aiResponse)}`;
+            const modeFlag = visualMode === 'partial' ? ':PARTIAL' : '';
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting MULTIPLY_VERTICAL (${visualMode}): ${numbers.num1} × ${numbers.num2}`);
+            return `[MULTIPLY_VERTICAL:${numbers.num1},${numbers.num2}${modeFlag}] ${getTeachingPrompt('multiply', visualMode)}`;
         }
     }
 
@@ -47,8 +78,9 @@ function enforceVisualTeaching(studentMessage, aiResponse) {
     if (isFractionAdditionQuestion(lowerMessage)) {
         const fractions = extractFractionAddition(studentMessage, aiResponse);
         if (fractions) {
-            console.log(`[VisualEnforcer] 🎯 Auto-injecting FRACTION_ADD: ${fractions.n1}/${fractions.d1} + ${fractions.n2}/${fractions.d2}`);
-            return `[FRACTION_ADD:${fractions.n1},${fractions.d1},${fractions.n2},${fractions.d2}] ${shortenResponse(aiResponse)}`;
+            const modeFlag = visualMode === 'partial' ? ':PARTIAL' : '';
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting FRACTION_ADD (${visualMode}): ${fractions.n1}/${fractions.d1} + ${fractions.n2}/${fractions.d2}`);
+            return `[FRACTION_ADD:${fractions.n1},${fractions.d1},${fractions.n2},${fractions.d2}${modeFlag}] ${getTeachingPrompt('fraction_add', visualMode)}`;
         }
     }
 
@@ -56,8 +88,9 @@ function enforceVisualTeaching(studentMessage, aiResponse) {
     if (isFractionMultiplicationQuestion(lowerMessage)) {
         const fractions = extractFractionMultiplication(studentMessage, aiResponse);
         if (fractions) {
-            console.log(`[VisualEnforcer] 🎯 Auto-injecting FRACTION_MULTIPLY: ${fractions.n1}/${fractions.d1} × ${fractions.n2}/${fractions.d2}`);
-            return `[FRACTION_MULTIPLY:${fractions.n1},${fractions.d1},${fractions.n2},${fractions.d2}] ${shortenResponse(aiResponse)}`;
+            const modeFlag = visualMode === 'partial' ? ':PARTIAL' : '';
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting FRACTION_MULTIPLY (${visualMode}): ${fractions.n1}/${fractions.d1} × ${fractions.n2}/${fractions.d2}`);
+            return `[FRACTION_MULTIPLY:${fractions.n1},${fractions.d1},${fractions.n2},${fractions.d2}${modeFlag}] ${getTeachingPrompt('fraction_multiply', visualMode)}`;
         }
     }
 
@@ -65,8 +98,9 @@ function enforceVisualTeaching(studentMessage, aiResponse) {
     if (isEquationSolvingQuestion(lowerMessage)) {
         const equation = extractEquation(studentMessage, aiResponse);
         if (equation) {
-            console.log(`[VisualEnforcer] 🎯 Auto-injecting EQUATION_SOLVE: ${equation}`);
-            return `[EQUATION_SOLVE:${equation}] ${shortenResponse(aiResponse)}`;
+            const modeFlag = visualMode === 'partial' ? ':PARTIAL' : '';
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting EQUATION_SOLVE (${visualMode}): ${equation}`);
+            return `[EQUATION_SOLVE:${equation}${modeFlag}] ${getTeachingPrompt('equation', visualMode)}`;
         }
     }
 
@@ -345,6 +379,30 @@ function extractTriangleAngles(studentMsg, aiResponse) {
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
+
+/**
+ * Get appropriate teaching prompt based on operation and mode
+ * Encourages student participation instead of just watching
+ *
+ * @param {string} operation - Type of operation
+ * @param {string} mode - 'partial', 'example', or 'full'
+ * @returns {string} Teaching prompt
+ */
+function getTeachingPrompt(operation, mode) {
+    if (mode === 'partial') {
+        const prompts = {
+            division: "Watch the first steps. Can you finish it?",
+            multiply: "I'll show you how it starts. You do the rest!",
+            fraction_add: "Here's the setup. What's the common denominator?",
+            fraction_multiply: "Watch the first step. What comes next?",
+            equation: "Here's the first move. What should we do next?"
+        };
+        return prompts[operation] || "Watch the method, then you try!";
+    } else if (mode === 'example') {
+        return "Here's an example with different numbers. Then YOU try with yours!";
+    }
+    return "Watch how this works!";
+}
 
 /**
  * Shorten AI response to avoid text walls

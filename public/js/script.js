@@ -2197,6 +2197,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
 
+        // Notify whiteboard-chat layout manager about new AI message
+        if (window.whiteboardChatLayout) {
+            document.dispatchEvent(new CustomEvent('newAIMessage', {
+                detail: { message: aiText }
+            }));
+        }
+
         // BOARD-FIRST CHAT INTEGRATION: Handle spatial anchoring if boardContext exists
         if (data.boardContext && window.chatBoardController) {
             const messageElements = document.querySelectorAll('.message.ai');
