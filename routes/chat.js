@@ -18,6 +18,8 @@ const axios = require('axios');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const { parseAIDrawingCommands } = require('../utils/aiDrawingTools');
 const { parseVisualTeaching } = require('../utils/visualTeachingParser');
+const { enforceVisualTeaching } = require('../utils/visualCommandEnforcer');
+const { injectFewShotExamples } = require('../utils/visualCommandExamples');
 const { detectAndFetchResource } = require('../utils/resourceDetector');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 const { processAIResponse } = require('../utils/chatBoardParser');
@@ -225,6 +227,9 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             };
         }
 
+        // Inject few-shot examples for new conversations to teach visual command usage
+        formattedMessagesForLLM = injectFewShotExamples(formattedMessagesForLLM);
+
         const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
@@ -305,6 +310,9 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 400 });
             aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
         }
+
+        // ENFORCE visual teaching: Auto-inject commands if AI forgot to use them
+        aiResponseText = enforceVisualTeaching(message, aiResponseText);
 
         // Parse visual teaching commands (whiteboard, algebra tiles, images, manipulatives)
         const visualResult = parseVisualTeaching(aiResponseText);
