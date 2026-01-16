@@ -15,19 +15,43 @@ class WhiteboardChatLayout {
     }
 
     init() {
-        // Create message ticker overlay
-        this.createMessageTicker();
+        // Wait for whiteboard to be ready before creating ticker
+        this.waitForWhiteboard().then(() => {
+            // Create message ticker overlay
+            this.createMessageTicker();
 
-        // Create PIP widget (hidden by default)
-        this.createPIPWidget();
+            // Create PIP widget (hidden by default)
+            this.createPIPWidget();
 
-        // Listen for whiteboard show/hide
-        this.setupWhiteboardListeners();
+            // Listen for whiteboard show/hide
+            this.setupWhiteboardListeners();
 
-        // Auto-detect best layout mode
-        this.detectBestLayout();
+            // Auto-detect best layout mode
+            this.detectBestLayout();
 
-        console.log(`✅ Layout mode: ${this.mode}`);
+            console.log(`✅ Layout mode: ${this.mode}`);
+        });
+    }
+
+    // Wait for whiteboard panel to exist in DOM
+    async waitForWhiteboard() {
+        return new Promise((resolve) => {
+            const checkInterval = setInterval(() => {
+                const panel = document.getElementById('whiteboard-panel');
+                if (panel && window.whiteboard) {
+                    clearInterval(checkInterval);
+                    console.log('[Layout] Whiteboard panel ready');
+                    resolve();
+                }
+            }, 100); // Check every 100ms
+
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                console.warn('[Layout] Whiteboard panel not found after 10s');
+                resolve(); // Resolve anyway to prevent hanging
+            }, 10000);
+        });
     }
 
     // ============================================
@@ -66,9 +90,15 @@ class WhiteboardChatLayout {
 
         console.log('[Layout] Whiteboard opened, mode:', this.mode);
 
+        // Ensure ticker exists if using ticker mode
+        if (this.mode === 'message-ticker' && !this.messageTicker) {
+            this.createMessageTicker();
+        }
+
         // Apply layout mode
         switch (this.mode) {
             case 'message-ticker':
+                // Always show ticker when whiteboard opens
                 this.showMessageTicker();
                 break;
             case 'split-screen':
@@ -107,19 +137,36 @@ class WhiteboardChatLayout {
     // ============================================
 
     createMessageTicker() {
+        const whiteboardPanel = document.getElementById('whiteboard-panel');
+        if (!whiteboardPanel) {
+            console.warn('[Layout] Cannot create ticker: whiteboard panel not found');
+            return;
+        }
+
+        // Remove existing ticker if any
+        const existing = document.getElementById('whiteboard-message-ticker');
+        if (existing) {
+            existing.remove();
+        }
+
         this.messageTicker = document.createElement('div');
         this.messageTicker.id = 'whiteboard-message-ticker';
         this.messageTicker.innerHTML = `
             <span class="message-icon">💬</span>
             <div class="message-text"></div>
-            <button class="dismiss-btn" onclick="whiteboardChatLayout.dismissMessageTicker()">×</button>
+            <button class="dismiss-btn" onclick="window.whiteboardChatLayout.dismissMessageTicker()">×</button>
         `;
 
-        // Insert into whiteboard panel
-        const whiteboardPanel = document.getElementById('whiteboard-panel');
-        if (whiteboardPanel) {
-            whiteboardPanel.appendChild(this.messageTicker);
+        // Insert AFTER the whiteboard header (first child)
+        const header = whiteboardPanel.querySelector('.whiteboard-header');
+        if (header && header.nextSibling) {
+            whiteboardPanel.insertBefore(this.messageTicker, header.nextSibling);
+        } else {
+            // Fallback: prepend to panel
+            whiteboardPanel.insertBefore(this.messageTicker, whiteboardPanel.firstChild);
         }
+
+        console.log('[Layout] Message ticker created');
     }
 
     showMessageTicker() {
@@ -247,17 +294,44 @@ class WhiteboardChatLayout {
     // ============================================
 
     getLatestAIMessage() {
-        const messages = document.querySelectorAll('.message.assistant');
-        if (messages.length === 0) return null;
+        // Try multiple selectors for AI messages (different implementations)
+        const selectors = [
+            '.message.assistant',
+            '.message.ai',
+            '.ai-message',
+            '[data-role="assistant"]',
+            '[data-role="ai"]'
+        ];
+
+        let messages = [];
+        for (const selector of selectors) {
+            messages = document.querySelectorAll(selector);
+            if (messages.length > 0) break;
+        }
+
+        if (messages.length === 0) {
+            console.log('[Layout] No AI messages found in DOM');
+            return null;
+        }
 
         const latestMessage = messages[messages.length - 1];
-        const textContent = latestMessage.querySelector('.message-text')?.textContent;
+
+        // Try multiple ways to get text content
+        let textContent = latestMessage.querySelector('.message-text')?.textContent
+            || latestMessage.querySelector('.message-content')?.textContent
+            || latestMessage.textContent;
+
+        if (!textContent) {
+            console.log('[Layout] Could not extract text from AI message');
+            return null;
+        }
 
         // Truncate to 120 chars for ticker
-        if (textContent && textContent.length > 120) {
+        if (textContent.length > 120) {
             return textContent.substring(0, 117) + '...';
         }
 
+        console.log('[Layout] Latest AI message:', textContent.substring(0, 50) + '...');
         return textContent;
     }
 
@@ -328,6 +402,53 @@ class WhiteboardChatLayout {
         setTimeout(() => {
             hint.remove();
         }, 3000);
+    }
+
+    // ============================================
+    // DEBUG / TEST METHODS
+    // ============================================
+
+    /**
+     * Manual test method - call from console
+     * Usage: window.whiteboardChatLayout.testTicker()
+     */
+    testTicker() {
+        console.log('[Layout] Testing ticker...');
+        console.log('- Mode:', this.mode);
+        console.log('- Whiteboard open:', this.isWhiteboardOpen);
+        console.log('- Ticker exists:', !!this.messageTicker);
+
+        if (!this.messageTicker) {
+            console.log('Creating ticker...');
+            this.createMessageTicker();
+        }
+
+        if (this.messageTicker) {
+            const testMessage = "This is a test message to verify the ticker is working!";
+            const messageText = this.messageTicker.querySelector('.message-text');
+            if (messageText) {
+                messageText.textContent = testMessage;
+                this.messageTicker.classList.add('active');
+                console.log('✅ Ticker should now be visible!');
+
+                setTimeout(() => {
+                    this.dismissMessageTicker();
+                    console.log('Ticker dismissed');
+                }, 5000);
+            } else {
+                console.error('❌ Could not find message-text element');
+            }
+        } else {
+            console.error('❌ Failed to create ticker');
+        }
+    }
+
+    /**
+     * Force show ticker with current message
+     */
+    forceShowTicker() {
+        this.isWhiteboardOpen = true;
+        this.showMessageTicker();
     }
 }
 
