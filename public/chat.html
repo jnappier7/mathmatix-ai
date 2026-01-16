@@ -53,9 +53,29 @@
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </a>
     <nav class="landing-nav">
+      <!-- TTS Playback Controls -->
+      <button id="restart-audio-btn" class="btn btn-tertiary icon-only" title="Restart Audio" style="display: none;">
+        <i class="fas fa-redo"></i>
+      </button>
+      <button id="pause-audio-btn" class="btn btn-tertiary icon-only" title="Pause Audio" style="display: none;">
+        <i class="fas fa-pause"></i>
+      </button>
       <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" style="display: none;">
         <i class="fas fa-stop-circle"></i> <span class="mobile-hide">Stop</span>
       </button>
+      <div class="speed-control" style="display: none;" id="speed-control-container">
+        <button id="speed-btn" class="btn btn-tertiary icon-only" title="Playback Speed">
+          <span id="speed-display">1x</span>
+        </button>
+        <div class="speed-dropdown" id="speed-dropdown">
+          <button data-speed="0.5">0.5x</button>
+          <button data-speed="0.75">0.75x</button>
+          <button data-speed="1">1x</button>
+          <button data-speed="1.25">1.25x</button>
+          <button data-speed="1.5">1.5x</button>
+          <button data-speed="2">2x</button>
+        </div>
+      </div>
       <button id="open-resources-modal-btn" class="btn btn-tertiary" title="Resources" style="display: none;">
         <i class="fas fa-book-open"></i> <span class="mobile-hide">Resources</span>
       </button>
