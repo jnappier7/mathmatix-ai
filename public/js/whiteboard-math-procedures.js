@@ -30,8 +30,9 @@ class MathProcedures {
      * Animated long division: 342 ÷ 6 = ?
      * @param {number} dividend - Number being divided (342)
      * @param {number} divisor - Number dividing by (6)
+     * @param {string} mode - 'full' (complete solution) or 'partial' (first 1-2 steps only)
      */
-    async showLongDivision(dividend, divisor) {
+    async showLongDivision(dividend, divisor, mode = 'full') {
         const region = this.enhancer.getAvailableRegion('topCenter');
         if (!region) {
             console.warn('[MathProc] No available region');
@@ -41,7 +42,7 @@ class MathProcedures {
         const startX = region.x + 50;
         const startY = region.y + 30;
 
-        console.log(`🔢 Long Division: ${dividend} ÷ ${divisor}`);
+        console.log(`🔢 Long Division: ${dividend} ÷ ${divisor} (${mode} mode)`);
 
         // Draw division bracket
         await this.drawDivisionBracket(startX, startY, dividend.toString(), divisor);
@@ -54,7 +55,11 @@ class MathProcedures {
         let currentPosition = 0;
         let yOffset = startY + 40;
 
-        for (let i = 0; i < dividendStr.length; i++) {
+        // ANTI-CHEAT: Limit steps in partial mode (max 2 steps)
+        const maxSteps = mode === 'partial' ? 2 : dividendStr.length;
+        let stepsShown = 0;
+
+        for (let i = 0; i < dividendStr.length && stepsShown < maxSteps; i++) {
             // Build current number
             const currentNum = remainder * 10 + parseInt(dividendStr[i]);
 
@@ -106,6 +111,7 @@ class MathProcedures {
                 await this.delay(400);
 
                 yOffset += 40;
+                stepsShown++; // Count this as a completed step
             } else {
                 remainder = currentNum;
                 if (quotientDigits.length > 0) {
@@ -117,11 +123,12 @@ class MathProcedures {
                         this.colors.result,
                         22
                     );
+                    stepsShown++; // Count zero placement as a step
                 }
             }
 
-            // Bring down next digit (if not last)
-            if (i < dividendStr.length - 1) {
+            // Bring down next digit (if not last and not at max steps)
+            if (i < dividendStr.length - 1 && stepsShown < maxSteps) {
                 await this.drawArrow(
                     startX + 60 + (i + 1) * 15,
                     startY + 15,
@@ -133,21 +140,33 @@ class MathProcedures {
             }
         }
 
-        // Final answer emphasis
-        if (remainder === 0) {
-            await this.addText(
-                startX,
-                yOffset + 20,
-                `Answer: ${quotientDigits.join('')}`,
-                this.colors.result,
-                20
-            );
+        // ANTI-CHEAT: Only show final answer in 'full' mode
+        if (mode === 'full') {
+            // Final answer emphasis
+            if (remainder === 0) {
+                await this.addText(
+                    startX,
+                    yOffset + 20,
+                    `Answer: ${quotientDigits.join('')}`,
+                    this.colors.result,
+                    20
+                );
+            } else {
+                await this.addText(
+                    startX,
+                    yOffset + 20,
+                    `Answer: ${quotientDigits.join('')} R${remainder}`,
+                    this.colors.result,
+                    20
+                );
+            }
         } else {
+            // Partial mode: Show "Your turn!" message instead of answer
             await this.addText(
                 startX,
                 yOffset + 20,
-                `Answer: ${quotientDigits.join('')} R${remainder}`,
-                this.colors.result,
+                '↑ Now you finish it!',
+                this.colors.emphasis,
                 20
             );
         }

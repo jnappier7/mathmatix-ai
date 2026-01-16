@@ -109,32 +109,34 @@ function parseVisualTeaching(aiResponseText) {
     cleanedText = cleanedText.replace(pointToRegex, '');
 
     // --- MATH PROCEDURE COMMANDS ---
-    // [LONG_DIVISION:dividend,divisor] - Show long division process
-    const longDivRegex = /\[LONG_DIVISION:(\d+),(\d+)\]/g;
+    // [LONG_DIVISION:dividend,divisor] or [LONG_DIVISION:dividend,divisor:PARTIAL]
+    const longDivRegex = /\[LONG_DIVISION:(\d+),(\d+)(?::([A-Z]+))?\]/g;
     while ((match = longDivRegex.exec(aiResponseText)) !== null) {
         visualCommands.whiteboard.push({
             type: 'long_division',
             dividend: parseInt(match[1]),
             divisor: parseInt(match[2]),
+            mode: match[3] ? match[3].toLowerCase() : 'full', // 'partial' or 'full'
             autoOpen: true
         });
     }
     cleanedText = cleanedText.replace(longDivRegex, '');
 
-    // [MULTIPLY_VERTICAL:num1,num2] - Show vertical multiplication
-    const multiplyVertRegex = /\[MULTIPLY_VERTICAL:(\d+),(\d+)\]/g;
+    // [MULTIPLY_VERTICAL:num1,num2] or [MULTIPLY_VERTICAL:num1,num2:PARTIAL]
+    const multiplyVertRegex = /\[MULTIPLY_VERTICAL:(\d+),(\d+)(?::([A-Z]+))?\]/g;
     while ((match = multiplyVertRegex.exec(aiResponseText)) !== null) {
         visualCommands.whiteboard.push({
             type: 'multiply_vertical',
             num1: parseInt(match[1]),
             num2: parseInt(match[2]),
+            mode: match[3] ? match[3].toLowerCase() : 'full',
             autoOpen: true
         });
     }
     cleanedText = cleanedText.replace(multiplyVertRegex, '');
 
-    // [FRACTION_ADD:n1,d1,n2,d2] - Show fraction addition
-    const fractionAddRegex = /\[FRACTION_ADD:(\d+),(\d+),(\d+),(\d+)\]/g;
+    // [FRACTION_ADD:n1,d1,n2,d2] or [FRACTION_ADD:n1,d1,n2,d2:PARTIAL]
+    const fractionAddRegex = /\[FRACTION_ADD:(\d+),(\d+),(\d+),(\d+)(?::([A-Z]+))?\]/g;
     while ((match = fractionAddRegex.exec(aiResponseText)) !== null) {
         visualCommands.whiteboard.push({
             type: 'fraction_add',
@@ -142,13 +144,14 @@ function parseVisualTeaching(aiResponseText) {
             d1: parseInt(match[2]),
             n2: parseInt(match[3]),
             d2: parseInt(match[4]),
+            mode: match[5] ? match[5].toLowerCase() : 'full',
             autoOpen: true
         });
     }
     cleanedText = cleanedText.replace(fractionAddRegex, '');
 
-    // [FRACTION_MULTIPLY:n1,d1,n2,d2] - Show fraction multiplication
-    const fractionMultRegex = /\[FRACTION_MULTIPLY:(\d+),(\d+),(\d+),(\d+)\]/g;
+    // [FRACTION_MULTIPLY:n1,d1,n2,d2] or [FRACTION_MULTIPLY:n1,d1,n2,d2:PARTIAL]
+    const fractionMultRegex = /\[FRACTION_MULTIPLY:(\d+),(\d+),(\d+),(\d+)(?::([A-Z]+))?\]/g;
     while ((match = fractionMultRegex.exec(aiResponseText)) !== null) {
         visualCommands.whiteboard.push({
             type: 'fraction_multiply',
@@ -156,17 +159,19 @@ function parseVisualTeaching(aiResponseText) {
             d1: parseInt(match[2]),
             n2: parseInt(match[3]),
             d2: parseInt(match[4]),
+            mode: match[5] ? match[5].toLowerCase() : 'full',
             autoOpen: true
         });
     }
     cleanedText = cleanedText.replace(fractionMultRegex, '');
 
-    // [EQUATION_SOLVE:equation] - Show equation solving steps
-    const equationSolveRegex = /\[EQUATION_SOLVE:([^\]]+)\]/g;
+    // [EQUATION_SOLVE:equation] or [EQUATION_SOLVE:equation:PARTIAL]
+    const equationSolveRegex = /\[EQUATION_SOLVE:([^:\]]+)(?::([A-Z]+))?\]/g;
     while ((match = equationSolveRegex.exec(aiResponseText)) !== null) {
         visualCommands.whiteboard.push({
             type: 'equation_solve',
             equation: match[1],
+            mode: match[2] ? match[2].toLowerCase() : 'full',
             autoOpen: true
         });
     }
