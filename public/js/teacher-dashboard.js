@@ -15,13 +15,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     // IEP Form Elements
     const iepAccommodations = {
         extendedTime: document.getElementById("extendedTime"),
-        simplifiedInstructions: document.getElementById("simplifiedInstructions"),
-        frequentCheckIns: document.getElementById("iepFrequentCheckIns"),
-        visualSupport: document.getElementById("visualSupport"),
-        chunking: document.getElementById("chunking"),
         reducedDistraction: document.getElementById("reducedDistraction"),
-        mathAnxiety: document.getElementById("mathAnxiety")
+        calculatorAllowed: document.getElementById("calculatorAllowed"),
+        audioReadAloud: document.getElementById("audioReadAloud"),
+        chunkedAssignments: document.getElementById("chunkedAssignments"),
+        breaksAsNeeded: document.getElementById("breaksAsNeeded"),
+        digitalMultiplicationChart: document.getElementById("digitalMultiplicationChart"),
+        largePrintHighContrast: document.getElementById("largePrintHighContrast"),
+        mathAnxietySupport: document.getElementById("mathAnxietySupport")
     };
+    const customAccommodationsInput = document.getElementById("customAccommodations");
     const readingLevelInput = document.getElementById("readingLevel");
     const preferredScaffoldsInput = document.getElementById("preferredScaffolds");
     const iepGoalsList = document.getElementById("iep-goals-list");
@@ -85,11 +88,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- IEP Form Logic ---
     const loadIepData = (iepPlan = {}) => {
         const accommodations = iepPlan.accommodations || {};
+
+        // Load checkboxes
         Object.keys(iepAccommodations).forEach(key => {
-            if(iepAccommodations[key]) iepAccommodations[key].checked = accommodations[key] || false;
+            if(iepAccommodations[key]) {
+                iepAccommodations[key].checked = accommodations[key] || false;
+            }
         });
+
+        // Load custom accommodations
+        if (customAccommodationsInput) {
+            customAccommodationsInput.value = (accommodations.custom || []).join('\n');
+        }
+
+        // Load other fields
         if(readingLevelInput) readingLevelInput.value = iepPlan.readingLevel || '';
         if(preferredScaffoldsInput) preferredScaffoldsInput.value = (iepPlan.preferredScaffolds || []).join(', ');
+
+        // Load goals
         if(iepGoalsList) {
             iepGoalsList.innerHTML = '';
             (iepPlan.goals || []).forEach(goal => addIepGoalToUI(goal));
@@ -97,6 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     const getIepDataFromForm = () => {
+        // Get goals from form
         const goals = Array.from(iepGoalsList.querySelectorAll('.iep-goal-item')).map(item => ({
             description: item.querySelector('.goal-description').value,
             targetDate: item.querySelector('.goal-target-date').value,
@@ -104,8 +121,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             measurementMethod: item.querySelector('.goal-method').value,
             status: item.querySelector('.goal-status').value,
         }));
+
+        // Build accommodations object
+        const accommodations = Object.fromEntries(
+            Object.entries(iepAccommodations).map(([key, el]) => [key, el.checked])
+        );
+
+        // Add custom accommodations array
+        if (customAccommodationsInput && customAccommodationsInput.value.trim()) {
+            accommodations.custom = customAccommodationsInput.value
+                .split('\n')
+                .map(s => s.trim())
+                .filter(Boolean);
+        } else {
+            accommodations.custom = [];
+        }
+
         return {
-            accommodations: Object.fromEntries(Object.entries(iepAccommodations).map(([key, el]) => [key, el.checked])),
+            accommodations,
             readingLevel: parseFloat(readingLevelInput.value) || null,
             preferredScaffolds: preferredScaffoldsInput.value.split(',').map(s => s.trim()).filter(Boolean),
             goals
