@@ -76,6 +76,7 @@ function calculateZScore(observed, expected, stdDev = null) {
  * @param {Object} skill - The skill object from database with fluencyMetadata
  * @param {Object} userProfile - User's learningProfile with fluencyBaseline
  * @param {Object} options - Additional options
+ * @param {Boolean} options.iepExtendedTime - Apply IEP extended time accommodation (1.5x multiplier)
  * @returns {Object} { ghostLimit, strictLimit, warningThreshold, expectedTime }
  *
  * @example
@@ -92,6 +93,10 @@ function calculateZScore(observed, expected, stdDev = null) {
  *
  * const timers = calculateAdaptiveTimeLimit(skill, userProfile);
  * // => { ghostLimit: 5.4, strictLimit: 3.6, warningThreshold: 4.5, expectedTime: 4.5 }
+ *
+ * // With IEP extended time:
+ * const timersIEP = calculateAdaptiveTimeLimit(skill, userProfile, { iepExtendedTime: true });
+ * // => All times multiplied by 1.5x (IEP accommodation)
  */
 function calculateAdaptiveTimeLimit(skill, userProfile, options = {}) {
   // Extract fluency metadata from skill
@@ -103,20 +108,32 @@ function calculateAdaptiveTimeLimit(skill, userProfile, options = {}) {
 
   // STEP 1: Calculate the Expected Time for THIS student
   // This is the "fair" baseline adjusted for their processing speed
-  const expectedTime = baseFluencyTime * readSpeedModifier;
+  let expectedTime = baseFluencyTime * readSpeedModifier;
 
   // STEP 2: Apply Tolerance Factor for the skill type
   // - Reflex problems: Low tolerance (1.2x) - must be fast
   // - Process problems: Moderate tolerance (2.0x) - should be smooth
   // - Algorithm problems: High tolerance (3.0x+) - methodical is fine
-  const ghostLimit = expectedTime * toleranceFactor;
+  let ghostLimit = expectedTime * toleranceFactor;
 
   // STEP 3: Calculate intermediate thresholds
   // Warning threshold: 75% of the way to ghost limit
-  const warningThreshold = expectedTime + (ghostLimit - expectedTime) * 0.75;
+  let warningThreshold = expectedTime + (ghostLimit - expectedTime) * 0.75;
 
   // Strict limit: For "fluent" designation (halfway between expected and ghost)
-  const strictLimit = expectedTime + (ghostLimit - expectedTime) * 0.5;
+  let strictLimit = expectedTime + (ghostLimit - expectedTime) * 0.5;
+
+  // STEP 4: Apply IEP Extended Time Accommodation (1.5x multiplier)
+  // This is a LEGALLY REQUIRED accommodation under IDEA
+  // Must be applied AFTER all other calculations to ensure consistent fairness
+  const iepExtendedTimeMultiplier = options.iepExtendedTime ? 1.5 : 1.0;
+
+  if (iepExtendedTimeMultiplier !== 1.0) {
+    expectedTime *= iepExtendedTimeMultiplier;
+    ghostLimit *= iepExtendedTimeMultiplier;
+    warningThreshold *= iepExtendedTimeMultiplier;
+    strictLimit *= iepExtendedTimeMultiplier;
+  }
 
   return {
     expectedTime: Math.round(expectedTime * 10) / 10,      // Expected time for this student
@@ -125,7 +142,8 @@ function calculateAdaptiveTimeLimit(skill, userProfile, options = {}) {
     ghostLimit: Math.round(ghostLimit * 10) / 10,          // Hard cutoff for mastery credit
     baseFluencyTime,                                        // Reference: neurotypical time
     userModifier: readSpeedModifier,                       // Reference: user's handicap
-    toleranceFactor                                         // Reference: skill tolerance
+    toleranceFactor,                                        // Reference: skill tolerance
+    iepExtendedTime: options.iepExtendedTime || false      // Reference: IEP accommodation applied
   };
 }
 

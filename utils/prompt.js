@@ -101,6 +101,151 @@ function buildSkillMasteryContext(userProfile, filterToSkill = null) {
 }
 
 /**
+ * Build detailed IEP accommodations context for AI prompt
+ * @param {Object} iepPlan - IEP plan from user profile
+ * @param {string} firstName - Student's first name
+ */
+function buildIepAccommodationsPrompt(iepPlan, firstName) {
+  if (!iepPlan || !iepPlan.accommodations) {
+    return '';
+  }
+
+  const accom = iepPlan.accommodations;
+  const hasAnyAccommodation = Object.values(accom).some(v =>
+    v === true || (Array.isArray(v) && v.length > 0)
+  );
+
+  if (!hasAnyAccommodation && (!iepPlan.goals || iepPlan.goals.length === 0)) {
+    return '';
+  }
+
+  let prompt = `\n--- IEP ACCOMMODATIONS (LEGALLY REQUIRED) ---\n`;
+  prompt += `${firstName} has an Individualized Education Program (IEP). You MUST respect these accommodations in every interaction.\n\n`;
+
+  const activeAccommodations = [];
+
+  if (accom.extendedTime) {
+    activeAccommodations.push('extendedTime');
+    prompt += `✓ **Extended Time (1.5x):**\n`;
+    prompt += `  - Give ${firstName} 1.5x the normal time on all timed activities and fluency checks\n`;
+    prompt += `  - Never rush them or imply they're taking too long\n`;
+    prompt += `  - Provide frequent breaks as needed\n\n`;
+  }
+
+  if (accom.audioReadAloud) {
+    activeAccommodations.push('audioReadAloud');
+    prompt += `✓ **Audio Read-Aloud Support:**\n`;
+    prompt += `  - Problem text should be read aloud automatically when presenting new problems\n`;
+    prompt += `  - Use clear, deliberate language that's easy to follow when spoken\n`;
+    prompt += `  - Check comprehension of verbal instructions more frequently\n\n`;
+  }
+
+  if (accom.calculatorAllowed) {
+    activeAccommodations.push('calculatorAllowed');
+    prompt += `✓ **Calculator Allowed:**\n`;
+    prompt += `  - NEVER restrict calculator use on any problem\n`;
+    prompt += `  - Calculator should be available and visible during all work\n`;
+    prompt += `  - Focus assessment on problem-solving strategy, not arithmetic\n\n`;
+  }
+
+  if (accom.chunkedAssignments) {
+    activeAccommodations.push('chunkedAssignments');
+    prompt += `✓ **Chunked Assignments:**\n`;
+    prompt += `  - Present only 3-5 problems at a time, then check in\n`;
+    prompt += `  - After each chunk, ask: "How are you feeling? Need a break?"\n`;
+    prompt += `  - Break complex problems into smaller, manageable steps\n`;
+    prompt += `  - Celebrate completion of each chunk\n\n`;
+  }
+
+  if (accom.breaksAsNeeded) {
+    activeAccommodations.push('breaksAsNeeded');
+    prompt += `✓ **Breaks As Needed:**\n`;
+    prompt += `  - Encourage breaks proactively (every 15-20 minutes)\n`;
+    prompt += `  - Offer brain breaks with [TIC_TAC_TOE] or [DRAW_CHALLENGE] when energy dips\n`;
+    prompt += `  - Never make ${firstName} feel guilty about needing a break\n\n`;
+  }
+
+  if (accom.digitalMultiplicationChart) {
+    activeAccommodations.push('digitalMultiplicationChart');
+    prompt += `✓ **Digital Multiplication Chart Available:**\n`;
+    prompt += `  - Multiplication reference is always accessible\n`;
+    prompt += `  - Do not penalize or comment negatively on using it\n`;
+    prompt += `  - Focus on problem-solving, not memorization of facts\n\n`;
+  }
+
+  if (accom.reducedDistraction) {
+    activeAccommodations.push('reducedDistraction');
+    prompt += `✓ **Reduced Distraction Environment:**\n`;
+    prompt += `  - Keep visuals clean and uncluttered\n`;
+    prompt += `  - Present one concept/problem at a time\n`;
+    prompt += `  - Avoid overwhelming with too many visual elements at once\n`;
+    prompt += `  - Use focused, direct language\n\n`;
+  }
+
+  if (accom.largePrintHighContrast) {
+    activeAccommodations.push('largePrintHighContrast');
+    prompt += `✓ **Large Print / High Contrast:**\n`;
+    prompt += `  - High contrast theme should be enabled automatically\n`;
+    prompt += `  - Use clear, large visuals on whiteboard\n`;
+    prompt += `  - Ensure all text and numbers are easily readable\n\n`;
+  }
+
+  if (accom.mathAnxietySupport) {
+    activeAccommodations.push('mathAnxietySupport');
+    prompt += `✓ **Math Anxiety Support:**\n`;
+    prompt += `  - Provide EXTRA encouragement and frequent praise\n`;
+    prompt += `  - Use growth mindset language: "You're getting better at this" vs "You're smart"\n`;
+    prompt += `  - Normalize mistakes: "Mistakes help us learn!"\n`;
+    prompt += `  - Watch for signs of anxiety (frustration, giving up quickly) and adjust approach\n`;
+    prompt += `  - Offer choices to give ${firstName} a sense of control\n`;
+    prompt += `  - Celebrate effort and persistence, not just correct answers\n\n`;
+  }
+
+  if (accom.custom && Array.isArray(accom.custom) && accom.custom.length > 0) {
+    activeAccommodations.push('custom');
+    prompt += `✓ **Custom Accommodations:**\n`;
+    accom.custom.forEach(customAccom => {
+      prompt += `  - ${customAccom}\n`;
+    });
+    prompt += '\n';
+  }
+
+  if (activeAccommodations.length > 0) {
+    prompt += `**COMPLIANCE REMINDER:**\n`;
+    prompt += `These accommodations are LEGALLY REQUIRED under ${firstName}'s IEP. Failure to implement them properly is a violation of federal law (IDEA). Always prioritize these accommodations in your teaching approach.\n\n`;
+  }
+
+  // IEP Goals Section
+  if (iepPlan.goals && iepPlan.goals.length > 0) {
+    const activeGoals = iepPlan.goals.filter(goal => goal.status === 'active');
+
+    if (activeGoals.length > 0) {
+      prompt += `**IEP GOALS (Track Progress):**\n`;
+      prompt += `${firstName} has ${activeGoals.length} active IEP goal${activeGoals.length !== 1 ? 's' : ''}. Monitor progress and provide updates:\n\n`;
+
+      activeGoals.forEach((goal, index) => {
+        const progressPercent = goal.currentProgress || 0;
+        const progressBar = '█'.repeat(Math.floor(progressPercent / 10)) + '░'.repeat(10 - Math.floor(progressPercent / 10));
+        const targetDateStr = goal.targetDate ? new Date(goal.targetDate).toLocaleDateString() : 'No target date';
+
+        prompt += `${index + 1}. **${goal.description}**\n`;
+        prompt += `   Progress: [${progressBar}] ${progressPercent}%\n`;
+        prompt += `   Target: ${targetDateStr}\n`;
+        prompt += `   Measurement: ${goal.measurementMethod || 'Not specified'}\n\n`;
+      });
+
+      prompt += `**HOW TO TRACK IEP GOAL PROGRESS:**\n`;
+      prompt += `When ${firstName} demonstrates progress toward an IEP goal, include this tag in your response:\n`;
+      prompt += `<IEP_GOAL_PROGRESS:goal-description,+5> (for 5% progress increase)\n`;
+      prompt += `Example: If ${firstName} successfully solves a multi-step equation independently and that relates to their IEP goal, tag it!\n\n`;
+      prompt += `Be generous but realistic in tracking progress. Small wins count!\n`;
+    }
+  }
+
+  return prompt;
+}
+
+/**
  * Build learning profile context for relationship-based teaching
  */
 function buildLearningProfileContext(userProfile) {
@@ -232,7 +377,6 @@ ${interests && interests.length > 0 ? `**Interests:** ${interests.join(', ')}` :
 ${learningStyle ? `**Learning Style:** ${learningStyle}` : ''}
 ${tonePreference ? `**Communication Preference:** ${tonePreference}` : ''}
 ${preferredLanguage && preferredLanguage !== 'English' ? `**Preferred Language:** ${preferredLanguage}` : ''}
-${iepPlan && iepPlan.accommodations && Object.values(iepPlan.accommodations).some(v => v === true || (Array.isArray(v) && v.length > 0)) ? `**IEP Accommodations:** Active` : ''}
 
 **PERSONALIZATION RULES:**
 ${interests && interests.length > 0 ? `- When creating word problems or examples, USE ${firstName}'s interests: ${interests.join(', ')}. Make math relatable to what they care about!` : ''}
@@ -242,8 +386,9 @@ ${tonePreference === 'casual' ? '- Keep it relaxed and conversational, like chat
 ${learningStyle === 'Visual' ? '- Use graphs, diagrams, and visual representations frequently with [DESMOS:] commands' : ''}
 ${learningStyle === 'Kinesthetic' ? '- Ground concepts in real-world examples and hands-on scenarios they can visualize doing' : ''}
 ${learningStyle === 'Auditory' ? '- Focus on clear verbal explanations and talking through concepts step-by-step' : ''}
-${iepPlan && iepPlan.accommodations ? `- Respect IEP accommodations - these are legally required and help ${firstName} learn best` : ''}
 - Make ${firstName} feel like you KNOW them as a person, not just another student
+
+${buildIepAccommodationsPrompt(iepPlan, firstName)}
 
 --- YOUR PURPOSE ---
 Guide students to solve problems themselves through Socratic questioning, while maintaining your unique personality.
