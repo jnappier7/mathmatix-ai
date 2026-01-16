@@ -30,10 +30,25 @@ class Sidebar {
         if (window.innerWidth < 768) {
             this.isOpen = false;
             this.sidebar.classList.add('collapsed');
+            const wrapper = document.getElementById('app-layout-wrapper');
+            if (wrapper) {
+                wrapper.classList.add('sidebar-collapsed');
+            }
         }
 
         // Toggle button click
         this.toggle.addEventListener('click', () => this.toggleSidebar());
+
+        // Close sidebar when clicking outside on mobile
+        if (window.innerWidth < 768) {
+            document.addEventListener('click', (e) => {
+                if (this.isOpen &&
+                    !this.sidebar.contains(e.target) &&
+                    !this.toggle.contains(e.target)) {
+                    this.toggleSidebar();
+                }
+            });
+        }
 
         // Sessions expand/collapse
         const sessionsToggle = document.querySelector('.sessions-toggle');
@@ -412,6 +427,12 @@ class Sidebar {
             `;
             tbody.appendChild(row);
         });
+
+        // Sync to mobile drawer
+        const drawerTbody = document.getElementById('drawer-leaderboard-body');
+        if (drawerTbody) {
+            drawerTbody.innerHTML = tbody.innerHTML;
+        }
     }
 
     async loadProgress() {
@@ -430,6 +451,23 @@ class Sidebar {
         if (levelEl) levelEl.textContent = level;
         if (xpEl) xpEl.textContent = `${xp} / ${xpNeeded} XP`;
         if (progressBar) progressBar.style.width = `${Math.min(progress, 100)}%`;
+
+        // Update mobile drawer progress
+        const drawerLevelEl = document.getElementById('drawer-level');
+        const drawerXpEl = document.getElementById('drawer-xp');
+        const drawerProgressBar = document.getElementById('drawer-progress-fill');
+
+        if (drawerLevelEl) drawerLevelEl.textContent = level;
+        if (drawerXpEl) drawerXpEl.textContent = `${xp} / ${xpNeeded} XP`;
+        if (drawerProgressBar) drawerProgressBar.style.width = `${Math.min(progress, 100)}%`;
+
+        // Update link code in drawer
+        const drawerLinkCode = document.getElementById('drawer-student-link-code-value');
+        const sidebarLinkCode = document.getElementById('student-link-code-value');
+        if (drawerLinkCode && sidebarLinkCode) {
+            drawerLinkCode.textContent = sidebarLinkCode.textContent;
+            drawerLinkCode.onclick = sidebarLinkCode.onclick;
+        }
     }
 }
 

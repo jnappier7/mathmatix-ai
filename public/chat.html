@@ -329,6 +329,99 @@
     </div>
   </main>
   
+  <!-- Mobile Drawers -->
+  <!-- Left Drawer (Leaderboard & Quests) -->
+  <div id="left-drawer" class="mobile-drawer left-drawer">
+    <div class="drawer-header">
+      <h3>Leaderboard & Quests</h3>
+      <button id="close-left-drawer" class="drawer-close-btn" title="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="drawer-content">
+      <!-- Leaderboard Section -->
+      <div class="drawer-section">
+        <h4><i class="fas fa-trophy"></i> Leaderboard</h4>
+        <table id="drawer-leaderboard-table" class="leaderboard-table-mobile">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Lvl</th>
+              <th>XP</th>
+            </tr>
+          </thead>
+          <tbody id="drawer-leaderboard-body">
+            <!-- Populated by sidebar.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Daily Quests Section -->
+      <div class="drawer-section">
+        <h4><i class="fas fa-tasks"></i> Daily Quests</h4>
+        <div id="drawer-daily-quests-container"></div>
+      </div>
+
+      <!-- Weekly Challenges Section -->
+      <div class="drawer-section">
+        <h4><i class="fas fa-calendar-week"></i> Weekly Challenges</h4>
+        <div id="drawer-weekly-challenges-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Drawer (Progress & Profile) -->
+  <div id="right-drawer" class="mobile-drawer right-drawer">
+    <div class="drawer-header">
+      <h3>Your Progress</h3>
+      <button id="close-right-drawer" class="drawer-close-btn" title="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="drawer-content">
+      <!-- Progress Section -->
+      <div class="drawer-section drawer-progress-section">
+        <div class="drawer-progress-card">
+          <div class="drawer-progress-level">Level <span id="drawer-level">1</span></div>
+          <div class="drawer-progress-bar">
+            <div id="drawer-progress-fill" class="drawer-progress-fill" style="width: 0%;"></div>
+          </div>
+          <div class="drawer-progress-xp" id="drawer-xp">0 / 100 XP</div>
+        </div>
+      </div>
+
+      <!-- Session Stats -->
+      <div class="drawer-section">
+        <h4><i class="fas fa-chart-line"></i> Session Stats</h4>
+        <div class="drawer-stats-grid">
+          <div class="drawer-stat-item">
+            <span class="drawer-stat-label">Session XP:</span>
+            <span id="drawer-session-xp" class="drawer-stat-value">0</span>
+          </div>
+          <div class="drawer-stat-item">
+            <span class="drawer-stat-label">Accuracy:</span>
+            <span id="drawer-session-accuracy" class="drawer-stat-value">--</span>
+          </div>
+          <div class="drawer-stat-item">
+            <span class="drawer-stat-label">Problems:</span>
+            <span id="drawer-session-problems" class="drawer-stat-value">0/0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parent Link -->
+      <div class="drawer-section">
+        <h4><i class="fas fa-link"></i> Share Progress</h4>
+        <p style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">Share this code with a parent or teacher to link accounts.</p>
+        <div id="drawer-student-link-code-value" class="drawer-link-code" title="Click to copy"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer Overlay -->
+  <div id="drawer-overlay" class="drawer-overlay"></div>
+
   <footer>
       <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
   </footer>
