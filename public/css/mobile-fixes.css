@@ -321,3 +321,428 @@ select,
     90% { opacity: 1; transform: translateX(-50%) translateY(0); }
     100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
 }
+
+/* ============================================
+   MOBILE DRAWERS
+   Side-sliding drawers for mobile navigation
+   ============================================ */
+
+/* Drawer Container */
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 85%;
+    max-width: 320px;
+    background: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Left Drawer */
+.left-drawer {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.left-drawer.open {
+    transform: translateX(0);
+}
+
+/* Right Drawer */
+.right-drawer {
+    right: 0;
+    left: auto;
+    transform: translateX(100%);
+}
+
+.right-drawer.open {
+    transform: translateX(0);
+}
+
+/* Drawer Header */
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 2px solid var(--clr-primary-teal);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    flex-shrink: 0;
+}
+
+.drawer-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: white;
+}
+
+.drawer-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.drawer-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Drawer Content */
+.drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0;
+}
+
+.drawer-section {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.drawer-section:last-child {
+    border-bottom: none;
+}
+
+.drawer-section h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.drawer-section h4 i {
+    color: var(--clr-primary-teal);
+}
+
+/* Progress Section in Drawer */
+.drawer-progress-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.drawer-progress-card {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.drawer-progress-level {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.drawer-progress-bar {
+    width: 100%;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.drawer-progress-fill {
+    height: 100%;
+    background: white;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.drawer-progress-xp {
+    font-size: 1rem;
+    opacity: 0.9;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Stats Grid */
+.drawer-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.drawer-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.drawer-stat-label {
+    font-size: 0.95rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.drawer-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--clr-primary-teal);
+}
+
+/* Leaderboard Table */
+.leaderboard-table-mobile {
+    width: 100%;
+    font-size: 0.9rem;
+    border-collapse: collapse;
+}
+
+.leaderboard-table-mobile th {
+    font-weight: 600;
+    color: #666;
+    padding: 8px 4px;
+    text-align: left;
+    border-bottom: 2px solid #e0e0e0;
+    font-size: 0.85rem;
+}
+
+.leaderboard-table-mobile td {
+    padding: 10px 4px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.leaderboard-table-mobile tr:hover {
+    background: #f9f9f9;
+}
+
+/* Link Code */
+.drawer-link-code {
+    padding: 12px;
+    background: #f0f7ff;
+    border: 2px dashed var(--clr-primary-teal);
+    border-radius: 8px;
+    text-align: center;
+    font-family: monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--clr-primary-teal);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.drawer-link-code:hover {
+    background: #e0f0ff;
+    transform: scale(1.02);
+}
+
+/* Drawer Overlay */
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.drawer-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Hide drawers on desktop */
+@media (min-width: 768px) {
+    .mobile-drawer,
+    .drawer-overlay {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   MOBILE LAYOUT FIXES
+   Fix overlapping and z-index issues
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Ensure proper z-index stacking */
+    .landing-header {
+        z-index: 1100;
+        position: relative;
+    }
+
+    #app-sidebar {
+        z-index: 1500;
+    }
+
+    #sidebar-toggle {
+        z-index: 1501;
+    }
+
+    .mobile-drawer {
+        z-index: 2000;
+    }
+
+    .drawer-overlay {
+        z-index: 1999;
+    }
+
+    .modal-overlay {
+        z-index: 9999;
+    }
+
+    /* Main content should not overlap or be hidden */
+    #app-layout-wrapper {
+        position: relative;
+        z-index: 1;
+    }
+
+    #chat-container {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Input container should stay at bottom */
+    #input-container {
+        position: relative;
+        z-index: 1003;
+    }
+
+    /* Footer should be at the very bottom */
+    footer {
+        position: relative;
+        z-index: 1005;
+    }
+
+    /* Session stats bar */
+    .session-stats-bar {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .stat-item {
+        flex: 1 1 auto;
+        min-width: 80px;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    .stat-value {
+        font-size: 0.9rem;
+    }
+
+    /* Hide text labels in header buttons on very small screens */
+    .mobile-hide {
+        display: none !important;
+    }
+
+    /* Desktop-only elements */
+    .desktop-only {
+        display: none !important;
+    }
+
+    /* Make sure chat messages don't get cut off */
+    #chat-messages-container {
+        padding: 12px 8px;
+        padding-bottom: 20px;
+    }
+
+    /* Compact message bubbles on mobile */
+    .message {
+        max-width: 92%;
+        margin-bottom: 12px;
+    }
+
+    /* User messages */
+    .message.user-message,
+    .message.user {
+        margin-left: auto;
+        margin-right: 8px;
+    }
+
+    /* AI messages */
+    .message.ai-message,
+    .message.ai {
+        margin-right: auto;
+        margin-left: 8px;
+    }
+
+    /* Prevent content from hiding under header */
+    #app-layout-wrapper.sidebar-layout {
+        padding-top: 0;
+    }
+
+    /* Ensure whiteboard and calculator don't overlap */
+    #whiteboard-panel,
+    #floating-calculator {
+        z-index: 1600;
+    }
+
+    /* XP feed positioning */
+    #xp-feed {
+        top: 70px;
+        right: 10px;
+        max-width: calc(100vw - 20px);
+        z-index: 1400;
+    }
+
+    /* Streak counter positioning */
+    #streak-counter {
+        top: 70px;
+        left: 10px;
+        z-index: 1400;
+    }
+
+    /* Level-up and badge modals */
+    #levelup-celebration-modal,
+    #badge-celebration-modal {
+        z-index: 10000;
+    }
+
+    /* File grid container */
+    #file-grid-container {
+        padding: 8px;
+        max-width: 100%;
+    }
+
+    /* Compact toolbar */
+    .input-toolbar-compact {
+        gap: 4px;
+    }
+
+    .input-toolbar-compact .btn {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 8px;
+        font-size: 1rem;
+    }
+
+    /* Send button full width on mobile */
+    .send-button-fullwidth {
+        width: 100%;
+        margin-top: 8px;
+    }
+}

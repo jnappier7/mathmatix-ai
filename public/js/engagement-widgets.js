@@ -147,6 +147,23 @@ function updateSessionStats() {
     if (problemsEl) {
         problemsEl.textContent = `${sessionStats.problemsCorrect}/${sessionStats.problemsAttempted}`;
     }
+
+    // Sync to mobile drawer
+    const drawerXpEl = document.getElementById('drawer-session-xp');
+    const drawerAccuracyEl = document.getElementById('drawer-session-accuracy');
+    const drawerProblemsEl = document.getElementById('drawer-session-problems');
+
+    if (drawerXpEl) drawerXpEl.textContent = sessionStats.xpEarned;
+
+    if (drawerAccuracyEl && sessionStats.problemsAttempted > 0) {
+        const accuracy = Math.round((sessionStats.problemsCorrect / sessionStats.problemsAttempted) * 100);
+        drawerAccuracyEl.textContent = `${accuracy}%`;
+        drawerAccuracyEl.style.color = accuracy >= 80 ? '#4CAF50' : accuracy >= 60 ? '#FFA500' : '#FF6B6B';
+    }
+
+    if (drawerProblemsEl) {
+        drawerProblemsEl.textContent = `${sessionStats.problemsCorrect}/${sessionStats.problemsAttempted}`;
+    }
 }
 
 /**
@@ -215,7 +232,7 @@ window.renderDailyQuests = function(quests) {
     const container = document.getElementById('daily-quests-container');
     if (!container || !quests || quests.length === 0) return;
 
-    container.innerHTML = quests.map(quest => `
+    const questsHTML = quests.map(quest => `
         <div class="quest-item ${quest.completed ? 'completed' : ''}">
             <div class="quest-name">${quest.type || quest.title}</div>
             <div class="quest-description">${quest.description || getQuestDescription(quest.type)}</div>
@@ -228,6 +245,14 @@ window.renderDailyQuests = function(quests) {
             </div>
         </div>
     `).join('');
+
+    container.innerHTML = questsHTML;
+
+    // Sync to mobile drawer
+    const drawerContainer = document.getElementById('drawer-daily-quests-container');
+    if (drawerContainer) {
+        drawerContainer.innerHTML = questsHTML;
+    }
 };
 
 /**
@@ -238,7 +263,7 @@ window.renderWeeklyChallenges = function(challenges) {
     const container = document.getElementById('weekly-challenges-container');
     if (!container || !challenges || challenges.length === 0) return;
 
-    container.innerHTML = challenges.map(challenge => `
+    const challengesHTML = challenges.map(challenge => `
         <div class="quest-item ${challenge.completed ? 'completed' : ''}">
             <div class="quest-name">⭐ ${challenge.type || challenge.title}</div>
             <div class="quest-description">${challenge.description || getQuestDescription(challenge.type)}</div>
@@ -251,6 +276,14 @@ window.renderWeeklyChallenges = function(challenges) {
             </div>
         </div>
     `).join('');
+
+    container.innerHTML = challengesHTML;
+
+    // Sync to mobile drawer
+    const drawerContainer = document.getElementById('drawer-weekly-challenges-container');
+    if (drawerContainer) {
+        drawerContainer.innerHTML = challengesHTML;
+    }
 };
 
 /**
