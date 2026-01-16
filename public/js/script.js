@@ -11,6 +11,21 @@ let fabricCanvas = null;
 let whiteboard = null; // New whiteboard instance
 let attachedFile = null;
 
+// Enhanced audio playback state
+let audioState = {
+    context: null,
+    buffer: null,
+    source: null,
+    startTime: 0,
+    pausedAt: 0,
+    isPaused: false,
+    isPlaying: false,
+    playbackRate: 1.0,
+    currentMessageId: null,
+    currentText: null,
+    currentVoiceId: null
+};
+
 // Whiteboard state
 let whiteboardState = {
     currentTool: 'pen',
@@ -139,6 +154,10 @@ function generateSpeakableText(text) {
         speakableMath = speakableMath
             .replace(/\bopen paren(thesis)?\b/gi, '')
             .replace(/\bclosed? paren(thesis)?\b/gi, '')
+            .replace(/\bopen fraction\b/gi, '')
+            .replace(/\bend fraction\b/gi, '')
+            .replace(/\bstart fraction\b/gi, '')
+            .replace(/\bfraction\s+(start|end|open|close)\b/gi, '')
             .replace(/\bsubscript\b/gi, '')
             .replace(/\bsuperscript\b/gi, '')
             .replace(/\s+/g, ' ') // Collapse multiple spaces
@@ -295,6 +314,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const voiceChatToggle = document.getElementById("voiceChatToggle");
     const changeTutorBtn = document.getElementById('change-tutor-btn');
     const stopAudioBtn = document.getElementById('stop-audio-btn');
+    const pauseAudioBtn = document.getElementById('pause-audio-btn');
+    const restartAudioBtn = document.getElementById('restart-audio-btn');
+    const speedBtn = document.getElementById('speed-btn');
+    const speedDropdown = document.getElementById('speed-dropdown');
+    const speedControlContainer = document.getElementById('speed-control-container');
     const fullscreenDropzone = document.getElementById('app-layout-wrapper');
     const studentLinkCodeValue = document.getElementById('student-link-code-value');
     const shareProgressHeaderBtn = document.getElementById('share-progress-header-btn');
@@ -2301,15 +2325,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function processAudioQueue() {
-        if (isPlaying || audioQueue.length === 0) {
-            if (stopAudioBtn) stopAudioBtn.style.display = 'none';
+        if (audioState.isPlaying || audioQueue.length === 0) {
+            if (stopAudioBtn && !audioState.isPlaying) stopAudioBtn.style.display = 'none';
             return;
         }
-        isPlaying = true;
+
+        audioState.isPlaying = true;
+        isPlaying = true; // Keep for backward compatibility
+
+        // Update UI
         if (stopAudioBtn) stopAudioBtn.style.display = 'inline-flex';
+        updateAudioControls();
+
         const { text, voiceId, messageId } = audioQueue.shift();
         const messageBubble = document.getElementById(messageId);
         const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
+
+        // Store current playback info
+        audioState.currentMessageId = messageId;
+        audioState.currentText = text;
+        audioState.currentVoiceId = voiceId;
+
         try {
             const response = await csrfFetch('/api/speak', {
                 method: 'POST',
@@ -2317,47 +2353,221 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ text, voiceId })
             });
             if (!response.ok) throw new Error('Failed to fetch audio stream.');
+
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const source = audioContext.createBufferSource();
-            currentAudioSource = source;
+            audioState.context = audioContext;
+
             const audioBuffer = await response.arrayBuffer();
             await audioContext.decodeAudioData(audioBuffer, (buffer) => {
-                if (playButton) {
-                    playButton.classList.remove('is-loading');
-                    playButton.classList.add('is-playing');
-                }
-                source.buffer = buffer;
-                source.connect(audioContext.destination);
-                source.start(0);
-                source.onended = () => {
-                    isPlaying = false;
-                    currentAudioSource = null;
-                    if (playButton) {
-                        playButton.classList.remove('is-playing');
-                        playButton.disabled = false;
-                    }
-                    audioContext.close();
-                    if (currentUser?.preferences?.handsFreeModeEnabled && audioQueue.length === 0) {
-                        if (recognition && !isRecognizing) {
-                            try {
-                                recognition.start();
-                                isRecognizing = true;
-                                if (micBtn) micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
-                            } catch(e) { console.error("Auto-listen could not be started:", e); }
-                        }
-                    }
-                    processAudioQueue();
-                };
+                audioState.buffer = buffer;
+                startAudioPlayback(0, playButton);
             });
         } catch (error) {
             console.error('Audio playback error:', error);
-            isPlaying = false;
+            resetAudioState();
             if (playButton) {
                 playButton.classList.remove('is-loading');
                 playButton.classList.remove('is-playing');
                 playButton.disabled = false;
             }
             processAudioQueue();
+        }
+    }
+
+    function startAudioPlayback(offset = 0, playButton = null) {
+        if (!audioState.buffer || !audioState.context) return;
+
+        const source = audioState.context.createBufferSource();
+        source.buffer = audioState.buffer;
+        source.playbackRate.value = audioState.playbackRate;
+        source.connect(audioState.context.destination);
+
+        audioState.source = source;
+        currentAudioSource = source; // Keep for backward compatibility
+        audioState.startTime = audioState.context.currentTime - offset;
+        audioState.isPaused = false;
+
+        if (playButton) {
+            playButton.classList.remove('is-loading');
+            playButton.classList.add('is-playing');
+        }
+
+        source.start(0, offset);
+
+        source.onended = () => {
+            // Only process if not manually stopped
+            if (audioState.isPlaying && !audioState.isPaused) {
+                handleAudioEnded(playButton);
+            }
+        };
+
+        updateAudioControls();
+    }
+
+    function handleAudioEnded(playButton) {
+        resetAudioState();
+
+        if (playButton) {
+            playButton.classList.remove('is-playing');
+            playButton.disabled = false;
+        }
+
+        if (currentUser?.preferences?.handsFreeModeEnabled && audioQueue.length === 0) {
+            if (recognition && !isRecognizing) {
+                try {
+                    recognition.start();
+                    isRecognizing = true;
+                    if (micBtn) micBtn.innerHTML = '<i class="fas fa-stop-circle"></i>';
+                } catch(e) { console.error("Auto-listen could not be started:", e); }
+            }
+        }
+
+        processAudioQueue();
+    }
+
+    function pauseAudio() {
+        if (!audioState.isPlaying || audioState.isPaused || !audioState.source) return;
+
+        const elapsed = audioState.context.currentTime - audioState.startTime;
+        audioState.pausedAt = elapsed;
+        audioState.isPaused = true;
+
+        audioState.source.stop();
+        audioState.source = null;
+        currentAudioSource = null;
+
+        updateAudioControls();
+
+        const messageBubble = document.getElementById(audioState.currentMessageId);
+        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
+        if (playButton) {
+            playButton.classList.remove('is-playing');
+            playButton.classList.add('is-paused');
+        }
+    }
+
+    function resumeAudio() {
+        if (!audioState.isPaused || !audioState.buffer) return;
+
+        const messageBubble = document.getElementById(audioState.currentMessageId);
+        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
+
+        if (playButton) {
+            playButton.classList.remove('is-paused');
+        }
+
+        startAudioPlayback(audioState.pausedAt, playButton);
+    }
+
+    function restartAudio() {
+        if (!audioState.isPlaying && !audioState.isPaused) return;
+
+        if (audioState.source) {
+            audioState.source.stop();
+            audioState.source = null;
+            currentAudioSource = null;
+        }
+
+        const messageBubble = document.getElementById(audioState.currentMessageId);
+        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
+
+        audioState.pausedAt = 0;
+        audioState.isPaused = false;
+
+        startAudioPlayback(0, playButton);
+    }
+
+    function stopAudio() {
+        if (audioState.source) {
+            audioState.source.stop();
+        }
+
+        const messageBubble = document.getElementById(audioState.currentMessageId);
+        const playButton = messageBubble ? messageBubble.querySelector('.play-audio-btn') : null;
+        if (playButton) {
+            playButton.classList.remove('is-playing', 'is-paused');
+            playButton.disabled = false;
+        }
+
+        resetAudioState();
+        updateAudioControls();
+        processAudioQueue();
+    }
+
+    function changePlaybackSpeed(rate) {
+        audioState.playbackRate = rate;
+
+        // If currently playing, apply the new rate
+        if (audioState.source && !audioState.isPaused) {
+            audioState.source.playbackRate.value = rate;
+        }
+
+        // Save preference
+        if (localStorage) {
+            localStorage.setItem('ttsPlaybackRate', rate);
+        }
+
+        updateAudioControls();
+    }
+
+    function resetAudioState() {
+        if (audioState.context) {
+            audioState.context.close();
+        }
+
+        audioState.context = null;
+        audioState.buffer = null;
+        audioState.source = null;
+        audioState.startTime = 0;
+        audioState.pausedAt = 0;
+        audioState.isPaused = false;
+        audioState.isPlaying = false;
+        audioState.currentMessageId = null;
+        audioState.currentText = null;
+        audioState.currentVoiceId = null;
+
+        isPlaying = false; // Keep for backward compatibility
+        currentAudioSource = null;
+
+        updateAudioControls();
+    }
+
+    function updateAudioControls() {
+        const pauseBtn = document.getElementById('pause-audio-btn');
+        const restartBtn = document.getElementById('restart-audio-btn');
+        const speedDisplay = document.getElementById('speed-display');
+        const speedControlContainer = document.getElementById('speed-control-container');
+
+        const isActive = audioState.isPlaying || audioState.isPaused;
+
+        if (pauseBtn) {
+            if (audioState.isPlaying && !audioState.isPaused) {
+                pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                pauseBtn.title = 'Pause';
+                pauseBtn.style.display = 'inline-flex';
+            } else if (audioState.isPaused) {
+                pauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                pauseBtn.title = 'Resume';
+                pauseBtn.style.display = 'inline-flex';
+            } else {
+                pauseBtn.style.display = 'none';
+            }
+        }
+
+        if (restartBtn) {
+            restartBtn.style.display = isActive ? 'inline-flex' : 'none';
+        }
+
+        if (speedDisplay) {
+            speedDisplay.textContent = `${audioState.playbackRate}x`;
+        }
+
+        if (speedControlContainer) {
+            speedControlContainer.style.display = isActive ? 'inline-block' : 'none';
+        }
+
+        if (stopAudioBtn) {
+            stopAudioBtn.style.display = isActive ? 'inline-flex' : 'none';
         }
     }
     
@@ -2494,6 +2704,65 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // Audio control event listeners
+    if (stopAudioBtn) {
+        stopAudioBtn.addEventListener('click', stopAudio);
+    }
+    if (pauseAudioBtn) {
+        pauseAudioBtn.addEventListener('click', () => {
+            if (audioState.isPaused) {
+                resumeAudio();
+            } else {
+                pauseAudio();
+            }
+        });
+    }
+    if (restartAudioBtn) {
+        restartAudioBtn.addEventListener('click', restartAudio);
+    }
+    if (speedBtn && speedDropdown) {
+        speedBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            speedDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            speedDropdown.classList.remove('show');
+        });
+
+        // Handle speed selection
+        speedDropdown.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const speed = parseFloat(btn.getAttribute('data-speed'));
+                changePlaybackSpeed(speed);
+
+                // Update active state
+                speedDropdown.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                speedDropdown.classList.remove('show');
+            });
+        });
+
+        // Load saved playback speed
+        const savedSpeed = localStorage.getItem('ttsPlaybackRate');
+        if (savedSpeed) {
+            const speed = parseFloat(savedSpeed);
+            changePlaybackSpeed(speed);
+            speedDropdown.querySelectorAll('button').forEach(btn => {
+                if (parseFloat(btn.getAttribute('data-speed')) === speed) {
+                    btn.classList.add('active');
+                }
+            });
+        } else {
+            // Mark 1x as active by default
+            speedDropdown.querySelector('button[data-speed="1"]')?.classList.add('active');
+        }
+    }
+
     if (settingsBtn) settingsBtn.addEventListener('click', openSettingsModal);
     if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettingsModal);
     if (settingsModal) settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettingsModal(); });
