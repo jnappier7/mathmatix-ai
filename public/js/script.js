@@ -344,6 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
             await fetchAndDisplayParentCode();
             await getWelcomeMessage();
             await fetchAndDisplayLeaderboard();
+            await loadQuestsAndChallenges();
 
             // Show default suggestions after welcome message
             setTimeout(() => showDefaultSuggestions(), 1000);
@@ -2230,6 +2231,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (data.specialXpAwarded) {
             const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
             triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
+
+            // Show XP notification in live feed
+            if (typeof window.showXpNotification === 'function' && data.xpAmount) {
+                const reason = data.specialXpAwarded.replace('🎉 ', '').replace('⭐ ', '').replace('🎊 ', '').split('!')[0];
+                window.showXpNotification(data.xpAmount, reason);
+            }
+        }
+
+        // Track problem attempts for streak/stats (if answer feedback is available)
+        if (data.answerCorrect !== undefined && typeof window.trackProblemAttempt === 'function') {
+            window.trackProblemAttempt(data.answerCorrect);
         }
 
     } catch (error) {
@@ -2384,6 +2396,38 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error('Leaderboard error:', error);
             leaderboardTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Could not load leaderboard.</td></tr>`;
+        }
+    }
+
+    /**
+     * Load and display daily quests and weekly challenges
+     */
+    async function loadQuestsAndChallenges() {
+        if (typeof window.renderDailyQuests !== 'function' || typeof window.renderWeeklyChallenges !== 'function') {
+            console.log('Quest rendering functions not available');
+            return;
+        }
+
+        try {
+            // Fetch daily quests
+            const questsRes = await fetch('/api/dailyQuests', { credentials: 'include' });
+            if (questsRes.ok) {
+                const questsData = await questsRes.json();
+                if (questsData && questsData.quests) {
+                    window.renderDailyQuests(questsData.quests);
+                }
+            }
+
+            // Fetch weekly challenges
+            const challengesRes = await fetch('/api/weeklyChallenges', { credentials: 'include' });
+            if (challengesRes.ok) {
+                const challengesData = await challengesRes.json();
+                if (challengesData && challengesData.challenges) {
+                    window.renderWeeklyChallenges(challengesData.challenges);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading quests/challenges:', error);
         }
     }
 
