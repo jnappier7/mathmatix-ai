@@ -151,61 +151,75 @@ function generateSpeakableText(text) {
 }
 
 /**
- * Show level-up video in a floating card with smooth animations
- * @param {string} animationType - 'levelUp' or 'smallcele'
- * @param {string} tutorId - Current tutor ID
+ * Show level-up celebration modal with tutor video
+ * Uses smallcele for regular levels, levelUp for milestone levels (every 5)
  */
-function showLevelUpVideoCard(animationType, tutorId) {
-    if (!tutorId) return;
+function showLevelUpCelebration() {
+    const modal = document.getElementById('levelup-celebration-modal');
+    const video = document.getElementById('celebration-tutor-video');
+    const titleEl = document.getElementById('celebration-title');
+    const subtitleEl = document.getElementById('celebration-subtitle');
 
-    // Create overlay container
-    const overlay = document.createElement('div');
-    overlay.className = 'levelup-video-overlay';
+    if (!modal || !video || !currentUser || !currentUser.selectedTutorId) return;
 
-    // Create card
-    const card = document.createElement('div');
-    card.className = 'levelup-video-card';
+    // Get the tutor ID
+    const tutorId = currentUser.selectedTutorId;
 
-    // Create video element
-    const video = document.createElement('video');
-    video.src = `/videos/${tutorId}_${animationType}.mp4`;
-    video.autoplay = true;
-    video.muted = false;
-    video.playsInline = true;
+    // Determine which video to use based on level milestone
+    const currentLevel = currentUser.level || 1;
+    const isMilestone = currentLevel % 5 === 0;
+    const videoType = isMilestone ? 'levelUp' : 'smallcele';
+    const videoPath = `/videos/${tutorId}_${videoType}.mp4`;
 
-    // When video ends, animate out
-    video.addEventListener('ended', () => {
-        card.classList.add('exiting');
-        setTimeout(() => {
-            overlay.remove();
-        }, 400); // Match cardExit animation duration
-    });
+    // Update celebration text based on milestone
+    if (titleEl && subtitleEl) {
+        if (isMilestone) {
+            titleEl.textContent = `LEVEL ${currentLevel}!`;
+            subtitleEl.textContent = "🎉 Milestone Achievement! 🎉";
+        } else {
+            titleEl.textContent = "LEVEL UP!";
+            subtitleEl.textContent = "You're getting stronger!";
+        }
+    }
 
-    // Assemble and add to page
-    card.appendChild(video);
-    overlay.appendChild(card);
-    document.body.appendChild(overlay);
+    // Set video source
+    video.src = videoPath;
 
-    // Start playing
+    // Show modal with animation
+    modal.style.display = 'flex';
+
+    // Play video
     video.play().catch(err => {
-        console.warn('Video autoplay failed:', err);
-        // Remove card if video fails to play
-        setTimeout(() => overlay.remove(), 500);
+        console.warn('Video playback failed:', err);
     });
+
+    // Auto-dismiss when video ends (or after 4 seconds as fallback)
+    const dismissModal = () => {
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.remove('fade-out');
+            video.pause();
+            video.src = '';
+        }, 400);
+    };
+
+    video.addEventListener('ended', dismissModal, { once: true });
+    setTimeout(dismissModal, 4000); // Fallback timeout
+
+    // Allow click to dismiss
+    modal.addEventListener('click', dismissModal, { once: true });
 }
 
-function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false, isBigCelebration = false) {
+function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
     const animationText = document.createElement('div');
     animationText.textContent = message;
     animationText.classList.add('xp-animation-text');
     if (isLevelUp) {
         animationText.classList.add('level-up-animation-text', 'animate-level-up');
 
-        // 🎬 Show tutor level-up video in floating card based on milestone
-        if (currentUser && currentUser.selectedTutorId) {
-            const animationType = isBigCelebration ? 'levelUp' : 'smallcele';
-            showLevelUpVideoCard(animationType, currentUser.selectedTutorId);
-        }
+        // Show celebration video modal
+        showLevelUpCelebration();
 
         if (typeof confetti === 'function') {
             const duration = 3 * 1000;
@@ -330,6 +344,7 @@ document.addEventListener("DOMContentLoaded", () => {
             await fetchAndDisplayParentCode();
             await getWelcomeMessage();
             await fetchAndDisplayLeaderboard();
+            await loadQuestsAndChallenges();
 
             // Show default suggestions after welcome message
             setTimeout(() => showDefaultSuggestions(), 1000);
@@ -2215,14 +2230,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data.specialXpAwarded) {
             const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
-            if (isLevelUp) {
-                // Extract level number from message like "LEVEL_UP! New level: 5"
-                const levelMatch = data.specialXpAwarded.match(/New level: (\d+)/);
-                const newLevel = levelMatch ? parseInt(levelMatch[1]) : 0;
-                const isBigCelebration = newLevel % 5 === 0;
-                triggerXpAnimation(data.specialXpAwarded, isLevelUp, false, isBigCelebration);
-            } else {
-                triggerXpAnimation(data.specialXpAwarded, false, true, false);
+            triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
+
+            // Show XP notification in live feed
+            if (typeof window.showXpNotification === 'function' && data.xpAmount) {
+                const reason = data.specialXpAwarded.replace('🎉 ', '').replace('⭐ ', '').replace('🎊 ', '').split('!')[0];
+                window.showXpNotification(data.xpAmount, reason);
+            }
+        }
+
+        // Smart streak tracking - only when AI explicitly signals problem correctness
+        // Prevents false negatives from breaking streaks unfairly
+        if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
+            // problemResult can be: 'correct', 'incorrect', 'partial'
+            // Only track definitive correct/incorrect (skip partial/ambiguous)
+            if (data.problemResult === 'correct') {
+                window.trackProblemAttempt(true);
+            } else if (data.problemResult === 'incorrect') {
+                // Still show streak counter but don't break it harshly
+                // Could add "Challenge this" button in future
+                window.trackProblemAttempt(false);
             }
         }
 
@@ -2378,6 +2405,38 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error('Leaderboard error:', error);
             leaderboardTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Could not load leaderboard.</td></tr>`;
+        }
+    }
+
+    /**
+     * Load and display daily quests and weekly challenges
+     */
+    async function loadQuestsAndChallenges() {
+        if (typeof window.renderDailyQuests !== 'function' || typeof window.renderWeeklyChallenges !== 'function') {
+            console.log('Quest rendering functions not available');
+            return;
+        }
+
+        try {
+            // Fetch daily quests
+            const questsRes = await fetch('/api/dailyQuests', { credentials: 'include' });
+            if (questsRes.ok) {
+                const questsData = await questsRes.json();
+                if (questsData && questsData.quests) {
+                    window.renderDailyQuests(questsData.quests);
+                }
+            }
+
+            // Fetch weekly challenges
+            const challengesRes = await fetch('/api/weeklyChallenges', { credentials: 'include' });
+            if (challengesRes.ok) {
+                const challengesData = await challengesRes.json();
+                if (challengesData && challengesData.challenges) {
+                    window.renderWeeklyChallenges(challengesData.challenges);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading quests/challenges:', error);
         }
     }
 

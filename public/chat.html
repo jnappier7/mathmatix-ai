@@ -176,6 +176,27 @@
       </div>
     </div>
 
+    <!-- Quest Tracker Section -->
+    <div class="sidebar-section">
+      <button class="quest-toggle">
+        <span>Daily Quests</span>
+        <i class="fas fa-chevron-down"></i>
+      </button>
+
+      <div id="sidebar-quests" class="sidebar-quests-list">
+        <!-- Daily quests populated by JS -->
+        <div id="daily-quests-container"></div>
+
+        <div style="margin-top: 15px;">
+          <button class="quest-toggle-weekly" style="background: none; border: none; width: 100%; text-align: left; padding: 8px; cursor: pointer; font-weight: 600; color: #667eea;">
+            <span>Weekly Challenges</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div id="weekly-challenges-container" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Parent Link Section -->
     <div class="sidebar-section">
       <div id="student-parent-link-display" style="padding: 0;">
@@ -190,6 +211,18 @@
   <main id="app-layout-wrapper" class="sidebar-layout">
     <div id="chat-container" class="dashboard-panel full-width">
       <div id="chat-messages-container"></div>
+
+      <!-- Live XP Feed -->
+      <div id="xp-feed" class="xp-feed"></div>
+
+      <!-- Streak Counter -->
+      <div id="streak-counter" class="streak-counter" style="display: none;">
+        <span class="streak-icon">🔥</span>
+        <span class="streak-number">0</span>
+        <span class="streak-label">STREAK</span>
+        <span class="streak-multiplier">1.0x</span>
+      </div>
+
       <div id="thinking-indicator" style="display: none;">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
         <span>Mathmatix is thinking...</span>
@@ -277,6 +310,22 @@
       <i class="fas fa-paper-plane"></i> Send
     </button>
 </div>
+
+      <!-- Session Stats Bar -->
+      <div id="session-stats-bar" class="session-stats-bar">
+        <div class="stat-item">
+          <span class="stat-label">Session XP:</span>
+          <span id="session-xp" class="stat-value">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Accuracy:</span>
+          <span id="session-accuracy" class="stat-value">--</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Problems:</span>
+          <span id="session-problems" class="stat-value">0/0</span>
+        </div>
+      </div>
     </div>
   </main>
   
@@ -894,6 +943,39 @@
       <p class="unlock-dismiss-hint">Click anywhere to continue</p>
     </div>
   </div>
+
+  <!-- Level-Up Celebration Modal -->
+  <div id="levelup-celebration-modal" class="levelup-celebration-overlay" style="display: none;">
+    <div class="levelup-celebration-content">
+      <div class="celebration-video-container">
+        <video id="celebration-tutor-video"
+               class="celebration-video"
+               muted
+               playsinline>
+        </video>
+      </div>
+      <div class="celebration-message">
+        <h1 id="celebration-title" class="celebration-title">LEVEL UP!</h1>
+        <p id="celebration-subtitle" class="celebration-subtitle">You're getting stronger!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Badge Unlock Celebration Modal -->
+  <div id="badge-celebration-modal" class="badge-celebration-overlay" style="display: none;">
+    <div class="badge-celebration-content">
+      <div class="badge-icon-container">
+        <div class="badge-glow"></div>
+        <i id="badge-icon" class="fas fa-trophy badge-icon"></i>
+      </div>
+      <h1 id="badge-title" class="badge-title">NEW BADGE!</h1>
+      <h2 id="badge-name" class="badge-name">Achievement Unlocked</h2>
+      <p id="badge-description" class="badge-description">You've mastered a new skill!</p>
+      <div id="badge-xp-reward" class="badge-xp-reward">+500 XP</div>
+      <p class="badge-dismiss-hint">Click anywhere to continue</p>
+    </div>
+  </div>
+
   <!-- Algebra Tiles Container -->
   <div id="algebraTilesContainer"></div>
 
@@ -913,6 +995,7 @@
   <script src="/js/voice-controller.js"></script>
   <script src="/js/floating-calculator.js"></script>
   <script src="/js/sidebar.js"></script>
+  <script src="/js/engagement-widgets.js"></script>
   <script src="/js/visualTeachingHandler.js"></script>
   <!-- PDF.js library for PDF preview and rendering -->
   <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
