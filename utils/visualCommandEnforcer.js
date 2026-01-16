@@ -122,6 +122,15 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
         }
     }
 
+    // ===== FACTORING / ALGEBRA TILES =====
+    if (isFactoringQuestion(lowerMessage)) {
+        const expression = extractAlgebraExpression(studentMessage, aiResponse);
+        if (expression) {
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting ALGEBRA_TILES: ${expression}`);
+            return `[ALGEBRA_TILES:${expression}] Let's visualize this with algebra tiles. See how we can arrange these into a rectangle?`;
+        }
+    }
+
     // No pattern matched - return original response
     return aiResponse;
 }
@@ -195,6 +204,21 @@ function isTriangleProblem(message) {
         /triangle/i,
         /angle.*degree/i,
         /find.*angle/i
+    ];
+    return patterns.some(p => p.test(message));
+}
+
+function isFactoringQuestion(message) {
+    const patterns = [
+        /factor/i,
+        /factoriz/i, // Spanish
+        /expand/i,
+        /foil/i,
+        /multiply.*binomial/i,
+        /\(x[+-]\d+\)\s*\(x[+-]\d+\)/, // Matches patterns like (x+2)(x+3)
+        /quadratic.*factor/i,
+        /area\s+model/i,
+        /algebra\s+tiles/i
     ];
     return patterns.some(p => p.test(message));
 }
@@ -371,6 +395,57 @@ function extractTriangleAngles(studentMsg, aiResponse) {
     // If only 1 angle, use it and make others unknowns
     if (angles.length === 1) {
         return { A: angles[0], B: '?', C: '?' };
+    }
+
+    return null;
+}
+
+function extractAlgebraExpression(studentMsg, aiResponse) {
+    // Look for algebraic expressions in various formats
+    // Examples: x^2-5x+6, x²+5x+6, 2x+3, (x+2)(x+3)
+
+    const patterns = [
+        // Quadratic expressions: x^2-5x+6, x²-5x+6
+        /([x]\^?²?\s*[+\-]\s*\d+[x]\s*[+\-]\s*\d+)/i,
+        // Quadratic with caret: x^2-5x+6
+        /([x]\^\d+\s*[+\-]\s*\d+[x]\s*[+\-]\s*\d+)/i,
+        // Simple quadratic: x^2+6 or x²+6
+        /([x]\^?²?\s*[+\-]\s*\d+)/i,
+        // Linear expressions: 2x+3
+        /(\d+[x]\s*[+\-]\s*\d+)/i,
+        // Just x with coefficient: 2x, 3x
+        /(\d*[x])/i
+    ];
+
+    const text = studentMsg + ' ' + aiResponse;
+
+    for (const pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) {
+            let expr = match[1].trim();
+
+            // Clean up the expression
+            // Replace superscript 2 with ^2
+            expr = expr.replace(/²/g, '^2');
+            // Remove spaces
+            expr = expr.replace(/\s+/g, '');
+            // Ensure proper format for algebra tiles
+
+            console.log('[VisualEnforcer] Extracted expression:', expr);
+            return expr;
+        }
+    }
+
+    // Special case: Look for expressions mentioned in quotes
+    const quotedPattern = /"([^"]+)"|'([^']+)'/;
+    const quotedMatch = text.match(quotedPattern);
+    if (quotedMatch) {
+        const quoted = quotedMatch[1] || quotedMatch[2];
+        if (/[x]/.test(quoted) && /[+\-]/.test(quoted)) {
+            const cleaned = quoted.replace(/²/g, '^2').replace(/\s+/g, '');
+            console.log('[VisualEnforcer] Extracted quoted expression:', cleaned);
+            return cleaned;
+        }
     }
 
     return null;
