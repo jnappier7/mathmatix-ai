@@ -253,7 +253,7 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             res.flushHeaders();
 
             try {
-                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 800 });
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
 
                 // Buffer to collect the complete response for database storage
                 let fullResponseBuffer = '';
@@ -305,13 +305,13 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             } catch (streamError) {
                 console.error('ERROR: Streaming failed, falling back to non-streaming:', streamError.message);
                 // Fallback to non-streaming if streaming fails
-                const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 800 });
+                const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
                 aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
                 res.write(`data: ${JSON.stringify({ type: 'chunk', content: aiResponseText })}\n\n`);
             }
         } else {
             // NON-STREAMING MODE: Original behavior
-            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 800 });
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 1500 });
             aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
         }
 
@@ -723,7 +723,7 @@ async function handleParentChat(req, res, parentId, childId, message) {
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, {
             system: systemPrompt,
             temperature: 0.7,
-            max_tokens: 500
+            max_tokens: 800
         });
 
         let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I apologize, I'm having trouble responding right now.";
