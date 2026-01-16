@@ -150,12 +150,57 @@ function generateSpeakableText(text) {
     return result.replace(/\*\*(.+?)\*\*/g, '$1').replace(/_(.+?)_/g, '$1').replace(/`(.+?)`/g, '$1').replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
 }
 
+/**
+ * Show level-up celebration modal with tutor video
+ */
+function showLevelUpCelebration() {
+    const modal = document.getElementById('levelup-celebration-modal');
+    const video = document.getElementById('celebration-tutor-video');
+
+    if (!modal || !video || !currentUser || !currentUser.selectedTutorId) return;
+
+    // Get the tutor's level-up video
+    const tutorId = currentUser.selectedTutorId;
+    const videoPath = `/videos/${tutorId}_levelUp.mp4`;
+
+    // Set video source
+    video.src = videoPath;
+
+    // Show modal with animation
+    modal.style.display = 'flex';
+
+    // Play video
+    video.play().catch(err => {
+        console.warn('Video playback failed:', err);
+    });
+
+    // Auto-dismiss when video ends (or after 4 seconds as fallback)
+    const dismissModal = () => {
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.remove('fade-out');
+            video.pause();
+            video.src = '';
+        }, 400);
+    };
+
+    video.addEventListener('ended', dismissModal, { once: true });
+    setTimeout(dismissModal, 4000); // Fallback timeout
+
+    // Allow click to dismiss
+    modal.addEventListener('click', dismissModal, { once: true });
+}
+
 function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
     const animationText = document.createElement('div');
     animationText.textContent = message;
     animationText.classList.add('xp-animation-text');
     if (isLevelUp) {
         animationText.classList.add('level-up-animation-text', 'animate-level-up');
+
+        // Show celebration video modal
+        showLevelUpCelebration();
 
         if (typeof confetti === 'function') {
             const duration = 3 * 1000;
