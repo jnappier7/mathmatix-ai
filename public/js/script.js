@@ -544,9 +544,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Create file from blob
                     const file = new File([blob], 'whiteboard-drawing.png', { type: 'image/png' });
 
-                    // Attach file and show preview in input area
-                    attachedFile = file;
-                    showFilePill(file.name);
+                    // Use the proper file upload handler to add to attachedFiles array
+                    if (window.handleFileUpload) {
+                        window.handleFileUpload(file);
+                    } else {
+                        console.error('handleFileUpload not found - falling back to direct attachment');
+                        attachedFile = file; // Fallback for backwards compatibility
+                        showFilePill(file.name);
+                    }
 
                     // Set placeholder message (user can edit or replace)
                     if (!userInput.value.trim()) {
