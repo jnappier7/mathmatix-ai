@@ -3734,6 +3734,85 @@ body:not(.landing-page-body) {
     display: none; /* Hide other icons when loading */
 }
 
+/* Paused state for play button */
+.play-audio-btn.is-paused {
+    background-color: rgba(255, 165, 0, 0.2);
+    border: 1px solid rgba(255, 165, 0, 0.5);
+}
+
+/* Speed control container and dropdown */
+.speed-control {
+    position: relative;
+    display: inline-block;
+}
+
+#speed-btn {
+    min-width: 45px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+#speed-display {
+    font-size: 0.9em;
+}
+
+.speed-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    background: var(--clr-bg-light);
+    border: 1px solid var(--clr-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 80px;
+}
+
+.speed-dropdown.show {
+    display: block;
+}
+
+.speed-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+
+.speed-dropdown button:hover {
+    background-color: var(--clr-bg-secondary);
+}
+
+.speed-dropdown button:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+.speed-dropdown button:last-child {
+    border-radius: 0 0 8px 8px;
+}
+
+.speed-dropdown button.active {
+    background-color: var(--clr-primary-teal);
+    color: var(--clr-bg-light);
+    font-weight: 600;
+}
+
+/* Pause and restart buttons */
+#pause-audio-btn, #restart-audio-btn {
+    transition: transform 0.2s;
+}
+
+#pause-audio-btn:hover, #restart-audio-btn:hover {
+    transform: scale(1.1);
+}
+
 .message.mastery-quiz {
   border: 2px solid var(--clr-primary-teal);
   background-color: rgba(var(--clr-primary-teal-rgb), 0.05);
