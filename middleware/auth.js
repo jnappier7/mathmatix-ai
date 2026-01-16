@@ -133,7 +133,7 @@ function handleLogout(req, res, next) {
 // SECURITY FIX: Per-user rate limiting for AI-powered endpoints to prevent API abuse
 const aiEndpointLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour window
-    max: 100, // Limit each user to 100 requests per hour
+    max: 150, // Limit each user to 150 requests per hour (increased to accommodate 30s heartbeats = 120 req/hr)
     keyGenerator: (req) => {
         // Use user ID if authenticated, otherwise fall back to IP
         return req.user ? req.user._id.toString() : req.ip;
