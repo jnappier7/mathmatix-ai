@@ -139,6 +139,21 @@ async function sendTimeHeartbeat(isFinal = false) {
 // --- Global Helper Functions ---
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
+// Get color for graph expressions (cycles through a palette)
+function getGraphColor(index) {
+    const colors = [
+        '#2563eb', // blue
+        '#dc2626', // red
+        '#16a34a', // green
+        '#9333ea', // purple
+        '#ea580c', // orange
+        '#0891b2', // cyan
+        '#c026d3', // magenta
+        '#65a30d'  // lime
+    ];
+    return colors[index % colors.length];
+}
+
 function generateSpeakableText(text) {
     if (!text) return '';
     if (!window.MathLive) return text.replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
@@ -1778,6 +1793,92 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             // Remove [STEPS]...[/STEPS] tags from displayed text
             textNode.innerHTML = textNode.innerHTML.replace(stepsRegex, '');
+        }
+
+        // Handle Desmos Graphing: [DESMOS:expression]
+        if (sender === 'ai' && text && text.includes('[DESMOS:') && typeof Desmos !== 'undefined') {
+            const desmosRegex = /\[DESMOS:([^\]]+)\]/g;
+            let match;
+            const expressions = [];
+
+            // Collect all Desmos expressions from the message
+            while ((match = desmosRegex.exec(text)) !== null) {
+                expressions.push(match[1].trim());
+            }
+
+            if (expressions.length > 0) {
+                // Create Desmos calculator container
+                const desmosContainer = document.createElement('div');
+                const desmosId = `desmos-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                desmosContainer.id = desmosId;
+                desmosContainer.className = 'desmos-graph-container';
+                desmosContainer.style.cssText = `
+                    width: 100%;
+                    max-width: 600px;
+                    height: 400px;
+                    margin: 15px 0;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    background: white;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                `;
+
+                bubble.appendChild(desmosContainer);
+
+                // Initialize Desmos calculator after a short delay
+                setTimeout(() => {
+                    try {
+                        const calculator = Desmos.GraphingCalculator(document.getElementById(desmosId), {
+                            expressions: true,
+                            settingsMenu: true,
+                            zoomButtons: true,
+                            expressionsTopbar: true,
+                            pointsOfInterest: true,
+                            trace: true,
+                            border: false,
+                            lockViewport: false,
+                            showGrid: true,
+                            showXAxis: true,
+                            showYAxis: true
+                        });
+
+                        // Add each expression to the calculator
+                        expressions.forEach((expr, index) => {
+                            // Parse expression - handle both y= format and raw expressions
+                            let latex = expr;
+
+                            // If expression contains backslashes, it's already in LaTeX format
+                            // Otherwise, convert common notation
+                            if (!latex.includes('\\')) {
+                                latex = latex
+                                    .replace(/\*/g, '') // Remove multiplication signs
+                                    .replace(/Math\.(sin|cos|tan|sqrt|abs|log|ln)/g, '\\$1'); // Convert Math functions
+                            }
+
+                            calculator.setExpression({
+                                id: `expr-${index}`,
+                                latex: latex,
+                                color: getGraphColor(index)
+                            });
+                        });
+
+                        // Auto-zoom to fit the graphs
+                        // Give it a moment to render before resetting viewport
+                        setTimeout(() => {
+                            // Don't reset viewport - let user control it
+                            // calculator.setDefaultState();
+                        }, 100);
+
+                    } catch (error) {
+                        console.error('Desmos initialization error:', error);
+                        desmosContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #ef4444;">Could not render graph. Please try again.</div>';
+                    }
+                }, 100);
+
+                // Remove [DESMOS:...] tags from displayed text
+                textNode.innerHTML = textNode.innerHTML.replace(desmosRegex, '');
+            }
         }
 
         // Handle Color-Coded Highlights: [OLD:text] and [NEW:text]

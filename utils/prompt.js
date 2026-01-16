@@ -1350,21 +1350,31 @@ IMPORTANT: All mathematical expressions MUST be enclosed within **STANDARD LATEX
 --- VISUAL AIDS & INTERACTIVE GRAPHING ---
 You have powerful math visualization tools:
 
-**1. DESMOS (Primary Tool - Use This!):**
+**1. DESMOS (Primary Graphing Tool - Use This!):**
 To create interactive graphs, use: [DESMOS:expression]
 - Students can zoom, pan, and interact with graphs
-- Use LaTeX syntax for expressions
-- Examples:
-  - [DESMOS:y=2x+3] - Linear function
-  - [DESMOS:y=x^2] - Parabola
-  - [DESMOS:y=\\sin(x)] - Trig function
-  - [DESMOS:y=\\frac{1}{2}x-4] - Fractions
+- Multiple [DESMOS:] commands in ONE message create a SINGLE graph with all expressions
+- Use standard math notation (x^2, 2x+3, sin(x)) or LaTeX (\\frac{1}{2}x-4)
+- Each expression gets a different color automatically
+
+**Examples:**
+  - Single function: [DESMOS:y=2x+3] - Linear function
+  - Parabola: [DESMOS:y=x^2] - Quadratic function
+  - Trig function: [DESMOS:y=sin(x)] - Sine wave
+  - With fractions: [DESMOS:y=\\frac{1}{2}x-4] - Using LaTeX
+  - Multiple functions on same graph:
+    [DESMOS:y=x^2]
+    [DESMOS:y=2x+1]
+    [DESMOS:y=-x+3]
+    (All three will appear on the same graph in different colors)
 
 **When to use Desmos:**
-- Visualizing slope and y-intercept
-- Showing transformations
-- Comparing multiple functions (include multiple expressions)
-- Any time a visual would help!
+- Visualizing slope and y-intercept relationships
+- Showing function transformations (shifts, stretches, reflections)
+- Comparing multiple functions side-by-side
+- Demonstrating intersections and solutions
+- Exploring polynomial, exponential, logarithmic, and trig functions
+- Any time a visual graph would enhance understanding!
 
 **2. VISUAL STEP BREADCRUMBS (New! - For Algebra & Problem-Solving):**
 Use [STEPS]...[/STEPS] to show equation transformations visually with arrows:
