@@ -926,7 +926,243 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // -------------------------------------------------------------------------
+    // --- Survey Responses & Analytics ---
+    // -------------------------------------------------------------------------
+
+    /**
+     * Fetches survey statistics for the preview panel
+     */
+    async function fetchSurveyStatsPreview() {
+        try {
+            const response = await fetch('/api/admin/survey-stats', { credentials: 'include' });
+            if (!response.ok) throw new Error('Failed to fetch survey stats');
+
+            const data = await response.json();
+            const stats = data.stats;
+
+            // Update preview panel
+            document.getElementById('totalSurveyResponses').textContent = stats.totalResponses || 0;
+
+            // Calculate average rating from full data
+            const responsesRes = await fetch('/api/admin/survey-responses?limit=1000', { credentials: 'include' });
+            if (responsesRes.ok) {
+                const responsesData = await responsesRes.json();
+                const avgRating = responsesData.stats?.averageRating || 0;
+                document.getElementById('avgRating').textContent = avgRating;
+            }
+
+            // Calculate tour completion rate
+            const tourCompletionRate = stats.totalUsers > 0
+                ? Math.round((stats.tourCompletedCount / stats.totalUsers) * 100)
+                : 0;
+            document.getElementById('tourCompletionRate').textContent = tourCompletionRate;
+
+        } catch (error) {
+            console.error('Error fetching survey stats preview:', error);
+        }
+    }
+
+    /**
+     * Opens the survey responses modal and loads data
+     */
+    async function openSurveyResponsesModal() {
+        const modal = document.getElementById('surveyResponsesModal');
+        if (!modal) return;
+
+        modal.classList.add('is-visible');
+        await loadSurveyResponses();
+    }
+
+    /**
+     * Closes the survey responses modal
+     */
+    function closeSurveyResponsesModal() {
+        const modal = document.getElementById('surveyResponsesModal');
+        if (modal) modal.classList.remove('is-visible');
+    }
+
+    /**
+     * Loads and displays survey responses
+     */
+    async function loadSurveyResponses() {
+        try {
+            const response = await fetch('/api/admin/survey-responses?limit=100', { credentials: 'include' });
+            if (!response.ok) throw new Error('Failed to fetch survey responses');
+
+            const data = await response.json();
+            const { stats, responses } = data;
+
+            // Update statistics
+            document.getElementById('surveyTotalResponses').textContent = stats.totalResponses || 0;
+            document.getElementById('surveyTotalUsers').textContent = stats.totalUsers || 0;
+            document.getElementById('surveyAvgRating').textContent = `${stats.averageRating || 0} / 5`;
+            document.getElementById('surveyAvgHelpfulness').textContent = `${stats.averageHelpfulness || 0} / 5`;
+            document.getElementById('surveyAvgWillingness').textContent = `${stats.averageWillingness || 0} / 10`;
+
+            // Get tour stats
+            const statsRes = await fetch('/api/admin/survey-stats', { credentials: 'include' });
+            if (statsRes.ok) {
+                const statsData = await statsRes.json();
+                document.getElementById('surveyTourCompleted').textContent =
+                    `${statsData.stats.tourCompletedCount || 0} / ${statsData.stats.totalUsers || 0}`;
+            }
+
+            // Render rating distribution
+            renderRatingDistribution(stats.ratingDistribution);
+
+            // Render experience breakdown
+            renderExperienceBreakdown(stats.experienceBreakdown);
+
+            // Render responses table
+            renderSurveyResponsesTable(responses);
+
+            // Update count
+            document.getElementById('responsesCount').textContent = responses.length;
+
+        } catch (error) {
+            console.error('Error loading survey responses:', error);
+            document.getElementById('surveyResponsesTableBody').innerHTML =
+                '<tr><td colspan="11" style="text-align: center; color: #e74c3c;">Failed to load survey responses</td></tr>';
+        }
+    }
+
+    /**
+     * Renders the rating distribution bar chart
+     */
+    function renderRatingDistribution(distribution) {
+        const container = document.getElementById('ratingDistribution');
+        if (!container) return;
+
+        const maxCount = Math.max(...Object.values(distribution), 1);
+
+        container.innerHTML = Object.entries(distribution)
+            .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+            .map(([rating, count]) => {
+                const height = (count / maxCount) * 100;
+                const color = rating >= 4 ? '#4CAF50' : rating >= 3 ? '#FFC107' : '#f44336';
+                return `
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;">
+                        <div style="font-size: 0.9em; font-weight: bold; margin-bottom: 5px; color: #333;">${count}</div>
+                        <div style="width: 100%; height: ${height}%; background: ${color}; border-radius: 4px 4px 0 0; min-height: ${count > 0 ? '20px' : '0'}; transition: height 0.3s;"></div>
+                        <div style="margin-top: 8px; font-size: 0.9em; color: #666;">★${rating}</div>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    /**
+     * Renders the experience breakdown
+     */
+    function renderExperienceBreakdown(breakdown) {
+        const container = document.getElementById('experienceBreakdown');
+        if (!container) return;
+
+        const experienceColors = {
+            excellent: '#4CAF50',
+            good: '#8BC34A',
+            okay: '#FFC107',
+            frustrating: '#FF9800',
+            confusing: '#f44336'
+        };
+
+        const experienceIcons = {
+            excellent: 'fa-smile-beam',
+            good: 'fa-smile',
+            okay: 'fa-meh',
+            frustrating: 'fa-frown',
+            confusing: 'fa-dizzy'
+        };
+
+        if (Object.keys(breakdown).length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #999;">No experience data yet</p>';
+            return;
+        }
+
+        container.innerHTML = Object.entries(breakdown)
+            .sort((a, b) => b[1] - a[1])
+            .map(([experience, count]) => {
+                const color = experienceColors[experience] || '#999';
+                const icon = experienceIcons[experience] || 'fa-circle';
+                return `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e0e0e0;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fas ${icon}" style="color: ${color}; font-size: 1.2em;"></i>
+                            <span style="text-transform: capitalize; font-weight: 500;">${experience}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="background: ${color}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.9em; font-weight: bold;">
+                                ${count}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+    }
+
+    /**
+     * Renders the survey responses table
+     */
+    function renderSurveyResponsesTable(responses) {
+        const tbody = document.getElementById('surveyResponsesTableBody');
+        if (!tbody) return;
+
+        if (responses.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; color: #999;">No survey responses yet</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = responses.map(r => {
+            const date = new Date(r.submittedAt).toLocaleString();
+            const rating = r.rating ? `${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}` : '-';
+
+            return `
+                <tr>
+                    <td style="white-space: nowrap;">${date}</td>
+                    <td>${r.userName || 'Unknown'}<br><small style="color: #666;">${r.userEmail || ''}</small></td>
+                    <td style="text-align: center;">${rating}</td>
+                    <td>${r.experience || '-'}</td>
+                    <td style="text-align: center;">${r.helpfulness || '-'} / 5</td>
+                    <td style="text-align: center;">${r.difficulty || '-'} / 5</td>
+                    <td style="text-align: center;">${r.willingness !== null && r.willingness !== undefined ? r.willingness + ' / 10' : '-'}</td>
+                    <td style="text-align: center;">${r.sessionDuration || '-'}</td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;" title="${r.feedback || ''}">${r.feedback ? r.feedback.substring(0, 50) + (r.feedback.length > 50 ? '...' : '') : '-'}</td>
+                    <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;" title="${r.bugs || ''}">${r.bugs ? r.bugs.substring(0, 40) + (r.bugs.length > 40 ? '...' : '') : '-'}</td>
+                    <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;" title="${r.features || ''}">${r.features ? r.features.substring(0, 40) + (r.features.length > 40 ? '...' : '') : '-'}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // Event Listeners for Survey Modal
+    const openSurveyResponsesBtn = document.getElementById('openSurveyResponsesBtn');
+    const closeSurveyResponsesBtn = document.getElementById('closeSurveyResponsesBtn');
+    const refreshSurveyResponsesBtn = document.getElementById('refreshSurveyResponsesBtn');
+
+    if (openSurveyResponsesBtn) {
+        openSurveyResponsesBtn.addEventListener('click', openSurveyResponsesModal);
+    }
+
+    if (closeSurveyResponsesBtn) {
+        closeSurveyResponsesBtn.addEventListener('click', closeSurveyResponsesModal);
+    }
+
+    if (refreshSurveyResponsesBtn) {
+        refreshSurveyResponsesBtn.addEventListener('click', loadSurveyResponses);
+    }
+
+    // Close modal on outside click
+    const surveyModal = document.getElementById('surveyResponsesModal');
+    if (surveyModal) {
+        surveyModal.addEventListener('click', (e) => {
+            if (e.target === surveyModal) {
+                closeSurveyResponsesModal();
+            }
+        });
+    }
+
+    // -------------------------------------------------------------------------
     // --- Initial Load ---
     // -------------------------------------------------------------------------
     initializeDashboard();
+    fetchSurveyStatsPreview(); // Load survey stats preview
 });

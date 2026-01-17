@@ -664,6 +664,21 @@
             <i class="fas fa-broadcast-tower"></i> Live Activity
           </button>
         </div>
+
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <i class="fas fa-star"></i> Alpha Testing Feedback
+          </div>
+          <p>View survey responses and user feedback from alpha testing.</p>
+          <button id="openSurveyResponsesBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-chart-line"></i> Survey Analytics
+          </button>
+          <div id="surveyStatsPreview" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
+            <div style="margin-bottom: 5px;"><strong>Total Responses:</strong> <span id="totalSurveyResponses">-</span></div>
+            <div style="margin-bottom: 5px;"><strong>Avg Rating:</strong> <span id="avgRating">-</span> / 5</div>
+            <div><strong>Tour Completion:</strong> <span id="tourCompletionRate">-</span>%</div>
+          </div>
+        </div>
       </aside>
     </main>
 
@@ -906,6 +921,94 @@
         <h3>User Summaries (<span id="summariesCount">0</span>)</h3>
         <div id="summariesContainer">
           <p style="text-align: center;">Loading...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Survey Responses Modal -->
+  <div id="surveyResponsesModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 1400px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close-button" id="closeSurveyResponsesBtn">&times;</button>
+      <h2><i class="fas fa-star"></i> Alpha Testing Survey Analytics</h2>
+      <p style="color: #666; margin-bottom: 20px;">
+        <i class="fas fa-chart-line"></i> Feedback and survey responses from alpha testers
+        <button id="refreshSurveyResponsesBtn" class="btn btn-secondary" style="float: right;">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </p>
+
+      <!-- Statistics Cards -->
+      <div class="modal-section">
+        <h3>Overview Statistics</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-label">Total Responses</div>
+            <div class="stat-value" id="surveyTotalResponses">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Responding Users</div>
+            <div class="stat-value" id="surveyTotalUsers">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Rating</div>
+            <div class="stat-value" id="surveyAvgRating">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Helpfulness</div>
+            <div class="stat-value" id="surveyAvgHelpfulness">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Willingness (NPS)</div>
+            <div class="stat-value" id="surveyAvgWillingness">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Tour Completed</div>
+            <div class="stat-value" id="surveyTourCompleted">-</div>
+          </div>
+        </div>
+
+        <!-- Rating Distribution -->
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px;">Rating Distribution</h4>
+          <div id="ratingDistribution" style="display: flex; gap: 10px; align-items: flex-end; height: 150px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+            <!-- Will be populated with bars -->
+          </div>
+        </div>
+
+        <!-- Experience Breakdown -->
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px;">Experience Breakdown</h4>
+          <div id="experienceBreakdown" style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+            <!-- Will be populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Responses Table -->
+      <div class="modal-section">
+        <h3>Individual Responses (<span id="responsesCount">0</span>)</h3>
+        <div class="table-scroll-container" style="max-height: 500px;">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>User</th>
+                <th>Rating</th>
+                <th>Experience</th>
+                <th>Helpfulness</th>
+                <th>Difficulty</th>
+                <th>Willingness</th>
+                <th>Session (min)</th>
+                <th>Feedback</th>
+                <th>Bugs</th>
+                <th>Features</th>
+              </tr>
+            </thead>
+            <tbody id="surveyResponsesTableBody">
+              <tr><td colspan="11" style="text-align: center;">Loading...</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
