@@ -451,9 +451,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (toggleBtn && whiteboardPanel) {
                 toggleBtn.addEventListener('click', () => {
-                    whiteboardPanel.classList.toggle('is-hidden');
-                    if (openWhiteboardBtn) {
-                        openWhiteboardBtn.classList.toggle('hidden');
+                    const isHidden = whiteboardPanel.classList.contains('is-hidden');
+
+                    if (isHidden) {
+                        // Open whiteboard in split-screen mode
+                        whiteboardPanel.classList.remove('is-hidden');
+                        document.body.classList.add('whiteboard-split-screen');
+                        const chatContainer = document.getElementById('chat-container');
+                        if (chatContainer) {
+                            chatContainer.classList.remove('whiteboard-collapsed');
+                        }
+                        if (openWhiteboardBtn) {
+                            openWhiteboardBtn.classList.add('hidden');
+                        }
+                    } else {
+                        // Close whiteboard
+                        whiteboardPanel.classList.add('is-hidden');
+                        document.body.classList.remove('whiteboard-split-screen');
+                        const chatContainer = document.getElementById('chat-container');
+                        if (chatContainer) {
+                            chatContainer.classList.remove('whiteboard-collapsed');
+                        }
+                        if (openWhiteboardBtn) {
+                            openWhiteboardBtn.classList.remove('hidden');
+                        }
                     }
                 });
             }
@@ -461,7 +482,12 @@ document.addEventListener("DOMContentLoaded", () => {
             if (openWhiteboardBtn && whiteboardPanel) {
                 openWhiteboardBtn.addEventListener('click', () => {
                     whiteboardPanel.classList.remove('is-hidden');
+                    document.body.classList.add('whiteboard-split-screen');
                     openWhiteboardBtn.classList.add('hidden');
+                    const chatContainer = document.getElementById('chat-container');
+                    if (chatContainer) {
+                        chatContainer.classList.remove('whiteboard-collapsed');
+                    }
                 });
             }
 
@@ -3213,8 +3239,57 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
+    
+    if (closeWhiteboardBtn) {
+        closeWhiteboardBtn.addEventListener('click', () => {
+            const whiteboardPanel = document.getElementById('whiteboard-panel');
+            if (whiteboardPanel) {
+                whiteboardPanel.classList.add('is-hidden');
+                whiteboardPanel.classList.remove('collapsed');
+                document.body.classList.remove('whiteboard-split-screen');
+                const chatContainer = document.getElementById('chat-container');
+                if (chatContainer) {
+                    chatContainer.classList.remove('whiteboard-collapsed');
+                }
+                const openBtn = document.getElementById('open-whiteboard-btn');
+                if (openBtn) openBtn.classList.remove('hidden');
+            }
+        });
+    }
 
-    // Close button now handled in whiteboard.js setupPanelControls()
+    // Handle minimize button - collapse to thin bar
+    const minimizeWhiteboardBtn = document.getElementById('minimize-whiteboard-btn');
+    if (minimizeWhiteboardBtn) {
+        minimizeWhiteboardBtn.addEventListener('click', () => {
+            const whiteboardPanel = document.getElementById('whiteboard-panel');
+            const chatContainer = document.getElementById('chat-container');
+            const icon = minimizeWhiteboardBtn.querySelector('i');
+
+            if (whiteboardPanel && chatContainer) {
+                const isCollapsed = whiteboardPanel.classList.contains('collapsed');
+
+                if (isCollapsed) {
+                    // Expand whiteboard
+                    whiteboardPanel.classList.remove('collapsed');
+                    chatContainer.classList.remove('whiteboard-collapsed');
+                    if (icon) {
+                        icon.className = 'fas fa-window-minimize';
+                    }
+                    minimizeWhiteboardBtn.setAttribute('title', 'Minimize');
+                    minimizeWhiteboardBtn.setAttribute('data-tooltip', 'Minimize');
+                } else {
+                    // Collapse whiteboard to thin bar
+                    whiteboardPanel.classList.add('collapsed');
+                    chatContainer.classList.add('whiteboard-collapsed');
+                    if (icon) {
+                        icon.className = 'fas fa-window-maximize';
+                    }
+                    minimizeWhiteboardBtn.setAttribute('title', 'Expand');
+                    minimizeWhiteboardBtn.setAttribute('data-tooltip', 'Expand');
+                }
+            }
+        });
+    }
 
     if (drawItOutBtn) {
         drawItOutBtn.addEventListener('click', () => {

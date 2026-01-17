@@ -87,49 +87,79 @@ body.whiteboard-active #whiteboard-panel:not(.maximized) {
 }
 
 /* ============================================
-   SOLUTION 2: SPLIT-SCREEN MODE
+   SOLUTION 2: SPLIT-SCREEN MODE (ENHANCED)
    Side-by-side layout when whiteboard is open
    ============================================ */
 
-body.whiteboard-split-screen {
-    /* Enable split mode - non-disruptive approach */
+/* Main layout container adjustments */
+body.whiteboard-split-screen #app-layout-wrapper {
+    display: flex;
+    gap: 0;
+    height: 100vh;
+    overflow: hidden;
 }
 
-/* Chat container in split-screen mode - stays in place, just gets narrower */
+/* Chat side - left panel */
 body.whiteboard-split-screen #chat-container {
-    width: calc(50vw - 40px);
-    max-width: calc(50vw - 40px);
-    margin-right: 0;
-    transition: width 0.3s ease, max-width 0.3s ease;
-}
-
-/* Main content area adjusts to accommodate split view */
-body.whiteboard-split-screen .main-content {
     width: 50%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid #e5e7eb;
     transition: width 0.3s ease;
 }
 
-/* Whiteboard panel in split-screen mode - docks to right half */
-body.whiteboard-split-screen #whiteboard-panel:not(.maximized) {
-    position: fixed;
-    left: auto;
-    right: 0;
-    top: 0;
-    width: calc(50vw - 20px);
-    height: 100vh;
-    max-width: none;
-    border-radius: 0;
+/* Whiteboard side - right panel */
+body.whiteboard-split-screen #whiteboard-panel {
+    position: fixed !important;
+    left: 50% !important;
+    right: 0 !important;
+    top: 60px !important; /* Below header */
+    bottom: 0 !important;
+    width: 50% !important;
+    height: calc(100vh - 60px) !important;
+    max-width: none !important;
+    transform: none !important;
+    border-radius: 0 !important;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1) !important;
     transition: all 0.3s ease;
-    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
 }
 
-/* Ensure smooth transitions */
-#chat-container {
-    transition: width 0.3s ease, max-width 0.3s ease;
+/* Collapsed state - whiteboard minimized to thin bar */
+body.whiteboard-split-screen #whiteboard-panel.collapsed {
+    width: 48px !important;
+    left: calc(100% - 48px) !important;
 }
 
-#whiteboard-panel {
-    transition: all 0.3s ease;
+body.whiteboard-split-screen #whiteboard-panel.collapsed .whiteboard-header h2,
+body.whiteboard-split-screen #whiteboard-panel.collapsed .whiteboard-toolbar,
+body.whiteboard-split-screen #whiteboard-panel.collapsed .whiteboard-canvas-container {
+    display: none;
+}
+
+body.whiteboard-split-screen #whiteboard-panel.collapsed .whiteboard-header {
+    flex-direction: column;
+    padding: 8px 4px;
+    height: 100%;
+}
+
+body.whiteboard-split-screen #whiteboard-panel.collapsed .whiteboard-header-controls {
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Expand chat when whiteboard is collapsed */
+body.whiteboard-split-screen #chat-container.whiteboard-collapsed {
+    width: calc(100% - 48px);
+}
+
+/* Smooth transitions */
+body.whiteboard-split-screen #chat-container,
+body.whiteboard-split-screen #whiteboard-panel {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================
@@ -217,7 +247,103 @@ body.whiteboard-active #chat-pip-widget {
    RESPONSIVE BEHAVIOR
    ============================================ */
 
-/* On smaller screens, auto-use compact mode */
+/* Tablet/small laptop - adjust split to 40/60 */
+@media (max-width: 1400px) {
+    body.whiteboard-split-screen #chat-container {
+        width: 40%;
+    }
+
+    body.whiteboard-split-screen #whiteboard-panel {
+        left: 40% !important;
+        width: 60% !important;
+    }
+
+    body.whiteboard-split-screen #whiteboard-panel.collapsed {
+        left: calc(100% - 48px) !important;
+    }
+
+    body.whiteboard-split-screen #chat-container.whiteboard-collapsed {
+        width: calc(100% - 48px);
+    }
+}
+
+/* Tablet - stack vertically on medium screens */
+@media (max-width: 1024px) {
+    body.whiteboard-split-screen #app-layout-wrapper {
+        flex-direction: column;
+    }
+
+    body.whiteboard-split-screen #chat-container {
+        width: 100% !important;
+        height: 50%;
+        border-right: none;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    body.whiteboard-split-screen #whiteboard-panel {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: 50% !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 50% !important;
+    }
+
+    body.whiteboard-split-screen #whiteboard-panel.collapsed {
+        height: 48px !important;
+        top: calc(100% - 48px) !important;
+        left: 0 !important;
+    }
+
+    body.whiteboard-split-screen #chat-container.whiteboard-collapsed {
+        height: calc(100% - 48px);
+        width: 100%;
+    }
+}
+
+/* Mobile - full overlay mode (disable split-screen) */
+@media (max-width: 768px) {
+    body.whiteboard-split-screen #app-layout-wrapper {
+        flex-direction: column;
+    }
+
+    body.whiteboard-split-screen #chat-container {
+        width: 100% !important;
+        height: 100%;
+        border: none;
+    }
+
+    body.whiteboard-split-screen #whiteboard-panel {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 1050;
+    }
+
+    body.whiteboard-split-screen #whiteboard-panel.collapsed {
+        display: none;
+    }
+
+    /* Show backdrop on mobile */
+    body.whiteboard-split-screen::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        pointer-events: none;
+    }
+}
+
+/* Legacy responsive styles for non-split-screen mode */
 @media (max-width: 1400px) {
     body.whiteboard-active #chat-container {
         max-width: calc(100vw - 550px);
