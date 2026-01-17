@@ -84,12 +84,29 @@ router.get('/', async (req, res) => {
         let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
         let userMessagePart;
 
-        // Get time of day for natural greetings
-        const hour = new Date().getHours();
+        // Get temporal context for natural, time-aware greetings
+        const now = new Date();
+        const hour = now.getHours();
+        const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
         let timeContext = '';
         if (hour < 12) timeContext = 'morning';
         else if (hour < 17) timeContext = 'afternoon';
         else timeContext = 'evening';
+
+        // Build rich temporal context
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isMonday = dayOfWeek === 1;
+        const isFriday = dayOfWeek === 5;
+        const isLateNight = hour >= 21 || hour < 6; // 9pm - 6am
+        const isAfterSchool = hour >= 15 && hour < 20; // 3pm - 8pm
+
+        let temporalContext = `${dayNames[dayOfWeek]} ${timeContext}`;
+        if (isLateNight) temporalContext += ' (late night)';
+        if (isAfterSchool && !isWeekend) temporalContext += ' (after school)';
+        if (isMonday) temporalContext += ' (start of week)';
+        if (isFriday) temporalContext += ' (end of week)';
 
         // --- DYNAMIC WELCOME MESSAGE BASED ON USER STATE ---
 
@@ -97,9 +114,22 @@ router.get('/', async (req, res) => {
         if (!user.rapportBuildingComplete && !user.assessmentCompleted) {
             messagesForAI.push({
                 role: "system",
-                content: `Brand new student (${user.grade || 'grade unknown'}). Keep it super brief and casual. Time: ${timeContext}.`
+                content: `Brand new student (${user.grade || 'grade unknown'}). ${temporalContext}. Be contextually aware of the time and day.`
             });
-            userMessagePart = `Write a casual greeting for ${user.firstName}. Introduce yourself quickly, then ask ONE natural, friendly question like "How's your week going?" or "What's up?" or "What are you working on in math lately?". Sound like you're texting a friend, not collecting data. 1-2 sentences total. Don't ask for info you already have (like grade level).`;
+
+            // Build time-aware question examples
+            let questionExamples = [];
+            if (isMonday) questionExamples.push('"How was your weekend?"', '"Did you do anything fun this weekend?"');
+            if (isFriday) questionExamples.push('"Got any fun plans for the weekend?"', '"Almost the weekend!"');
+            if (isLateNight) questionExamples.push('"Whew it\'s late! Just starting homework?"', '"Burning the midnight oil?"');
+            if (isAfterSchool && !isWeekend) questionExamples.push('"How was school today?"', '"What are you working on in math this week?"');
+            if (isWeekend) questionExamples.push('"How\'s your weekend going?"', '"What\'s up?"');
+            // Always include general options
+            questionExamples.push('"What are you working on in math lately?"', '"What\'s up?"');
+
+            const exampleQuestions = questionExamples.slice(0, 3).join(' or ');
+
+            userMessagePart = `Write a casual greeting for ${user.firstName}. Introduce yourself quickly, then ask ONE natural, time-aware question like ${exampleQuestions}. Use the temporal context (${temporalContext}) to make it feel natural and relevant. Sound like you're texting a friend. 1-2 sentences total. Don't ask for info you already have (like grade level).`;
         }
 
         // RAPPORT IN PROGRESS: Transition to math quickly
@@ -130,15 +160,15 @@ router.get('/', async (req, res) => {
         else if (contextType !== 'none') {
             messagesForAI.push({
                 role: "system",
-                content: `Returning student. Time: ${timeContext}. Last session: ${lastContextForAI}`
+                content: `Returning student. ${temporalContext}. Last session: ${lastContextForAI}`
             });
-            userMessagePart = `Write a quick, natural greeting for ${user.firstName}. Time of day: ${timeContext}. Sound like you're texting. Vary your style - sometimes reference last session casually, sometimes just say hi and ask what they want to work on. Keep it SHORT (1-2 sentences). Mix up your greetings - use different phrases each time. NO formulaic openings like "Great to see you" or "Welcome back". Be spontaneous and genuine.`;
+            userMessagePart = `Write a quick, natural greeting for ${user.firstName}. Context: ${temporalContext}. Be time-aware - if it's Monday ask about the weekend, if it's late night acknowledge that, if it's Friday mention the weekend coming up. Sound like you're texting. Sometimes reference last session casually, sometimes just say hi and ask what they want to work on. Keep it SHORT (1-2 sentences). Mix up your greetings - use different phrases each time. NO formulaic openings like "Great to see you" or "Welcome back". Be spontaneous and genuine.`;
         }
 
         // FALLBACK: Simple natural greeting
         else {
-            messagesForAI.push({ role: "system", content: `Time of day: ${timeContext}` });
-            userMessagePart = `Write a short, friendly greeting for ${user.firstName}. Time: ${timeContext}. Sound natural and human. Ask what they want to work on. 1-2 sentences. Vary your greetings - don't use the same phrases twice.`;
+            messagesForAI.push({ role: "system", content: `${temporalContext}` });
+            userMessagePart = `Write a short, friendly greeting for ${user.firstName}. Context: ${temporalContext}. Be time-aware (Monday = weekend reference, late night = acknowledge time, etc.). Sound natural and human. Ask what they want to work on. 1-2 sentences. Vary your greetings - don't use the same phrases twice.`;
         }
         // --- END OF DYNAMIC WELCOME LOGIC ---
         

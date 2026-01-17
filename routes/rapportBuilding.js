@@ -71,6 +71,27 @@ router.post('/respond', isAuthenticated, async (req, res) => {
             m => m.role === 'user'
         ).length;
 
+        // Get temporal context
+        const now = new Date();
+        const hour = now.getHours();
+        const dayOfWeek = now.getDay();
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isMonday = dayOfWeek === 1;
+        const isFriday = dayOfWeek === 5;
+        const isLateNight = hour >= 21 || hour < 6;
+        const isAfterSchool = hour >= 15 && hour < 20;
+
+        let timeContext = '';
+        if (hour < 12) timeContext = 'morning';
+        else if (hour < 17) timeContext = 'afternoon';
+        else timeContext = 'evening';
+
+        let temporalContext = `${dayNames[dayOfWeek]} ${timeContext}`;
+        if (isLateNight) temporalContext += ' (late night)';
+        if (isAfterSchool && !isWeekend) temporalContext += ' (after school)';
+
         // Get tutor config
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
             ? user.selectedTutorId
@@ -81,7 +102,7 @@ router.post('/respond', isAuthenticated, async (req, res) => {
         // Extract information from user's response and generate next message
         const systemPrompt = generateSystemPrompt(user, tutorNameForPrompt, null, 'student');
 
-        const extractionPrompt = `Brief intro chat with ${user.firstName} (Grade: ${user.grade || 'unknown'}). Exchange count: ${rapportMessageCount}.
+        const extractionPrompt = `Brief intro chat with ${user.firstName} (Grade: ${user.grade || 'unknown'}). Exchange count: ${rapportMessageCount}. Context: ${temporalContext}.
 
 Current info: ${JSON.stringify(user.rapportAnswers, null, 2)}
 Their message: "${message}"
@@ -99,15 +120,20 @@ Complete if ANY of these:
 - They seem eager/ready ("let's go", "ready", short answers)
 - They didn't share much (just basic reply)
 
-TASK 3: Your response:
-- If complete: Quick, natural transition to assessment. "Cool! Let's see what you know" or similar. Sound casual.
-- If not complete (only if 1st message AND they shared something specific): ONE brief, natural follow-up. Keep it conversational like texting.
+TASK 3: Your response (be time-aware using context: ${temporalContext}):
+- If complete: Quick, natural transition to assessment. "Cool! Let's see what you know" or similar. Sound casual and contextual.
+- If not complete (only if 1st message AND they shared something specific): ONE brief, natural follow-up. Be time-aware if relevant.
+
+Examples of time-aware transitions:
+- Late night: "Nice! Alright let's knock out some problems and get you to bed"
+- Monday: "Cool! Let's start the week strong with some problems"
+- Friday: "Awesome! Let's see what you know so you can enjoy your weekend"
 
 RESPOND IN JSON:
 {
   "extractedInfo": { /* from TASK 1 */ },
   "rapportComplete": true/false,
-  "nextMessage": "your response (1-2 sentences)"
+  "nextMessage": "your response (1-2 sentences, time-aware)"
 }`;
 
         const extractionMessages = [
