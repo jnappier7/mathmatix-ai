@@ -93,22 +93,22 @@ router.get('/', async (req, res) => {
 
         // --- DYNAMIC WELCOME MESSAGE BASED ON USER STATE ---
 
-        // NEW USER: Start rapport building
+        // NEW USER: Start with ONE casual question
         if (!user.rapportBuildingComplete && !user.assessmentCompleted) {
             messagesForAI.push({
                 role: "system",
-                content: `This is a brand new student. Your goal is to build rapport naturally before any assessment. Time of day: ${timeContext}.`
+                content: `Brand new student. Keep it super brief and casual. Time: ${timeContext}.`
             });
-            userMessagePart = `Write a warm, natural greeting for ${user.firstName}. Introduce yourself as their math tutor. Sound like you're meeting a new friend - curious and friendly, not formal. Ask ONE getting-to-know-you question to start building rapport (like what they're interested in, what they're working on in school, or what they'd like to get better at). Keep it conversational and laid back. 2-3 sentences max.`;
+            userMessagePart = `Write a casual greeting for ${user.firstName}. Introduce yourself quickly, then ask ONE simple question like "what grade are you in?" or "what are you working on in math class?". Sound relaxed and friendly. 1-2 sentences total. Don't make it feel like an interview.`;
         }
 
-        // RAPPORT BUILDING IN PROGRESS: Continue the conversation
+        // RAPPORT IN PROGRESS: Transition to math quickly
         else if (!user.rapportBuildingComplete && user.rapportAnswers && Object.keys(user.rapportAnswers).length > 0) {
             messagesForAI.push({
                 role: "system",
-                content: `Continuing rapport-building. What we know so far: ${JSON.stringify(user.rapportAnswers)}`
+                content: `Second message. Keep it brief. Info: ${JSON.stringify(user.rapportAnswers)}`
             });
-            userMessagePart = `You're getting to know ${user.firstName}. Continue building rapport with another natural question. Reference what you learned (${JSON.stringify(user.rapportAnswers)}). Mix it up - don't use the same question format twice. Sound like texting a friend. After 3-4 questions total, naturally transition to suggesting you see where they're at with some problems.`;
+            userMessagePart = `Acknowledge their answer briefly, then naturally suggest starting with some problems to see where they're at. Don't drag it out. Make it sound fun and low-pressure. 1-2 sentences max.`;
         }
 
         // INCOMPLETE ASSESSMENT: Offer to resume

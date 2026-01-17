@@ -1,15 +1,15 @@
 /**
  * RAPPORT BUILDING API
  *
- * Handles getting-to-know-you conversations for new users before skills assessment.
- * Goal: Build natural rapport through casual conversation (3-5 questions max).
+ * Handles brief getting-to-know-you exchange for new users before skills assessment.
+ * Goal: Quick, natural intro (1-2 questions MAX). Read the room - don't force it.
  *
  * Flow:
- * 1. Welcome message asks first getting-to-know-you question
+ * 1. Welcome message asks ONE casual question (grade/topic)
  * 2. User responds → POST /api/rapport/respond
- * 3. AI extracts info, saves to user.rapportAnswers
- * 4. After 3-5 exchanges, marks rapportBuildingComplete = true
- * 5. Naturally transitions to assessment
+ * 3. AI extracts info, detects if student wants to jump straight to math
+ * 4. After 1-2 exchanges (or if student seems eager), marks rapportBuildingComplete = true
+ * 5. Transitions to assessment naturally
  */
 
 const express = require('express');
@@ -81,34 +81,33 @@ router.post('/respond', isAuthenticated, async (req, res) => {
         // Extract information from user's response and generate next message
         const systemPrompt = generateSystemPrompt(user, tutorNameForPrompt, null, 'student');
 
-        const extractionPrompt = `You're having a getting-to-know-you conversation with ${user.firstName}.
+        const extractionPrompt = `Brief intro chat with ${user.firstName}. Exchange count: ${rapportMessageCount}.
 
-Current knowledge about them:
-${JSON.stringify(user.rapportAnswers, null, 2)}
+Current info: ${JSON.stringify(user.rapportAnswers, null, 2)}
+Their message: "${message}"
 
-Their latest message: "${message}"
-
-TASK 1: Extract any new information from their message and update the following JSON (keep existing data, add new):
+TASK 1: Extract key info (keep brief):
 {
-  "interests": "what they're interested in learning or topics they like",
-  "favoriteSubject": "favorite subject in school",
-  "currentTopic": "what they're currently working on in math class",
-  "learningGoal": "what they want to improve at or learn",
-  "conversationStyle": "brief notes on how they communicate (e.g., 'enthusiastic', 'shy', 'detailed', 'brief')"
+  "currentTopic": "what they're working on in math",
+  "grade": "their grade level if mentioned",
+  "eagerness": "do they seem eager to start? ready to jump in?"
 }
 
-TASK 2: Decide if rapport building is complete (after ${rapportMessageCount} exchanges).
-Complete if: You have a good sense of their interests and learning goals (usually after 3-5 questions).
+TASK 2: Decide if rapport is complete.
+Complete if ANY of these:
+- This is the 2nd user message (after ${rapportMessageCount} exchanges, move on)
+- They seem eager/ready to start (short answers, "let's go", "ready", etc.)
+- You have enough basic info (grade/topic)
 
-TASK 3: Generate your next response:
-- If rapport complete (TASK 2 = yes): Naturally transition to suggesting you see where they're at with some problems. Don't call it a test - make it sound fun and low-pressure.
-- If rapport incomplete: Ask another casual question to learn more. Reference what they shared. Mix it up - use different question styles. Sound like texting a friend.
+TASK 3: Your response:
+- If complete: Quick transition to assessment. Sound excited, low-pressure. "Cool, let's see where you're at!"
+- If not complete (only if 1st message AND they gave detailed answer): ONE brief follow-up max. Don't drag it out.
 
-RESPOND IN THIS EXACT JSON FORMAT:
+RESPOND IN JSON:
 {
-  "extractedInfo": { /* updated JSON from TASK 1 */ },
+  "extractedInfo": { /* from TASK 1 */ },
   "rapportComplete": true/false,
-  "nextMessage": "your response here"
+  "nextMessage": "your response (1-2 sentences)"
 }`;
 
         const extractionMessages = [
@@ -116,9 +115,9 @@ RESPOND IN THIS EXACT JSON FORMAT:
             { role: 'user', content: extractionPrompt }
         ];
 
-        // Use GPT-4o-mini for rapport building
+        // Use GPT-4o-mini for rapport building (keep it brief!)
         const completion = await callLLM('gpt-4o-mini', extractionMessages, {
-            max_tokens: 300,
+            max_tokens: 150,
             response_format: { type: 'json_object' }
         });
 
