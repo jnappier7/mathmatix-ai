@@ -753,17 +753,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Panel controls
-        const minimizeBtn = document.getElementById('minimize-whiteboard-btn');
-        if (minimizeBtn) {
-            minimizeBtn.addEventListener('click', () => whiteboard.minimize());
-        }
-
-        const maximizeBtn = document.getElementById('maximize-whiteboard-btn');
-        if (maximizeBtn) {
-            maximizeBtn.addEventListener('click', () => whiteboard.maximize());
-        }
-
+        // Panel controls are now handled in whiteboard.js setupPanelControls()
+        // Open whiteboard button (when closed)
         const openWhiteboardBtn = document.getElementById('open-whiteboard-btn');
         if (openWhiteboardBtn) {
             openWhiteboardBtn.addEventListener('click', () => {
@@ -772,31 +763,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (!whiteboard) return;
-
-            // Ctrl/Cmd + Z = Undo
-            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
-                e.preventDefault();
-                whiteboard.undo();
-            }
-
-            // Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y = Redo
-            if ((e.ctrlKey || e.metaKey) && (e.shiftKey && e.key === 'z' || e.key === 'y')) {
-                e.preventDefault();
-                whiteboard.redo();
-            }
-
-            // Delete/Backspace = Delete selected
-            if (e.key === 'Delete' || e.key === 'Backspace') {
-                const activeElement = document.activeElement;
-                if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                    whiteboard.deleteSelected();
-                }
-            }
-        });
+        // Keyboard shortcuts now handled in whiteboard.js setupKeyboardShortcuts()
     }
 
     function updateDrawingMode() {
@@ -3182,16 +3149,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
-    
-    if (closeWhiteboardBtn) {
-        closeWhiteboardBtn.addEventListener('click', () => {
-            if (whiteboard) {
-                whiteboard.hide();
-                const openBtn = document.getElementById('open-whiteboard-btn');
-                if (openBtn) openBtn.classList.remove('hidden');
-            }
-        });
-    }
+
+    // Close button now handled in whiteboard.js setupPanelControls()
 
     if (drawItOutBtn) {
         drawItOutBtn.addEventListener('click', () => {
