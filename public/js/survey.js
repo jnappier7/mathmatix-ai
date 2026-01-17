@@ -182,7 +182,7 @@
     elements.modal.querySelector('.survey-content').classList.add('submitting');
 
     try {
-      const response = await fetch('/api/user/survey-submit', {
+      const response = await csrfFetch('/api/user/survey-submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -267,7 +267,7 @@
   // Track that survey was shown
   async function trackSurveyShown() {
     try {
-      await fetch('/api/user/survey-shown', {
+      await csrfFetch('/api/user/survey-shown', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -284,7 +284,7 @@
   // Track that survey was dismissed
   async function trackSurveyDismissed() {
     try {
-      await fetch('/api/user/survey-dismissed', {
+      await csrfFetch('/api/user/survey-dismissed', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

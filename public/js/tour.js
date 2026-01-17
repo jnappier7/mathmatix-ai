@@ -211,7 +211,7 @@
   // Mark tour as completed or dismissed
   async function markTourCompleted(completed = true) {
     try {
-      const response = await fetch('/api/user/tour-complete', {
+      const response = await csrfFetch('/api/user/tour-complete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

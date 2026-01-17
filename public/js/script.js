@@ -2860,7 +2860,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Fetch daily quests
-            const questsRes = await fetch('/api/dailyQuests', { credentials: 'include' });
+            const questsRes = await fetch('/api/daily-quests', { credentials: 'include' });
             if (questsRes.ok) {
                 const questsData = await questsRes.json();
                 if (questsData && questsData.quests) {
@@ -2869,7 +2869,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Fetch weekly challenges
-            const challengesRes = await fetch('/api/weeklyChallenges', { credentials: 'include' });
+            const challengesRes = await fetch('/api/weekly-challenges', { credentials: 'include' });
             if (challengesRes.ok) {
                 const challengesData = await challengesRes.json();
                 if (challengesData && challengesData.challenges) {
