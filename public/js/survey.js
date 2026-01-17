@@ -4,10 +4,11 @@
 
   // Survey configuration
   const CONFIG = {
-    MIN_SESSION_DURATION: 5, // Minimum 5 minutes before showing survey
-    SHOW_ON_EXIT_PROBABILITY: 0.7, // 70% chance to show on page exit
+    MIN_SESSION_DURATION: 15, // Minimum 15 minutes before showing survey
+    SHOW_ON_EXIT_PROBABILITY: 1.0, // Always show on page exit (if eligible)
     DAILY_FREQUENCY_HOURS: 24, // Show at most once per day
-    CHECK_INTERVAL: 60000 // Check every minute
+    CHECK_INTERVAL: 300000, // Check every 5 minutes (reduced frequency)
+    PREFER_EXIT_TRIGGER: true // Prefer showing on page exit rather than during session
   };
 
   // Survey state
@@ -85,6 +86,11 @@
 
     // Only check if minimum session duration has passed
     if (sessionDuration < CONFIG.MIN_SESSION_DURATION) {
+      return;
+    }
+
+    // If we prefer exit trigger, don't show during session
+    if (CONFIG.PREFER_EXIT_TRIGGER) {
       return;
     }
 
@@ -354,23 +360,51 @@
 
   // Handle before unload (page exit)
   function handleBeforeUnload(e) {
-    // Only show if session was long enough and we haven't shown it yet
+    // Note: Modern browsers don't allow showing custom modals on beforeunload
+    // This just tracks that the user had a qualifying session
+    // The survey will be shown on their next visit or when they return to the tab
     if (!surveyShown && getSessionDuration() >= CONFIG.MIN_SESSION_DURATION) {
-      // Random chance to show survey
-      if (Math.random() < CONFIG.SHOW_ON_EXIT_PROBABILITY) {
-        // We can't show modal on beforeunload, but we can trigger it for next time
-        trackSurveyShown();
+      // Use sendBeacon to track the exit event
+      if (navigator.sendBeacon) {
+        const blob = new Blob([JSON.stringify({ event: 'session_end', duration: getSessionDuration() })], {
+          type: 'application/json'
+        });
+        navigator.sendBeacon('/api/user/survey-shown', blob);
       }
     }
   }
 
   // Handle visibility change (tab switching)
-  function handleVisibilityChange() {
+  let hiddenTime = null;
+
+  async function handleVisibilityChange() {
     if (document.hidden) {
-      // Page is now hidden - user might be leaving
-      // Could trigger survey check here if desired
+      // Page is now hidden - track the time
+      hiddenTime = Date.now();
     } else {
       // Page is now visible again
+      // If user was away for more than 2 minutes and session is long enough, check survey
+      if (hiddenTime && (Date.now() - hiddenTime) > 120000) {
+        const sessionDur = getSessionDuration();
+
+        if (!surveyShown && sessionDur >= CONFIG.MIN_SESSION_DURATION) {
+          try {
+            const response = await fetch('/api/user/survey-status');
+            if (response.ok) {
+              const data = await response.json();
+              if (shouldShowSurvey(data)) {
+                // Small delay to let the page fully activate
+                setTimeout(() => {
+                  showSurvey();
+                }, 1000);
+              }
+            }
+          } catch (error) {
+            console.error('Error checking survey on visibility change:', error);
+          }
+        }
+      }
+      hiddenTime = null;
     }
   }
 
