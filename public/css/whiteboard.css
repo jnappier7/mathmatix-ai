@@ -553,3 +553,418 @@
         transform: rotate(360deg);
     }
 }
+
+/* ============================================
+   UX ENHANCEMENTS - NEW COMPONENTS
+   ============================================ */
+
+/* Layout Mode Dropdown Menu */
+.layout-mode-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    z-index: 1000;
+    min-width: 200px;
+}
+
+.layout-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+    transition: background 0.2s;
+}
+
+.layout-option:hover {
+    background: #f0f9f9;
+    color: #12B3B3;
+}
+
+.layout-option i {
+    font-size: 16px;
+    width: 20px;
+}
+
+/* Export Dropdown Menu */
+.export-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    z-index: 1000;
+    min-width: 180px;
+}
+
+.export-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+    transition: background 0.2s;
+}
+
+.export-option:hover {
+    background: #f0f9f9;
+    color: #12B3B3;
+}
+
+.export-option i {
+    font-size: 16px;
+    width: 20px;
+}
+
+/* Keyboard Shortcuts Panel */
+.shortcuts-help-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.shortcuts-content {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.shortcuts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.shortcuts-header h3 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.close-shortcuts-btn {
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-shortcuts-btn:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+}
+
+.shortcut-section h4 {
+    margin: 0 0 12px 0;
+    color: #12B3B3;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.shortcut-item kbd {
+    background: linear-gradient(135deg, #f5f5f5, #e5e5e5);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 60px;
+    text-align: center;
+}
+
+.shortcut-item span {
+    color: #666;
+}
+
+/* Toast Notifications */
+.whiteboard-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(18, 179, 179, 0.95);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10001;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.whiteboard-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Radial Context Menu */
+.radial-context-menu {
+    position: fixed;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    z-index: 10000;
+    display: none;
+    min-width: 200px;
+}
+
+.context-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.context-menu-item:hover {
+    background: linear-gradient(135deg, #12B3B3, #0ea5a5);
+    color: white;
+    transform: translateX(4px);
+}
+
+.context-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.context-label {
+    font-weight: 500;
+}
+
+/* Floating Selection Toolbar */
+.floating-selection-toolbar {
+    position: absolute;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 6px;
+    display: none;
+    gap: 4px;
+    z-index: 1000;
+    animation: fadeInUp 0.2s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.floating-toolbar-btn {
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-toolbar-btn:hover {
+    background: #f0f9f9;
+    color: #12B3B3;
+    transform: scale(1.1);
+}
+
+.floating-toolbar-btn:active {
+    transform: scale(0.95);
+}
+
+/* Region Overlay */
+.region-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.region-box {
+    position: absolute;
+    border: 2px dashed rgba(18, 179, 179, 0.5);
+    background: rgba(18, 179, 179, 0.05);
+    pointer-events: none;
+    animation: regionPulse 2s ease-in-out infinite;
+}
+
+@keyframes regionPulse {
+    0%, 100% {
+        border-color: rgba(18, 179, 179, 0.5);
+        background: rgba(18, 179, 179, 0.05);
+    }
+    50% {
+        border-color: rgba(18, 179, 179, 0.7);
+        background: rgba(18, 179, 179, 0.1);
+    }
+}
+
+.region-label {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: rgba(18, 179, 179, 0.9);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Active button state for toggles */
+.toolbar-btn.active {
+    background: linear-gradient(135deg, #12B3B3, #0ea5a5);
+    color: white;
+}
+
+/* Enhanced tooltips */
+.toolbar-btn[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    margin-bottom: 5px;
+    z-index: 1001;
+    animation: tooltipFade 0.2s ease;
+}
+
+@keyframes tooltipFade {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Smooth transitions for all interactive elements */
+.toolbar-btn,
+.whiteboard-control-btn,
+.export-option,
+.context-menu-item {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .shortcuts-content {
+        padding: 20px;
+        max-width: 90vw;
+    }
+
+    .shortcuts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .floating-selection-toolbar {
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        top: auto !important;
+    }
+
+    .radial-context-menu {
+        max-width: 90vw;
+    }
+}

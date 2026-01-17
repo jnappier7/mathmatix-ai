@@ -75,6 +75,14 @@ class WhiteboardChatLayout {
             };
         }
 
+        // Add split-screen toggle button listener
+        const splitScreenBtn = document.getElementById('split-screen-btn');
+        if (splitScreenBtn) {
+            splitScreenBtn.addEventListener('click', () => {
+                this.toggleSplitScreen();
+            });
+        }
+
         // Also listen for visual command execution
         document.addEventListener('visualCommandExecuted', (e) => {
             // Whiteboard was just used
@@ -119,8 +127,9 @@ class WhiteboardChatLayout {
     onWhiteboardClose() {
         this.isWhiteboardOpen = false;
         document.body.classList.remove('whiteboard-active');
-        document.body.classList.remove('whiteboard-split-screen');
 
+        // Clean up all modes
+        this.disableSplitScreen();
         this.hideMessageTicker();
         this.hidePIPWidget();
 
@@ -274,7 +283,37 @@ class WhiteboardChatLayout {
 
     enableSplitScreen() {
         document.body.classList.add('whiteboard-split-screen');
+        this.updateSplitScreenButton(true);
         console.log('[Layout] Split-screen mode enabled');
+    }
+
+    disableSplitScreen() {
+        document.body.classList.remove('whiteboard-split-screen');
+        this.updateSplitScreenButton(false);
+        console.log('[Layout] Split-screen mode disabled');
+    }
+
+    toggleSplitScreen() {
+        if (this.mode === 'split-screen') {
+            // Switch to message-ticker mode
+            this.setMode('message-ticker');
+        } else {
+            // Switch to split-screen mode
+            this.setMode('split-screen');
+        }
+    }
+
+    updateSplitScreenButton(isActive) {
+        const splitScreenBtn = document.getElementById('split-screen-btn');
+        if (splitScreenBtn) {
+            if (isActive) {
+                splitScreenBtn.style.background = 'rgba(255, 255, 255, 0.4)';
+                splitScreenBtn.style.transform = 'scale(1.05)';
+            } else {
+                splitScreenBtn.style.background = '';
+                splitScreenBtn.style.transform = '';
+            }
+        }
     }
 
     // ============================================
@@ -356,8 +395,8 @@ class WhiteboardChatLayout {
             // Medium screens: Message ticker
             this.mode = 'message-ticker';
         } else {
-            // Large screens: Split-screen
-            this.mode = 'message-ticker'; // Default to ticker (less disruptive)
+            // Large screens: Default to split-screen for better visibility
+            this.mode = 'split-screen';
         }
 
         // Check user preference from localStorage
@@ -449,6 +488,39 @@ class WhiteboardChatLayout {
     forceShowTicker() {
         this.isWhiteboardOpen = true;
         this.showMessageTicker();
+    }
+
+    /**
+     * Set layout mode manually
+     */
+    setLayoutMode(mode) {
+        const validModes = ['message-ticker', 'split-screen', 'pip', 'compact'];
+        if (!validModes.includes(mode)) {
+            console.error(`[Layout] Invalid mode: ${mode}`);
+            return;
+        }
+
+        // Clear previous mode
+        this.onWhiteboardClose();
+
+        // Set new mode
+        this.mode = mode;
+
+        // Apply new mode if whiteboard is open
+        if (this.isWhiteboardOpen || !window.whiteboard.panel.classList.contains('is-hidden')) {
+            this.onWhiteboardOpen();
+        }
+
+        // Save preference to localStorage
+        try {
+            if (window.StorageUtils) {
+                StorageUtils.local.setItem('whiteboardLayoutMode', mode);
+            }
+        } catch (e) {
+            console.warn('[Layout] Could not save layout mode preference:', e);
+        }
+
+        console.log(`✅ [Layout] Mode changed to: ${mode}`);
     }
 }
 

@@ -10,6 +10,7 @@ let currentAudioSource = null;
 let fabricCanvas = null;
 let whiteboard = null; // New whiteboard instance
 let attachedFile = null;
+let isRapportBuilding = false; // Track if user is in rapport building phase
 
 // Enhanced audio playback state
 let audioState = {
@@ -152,6 +153,47 @@ function getGraphColor(index) {
         '#65a30d'  // lime
     ];
     return colors[index % colors.length];
+}
+
+// Convert math expression to Desmos-compatible LaTeX
+function convertToDesmosLaTeX(expr) {
+    // If already in LaTeX format, return as-is
+    if (expr.includes('\\frac') || expr.includes('\\sqrt')) {
+        return expr;
+    }
+
+    let latex = expr.trim();
+
+    // Handle fractions: (a/b) -> \frac{a}{b}
+    // This handles nested parentheses properly
+    latex = latex.replace(/\(([^()]+)\/([^()]+)\)/g, '\\frac{$1}{$2}');
+
+    // Handle simple fractions without parens: a/b where a and b are simple terms
+    latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
+
+    // Handle implicit multiplication: 2x -> 2*x (Desmos handles this)
+    // But remove explicit * signs as Desmos prefers implicit
+    latex = latex.replace(/\*+/g, '');
+
+    // Handle powers: x^2 -> x^{2}, x^10 -> x^{10}
+    latex = latex.replace(/\^(\d+)/g, '^{$1}');
+    latex = latex.replace(/\^([a-zA-Z])/g, '^{$1}');
+
+    // Handle square roots: sqrt(x) -> \sqrt{x}
+    latex = latex.replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}');
+
+    // Handle trig functions
+    latex = latex.replace(/sin\(/g, '\\sin(');
+    latex = latex.replace(/cos\(/g, '\\cos(');
+    latex = latex.replace(/tan\(/g, '\\tan(');
+
+    // Handle absolute value: abs(x) -> |x| or \left|x\right|
+    latex = latex.replace(/abs\(([^)]+)\)/g, '\\left|$1\\right|');
+
+    // Clean up any double backslashes
+    latex = latex.replace(/\\\\/g, '\\');
+
+    return latex;
 }
 
 function generateSpeakableText(text) {
@@ -635,9 +677,58 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Export menu with dropdown
         const downloadBtn = document.getElementById('download-btn');
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', () => whiteboard.downloadImage());
+        const exportMenu = document.getElementById('export-menu');
+        if (downloadBtn && exportMenu) {
+            // Toggle menu on click
+            downloadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                exportMenu.style.display = exportMenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Handle export options
+            document.querySelectorAll('.export-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    const exportType = e.currentTarget.dataset.export;
+                    switch(exportType) {
+                        case 'png':
+                            whiteboard.exportToPNG();
+                            break;
+                        case 'pdf':
+                            whiteboard.exportToPDF();
+                            break;
+                        case 'clipboard':
+                            whiteboard.copyToClipboard();
+                            break;
+                    }
+                    exportMenu.style.display = 'none';
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!downloadBtn.contains(e.target) && !exportMenu.contains(e.target)) {
+                    exportMenu.style.display = 'none';
+                }
+            });
+        }
+
+        // Region overlay toggle
+        const regionOverlayBtn = document.getElementById('region-overlay-btn');
+        if (regionOverlayBtn) {
+            regionOverlayBtn.addEventListener('click', () => {
+                whiteboard.toggleRegionOverlay();
+                regionOverlayBtn.classList.toggle('active');
+            });
+        }
+
+        // Shortcuts help
+        const shortcutsHelpBtn = document.getElementById('shortcuts-help-btn');
+        if (shortcutsHelpBtn) {
+            shortcutsHelpBtn.addEventListener('click', () => {
+                whiteboard.toggleShortcutsPanel();
+            });
         }
 
         const sendToAiBtn = document.getElementById('send-to-ai-btn');
@@ -689,17 +780,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Panel controls
-        const minimizeBtn = document.getElementById('minimize-whiteboard-btn');
-        if (minimizeBtn) {
-            minimizeBtn.addEventListener('click', () => whiteboard.minimize());
-        }
-
-        const maximizeBtn = document.getElementById('maximize-whiteboard-btn');
-        if (maximizeBtn) {
-            maximizeBtn.addEventListener('click', () => whiteboard.maximize());
-        }
-
+        // Panel controls are now handled in whiteboard.js setupPanelControls()
+        // Open whiteboard button (when closed)
         const openWhiteboardBtn = document.getElementById('open-whiteboard-btn');
         if (openWhiteboardBtn) {
             openWhiteboardBtn.addEventListener('click', () => {
@@ -708,31 +790,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (!whiteboard) return;
-
-            // Ctrl/Cmd + Z = Undo
-            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
-                e.preventDefault();
-                whiteboard.undo();
-            }
-
-            // Ctrl/Cmd + Shift + Z or Ctrl/Cmd + Y = Redo
-            if ((e.ctrlKey || e.metaKey) && (e.shiftKey && e.key === 'z' || e.key === 'y')) {
-                e.preventDefault();
-                whiteboard.redo();
-            }
-
-            // Delete/Backspace = Delete selected
-            if (e.key === 'Delete' || e.key === 'Backspace') {
-                const activeElement = document.activeElement;
-                if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                    whiteboard.deleteSelected();
-                }
-            }
-        });
+        // Keyboard shortcuts now handled in whiteboard.js setupKeyboardShortcuts()
     }
 
     function updateDrawingMode() {
@@ -1336,8 +1394,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    /**
+     * Check rapport building status
+     * Sets global isRapportBuilding flag
+     */
+    async function checkRapportStatus() {
+        try {
+            const res = await fetch('/api/rapport/status', { credentials: 'include' });
+            if (res.ok) {
+                const data = await res.json();
+                isRapportBuilding = !data.rapportComplete;
+                console.log('[Rapport] Status:', data);
+                return data;
+            }
+        } catch (error) {
+            console.error('[Rapport] Failed to check status:', error);
+        }
+        isRapportBuilding = false;
+        return null;
+    }
+
     async function getWelcomeMessage() {
         try {
+            // Check rapport building status first
+            await checkRapportStatus();
+
             // Check if currently in mastery mode
             const inMasteryMode = window.StorageUtils
                 ? StorageUtils.session.getItem('masteryModeActive') === 'true'
@@ -1871,21 +1952,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         // Add each expression to the calculator
                         expressions.forEach((expr, index) => {
-                            // Parse expression - handle both y= format and raw expressions
-                            let latex = expr;
+                            // Parse expression and convert to LaTeX
+                            let latex = convertToDesmosLaTeX(expr);
 
-                            // If expression contains backslashes, it's already in LaTeX format
-                            // Otherwise, convert common notation
-                            if (!latex.includes('\\')) {
-                                latex = latex
-                                    .replace(/\*/g, '') // Remove multiplication signs
-                                    .replace(/Math\.(sin|cos|tan|sqrt|abs|log|ln)/g, '\\$1'); // Convert Math functions
-                            }
+                            console.log(`[Desmos] Expression ${index}: "${expr}" -> "${latex}"`);
 
                             calculator.setExpression({
                                 id: `expr-${index}`,
                                 latex: latex,
-                                color: getGraphColor(index)
+                                color: getGraphColor(index),
+                                lineStyle: Desmos.Styles.SOLID,
+                                lineWidth: 2,
+                                hidden: false
                             });
                         });
 
@@ -2280,6 +2358,41 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
         let response;
 
+        // RAPPORT BUILDING MODE: Route to rapport endpoint
+        if (isRapportBuilding && attachedFiles.length === 0) {
+            response = await csrfFetch('/api/rapport/respond', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: messageText }),
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`;
+                throw new Error(errorMessage);
+            }
+
+            const data = await response.json();
+
+            // Update rapport status
+            if (data.rapportComplete) {
+                isRapportBuilding = false;
+                console.log('[Rapport] Building complete!');
+            }
+
+            // Display AI response
+            appendMessage(data.message, "ai");
+
+            // TTS if enabled
+            if (data.voiceId) {
+                playTextToSpeech(data.message, data.voiceId);
+            }
+
+            showThinkingIndicator(false);
+            return;
+        }
+
         // Multi-file upload support
         if (attachedFiles.length > 0) {
             console.log(`[Frontend] Sending ${attachedFiles.length} file(s) to /api/chat-with-file`);
@@ -2396,10 +2509,15 @@ document.addEventListener("DOMContentLoaded", () => {
             triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
 
             // Show XP notification in live feed
-            if (typeof window.showXpNotification === 'function' && data.xpAmount) {
+            if (typeof window.showXpNotification === 'function') {
+                // Use xpAwarded if available, otherwise parse from specialXpAwarded
+                const xpAmount = data.xpAwarded || (data.xpAmount || 10);
                 const reason = data.specialXpAwarded.replace('🎉 ', '').replace('⭐ ', '').replace('🎊 ', '').split('!')[0];
-                window.showXpNotification(data.xpAmount, reason);
+                window.showXpNotification(xpAmount, reason);
             }
+        } else if (data.xpAwarded && typeof window.showXpNotification === 'function') {
+            // Show regular XP notification even without bonus
+            window.showXpNotification(data.xpAwarded, 'Question answered');
         }
 
         // Smart streak tracking - only when AI explicitly signals problem correctness

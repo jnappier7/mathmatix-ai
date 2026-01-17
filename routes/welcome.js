@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
+const ScreenerSession = require('../models/screenerSession');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
 const TUTOR_CONFIG = require("../utils/tutorConfig");
@@ -63,6 +64,9 @@ router.get('/', async (req, res) => {
             }
         }
 
+        // Check for incomplete screener session (resumption)
+        const activeScreenerSession = await ScreenerSession.getActiveSession(userId);
+
         // Check if user needs skills assessment
         const assessmentNeeded = await needsAssessment(userId);
 
@@ -80,17 +84,63 @@ router.get('/', async (req, res) => {
         let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
         let userMessagePart;
 
-        // --- NATURAL WELCOME MESSAGE PROMPT ---
-        if (assessmentNeeded) {
-            // First-time user or assessment needed - offer skills assessment
-            userMessagePart = `Write a warm, brief greeting for ${user.firstName} (1-2 sentences). Introduce yourself and suggest starting with a quick skills assessment to personalize their learning. Make it sound exciting and low-pressure, not like a test. Keep it conversational and friendly.`;
-        } else if (contextType !== 'none') {
-             messagesForAI.push({ role: "system", content: `(Last session context: \n${lastContextForAI})` });
-             userMessagePart = `Write a quick, casual greeting for ${user.firstName}. Keep it SHORT (1-2 sentences max). Sound natural, like you're texting. Sometimes reference last session, sometimes don't - mix it up. When you do reference it, vary your approach: don't always say "I remember how you..." or "I was thinking about..." Just dive in naturally. Then ask what they want to work on. BANNED PHRASES: "Great to see you", "Welcome back", "I remember how you solved", "I was thinking about how you", "that tricky problem", "Ready to dive into". Be creative.`;
-        } else {
-            userMessagePart = `Write a quick, casual greeting for ${user.firstName}. Keep it SHORT (1-2 sentences). Sound friendly and human, not robotic. Ask what they want to work on. NO canned phrases.`;
+        // Get time of day for natural greetings
+        const hour = new Date().getHours();
+        let timeContext = '';
+        if (hour < 12) timeContext = 'morning';
+        else if (hour < 17) timeContext = 'afternoon';
+        else timeContext = 'evening';
+
+        // --- DYNAMIC WELCOME MESSAGE BASED ON USER STATE ---
+
+        // NEW USER: Start rapport building
+        if (!user.rapportBuildingComplete && !user.assessmentCompleted) {
+            messagesForAI.push({
+                role: "system",
+                content: `This is a brand new student. Your goal is to build rapport naturally before any assessment. Time of day: ${timeContext}.`
+            });
+            userMessagePart = `Write a warm, natural greeting for ${user.firstName}. Introduce yourself as their math tutor. Sound like you're meeting a new friend - curious and friendly, not formal. Ask ONE getting-to-know-you question to start building rapport (like what they're interested in, what they're working on in school, or what they'd like to get better at). Keep it conversational and laid back. 2-3 sentences max.`;
         }
-        // --- END OF REVISED PROMPT SECTION ---
+
+        // RAPPORT BUILDING IN PROGRESS: Continue the conversation
+        else if (!user.rapportBuildingComplete && user.rapportAnswers && Object.keys(user.rapportAnswers).length > 0) {
+            messagesForAI.push({
+                role: "system",
+                content: `Continuing rapport-building. What we know so far: ${JSON.stringify(user.rapportAnswers)}`
+            });
+            userMessagePart = `You're getting to know ${user.firstName}. Continue building rapport with another natural question. Reference what you learned (${JSON.stringify(user.rapportAnswers)}). Mix it up - don't use the same question format twice. Sound like texting a friend. After 3-4 questions total, naturally transition to suggesting you see where they're at with some problems.`;
+        }
+
+        // INCOMPLETE ASSESSMENT: Offer to resume
+        else if (activeScreenerSession && !user.assessmentCompleted) {
+            const questionsCompleted = activeScreenerSession.questionCount || 0;
+            messagesForAI.push({
+                role: "system",
+                content: `Returning user with incomplete assessment. They answered ${questionsCompleted} questions already.`
+            });
+            userMessagePart = `Write a casual greeting for ${user.firstName}. Note that they started the placement assessment (${questionsCompleted} questions done) but didn't finish. Offer to continue where they left off or start fresh - keep it super casual and no-pressure. Sound like you're texting. 2 sentences max.`;
+        }
+
+        // ASSESSMENT NEEDED (but rapport complete)
+        else if (assessmentNeeded && user.rapportBuildingComplete) {
+            userMessagePart = `Write a brief, natural transition for ${user.firstName} to start the placement assessment. Reference that you've chatted a bit, now you want to see where they're at. Make it sound exciting and low-pressure. 2 sentences max. Don't call it a "test" - just say you want to see what they know.`;
+        }
+
+        // RETURNING USER: Natural welcome back
+        else if (contextType !== 'none') {
+            messagesForAI.push({
+                role: "system",
+                content: `Returning student. Time: ${timeContext}. Last session: ${lastContextForAI}`
+            });
+            userMessagePart = `Write a quick, natural greeting for ${user.firstName}. Time of day: ${timeContext}. Sound like you're texting. Vary your style - sometimes reference last session casually, sometimes just say hi and ask what they want to work on. Keep it SHORT (1-2 sentences). Mix up your greetings - use different phrases each time. NO formulaic openings like "Great to see you" or "Welcome back". Be spontaneous and genuine.`;
+        }
+
+        // FALLBACK: Simple natural greeting
+        else {
+            messagesForAI.push({ role: "system", content: `Time of day: ${timeContext}` });
+            userMessagePart = `Write a short, friendly greeting for ${user.firstName}. Time: ${timeContext}. Sound natural and human. Ask what they want to work on. 1-2 sentences. Vary your greetings - don't use the same phrases twice.`;
+        }
+        // --- END OF DYNAMIC WELCOME LOGIC ---
         
         messagesForAI.push({ role: "user", content: userMessagePart });
 

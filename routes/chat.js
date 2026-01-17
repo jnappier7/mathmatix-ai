@@ -253,7 +253,7 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             res.flushHeaders();
 
             try {
-                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 800 });
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
 
                 // Buffer to collect the complete response for database storage
                 let fullResponseBuffer = '';
@@ -305,13 +305,13 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             } catch (streamError) {
                 console.error('ERROR: Streaming failed, falling back to non-streaming:', streamError.message);
                 // Fallback to non-streaming if streaming fails
-                const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 800 });
+                const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
                 aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
                 res.write(`data: ${JSON.stringify({ type: 'chunk', content: aiResponseText })}\n\n`);
             }
         } else {
             // NON-STREAMING MODE: Original behavior
-            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 800 });
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 1500 });
             aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
         }
 
@@ -542,24 +542,27 @@ if (!message) return res.status(400).json({ message: "Message is required." });
 
         await activeConversation.save();
 
+        // Detect if a problem was just answered based on AI response keywords
+        // This is used for both badge tracking AND live stats updates
+        const latestAIResponse = aiResponseText.toLowerCase();
+        let problemAnswered = false;
+        let wasCorrect = false;
+
+        // Detect correctness from AI response
+        if (latestAIResponse.includes('correct') || latestAIResponse.includes('exactly') ||
+            latestAIResponse.includes('great job') || latestAIResponse.includes('perfect') ||
+            latestAIResponse.includes('well done')) {
+            problemAnswered = true;
+            wasCorrect = true;
+        } else if (latestAIResponse.includes('not quite') || latestAIResponse.includes('try again') ||
+                   latestAIResponse.includes('almost') || latestAIResponse.includes('incorrect') ||
+                   latestAIResponse.includes('not exactly')) {
+            problemAnswered = true;
+            wasCorrect = false;
+        }
+
         // Track badge progress if user has an active badge
         if (user.masteryProgress?.activeBadge) {
-            const latestAIResponse = aiResponseText.toLowerCase();
-            let problemAnswered = false;
-            let wasCorrect = false;
-
-            // Detect if a problem was just answered based on AI response keywords
-            if (latestAIResponse.includes('correct') || latestAIResponse.includes('exactly') ||
-                latestAIResponse.includes('great job') || latestAIResponse.includes('perfect') ||
-                latestAIResponse.includes('well done')) {
-                problemAnswered = true;
-                wasCorrect = true;
-            } else if (latestAIResponse.includes('not quite') || latestAIResponse.includes('try again') ||
-                       latestAIResponse.includes('almost') || latestAIResponse.includes('incorrect') ||
-                       latestAIResponse.includes('not exactly')) {
-                problemAnswered = true;
-                wasCorrect = false;
-            }
 
             // Update badge progress if a problem was answered
             if (problemAnswered) {
@@ -636,12 +639,19 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             userLevel: user.level,
             xpNeeded: xpForNextLevel,
             specialXpAwarded: specialXpAwardedMessage,
+            xpAwarded: xpAward, // NEW: XP earned this turn for live feed
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
             drawingSequence: dynamicDrawingSequence,
             visualCommands: visualCommands, // Visual teaching: whiteboard, algebra tiles, images
             boardContext: boardContext, // Board-first chat integration: spatial anchoring data
-            iepFeatures: iepFeatures // IEP accommodations for frontend to auto-enable features
+            iepFeatures: iepFeatures, // IEP accommodations for frontend to auto-enable features
+            // NEW: Problem-solving stats for live stats tracker
+            problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
+            sessionStats: {
+                problemsAttempted: activeConversation.problemsAttempted || 0,
+                problemsCorrect: activeConversation.problemsCorrect || 0
+            }
         };
 
         if (useStreaming) {
@@ -723,7 +733,7 @@ async function handleParentChat(req, res, parentId, childId, message) {
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, {
             system: systemPrompt,
             temperature: 0.7,
-            max_tokens: 500
+            max_tokens: 800
         });
 
         let aiResponseText = completion.choices[0]?.message?.content?.trim() || "I apologize, I'm having trouble responding right now.";

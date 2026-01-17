@@ -78,7 +78,7 @@ async function chat(context, options = {}) {
 
     const model = options.model || DEFAULT_MODELS.chat;
     const temperature = options.temperature || 0.7;
-    const maxTokens = options.maxTokens || 400;
+    const maxTokens = options.maxTokens || 1500;
 
     // Call LLM
     const completion = await callLLM(model, messagesForAI, {
@@ -129,7 +129,7 @@ async function chatStream(context, options = {}) {
 
     const model = options.model || DEFAULT_MODELS.chat;
     const temperature = options.temperature || 0.7;
-    const maxTokens = options.maxTokens || 400;
+    const maxTokens = options.maxTokens || 1500;
 
     // Call streaming LLM
     const stream = await callLLMStream(model, messagesForAI, {

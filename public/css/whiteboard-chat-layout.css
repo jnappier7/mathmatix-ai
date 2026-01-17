@@ -353,19 +353,36 @@ body.whiteboard-active #chat-pip-widget {
         width: 500px;
         height: 600px;
     }
+
+    /* Adjust split-screen for medium screens - give more space to whiteboard */
+    body.whiteboard-split-screen #chat-container {
+        width: calc(45vw - 30px);
+        max-width: calc(45vw - 30px);
+    }
+
+    body.whiteboard-split-screen #whiteboard-panel:not(.maximized) {
+        width: calc(55vw - 20px);
+    }
 }
 
 @media (max-width: 1024px) {
-    /* Mobile: Whiteboard becomes modal overlay */
-    body.whiteboard-active #whiteboard-panel {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 90vw;
-        height: 80vh;
-        max-width: 600px;
-        max-height: 700px;
+    /* Disable split-screen on smaller screens - revert to overlay mode */
+    body.whiteboard-split-screen #chat-container {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Mobile: Whiteboard becomes modal overlay even in split-screen mode */
+    body.whiteboard-active #whiteboard-panel,
+    body.whiteboard-split-screen #whiteboard-panel:not(.maximized) {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90vw !important;
+        height: 80vh !important;
+        max-width: 600px !important;
+        max-height: 700px !important;
     }
 
     /* Show backdrop */

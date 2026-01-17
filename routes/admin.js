@@ -707,4 +707,168 @@ router.delete('/users/:userId', isAdmin, async (req, res) => {
   }
 });
 
+// -----------------------------------------------------------------------------
+// --- Alpha Testing: Survey Responses ---
+// -----------------------------------------------------------------------------
+
+/**
+ * @route   GET /api/admin/survey-responses
+ * @desc    Get all survey responses from all users for alpha testing analysis
+ * @access  Private (Admin)
+ */
+router.get('/survey-responses', isAdmin, async (req, res) => {
+  try {
+    const { limit = 100, skip = 0, sortBy = 'submittedAt', order = 'desc' } = req.query;
+
+    // Fetch all users who have submitted survey responses
+    const users = await User.find(
+      { 'sessionSurveys.responses.0': { $exists: true } },
+      'firstName lastName email username role sessionSurveys.responses sessionSurveys.responsesCount'
+    ).lean();
+
+    // Flatten all responses with user info
+    const allResponses = [];
+    for (const user of users) {
+      if (user.sessionSurveys && user.sessionSurveys.responses) {
+        for (const response of user.sessionSurveys.responses) {
+          allResponses.push({
+            ...response,
+            userId: user._id,
+            userEmail: user.email,
+            userName: `${user.firstName} ${user.lastName}`,
+            userRole: user.role
+          });
+        }
+      }
+    }
+
+    // Sort responses
+    allResponses.sort((a, b) => {
+      const aVal = a[sortBy] || a.submittedAt;
+      const bVal = b[sortBy] || b.submittedAt;
+      if (order === 'asc') {
+        return aVal > bVal ? 1 : -1;
+      } else {
+        return aVal < bVal ? 1 : -1;
+      }
+    });
+
+    // Calculate statistics
+    const stats = {
+      totalResponses: allResponses.length,
+      totalUsers: users.length,
+      averageRating: 0,
+      averageHelpfulness: 0,
+      averageDifficulty: 0,
+      averageWillingness: 0,
+      experienceBreakdown: {},
+      ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+    };
+
+    let ratingSum = 0, helpfulnessSum = 0, difficultySum = 0, willingnessSum = 0;
+    let ratingCount = 0, helpfulnessCount = 0, difficultyCount = 0, willingnessCount = 0;
+
+    for (const response of allResponses) {
+      if (response.rating) {
+        ratingSum += response.rating;
+        ratingCount++;
+        stats.ratingDistribution[response.rating]++;
+      }
+      if (response.helpfulness) {
+        helpfulnessSum += response.helpfulness;
+        helpfulnessCount++;
+      }
+      if (response.difficulty) {
+        difficultySum += response.difficulty;
+        difficultyCount++;
+      }
+      if (response.willingness !== undefined && response.willingness !== null) {
+        willingnessSum += response.willingness;
+        willingnessCount++;
+      }
+      if (response.experience) {
+        stats.experienceBreakdown[response.experience] =
+          (stats.experienceBreakdown[response.experience] || 0) + 1;
+      }
+    }
+
+    stats.averageRating = ratingCount > 0 ? (ratingSum / ratingCount).toFixed(2) : 0;
+    stats.averageHelpfulness = helpfulnessCount > 0 ? (helpfulnessSum / helpfulnessCount).toFixed(2) : 0;
+    stats.averageDifficulty = difficultyCount > 0 ? (difficultySum / difficultyCount).toFixed(2) : 0;
+    stats.averageWillingness = willingnessCount > 0 ? (willingnessSum / willingnessCount).toFixed(2) : 0;
+
+    // Pagination
+    const paginatedResponses = allResponses.slice(parseInt(skip), parseInt(skip) + parseInt(limit));
+
+    res.json({
+      success: true,
+      stats,
+      responses: paginatedResponses,
+      pagination: {
+        total: allResponses.length,
+        limit: parseInt(limit),
+        skip: parseInt(skip),
+        hasMore: parseInt(skip) + parseInt(limit) < allResponses.length
+      }
+    });
+
+  } catch (err) {
+    console.error('Error fetching survey responses for admin:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Server error fetching survey responses.'
+    });
+  }
+});
+
+/**
+ * @route   GET /api/admin/survey-stats
+ * @desc    Get aggregated statistics for survey responses
+ * @access  Private (Admin)
+ */
+router.get('/survey-stats', isAdmin, async (req, res) => {
+  try {
+    const users = await User.find(
+      {},
+      'sessionSurveys.responses sessionSurveys.responsesCount tourCompleted tourDismissed'
+    ).lean();
+
+    const stats = {
+      totalUsers: users.length,
+      usersWithResponses: 0,
+      totalResponses: 0,
+      tourCompletedCount: 0,
+      tourDismissedCount: 0,
+      averageResponsesPerUser: 0,
+      recentResponses: []
+    };
+
+    for (const user of users) {
+      if (user.tourCompleted) stats.tourCompletedCount++;
+      if (user.tourDismissed) stats.tourDismissedCount++;
+
+      if (user.sessionSurveys && user.sessionSurveys.responses && user.sessionSurveys.responses.length > 0) {
+        stats.usersWithResponses++;
+        stats.totalResponses += user.sessionSurveys.responses.length;
+      }
+    }
+
+    stats.averageResponsesPerUser = stats.usersWithResponses > 0
+      ? (stats.totalResponses / stats.usersWithResponses).toFixed(2)
+      : 0;
+
+    res.json({
+      success: true,
+      stats
+    });
+
+  } catch (err) {
+    console.error('Error fetching survey stats for admin:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Server error fetching survey statistics.'
+    });
+  }
+});
+
 module.exports = router;

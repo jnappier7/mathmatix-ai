@@ -75,6 +75,7 @@ const voiceTestRoutes = require('./routes/voice-test');  // Voice diagnostics
 const uploadRoutes = require('./routes/upload');
 const chatWithFileRoutes = require('./routes/chatWithFile'); 
 const welcomeRoutes = require('./routes/welcome');
+const rapportBuildingRoutes = require('./routes/rapportBuilding');
 const { router: memoryRouter } = require('./routes/memory');
 const guidedLessonRoutes = require('./routes/guidedLesson');
 const summaryGeneratorRouter = require('./routes/summary_generator');
@@ -98,6 +99,7 @@ const celerationRoutes = require('./routes/celeration');  // Standard Celeration
 const characterRiggingRoutes = require('./routes/characterRigging');  // Character Rigging Portal for animation
 const sessionRoutes = require('./routes/session');  // Session management and tracking
 const feedbackRoutes = require('./routes/feedback');  // User feedback and bug reports
+const tourSurveyRoutes = require('./routes/tourSurvey');  // Tour and survey for alpha testing
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -305,6 +307,7 @@ app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (n
 app.use('/api/upload', isAuthenticated, aiEndpointLimiter, uploadRoutes); // SECURITY FIX: Added per-user rate limiting
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, chatWithFileRoutes); // SECURITY FIX: Added per-user rate limiting 
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
+app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
 app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
@@ -328,6 +331,7 @@ app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Chart
 app.use('/api/character-rigging', isAuthenticated, characterRiggingRoutes); // Character Rigging Portal for animation
 app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (idle timeout, auto-save, summaries)
 app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and bug reports for Alpha testing
+app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for alpha testing
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
