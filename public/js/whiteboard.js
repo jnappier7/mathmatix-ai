@@ -587,6 +587,20 @@ class MathmatixWhiteboard {
         } = options;
 
         try {
+            // Check if canvas is initialized
+            if (!this.canvas) {
+                console.error('Canvas not initialized. Cannot plot function.');
+                return;
+            }
+
+            const width = this.canvas.width || this.canvas.getWidth();
+            const height = this.canvas.height || this.canvas.getHeight();
+
+            if (width === 0 || height === 0) {
+                console.error(`Canvas has invalid dimensions: ${width}x${height}. Cannot plot function.`);
+                return;
+            }
+
             // Preprocess: Handle implicit multiplication (2x -> 2*x, 3x^2 -> 3*x^2, etc.)
             let processedFunc = funcString
                 .replace(/(\d+)([a-zA-Z])/g, '$1*$2')  // 2x -> 2*x
@@ -594,11 +608,11 @@ class MathmatixWhiteboard {
                 .replace(/([a-zA-Z])\(/g, '$1*(')       // x( -> x*(
                 .replace(/\^/g, '**');                  // x^2 -> x**2
 
+            console.log(`[Whiteboard] Plotting function: ${funcString} (processed: ${processedFunc})`);
+
             // Parse function (simple evaluation)
             const func = new Function('x', `return ${processedFunc}`);
 
-            const width = this.canvas.width;
-            const height = this.canvas.height;
             const centerX = width / 2;
             const centerY = height / 2;
             const gridSize = 30;
@@ -621,7 +635,9 @@ class MathmatixWhiteboard {
             }
 
             if (points.length < 2) {
-                console.error('Not enough valid points to plot');
+                console.error(`Not enough valid points to plot for function: ${funcString}`);
+                console.error(`Canvas dimensions: ${width}x${height}, Generated ${points.length} points`);
+                console.error('Tip: Make sure the whiteboard is visible and has been initialized properly');
                 return;
             }
 
@@ -635,6 +651,7 @@ class MathmatixWhiteboard {
 
             this.canvas.add(polyline);
             this.canvas.renderAll();
+            console.log(`✅ Plotted function with ${points.length} points`);
         } catch (error) {
             console.error('Error plotting function:', error);
         }
@@ -1945,7 +1962,7 @@ class MathmatixWhiteboard {
             <div class="shortcuts-content">
                 <div class="shortcuts-header">
                     <h3>⌨️ Keyboard Shortcuts</h3>
-                    <button class="close-shortcuts-btn" onclick="document.getElementById('shortcuts-help-panel').style.display='none'">×</button>
+                    <button class="close-shortcuts-btn">×</button>
                 </div>
                 <div class="shortcuts-grid">
                     <div class="shortcut-section">
@@ -1981,6 +1998,15 @@ class MathmatixWhiteboard {
                 </div>
             </div>
         `;
+
+        // Add close button event listener (CSP-compliant)
+        const closeBtn = panel.querySelector('.close-shortcuts-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                panel.style.display = 'none';
+            });
+        }
+
         return panel;
     }
 
