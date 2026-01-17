@@ -446,6 +446,32 @@ const userSchema = new Schema({
   /* Preferences */
   preferences: { type: userPreferencesSchema, default: () => ({}) },
 
+  /* Tour & Survey Tracking */
+  tourCompleted: { type: Boolean, default: false },
+  tourCompletedAt: { type: Date },
+  tourDismissed: { type: Boolean, default: false },  // If user dismissed without completing
+
+  sessionSurveys: {
+    enabled: { type: Boolean, default: true },  // Can be disabled by user
+    lastShownAt: { type: Date },
+    nextShowAfter: { type: Date },
+    frequency: { type: String, enum: ['every-session', 'daily', 'weekly', 'never'], default: 'daily' },
+    responsesCount: { type: Number, default: 0 },
+    consecutiveDismissals: { type: Number, default: 0 },  // Track if user keeps dismissing
+    responses: [{
+      submittedAt: { type: Date, default: Date.now },
+      sessionDuration: Number,  // Minutes in session
+      rating: Number,  // 1-5 star rating
+      experience: String,  // 'excellent', 'good', 'okay', 'frustrating', 'confusing'
+      feedback: String,  // Open-ended feedback
+      bugs: String,  // Bug reports
+      features: String,  // Feature requests
+      helpfulness: Number,  // 1-5 rating
+      difficulty: Number,  // 1-5 rating
+      willingness: Number  // 1-5 - how likely to recommend
+    }]
+  },
+
   /* Upload Retention Settings */
   retainUploadsIndefinitely: { type: Boolean, default: false }, // If true, student's uploads won't auto-delete (parent/teacher/admin can set)
 

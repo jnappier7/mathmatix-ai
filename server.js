@@ -98,6 +98,7 @@ const celerationRoutes = require('./routes/celeration');  // Standard Celeration
 const characterRiggingRoutes = require('./routes/characterRigging');  // Character Rigging Portal for animation
 const sessionRoutes = require('./routes/session');  // Session management and tracking
 const feedbackRoutes = require('./routes/feedback');  // User feedback and bug reports
+const tourSurveyRoutes = require('./routes/tourSurvey');  // Tour and survey for alpha testing
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -328,6 +329,7 @@ app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Chart
 app.use('/api/character-rigging', isAuthenticated, characterRiggingRoutes); // Character Rigging Portal for animation
 app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (idle timeout, auto-save, summaries)
 app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and bug reports for Alpha testing
+app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for alpha testing
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {

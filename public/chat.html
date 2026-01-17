@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/css/badgeProgress.css" />
   <link rel="stylesheet" href="/css/algebra-tiles.css" />
   <link rel="stylesheet" href="/css/sidebar-layout.css" />
+  <link rel="stylesheet" href="/css/tour-survey.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -1122,6 +1123,189 @@
   <!-- Algebra Tiles Container -->
   <div id="algebraTilesContainer"></div>
 
+  <!-- Welcome Tour Modal -->
+  <div id="tour-modal" class="modal-overlay tour-overlay">
+    <div class="modal-content tour-content">
+      <div class="tour-progress">
+        <span id="tour-step-indicator">Step <span id="tour-current-step">1</span> of <span id="tour-total-steps">5</span></span>
+        <div class="tour-progress-bar">
+          <div id="tour-progress-fill" class="tour-progress-fill"></div>
+        </div>
+      </div>
+
+      <div id="tour-step-content" class="tour-step-content">
+        <!-- Dynamic content will be inserted here -->
+      </div>
+
+      <div class="tour-actions">
+        <button id="tour-skip-btn" class="btn btn-tertiary">Skip Tour</button>
+        <div class="tour-navigation">
+          <button id="tour-prev-btn" class="btn btn-secondary" style="display: none;">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <button id="tour-next-btn" class="btn btn-primary">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+          <button id="tour-finish-btn" class="btn btn-primary" style="display: none;">
+            Get Started! <i class="fas fa-check"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Feedback Survey Modal -->
+  <div id="survey-modal" class="modal-overlay survey-overlay">
+    <div class="modal-content survey-content">
+      <button class="modal-close-button" id="close-survey-modal-btn">&times;</button>
+      <div class="survey-header">
+        <h2><i class="fas fa-star"></i> Quick Feedback</h2>
+        <p class="survey-subtitle">Help us improve your learning experience! (Alpha Testing)</p>
+      </div>
+
+      <form id="survey-form">
+        <!-- Overall Experience Rating -->
+        <div class="form-group">
+          <label>How was your session today?</label>
+          <div class="star-rating">
+            <input type="radio" id="star5" name="rating" value="5" />
+            <label for="star5" title="Excellent">★</label>
+            <input type="radio" id="star4" name="rating" value="4" />
+            <label for="star4" title="Good">★</label>
+            <input type="radio" id="star3" name="rating" value="3" />
+            <label for="star3" title="Okay">★</label>
+            <input type="radio" id="star2" name="rating" value="2" />
+            <label for="star2" title="Poor">★</label>
+            <input type="radio" id="star1" name="rating" value="1" />
+            <label for="star1" title="Very Poor">★</label>
+          </div>
+        </div>
+
+        <!-- Experience Type -->
+        <div class="form-group">
+          <label for="experience">What best describes your experience?</label>
+          <select id="experience" name="experience" class="form-control">
+            <option value="">Select one...</option>
+            <option value="excellent">Excellent - I learned a lot!</option>
+            <option value="good">Good - It was helpful</option>
+            <option value="okay">Okay - It was fine</option>
+            <option value="frustrating">Frustrating - I had some issues</option>
+            <option value="confusing">Confusing - I didn't understand</option>
+          </select>
+        </div>
+
+        <!-- Helpfulness Rating -->
+        <div class="form-group">
+          <label>How helpful was the tutor?</label>
+          <div class="rating-scale">
+            <input type="radio" id="help1" name="helpfulness" value="1" />
+            <label for="help1">1</label>
+            <input type="radio" id="help2" name="helpfulness" value="2" />
+            <label for="help2">2</label>
+            <input type="radio" id="help3" name="helpfulness" value="3" />
+            <label for="help3">3</label>
+            <input type="radio" id="help4" name="helpfulness" value="4" />
+            <label for="help4">4</label>
+            <input type="radio" id="help5" name="helpfulness" value="5" />
+            <label for="help5">5</label>
+          </div>
+          <div class="rating-labels">
+            <span>Not Helpful</span>
+            <span>Very Helpful</span>
+          </div>
+        </div>
+
+        <!-- Difficulty Rating -->
+        <div class="form-group">
+          <label>How was the difficulty level?</label>
+          <div class="rating-scale">
+            <input type="radio" id="diff1" name="difficulty" value="1" />
+            <label for="diff1">1</label>
+            <input type="radio" id="diff2" name="difficulty" value="2" />
+            <label for="diff2">2</label>
+            <input type="radio" id="diff3" name="difficulty" value="3" />
+            <label for="diff3">3</label>
+            <input type="radio" id="diff4" name="difficulty" value="4" />
+            <label for="diff4">4</label>
+            <input type="radio" id="diff5" name="difficulty" value="5" />
+            <label for="diff5">5</label>
+          </div>
+          <div class="rating-labels">
+            <span>Too Easy</span>
+            <span>Too Hard</span>
+          </div>
+        </div>
+
+        <!-- Open-ended Feedback -->
+        <div class="form-group">
+          <label for="feedback">What went well? What could be better?</label>
+          <textarea id="survey-feedback" name="feedback" class="form-control" rows="3" maxlength="1000" placeholder="Optional: Share your thoughts..."></textarea>
+          <small class="char-counter"><span id="feedback-char-count">0</span>/1000</small>
+        </div>
+
+        <!-- Bugs -->
+        <div class="form-group">
+          <label for="bugs">Did you encounter any bugs or errors?</label>
+          <textarea id="survey-bugs" name="bugs" class="form-control" rows="2" maxlength="500" placeholder="Optional: Describe any issues you faced..."></textarea>
+        </div>
+
+        <!-- Feature Requests -->
+        <div class="form-group">
+          <label for="features">What features would you like to see?</label>
+          <textarea id="survey-features" name="features" class="form-control" rows="2" maxlength="500" placeholder="Optional: Suggest new features..."></textarea>
+        </div>
+
+        <!-- Willingness to Recommend -->
+        <div class="form-group">
+          <label>How likely are you to recommend MathMatix AI to a friend?</label>
+          <div class="nps-scale">
+            <input type="radio" id="nps0" name="willingness" value="0" />
+            <label for="nps0">0</label>
+            <input type="radio" id="nps1" name="willingness" value="1" />
+            <label for="nps1">1</label>
+            <input type="radio" id="nps2" name="willingness" value="2" />
+            <label for="nps2">2</label>
+            <input type="radio" id="nps3" name="willingness" value="3" />
+            <label for="nps3">3</label>
+            <input type="radio" id="nps4" name="willingness" value="4" />
+            <label for="nps4">4</label>
+            <input type="radio" id="nps5" name="willingness" value="5" />
+            <label for="nps5">5</label>
+            <input type="radio" id="nps6" name="willingness" value="6" />
+            <label for="nps6">6</label>
+            <input type="radio" id="nps7" name="willingness" value="7" />
+            <label for="nps7">7</label>
+            <input type="radio" id="nps8" name="willingness" value="8" />
+            <label for="nps8">8</label>
+            <input type="radio" id="nps9" name="willingness" value="9" />
+            <label for="nps9">9</label>
+            <input type="radio" id="nps10" name="willingness" value="10" />
+            <label for="nps10">10</label>
+          </div>
+          <div class="rating-labels">
+            <span>Not Likely</span>
+            <span>Very Likely</span>
+          </div>
+        </div>
+
+        <div class="survey-actions">
+          <button type="button" id="survey-dismiss-btn" class="btn btn-tertiary">Maybe Later</button>
+          <button type="submit" id="survey-submit-btn" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i> Submit Feedback
+          </button>
+        </div>
+
+        <!-- Survey frequency preference -->
+        <div class="survey-footer">
+          <label class="survey-frequency">
+            <input type="checkbox" id="survey-frequency-toggle" />
+            Don't show this survey as often
+          </label>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Load storage utilities FIRST to prevent tracking prevention errors -->
   <script src="/js/storage-utils.js"></script>
   <script src="/js/logout.js"></script>
@@ -1166,5 +1350,7 @@
   <script src="/js/guidedPath.js" type="module"></script>
 <script src="/js/sessionManager.js"></script>
 <script src="/js/feedback.js"></script>
+<script src="/js/tour.js"></script>
+<script src="/js/survey.js"></script>
 </body>
 </html>

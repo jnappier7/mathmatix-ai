@@ -1,0 +1,471 @@
+/* ===================================
+   TOUR MODAL STYLES
+   =================================== */
+
+.tour-overlay {
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+}
+
+.tour-content {
+  max-width: 700px;
+  width: 90%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.tour-progress {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tour-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.tour-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+  border-radius: 3px;
+  transition: width 0.4s ease-in-out;
+}
+
+#tour-step-indicator {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.tour-step-content {
+  padding: 40px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: white;
+  color: #333;
+}
+
+.tour-step-content h3 {
+  font-size: 28px;
+  margin-bottom: 15px;
+  color: #667eea;
+  font-weight: 700;
+}
+
+.tour-step-content .tour-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  color: #667eea;
+  animation: tour-icon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tour-icon-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.tour-step-content p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+  max-width: 500px;
+  margin-bottom: 20px;
+}
+
+.tour-step-content ul {
+  text-align: left;
+  margin: 20px 0;
+  padding-left: 20px;
+  max-width: 500px;
+}
+
+.tour-step-content li {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.tour-step-content .tour-highlight {
+  background: rgba(102, 126, 234, 0.1);
+  padding: 15px 20px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  margin: 20px 0;
+  max-width: 500px;
+}
+
+.tour-actions {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tour-navigation {
+  display: flex;
+  gap: 10px;
+}
+
+#tour-skip-btn {
+  opacity: 0.7;
+}
+
+#tour-skip-btn:hover {
+  opacity: 1;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .tour-content {
+    width: 95%;
+    max-width: none;
+  }
+
+  .tour-step-content {
+    padding: 30px 20px;
+    min-height: 250px;
+  }
+
+  .tour-step-content h3 {
+    font-size: 22px;
+  }
+
+  .tour-step-content .tour-icon {
+    font-size: 48px;
+  }
+
+  .tour-actions {
+    padding: 15px 20px;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .tour-navigation {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  #tour-skip-btn {
+    width: 100%;
+  }
+}
+
+/* ===================================
+   SURVEY MODAL STYLES
+   =================================== */
+
+.survey-overlay {
+  z-index: 9999;
+}
+
+.survey-content {
+  max-width: 600px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.survey-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.survey-header h2 {
+  color: #667eea;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.survey-subtitle {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+#survey-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+#survey-form .form-group {
+  margin-bottom: 0;
+}
+
+#survey-form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 15px;
+}
+
+/* Star Rating */
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: 5px;
+  font-size: 40px;
+}
+
+.star-rating input {
+  display: none;
+}
+
+.star-rating label {
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+  margin: 0;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: #ffc107;
+  transform: scale(1.1);
+}
+
+.star-rating input:checked ~ label {
+  color: #ffc107;
+}
+
+/* Number Rating Scales */
+.rating-scale,
+.nps-scale {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.rating-scale input,
+.nps-scale input {
+  display: none;
+}
+
+.rating-scale label,
+.nps-scale label {
+  flex: 1;
+  padding: 12px 8px;
+  text-align: center;
+  background: #f5f5f5;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+  color: #666;
+  margin: 0;
+}
+
+.rating-scale label:hover,
+.nps-scale label:hover {
+  background: #e8f0fe;
+  border-color: #667eea;
+  transform: translateY(-2px);
+}
+
+.rating-scale input:checked + label,
+.nps-scale input:checked + label {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: white;
+  transform: scale(1.05);
+}
+
+.rating-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+/* NPS Scale specific styling */
+.nps-scale {
+  gap: 4px;
+}
+
+.nps-scale label {
+  padding: 10px 4px;
+  font-size: 13px;
+}
+
+/* Form Controls */
+#survey-form .form-control {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+#survey-form .form-control:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+#survey-form select.form-control {
+  background: white;
+  cursor: pointer;
+}
+
+#survey-form textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.char-counter {
+  display: block;
+  text-align: right;
+  color: #888;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.survey-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.survey-footer {
+  text-align: center;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 10px;
+}
+
+.survey-frequency {
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+}
+
+.survey-frequency input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .survey-content {
+    width: 95%;
+    max-height: 90vh;
+    padding: 20px;
+  }
+
+  .star-rating {
+    font-size: 32px;
+  }
+
+  .rating-scale,
+  .nps-scale {
+    gap: 4px;
+  }
+
+  .rating-scale label {
+    padding: 10px 6px;
+    font-size: 13px;
+  }
+
+  .nps-scale label {
+    padding: 8px 2px;
+    font-size: 11px;
+  }
+
+  .survey-actions {
+    flex-direction: column;
+  }
+
+  .survey-actions button {
+    width: 100%;
+  }
+}
+
+/* Loading state */
+.survey-content.submitting {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.survey-content.submitting::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Success message */
+.survey-success {
+  text-align: center;
+  padding: 40px;
+  color: #4CAF50;
+}
+
+.survey-success i {
+  font-size: 64px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.survey-success h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #4CAF50;
+}
+
+.survey-success p {
+  color: #666;
+  font-size: 14px;
+}
