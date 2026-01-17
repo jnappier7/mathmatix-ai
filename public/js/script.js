@@ -2384,11 +2384,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // Display AI response
             appendMessage(data.message, "ai");
 
-            // TTS if enabled
-            if (data.voiceId) {
-                playTextToSpeech(data.message, data.voiceId);
-            }
-
             showThinkingIndicator(false);
             return;
         }
