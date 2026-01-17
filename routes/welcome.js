@@ -97,9 +97,9 @@ router.get('/', async (req, res) => {
         if (!user.rapportBuildingComplete && !user.assessmentCompleted) {
             messagesForAI.push({
                 role: "system",
-                content: `Brand new student. Keep it super brief and casual. Time: ${timeContext}.`
+                content: `Brand new student (${user.grade || 'grade unknown'}). Keep it super brief and casual. Time: ${timeContext}.`
             });
-            userMessagePart = `Write a casual greeting for ${user.firstName}. Introduce yourself quickly, then ask ONE simple question like "what grade are you in?" or "what are you working on in math class?". Sound relaxed and friendly. 1-2 sentences total. Don't make it feel like an interview.`;
+            userMessagePart = `Write a casual greeting for ${user.firstName}. Introduce yourself quickly, then ask ONE natural, friendly question like "How's your week going?" or "What's up?" or "What are you working on in math lately?". Sound like you're texting a friend, not collecting data. 1-2 sentences total. Don't ask for info you already have (like grade level).`;
         }
 
         // RAPPORT IN PROGRESS: Transition to math quickly

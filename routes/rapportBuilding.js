@@ -81,27 +81,27 @@ router.post('/respond', isAuthenticated, async (req, res) => {
         // Extract information from user's response and generate next message
         const systemPrompt = generateSystemPrompt(user, tutorNameForPrompt, null, 'student');
 
-        const extractionPrompt = `Brief intro chat with ${user.firstName}. Exchange count: ${rapportMessageCount}.
+        const extractionPrompt = `Brief intro chat with ${user.firstName} (Grade: ${user.grade || 'unknown'}). Exchange count: ${rapportMessageCount}.
 
 Current info: ${JSON.stringify(user.rapportAnswers, null, 2)}
 Their message: "${message}"
 
-TASK 1: Extract key info (keep brief):
+TASK 1: Extract conversational insights (keep brief):
 {
-  "currentTopic": "what they're working on in math",
-  "grade": "their grade level if mentioned",
-  "eagerness": "do they seem eager to start? ready to jump in?"
+  "mood": "how they seem (excited/stressed/neutral/eager)",
+  "currentFocus": "what they mentioned working on or struggling with, if any",
+  "readyToStart": "do they seem ready to jump into math?"
 }
 
 TASK 2: Decide if rapport is complete.
 Complete if ANY of these:
 - This is the 2nd user message (after ${rapportMessageCount} exchanges, move on)
-- They seem eager/ready to start (short answers, "let's go", "ready", etc.)
-- You have enough basic info (grade/topic)
+- They seem eager/ready ("let's go", "ready", short answers)
+- They didn't share much (just basic reply)
 
 TASK 3: Your response:
-- If complete: Quick transition to assessment. Sound excited, low-pressure. "Cool, let's see where you're at!"
-- If not complete (only if 1st message AND they gave detailed answer): ONE brief follow-up max. Don't drag it out.
+- If complete: Quick, natural transition to assessment. "Cool! Let's see what you know" or similar. Sound casual.
+- If not complete (only if 1st message AND they shared something specific): ONE brief, natural follow-up. Keep it conversational like texting.
 
 RESPOND IN JSON:
 {
