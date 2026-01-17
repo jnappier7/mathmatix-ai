@@ -542,24 +542,27 @@ if (!message) return res.status(400).json({ message: "Message is required." });
 
         await activeConversation.save();
 
+        // Detect if a problem was just answered based on AI response keywords
+        // This is used for both badge tracking AND live stats updates
+        const latestAIResponse = aiResponseText.toLowerCase();
+        let problemAnswered = false;
+        let wasCorrect = false;
+
+        // Detect correctness from AI response
+        if (latestAIResponse.includes('correct') || latestAIResponse.includes('exactly') ||
+            latestAIResponse.includes('great job') || latestAIResponse.includes('perfect') ||
+            latestAIResponse.includes('well done')) {
+            problemAnswered = true;
+            wasCorrect = true;
+        } else if (latestAIResponse.includes('not quite') || latestAIResponse.includes('try again') ||
+                   latestAIResponse.includes('almost') || latestAIResponse.includes('incorrect') ||
+                   latestAIResponse.includes('not exactly')) {
+            problemAnswered = true;
+            wasCorrect = false;
+        }
+
         // Track badge progress if user has an active badge
         if (user.masteryProgress?.activeBadge) {
-            const latestAIResponse = aiResponseText.toLowerCase();
-            let problemAnswered = false;
-            let wasCorrect = false;
-
-            // Detect if a problem was just answered based on AI response keywords
-            if (latestAIResponse.includes('correct') || latestAIResponse.includes('exactly') ||
-                latestAIResponse.includes('great job') || latestAIResponse.includes('perfect') ||
-                latestAIResponse.includes('well done')) {
-                problemAnswered = true;
-                wasCorrect = true;
-            } else if (latestAIResponse.includes('not quite') || latestAIResponse.includes('try again') ||
-                       latestAIResponse.includes('almost') || latestAIResponse.includes('incorrect') ||
-                       latestAIResponse.includes('not exactly')) {
-                problemAnswered = true;
-                wasCorrect = false;
-            }
 
             // Update badge progress if a problem was answered
             if (problemAnswered) {
@@ -636,12 +639,19 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             userLevel: user.level,
             xpNeeded: xpForNextLevel,
             specialXpAwarded: specialXpAwardedMessage,
+            xpAwarded: xpAward, // NEW: XP earned this turn for live feed
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
             drawingSequence: dynamicDrawingSequence,
             visualCommands: visualCommands, // Visual teaching: whiteboard, algebra tiles, images
             boardContext: boardContext, // Board-first chat integration: spatial anchoring data
-            iepFeatures: iepFeatures // IEP accommodations for frontend to auto-enable features
+            iepFeatures: iepFeatures, // IEP accommodations for frontend to auto-enable features
+            // NEW: Problem-solving stats for live stats tracker
+            problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
+            sessionStats: {
+                problemsAttempted: activeConversation.problemsAttempted || 0,
+                problemsCorrect: activeConversation.problemsCorrect || 0
+            }
         };
 
         if (useStreaming) {
