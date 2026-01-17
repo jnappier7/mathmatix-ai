@@ -243,6 +243,7 @@
   cursor: pointer;
   transition: color 0.2s, transform 0.2s;
   margin: 0;
+  user-select: none;
 }
 
 .star-rating label:hover,
@@ -251,6 +252,7 @@
   transform: scale(1.1);
 }
 
+.star-rating input:checked + label,
 .star-rating input:checked ~ label {
   color: #ffc107;
 }
@@ -444,6 +446,11 @@
 @keyframes spin {
   0% { transform: translate(-50%, -50%) rotate(0deg); }
   100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 /* Success message */

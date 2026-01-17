@@ -51,6 +51,9 @@
     elements.form.addEventListener('submit', handleSubmit);
     elements.feedbackTextarea.addEventListener('input', updateCharCount);
 
+    // Setup star rating interactions
+    setupStarRating();
+
     // Track session duration
     startSessionTracking();
 
@@ -172,7 +175,17 @@
 
     // Validate required fields
     if (!surveyData.rating) {
-      alert('Please rate your session before submitting.');
+      alert('Please rate your session with stars (1-5) before submitting.');
+      // Scroll to star rating
+      const starRating = document.querySelector('.star-rating');
+      if (starRating) {
+        starRating.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Add a pulse animation to draw attention
+        starRating.style.animation = 'pulse 0.5s ease-in-out';
+        setTimeout(() => {
+          starRating.style.animation = '';
+        }, 500);
+      }
       return;
     }
 
@@ -182,7 +195,7 @@
     elements.modal.querySelector('.survey-content').classList.add('submitting');
 
     try {
-      const response = await fetch('/api/user/survey-submit', {
+      const response = await csrfFetch('/api/user/survey-submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -264,10 +277,54 @@
     }
   }
 
+  // Setup star rating interactions
+  function setupStarRating() {
+    const starLabels = document.querySelectorAll('.star-rating label');
+    const starInputs = document.querySelectorAll('.star-rating input');
+
+    // Add click handlers to labels
+    starLabels.forEach((label, index) => {
+      label.addEventListener('click', () => {
+        const input = label.previousElementSibling;
+        if (input && input.type === 'radio') {
+          input.checked = true;
+
+          // Update visual feedback
+          updateStarDisplay();
+        }
+      });
+    });
+
+    // Add change handlers to inputs
+    starInputs.forEach(input => {
+      input.addEventListener('change', updateStarDisplay);
+    });
+  }
+
+  // Update star display based on selected rating
+  function updateStarDisplay() {
+    const checkedInput = document.querySelector('.star-rating input:checked');
+    const allLabels = document.querySelectorAll('.star-rating label');
+
+    allLabels.forEach(label => {
+      label.style.color = '#ddd';
+    });
+
+    if (checkedInput) {
+      const rating = parseInt(checkedInput.value);
+      allLabels.forEach(label => {
+        const labelRating = parseInt(label.previousElementSibling?.value || 0);
+        if (labelRating <= rating) {
+          label.style.color = '#ffc107';
+        }
+      });
+    }
+  }
+
   // Track that survey was shown
   async function trackSurveyShown() {
     try {
-      await fetch('/api/user/survey-shown', {
+      await csrfFetch('/api/user/survey-shown', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -284,7 +341,7 @@
   // Track that survey was dismissed
   async function trackSurveyDismissed() {
     try {
-      await fetch('/api/user/survey-dismissed', {
+      await csrfFetch('/api/user/survey-dismissed', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
