@@ -91,18 +91,18 @@ const screenerSessionSchema = new mongoose.Schema({
         type: Date
     },
 
-    // Completion criteria
+    // Completion criteria (5-30 questions based on convergence)
     minQuestions: {
         type: Number,
-        default: 15
+        default: 5  // Minimum to establish baseline
     },
     targetQuestions: {
         type: Number,
-        default: 20
+        default: 15  // Ideal for most students
     },
     maxQuestions: {
         type: Number,
-        default: 25
+        default: 30  // Cap for students with variable performance
     },
     seThresholdStringent: {
         type: Number,

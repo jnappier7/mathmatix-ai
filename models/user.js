@@ -263,6 +263,16 @@ const learningProfileSchema = new Schema({
     context: String  // Why this was memorable/important
   }],
 
+  // Rapport building (getting-to-know-you phase for new users)
+  rapportBuildingComplete: { type: Boolean, default: false },
+  rapportAnswers: {
+    interests: String,           // What they're interested in learning
+    favoriteSubject: String,     // Favorite subject in school
+    currentTopic: String,        // What they're working on in school
+    learningGoal: String,        // What they want to improve at
+    conversationStyle: String    // Casual notes about how they communicate
+  },
+
   // Initial assessment
   assessmentCompleted: { type: Boolean, default: false },
   assessmentDate: { type: Date },

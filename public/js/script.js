@@ -10,6 +10,7 @@ let currentAudioSource = null;
 let fabricCanvas = null;
 let whiteboard = null; // New whiteboard instance
 let attachedFile = null;
+let isRapportBuilding = false; // Track if user is in rapport building phase
 
 // Enhanced audio playback state
 let audioState = {
@@ -1367,8 +1368,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    /**
+     * Check rapport building status
+     * Sets global isRapportBuilding flag
+     */
+    async function checkRapportStatus() {
+        try {
+            const res = await fetch('/api/rapport/status', { credentials: 'include' });
+            if (res.ok) {
+                const data = await res.json();
+                isRapportBuilding = !data.rapportComplete;
+                console.log('[Rapport] Status:', data);
+                return data;
+            }
+        } catch (error) {
+            console.error('[Rapport] Failed to check status:', error);
+        }
+        isRapportBuilding = false;
+        return null;
+    }
+
     async function getWelcomeMessage() {
         try {
+            // Check rapport building status first
+            await checkRapportStatus();
+
             // Check if currently in mastery mode
             const inMasteryMode = window.StorageUtils
                 ? StorageUtils.session.getItem('masteryModeActive') === 'true'
@@ -2307,6 +2331,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
         let response;
+
+        // RAPPORT BUILDING MODE: Route to rapport endpoint
+        if (isRapportBuilding && attachedFiles.length === 0) {
+            response = await csrfFetch('/api/rapport/respond', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: messageText }),
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`;
+                throw new Error(errorMessage);
+            }
+
+            const data = await response.json();
+
+            // Update rapport status
+            if (data.rapportComplete) {
+                isRapportBuilding = false;
+                console.log('[Rapport] Building complete!');
+            }
+
+            // Display AI response
+            appendMessage(data.message, "ai");
+
+            // TTS if enabled
+            if (data.voiceId) {
+                playTextToSpeech(data.message, data.voiceId);
+            }
+
+            showThinkingIndicator(false);
+            return;
+        }
 
         // Multi-file upload support
         if (attachedFiles.length > 0) {

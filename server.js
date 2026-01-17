@@ -75,6 +75,7 @@ const voiceTestRoutes = require('./routes/voice-test');  // Voice diagnostics
 const uploadRoutes = require('./routes/upload');
 const chatWithFileRoutes = require('./routes/chatWithFile'); 
 const welcomeRoutes = require('./routes/welcome');
+const rapportBuildingRoutes = require('./routes/rapportBuilding');
 const { router: memoryRouter } = require('./routes/memory');
 const guidedLessonRoutes = require('./routes/guidedLesson');
 const summaryGeneratorRouter = require('./routes/summary_generator');
@@ -306,6 +307,7 @@ app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (n
 app.use('/api/upload', isAuthenticated, aiEndpointLimiter, uploadRoutes); // SECURITY FIX: Added per-user rate limiting
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, chatWithFileRoutes); // SECURITY FIX: Added per-user rate limiting 
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
+app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
 app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
