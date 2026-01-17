@@ -135,6 +135,30 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
             .select('summary date activeMinutes');
         // --- MODIFICATION END ---
 
+        // NEW: Fetch active conversation for live stats
+        const activeConversation = await Conversation.findOne({
+            userId: childId,
+            status: 'active'
+        }).select('currentTopic problemsAttempted problemsCorrect strugglingWith alerts lastActivity liveSummary').lean();
+
+        // NEW: Build live stats object
+        const liveStats = activeConversation ? {
+            isActive: true,
+            currentTopic: activeConversation.currentTopic || 'General Math',
+            problemsAttempted: activeConversation.problemsAttempted || 0,
+            problemsCorrect: activeConversation.problemsCorrect || 0,
+            accuracy: activeConversation.problemsAttempted > 0
+                ? Math.round((activeConversation.problemsCorrect / activeConversation.problemsAttempted) * 100)
+                : 0,
+            strugglingWith: activeConversation.strugglingWith || null,
+            hasAlerts: activeConversation.alerts && activeConversation.alerts.some(a => !a.acknowledged),
+            alerts: activeConversation.alerts?.filter(a => !a.acknowledged) || [],
+            lastActivity: activeConversation.lastActivity,
+            liveSummary: activeConversation.liveSummary || null
+        } : {
+            isActive: false
+        };
+
         const progressData = {
             _id: child._id,
             firstName: child.firstName,
@@ -144,6 +168,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
             gradeLevel: child.gradeLevel,
             mathCourse: child.mathCourse,
             totalActiveTutoringMinutes: child.totalActiveTutoringMinutes,
+            liveStats: liveStats, // NEW: Live activity stats
             recentSessions: recentSessions.map(session => ({
                 date: session.date,
                 summary: session.summary,
