@@ -154,7 +154,7 @@ class WhiteboardChatLayout {
         this.messageTicker.innerHTML = `
             <span class="message-icon">💬</span>
             <div class="message-text"></div>
-            <button class="dismiss-btn" onclick="window.whiteboardChatLayout.dismissMessageTicker()">×</button>
+            <button class="dismiss-btn">×</button>
         `;
 
         // Insert AFTER the whiteboard header (first child)
@@ -164,6 +164,12 @@ class WhiteboardChatLayout {
         } else {
             // Fallback: prepend to panel
             whiteboardPanel.insertBefore(this.messageTicker, whiteboardPanel.firstChild);
+        }
+
+        // Add event listener to dismiss button (CSP-compliant)
+        const dismissBtn = this.messageTicker.querySelector('.dismiss-btn');
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', () => this.dismissMessageTicker());
         }
 
         console.log('[Layout] Message ticker created');
