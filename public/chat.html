@@ -605,9 +605,23 @@
     <div class="whiteboard-header">
       <h2>Whiteboard</h2>
       <div class="whiteboard-header-controls">
-        <button class="whiteboard-control-btn" id="split-screen-btn" data-tooltip="Split Screen" title="Toggle Split Screen Mode">
+        <button class="whiteboard-control-btn" id="layout-mode-btn" data-tooltip="Layout" title="Change layout mode">
           <i class="fas fa-columns"></i>
         </button>
+        <div id="layout-mode-menu" class="layout-mode-dropdown" style="display: none;">
+          <button class="layout-option" data-mode="message-ticker">
+            <i class="fas fa-comment"></i> Message Ticker
+          </button>
+          <button class="layout-option" data-mode="split-screen">
+            <i class="fas fa-columns"></i> Split Screen
+          </button>
+          <button class="layout-option" data-mode="pip">
+            <i class="fas fa-window-restore"></i> Picture-in-Picture
+          </button>
+          <button class="layout-option" data-mode="compact">
+            <i class="fas fa-compress-alt"></i> Compact
+          </button>
+        </div>
         <button class="whiteboard-control-btn" id="minimize-whiteboard-btn" data-tooltip="Minimize" title="Minimize">
           <i class="fas fa-window-minimize"></i>
         </button>
