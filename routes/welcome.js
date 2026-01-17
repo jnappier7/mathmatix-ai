@@ -119,17 +119,17 @@ router.get('/', async (req, res) => {
 
             // Build time-aware question examples
             let questionExamples = [];
-            if (isMonday) questionExamples.push('"How was your weekend?"', '"Did you do anything fun this weekend?"');
-            if (isFriday) questionExamples.push('"Got any fun plans for the weekend?"', '"Almost the weekend!"');
-            if (isLateNight) questionExamples.push('"Whew it\'s late! Just starting homework?"', '"Burning the midnight oil?"');
-            if (isAfterSchool && !isWeekend) questionExamples.push('"How was school today?"', '"What are you working on in math this week?"');
-            if (isWeekend) questionExamples.push('"How\'s your weekend going?"', '"What\'s up?"');
+            if (isMonday) questionExamples.push('"How was your weekend?"', '"Did you get to do anything fun?"');
+            if (isFriday) questionExamples.push('"Any plans for the weekend?"', '"Ready for the weekend?"');
+            if (isLateNight) questionExamples.push('"Up late working on something?"', '"Still working? What\'s up?"');
+            if (isAfterSchool && !isWeekend) questionExamples.push('"How was your day?"', '"What\'s going on in math class?"');
+            if (isWeekend) questionExamples.push('"What\'s up?"', '"How\'s it going?"');
             // Always include general options
-            questionExamples.push('"What are you working on in math lately?"', '"What\'s up?"');
+            questionExamples.push('"What do you want to work on?"', '"What brings you here?"', '"Need help with anything specific?"');
 
             const exampleQuestions = questionExamples.slice(0, 3).join(' or ');
 
-            userMessagePart = `Write a casual greeting for ${user.firstName}. Introduce yourself quickly, then ask ONE natural, time-aware question like ${exampleQuestions}. Use the temporal context (${temporalContext}) to make it feel natural and relevant. Sound like you're texting a friend. 1-2 sentences total. Don't ask for info you already have (like grade level).`;
+            userMessagePart = `Write a short, casual greeting for ${user.firstName}. Introduce yourself briefly, then ask ONE natural question like ${exampleQuestions}. Consider the time/day (${temporalContext}) but keep it natural - not forced. Sound like you're texting. 1-2 sentences max. Don't mention grade level or info you already know.`;
         }
 
         // RAPPORT IN PROGRESS: Transition to math quickly
@@ -138,7 +138,7 @@ router.get('/', async (req, res) => {
                 role: "system",
                 content: `Second message. Keep it brief. Info: ${JSON.stringify(user.rapportAnswers)}`
             });
-            userMessagePart = `Acknowledge their answer briefly, then naturally suggest starting with some problems to see where they're at. Don't drag it out. Make it sound fun and low-pressure. 1-2 sentences max.`;
+            userMessagePart = `Acknowledge their answer briefly, then suggest starting with some problems. Be natural and low-pressure. 1-2 sentences. Don't use phrases like "buddy" or overly enthusiastic language.`;
         }
 
         // INCOMPLETE ASSESSMENT: Offer to resume
@@ -148,7 +148,7 @@ router.get('/', async (req, res) => {
                 role: "system",
                 content: `Returning user with incomplete assessment. They answered ${questionsCompleted} questions already.`
             });
-            userMessagePart = `Write a casual greeting for ${user.firstName}. Note that they started the placement assessment (${questionsCompleted} questions done) but didn't finish. Offer to continue where they left off or start fresh - keep it super casual and no-pressure. Sound like you're texting. 2 sentences max.`;
+            userMessagePart = `Casual greeting for ${user.firstName}. Mention they started the placement (${questionsCompleted} questions done) but didn't finish. Offer to continue or start over - keep it relaxed. 1-2 sentences. Sound like texting, not like a teacher.`;
         }
 
         // ASSESSMENT NEEDED (but rapport complete)
@@ -158,17 +158,29 @@ router.get('/', async (req, res) => {
 
         // RETURNING USER: Natural welcome back
         else if (contextType !== 'none') {
+            // Generate a random seed to force variety in AI responses
+            const greetingStyles = [
+                'casual and brief - just say hey and ask what they need',
+                'reference last session briefly if relevant',
+                'time/day-aware - mention Monday/weekend/late night naturally',
+                'jump straight to asking what they want to work on',
+                'friendly but direct - skip pleasantries'
+            ];
+            const randomStyle = greetingStyles[Math.floor(Math.random() * greetingStyles.length)];
+            const varietySeed = Math.floor(Math.random() * 10000); // Random number to force different responses
+
             messagesForAI.push({
                 role: "system",
-                content: `Returning student. ${temporalContext}. Last session: ${lastContextForAI}`
+                content: `Returning student. ${temporalContext}. Last session context: ${lastContextForAI}. Variety seed: ${varietySeed}`
             });
-            userMessagePart = `Write a quick, natural greeting for ${user.firstName}. Context: ${temporalContext}. Be time-aware - if it's Monday ask about the weekend, if it's late night acknowledge that, if it's Friday mention the weekend coming up. Sound like you're texting. Sometimes reference last session casually, sometimes just say hi and ask what they want to work on. Keep it SHORT (1-2 sentences). Mix up your greetings - use different phrases each time. NO formulaic openings like "Great to see you" or "Welcome back". Be spontaneous and genuine.`;
+            userMessagePart = `Write a ${randomStyle}. For ${user.firstName}. Keep it VERY short (1 sentence). Sound natural, like texting. CRITICAL: Vary your word choice every time - don't repeat phrases like "my friend", "buddy", "pal" etc. Just be yourself. Context: ${temporalContext}. NO canned greetings. Be spontaneous.`;
         }
 
         // FALLBACK: Simple natural greeting
         else {
-            messagesForAI.push({ role: "system", content: `${temporalContext}` });
-            userMessagePart = `Write a short, friendly greeting for ${user.firstName}. Context: ${temporalContext}. Be time-aware (Monday = weekend reference, late night = acknowledge time, etc.). Sound natural and human. Ask what they want to work on. 1-2 sentences. Vary your greetings - don't use the same phrases twice.`;
+            const varietySeed = Math.floor(Math.random() * 10000);
+            messagesForAI.push({ role: "system", content: `${temporalContext}. Variety seed: ${varietySeed}` });
+            userMessagePart = `Write a brief greeting for ${user.firstName}. Context: ${temporalContext}. Keep it natural like texting. Ask what they need help with. 1 sentence. Don't use repetitive phrases like "buddy" or "my friend". Be direct and genuine.`;
         }
         // --- END OF DYNAMIC WELCOME LOGIC ---
         
