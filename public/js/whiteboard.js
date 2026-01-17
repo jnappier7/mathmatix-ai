@@ -126,6 +126,71 @@ class MathmatixWhiteboard {
     }
 
     setupPanelControls() {
+        // Close button
+        const closeBtn = this.panel.querySelector('#close-whiteboard-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.hide();
+                const openBtn = document.getElementById('open-whiteboard-btn');
+                if (openBtn) openBtn.classList.remove('hidden');
+                console.log('✅ Whiteboard closed');
+            });
+        }
+
+        // Minimize button
+        const minimizeBtn = this.panel.querySelector('#minimize-whiteboard-btn');
+        if (minimizeBtn) {
+            minimizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.minimize();
+                console.log('✅ Whiteboard minimized');
+            });
+        }
+
+        // Maximize button
+        const maximizeBtn = this.panel.querySelector('#maximize-whiteboard-btn');
+        if (maximizeBtn) {
+            maximizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.maximize();
+                const icon = maximizeBtn.querySelector('i');
+                if (icon) {
+                    icon.className = this.isMaximized ? 'fas fa-compress' : 'fas fa-expand';
+                }
+                console.log(this.isMaximized ? '✅ Whiteboard maximized' : '✅ Whiteboard restored');
+            });
+        }
+
+        // Layout mode switcher
+        const layoutModeBtn = this.panel.querySelector('#layout-mode-btn');
+        const layoutModeMenu = this.panel.querySelector('#layout-mode-menu');
+        if (layoutModeBtn && layoutModeMenu) {
+            layoutModeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                layoutModeMenu.style.display = layoutModeMenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Handle layout mode selection
+            layoutModeMenu.querySelectorAll('.layout-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    const mode = e.currentTarget.dataset.mode;
+                    if (window.whiteboardChatLayout) {
+                        window.whiteboardChatLayout.setLayoutMode(mode);
+                        console.log(`✅ Layout mode: ${mode}`);
+                    }
+                    layoutModeMenu.style.display = 'none';
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!layoutModeBtn.contains(e.target) && !layoutModeMenu.contains(e.target)) {
+                    layoutModeMenu.style.display = 'none';
+                }
+            });
+        }
+
         // Dragging
         const header = this.panel.querySelector('.whiteboard-header');
         if (header) {

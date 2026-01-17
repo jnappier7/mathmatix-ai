@@ -450,6 +450,39 @@ class WhiteboardChatLayout {
         this.isWhiteboardOpen = true;
         this.showMessageTicker();
     }
+
+    /**
+     * Set layout mode manually
+     */
+    setLayoutMode(mode) {
+        const validModes = ['message-ticker', 'split-screen', 'pip', 'compact'];
+        if (!validModes.includes(mode)) {
+            console.error(`[Layout] Invalid mode: ${mode}`);
+            return;
+        }
+
+        // Clear previous mode
+        this.onWhiteboardClose();
+
+        // Set new mode
+        this.mode = mode;
+
+        // Apply new mode if whiteboard is open
+        if (this.isWhiteboardOpen || !window.whiteboard.panel.classList.contains('is-hidden')) {
+            this.onWhiteboardOpen();
+        }
+
+        // Save preference to localStorage
+        try {
+            if (window.StorageUtils) {
+                StorageUtils.local.setItem('whiteboardLayoutMode', mode);
+            }
+        } catch (e) {
+            console.warn('[Layout] Could not save layout mode preference:', e);
+        }
+
+        console.log(`✅ [Layout] Mode changed to: ${mode}`);
+    }
 }
 
 // Initialize globally
