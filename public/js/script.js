@@ -609,9 +609,58 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Export menu with dropdown
         const downloadBtn = document.getElementById('download-btn');
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', () => whiteboard.downloadImage());
+        const exportMenu = document.getElementById('export-menu');
+        if (downloadBtn && exportMenu) {
+            // Toggle menu on click
+            downloadBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                exportMenu.style.display = exportMenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Handle export options
+            document.querySelectorAll('.export-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    const exportType = e.currentTarget.dataset.export;
+                    switch(exportType) {
+                        case 'png':
+                            whiteboard.exportToPNG();
+                            break;
+                        case 'pdf':
+                            whiteboard.exportToPDF();
+                            break;
+                        case 'clipboard':
+                            whiteboard.copyToClipboard();
+                            break;
+                    }
+                    exportMenu.style.display = 'none';
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!downloadBtn.contains(e.target) && !exportMenu.contains(e.target)) {
+                    exportMenu.style.display = 'none';
+                }
+            });
+        }
+
+        // Region overlay toggle
+        const regionOverlayBtn = document.getElementById('region-overlay-btn');
+        if (regionOverlayBtn) {
+            regionOverlayBtn.addEventListener('click', () => {
+                whiteboard.toggleRegionOverlay();
+                regionOverlayBtn.classList.toggle('active');
+            });
+        }
+
+        // Shortcuts help
+        const shortcutsHelpBtn = document.getElementById('shortcuts-help-btn');
+        if (shortcutsHelpBtn) {
+            shortcutsHelpBtn.addEventListener('click', () => {
+                whiteboard.toggleShortcutsPanel();
+            });
         }
 
         const sendToAiBtn = document.getElementById('send-to-ai-btn');

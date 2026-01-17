@@ -79,7 +79,14 @@ class MathmatixWhiteboard {
         this.resizeCanvas();
         this.saveState();
 
-        console.log('✅ Mathmatix Whiteboard initialized');
+        // Initialize UX enhancements
+        this.setupKeyboardShortcuts();
+        this.setupContextMenu();
+        this.setupFloatingToolbar();
+        this.setupTouchGestures();
+        this._clipboard = null; // For copy/paste
+
+        console.log('✅ Mathmatix Whiteboard initialized with enhanced UX');
     }
 
     setupEventListeners() {
@@ -89,6 +96,18 @@ class MathmatixWhiteboard {
         this.canvas.on('mouse:up', (e) => this.onMouseUp(e));
         this.canvas.on('object:added', (e) => this.onObjectAdded(e));
         this.canvas.on('object:modified', (e) => this.onObjectModified(e));
+
+        // Make drawn paths selectable after creation
+        this.canvas.on('path:created', (e) => {
+            if (e.path) {
+                e.path.set({
+                    selectable: true,
+                    hasControls: true,
+                    hasBorders: true
+                });
+                this.canvas.renderAll();
+            }
+        });
 
         // Resize observer
         const resizeObserver = new ResizeObserver(() => this.resizeCanvas());
@@ -1492,6 +1511,638 @@ class MathmatixWhiteboard {
 
         this.resizeCanvas();
         console.log('✅ Reset whiteboard layout to defaults');
+    }
+
+    // ============================================
+    // UX ENHANCEMENTS - EXPORT & SHARE
+    // ============================================
+
+    exportToPNG() {
+        const dataURL = this.canvas.toDataURL({
+            format: 'png',
+            quality: 1.0,
+            multiplier: 2 // 2x resolution for better quality
+        });
+
+        const link = document.createElement('a');
+        link.download = `mathmatix-whiteboard-${Date.now()}.png`;
+        link.href = dataURL;
+        link.click();
+
+        console.log('✅ Exported whiteboard as PNG');
+    }
+
+    exportToPDF() {
+        // Use jsPDF if available
+        if (typeof jsPDF !== 'undefined') {
+            const dataURL = this.canvas.toDataURL({
+                format: 'png',
+                quality: 1.0
+            });
+
+            const pdf = new jsPDF({
+                orientation: this.canvas.width > this.canvas.height ? 'landscape' : 'portrait',
+                unit: 'px',
+                format: [this.canvas.width, this.canvas.height]
+            });
+
+            pdf.addImage(dataURL, 'PNG', 0, 0, this.canvas.width, this.canvas.height);
+            pdf.save(`mathmatix-whiteboard-${Date.now()}.pdf`);
+
+            console.log('✅ Exported whiteboard as PDF');
+        } else {
+            // Fallback to PNG if jsPDF not available
+            console.warn('jsPDF not available, exporting as PNG instead');
+            this.exportToPNG();
+        }
+    }
+
+    copyToClipboard() {
+        this.canvas.toBlob((blob) => {
+            if (navigator.clipboard && navigator.clipboard.write) {
+                const item = new ClipboardItem({ 'image/png': blob });
+                navigator.clipboard.write([item]).then(() => {
+                    console.log('✅ Copied whiteboard to clipboard');
+                    this.showToast('Copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy to clipboard:', err);
+                });
+            } else {
+                console.warn('Clipboard API not available');
+                this.showToast('Clipboard not supported, use download instead');
+            }
+        });
+    }
+
+    // ============================================
+    // KEYBOARD SHORTCUTS SYSTEM
+    // ============================================
+
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Don't trigger shortcuts when typing in text
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+
+            const ctrl = e.ctrlKey || e.metaKey;
+
+            // Undo/Redo
+            if (ctrl && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                this.undo();
+            } else if (ctrl && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+                e.preventDefault();
+                this.redo();
+            }
+            // Delete
+            else if (e.key === 'Delete' || e.key === 'Backspace') {
+                const activeObject = this.canvas.getActiveObject();
+                if (activeObject) {
+                    e.preventDefault();
+                    this.deleteSelected();
+                }
+            }
+            // Select All
+            else if (ctrl && e.key === 'a') {
+                e.preventDefault();
+                this.selectAll();
+            }
+            // Copy
+            else if (ctrl && e.key === 'c') {
+                e.preventDefault();
+                this.copySelection();
+            }
+            // Paste
+            else if (ctrl && e.key === 'v') {
+                e.preventDefault();
+                this.pasteSelection();
+            }
+            // Duplicate
+            else if (ctrl && e.key === 'd') {
+                e.preventDefault();
+                this.duplicateSelection();
+            }
+            // Export
+            else if (ctrl && e.key === 's') {
+                e.preventDefault();
+                this.exportToPNG();
+            }
+            // Show shortcuts help
+            else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+                e.preventDefault();
+                this.toggleShortcutsPanel();
+            }
+            // Quick tool switching (1-9 keys)
+            else if (!ctrl && !e.shiftKey && e.key >= '1' && e.key <= '9') {
+                this.quickToolSwitch(parseInt(e.key));
+            }
+            // Escape - deselect
+            else if (e.key === 'Escape') {
+                this.canvas.discardActiveObject();
+                this.canvas.renderAll();
+            }
+        });
+
+        console.log('✅ Keyboard shortcuts enabled');
+    }
+
+    quickToolSwitch(number) {
+        const tools = ['select', 'pen', 'highlighter', 'eraser', 'line', 'rectangle', 'circle', 'text'];
+        if (number > 0 && number <= tools.length) {
+            this.setTool(tools[number - 1]);
+            document.getElementById(`tool-${tools[number - 1]}`)?.click();
+        }
+    }
+
+    selectAll() {
+        const selection = new fabric.ActiveSelection(this.canvas.getObjects(), {
+            canvas: this.canvas,
+        });
+        this.canvas.setActiveObject(selection);
+        this.canvas.requestRenderAll();
+    }
+
+    copySelection() {
+        const activeObject = this.canvas.getActiveObject();
+        if (activeObject) {
+            activeObject.clone((cloned) => {
+                this._clipboard = cloned;
+            });
+            console.log('✅ Selection copied');
+        }
+    }
+
+    pasteSelection() {
+        if (this._clipboard) {
+            this._clipboard.clone((clonedObj) => {
+                this.canvas.discardActiveObject();
+                clonedObj.set({
+                    left: clonedObj.left + 10,
+                    top: clonedObj.top + 10,
+                    evented: true,
+                });
+                if (clonedObj.type === 'activeSelection') {
+                    clonedObj.canvas = this.canvas;
+                    clonedObj.forEachObject((obj) => {
+                        this.canvas.add(obj);
+                    });
+                    clonedObj.setCoords();
+                } else {
+                    this.canvas.add(clonedObj);
+                }
+                this._clipboard.top += 10;
+                this._clipboard.left += 10;
+                this.canvas.setActiveObject(clonedObj);
+                this.canvas.requestRenderAll();
+            });
+            console.log('✅ Selection pasted');
+        }
+    }
+
+    duplicateSelection() {
+        const activeObject = this.canvas.getActiveObject();
+        if (activeObject) {
+            activeObject.clone((cloned) => {
+                this.canvas.discardActiveObject();
+                cloned.set({
+                    left: cloned.left + 20,
+                    top: cloned.top + 20,
+                    evented: true,
+                });
+                if (cloned.type === 'activeSelection') {
+                    cloned.canvas = this.canvas;
+                    cloned.forEachObject((obj) => {
+                        this.canvas.add(obj);
+                    });
+                    cloned.setCoords();
+                } else {
+                    this.canvas.add(cloned);
+                }
+                this.canvas.setActiveObject(cloned);
+                this.canvas.requestRenderAll();
+                this.saveState();
+            });
+            console.log('✅ Selection duplicated');
+        }
+    }
+
+    toggleShortcutsPanel() {
+        let panel = document.getElementById('shortcuts-help-panel');
+
+        if (!panel) {
+            panel = this.createShortcutsPanel();
+            document.body.appendChild(panel);
+        }
+
+        if (panel.style.display === 'none' || !panel.style.display) {
+            panel.style.display = 'flex';
+        } else {
+            panel.style.display = 'none';
+        }
+    }
+
+    createShortcutsPanel() {
+        const panel = document.createElement('div');
+        panel.id = 'shortcuts-help-panel';
+        panel.className = 'shortcuts-help-panel';
+        panel.innerHTML = `
+            <div class="shortcuts-content">
+                <div class="shortcuts-header">
+                    <h3>⌨️ Keyboard Shortcuts</h3>
+                    <button class="close-shortcuts-btn" onclick="document.getElementById('shortcuts-help-panel').style.display='none'">×</button>
+                </div>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-section">
+                        <h4>General</h4>
+                        <div class="shortcut-item"><kbd>?</kbd><span>Show this help</span></div>
+                        <div class="shortcut-item"><kbd>Esc</kbd><span>Deselect</span></div>
+                    </div>
+                    <div class="shortcut-section">
+                        <h4>Edit</h4>
+                        <div class="shortcut-item"><kbd>Ctrl+Z</kbd><span>Undo</span></div>
+                        <div class="shortcut-item"><kbd>Ctrl+Y</kbd><span>Redo</span></div>
+                        <div class="shortcut-item"><kbd>Delete</kbd><span>Delete selected</span></div>
+                        <div class="shortcut-item"><kbd>Ctrl+A</kbd><span>Select all</span></div>
+                        <div class="shortcut-item"><kbd>Ctrl+C</kbd><span>Copy</span></div>
+                        <div class="shortcut-item"><kbd>Ctrl+V</kbd><span>Paste</span></div>
+                        <div class="shortcut-item"><kbd>Ctrl+D</kbd><span>Duplicate</span></div>
+                    </div>
+                    <div class="shortcut-section">
+                        <h4>Tools</h4>
+                        <div class="shortcut-item"><kbd>1</kbd><span>Select tool</span></div>
+                        <div class="shortcut-item"><kbd>2</kbd><span>Pen</span></div>
+                        <div class="shortcut-item"><kbd>3</kbd><span>Highlighter</span></div>
+                        <div class="shortcut-item"><kbd>4</kbd><span>Eraser</span></div>
+                        <div class="shortcut-item"><kbd>5</kbd><span>Line</span></div>
+                        <div class="shortcut-item"><kbd>6</kbd><span>Rectangle</span></div>
+                        <div class="shortcut-item"><kbd>7</kbd><span>Circle</span></div>
+                        <div class="shortcut-item"><kbd>8</kbd><span>Text</span></div>
+                    </div>
+                    <div class="shortcut-section">
+                        <h4>File</h4>
+                        <div class="shortcut-item"><kbd>Ctrl+S</kbd><span>Export PNG</span></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        return panel;
+    }
+
+    // ============================================
+    // QUICK COLOR PRESETS
+    // ============================================
+
+    setupColorPresets() {
+        const presetColors = [
+            '#000000', // Black
+            '#FF3B7F', // Hot Pink (brand)
+            '#12B3B3', // Teal (brand)
+            '#FF6B6B', // Red
+            '#4ECDC4', // Turquoise
+            '#45B7D1', // Blue
+            '#FFA07A', // Orange
+            '#98D8C8', // Mint
+            '#FFD93D', // Yellow
+            '#6C5CE7', // Purple
+        ];
+
+        return presetColors;
+    }
+
+    // ============================================
+    // REGION OVERLAY TOGGLE
+    // ============================================
+
+    toggleRegionOverlay() {
+        let overlay = document.getElementById('region-overlay');
+
+        if (!overlay) {
+            overlay = this.createRegionOverlay();
+            this.panel.querySelector('.whiteboard-canvas-container').appendChild(overlay);
+        }
+
+        overlay.style.display = overlay.style.display === 'none' ? 'block' : 'none';
+        console.log('✅ Region overlay toggled');
+    }
+
+    createRegionOverlay() {
+        const overlay = document.createElement('div');
+        overlay.id = 'region-overlay';
+        overlay.className = 'region-overlay';
+        overlay.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        `;
+
+        const canvasWidth = this.canvas.width;
+        const canvasHeight = this.canvas.height;
+
+        // Create region boxes
+        Object.entries(this.regions).forEach(([key, region]) => {
+            const box = document.createElement('div');
+            box.className = 'region-box';
+            box.style.cssText = `
+                position: absolute;
+                left: ${region.x * 100}%;
+                top: ${region.y * 100}%;
+                width: ${region.width * 100}%;
+                height: ${region.height * 100}%;
+                border: 2px dashed rgba(18, 179, 179, 0.5);
+                background: rgba(18, 179, 179, 0.05);
+                pointer-events: none;
+            `;
+
+            const label = document.createElement('div');
+            label.className = 'region-label';
+            label.textContent = region.label;
+            label.style.cssText = `
+                position: absolute;
+                top: 5px;
+                left: 5px;
+                background: rgba(18, 179, 179, 0.9);
+                color: white;
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 11px;
+                font-weight: 600;
+            `;
+
+            box.appendChild(label);
+            overlay.appendChild(box);
+        });
+
+        return overlay;
+    }
+
+    // ============================================
+    // TOAST NOTIFICATIONS
+    // ============================================
+
+    showToast(message, duration = 2000) {
+        let toast = document.getElementById('whiteboard-toast');
+
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'whiteboard-toast';
+            toast.className = 'whiteboard-toast';
+            document.body.appendChild(toast);
+        }
+
+        toast.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
+    }
+
+    // ============================================
+    // RADIAL CONTEXT MENU
+    // ============================================
+
+    setupContextMenu() {
+        this.canvas.on('mouse:down', (e) => {
+            // Right click
+            if (e.e.button === 2) {
+                e.e.preventDefault();
+                this.showContextMenu(e.e.clientX, e.e.clientY, e.target);
+            }
+        });
+
+        // Prevent default context menu
+        document.getElementById(this.canvasId).addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+    }
+
+    showContextMenu(x, y, target) {
+        let menu = document.getElementById('radial-context-menu');
+
+        if (!menu) {
+            menu = this.createRadialContextMenu();
+            document.body.appendChild(menu);
+        }
+
+        // Update menu items based on context
+        const hasSelection = !!this.canvas.getActiveObject();
+
+        menu.style.left = x + 'px';
+        menu.style.top = y + 'px';
+        menu.style.display = 'block';
+
+        // Close menu on click outside
+        const closeMenu = (e) => {
+            if (!menu.contains(e.target)) {
+                menu.style.display = 'none';
+                document.removeEventListener('click', closeMenu);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', closeMenu), 100);
+    }
+
+    createRadialContextMenu() {
+        const menu = document.createElement('div');
+        menu.id = 'radial-context-menu';
+        menu.className = 'radial-context-menu';
+
+        const items = [
+            { icon: '✂️', label: 'Cut', action: () => this.cutSelection() },
+            { icon: '📋', label: 'Copy', action: () => this.copySelection() },
+            { icon: '📄', label: 'Paste', action: () => this.pasteSelection() },
+            { icon: '🗑️', label: 'Delete', action: () => this.deleteSelected() },
+            { icon: '👥', label: 'Duplicate', action: () => this.duplicateSelection() },
+            { icon: '🎨', label: 'Colors', action: () => document.getElementById('color-picker').click() },
+            { icon: '↩️', label: 'Undo', action: () => this.undo() },
+            { icon: '↪️', label: 'Redo', action: () => this.redo() },
+        ];
+
+        items.forEach((item, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'context-menu-item';
+            btn.innerHTML = `<span class="context-icon">${item.icon}</span><span class="context-label">${item.label}</span>`;
+            btn.onclick = () => {
+                item.action();
+                menu.style.display = 'none';
+            };
+            menu.appendChild(btn);
+        });
+
+        return menu;
+    }
+
+    cutSelection() {
+        this.copySelection();
+        this.deleteSelected();
+    }
+
+    // ============================================
+    // FLOATING SELECTION TOOLBAR
+    // ============================================
+
+    setupFloatingToolbar() {
+        this.canvas.on('selection:created', () => this.showFloatingToolbar());
+        this.canvas.on('selection:updated', () => this.showFloatingToolbar());
+        this.canvas.on('selection:cleared', () => this.hideFloatingToolbar());
+    }
+
+    showFloatingToolbar() {
+        const activeObject = this.canvas.getActiveObject();
+        if (!activeObject) return;
+
+        let toolbar = document.getElementById('floating-selection-toolbar');
+
+        if (!toolbar) {
+            toolbar = this.createFloatingToolbar();
+            this.panel.appendChild(toolbar);
+        }
+
+        // Position toolbar above selection
+        const bound = activeObject.getBoundingRect();
+        const canvasContainer = this.panel.querySelector('.whiteboard-canvas-container');
+        const containerRect = canvasContainer.getBoundingClientRect();
+
+        toolbar.style.left = (bound.left + bound.width / 2 - 150) + 'px';
+        toolbar.style.top = (bound.top - 50) + 'px';
+        toolbar.style.display = 'flex';
+    }
+
+    hideFloatingToolbar() {
+        const toolbar = document.getElementById('floating-selection-toolbar');
+        if (toolbar) {
+            toolbar.style.display = 'none';
+        }
+    }
+
+    createFloatingToolbar() {
+        const toolbar = document.createElement('div');
+        toolbar.id = 'floating-selection-toolbar';
+        toolbar.className = 'floating-selection-toolbar';
+
+        const actions = [
+            { icon: 'fa-copy', tooltip: 'Duplicate', action: () => this.duplicateSelection() },
+            { icon: 'fa-trash', tooltip: 'Delete', action: () => this.deleteSelected() },
+            { icon: 'fa-palette', tooltip: 'Color', action: () => this.changeSelectionColor() },
+            { icon: 'fa-arrows-alt', tooltip: 'Bring to front', action: () => this.bringToFront() },
+            { icon: 'fa-layer-group', tooltip: 'Send to back', action: () => this.sendToBack() },
+        ];
+
+        actions.forEach(action => {
+            const btn = document.createElement('button');
+            btn.className = 'floating-toolbar-btn';
+            btn.innerHTML = `<i class="fas ${action.icon}"></i>`;
+            btn.title = action.tooltip;
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                action.action();
+            };
+            toolbar.appendChild(btn);
+        });
+
+        return toolbar;
+    }
+
+    changeSelectionColor() {
+        const colorPicker = document.getElementById('color-picker');
+        if (colorPicker) {
+            colorPicker.click();
+            colorPicker.addEventListener('change', () => {
+                const activeObject = this.canvas.getActiveObject();
+                if (activeObject) {
+                    if (activeObject.type === 'activeSelection') {
+                        activeObject.forEachObject((obj) => {
+                            obj.set('stroke', colorPicker.value);
+                            if (obj.fill && obj.fill !== 'transparent') {
+                                obj.set('fill', colorPicker.value);
+                            }
+                        });
+                    } else {
+                        activeObject.set('stroke', colorPicker.value);
+                        if (activeObject.fill && activeObject.fill !== 'transparent') {
+                            activeObject.set('fill', colorPicker.value);
+                        }
+                    }
+                    this.canvas.renderAll();
+                    this.saveState();
+                }
+            }, { once: true });
+        }
+    }
+
+    bringToFront() {
+        const activeObject = this.canvas.getActiveObject();
+        if (activeObject) {
+            this.canvas.bringToFront(activeObject);
+            this.canvas.renderAll();
+            this.saveState();
+        }
+    }
+
+    sendToBack() {
+        const activeObject = this.canvas.getActiveObject();
+        if (activeObject) {
+            this.canvas.sendToBack(activeObject);
+            this.canvas.renderAll();
+            this.saveState();
+        }
+    }
+
+    // ============================================
+    // ENHANCED TOUCH GESTURES
+    // ============================================
+
+    setupTouchGestures() {
+        let lastTouchDistance = 0;
+        let isPinching = false;
+
+        this.canvas.on('touch:gesture', (e) => {
+            if (e.e.touches && e.e.touches.length === 2) {
+                isPinching = true;
+                const touch1 = e.e.touches[0];
+                const touch2 = e.e.touches[1];
+                const distance = Math.sqrt(
+                    Math.pow(touch2.clientX - touch1.clientX, 2) +
+                    Math.pow(touch2.clientY - touch1.clientY, 2)
+                );
+
+                if (lastTouchDistance > 0) {
+                    const delta = distance - lastTouchDistance;
+                    const zoom = this.canvas.getZoom();
+                    let newZoom = zoom * (1 + delta / 200);
+                    newZoom = Math.max(0.5, Math.min(3, newZoom));
+                    this.canvas.zoomToPoint({ x: e.self.x, y: e.self.y }, newZoom);
+                }
+
+                lastTouchDistance = distance;
+                e.e.preventDefault();
+            }
+        });
+
+        this.canvas.on('touch:drag', (e) => {
+            if (!isPinching && e.e.touches && e.e.touches.length === 2) {
+                // Pan with two fingers
+                const touch = e.e.touches[0];
+                const delta = new fabric.Point(
+                    touch.clientX - this.lastPanPoint.x,
+                    touch.clientY - this.lastPanPoint.y
+                );
+                this.canvas.relativePan(delta);
+                this.lastPanPoint = { x: touch.clientX, y: touch.clientY };
+            }
+        });
+
+        this.canvas.on('mouse:up', () => {
+            isPinching = false;
+            lastTouchDistance = 0;
+        });
+
+        this.lastPanPoint = { x: 0, y: 0 };
+        console.log('✅ Touch gestures enabled');
     }
 }
 
