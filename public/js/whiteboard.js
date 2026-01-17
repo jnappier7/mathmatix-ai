@@ -640,6 +640,130 @@ class MathmatixWhiteboard {
         }
     }
 
+    plotInequality(inequalityString, options = {}) {
+        const {
+            xMin = -10,
+            xMax = 10,
+            yMin = -10,
+            yMax = 10,
+            color = '#12B3B3',
+            strokeWidth = 3,
+            samples = 200
+        } = options;
+
+        try {
+            // Parse inequality: y > 2x + 1, y <= x^2, etc.
+            let operator, leftSide, rightSide;
+
+            if (inequalityString.includes('>=')) {
+                [leftSide, rightSide] = inequalityString.split('>=');
+                operator = '>=';
+            } else if (inequalityString.includes('<=')) {
+                [leftSide, rightSide] = inequalityString.split('<=');
+                operator = '<=';
+            } else if (inequalityString.includes('>')) {
+                [leftSide, rightSide] = inequalityString.split('>');
+                operator = '>';
+            } else if (inequalityString.includes('<')) {
+                [leftSide, rightSide] = inequalityString.split('<');
+                operator = '<';
+            } else {
+                console.error('No inequality operator found');
+                return;
+            }
+
+            leftSide = leftSide.trim();
+            rightSide = rightSide.trim();
+
+            // For now, we assume left side is 'y' and right side is function of x
+            if (leftSide !== 'y') {
+                console.error('Currently only supports y on left side');
+                return;
+            }
+
+            // Plot boundary line (solid for >= and <=, dashed for > and <)
+            const lineStyle = (operator === '>=' || operator === '<=') ? [] : [10, 5];
+            this.plotFunction(rightSide, {
+                xMin, xMax,
+                color: color,
+                strokeWidth: strokeWidth,
+                samples: samples
+            });
+
+            // Make the boundary line dashed if needed
+            if (lineStyle.length > 0) {
+                const objects = this.canvas.getObjects();
+                const lastLine = objects[objects.length - 1];
+                if (lastLine) {
+                    lastLine.set({ strokeDashArray: lineStyle });
+                }
+            }
+
+            // Create shading
+            const width = this.canvas.width;
+            const height = this.canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const gridSize = 30;
+
+            // Preprocess function
+            let processedFunc = rightSide
+                .replace(/(\d+)([a-zA-Z])/g, '$1*$2')
+                .replace(/\)([a-zA-Z])/g, ')*$1')
+                .replace(/([a-zA-Z])\(/g, '$1*(')
+                .replace(/\^/g, '**');
+
+            const func = new Function('x', `return ${processedFunc}`);
+
+            // Create polygon for shading
+            const shadingPoints = [];
+            const step = (xMax - xMin) / samples;
+
+            for (let x = xMin; x <= xMax; x += step) {
+                try {
+                    const y = func(x);
+                    if (isFinite(y)) {
+                        const canvasX = centerX + (x * gridSize);
+                        const canvasY = centerY - (y * gridSize);
+                        shadingPoints.push({ x: canvasX, y: canvasY });
+                    }
+                } catch (e) {
+                    // Skip invalid points
+                }
+            }
+
+            // Add boundary points based on operator direction
+            const shadeAbove = (operator === '>' || operator === '>=');
+
+            if (shadeAbove) {
+                // Add top boundary
+                shadingPoints.push({ x: centerX + (xMax * gridSize), y: 0 });
+                shadingPoints.push({ x: centerX + (xMin * gridSize), y: 0 });
+            } else {
+                // Add bottom boundary
+                shadingPoints.push({ x: centerX + (xMax * gridSize), y: height });
+                shadingPoints.push({ x: centerX + (xMin * gridSize), y: height });
+            }
+
+            if (shadingPoints.length > 2) {
+                const shading = new fabric.Polygon(shadingPoints, {
+                    fill: color,
+                    opacity: 0.2,
+                    selectable: false,
+                    evented: false,
+                });
+
+                this.canvas.add(shading);
+                this.canvas.sendToBack(shading);
+            }
+
+            this.canvas.renderAll();
+            console.log(`✅ Plotted inequality: ${inequalityString}`);
+        } catch (error) {
+            console.error('Error plotting inequality:', error);
+        }
+    }
+
     addProtractor(x, y) {
         // Create a simple protractor
         const protractor = new fabric.Circle({
@@ -943,7 +1067,13 @@ class MathmatixWhiteboard {
     }
 
     startDragging(e) {
-        if (this.isMaximized || e.target.closest('.toolbar-btn')) return;
+        // Don't drag if maximized or if clicking on buttons/controls
+        if (this.isMaximized ||
+            e.target.closest('.toolbar-btn') ||
+            e.target.closest('.whiteboard-control-btn') ||
+            e.target.closest('button')) {
+            return;
+        }
         this.isDragging = true;
         this.dragOffset = {
             x: e.clientX - this.panel.offsetLeft,
