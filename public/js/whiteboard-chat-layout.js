@@ -75,6 +75,14 @@ class WhiteboardChatLayout {
             };
         }
 
+        // Add split-screen toggle button listener
+        const splitScreenBtn = document.getElementById('split-screen-btn');
+        if (splitScreenBtn) {
+            splitScreenBtn.addEventListener('click', () => {
+                this.toggleSplitScreen();
+            });
+        }
+
         // Also listen for visual command execution
         document.addEventListener('visualCommandExecuted', (e) => {
             // Whiteboard was just used
@@ -119,8 +127,9 @@ class WhiteboardChatLayout {
     onWhiteboardClose() {
         this.isWhiteboardOpen = false;
         document.body.classList.remove('whiteboard-active');
-        document.body.classList.remove('whiteboard-split-screen');
 
+        // Clean up all modes
+        this.disableSplitScreen();
         this.hideMessageTicker();
         this.hidePIPWidget();
 
@@ -274,7 +283,37 @@ class WhiteboardChatLayout {
 
     enableSplitScreen() {
         document.body.classList.add('whiteboard-split-screen');
+        this.updateSplitScreenButton(true);
         console.log('[Layout] Split-screen mode enabled');
+    }
+
+    disableSplitScreen() {
+        document.body.classList.remove('whiteboard-split-screen');
+        this.updateSplitScreenButton(false);
+        console.log('[Layout] Split-screen mode disabled');
+    }
+
+    toggleSplitScreen() {
+        if (this.mode === 'split-screen') {
+            // Switch to message-ticker mode
+            this.setMode('message-ticker');
+        } else {
+            // Switch to split-screen mode
+            this.setMode('split-screen');
+        }
+    }
+
+    updateSplitScreenButton(isActive) {
+        const splitScreenBtn = document.getElementById('split-screen-btn');
+        if (splitScreenBtn) {
+            if (isActive) {
+                splitScreenBtn.style.background = 'rgba(255, 255, 255, 0.4)';
+                splitScreenBtn.style.transform = 'scale(1.05)';
+            } else {
+                splitScreenBtn.style.background = '';
+                splitScreenBtn.style.transform = '';
+            }
+        }
     }
 
     // ============================================
@@ -356,8 +395,8 @@ class WhiteboardChatLayout {
             // Medium screens: Message ticker
             this.mode = 'message-ticker';
         } else {
-            // Large screens: Split-screen
-            this.mode = 'message-ticker'; // Default to ticker (less disruptive)
+            // Large screens: Default to split-screen for better visibility
+            this.mode = 'split-screen';
         }
 
         // Check user preference from localStorage

@@ -2424,10 +2424,15 @@ document.addEventListener("DOMContentLoaded", () => {
             triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
 
             // Show XP notification in live feed
-            if (typeof window.showXpNotification === 'function' && data.xpAmount) {
+            if (typeof window.showXpNotification === 'function') {
+                // Use xpAwarded if available, otherwise parse from specialXpAwarded
+                const xpAmount = data.xpAwarded || (data.xpAmount || 10);
                 const reason = data.specialXpAwarded.replace('🎉 ', '').replace('⭐ ', '').replace('🎊 ', '').split('!')[0];
-                window.showXpNotification(data.xpAmount, reason);
+                window.showXpNotification(xpAmount, reason);
             }
+        } else if (data.xpAwarded && typeof window.showXpNotification === 'function') {
+            // Show regular XP notification even without bonus
+            window.showXpNotification(data.xpAwarded, 'Question answered');
         }
 
         // Smart streak tracking - only when AI explicitly signals problem correctness
