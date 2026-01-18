@@ -220,9 +220,20 @@ class AlgebraTiles {
 
   setupEventListeners() {
     // Close button
-    document.getElementById('closeTilesBtn').addEventListener('click', () => {
-      this.close();
-    });
+    const closeBtn = document.getElementById('closeTilesBtn');
+    if (closeBtn) {
+      // Use mousedown with capture to ensure it fires reliably
+      closeBtn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, true);
+
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.close();
+      }, true);
+    }
 
     // Mode selector
     document.getElementById('modeSelector').addEventListener('change', (e) => {
