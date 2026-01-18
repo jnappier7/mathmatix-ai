@@ -80,14 +80,17 @@ router.get('/', async (req, res) => {
             };
         }
 
-        const systemPromptForWelcome = generateSystemPrompt(user, tutorNameForPrompt, null, 'student', null, null, null, [], null, conversationContextForPrompt);
+        const systemPromptForWelcome = generateSystemPrompt(user, currentTutor, null, 'student', null, null, null, [], null, conversationContextForPrompt);
         let messagesForAI = [{ role: "system", content: systemPromptForWelcome }];
         let userMessagePart;
 
-        // Get temporal context for natural, time-aware greetings
+        // Get temporal context for natural, time-aware greetings (EST/EDT)
         const now = new Date();
-        const hour = now.getHours();
-        const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
+
+        // Convert to Eastern Time (handles EST/EDT automatically)
+        const estTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+        const hour = estTime.getHours();
+        const dayOfWeek = estTime.getDay(); // 0 = Sunday, 6 = Saturday
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
         let timeContext = '';
