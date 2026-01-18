@@ -891,7 +891,8 @@ class AlgebraTiles {
     const threshold = this.snapThreshold;
     let snappedX = x;
     let snappedY = y;
-    let snapped = false;
+    let snappedHorizontal = false;
+    let snappedVertical = false;
 
     // Check all other tiles for magnetic snap opportunities
     for (const otherTile of this.tiles) {
@@ -899,28 +900,48 @@ class AlgebraTiles {
 
       const otherDims = this.getTileDimensions(otherTile.type);
 
-      // Try to snap to edges
-      const snapPositions = [
-        // Snap right edge of this tile to left edge of other tile
-        { x: otherTile.x - tileDims.width, y: otherTile.y, condition: Math.abs((x + tileDims.width) - otherTile.x) < threshold && Math.abs(y - otherTile.y) < threshold },
-        // Snap left edge of this tile to right edge of other tile
-        { x: otherTile.x + otherDims.width, y: otherTile.y, condition: Math.abs(x - (otherTile.x + otherDims.width)) < threshold && Math.abs(y - otherTile.y) < threshold },
-        // Snap bottom edge of this tile to top edge of other tile
-        { x: otherTile.x, y: otherTile.y - tileDims.height, condition: Math.abs((y + tileDims.height) - otherTile.y) < threshold && Math.abs(x - otherTile.x) < threshold },
-        // Snap top edge of this tile to bottom edge of other tile
-        { x: otherTile.x, y: otherTile.y + otherDims.height, condition: Math.abs(y - (otherTile.y + otherDims.height)) < threshold && Math.abs(x - otherTile.x) < threshold },
-      ];
+      // Calculate tile boundaries
+      const thisBottom = y + tileDims.height;
+      const thisRight = x + tileDims.width;
+      const otherBottom = otherTile.y + otherDims.height;
+      const otherRight = otherTile.x + otherDims.width;
 
-      for (const snap of snapPositions) {
-        if (snap.condition) {
-          snappedX = snap.x;
-          snappedY = snap.y;
-          snapped = true;
-          break;
+      // HORIZONTAL SNAPPING (left/right edges)
+      // Check if tiles overlap vertically (are at similar heights)
+      const verticalOverlap = !(thisBottom < otherTile.y || y > otherBottom);
+
+      if (verticalOverlap && !snappedHorizontal) {
+        // Snap right edge of this tile to left edge of other tile
+        if (Math.abs(thisRight - otherTile.x) < threshold) {
+          snappedX = otherTile.x - tileDims.width;
+          snappedHorizontal = true;
+        }
+        // Snap left edge of this tile to right edge of other tile
+        else if (Math.abs(x - otherRight) < threshold) {
+          snappedX = otherRight;
+          snappedHorizontal = true;
         }
       }
 
-      if (snapped) break;
+      // VERTICAL SNAPPING (top/bottom edges)
+      // Check if tiles overlap horizontally (are at similar horizontal positions)
+      const horizontalOverlap = !(thisRight < otherTile.x || x > otherRight);
+
+      if (horizontalOverlap && !snappedVertical) {
+        // Snap bottom edge of this tile to top edge of other tile
+        if (Math.abs(thisBottom - otherTile.y) < threshold) {
+          snappedY = otherTile.y - tileDims.height;
+          snappedVertical = true;
+        }
+        // Snap top edge of this tile to bottom edge of other tile
+        else if (Math.abs(y - otherBottom) < threshold) {
+          snappedY = otherBottom;
+          snappedVertical = true;
+        }
+      }
+
+      // If both dimensions snapped, we're done
+      if (snappedHorizontal && snappedVertical) break;
     }
 
     return { x: snappedX, y: snappedY };
