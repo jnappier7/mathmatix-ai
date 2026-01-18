@@ -220,9 +220,20 @@ class AlgebraTiles {
 
   setupEventListeners() {
     // Close button
-    document.getElementById('closeTilesBtn').addEventListener('click', () => {
-      this.close();
-    });
+    const closeBtn = document.getElementById('closeTilesBtn');
+    if (closeBtn) {
+      // Use mousedown with capture to ensure it fires reliably
+      closeBtn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }, true);
+
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.close();
+      }, true);
+    }
 
     // Mode selector
     document.getElementById('modeSelector').addEventListener('change', (e) => {
@@ -862,7 +873,7 @@ class AlgebraTiles {
    * @returns {boolean} True if collision detected
    */
   hasCollision(x, y, excludeTileId = null) {
-    const tileSize = 60; // Approximate tile size
+    const tileSize = 120; // Approximate max tile size (x² tiles are 120×120)
     const padding = this.collisionPadding;
 
     for (const tile of this.tiles) {
