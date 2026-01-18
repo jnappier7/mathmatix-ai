@@ -18,7 +18,7 @@ class AlgebraTiles {
     this.selectionBox = null; // For drag-to-select rectangle
     this.isDraggingSelection = false;
     this.tileRotations = new Map(); // Store rotation angles for each tile ID
-    this.collisionPadding = 10; // Padding for collision detection
+    this.snapThreshold = 30; // Magnetic snap distance in pixels
 
     this.init();
   }
@@ -681,31 +681,21 @@ class AlgebraTiles {
           let newX = this.snapToGrid(initialPos.x + finalDeltaX);
           let newY = this.snapToGrid(initialPos.y + finalDeltaY);
 
-          // Check for collision with other tiles (excluding tiles being dragged)
+          // Apply magnetic snapping to nearby tiles (excluding tiles being dragged)
           const otherDraggedIds = this.draggedTile.ids.filter(otherId => otherId !== id);
-          let hasCollisionWithOthers = false;
+          const tempTile = { ...tile, id: tile.id };
 
-          for (const otherTile of this.tiles) {
-            // Skip if it's the current tile or another dragged tile
-            if (otherTile.id === id || otherDraggedIds.includes(otherTile.id)) continue;
+          // Temporarily exclude dragged tiles from snap candidates
+          const savedTiles = this.tiles;
+          this.tiles = this.tiles.filter(t => !otherDraggedIds.includes(t.id) && t.id !== id);
 
-            const dx = Math.abs(otherTile.x - newX);
-            const dy = Math.abs(otherTile.y - newY);
-            const tileSize = 60;
-            const padding = this.collisionPadding;
+          // Apply magnetic snap
+          const snapped = this.magneticSnapToTile(tempTile, newX, newY);
+          newX = snapped.x;
+          newY = snapped.y;
 
-            if (dx < (tileSize + padding) && dy < (tileSize + padding)) {
-              hasCollisionWithOthers = true;
-              break;
-            }
-          }
-
-          // If collision detected, find nearby empty position
-          if (hasCollisionWithOthers) {
-            const emptyPos = this.findEmptyPosition(newX, newY);
-            newX = emptyPos.x;
-            newY = emptyPos.y;
-          }
+          // Restore tiles array
+          this.tiles = savedTiles;
 
           // Update tile data
           tile.x = newX;
@@ -866,24 +856,114 @@ class AlgebraTiles {
   }
 
   /**
-   * Check if a position collides with existing tiles
+   * Get tile dimensions based on type
+   * @param {string} type - Tile type
+   * @returns {Object} { width, height } dimensions in pixels
+   */
+  getTileDimensions(type) {
+    const dimensions = {
+      'positive-unit': { width: 40, height: 40 },
+      'negative-unit': { width: 40, height: 40 },
+      'x-positive': { width: 120, height: 40 },
+      'x-negative': { width: 120, height: 40 },
+      'y-positive': { width: 40, height: 120 },
+      'y-negative': { width: 40, height: 120 },
+      'xy-positive': { width: 120, height: 120 },
+      'xy-negative': { width: 120, height: 120 },
+      'x2-positive': { width: 120, height: 120 },
+      'x2-negative': { width: 120, height: 120 },
+      'hundred': { width: 100, height: 100 },
+      'ten': { width: 100, height: 30 },
+      'one': { width: 30, height: 30 }
+    };
+    return dimensions[type] || { width: 40, height: 40 };
+  }
+
+  /**
+   * Magnetic snap - snaps tile to align with nearby tiles
+   * @param {Object} tile - The tile being moved
+   * @param {number} x - Proposed x position
+   * @param {number} y - Proposed y position
+   * @returns {Object} { x, y } snapped position
+   */
+  magneticSnapToTile(tile, x, y) {
+    const tileDims = this.getTileDimensions(tile.type);
+    const threshold = this.snapThreshold;
+    let snappedX = x;
+    let snappedY = y;
+    let snappedHorizontal = false;
+    let snappedVertical = false;
+
+    // Check all other tiles for magnetic snap opportunities
+    for (const otherTile of this.tiles) {
+      if (otherTile.id === tile.id) continue;
+
+      const otherDims = this.getTileDimensions(otherTile.type);
+
+      // Calculate tile boundaries
+      const thisBottom = y + tileDims.height;
+      const thisRight = x + tileDims.width;
+      const otherBottom = otherTile.y + otherDims.height;
+      const otherRight = otherTile.x + otherDims.width;
+
+      // HORIZONTAL SNAPPING (left/right edges)
+      // Check if tiles overlap vertically (are at similar heights)
+      const verticalOverlap = !(thisBottom < otherTile.y || y > otherBottom);
+
+      if (verticalOverlap && !snappedHorizontal) {
+        // Snap right edge of this tile to left edge of other tile
+        if (Math.abs(thisRight - otherTile.x) < threshold) {
+          snappedX = otherTile.x - tileDims.width;
+          snappedHorizontal = true;
+        }
+        // Snap left edge of this tile to right edge of other tile
+        else if (Math.abs(x - otherRight) < threshold) {
+          snappedX = otherRight;
+          snappedHorizontal = true;
+        }
+      }
+
+      // VERTICAL SNAPPING (top/bottom edges)
+      // Check if tiles overlap horizontally (are at similar horizontal positions)
+      const horizontalOverlap = !(thisRight < otherTile.x || x > otherRight);
+
+      if (horizontalOverlap && !snappedVertical) {
+        // Snap bottom edge of this tile to top edge of other tile
+        if (Math.abs(thisBottom - otherTile.y) < threshold) {
+          snappedY = otherTile.y - tileDims.height;
+          snappedVertical = true;
+        }
+        // Snap top edge of this tile to bottom edge of other tile
+        else if (Math.abs(y - otherBottom) < threshold) {
+          snappedY = otherBottom;
+          snappedVertical = true;
+        }
+      }
+
+      // If both dimensions snapped, we're done
+      if (snappedHorizontal && snappedVertical) break;
+    }
+
+    return { x: snappedX, y: snappedY };
+  }
+
+  /**
+   * Check if a position actually overlaps with existing tiles (for finding empty spots)
    * @param {number} x - X coordinate
    * @param {number} y - Y coordinate
    * @param {number} excludeTileId - Optional tile ID to exclude from collision check
-   * @returns {boolean} True if collision detected
+   * @returns {boolean} True if tiles actually overlap
    */
   hasCollision(x, y, excludeTileId = null) {
-    const tileSize = 120; // Approximate max tile size (x² tiles are 120×120)
-    const padding = this.collisionPadding;
-
     for (const tile of this.tiles) {
       if (excludeTileId && tile.id === excludeTileId) continue;
 
+      const tileDims = this.getTileDimensions(tile.type);
       const dx = Math.abs(tile.x - x);
       const dy = Math.abs(tile.y - y);
 
-      // Check if tiles overlap (with padding)
-      if (dx < (tileSize + padding) && dy < (tileSize + padding)) {
+      // Check if tiles actually overlap (no padding)
+      if (dx < tileDims.width && dy < tileDims.height) {
         return true;
       }
     }
