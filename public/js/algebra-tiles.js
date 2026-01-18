@@ -873,7 +873,7 @@ class AlgebraTiles {
    * @returns {boolean} True if collision detected
    */
   hasCollision(x, y, excludeTileId = null) {
-    const tileSize = 60; // Approximate tile size
+    const tileSize = 120; // Approximate max tile size (x² tiles are 120×120)
     const padding = this.collisionPadding;
 
     for (const tile of this.tiles) {
