@@ -21,9 +21,9 @@
 }
 
 #whiteboard-panel.is-hidden {
+    display: none !important;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(20px) scale(0.95);
 }
 
 #whiteboard-panel.maximized {

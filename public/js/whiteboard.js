@@ -129,47 +129,73 @@ class MathmatixWhiteboard {
         // Close button
         const closeBtn = this.panel.querySelector('#close-whiteboard-btn');
         if (closeBtn) {
+            // Use mousedown with capture to ensure it fires before dragging
+            closeBtn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+
             closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 this.hide();
+                // Reset maximized state when closing
+                this.panel.classList.remove('maximized');
+                this.isMaximized = false;
                 const openBtn = document.getElementById('open-whiteboard-btn');
                 if (openBtn) openBtn.classList.remove('hidden');
-                console.log('✅ Whiteboard closed');
-            });
+            }, true);
         }
 
         // Minimize button
         const minimizeBtn = this.panel.querySelector('#minimize-whiteboard-btn');
         if (minimizeBtn) {
+            minimizeBtn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+
             minimizeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 this.minimize();
-                console.log('✅ Whiteboard minimized');
-            });
+            }, true);
         }
 
         // Maximize button
         const maximizeBtn = this.panel.querySelector('#maximize-whiteboard-btn');
         if (maximizeBtn) {
+            maximizeBtn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+
             maximizeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 this.maximize();
                 const icon = maximizeBtn.querySelector('i');
                 if (icon) {
                     icon.className = this.isMaximized ? 'fas fa-compress' : 'fas fa-expand';
                 }
-                console.log(this.isMaximized ? '✅ Whiteboard maximized' : '✅ Whiteboard restored');
-            });
+            }, true);
         }
 
         // Layout mode switcher
         const layoutModeBtn = this.panel.querySelector('#layout-mode-btn');
         const layoutModeMenu = this.panel.querySelector('#layout-mode-menu');
         if (layoutModeBtn && layoutModeMenu) {
-            layoutModeBtn.addEventListener('click', (e) => {
+            layoutModeBtn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                layoutModeMenu.style.display = layoutModeMenu.style.display === 'none' ? 'block' : 'none';
-            });
+            }, true);
+
+            layoutModeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const currentDisplay = layoutModeMenu.style.display;
+                layoutModeMenu.style.display = currentDisplay === 'none' || !currentDisplay ? 'block' : 'none';
+            }, true);
 
             // Handle layout mode selection
             layoutModeMenu.querySelectorAll('.layout-option').forEach(option => {
@@ -177,7 +203,6 @@ class MathmatixWhiteboard {
                     const mode = e.currentTarget.dataset.mode;
                     if (window.whiteboardChatLayout) {
                         window.whiteboardChatLayout.setLayoutMode(mode);
-                        console.log(`✅ Layout mode: ${mode}`);
                     }
                     layoutModeMenu.style.display = 'none';
                 });
