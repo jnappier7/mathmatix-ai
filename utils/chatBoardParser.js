@@ -63,48 +63,6 @@ function parseBoardReferences(text) {
     };
 }
 
-/**
- * Validate message length for micro-chat constraints
- * Returns warnings but doesn't block (soft enforcement)
- *
- * @param {string} text - Message text to validate
- * @param {number} maxLength - Maximum character limit (default 100)
- * @returns {Object} { isValid, length, warning }
- */
-function validateMicroChat(text, maxLength = 100) {
-    if (!text) {
-        return { isValid: true, length: 0, warning: null };
-    }
-
-    // Remove markdown and special formatting for length calculation
-    const cleanText = text
-        .replace(/\*\*/g, '') // bold
-        .replace(/\*/g, '')   // italic
-        .replace(/\[BOARD_REF:[^\]]+\]/g, '') // board refs
-        .replace(/\[DESMOS:[^\]]+\]/g, '')    // desmos
-        .replace(/\\\(.*?\\\)/g, '')          // inline latex
-        .replace(/\\\[.*?\\\]/g, '')          // display latex
-        .trim();
-
-    const length = cleanText.length;
-    const isValid = length <= maxLength;
-
-    let warning = null;
-    if (!isValid) {
-        const overage = length - maxLength;
-        warning = `Micro-chat constraint violated: ${length} chars (${overage} over limit). Should use whiteboard instead.`;
-    } else if (length > maxLength * 0.7) {
-        // Warn at 70% threshold
-        warning = `Approaching micro-chat limit: ${length}/${maxLength} chars. Consider whiteboard.`;
-    }
-
-    return {
-        isValid,
-        length,
-        warning,
-        overage: isValid ? 0 : length - maxLength
-    };
-}
 
 /**
  * Detect if message should trigger board mode
@@ -144,7 +102,7 @@ function shouldUseBoard(text) {
 
 /**
  * Process complete AI response for board-first integration
- * Combines all parsing and validation
+ * Combines all parsing
  *
  * @param {string} aiResponseText - Raw AI response
  * @returns {Object} Processed response with all metadata
@@ -153,16 +111,8 @@ function processAIResponse(aiResponseText) {
     // Parse board references
     const { cleanedText, boardReferences, boardContext } = parseBoardReferences(aiResponseText);
 
-    // Validate message length
-    const validation = validateMicroChat(cleanedText);
-
     // Check if board should be used
     const shouldBoard = shouldUseBoard(cleanedText);
-
-    // Log warnings to console for monitoring
-    if (validation.warning) {
-        console.log(`[ChatBoard] ${validation.warning}`);
-    }
 
     if (boardReferences.length > 0) {
         console.log(`[ChatBoard] Found ${boardReferences.length} board reference(s): ${boardReferences.map(r => r.objectId).join(', ')}`);
@@ -172,13 +122,11 @@ function processAIResponse(aiResponseText) {
         text: cleanedText,
         boardContext: boardContext,
         boardReferences: boardReferences,
-        validation: validation,
         shouldUseBoard: shouldBoard,
         metadata: {
             originalLength: aiResponseText.length,
             cleanedLength: cleanedText.length,
-            hasBoardRefs: boardReferences.length > 0,
-            isWithinLimit: validation.isValid
+            hasBoardRefs: boardReferences.length > 0
         }
     };
 }
@@ -240,39 +188,10 @@ function getMicroChatSuggestions(intent = 'invite') {
     return templates[intent] || templates.invite;
 }
 
-/**
- * Fallback: Truncate message if it's way too long
- * Last resort - shouldn't normally be needed if AI follows prompt
- *
- * @param {string} text - Text to truncate
- * @param {number} maxLength - Max length (default 100)
- * @returns {string} Truncated text
- */
-function truncateIfNeeded(text, maxLength = 100) {
-    if (!text || text.length <= maxLength) {
-        return text;
-    }
-
-    // Find a good break point (end of sentence, word, etc.)
-    const truncated = text.substring(0, maxLength - 3);
-    const lastSpace = truncated.lastIndexOf(' ');
-    const lastPeriod = truncated.lastIndexOf('.');
-
-    let breakPoint = lastPeriod > 0 ? lastPeriod + 1 : lastSpace > 0 ? lastSpace : maxLength - 3;
-
-    const result = text.substring(0, breakPoint).trim() + '...';
-
-    console.warn(`[ChatBoard] MESSAGE TRUNCATED: Original ${text.length} chars -> ${result.length} chars`);
-    console.warn(`[ChatBoard] Original: "${text.substring(0, 50)}..."`);
-
-    return result;
-}
 
 module.exports = {
     parseBoardReferences,
-    validateMicroChat,
     shouldUseBoard,
     processAIResponse,
-    getMicroChatSuggestions,
-    truncateIfNeeded
+    getMicroChatSuggestions
 };

@@ -73,6 +73,21 @@ function buildSkillMasteryContext(userProfile, filterToSkill = null) {
     context += '\n';
   }
 
+  // Identify assessment-based gaps (learning skills noted from assessment)
+  const assessmentGaps = learning.filter(skill =>
+    skill.notes && skill.notes.includes('assessment')
+  );
+
+  if (assessmentGaps.length > 0) {
+    context += `**GAPS FROM INITIAL ASSESSMENT:**\n`;
+    context += `These areas showed room for growth during their skills assessment:\n`;
+    assessmentGaps.forEach(skill => {
+      context += `  ⚠️  ${skill.display}\n`;
+    });
+    context += `\n**When to reference these:** When the student seems unsure what to work on, you can say:\n`;
+    context += `"I noticed from your skills assessment that ${assessmentGaps[0].display.toLowerCase()} needed some work. Want to tackle that together and build a stronger foundation?"\n\n`;
+  }
+
   if (ready.length > 0) {
     context += `**READY TO LEARN** (Prerequisites Met):\n`;
     ready.slice(0, 5).forEach(skill => {
@@ -86,14 +101,16 @@ function buildSkillMasteryContext(userProfile, filterToSkill = null) {
 
   context += `**HOW TO USE THIS INFORMATION:**
 1. **Reference Growth:** When relevant, acknowledge their progress ("Remember when you were learning ${mastered[0]?.display || 'that skill'}? Look at you now!")
-2. **Suggest Next Steps:** When a student finishes a problem set or asks "what's next", suggest a ready skill
-3. **Mark Progress:** When you're confident they've mastered a skill, use: <SKILL_MASTERED:skill-id>
-4. **Start New Learning:** When teaching a new skill, use: <SKILL_STARTED:skill-id>
-5. **Stay Aligned:** Focus tutoring on current learning skills or ready skills unless student asks about something else
+2. **Fill Assessment Gaps:** When student is unsure what to work on, reference areas from their assessment that need strengthening
+3. **Suggest Next Steps:** When a student finishes a problem set or asks "what's next", suggest a ready skill or address a learning gap
+4. **Mark Progress:** When you're confident they've mastered a skill, use: <SKILL_MASTERED:skill-id>
+5. **Start New Learning:** When teaching a new skill, use: <SKILL_STARTED:skill-id>
+6. **Stay Aligned:** Focus tutoring on current learning skills or ready skills unless student asks about something else
 
 **IMPORTANT:** Suggest new skills naturally in conversation. Don't force it. Examples:
 - "You're crushing these two-step equations! Want to level up to multi-step?"
 - "I've noticed you've got this down. Ready to try something new, or want more practice?"
+- "I noticed from your skills assessment that you had some trouble with ${learning[0]?.display.toLowerCase() || 'that topic'}. Want to strengthen that foundation?"
 - After completing work: "Great session! You're ready for [skill] whenever you want to tackle it."
 `;
 
