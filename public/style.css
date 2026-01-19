@@ -1196,6 +1196,31 @@ a:hover {
   border: 1px solid #ccc;
   font-size: 1rem; /* Use var for consistency */
   resize: vertical;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Placeholder for contenteditable */
+#user-input:empty::before {
+  content: attr(data-placeholder);
+  color: #999;
+  pointer-events: none;
+}
+
+#user-input:focus {
+  outline: none;
+  border-color: var(--clr-primary-teal);
+  box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
+}
+
+/* Math rendering in input field */
+#user-input .math-container {
+  display: inline;
+  vertical-align: middle;
+  padding: 2px 4px;
+  margin: 0 2px;
+  background-color: rgba(var(--clr-primary-teal-rgb), 0.05);
+  border-radius: 3px;
 }
 
 #send-button {
@@ -3047,11 +3072,6 @@ form label, .password-label-row label {
         margin-bottom: 8px;
     }
 
-    #user-input:focus {
-        outline: none;
-        border-color: var(--clr-primary-teal);
-        box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
-    }
 
     /* Hide suggestion chips on mobile - saves space and reduces clutter */
     #suggestion-chips-container {
