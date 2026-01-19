@@ -328,15 +328,10 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             ? visualCommands.whiteboard[0].sequence
             : null;
 
-        // BOARD-FIRST CHAT INTEGRATION: Parse board references and validate micro-chat
+        // BOARD-FIRST CHAT INTEGRATION: Parse board references
         const boardParsed = processAIResponse(aiResponseText);
         aiResponseText = boardParsed.text; // Cleaned text with [BOARD_REF:...] removed
         const boardContext = boardParsed.boardContext; // { targetObjectId, type, allReferences }
-
-        // Log validation warnings for monitoring (but don't enforce truncation)
-        if (boardParsed.validation.warning) {
-            console.warn(`[ChatBoard] AI message validation: ${boardParsed.validation.warning}`);
-        }
 
         const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
         let bonusXpAwarded = 0;
@@ -571,8 +566,6 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                 if (wasCorrect) {
                     activeBadge.problemsCorrect = (activeBadge.problemsCorrect || 0) + 1;
                 }
-
-                console.log(`📊 Badge Progress: ${activeBadge.badgeName} - ${activeBadge.problemsCompleted}/${activeBadge.requiredProblems} (${activeBadge.problemsCorrect} correct)`);
 
                 // Check if badge is complete and AUTO-AWARD
                 const accuracy = activeBadge.problemsCorrect / activeBadge.problemsCompleted;

@@ -214,12 +214,7 @@ class ChatBoardController {
      * Format chat message to be concise and board-anchored
      */
     formatMicroChat(text, anchorTarget = null) {
-        // Ensure message is short
-        if (!this.validateChatMessage(text)) {
-            // Truncate if too long (emergency fallback)
-            text = text.substring(0, this.maxChatLength - 3) + '...';
-        }
-
+        // Note: No truncation - AI should follow system instructions for conciseness
         return {
             text: text,
             anchorTarget: anchorTarget,
