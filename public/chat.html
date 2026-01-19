@@ -24,6 +24,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
   <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
@@ -1308,6 +1309,7 @@
 
   <!-- Load storage utilities FIRST to prevent tracking prevention errors -->
   <script src="/js/storage-utils.js"></script>
+  <script src="/js/sanitize-util.js"></script>
   <script src="/js/logout.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/algebra-tiles.js"></script>

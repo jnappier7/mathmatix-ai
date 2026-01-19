@@ -1834,7 +1834,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
             });
 
-            textNode.innerHTML = finalHtml;
+            // Sanitize HTML to prevent XSS attacks
+            const sanitizedHtml = DOMPurify.sanitize(finalHtml, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span'],
+                ALLOWED_ATTR: ['href', 'class', 'target', 'rel']
+            });
+            textNode.innerHTML = sanitizedHtml;
         } else {
             textNode.textContent = text;
         }
