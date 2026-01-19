@@ -171,6 +171,23 @@ class FileUploadManager {
         pdfNav.style.display = 'flex';
 
         try {
+            // Lazy load PDF.js library if not already loaded (19MB)
+            if (!window.pdfLazyLoader || !window.pdfLazyLoader.isReady()) {
+                const loadingMsg = document.createElement('div');
+                loadingMsg.textContent = 'Loading PDF viewer...';
+                loadingMsg.style.cssText = 'text-align: center; padding: 20px; color: #666;';
+                canvas.parentElement.insertBefore(loadingMsg, canvas);
+
+                try {
+                    await window.pdfLazyLoader.load();
+                    loadingMsg.remove();
+                } catch (error) {
+                    console.error('Failed to load PDF.js:', error);
+                    alert('Failed to load PDF viewer. Please refresh and try again.');
+                    return;
+                }
+            }
+
             // Load PDF using pdfjs
             const arrayBuffer = await file.arrayBuffer();
             const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });

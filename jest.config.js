@@ -21,7 +21,7 @@ module.exports = {
   ],
 
   // Coverage thresholds (start low, increase over time)
-  coverageThresholds: {
+  coverageThreshold: {
     global: {
       statements: 40,
       branches: 30,
