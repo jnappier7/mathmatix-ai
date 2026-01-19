@@ -8,15 +8,29 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// Initialize Anthropic (Claude) client, if API key is present
+// Initialize Anthropic (Claude) client, with environment-specific API keys
 let anthropic = null;
-if (process.env.ANTHROPIC_API_KEY) {
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Select appropriate API key based on environment
+const anthropicApiKey = isProduction
+    ? process.env.ANTHROPIC_API_KEY_PROD    // Production: Use dedicated prod key
+    : process.env.ANTHROPIC_API_KEY_DEV     // Development/Testing: Use dev key
+    || process.env.ANTHROPIC_API_KEY;       // Legacy fallback (deprecated)
+
+if (anthropicApiKey) {
     anthropic = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY,
+        apiKey: anthropicApiKey,
     });
-    console.log('✅ [Init] Anthropic client initialized successfully');
+    const keyType = isProduction ? 'PRODUCTION' : 'DEVELOPMENT';
+    const keySource = isProduction
+        ? (process.env.ANTHROPIC_API_KEY_PROD ? 'ANTHROPIC_API_KEY_PROD' : 'ANTHROPIC_API_KEY (fallback)')
+        : (process.env.ANTHROPIC_API_KEY_DEV ? 'ANTHROPIC_API_KEY_DEV' : 'ANTHROPIC_API_KEY (fallback)');
+
+    console.log(`✅ [Init] Anthropic client initialized successfully (${keyType} mode using ${keySource})`);
 } else {
-    console.warn('⚠️  [Init] ANTHROPIC_API_KEY not found - Claude models will not be available');
+    console.warn('⚠️  [Init] No Anthropic API key found - Claude models will not be available');
+    console.warn('⚠️  [Init] Set ANTHROPIC_API_KEY_PROD (production) or ANTHROPIC_API_KEY_DEV (development)');
 }
 
 // Log OpenAI client status
