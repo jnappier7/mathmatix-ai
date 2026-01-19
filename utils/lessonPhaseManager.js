@@ -9,16 +9,18 @@
  */
 
 /**
- * Lesson phases following gradual release model
+ * Lesson phases following gradual release model (CONCEPT-FIRST APPROACH)
  */
 const PHASES = {
-  INTRO: 'intro',             // Student choice: lesson vs. direct test
-  WARMUP: 'warmup',           // Prerequisite skill review
-  I_DO: 'i-do',               // Teacher models with think-aloud
-  WE_DO: 'we-do',             // Guided practice with scaffolding
-  CHECK_IN: 'check-in',       // Emotional confidence assessment
-  YOU_DO: 'you-do',           // Independent practice
-  MASTERY_CHECK: 'mastery'    // Final assessment for badge eligibility
+  INTRO: 'intro',                 // Student choice: lesson vs. direct test
+  WARMUP: 'warmup',               // Prerequisite skill review
+  CONCEPT_INTRO: 'concept-intro', // 🆕 Build conceptual understanding (BIG IDEA)
+  I_DO: 'i-do',                   // Teacher models with 2-3 examples
+  CONCEPT_CHECK: 'concept-check', // 🆕 Verify understanding before practice
+  WE_DO: 'we-do',                 // Guided practice with scaffolding
+  CHECK_IN: 'check-in',           // Emotional confidence assessment
+  YOU_DO: 'you-do',               // Independent practice
+  MASTERY_CHECK: 'mastery'        // Final assessment for badge eligibility
 };
 
 /**
@@ -50,11 +52,13 @@ function initializeLessonPhase(skillId, warmupData) {
     warmupData,
     phaseHistory: [],
     assessmentData: {
-      intro: { attempts: 0, correct: 0, signals: [] },
-      warmup: { attempts: 0, correct: 0, signals: [] },
-      'i-do': { attempts: 0, correct: 0, signals: [] },
-      'we-do': { attempts: 0, correct: 0, signals: [] },
-      'you-do': { attempts: 0, correct: 0, signals: [] }
+      intro: { attempts: 0, correct: 0, signals: [], understandingSignals: [] },
+      warmup: { attempts: 0, correct: 0, signals: [], understandingSignals: [] },
+      'concept-intro': { attempts: 0, correct: 0, signals: [], understandingSignals: [] }, // 🆕
+      'i-do': { attempts: 0, correct: 0, signals: [], understandingSignals: [] },
+      'concept-check': { attempts: 0, correct: 0, signals: [], understandingSignals: [] }, // 🆕
+      'we-do': { attempts: 0, correct: 0, signals: [], understandingSignals: [] },
+      'you-do': { attempts: 0, correct: 0, signals: [], understandingSignals: [] }
     },
     transitionLog: [],
     startTime: new Date(),
@@ -131,11 +135,13 @@ function evaluatePhaseTransition(phaseState) {
 
   // Minimum attempts before considering transition
   const MIN_ATTEMPTS = {
-    intro: 1,       // Just needs student's choice
-    warmup: 2,
-    'i-do': 1,      // Just needs to observe modeling
-    'we-do': 3,     // Practice with guidance
-    'you-do': 5     // Independent mastery
+    intro: 1,           // Just needs student's choice
+    warmup: 2,          // Check prerequisite understanding
+    'concept-intro': 1, // 🆕 Just needs concept explanation
+    'i-do': 1,          // Just needs to observe modeling (now 2-3 examples)
+    'concept-check': 1, // 🆕 Verify understanding with WHY questions
+    'we-do': 3,         // Practice with guidance
+    'you-do': 5         // Independent mastery
   };
 
   const minAttempts = MIN_ATTEMPTS[currentPhase] || 2;
@@ -172,59 +178,117 @@ function evaluatePhaseTransition(phaseState) {
       }
 
     case PHASES.WARMUP:
-      // If warmup is strong, skip I Do and go straight to We Do
-      if (confidence >= 0.8 && accuracy >= 0.75) {
-        return {
-          shouldTransition: true,
-          nextPhase: PHASES.WE_DO,
-          rationale: 'Strong warmup performance - ready for guided practice'
-        };
-      }
-      // If warmup is weak, need more modeling
-      if (confidence < 0.5 || accuracy < 0.5) {
-        return {
-          shouldTransition: true,
-          nextPhase: PHASES.I_DO,
-          rationale: 'Warmup shows gaps - need teacher modeling first'
-        };
-      }
-      // Moderate warmup - start with I Do
+      // 🆕 ALWAYS go to CONCEPT INTRO after warmup (concept-first approach)
+      // Warmup just checks prerequisites, not the new concept
+      return {
+        shouldTransition: true,
+        nextPhase: PHASES.CONCEPT_INTRO,
+        rationale: 'Warmup complete - ready to introduce new concept'
+      };
+
+    case PHASES.CONCEPT_INTRO:
+      // 🆕 After introducing concept, show worked examples
+      // Always transition to I DO to show 2-3 examples
       return {
         shouldTransition: true,
         nextPhase: PHASES.I_DO,
-        rationale: 'Moving to teacher modeling after warmup'
+        rationale: 'Concept introduced - ready to show worked examples'
       };
 
     case PHASES.I_DO:
-      // I Do is about observation, always transition to We Do
+      // 🆕 After showing 2-3 examples, check conceptual understanding
+      // Always transition to CONCEPT CHECK before practice
       return {
         shouldTransition: true,
-        nextPhase: PHASES.WE_DO,
-        rationale: 'Modeling complete - ready for guided practice'
+        nextPhase: PHASES.CONCEPT_CHECK,
+        rationale: '2-3 examples shown - checking understanding before practice'
+      };
+
+    case PHASES.CONCEPT_CHECK:
+      // 🆕 Determine if student understands WHY, not just HOW
+      // This is based on their ability to explain reasoning
+      // Note: This requires manual teacher judgment via understanding signals
+
+      // Check if we have understanding signals recorded
+      const understandingSignals = assessment.understandingSignals || [];
+
+      if (understandingSignals.length > 0) {
+        const lastUnderstanding = understandingSignals[understandingSignals.length - 1];
+
+        // If they can explain clearly → move to WE DO
+        if (lastUnderstanding === 'DEEP_UNDERSTANDING' || lastUnderstanding === 'CAN_EXPLAIN') {
+          return {
+            shouldTransition: true,
+            nextPhase: PHASES.WE_DO,
+            rationale: 'Student demonstrates conceptual understanding - ready for guided practice'
+          };
+        }
+
+        // If they can't explain → return to CONCEPT INTRO
+        if (lastUnderstanding === 'CANNOT_EXPLAIN' || lastUnderstanding === 'GUESSING') {
+          return {
+            shouldTransition: true,
+            nextPhase: PHASES.CONCEPT_INTRO,
+            rationale: 'Student cannot explain reasoning - revisiting concept with different approach'
+          };
+        }
+
+        // Partial understanding → move to WE DO with extra scaffolding
+        if (lastUnderstanding === 'PARTIAL_UNDERSTANDING') {
+          return {
+            shouldTransition: true,
+            nextPhase: PHASES.WE_DO,
+            rationale: 'Partial understanding - will scaffold heavily in guided practice'
+          };
+        }
+      }
+
+      // Default: if no understanding signals yet, stay in concept check
+      return {
+        shouldTransition: false,
+        nextPhase: PHASES.CONCEPT_CHECK,
+        rationale: 'Awaiting understanding check - need student to explain reasoning'
       };
 
     case PHASES.WE_DO:
-      // Strong performance - ready for independence
-      if (confidence >= 0.7 && accuracy >= 0.7) {
+      // 🆕 Check both accuracy AND understanding
+      const weDoUnderstanding = assessment.understandingSignals || [];
+      const hasDeepUnderstanding = weDoUnderstanding.slice(-2).some(
+        s => s === 'DEEP_UNDERSTANDING' || s === 'CAN_EXPLAIN'
+      );
+
+      // Strong performance + understanding - ready for independence
+      if (confidence >= 0.7 && accuracy >= 0.7 && hasDeepUnderstanding) {
         return {
           shouldTransition: true,
           nextPhase: PHASES.CHECK_IN,
-          rationale: 'Strong guided practice - checking student confidence'
+          rationale: 'Strong guided practice with understanding - checking student confidence'
         };
       }
-      // Struggling - go back to I Do for more modeling
+
+      // Correct but can't explain WHY - return to concept check
+      if (accuracy >= 0.7 && !hasDeepUnderstanding && weDoUnderstanding.length > 0) {
+        return {
+          shouldTransition: true,
+          nextPhase: PHASES.CONCEPT_CHECK,
+          rationale: 'Procedural success but lacks conceptual understanding - revisiting concept'
+        };
+      }
+
+      // Struggling with execution - go back to I Do for more modeling
       if (confidence < 0.4 || accuracy < 0.4) {
         return {
           shouldTransition: true,
           nextPhase: PHASES.I_DO,
-          rationale: 'Student struggling - need more modeling'
+          rationale: 'Student struggling with execution - need more modeling'
         };
       }
+
       // Still building - stay in We Do
       return {
         shouldTransition: false,
         nextPhase: PHASES.WE_DO,
-        rationale: 'Continue guided practice to build confidence'
+        rationale: 'Continue guided practice to build confidence and understanding'
       };
 
     case PHASES.CHECK_IN:
@@ -236,14 +300,30 @@ function evaluatePhaseTransition(phaseState) {
       };
 
     case PHASES.YOU_DO:
-      // Ready for mastery assessment
-      if (confidence >= 0.75 && accuracy >= 0.75 && assessment.attempts >= 5) {
+      // 🆕 Check accuracy + understanding + attempts
+      const youDoUnderstanding = assessment.understandingSignals || [];
+      const hasConsistentUnderstanding = youDoUnderstanding.slice(-3).filter(
+        s => s === 'DEEP_UNDERSTANDING' || s === 'CAN_EXPLAIN'
+      ).length >= 2;
+
+      // Ready for mastery: high accuracy + understanding + enough practice
+      if (confidence >= 0.75 && accuracy >= 0.75 && assessment.attempts >= 5 && hasConsistentUnderstanding) {
         return {
           shouldTransition: true,
           nextPhase: PHASES.MASTERY_CHECK,
-          rationale: 'Consistent independent success - ready for mastery check'
+          rationale: 'Consistent independent success with deep understanding - ready for mastery check'
         };
       }
+
+      // High accuracy but can't explain - need to verify understanding
+      if (accuracy >= 0.75 && !hasConsistentUnderstanding && assessment.attempts >= 3) {
+        return {
+          shouldTransition: true,
+          nextPhase: PHASES.CONCEPT_CHECK,
+          rationale: 'Good execution but needs to verify conceptual understanding'
+        };
+      }
+
       // Need more practice - go back to We Do
       if (confidence < 0.5 || accuracy < 0.5) {
         return {
@@ -252,11 +332,12 @@ function evaluatePhaseTransition(phaseState) {
           rationale: 'Independent practice shows gaps - return to guided practice'
         };
       }
+
       // Keep practicing
       return {
         shouldTransition: false,
         nextPhase: PHASES.YOU_DO,
-        rationale: 'Continue independent practice to solidify mastery'
+        rationale: 'Continue independent practice to solidify mastery and understanding'
       };
 
     case PHASES.MASTERY_CHECK:
@@ -384,30 +465,128 @@ Which works better for you?"
 - Should you spend more time modeling or can you move quickly to guided practice?
 `;
 
-    case PHASES.I_DO:
+    case PHASES.CONCEPT_INTRO:
       return baseInstructions + `
-## Internal Phase: I DO (Teacher Modeling)
+## Internal Phase: CONCEPT INTRODUCTION (Build Conceptual Understanding) 🆕
 
 **Your Task:**
-1. Introduce ${skillName} naturally
-2. Walk through an example step-by-step
-3. **Think aloud** - explain your reasoning at each step
-4. Model expert problem-solving strategies
+1. Explain the BIG IDEA of ${skillName} before showing procedures
+2. Answer: "WHAT is this concept?" and "WHY does it matter?"
+3. Use MULTIPLE REPRESENTATIONS:
+   - VISUAL: Show what it looks like (graphs, diagrams, manipulatives)
+   - SYMBOLIC: How we write it mathematically (equations, notation)
+   - CONTEXTUAL: When/why we use it in real life (applications)
+   - VERBAL: How we describe it in plain language
+4. Connect to prior knowledge explicitly
+5. Make it concrete before abstract
+
+**Example Opening:**
+"Let's understand WHAT ${skillName} really means. Think of it like [familiar analogy]... [Explain big idea]. Here's WHY this matters: [real-world connection]. Let me show you what this looks like visually..."
+
+**Multiple Representations Example:**
+- VISUAL: [Use whiteboard command to show diagram/graph]
+- SYMBOLIC: "We write this as [notation]"
+- CONTEXTUAL: "You use this when [real-world scenario]"
+- VERBAL: "In plain English, this means..."
+
+**What You're Building:**
+- Conceptual foundation before procedures
+- Understanding of WHY before HOW
+- Connection to what they already know
+- Motivation through relevance
+
+**Check For Understanding:**
+- "Does that make sense so far?"
+- "Can you explain it back to me in your own words?"
+- Look for nodding, questions, "aha" moments
+`;
+
+    case PHASES.I_DO:
+      return baseInstructions + `
+## Internal Phase: I DO (Teacher Modeling with 2-3 Examples) 🆕
+
+**Your Task:**
+1. Show 2-3 worked examples (not just one!) 🆕
+   - Example 1: Standard case with clear steps
+   - Example 2: Variation (different numbers, same concept)
+   - Example 3: Edge case (negatives, fractions, zeros, etc.)
+2. **Think aloud** - explain your reasoning WITH WHY at each step 🆕
+3. Model expert problem-solving strategies
+4. Point out common mistakes proactively
 5. Ask occasional check-for-understanding questions (but YOU do the work)
 
 **Example:**
-"Let me show you how I approach this. When I see [problem], the first thing I think is... [explain thinking]. Watch as I [demonstrate step]. I'm doing this because..."
+"Let me show you THREE different problems so you can see the pattern...
+
+**Example 1:** [Standard case]
+When I see [problem], the first thing I think is... [explain thinking]. I'm doing this BECAUSE... Watch as I [demonstrate step].
+
+**Example 2:** [Variation]
+Now watch how the same strategy works with different numbers... Notice what stays the same?
+
+**Example 3:** [Edge case]
+This one's trickier because [reason], but same approach... Watch out for [common mistake]."
 
 **Metacognitive Modeling:**
-- "I notice that..."
-- "This reminds me of..."
-- "I'm going to try..."
+- "I notice that... so I'm going to..."
+- "This reminds me of... because..."
+- "I'm doing this BECAUSE..."
 - "Let me check if that makes sense..."
 
+**After All Examples:**
+- "See the pattern? What stays the same across all three?"
+- "That's the key strategy for ${skillName}"
+
 **What You're Assessing:**
-- Are they following along?
-- Do their responses show understanding?
-- Can you move to guided practice?
+- Are they following along across multiple examples?
+- Do they see the pattern?
+- Ready for concept check?
+`;
+
+    case PHASES.CONCEPT_CHECK:
+      return baseInstructions + `
+## Internal Phase: CONCEPT CHECK (Verify Understanding Before Practice) 🆕
+
+**Your Task:**
+1. Ask "WHY" questions to check conceptual understanding
+2. Verify they understand WHY, not just HOW
+3. Look for ability to explain reasoning
+4. Determine if ready for practice or need more concept teaching
+
+**Critical Questions:**
+- "WHY did we do that step first?" (not just "what did we do?")
+- "What would happen if we did it differently?"
+- "How is this different from [related concept]?"
+- "Can you explain in your own words why this works?"
+
+**What You're Looking For:**
+✅ **DEEP UNDERSTANDING:**
+- Can explain reasoning clearly
+- Uses words like "because", "so that", "in order to"
+- Can predict what would happen with changes
+
+⚠️ **PROCEDURAL ONLY:**
+- Says "I don't know, I just did the steps"
+- Can't explain why
+- Memorized procedure without understanding
+
+❌ **GUESSING/CONFUSED:**
+- Wrong explanations showing misconceptions
+- "I'm not sure" or no response
+- Random reasoning
+
+**Decision Making:**
+- If DEEP UNDERSTANDING → Move to WE_DO (guided practice)
+- If PROCEDURAL ONLY → Return to CONCEPT_INTRO (re-teach with different approach)
+- If GUESSING → Return to CONCEPT_INTRO (foundational gap)
+
+**CRITICAL:**
+Use recordUnderstandingSignal() to track:
+- DEEP_UNDERSTANDING
+- CAN_EXPLAIN
+- PARTIAL_UNDERSTANDING
+- CANNOT_EXPLAIN
+- GUESSING
 `;
 
     case PHASES.WE_DO:
@@ -529,11 +708,47 @@ Do NOT show this marker to the student - it's for system tracking only.
   }
 }
 
+/**
+ * Record conceptual understanding signal
+ * Used to track whether student can explain WHY, not just HOW
+ *
+ * @param {Object} phaseState - Current lesson phase state
+ * @param {String} understandingLevel - Level of understanding shown
+ *   - DEEP_UNDERSTANDING: Can explain why, transfers to new contexts
+ *   - CAN_EXPLAIN: Can articulate reasoning clearly
+ *   - PARTIAL_UNDERSTANDING: Has concept but execution errors
+ *   - CANNOT_EXPLAIN: Gets answer but can't explain why
+ *   - GUESSING: No reasoning, random attempts
+ * @returns {Object} Updated phase state
+ */
+function recordUnderstandingSignal(phaseState, understandingLevel) {
+  const phase = phaseState.currentPhase;
+  const assessment = phaseState.assessmentData[phase];
+
+  if (!assessment) {
+    console.warn(`No assessment tracking for phase: ${phase}`);
+    return phaseState;
+  }
+
+  // Initialize understandingSignals array if it doesn't exist
+  if (!assessment.understandingSignals) {
+    assessment.understandingSignals = [];
+  }
+
+  // Record the understanding signal
+  assessment.understandingSignals.push(understandingLevel);
+
+  console.log(`🧠 Understanding Signal: ${phase} - ${understandingLevel}`);
+
+  return phaseState;
+}
+
 module.exports = {
   PHASES,
   ASSESSMENT_SIGNALS,
   initializeLessonPhase,
   recordAssessment,
+  recordUnderstandingSignal,
   calculateConfidence,
   evaluatePhaseTransition,
   transitionPhase,
