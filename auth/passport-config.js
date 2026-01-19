@@ -7,6 +7,34 @@ const User                = require("../models/user");
 const bcrypt              = require("bcryptjs");
 const { generateUniqueStudentLinkCode } = require("../routes/student");
 
+/**
+ * Generate a unique username from a display name
+ * Checks database to ensure no collisions occur
+ */
+async function generateUniqueUsername(displayName, providerId) {
+  const baseUsername = displayName.replace(/\s+/g, "").toLowerCase();
+
+  // Check if base username is available
+  let existingUser = await User.findOne({ username: baseUsername });
+  if (!existingUser) {
+    return baseUsername;
+  }
+
+  // If taken, append unique suffix from provider ID
+  const suffix = providerId.substring(0, 6);
+  const uniqueUsername = `${baseUsername}_${suffix}`;
+
+  // Check again with suffix
+  existingUser = await User.findOne({ username: uniqueUsername });
+  if (!existingUser) {
+    return uniqueUsername;
+  }
+
+  // If still taken (very rare), append timestamp
+  const timestamp = Date.now().toString().slice(-4);
+  return `${baseUsername}_${timestamp}`;
+}
+
 /* --------------------------  SESSION HANDLING  -------------------------- */
 passport.serializeUser((user, done) => {
   console.log("LOG: serializeUser called. User ID:", user.id);
@@ -116,7 +144,7 @@ passport.use(
         const { firstName, lastName, needsFix } = extractNames(profile);
 
         const newUser = new User({
-          username: profile.displayName.replace(/\s+/g, "").toLowerCase(),
+          username: await generateUniqueUsername(profile.displayName, profile.id),
           email:    userEmail || undefined,
           googleId: profile.id,
           role:     "student",
@@ -174,7 +202,7 @@ passport.use(
 
         // 3. New user
         const newUser = new User({
-          username: profile.displayName.replace(/\s+/g, "").toLowerCase(),
+          username: await generateUniqueUsername(profile.displayName, profile.id),
           email: userEmail || undefined,
           microsoftId: profile.id,
           role: "student",

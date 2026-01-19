@@ -6,6 +6,7 @@ const router = express.Router();
 const Curriculum = require('../models/curriculum');
 const User = require('../models/user');
 const { isAuthenticated, isTeacher } = require('../middleware/auth');
+const { validateObjectId } = require('../middleware/validateObjectId');
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
@@ -90,7 +91,7 @@ router.post('/teacher/curriculum', isAuthenticated, isTeacher, async (req, res) 
 });
 
 // Update curriculum
-router.put('/teacher/curriculum/:id', isAuthenticated, isTeacher, async (req, res) => {
+router.put('/teacher/curriculum/:id', isAuthenticated, isTeacher, validateObjectId('id'), async (req, res) => {
     try {
         const curriculum = await Curriculum.findOne({
             _id: req.params.id,
@@ -129,7 +130,7 @@ router.put('/teacher/curriculum/:id', isAuthenticated, isTeacher, async (req, re
 });
 
 // Delete curriculum
-router.delete('/teacher/curriculum/:id', isAuthenticated, isTeacher, async (req, res) => {
+router.delete('/teacher/curriculum/:id', isAuthenticated, isTeacher, validateObjectId('id'), async (req, res) => {
     try {
         const result = await Curriculum.findOneAndDelete({
             _id: req.params.id,

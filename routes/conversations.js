@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
+const { validateObjectId } = require('../middleware/validateObjectId');
 const {
   getUserConversations,
   getOrCreateConversation,
@@ -81,7 +82,7 @@ router.post('/', isAuthenticated, async (req, res) => {
  * POST /api/conversations/:id/switch
  * Switch to a specific conversation
  */
-router.post('/:id/switch', isAuthenticated, async (req, res) => {
+router.post('/:id/switch', isAuthenticated, validateObjectId('id'), async (req, res) => {
   try {
     const userId = req.user._id;
     const conversationId = req.params.id;
@@ -125,7 +126,7 @@ router.post('/:id/switch', isAuthenticated, async (req, res) => {
  * DELETE /api/conversations/:id
  * Archive a conversation
  */
-router.delete('/:id', isAuthenticated, async (req, res) => {
+router.delete('/:id', isAuthenticated, validateObjectId('id'), async (req, res) => {
   try {
     const userId = req.user._id;
     const conversationId = req.params.id;

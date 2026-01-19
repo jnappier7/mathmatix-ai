@@ -6,6 +6,7 @@ const router = express.Router();
 const TeacherResource = require('../models/teacherResource');
 const User = require('../models/user');
 const { isAuthenticated, isTeacher } = require('../middleware/auth');
+const { validateObjectId } = require('../middleware/validateObjectId');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -271,7 +272,7 @@ router.get('/search', isAuthenticated, isTeacher, async (req, res) => {
 });
 
 // Delete a resource
-router.delete('/:id', isAuthenticated, isTeacher, async (req, res) => {
+router.delete('/:id', isAuthenticated, isTeacher, validateObjectId('id'), async (req, res) => {
     try {
         const resource = await TeacherResource.findOne({
             _id: req.params.id,
@@ -303,7 +304,7 @@ router.delete('/:id', isAuthenticated, isTeacher, async (req, res) => {
 });
 
 // Get resource details by ID
-router.get('/:id', isAuthenticated, isTeacher, async (req, res) => {
+router.get('/:id', isAuthenticated, isTeacher, validateObjectId('id'), async (req, res) => {
     try {
         const resource = await TeacherResource.findOne({
             _id: req.params.id,
@@ -339,7 +340,7 @@ router.get('/:id', isAuthenticated, isTeacher, async (req, res) => {
 });
 
 // STUDENT ACCESS: Download/view a specific resource from their teacher
-router.get('/download/:id', isAuthenticated, async (req, res) => {
+router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req, res) => {
     try {
         const resource = await TeacherResource.findById(req.params.id);
 
