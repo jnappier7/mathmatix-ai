@@ -1552,7 +1552,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
             if (data.greeting) {
                 appendMessage(data.greeting, "ai");
-                addActionButtons();
             }
         } catch (error) {
             appendMessage("Hello! Let's solve some math problems.", "ai");
@@ -2101,43 +2100,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Expose appendMessage and renderMathInElement globally
     window.appendMessage = appendMessage;
     window.renderMathInElement = renderMathInElement;
-
-    // Add action buttons for returning students (warm-up or continue)
-    function addActionButtons() {
-        if (!chatBox) return;
-
-        const buttonContainer = document.createElement("div");
-        buttonContainer.className = "welcome-action-buttons";
-        buttonContainer.style.cssText = "display: flex; gap: 10px; margin: 15px auto; max-width: 500px; justify-content: center;";
-
-        // Quick warm-up button
-        const warmupBtn = document.createElement("button");
-        warmupBtn.className = "btn btn-primary";
-        warmupBtn.innerHTML = '<i class="fas fa-fire"></i> Quick warm-up (30 sec)';
-        warmupBtn.style.cssText = "flex: 1; padding: 12px 20px; font-size: 14px; border-radius: 8px; cursor: pointer;";
-        warmupBtn.onclick = () => {
-            buttonContainer.remove(); // Remove buttons after click
-            userInput.textContent = "Give me a quick 30-second warm-up problem";
-            sendBtn.click();
-        };
-
-        // Continue button
-        const continueBtn = document.createElement("button");
-        continueBtn.className = "btn btn-secondary";
-        continueBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Continue where we left off';
-        continueBtn.style.cssText = "flex: 1; padding: 12px 20px; font-size: 14px; border-radius: 8px; cursor: pointer;";
-        continueBtn.onclick = () => {
-            buttonContainer.remove(); // Remove buttons after click
-            userInput.textContent = "Let's continue where we left off last time";
-            sendBtn.click();
-        };
-
-        buttonContainer.appendChild(warmupBtn);
-        buttonContainer.appendChild(continueBtn);
-        chatBox.appendChild(buttonContainer);
-
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
 
     // Quick Reply Suggestion Chips (contextual help)
     const suggestionsContainer = document.getElementById('suggestion-chips-container');
