@@ -16,6 +16,7 @@
   let sessionDuration = 0;
   let surveyShown = false;
   let checkInterval = null;
+  let originalFormHTML = null; // Store original form HTML to restore after submission
 
   // DOM elements
   const elements = {
@@ -44,6 +45,12 @@
     if (!elements.modal) {
       console.warn('Survey modal not found in DOM');
       return;
+    }
+
+    // Store original form HTML for restoration after submission (avoid page reload)
+    const content = elements.modal.querySelector('.survey-content');
+    if (content) {
+      originalFormHTML = content.innerHTML;
     }
 
     // Attach event listeners
@@ -257,15 +264,38 @@
 
   // Reset form to initial state
   function resetForm() {
-    elements.form.reset();
-    updateCharCount();
-    elements.submitBtn.disabled = false;
-    elements.submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
-
-    // Restore original content
+    // Restore original content if success message is shown
     const content = elements.modal.querySelector('.survey-content');
-    if (content.querySelector('.survey-success')) {
-      location.reload(); // Reload to restore original form
+    if (content && content.querySelector('.survey-success') && originalFormHTML) {
+      content.innerHTML = originalFormHTML;
+
+      // Re-attach event listeners after restoring HTML
+      elements.form = document.getElementById('survey-form');
+      elements.closeBtn = document.getElementById('close-survey-modal-btn');
+      elements.dismissBtn = document.getElementById('survey-dismiss-btn');
+      elements.submitBtn = document.getElementById('survey-submit-btn');
+      elements.frequencyToggle = document.getElementById('survey-frequency-toggle');
+      elements.feedbackTextarea = document.getElementById('survey-feedback');
+      elements.charCount = document.getElementById('feedback-char-count');
+
+      elements.closeBtn.addEventListener('click', handleDismiss);
+      elements.dismissBtn.addEventListener('click', handleDismiss);
+      elements.form.addEventListener('submit', handleSubmit);
+      elements.feedbackTextarea.addEventListener('input', updateCharCount);
+
+      setupStarRating();
+    }
+
+    // Reset form if it exists
+    if (elements.form) {
+      elements.form.reset();
+    }
+    if (elements.charCount) {
+      updateCharCount();
+    }
+    if (elements.submitBtn) {
+      elements.submitBtn.disabled = false;
+      elements.submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Feedback';
     }
   }
 
