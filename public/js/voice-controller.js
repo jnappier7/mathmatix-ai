@@ -322,7 +322,8 @@ class VoiceController {
             }
 
             // Hold spacebar to talk (push-to-talk mode)
-            if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            // Only activate if NOT typing in an input field
+            if (e.code === 'Space' && !this.isTypingInInputField(e.target)) {
                 if (!this.isListening && !e.repeat) {
                     e.preventDefault();
                     this.startListening();
@@ -331,11 +332,44 @@ class VoiceController {
         });
 
         document.addEventListener('keyup', (e) => {
-            if (e.code === 'Space' && this.isListening) {
+            // Only stop listening on space release if NOT typing in an input field
+            if (e.code === 'Space' && this.isListening && !this.isTypingInInputField(e.target)) {
                 e.preventDefault();
                 this.stopListening();
             }
         });
+    }
+
+    /**
+     * Check if user is currently typing in an input field
+     * Prevents spacebar from activating voice when typing
+     * @param {HTMLElement} target - The event target element
+     * @returns {boolean} True if user is typing in an input field
+     */
+    isTypingInInputField(target) {
+        // Check if target is an input, textarea, or contenteditable element
+        if (!target) return false;
+
+        const tagName = target.tagName;
+        const isContentEditable = target.isContentEditable || target.contentEditable === 'true';
+
+        // Check for standard input elements
+        if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
+            return true;
+        }
+
+        // Check for contenteditable divs (like the chat input)
+        if (isContentEditable) {
+            return true;
+        }
+
+        // Check if user-input chat box has focus (additional safety check)
+        const userInput = document.getElementById('user-input');
+        if (userInput && (document.activeElement === userInput || userInput.contains(document.activeElement))) {
+            return true;
+        }
+
+        return false;
     }
 
     // ============================================
