@@ -401,7 +401,10 @@ document.addEventListener("DOMContentLoaded", () => {
         recognition.lang = 'en-US';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
-        recognition.onresult = (event) => { userInput.value += event.results[0][0].transcript; };
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.textContent += transcript;
+        };
         recognition.onerror = (event) => { console.error("Speech recognition error:", event.error); isRecognizing = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
         recognition.onend = () => { isRecognizing = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
     }
@@ -764,8 +767,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                     // Set placeholder message (user can edit or replace)
-                    if (!userInput.value.trim()) {
-                        userInput.value = 'Can you help me with this?';
+                    if (!userInput.textContent.trim()) {
+                        userInput.textContent = 'Can you help me with this?';
                     }
 
                     // Focus input so user can type or send
@@ -952,8 +955,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Suggest a message
             const userInput = document.getElementById('user-input');
-            if (userInput && !userInput.value.trim()) {
-                userInput.value = "Can you help me with this problem I drew on the whiteboard?";
+            if (userInput && !userInput.textContent.trim()) {
+                userInput.textContent = "Can you help me with this problem I drew on the whiteboard?";
             }
 
             showToast('Whiteboard snapshot attached! Click send to share with AI.', 3000);
@@ -2114,7 +2117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         warmupBtn.style.cssText = "flex: 1; padding: 12px 20px; font-size: 14px; border-radius: 8px; cursor: pointer;";
         warmupBtn.onclick = () => {
             buttonContainer.remove(); // Remove buttons after click
-            userInput.value = "Give me a quick 30-second warm-up problem";
+            userInput.textContent = "Give me a quick 30-second warm-up problem";
             sendBtn.click();
         };
 
@@ -2125,7 +2128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         continueBtn.style.cssText = "flex: 1; padding: 12px 20px; font-size: 14px; border-radius: 8px; cursor: pointer;";
         continueBtn.onclick = () => {
             buttonContainer.remove(); // Remove buttons after click
-            userInput.value = "Let's continue where we left off last time";
+            userInput.textContent = "Let's continue where we left off last time";
             sendBtn.click();
         };
 
@@ -2183,7 +2186,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Click handler - fills input but doesn't auto-send
             chip.addEventListener('click', () => {
                 if (userInput) {
-                    userInput.value = suggestion.message;
+                    userInput.textContent = suggestion.message;
                     userInput.focus();
                     // Trigger resize if needed
                     if (userInput.dispatchEvent) {
@@ -2345,8 +2348,28 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => renderMathInElement(messageRef.bubble), 100);
     }
 
+    // Helper function to extract text with LaTeX from contenteditable
+    function extractMessageText(element) {
+        let result = '';
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, null, false);
+        let node;
+
+        while (node = walker.nextNode()) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                result += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('math-container')) {
+                const latex = node.getAttribute('data-latex');
+                if (latex) {
+                    result += `\\(${latex}\\)`;
+                }
+            }
+        }
+
+        return result;
+    }
+
     async function sendMessage() {
-    const messageText = userInput.value.trim();
+    const messageText = extractMessageText(userInput).trim();
     if (!messageText && attachedFiles.length === 0) return;
 
     // CAPTURE RESPONSE TIME from ghost timer
@@ -2356,8 +2379,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     appendMessage(messageText, "user");
-    userInput.value = "";
-    userInput.placeholder = "Type your message..."; // Reset placeholder
+    userInput.textContent = "";
+    userInput.setAttribute('data-placeholder', "Ask a math question..."); // Reset placeholder
     showThinkingIndicator(true);
 
     try {
@@ -2944,7 +2967,7 @@ document.addEventListener("DOMContentLoaded", () => {
         userInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
         // Hide suggestions when user starts typing
         userInput.addEventListener("input", () => {
-            if (userInput.value.trim().length > 0) {
+            if (userInput.textContent.trim().length > 0) {
                 hideSuggestions();
             }
         });
@@ -3115,7 +3138,36 @@ document.addEventListener("DOMContentLoaded", () => {
         insertInlineEqBtn.addEventListener('click', () => {
             const latex = inlineMathEditor.value;
             if (latex) {
-                userInput.value += ` \\(${latex}\\) `;
+                // Create a container for the rendered math
+                const mathContainer = document.createElement('span');
+                mathContainer.className = 'math-container';
+                mathContainer.setAttribute('data-latex', latex);
+                mathContainer.textContent = `\\(${latex}\\)`;
+
+                // Insert at cursor position or at the end
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0 && userInput.contains(selection.anchorNode)) {
+                    const range = selection.getRangeAt(0);
+                    range.deleteContents();
+                    range.insertNode(mathContainer);
+                    // Add a space after
+                    const space = document.createTextNode(' ');
+                    range.insertNode(space);
+                    // Move cursor after the space
+                    range.setStartAfter(space);
+                    range.setEndAfter(space);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                } else {
+                    userInput.appendChild(mathContainer);
+                    userInput.appendChild(document.createTextNode(' '));
+                }
+
+                // Render the math using MathJax
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([mathContainer]).catch((err) => console.log('MathJax error:', err));
+                }
+
                 inlineMathEditor.value = ''; // Clear the editor
                 inlineEquationPalette.style.display = 'none';
                 userInput.focus();
@@ -3233,7 +3285,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (insertLatexBtn) {
             insertLatexBtn.addEventListener('click', () => {
                 if (mathEditor && userInput) {
-                    userInput.value += ` \\(${mathEditor.value}\\) `;
+                    const latex = mathEditor.value;
+                    // Create a container for the rendered math
+                    const mathContainer = document.createElement('span');
+                    mathContainer.className = 'math-container';
+                    mathContainer.setAttribute('data-latex', latex);
+                    mathContainer.textContent = `\\(${latex}\\)`;
+
+                    userInput.appendChild(mathContainer);
+                    userInput.appendChild(document.createTextNode(' '));
+
+                    // Render the math using MathJax
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        window.MathJax.typesetPromise([mathContainer]).catch((err) => console.log('MathJax error:', err));
+                    }
+
                     equationModal.classList.remove('is-visible');
                 }
             });
