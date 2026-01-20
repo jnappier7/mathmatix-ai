@@ -207,7 +207,18 @@ router.get('/', async (req, res) => {
     } catch (error) {
         console.error("ERROR: Error generating personalized welcome message from AI:", error?.message || error);
         const userName = user?.firstName || 'there';
-        res.status(500).json({ greeting: `Hello ${userName}! How can I help you today?`, error: "Failed to load personalized welcome." });
+
+        // Fallback with variety (only used if AI fails)
+        const fallbackGreetings = [
+            `Hey ${userName}! What do you need help with?`,
+            `Hi ${userName}! What are you working on?`,
+            `${userName}! What's up?`,
+            `Hey ${userName}! What brings you here?`,
+            `${userName}! Ready to work on some math?`
+        ];
+        const randomGreeting = fallbackGreetings[Math.floor(Math.random() * fallbackGreetings.length)];
+
+        res.status(500).json({ greeting: randomGreeting, error: "Failed to load personalized welcome." });
     }
 });
 
