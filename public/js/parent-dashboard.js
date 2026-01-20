@@ -257,11 +257,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             <div class="session-log-container" style="margin-top: 12px;">
                 <strong>Recent Sessions:</strong>
-                ${progress.recentSessions && progress.recentSessions.length > 0 ? progress.recentSessions.map(s => `
-                    <div class="session-entry">
-                        <strong>${new Date(s.date).toLocaleDateString()}:</strong> ${s.summary || 'No summary.'} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
-                    </div>
-                `).join('') : '<p class="text-gray-500 text-sm">No recent sessions with summaries.</p>'}
+                ${progress.recentSessions && progress.recentSessions.length > 0 ? progress.recentSessions
+                    .filter(s => {
+                        // Filter out sessions with bad/prompt summaries or invalid dates
+                        if (!s.date) return false;
+                        if (!s.summary) return false;
+                        // Filter out summaries that are actually AI prompts (contain prompt keywords)
+                        if (s.summary.includes('--- End Session Transcript ---') ||
+                            s.summary.includes('Please provide a summary') ||
+                            s.summary.includes('**Concise (1-3 paragraphs)**')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    .map(s => {
+                        const sessionDate = new Date(s.date);
+                        const dateStr = isNaN(sessionDate.getTime()) ? 'Unknown date' : sessionDate.toLocaleDateString();
+                        return `
+                        <div class="session-entry">
+                            <strong>${dateStr}:</strong> ${s.summary} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
+                        </div>
+                    `;
+                    }).join('') || '<p class="text-gray-500 text-sm">No recent sessions with summaries.</p>'
+                : '<p class="text-gray-500 text-sm">No recent sessions with summaries.</p>'}
             </div>
         `;
         childrenListContainer.appendChild(card);
@@ -540,7 +558,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Initial load
+    // Initial load (logout button handled by /js/logout.js)
     const parentUser = await loadParentUser();
     if (parentUser) {
         loadChildren();

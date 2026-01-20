@@ -1,7 +1,7 @@
 // public/js/logout.js
 document.addEventListener('DOMContentLoaded', () => {
-  // Use querySelectorAll to select all buttons with the common class
-  const logoutButtons = document.querySelectorAll('.logout-button');
+  // Select all logout buttons (by class or by ID)
+  const logoutButtons = document.querySelectorAll('.logout-button, #logoutBtn');
 
   logoutButtons.forEach(logoutBtn => {
     if (logoutBtn) {

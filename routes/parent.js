@@ -132,7 +132,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
         const recentSessions = await Conversation.find({ userId: childId })
             .sort({ lastActivity: -1 })
             .limit(5)
-            .select('summary date activeMinutes');
+            .select('summary lastActivity activeMinutes startDate');
         // --- MODIFICATION END ---
 
         // NEW: Fetch active conversation for live stats
@@ -170,7 +170,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
             totalActiveTutoringMinutes: child.totalActiveTutoringMinutes,
             liveStats: liveStats, // NEW: Live activity stats
             recentSessions: recentSessions.map(session => ({
-                date: session.date,
+                date: session.lastActivity || session.startDate,
                 summary: session.summary,
                 duration: session.activeMinutes
             })),
