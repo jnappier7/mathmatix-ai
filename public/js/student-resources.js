@@ -79,16 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!data.hasResources) {
+                // Use teacher's actual Common Curriculum URL if available, otherwise use generic schedule
+                const scheduleUrl = data.scheduleUrl || 'https://www.commoncurriculum.com/sites/tentative-schedule';
+
                 resourcesContent.innerHTML = `
                     <div style="padding: 20px;">
                         <!-- Tentative Schedule Section -->
                         <div style="margin-bottom: 25px;">
                             <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
                                 <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
-                                Tentative Schedule
+                                ${data.scheduleUrl ? 'Your Class Schedule' : 'Tentative Schedule'}
                             </h3>
                             <div class="schedule-iframe-container">
-                                <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
+                                <iframe src="${scheduleUrl}" title="Common Curriculum Schedule"></iframe>
                             </div>
                             <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
                                 <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources
@@ -128,16 +131,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Build HTML
+            // Use teacher's actual Common Curriculum URL if available, otherwise use generic schedule
+            const scheduleUrl = data.scheduleUrl || 'https://www.commoncurriculum.com/sites/tentative-schedule';
+
             let html = `
                 <div style="padding: 20px;">
                     <!-- Tentative Schedule Section -->
                     <div style="margin-bottom: 25px;">
                         <h3 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center; gap: 10px;">
                             <i class="fas fa-calendar-alt" style="color: #12B3B3;"></i>
-                            Tentative Schedule
+                            ${data.scheduleUrl ? 'Your Class Schedule' : 'Tentative Schedule'}
                         </h3>
                         <div class="schedule-iframe-container">
-                            <iframe src="https://www.commoncurriculum.com/sites/tentative-schedule" title="Common Curriculum Tentative Schedule"></iframe>
+                            <iframe src="${scheduleUrl}" title="Common Curriculum Schedule"></iframe>
                         </div>
                         <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #666; text-align: center;">
                             <i class="fas fa-info-circle"></i> View the full curriculum schedule and click links to explore lesson resources

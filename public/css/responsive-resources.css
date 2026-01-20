@@ -1,5 +1,10 @@
 /* Responsive styles for student resources modal */
 
+/* Ensure resources modal appears above all elements including message input */
+#resources-modal {
+    z-index: 10000 !important;
+}
+
 /* Schedule iframe container */
 .schedule-iframe-container {
     position: relative;

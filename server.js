@@ -197,7 +197,7 @@ app.use(helmet({
       ],
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
       objectSrc: ["'none'"], // Disable plugins
-      frameSrc: ["'self'"], // Only allow same-origin iframes
+      frameSrc: ["'self'", "https://www.commoncurriculum.com"], // Allow Common Curriculum schedule iframes
       upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
     }
   },

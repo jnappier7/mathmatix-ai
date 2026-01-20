@@ -47,6 +47,7 @@ const curriculumSchema = new Schema({
     // Import metadata
     importSource: { type: String, enum: ['manual', 'csv', 'excel', 'pdf', 'common-curriculum'], default: 'manual' },
     importedAt: { type: Date },
+    commonCurriculumUrl: { type: String }, // URL of Common Curriculum schedule for iframe display
 
     // Timestamps
     createdAt: { type: Date, default: Date.now },
@@ -63,12 +64,47 @@ curriculumSchema.index({ 'lessons.startDate': 1, 'lessons.endDate': 1 });
 // Get current week's lesson based on today's date
 curriculumSchema.methods.getCurrentLesson = function() {
     const today = new Date();
-    return this.lessons.find(lesson => {
+
+    // First, try to find a lesson with valid dates
+    const dateBasedLesson = this.lessons.find(lesson => {
         if (lesson.startDate && lesson.endDate) {
             return today >= lesson.startDate && today <= lesson.endDate;
         }
         return false;
     });
+
+    if (dateBasedLesson) {
+        return dateBasedLesson;
+    }
+
+    // Fallback 1: If no date-based lesson found, estimate current week based on school year
+    if (this.lessons.length > 0) {
+        // Calculate current week of school year (assuming September 1 start)
+        const schoolYearStart = new Date(today.getFullYear(), 8, 1); // Sept 1
+        if (today.getMonth() < 6) { // Jan-Jun = previous year's school year
+            schoolYearStart.setFullYear(today.getFullYear() - 1);
+        }
+
+        const weeksSinceStart = Math.floor((today - schoolYearStart) / (7 * 24 * 60 * 60 * 1000)) + 1;
+
+        // Try to find lesson by week number
+        const weekBasedLesson = this.lessons.find(lesson => lesson.weekNumber === weeksSinceStart);
+        if (weekBasedLesson) {
+            return weekBasedLesson;
+        }
+
+        // Fallback 2: Return the lesson closest to the current week
+        const sortedLessons = this.lessons.slice().sort((a, b) => a.weekNumber - b.weekNumber);
+        const closestLesson = sortedLessons.find(lesson => lesson.weekNumber >= weeksSinceStart) ||
+                             sortedLessons[sortedLessons.length - 1]; // Last lesson if past all weeks
+
+        if (closestLesson) {
+            return closestLesson;
+        }
+    }
+
+    // Fallback 3: Return first lesson with resources
+    return this.lessons.find(lesson => lesson.resources && lesson.resources.length > 0) || null;
 };
 
 // Get lesson by week number

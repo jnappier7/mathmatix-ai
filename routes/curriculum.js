@@ -351,8 +351,33 @@ function parseCSV(filePath) {
 // Helper to parse date strings
 function parseDate(dateStr) {
     if (!dateStr) return null;
-    const date = new Date(dateStr);
-    return isNaN(date.getTime()) ? null : date;
+
+    // Clean up the date string
+    dateStr = dateStr.trim();
+
+    // Try parsing as-is first
+    let date = new Date(dateStr);
+    if (!isNaN(date.getTime())) return date;
+
+    // Handle month abbreviation + day (e.g., "Nov 11")
+    const monthDayMatch = dateStr.match(/^(\w{3})\s+(\d{1,2})$/);
+    if (monthDayMatch) {
+        const currentYear = new Date().getFullYear();
+        dateStr = `${monthDayMatch[1]} ${monthDayMatch[2]}, ${currentYear}`;
+        date = new Date(dateStr);
+        if (!isNaN(date.getTime())) return date;
+    }
+
+    // Handle MM/DD format (add current year)
+    const mmddMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
+    if (mmddMatch) {
+        const currentYear = new Date().getFullYear();
+        dateStr = `${mmddMatch[1]}/${mmddMatch[2]}/${currentYear}`;
+        date = new Date(dateStr);
+        if (!isNaN(date.getTime())) return date;
+    }
+
+    return null;
 }
 
 // Helper to parse comma-separated lists
@@ -381,7 +406,8 @@ router.get('/student/resources', isAuthenticated, async (req, res) => {
         if (!currentLesson || !currentLesson.resources || currentLesson.resources.length === 0) {
             return res.json({
                 hasResources: false,
-                currentTopic: currentLesson ? currentLesson.topic : null
+                currentTopic: currentLesson ? currentLesson.topic : null,
+                scheduleUrl: curriculum.commonCurriculumUrl || null
             });
         }
 
@@ -395,7 +421,8 @@ router.get('/student/resources', isAuthenticated, async (req, res) => {
                 resources: currentLesson.resources,
                 startDate: currentLesson.startDate,
                 endDate: currentLesson.endDate
-            }
+            },
+            scheduleUrl: curriculum.commonCurriculumUrl || null
         });
 
     } catch (error) {
@@ -435,7 +462,8 @@ router.post('/teacher/curriculum/sync-common', isAuthenticated, isTeacher, async
             schoolYear,
             lessons,
             importSource: 'common-curriculum',
-            importedAt: new Date()
+            importedAt: new Date(),
+            commonCurriculumUrl: url // Save URL for iframe display
         });
 
         await curriculum.save();
@@ -708,15 +736,35 @@ function parseCommonCurriculumHTML(html) {
 
 // Extract date ranges from text
 function extractDates(text) {
-    // Look for patterns like "Nov 11 - Dec 12" or "11/11 - 12/12"
-    const dateRegex = /(\w{3}\s+\d{1,2}|\d{1,2}\/\d{1,2})\s*-\s*(\w{3}\s+\d{1,2}|\d{1,2}\/\d{1,2})/;
-    const match = text.match(dateRegex);
+    if (!text) return { start: null, end: null };
 
-    if (match) {
-        return {
-            start: parseDate(match[1]),
-            end: parseDate(match[2])
-        };
+    // Try multiple date range patterns
+    const patterns = [
+        // "Nov 11 - Dec 12" or "Nov. 11 - Dec. 12"
+        /(\w{3}\.?\s+\d{1,2})\s*[-–—to]\s*(\w{3}\.?\s+\d{1,2})/i,
+        // "11/11 - 12/12" or "11/11/2024 - 12/12/2024"
+        /(\d{1,2}\/\d{1,2}(?:\/\d{2,4})?)\s*[-–—to]\s*(\d{1,2}\/\d{1,2}(?:\/\d{2,4})?)/i,
+        // "2024-11-11 - 2024-12-12" (ISO format)
+        /(\d{4}-\d{1,2}-\d{1,2})\s*[-–—to]\s*(\d{4}-\d{1,2}-\d{1,2})/i,
+        // "November 11 - December 12"
+        /(\w+\s+\d{1,2}(?:,\s*\d{4})?)\s*[-–—to]\s*(\w+\s+\d{1,2}(?:,\s*\d{4})?)/i
+    ];
+
+    for (const pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) {
+            const startDate = parseDate(match[1]);
+            const endDate = parseDate(match[2]);
+
+            if (startDate && endDate) {
+                // Handle year rollover (e.g., Dec 2024 - Jan 2025)
+                if (endDate < startDate) {
+                    endDate.setFullYear(endDate.getFullYear() + 1);
+                }
+
+                return { start: startDate, end: endDate };
+            }
+        }
     }
 
     return { start: null, end: null };
