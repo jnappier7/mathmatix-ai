@@ -40,7 +40,7 @@ class VoiceController {
         this.isListening = false;
         this.isAISpeaking = false;
         this.mode = 'idle'; // 'idle', 'listening', 'thinking', 'speaking'
-        this.handsFreeMode = true; // GPT-style continuous conversation
+        this.handsFreeMode = false; // Push-to-talk mode by default (user can enable hands-free)
         this.currentAudio = null; // Track current playing audio for interruption
         this.speechStartTime = null; // Track when user started speaking
 
