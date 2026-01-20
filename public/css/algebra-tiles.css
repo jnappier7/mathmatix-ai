@@ -1527,3 +1527,57 @@ body.algebra-tiles-split-screen .algebra-tiles-modal {
     display: none;
   }
 }
+
+/* ============================================
+   AI MANIPULATION ANIMATIONS
+   ============================================ */
+
+/* Highlight pulse animation */
+@keyframes highlight-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.3);
+  }
+}
+
+/* Fade in with scale */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Fade out with scale */
+@keyframes fadeOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* AI highlighted tile state */
+.workspace-tile.ai-highlighted {
+  z-index: 999;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+}
+
+/* Tile annotation styles */
+.tile-annotation {
+  font-family: 'Indie Flower', cursive;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  line-height: 1.4;
+}

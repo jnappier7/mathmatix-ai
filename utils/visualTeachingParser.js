@@ -201,6 +201,60 @@ function parseVisualTeaching(aiResponseText) {
     }
     cleanedText = cleanedText.replace(algebraDemoRegex, '');
 
+    // [TILES_MOVE:tileType,fromX,fromY,toX,toY] - Move tiles with animation
+    // Example: [TILES_MOVE:x-positive,100,100,200,200]
+    const tilesMoveRegex = /\[TILES_MOVE:([^,\]]+),([^,\]]+),([^,\]]+),([^,\]]+),([^\]]+)\]/g;
+    while ((match = tilesMoveRegex.exec(aiResponseText)) !== null) {
+        visualCommands.algebraTiles.push({
+            type: 'move',
+            tileType: match[1],
+            fromX: parseFloat(match[2]),
+            fromY: parseFloat(match[3]),
+            toX: parseFloat(match[4]),
+            toY: parseFloat(match[5]),
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(tilesMoveRegex, '');
+
+    // [TILES_HIGHLIGHT:tileType,x,y] - Highlight specific tiles
+    // Example: [TILES_HIGHLIGHT:x-positive,100,100]
+    const tilesHighlightRegex = /\[TILES_HIGHLIGHT:([^,\]]+),([^,\]]+),([^\]]+)\]/g;
+    while ((match = tilesHighlightRegex.exec(aiResponseText)) !== null) {
+        visualCommands.algebraTiles.push({
+            type: 'highlight',
+            tileType: match[1],
+            x: parseFloat(match[2]),
+            y: parseFloat(match[3]),
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(tilesHighlightRegex, '');
+
+    // [TILES_ANNOTATE:x,y,text] - Add annotation/label to tiles
+    // Example: [TILES_ANNOTATE:150,100,These represent x²]
+    const tilesAnnotateRegex = /\[TILES_ANNOTATE:([^,\]]+),([^,\]]+),([^\]]+)\]/g;
+    while ((match = tilesAnnotateRegex.exec(aiResponseText)) !== null) {
+        visualCommands.algebraTiles.push({
+            type: 'annotate',
+            x: parseFloat(match[1]),
+            y: parseFloat(match[2]),
+            text: match[3],
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(tilesAnnotateRegex, '');
+
+    // [TILES_CLEAR] - Clear all tiles from workspace
+    const tilesClearRegex = /\[TILES_CLEAR\]/g;
+    if (tilesClearRegex.test(aiResponseText)) {
+        visualCommands.algebraTiles.push({
+            type: 'clear',
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(tilesClearRegex, '');
+
     // --- IMAGE COMMANDS ---
     // [IMAGE:url,caption] - Display an educational image
     const imageRegex = /\[IMAGE:([^,\]]+)(?:,([^\]]+))?\]/g;
