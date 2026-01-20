@@ -138,7 +138,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
         // NEW: Fetch active conversation for live stats
         const activeConversation = await Conversation.findOne({
             userId: childId,
-            status: 'active'
+            isActive: true
         }).select('currentTopic problemsAttempted problemsCorrect strugglingWith alerts lastActivity liveSummary').lean();
 
         // NEW: Build live stats object

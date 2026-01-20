@@ -6,6 +6,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { sendTestEmail, sendParentWeeklyReport } = require('../utils/emailService');
 const User = require('../models/user');
+const Conversation = require('../models/conversation');
 
 /**
  * POST /api/email/test
@@ -76,16 +77,65 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Calculate weekly stats (simplified - you'll want to query actual data)
+    // Calculate one week ago
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    // Calculate problemsCompleted from Conversation collection
+    const conversationStats = await Conversation.aggregate([
+      { $match: { userId: student._id } },
+      { $group: {
+        _id: null,
+        totalProblems: { $sum: '$problemsAttempted' },
+        totalCorrect: { $sum: '$problemsCorrect' }
+      }}
+    ]);
+    const problemsCompleted = conversationStats.length > 0 ? conversationStats[0].totalCorrect : 0;
+
+    // Calculate masteryGained from skillMastery (count skills with status 'mastered')
+    let masteryGained = 0;
+    if (student.skillMastery && student.skillMastery.size > 0) {
+      for (const [skillId, mastery] of student.skillMastery) {
+        if (mastery.status === 'mastered' && mastery.masteredDate && mastery.masteredDate >= oneWeekAgo) {
+          masteryGained++;
+        }
+      }
+    }
+
+    // Get strugglingSkills from skillMastery where status === 'needs-review'
+    const strugglingSkills = [];
+    if (student.skillMastery && student.skillMastery.size > 0) {
+      for (const [skillId, mastery] of student.skillMastery) {
+        if (mastery.status === 'needs-review' || mastery.status === 're-fragile') {
+          strugglingSkills.push(skillId);
+        }
+      }
+    }
+
+    // Get recent achievements (badges earned in the last week)
+    const achievements = [];
+    if (student.badges && student.badges.length > 0) {
+      for (const badge of student.badges) {
+        if (badge.unlockedAt && badge.unlockedAt >= oneWeekAgo) {
+          achievements.push({
+            key: badge.key,
+            badgeId: badge.badgeId,
+            unlockedAt: badge.unlockedAt
+          });
+        }
+      }
+    }
+
+    // Calculate weekly stats
     const studentData = {
       studentName: `${student.firstName} ${student.lastName}`,
-      problemsCompleted: student.problemsCompleted || 0,
+      problemsCompleted: problemsCompleted,
       currentLevel: student.level || 1,
       xpEarned: student.xp || 0,
       activeMinutes: student.totalActiveTutoringMinutes || 0,
-      masteryGained: 0, // TODO: Calculate from skillMastery
-      strugglingSkills: [], // TODO: Get from skillMastery where status === 'needs-review'
-      achievements: [] // TODO: Get recent badges
+      masteryGained: masteryGained,
+      strugglingSkills: strugglingSkills,
+      achievements: achievements
     };
 
     const result = await sendParentWeeklyReport(parent, studentData);
