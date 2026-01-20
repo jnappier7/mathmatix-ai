@@ -1858,7 +1858,12 @@ class MathmatixWhiteboard {
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
             // Don't trigger shortcuts when typing in text
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            // Check for INPUT, TEXTAREA, contenteditable elements, and the chat input
+            if (e.target.tagName === 'INPUT' ||
+                e.target.tagName === 'TEXTAREA' ||
+                e.target.isContentEditable ||
+                e.target.contentEditable === 'true' ||
+                e.target.id === 'user-input') {
                 return;
             }
 
