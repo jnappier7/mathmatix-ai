@@ -101,7 +101,7 @@ body.whiteboard-split-screen #app-layout-wrapper {
 
 /* Chat side - left panel */
 body.whiteboard-split-screen #chat-container {
-    width: 50%;
+    width: 50%; /* Default, will be overridden by resizer */
     max-width: none;
     margin: 0;
     padding: 0;
@@ -109,23 +109,23 @@ body.whiteboard-split-screen #chat-container {
     display: flex;
     flex-direction: column;
     border-right: 2px solid #e5e7eb;
-    transition: width 0.3s ease;
+    transition: width 0.1s ease; /* Faster transition for responsive resizing */
 }
 
 /* Whiteboard side - right panel */
 body.whiteboard-split-screen #whiteboard-panel {
     position: fixed !important;
-    left: 50% !important;
+    left: 50% !important; /* Default, will be overridden by resizer */
     right: 0 !important;
     top: 60px !important; /* Below header */
     bottom: 0 !important;
-    width: 50% !important;
+    width: 50% !important; /* Default, will be overridden by resizer */
     height: calc(100vh - 60px) !important;
     max-width: none !important;
     transform: none !important;
     border-radius: 0 !important;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease; /* Faster transition for responsive resizing */
 }
 
 /* Collapsed state - whiteboard minimized to thin bar */
