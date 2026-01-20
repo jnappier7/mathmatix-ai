@@ -523,7 +523,7 @@ class WhiteboardChatLayout {
         this.mode = mode;
 
         // Apply new mode if whiteboard is open
-        if (this.isWhiteboardOpen || !window.whiteboard.panel.classList.contains('is-hidden')) {
+        if (this.isWhiteboardOpen || (window.whiteboard && window.whiteboard.panel && !window.whiteboard.panel.classList.contains('is-hidden'))) {
             this.onWhiteboardOpen();
         }
 
