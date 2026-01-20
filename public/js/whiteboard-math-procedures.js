@@ -412,12 +412,9 @@ class MathProcedures {
         const region = this.enhancer.getAvailableRegion('topCenter');
         if (!region) return;
 
-        const startX = region.x + 50;
-        let yPos = region.y + 30;
-
         console.log(`🔢 Solving Equation: ${equation}`);
 
-        // Parse equation (simple linear: ax + b = c)
+        // Parse equation (simple linear: ax + b = c or ax - b = c)
         const match = equation.match(/(\d*)x\s*([+-])\s*(\d+)\s*=\s*(\d+)/);
         if (!match) {
             console.warn('[MathProc] Could not parse equation:', equation);
@@ -430,45 +427,103 @@ class MathProcedures {
         const c = parseInt(match[4]);
         const bValue = sign === '+' ? b : -b;
 
-        // Step 1: Write original equation
-        await this.addText(startX, yPos, equation, this.colors.given, 24);
-        await this.delay(500);
-        yPos += 40;
+        // Calculate equals sign alignment position
+        // We want all equals signs to line up vertically
+        const equalsX = region.x + 150; // Fixed X position for all equals signs
+        let yPos = region.y + 30;
+        const lineHeight = 45;
 
-        // Step 2: Subtract/add b from both sides
-        const stepDescription = bValue > 0 ? `Subtract ${bValue}` : `Add ${Math.abs(bValue)}`;
-        await this.addText(startX + 150, yPos - 40, `← ${stepDescription}`, this.colors.working, 14);
-        await this.delay(400);
+        // Step 1: Write original equation with step label
+        const step1Left = equation.split('=')[0].trim();
+        const step1Right = equation.split('=')[1].trim();
+
+        await this.addText(region.x + 20, yPos, 'Original equation:', this.colors.working, 14);
+        yPos += 25;
+
+        // Write left side, equals sign, right side (aligned)
+        await this.addText(equalsX - this.measureText(step1Left) - 10, yPos, step1Left, this.colors.given, 22);
+        await this.addText(equalsX, yPos, '=', this.colors.given, 22);
+        await this.addText(equalsX + 20, yPos, step1Right, this.colors.given, 22);
+        await this.delay(800);
+        yPos += lineHeight;
+
+        // Step 2: Show operation (subtract/add b from both sides)
+        const operation = bValue > 0 ? '-' : '+';
+        const absB = Math.abs(bValue);
+        const stepDescription = bValue > 0 ? `Subtract ${absB} from both sides` : `Add ${absB} to both sides`;
+
+        await this.addText(region.x + 20, yPos, stepDescription, this.colors.working, 14);
+        yPos += 25;
+
+        const step2Left = `${a === 1 ? '' : a}x ${sign} ${b} ${operation} ${absB}`;
+        const step2Right = `${c} ${operation} ${absB}`;
+
+        await this.addText(equalsX - this.measureText(step2Left) - 10, yPos, step2Left, this.colors.working, 22);
+        await this.addText(equalsX, yPos, '=', this.colors.working, 22);
+        await this.addText(equalsX + 20, yPos, step2Right, this.colors.working, 22);
+        await this.delay(800);
+        yPos += lineHeight;
+
+        // Step 3: Simplify
+        await this.addText(region.x + 20, yPos, 'Simplify:', this.colors.working, 14);
+        yPos += 25;
 
         const cMinusB = c - bValue;
-        const step2 = `${a === 1 ? '' : a}x = ${cMinusB}`;
-        await this.addText(startX, yPos, step2, this.colors.working, 24);
-        await this.delay(500);
-        yPos += 40;
+        const step3Left = `${a === 1 ? '' : a}x`;
+        const step3Right = `${cMinusB}`;
 
-        // Step 3: Divide by coefficient
+        await this.addText(equalsX - this.measureText(step3Left) - 10, yPos, step3Left, this.colors.working, 22);
+        await this.addText(equalsX, yPos, '=', this.colors.working, 22);
+        await this.addText(equalsX + 20, yPos, step3Right, this.colors.working, 22);
+        await this.delay(800);
+        yPos += lineHeight;
+
+        // Step 4: Divide by coefficient (if a !== 1)
         if (a !== 1) {
-            await this.addText(startX + 150, yPos - 40, `← Divide by ${a}`, this.colors.working, 14);
-            await this.delay(400);
+            await this.addText(region.x + 20, yPos, `Divide both sides by ${a}:`, this.colors.working, 14);
+            yPos += 25;
 
-            const x = cMinusB / a;
-            const step3 = `x = ${x}`;
-            await this.addText(startX, yPos, step3, this.colors.result, 26);
-            await this.delay(500);
+            const step4Left = `${a}x/${a}`;
+            const step4Right = `${cMinusB}/${a}`;
 
-            // Box the answer
-            if (this.whiteboard.handwriting) {
-                await this.whiteboard.handwriting.drawHandDrawnCircle(
-                    startX + 30,
-                    yPos + 5,
-                    25,
-                    { color: this.colors.result, strokeWidth: 3 }
-                );
-            }
+            await this.addText(equalsX - this.measureText(step4Left) - 10, yPos, step4Left, this.colors.working, 22);
+            await this.addText(equalsX, yPos, '=', this.colors.working, 22);
+            await this.addText(equalsX + 20, yPos, step4Right, this.colors.working, 22);
+            await this.delay(800);
+            yPos += lineHeight;
+        }
+
+        // Step 5: Final answer
+        await this.addText(region.x + 20, yPos, 'Solution:', this.colors.result, 14);
+        yPos += 25;
+
+        const x = a !== 1 ? cMinusB / a : cMinusB;
+        const answerLeft = 'x';
+        const answerRight = `${x}`;
+
+        await this.addText(equalsX - this.measureText(answerLeft) - 10, yPos, answerLeft, this.colors.result, 26);
+        await this.addText(equalsX, yPos, '=', this.colors.result, 26);
+        await this.addText(equalsX + 20, yPos, answerRight, this.colors.result, 26);
+
+        // Box the answer
+        if (this.whiteboard.handwriting) {
+            await this.delay(300);
+            await this.whiteboard.handwriting.drawHandDrawnCircle(
+                equalsX + 35,
+                yPos + 10,
+                30,
+                { color: this.colors.result, strokeWidth: 3, wobbleIntensity: 0.08 }
+            );
         }
 
         this.enhancer.markRegionOccupied(region);
-        console.log('✅ Equation solving complete');
+        console.log('✅ Equation solving complete with aligned steps');
+    }
+
+    // Helper to measure text width (approximation)
+    measureText(text) {
+        // Rough estimate: 12px per character at font size 22
+        return text.length * 10;
     }
 
     // ============================================
