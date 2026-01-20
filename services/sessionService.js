@@ -5,6 +5,12 @@
 const logger = require('../utils/logger').child({ service: 'session-service' });
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
+const {
+  generateSessionSummary: generateAISummary,
+  detectTopic,
+  calculateProblemStats,
+  detectStruggle
+} = require('../utils/activitySummarizer');
 
 /**
  * Session configuration
@@ -189,7 +195,56 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
   try {
     sessionData.endReason = reason;
 
-    // Generate summary
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Find and update the active conversation with AI-generated summary
+    const activeConversation = await Conversation.findOne({
+      userId: userId,
+      isActive: true
+    });
+
+    if (activeConversation && activeConversation.messages.length > 0) {
+      try {
+        // Update tracking fields one final time
+        activeConversation.currentTopic = detectTopic(activeConversation.messages);
+        const stats = calculateProblemStats(activeConversation.messages);
+        activeConversation.problemsAttempted = stats.attempted;
+        activeConversation.problemsCorrect = stats.correct;
+
+        // Detect if struggling
+        const struggleInfo = detectStruggle(activeConversation.messages.slice(-10));
+        if (struggleInfo.isStruggling) {
+          activeConversation.strugglingWith = struggleInfo.strugglingWith;
+        }
+
+        // Generate AI-powered session summary
+        const studentName = `${user.firstName} ${user.lastName}`;
+        const aiSummary = await generateAISummary(activeConversation, studentName);
+        activeConversation.summary = aiSummary;
+
+        // Mark conversation as inactive
+        activeConversation.isActive = false;
+        activeConversation.lastActivity = new Date();
+
+        await activeConversation.save();
+
+        logger.info('Conversation summary generated', {
+          conversationId: activeConversation._id,
+          userId,
+          topic: activeConversation.currentTopic,
+          problemsAttempted: activeConversation.problemsAttempted,
+          summary: aiSummary.substring(0, 100)
+        });
+      } catch (error) {
+        logger.error('Failed to generate conversation summary', { userId, error });
+        // Continue with session end even if summary generation fails
+      }
+    }
+
+    // Generate basic session summary for metrics
     const summary = await generateSessionSummary(userId, sessionId, sessionData);
 
     // Save mastery progress if applicable
