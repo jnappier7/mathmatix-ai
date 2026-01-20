@@ -598,7 +598,7 @@
 
 .workspace-tile.dragging {
   cursor: grabbing;
-  transform: scale(1.1) rotate(3deg);
+  /* Don't set transform here - JS sets it dynamically to preserve rotation */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   z-index: 100;
   opacity: 0.9;
@@ -872,7 +872,7 @@
   }
 
   .workspace-tile.dragging {
-    transform: scale(0.9);
+    /* Don't override transform - JS handles it with rotation */
   }
 }
 
@@ -1298,7 +1298,7 @@
 /* Enhanced dragging state for multi-select */
 .workspace-tile.dragging {
   cursor: grabbing;
-  transform: scale(1.05) rotate(2deg);
+  /* Don't set transform - JS handles it dynamically to preserve tile rotation */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   z-index: 100;
   opacity: 0.9;
