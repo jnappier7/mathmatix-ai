@@ -10,11 +10,12 @@
   width: 6px;
   background: transparent;
   cursor: col-resize;
-  z-index: 1100;
+  z-index: 999; /* Below whiteboard (1006) and tiles (1000) to not block interactive elements */
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s ease;
+  pointer-events: auto; /* Only the divider itself should be interactive */
 }
 
 /* Hover state - show visual indicator */

@@ -457,23 +457,23 @@ document.addEventListener("DOMContentLoaded", () => {
                     const isHidden = whiteboardPanel.classList.contains('is-hidden');
 
                     if (isHidden) {
-                        // Open whiteboard in split-screen mode
-                        whiteboardPanel.classList.remove('is-hidden');
-                        document.body.classList.add('whiteboard-split-screen');
-                        const chatContainer = document.getElementById('chat-container');
-                        if (chatContainer) {
-                            chatContainer.classList.remove('whiteboard-collapsed');
+                        // Open whiteboard using proper method to trigger layout manager
+                        if (window.whiteboard && typeof window.whiteboard.show === 'function') {
+                            window.whiteboard.show();
+                        } else {
+                            // Fallback if whiteboard not fully initialized
+                            whiteboardPanel.classList.remove('is-hidden');
                         }
                         if (openWhiteboardBtn) {
                             openWhiteboardBtn.classList.add('hidden');
                         }
                     } else {
-                        // Close whiteboard
-                        whiteboardPanel.classList.add('is-hidden');
-                        document.body.classList.remove('whiteboard-split-screen');
-                        const chatContainer = document.getElementById('chat-container');
-                        if (chatContainer) {
-                            chatContainer.classList.remove('whiteboard-collapsed');
+                        // Close whiteboard using proper method to trigger layout manager
+                        if (window.whiteboard && typeof window.whiteboard.hide === 'function') {
+                            window.whiteboard.hide();
+                        } else {
+                            // Fallback if whiteboard not fully initialized
+                            whiteboardPanel.classList.add('is-hidden');
                         }
                         if (openWhiteboardBtn) {
                             openWhiteboardBtn.classList.remove('hidden');
@@ -484,13 +484,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (openWhiteboardBtn && whiteboardPanel) {
                 openWhiteboardBtn.addEventListener('click', () => {
-                    whiteboardPanel.classList.remove('is-hidden');
-                    document.body.classList.add('whiteboard-split-screen');
-                    openWhiteboardBtn.classList.add('hidden');
-                    const chatContainer = document.getElementById('chat-container');
-                    if (chatContainer) {
-                        chatContainer.classList.remove('whiteboard-collapsed');
+                    // Open whiteboard using proper method to trigger layout manager
+                    if (window.whiteboard && typeof window.whiteboard.show === 'function') {
+                        window.whiteboard.show();
+                    } else {
+                        // Fallback if whiteboard not fully initialized
+                        whiteboardPanel.classList.remove('is-hidden');
                     }
+                    openWhiteboardBtn.classList.add('hidden');
                 });
             }
 
