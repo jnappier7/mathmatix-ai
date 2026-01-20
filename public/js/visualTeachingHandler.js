@@ -311,9 +311,22 @@ class VisualTeachingHandler {
     async showAlgebraTilesExpression(expression) {
         console.log('🟦 Showing algebra tiles for:', expression);
 
+        // Wait a moment for the modal to open if it was just triggered
+        await this.delay(100);
+
         // If AlgebraTiles class is available globally
-        if (window.algebraTiles && typeof window.algebraTiles.parseExpression === 'function') {
-            window.algebraTiles.parseExpression(expression);
+        if (window.algebraTiles && typeof window.algebraTiles.buildAlgebraTiles === 'function') {
+            // Ensure we're in algebra mode
+            if (window.algebraTiles.currentMode !== 'algebra') {
+                const algebraModeBtn = document.querySelector('[data-mode="algebra"]');
+                if (algebraModeBtn) algebraModeBtn.click();
+            }
+
+            // Build tiles from expression
+            window.algebraTiles.buildAlgebraTiles(expression);
+            console.log('✅ Successfully built algebra tiles for:', expression);
+        } else {
+            console.warn('[VisualTeaching] Algebra tiles not initialized or buildAlgebraTiles method unavailable');
         }
     }
 

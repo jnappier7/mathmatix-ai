@@ -1964,11 +1964,37 @@ class AlgebraTiles {
   }
 
   open() {
-    document.getElementById('algebraTilesModal').classList.add('active');
+    const modal = document.getElementById('algebraTilesModal');
+    if (modal) {
+      modal.classList.add('active');
+
+      // Enable split-screen mode by default (unless on mobile)
+      const isMobile = window.innerWidth < 768;
+      if (!isMobile) {
+        document.body.classList.add('algebra-tiles-split-screen');
+        console.log('📐 Algebra tiles opened in split-screen mode');
+      } else {
+        console.log('📐 Algebra tiles opened in modal mode (mobile)');
+      }
+    }
   }
 
   close() {
-    document.getElementById('algebraTilesModal').classList.remove('active');
+    const modal = document.getElementById('algebraTilesModal');
+    if (modal) {
+      modal.classList.remove('active');
+
+      // Remove split-screen mode
+      document.body.classList.remove('algebra-tiles-split-screen');
+
+      // Also remove collapsed state if it was set
+      const chatContainer = document.getElementById('chat-container');
+      if (chatContainer) {
+        chatContainer.classList.remove('tiles-collapsed');
+      }
+
+      console.log('📐 Algebra tiles closed');
+    }
   }
 
   sendToAI() {
