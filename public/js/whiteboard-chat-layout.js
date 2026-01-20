@@ -5,13 +5,13 @@
 
 class WhiteboardChatLayout {
     constructor() {
-        this.mode = 'message-ticker'; // 'message-ticker' | 'split-screen' | 'pip' | 'compact'
+        this.mode = 'split-screen'; // 'message-ticker' | 'split-screen' | 'pip' | 'compact'
         this.isWhiteboardOpen = false;
         this.latestAIMessage = null;
         this.messageTicker = null;
         this.pipWidget = null;
 
-        console.log('📐 Whiteboard-Chat Layout Manager initialized');
+        console.log('📐 Whiteboard-Chat Layout Manager initialized (default: split-screen)');
     }
 
     init() {
@@ -394,18 +394,16 @@ class WhiteboardChatLayout {
     detectBestLayout() {
         const screenWidth = window.innerWidth;
 
-        if (screenWidth < 1024) {
-            // Mobile: Use compact mode
+        if (screenWidth < 768) {
+            // Mobile phones: Use compact mode (full overlay)
             this.mode = 'compact';
-        } else if (screenWidth < 1400) {
-            // Medium screens: Message ticker
-            this.mode = 'message-ticker';
         } else {
-            // Large screens: Default to split-screen for better visibility
+            // Tablets and larger: Default to split-screen for better visibility and interaction
+            // The CSS handles responsive breakpoints automatically (vertical split on tablets)
             this.mode = 'split-screen';
         }
 
-        // Check user preference from localStorage
+        // Check user preference from localStorage (overrides auto-detection)
         const savedMode = localStorage.getItem('whiteboardChatLayoutMode');
         if (savedMode && ['message-ticker', 'split-screen', 'pip', 'compact'].includes(savedMode)) {
             this.mode = savedMode;

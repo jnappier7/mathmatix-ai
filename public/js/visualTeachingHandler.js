@@ -109,6 +109,18 @@ class VisualTeachingHandler {
                 case 'demo':
                     await this.demonstrateOperation(cmd.operation);
                     break;
+                case 'move':
+                    await this.moveTiles(cmd.tileType, cmd.fromX, cmd.fromY, cmd.toX, cmd.toY);
+                    break;
+                case 'highlight':
+                    await this.highlightTiles(cmd.tileType, cmd.x, cmd.y);
+                    break;
+                case 'annotate':
+                    await this.annotateTiles(cmd.x, cmd.y, cmd.text);
+                    break;
+                case 'clear':
+                    await this.clearTiles();
+                    break;
             }
 
             await this.delay(500);
@@ -311,15 +323,74 @@ class VisualTeachingHandler {
     async showAlgebraTilesExpression(expression) {
         console.log('🟦 Showing algebra tiles for:', expression);
 
+        // Wait a moment for the modal to open if it was just triggered
+        await this.delay(100);
+
         // If AlgebraTiles class is available globally
-        if (window.algebraTiles && typeof window.algebraTiles.parseExpression === 'function') {
-            window.algebraTiles.parseExpression(expression);
+        if (window.algebraTiles && typeof window.algebraTiles.buildAlgebraTiles === 'function') {
+            // Ensure we're in algebra mode
+            if (window.algebraTiles.currentMode !== 'algebra') {
+                const algebraModeBtn = document.querySelector('[data-mode="algebra"]');
+                if (algebraModeBtn) algebraModeBtn.click();
+            }
+
+            // Build tiles from expression
+            window.algebraTiles.buildAlgebraTiles(expression);
+            console.log('✅ Successfully built algebra tiles for:', expression);
+        } else {
+            console.warn('[VisualTeaching] Algebra tiles not initialized or buildAlgebraTiles method unavailable');
         }
     }
 
     async demonstrateOperation(operation) {
         console.log('🟦 Demonstrating operation:', operation);
         // Implementation depends on algebra tiles API
+    }
+
+    async moveTiles(tileType, fromX, fromY, toX, toY) {
+        console.log(`🟦 Moving ${tileType} tiles from (${fromX},${fromY}) to (${toX},${toY})`);
+
+        await this.delay(100);
+
+        if (window.algebraTiles && typeof window.algebraTiles.moveTilesByType === 'function') {
+            window.algebraTiles.moveTilesByType(tileType, fromX, fromY, toX, toY);
+        } else {
+            console.warn('[VisualTeaching] Algebra tiles moveTilesByType method not available');
+        }
+    }
+
+    async highlightTiles(tileType, x, y) {
+        console.log(`🟦 Highlighting ${tileType} tiles at (${x},${y})`);
+
+        await this.delay(100);
+
+        if (window.algebraTiles && typeof window.algebraTiles.highlightTilesAt === 'function') {
+            window.algebraTiles.highlightTilesAt(tileType, x, y);
+        } else {
+            console.warn('[VisualTeaching] Algebra tiles highlightTilesAt method not available');
+        }
+    }
+
+    async annotateTiles(x, y, text) {
+        console.log(`🟦 Annotating tiles at (${x},${y}): "${text}"`);
+
+        await this.delay(100);
+
+        if (window.algebraTiles && typeof window.algebraTiles.addAnnotation === 'function') {
+            window.algebraTiles.addAnnotation(x, y, text);
+        } else {
+            console.warn('[VisualTeaching] Algebra tiles addAnnotation method not available');
+        }
+    }
+
+    async clearTiles() {
+        console.log('🟦 Clearing all tiles');
+
+        if (window.algebraTiles && typeof window.algebraTiles.clearWorkspace === 'function') {
+            window.algebraTiles.clearWorkspace();
+        } else {
+            console.warn('[VisualTeaching] Algebra tiles clearWorkspace method not available');
+        }
     }
 
     // ==================== IMAGE METHODS ====================

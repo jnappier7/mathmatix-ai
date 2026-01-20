@@ -50,13 +50,14 @@
 /* Whiteboard Header */
 .whiteboard-header {
     background: linear-gradient(135deg, #12B3B3 0%, #0d8888 100%);
-    padding: 12px 16px;
+    padding: 16px 20px; /* Increased padding for better drag area */
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: move;
     user-select: none;
     border-radius: 8px 8px 0 0;
+    min-height: 56px; /* Ensure minimum draggable height */
 }
 
 .whiteboard-header h2 {

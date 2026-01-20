@@ -1528,6 +1528,145 @@ class AlgebraTiles {
   }
 
   // ============================================
+  // AI MANIPULATION METHODS
+  // ============================================
+
+  /**
+   * Move tiles of a specific type from one position to another with animation
+   * @param {string} tileType - Type of tiles to move (e.g., 'x-positive')
+   * @param {number} fromX - Source X position (approximate)
+   * @param {number} fromY - Source Y position (approximate)
+   * @param {number} toX - Target X position
+   * @param {number} toY - Target Y position
+   */
+  moveTilesByType(tileType, fromX, fromY, toX, toY) {
+    // Find tiles of this type near the source position (within 50px radius)
+    const tilesToMove = this.tiles.filter(tile => {
+      const dx = tile.x - fromX;
+      const dy = tile.y - fromY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return tile.type === tileType && distance < 100;
+    });
+
+    if (tilesToMove.length === 0) {
+      console.warn(`No ${tileType} tiles found near (${fromX}, ${fromY})`);
+      return;
+    }
+
+    // Move each tile with staggered animation
+    tilesToMove.forEach((tile, index) => {
+      setTimeout(() => {
+        // Calculate offset from original position
+        const offsetX = tile.x - fromX;
+        const offsetY = tile.y - fromY;
+
+        // Apply offset to new position
+        tile.x = toX + offsetX;
+        tile.y = toY + offsetY;
+
+        // Find DOM element and animate
+        const tileElement = this.workspace.querySelector(`[data-tile-id="${tile.id}"]`);
+        if (tileElement) {
+          tileElement.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+          tileElement.style.left = tile.x + 'px';
+          tileElement.style.top = tile.y + 'px';
+
+          // Add visual feedback
+          tileElement.style.boxShadow = '0 4px 16px rgba(102, 126, 234, 0.5)';
+          setTimeout(() => {
+            tileElement.style.boxShadow = '';
+            tileElement.style.transition = '';
+          }, 600);
+        }
+      }, index * 100); // Stagger by 100ms
+    });
+
+    this.updateExpression();
+    console.log(`✅ Moved ${tilesToMove.length} ${tileType} tile(s)`);
+  }
+
+  /**
+   * Highlight tiles of a specific type at a position
+   * @param {string} tileType - Type of tiles to highlight
+   * @param {number} x - X position
+   * @param {number} y - Y position
+   */
+  highlightTilesAt(tileType, x, y) {
+    // Find tiles of this type near the position
+    const tilesToHighlight = this.tiles.filter(tile => {
+      const dx = tile.x - x;
+      const dy = tile.y - y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return tile.type === tileType && distance < 100;
+    });
+
+    if (tilesToHighlight.length === 0) {
+      console.warn(`No ${tileType} tiles found near (${x}, ${y})`);
+      return;
+    }
+
+    // Highlight each tile
+    tilesToHighlight.forEach(tile => {
+      const tileElement = this.workspace.querySelector(`[data-tile-id="${tile.id}"]`);
+      if (tileElement) {
+        // Add highlight class
+        tileElement.classList.add('ai-highlighted');
+
+        // Add pulsing animation
+        tileElement.style.animation = 'highlight-pulse 1.5s ease-in-out 3';
+        tileElement.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.4)';
+
+        // Remove highlight after 4.5 seconds
+        setTimeout(() => {
+          tileElement.classList.remove('ai-highlighted');
+          tileElement.style.animation = '';
+          tileElement.style.boxShadow = '';
+        }, 4500);
+      }
+    });
+
+    console.log(`✅ Highlighted ${tilesToHighlight.length} ${tileType} tile(s)`);
+  }
+
+  /**
+   * Add an annotation/label at a position
+   * @param {number} x - X position
+   * @param {number} y - Y position
+   * @param {string} text - Annotation text
+   */
+  addAnnotation(x, y, text) {
+    const annotation = document.createElement('div');
+    annotation.className = 'tile-annotation';
+    annotation.textContent = text;
+    annotation.style.cssText = `
+      position: absolute;
+      left: ${x}px;
+      top: ${y}px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      max-width: 200px;
+      pointer-events: none;
+      animation: fadeInScale 0.3s ease;
+    `;
+
+    this.workspace.appendChild(annotation);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      annotation.style.animation = 'fadeOutScale 0.3s ease';
+      setTimeout(() => annotation.remove(), 300);
+    }, 5000);
+
+    console.log(`✅ Added annotation at (${x}, ${y}): "${text}"`);
+  }
+
+  // ============================================
   // MODE SWITCHING
   // ============================================
 
@@ -1964,11 +2103,37 @@ class AlgebraTiles {
   }
 
   open() {
-    document.getElementById('algebraTilesModal').classList.add('active');
+    const modal = document.getElementById('algebraTilesModal');
+    if (modal) {
+      modal.classList.add('active');
+
+      // Enable split-screen mode by default (unless on mobile)
+      const isMobile = window.innerWidth < 768;
+      if (!isMobile) {
+        document.body.classList.add('algebra-tiles-split-screen');
+        console.log('📐 Algebra tiles opened in split-screen mode');
+      } else {
+        console.log('📐 Algebra tiles opened in modal mode (mobile)');
+      }
+    }
   }
 
   close() {
-    document.getElementById('algebraTilesModal').classList.remove('active');
+    const modal = document.getElementById('algebraTilesModal');
+    if (modal) {
+      modal.classList.remove('active');
+
+      // Remove split-screen mode
+      document.body.classList.remove('algebra-tiles-split-screen');
+
+      // Also remove collapsed state if it was set
+      const chatContainer = document.getElementById('chat-container');
+      if (chatContainer) {
+        chatContainer.classList.remove('tiles-collapsed');
+      }
+
+      console.log('📐 Algebra tiles closed');
+    }
   }
 
   sendToAI() {

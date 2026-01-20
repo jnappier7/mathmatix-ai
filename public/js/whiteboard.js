@@ -1087,6 +1087,13 @@ class MathmatixWhiteboard {
 
     hide() {
         this.panel.classList.add('is-hidden');
+
+        // Clean up split-screen layout when hiding
+        if (window.whiteboardChatLayout) {
+            window.whiteboardChatLayout.onWhiteboardClose();
+        }
+
+        console.log('✅ Whiteboard hidden');
     }
 
     toggle() {
@@ -1101,11 +1108,25 @@ class MathmatixWhiteboard {
         this.panel.classList.toggle('maximized');
         this.isMaximized = !this.isMaximized;
         setTimeout(() => this.resizeCanvas(), 100);
+
+        console.log(`✅ Whiteboard ${this.isMaximized ? 'maximized' : 'restored'}`);
     }
 
     minimize() {
+        const wasMinimized = this.isMinimized;
         this.panel.classList.toggle('minimized');
         this.isMinimized = !this.isMinimized;
+
+        // In split-screen mode, minimize should collapse to thin bar
+        if (document.body.classList.contains('whiteboard-split-screen')) {
+            this.panel.classList.toggle('collapsed', this.isMinimized);
+            const chatContainer = document.getElementById('chat-container');
+            if (chatContainer) {
+                chatContainer.classList.toggle('whiteboard-collapsed', this.isMinimized);
+            }
+        }
+
+        console.log(`✅ Whiteboard ${this.isMinimized ? 'minimized' : 'restored'}`);
     }
 
     startDragging(e) {
@@ -1568,7 +1589,7 @@ class MathmatixWhiteboard {
         this.setBoardMode('collaborative');
     }
 
-    renderDrawingItem(item) {
+    async renderDrawingItem(item) {
         switch (item.type) {
             case 'grid':
                 this.addCoordinateGrid({
@@ -1591,7 +1612,7 @@ class MathmatixWhiteboard {
             case 'line':
                 // Use hand-drawn line if handwriting engine available
                 if (this.handwriting && item.points.length === 4) {
-                    this.handwriting.drawHandDrawnArrow(
+                    const arrow = this.handwriting.drawHandDrawnArrow(
                         item.points[0], item.points[1],
                         item.points[2], item.points[3],
                         {
@@ -1600,6 +1621,10 @@ class MathmatixWhiteboard {
                             wobbleIntensity: 0.02
                         }
                     );
+                    // Animate the arrow drawing
+                    if (arrow && this.handwriting.animatePathDrawing) {
+                        await this.handwriting.animatePathDrawing(arrow, 600);
+                    }
                 } else {
                     const line = new fabric.Line(item.points, {
                         stroke: item.color || '#333',
@@ -1613,16 +1638,27 @@ class MathmatixWhiteboard {
                 break;
 
             case 'text':
-                // Use handwritten text style
-                const text = new fabric.Text(item.content, {
-                    left: item.position[0],
-                    top: item.position[1],
-                    fontSize: item.fontSize || 20,
-                    fill: item.color || '#2d3748',
-                    fontFamily: 'Indie Flower, cursive',
-                    selectable: false,
-                });
-                this.canvas.add(text);
+                // Use handwriting engine for natural, animated text
+                if (this.handwriting && this.handwriting.writeText) {
+                    await this.handwriting.writeText(item.content, item.position[0], item.position[1], {
+                        fontSize: item.fontSize || 20,
+                        color: item.color || '#2d3748',
+                        fontFamily: 'Indie Flower, cursive',
+                        selectable: false,
+                        pauseAfter: true
+                    });
+                } else {
+                    // Fallback to static text if handwriting engine not available
+                    const text = new fabric.Text(item.content, {
+                        left: item.position[0],
+                        top: item.position[1],
+                        fontSize: item.fontSize || 20,
+                        fill: item.color || '#2d3748',
+                        fontFamily: 'Indie Flower, cursive',
+                        selectable: false,
+                    });
+                    this.canvas.add(text);
+                }
                 break;
 
             case 'circle':
@@ -1630,7 +1666,7 @@ class MathmatixWhiteboard {
                 if (this.handwriting && item.radius > 10) {
                     const centerX = item.position[0] + item.radius;
                     const centerY = item.position[1] + item.radius;
-                    this.handwriting.drawHandDrawnCircle(
+                    const circlePath = this.handwriting.drawHandDrawnCircle(
                         centerX, centerY, item.radius,
                         {
                             color: item.stroke || '#12B3B3',
@@ -1638,6 +1674,10 @@ class MathmatixWhiteboard {
                             wobbleIntensity: 0.08
                         }
                     );
+                    // Animate the circle drawing
+                    if (circlePath && this.handwriting.animatePathDrawing) {
+                        await this.handwriting.animatePathDrawing(circlePath, 800);
+                    }
                 } else {
                     const circle = new fabric.Circle({
                         left: item.position[0],
