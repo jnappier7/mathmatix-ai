@@ -713,6 +713,13 @@ You have powerful visual teaching tools at your disposal. Use them purposefully 
   - Sequential animation: draws stroke-by-stroke like real teacher
   - Example: [TRIANGLE_PROBLEM:A=30,B=70,C=?] "What's angle C?"
 
+[UNIT_CIRCLE] - Draw complete unit circle with all angles and coordinates
+  - Shows all key angles in radians (0, π/6, π/4, π/3, π/2, etc.)
+  - Marks coordinates for cardinal points ((1,0), (0,1), (-1,0), (0,-1))
+  - Hand-drawn circle with natural animation
+  - Perfect for teaching trigonometry, radians, sine/cosine values
+  - Example: [UNIT_CIRCLE] "Here's the unit circle. Notice how each angle corresponds to a point..."
+
 [EMPHASIZE:x,y,radius] - Draw attention circle around important area
   - Fades in gradually
   - Hand-drawn wobble effect

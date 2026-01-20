@@ -80,6 +80,17 @@ function parseVisualTeaching(aiResponseText) {
     }
     cleanedText = cleanedText.replace(triangleProblemRegex, '');
 
+    // [UNIT_CIRCLE] or [UNIT_CIRCLE:highlight=π/4] - Draw a complete unit circle with angles and coordinates
+    const unitCircleRegex = /\[UNIT_CIRCLE(?::highlight=([^\]]+))?\]/g;
+    while ((match = unitCircleRegex.exec(aiResponseText)) !== null) {
+        visualCommands.whiteboard.push({
+            type: 'unit_circle',
+            highlightAngle: match[1] || null,
+            autoOpen: true
+        });
+    }
+    cleanedText = cleanedText.replace(unitCircleRegex, '');
+
     // [EMPHASIZE:x,y,radius] - Draw attention circle around point
     const emphasizeRegex = /\[EMPHASIZE:(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,(\d+))?\]/g;
     while ((match = emphasizeRegex.exec(aiResponseText)) !== null) {
