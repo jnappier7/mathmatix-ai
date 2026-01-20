@@ -86,6 +86,14 @@ class MathmatixWhiteboard {
         this.setupTouchGestures();
         this._clipboard = null; // For copy/paste
 
+        // Initialize handwriting engine for natural AI drawing
+        if (typeof HandwritingEngine !== 'undefined') {
+            this.handwriting = new HandwritingEngine(this);
+            console.log('✍️ Handwriting engine initialized for natural AI writing');
+        } else {
+            console.warn('⚠️ HandwritingEngine not available - will use static rendering');
+        }
+
         console.log('✅ Mathmatix Whiteboard initialized with enhanced UX');
     }
 
@@ -1711,6 +1719,164 @@ class MathmatixWhiteboard {
 
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
+     * Draw a complete unit circle with angles, coordinates, and labels
+     * @param {string} highlightAngle - Optional angle to highlight (e.g., "π/4", "45°")
+     */
+    async drawUnitCircle(highlightAngle = null) {
+        this.show();
+        this.setBoardMode('teacher');
+
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
+        const radius = Math.min(this.canvas.width, this.canvas.height) * 0.35;
+
+        // Clear canvas first
+        this.canvas.clear();
+        this.canvas.backgroundColor = '#ffffff';
+
+        // Draw axes
+        const axisColor = '#888';
+        const axisWidth = 2;
+
+        // X-axis
+        this.canvas.add(new fabric.Line([centerX - radius * 1.3, centerY, centerX + radius * 1.3, centerY], {
+            stroke: axisColor,
+            strokeWidth: axisWidth,
+            selectable: false
+        }));
+
+        // Y-axis
+        this.canvas.add(new fabric.Line([centerX, centerY - radius * 1.3, centerX, centerY + radius * 1.3], {
+            stroke: axisColor,
+            strokeWidth: axisWidth,
+            selectable: false
+        }));
+
+        // Draw the unit circle
+        if (this.handwriting) {
+            const circlePath = this.handwriting.drawHandDrawnCircle(centerX, centerY, radius, {
+                color: '#12B3B3',
+                strokeWidth: 3,
+                wobbleIntensity: 0.05
+            });
+            if (circlePath && this.handwriting.animatePathDrawing) {
+                await this.handwriting.animatePathDrawing(circlePath, 1200);
+            }
+        } else {
+            this.canvas.add(new fabric.Circle({
+                left: centerX - radius,
+                top: centerY - radius,
+                radius: radius,
+                fill: 'transparent',
+                stroke: '#12B3B3',
+                strokeWidth: 3,
+                selectable: false
+            }));
+        }
+
+        await this.sleep(300);
+
+        // Key angles on the unit circle (in radians)
+        const angles = [
+            { rad: 0, deg: '0°', label: '0', x: 1, y: 0 },
+            { rad: Math.PI/6, deg: '30°', label: 'π/6', x: Math.sqrt(3)/2, y: 0.5 },
+            { rad: Math.PI/4, deg: '45°', label: 'π/4', x: Math.sqrt(2)/2, y: Math.sqrt(2)/2 },
+            { rad: Math.PI/3, deg: '60°', label: 'π/3', x: 0.5, y: Math.sqrt(3)/2 },
+            { rad: Math.PI/2, deg: '90°', label: 'π/2', x: 0, y: 1 },
+            { rad: 2*Math.PI/3, deg: '120°', label: '2π/3', x: -0.5, y: Math.sqrt(3)/2 },
+            { rad: 3*Math.PI/4, deg: '135°', label: '3π/4', x: -Math.sqrt(2)/2, y: Math.sqrt(2)/2 },
+            { rad: 5*Math.PI/6, deg: '150°', label: '5π/6', x: -Math.sqrt(3)/2, y: 0.5 },
+            { rad: Math.PI, deg: '180°', label: 'π', x: -1, y: 0 },
+            { rad: 7*Math.PI/6, deg: '210°', label: '7π/6', x: -Math.sqrt(3)/2, y: -0.5 },
+            { rad: 5*Math.PI/4, deg: '225°', label: '5π/4', x: -Math.sqrt(2)/2, y: -Math.sqrt(2)/2 },
+            { rad: 4*Math.PI/3, deg: '240°', label: '4π/3', x: -0.5, y: -Math.sqrt(3)/2 },
+            { rad: 3*Math.PI/2, deg: '270°', label: '3π/2', x: 0, y: -1 },
+            { rad: 5*Math.PI/3, deg: '300°', label: '5π/3', x: 0.5, y: -Math.sqrt(3)/2 },
+            { rad: 7*Math.PI/4, deg: '315°', label: '7π/4', x: Math.sqrt(2)/2, y: -Math.sqrt(2)/2 },
+            { rad: 11*Math.PI/6, deg: '330°', label: '11π/6', x: Math.sqrt(3)/2, y: -0.5 }
+        ];
+
+        // Draw points and labels for each angle
+        for (const angle of angles) {
+            const px = centerX + radius * angle.x;
+            const py = centerY - radius * angle.y; // Negative because canvas Y is inverted
+
+            // Draw point
+            this.canvas.add(new fabric.Circle({
+                left: px - 4,
+                top: py - 4,
+                radius: 4,
+                fill: '#12B3B3',
+                stroke: '#0a8888',
+                strokeWidth: 1,
+                selectable: false
+            }));
+
+            // Label positioning (outside the circle)
+            const labelOffset = 40;
+            const labelX = centerX + (radius + labelOffset) * angle.x;
+            const labelY = centerY - (radius + labelOffset) * angle.y;
+
+            // Add radian label
+            if (this.handwriting) {
+                await this.handwriting.writeText(angle.label, labelX - 15, labelY - 10, {
+                    fontSize: 14,
+                    color: '#2d3748',
+                    fontFamily: 'Indie Flower, cursive',
+                    selectable: false,
+                    pauseAfter: false
+                });
+            } else {
+                this.canvas.add(new fabric.Text(angle.label, {
+                    left: labelX - 15,
+                    top: labelY - 10,
+                    fontSize: 14,
+                    fill: '#2d3748',
+                    fontFamily: 'Indie Flower, cursive',
+                    selectable: false
+                }));
+            }
+
+            await this.sleep(100);
+        }
+
+        // Add coordinate labels for key points
+        await this.sleep(200);
+        const coordLabels = [
+            { x: centerX + radius, y: centerY + 20, text: '(1, 0)' },
+            { x: centerX, y: centerY - radius - 20, text: '(0, 1)' },
+            { x: centerX - radius - 30, y: centerY + 20, text: '(-1, 0)' },
+            { x: centerX, y: centerY + radius + 30, text: '(0, -1)' }
+        ];
+
+        for (const coord of coordLabels) {
+            if (this.handwriting) {
+                await this.handwriting.writeText(coord.text, coord.x - 20, coord.y - 10, {
+                    fontSize: 12,
+                    color: '#555',
+                    fontFamily: 'Indie Flower, cursive',
+                    selectable: false,
+                    pauseAfter: false
+                });
+            } else {
+                this.canvas.add(new fabric.Text(coord.text, {
+                    left: coord.x - 20,
+                    top: coord.y - 10,
+                    fontSize: 12,
+                    fill: '#555',
+                    fontFamily: 'Indie Flower, cursive',
+                    selectable: false
+                }));
+            }
+            await this.sleep(50);
+        }
+
+        // Switch to collaborative mode
+        this.setBoardMode('collaborative');
+        console.log('✅ Unit circle drawn successfully');
     }
 
     // ============================================

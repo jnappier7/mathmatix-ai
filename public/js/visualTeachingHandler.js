@@ -64,6 +64,9 @@ class VisualTeachingHandler {
                 case 'triangle_problem':
                     await this.createTriangleProblem(cmd.angles);
                     break;
+                case 'unit_circle':
+                    await this.createUnitCircle(cmd.highlightAngle);
+                    break;
                 case 'emphasize':
                     await this.emphasizePoint(cmd.x, cmd.y, cmd.radius);
                     break;
@@ -240,6 +243,16 @@ class VisualTeachingHandler {
             await window.whiteboardEnhancer.createTriangleProblem(angles);
         } else {
             console.warn('[VisualTeaching] Whiteboard enhancer not available');
+        }
+    }
+
+    async createUnitCircle(highlightAngle = null) {
+        console.log('⭕ Creating unit circle', highlightAngle ? `(highlighting ${highlightAngle})` : '');
+
+        if (window.whiteboard && typeof window.whiteboard.drawUnitCircle === 'function') {
+            await window.whiteboard.drawUnitCircle(highlightAngle);
+        } else {
+            console.warn('[VisualTeaching] Unit circle drawing not available');
         }
     }
 

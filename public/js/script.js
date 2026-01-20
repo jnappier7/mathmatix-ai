@@ -442,6 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (document.getElementById('tutor-canvas') && window.MathmatixWhiteboard) {
             // Initialize the new whiteboard system
             whiteboard = new MathmatixWhiteboard('tutor-canvas', 'whiteboard-panel');
+            window.whiteboard = whiteboard; // Make available globally for layout manager
             fabricCanvas = whiteboard.canvas; // Keep for backward compatibility
 
             // Setup toolbar button event listeners

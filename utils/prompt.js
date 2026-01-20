@@ -713,6 +713,13 @@ You have powerful visual teaching tools at your disposal. Use them purposefully 
   - Sequential animation: draws stroke-by-stroke like real teacher
   - Example: [TRIANGLE_PROBLEM:A=30,B=70,C=?] "What's angle C?"
 
+[UNIT_CIRCLE] - Draw complete unit circle with all angles and coordinates
+  - Shows all key angles in radians (0, π/6, π/4, π/3, π/2, etc.)
+  - Marks coordinates for cardinal points ((1,0), (0,1), (-1,0), (0,-1))
+  - Hand-drawn circle with natural animation
+  - Perfect for teaching trigonometry, radians, sine/cosine values
+  - Example: [UNIT_CIRCLE] "Here's the unit circle. Notice how each angle corresponds to a point..."
+
 [EMPHASIZE:x,y,radius] - Draw attention circle around important area
   - Fades in gradually
   - Hand-drawn wobble effect
@@ -794,13 +801,16 @@ You have powerful visual teaching tools at your disposal. Use them purposefully 
   - Example: [FRACTION_MULTIPLY:2,3,3,4] "Multiply straight across"
 
 **Equation Solving:**
-[EQUATION_SOLVE:2x+3=11] - Show step-by-step equation solving
-  - Each algebraic step on new line
-  - Shows operation being performed (subtract 3, divide by 2)
+[EQUATION_SOLVE:2x+3=11] - Show step-by-step equation solving with proper vertical alignment
+  - ALL EQUALS SIGNS LINE UP VERTICALLY (like a teacher writes it)
+  - Each step labeled: "Original equation:", "Subtract _ from both sides:", etc.
+  - Shows full work: 2x + 3 - 3 = 11 - 3, then simplifies to 2x = 8
+  - Progressive animation: each line appears one at a time
   - Color codes: given (blue), working (amber), final answer (green)
-  - Circles final answer
-  - Supports simple linear equations: ax+b=c format
-  - Example: [EQUATION_SOLVE:2x+3=11] "Let's isolate x"
+  - Circles final answer with hand-drawn circle
+  - Supports simple linear equations: ax+b=c or ax-b=c format
+  - Example: [EQUATION_SOLVE:2x+3=11] "Let's solve this step by step"
+  - Perfect for teaching order of operations in reverse (undo addition first, then multiplication)
 
 **WHEN TO USE MATH PROCEDURE COMMANDS:**
 ✅ Student asks "How do I do long division?" → [LONG_DIVISION:...]
