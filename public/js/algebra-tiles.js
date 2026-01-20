@@ -2111,6 +2111,12 @@ class AlgebraTiles {
       const isMobile = window.innerWidth < 768;
       if (!isMobile) {
         document.body.classList.add('algebra-tiles-split-screen');
+
+        // Enable resizable split divider
+        if (window.splitScreenResizer) {
+          window.splitScreenResizer.enableForTiles();
+        }
+
         console.log('📐 Algebra tiles opened in split-screen mode');
       } else {
         console.log('📐 Algebra tiles opened in modal mode (mobile)');
@@ -2125,6 +2131,11 @@ class AlgebraTiles {
 
       // Remove split-screen mode
       document.body.classList.remove('algebra-tiles-split-screen');
+
+      // Disable resizable split divider
+      if (window.splitScreenResizer) {
+        window.splitScreenResizer.disable();
+      }
 
       // Also remove collapsed state if it was set
       const chatContainer = document.getElementById('chat-container');

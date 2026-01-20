@@ -1,0 +1,99 @@
+/* ============================================
+   SPLIT-SCREEN RESIZER
+   Draggable divider for resizing chat/panel split
+   ============================================ */
+
+.split-screen-divider {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: transparent;
+  cursor: col-resize;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+/* Hover state - show visual indicator */
+.split-screen-divider:hover {
+  background: rgba(18, 179, 179, 0.1);
+}
+
+/* Active/dragging state */
+.split-screen-divider.dragging {
+  background: rgba(18, 179, 179, 0.2);
+}
+
+/* Visual handle in the center */
+.divider-handle {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 179, 179, 0.15);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.split-screen-divider:hover .divider-handle {
+  background: rgba(18, 179, 179, 0.3);
+  height: 80px;
+}
+
+.split-screen-divider.dragging .divider-handle {
+  background: rgba(18, 179, 179, 0.5);
+  height: 100px;
+}
+
+/* Grip dots */
+.divider-grip {
+  width: 4px;
+  height: 30px;
+  background-image: radial-gradient(circle, rgba(18, 179, 179, 0.6) 1px, transparent 1px);
+  background-size: 4px 6px;
+  background-position: center;
+  background-repeat: repeat-y;
+  transition: all 0.2s ease;
+}
+
+.split-screen-divider:hover .divider-grip {
+  background-image: radial-gradient(circle, rgba(18, 179, 179, 0.8) 1.5px, transparent 1.5px);
+  height: 40px;
+}
+
+.split-screen-divider.dragging .divider-grip {
+  background-image: radial-gradient(circle, rgba(18, 179, 179, 1) 2px, transparent 2px);
+  height: 50px;
+}
+
+/* Prevent text selection during drag */
+body.resizing-split {
+  user-select: none;
+  cursor: col-resize !important;
+}
+
+body.resizing-split * {
+  cursor: col-resize !important;
+}
+
+/* ============================================
+   RESPONSIVE BEHAVIOR
+   ============================================ */
+
+/* Hide divider on mobile (no split-screen on small screens) */
+@media (max-width: 768px) {
+  .split-screen-divider {
+    display: none;
+  }
+}
+
+/* Tablet - vertical divider still works */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .split-screen-divider {
+    /* Keep divider functional on tablets */
+  }
+}

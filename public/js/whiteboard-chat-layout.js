@@ -290,12 +290,24 @@ class WhiteboardChatLayout {
     enableSplitScreen() {
         document.body.classList.add('whiteboard-split-screen');
         this.updateSplitScreenButton(true);
+
+        // Enable resizable split divider
+        if (window.splitScreenResizer) {
+            window.splitScreenResizer.enableForWhiteboard();
+        }
+
         console.log('[Layout] Split-screen mode enabled');
     }
 
     disableSplitScreen() {
         document.body.classList.remove('whiteboard-split-screen');
         this.updateSplitScreenButton(false);
+
+        // Disable resizable split divider
+        if (window.splitScreenResizer) {
+            window.splitScreenResizer.disable();
+        }
+
         console.log('[Layout] Split-screen mode disabled');
     }
 
