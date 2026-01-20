@@ -1,7 +1,7 @@
 // NEW FILE: utils/summaryService.js
 // Centralizes the logic for generating a conversation summary.
 
-const { callLLM, anthropic, retryWithExponentialBackoff } = require('./openaiClient');
+const { callLLM } = require('./llmGateway');
 
 const SUMMARY_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for summaries
 
@@ -53,20 +53,16 @@ async function generateSummary(messageLog, studentProfile) {
     Format your response clearly with a "Summary:" section and a "Next Steps:" section.
     `;
 
-    if (!anthropic) {
-        throw new Error("Anthropic client is not initialized for summarization. Check ANTHROPIC_API_KEY.");
-    }
-
     try {
-        const completion = await retryWithExponentialBackoff(() =>
-            anthropic.messages.create({
-                model: SUMMARY_MODEL,
-                max_tokens: 500,
-                system: summarizationPromptContent,
-                messages: formattedHistory
-            })
-        );
-        return completion.content[0]?.text?.trim() || "No summary was generated.";
+        const completion = await callLLM(SUMMARY_MODEL, [
+            { role: 'system', content: summarizationPromptContent },
+            ...formattedHistory
+        ], {
+            temperature: 0.3,
+            max_tokens: 500
+        });
+
+        return completion.choices[0]?.message?.content?.trim() || "No summary was generated.";
     } catch (error) {
         console.error("ERROR in generateSummary:", error);
         throw error; // Re-throw to be handled by the caller

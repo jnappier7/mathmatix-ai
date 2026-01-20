@@ -1,7 +1,7 @@
 // utils/activitySummarizer.js
 // Generates AI summaries of student activity for teacher live feed
 
-const { callLLM } = require('./openaiClient');
+const { callLLM } = require('./llmGateway');
 
 /**
  * Generate a concise live summary of student activity
