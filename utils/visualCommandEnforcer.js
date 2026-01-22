@@ -26,6 +26,15 @@ const {
  * @returns {string} Enhanced AI response with visual commands injected
  */
 function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory = '') {
+    // ============================================
+    // WHITEBOARD SHELVED FOR BETA
+    // Visual command enforcement disabled
+    // ============================================
+    console.log('[VisualEnforcer] DISABLED - Whiteboard shelved for beta');
+    return aiResponse;
+
+    // ORIGINAL CODE BELOW - COMMENTED OUT FOR BETA
+    /*
     // Skip if AI already used visual commands
     if (hasVisualCommands(aiResponse)) {
         console.log('[VisualEnforcer] AI already used visual commands ✓');
@@ -50,7 +59,9 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
     // Determine visual mode: 'partial' (teaching), 'example', or 'full'
     const visualMode = determineVisualMode(studentMessage, cheatCheck);
     console.log(`[VisualEnforcer] Visual mode: ${visualMode}`);
+    *///
 
+    /*
     const lowerMessage = studentMessage.toLowerCase();
     const lowerResponse = aiResponse.toLowerCase();
 
@@ -133,6 +144,7 @@ function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory =
 
     // No pattern matched - return original response
     return aiResponse;
+    */
 }
 
 // ============================================

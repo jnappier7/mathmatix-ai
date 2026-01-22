@@ -423,7 +423,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // Initialize session time tracking
             initSessionTracking();
 
-            initializeWhiteboard();
+            // WHITEBOARD SHELVED FOR BETA
+            // initializeWhiteboard();
             setupChatUI();
             await fetchAndDisplayParentCode();
             await getWelcomeMessage();
@@ -2446,6 +2447,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 graphData = JSON.parse(graphMatch[1]);
             } catch (e) { console.error("Failed to parse graph JSON:", e); }
         }
+
+        // Process diagram commands and replace with inline images
+        if (window.diagramDisplay) {
+            try {
+                aiText = await window.diagramDisplay.processMessage(aiText);
+            } catch (error) {
+                console.error('[Diagrams] Error processing diagrams:', error);
+            }
+        }
+
         appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
 
         // Notify whiteboard-chat layout manager about new AI message

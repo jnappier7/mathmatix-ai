@@ -118,6 +118,7 @@ const characterRiggingRoutes = require('./routes/characterRigging');  // Charact
 const sessionRoutes = require('./routes/session');  // Session management and tracking
 const feedbackRoutes = require('./routes/feedback');  // User feedback and bug reports
 const tourSurveyRoutes = require('./routes/tourSurvey');  // Tour and survey for alpha testing
+const diagramRoutes = require('./routes/diagram');  // Diagram generation for visual learners
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -330,6 +331,7 @@ app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
 app.use('/api/graph', isAuthenticated, graphRoutes);
+app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);

@@ -355,14 +355,14 @@ class Sidebar {
             });
         }
 
-        // Whiteboard
-        const whiteboardBtn = document.getElementById('sidebar-whiteboard-btn');
-        if (whiteboardBtn) {
-            whiteboardBtn.addEventListener('click', () => {
-                const mainWhiteboardBtn = document.getElementById('toggle-whiteboard-btn');
-                if (mainWhiteboardBtn) mainWhiteboardBtn.click();
-            });
-        }
+        // WHITEBOARD SHELVED FOR BETA
+        // const whiteboardBtn = document.getElementById('sidebar-whiteboard-btn');
+        // if (whiteboardBtn) {
+        //     whiteboardBtn.addEventListener('click', () => {
+        //         const mainWhiteboardBtn = document.getElementById('toggle-whiteboard-btn');
+        //         if (mainWhiteboardBtn) mainWhiteboardBtn.click();
+        //     });
+        // }
 
         // Calculator
         const calculatorBtn = document.getElementById('sidebar-calculator-btn');
@@ -382,14 +382,14 @@ class Sidebar {
             });
         }
 
-        // Algebra Tiles
-        const algebraBtn = document.getElementById('sidebar-algebra-btn');
-        if (algebraBtn) {
-            algebraBtn.addEventListener('click', () => {
-                const mainAlgebraBtn = document.getElementById('algebra-tiles-btn');
-                if (mainAlgebraBtn) mainAlgebraBtn.click();
-            });
-        }
+        // ALGEBRA TILES SHELVED FOR BETA
+        // const algebraBtn = document.getElementById('sidebar-algebra-btn');
+        // if (algebraBtn) {
+        //     algebraBtn.addEventListener('click', () => {
+        //         const mainAlgebraBtn = document.getElementById('algebra-tiles-btn');
+        //         if (mainAlgebraBtn) mainAlgebraBtn.click();
+        //     });
+        // }
     }
 
     async loadLeaderboard() {
