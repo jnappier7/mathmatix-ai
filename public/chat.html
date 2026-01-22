@@ -5,16 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <title>M∆THM∆TIΧ AI Chat</title>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="/css/whiteboard.css" />
-  <link rel="stylesheet" href="/css/whiteboard-chat-layout.css" />
-  <link rel="stylesheet" href="/css/split-screen-resizer.css" />
+  <!-- WHITEBOARD SHELVED FOR BETA -->
+  <!-- <link rel="stylesheet" href="/css/whiteboard.css" /> -->
+  <!-- <link rel="stylesheet" href="/css/whiteboard-chat-layout.css" /> -->
+  <!-- <link rel="stylesheet" href="/css/split-screen-resizer.css" /> -->
   <link rel="stylesheet" href="/css/file-upload.css" />
   <link rel="stylesheet" href="/css/calculator.css" />
   <link rel="stylesheet" href="/css/responsive-resources.css" />
   <link rel="stylesheet" href="/css/mobile-fixes.css" />
   <link rel="stylesheet" href="/css/ghostTimer.css" />
   <link rel="stylesheet" href="/css/badgeProgress.css" />
-  <link rel="stylesheet" href="/css/algebra-tiles.css" />
+  <!-- ALGEBRA TILES SHELVED FOR BETA -->
+  <!-- <link rel="stylesheet" href="/css/algebra-tiles.css" /> -->
   <link rel="stylesheet" href="/css/sidebar-layout.css" />
   <link rel="stylesheet" href="/css/tour-survey.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
@@ -29,7 +31,8 @@
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
   <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <!-- WHITEBOARD SHELVED FOR BETA -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script> -->
   <script>
     window.MathJax = {
       tex: {
@@ -156,10 +159,11 @@
           <span>Resources</span>
         </button>
 
-        <button id="sidebar-whiteboard-btn" class="sidebar-tool-btn">
+        <!-- WHITEBOARD SHELVED FOR BETA -->
+        <!-- <button id="sidebar-whiteboard-btn" class="sidebar-tool-btn">
           <i class="fas fa-chalkboard"></i>
           <span>Whiteboard</span>
-        </button>
+        </button> -->
 
         <button id="sidebar-calculator-btn" class="sidebar-tool-btn">
           <i class="fas fa-calculator"></i>
@@ -170,10 +174,11 @@
           <span>Upload Work</span>
         </button>
 
-        <button id="sidebar-algebra-btn" class="sidebar-tool-btn">
+        <!-- ALGEBRA TILES SHELVED FOR BETA -->
+        <!-- <button id="sidebar-algebra-btn" class="sidebar-tool-btn">
           <i class="fas fa-th"></i>
           <span>Algebra Tiles</span>
-        </button>
+        </button> -->
       </div>
     </div>
 
@@ -254,9 +259,11 @@
       </div>
      <div id="input-container">
     <!-- Hidden button triggers for sidebar -->
-    <button id="toggle-whiteboard-btn" style="display: none;"></button>
+    <!-- WHITEBOARD SHELVED FOR BETA -->
+    <!-- <button id="toggle-whiteboard-btn" style="display: none;"></button> -->
     <button id="toggle-calculator-btn" style="display: none;"></button>
-    <button id="algebra-tiles-btn" style="display: none;"></button>
+    <!-- ALGEBRA TILES SHELVED FOR BETA -->
+    <!-- <button id="algebra-tiles-btn" style="display: none;"></button> -->
 
     <!-- Inline Equation Palette (MS Word-like) -->
     <div id="inline-equation-palette" class="inline-equation-palette" style="display: none;">
@@ -603,8 +610,8 @@
     </div>
   </div>
 
-  <!-- Floating Whiteboard Panel -->
-  <div id="whiteboard-panel" class="is-hidden">
+  <!-- WHITEBOARD SHELVED FOR BETA -->
+  <!-- <div id="whiteboard-panel" class="is-hidden">
     <div class="whiteboard-header">
       <h2>Whiteboard</h2>
       <div class="whiteboard-header-controls">
@@ -638,7 +645,6 @@
     </div>
 
     <div class="whiteboard-toolbar">
-      <!-- Selection & Drawing -->
       <div class="toolbar-section">
         <button class="toolbar-btn" id="tool-select" data-tooltip="Select" title="Select">
           <i class="fas fa-mouse-pointer"></i>
@@ -654,7 +660,6 @@
         </button>
       </div>
 
-      <!-- Shapes -->
       <div class="toolbar-section">
         <button class="toolbar-btn" id="tool-line" data-tooltip="Line" title="Line">
           <i class="fas fa-minus"></i>
@@ -682,7 +687,6 @@
         </button>
       </div>
 
-      <!-- Math Tools -->
       <div class="toolbar-section">
         <button class="toolbar-btn" id="tool-grid" data-tooltip="Add Grid" title="Add Grid">
           <i class="fas fa-grip-lines"></i>
@@ -708,7 +712,6 @@
         <input type="file" id="whiteboard-bg-upload" accept="image/*,application/pdf" style="display: none;" />
       </div>
 
-      <!-- Color & Size -->
       <div class="toolbar-section">
         <div class="color-picker-wrapper">
           <label class="color-display" for="color-picker" style="color: #000000;"></label>
@@ -719,7 +722,6 @@
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="toolbar-section">
         <button class="toolbar-btn" id="undo-btn" data-tooltip="Undo (Ctrl+Z)" title="Undo">
           <i class="fas fa-undo"></i>
@@ -760,12 +762,11 @@
       </div>
       <div class="whiteboard-resize-handle"></div>
     </div>
-  </div>
+  </div> -->
 
-  <!-- Open Whiteboard Button (when closed) -->
-  <button id="open-whiteboard-btn" class="hidden">
+  <!-- <button id="open-whiteboard-btn" class="hidden">
     ✏️
-  </button>
+  </button> -->
 
   <!-- Drag & Drop Overlay -->
   <div id="drag-drop-overlay" class="drag-drop-overlay hidden">
@@ -1122,8 +1123,8 @@
     </div>
   </div>
 
-  <!-- Algebra Tiles Container -->
-  <div id="algebraTilesContainer"></div>
+  <!-- ALGEBRA TILES SHELVED FOR BETA -->
+  <!-- <div id="algebraTilesContainer"></div> -->
 
   <!-- Welcome Tour Modal -->
   <div id="tour-modal" class="modal-overlay tour-overlay">
@@ -1313,22 +1314,26 @@
   <script src="/js/sanitize-util.js"></script>
   <script src="/js/logout.js"></script>
   <script src="/js/auto-logout.js"></script>
-  <script src="/js/algebra-tiles.js"></script>
+  <!-- ALGEBRA TILES SHELVED FOR BETA -->
+  <!-- <script src="/js/algebra-tiles.js"></script> -->
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
-  <script src="/js/whiteboard.js"></script>
-  <script src="/js/whiteboard-phase2.js"></script>
-  <script src="/js/whiteboard-handwriting.js"></script>
-  <script src="/js/whiteboard-enhanced.js"></script>
-  <script src="/js/whiteboard-math-procedures.js"></script>
-  <script src="/js/chat-board-integration.js"></script>
+  <!-- WHITEBOARD SHELVED FOR BETA -->
+  <!-- <script src="/js/whiteboard.js"></script> -->
+  <!-- <script src="/js/whiteboard-phase2.js"></script> -->
+  <!-- <script src="/js/whiteboard-handwriting.js"></script> -->
+  <!-- <script src="/js/whiteboard-enhanced.js"></script> -->
+  <!-- <script src="/js/whiteboard-math-procedures.js"></script> -->
+  <!-- <script src="/js/chat-board-integration.js"></script> -->
   <script src="/js/voice-controller.js"></script>
   <script src="/js/floating-calculator.js"></script>
   <script src="/js/sidebar.js"></script>
+  <script src="/js/diagram-display.js"></script>
   <script src="/js/engagement-widgets.js"></script>
-  <script src="/js/visualTeachingHandler.js"></script>
-  <script src="/js/split-screen-resizer.js"></script>
-  <script src="/js/whiteboard-chat-layout.js"></script>
+  <!-- WHITEBOARD SHELVED FOR BETA -->
+  <!-- <script src="/js/visualTeachingHandler.js"></script> -->
+  <!-- <script src="/js/split-screen-resizer.js"></script> -->
+  <!-- <script src="/js/whiteboard-chat-layout.js"></script> -->
   <!-- PDF.js library for PDF preview and rendering -->
   <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
   <script type="module">
@@ -1348,7 +1353,8 @@
   <script src="/js/settings.js"></script>
   <script src="/js/show-your-work.js"></script>
   <script src="/js/ghostTimer.js"></script>
-  <script src="/js/masteryMode.js"></script>
+  <!-- MASTERY MODE SHELVED FOR BETA -->
+  <!-- <script src="/js/masteryMode.js"></script> -->
   <script src="/js/badgeProgress.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
