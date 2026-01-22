@@ -57,6 +57,7 @@ class DiagramDisplay {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({ type, params })
             });
 
