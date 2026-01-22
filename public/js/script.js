@@ -2321,7 +2321,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         while (node = walker.nextNode()) {
             if (node.nodeType === Node.TEXT_NODE) {
-                result += node.textContent;
+                // Skip text nodes that are inside math-container elements
+                // (MathJax creates these when rendering, but we want the LaTeX source instead)
+                let parent = node.parentElement;
+                let insideMathContainer = false;
+                while (parent && parent !== element) {
+                    if (parent.classList && parent.classList.contains('math-container')) {
+                        insideMathContainer = true;
+                        break;
+                    }
+                    parent = parent.parentElement;
+                }
+
+                if (!insideMathContainer) {
+                    result += node.textContent;
+                }
             } else if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('math-container')) {
                 const latex = node.getAttribute('data-latex');
                 if (latex) {
