@@ -158,6 +158,23 @@ async function generateSessionSummary(conversation, studentName) {
         const stats = calculateProblemStats(messages);
         const topic = detectTopic(messages);
 
+        // Check if this is an assessment session with results
+        if (conversation.isAssessment && conversation.assessmentResults) {
+            const results = conversation.assessmentResults;
+
+            // Create structured assessment summary
+            const assessmentSummary = `${studentName} completed a placement assessment. Results:
+- Estimated Grade Level: ${results.estimatedGrade || 'Not determined'}
+- Skill Level: ${results.skillLevel || 'Not scored'}/100
+- Questions: ${results.correctCount || stats.correct}/${results.totalQuestions || stats.attempted} correct
+- Strengths: ${results.strengths?.join(', ') || 'None identified'}
+- Weaknesses: ${results.weaknesses?.join(', ') || 'None identified'}
+- Recommended Starting Point: ${results.recommendedStartingPoint || 'To be determined'}`;
+
+            return assessmentSummary;
+        }
+
+        // Regular session summary for non-assessment sessions
         const summaryPrompt = `Summarize this math tutoring session in 2-3 sentences for a teacher. Focus on:
 - Main topic covered
 - Number of problems attempted and success rate

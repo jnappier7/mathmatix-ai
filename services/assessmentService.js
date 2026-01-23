@@ -414,9 +414,10 @@ async function calculateAssessmentResults(conversation) {
     totalQuestions
   };
 
-  // Save results to conversation
+  // Save results to conversation and mark as inactive
   conversation.assessmentResults = results;
   conversation.isAssessmentComplete = true;
+  conversation.isActive = false; // Mark inactive so it gets properly summarized
   await conversation.save();
 
   logger.info('Assessment completed', {

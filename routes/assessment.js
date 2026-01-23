@@ -339,8 +339,9 @@ async function completeAssessment(user, conversation, aiResponse) {
 
     await user.save();
 
-    // Update conversation
+    // Update conversation and mark inactive so it gets properly summarized
     conversation.isAssessmentComplete = true;
+    conversation.isActive = false;
     await conversation.save();
 
   } catch (error) {
