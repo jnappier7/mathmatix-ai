@@ -23,7 +23,7 @@ class DiagramDisplay {
             const type = match[1];
             const paramsStr = match[2];
 
-            // Parse parameters with support for nested objects and arrays
+            // Parse parameters (handling nested objects)
             const params = this.parseParams(paramsStr);
 
             commands.push({
@@ -37,90 +37,86 @@ class DiagramDisplay {
     }
 
     /**
-     * Parse parameter string with support for nested objects and arrays
-     * Handles: "a=1,b=2,obj={x:1,y:2},arr=[{x:1}]"
+     * Parse parameter string, handling nested objects in curly braces
+     * Example: "xRange=10,yRange=10,inequality={slope:2,yIntercept:1,type:'greater'}"
      */
     parseParams(paramsStr) {
         const params = {};
-        const pairs = this.splitTopLevel(paramsStr, ',');
+        let currentKey = '';
+        let currentValue = '';
+        let depth = 0;
+        let inQuotes = false;
+        let quoteChar = '';
 
-        for (const pair of pairs) {
-            const eqIndex = pair.indexOf('=');
-            if (eqIndex === -1) continue;
+        for (let i = 0; i < paramsStr.length; i++) {
+            const char = paramsStr[i];
 
-            const key = pair.substring(0, eqIndex).trim();
-            const value = pair.substring(eqIndex + 1).trim();
-
-            if (key && value) {
-                params[key] = this.parseValue(value);
+            // Handle quotes
+            if ((char === '"' || char === "'") && (i === 0 || paramsStr[i - 1] !== '\\')) {
+                if (!inQuotes) {
+                    inQuotes = true;
+                    quoteChar = char;
+                } else if (char === quoteChar) {
+                    inQuotes = false;
+                    quoteChar = '';
+                }
+                currentValue += char;
+                continue;
             }
+
+            // Skip if inside quotes
+            if (inQuotes) {
+                currentValue += char;
+                continue;
+            }
+
+            // Track depth of nested objects
+            if (char === '{') depth++;
+            if (char === '}') depth--;
+
+            // Split on = (only at depth 0)
+            if (char === '=' && depth === 0 && !currentKey) {
+                currentKey = currentValue.trim();
+                currentValue = '';
+                continue;
+            }
+
+            // Split on , (only at depth 0)
+            if (char === ',' && depth === 0) {
+                if (currentKey && currentValue) {
+                    params[currentKey] = this.parseValue(currentValue.trim());
+                }
+                currentKey = '';
+                currentValue = '';
+                continue;
+            }
+
+            currentValue += char;
+        }
+
+        // Don't forget the last parameter
+        if (currentKey && currentValue) {
+            params[currentKey] = this.parseValue(currentValue.trim());
         }
 
         return params;
     }
 
     /**
-     * Split string by delimiter, but only at top level (not inside braces/brackets)
-     */
-    splitTopLevel(str, delimiter) {
-        const result = [];
-        let current = '';
-        let depth = 0;
-        let inQuote = false;
-        let quoteChar = '';
-
-        for (let i = 0; i < str.length; i++) {
-            const char = str[i];
-            const prevChar = i > 0 ? str[i - 1] : '';
-
-            // Handle quotes
-            if ((char === '"' || char === "'") && prevChar !== '\\') {
-                if (!inQuote) {
-                    inQuote = true;
-                    quoteChar = char;
-                } else if (char === quoteChar) {
-                    inQuote = false;
-                }
-            }
-
-            if (!inQuote) {
-                // Track nesting
-                if (char === '{' || char === '[') {
-                    depth++;
-                } else if (char === '}' || char === ']') {
-                    depth--;
-                }
-
-                // Split at delimiter when at top level
-                if (char === delimiter && depth === 0) {
-                    if (current.trim()) {
-                        result.push(current);
-                    }
-                    current = '';
-                    continue;
-                }
-            }
-
-            current += char;
-        }
-
-        // Add final segment
-        if (current.trim()) {
-            result.push(current);
-        }
-
-        return result;
-    }
-
-    /**
-     * Parse a value (handles objects, arrays, numbers, booleans, strings)
+     * Parse a value, converting to appropriate type
      */
     parseValue(value) {
         value = value.trim();
 
-        // Handle objects and arrays - convert to valid JSON and parse
-        if ((value.startsWith('{') && value.endsWith('}')) ||
-            (value.startsWith('[') && value.endsWith(']'))) {
+        // Handle booleans
+        if (value === 'true') return true;
+        if (value === 'false') return false;
+
+        // Handle numbers
+        if (!isNaN(value) && value !== '') return parseFloat(value);
+
+        // Handle objects (JSON-like syntax with curly braces)
+        if (value.startsWith('{') && value.endsWith('}')) {
             try {
                 // Convert JavaScript object notation to JSON
                 // First, evaluate any arithmetic expressions (e.g., -2/3 -> -0.666...)
@@ -132,7 +128,7 @@ class DiagramDisplay {
                 jsonStr = jsonStr.replace(/'/g, '"');
                 return JSON.parse(jsonStr);
             } catch (e) {
-                console.error('[DiagramDisplay] Failed to parse object/array:', value, e);
+                console.warn('[DiagramDisplay] Failed to parse object:', value, e);
                 return value;
             }
         }
@@ -151,7 +147,7 @@ class DiagramDisplay {
         // Handle strings (remove quotes if present)
         if ((value.startsWith('"') && value.endsWith('"')) ||
             (value.startsWith("'") && value.endsWith("'"))) {
-            return value.substring(1, value.length - 1);
+            return value.slice(1, -1);
         }
 
         return value;
