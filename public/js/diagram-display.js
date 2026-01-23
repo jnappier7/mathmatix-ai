@@ -23,19 +23,8 @@ class DiagramDisplay {
             const type = match[1];
             const paramsStr = match[2];
 
-            // Parse parameters
-            const params = {};
-            const pairs = paramsStr.split(',');
-            for (const pair of pairs) {
-                const [key, value] = pair.split('=').map(s => s.trim());
-                if (key && value) {
-                    // Try to parse as number or boolean
-                    if (value === 'true') params[key] = true;
-                    else if (value === 'false') params[key] = false;
-                    else if (!isNaN(value)) params[key] = parseFloat(value);
-                    else params[key] = value;
-                }
-            }
+            // Parse parameters with support for nested objects and arrays
+            const params = this.parseParams(paramsStr);
 
             commands.push({
                 fullMatch: match[0],
@@ -48,10 +37,126 @@ class DiagramDisplay {
     }
 
     /**
+     * Parse parameter string with support for nested objects and arrays
+     * Handles: "a=1,b=2,obj={x:1,y:2},arr=[{x:1}]"
+     */
+    parseParams(paramsStr) {
+        const params = {};
+        const pairs = this.splitTopLevel(paramsStr, ',');
+
+        for (const pair of pairs) {
+            const eqIndex = pair.indexOf('=');
+            if (eqIndex === -1) continue;
+
+            const key = pair.substring(0, eqIndex).trim();
+            const value = pair.substring(eqIndex + 1).trim();
+
+            if (key && value) {
+                params[key] = this.parseValue(value);
+            }
+        }
+
+        return params;
+    }
+
+    /**
+     * Split string by delimiter, but only at top level (not inside braces/brackets)
+     */
+    splitTopLevel(str, delimiter) {
+        const result = [];
+        let current = '';
+        let depth = 0;
+        let inQuote = false;
+        let quoteChar = '';
+
+        for (let i = 0; i < str.length; i++) {
+            const char = str[i];
+            const prevChar = i > 0 ? str[i - 1] : '';
+
+            // Handle quotes
+            if ((char === '"' || char === "'") && prevChar !== '\\') {
+                if (!inQuote) {
+                    inQuote = true;
+                    quoteChar = char;
+                } else if (char === quoteChar) {
+                    inQuote = false;
+                }
+            }
+
+            if (!inQuote) {
+                // Track nesting
+                if (char === '{' || char === '[') {
+                    depth++;
+                } else if (char === '}' || char === ']') {
+                    depth--;
+                }
+
+                // Split at delimiter when at top level
+                if (char === delimiter && depth === 0) {
+                    if (current.trim()) {
+                        result.push(current);
+                    }
+                    current = '';
+                    continue;
+                }
+            }
+
+            current += char;
+        }
+
+        // Add final segment
+        if (current.trim()) {
+            result.push(current);
+        }
+
+        return result;
+    }
+
+    /**
+     * Parse a value (handles objects, arrays, numbers, booleans, strings)
+     */
+    parseValue(value) {
+        value = value.trim();
+
+        // Handle objects and arrays - convert to valid JSON and parse
+        if ((value.startsWith('{') && value.endsWith('}')) ||
+            (value.startsWith('[') && value.endsWith(']'))) {
+            try {
+                // Convert JavaScript object notation to JSON
+                // Replace unquoted keys with quoted keys
+                let jsonStr = value.replace(/(\w+):/g, '"$1":');
+                // Replace single quotes with double quotes
+                jsonStr = jsonStr.replace(/'/g, '"');
+                return JSON.parse(jsonStr);
+            } catch (e) {
+                console.error('[DiagramDisplay] Failed to parse object/array:', value, e);
+                return value;
+            }
+        }
+
+        // Handle booleans
+        if (value === 'true') return true;
+        if (value === 'false') return false;
+
+        // Handle numbers
+        if (!isNaN(value) && value !== '') return parseFloat(value);
+
+        // Handle strings (remove quotes if present)
+        if ((value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'"))) {
+            return value.substring(1, value.length - 1);
+        }
+
+        return value;
+    }
+
+    /**
      * Generate diagram and return as data URL
      */
     async generateDiagram(type, params) {
         try {
+            console.log(`[DiagramDisplay] Generating ${type} diagram with params:`, params);
+
             const response = await fetch('/api/generate-diagram', {
                 method: 'POST',
                 headers: {
@@ -63,14 +168,17 @@ class DiagramDisplay {
 
             if (!response.ok) {
                 const error = await response.json();
+                console.error(`[DiagramDisplay] Server returned error:`, error);
                 throw new Error(error.error || 'Failed to generate diagram');
             }
 
             const data = await response.json();
+            console.log(`[DiagramDisplay] Successfully generated ${type} diagram`);
             return data.image; // data:image/png;base64,...
 
         } catch (error) {
             console.error('[DiagramDisplay] Error generating diagram:', error);
+            console.error('[DiagramDisplay] Type:', type, 'Params:', params);
             return null;
         }
     }
@@ -86,12 +194,18 @@ class DiagramDisplay {
             return message; // No diagrams to process
         }
 
-        console.log(`[DiagramDisplay] Found ${commands.length} diagram commands`);
+        console.log(`[DiagramDisplay] Found ${commands.length} diagram commands:`, commands);
 
         let processedMessage = message;
 
         // Generate each diagram
         for (const command of commands) {
+            console.log(`[DiagramDisplay] Processing command:`, {
+                type: command.type,
+                params: command.params,
+                fullMatch: command.fullMatch
+            });
+
             const imageUrl = await this.generateDiagram(command.type, command.params);
 
             if (imageUrl) {
@@ -99,8 +213,10 @@ class DiagramDisplay {
                 const diagramHTML = this.createDiagramHTML(imageUrl, command.type, command.params);
                 // Replace command with diagram
                 processedMessage = processedMessage.replace(command.fullMatch, diagramHTML);
+                console.log(`[DiagramDisplay] Successfully replaced diagram command for ${command.type}`);
             } else {
                 // If generation failed, show error message
+                console.error(`[DiagramDisplay] Failed to generate diagram for ${command.type}`);
                 const errorHTML = `<div class="diagram-error">⚠️ Could not generate ${command.type} diagram</div>`;
                 processedMessage = processedMessage.replace(command.fullMatch, errorHTML);
             }
