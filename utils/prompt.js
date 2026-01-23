@@ -20,8 +20,10 @@ function buildSkillMasteryContext(userProfile, filterToSkill = null) {
       userProfile.skillMastery.size === 0) {
     return `--- SKILL PROGRESSION & LEARNING PATH ---
 **ASSESSMENT NEEDED:** This student hasn't completed their initial skills assessment yet.
-- If they ask what to learn or seem ready for structured learning, suggest they take the assessment
-- For now, provide tutoring help on whatever they ask about
+- **IMPORTANT:** If they explicitly request a "placement test," "assessment," or say "my teacher said to take a test," IMMEDIATELY tell them you'll start their assessment and ask if they're ready
+- Do NOT give practice problems when they ask for the actual placement test
+- If they seem ready for structured learning or ask what to learn, proactively suggest they take the assessment
+- For general questions, provide tutoring help on whatever they ask about
 `;
   }
 
