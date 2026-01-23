@@ -84,10 +84,38 @@ router.post('/generate-diagram', async (req, res) => {
 
 /**
  * Call Python script and return output
+ * Tries multiple Python commands: python3, python, /usr/bin/python3
  */
 function callPythonScript(scriptPath, inputData) {
+    return new Promise(async (resolve, reject) => {
+        const pythonCommands = ['python3', 'python', '/usr/bin/python3', '/usr/local/bin/python3'];
+
+        // Try each Python command until one works
+        for (const pythonCmd of pythonCommands) {
+            try {
+                const result = await tryPythonCommand(pythonCmd, scriptPath, inputData);
+                return resolve(result);
+            } catch (err) {
+                // If it's a spawn error, try next command
+                if (err.message.includes('ENOENT') || err.message.includes('spawn')) {
+                    continue;
+                }
+                // If it's a Python execution error, reject immediately
+                return reject(err);
+            }
+        }
+
+        // If all commands failed, reject
+        reject(new Error(`Python not found. Tried: ${pythonCommands.join(', ')}`));
+    });
+}
+
+/**
+ * Try executing Python with a specific command
+ */
+function tryPythonCommand(pythonCmd, scriptPath, inputData) {
     return new Promise((resolve, reject) => {
-        const python = spawn('python3', [scriptPath, inputData]);
+        const python = spawn(pythonCmd, [scriptPath, inputData]);
 
         let output = '';
         let errorOutput = '';
@@ -102,7 +130,7 @@ function callPythonScript(scriptPath, inputData) {
 
         python.on('close', (code) => {
             if (code !== 0) {
-                console.error('[DiagramGen] Python error:', errorOutput);
+                console.error(`[DiagramGen] Python (${pythonCmd}) error:`, errorOutput);
                 reject(new Error(`Python script failed: ${errorOutput}`));
             } else {
                 resolve(output.trim());
@@ -110,8 +138,8 @@ function callPythonScript(scriptPath, inputData) {
         });
 
         python.on('error', (err) => {
-            console.error('[DiagramGen] Failed to start Python:', err);
-            reject(new Error(`Failed to start Python: ${err.message}`));
+            console.error(`[DiagramGen] Failed to start Python (${pythonCmd}):`, err.message);
+            reject(new Error(`spawn ${pythonCmd} ${err.code || 'ENOENT'}`));
         });
     });
 }
