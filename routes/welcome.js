@@ -141,7 +141,7 @@ router.get('/', async (req, res) => {
                 role: "system",
                 content: `Second message. Keep it brief. Info: ${JSON.stringify(user.rapportAnswers)}`
             });
-            userMessagePart = `Acknowledge their answer briefly, then suggest starting with some problems. Be natural and low-pressure. 1-2 sentences. Don't use phrases like "buddy" or overly enthusiastic language.`;
+            userMessagePart = `Acknowledge their answer briefly, then suggest starting with some problems. Be natural and low-pressure. 1-2 sentences. Don't introduce yourself again - they know who you are. Don't use phrases like "buddy" or overly enthusiastic language.`;
         }
 
         // INCOMPLETE ASSESSMENT: Offer to resume
@@ -151,12 +151,12 @@ router.get('/', async (req, res) => {
                 role: "system",
                 content: `Returning user with incomplete assessment. They answered ${questionsCompleted} questions already.`
             });
-            userMessagePart = `Casual greeting for ${user.firstName}. Mention they started the placement (${questionsCompleted} questions done) but didn't finish. Offer to continue or start over - keep it relaxed. 1-2 sentences. Sound like texting, not like a teacher.`;
+            userMessagePart = `Casual greeting for ${user.firstName}. Don't introduce yourself - they've met you. Mention they started the placement (${questionsCompleted} questions done) but didn't finish. Offer to continue or start over - keep it relaxed. 1-2 sentences. Sound like texting, not like a teacher.`;
         }
 
         // ASSESSMENT NEEDED (but rapport complete)
         else if (assessmentNeeded && user.rapportBuildingComplete) {
-            userMessagePart = `Write a brief, natural transition for ${user.firstName} to start the placement assessment. Reference that you've chatted a bit, now you want to see where they're at. Make it sound exciting and low-pressure. 2 sentences max. Don't call it a "test" - just say you want to see what they know.`;
+            userMessagePart = `Write a brief, natural transition for ${user.firstName} to start the placement assessment. Don't introduce yourself - they know you. Reference that you've chatted a bit, now you want to see where they're at. Make it sound exciting and low-pressure. 2 sentences max. Don't call it a "test" - just say you want to see what they know.`;
         }
 
         // RETURNING USER: Natural welcome back
@@ -176,14 +176,14 @@ router.get('/', async (req, res) => {
                 role: "system",
                 content: `Returning student. ${temporalContext}. Last session context: ${lastContextForAI}. Variety seed: ${varietySeed}`
             });
-            userMessagePart = `Write a ${randomStyle}. For ${user.firstName}. Keep it VERY short (1 sentence). Sound natural, like texting. CRITICAL: Vary your word choice every time - don't repeat phrases like "my friend", "buddy", "pal" etc. Just be yourself. Context: ${temporalContext}. NO canned greetings. Be spontaneous.`;
+            userMessagePart = `Write a ${randomStyle}. For ${user.firstName}. Keep it VERY short (1 sentence). Sound natural, like texting. CRITICAL: DON'T introduce yourself - they already know you. Vary your word choice every time - don't repeat phrases like "my friend", "buddy", "pal" etc. Just jump right in. Context: ${temporalContext}. NO canned greetings. Be spontaneous.`;
         }
 
         // FALLBACK: Simple natural greeting
         else {
             const varietySeed = Math.floor(Math.random() * 10000);
             messagesForAI.push({ role: "system", content: `${temporalContext}. Variety seed: ${varietySeed}` });
-            userMessagePart = `Write a brief greeting for ${user.firstName}. Context: ${temporalContext}. Keep it natural like texting. Ask what they need help with. 1 sentence. Don't use repetitive phrases like "buddy" or "my friend". Be direct and genuine.`;
+            userMessagePart = `Write a brief greeting for ${user.firstName}. Context: ${temporalContext}. Don't introduce yourself. Keep it natural like texting. Ask what they need help with. 1 sentence. Don't use repetitive phrases like "buddy" or "my friend". Be direct and genuine.`;
         }
         // --- END OF DYNAMIC WELCOME LOGIC ---
         
