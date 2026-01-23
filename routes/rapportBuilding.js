@@ -174,7 +174,8 @@ RESPOND IN JSON:
         res.json({
             message: result.nextMessage,
             rapportComplete: result.rapportComplete,
-            voiceId: currentTutor.voiceId
+            voiceId: currentTutor.voiceId,
+            triggerAssessment: result.rapportComplete // Signal frontend to show assessment pitch
         });
 
     } catch (error) {
