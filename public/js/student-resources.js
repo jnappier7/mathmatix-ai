@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!data.hasResources) {
                 // Use teacher's actual Common Curriculum URL if available, otherwise use generic schedule
-                const scheduleUrl = data.scheduleUrl || 'https://www.commoncurriculum.com/sites/tentative-schedule';
+                const scheduleUrl = data.scheduleUrl || 'https://www.commonplanner.com/sites/tentative-schedule';
 
                 resourcesContent.innerHTML = `
                     <div style="padding: 20px;">
