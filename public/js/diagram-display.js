@@ -123,8 +123,11 @@ class DiagramDisplay {
             (value.startsWith('[') && value.endsWith(']'))) {
             try {
                 // Convert JavaScript object notation to JSON
+                // First, evaluate any arithmetic expressions (e.g., -2/3 -> -0.666...)
+                let processedValue = this.evaluateArithmetic(value);
+
                 // Replace unquoted keys with quoted keys
-                let jsonStr = value.replace(/(\w+):/g, '"$1":');
+                let jsonStr = processedValue.replace(/(\w+):/g, '"$1":');
                 // Replace single quotes with double quotes
                 jsonStr = jsonStr.replace(/'/g, '"');
                 return JSON.parse(jsonStr);
@@ -138,8 +141,12 @@ class DiagramDisplay {
         if (value === 'true') return true;
         if (value === 'false') return false;
 
-        // Handle numbers
+        // Handle numbers (including fractions like -2/3)
         if (!isNaN(value) && value !== '') return parseFloat(value);
+
+        // Handle arithmetic expressions (e.g., -2/3)
+        const evaluated = this.evaluateSimpleArithmetic(value);
+        if (evaluated !== null) return evaluated;
 
         // Handle strings (remove quotes if present)
         if ((value.startsWith('"') && value.endsWith('"')) ||
@@ -148,6 +155,48 @@ class DiagramDisplay {
         }
 
         return value;
+    }
+
+    /**
+     * Evaluate simple arithmetic expressions in a string
+     * Handles expressions like: -2/3, 1/2, 5*2, etc.
+     */
+    evaluateArithmetic(str) {
+        // Match patterns like: -2/3, 1/2, 3*4, 5+2, etc.
+        // This regex finds number op number patterns
+        return str.replace(/(-?\d+(?:\.\d+)?)\s*([\/*+\-])\s*(-?\d+(?:\.\d+)?)/g, (match, num1, op, num2) => {
+            const n1 = parseFloat(num1);
+            const n2 = parseFloat(num2);
+
+            switch (op) {
+                case '/': return n1 / n2;
+                case '*': return n1 * n2;
+                case '+': return n1 + n2;
+                case '-': return n1 - n2;
+                default: return match;
+            }
+        });
+    }
+
+    /**
+     * Evaluate a simple arithmetic expression (for standalone values)
+     */
+    evaluateSimpleArithmetic(value) {
+        // Check if it matches a simple arithmetic pattern
+        const match = value.match(/^(-?\d+(?:\.\d+)?)\s*([\/*+\-])\s*(-?\d+(?:\.\d+)?)$/);
+        if (!match) return null;
+
+        const n1 = parseFloat(match[1]);
+        const op = match[2];
+        const n2 = parseFloat(match[3]);
+
+        switch (op) {
+            case '/': return n1 / n2;
+            case '*': return n1 * n2;
+            case '+': return n1 + n2;
+            case '-': return n1 - n2;
+            default: return null;
+        }
     }
 
     /**
