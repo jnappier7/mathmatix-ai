@@ -153,11 +153,23 @@ class DiagramDisplay {
         try {
             console.log(`[DiagramDisplay] Generating ${type} diagram with params:`, params);
 
+            // Get CSRF token (from global csrf.js)
+            const csrfToken = typeof getCsrfToken === 'function' ? getCsrfToken() : null;
+
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add CSRF token if available
+            if (csrfToken) {
+                headers['X-CSRF-Token'] = csrfToken;
+            } else {
+                console.warn('[DiagramDisplay] No CSRF token found. Request may be rejected.');
+            }
+
             const response = await fetch('/api/generate-diagram', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: headers,
                 credentials: 'include',
                 body: JSON.stringify({ type, params })
             });
