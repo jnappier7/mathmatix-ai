@@ -23,19 +23,8 @@ class DiagramDisplay {
             const type = match[1];
             const paramsStr = match[2];
 
-            // Parse parameters
-            const params = {};
-            const pairs = paramsStr.split(',');
-            for (const pair of pairs) {
-                const [key, value] = pair.split('=').map(s => s.trim());
-                if (key && value) {
-                    // Try to parse as number or boolean
-                    if (value === 'true') params[key] = true;
-                    else if (value === 'false') params[key] = false;
-                    else if (!isNaN(value)) params[key] = parseFloat(value);
-                    else params[key] = value;
-                }
-            }
+            // Parse parameters (handling nested objects)
+            const params = this.parseParams(paramsStr);
 
             commands.push({
                 fullMatch: match[0],
@@ -45,6 +34,116 @@ class DiagramDisplay {
         }
 
         return commands;
+    }
+
+    /**
+     * Parse parameter string, handling nested objects in curly braces
+     * Example: "xRange=10,yRange=10,inequality={slope:2,yIntercept:1,type:'greater'}"
+     */
+    parseParams(paramsStr) {
+        const params = {};
+        let currentKey = '';
+        let currentValue = '';
+        let depth = 0;
+        let inQuotes = false;
+        let quoteChar = '';
+
+        for (let i = 0; i < paramsStr.length; i++) {
+            const char = paramsStr[i];
+
+            // Handle quotes
+            if ((char === '"' || char === "'") && (i === 0 || paramsStr[i - 1] !== '\\')) {
+                if (!inQuotes) {
+                    inQuotes = true;
+                    quoteChar = char;
+                } else if (char === quoteChar) {
+                    inQuotes = false;
+                    quoteChar = '';
+                }
+                currentValue += char;
+                continue;
+            }
+
+            // Skip if inside quotes
+            if (inQuotes) {
+                currentValue += char;
+                continue;
+            }
+
+            // Track depth of nested objects
+            if (char === '{') depth++;
+            if (char === '}') depth--;
+
+            // Split on = (only at depth 0)
+            if (char === '=' && depth === 0 && !currentKey) {
+                currentKey = currentValue.trim();
+                currentValue = '';
+                continue;
+            }
+
+            // Split on , (only at depth 0)
+            if (char === ',' && depth === 0) {
+                if (currentKey && currentValue) {
+                    params[currentKey] = this.parseValue(currentValue.trim());
+                }
+                currentKey = '';
+                currentValue = '';
+                continue;
+            }
+
+            currentValue += char;
+        }
+
+        // Don't forget the last parameter
+        if (currentKey && currentValue) {
+            params[currentKey] = this.parseValue(currentValue.trim());
+        }
+
+        return params;
+    }
+
+    /**
+     * Parse a value, converting to appropriate type
+     */
+    parseValue(value) {
+        value = value.trim();
+
+        // Handle booleans
+        if (value === 'true') return true;
+        if (value === 'false') return false;
+
+        // Handle numbers
+        if (!isNaN(value) && value !== '') return parseFloat(value);
+
+        // Handle objects (JSON-like syntax with curly braces)
+        if (value.startsWith('{') && value.endsWith('}')) {
+            try {
+                // Convert {key:value} to {"key":value} for JSON.parse
+                const jsonStr = value.replace(/(\w+):/g, '"$1":');
+                return JSON.parse(jsonStr);
+            } catch (e) {
+                console.warn('[DiagramDisplay] Failed to parse object:', value, e);
+                return value;
+            }
+        }
+
+        // Handle arrays
+        if (value.startsWith('[') && value.endsWith(']')) {
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                console.warn('[DiagramDisplay] Failed to parse array:', value, e);
+                return value;
+            }
+        }
+
+        // Remove quotes from strings
+        if ((value.startsWith('"') && value.endsWith('"')) ||
+            (value.startsWith("'") && value.endsWith("'"))) {
+            return value.slice(1, -1);
+        }
+
+        return value;
     }
 
     /**
