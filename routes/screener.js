@@ -1315,4 +1315,38 @@ function thetaToPercentile(theta) {
   return Math.round(percentile);
 }
 
+/**
+ * POST /api/screener/skip
+ * Record that user skipped the assessment
+ * They'll be offered again on next login
+ */
+router.post('/skip', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Mark that user was offered but skipped
+    // Don't set assessmentCompleted, so they'll be offered again
+    if (!user.learningProfile) {
+      user.learningProfile = {};
+    }
+
+    user.learningProfile.assessmentOfferedAt = new Date();
+    user.learningProfile.assessmentSkipped = true;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Assessment skipped - will be offered again next time'
+    });
+
+  } catch (error) {
+    console.error('[Screener Skip] Error:', error);
+    res.status(500).json({ error: 'Failed to record skip' });
+  }
+});
+
 module.exports = router;
