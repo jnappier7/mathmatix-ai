@@ -151,6 +151,8 @@ class DiagramDisplay {
      */
     async generateDiagram(type, params) {
         try {
+            console.log(`[DiagramDisplay] Generating ${type} diagram with params:`, params);
+
             const response = await fetch('/api/generate-diagram', {
                 method: 'POST',
                 headers: {
@@ -162,14 +164,17 @@ class DiagramDisplay {
 
             if (!response.ok) {
                 const error = await response.json();
+                console.error(`[DiagramDisplay] Server returned error:`, error);
                 throw new Error(error.error || 'Failed to generate diagram');
             }
 
             const data = await response.json();
+            console.log(`[DiagramDisplay] Successfully generated ${type} diagram`);
             return data.image; // data:image/png;base64,...
 
         } catch (error) {
             console.error('[DiagramDisplay] Error generating diagram:', error);
+            console.error('[DiagramDisplay] Type:', type, 'Params:', params);
             return null;
         }
     }
@@ -185,12 +190,18 @@ class DiagramDisplay {
             return message; // No diagrams to process
         }
 
-        console.log(`[DiagramDisplay] Found ${commands.length} diagram commands`);
+        console.log(`[DiagramDisplay] Found ${commands.length} diagram commands:`, commands);
 
         let processedMessage = message;
 
         // Generate each diagram
         for (const command of commands) {
+            console.log(`[DiagramDisplay] Processing command:`, {
+                type: command.type,
+                params: command.params,
+                fullMatch: command.fullMatch
+            });
+
             const imageUrl = await this.generateDiagram(command.type, command.params);
 
             if (imageUrl) {
@@ -198,8 +209,10 @@ class DiagramDisplay {
                 const diagramHTML = this.createDiagramHTML(imageUrl, command.type, command.params);
                 // Replace command with diagram
                 processedMessage = processedMessage.replace(command.fullMatch, diagramHTML);
+                console.log(`[DiagramDisplay] Successfully replaced diagram command for ${command.type}`);
             } else {
                 // If generation failed, show error message
+                console.error(`[DiagramDisplay] Failed to generate diagram for ${command.type}`);
                 const errorHTML = `<div class="diagram-error">⚠️ Could not generate ${command.type} diagram</div>`;
                 processedMessage = processedMessage.replace(command.fullMatch, errorHTML);
             }
