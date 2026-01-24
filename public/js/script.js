@@ -2686,7 +2686,10 @@ Ready to start? Or would you rather skip for now and jump straight into general 
             });
 
             if (!response.ok) {
-                throw new Error('Failed to start assessment');
+                // Get error details from response
+                const errorData = await response.json();
+                const errorMsg = errorData.message || errorData.error || 'Failed to start assessment';
+                throw new Error(errorMsg);
             }
 
             const data = await response.json();
@@ -2697,7 +2700,7 @@ Ready to start? Or would you rather skip for now and jump straight into general 
 
         } catch (error) {
             console.error('[Assessment] Start error:', error);
-            appendMessage("Oops, something went wrong starting the assessment. Let's just chat instead - what would you like to work on?", "ai");
+            appendMessage(`Oops, something went wrong starting the assessment: ${error.message}. Let's just chat instead - what would you like to work on?`, "ai");
             showThinkingIndicator(false);
         }
     }
