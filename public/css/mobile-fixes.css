@@ -22,6 +22,72 @@ button,
 
 /* Increase tap target for toolbar buttons on mobile */
 @media (max-width: 768px) {
+    /* CRITICAL FIX: Hide desktop sidebar toggle on mobile to prevent duplicate hamburger menus */
+    #sidebar-toggle {
+        display: none !important;
+    }
+
+    /* Optimize header height on mobile to maximize content space */
+    .landing-header {
+        min-height: 60px !important;
+        padding: 8px 12px !important;
+    }
+
+    /* Reduce logo size on mobile */
+    .main-logo-hero {
+        max-height: 40px !important;
+    }
+
+    /* Compact header navigation on mobile */
+    .landing-nav {
+        gap: 4px !important;
+    }
+
+    .landing-nav button {
+        padding: 8px !important;
+        font-size: 1.1rem !important;
+    }
+
+    /* Enhanced Mobile Drawer Toggle Buttons */
+    .drawer-toggle-btn {
+        min-width: 48px;
+        min-height: 48px;
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .drawer-toggle-btn:active {
+        background: rgba(18, 179, 179, 0.1);
+        transform: scale(0.95);
+    }
+
+    /* Ensure drawer toggles are properly sized and accessible */
+    #left-drawer-toggle,
+    #right-drawer-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Add subtle visual feedback for drawer buttons */
+    #left-drawer-toggle:hover,
+    #right-drawer-toggle:hover {
+        background: rgba(18, 179, 179, 0.05);
+    }
+
+    /* Optimize chat message container spacing on mobile */
+    #chat-messages-container {
+        padding: 10px 12px !important;
+        gap: 8px !important;
+    }
+
+    /* Reduce message bubble padding on mobile to maximize content area */
+    .message-wrapper,
+    .message {
+        margin-bottom: 8px !important;
+    }
+
     .input-toolbar {
         display: flex;
         gap: 8px;
