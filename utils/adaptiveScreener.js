@@ -348,6 +348,9 @@ function checkConvergenceCriteria(session) {
 function determineNextAction(session) {
   // COMPLETION CRITERIA (Multi-tier like ALEKS)
 
+  // DEBUG: Log current state
+  console.log(`[determineNextAction] questionCount=${session.questionCount}, maxQuestions=${session.maxQuestions}, targetQuestions=${session.targetQuestions}, SE=${session.standardError?.toFixed(3)}, converged=${session.converged}`);
+
   // 1. High confidence convergence (IDEAL STOP)
   if (session.converged && session.questionCount >= session.minQuestions) {
     return {

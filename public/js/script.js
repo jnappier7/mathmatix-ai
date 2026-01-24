@@ -2861,11 +2861,12 @@ ${data.problem.content}`;
             }
 
             // Load next problem or finish
-            if (data.complete || data.converged) {
-                // Pass sessionId to completion handler
+            if (data.nextAction === 'interview' || data.nextAction === 'complete') {
+                // Assessment reached stopping criteria - complete it
                 data.sessionId = sessionId;
                 handleAssessmentComplete(data);
             } else {
+                // Continue with next problem
                 await loadNextAssessmentProblem(sessionId);
             }
 
