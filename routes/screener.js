@@ -51,12 +51,21 @@ function gradeToTheta(grade) {
   // Handle null/undefined
   if (!grade) return 0;
 
-  // Parse grade (handle 'K', 'kindergarten', numbers)
+  // Parse grade (handle 'K', 'kindergarten', numbers, and college)
   let g;
   if (typeof grade === 'string') {
     const lower = grade.toLowerCase();
+
+    // Handle special grade levels
     if (lower === 'k' || lower.includes('kinder')) {
       g = 0;
+    } else if (lower.includes('college') || lower.includes('university') ||
+               lower.includes('undergrad') || lower.includes('freshman') ||
+               lower.includes('sophomore') || lower.includes('junior') || lower.includes('senior')) {
+      g = 13;  // College = grade 13+
+    } else if (lower.includes('graduate') || lower.includes('masters') ||
+               lower.includes('phd') || lower.includes('doctoral')) {
+      g = 17;  // Graduate school
     } else {
       g = parseInt(grade, 10);
     }
