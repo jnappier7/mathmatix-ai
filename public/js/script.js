@@ -409,6 +409,23 @@ document.addEventListener("DOMContentLoaded", () => {
         recognition.onend = () => { isRecognizing = false; if (micBtn) micBtn.innerHTML = '<i class="fas fa-microphone"></i>'; };
     }
 
+    // --- Watermark Helper Function ---
+    /**
+     * Toggle 'empty' class on chat container for logo watermark
+     * Shows watermark at higher opacity when no messages, lower when messages exist
+     */
+    function updateChatWatermark() {
+        if (!chatBox) return;
+
+        const messages = chatBox.querySelectorAll('.message-container, .message');
+
+        if (messages.length === 0) {
+            chatBox.classList.add('empty');
+        } else {
+            chatBox.classList.remove('empty');
+        }
+    }
+
     // --- Core Functions ---
     async function initializeApp() {
         try {
@@ -426,6 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // WHITEBOARD SHELVED FOR BETA
             // initializeWhiteboard();
             setupChatUI();
+            updateChatWatermark(); // Initialize watermark state (chat starts empty)
             await fetchAndDisplayParentCode();
             await getWelcomeMessage();
             await fetchAndDisplayLeaderboard();
@@ -2066,6 +2084,17 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.appendChild(reactionContainer);
         }
 
+        // Add timestamp to message
+        const timestamp = document.createElement('span');
+        timestamp.className = 'message-timestamp';
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        timestamp.textContent = `${displayHours}:${minutes} ${ampm}`;
+        bubble.appendChild(timestamp);
+
         // Append bubble to messageContainer
         messageContainer.appendChild(bubble);
 
@@ -2097,6 +2126,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         setTimeout(() => renderMathInElement(bubble), 0);
+
+        // Update watermark visibility based on message count
+        updateChatWatermark();
+
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
@@ -3937,6 +3970,7 @@ What would you like to work on first?`;
         if (chatBox) {
             chatBox.innerHTML = '';
             messageIndexCounter = 0; // Reset message counter
+            updateChatWatermark(); // Mark chat as empty for watermark
         }
 
         // Display session header if it's a topic-based conversation
