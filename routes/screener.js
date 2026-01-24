@@ -664,7 +664,15 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     const { sessionId, problemId, answer, responseTime } = req.body;
 
     if (!sessionId || !problemId || answer === undefined) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      const missing = [];
+      if (!sessionId) missing.push('sessionId');
+      if (!problemId) missing.push('problemId');
+      if (answer === undefined) missing.push('answer');
+      console.error(`[Screener] Submit answer failed - Missing fields: ${missing.join(', ')}`);
+      return res.status(400).json({
+        error: 'Missing required fields',
+        missingFields: missing
+      });
     }
 
     // CTO REVIEW FIX: Retrieve session from database

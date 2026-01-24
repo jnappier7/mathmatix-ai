@@ -2783,7 +2783,7 @@ ${data.problem.question}`;
             if (!answer) return;
 
             inputContainer.remove();
-            await submitAssessmentAnswer(sessionId, problem._id, answer);
+            await submitAssessmentAnswer(sessionId, problem.problemId, answer);
         };
 
         input.onkeypress = (e) => {
