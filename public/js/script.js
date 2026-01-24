@@ -2084,6 +2084,17 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.appendChild(reactionContainer);
         }
 
+        // Add timestamp to message
+        const timestamp = document.createElement('span');
+        timestamp.className = 'message-timestamp';
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        timestamp.textContent = `${displayHours}:${minutes} ${ampm}`;
+        bubble.appendChild(timestamp);
+
         // Append bubble to messageContainer
         messageContainer.appendChild(bubble);
 

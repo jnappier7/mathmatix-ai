@@ -1,0 +1,20 @@
+{
+  "name": "MATHMATIX AI - Learn for Life",
+  "short_name": "MATHMATIX",
+  "description": "Unlock the Pattern. Learn for Life. - AI-powered math tutoring platform",
+  "start_url": "/chat.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#12B3B3",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/mathmatix-ai-logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "screenshots": []
+}

@@ -146,5 +146,58 @@
                 }
             }, 250);
         });
+
+        // SWIPE GESTURES - Swipe right from left edge to open, swipe left to close
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+        const minSwipeDistance = 50;
+        const edgeThreshold = 30; // Pixels from edge to trigger open
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+
+            // Ignore if vertical swipe (scrolling)
+            if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                return;
+            }
+
+            // Swipe right from left edge - open left drawer
+            if (touchStartX < edgeThreshold && deltaX > minSwipeDistance) {
+                if (!leftDrawer.classList.contains('open')) {
+                    openDrawer(leftDrawer);
+                }
+            }
+
+            // Swipe left from right edge - open right drawer
+            if (touchStartX > window.innerWidth - edgeThreshold && deltaX < -minSwipeDistance) {
+                if (!rightDrawer.classList.contains('open')) {
+                    openDrawer(rightDrawer);
+                }
+            }
+
+            // Swipe left when left drawer is open - close it
+            if (leftDrawer.classList.contains('open') && deltaX < -minSwipeDistance) {
+                closeDrawer(leftDrawer);
+            }
+
+            // Swipe right when right drawer is open - close it
+            if (rightDrawer.classList.contains('open') && deltaX > minSwipeDistance) {
+                closeDrawer(rightDrawer);
+            }
+        }
     }
 })();

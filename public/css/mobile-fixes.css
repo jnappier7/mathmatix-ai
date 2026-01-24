@@ -27,25 +27,39 @@ button,
         display: none !important;
     }
 
-    /* Optimize header height on mobile to maximize content space */
-    .landing-header {
-        min-height: 60px !important;
-        padding: 8px 12px !important;
+    /* OPTIMIZATION: Hide header logo on mobile - watermark provides branding, saves ~50px */
+    .header-logo-container {
+        display: none !important;
     }
 
-    /* Reduce logo size on mobile */
-    .main-logo-hero {
-        max-height: 40px !important;
+    /* Optimize header height on mobile to maximize content space */
+    .landing-header {
+        min-height: 44px !important; /* Reduced from 60px - saves ~16px */
+        padding: 4px 8px !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     /* Compact header navigation on mobile */
     .landing-nav {
-        gap: 4px !important;
+        gap: 2px !important; /* Tighter spacing */
+        display: flex !important;
+        align-items: center;
     }
 
     .landing-nav button {
-        padding: 8px !important;
-        font-size: 1.1rem !important;
+        padding: 6px !important;
+        font-size: 1rem !important;
+        min-width: 42px !important;
+        min-height: 42px !important;
+    }
+
+    /* Hide less important header buttons on mobile - move to drawer menu */
+    #open-resources-modal-btn,
+    #restart-audio-btn,
+    #pause-audio-btn {
+        display: none !important;
     }
 
     /* Enhanced Mobile Drawer Toggle Buttons */
@@ -863,5 +877,111 @@ select,
     .send-button-fullwidth {
         width: 100%;
         margin-top: 8px;
+    }
+}
+
+/* ============================================
+   PRINT STYLESHEET
+   Hide watermark and UI elements when printing
+   ============================================ */
+@media print {
+    /* Hide watermark logo when printing/screenshotting */
+    #chat-messages-container::before,
+    #chat-messages-container.empty::before {
+        display: none !important;
+    }
+
+    /* Hide UI chrome when printing */
+    header,
+    .landing-header,
+    .drawer-toggle-btn,
+    .input-toolbar,
+    #send-button,
+    .modal-overlay,
+    #app-sidebar {
+        display: none !important;
+    }
+
+    /* Optimize chat for printing */
+    #chat-messages-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .message {
+        page-break-inside: avoid;
+        margin-bottom: 12px !important;
+    }
+}
+
+/* ============================================
+   MESSAGE TIMESTAMPS
+   Subtle timestamps for better context
+   ============================================ */
+@media (max-width: 768px) {
+    .message-timestamp {
+        font-size: 0.7rem;
+        color: #999;
+        margin-top: 4px;
+        display: block;
+        text-align: right;
+    }
+
+    .message.user .message-timestamp {
+        text-align: left;
+    }
+
+    .message-container {
+        position: relative;
+    }
+}
+
+/* ============================================
+   ADDITIONAL MOBILE OPTIMIZATIONS
+   ============================================ */
+@media (max-width: 768px) {
+    /* Reduce excessive padding on message bubbles */
+    .message {
+        padding: 10px 14px !important; /* Was more generous */
+        margin-bottom: 6px !important;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* Tighter message containers */
+    .message-container {
+        margin-bottom: 8px !important;
+    }
+
+    /* Optimize avatar sizes on mobile */
+    .message-avatar {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .message-avatar img {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 50%;
+    }
+
+    /* Compact thinking indicator */
+    #thinking-indicator {
+        padding: 8px 12px !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Optimize input area */
+    #user-input {
+        font-size: 16px !important; /* Prevent iOS zoom */
+        padding: 10px 12px !important;
+        min-height: 44px !important;
+    }
+
+    /* Send button optimization */
+    #send-button {
+        min-height: 48px !important;
+        font-size: 1rem !important;
+        padding: 12px 24px !important;
     }
 }
