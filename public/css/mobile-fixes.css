@@ -80,7 +80,62 @@ button,
     #chat-messages-container {
         padding: 10px 12px !important;
         gap: 8px !important;
+        position: relative;
     }
+
+    /* EXPERIMENTAL: Logo watermark on mobile
+     * OPTION 1: Very subtle watermark always visible (3% opacity)
+     * OPTION 2: More visible when chat is empty (6% opacity)
+     *
+     * Uncomment ONE option below to test.
+     * RECOMMENDATION: Start with OPTION 2 for best balance.
+     */
+
+    /* OPTION 1: Always visible, very subtle */
+    /*
+    #chat-messages-container::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-image: url('/images/mathmatix-ai-logo.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        width: 60%;
+        max-width: 250px;
+        height: 200px;
+        opacity: 0.03;
+        z-index: 0;
+        pointer-events: none;
+    }
+    */
+
+    /* OPTION 2: More visible when empty, subtle when messages exist */
+    /*
+    #chat-messages-container.empty::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-image: url('/images/mathmatix-ai-logo.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        width: 70%;
+        max-width: 300px;
+        height: 250px;
+        opacity: 0.06;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    #chat-messages-container:not(.empty)::before {
+        opacity: 0.02;
+    }
+    */
 
     /* Reduce message bubble padding on mobile to maximize content area */
     .message-wrapper,
