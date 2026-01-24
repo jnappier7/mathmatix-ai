@@ -2759,9 +2759,9 @@ Ready to start? Or would you rather skip for now and jump straight into general 
             }
 
             // Display problem
-            const problemMessage = `**Question ${data.questionNumber} of ~${data.estimatedRemaining || '?'}**
+            const problemMessage = `**Question ${data.problem.questionNumber} of ~${data.problem.progress?.target || '?'}**
 
-${data.problem.question}`;
+${data.problem.content}`;
 
             appendMessage(problemMessage, "ai");
 
