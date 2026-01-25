@@ -69,30 +69,6 @@ Now divide both sides by 5 to get [FOCUS:x] alone
 
 ---
 
-## 3. Automatic Graphing `[DESMOS:...]`
-
-**Purpose:** Show graphs inline for visual learners
-
-**Syntax:**
-```
-[DESMOS:y=2x+3]
-```
-
-**Also works with:**
-- `[DESMOS:y=x^2-4]` (parabolas)
-- `[DESMOS:y>2x+1]` (inequalities)
-- `[DESMOS:x^2+y^2=25]` (circles)
-
-**Renders:** Interactive Desmos graph embedded in the chat
-
-**Auto-detect:** The tutor can automatically suggest graphing when discussing:
-- Linear equations (slope-intercept form)
-- Quadratic functions
-- Systems of equations
-- Inequalities
-
----
-
 ## When to Use Visual Features
 
 ### Use STEPS for:
@@ -107,12 +83,6 @@ Now divide both sides by 5 to get [FOCUS:x] alone
 - Emphasizing the important part of an equation
 - Teaching substitution or elimination
 - Demonstrating the distributive property
-
-### Use DESMOS for:
-- Any mention of "y=", "f(x)=", or function notation
-- Slope and intercept discussions
-- Comparing multiple functions
-- Showing transformations
 
 ---
 
@@ -176,5 +146,4 @@ See how the line crosses the y-axis at 3? That's the y-intercept!
 
 - All syntax is stripped from the final display (students don't see `[STEPS]` tags)
 - LaTeX rendering happens after visual processing
-- Desmos graphs render with 400px height, responsive width
 - Step containers have blue gradient background for consistency
