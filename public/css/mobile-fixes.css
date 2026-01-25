@@ -126,8 +126,8 @@ button,
     }
     */
 
-    /* OPTION 2: More visible when empty, subtle when messages exist - ENABLED */
-    #chat-messages-container.empty::before {
+    /* Logo watermark - consistent throughout for branding */
+    #chat-messages-container::before {
         content: '';
         position: absolute;
         top: 50%;
@@ -137,16 +137,12 @@ button,
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
-        width: 70%;
-        max-width: 300px;
-        height: 250px;
-        opacity: 0.06;
+        width: 65%;
+        max-width: 280px;
+        height: 220px;
+        opacity: 0.035; /* Subtle but visible - consistent branding */
         z-index: 0;
         pointer-events: none;
-    }
-
-    #chat-messages-container:not(.empty)::before {
-        opacity: 0.02;
     }
 
     /* Reduce message bubble padding on mobile to maximize content area */
@@ -878,6 +874,13 @@ select,
         width: 100%;
         margin-top: 8px;
     }
+
+    /* Hide session stats bar on mobile - saves ~40px vertical space
+     * Stats are still accessible in the right drawer menu */
+    #session-stats-bar,
+    .session-stats-bar {
+        display: none !important;
+    }
 }
 
 /* ============================================
@@ -886,8 +889,7 @@ select,
    ============================================ */
 @media print {
     /* Hide watermark logo when printing/screenshotting */
-    #chat-messages-container::before,
-    #chat-messages-container.empty::before {
+    #chat-messages-container::before {
         display: none !important;
     }
 
