@@ -6036,6 +6036,17 @@ body.landing-page-body:has(.profile-container) main {
     overflow: visible;
 }
 
+/* Allow landing page (index.html) to scroll */
+body.landing-page-body:has(.hero-section) {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+body.landing-page-body:has(.hero-section) main {
+    overflow: visible;
+}
+
 /* Scrollable form wrapper for long forms */
 .scrollable-form-wrapper {
     max-height: none;
