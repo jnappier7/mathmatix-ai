@@ -3615,30 +3615,6 @@ form label, .password-label-row label {
     height: 100%;
 }
 
-/* --- Desmos Graph Container Styles --- */
-.desmos-graph-container {
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.desmos-graph-container:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-}
-
-/* Ensure Desmos calculator fills container properly */
-.desmos-graph-container .dcg-container {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-/* Mobile responsive adjustments */
-@media (max-width: 768px) {
-    .desmos-graph-container {
-        max-width: 100% !important;
-        height: 350px !important;
-    }
-}
-
 /* Add these styles to make the login form more compact */
 
 .login-container {

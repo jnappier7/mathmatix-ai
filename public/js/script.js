@@ -155,47 +155,6 @@ function getGraphColor(index) {
     return colors[index % colors.length];
 }
 
-// Convert math expression to Desmos-compatible LaTeX
-function convertToDesmosLaTeX(expr) {
-    // If already in LaTeX format, return as-is
-    if (expr.includes('\\frac') || expr.includes('\\sqrt')) {
-        return expr;
-    }
-
-    let latex = expr.trim();
-
-    // Handle fractions: (a/b) -> \frac{a}{b}
-    // This handles nested parentheses properly
-    latex = latex.replace(/\(([^()]+)\/([^()]+)\)/g, '\\frac{$1}{$2}');
-
-    // Handle simple fractions without parens: a/b where a and b are simple terms
-    latex = latex.replace(/(\d+)\/(\d+)/g, '\\frac{$1}{$2}');
-
-    // Handle implicit multiplication: 2x -> 2*x (Desmos handles this)
-    // But remove explicit * signs as Desmos prefers implicit
-    latex = latex.replace(/\*+/g, '');
-
-    // Handle powers: x^2 -> x^{2}, x^10 -> x^{10}
-    latex = latex.replace(/\^(\d+)/g, '^{$1}');
-    latex = latex.replace(/\^([a-zA-Z])/g, '^{$1}');
-
-    // Handle square roots: sqrt(x) -> \sqrt{x}
-    latex = latex.replace(/sqrt\(([^)]+)\)/g, '\\sqrt{$1}');
-
-    // Handle trig functions
-    latex = latex.replace(/sin\(/g, '\\sin(');
-    latex = latex.replace(/cos\(/g, '\\cos(');
-    latex = latex.replace(/tan\(/g, '\\tan(');
-
-    // Handle absolute value: abs(x) -> |x| or \left|x\right|
-    latex = latex.replace(/abs\(([^)]+)\)/g, '\\left|$1\\right|');
-
-    // Clean up any double backslashes
-    latex = latex.replace(/\\\\/g, '\\');
-
-    return latex;
-}
-
 function generateSpeakableText(text) {
     if (!text) return '';
     if (!window.MathLive) return text.replace(/\\\(|\\\)|\\\[|\\\]|\$/g, '');
@@ -1928,89 +1887,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             // Remove [STEPS]...[/STEPS] tags from displayed text
             textNode.innerHTML = textNode.innerHTML.replace(stepsRegex, '');
-        }
-
-        // Handle Desmos Graphing: [DESMOS:expression]
-        if (sender === 'ai' && text && text.includes('[DESMOS:') && typeof Desmos !== 'undefined') {
-            const desmosRegex = /\[DESMOS:([^\]]+)\]/g;
-            let match;
-            const expressions = [];
-
-            // Collect all Desmos expressions from the message
-            while ((match = desmosRegex.exec(text)) !== null) {
-                expressions.push(match[1].trim());
-            }
-
-            if (expressions.length > 0) {
-                // Create Desmos calculator container
-                const desmosContainer = document.createElement('div');
-                const desmosId = `desmos-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                desmosContainer.id = desmosId;
-                desmosContainer.className = 'desmos-graph-container';
-                desmosContainer.style.cssText = `
-                    width: 100%;
-                    max-width: 600px;
-                    height: 400px;
-                    margin: 15px 0;
-                    border: 2px solid #e5e7eb;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    background: white;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                `;
-
-                bubble.appendChild(desmosContainer);
-
-                // Initialize Desmos calculator after a short delay
-                setTimeout(() => {
-                    try {
-                        const calculator = Desmos.GraphingCalculator(document.getElementById(desmosId), {
-                            expressions: true,
-                            settingsMenu: true,
-                            zoomButtons: true,
-                            expressionsTopbar: true,
-                            pointsOfInterest: true,
-                            trace: true,
-                            border: false,
-                            lockViewport: false,
-                            showGrid: true,
-                            showXAxis: true,
-                            showYAxis: true
-                        });
-
-                        // Add each expression to the calculator
-                        expressions.forEach((expr, index) => {
-                            // Parse expression and convert to LaTeX
-                            let latex = convertToDesmosLaTeX(expr);
-
-                            console.log(`[Desmos] Expression ${index}: "${expr}" -> "${latex}"`);
-
-                            calculator.setExpression({
-                                id: `expr-${index}`,
-                                latex: latex,
-                                color: getGraphColor(index),
-                                lineStyle: Desmos.Styles.SOLID,
-                                lineWidth: 2,
-                                hidden: false
-                            });
-                        });
-
-                        // Auto-zoom to fit the graphs
-                        // Give it a moment to render before resetting viewport
-                        setTimeout(() => {
-                            // Don't reset viewport - let user control it
-                            // calculator.setDefaultState();
-                        }, 100);
-
-                    } catch (error) {
-                        console.error('Desmos initialization error:', error);
-                        desmosContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #ef4444;">Could not render graph. Please try again.</div>';
-                    }
-                }, 100);
-
-                // Remove [DESMOS:...] tags from displayed text
-                textNode.innerHTML = textNode.innerHTML.replace(desmosRegex, '');
-            }
         }
 
         // Handle Color-Coded Highlights: [OLD:text] and [NEW:text]
