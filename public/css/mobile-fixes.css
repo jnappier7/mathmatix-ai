@@ -1053,3 +1053,109 @@ select,
         opacity: 1;
     }
 }
+
+/* ============================================
+   ORIENTATION & RESPONSIVE FIXES
+   Handles landscape, portrait, and rotation
+   ============================================ */
+
+/* Mobile styles for touch devices (regardless of width/orientation) */
+body.is-touch-device .landing-header,
+body.is-mobile .landing-header {
+    min-height: 40px !important;
+    height: 40px !important;
+    padding: 2px 6px !important;
+}
+
+body.is-touch-device .header-logo-container,
+body.is-mobile .header-logo-container {
+    display: none !important;
+}
+
+body.is-touch-device #sidebar-toggle,
+body.is-mobile #sidebar-toggle {
+    display: none !important;
+}
+
+/* Landscape-specific fixes for mobile devices */
+@media (max-height: 500px) and (orientation: landscape) {
+    /* Even more compact header in landscape */
+    .landing-header {
+        min-height: 36px !important;
+        height: 36px !important;
+        padding: 2px 4px !important;
+    }
+
+    .landing-nav button {
+        min-width: 38px !important;
+        min-height: 38px !important;
+        padding: 4px !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Reduce toolbar heights */
+    .input-toolbar button {
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
+
+    #send-button {
+        min-height: 40px !important;
+        padding: 8px 18px !important;
+    }
+
+    /* More compact chat area */
+    #chat-messages-container {
+        padding: 6px 10px !important;
+    }
+
+    .message {
+        padding: 8px 12px !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* Smaller avatars in landscape */
+    .message-avatar {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    .message-avatar img {
+        width: 28px !important;
+        height: 28px !important;
+    }
+}
+
+/* Tablet landscape - ensure proper layout */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    /* Use mobile layout for tablets in landscape if touch device */
+    body.is-touch-device .landing-header {
+        min-height: 44px !important;
+    }
+
+    body.is-touch-device .drawer-toggle-btn {
+        display: flex !important;
+    }
+
+    body.is-touch-device #sidebar-toggle {
+        display: none !important;
+    }
+}
+
+/* Fix for when returning from landscape to portrait */
+@media (orientation: portrait) {
+    body, .landing-header, #chat-messages-container {
+        /* Force reflow */
+        transform: translateZ(0);
+    }
+}
+
+/* Prevent layout shift during rotation */
+* {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+#app-layout-wrapper {
+    will-change: auto;
+}
