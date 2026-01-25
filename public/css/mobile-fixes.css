@@ -40,6 +40,14 @@ button,
         display: flex;
         align-items: center;
         justify-content: space-between;
+        position: sticky !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1000 !important;
+        background: #ffffff !important;
+        width: 100% !important;
+        overflow: hidden !important;
     }
 
     /* Compact header navigation on mobile */
@@ -47,6 +55,10 @@ button,
         gap: 2px !important; /* Tighter spacing */
         display: flex !important;
         align-items: center;
+        position: relative !important;
+        z-index: 1001 !important;
+        flex-wrap: nowrap !important;
+        overflow: visible !important;
     }
 
     .landing-nav button {
@@ -65,11 +77,14 @@ button,
 
     /* Enhanced Mobile Drawer Toggle Buttons */
     .drawer-toggle-btn {
-        min-width: 48px;
-        min-height: 48px;
-        padding: 12px;
+        min-width: 44px;
+        min-height: 40px;
+        padding: 8px;
         border-radius: 8px;
         transition: all 0.2s ease;
+        position: relative !important;
+        z-index: 1002 !important;
+        flex-shrink: 0 !important;
     }
 
     .drawer-toggle-btn:active {
@@ -83,6 +98,7 @@ button,
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative !important;
     }
 
     /* Add subtle visual feedback for drawer buttons */
@@ -1158,4 +1174,63 @@ body.is-mobile #sidebar-toggle {
 
 #app-layout-wrapper {
     will-change: auto;
+}
+
+/* ============================================
+   CRITICAL HEADER POSITIONING FIX
+   Prevents header icons from floating over content
+   ============================================ */
+@media (max-width: 768px) {
+    /* Ensure main app container accounts for header */
+    #app-layout-wrapper {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    /* Chat container must not overlap header */
+    #chat-container {
+        margin-top: 0 !important;
+        padding-top: 45px !important; /* Account for 40px header + 5px buffer */
+        position: relative !important;
+    }
+
+    #chat-messages-container {
+        position: relative !important;
+        z-index: 1 !important; /* Below header */
+    }
+
+    /* Input container should also respect header */
+    #input-container {
+        position: relative !important;
+        z-index: 100 !important; /* Above chat, below modals, below header */
+    }
+
+    /* Ensure header buttons don't wrap or overflow */
+    .landing-nav button {
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+    }
+
+    /* Fix hamburger positioning */
+    #left-drawer-toggle {
+        margin-right: 4px !important;
+    }
+
+    #right-drawer-toggle {
+        margin-left: 4px !important;
+    }
+}
+
+/* Tablet landscape - ensure header stays put */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    body.is-touch-device .landing-header {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1000 !important;
+        width: 100% !important;
+    }
+
+    body.is-touch-device #chat-container {
+        padding-top: 48px !important;
+    }
 }
