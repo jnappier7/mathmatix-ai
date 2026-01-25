@@ -1234,3 +1234,98 @@ body.is-mobile #sidebar-toggle {
         padding-top: 48px !important;
     }
 }
+
+/* ============================================
+   ENHANCED BUTTON READABILITY
+   Larger, clearer icons and text on all buttons
+   ============================================ */
+@media (max-width: 768px) {
+    /* Send button - larger, bolder text */
+    #send-button {
+        font-size: 1.125rem !important; /* 18px - larger */
+        font-weight: 600 !important; /* Semi-bold */
+        letter-spacing: 0.5px !important;
+        text-transform: none !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    #send-button i {
+        font-size: 1.25rem !important; /* Larger send icon */
+        margin-right: 6px !important;
+    }
+
+    /* Toolbar buttons - larger icons */
+    .input-toolbar button {
+        font-size: 1.3em !important; /* Larger icons */
+    }
+
+    .input-toolbar button i,
+    .input-toolbar button .fa,
+    .input-toolbar button .fas {
+        font-size: 1.4em !important; /* Even larger for FontAwesome icons */
+    }
+
+    /* Header navigation buttons - larger icons */
+    .landing-nav button {
+        font-size: 1.125rem !important; /* Larger icons */
+    }
+
+    .landing-nav button i,
+    .landing-nav button .fa,
+    .landing-nav button .fas {
+        font-size: 1.25rem !important;
+    }
+
+    /* Drawer toggle buttons - larger hamburger/user icons */
+    .drawer-toggle-btn {
+        font-size: 1.25rem !important;
+    }
+
+    .drawer-toggle-btn i,
+    .drawer-toggle-btn .fa,
+    .drawer-toggle-btn .fas {
+        font-size: 1.4rem !important;
+    }
+
+    /* All buttons - better contrast and clarity */
+    button,
+    .btn {
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        text-rendering: optimizeLegibility !important;
+    }
+
+    /* Button text should be bold and clear */
+    .btn-primary,
+    .btn-secondary,
+    .btn-tertiary {
+        font-weight: 500 !important;
+    }
+
+    /* Ensure icon buttons have good contrast */
+    .btn-tertiary {
+        background-color: #5a6b7d !important; /* Darker for better visibility */
+    }
+
+    .btn-tertiary:hover,
+    .btn-tertiary:active {
+        background-color: #4a5763 !important;
+    }
+}
+
+/* Landscape mode - slightly smaller but still readable */
+@media (max-height: 500px) and (orientation: landscape) {
+    #send-button {
+        font-size: 1.0625rem !important; /* 17px */
+        font-weight: 600 !important;
+    }
+
+    .input-toolbar button {
+        font-size: 1.2em !important;
+    }
+
+    .landing-nav button {
+        font-size: 1.0625rem !important;
+    }
+}
