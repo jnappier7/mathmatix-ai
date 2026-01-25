@@ -2,17 +2,215 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>M∆THM∆TIΧ AI | An Affordable Math Tutor for Every Child</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathmatix AI | An Affordable Math Tutor for Every Child</title>
+  <meta name="description" content="Mathmatix AI is an intelligent math tutoring platform that provides personalized, one-on-one learning for students of all levels. Affordable, accessible, and effective." />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <style>
+    /* Landing Page Specific Styles */
+    .hero-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem var(--page-horizontal-padding);
+      min-height: 60vh;
+      background: linear-gradient(135deg, #f8fcfc 0%, #e8f4f4 100%);
+    }
 
-  <script>
-    window.location.href = "/login.html";
-  </script>
+    .hero-section h1 {
+      font-size: 2.5rem;
+      color: var(--clr-text);
+      margin-bottom: 1rem;
+      max-width: 800px;
+    }
 
+    .hero-section .tagline {
+      font-size: 1.25rem;
+      color: var(--clr-text-dim);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .hero-buttons .btn {
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 4rem var(--page-horizontal-padding);
+      background: var(--clr-bg-light);
+    }
+
+    .features-section h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--clr-text);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: var(--content-max-width);
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--clr-bg-light);
+      border: 1px solid #e0e0e0;
+      border-radius: var(--border-radius-base);
+      padding: 2rem;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .feature-card i {
+      font-size: 2.5rem;
+      color: var(--clr-primary-teal);
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+      color: var(--clr-text);
+    }
+
+    .feature-card p {
+      color: var(--clr-text-dim);
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 4rem var(--page-horizontal-padding);
+      background: var(--clr-primary-teal);
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      color: var(--clr-bg-light);
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .cta-section .btn {
+      background: var(--clr-bg-light);
+      color: var(--clr-primary-teal);
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+    }
+
+    .cta-section .btn:hover {
+      background: #f0f0f0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero-section h1 {
+        font-size: 1.8rem;
+      }
+
+      .hero-section .tagline {
+        font-size: 1rem;
+      }
+
+      .hero-buttons .btn {
+        width: 100%;
+        max-width: 280px;
+      }
+    }
+  </style>
 </head>
 <body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <a href="/login.html" class="btn btn-primary-outline">Log In</a>
+      <a href="/signup.html" class="btn btn-primary">Sign Up</a>
+    </nav>
+  </header>
 
-  </body>
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <h1>An Affordable Math Tutor for Every Child</h1>
+      <p class="tagline">
+        Personalized, AI-powered math tutoring that adapts to your child's learning style.
+        Get one-on-one help anytime, anywhere.
+      </p>
+      <div class="hero-buttons">
+        <a href="/signup.html" class="btn btn-primary">Get Started</a>
+        <a href="/login.html" class="btn btn-primary-outline">Log In</a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <h2>Why Mathmatix AI?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fas fa-brain"></i>
+          <h3>Adaptive Learning</h3>
+          <p>Our AI tutor adjusts to each student's pace and skill level, providing the right challenge at the right time.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-comments"></i>
+          <h3>Conversational Tutoring</h3>
+          <p>Students can ask questions naturally and get step-by-step explanations that make sense to them.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-chart-line"></i>
+          <h3>Progress Tracking</h3>
+          <p>Parents and teachers can monitor student progress with detailed dashboards and learning analytics.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-clock"></i>
+          <h3>Available 24/7</h3>
+          <p>Help with homework at midnight? No problem. Mathmatix AI is always ready when your child needs support.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>Ready to Transform Math Learning?</h2>
+      <p>Join schools and families who are making math accessible for every student.</p>
+      <a href="/signup.html" class="btn">Create Your Account</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Mathmatix AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a> |
+      <a href="mailto:support@mathmatix.ai">Contact Us</a>
+    </p>
+  </footer>
+</body>
 </html>
