@@ -2719,7 +2719,10 @@ Ready to start? Or would you rather skip for now and jump straight into general 
             });
 
             if (!response.ok) {
-                throw new Error('Failed to start assessment');
+                // Get error details from response
+                const errorData = await response.json();
+                const errorMsg = errorData.message || errorData.error || 'Failed to start assessment';
+                throw new Error(errorMsg);
             }
 
             const data = await response.json();
@@ -2730,7 +2733,7 @@ Ready to start? Or would you rather skip for now and jump straight into general 
 
         } catch (error) {
             console.error('[Assessment] Start error:', error);
-            appendMessage("Oops, something went wrong starting the assessment. Let's just chat instead - what would you like to work on?", "ai");
+            appendMessage(`Oops, something went wrong starting the assessment: ${error.message}. Let's just chat instead - what would you like to work on?`, "ai");
             showThinkingIndicator(false);
         }
     }
@@ -2745,7 +2748,10 @@ Ready to start? Or would you rather skip for now and jump straight into general 
             });
 
             if (!response.ok) {
-                throw new Error('Failed to load problem');
+                // Get error details from response
+                const errorData = await response.json();
+                const errorMsg = errorData.message || errorData.error || 'Failed to load problem';
+                throw new Error(errorMsg);
             }
 
             const data = await response.json();
@@ -2770,7 +2776,7 @@ ${data.problem.content}`;
 
         } catch (error) {
             console.error('[Assessment] Load problem error:', error);
-            appendMessage("Had trouble loading the next question. Let's continue with regular tutoring instead!", "ai");
+            appendMessage(`Had trouble loading the next question: ${error.message}. Let's continue with regular tutoring instead!`, "ai");
             showThinkingIndicator(false);
         }
     }
@@ -2850,7 +2856,10 @@ ${data.problem.content}`;
             });
 
             if (!response.ok) {
-                throw new Error('Failed to submit answer');
+                // Get error details from response
+                const errorData = await response.json();
+                const errorMsg = errorData.message || errorData.error || 'Failed to submit answer';
+                throw new Error(errorMsg);
             }
 
             const data = await response.json();
@@ -2873,7 +2882,7 @@ ${data.problem.content}`;
         } catch (error) {
             console.error('[Assessment] Submit error:', error);
             showThinkingIndicator(false);
-            appendMessage("Had trouble processing that. Let's move on to regular tutoring!", "ai");
+            appendMessage(`Had trouble processing that: ${error.message}. Let's move on to regular tutoring!`, "ai");
         }
     }
 
