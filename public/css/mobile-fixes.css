@@ -971,7 +971,8 @@ select,
 
     /* Set base font size on chat container for better readability */
     #chat-messages-container {
-        font-size: 17px !important; /* Larger, more readable (was ~15px) */
+        /* Base 17px that scales with pinch-to-zoom (80%-150%) */
+        font-size: calc(17px * var(--chat-font-scale, 1)) !important;
     }
 
     /* Tighter message containers */

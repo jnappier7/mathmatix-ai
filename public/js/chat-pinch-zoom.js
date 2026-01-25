@@ -62,10 +62,8 @@
             currentScale = scale;
 
             // Apply scale using CSS custom property
+            // CSS will multiply base font size (17px) by this scale factor
             chatContainer.style.setProperty('--chat-font-scale', scale);
-
-            // Apply to messages container
-            chatContainer.style.fontSize = `${scale}em`;
 
             // Save to localStorage
             localStorage.setItem(STORAGE_KEY, scale.toString());
