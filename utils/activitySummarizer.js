@@ -106,7 +106,10 @@ function detectTopic(messages) {
     const recentText = messages.slice(-5).map(m => m.content).join(' ').toLowerCase();
 
     const topics = {
+        'calculus': /calculus|derivative|integral|limit|differenti|antiderivative|d\/dx/i,
+        'pre-calculus': /precalculus|pre-calculus|trigonometr|logarithm|exponential function/i,
         'linear equation': /linear\s+equation|solve.*equation|2x\s*\+|isolat.*variable/i,
+        'quadratic equation': /quadratic|parabola|x\^2|ax²|factoring|completing the square/i,
         'fractions': /fraction|numerator|denominator|\/|½|⅓|¼/i,
         'algebra': /algebra|variable|expression|simplif/i,
         'geometry': /geometry|triangle|circle|angle|perimeter|area/i,
@@ -114,6 +117,8 @@ function detectTopic(messages) {
         'ratios': /ratio|proportion|rate/i,
         'percentage': /percent|%/i,
         'graphing': /graph|coordinate|plot|x-axis|y-axis/i,
+        'statistics': /statistic|mean|median|mode|standard deviation|probability/i,
+        'polynomials': /polynomial|monomial|binomial|trinomial|degree/i,
     };
 
     for (const [topic, regex] of Object.entries(topics)) {
