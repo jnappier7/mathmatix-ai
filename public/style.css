@@ -1045,6 +1045,20 @@ a:hover {
     border: 1px solid #e0e0e0;
 }
 
+/* Message Timestamps */
+.message-timestamp {
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 4px;
+    display: block;
+    text-align: right;
+}
+
+.message.user .message-timestamp {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: left;
+}
+
 /* ===== EMOJI REACTION SYSTEM ===== */
 .message-reaction-container {
     position: absolute;
