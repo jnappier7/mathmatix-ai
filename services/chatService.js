@@ -381,23 +381,20 @@ async function needsAssessment(userId) {
       return false;
     }
 
-    // Check if user has completed assessment
-    const completedAssessment = await Conversation.findOne({
-      userId,
-      isAssessment: true,
-      isAssessmentComplete: true
-    });
-
-    if (!completedAssessment) {
+    // First time users need assessment
+    if (!user.assessmentCompleted) {
       return true;
     }
 
-    // Check if assessment is too old (> 90 days)
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    // Check if assessment is stale (> 90 days / ~3 months)
+    // Users should be re-assessed every 3-6 months for accurate placement
+    if (user.assessmentDate) {
+      const ninetyDaysAgo = new Date();
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
-    if (completedAssessment.assessmentResults?.completedAt < ninetyDaysAgo) {
-      return true;
+      if (user.assessmentDate < ninetyDaysAgo) {
+        return true;
+      }
     }
 
     return false;

@@ -188,16 +188,25 @@ router.post('/start', isAuthenticated, async (req, res) => {
       await user.save();
     }
 
-    // Check if assessment already completed
+    // Check if assessment already completed (allow re-assessment after 90 days)
     if (user.assessmentCompleted) {
-      return res.status(403).json({
-        error: 'Assessment already completed',
-        alreadyCompleted: true,
-        message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
-        completedDate: user.assessmentDate,
-        theta: user.initialPlacement,
-        canReset: false  // Only teachers can reset via dashboard
-      });
+      const ninetyDaysAgo = new Date();
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
+      const isStale = user.assessmentDate && user.assessmentDate < ninetyDaysAgo;
+
+      if (!isStale) {
+        return res.status(403).json({
+          error: 'Assessment already completed',
+          alreadyCompleted: true,
+          message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
+          completedDate: user.assessmentDate,
+          theta: user.initialPlacement,
+          canReset: false  // Only teachers can reset via dashboard
+        });
+      }
+      // Assessment is stale (> 90 days), allow re-assessment
+      console.log(`[Screener] Allowing re-assessment for user ${user._id} - last assessment was ${user.assessmentDate}`);
     }
 
     // Initialize screener session with grade-based starting point

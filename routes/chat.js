@@ -85,21 +85,29 @@ if (!message) return res.status(400).json({ message: "Message is required." });
     if (isAssessmentRequest) {
         console.log(`📋 ASSESSMENT REQUEST DETECTED - User ${userId} - Message: "${message.substring(0, 100)}..."`);
 
-        // Check if user already completed assessment (must match screener.js check)
+        // Check if user already completed assessment (allow re-assessment after 90 days)
         const user = await User.findById(userId);
         if (user && user.assessmentCompleted) {
-            // User already took assessment, just acknowledge
-            return res.json({
-                text: "I see you've already completed your skills assessment! Your learning profile is all set up. What would you like to work on today?",
-                userXp: 0,
-                userLevel: user.level || 1,
-                xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel,
-                specialXpAwarded: "",
-                voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].voiceId,
-                newlyUnlockedTutors: [],
-                drawingSequence: null,
-                triggerAssessment: false
-            });
+            const ninetyDaysAgo = new Date();
+            ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+            const isStale = user.assessmentDate && user.assessmentDate < ninetyDaysAgo;
+
+            if (!isStale) {
+                // Recent assessment, just acknowledge
+                return res.json({
+                    text: "I see you've already completed your skills assessment! Your learning profile is all set up. What would you like to work on today?",
+                    userXp: 0,
+                    userLevel: user.level || 1,
+                    xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel,
+                    specialXpAwarded: "",
+                    voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].voiceId,
+                    newlyUnlockedTutors: [],
+                    drawingSequence: null,
+                    triggerAssessment: false
+                });
+            }
+            // Stale assessment (> 90 days), allow re-assessment - fall through to trigger
+            console.log(`📋 STALE ASSESSMENT - User ${userId} - allowing re-assessment`);
         }
 
         // User needs assessment - trigger it
