@@ -74,9 +74,9 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         /\b(placement|skills?)\s+(test|assessment|exam)\b/i,
         /\btake\s+(a|an|the)?\s*(placement|skills?|initial)?\s*(test|assessment)\b/i,
         /\b(teacher|instructor)\s+(said|told|wants?)\b.*\b(test|assessment|placement)\b/i,
-        /\bsupposed to (give|take)\b.*\b(test|assessment|placement|one)\b/i,
+        /\bsupposed to (give|take)\b.*\b(test|assessment|placement)\b/i,
         /\bneed to take\b.*\b(test|assessment|placement)\b/i,
-        /\b(give|take) me (a|an|the)?\s*(test|assessment|placement|one)\b/i,
+        /\b(give|take) me (a|an|the)?\s*(test|assessment|placement)\b/i,
         /\b(teacher|instructor|she|he)\s+(said|told).*\bgive me (one|it)\b/i
     ];
 
