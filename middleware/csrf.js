@@ -42,7 +42,7 @@ function csrfProtection(req, res, next) {
     res.cookie('_csrf', token, {
       httpOnly: false, // MUST be false so JavaScript can read it and send in header
       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'strict', // Prevents CSRF attacks
+      sameSite: 'lax', // 'lax' allows cookie on top-level navigations (links), 'strict' blocks them
       maxAge: 3600000 // 1 hour
     });
 

@@ -6,6 +6,7 @@
   <title>Login - M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="/js/csrf.js"></script>
   </head>
 <body class="landing-page-body">
   <header class="landing-header">
@@ -76,6 +77,15 @@
 
       loginMessage.style.display = 'none';
 
+      // Check if CSRF token exists before attempting login
+      const csrfToken = getCsrfToken();
+      if (!csrfToken) {
+        console.error('[Login] CSRF token not found. Cookies may be disabled or blocked.');
+        loginMessage.textContent = 'Session error. Please refresh the page or check that cookies are enabled.';
+        loginMessage.style.display = 'block';
+        return;
+      }
+
       try {
         const response = await csrfFetch('/login', {
           method: 'POST',
@@ -105,6 +115,5 @@
       }
     });
   </script>
-<script src="/js/csrf.js"></script>
 </body>
 </html>
