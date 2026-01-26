@@ -194,6 +194,7 @@ app.use(helmet({
         "https://api.mathpix.com", // Mathpix OCR
         "https://api.elevenlabs.io" // ElevenLabs TTS
       ],
+      workerSrc: ["'self'", "blob:"], // Allow blob workers for confetti effects
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
       objectSrc: ["'none'"], // Disable plugins
       frameSrc: ["'self'", "https://www.commoncurriculum.com", "https://*.commoncurriculum.com", "https://www.commonplanner.com", "https://*.commonplanner.com"], // Allow Common Curriculum/Planner schedule iframes
