@@ -126,6 +126,51 @@ const metaBadgeSchema = new Schema({
   specialData: Schema.Types.Mixed  // Flexible for special badges
 }, { _id: false });
 
+/* ---------- COURSE ENROLLMENT & PROGRESS ---------- */
+const courseLessonProgressSchema = new Schema({
+  lessonId: { type: String, required: true },
+  status: { type: String, enum: ['locked', 'available', 'in_progress', 'completed'], default: 'locked' },
+  startedAt: { type: Date },
+  completedAt: { type: Date },
+  practiceProblems: {
+    attempted: { type: Number, default: 0 },
+    correct: { type: Number, default: 0 },
+    lastAttemptAt: { type: Date }
+  },
+  masteryQuizScore: { type: Number },  // 0-100
+  masteryQuizPassed: { type: Boolean, default: false },
+  timeSpentMinutes: { type: Number, default: 0 }
+}, { _id: false });
+
+const courseModuleProgressSchema = new Schema({
+  moduleId: { type: String, required: true },
+  status: { type: String, enum: ['locked', 'available', 'in_progress', 'completed'], default: 'locked' },
+  startedAt: { type: Date },
+  completedAt: { type: Date },
+  lessons: [courseLessonProgressSchema],
+  checkpointScore: { type: Number },  // For checkpoint modules
+  checkpointPassed: { type: Boolean, default: false }
+}, { _id: false });
+
+const courseEnrollmentSchema = new Schema({
+  courseId: { type: String, required: true },  // e.g., 'calculus-1', 'algebra-1'
+  courseName: { type: String },
+  enrolledAt: { type: Date, default: Date.now },
+  status: { type: String, enum: ['active', 'paused', 'completed', 'dropped'], default: 'active' },
+  currentModuleId: { type: String },  // Current module being worked on
+  currentLessonId: { type: String },  // Current lesson within the module
+  modules: [courseModuleProgressSchema],
+  overallProgress: { type: Number, default: 0, min: 0, max: 100 },  // Percentage complete
+  completedAt: { type: Date },
+
+  // Course mode settings
+  settings: {
+    autoAdvance: { type: Boolean, default: true },  // Auto-advance to next lesson on completion
+    practiceRequirement: { type: Number, default: 3 },  // Min practice problems before advancing
+    masteryThreshold: { type: Number, default: 80 }  // Score needed to pass mastery quizzes
+  }
+}, { _id: false });
+
 /* ---------- SKILL MASTERY TRACKING ---------- */
 const skillMasterySchema = new Schema({
   status: {
@@ -697,6 +742,20 @@ const userSchema = new Schema({
       of: Schema.Types.Mixed,
       default: () => new Map()
     }
+  },
+
+  /* Course Mode Enrollment (Structured Learning Paths) */
+  courseEnrollments: {
+    type: [courseEnrollmentSchema],
+    default: []
+  },
+
+  // Active course for "course mode" tutoring sessions
+  activeCourse: {
+    courseId: { type: String },
+    moduleId: { type: String },
+    lessonId: { type: String },
+    lastActiveAt: { type: Date }
   }
 }, { timestamps: true });
 

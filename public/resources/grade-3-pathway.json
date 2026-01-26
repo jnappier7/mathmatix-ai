@@ -1,11 +1,334 @@
 {
+  "courseId": "grade-3",
   "track": "Grade 3 Math",
-  "overview": "Multiplication, division, fractions, area, and perimeter.",
+  "overview": "Building fluency with multiplication and division, understanding fractions, and exploring area and perimeter.",
+  "prerequisites": ["grade-2"],
+  "naturalProgression": [
+    "Start with multiplication concepts and fact fluency",
+    "Connect multiplication to division as inverse operations",
+    "Introduce fractions as equal parts of a whole",
+    "Apply multiplication to area and perimeter",
+    "Use all skills for measurement and data problems"
+  ],
   "modules": [
-    {"moduleId": "multiplication", "quarter": 1, "title": "Multiplication", "preview": "Concept, strategies, fact fluency 0-12", "skills": ["multiplication-basics", "multiplication-facts", "multiplication-patterns"]},
-    {"moduleId": "division_fractions", "quarter": 2, "title": "Division & Fractions", "preview": "Division basics, unit fractions, number line", "skills": ["division-basics", "division-facts", "fractions-unit-fractions", "fractions-on-number-line"]},
-    {"moduleId": "area_perimeter", "quarter": 3, "title": "Area & Perimeter", "preview": "Rectangles, composite figures, measurement", "skills": ["area-rectangles", "perimeter", "area-perimeter-word-problems"]},
-    {"moduleId": "data_measurement", "quarter": 4, "title": "Data & Measurement", "preview": "Bar graphs, line plots, time, mass, volume", "skills": ["bar-graphs-scaled", "measuring-mass-volume", "elapsed-time"]},
-    {"moduleId": "final_assessment", "quarter": 4, "title": "Grade 3 Assessment", "preview": "Multiplication, division, fractions, area"}
-  ]
+    {
+      "moduleId": "multiplication",
+      "quarter": 1,
+      "title": "Multiplication",
+      "preview": "Understanding multiplication as groups, arrays, and repeated addition",
+      "skills": ["multiplication-basics", "multiplication-facts", "multiplication-patterns"],
+      "lessons": [
+        {
+          "lessonId": "mult-intro",
+          "title": "What is Multiplication?",
+          "order": 1,
+          "concepts": [
+            "Equal groups (3 groups of 4)",
+            "Repeated addition connection",
+            "Multiplication symbol and notation"
+          ],
+          "teachingNotes": "Use concrete objects first - counters, toys, snacks in groups."
+        },
+        {
+          "lessonId": "mult-arrays",
+          "title": "Arrays and Area Models",
+          "order": 2,
+          "concepts": [
+            "Rows and columns",
+            "Reading arrays (3 rows of 4 = 3 × 4)",
+            "Drawing arrays to show multiplication"
+          ],
+          "teachingNotes": "Arrays are powerful for building conceptual understanding."
+        },
+        {
+          "lessonId": "mult-2s-5s-10s",
+          "title": "Multiplying by 2, 5, and 10",
+          "order": 3,
+          "concepts": [
+            "Skip counting patterns",
+            "2s: doubles",
+            "5s: nickel counting",
+            "10s: place value connection"
+          ],
+          "teachingNotes": "Start with these because patterns are easy to see."
+        },
+        {
+          "lessonId": "mult-3s-4s",
+          "title": "Multiplying by 3 and 4",
+          "order": 4,
+          "concepts": [
+            "3s patterns",
+            "4s as double-doubles",
+            "Building fluency"
+          ]
+        },
+        {
+          "lessonId": "mult-6s-7s-8s-9s",
+          "title": "Multiplying by 6, 7, 8, and 9",
+          "order": 5,
+          "concepts": [
+            "Using known facts to find unknown",
+            "6s as 5s + one more group",
+            "9s finger trick and patterns",
+            "Commutative property to reduce facts needed"
+          ],
+          "teachingNotes": "By now they know many of these from commutativity. Focus on the few remaining."
+        },
+        {
+          "lessonId": "mult-properties",
+          "title": "Multiplication Properties",
+          "order": 6,
+          "concepts": [
+            "Commutative: 3 × 4 = 4 × 3",
+            "Associative: (2 × 3) × 4 = 2 × (3 × 4)",
+            "Identity: n × 1 = n",
+            "Zero property: n × 0 = 0"
+          ]
+        },
+        {
+          "lessonId": "mult-word-problems",
+          "title": "Multiplication Word Problems",
+          "order": 7,
+          "concepts": [
+            "Equal groups problems",
+            "Array problems",
+            "Comparison problems (times as many)"
+          ]
+        }
+      ]
+    },
+    {
+      "moduleId": "division_fractions",
+      "quarter": 2,
+      "title": "Division & Fractions",
+      "preview": "Division as sharing equally and fractions as parts of a whole",
+      "skills": ["division-basics", "division-facts", "fractions-unit-fractions", "fractions-on-number-line"],
+      "lessons": [
+        {
+          "lessonId": "div-intro",
+          "title": "What is Division?",
+          "order": 1,
+          "concepts": [
+            "Sharing equally (partitive division)",
+            "How many groups? (quotative division)",
+            "Division symbol and notation"
+          ],
+          "teachingNotes": "Use real objects to share into groups."
+        },
+        {
+          "lessonId": "div-mult-connection",
+          "title": "Division and Multiplication Connection",
+          "order": 2,
+          "concepts": [
+            "Inverse operations",
+            "Fact families: 3 × 4 = 12, so 12 ÷ 3 = 4",
+            "Using multiplication to solve division"
+          ],
+          "teachingNotes": "This is the key insight - division 'undoes' multiplication."
+        },
+        {
+          "lessonId": "div-facts",
+          "title": "Division Fact Fluency",
+          "order": 3,
+          "concepts": [
+            "Using known multiplication facts",
+            "Division by 1, 2, 5, 10",
+            "Division by 3, 4, 6, 7, 8, 9"
+          ]
+        },
+        {
+          "lessonId": "fractions-intro",
+          "title": "Introduction to Fractions",
+          "order": 4,
+          "concepts": [
+            "Equal parts of a whole",
+            "Numerator and denominator",
+            "Unit fractions: 1/2, 1/3, 1/4, etc."
+          ],
+          "teachingNotes": "Use fraction circles, bars, and real-world examples (pizza, brownies)."
+        },
+        {
+          "lessonId": "fractions-models",
+          "title": "Fraction Models",
+          "order": 5,
+          "concepts": [
+            "Area models (circles, rectangles)",
+            "Set models (3 of 6 apples = 3/6)",
+            "Equivalent representations"
+          ]
+        },
+        {
+          "lessonId": "fractions-number-line",
+          "title": "Fractions on a Number Line",
+          "order": 6,
+          "concepts": [
+            "Fractions as points on number line",
+            "Partitioning segments equally",
+            "Locating fractions between 0 and 1"
+          ]
+        },
+        {
+          "lessonId": "fractions-compare",
+          "title": "Comparing Fractions",
+          "order": 7,
+          "concepts": [
+            "Comparing with same denominator",
+            "Comparing with same numerator",
+            "Using benchmarks (1/2)"
+          ]
+        },
+        {
+          "lessonId": "fractions-equivalent",
+          "title": "Equivalent Fractions",
+          "order": 8,
+          "concepts": [
+            "Same amount, different names",
+            "Visual proof of equivalence",
+            "Recognizing equivalent fractions"
+          ]
+        }
+      ]
+    },
+    {
+      "moduleId": "area_perimeter",
+      "quarter": 3,
+      "title": "Area & Perimeter",
+      "preview": "Measuring space inside and distance around shapes",
+      "skills": ["area-rectangles", "perimeter", "area-perimeter-word-problems"],
+      "lessons": [
+        {
+          "lessonId": "perimeter-intro",
+          "title": "What is Perimeter?",
+          "order": 1,
+          "concepts": [
+            "Distance around a shape",
+            "Adding side lengths",
+            "Measuring in units"
+          ],
+          "teachingNotes": "Walk around the classroom, measure the edges of objects."
+        },
+        {
+          "lessonId": "perimeter-rectangles",
+          "title": "Perimeter of Rectangles",
+          "order": 2,
+          "concepts": [
+            "Adding all four sides",
+            "Shortcut: P = 2l + 2w",
+            "Finding missing side lengths"
+          ]
+        },
+        {
+          "lessonId": "area-intro",
+          "title": "What is Area?",
+          "order": 3,
+          "concepts": [
+            "Space inside a shape",
+            "Counting square units",
+            "Square units vs. linear units"
+          ],
+          "teachingNotes": "Cover shapes with square tiles to count area."
+        },
+        {
+          "lessonId": "area-rectangles",
+          "title": "Area of Rectangles",
+          "order": 4,
+          "concepts": [
+            "Rows × columns = total squares",
+            "Area = length × width",
+            "Connection to multiplication arrays"
+          ]
+        },
+        {
+          "lessonId": "area-composite",
+          "title": "Area of Composite Figures",
+          "order": 5,
+          "concepts": [
+            "Breaking shapes into rectangles",
+            "Adding areas together",
+            "Different ways to decompose"
+          ]
+        },
+        {
+          "lessonId": "area-perimeter-problems",
+          "title": "Area and Perimeter Word Problems",
+          "order": 6,
+          "concepts": [
+            "When to use area vs perimeter",
+            "Real-world applications",
+            "Drawing diagrams"
+          ],
+          "teachingNotes": "Perimeter = fence, border, trim. Area = carpet, paint, tiles."
+        }
+      ]
+    },
+    {
+      "moduleId": "data_measurement",
+      "quarter": 4,
+      "title": "Data & Measurement",
+      "preview": "Reading graphs, measuring time, mass, and volume",
+      "skills": ["bar-graphs-scaled", "measuring-mass-volume", "elapsed-time"],
+      "lessons": [
+        {
+          "lessonId": "graphs-pictograph",
+          "title": "Pictographs and Bar Graphs",
+          "order": 1,
+          "concepts": [
+            "Reading scaled pictographs",
+            "Creating and reading bar graphs",
+            "Interpreting data"
+          ]
+        },
+        {
+          "lessonId": "graphs-line-plots",
+          "title": "Line Plots",
+          "order": 2,
+          "concepts": [
+            "Showing data on number lines",
+            "Using fractions of a unit",
+            "Analyzing line plot data"
+          ]
+        },
+        {
+          "lessonId": "time-telling",
+          "title": "Telling Time",
+          "order": 3,
+          "concepts": [
+            "Reading analog and digital clocks",
+            "Time to the minute",
+            "A.M. and P.M."
+          ]
+        },
+        {
+          "lessonId": "time-elapsed",
+          "title": "Elapsed Time",
+          "order": 4,
+          "concepts": [
+            "Finding how much time has passed",
+            "Start time, end time, elapsed time",
+            "Using number lines for time"
+          ],
+          "teachingNotes": "Number lines are very helpful for elapsed time problems."
+        },
+        {
+          "lessonId": "measurement-mass",
+          "title": "Measuring Mass and Volume",
+          "order": 5,
+          "concepts": [
+            "Grams and kilograms",
+            "Milliliters and liters",
+            "Estimating and measuring"
+          ]
+        }
+      ]
+    },
+    {
+      "moduleId": "final_assessment",
+      "quarter": 4,
+      "title": "Grade 3 Assessment",
+      "preview": "Showing mastery of multiplication, division, fractions, and measurement",
+      "isCheckpoint": true,
+      "isFinal": true
+    }
+  ],
+  "aiGuidanceNotes": "For Grade 3, emphasize concrete and visual representations before abstract. Use manipulatives, drawings, and real-world contexts. Multiplication facts need regular practice for fluency. Connect division to multiplication constantly. Fractions should be visual - avoid rushing to procedures."
 }
