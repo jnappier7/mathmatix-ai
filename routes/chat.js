@@ -839,8 +839,12 @@ STUDENT PROFILE:
     if (recentSessions && recentSessions.length > 0) {
         prompt += `\nRECENT LEARNING ACTIVITY:\n`;
         recentSessions.slice(0, 5).forEach(session => {
-            if (session.currentTopic) {
-                prompt += `- ${session.currentTopic}`;
+            const topic = session.currentTopic && session.currentTopic !== 'mathematics'
+                ? session.currentTopic
+                : null;
+
+            if (topic) {
+                prompt += `- Topic: ${topic}`;
                 if (session.problemsAttempted) {
                     prompt += ` (${session.problemsCorrect || 0}/${session.problemsAttempted} correct)`;
                 }
@@ -848,6 +852,11 @@ STUDENT PROFILE:
                     prompt += ` - Struggling with: ${session.strugglingWith}`;
                 }
                 prompt += `\n`;
+            }
+
+            // Always include summary if available (provides context even when topic detection failed)
+            if (session.summary) {
+                prompt += `  Summary: ${session.summary}\n`;
             }
         });
     }
