@@ -189,19 +189,48 @@ router.post('/start', isAuthenticated, async (req, res) => {
     }
 
     // Check if assessment already completed
-    // Students cannot re-take placement assessment - only teachers/admins/parents can reset
+    // Students can re-take after 6 months; teachers/admins/parents can reset anytime via dashboard
     if (user.assessmentCompleted) {
-      return res.status(403).json({
-        error: 'Assessment already completed',
-        alreadyCompleted: true,
-        message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
-        completedDate: user.assessmentDate,
-        theta: user.initialPlacement,
-        canReset: false  // Only teachers/admins/parents can reset via dashboard
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 180);
+      const isEligibleForReassessment = user.assessmentDate && user.assessmentDate < sixMonthsAgo;
+
+      if (!isEligibleForReassessment) {
+        return res.status(403).json({
+          error: 'Assessment already completed',
+          alreadyCompleted: true,
+          message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
+          completedDate: user.assessmentDate,
+          theta: user.initialPlacement,
+          canReset: false  // Teachers/admins/parents can reset anytime via dashboard
+        });
+      }
+      // Assessment is > 6 months old, allow re-assessment
+      console.log(`[Screener] Allowing 6-month re-assessment for user ${user._id} - last assessment: ${user.assessmentDate}`);
+    }
+
+    // Check for existing incomplete session
+    const existingSession = await ScreenerSession.getActiveSession(userId);
+    const forceRestart = req.body.restart === true;
+
+    if (existingSession && !forceRestart) {
+      // Return existing session for resume
+      console.log(`[Screener] Resuming existing session ${existingSession.sessionId} for user ${userId}`);
+      return res.json({
+        sessionId: existingSession.sessionId,
+        message: "Welcome back! Let's continue where you left off.",
+        resumed: true,
+        questionsCompleted: existingSession.questionCount || 0
       });
     }
 
-    // Initialize screener session with grade-based starting point
+    // Delete any existing incomplete sessions if restarting
+    if (existingSession && forceRestart) {
+      await ScreenerSession.deleteOne({ _id: existingSession._id });
+      console.log(`[Screener] Deleted existing session for restart - user ${userId}`);
+    }
+
+    // Initialize new screener session with grade-based starting point
     // This provides a Bayesian prior for faster convergence
     const startingTheta = gradeToTheta(user.gradeLevel);
     console.log(`[Screener Start] Grade ${user.gradeLevel} → Starting θ=${startingTheta.toFixed(2)}`);
