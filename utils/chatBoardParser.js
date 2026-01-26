@@ -82,7 +82,6 @@ function shouldUseBoard(text) {
         /\[grid\]/i,
         /\[circle:/i,
         /\[line:/i,
-        /\[desmos:/i,
 
         // Math operations that should be visual
         /solve this equation/i,

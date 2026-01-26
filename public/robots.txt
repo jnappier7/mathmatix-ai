@@ -1,0 +1,33 @@
+# Robots.txt for Mathmatix AI
+# https://www.mathmatix.ai
+
+User-agent: *
+Allow: /
+Allow: /login.html
+Allow: /signup.html
+Allow: /privacy.html
+Allow: /terms.html
+
+# Disallow authenticated/protected pages
+Disallow: /chat.html
+Disallow: /student-dashboard.html
+Disallow: /teacher-dashboard.html
+Disallow: /parent-dashboard.html
+Disallow: /admin-dashboard.html
+Disallow: /badge-map.html
+Disallow: /screener.html
+Disallow: /mastery-chat.html
+Disallow: /mastery-arcade.html
+Disallow: /fact-fluency-blaster.html
+Disallow: /number-run.html
+Disallow: /learning-curves.html
+Disallow: /progress.html
+Disallow: /complete-profile.html
+Disallow: /reset-password.html
+
+# Disallow API endpoints
+Disallow: /api/
+Disallow: /auth/
+
+# Sitemap location
+Sitemap: https://www.mathmatix.ai/sitemap.xml

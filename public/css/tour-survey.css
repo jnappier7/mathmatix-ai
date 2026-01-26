@@ -10,12 +10,15 @@
 .tour-content {
   max-width: 700px;
   width: 90%;
+  max-height: 90vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 16px;
   padding: 0;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
 }
 
 .tour-progress {
@@ -23,6 +26,7 @@
   padding: 20px;
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .tour-progress-bar {
@@ -58,6 +62,8 @@
   text-align: center;
   background: white;
   color: #333;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .tour-step-content h3 {
@@ -119,6 +125,7 @@
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .tour-navigation {
@@ -139,11 +146,12 @@
   .tour-content {
     width: 95%;
     max-width: none;
+    max-height: 95vh;
   }
 
   .tour-step-content {
     padding: 30px 20px;
-    min-height: 250px;
+    min-height: 200px;
   }
 
   .tour-step-content h3 {

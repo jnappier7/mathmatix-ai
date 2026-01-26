@@ -98,7 +98,6 @@ const { router: memoryRouter } = require('./routes/memory');
 const guidedLessonRoutes = require('./routes/guidedLesson');
 const summaryGeneratorRouter = require('./routes/summary_generator');
 const avatarRoutes = require('./routes/avatar');
-const graphRoutes = require('./routes/graph');
 const curriculumRoutes = require('./routes/curriculum');
 const assessmentRoutes = require('./routes/assessment');
 const screenerRoutes = require('./routes/screener');  // IRT-based adaptive screener
@@ -168,8 +167,7 @@ app.use(helmet({
         "'unsafe-eval'", // Required for MathLive and dynamic math rendering
         "https://cdnjs.cloudflare.com", // Font Awesome
         "https://cdn.jsdelivr.net", // Various CDN resources
-        "https://unpkg.com", // MathLive and other packages
-        "https://www.desmos.com" // Desmos graphing calculator API
+        "https://unpkg.com" // MathLive and other packages
       ],
       styleSrc: [
         "'self'",
@@ -330,7 +328,6 @@ app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
 app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
-app.use('/api/graph', isAuthenticated, graphRoutes);
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
