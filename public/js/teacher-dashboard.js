@@ -36,6 +36,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const conversationsListDiv = document.getElementById("conversations-list");
     const closeHistoryModalBtn = document.getElementById("close-history-modal-btn");
 
+    // Student Detail Modal Elements
+    const studentDetailModal = document.getElementById("student-detail-modal");
+    let currentStudentsData = []; // Store fetched students for detail lookup
+
     // --- Tab Switching Logic ---
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -75,7 +79,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         { btn: closeIepModalBtn, modal: iepEditorModal },
         { btn: document.getElementById("cancel-iep-edit-btn"), modal: iepEditorModal },
         { btn: document.getElementById("conversationModalCloseBtn"), modal: conversationHistoryModal },
-        { btn: closeHistoryModalBtn, modal: conversationHistoryModal }
+        { btn: closeHistoryModalBtn, modal: conversationHistoryModal },
+        { btn: document.getElementById("studentDetailModalCloseBtn"), modal: studentDetailModal },
+        { btn: document.getElementById("close-student-detail-btn"), modal: studentDetailModal }
     ].forEach(item => {
         if (item.btn) item.btn.addEventListener('click', () => hideModal(item.modal));
     });
@@ -83,6 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.addEventListener('click', (event) => {
         if (event.target === iepEditorModal) hideModal(iepEditorModal);
         if (event.target === conversationHistoryModal) hideModal(conversationHistoryModal);
+        if (event.target === studentDetailModal) hideModal(studentDetailModal);
     });
 
     // --- IEP Form Logic ---
@@ -209,6 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const students = await response.json();
+            currentStudentsData = students; // Store for detail lookup
             renderStudentList(students);
         } catch (error) {
             console.error("Failed to fetch students:", error);
@@ -227,7 +235,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             studentCard.className = 'student-card';
             const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
             studentCard.innerHTML = `
-                <strong>${fullName}</strong>
+                <strong><a href="#" class="student-name-link" data-student-id="${student._id}" style="color: #27ae60; text-decoration: none; cursor: pointer;">${fullName}</a></strong>
                 <p>Username: ${student.username}</p>
                 <p>Grade: ${student.gradeLevel || 'N/A'}</p>
                 <div class="card-buttons">
@@ -251,6 +259,88 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.querySelectorAll('.reset-screener-btn').forEach(button => {
             button.addEventListener('click', handleResetScreener);
         });
+        document.querySelectorAll('.student-name-link').forEach(link => {
+            link.addEventListener('click', handleStudentNameClick);
+        });
+    }
+
+    async function handleStudentNameClick(event) {
+        event.preventDefault();
+        const studentId = event.target.dataset.studentId;
+        const student = currentStudentsData.find(s => s._id === studentId);
+        if (!student) return;
+
+        const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+
+        // Populate modal with student info
+        document.getElementById('detail-student-name').textContent = fullName;
+        document.getElementById('detail-username').textContent = student.username || '-';
+        document.getElementById('detail-email').textContent = student.email || '-';
+        document.getElementById('detail-grade').textContent = student.gradeLevel || '-';
+        document.getElementById('detail-course').textContent = student.mathCourse || '-';
+        document.getElementById('detail-level').textContent = student.level || 1;
+        document.getElementById('detail-xp').textContent = (student.xp || 0).toLocaleString();
+        document.getElementById('detail-total-minutes').textContent = student.totalActiveTutoringMinutes || 0;
+        document.getElementById('detail-weekly-minutes').textContent = student.weeklyActiveTutoringMinutes || 0;
+        document.getElementById('detail-last-login').textContent = student.lastLogin
+            ? new Date(student.lastLogin).toLocaleString()
+            : 'Never';
+
+        // Show modal
+        showModal(studentDetailModal);
+
+        // Load conversations
+        const conversationsDiv = document.getElementById('detail-conversations');
+        conversationsDiv.innerHTML = '<p style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
+
+        try {
+            const response = await fetch(`/api/teacher/students/${studentId}/conversations`);
+            if (!response.ok) throw new Error('Failed to load conversations');
+            const conversations = await response.json();
+
+            if (conversations.length === 0) {
+                conversationsDiv.innerHTML = '<p style="color: #666; font-style: italic;">No conversation history found.</p>';
+            } else {
+                conversationsDiv.innerHTML = conversations.slice(0, 5).map(conv => `
+                    <div style="background: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid #27ae60;">
+                        <div style="font-size: 0.85em; color: #666; margin-bottom: 5px;">
+                            <i class="fas fa-calendar"></i> ${new Date(conv.date || conv.startDate).toLocaleDateString()}
+                            ${conv.activeMinutes ? `<span style="margin-left: 10px;"><i class="fas fa-clock"></i> ${conv.activeMinutes} min</span>` : ''}
+                        </div>
+                        <div style="color: #333;">${conv.summary || 'No summary available'}</div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Error loading conversations:', error);
+            conversationsDiv.innerHTML = '<p style="color: #e74c3c;">Error loading conversation history.</p>';
+        }
+
+        // Setup action buttons in modal
+        const viewIepBtn = document.getElementById('detail-view-iep-btn');
+        const viewHistoryBtn = document.getElementById('detail-view-history-btn');
+
+        // Remove old listeners and add new ones
+        viewIepBtn.onclick = () => {
+            hideModal(studentDetailModal);
+            iepStudentNameSpan.textContent = fullName;
+            currentIepStudentIdInput.value = studentId;
+            showModal(iepEditorModal);
+            fetch(`/api/teacher/students/${studentId}/iep`)
+                .then(res => res.json())
+                .then(iepPlan => loadIepData(iepPlan))
+                .catch(err => {
+                    console.error('Error loading IEP:', err);
+                    alert('Failed to load IEP data.');
+                });
+        };
+
+        viewHistoryBtn.onclick = () => {
+            hideModal(studentDetailModal);
+            historyStudentNameSpan.textContent = fullName;
+            showModal(conversationHistoryModal);
+            handleViewHistory({ target: { dataset: { studentId, studentName: fullName } } });
+        };
     }
 
     async function handleViewIep(event) {
