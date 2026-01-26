@@ -605,8 +605,8 @@ router.post('/students/:studentId/reset-assessment', isAdmin, async (req, res) =
 
     // Store previous assessment data for audit trail
     const previousAssessment = {
-      completedDate: student.learningProfile.assessmentDate,
-      placement: student.learningProfile.initialPlacement,
+      completedDate: student.assessmentDate,
+      placement: student.initialPlacement,
       resetDate: new Date(),
       resetBy: adminId,
       resetByRole: 'admin',
@@ -620,9 +620,9 @@ router.post('/students/:studentId/reset-assessment', isAdmin, async (req, res) =
     student.learningProfile.assessmentHistory.push(previousAssessment);
 
     // Reset assessment flags
-    student.learningProfile.assessmentCompleted = false;
-    student.learningProfile.assessmentDate = null;
-    student.learningProfile.initialPlacement = null;
+    student.assessmentCompleted = false;
+    student.assessmentDate = null;
+    student.initialPlacement = null;
 
     // Optional: Clear skill mastery (keeping it for now to preserve learning history)
     // student.skillMastery = new Map();

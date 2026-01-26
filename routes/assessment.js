@@ -32,11 +32,11 @@ router.post('/start', async (req, res) => {
     }
 
     // Check if assessment already completed
-    if (user.learningProfile.assessmentCompleted) {
+    if (user.assessmentCompleted) {
       return res.json({
         alreadyCompleted: true,
         message: 'Assessment already completed',
-        completedDate: user.learningProfile.assessmentDate
+        completedDate: user.assessmentDate
       });
     }
 
@@ -329,12 +329,12 @@ async function completeAssessment(user, conversation, aiResponse) {
     }
 
     // Mark assessment as completed
-    user.learningProfile.assessmentCompleted = true;
-    user.learningProfile.assessmentDate = new Date();
+    user.assessmentCompleted = true;
+    user.assessmentDate = new Date();
 
     // Determine initial placement (highest mastered skill)
     if (masteredSkills.length > 0) {
-      user.learningProfile.initialPlacement = masteredSkills[masteredSkills.length - 1];
+      user.initialPlacement = masteredSkills[masteredSkills.length - 1];
     }
 
     await user.save();
@@ -367,9 +367,9 @@ router.get('/status', async (req, res) => {
     }
 
     res.json({
-      assessmentCompleted: user.learningProfile.assessmentCompleted || false,
-      assessmentDate: user.learningProfile.assessmentDate,
-      initialPlacement: user.learningProfile.initialPlacement
+      assessmentCompleted: user.assessmentCompleted || false,
+      assessmentDate: user.assessmentDate,
+      initialPlacement: user.initialPlacement
     });
 
   } catch (error) {

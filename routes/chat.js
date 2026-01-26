@@ -87,7 +87,7 @@ if (!message) return res.status(400).json({ message: "Message is required." });
 
         // Check if user already completed assessment (must match screener.js check)
         const user = await User.findById(userId);
-        if (user && user.learningProfile && user.learningProfile.assessmentCompleted) {
+        if (user && user.assessmentCompleted) {
             // User already took assessment, just acknowledge
             return res.json({
                 text: "I see you've already completed your skills assessment! Your learning profile is all set up. What would you like to work on today?",

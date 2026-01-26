@@ -114,7 +114,7 @@ router.get('/', async (req, res) => {
         // --- DYNAMIC WELCOME MESSAGE BASED ON USER STATE ---
 
         // NEW USER: Start with ONE casual question
-        if (!user.rapportBuildingComplete && !user.assessmentCompleted) {
+        if (!user.learningProfile?.rapportBuildingComplete && !user.assessmentCompleted) {
             messagesForAI.push({
                 role: "system",
                 content: `Brand new student (${user.grade || 'grade unknown'}). ${temporalContext}. Be contextually aware of the time and day.`
@@ -136,10 +136,10 @@ router.get('/', async (req, res) => {
         }
 
         // RAPPORT IN PROGRESS: Transition to math quickly
-        else if (!user.rapportBuildingComplete && user.rapportAnswers && Object.keys(user.rapportAnswers).length > 0) {
+        else if (!user.learningProfile?.rapportBuildingComplete && user.learningProfile?.rapportAnswers && Object.keys(user.learningProfile.rapportAnswers).length > 0) {
             messagesForAI.push({
                 role: "system",
-                content: `Second message. Keep it brief. Info: ${JSON.stringify(user.rapportAnswers)}`
+                content: `Second message. Keep it brief. Info: ${JSON.stringify(user.learningProfile.rapportAnswers)}`
             });
             userMessagePart = `Acknowledge their answer briefly, then suggest starting with some problems. Be natural and low-pressure. 1-2 sentences. Don't introduce yourself again - they know who you are. Don't use phrases like "buddy" or overly enthusiastic language.`;
         }
@@ -155,7 +155,7 @@ router.get('/', async (req, res) => {
         }
 
         // ASSESSMENT NEEDED (but rapport complete)
-        else if (assessmentNeeded && user.rapportBuildingComplete) {
+        else if (assessmentNeeded && user.learningProfile?.rapportBuildingComplete) {
             userMessagePart = `Write a brief, natural transition for ${user.firstName} to start the placement assessment. Don't introduce yourself - they know you. Reference that you've chatted a bit, now you want to see where they're at. Make it sound exciting and low-pressure. 2 sentences max. Don't call it a "test" - just say you want to see what they know.`;
         }
 

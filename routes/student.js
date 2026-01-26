@@ -147,7 +147,7 @@ router.get('/progress', isAuthenticated, isStudent, async (req, res) => {
 
         res.json({
             assessmentCompleted: true,
-            assessmentDate: student.learningProfile.assessmentDate,
+            assessmentDate: student.assessmentDate,
             progress: {
                 mastered,
                 learning,
