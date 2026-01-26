@@ -69,59 +69,35 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         });
     }
 
-    // ASSESSMENT REQUEST DETECTION: Catch explicit requests for placement tests
-    const assessmentKeywords = [
+    // PLACEMENT ASSESSMENT REQUEST DETECTION
+    // Students cannot request placement assessments - only teachers/admins/parents can trigger them
+    const placementKeywords = [
         /\b(placement|skills?)\s+(test|assessment|exam)\b/i,
         /\btake\s+(a|an|the)?\s*(placement|skills?|initial)?\s*(test|assessment)\b/i,
-        /\b(teacher|instructor)\s+(said|told|wants?)\b.*\b(test|assessment|placement)\b/i,
-        /\bsupposed to (give|take)\b.*\b(test|assessment|placement)\b/i,
-        /\bneed to take\b.*\b(test|assessment|placement)\b/i,
-        /\b(give|take) me (a|an|the)?\s*(test|assessment|placement)\b/i,
-        /\b(teacher|instructor|she|he)\s+(said|told).*\bgive me (one|it)\b/i
+        /\bneed to take\b.*\b(placement)\s*(test|assessment)\b/i
     ];
 
-    const isAssessmentRequest = assessmentKeywords.some(pattern => pattern.test(messageClean));
+    const isPlacementRequest = placementKeywords.some(pattern => pattern.test(messageClean));
 
-    if (isAssessmentRequest) {
-        console.log(`📋 ASSESSMENT REQUEST DETECTED - User ${userId} - Message: "${message.substring(0, 100)}..."`);
-
-        // Check if user already completed assessment (allow re-assessment after 90 days)
+    if (isPlacementRequest) {
+        console.log(`📋 PLACEMENT REQUEST DETECTED (declined) - User ${userId} - Message: "${message.substring(0, 100)}..."`);
         const user = await User.findById(userId);
+
         if (user && user.assessmentCompleted) {
-            const ninetyDaysAgo = new Date();
-            ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-            const isStale = user.assessmentDate && user.assessmentDate < ninetyDaysAgo;
-
-            if (!isStale) {
-                // Recent assessment, just acknowledge
-                return res.json({
-                    text: "I see you've already completed your skills assessment! Your learning profile is all set up. What would you like to work on today?",
-                    userXp: 0,
-                    userLevel: user.level || 1,
-                    xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel,
-                    specialXpAwarded: "",
-                    voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].voiceId,
-                    newlyUnlockedTutors: [],
-                    drawingSequence: null,
-                    triggerAssessment: false
-                });
-            }
-            // Stale assessment (> 90 days), allow re-assessment - fall through to trigger
-            console.log(`📋 STALE ASSESSMENT - User ${userId} - allowing re-assessment`);
+            // Already completed - can't retake
+            return res.json({
+                text: "You've already done your placement assessment! I'm using those results to give you the right level of problems. If your teacher or parent thinks you need a new assessment, they can request one for you. What would you like to work on?",
+                userXp: 0,
+                userLevel: user.level || 1,
+                xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel,
+                specialXpAwarded: "",
+                voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].voiceId,
+                newlyUnlockedTutors: [],
+                drawingSequence: null,
+                triggerAssessment: false
+            });
         }
-
-        // User needs assessment - trigger it
-        return res.json({
-            text: "You're absolutely right! Let's get you started with your placement test. This will help me understand exactly where you are so I can give you the best help possible. Ready?",
-            userXp: 0,
-            userLevel: user ? (user.level || 1) : 1,
-            xpNeeded: user ? ((user.level || 1) * BRAND_CONFIG.xpPerLevel) : 200,
-            specialXpAwarded: "",
-            voiceId: user && user.selectedTutorId ? TUTOR_CONFIG[user.selectedTutorId].voiceId : "default",
-            newlyUnlockedTutors: [],
-            drawingSequence: null,
-            triggerAssessment: true
-        });
+        // First-time user asking about placement - let normal flow handle it (welcome will offer it)
     }
 
     try {

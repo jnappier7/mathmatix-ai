@@ -154,16 +154,8 @@ router.get('/', async (req, res) => {
             userMessagePart = `Casual greeting for ${user.firstName}. Don't introduce yourself - they've met you. Mention they started the placement (${questionsCompleted} questions done) but didn't finish. Offer to continue or start over - keep it relaxed. 1-2 sentences. Sound like texting, not like a teacher.`;
         }
 
-        // RE-ASSESSMENT NEEDED (returning user with stale assessment > 90 days)
-        else if (assessmentNeeded && user.assessmentCompleted) {
-            messagesForAI.push({
-                role: "system",
-                content: `Returning student who completed assessment a while ago. Time for a skills refresh check-in. ${temporalContext}.`
-            });
-            userMessagePart = `Write a casual greeting for ${user.firstName}. Don't introduce yourself - they know you well. Mention it's been a while since you checked in on their skills and suggest doing a quick placement refresh to make sure you're giving them the right level of problems. Keep it light and optional - not mandatory. 2 sentences max.`;
-        }
-
         // FIRST ASSESSMENT NEEDED (new user, rapport complete)
+        // Note: Re-assessments are only triggered by teachers/parents, not auto-offered to students
         else if (assessmentNeeded && user.learningProfile?.rapportBuildingComplete) {
             userMessagePart = `Write a brief, natural transition for ${user.firstName} to start the placement assessment. Don't introduce yourself - they know you. Reference that you've chatted a bit, now you want to see where they're at. Make it sound exciting and low-pressure. 2 sentences max. Don't call it a "test" - just say you want to see what they know.`;
         }

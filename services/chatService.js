@@ -386,13 +386,13 @@ async function needsAssessment(userId) {
       return true;
     }
 
-    // Check if assessment is stale (> 90 days / ~3 months)
-    // Users should be re-assessed every 3-6 months for accurate placement
+    // Check if assessment is stale (> 180 days / 6 months)
+    // Re-assessment can only be triggered by teacher/admin/parent, not student
     if (user.assessmentDate) {
-      const ninetyDaysAgo = new Date();
-      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 180);
 
-      if (user.assessmentDate < ninetyDaysAgo) {
+      if (user.assessmentDate < sixMonthsAgo) {
         return true;
       }
     }
