@@ -141,7 +141,7 @@ const aiEndpointLimiter = rateLimit({
     handler: (req, res) => {
         console.warn(`WARN: Rate limit exceeded for user ${req.user ? req.user._id : req.ip} on ${req.path}`);
         res.status(429).json({
-            message: 'Too many AI requests. Please try again later.',
+            message: "We've been working hard for a while now! Let's take a break and pick up where we left off tomorrow. Great job today! 🌟",
             retryAfter: Math.ceil(req.rateLimit.resetTime / 1000)
         });
     },
