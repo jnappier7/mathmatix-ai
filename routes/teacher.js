@@ -294,8 +294,8 @@ router.post('/students/:studentId/reset-assessment', isTeacher, async (req, res)
 
     // Store previous assessment data for audit trail
     const previousAssessment = {
-      completedDate: student.learningProfile.assessmentDate,
-      placement: student.learningProfile.initialPlacement,
+      completedDate: student.assessmentDate,
+      placement: student.initialPlacement,
       resetDate: new Date(),
       resetBy: teacherId,
       reason: reason || 'Teacher requested reset'
@@ -308,9 +308,9 @@ router.post('/students/:studentId/reset-assessment', isTeacher, async (req, res)
     student.learningProfile.assessmentHistory.push(previousAssessment);
 
     // Reset assessment flags
-    student.learningProfile.assessmentCompleted = false;
-    student.learningProfile.assessmentDate = null;
-    student.learningProfile.initialPlacement = null;
+    student.assessmentCompleted = false;
+    student.assessmentDate = null;
+    student.initialPlacement = null;
 
     // Clear skill mastery (optional - may want to keep some data)
     // student.skillMastery = new Map();
@@ -356,8 +356,8 @@ router.get('/students/:studentId/skill-report', isTeacher, async (req, res) => {
     // Parse theta from initialPlacement if available
     let theta = null;
     let percentile = null;
-    if (student.learningProfile?.initialPlacement) {
-      const match = student.learningProfile.initialPlacement.match(/Theta:\s*([-\d.]+)\s*\((\d+)th percentile\)/);
+    if (student.initialPlacement) {
+      const match = student.initialPlacement.match(/Theta:\s*([-\d.]+)\s*\((\d+)th percentile\)/);
       if (match) {
         theta = parseFloat(match[1]);
         percentile = parseInt(match[2]);

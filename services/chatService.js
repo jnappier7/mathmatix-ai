@@ -381,23 +381,20 @@ async function needsAssessment(userId) {
       return false;
     }
 
-    // Check if user has completed assessment
-    const completedAssessment = await Conversation.findOne({
-      userId,
-      isAssessment: true,
-      isAssessmentComplete: true
-    });
-
-    if (!completedAssessment) {
+    // First time users need assessment
+    if (!user.assessmentCompleted) {
       return true;
     }
 
-    // Check if assessment is too old (> 90 days)
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    // Check if assessment is stale (> 180 days / 6 months)
+    // Re-assessment can only be triggered by teacher/admin/parent, not student
+    if (user.assessmentDate) {
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 180);
 
-    if (completedAssessment.assessmentResults?.completedAt < ninetyDaysAgo) {
-      return true;
+      if (user.assessmentDate < sixMonthsAgo) {
+        return true;
+      }
     }
 
     return false;

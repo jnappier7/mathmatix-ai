@@ -130,9 +130,9 @@ router.get('/available-badges', isAuthenticated, async (req, res) => {
     let theta = user.learningProfile?.abilityEstimate?.theta;
 
     // MIGRATION: Handle old format where theta was stored as string in initialPlacement
-    if (theta === undefined && user.learningProfile?.initialPlacement) {
+    if (theta === undefined && user.initialPlacement) {
       // Parse "Theta: 1.5 (75th percentile)" format
-      const match = user.learningProfile.initialPlacement.match(/Theta:\s*([-\d.]+)/);
+      const match = user.initialPlacement.match(/Theta:\s*([-\d.]+)/);
       if (match) {
         theta = parseFloat(match[1]);
         // Update to new format
@@ -1264,8 +1264,8 @@ router.get('/badge-map', isAuthenticated, async (req, res) => {
     let theta = user.learningProfile?.abilityEstimate?.theta;
 
     // MIGRATION: Handle old format where theta was stored as string in initialPlacement
-    if (theta === undefined && user.learningProfile?.initialPlacement) {
-      const match = user.learningProfile.initialPlacement.match(/Theta:\s*([-\d.]+)/);
+    if (theta === undefined && user.initialPlacement) {
+      const match = user.initialPlacement.match(/Theta:\s*([-\d.]+)/);
       if (match) {
         theta = parseFloat(match[1]);
       }

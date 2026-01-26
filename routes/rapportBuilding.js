@@ -40,8 +40,9 @@ router.post('/respond', isAuthenticated, async (req, res) => {
         }
 
         // Initialize rapportAnswers if needed
-        if (!user.rapportAnswers) {
-            user.rapportAnswers = {};
+        user.learningProfile = user.learningProfile || {};
+        if (!user.learningProfile.rapportAnswers) {
+            user.learningProfile.rapportAnswers = {};
         }
 
         // Get conversation context
@@ -104,7 +105,7 @@ router.post('/respond', isAuthenticated, async (req, res) => {
 
         const extractionPrompt = `Brief intro chat with ${user.firstName} (Grade: ${user.grade || 'unknown'}). Exchange count: ${rapportMessageCount}. Context: ${temporalContext}.
 
-Current info: ${JSON.stringify(user.rapportAnswers, null, 2)}
+Current info: ${JSON.stringify(user.learningProfile.rapportAnswers, null, 2)}
 Their message: "${message}"
 
 TASK 1: Extract conversational insights (keep brief):
@@ -150,14 +151,15 @@ RESPOND IN JSON:
         const result = JSON.parse(completion.choices[0].message.content.trim());
 
         // Update user's rapport answers
-        user.rapportAnswers = {
-            ...user.rapportAnswers,
+        user.learningProfile.rapportAnswers = {
+            ...user.learningProfile.rapportAnswers,
             ...result.extractedInfo
         };
 
         // Mark rapport building as complete if AI decides it's time
         if (result.rapportComplete) {
-            user.rapportBuildingComplete = true;
+            user.learningProfile = user.learningProfile || {};
+            user.learningProfile.rapportBuildingComplete = true;
         }
 
         await user.save();
@@ -193,11 +195,11 @@ RESPOND IN JSON:
  */
 router.get('/status', isAuthenticated, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('rapportBuildingComplete rapportAnswers');
+        const user = await User.findById(req.user._id).select('learningProfile.rapportBuildingComplete learningProfile.rapportAnswers');
 
         res.json({
-            rapportComplete: user.rapportBuildingComplete || false,
-            rapportAnswers: user.rapportAnswers || {}
+            rapportComplete: user.learningProfile?.rapportBuildingComplete || false,
+            rapportAnswers: user.learningProfile?.rapportAnswers || {}
         });
     } catch (error) {
         console.error('[Rapport Status] Error:', error);

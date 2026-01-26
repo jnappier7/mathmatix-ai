@@ -189,14 +189,15 @@ router.post('/start', isAuthenticated, async (req, res) => {
     }
 
     // Check if assessment already completed
-    if (user.learningProfile.assessmentCompleted) {
+    // Students cannot re-take placement assessment - only teachers/admins/parents can reset
+    if (user.assessmentCompleted) {
       return res.status(403).json({
         error: 'Assessment already completed',
         alreadyCompleted: true,
         message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
-        completedDate: user.learningProfile.assessmentDate,
-        theta: user.learningProfile.initialPlacement,
-        canReset: false  // Only teachers can reset via dashboard
+        completedDate: user.assessmentDate,
+        theta: user.initialPlacement,
+        canReset: false  // Only teachers/admins/parents can reset via dashboard
       });
     }
 
@@ -925,9 +926,9 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     report.badgeCount = earnedBadges.length;
 
     // Mark assessment as completed
-    user.learningProfile.assessmentCompleted = true;
-    user.learningProfile.assessmentDate = new Date();
-    user.learningProfile.initialPlacement = `Theta: ${report.theta} (${report.percentile}th percentile)`;
+    user.assessmentCompleted = true;
+    user.assessmentDate = new Date();
+    user.initialPlacement = `Theta: ${report.theta} (${report.percentile}th percentile)`;
 
     // Store theta in the format expected by badge system
     user.learningProfile.abilityEstimate = {
@@ -1203,8 +1204,8 @@ router.post('/interview-complete', async (req, res) => {
 
     // Update user profile with refined results
     user.learningProfile = user.learningProfile || {};
-    user.learningProfile.assessmentCompleted = true;
-    user.learningProfile.assessmentDate = new Date();
+    user.assessmentCompleted = true;
+    user.assessmentDate = new Date();
     user.learningProfile.abilityEstimate = {
       theta: session.theta,
       standardError: session.standardError,
