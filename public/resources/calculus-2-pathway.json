@@ -1,16 +1,511 @@
 {
+  "courseId": "calculus-2",
   "track": "Calculus 2",
-  "overview": "Advanced integration techniques, sequences and series, parametric/polar calculus, and differential equations.",
+  "overview": "Advanced integration techniques, sequences and series, parametric/polar calculus, and differential equations. Equivalent to AP Calculus BC.",
+  "prerequisites": ["calculus-1"],
+  "naturalProgression": [
+    "Master advanced integration techniques",
+    "Understand sequences and convergence",
+    "Study infinite series and convergence tests",
+    "Learn Taylor and Maclaurin series",
+    "Explore parametric and polar coordinate systems",
+    "Introduction to differential equations"
+  ],
   "modules": [
-    {"moduleId": "integration_techniques", "quarter": 1, "title": "Integration Techniques", "preview": "Integration by parts, trig substitution, partial fractions", "skills": ["integration-by-parts", "trig-substitution", "partial-fractions", "improper-integrals"]},
-    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Advanced integration mastery"},
-    {"moduleId": "sequences_series", "quarter": 2, "title": "Sequences and Series", "preview": "Convergence tests for sequences and series", "skills": ["sequences", "series-tests", "geometric-series", "harmonic-series"]},
-    {"moduleId": "power_series", "quarter": 2, "title": "Power Series", "preview": "Radius/interval of convergence, operations", "skills": ["power-series", "radius-convergence", "term-by-term"]},
-    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Series convergence"},
-    {"moduleId": "taylor_series", "quarter": 3, "title": "Taylor and Maclaurin Series", "preview": "Series representations, approximations", "skills": ["taylor-series", "maclaurin-series", "taylor-polynomials", "lagrange-error"]},
-    {"moduleId": "parametric_polar", "quarter": 3, "title": "Parametric & Polar Calculus", "preview": "Derivatives, areas, arc length", "skills": ["parametric-calculus", "polar-calculus", "arc-length-polar"]},
-    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Taylor series and parametric/polar"},
-    {"moduleId": "differential_equations", "quarter": 4, "title": "Differential Equations", "preview": "Separable DEs, slope fields, logistic growth", "skills": ["differential-equations-intro", "slope-fields", "logistic-growth", "eulers-method"]},
-    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment / AP BC Exam Prep", "preview": "Comprehensive Calculus 2 (AP Calc BC level)"}
-  ]
+    {
+      "moduleId": "integration_techniques",
+      "quarter": 1,
+      "title": "Integration Techniques",
+      "preview": "Integration by parts, trig substitution, partial fractions",
+      "skills": ["integration-by-parts", "trig-substitution", "partial-fractions", "improper-integrals"],
+      "lessons": [
+        {
+          "lessonId": "integration-by-parts",
+          "title": "Integration by Parts",
+          "order": 1,
+          "concepts": [
+            "Product rule in reverse",
+            "∫u dv = uv - ∫v du",
+            "Choosing u and dv (LIATE rule)",
+            "Tabular method for repeated IBP"
+          ],
+          "keyFormulas": ["∫u dv = uv - ∫v du"],
+          "teachingNotes": "LIATE: Logarithmic, Inverse trig, Algebraic, Trig, Exponential - choose u in this order."
+        },
+        {
+          "lessonId": "trig-integrals",
+          "title": "Trigonometric Integrals",
+          "order": 2,
+          "concepts": [
+            "∫sinᵐx cosⁿx dx strategies",
+            "Using identities: sin²x + cos²x = 1",
+            "Half-angle formulas for even powers",
+            "∫tanᵐx secⁿx dx strategies"
+          ],
+          "teachingNotes": "The strategy depends on whether powers are odd or even."
+        },
+        {
+          "lessonId": "trig-substitution",
+          "title": "Trigonometric Substitution",
+          "order": 3,
+          "concepts": [
+            "When to use trig sub (square roots of quadratics)",
+            "√(a²-x²): x = a sin θ",
+            "√(a²+x²): x = a tan θ",
+            "√(x²-a²): x = a sec θ",
+            "Setting up the reference triangle"
+          ],
+          "keyFormulas": [
+            "√(a²-x²): let x = a sin θ",
+            "√(a²+x²): let x = a tan θ",
+            "√(x²-a²): let x = a sec θ"
+          ]
+        },
+        {
+          "lessonId": "partial-fractions",
+          "title": "Partial Fractions",
+          "order": 4,
+          "concepts": [
+            "Decomposing rational functions",
+            "Linear factors: A/(x-a)",
+            "Repeated linear factors: A/(x-a) + B/(x-a)²",
+            "Irreducible quadratic factors: (Ax+B)/(x²+bx+c)"
+          ],
+          "teachingNotes": "Always do polynomial long division first if degree of numerator ≥ degree of denominator."
+        },
+        {
+          "lessonId": "improper-integrals",
+          "title": "Improper Integrals",
+          "order": 5,
+          "concepts": [
+            "Infinite limits of integration",
+            "Discontinuous integrands",
+            "Convergence vs divergence",
+            "Comparison tests for improper integrals"
+          ],
+          "keyFormulas": ["∫ₐ^∞ f(x)dx = lim(b→∞) ∫ₐᵇ f(x)dx"]
+        },
+        {
+          "lessonId": "numerical-integration",
+          "title": "Numerical Integration",
+          "order": 6,
+          "concepts": [
+            "Trapezoidal rule",
+            "Simpson's rule",
+            "Error bounds"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q1",
+      "quarter": 1,
+      "title": "Q1 Checkpoint",
+      "preview": "Advanced integration mastery",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "sequences_series",
+      "quarter": 2,
+      "title": "Sequences and Series",
+      "preview": "Convergence tests for sequences and series",
+      "skills": ["sequences", "series-tests", "geometric-series", "harmonic-series"],
+      "lessons": [
+        {
+          "lessonId": "sequences-intro",
+          "title": "Sequences",
+          "order": 1,
+          "concepts": [
+            "Explicit vs recursive formulas",
+            "Limits of sequences",
+            "Bounded and monotonic sequences",
+            "Squeeze theorem for sequences"
+          ]
+        },
+        {
+          "lessonId": "series-intro",
+          "title": "Introduction to Series",
+          "order": 2,
+          "concepts": [
+            "Partial sums",
+            "Convergence and divergence",
+            "nth term test for divergence",
+            "Properties of convergent series"
+          ],
+          "keyFormulas": ["If Σaₙ converges, then lim aₙ = 0 (but not conversely!)"]
+        },
+        {
+          "lessonId": "geometric-series",
+          "title": "Geometric Series",
+          "order": 3,
+          "concepts": [
+            "Σarⁿ from n=0 to ∞",
+            "Converges if |r| < 1 to a/(1-r)",
+            "Diverges if |r| ≥ 1",
+            "Applications and telescoping series"
+          ],
+          "keyFormulas": ["Σarⁿ = a/(1-r) if |r| < 1"]
+        },
+        {
+          "lessonId": "p-series",
+          "title": "p-Series and Harmonic Series",
+          "order": 4,
+          "concepts": [
+            "Σ1/nᵖ converges if p > 1",
+            "Harmonic series (p=1) diverges",
+            "Integral test connection"
+          ],
+          "keyFormulas": ["Σ1/nᵖ converges iff p > 1"]
+        },
+        {
+          "lessonId": "comparison-tests",
+          "title": "Comparison Tests",
+          "order": 5,
+          "concepts": [
+            "Direct comparison test",
+            "Limit comparison test",
+            "Choosing comparison series"
+          ]
+        },
+        {
+          "lessonId": "integral-test",
+          "title": "Integral Test",
+          "order": 6,
+          "concepts": [
+            "When to use integral test",
+            "Requirements: positive, continuous, decreasing",
+            "Estimating sums with integrals"
+          ]
+        },
+        {
+          "lessonId": "ratio-root-tests",
+          "title": "Ratio and Root Tests",
+          "order": 7,
+          "concepts": [
+            "Ratio test: lim |aₙ₊₁/aₙ|",
+            "Root test: lim |aₙ|^(1/n)",
+            "When tests are inconclusive"
+          ],
+          "keyFormulas": [
+            "Ratio test: L < 1 converges, L > 1 diverges",
+            "Root test: L < 1 converges, L > 1 diverges"
+          ]
+        },
+        {
+          "lessonId": "alternating-series",
+          "title": "Alternating Series",
+          "order": 8,
+          "concepts": [
+            "Alternating series test",
+            "Error bound for alternating series",
+            "Conditional vs absolute convergence"
+          ],
+          "keyFormulas": ["Error ≤ |aₙ₊₁| for alternating series"]
+        }
+      ]
+    },
+    {
+      "moduleId": "power_series",
+      "quarter": 2,
+      "title": "Power Series",
+      "preview": "Radius/interval of convergence, operations",
+      "skills": ["power-series", "radius-convergence", "term-by-term"],
+      "lessons": [
+        {
+          "lessonId": "power-series-intro",
+          "title": "Introduction to Power Series",
+          "order": 1,
+          "concepts": [
+            "Σcₙ(x-a)ⁿ form",
+            "Center of series",
+            "Convergence at center"
+          ]
+        },
+        {
+          "lessonId": "radius-interval",
+          "title": "Radius and Interval of Convergence",
+          "order": 2,
+          "concepts": [
+            "Radius of convergence R",
+            "Using ratio or root test",
+            "Checking endpoints separately",
+            "Interval notation"
+          ]
+        },
+        {
+          "lessonId": "power-series-operations",
+          "title": "Operations on Power Series",
+          "order": 3,
+          "concepts": [
+            "Term-by-term differentiation",
+            "Term-by-term integration",
+            "Addition and multiplication"
+          ],
+          "teachingNotes": "Differentiation and integration preserve radius of convergence (but maybe not endpoints)."
+        },
+        {
+          "lessonId": "functions-power-series",
+          "title": "Functions as Power Series",
+          "order": 4,
+          "concepts": [
+            "1/(1-x) = Σxⁿ",
+            "Building other series from geometric",
+            "Integration to get ln(1+x), arctan(x)"
+          ],
+          "keyFormulas": ["1/(1-x) = Σxⁿ for |x| < 1"]
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q2",
+      "quarter": 2,
+      "title": "Q2 Checkpoint",
+      "preview": "Series convergence",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "taylor_series",
+      "quarter": 3,
+      "title": "Taylor and Maclaurin Series",
+      "preview": "Series representations, approximations",
+      "skills": ["taylor-series", "maclaurin-series", "taylor-polynomials", "lagrange-error"],
+      "lessons": [
+        {
+          "lessonId": "taylor-polynomials",
+          "title": "Taylor Polynomials",
+          "order": 1,
+          "concepts": [
+            "Approximating functions with polynomials",
+            "nth degree Taylor polynomial",
+            "Coefficients from derivatives at a"
+          ],
+          "keyFormulas": ["Pₙ(x) = Σ[f⁽ᵏ⁾(a)/k!](x-a)ᵏ from k=0 to n"]
+        },
+        {
+          "lessonId": "taylor-series-def",
+          "title": "Taylor Series Definition",
+          "order": 2,
+          "concepts": [
+            "Infinite Taylor polynomial",
+            "Maclaurin series (a = 0)",
+            "When does the series equal the function?"
+          ],
+          "keyFormulas": ["f(x) = Σ[f⁽ⁿ⁾(a)/n!](x-a)ⁿ"]
+        },
+        {
+          "lessonId": "common-maclaurin",
+          "title": "Common Maclaurin Series",
+          "order": 3,
+          "concepts": [
+            "eˣ = Σxⁿ/n!",
+            "sin x = Σ(-1)ⁿx²ⁿ⁺¹/(2n+1)!",
+            "cos x = Σ(-1)ⁿx²ⁿ/(2n)!",
+            "ln(1+x), arctan(x), (1+x)ᵖ"
+          ],
+          "keyFormulas": [
+            "eˣ = 1 + x + x²/2! + x³/3! + ...",
+            "sin x = x - x³/3! + x⁵/5! - ...",
+            "cos x = 1 - x²/2! + x⁴/4! - ..."
+          ],
+          "teachingNotes": "These must be memorized. Notice eˣ is for all x, but ln(1+x) only for |x| ≤ 1."
+        },
+        {
+          "lessonId": "manipulating-series",
+          "title": "Manipulating Known Series",
+          "order": 4,
+          "concepts": [
+            "Substitution into known series",
+            "Building new series from old",
+            "Example: e^(-x²) from eˣ series"
+          ]
+        },
+        {
+          "lessonId": "lagrange-error",
+          "title": "Lagrange Error Bound",
+          "order": 5,
+          "concepts": [
+            "Error in Taylor approximation",
+            "|Rₙ(x)| ≤ M|x-a|ⁿ⁺¹/(n+1)!",
+            "Finding M as max of |f⁽ⁿ⁺¹⁾(z)|",
+            "Applications to approximation problems"
+          ],
+          "keyFormulas": ["|Rₙ(x)| ≤ M|x-a|ⁿ⁺¹/(n+1)!"]
+        }
+      ]
+    },
+    {
+      "moduleId": "parametric_polar",
+      "quarter": 3,
+      "title": "Parametric & Polar Calculus",
+      "preview": "Derivatives, areas, arc length in parametric and polar",
+      "skills": ["parametric-calculus", "polar-calculus", "arc-length-polar"],
+      "lessons": [
+        {
+          "lessonId": "parametric-intro",
+          "title": "Parametric Equations",
+          "order": 1,
+          "concepts": [
+            "x = f(t), y = g(t)",
+            "Eliminating the parameter",
+            "Direction and orientation"
+          ]
+        },
+        {
+          "lessonId": "parametric-derivatives",
+          "title": "Calculus with Parametric Curves",
+          "order": 2,
+          "concepts": [
+            "dy/dx = (dy/dt)/(dx/dt)",
+            "Second derivative d²y/dx²",
+            "Tangent lines to parametric curves"
+          ],
+          "keyFormulas": ["dy/dx = (dy/dt)/(dx/dt)"]
+        },
+        {
+          "lessonId": "parametric-arc-length",
+          "title": "Arc Length in Parametric",
+          "order": 3,
+          "concepts": [
+            "L = ∫√[(dx/dt)² + (dy/dt)²] dt",
+            "Surface area of revolution"
+          ],
+          "keyFormulas": ["L = ∫ₐᵇ √[(dx/dt)² + (dy/dt)²] dt"]
+        },
+        {
+          "lessonId": "polar-intro",
+          "title": "Polar Coordinates",
+          "order": 4,
+          "concepts": [
+            "r and θ coordinates",
+            "Converting to/from rectangular",
+            "Common polar curves"
+          ],
+          "keyFormulas": ["x = r cos θ, y = r sin θ", "r² = x² + y²"]
+        },
+        {
+          "lessonId": "polar-derivatives",
+          "title": "Calculus with Polar Curves",
+          "order": 5,
+          "concepts": [
+            "dy/dx from polar: dy/dx = (dr/dθ sin θ + r cos θ)/(dr/dθ cos θ - r sin θ)",
+            "Tangent lines to polar curves"
+          ]
+        },
+        {
+          "lessonId": "polar-area",
+          "title": "Area in Polar Coordinates",
+          "order": 6,
+          "concepts": [
+            "A = (1/2)∫r² dθ",
+            "Area between polar curves",
+            "Finding intersection points"
+          ],
+          "keyFormulas": ["A = (1/2)∫ₐᵝ r² dθ"]
+        },
+        {
+          "lessonId": "polar-arc-length",
+          "title": "Arc Length in Polar",
+          "order": 7,
+          "concepts": [
+            "L = ∫√[r² + (dr/dθ)²] dθ"
+          ],
+          "keyFormulas": ["L = ∫ₐᵝ √[r² + (dr/dθ)²] dθ"]
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q3",
+      "quarter": 3,
+      "title": "Q3 Checkpoint",
+      "preview": "Taylor series and parametric/polar",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "differential_equations",
+      "quarter": 4,
+      "title": "Differential Equations",
+      "preview": "Separable DEs, slope fields, logistic growth",
+      "skills": ["differential-equations-intro", "slope-fields", "logistic-growth", "eulers-method"],
+      "lessons": [
+        {
+          "lessonId": "de-intro",
+          "title": "Introduction to Differential Equations",
+          "order": 1,
+          "concepts": [
+            "What is a differential equation?",
+            "Order of a DE",
+            "Solutions and initial conditions",
+            "Verifying solutions"
+          ]
+        },
+        {
+          "lessonId": "slope-fields",
+          "title": "Slope Fields",
+          "order": 2,
+          "concepts": [
+            "Visualizing dy/dx = f(x,y)",
+            "Sketching slope fields",
+            "Reading solution curves from fields"
+          ]
+        },
+        {
+          "lessonId": "eulers-method",
+          "title": "Euler's Method",
+          "order": 3,
+          "concepts": [
+            "Numerical approximation",
+            "Step-by-step calculation",
+            "Accuracy and step size"
+          ],
+          "keyFormulas": ["yₙ₊₁ = yₙ + f(xₙ, yₙ)·Δx"]
+        },
+        {
+          "lessonId": "separable-de",
+          "title": "Separable Differential Equations",
+          "order": 4,
+          "concepts": [
+            "When dy/dx = f(x)g(y)",
+            "Separating variables",
+            "Integrating both sides",
+            "Solving for y explicitly"
+          ],
+          "teachingNotes": "Get all y terms on one side with dy, all x terms on other side with dx."
+        },
+        {
+          "lessonId": "exponential-growth-de",
+          "title": "Exponential Growth/Decay Models",
+          "order": 5,
+          "concepts": [
+            "dy/dt = ky",
+            "Solution y = Ce^(kt)",
+            "Half-life and doubling time",
+            "Newton's law of cooling"
+          ],
+          "keyFormulas": ["dy/dt = ky → y = Ce^(kt)"]
+        },
+        {
+          "lessonId": "logistic-growth",
+          "title": "Logistic Growth",
+          "order": 6,
+          "concepts": [
+            "dy/dt = ky(1 - y/L)",
+            "Carrying capacity L",
+            "S-shaped growth curve",
+            "Point of inflection"
+          ],
+          "keyFormulas": ["dy/dt = ky(1 - y/L)", "y = L/(1 + Ae^(-kt))"]
+        }
+      ]
+    },
+    {
+      "moduleId": "final_mastery_assessment",
+      "quarter": 4,
+      "title": "Final Mastery Assessment",
+      "preview": "Comprehensive Calculus 2 (AP Calc BC level)",
+      "isCheckpoint": true,
+      "isFinal": true
+    }
+  ],
+  "aiGuidanceNotes": "Calculus 2 is often considered harder than Calculus 1 because of series. Integration techniques require lots of practice to recognize which method to use. Series convergence tests form a decision tree - help students build this mental flowchart. Taylor series connect everything - they're both the culmination of series and deeply connected to function approximation."
 }

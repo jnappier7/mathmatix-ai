@@ -7,6 +7,8 @@ const { generateDOKGatingPrompt } = require('./dokGating');
 const { generateAlternativeReasoningPrompt } = require('./alternativeReasoning');
 const { generateMasteryModePrompt } = require('./masteryPrompt');
 const { generateTeachingStrategiesPrompt } = require('./teachingStrategies');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * Build skill mastery context for AI prompt
@@ -338,6 +340,128 @@ function buildLearningProfileContext(userProfile) {
 `;
 
   return context;
+}
+
+/**
+ * Build course progression context for guiding students through a structured curriculum
+ * @param {string} mathCourse - The student's current math course (e.g., 'Calculus 1', 'Algebra 1', 'Grade 3')
+ * @param {string} firstName - Student's first name
+ */
+function buildCourseProgressionContext(mathCourse, firstName) {
+  if (!mathCourse) return '';
+
+  // Map course names to pathway file names
+  const courseToPathwayMap = {
+    // Elementary grades
+    'kindergarten': 'kindergarten-pathway.json',
+    'grade 1': 'grade-1-pathway.json',
+    'grade 2': 'grade-2-pathway.json',
+    'grade 3': 'grade-3-pathway.json',
+    'grade 4': 'grade-4-pathway.json',
+    'grade 5': 'grade-5-pathway.json',
+    'grade 6': 'grade-6-pathway.json',
+    'grade 7': 'grade-7-pathway.json',
+    'grade 8': 'grade-8-pathway.json',
+    '1st grade': 'grade-1-pathway.json',
+    '2nd grade': 'grade-2-pathway.json',
+    '3rd grade': 'grade-3-pathway.json',
+    '4th grade': 'grade-4-pathway.json',
+    '5th grade': 'grade-5-pathway.json',
+    '6th grade': 'grade-6-pathway.json',
+    '7th grade': 'grade-7-pathway.json',
+    '8th grade': 'grade-8-pathway.json',
+    // High school courses
+    'pre-algebra': 'ready-for-algebra-1-pathway.json',
+    'algebra 1': 'algebra-1-pathway.json',
+    'algebra i': 'algebra-1-pathway.json',
+    'geometry': 'geometry-pathway.json',
+    'algebra 2': 'algebra-2-pathway.json',
+    'algebra ii': 'algebra-2-pathway.json',
+    'precalculus': 'precalculus-pathway.json',
+    'pre-calculus': 'precalculus-pathway.json',
+    'trigonometry': 'precalculus-pathway.json',
+    // College courses
+    'calculus 1': 'calculus-1-pathway.json',
+    'calculus i': 'calculus-1-pathway.json',
+    'calc 1': 'calculus-1-pathway.json',
+    'ap calculus ab': 'calculus-1-pathway.json',
+    'calculus 2': 'calculus-2-pathway.json',
+    'calculus ii': 'calculus-2-pathway.json',
+    'calc 2': 'calculus-2-pathway.json',
+    'ap calculus bc': 'calculus-2-pathway.json',
+    'calculus 3': 'calculus-3-pathway.json',
+    'calculus iii': 'calculus-3-pathway.json',
+    'calc 3': 'calculus-3-pathway.json',
+    'multivariable calculus': 'calculus-3-pathway.json',
+    // Test prep
+    'act prep': 'act-prep-pathway.json',
+    'act math': 'act-prep-pathway.json'
+  };
+
+  const normalizedCourse = mathCourse.toLowerCase().trim();
+  const pathwayFile = courseToPathwayMap[normalizedCourse];
+
+  if (!pathwayFile) return '';
+
+  try {
+    const pathwayPath = path.join(__dirname, '..', 'public', 'resources', pathwayFile);
+    if (!fs.existsSync(pathwayPath)) return '';
+
+    const pathwayData = JSON.parse(fs.readFileSync(pathwayPath, 'utf8'));
+
+    let context = `\n--- COURSE PROGRESSION GUIDE (${pathwayData.track || mathCourse}) ---\n`;
+    context += `**${firstName} is studying ${pathwayData.track || mathCourse}.**\n\n`;
+
+    // Add natural progression overview
+    if (pathwayData.naturalProgression && pathwayData.naturalProgression.length > 0) {
+      context += `**NATURAL PROGRESSION (When ${firstName} asks "teach me" or wants to learn systematically):**\n`;
+      pathwayData.naturalProgression.forEach((step, i) => {
+        context += `${i + 1}. ${step}\n`;
+      });
+      context += '\n';
+    }
+
+    // Add module overview with lessons
+    if (pathwayData.modules && pathwayData.modules.length > 0) {
+      context += `**COURSE MODULES (Use as guide, not rigid structure):**\n`;
+      pathwayData.modules.forEach((mod, i) => {
+        if (!mod.isCheckpoint) {
+          context += `\n**${i + 1}. ${mod.title}** - ${mod.preview || ''}\n`;
+          if (mod.lessons && mod.lessons.length > 0) {
+            context += `   Topics: `;
+            const lessonTitles = mod.lessons.slice(0, 5).map(l => l.title);
+            context += lessonTitles.join(' → ');
+            if (mod.lessons.length > 5) context += ` → ... (${mod.lessons.length - 5} more)`;
+            context += '\n';
+          }
+        }
+      });
+    }
+
+    // Add AI guidance notes
+    if (pathwayData.aiGuidanceNotes) {
+      context += `\n**TEACHING GUIDANCE:** ${pathwayData.aiGuidanceNotes}\n`;
+    }
+
+    context += `
+**HOW TO USE THIS PROGRESSION:**
+- When ${firstName} says "teach me ${mathCourse.toLowerCase()}" or "what should I learn next?" → Follow this progression
+- When ${firstName} has specific questions → Address those first, progression is secondary
+- When ${firstName} is unsure what to work on → Suggest the next logical topic from the progression
+- DON'T force the progression - it's a GUIDE, not a requirement
+- DO use it to give ${firstName} direction when they need it
+
+**EXAMPLE RESPONSES:**
+- "${firstName}: teach me calculus" → "Let's start with limits - they're the foundation of calculus. A limit helps us understand how a function behaves as it approaches a certain point..."
+- "${firstName}: what's next?" → "You've got limits down! Ready to explore derivatives? They build directly on what you just learned..."
+- "${firstName}: I have a specific homework problem" → [Help with their problem - progression is secondary]
+`;
+
+    return context;
+  } catch (error) {
+    console.error('Error loading course pathway:', error);
+    return '';
+  }
 }
 
 function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null) {
@@ -1455,7 +1579,9 @@ ${masteryContext ?
 ` :
   `${buildSkillMasteryContext(userProfile)}
 
-${buildLearningProfileContext(userProfile)}`}
+${buildLearningProfileContext(userProfile)}
+
+${buildCourseProgressionContext(mathCourse, firstName)}`}
 
 ${!masteryContext && curriculumContext ? `--- CURRICULUM CONTEXT (FROM TEACHER) ---
 ${curriculumContext}

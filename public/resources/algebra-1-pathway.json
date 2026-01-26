@@ -1,73 +1,621 @@
 {
+  "courseId": "algebra-1",
   "track": "Algebra 1",
   "overview": "Build algebraic thinking through equations, functions, and data analysis. Master linear and quadratic relationships.",
+  "prerequisites": ["grade-8", "pre-algebra"],
+  "naturalProgression": [
+    "Start with solving equations - the core skill of algebra",
+    "Move to linear functions and graphing",
+    "Learn systems of equations for multiple unknowns",
+    "Build polynomial skills and factoring",
+    "Culminate with quadratic functions and exponentials"
+  ],
   "modules": [
     {
       "moduleId": "foundations_equations",
       "quarter": 1,
       "title": "Foundations & Linear Equations",
-      "preview": "Solve equations systematically and understand equality.",
-      "skills": ["solving-one-step-equations", "solving-two-step-equations", "solving-multi-step-equations", "solving-equations-with-variables-both-sides"]
+      "preview": "Solve equations systematically and understand equality",
+      "skills": ["solving-one-step-equations", "solving-two-step-equations", "solving-multi-step-equations", "solving-equations-with-variables-both-sides"],
+      "lessons": [
+        {
+          "lessonId": "variables-expressions",
+          "title": "Variables and Expressions",
+          "order": 1,
+          "concepts": [
+            "Variables represent unknown quantities",
+            "Writing expressions from words",
+            "Evaluating expressions"
+          ],
+          "teachingNotes": "Review and solidify understanding of what a variable means."
+        },
+        {
+          "lessonId": "equations-intro",
+          "title": "What is an Equation?",
+          "order": 2,
+          "concepts": [
+            "Equations show equality",
+            "Solutions make equations true",
+            "Checking solutions by substitution"
+          ]
+        },
+        {
+          "lessonId": "one-step-equations",
+          "title": "One-Step Equations",
+          "order": 3,
+          "concepts": [
+            "Inverse operations",
+            "Addition/subtraction equations",
+            "Multiplication/division equations",
+            "Keeping equations balanced"
+          ],
+          "keyFormulas": ["Whatever you do to one side, do to the other"],
+          "teachingNotes": "Use balance scale analogy. Stress the 'why' behind inverse operations."
+        },
+        {
+          "lessonId": "two-step-equations",
+          "title": "Two-Step Equations",
+          "order": 4,
+          "concepts": [
+            "Order of operations in reverse",
+            "Undo addition/subtraction first, then multiplication/division",
+            "ax + b = c form"
+          ],
+          "teachingNotes": "Box the variable term, then work 'outside the box' first."
+        },
+        {
+          "lessonId": "multi-step-equations",
+          "title": "Multi-Step Equations",
+          "order": 5,
+          "concepts": [
+            "Combining like terms first",
+            "Distributive property",
+            "Simplifying before solving"
+          ]
+        },
+        {
+          "lessonId": "variables-both-sides",
+          "title": "Variables on Both Sides",
+          "order": 6,
+          "concepts": [
+            "Move all variables to one side",
+            "Move all constants to other side",
+            "Special cases: no solution, infinite solutions"
+          ],
+          "commonMistakes": ["Forgetting to distribute negative signs", "Not collecting all variable terms"]
+        },
+        {
+          "lessonId": "literal-equations",
+          "title": "Literal Equations and Formulas",
+          "order": 7,
+          "concepts": [
+            "Solving for a specific variable",
+            "Rearranging formulas",
+            "Applications with geometry and science formulas"
+          ]
+        },
+        {
+          "lessonId": "inequalities-intro",
+          "title": "Solving Inequalities",
+          "order": 8,
+          "concepts": [
+            "Inequality symbols: <, >, ≤, ≥",
+            "Solving like equations (mostly)",
+            "FLIP the sign when multiplying/dividing by negative",
+            "Graphing on number lines"
+          ],
+          "commonMistakes": ["Forgetting to flip inequality when multiplying by negative"]
+        }
+      ]
     },
     {
       "moduleId": "linear_functions",
       "quarter": 2,
       "title": "Linear Functions & Graphing",
-      "preview": "Graph linear relationships and write equations from multiple representations.",
-      "skills": ["graphing-linear-equations-slope-intercept", "writing-linear-equations-slope-intercept", "slope-from-points", "parallel-perpendicular-lines"]
+      "preview": "Graph linear relationships and write equations from multiple representations",
+      "skills": ["graphing-linear-equations-slope-intercept", "writing-linear-equations-slope-intercept", "slope-from-points", "parallel-perpendicular-lines"],
+      "lessons": [
+        {
+          "lessonId": "coordinate-plane",
+          "title": "The Coordinate Plane",
+          "order": 1,
+          "concepts": [
+            "x-axis, y-axis, origin",
+            "Ordered pairs (x, y)",
+            "Plotting and reading points"
+          ]
+        },
+        {
+          "lessonId": "relations-functions",
+          "title": "Relations and Functions",
+          "order": 2,
+          "concepts": [
+            "Domain and range",
+            "Function definition: each input has exactly one output",
+            "Vertical line test",
+            "Function notation f(x)"
+          ]
+        },
+        {
+          "lessonId": "slope-intro",
+          "title": "Understanding Slope",
+          "order": 3,
+          "concepts": [
+            "Slope as rate of change",
+            "Rise over run",
+            "Positive, negative, zero, undefined slopes",
+            "Slope from a graph"
+          ],
+          "keyFormulas": ["m = (y₂ - y₁)/(x₂ - x₁) = rise/run"]
+        },
+        {
+          "lessonId": "slope-intercept",
+          "title": "Slope-Intercept Form",
+          "order": 4,
+          "concepts": [
+            "y = mx + b",
+            "m is slope, b is y-intercept",
+            "Graphing from slope-intercept form",
+            "Writing equations from graphs"
+          ],
+          "keyFormulas": ["y = mx + b"]
+        },
+        {
+          "lessonId": "point-slope",
+          "title": "Point-Slope Form",
+          "order": 5,
+          "concepts": [
+            "y - y₁ = m(x - x₁)",
+            "When to use point-slope",
+            "Converting between forms"
+          ],
+          "keyFormulas": ["y - y₁ = m(x - x₁)"]
+        },
+        {
+          "lessonId": "standard-form",
+          "title": "Standard Form",
+          "order": 6,
+          "concepts": [
+            "Ax + By = C",
+            "Finding intercepts",
+            "Converting to slope-intercept"
+          ],
+          "keyFormulas": ["Ax + By = C"]
+        },
+        {
+          "lessonId": "parallel-perpendicular",
+          "title": "Parallel and Perpendicular Lines",
+          "order": 7,
+          "concepts": [
+            "Parallel lines: same slope",
+            "Perpendicular lines: negative reciprocal slopes",
+            "Writing equations of parallel/perpendicular lines"
+          ],
+          "keyFormulas": ["Parallel: m₁ = m₂", "Perpendicular: m₁ × m₂ = -1"]
+        },
+        {
+          "lessonId": "linear-inequalities-2var",
+          "title": "Graphing Linear Inequalities",
+          "order": 8,
+          "concepts": [
+            "Boundary line (solid vs dashed)",
+            "Shading above or below",
+            "Testing points to verify"
+          ]
+        }
+      ]
     },
     {
       "moduleId": "systems_equations",
       "quarter": 2,
       "title": "Systems of Equations",
-      "preview": "Solve systems using graphing, substitution, and elimination methods.",
-      "skills": ["systems-of-equations-graphing", "systems-of-equations-substitution", "systems-of-equations-elimination", "systems-word-problems"]
+      "preview": "Solve systems using graphing, substitution, and elimination methods",
+      "skills": ["systems-of-equations-graphing", "systems-of-equations-substitution", "systems-of-equations-elimination", "systems-word-problems"],
+      "lessons": [
+        {
+          "lessonId": "systems-intro",
+          "title": "Introduction to Systems",
+          "order": 1,
+          "concepts": [
+            "Two equations, two unknowns",
+            "Solution as intersection point",
+            "Checking solutions in both equations"
+          ]
+        },
+        {
+          "lessonId": "systems-graphing",
+          "title": "Solving by Graphing",
+          "order": 2,
+          "concepts": [
+            "Graph both lines",
+            "Find intersection point",
+            "Limitations (imprecise for non-integer solutions)"
+          ]
+        },
+        {
+          "lessonId": "systems-substitution",
+          "title": "Solving by Substitution",
+          "order": 3,
+          "concepts": [
+            "Solve one equation for one variable",
+            "Substitute into other equation",
+            "Solve and back-substitute"
+          ],
+          "teachingNotes": "Best when one equation is already solved for a variable."
+        },
+        {
+          "lessonId": "systems-elimination",
+          "title": "Solving by Elimination",
+          "order": 4,
+          "concepts": [
+            "Add/subtract equations to eliminate a variable",
+            "Multiplying to create opposites",
+            "Choosing which variable to eliminate"
+          ],
+          "teachingNotes": "Best when coefficients are already opposites or easy to make opposites."
+        },
+        {
+          "lessonId": "systems-special-cases",
+          "title": "Special Cases",
+          "order": 5,
+          "concepts": [
+            "No solution (parallel lines)",
+            "Infinite solutions (same line)",
+            "Recognizing from algebraic solution"
+          ]
+        },
+        {
+          "lessonId": "systems-word-problems",
+          "title": "Systems Word Problems",
+          "order": 6,
+          "concepts": [
+            "Define variables",
+            "Write two equations from context",
+            "Solve and interpret"
+          ],
+          "teachingNotes": "Common types: mixture, distance-rate-time, cost problems."
+        }
+      ]
     },
     {
       "moduleId": "checkpoint_q2",
       "quarter": 2,
       "title": "Q2 Checkpoint",
-      "preview": "Cumulative assessment: Linear functions and systems"
+      "preview": "Cumulative assessment: Linear functions and systems",
+      "isCheckpoint": true
     },
     {
       "moduleId": "exponents_polynomials",
       "quarter": 3,
       "title": "Exponents & Polynomials",
-      "preview": "Master exponent rules and polynomial operations.",
-      "skills": ["exponent-rules-multiplication", "exponent-rules-division", "exponent-rules-power-of-power", "polynomial-addition-subtraction", "polynomial-multiplication-monomial"]
+      "preview": "Master exponent rules and polynomial operations",
+      "skills": ["exponent-rules-multiplication", "exponent-rules-division", "exponent-rules-power-of-power", "polynomial-addition-subtraction", "polynomial-multiplication-monomial"],
+      "lessons": [
+        {
+          "lessonId": "exponents-review",
+          "title": "Exponent Basics",
+          "order": 1,
+          "concepts": [
+            "Base and exponent",
+            "Expanded form",
+            "Negative exponents as reciprocals",
+            "Zero exponent rule"
+          ],
+          "keyFormulas": ["a⁰ = 1", "a⁻ⁿ = 1/aⁿ"]
+        },
+        {
+          "lessonId": "exponents-multiply",
+          "title": "Multiplying with Exponents",
+          "order": 2,
+          "concepts": [
+            "Product rule: aᵐ × aⁿ = aᵐ⁺ⁿ",
+            "Same base required",
+            "Power of a product"
+          ],
+          "keyFormulas": ["aᵐ × aⁿ = aᵐ⁺ⁿ", "(ab)ⁿ = aⁿbⁿ"]
+        },
+        {
+          "lessonId": "exponents-divide",
+          "title": "Dividing with Exponents",
+          "order": 3,
+          "concepts": [
+            "Quotient rule: aᵐ ÷ aⁿ = aᵐ⁻ⁿ",
+            "Power of a quotient"
+          ],
+          "keyFormulas": ["aᵐ ÷ aⁿ = aᵐ⁻ⁿ", "(a/b)ⁿ = aⁿ/bⁿ"]
+        },
+        {
+          "lessonId": "exponents-power",
+          "title": "Power of a Power",
+          "order": 4,
+          "concepts": [
+            "(aᵐ)ⁿ = aᵐⁿ",
+            "Combining exponent rules"
+          ],
+          "keyFormulas": ["(aᵐ)ⁿ = aᵐⁿ"]
+        },
+        {
+          "lessonId": "polynomials-intro",
+          "title": "Introduction to Polynomials",
+          "order": 5,
+          "concepts": [
+            "Terms, coefficients, degrees",
+            "Monomials, binomials, trinomials",
+            "Standard form",
+            "Classifying polynomials"
+          ]
+        },
+        {
+          "lessonId": "polynomials-add-sub",
+          "title": "Adding and Subtracting Polynomials",
+          "order": 6,
+          "concepts": [
+            "Combining like terms",
+            "Distributing the negative",
+            "Horizontal and vertical methods"
+          ]
+        },
+        {
+          "lessonId": "polynomials-multiply",
+          "title": "Multiplying Polynomials",
+          "order": 7,
+          "concepts": [
+            "Monomial × polynomial (distribute)",
+            "Binomial × binomial (FOIL)",
+            "Polynomial × polynomial (distribute each term)"
+          ],
+          "teachingNotes": "FOIL is a special case of distribution, not a separate method."
+        },
+        {
+          "lessonId": "special-products",
+          "title": "Special Products",
+          "order": 8,
+          "concepts": [
+            "Square of a binomial: (a+b)² = a² + 2ab + b²",
+            "Difference of squares: (a+b)(a-b) = a² - b²"
+          ],
+          "keyFormulas": ["(a+b)² = a² + 2ab + b²", "(a-b)² = a² - 2ab + b²", "(a+b)(a-b) = a² - b²"]
+        }
+      ]
     },
     {
       "moduleId": "factoring",
       "quarter": 3,
       "title": "Factoring",
-      "preview": "Factor polynomials using GCF, grouping, and special patterns.",
-      "skills": ["factoring-gcf", "factoring-trinomials", "factoring-difference-of-squares", "factoring-perfect-square-trinomials"]
+      "preview": "Factor polynomials using GCF, grouping, and special patterns",
+      "skills": ["factoring-gcf", "factoring-trinomials", "factoring-difference-of-squares", "factoring-perfect-square-trinomials"],
+      "lessons": [
+        {
+          "lessonId": "factoring-gcf",
+          "title": "Factoring Out the GCF",
+          "order": 1,
+          "concepts": [
+            "Finding greatest common factor",
+            "Factoring out GCF from all terms",
+            "Always factor GCF first!"
+          ],
+          "teachingNotes": "This should always be the first step in any factoring problem."
+        },
+        {
+          "lessonId": "factoring-x2-bx-c",
+          "title": "Factoring x² + bx + c",
+          "order": 2,
+          "concepts": [
+            "Find two numbers that multiply to c and add to b",
+            "(x + p)(x + q) where pq = c and p + q = b",
+            "Signs: both positive, both negative, or opposite"
+          ],
+          "teachingNotes": "Lots of practice with the 'sum and product' thinking."
+        },
+        {
+          "lessonId": "factoring-ax2-bx-c",
+          "title": "Factoring ax² + bx + c",
+          "order": 3,
+          "concepts": [
+            "When a ≠ 1",
+            "AC method (grouping)",
+            "Trial and error method"
+          ],
+          "teachingNotes": "AC method: find numbers that multiply to ac and add to b, then factor by grouping."
+        },
+        {
+          "lessonId": "factoring-special",
+          "title": "Factoring Special Patterns",
+          "order": 4,
+          "concepts": [
+            "Difference of squares: a² - b² = (a+b)(a-b)",
+            "Perfect square trinomials",
+            "Recognizing the patterns"
+          ],
+          "keyFormulas": ["a² - b² = (a+b)(a-b)", "a² + 2ab + b² = (a+b)²"]
+        },
+        {
+          "lessonId": "factoring-grouping",
+          "title": "Factoring by Grouping",
+          "order": 5,
+          "concepts": [
+            "Four-term polynomials",
+            "Group first two and last two",
+            "Factor out common binomial"
+          ]
+        },
+        {
+          "lessonId": "factoring-completely",
+          "title": "Factoring Completely",
+          "order": 6,
+          "concepts": [
+            "Multiple factoring steps",
+            "Check for GCF first, then other methods",
+            "Factor until prime"
+          ]
+        }
+      ]
     },
     {
       "moduleId": "checkpoint_q3",
       "quarter": 3,
       "title": "Q3 Checkpoint",
-      "preview": "Cumulative assessment: Exponents, polynomials, and factoring"
+      "preview": "Cumulative assessment: Exponents, polynomials, and factoring",
+      "isCheckpoint": true
     },
     {
       "moduleId": "quadratic_functions",
       "quarter": 4,
       "title": "Quadratic Functions",
-      "preview": "Graph parabolas and solve quadratic equations using multiple methods.",
-      "skills": ["quadratic-equations-graphing", "solving-quadratics-factoring", "solving-quadratics-square-roots", "quadratic-formula", "discriminant"]
+      "preview": "Graph parabolas and solve quadratic equations using multiple methods",
+      "skills": ["quadratic-equations-graphing", "solving-quadratics-factoring", "solving-quadratics-square-roots", "quadratic-formula", "discriminant"],
+      "lessons": [
+        {
+          "lessonId": "quadratics-intro",
+          "title": "Introduction to Quadratics",
+          "order": 1,
+          "concepts": [
+            "f(x) = ax² + bx + c",
+            "Parabola shape",
+            "Real-world applications (projectile motion)"
+          ]
+        },
+        {
+          "lessonId": "quadratics-graphing",
+          "title": "Graphing Quadratic Functions",
+          "order": 2,
+          "concepts": [
+            "Vertex and axis of symmetry",
+            "Direction of opening (a > 0 vs a < 0)",
+            "x-intercepts (zeros/roots)",
+            "y-intercept"
+          ],
+          "keyFormulas": ["Axis of symmetry: x = -b/(2a)"]
+        },
+        {
+          "lessonId": "vertex-form",
+          "title": "Vertex Form",
+          "order": 3,
+          "concepts": [
+            "f(x) = a(x-h)² + k",
+            "Vertex at (h, k)",
+            "Transformations from parent function",
+            "Converting to/from standard form"
+          ],
+          "keyFormulas": ["f(x) = a(x-h)² + k, vertex at (h,k)"]
+        },
+        {
+          "lessonId": "solving-factoring",
+          "title": "Solving by Factoring",
+          "order": 4,
+          "concepts": [
+            "Zero product property",
+            "Set each factor = 0",
+            "Factor, then solve"
+          ],
+          "keyFormulas": ["If ab = 0, then a = 0 or b = 0"]
+        },
+        {
+          "lessonId": "solving-square-roots",
+          "title": "Solving by Square Roots",
+          "order": 5,
+          "concepts": [
+            "When there's no x-term",
+            "Isolate x², take square root",
+            "Don't forget ± for two solutions"
+          ]
+        },
+        {
+          "lessonId": "completing-square",
+          "title": "Completing the Square",
+          "order": 6,
+          "concepts": [
+            "Creating a perfect square trinomial",
+            "Adding (b/2)² to both sides",
+            "Solving and converting to vertex form"
+          ]
+        },
+        {
+          "lessonId": "quadratic-formula",
+          "title": "The Quadratic Formula",
+          "order": 7,
+          "concepts": [
+            "x = (-b ± √(b²-4ac))/(2a)",
+            "Works for any quadratic",
+            "Derivation from completing the square"
+          ],
+          "keyFormulas": ["x = (-b ± √(b²-4ac))/(2a)"]
+        },
+        {
+          "lessonId": "discriminant",
+          "title": "The Discriminant",
+          "order": 8,
+          "concepts": [
+            "b² - 4ac determines number of solutions",
+            "Positive: 2 real solutions",
+            "Zero: 1 real solution (double root)",
+            "Negative: no real solutions"
+          ],
+          "keyFormulas": ["Discriminant = b² - 4ac"]
+        }
+      ]
     },
     {
       "moduleId": "exponential_functions",
       "quarter": 4,
       "title": "Exponential Functions",
-      "preview": "Model growth and decay with exponential relationships.",
-      "skills": ["exponential-functions-basics", "exponential-growth-decay", "exponential-equations"]
+      "preview": "Model growth and decay with exponential relationships",
+      "skills": ["exponential-functions-basics", "exponential-growth-decay", "exponential-equations"],
+      "lessons": [
+        {
+          "lessonId": "exponential-intro",
+          "title": "Exponential Functions",
+          "order": 1,
+          "concepts": [
+            "f(x) = a·bˣ",
+            "Base b determines growth or decay",
+            "Exponential vs linear growth"
+          ]
+        },
+        {
+          "lessonId": "exponential-growth",
+          "title": "Exponential Growth",
+          "order": 2,
+          "concepts": [
+            "When b > 1",
+            "Doubling, tripling",
+            "Growth rate and factor",
+            "Applications: population, compound interest"
+          ],
+          "keyFormulas": ["A = P(1 + r)ᵗ"]
+        },
+        {
+          "lessonId": "exponential-decay",
+          "title": "Exponential Decay",
+          "order": 3,
+          "concepts": [
+            "When 0 < b < 1",
+            "Half-life",
+            "Depreciation",
+            "Decay rate"
+          ],
+          "keyFormulas": ["A = P(1 - r)ᵗ"]
+        },
+        {
+          "lessonId": "exponential-graphing",
+          "title": "Graphing Exponential Functions",
+          "order": 4,
+          "concepts": [
+            "Horizontal asymptote",
+            "Domain and range",
+            "Transformations"
+          ]
+        }
+      ]
     },
     {
       "moduleId": "final_mastery_assessment",
       "quarter": 4,
       "title": "Final Mastery Assessment",
-      "preview": "Comprehensive assessment covering all Algebra 1 content"
+      "preview": "Comprehensive assessment covering all Algebra 1 content",
+      "isCheckpoint": true,
+      "isFinal": true
     }
-  ]
+  ],
+  "aiGuidanceNotes": "Algebra 1 is the foundation for all higher math. Focus on equation-solving fluency first. Linear functions connect algebra to graphing - use multiple representations. Factoring requires lots of practice. The quadratic formula is a safety net but encourage understanding other methods first."
 }

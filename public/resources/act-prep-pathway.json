@@ -1,0 +1,518 @@
+{
+  "courseId": "act-prep",
+  "track": "ACT Math Prep",
+  "overview": "Targeted preparation for the ACT Mathematics section covering pre-algebra through trigonometry with test-taking strategies.",
+  "prerequisites": ["algebra-2"],
+  "naturalProgression": [
+    "Review foundational arithmetic and algebra skills",
+    "Master coordinate geometry and functions",
+    "Strengthen geometry knowledge",
+    "Learn trigonometry essentials",
+    "Practice timing and test strategies"
+  ],
+  "testInfo": {
+    "totalQuestions": 60,
+    "timeLimit": "60 minutes",
+    "contentBreakdown": {
+      "preAlgebraElementaryAlgebra": "20-25%",
+      "intermediateAlgebraCoordinateGeometry": "25-30%",
+      "planeGeometry": "20-25%",
+      "trigonometry": "5-10%"
+    },
+    "calculatorPolicy": "Calculator allowed for entire test"
+  },
+  "modules": [
+    {
+      "moduleId": "pre_algebra_foundations",
+      "title": "Pre-Algebra & Number Properties",
+      "preview": "Fractions, decimals, percents, and number properties",
+      "actPercentage": "10-15%",
+      "lessons": [
+        {
+          "lessonId": "number-operations",
+          "title": "Number Operations",
+          "order": 1,
+          "concepts": [
+            "Order of operations (PEMDAS)",
+            "Absolute value",
+            "Factors and multiples",
+            "GCF and LCM"
+          ],
+          "actTips": "These are often the 'easy' questions at the beginning. Don't rush - careless errors cost points."
+        },
+        {
+          "lessonId": "fractions-decimals",
+          "title": "Fractions and Decimals",
+          "order": 2,
+          "concepts": [
+            "Converting between fractions and decimals",
+            "Operations with fractions",
+            "Comparing fractions"
+          ]
+        },
+        {
+          "lessonId": "percents-ratios",
+          "title": "Percents and Ratios",
+          "order": 3,
+          "concepts": [
+            "Percent calculations (of, is, what)",
+            "Percent increase/decrease",
+            "Ratios and proportions",
+            "Unit rates"
+          ],
+          "actTips": "Percent change formula: (new - old)/old × 100"
+        },
+        {
+          "lessonId": "exponents-roots",
+          "title": "Exponents and Roots",
+          "order": 4,
+          "concepts": [
+            "Exponent rules",
+            "Square roots and cube roots",
+            "Rational exponents",
+            "Scientific notation"
+          ]
+        },
+        {
+          "lessonId": "mean-median-mode",
+          "title": "Statistics Basics",
+          "order": 5,
+          "concepts": [
+            "Mean, median, mode",
+            "Range",
+            "Weighted averages",
+            "Probability basics"
+          ],
+          "actTips": "ACT loves weighted average problems. Know the formula: total = sum/count."
+        }
+      ]
+    },
+    {
+      "moduleId": "elementary_algebra",
+      "title": "Elementary Algebra",
+      "preview": "Equations, inequalities, and basic algebraic manipulation",
+      "actPercentage": "10-15%",
+      "lessons": [
+        {
+          "lessonId": "linear-equations-act",
+          "title": "Linear Equations",
+          "order": 1,
+          "concepts": [
+            "Solving one and two-step equations",
+            "Equations with fractions",
+            "Word problems to equations"
+          ],
+          "actTips": "Plug in answer choices (backsolving) when algebra seems messy."
+        },
+        {
+          "lessonId": "inequalities-act",
+          "title": "Inequalities",
+          "order": 2,
+          "concepts": [
+            "Solving linear inequalities",
+            "Compound inequalities",
+            "Inequality word problems"
+          ]
+        },
+        {
+          "lessonId": "absolute-value-equations",
+          "title": "Absolute Value",
+          "order": 3,
+          "concepts": [
+            "Absolute value equations",
+            "Absolute value inequalities",
+            "Graphing absolute value"
+          ]
+        },
+        {
+          "lessonId": "substitution-evaluation",
+          "title": "Substitution and Evaluation",
+          "order": 4,
+          "concepts": [
+            "Evaluating expressions",
+            "Substituting values",
+            "Working with formulas"
+          ]
+        }
+      ]
+    },
+    {
+      "moduleId": "intermediate_algebra",
+      "title": "Intermediate Algebra",
+      "preview": "Quadratics, systems, functions, and polynomials",
+      "actPercentage": "15-20%",
+      "lessons": [
+        {
+          "lessonId": "systems-act",
+          "title": "Systems of Equations",
+          "order": 1,
+          "concepts": [
+            "Substitution method",
+            "Elimination method",
+            "Word problems with systems"
+          ],
+          "actTips": "ACT systems often have nice numbers - look for quick elimination opportunities."
+        },
+        {
+          "lessonId": "quadratics-act",
+          "title": "Quadratic Equations",
+          "order": 2,
+          "concepts": [
+            "Factoring quadratics",
+            "Quadratic formula",
+            "Completing the square",
+            "Discriminant"
+          ],
+          "keyFormulas": ["x = (-b ± √(b²-4ac))/(2a)"]
+        },
+        {
+          "lessonId": "polynomials-act",
+          "title": "Polynomials",
+          "order": 3,
+          "concepts": [
+            "Adding and subtracting polynomials",
+            "Multiplying polynomials (FOIL)",
+            "Factoring techniques"
+          ]
+        },
+        {
+          "lessonId": "functions-act",
+          "title": "Functions",
+          "order": 4,
+          "concepts": [
+            "Function notation f(x)",
+            "Domain and range",
+            "Composite functions",
+            "Inverse functions"
+          ],
+          "actTips": "f(g(x)) means do g first, then f. Work inside out."
+        },
+        {
+          "lessonId": "radicals-act",
+          "title": "Radicals and Rational Expressions",
+          "order": 5,
+          "concepts": [
+            "Simplifying radicals",
+            "Rationalizing denominators",
+            "Operations with radicals"
+          ]
+        },
+        {
+          "lessonId": "complex-numbers",
+          "title": "Complex Numbers",
+          "order": 6,
+          "concepts": [
+            "i = √(-1), i² = -1",
+            "Adding and multiplying complex numbers",
+            "Powers of i pattern"
+          ],
+          "actTips": "Powers of i cycle: i, -1, -i, 1, i, -1, ... Use remainder when dividing exponent by 4."
+        }
+      ]
+    },
+    {
+      "moduleId": "coordinate_geometry",
+      "title": "Coordinate Geometry",
+      "preview": "Graphing, lines, circles, and conic sections",
+      "actPercentage": "15-20%",
+      "lessons": [
+        {
+          "lessonId": "coordinate-plane-act",
+          "title": "The Coordinate Plane",
+          "order": 1,
+          "concepts": [
+            "Plotting points",
+            "Quadrants",
+            "Distance formula",
+            "Midpoint formula"
+          ],
+          "keyFormulas": [
+            "Distance: d = √[(x₂-x₁)² + (y₂-y₁)²]",
+            "Midpoint: ((x₁+x₂)/2, (y₁+y₂)/2)"
+          ]
+        },
+        {
+          "lessonId": "linear-graphs-act",
+          "title": "Graphing Linear Equations",
+          "order": 2,
+          "concepts": [
+            "Slope-intercept form (y = mx + b)",
+            "Point-slope form",
+            "Standard form",
+            "Finding slope from two points"
+          ],
+          "actTips": "Know slope formula cold: m = (y₂-y₁)/(x₂-x₁)"
+        },
+        {
+          "lessonId": "parallel-perpendicular-act",
+          "title": "Parallel and Perpendicular Lines",
+          "order": 3,
+          "concepts": [
+            "Parallel lines: same slope",
+            "Perpendicular lines: negative reciprocal slopes",
+            "Writing equations given conditions"
+          ]
+        },
+        {
+          "lessonId": "parabolas-act",
+          "title": "Parabolas",
+          "order": 4,
+          "concepts": [
+            "Standard form y = ax² + bx + c",
+            "Vertex form y = a(x-h)² + k",
+            "Finding vertex: x = -b/(2a)",
+            "Direction of opening"
+          ]
+        },
+        {
+          "lessonId": "circles-act",
+          "title": "Circles",
+          "order": 5,
+          "concepts": [
+            "Standard form: (x-h)² + (y-k)² = r²",
+            "Center (h, k) and radius r",
+            "Converting from general form"
+          ],
+          "keyFormulas": ["(x-h)² + (y-k)² = r²"]
+        },
+        {
+          "lessonId": "transformations-act",
+          "title": "Transformations",
+          "order": 6,
+          "concepts": [
+            "Translations",
+            "Reflections",
+            "Stretches and shrinks"
+          ]
+        }
+      ]
+    },
+    {
+      "moduleId": "plane_geometry",
+      "title": "Plane Geometry",
+      "preview": "Angles, triangles, polygons, circles, and area/volume",
+      "actPercentage": "20-25%",
+      "lessons": [
+        {
+          "lessonId": "angles-lines-act",
+          "title": "Angles and Lines",
+          "order": 1,
+          "concepts": [
+            "Complementary (90°) and supplementary (180°)",
+            "Vertical angles (equal)",
+            "Parallel lines cut by transversal",
+            "Corresponding, alternate interior/exterior angles"
+          ]
+        },
+        {
+          "lessonId": "triangles-act",
+          "title": "Triangles",
+          "order": 2,
+          "concepts": [
+            "Angle sum = 180°",
+            "Types: equilateral, isosceles, scalene, right",
+            "Triangle inequality",
+            "Similar triangles (AA, SAS, SSS)"
+          ],
+          "actTips": "Look for similar triangles in complex figures. Ratios are your friend."
+        },
+        {
+          "lessonId": "pythagorean-act",
+          "title": "Pythagorean Theorem",
+          "order": 3,
+          "concepts": [
+            "a² + b² = c²",
+            "Common triples: 3-4-5, 5-12-13, 8-15-17",
+            "Special right triangles: 45-45-90, 30-60-90"
+          ],
+          "keyFormulas": [
+            "a² + b² = c²",
+            "45-45-90: x, x, x√2",
+            "30-60-90: x, x√3, 2x"
+          ],
+          "actTips": "Memorize the special triangles! They appear constantly."
+        },
+        {
+          "lessonId": "polygons-act",
+          "title": "Polygons",
+          "order": 4,
+          "concepts": [
+            "Sum of interior angles: (n-2)·180°",
+            "Regular polygon properties",
+            "Quadrilateral properties"
+          ]
+        },
+        {
+          "lessonId": "circles-geometry-act",
+          "title": "Circle Properties",
+          "order": 5,
+          "concepts": [
+            "Circumference: C = 2πr = πd",
+            "Area: A = πr²",
+            "Arc length and sector area",
+            "Central and inscribed angles"
+          ],
+          "keyFormulas": [
+            "C = 2πr",
+            "A = πr²",
+            "Arc = (θ/360)·2πr",
+            "Sector = (θ/360)·πr²"
+          ]
+        },
+        {
+          "lessonId": "area-volume-act",
+          "title": "Area and Volume",
+          "order": 6,
+          "concepts": [
+            "Rectangle, triangle, parallelogram, trapezoid areas",
+            "Surface area and volume of prisms, cylinders",
+            "Cones, spheres, pyramids"
+          ],
+          "keyFormulas": [
+            "Triangle: A = (1/2)bh",
+            "Trapezoid: A = (1/2)(b₁+b₂)h",
+            "Cylinder: V = πr²h",
+            "Sphere: V = (4/3)πr³"
+          ]
+        }
+      ]
+    },
+    {
+      "moduleId": "trigonometry",
+      "title": "Trigonometry",
+      "preview": "Right triangle trig and unit circle basics",
+      "actPercentage": "5-10%",
+      "lessons": [
+        {
+          "lessonId": "sohcahtoa",
+          "title": "Right Triangle Trigonometry",
+          "order": 1,
+          "concepts": [
+            "SOH-CAH-TOA",
+            "Finding sides and angles",
+            "Setting up trig equations"
+          ],
+          "keyFormulas": [
+            "sin θ = opposite/hypotenuse",
+            "cos θ = adjacent/hypotenuse",
+            "tan θ = opposite/adjacent"
+          ]
+        },
+        {
+          "lessonId": "trig-identities-act",
+          "title": "Basic Trig Identities",
+          "order": 2,
+          "concepts": [
+            "sin²θ + cos²θ = 1",
+            "tan θ = sin θ/cos θ",
+            "Reciprocal functions: csc, sec, cot"
+          ]
+        },
+        {
+          "lessonId": "unit-circle-act",
+          "title": "Unit Circle Basics",
+          "order": 3,
+          "concepts": [
+            "Angles in radians",
+            "Key angles: 0, π/6, π/4, π/3, π/2",
+            "Signs in quadrants"
+          ],
+          "actTips": "ACT rarely goes deep on unit circle. Know the quadrant signs: All Students Take Calculus."
+        },
+        {
+          "lessonId": "law-of-sines-cosines",
+          "title": "Laws of Sines and Cosines",
+          "order": 4,
+          "concepts": [
+            "Law of Sines: a/sin A = b/sin B = c/sin C",
+            "Law of Cosines: c² = a² + b² - 2ab·cos C",
+            "When to use each"
+          ],
+          "keyFormulas": [
+            "Law of Sines: a/sin A = b/sin B",
+            "Law of Cosines: c² = a² + b² - 2ab·cos C"
+          ]
+        },
+        {
+          "lessonId": "trig-graphs-act",
+          "title": "Graphing Trig Functions",
+          "order": 5,
+          "concepts": [
+            "Amplitude, period, phase shift",
+            "y = A sin(Bx + C) + D form",
+            "Reading graphs"
+          ],
+          "optional": true
+        }
+      ]
+    },
+    {
+      "moduleId": "test_strategies",
+      "title": "ACT Test Strategies",
+      "preview": "Time management, question types, and scoring strategies",
+      "lessons": [
+        {
+          "lessonId": "timing-strategy",
+          "title": "Time Management",
+          "order": 1,
+          "concepts": [
+            "60 questions in 60 minutes = 1 min/question average",
+            "Questions get harder as you go",
+            "Don't spend more than 2 minutes on any question",
+            "Skip and return strategy"
+          ],
+          "actTips": "Mark questions you skip. Answer every question - no penalty for guessing!"
+        },
+        {
+          "lessonId": "backsolving",
+          "title": "Backsolving (Plugging In Answers)",
+          "order": 2,
+          "concepts": [
+            "When algebra is messy, try answer choices",
+            "Start with middle answer (B or C) for efficiency",
+            "Works great for word problems"
+          ]
+        },
+        {
+          "lessonId": "picking-numbers",
+          "title": "Picking Numbers",
+          "order": 3,
+          "concepts": [
+            "Replace variables with easy numbers",
+            "Good for 'which expression equals...' questions",
+            "Avoid 0, 1, and numbers in the problem"
+          ]
+        },
+        {
+          "lessonId": "estimation",
+          "title": "Estimation and Elimination",
+          "order": 4,
+          "concepts": [
+            "Round numbers to estimate quickly",
+            "Eliminate obviously wrong answers",
+            "Use approximations for π, √2, √3"
+          ]
+        },
+        {
+          "lessonId": "common-traps",
+          "title": "Common Traps and Mistakes",
+          "order": 5,
+          "concepts": [
+            "Not reading the question fully (asks for x+1, not x)",
+            "Forgetting negative solutions",
+            "Unit conversions",
+            "Misreading graphs"
+          ]
+        }
+      ]
+    },
+    {
+      "moduleId": "practice_tests",
+      "title": "Practice and Assessment",
+      "preview": "Full-length practice and targeted review",
+      "isCheckpoint": true,
+      "isFinal": true
+    }
+  ],
+  "aiGuidanceNotes": "For ACT prep, focus on efficiency and strategy alongside content review. Many students know the math but lose points to timing or careless errors. Practice identifying question types quickly and knowing which strategy to use. The test is predictable - certain question types appear every time."
+}
