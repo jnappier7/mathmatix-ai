@@ -492,6 +492,15 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     // Build candidate skills with estimated difficulties
     let candidateSkills = [];
 
+    // Build a map of skillId -> template baseDifficulty for more accurate difficulty estimates
+    const templateDifficultyMap = {};
+    for (const template of Object.values(TEMPLATES)) {
+      if (template.skillId && template.baseDifficulty !== undefined) {
+        templateDifficultyMap[template.skillId] = template.baseDifficulty;
+      }
+    }
+    console.log(`[DEBUG] Template difficulty map:`, templateDifficultyMap);
+
     // Get count of actual problems for each skill (not just templates)
     const problemCounts = await Problem.aggregate([
       { $match: { isActive: true } },
@@ -504,8 +513,18 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       // We allow template-only skills since generateProblem() can create on-demand
       const actualProblemCount = problemCountMap.get(skill.skillId) || 0;
 
-      // Use IRT difficulty if available, otherwise category estimate
-      const estimatedDifficulty = skill.irtDifficulty || categoryDifficultyMap[skill.category] || 0;
+      // Use difficulty in priority order:
+      // 1. Skill's irtDifficulty (if non-zero, meaning explicitly calibrated)
+      // 2. Template's baseDifficulty (most accurate for template-based skills)
+      // 3. Category-based estimate (fallback)
+      let estimatedDifficulty;
+      if (skill.irtDifficulty && skill.irtDifficulty !== 0) {
+        estimatedDifficulty = skill.irtDifficulty;
+      } else if (templateDifficultyMap[skill.skillId] !== undefined) {
+        estimatedDifficulty = templateDifficultyMap[skill.skillId];
+      } else {
+        estimatedDifficulty = categoryDifficultyMap[skill.category] || 0;
+      }
 
       // Count how many times this skill has been tested
       const testCount = session.testedSkills.filter(s => s === skill.skillId).length;

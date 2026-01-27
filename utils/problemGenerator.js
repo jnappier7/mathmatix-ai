@@ -592,6 +592,200 @@ const TEMPLATES = {
         estimatedTime: 15
       };
     }
+  },
+
+  // =========================================================================
+  // ALGEBRA 2 / HIGH SCHOOL LEVEL
+  // These match skillIds that may exist in the database
+  // =========================================================================
+
+  'algebra': {
+    skillId: 'algebra',
+    baseDifficulty: 1.0,
+    baseDiscrimination: 1.4,
+
+    generate: (targetDifficulty = 1.0) => {
+      // Solve linear equations
+      const a = random(2, 8);
+      const b = random(-10, 10);
+      const answer = random(-5, 5);
+      const result = a * answer + b;
+
+      return {
+        content: `Solve for x: ${a}x ${b >= 0 ? '+' : '-'} ${Math.abs(b)} = ${result}`,
+        answer,
+        difficulty: targetDifficulty,
+        discrimination: 1.4,
+        estimatedTime: 30
+      };
+    }
+  },
+
+  'circles-circumference-area': {
+    skillId: 'circles-circumference-area',
+    baseDifficulty: 1.4,
+    baseDiscrimination: 1.3,
+
+    generate: (targetDifficulty = 1.4) => {
+      const radius = random(2, 10);
+      const askCircumference = Math.random() < 0.5;
+
+      if (askCircumference) {
+        const answer = Math.round(2 * Math.PI * radius * 100) / 100;
+        return {
+          content: `Find the circumference of a circle with radius ${radius}. (Use π ≈ 3.14, round to 2 decimal places)`,
+          answer,
+          difficulty: targetDifficulty,
+          discrimination: 1.3,
+          estimatedTime: 30
+        };
+      } else {
+        const answer = Math.round(Math.PI * radius * radius * 100) / 100;
+        return {
+          content: `Find the area of a circle with radius ${radius}. (Use π ≈ 3.14, round to 2 decimal places)`,
+          answer,
+          difficulty: targetDifficulty,
+          discrimination: 1.3,
+          estimatedTime: 30
+        };
+      }
+    }
+  },
+
+  'circles': {
+    skillId: 'circles',
+    baseDifficulty: 2.5,
+    baseDiscrimination: 1.5,
+
+    generate: (targetDifficulty = 2.5) => {
+      // Advanced circle problems - equation of a circle
+      const h = random(-5, 5);
+      const k = random(-5, 5);
+      const r = random(2, 6);
+
+      return {
+        content: `Find the center and radius of the circle: (x ${h >= 0 ? '-' : '+'} ${Math.abs(h)})² + (y ${k >= 0 ? '-' : '+'} ${Math.abs(k)})² = ${r * r}`,
+        answer: `(${h}, ${k}), r = ${r}`,
+        answerType: 'expression',
+        difficulty: targetDifficulty,
+        discrimination: 1.5,
+        estimatedTime: 45
+      };
+    }
+  },
+
+  'area-triangles': {
+    skillId: 'area-triangles',
+    baseDifficulty: 0.7,
+    baseDiscrimination: 1.2,
+
+    generate: (targetDifficulty = 0.7) => {
+      const base = random(3, 15);
+      const height = random(3, 12);
+      const answer = (base * height) / 2;
+
+      return {
+        content: `Find the area of a triangle with base ${base} and height ${height}.`,
+        answer,
+        difficulty: targetDifficulty,
+        discrimination: 1.2,
+        estimatedTime: 20
+      };
+    }
+  },
+
+  // High-difficulty algebra skills
+  'quadratic-equations': {
+    skillId: 'quadratic-equations',
+    baseDifficulty: 1.8,
+    baseDiscrimination: 1.6,
+
+    generate: (targetDifficulty = 1.8) => {
+      // Generate factorable quadratics
+      const root1 = random(-6, 6);
+      const root2 = random(-6, 6);
+
+      // (x - root1)(x - root2) = x² - (root1+root2)x + root1*root2
+      const b = -(root1 + root2);
+      const c = root1 * root2;
+
+      let content = 'x²';
+      if (b !== 0) content += b > 0 ? ` + ${b}x` : ` - ${Math.abs(b)}x`;
+      if (c !== 0) content += c > 0 ? ` + ${c}` : ` - ${Math.abs(c)}`;
+      content += ' = 0';
+
+      return {
+        content: `Solve: ${content}`,
+        answer: Math.min(root1, root2),
+        difficulty: targetDifficulty,
+        discrimination: 1.6,
+        estimatedTime: 60
+      };
+    }
+  },
+
+  'systems-equations': {
+    skillId: 'systems-equations',
+    baseDifficulty: 1.5,
+    baseDiscrimination: 1.5,
+
+    generate: (targetDifficulty = 1.5) => {
+      // Simple system of 2 equations
+      const x = random(-5, 5);
+      const y = random(-5, 5);
+
+      // Generate coefficients
+      const a1 = random(1, 3);
+      const b1 = random(1, 3);
+      const a2 = random(1, 3);
+      const b2 = random(-3, 3);
+
+      const c1 = a1 * x + b1 * y;
+      const c2 = a2 * x + b2 * y;
+
+      return {
+        content: `Solve the system:\n${a1}x + ${b1}y = ${c1}\n${a2}x + ${b2}y = ${c2}\n(Enter the value of x)`,
+        answer: x,
+        difficulty: targetDifficulty,
+        discrimination: 1.5,
+        estimatedTime: 90
+      };
+    }
+  },
+
+  'polynomials-operations': {
+    skillId: 'polynomials-operations',
+    baseDifficulty: 1.6,
+    baseDiscrimination: 1.4,
+
+    generate: (targetDifficulty = 1.6) => {
+      // Multiply binomials (FOIL)
+      const a = random(1, 4);
+      const b = random(-5, 5);
+      const c = random(1, 4);
+      const d = random(-5, 5);
+
+      // (ax + b)(cx + d) = acx² + (ad + bc)x + bd
+      const coeff_x2 = a * c;
+      const coeff_x = a * d + b * c;
+      const constant = b * d;
+
+      const formatBinomial = (coeff, const_term) => {
+        let term = coeff === 1 ? 'x' : `${coeff}x`;
+        if (const_term > 0) return `(${term} + ${const_term})`;
+        if (const_term < 0) return `(${term} - ${Math.abs(const_term)})`;
+        return `(${term})`;
+      };
+
+      return {
+        content: `Expand: ${formatBinomial(a, b)} × ${formatBinomial(c, d)}`,
+        answer: `${coeff_x2}x² ${coeff_x >= 0 ? '+' : '-'} ${Math.abs(coeff_x)}x ${constant >= 0 ? '+' : '-'} ${Math.abs(constant)}`,
+        answerType: 'expression',
+        difficulty: targetDifficulty,
+        discrimination: 1.4,
+        estimatedTime: 45
+      };
+    }
   }
 };
 
