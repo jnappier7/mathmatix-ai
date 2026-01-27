@@ -3,21 +3,14 @@
 // Cool creatures that students can pick as their avatar
 
 window.AVATAR_CONFIG = {
-  // ===== ALWAYS UNLOCKED (Starter Creatures) =====
-  'lion': {
-    name: '🦁 Lion',
-    image: 'lion.png',
-    category: 'wild',
+  // ===== ALWAYS UNLOCKED (Starter Avatars) =====
+  // Mixed order for variety - images should represent diverse skin tones and hair colors
+  'artist': {
+    name: '🎨 Artist',
+    image: 'artist.png',
+    category: 'creative',
     rarity: 'common',
-    description: 'Bold, brave, and ready to conquer any math challenge!',
-    unlocked: true
-  },
-  'dragon': {
-    name: '🐉 Dragon',
-    image: 'dragon.png',
-    category: 'fantasy',
-    rarity: 'common',
-    description: 'Breathe fire through tough problems!',
+    description: 'Paint your path to success!',
     unlocked: true
   },
   'panda': {
@@ -28,78 +21,20 @@ window.AVATAR_CONFIG = {
     description: 'Dunk on those math problems!',
     unlocked: true
   },
-  'owl': {
-    name: '⚾ Baseball Player',
-    image: 'owl.png',
-    category: 'sports',
+  'musician': {
+    name: '🎵 Musician',
+    image: 'musician.png',
+    category: 'creative',
     rarity: 'common',
-    description: 'Hit it out of the park!',
+    description: 'Math is music to my ears!',
     unlocked: true
   },
-  'fox': {
-    name: '🦊 Fox',
-    image: 'fox.png',
-    category: 'clever',
-    rarity: 'common',
-    description: 'Quick thinking and creative!',
-    unlocked: true
-  },
-  'tiger': {
-    name: '🏈 Football Player',
-    image: 'tiger.png',
-    category: 'sports',
-    rarity: 'common',
-    description: 'Tackle tough problems head-on!',
-    unlocked: true
-  },
-  // BETA FEEDBACK: Added more sports options for female athletes
   'volleyball': {
     name: '🏐 Volleyball Player',
     image: 'volleyball.png',
     category: 'sports',
     rarity: 'common',
     description: 'Spike those math problems!',
-    unlocked: true
-  },
-  'softball': {
-    name: '🥎 Softball Player',
-    image: 'softball.png',
-    category: 'sports',
-    rarity: 'common',
-    description: 'Knock it out of the park!',
-    unlocked: true
-  },
-  'tennis': {
-    name: '🎾 Tennis Player',
-    image: 'tennis.png',
-    category: 'sports',
-    rarity: 'common',
-    description: 'Ace every problem!',
-    unlocked: true
-  },
-  'figureskater': {
-    name: '⛸️ Figure Skater',
-    image: 'figureskater.png',
-    category: 'sports',
-    rarity: 'common',
-    description: 'Glide through challenges with elegance!',
-    unlocked: true
-  },
-  'golfer': {
-    name: '⛳ Golfer',
-    image: 'golfer.png',
-    category: 'sports',
-    rarity: 'common',
-    description: 'Par for the course!',
-    unlocked: true
-  },
-  // Non-athletes - hobbies and interests
-  'artist': {
-    name: '🎨 Artist',
-    image: 'artist.png',
-    category: 'creative',
-    rarity: 'common',
-    description: 'Paint your path to success!',
     unlocked: true
   },
   'gamer': {
@@ -110,6 +45,14 @@ window.AVATAR_CONFIG = {
     description: 'Level up your math skills!',
     unlocked: true
   },
+  'softball': {
+    name: '🥎 Softball Player',
+    image: 'softball.png',
+    category: 'sports',
+    rarity: 'common',
+    description: 'Knock it out of the park!',
+    unlocked: true
+  },
   'bookworm': {
     name: '📚 Bookworm',
     image: 'bookworm.png',
@@ -118,16 +61,64 @@ window.AVATAR_CONFIG = {
     description: 'Read your way to knowledge!',
     unlocked: true
   },
-  'musician': {
-    name: '🎵 Musician',
-    image: 'musician.png',
-    category: 'creative',
+  'tennis': {
+    name: '🎾 Tennis Player',
+    image: 'tennis.png',
+    category: 'sports',
     rarity: 'common',
-    description: 'Math is music to my ears!',
+    description: 'Ace every problem!',
+    unlocked: true
+  },
+  'tiger': {
+    name: '🏈 Football Player',
+    image: 'tiger.png',
+    category: 'sports',
+    rarity: 'common',
+    description: 'Tackle tough problems head-on!',
+    unlocked: true
+  },
+  'figureskater': {
+    name: '⛸️ Figure Skater',
+    image: 'figureskater.png',
+    category: 'sports',
+    rarity: 'common',
+    description: 'Glide through challenges with elegance!',
+    unlocked: true
+  },
+  'owl': {
+    name: '⚾ Baseball Player',
+    image: 'owl.png',
+    category: 'sports',
+    rarity: 'common',
+    description: 'Hit it out of the park!',
+    unlocked: true
+  },
+  'golfer': {
+    name: '⛳ Golfer',
+    image: 'golfer.png',
+    category: 'sports',
+    rarity: 'common',
+    description: 'Par for the course!',
     unlocked: true
   },
 
   // ===== UNLOCK AT LEVEL 5 =====
+  'fox': {
+    name: '🦊 Fox',
+    image: 'fox.png',
+    category: 'clever',
+    rarity: 'uncommon',
+    description: 'Quick thinking and creative!',
+    unlockLevel: 5
+  },
+  'dragon': {
+    name: '🐉 Dragon',
+    image: 'dragon.png',
+    category: 'fantasy',
+    rarity: 'uncommon',
+    description: 'Breathe fire through tough problems!',
+    unlockLevel: 5
+  },
   'unicorn': {
     name: '🏒 Hockey Player',
     image: 'unicorn.png',
