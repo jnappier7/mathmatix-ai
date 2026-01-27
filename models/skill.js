@@ -107,6 +107,13 @@ const skillSchema = new mongoose.Schema({
       'right-triangles',
       'coordinate-geometry',
 
+      // Additional categories from database audit
+      'integrals',
+      'estimation',
+      'number-sense',
+      'mental-math',
+      'linear-functions',
+
       // Catch-all
       'advanced'
     ]

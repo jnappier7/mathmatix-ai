@@ -149,6 +149,13 @@ const CATEGORY_DIFFICULTY_MAP = {
   'right-triangles': 1.2,
   'coordinate-geometry': 1.2,
 
+  // Categories from database audit
+  'integrals': 3.0,
+  'estimation': -1.5,
+  'number-sense': -2.0,
+  'mental-math': -1.8,
+  'linear-functions': 1.0,
+
   'advanced': 2.5
 };
 
