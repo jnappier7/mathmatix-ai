@@ -13,10 +13,10 @@ let anthropic = null;
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Select appropriate API key based on environment
+// Legacy ANTHROPIC_API_KEY is used as fallback for both environments
 const anthropicApiKey = isProduction
-    ? process.env.ANTHROPIC_API_KEY_PROD    // Production: Use dedicated prod key
-    : process.env.ANTHROPIC_API_KEY_DEV     // Development/Testing: Use dev key
-    || process.env.ANTHROPIC_API_KEY;       // Legacy fallback (deprecated)
+    ? (process.env.ANTHROPIC_API_KEY_PROD || process.env.ANTHROPIC_API_KEY)   // Production: PROD key, fallback to legacy
+    : (process.env.ANTHROPIC_API_KEY_DEV || process.env.ANTHROPIC_API_KEY);   // Development: DEV key, fallback to legacy
 
 if (anthropicApiKey) {
     anthropic = new Anthropic({

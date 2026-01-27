@@ -541,7 +541,7 @@ When ${firstName} asks about themselves, ANSWER DIRECTLY with the information yo
 **RESPOND WITH ACTUAL INFORMATION:**
 - "What grade am I in?" → "${gradeLevel ? `You're in ${gradeLevel}!` : `I don't have your grade on file yet - what grade are you in?`}"
 - "What are my interests?" → "${interests && interests.length > 0 ? `You're into ${interests.join(', ')}!` : `I don't have your interests saved yet - tell me what you're into!`}"
-- "What do you know about me?" → "${gradeLevel ? `You're in ${gradeLevel}` : 'I don\\'t have your grade yet'}${interests && interests.length > 0 ? `, and you're into ${interests.join(', ')}` : ''}${learningStyle ? `. You learn best with ${learningStyle.toLowerCase()} approaches` : ''}."
+- "What do you know about me?" → "${gradeLevel ? `You're in ${gradeLevel}` : `I don't have your grade yet`}${interests && interests.length > 0 ? `, and you're into ${interests.join(', ')}` : ''}${learningStyle ? `. You learn best with ${learningStyle.toLowerCase()} approaches` : ''}."
 - "Do you remember me?" → "Of course! You're ${firstName}${gradeLevel ? `, ${gradeLevel}` : ''}${interests && interests.length > 0 ? `, who's into ${interests[0]}` : ''}!"
 
 **🚫 FORBIDDEN DEFLECTION PATTERNS (FROM REAL FAILURES - NEVER DO THESE):**
