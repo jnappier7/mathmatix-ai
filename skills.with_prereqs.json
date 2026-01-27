@@ -1,0 +1,4297 @@
+[
+  {
+    "skillId": "one-step-equations-addition",
+    "displayName": "One Step Equations Addition",
+    "description": "Practice problems for one step equations addition",
+    "category": "equations",
+    "prerequisites": [
+      "one-step-division"
+    ],
+    "enables": [
+      "one-step-multiplication"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 24
+  },
+  {
+    "skillId": "adding-fractions-different-denominators",
+    "displayName": "Adding Fractions Different Denominators",
+    "description": "Practice problems for adding fractions different denominators",
+    "category": "fractions",
+    "prerequisites": [
+      "add-fractions"
+    ],
+    "enables": [
+      "adding-fractions-same-denominator"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 1
+  },
+  {
+    "skillId": "adding-fractions-same-denominator",
+    "displayName": "Adding Fractions Same Denominator",
+    "description": "Practice problems for adding fractions same denominator",
+    "category": "fractions",
+    "prerequisites": [
+      "adding-fractions-different-denominators",
+      "addition-within-10"
+    ],
+    "enables": [
+      "subtract-fractions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 4
+  },
+  {
+    "skillId": "adding-subtracting-integers",
+    "displayName": "Adding Subtracting Integers",
+    "description": "Practice problems for adding subtracting integers",
+    "category": "integers-rationals",
+    "prerequisites": [],
+    "enables": [
+      "multiplying-dividing-integers"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "The Number System",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "number_system",
+    "depth": 0
+  },
+  {
+    "skillId": "addition-subtraction-word-problems",
+    "displayName": "Addition and Subtraction Word Problems",
+    "description": "Solve word problems involving addition and subtraction situations",
+    "category": "word-problems",
+    "prerequisites": [
+      "one-step-subtraction"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 27
+  },
+  {
+    "skillId": "addition-within-10",
+    "displayName": "Addition Within 10",
+    "description": "Practice problems for addition within 10",
+    "category": "operations",
+    "prerequisites": [
+      "addition-as-joining"
+    ],
+    "enables": [
+      "addition-within-100",
+      "adding-fractions-same-denominator",
+      "decimals-add-subtract"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 3
+  },
+  {
+    "skillId": "addition-within-100",
+    "displayName": "Addition Within 100",
+    "description": "Practice problems for addition within 100",
+    "category": "operations",
+    "prerequisites": [
+      "addition-within-10"
+    ],
+    "enables": [
+      "exponent-properties"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 4
+  },
+  {
+    "skillId": "area-triangles",
+    "displayName": "Area Triangles",
+    "description": "Practice problems for area triangles",
+    "category": "area-perimeter",
+    "prerequisites": [
+      "3d-shapes"
+    ],
+    "enables": [
+      "circles-circumference-area"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 5
+  },
+  {
+    "skillId": "circles-circumference-area",
+    "displayName": "Circles Circumference Area",
+    "description": "Practice problems for circles circumference area",
+    "category": "area-perimeter",
+    "prerequisites": [
+      "area-triangles"
+    ],
+    "enables": [
+      "classify-shapes"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 6
+  },
+  {
+    "skillId": "combining-like-terms",
+    "displayName": "Combining Like Terms",
+    "description": "Simplify expressions by combining like terms",
+    "category": "expressions",
+    "prerequisites": [
+      "blank-as-variable"
+    ],
+    "enables": [
+      "distributive-property"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 11
+  },
+  {
+    "skillId": "comparing-fractions",
+    "displayName": "Comparing Fractions",
+    "description": "Practice problems for comparing fractions",
+    "category": "fractions",
+    "prerequisites": [
+      "probability-fractions"
+    ],
+    "enables": [
+      "equivalent-fractions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 9
+  },
+  {
+    "skillId": "coordinate-plane",
+    "displayName": "Coordinate Plane Basics",
+    "description": "Plot and identify points using ordered pairs",
+    "category": "graphing",
+    "prerequisites": [
+      "check-reasonableness"
+    ],
+    "enables": [
+      "difference-word-problems"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 8
+  },
+  {
+    "skillId": "equivalent-expressions",
+    "displayName": "Equivalent Expressions",
+    "description": "Practice problems for equivalent expressions",
+    "category": "expressions",
+    "prerequisites": [
+      "equations-with-variables-both-sides"
+    ],
+    "enables": [
+      "evaluate-expressions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 15
+  },
+  {
+    "skillId": "equivalent-fractions",
+    "displayName": "Equivalent Fractions",
+    "description": "Practice problems for equivalent fractions",
+    "category": "fractions",
+    "prerequisites": [
+      "comparing-fractions"
+    ],
+    "enables": [
+      "fraction-concepts",
+      "decimals-place-value",
+      "decimals-add-subtract",
+      "decimals-divide",
+      "decimals-multiply"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 10
+  },
+  {
+    "skillId": "exponent-properties",
+    "displayName": "Exponent Properties",
+    "description": "Practice problems for exponent properties",
+    "category": "operations",
+    "prerequisites": [
+      "addition-within-100"
+    ],
+    "enables": [
+      "fact-families"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 5
+  },
+  {
+    "skillId": "financial-literacy",
+    "displayName": "Financial Literacy",
+    "description": "Practice problems for financial literacy",
+    "category": "operations",
+    "prerequisites": [
+      "fact-families"
+    ],
+    "enables": [
+      "missing-addend"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 7
+  },
+  {
+    "skillId": "fractions-basics",
+    "displayName": "Fractions Basics",
+    "description": "Practice problems for fractions basics",
+    "category": "fractions",
+    "prerequisites": [
+      "fractions-as-parts"
+    ],
+    "enables": [],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 13
+  },
+  {
+    "skillId": "irrational-numbers",
+    "displayName": "Irrational Numbers",
+    "description": "Practice problems for irrational numbers",
+    "category": "integers-rationals",
+    "prerequisites": [
+      "divide-rational-expressions"
+    ],
+    "enables": [
+      "multiply-rational-expressions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "The Number System",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 3
+  },
+  {
+    "skillId": "linear-equations",
+    "displayName": "Linear Equations",
+    "description": "Practice problems for linear equations",
+    "category": "equations",
+    "prerequisites": [
+      "graph-linear-equations"
+    ],
+    "enables": [
+      "solving-linear-equations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 6
+  },
+  {
+    "skillId": "multiplying-dividing-integers",
+    "displayName": "Multiplying Dividing Integers",
+    "description": "Practice problems for multiplying dividing integers",
+    "category": "integers-rationals",
+    "prerequisites": [
+      "adding-subtracting-integers"
+    ],
+    "enables": [
+      "number-system"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "The Number System",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "number_system",
+    "depth": 1
+  },
+  {
+    "skillId": "number-system",
+    "displayName": "Number System",
+    "description": "Practice problems for number system",
+    "category": "number-system",
+    "prerequisites": [
+      "multiplying-dividing-integers"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "The Number System",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "number_system",
+    "depth": 2
+  },
+  {
+    "skillId": "numerical-expressions-exponents",
+    "displayName": "Numerical Expressions Exponents",
+    "description": "Practice problems for numerical expressions exponents",
+    "category": "expressions",
+    "prerequisites": [
+      "multi-step-inequalities"
+    ],
+    "enables": [
+      "simplify-expressions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 25
+  },
+  {
+    "skillId": "operations",
+    "displayName": "Operations",
+    "description": "Practice problems for operations",
+    "category": "operations",
+    "prerequisites": [],
+    "enables": [
+      "add-subtract-rational-expressions"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 0
+  },
+  {
+    "skillId": "percent-problems",
+    "displayName": "Percent Problems",
+    "description": "Practice problems for percent problems",
+    "category": "percent",
+    "prerequisites": [
+      "percent-of-a-number"
+    ],
+    "enables": [
+      "proportional-relationships"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 7
+  },
+  {
+    "skillId": "place-value",
+    "displayName": "Place Value",
+    "description": "Understand place value in whole numbers",
+    "category": "place-value",
+    "prerequisites": [],
+    "enables": [
+      "compose-numbers"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "place_value",
+    "depth": 0
+  },
+  {
+    "skillId": "precalculus",
+    "displayName": "Precalculus",
+    "description": "Practice problems for precalculus",
+    "category": "operations",
+    "prerequisites": [
+      "part-part-whole"
+    ],
+    "enables": [
+      "related-facts"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 14
+  },
+  {
+    "skillId": "probability-basics",
+    "displayName": "Probability Basics",
+    "description": "Practice problems for probability basics",
+    "category": "probability",
+    "prerequisites": [
+      "conditional-probability"
+    ],
+    "enables": [
+      "probability-language"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 2
+  },
+  {
+    "skillId": "proportional-relationships",
+    "displayName": "Proportional Relationships",
+    "description": "Practice problems for proportional relationships",
+    "category": "ratios-proportions",
+    "prerequisites": [
+      "percent-problems"
+    ],
+    "enables": [
+      "rate-problems"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 8
+  },
+  {
+    "skillId": "pythagorean-theorem",
+    "displayName": "Pythagorean Theorem",
+    "description": "Practice problems for pythagorean theorem",
+    "category": "pythagorean-theorem",
+    "prerequisites": [
+      "position-words"
+    ],
+    "enables": [
+      "quadrants",
+      "trig-right-triangle-ratios"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 19
+  },
+  {
+    "skillId": "ratio-tables",
+    "displayName": "Ratio Tables",
+    "description": "Practice problems for ratio tables",
+    "category": "ratios-proportions",
+    "prerequisites": [
+      "ratio-concepts"
+    ],
+    "enables": [
+      "ratios"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 11
+  },
+  {
+    "skillId": "ratios",
+    "displayName": "Understanding Ratios",
+    "description": "Understand ratio concepts and use ratio language",
+    "category": "ratios-proportions",
+    "prerequisites": [
+      "ratio-tables"
+    ],
+    "enables": [
+      "simplify-rational-expressions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 12
+  },
+  {
+    "skillId": "slope",
+    "displayName": "Understanding Slope",
+    "description": "Calculate and interpret slope as rate of change",
+    "category": "graphing",
+    "prerequisites": [
+      "permutations"
+    ],
+    "enables": [
+      "area-approximation",
+      "trig-elevation-depression"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 4
+  },
+  {
+    "skillId": "solving-equations",
+    "displayName": "Solving Equations",
+    "description": "Practice problems for solving equations",
+    "category": "equations",
+    "prerequisites": [
+      "simplify-expressions"
+    ],
+    "enables": [
+      "solving-inequalities"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 27
+  },
+  {
+    "skillId": "solving-inequalities",
+    "displayName": "Solving Inequalities",
+    "description": "Solve and graph inequalities including compound inequalities",
+    "category": "expressions-equations",
+    "prerequisites": [
+      "solving-equations"
+    ],
+    "enables": [
+      "systems-elimination"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 28
+  },
+  {
+    "skillId": "solving-linear-equations",
+    "displayName": "Solving Linear Equations",
+    "description": "Practice problems for solving linear equations",
+    "category": "equations",
+    "prerequisites": [
+      "linear-equations"
+    ],
+    "enables": [
+      "absolute-value-inequalities"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 7
+  },
+  {
+    "skillId": "square-cube-roots",
+    "displayName": "Square Cube Roots",
+    "description": "Practice problems for square cube roots",
+    "category": "operations",
+    "prerequisites": [
+      "repeated-addition"
+    ],
+    "enables": [
+      "subtraction"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 17
+  },
+  {
+    "skillId": "statistics",
+    "displayName": "Statistics",
+    "description": "Practice problems for statistics",
+    "category": "statistics",
+    "prerequisites": [
+      "standard-deviation"
+    ],
+    "enables": [
+      "tally-charts"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 16
+  },
+  {
+    "skillId": "statistics-probability",
+    "displayName": "Statistics Probability",
+    "description": "Practice problems for statistics probability",
+    "category": "statistics",
+    "prerequisites": [
+      "simple-probability"
+    ],
+    "enables": [
+      "data-collection"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 5
+  },
+  {
+    "skillId": "subtraction-within-100",
+    "displayName": "Subtraction Within 100",
+    "description": "Practice problems for subtraction within 100",
+    "category": "operations",
+    "prerequisites": [
+      "subtraction"
+    ],
+    "enables": [
+      "unit-rates"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 19
+  },
+  {
+    "skillId": "unit-rates",
+    "displayName": "Unit Rates",
+    "description": "Practice problems for unit rates",
+    "category": "operations",
+    "prerequisites": [
+      "subtraction-within-100"
+    ],
+    "enables": [
+      "unknown-addend"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 20
+  },
+  {
+    "skillId": "volume-rectangular-prisms",
+    "displayName": "Volume Rectangular Prisms",
+    "description": "Practice problems for volume rectangular prisms",
+    "category": "volume",
+    "prerequisites": [
+      "vertical-shift"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 30
+  },
+  {
+    "skillId": "writing-expressions",
+    "displayName": "Writing Expressions",
+    "description": "Practice problems for writing expressions",
+    "category": "expressions",
+    "prerequisites": [
+      "systems-substitution"
+    ],
+    "enables": [
+      "factoring-quadratics"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 34
+  },
+  {
+    "skillId": "fact-families",
+    "displayName": "Fact Families",
+    "description": "Understand related addition and subtraction facts within a family",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "exponent-properties"
+    ],
+    "enables": [
+      "financial-literacy"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 6
+  },
+  {
+    "skillId": "equality-concept",
+    "displayName": "Equality Concept",
+    "description": "Understand the meaning of the equal sign as a relation of equivalence",
+    "category": "equations",
+    "prerequisites": [
+      "distributive-property"
+    ],
+    "enables": [
+      "equations-with-variables-both-sides"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 13
+  },
+  {
+    "skillId": "related-facts",
+    "displayName": "Related Facts",
+    "description": "Identify and use relationships between addition and subtraction",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "precalculus"
+    ],
+    "enables": [
+      "repeated-addition"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 15
+  },
+  {
+    "skillId": "unknown-addend",
+    "displayName": "Unknown Addend Problems",
+    "description": "Solve word problems with unknown addends",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "unit-rates"
+    ],
+    "enables": [
+      "one-step-addition"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 21
+  },
+  {
+    "skillId": "balance-scales",
+    "displayName": "Balance Scales",
+    "description": "Maintain equality on both sides of a balance",
+    "category": "equations",
+    "prerequisites": [
+      "absolute-value-inequalities"
+    ],
+    "enables": [
+      "blank-as-variable"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 9
+  },
+  {
+    "skillId": "missing-addend",
+    "displayName": "Missing Addend",
+    "description": "Find the unknown addend in addition equations like 5 + __ = 12",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "financial-literacy"
+    ],
+    "enables": [
+      "multi-digit-addition"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 8
+  },
+  {
+    "skillId": "missing-number-problems",
+    "displayName": "Missing Number Problems",
+    "description": "Solve problems with boxes or blanks representing unknown numbers",
+    "category": "equations",
+    "prerequisites": [
+      "inequality-notation"
+    ],
+    "enables": [
+      "multi-step-equations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 22
+  },
+  {
+    "skillId": "one-step-subtraction",
+    "displayName": "One-Step Subtraction Equations",
+    "description": "Solve equations of the form x - a = b",
+    "category": "equations",
+    "prerequisites": [
+      "one-step-multiplication"
+    ],
+    "enables": [
+      "addition-subtraction-word-problems"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 26
+  },
+  {
+    "skillId": "blank-as-variable",
+    "displayName": "Blanks as Proto-Variables",
+    "description": "Use boxes or blanks as placeholders for unknown values (early algebra)",
+    "category": "equations",
+    "prerequisites": [
+      "balance-scales"
+    ],
+    "enables": [
+      "combining-like-terms"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 10
+  },
+  {
+    "skillId": "one-step-equations",
+    "displayName": "One-Step Equations",
+    "description": "Solve one-step linear equations using inverse operations",
+    "category": "equations",
+    "prerequisites": [],
+    "enables": [
+      "one-step-inequalities"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 0
+  },
+  {
+    "skillId": "one-step-addition",
+    "displayName": "One-Step Addition Equations",
+    "description": "Solve equations of the form x + a = b",
+    "category": "equations",
+    "prerequisites": [
+      "unknown-addend"
+    ],
+    "enables": [
+      "one-step-division"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 22
+  },
+  {
+    "skillId": "equations-with-distribution",
+    "displayName": "Equations with Distribution",
+    "description": "Solve equations requiring the distributive property",
+    "category": "equations",
+    "prerequisites": [
+      "two-step-inequalities"
+    ],
+    "enables": [
+      "graph-linear-equations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 4
+  },
+  {
+    "skillId": "two-step-equations",
+    "displayName": "Two-Step Equations",
+    "description": "Solve two-step linear equations like 2x + 3 = 11",
+    "category": "equations",
+    "prerequisites": [
+      "one-step-inequalities"
+    ],
+    "enables": [
+      "two-step-inequalities"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 2
+  },
+  {
+    "skillId": "multi-step-equations",
+    "displayName": "Multi-Step Equations",
+    "description": "Solve equations requiring combining like terms and distribution",
+    "category": "equations",
+    "prerequisites": [
+      "missing-number-problems"
+    ],
+    "enables": [
+      "multi-step-inequalities"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 23
+  },
+  {
+    "skillId": "one-step-multiplication",
+    "displayName": "One-Step Multiplication Equations",
+    "description": "Solve equations of the form ax = b",
+    "category": "equations",
+    "prerequisites": [
+      "one-step-equations-addition"
+    ],
+    "enables": [
+      "one-step-subtraction"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 25
+  },
+  {
+    "skillId": "one-step-division",
+    "displayName": "One-Step Division Equations",
+    "description": "Solve equations of the form x/a = b",
+    "category": "equations",
+    "prerequisites": [
+      "one-step-addition"
+    ],
+    "enables": [
+      "one-step-equations-addition"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 23
+  },
+  {
+    "skillId": "equations-with-variables-both-sides",
+    "displayName": "Variables on Both Sides",
+    "description": "Solve equations with variables on both sides like 3x + 2 = x + 10",
+    "category": "equations",
+    "prerequisites": [
+      "equality-concept"
+    ],
+    "enables": [
+      "equivalent-expressions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 14
+  },
+  {
+    "skillId": "systems-special-cases",
+    "displayName": "Special Cases in Systems",
+    "description": "Identify and understand no solution and infinite solution cases",
+    "category": "systems",
+    "prerequisites": [
+      "systems-of-inequalities"
+    ],
+    "enables": [
+      "systems-substitution"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 32
+  },
+  {
+    "skillId": "systems-substitution",
+    "displayName": "Systems by Substitution",
+    "description": "Solve systems of equations using substitution method",
+    "category": "systems",
+    "prerequisites": [
+      "systems-special-cases"
+    ],
+    "enables": [
+      "writing-expressions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 33
+  },
+  {
+    "skillId": "systems-elimination",
+    "displayName": "Systems by Elimination",
+    "description": "Solve systems of equations by adding or subtracting equations",
+    "category": "systems",
+    "prerequisites": [
+      "solving-inequalities"
+    ],
+    "enables": [
+      "systems-graphing"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 29
+  },
+  {
+    "skillId": "systems-graphing",
+    "displayName": "Systems by Graphing",
+    "description": "Solve systems by graphing and finding intersection points",
+    "category": "systems",
+    "prerequisites": [
+      "systems-elimination"
+    ],
+    "enables": [
+      "systems-of-inequalities"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 30
+  },
+  {
+    "skillId": "addition",
+    "displayName": "Addition",
+    "description": "Add whole numbers fluently",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "adding-groups"
+    ],
+    "enables": [
+      "addition-as-joining"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 1
+  },
+  {
+    "skillId": "counting-up",
+    "displayName": "Counting Forward",
+    "description": "Count forward from any number",
+    "category": "counting-cardinality",
+    "prerequisites": [
+      "counting-down"
+    ],
+    "enables": [
+      "prek-count-0-10"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 3
+  },
+  {
+    "skillId": "counting-down",
+    "displayName": "Counting Backward",
+    "description": "Count backward from any number",
+    "category": "counting-cardinality",
+    "prerequisites": [
+      "counting-by-groups"
+    ],
+    "enables": [
+      "counting-up"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 2
+  },
+  {
+    "skillId": "subtraction",
+    "displayName": "Subtraction",
+    "description": "Subtract whole numbers fluently",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "square-cube-roots"
+    ],
+    "enables": [
+      "subtraction-within-100"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 18
+  },
+  {
+    "skillId": "counting-by-groups",
+    "displayName": "Counting by Groups",
+    "description": "Count equal groups to find total",
+    "category": "counting-cardinality",
+    "prerequisites": [
+      "counting"
+    ],
+    "enables": [
+      "counting-down"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 1
+  },
+  {
+    "skillId": "counting",
+    "displayName": "Counting",
+    "description": "Count objects to determine quantity",
+    "category": "counting-cardinality",
+    "prerequisites": [],
+    "enables": [
+      "counting-by-groups"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 0
+  },
+  {
+    "skillId": "skip-counting",
+    "displayName": "Skip Counting",
+    "description": "Count by 2s, 5s, 10s, etc.",
+    "category": "counting-cardinality",
+    "prerequisites": [
+      "prek-count-0-5"
+    ],
+    "enables": [
+      "compare-numbers"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 6
+  },
+  {
+    "skillId": "multiplication-concepts",
+    "displayName": "Multiplication Concepts",
+    "description": "Understand multiplication as equal groups",
+    "category": "multiplication-division",
+    "prerequisites": [
+      "multiplication-basics"
+    ],
+    "enables": [
+      "part-part-whole"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 12
+  },
+  {
+    "skillId": "multiplication-as-groups",
+    "displayName": "Multiplication as Groups Of",
+    "description": "Interpret 3 × 4 as 3 groups of 4 objects",
+    "category": "multiplication-division",
+    "prerequisites": [
+      "multi-digit-addition"
+    ],
+    "enables": [
+      "multiplication-basics"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 10
+  },
+  {
+    "skillId": "multiplication-basics",
+    "displayName": "Basic Multiplication",
+    "description": "Multiply single-digit numbers fluently",
+    "category": "multiplication-division",
+    "prerequisites": [
+      "multiplication-as-groups"
+    ],
+    "enables": [
+      "multiplication-concepts"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 11
+  },
+  {
+    "skillId": "repeated-addition",
+    "displayName": "Repeated Addition",
+    "description": "Add equal groups (introduction to multiplication)",
+    "category": "multiplication-division",
+    "prerequisites": [
+      "related-facts"
+    ],
+    "enables": [
+      "square-cube-roots"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 16
+  },
+  {
+    "skillId": "fraction-concepts",
+    "displayName": "Fraction Concepts",
+    "description": "Understand fractions as parts of a whole",
+    "category": "fractions",
+    "prerequisites": [
+      "equivalent-fractions"
+    ],
+    "enables": [
+      "fractions-as-parts"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 11
+  },
+  {
+    "skillId": "fractions-as-parts",
+    "displayName": "Fractions as Parts",
+    "description": "Understand 1/4 as one part of four equal pieces",
+    "category": "fractions",
+    "prerequisites": [
+      "fraction-concepts"
+    ],
+    "enables": [
+      "fractions-basics"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 12
+  },
+  {
+    "skillId": "add-fractions",
+    "displayName": "Adding Fractions",
+    "description": "Add fractions with like and unlike denominators",
+    "category": "fractions",
+    "prerequisites": [],
+    "enables": [
+      "adding-fractions-different-denominators"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 0
+  },
+  {
+    "skillId": "subtract-fractions",
+    "displayName": "Subtracting Fractions",
+    "description": "Subtract fractions with like and unlike denominators",
+    "category": "fractions",
+    "prerequisites": [
+      "adding-fractions-same-denominator"
+    ],
+    "enables": [
+      "multiply-fractions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 5
+  },
+  {
+    "skillId": "multiply-fractions",
+    "displayName": "Multiplying Fractions",
+    "description": "Multiply fractions by fractions",
+    "category": "fractions",
+    "prerequisites": [
+      "subtract-fractions"
+    ],
+    "enables": [
+      "divide-fractions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 6
+  },
+  {
+    "skillId": "divide-fractions",
+    "displayName": "Dividing Fractions",
+    "description": "Divide fractions by fractions using reciprocals",
+    "category": "fractions",
+    "prerequisites": [
+      "multiply-fractions"
+    ],
+    "enables": [
+      "probability-fractions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations—Fractions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 7
+  },
+  {
+    "skillId": "simplify-expressions",
+    "displayName": "Simplifying Expressions",
+    "description": "Use properties to generate equivalent expressions",
+    "category": "expressions",
+    "prerequisites": [
+      "numerical-expressions-exponents"
+    ],
+    "enables": [
+      "solving-equations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 26
+  },
+  {
+    "skillId": "distributive-property",
+    "displayName": "Distributive Property",
+    "description": "Apply the distributive property to expand and factor expressions",
+    "category": "expressions",
+    "prerequisites": [
+      "combining-like-terms"
+    ],
+    "enables": [
+      "equality-concept"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 12
+  },
+  {
+    "skillId": "expanding-expressions",
+    "displayName": "Expanding Expressions",
+    "description": "Expand expressions using the distributive property",
+    "category": "expressions",
+    "prerequisites": [
+      "evaluate-expressions"
+    ],
+    "enables": [
+      "factoring-difference-squares"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 17
+  },
+  {
+    "skillId": "decompose-numbers",
+    "displayName": "Number Decomposition",
+    "description": "Break numbers into tens and ones",
+    "category": "place-value",
+    "prerequisites": [
+      "compose-numbers"
+    ],
+    "enables": [
+      "expanded-form"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "place_value",
+    "depth": 2
+  },
+  {
+    "skillId": "multi-digit-addition",
+    "displayName": "Multi-Digit Addition",
+    "description": "Add multi-digit numbers with regrouping",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "missing-addend"
+    ],
+    "enables": [
+      "multiplication-as-groups"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 9
+  },
+  {
+    "skillId": "regrouping",
+    "displayName": "Regrouping",
+    "description": "Regroup ones as tens, tens as hundreds, etc.",
+    "category": "place-value",
+    "prerequisites": [
+      "expanded-form"
+    ],
+    "enables": [
+      "decimals-place-value"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "place_value",
+    "depth": 4
+  },
+  {
+    "skillId": "compose-numbers",
+    "displayName": "Number Composition",
+    "description": "Combine parts to make wholes",
+    "category": "place-value",
+    "prerequisites": [
+      "place-value"
+    ],
+    "enables": [
+      "decompose-numbers"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "place_value",
+    "depth": 1
+  },
+  {
+    "skillId": "expanded-form",
+    "displayName": "Expanded Form",
+    "description": "Write numbers in expanded form",
+    "category": "place-value",
+    "prerequisites": [
+      "decompose-numbers"
+    ],
+    "enables": [
+      "regrouping"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "place_value",
+    "depth": 3
+  },
+  {
+    "skillId": "addition-as-joining",
+    "displayName": "Addition as Joining",
+    "description": "Understand addition as putting parts together",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "addition"
+    ],
+    "enables": [
+      "addition-within-10"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 2
+  },
+  {
+    "skillId": "adding-groups",
+    "displayName": "Adding Groups",
+    "description": "Add equal groups to find total",
+    "category": "addition-subtraction",
+    "prerequisites": [],
+    "enables": [
+      "addition"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 0
+  },
+  {
+    "skillId": "comparing-numbers",
+    "displayName": "Comparing Whole Numbers",
+    "description": "Compare multi-digit whole numbers",
+    "category": "number-recognition",
+    "prerequisites": [
+      "rounding-to-nearest-ten"
+    ],
+    "enables": [
+      "equal-to"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 11
+  },
+  {
+    "skillId": "compare-numbers",
+    "displayName": "Comparing Numbers",
+    "description": "Compare numbers using greater than, less than, equal to",
+    "category": "number-recognition",
+    "prerequisites": [
+      "skip-counting"
+    ],
+    "enables": [
+      "prek-compare-sets"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 7
+  },
+  {
+    "skillId": "part-part-whole",
+    "displayName": "Part-Part-Whole",
+    "description": "Understand relationship between parts and whole",
+    "category": "addition-subtraction",
+    "prerequisites": [
+      "multiplication-concepts"
+    ],
+    "enables": [
+      "precalculus"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Operations & Algebraic Thinking",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "operations",
+    "depth": 13
+  },
+  {
+    "skillId": "ordering-numbers",
+    "displayName": "Ordering Numbers",
+    "description": "Put numbers in order from least to greatest",
+    "category": "number-recognition",
+    "prerequisites": [
+      "number-order"
+    ],
+    "enables": [
+      "prek-number-words"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 15
+  },
+  {
+    "skillId": "number-order",
+    "displayName": "Number Order",
+    "description": "Understand order relationships among numbers",
+    "category": "number-recognition",
+    "prerequisites": [
+      "greater-less-than"
+    ],
+    "enables": [
+      "ordering-numbers"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 14
+  },
+  {
+    "skillId": "greater-less-than",
+    "displayName": "Greater Than / Less Than",
+    "description": "Use >, <, = to compare numbers",
+    "category": "number-recognition",
+    "prerequisites": [
+      "equal-to"
+    ],
+    "enables": [
+      "number-order"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 13
+  },
+  {
+    "skillId": "equal-to",
+    "displayName": "Equal To",
+    "description": "Understand the equal sign as meaning 'the same as'",
+    "category": "number-recognition",
+    "prerequisites": [
+      "comparing-numbers"
+    ],
+    "enables": [
+      "greater-less-than"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 12
+  },
+  {
+    "skillId": "rounding",
+    "displayName": "Rounding",
+    "description": "Round numbers to the nearest ten, hundred, etc.",
+    "category": "number-recognition",
+    "prerequisites": [
+      "prek-compare-sets"
+    ],
+    "enables": [
+      "rounding-to-nearest-ten"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 9
+  },
+  {
+    "skillId": "rounding-to-nearest-ten",
+    "displayName": "Rounding to Nearest Ten",
+    "description": "Round numbers to the nearest ten",
+    "category": "number-recognition",
+    "prerequisites": [
+      "rounding"
+    ],
+    "enables": [
+      "comparing-numbers"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "prek_foundations",
+    "depth": 10
+  },
+  {
+    "skillId": "exponential-functions",
+    "displayName": "Understanding Exponential Functions",
+    "description": "Identify and evaluate exponential functions f(x) = a·b^x",
+    "category": "exponential",
+    "prerequisites": [
+      "exponential-decay"
+    ],
+    "enables": [
+      "exponential-growth"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 7
+  },
+  {
+    "skillId": "limits",
+    "displayName": "Limits (Algebraic)",
+    "description": "Evaluate limits using algebraic techniques",
+    "category": "limits",
+    "prerequisites": [
+      "finite-series"
+    ],
+    "enables": [
+      "series-formulas"
+    ],
+    "gradeBand": "Calculus",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "calculus",
+    "depth": 4
+  },
+  {
+    "skillId": "derivatives",
+    "displayName": "Derivative from Definition",
+    "description": "Find derivatives using limit definition",
+    "category": "derivatives",
+    "prerequisites": [
+      "definite-integrals"
+    ],
+    "enables": [
+      "finite-series",
+      "calc3-partial-derivatives"
+    ],
+    "gradeBand": "Calculus",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "calculus",
+    "depth": 2
+  },
+  {
+    "skillId": "simplify-rational-expressions",
+    "displayName": "Simplifying Rational Expressions",
+    "description": "Factor and simplify rational expressions by canceling common factors",
+    "category": "rational",
+    "prerequisites": [
+      "ratios"
+    ],
+    "enables": [
+      "solve-proportions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "The Number System",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 13
+  },
+  {
+    "skillId": "congruence",
+    "displayName": "Triangle Congruence (SSS, SAS, ASA)",
+    "description": "Prove triangles congruent using postulates",
+    "category": "congruence",
+    "prerequisites": [
+      "classify-shapes"
+    ],
+    "enables": [
+      "create-symmetry"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 8
+  },
+  {
+    "skillId": "similarity",
+    "displayName": "Similar Figures and Scale Factor",
+    "description": "Understand similarity, find scale factors, and solve proportions",
+    "category": "similarity",
+    "prerequisites": [
+      "similar-figures"
+    ],
+    "enables": [
+      "spatial-relationships"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 25
+  },
+  {
+    "skillId": "multiply-rational-expressions",
+    "displayName": "Multiplying Rational Expressions",
+    "description": "Multiply rational expressions by multiplying numerators and denominators",
+    "category": "rational",
+    "prerequisites": [
+      "irrational-numbers"
+    ],
+    "enables": [
+      "percent-change"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "The Number System",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 4
+  },
+  {
+    "skillId": "divide-rational-expressions",
+    "displayName": "Dividing Rational Expressions",
+    "description": "Divide rational expressions by multiplying by the reciprocal",
+    "category": "rational",
+    "prerequisites": [
+      "add-subtract-rational-expressions"
+    ],
+    "enables": [
+      "irrational-numbers"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "The Number System",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 2
+  },
+  {
+    "skillId": "add-subtract-rational-expressions",
+    "displayName": "Adding and Subtracting Rational Expressions",
+    "description": "Add and subtract rational expressions using common denominators",
+    "category": "rational",
+    "prerequisites": [
+      "operations"
+    ],
+    "enables": [
+      "divide-rational-expressions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "The Number System",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 1
+  },
+  {
+    "skillId": "arithmetic-sequences",
+    "displayName": "Arithmetic Sequences and Series",
+    "description": "Identify patterns, find terms, and sum arithmetic sequences",
+    "category": "sequences",
+    "prerequisites": [
+      "linear-word-problems"
+    ],
+    "enables": [
+      "arithmetic-series"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 3
+  },
+  {
+    "skillId": "geometric-sequences",
+    "displayName": "Geometric Sequences and Series",
+    "description": "Work with geometric sequences and find sums, including infinite series",
+    "category": "sequences",
+    "prerequisites": [
+      "function-transformations"
+    ],
+    "enables": [
+      "geometric-series"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 13
+  },
+  {
+    "skillId": "definite-integrals",
+    "displayName": "Definite Integrals and FTC",
+    "description": "Evaluate definite integrals using Fundamental Theorem of Calculus",
+    "category": "integrals",
+    "prerequisites": [
+      "linear-programming"
+    ],
+    "enables": [
+      "derivatives",
+      "calc3-double-integrals"
+    ],
+    "gradeBand": "Calculus",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "calculus",
+    "depth": 1
+  },
+  {
+    "skillId": "function-composition",
+    "displayName": "Function Notation and Composition",
+    "description": "Evaluate and compose functions using proper notation",
+    "category": "functions",
+    "prerequisites": [
+      "exponential-patterns"
+    ],
+    "enables": [
+      "function-families"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 10
+  },
+  {
+    "skillId": "mean",
+    "displayName": "Mean (Average)",
+    "description": "Calculate and interpret the mean of a data set",
+    "category": "statistics",
+    "prerequisites": [
+      "likely-unlikely"
+    ],
+    "enables": [
+      "measures-of-center"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 10
+  },
+  {
+    "skillId": "range",
+    "displayName": "Range",
+    "description": "Calculate the range (spread) of a data set",
+    "category": "statistics",
+    "prerequisites": [
+      "mode"
+    ],
+    "enables": [
+      "standard-deviation"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 14
+  },
+  {
+    "skillId": "median",
+    "displayName": "Median",
+    "description": "Find the median (middle value) of a data set",
+    "category": "statistics",
+    "prerequisites": [
+      "measures-of-center"
+    ],
+    "enables": [
+      "mode"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 12
+  },
+  {
+    "skillId": "mode",
+    "displayName": "Mode",
+    "description": "Identify the mode (most frequent value) of a data set",
+    "category": "statistics",
+    "prerequisites": [
+      "median"
+    ],
+    "enables": [
+      "range"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 13
+  },
+  {
+    "skillId": "translations",
+    "displayName": "Translations",
+    "description": "Perform and describe translations (slides) on the coordinate plane",
+    "category": "transformations",
+    "prerequisites": [
+      "symmetry-shapes"
+    ],
+    "enables": [
+      "vertical-shift"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 28
+  },
+  {
+    "skillId": "reflections",
+    "displayName": "Reflections",
+    "description": "Perform and describe reflections (flips) over lines",
+    "category": "transformations",
+    "prerequisites": [
+      "quadrants"
+    ],
+    "enables": [
+      "rotations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 21
+  },
+  {
+    "skillId": "likely-unlikely",
+    "displayName": "Likely and Unlikely Events",
+    "description": "Describe events as likely or unlikely based on experience",
+    "category": "probability",
+    "prerequisites": [
+      "iqr"
+    ],
+    "enables": [
+      "mean"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 9
+  },
+  {
+    "skillId": "rotations",
+    "displayName": "Rotations",
+    "description": "Perform and describe rotations (turns) around a point",
+    "category": "transformations",
+    "prerequisites": [
+      "reflections"
+    ],
+    "enables": [
+      "scale-factor"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 22
+  },
+  {
+    "skillId": "probability-language",
+    "displayName": "Probability Vocabulary",
+    "description": "Use probability vocabulary: certain, likely, unlikely, impossible",
+    "category": "probability",
+    "prerequisites": [
+      "probability-basics"
+    ],
+    "enables": [
+      "simple-probability"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 3
+  },
+  {
+    "skillId": "simple-probability",
+    "displayName": "Simple Probability",
+    "description": "Find probability of simple events using outcomes",
+    "category": "probability",
+    "prerequisites": [
+      "probability-language"
+    ],
+    "enables": [
+      "statistics-probability"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 4
+  },
+  {
+    "skillId": "probability-fractions",
+    "displayName": "Probability as Fractions",
+    "description": "Express probability as fractions (favorable/total)",
+    "category": "probability",
+    "prerequisites": [
+      "divide-fractions"
+    ],
+    "enables": [
+      "comparing-fractions"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "fractions",
+    "depth": 8
+  },
+  {
+    "skillId": "data-collection",
+    "displayName": "Collecting and Organizing Data",
+    "description": "Collect and organize data in tables and charts",
+    "category": "data",
+    "prerequisites": [
+      "statistics-probability"
+    ],
+    "enables": [
+      "frequency-tables"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Measurement & Data",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 6
+  },
+  {
+    "skillId": "tally-charts",
+    "displayName": "Tally Charts",
+    "description": "Use tally marks to collect and display data",
+    "category": "data",
+    "prerequisites": [
+      "statistics"
+    ],
+    "enables": [
+      "box-plots"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Measurement & Data",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 17
+  },
+  {
+    "skillId": "classify-shapes",
+    "displayName": "Classifying Shapes by Properties",
+    "description": "Sort and classify shapes based on their attributes",
+    "category": "geometry",
+    "prerequisites": [
+      "circles-circumference-area"
+    ],
+    "enables": [
+      "congruence"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 7
+  },
+  {
+    "skillId": "identify-shapes",
+    "displayName": "Identifying 2D and 3D Shapes",
+    "description": "Identify and name common 2D and 3D shapes",
+    "category": "geometry",
+    "prerequisites": [
+      "horizontal-shift"
+    ],
+    "enables": [
+      "line-symmetry"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 14
+  },
+  {
+    "skillId": "3d-shapes",
+    "displayName": "3D Shapes and Attributes",
+    "description": "Understand properties of 3D shapes: faces, edges, vertices",
+    "category": "geometry",
+    "prerequisites": [
+      "2d-shapes"
+    ],
+    "enables": [
+      "area-triangles"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 4
+  },
+  {
+    "skillId": "frequency-tables",
+    "displayName": "Frequency Tables",
+    "description": "Create and interpret frequency tables",
+    "category": "data",
+    "prerequisites": [
+      "data-collection"
+    ],
+    "enables": [
+      "iqr"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Measurement & Data",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 7
+  },
+  {
+    "skillId": "2d-shapes",
+    "displayName": "2D Shapes and Attributes",
+    "description": "Understand properties of 2D shapes: sides, vertices, angles",
+    "category": "geometry",
+    "prerequisites": [
+      "perimeter"
+    ],
+    "enables": [
+      "3d-shapes"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 3
+  },
+  {
+    "skillId": "spatial-relationships",
+    "displayName": "Spatial Relationships",
+    "description": "Describe position using spatial vocabulary: above, below, beside, in front of, behind",
+    "category": "geometry",
+    "prerequisites": [
+      "similarity"
+    ],
+    "enables": [
+      "symmetry-shapes"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 26
+  },
+  {
+    "skillId": "position-words",
+    "displayName": "Position Words and Directions",
+    "description": "Use positional vocabulary to give and follow directions",
+    "category": "geometry",
+    "prerequisites": [
+      "plotting-points"
+    ],
+    "enables": [
+      "pythagorean-theorem"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 18
+  },
+  {
+    "skillId": "area-rectangles",
+    "displayName": "Area of Rectangles",
+    "description": "Find area by counting squares or using length × width",
+    "category": "measurement",
+    "prerequisites": [
+      "area-perimeter-word-problems"
+    ],
+    "enables": [
+      "perimeter"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Measurement & Data",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 1
+  },
+  {
+    "skillId": "symmetry-shapes",
+    "displayName": "Symmetric Shapes",
+    "description": "Work with and analyze symmetric shapes",
+    "category": "geometry",
+    "prerequisites": [
+      "spatial-relationships"
+    ],
+    "enables": [
+      "translations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 27
+  },
+  {
+    "skillId": "area-perimeter-word-problems",
+    "displayName": "Area and Perimeter Word Problems",
+    "description": "Solve real-world problems involving area and perimeter",
+    "category": "measurement",
+    "prerequisites": [],
+    "enables": [
+      "area-rectangles"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Measurement & Data",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 0
+  },
+  {
+    "skillId": "line-symmetry",
+    "displayName": "Line Symmetry",
+    "description": "Identify lines of symmetry in shapes and figures",
+    "category": "geometry",
+    "prerequisites": [
+      "identify-shapes"
+    ],
+    "enables": [
+      "midpoint-formula"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 15
+  },
+  {
+    "skillId": "perimeter",
+    "displayName": "Perimeter",
+    "description": "Find perimeter by adding all side lengths",
+    "category": "measurement",
+    "prerequisites": [
+      "area-rectangles"
+    ],
+    "enables": [
+      "2d-shapes"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Measurement & Data",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 2
+  },
+  {
+    "skillId": "create-symmetry",
+    "displayName": "Creating Symmetric Figures",
+    "description": "Create symmetric figures by completing the other half",
+    "category": "geometry",
+    "prerequisites": [
+      "congruence"
+    ],
+    "enables": [
+      "dilations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 9
+  },
+  {
+    "skillId": "difference-word-problems",
+    "displayName": "Difference Word Problems",
+    "description": "Solve compare problems to find the difference between quantities",
+    "category": "word-problems",
+    "prerequisites": [
+      "coordinate-plane"
+    ],
+    "enables": [
+      "doubles-near-doubles"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 9
+  },
+  {
+    "skillId": "result-unknown",
+    "displayName": "Result Unknown Problems",
+    "description": "Solve problems where the ending amount is unknown",
+    "category": "word-problems",
+    "prerequisites": [
+      "number-bonds"
+    ],
+    "enables": [
+      "riemann-sums"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 15
+  },
+  {
+    "skillId": "change-unknown",
+    "displayName": "Change Unknown Problems",
+    "description": "Solve problems where the amount of change is unknown",
+    "category": "word-problems",
+    "prerequisites": [
+      "area-approximation"
+    ],
+    "enables": [
+      "check-reasonableness"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 6
+  },
+  {
+    "skillId": "estimation",
+    "displayName": "Estimation",
+    "description": "Estimate sums and differences using rounding and mental math",
+    "category": "estimation",
+    "prerequisites": [
+      "estimate-sums"
+    ],
+    "enables": [
+      "make-ten"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 12
+  },
+  {
+    "skillId": "estimate-sums",
+    "displayName": "Estimating Sums and Differences",
+    "description": "Use rounding to estimate sums and differences before calculating",
+    "category": "estimation",
+    "prerequisites": [
+      "doubles-near-doubles"
+    ],
+    "enables": [
+      "estimation"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 11
+  },
+  {
+    "skillId": "check-reasonableness",
+    "displayName": "Checking Reasonableness",
+    "description": "Use estimation to determine if answers are reasonable",
+    "category": "estimation",
+    "prerequisites": [
+      "change-unknown"
+    ],
+    "enables": [
+      "coordinate-plane"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 7
+  },
+  {
+    "skillId": "number-bonds",
+    "displayName": "Number Bonds",
+    "description": "Build fluency with number relationships and part-whole understanding",
+    "category": "number-sense",
+    "prerequisites": [
+      "make-ten"
+    ],
+    "enables": [
+      "result-unknown"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 14
+  },
+  {
+    "skillId": "make-ten",
+    "displayName": "Make Ten Strategy",
+    "description": "Use make-ten strategy to add numbers efficiently",
+    "category": "mental-math",
+    "prerequisites": [
+      "estimation"
+    ],
+    "enables": [
+      "number-bonds"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 13
+  },
+  {
+    "skillId": "doubles-near-doubles",
+    "displayName": "Doubles and Near Doubles",
+    "description": "Use doubles facts and near doubles strategy for mental addition",
+    "category": "mental-math",
+    "prerequisites": [
+      "difference-word-problems"
+    ],
+    "enables": [
+      "estimate-sums"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 10
+  },
+  {
+    "skillId": "solve-proportions",
+    "displayName": "Solving Proportions",
+    "description": "Solve proportions using cross-multiplication and equivalent ratios",
+    "category": "ratios-proportions",
+    "prerequisites": [
+      "simplify-rational-expressions"
+    ],
+    "enables": [
+      "nested-operations"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 14
+  },
+  {
+    "skillId": "ratio-concepts",
+    "displayName": "Ratio Concepts",
+    "description": "Understand and apply ratio concepts to compare quantities",
+    "category": "ratios-proportions",
+    "prerequisites": [
+      "rate-problems"
+    ],
+    "enables": [
+      "ratio-tables"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 10
+  },
+  {
+    "skillId": "percent-of-a-number",
+    "displayName": "Finding Percent of a Number",
+    "description": "Calculate percent of a quantity in real-world situations",
+    "category": "percent",
+    "prerequisites": [
+      "percent-change"
+    ],
+    "enables": [
+      "percent-problems"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 6
+  },
+  {
+    "skillId": "percent-change",
+    "displayName": "Percent Change",
+    "description": "Calculate percent increase and decrease",
+    "category": "percent",
+    "prerequisites": [
+      "multiply-rational-expressions"
+    ],
+    "enables": [
+      "percent-of-a-number"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 5
+  },
+  {
+    "skillId": "rate-problems",
+    "displayName": "Rate Problems",
+    "description": "Solve real-world problems involving rates and unit rates",
+    "category": "ratios-proportions",
+    "prerequisites": [
+      "proportional-relationships"
+    ],
+    "enables": [
+      "ratio-concepts"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Ratios & Proportional Relationships",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 9
+  },
+  {
+    "skillId": "slope-concepts",
+    "displayName": "Slope Concepts",
+    "description": "Understand slope as rate of change and steepness",
+    "category": "linear-functions",
+    "prerequisites": [],
+    "enables": [
+      "slope-from-two-points"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 0
+  },
+  {
+    "skillId": "graph-linear-equations",
+    "displayName": "Graphing Linear Equations",
+    "description": "Graph linear equations using multiple methods",
+    "category": "linear-functions",
+    "prerequisites": [
+      "equations-with-distribution"
+    ],
+    "enables": [
+      "linear-equations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 5
+  },
+  {
+    "skillId": "scale-factor",
+    "displayName": "Scale Factor",
+    "description": "Use scale factors to enlarge or reduce figures proportionally",
+    "category": "similarity",
+    "prerequisites": [
+      "rotations"
+    ],
+    "enables": [
+      "similar-figures"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 23
+  },
+  {
+    "skillId": "similar-figures",
+    "displayName": "Similar Figures",
+    "description": "Identify and work with similar figures using proportional relationships",
+    "category": "similarity",
+    "prerequisites": [
+      "scale-factor"
+    ],
+    "enables": [
+      "similarity"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 24
+  },
+  {
+    "skillId": "slope-from-two-points",
+    "displayName": "Finding Slope from Two Points",
+    "description": "Calculate slope given two coordinate points using the slope formula",
+    "category": "linear-functions",
+    "prerequisites": [
+      "slope-concepts"
+    ],
+    "enables": [
+      "linear-word-problems"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 1
+  },
+  {
+    "skillId": "linear-word-problems",
+    "displayName": "Linear Growth Word Problems",
+    "description": "Solve real-world problems involving constant rate of change",
+    "category": "linear-functions",
+    "prerequisites": [
+      "slope-from-two-points"
+    ],
+    "enables": [
+      "arithmetic-sequences"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 2
+  },
+  {
+    "skillId": "rate-of-change-problems",
+    "displayName": "Rate of Change Problems",
+    "description": "Calculate and interpret average rate of change from tables, graphs, and situations",
+    "category": "linear-functions",
+    "prerequisites": [
+      "parent-functions"
+    ],
+    "enables": [
+      "sequence-patterns"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 16
+  },
+  {
+    "skillId": "evaluate-expressions",
+    "displayName": "Evaluating Algebraic Expressions",
+    "description": "Substitute values and evaluate expressions using order of operations (GEMS)",
+    "category": "expressions",
+    "prerequisites": [
+      "equivalent-expressions"
+    ],
+    "enables": [
+      "expanding-expressions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 16
+  },
+  {
+    "skillId": "nested-operations",
+    "displayName": "Nested Operations and Complex GEMS",
+    "description": "Evaluate complex expressions with multiple grouping symbols and operations",
+    "category": "expressions",
+    "prerequisites": [
+      "solve-proportions"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "ratios_percent",
+    "depth": 15
+  },
+  {
+    "skillId": "factoring-quadratics",
+    "displayName": "Factoring Quadratic Expressions",
+    "description": "Factor quadratic expressions of the form x² + bx + c and ax² + bx + c",
+    "category": "expressions",
+    "prerequisites": [
+      "writing-expressions"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 35
+  },
+  {
+    "skillId": "factoring-difference-squares",
+    "displayName": "Factoring Difference of Squares",
+    "description": "Factor expressions in the form a² - b² into (a+b)(a-b)",
+    "category": "expressions",
+    "prerequisites": [
+      "expanding-expressions"
+    ],
+    "enables": [
+      "graphing-inequalities"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 18
+  },
+  {
+    "skillId": "quadrants",
+    "displayName": "Quadrants and Coordinate Plane Regions",
+    "description": "Identify and work with the four quadrants of the coordinate plane",
+    "category": "coordinate-geometry",
+    "prerequisites": [
+      "pythagorean-theorem"
+    ],
+    "enables": [
+      "reflections"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 20
+  },
+  {
+    "skillId": "plotting-points",
+    "displayName": "Plotting Points on Coordinate Plane",
+    "description": "Plot ordered pairs accurately on the coordinate plane",
+    "category": "coordinate-geometry",
+    "prerequisites": [
+      "midpoint-formula"
+    ],
+    "enables": [
+      "position-words"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 17
+  },
+  {
+    "skillId": "one-step-inequalities",
+    "displayName": "Solving One-Step Inequalities",
+    "description": "Solve and graph one-step inequalities",
+    "category": "inequalities",
+    "prerequisites": [
+      "one-step-equations"
+    ],
+    "enables": [
+      "two-step-equations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 1
+  },
+  {
+    "skillId": "multi-step-inequalities",
+    "displayName": "Multi-Step Inequalities",
+    "description": "Solve complex inequalities with variables on both sides",
+    "category": "inequalities",
+    "prerequisites": [
+      "multi-step-equations"
+    ],
+    "enables": [
+      "numerical-expressions-exponents"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 24
+  },
+  {
+    "skillId": "graphing-inequalities",
+    "displayName": "Graphing Inequalities on Number Line",
+    "description": "Graph solution sets of inequalities using number lines",
+    "category": "inequalities",
+    "prerequisites": [
+      "factoring-difference-squares"
+    ],
+    "enables": [
+      "graphing-systems-inequalities"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 19
+  },
+  {
+    "skillId": "two-step-inequalities",
+    "displayName": "Solving Two-Step Inequalities",
+    "description": "Solve inequalities requiring two operations",
+    "category": "inequalities",
+    "prerequisites": [
+      "two-step-equations"
+    ],
+    "enables": [
+      "equations-with-distribution"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 3
+  },
+  {
+    "skillId": "distance-formula",
+    "displayName": "Distance Formula",
+    "description": "Find distance between two points using the distance formula",
+    "category": "coordinate-geometry",
+    "prerequisites": [
+      "dilations"
+    ],
+    "enables": [
+      "geometric-proofs"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 11
+  },
+  {
+    "skillId": "midpoint-formula",
+    "displayName": "Midpoint Formula",
+    "description": "Find the midpoint between two coordinate points",
+    "category": "coordinate-geometry",
+    "prerequisites": [
+      "line-symmetry"
+    ],
+    "enables": [
+      "plotting-points"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 16
+  },
+  {
+    "skillId": "inequality-notation",
+    "displayName": "Inequality Notation and Symbols",
+    "description": "Understand and use inequality symbols and interval notation",
+    "category": "inequalities",
+    "prerequisites": [
+      "graphing-systems-inequalities"
+    ],
+    "enables": [
+      "missing-number-problems"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 21
+  },
+  {
+    "skillId": "measures-of-center",
+    "displayName": "Comparing Measures of Center",
+    "description": "Choose and compare appropriate measures of center (mean, median, mode)",
+    "category": "statistics",
+    "prerequisites": [
+      "mean"
+    ],
+    "enables": [
+      "median"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 11
+  },
+  {
+    "skillId": "iqr",
+    "displayName": "Interquartile Range (IQR)",
+    "description": "Find and interpret the interquartile range as a measure of spread",
+    "category": "statistics",
+    "prerequisites": [
+      "frequency-tables"
+    ],
+    "enables": [
+      "likely-unlikely"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 8
+  },
+  {
+    "skillId": "standard-deviation",
+    "displayName": "Standard Deviation",
+    "description": "Understand standard deviation as a measure of spread",
+    "category": "statistics",
+    "prerequisites": [
+      "range"
+    ],
+    "enables": [
+      "statistics"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 15
+  },
+  {
+    "skillId": "data-displays",
+    "displayName": "Choosing Appropriate Data Displays",
+    "description": "Select and create appropriate data displays for different data types",
+    "category": "data-displays",
+    "prerequisites": [
+      "box-plots"
+    ],
+    "enables": [
+      "histograms"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 19
+  },
+  {
+    "skillId": "exponential-patterns",
+    "displayName": "Exponential Patterns",
+    "description": "Identify and extend geometric (exponential) sequences",
+    "category": "sequences",
+    "prerequisites": [
+      "exponential-growth"
+    ],
+    "enables": [
+      "function-composition"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 9
+  },
+  {
+    "skillId": "histograms",
+    "displayName": "Histograms",
+    "description": "Create and interpret histograms to display numerical data",
+    "category": "data-displays",
+    "prerequisites": [
+      "data-displays"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 20
+  },
+  {
+    "skillId": "box-plots",
+    "displayName": "Box Plots (Box-and-Whisker)",
+    "description": "Create and interpret box plots using five-number summary",
+    "category": "data-displays",
+    "prerequisites": [
+      "tally-charts"
+    ],
+    "enables": [
+      "data-displays"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 18
+  },
+  {
+    "skillId": "sequence-patterns",
+    "displayName": "Sequence Patterns",
+    "description": "Identify and extend patterns in arithmetic sequences",
+    "category": "sequences",
+    "prerequisites": [
+      "rate-of-change-problems"
+    ],
+    "enables": [
+      "graph-quadratic-functions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 17
+  },
+  {
+    "skillId": "arithmetic-series",
+    "displayName": "Arithmetic Series Basics",
+    "description": "Find sums of arithmetic sequences",
+    "category": "sequences",
+    "prerequisites": [
+      "arithmetic-sequences"
+    ],
+    "enables": [
+      "average-rate-of-change"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 4
+  },
+  {
+    "skillId": "geometric-series",
+    "displayName": "Geometric Series Basics",
+    "description": "Find sums of geometric sequences (finite)",
+    "category": "sequences",
+    "prerequisites": [
+      "geometric-sequences"
+    ],
+    "enables": [
+      "parent-functions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 14
+  },
+  {
+    "skillId": "quadratic-functions",
+    "displayName": "Quadratic Functions",
+    "description": "Understand and analyze quadratic functions and their key features",
+    "category": "quadratics",
+    "prerequisites": [
+      "graph-quadratic-functions"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 19
+  },
+  {
+    "skillId": "graph-quadratic-functions",
+    "displayName": "Graphing Quadratic Functions",
+    "description": "Graph parabolas and identify key features from equations",
+    "category": "quadratics",
+    "prerequisites": [
+      "sequence-patterns"
+    ],
+    "enables": [
+      "quadratic-functions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 18
+  },
+  {
+    "skillId": "average-rate-of-change",
+    "displayName": "Average Rate of Change",
+    "description": "Calculate and interpret average rate of change for any function",
+    "category": "functions",
+    "prerequisites": [
+      "arithmetic-series"
+    ],
+    "enables": [
+      "exponential-decay"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 5
+  },
+  {
+    "skillId": "function-transformations",
+    "displayName": "Function Transformations",
+    "description": "Apply and identify transformations of functions (shifts, stretches, reflections)",
+    "category": "functions",
+    "prerequisites": [
+      "function-families"
+    ],
+    "enables": [
+      "geometric-sequences"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 12
+  },
+  {
+    "skillId": "vertical-shift",
+    "displayName": "Vertical Shifts",
+    "description": "Apply and identify vertical shifts of functions",
+    "category": "transformations",
+    "prerequisites": [
+      "translations"
+    ],
+    "enables": [
+      "volume-rectangular-prisms"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 29
+  },
+  {
+    "skillId": "exponential-growth",
+    "displayName": "Exponential Growth",
+    "description": "Model and analyze exponential growth situations",
+    "category": "exponential",
+    "prerequisites": [
+      "exponential-functions"
+    ],
+    "enables": [
+      "exponential-patterns"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 8
+  },
+  {
+    "skillId": "parent-functions",
+    "displayName": "Parent Functions",
+    "description": "Identify and analyze parent functions and their characteristics",
+    "category": "functions",
+    "prerequisites": [
+      "geometric-series"
+    ],
+    "enables": [
+      "rate-of-change-problems"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 15
+  },
+  {
+    "skillId": "exponential-decay",
+    "displayName": "Exponential Decay",
+    "description": "Model and analyze exponential decay situations",
+    "category": "exponential",
+    "prerequisites": [
+      "average-rate-of-change"
+    ],
+    "enables": [
+      "exponential-functions"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 6
+  },
+  {
+    "skillId": "function-families",
+    "displayName": "Function Families",
+    "description": "Understand and classify functions into families",
+    "category": "functions",
+    "prerequisites": [
+      "function-composition"
+    ],
+    "enables": [
+      "function-transformations"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "functions",
+    "depth": 11
+  },
+  {
+    "skillId": "horizontal-shift",
+    "displayName": "Horizontal Shifts",
+    "description": "Apply and identify horizontal shifts of functions",
+    "category": "transformations",
+    "prerequisites": [
+      "geometric-proofs"
+    ],
+    "enables": [
+      "identify-shapes"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 13
+  },
+  {
+    "skillId": "absolute-value-inequalities",
+    "displayName": "Absolute Value Inequalities",
+    "description": "Solve and graph absolute value inequalities",
+    "category": "inequalities",
+    "prerequisites": [
+      "solving-linear-equations"
+    ],
+    "enables": [
+      "balance-scales"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 8
+  },
+  {
+    "skillId": "systems-of-inequalities",
+    "displayName": "Systems of Inequalities",
+    "description": "Solve systems of linear inequalities algebraically and graphically",
+    "category": "inequalities",
+    "prerequisites": [
+      "systems-graphing"
+    ],
+    "enables": [
+      "systems-special-cases"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 31
+  },
+  {
+    "skillId": "linear-programming",
+    "displayName": "Linear Programming",
+    "description": "Use linear programming to optimize under constraints",
+    "category": "optimization",
+    "prerequisites": [],
+    "enables": [
+      "definite-integrals"
+    ],
+    "gradeBand": "Calculus",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "calculus",
+    "depth": 0
+  },
+  {
+    "skillId": "graphing-systems-inequalities",
+    "displayName": "Graphing Systems of Inequalities",
+    "description": "Graph solution regions for systems of inequalities on coordinate plane",
+    "category": "inequalities",
+    "prerequisites": [
+      "graphing-inequalities"
+    ],
+    "enables": [
+      "inequality-notation"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Expressions & Equations",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "algebra_equations",
+    "depth": 20
+  },
+  {
+    "skillId": "counting-methods",
+    "displayName": "Counting Methods",
+    "description": "Apply various counting techniques to complex situations",
+    "category": "counting",
+    "prerequisites": [],
+    "enables": [
+      "fundamental-counting-principle"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 0
+  },
+  {
+    "skillId": "fundamental-counting-principle",
+    "displayName": "Fundamental Counting Principle",
+    "description": "Use multiplication to count outcomes in multi-stage events",
+    "category": "counting",
+    "prerequisites": [
+      "counting-methods"
+    ],
+    "enables": [
+      "combinations"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 1
+  },
+  {
+    "skillId": "geometric-proofs",
+    "displayName": "Geometric Proofs",
+    "description": "Write formal proofs using postulates, theorems, and logical reasoning",
+    "category": "geometry",
+    "prerequisites": [
+      "distance-formula"
+    ],
+    "enables": [
+      "horizontal-shift"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 12
+  },
+  {
+    "skillId": "permutations",
+    "displayName": "Permutations",
+    "description": "Calculate permutations when order matters",
+    "category": "counting",
+    "prerequisites": [
+      "combinations"
+    ],
+    "enables": [
+      "slope"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 3
+  },
+  {
+    "skillId": "combinations",
+    "displayName": "Combinations",
+    "description": "Calculate combinations when order does not matter",
+    "category": "counting",
+    "prerequisites": [
+      "fundamental-counting-principle"
+    ],
+    "enables": [
+      "permutations"
+    ],
+    "gradeBand": "K-5",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 2
+  },
+  {
+    "skillId": "compound-probability",
+    "displayName": "Compound Probability",
+    "description": "Calculate probability of compound events using AND and OR",
+    "category": "probability",
+    "prerequisites": [],
+    "enables": [
+      "conditional-probability"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 0
+  },
+  {
+    "skillId": "dilations",
+    "displayName": "Dilations",
+    "description": "Perform and analyze dilations (size transformations) on the coordinate plane",
+    "category": "transformations",
+    "prerequisites": [
+      "create-symmetry"
+    ],
+    "enables": [
+      "distance-formula"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Geometry",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "geometry",
+    "depth": 10
+  },
+  {
+    "skillId": "sigma-notation",
+    "displayName": "Sigma Notation (Summation Notation)",
+    "description": "Read and write sums using sigma (Σ) notation",
+    "category": "series",
+    "prerequisites": [
+      "series-formulas"
+    ],
+    "enables": [
+      "summation-notation"
+    ],
+    "gradeBand": "Calculus",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "calculus",
+    "depth": 6
+  },
+  {
+    "skillId": "conditional-probability",
+    "displayName": "Conditional Probability",
+    "description": "Calculate and interpret conditional probability",
+    "category": "probability",
+    "prerequisites": [
+      "compound-probability"
+    ],
+    "enables": [
+      "probability-basics"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Statistics & Probability",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "stats_prob",
+    "depth": 1
+  },
+  {
+    "skillId": "finite-series",
+    "displayName": "Finite Series",
+    "description": "Find sums of finite arithmetic and geometric series",
+    "category": "series",
+    "prerequisites": [
+      "derivatives"
+    ],
+    "enables": [
+      "limits"
+    ],
+    "gradeBand": "Calculus",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "calculus",
+    "depth": 3
+  },
+  {
+    "skillId": "series-formulas",
+    "displayName": "Series Formulas",
+    "description": "Apply and derive formulas for arithmetic and geometric series",
+    "category": "series",
+    "prerequisites": [
+      "limits"
+    ],
+    "enables": [
+      "sigma-notation"
+    ],
+    "gradeBand": "Calculus",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "calculus",
+    "depth": 5
+  },
+  {
+    "skillId": "riemann-sums",
+    "displayName": "Riemann Sums",
+    "description": "Approximate area under curves using Riemann sums",
+    "category": "area-approximation",
+    "prerequisites": [
+      "result-unknown"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 16
+  },
+  {
+    "skillId": "summation-notation",
+    "displayName": "Working with Summation Notation",
+    "description": "Evaluate and manipulate expressions in summation notation",
+    "category": "series",
+    "prerequisites": [
+      "sigma-notation"
+    ],
+    "enables": [],
+    "gradeBand": "Calculus",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "calculus",
+    "depth": 7
+  },
+  {
+    "skillId": "area-approximation",
+    "displayName": "Area Approximation Methods",
+    "description": "Use various methods to approximate area under curves",
+    "category": "area-approximation",
+    "prerequisites": [
+      "slope"
+    ],
+    "enables": [
+      "change-unknown"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Algebra",
+    "isActive": true,
+    "source": "cleaned_from_archive",
+    "strand": "other",
+    "depth": 5
+  },
+  {
+    "skillId": "trig-right-triangle-ratios",
+    "displayName": "Trig Ratios in Right Triangles",
+    "description": "Compute sin, cos, tan from opposite/adjacent/hypotenuse or side ratios.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "pythagorean-theorem"
+    ],
+    "enables": [
+      "trig-degree-radian-conversion",
+      "trig-solve-right-triangles"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 20
+  },
+  {
+    "skillId": "trig-degree-radian-conversion",
+    "displayName": "Degree ↔ Radian Conversion",
+    "description": "Convert between degrees and radians using π.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-right-triangle-ratios"
+    ],
+    "enables": [
+      "trig-unit-circle-evaluation"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 21
+  },
+  {
+    "skillId": "trig-unit-circle-evaluation",
+    "displayName": "Unit Circle Exact Values",
+    "description": "Evaluate sin and cos at special angles using the unit circle.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-degree-radian-conversion"
+    ],
+    "enables": [
+      "trig-tan-unit-circle",
+      "trig-identities-basic",
+      "trig-solve-equations-special"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 22
+  },
+  {
+    "skillId": "trig-solve-right-triangles",
+    "displayName": "Solve Right Triangles",
+    "description": "Use trig ratios to find missing sides in right triangles.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-solve-equations-special",
+      "trig-right-triangle-ratios"
+    ],
+    "enables": [
+      "trig-elevation-depression",
+      "trig-law-of-sines"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 26
+  },
+  {
+    "skillId": "trig-elevation-depression",
+    "displayName": "Angles of Elevation and Depression",
+    "description": "Model and solve real-world problems using right-triangle trig.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-solve-right-triangles",
+      "slope"
+    ],
+    "enables": [
+      "trig-law-of-sines"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 27
+  },
+  {
+    "skillId": "trig-law-of-sines",
+    "displayName": "Law of Sines",
+    "description": "Solve oblique triangles using the Law of Sines.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-elevation-depression",
+      "trig-solve-right-triangles"
+    ],
+    "enables": [
+      "trig-law-of-cosines"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 28
+  },
+  {
+    "skillId": "trig-law-of-cosines",
+    "displayName": "Law of Cosines",
+    "description": "Solve oblique triangles using the Law of Cosines.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-law-of-sines"
+    ],
+    "enables": [],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 29
+  },
+  {
+    "skillId": "calc3-dot-cross",
+    "displayName": "Dot and Cross Products",
+    "description": "Compute dot products and cross products and interpret magnitudes.",
+    "category": "calc3",
+    "prerequisites": [],
+    "enables": [
+      "calc3-partial-derivatives"
+    ],
+    "gradeBand": "Calc 3",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "calc3",
+    "depth": 0
+  },
+  {
+    "skillId": "calc3-partial-derivatives",
+    "displayName": "Partial Derivatives",
+    "description": "Compute ∂f/∂x and ∂f/∂y for functions of two variables.",
+    "category": "calc3",
+    "prerequisites": [
+      "calc3-dot-cross",
+      "derivatives"
+    ],
+    "enables": [
+      "calc3-gradient"
+    ],
+    "gradeBand": "Calc 3",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "calc3",
+    "depth": 3
+  },
+  {
+    "skillId": "calc3-gradient",
+    "displayName": "Gradients",
+    "description": "Compute ∇f and evaluate it at a point.",
+    "category": "calc3",
+    "prerequisites": [
+      "calc3-partial-derivatives"
+    ],
+    "enables": [
+      "calc3-double-integrals"
+    ],
+    "gradeBand": "Calc 3",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "calc3",
+    "depth": 4
+  },
+  {
+    "skillId": "calc3-double-integrals",
+    "displayName": "Double Integrals",
+    "description": "Compute double integrals over rectangular regions.",
+    "category": "calc3",
+    "prerequisites": [
+      "calc3-gradient",
+      "definite-integrals"
+    ],
+    "enables": [
+      "calc3-greens-theorem"
+    ],
+    "gradeBand": "Calc 3",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "calc3",
+    "depth": 5
+  },
+  {
+    "skillId": "calc3-greens-theorem",
+    "displayName": "Green’s Theorem Reasoning + Computation",
+    "description": "Use Green’s Theorem to compute a line integral and justify applicability.",
+    "category": "calc3",
+    "prerequisites": [
+      "calc3-double-integrals"
+    ],
+    "enables": [
+      "calc3-divergence-theorem",
+      "calc3-stokes-theorem"
+    ],
+    "gradeBand": "Calc 3",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "calc3",
+    "depth": 6
+  },
+  {
+    "skillId": "prek-count-0-5",
+    "displayName": "Count Objects 0–5",
+    "description": "Count a small set and give the total.",
+    "category": "counting-cardinality",
+    "prerequisites": [
+      "prek-count-0-10"
+    ],
+    "enables": [
+      "skip-counting"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "prek_foundations",
+    "depth": 5
+  },
+  {
+    "skillId": "prek-count-0-10",
+    "displayName": "Count Objects 0–10",
+    "description": "Count a set up to 10 and give the total.",
+    "category": "counting-cardinality",
+    "prerequisites": [
+      "counting-up"
+    ],
+    "enables": [
+      "prek-count-0-5"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "prek_foundations",
+    "depth": 4
+  },
+  {
+    "skillId": "prek-compare-sets",
+    "displayName": "Compare Sets (More, Less, Equal)",
+    "description": "Compare two groups and decide which has more, less, or the same.",
+    "category": "counting-cardinality",
+    "prerequisites": [
+      "compare-numbers"
+    ],
+    "enables": [
+      "rounding"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "prek_foundations",
+    "depth": 8
+  },
+  {
+    "skillId": "prek-shapes-basic",
+    "displayName": "Identify Basic Shapes",
+    "description": "Identify circle, triangle, square, rectangle from descriptions.",
+    "category": "geometry",
+    "prerequisites": [
+      "prek-position-words"
+    ],
+    "enables": [
+      "prek-sort-attributes"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "prek_foundations",
+    "depth": 19
+  },
+  {
+    "skillId": "prek-patterns",
+    "displayName": "Complete Simple Patterns",
+    "description": "Complete AB and AAB patterns.",
+    "category": "operations",
+    "prerequisites": [
+      "prek-number-words"
+    ],
+    "enables": [
+      "prek-position-words"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "prek_foundations",
+    "depth": 17
+  },
+  {
+    "skillId": "prek-sort-attributes",
+    "displayName": "Sort by Attribute",
+    "description": "Sort objects by size, color, or shape based on description.",
+    "category": "operations",
+    "prerequisites": [
+      "prek-shapes-basic"
+    ],
+    "enables": [],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "prek_foundations",
+    "depth": 20
+  },
+  {
+    "skillId": "prek-number-words",
+    "displayName": "Number Words 0–10",
+    "description": "Match number words to numerals from 0 to 10.",
+    "category": "number-recognition",
+    "prerequisites": [
+      "ordering-numbers"
+    ],
+    "enables": [
+      "prek-patterns"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "prek_foundations",
+    "depth": 16
+  },
+  {
+    "skillId": "prek-position-words",
+    "displayName": "Positional Words",
+    "description": "Use positional words like above/below/next to in simple situations.",
+    "category": "measurement",
+    "prerequisites": [
+      "prek-patterns"
+    ],
+    "enables": [
+      "prek-shapes-basic"
+    ],
+    "gradeBand": "preK",
+    "ohioDomain": "Counting & Cardinality",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "prek_foundations",
+    "depth": 18
+  },
+  {
+    "skillId": "decimals-place-value",
+    "displayName": "Decimal Place Value",
+    "description": "Identify the digit value in tenths/hundredths/thousandths.",
+    "category": "decimals",
+    "prerequisites": [
+      "equivalent-fractions",
+      "regrouping"
+    ],
+    "enables": [
+      "decimals-rounding"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "place_value",
+    "depth": 11
+  },
+  {
+    "skillId": "decimals-rounding",
+    "displayName": "Round Decimals",
+    "description": "Round decimals to a given place.",
+    "category": "decimals",
+    "prerequisites": [
+      "decimals-place-value"
+    ],
+    "enables": [
+      "decimals-add-subtract"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "place_value",
+    "depth": 12
+  },
+  {
+    "skillId": "decimals-add-subtract",
+    "displayName": "Add and Subtract Decimals",
+    "description": "Compute sums and differences of decimals.",
+    "category": "decimals",
+    "prerequisites": [
+      "decimals-rounding",
+      "equivalent-fractions",
+      "addition-within-10"
+    ],
+    "enables": [
+      "decimals-divide"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "place_value",
+    "depth": 13
+  },
+  {
+    "skillId": "decimals-multiply",
+    "displayName": "Multiply Decimals",
+    "description": "Multiply decimals and interpret the product.",
+    "category": "decimals",
+    "prerequisites": [
+      "decimals-divide",
+      "equivalent-fractions"
+    ],
+    "enables": [],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "place_value",
+    "depth": 15
+  },
+  {
+    "skillId": "decimals-divide",
+    "displayName": "Divide Decimals",
+    "description": "Divide decimals (including by powers of 10).",
+    "category": "decimals",
+    "prerequisites": [
+      "decimals-add-subtract",
+      "equivalent-fractions"
+    ],
+    "enables": [
+      "decimals-multiply"
+    ],
+    "gradeBand": "5-8",
+    "ohioDomain": "Number & Operations in Base Ten",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "place_value",
+    "depth": 14
+  },
+  {
+    "skillId": "trig-tan-unit-circle",
+    "displayName": "Evaluate tan at Special Angles",
+    "description": "Evaluate tan(θ) exactly at special angles.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-unit-circle-evaluation"
+    ],
+    "enables": [
+      "trig-identities-basic"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 23
+  },
+  {
+    "skillId": "trig-identities-basic",
+    "displayName": "Basic Trig Identities",
+    "description": "Use sin^2θ + cos^2θ = 1 and related identities.",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-tan-unit-circle",
+      "trig-unit-circle-evaluation"
+    ],
+    "enables": [
+      "trig-solve-equations-special"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 24
+  },
+  {
+    "skillId": "trig-solve-equations-special",
+    "displayName": "Solve Simple Trig Equations (Special Angles)",
+    "description": "Solve trig equations using unit circle values on [0, 2π).",
+    "category": "trigonometry",
+    "prerequisites": [
+      "trig-identities-basic",
+      "trig-unit-circle-evaluation"
+    ],
+    "enables": [
+      "trig-solve-right-triangles"
+    ],
+    "gradeBand": "8-12",
+    "ohioDomain": "Functions",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "trigonometry",
+    "depth": 25
+  },
+  {
+    "skillId": "calc3-divergence-theorem",
+    "displayName": "Divergence Theorem Reasoning",
+    "description": "Relate flux through a closed surface to triple integral of divergence; justify conditions.",
+    "category": "calc3",
+    "prerequisites": [
+      "calc3-greens-theorem"
+    ],
+    "enables": [
+      "calc3-stokes-theorem"
+    ],
+    "gradeBand": "Calc 3",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "calc3",
+    "depth": 7
+  },
+  {
+    "skillId": "calc3-stokes-theorem",
+    "displayName": "Stokes’ Theorem Reasoning",
+    "description": "Relate line integral around boundary to surface integral of curl; justify conditions.",
+    "category": "calc3",
+    "prerequisites": [
+      "calc3-divergence-theorem",
+      "calc3-greens-theorem"
+    ],
+    "enables": [],
+    "gradeBand": "Calc 3",
+    "ohioDomain": "Calculus",
+    "isActive": true,
+    "source": "generated_skill",
+    "strand": "calc3",
+    "depth": 8
+  }
+]
