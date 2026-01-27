@@ -52,6 +52,31 @@ window.AVATAR_CONFIG = {
     description: 'Tackle tough problems head-on!',
     unlocked: true
   },
+  // BETA FEEDBACK: Added more sports options for female athletes
+  'volleyball': {
+    name: '🏐 Volleyball Player',
+    image: 'volleyball.png',
+    category: 'sports',
+    rarity: 'common',
+    description: 'Spike those math problems!',
+    unlocked: true
+  },
+  'softball': {
+    name: '🥎 Softball Player',
+    image: 'softball.png',
+    category: 'sports',
+    rarity: 'common',
+    description: 'Knock it out of the park!',
+    unlocked: true
+  },
+  'tennis': {
+    name: '🎾 Tennis Player',
+    image: 'tennis.png',
+    category: 'sports',
+    rarity: 'common',
+    description: 'Ace every problem!',
+    unlocked: true
+  },
 
   // ===== UNLOCK AT LEVEL 5 =====
   'unicorn': {
@@ -60,6 +85,22 @@ window.AVATAR_CONFIG = {
     category: 'sports',
     rarity: 'uncommon',
     description: 'Skate through challenges with speed!',
+    unlockLevel: 5
+  },
+  'swimmer': {
+    name: '🏊 Swimmer',
+    image: 'swimmer.png',
+    category: 'sports',
+    rarity: 'uncommon',
+    description: 'Dive deep into problem solving!',
+    unlockLevel: 5
+  },
+  'runner': {
+    name: '🏃 Track & Field',
+    image: 'runner.png',
+    category: 'sports',
+    rarity: 'uncommon',
+    description: 'Sprint to success!',
     unlockLevel: 5
   },
   'penguin': {
@@ -104,6 +145,23 @@ window.AVATAR_CONFIG = {
     description: 'Soar above challenges!',
     unlockLevel: 10
   },
+  // BETA FEEDBACK: More female-friendly sports at level 10
+  'gymnast': {
+    name: '🤸 Gymnast',
+    image: 'gymnast.png',
+    category: 'sports',
+    rarity: 'rare',
+    description: 'Flip through problems with grace!',
+    unlockLevel: 10
+  },
+  'dancer': {
+    name: '💃 Dancer',
+    image: 'dancer.png',
+    category: 'sports',
+    rarity: 'rare',
+    description: 'Dance your way to success!',
+    unlockLevel: 10
+  },
 
   // ===== UNLOCK AT LEVEL 15 =====
   'octopus': {
@@ -120,6 +178,23 @@ window.AVATAR_CONFIG = {
     category: 'students',
     rarity: 'rare',
     description: 'Find creative solutions!',
+    unlockLevel: 15
+  },
+  // BETA FEEDBACK: More sports at level 15
+  'cheerleader': {
+    name: '📣 Cheerleader',
+    image: 'cheerleader.png',
+    category: 'sports',
+    rarity: 'rare',
+    description: 'Cheer yourself to victory!',
+    unlockLevel: 15
+  },
+  'lacrosse': {
+    name: '🥍 Lacrosse Player',
+    image: 'lacrosse.png',
+    category: 'sports',
+    rarity: 'rare',
+    description: 'Catch every concept!',
     unlockLevel: 15
   },
 

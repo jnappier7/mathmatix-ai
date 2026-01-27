@@ -20,12 +20,15 @@ function buildSkillMasteryContext(userProfile, filterToSkill = null) {
   if (!userProfile.skillMastery ||
       !(userProfile.skillMastery instanceof Map) ||
       userProfile.skillMastery.size === 0) {
+    // BETA FEEDBACK FIX: Made this less aggressive about suggesting assessments
+    // Students were being incorrectly prompted to take placement tests when just asking for help
     return `--- SKILL PROGRESSION & LEARNING PATH ---
-**ASSESSMENT NEEDED:** This student hasn't completed their initial skills assessment yet.
-- **IMPORTANT:** If they explicitly request a "placement test," "assessment," or say "my teacher said to take a test," IMMEDIATELY tell them you'll start their assessment and ask if they're ready
-- Do NOT give practice problems when they ask for the actual placement test
-- If they seem ready for structured learning or ask what to learn, proactively suggest they take the assessment
-- For general questions, provide tutoring help on whatever they ask about
+**ASSESSMENT PENDING:** This student hasn't completed their initial skills assessment yet.
+- **ONLY WHEN EXPLICITLY REQUESTED:** If they say "placement test," "take my assessment," "my teacher said to take a test," or similar - THEN tell them you'll start their assessment
+- **DO NOT** suggest the assessment when they ask general questions like "help with fractions" or "what should I learn"
+- **DO NOT** assume they want an assessment just because they mention struggling or being unsure
+- For ALL regular tutoring requests, provide helpful tutoring without mentioning the assessment
+- Let the assessment happen naturally through the normal app flow - don't push it in conversation
 `;
   }
 
