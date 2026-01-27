@@ -133,6 +133,22 @@ const CATEGORY_DIFFICULTY_MAP = {
   'word-problems': 0.8,
   'rates': 0.5,
   'conversions': 0.3,
+
+  // Additional categories from curriculum data
+  'expressions-equations': 0.8,
+  'exponential': 2.0,
+  'rational': 2.0,
+  'congruence': 1.3,
+  'similarity': 1.3,
+  'sequences': 2.0,
+  'proofs': 1.8,
+  'circles': 1.4,
+  'triangles': 1.0,
+  'parallel-perpendicular': 1.0,
+  'surface-area': 0.8,
+  'right-triangles': 1.2,
+  'coordinate-geometry': 1.2,
+
   'advanced': 2.5
 };
 

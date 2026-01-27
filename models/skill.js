@@ -87,6 +87,26 @@ const skillSchema = new mongoose.Schema({
       'statistics',
       'probability',
 
+      // Additional categories found in curriculum data
+      'word-problems',
+      'expressions-equations',
+      'exponential',
+      'rational',
+      'congruence',
+      'similarity',
+      'sequences',
+      'counting',
+      'number-theory',
+      'rates',
+      'conversions',
+      'proofs',
+      'circles',
+      'triangles',
+      'parallel-perpendicular',
+      'surface-area',
+      'right-triangles',
+      'coordinate-geometry',
+
       // Catch-all
       'advanced'
     ]

@@ -491,6 +491,22 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       'word-problems': 0.8,     // Applied problems
       'rates': 0.5,             // Rate problems
       'conversions': 0.3,       // Unit conversions
+
+      // Additional categories from curriculum data
+      'expressions-equations': 0.8,  // Combo category
+      'exponential': 2.0,            // Exponential functions
+      'rational': 2.0,               // Rational expressions/equations
+      'congruence': 1.3,             // Geometry congruence
+      'similarity': 1.3,             // Geometry similarity
+      'sequences': 2.0,              // Sequences (not series)
+      'proofs': 1.8,                 // Geometric proofs
+      'circles': 1.4,                // Circle properties
+      'triangles': 1.0,              // Triangle properties
+      'parallel-perpendicular': 1.0, // Lines geometry
+      'surface-area': 0.8,           // 3D surface area
+      'right-triangles': 1.2,        // Right triangle trig
+      'coordinate-geometry': 1.2,    // Coordinate plane geometry
+
       'advanced': 2.5
     };
 
