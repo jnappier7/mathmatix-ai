@@ -507,6 +507,13 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       'right-triangles': 1.2,        // Right triangle trig
       'coordinate-geometry': 1.2,    // Coordinate plane geometry
 
+      // Additional categories from database audit
+      'integrals': 3.0,              // Definite/indefinite integrals
+      'estimation': -1.5,            // Estimating sums, checking reasonableness
+      'number-sense': -2.0,          // Number bonds, basic number relationships
+      'mental-math': -1.8,           // Make-ten, doubles, mental strategies
+      'linear-functions': 1.0,       // Slope concepts, graphing linear equations
+
       'advanced': 2.5
     };
 

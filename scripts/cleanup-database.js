@@ -47,6 +47,8 @@ const VALID_CATEGORIES = [
   'congruence', 'similarity', 'sequences', 'counting', 'number-theory',
   'rates', 'conversions', 'proofs', 'circles', 'triangles',
   'parallel-perpendicular', 'surface-area', 'right-triangles', 'coordinate-geometry',
+  // Categories from database audit
+  'integrals', 'estimation', 'number-sense', 'mental-math', 'linear-functions',
   'advanced'
 ];
 
