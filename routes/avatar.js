@@ -60,7 +60,7 @@ if (requestedId !== req.user._id.toString()) {
 }
         const { userId } = req.params; //
         const user = await User.findById(userId).select('avatar').lean(); // Fetch only avatar field
-        
+
         if (!user) { //
             return res.status(404).json({ message: 'User not found.' }); //
         }
@@ -68,6 +68,98 @@ if (requestedId !== req.user._id.toString()) {
     } catch (error) {
         console.error('ERROR: Failed to fetch avatar:', error); //
         res.status(500).json({ message: 'Server error fetching avatar.' }); //
+    }
+});
+
+// ============ DICEBEAR AVATAR ENDPOINTS ============
+
+/**
+ * GET /api/avatar/config
+ * Get the current user's DiceBear avatar configuration
+ */
+router.get('/config', isAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('avatar.dicebearConfig avatar.dicebearUrl').lean();
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.json({
+            config: user.avatar?.dicebearConfig || null,
+            avatarUrl: user.avatar?.dicebearUrl || null
+        });
+    } catch (error) {
+        console.error('ERROR: Failed to fetch avatar config:', error);
+        res.status(500).json({ message: 'Server error fetching avatar config.' });
+    }
+});
+
+/**
+ * POST /api/avatar/dicebear
+ * Save a DiceBear avatar configuration
+ */
+router.post('/dicebear', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { config, avatarUrl } = req.body;
+
+        if (!config || !avatarUrl) {
+            return res.status(400).json({ message: 'Config and avatarUrl are required.' });
+        }
+
+        // Validate the avatar URL is from DiceBear
+        if (!avatarUrl.startsWith('https://api.dicebear.com/')) {
+            return res.status(400).json({ message: 'Invalid avatar URL. Must be from DiceBear API.' });
+        }
+
+        // Validate config has required fields
+        const allowedStyles = ['adventurer', 'adventurer-neutral', 'big-smile', 'lorelei', 'micah', 'pixel-art', 'thumbs', 'fun-emoji'];
+        if (!config.style || !allowedStyles.includes(config.style)) {
+            return res.status(400).json({ message: 'Invalid avatar style.' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Initialize avatar object if needed
+        if (!user.avatar) {
+            user.avatar = {};
+        }
+
+        // Update DiceBear config
+        user.avatar.dicebearConfig = {
+            style: config.style,
+            seed: config.seed || Math.random().toString(36).substring(2, 10),
+            skinColor: config.skinColor,
+            hairColor: config.hairColor,
+            backgroundColor: config.backgroundColor || 'transparent',
+            glasses: Boolean(config.glasses),
+            earrings: Boolean(config.earrings),
+            flip: Boolean(config.flip)
+        };
+
+        // Store the avatar URL for quick retrieval
+        user.avatar.dicebearUrl = avatarUrl;
+
+        // Clear the old selectedAvatarId since they're using a custom avatar now
+        user.selectedAvatarId = null;
+
+        await user.save();
+
+        console.log(`[Avatar] User ${userId} saved DiceBear avatar: ${config.style}`);
+
+        res.json({
+            success: true,
+            message: 'Avatar saved successfully!',
+            avatarUrl: avatarUrl
+        });
+
+    } catch (error) {
+        console.error('ERROR: Failed to save DiceBear avatar:', error);
+        res.status(500).json({ message: 'Server error saving avatar.' });
     }
 });
 

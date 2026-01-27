@@ -329,6 +329,7 @@ app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
 app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
+app.use('/api/avatar', isAuthenticated, avatarRoutes); // DiceBear avatar customization endpoints
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
@@ -502,6 +503,9 @@ app.get("/teacher-celeration-dashboard.html", isAuthenticated, isTeacher, (req, 
 
 // Parent-specific protected routes
 app.get("/parent-dashboard.html", isAuthenticated, isParent, (req, res) => res.sendFile(path.join(__dirname, "public", "parent-dashboard.html")));
+
+// Avatar Builder page (authenticated users only)
+app.get("/avatar-builder.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "avatar-builder.html")));
 
 // Upload page (authenticated users only)
 app.get("/upload.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "upload.html")));

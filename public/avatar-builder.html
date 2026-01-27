@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Avatar | M∆THM∆TIΧ AI</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/css/avatar-builder.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer">
+</head>
+<body class="landing-page-body">
+    <header class="landing-header">
+        <div class="header-logo-container">
+            <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero">
+        </div>
+        <nav class="landing-nav">
+            <a href="/pick-tutor.html" class="btn btn-tertiary" id="back-link">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </nav>
+    </header>
+
+    <main class="pick-tutor-main" style="min-height: calc(100vh - 140px); overflow-y: auto; padding-bottom: 3rem;">
+        <section class="selection-section">
+            <h1 class="section-title">Create Your Custom Avatar</h1>
+            <p class="subtitle">Design your own unique look! Pick a style, customize your appearance, and make it yours.</p>
+
+            <div class="avatar-builder-wrapper">
+                <!-- Avatar Preview -->
+                <div class="avatar-preview-card">
+                    <div class="avatar-preview-wrapper">
+                        <img id="avatar-preview" src="" alt="Your Avatar" class="avatar-preview">
+                    </div>
+                    <button id="randomize-btn" class="btn btn-secondary">
+                        <i class="fas fa-dice"></i> Randomize
+                    </button>
+                </div>
+
+                <!-- Customization Options -->
+                <div class="customization-panel">
+                    <!-- Style Selector -->
+                    <div class="option-group">
+                        <h3><i class="fas fa-palette"></i> Avatar Style</h3>
+                        <div class="style-grid" id="style-selector">
+                            <button class="style-btn active" data-style="adventurer" title="Adventurer">
+                                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=style1" alt="Adventurer">
+                                <span>Adventurer</span>
+                            </button>
+                            <button class="style-btn" data-style="adventurer-neutral" title="Neutral">
+                                <img src="https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=style2" alt="Neutral">
+                                <span>Neutral</span>
+                            </button>
+                            <button class="style-btn" data-style="big-smile" title="Big Smile">
+                                <img src="https://api.dicebear.com/7.x/big-smile/svg?seed=style3" alt="Big Smile">
+                                <span>Big Smile</span>
+                            </button>
+                            <button class="style-btn" data-style="lorelei" title="Lorelei">
+                                <img src="https://api.dicebear.com/7.x/lorelei/svg?seed=style4" alt="Lorelei">
+                                <span>Lorelei</span>
+                            </button>
+                            <button class="style-btn" data-style="micah" title="Micah">
+                                <img src="https://api.dicebear.com/7.x/micah/svg?seed=style5" alt="Micah">
+                                <span>Micah</span>
+                            </button>
+                            <button class="style-btn" data-style="pixel-art" title="Pixel Art">
+                                <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=style6" alt="Pixel Art">
+                                <span>Pixel Art</span>
+                            </button>
+                            <button class="style-btn" data-style="thumbs" title="Thumbs">
+                                <img src="https://api.dicebear.com/7.x/thumbs/svg?seed=style7" alt="Thumbs">
+                                <span>Thumbs</span>
+                            </button>
+                            <button class="style-btn" data-style="fun-emoji" title="Emoji">
+                                <img src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=style8" alt="Emoji">
+                                <span>Emoji</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Skin Tone -->
+                    <div class="option-group" id="skin-group">
+                        <h3><i class="fas fa-user"></i> Skin Tone</h3>
+                        <div class="color-picker" id="skin-picker">
+                            <button class="color-btn" data-color="f2d3b1" style="background-color: #f2d3b1" title="Light"></button>
+                            <button class="color-btn" data-color="ecad80" style="background-color: #ecad80" title="Light Medium"></button>
+                            <button class="color-btn active" data-color="d08b5b" style="background-color: #d08b5b" title="Medium"></button>
+                            <button class="color-btn" data-color="ae5d29" style="background-color: #ae5d29" title="Medium Dark"></button>
+                            <button class="color-btn" data-color="694d3d" style="background-color: #694d3d" title="Dark"></button>
+                        </div>
+                    </div>
+
+                    <!-- Hair Color -->
+                    <div class="option-group" id="hair-color-group">
+                        <h3><i class="fas fa-paint-brush"></i> Hair Color</h3>
+                        <div class="color-picker" id="hair-color-picker">
+                            <button class="color-btn" data-color="090806" style="background-color: #090806" title="Black"></button>
+                            <button class="color-btn active" data-color="4a3728" style="background-color: #4a3728" title="Brown"></button>
+                            <button class="color-btn" data-color="b58143" style="background-color: #b58143" title="Blonde"></button>
+                            <button class="color-btn" data-color="a55728" style="background-color: #a55728" title="Auburn"></button>
+                            <button class="color-btn" data-color="d6c4c2" style="background-color: #d6c4c2" title="Gray"></button>
+                            <button class="color-btn" data-color="cc3333" style="background-color: #cc3333" title="Red"></button>
+                            <button class="color-btn" data-color="6699ff" style="background-color: #6699ff" title="Blue"></button>
+                            <button class="color-btn" data-color="ff66cc" style="background-color: #ff66cc" title="Pink"></button>
+                            <button class="color-btn" data-color="9966ff" style="background-color: #9966ff" title="Purple"></button>
+                            <button class="color-btn" data-color="66ff66" style="background-color: #66ff66" title="Green"></button>
+                        </div>
+                    </div>
+
+                    <!-- Background Color -->
+                    <div class="option-group">
+                        <h3><i class="fas fa-square"></i> Background</h3>
+                        <div class="color-picker" id="bg-picker">
+                            <button class="color-btn transparent active" data-color="transparent" title="None">
+                                <i class="fas fa-ban"></i>
+                            </button>
+                            <button class="color-btn" data-color="b6e3f4" style="background-color: #b6e3f4" title="Sky Blue"></button>
+                            <button class="color-btn" data-color="c0aede" style="background-color: #c0aede" title="Lavender"></button>
+                            <button class="color-btn" data-color="d1d4f9" style="background-color: #d1d4f9" title="Periwinkle"></button>
+                            <button class="color-btn" data-color="ffd5dc" style="background-color: #ffd5dc" title="Pink"></button>
+                            <button class="color-btn" data-color="ffdfbf" style="background-color: #ffdfbf" title="Peach"></button>
+                            <button class="color-btn" data-color="d5f5e3" style="background-color: #d5f5e3" title="Mint"></button>
+                            <button class="color-btn" data-color="fef9c3" style="background-color: #fef9c3" title="Yellow"></button>
+                        </div>
+                    </div>
+
+                    <!-- Accessories -->
+                    <div class="option-group" id="accessories-group">
+                        <h3><i class="fas fa-glasses"></i> Accessories</h3>
+                        <div class="toggle-options" id="accessories-toggles">
+                            <label class="toggle-option">
+                                <input type="checkbox" id="glasses-toggle">
+                                <span class="toggle-label">Glasses</span>
+                            </label>
+                            <label class="toggle-option">
+                                <input type="checkbox" id="earrings-toggle">
+                                <span class="toggle-label">Earrings</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Flip Option -->
+                    <div class="option-group">
+                        <h3><i class="fas fa-arrows-alt-h"></i> Direction</h3>
+                        <div class="toggle-options">
+                            <label class="toggle-option">
+                                <input type="checkbox" id="flip-toggle">
+                                <span class="toggle-label">Flip Horizontally</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="tutor-actions-bar" style="margin-top: 2rem;">
+                <button id="save-avatar-btn" class="btn btn-select btn-large">
+                    <i class="fas fa-save"></i> Save My Avatar
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 M∆THM∆TIΧ AI. All rights reserved. <a href="/privacy.html">Privacy Policy</a> | <a href="/terms.html">Terms of Use</a></p>
+        <p class="edtech-pledge">Proud member of the EdTech Equity Pledge.</p>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/js/csrf.js"></script>
+    <script src="/js/avatar-builder.js"></script>
+</body>
+</html>
