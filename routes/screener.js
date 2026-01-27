@@ -364,14 +364,21 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     // Filter to only include skills that have either:
     // 1. Existing problems in the database
     // 2. Problem generation templates
+    // BUG FIX: Extract actual skillId from each template, not the template keys
+    // Template keys (e.g., 'multi-step-equation') differ from skillIds (e.g., 'solving-multi-step-equations')
     const { TEMPLATES } = require('../utils/problemGenerator');
-    const templateSkillIds = Object.keys(TEMPLATES);
+    const templateSkillIds = Object.values(TEMPLATES).map(t => t.skillId);
 
     // Get list of skill IDs that have problems in the database
     const skillsWithProblems = await Problem.distinct('skillId');
 
     // Combine: skills that have templates OR problems
     const availableSkillIds = new Set([...templateSkillIds, ...skillsWithProblems]);
+
+    // DEBUG: Log available skill IDs for diagnosis
+    console.log(`[DEBUG] Template skillIds: [${templateSkillIds.join(', ')}]`);
+    console.log(`[DEBUG] Skills with problems in DB: [${skillsWithProblems.slice(0, 20).join(', ')}${skillsWithProblems.length > 20 ? '...' : ''}]`);
+    console.log(`[DEBUG] Target difficulty: ${targetDifficulty.toFixed(2)}`);
 
     // Filter allSkills to only include available skills
     const filteredSkills = allSkills.filter(skill => availableSkillIds.has(skill.skillId));
@@ -410,6 +417,8 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     };
 
     // If no IRT difficulty in database, use category-based estimates
+    // Maps skill.category (from Skill model enum) to estimated IRT difficulty
+    // These categories match the enum in models/skill.js
     const categoryDifficultyMap = {
       // Elementary (K-5)
       'counting-cardinality': -2.5,
@@ -417,52 +426,85 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       'addition-subtraction': -2.0,
       'place-value': -1.8,
       'multiplication-division': -1.5,
-      'fractions-basics': -1.2,
-      'decimals-basics': -1.0,
+      'shapes-geometry': -1.0,
       'measurement': -0.8,
+      'time': -1.5,
+      'data': -0.5,
+      'money': -1.2,
+      'arrays': -1.5,
 
       // Middle School (6-8)
-      'integers-rationals': -0.5,
-      'proportional-reasoning': -0.3,
-      'percent-applications': 0.0,
-      'integer-operations': -0.4,
-      'integer-addition': -0.6,
-      'integer-subtraction': -0.5,
-      'integer-multiplication': -0.2,
-      'integer-division': 0.0,
-      'integer-all-operations': 0.2,
-      'expressions-equations': 0.3,
-      'solving-equations': 0.5,
-      'one-step-equations-addition': 0.0,
-      'one-step-equations-multiplication': 0.5,
-      'two-step-equations': 1.0,
-      'multi-step-equations': 1.5,
-      'inequalities': 0.8,
-      'scientific-notation': 0.6,
+      'integers-rationals': -0.3,
+      'scientific-notation': 0.5,
+      'area-perimeter': 0.0,
+      'volume': 0.3,
+      'angles': 0.2,
       'pythagorean-theorem': 0.7,
-      'geometry-basics': -0.6,
+      'transformations': 0.8,
+      'scatter-plots': 0.6,
 
-      // High School Algebra
-      'linear-equations': 1.0,
-      'systems-equations': 1.5,
-      'quadratics': 1.8,
+      // High School & College Algebra (these are the actual category enum values)
+      'number-system': -0.5,
+      'operations': -0.3,
+      'decimals': -0.8,
+      'fractions': -0.5,
+      'ratios-proportions': 0.2,
+      'percent': 0.0,
+      'expressions': 0.5,
+      'equations': 0.8,           // General equations category
+      'linear-equations': 1.0,    // Linear equations
+      'systems': 1.5,             // Systems of equations
+      'inequalities': 1.2,
       'polynomials': 1.6,
+      'factoring': 1.4,
+      'quadratics': 1.8,
+      'radicals': 1.5,
       'rational-expressions': 2.0,
-      'exponentials-logs': 2.2,
+      'complex-numbers': 2.2,
+      'exponentials-logarithms': 2.0,
+      'sequences-series': 2.3,
+      'conics': 2.5,
       'functions': 1.4,
-      'graphing': 1.2,
+      'graphing': 1.0,
+      'coordinate-plane': 0.8,
+      'geometry': 1.2,
 
-      // Advanced
-      'trigonometry': 2.5,
-      'precalculus': 2.8,
-      'limits': 3.0,
-      'derivatives': 3.2,
-      'integration': 3.5,
-      'series': 3.8
+      // Advanced (Precalculus through Calculus)
+      'trigonometry': 2.0,
+      'identities': 2.3,
+      'polar-coordinates': 2.5,
+      'vectors': 2.5,
+      'matrices': 2.3,
+      'limits': 2.8,
+      'derivatives': 3.0,
+      'integration': 3.2,
+      'series-tests': 3.3,
+      'taylor-series': 3.5,
+      'parametric-polar': 3.0,
+      'differential-equations': 3.5,
+      'multivariable': 3.5,
+      'vector-calculus': 3.5,
+      'statistics': 1.5,
+      'probability': 1.3,
+      'counting': 1.8,          // Permutations, combinations (Algebra 2)
+      'number-theory': 1.5,     // Divisibility, primes
+      'word-problems': 0.8,     // Applied problems
+      'rates': 0.5,             // Rate problems
+      'conversions': 0.3,       // Unit conversions
+      'advanced': 2.5
     };
 
     // Build candidate skills with estimated difficulties
     let candidateSkills = [];
+
+    // Build a map of skillId -> template baseDifficulty for more accurate difficulty estimates
+    const templateDifficultyMap = {};
+    for (const template of Object.values(TEMPLATES)) {
+      if (template.skillId && template.baseDifficulty !== undefined) {
+        templateDifficultyMap[template.skillId] = template.baseDifficulty;
+      }
+    }
+    console.log(`[DEBUG] Template difficulty map:`, templateDifficultyMap);
 
     // Get count of actual problems for each skill (not just templates)
     const problemCounts = await Problem.aggregate([
@@ -476,8 +518,18 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       // We allow template-only skills since generateProblem() can create on-demand
       const actualProblemCount = problemCountMap.get(skill.skillId) || 0;
 
-      // Use IRT difficulty if available, otherwise category estimate
-      const estimatedDifficulty = skill.irtDifficulty || categoryDifficultyMap[skill.category] || 0;
+      // Use difficulty in priority order:
+      // 1. Skill's irtDifficulty (if non-zero, meaning explicitly calibrated)
+      // 2. Template's baseDifficulty (most accurate for template-based skills)
+      // 3. Category-based estimate (fallback)
+      let estimatedDifficulty;
+      if (skill.irtDifficulty && skill.irtDifficulty !== 0) {
+        estimatedDifficulty = skill.irtDifficulty;
+      } else if (templateDifficultyMap[skill.skillId] !== undefined) {
+        estimatedDifficulty = templateDifficultyMap[skill.skillId];
+      } else {
+        estimatedDifficulty = categoryDifficultyMap[skill.category] || 0;
+      }
 
       // Count how many times this skill has been tested
       const testCount = session.testedSkills.filter(s => s === skill.skillId).length;
@@ -533,6 +585,14 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     console.log(`[DEBUG] Target difficulty: ${targetDifficulty.toFixed(2)}`);
     console.log(`[DEBUG] Tested skills so far: [${session.testedSkills.join(', ')}]`);
     console.log(`[DEBUG] Category counts:`, session.testedSkillCategories);
+
+    // DEBUG: Show top 5 candidates by score (lower is better = closer to target difficulty)
+    const sortedByScore = [...candidateSkills].sort((a, b) => a.score - b.score);
+    const top5 = sortedByScore.slice(0, 5);
+    console.log(`[DEBUG] Top 5 skill candidates (by score, lower=better):`);
+    top5.forEach((s, i) => {
+      console.log(`  ${i+1}. ${s.skillId} (cat=${s.category}, d=${s.difficulty.toFixed(2)}, dist=${s.difficultyDistance.toFixed(2)}, score=${s.score.toFixed(1)})`);
+    });
 
     // SKILL CLUSTERING: Group skills by difficulty bins to prevent wild jumps
     // Test 2-3 skills at similar difficulty before moving to next level

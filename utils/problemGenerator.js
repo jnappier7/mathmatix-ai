@@ -592,6 +592,332 @@ const TEMPLATES = {
         estimatedTime: 15
       };
     }
+  },
+
+  // =========================================================================
+  // ALGEBRA 2 / HIGH SCHOOL LEVEL
+  // These match skillIds that may exist in the database
+  // =========================================================================
+
+  'algebra': {
+    skillId: 'algebra',
+    baseDifficulty: 1.0,
+    baseDiscrimination: 1.4,
+
+    generate: (targetDifficulty = 1.0) => {
+      // Solve linear equations
+      const a = random(2, 8);
+      const b = random(-10, 10);
+      const answer = random(-5, 5);
+      const result = a * answer + b;
+
+      return {
+        content: `Solve for x: ${a}x ${b >= 0 ? '+' : '-'} ${Math.abs(b)} = ${result}`,
+        answer,
+        difficulty: targetDifficulty,
+        discrimination: 1.4,
+        estimatedTime: 30
+      };
+    }
+  },
+
+  'circles-circumference-area': {
+    skillId: 'circles-circumference-area',
+    baseDifficulty: 1.4,
+    baseDiscrimination: 1.3,
+
+    generate: (targetDifficulty = 1.4) => {
+      const radius = random(2, 10);
+      const askCircumference = Math.random() < 0.5;
+
+      if (askCircumference) {
+        const answer = Math.round(2 * Math.PI * radius * 100) / 100;
+        return {
+          content: `Find the circumference of a circle with radius ${radius}. (Use π ≈ 3.14, round to 2 decimal places)`,
+          answer,
+          difficulty: targetDifficulty,
+          discrimination: 1.3,
+          estimatedTime: 30
+        };
+      } else {
+        const answer = Math.round(Math.PI * radius * radius * 100) / 100;
+        return {
+          content: `Find the area of a circle with radius ${radius}. (Use π ≈ 3.14, round to 2 decimal places)`,
+          answer,
+          difficulty: targetDifficulty,
+          discrimination: 1.3,
+          estimatedTime: 30
+        };
+      }
+    }
+  },
+
+  'circles': {
+    skillId: 'circles',
+    baseDifficulty: 2.5,
+    baseDiscrimination: 1.5,
+
+    generate: (targetDifficulty = 2.5) => {
+      // Advanced circle problems - equation of a circle
+      const h = random(-5, 5);
+      const k = random(-5, 5);
+      const r = random(2, 6);
+
+      return {
+        content: `Find the center and radius of the circle: (x ${h >= 0 ? '-' : '+'} ${Math.abs(h)})² + (y ${k >= 0 ? '-' : '+'} ${Math.abs(k)})² = ${r * r}`,
+        answer: `(${h}, ${k}), r = ${r}`,
+        answerType: 'expression',
+        difficulty: targetDifficulty,
+        discrimination: 1.5,
+        estimatedTime: 45
+      };
+    }
+  },
+
+  'area-triangles': {
+    skillId: 'area-triangles',
+    baseDifficulty: 0.7,
+    baseDiscrimination: 1.2,
+
+    generate: (targetDifficulty = 0.7) => {
+      const base = random(3, 15);
+      const height = random(3, 12);
+      const answer = (base * height) / 2;
+
+      return {
+        content: `Find the area of a triangle with base ${base} and height ${height}.`,
+        answer,
+        difficulty: targetDifficulty,
+        discrimination: 1.2,
+        estimatedTime: 20
+      };
+    }
+  },
+
+  // High-difficulty algebra skills
+  'quadratic-equations': {
+    skillId: 'quadratic-equations',
+    baseDifficulty: 1.8,
+    baseDiscrimination: 1.6,
+
+    generate: (targetDifficulty = 1.8) => {
+      // Generate factorable quadratics
+      const root1 = random(-6, 6);
+      const root2 = random(-6, 6);
+
+      // (x - root1)(x - root2) = x² - (root1+root2)x + root1*root2
+      const b = -(root1 + root2);
+      const c = root1 * root2;
+
+      let content = 'x²';
+      if (b !== 0) content += b > 0 ? ` + ${b}x` : ` - ${Math.abs(b)}x`;
+      if (c !== 0) content += c > 0 ? ` + ${c}` : ` - ${Math.abs(c)}`;
+      content += ' = 0';
+
+      return {
+        content: `Solve: ${content}`,
+        answer: Math.min(root1, root2),
+        difficulty: targetDifficulty,
+        discrimination: 1.6,
+        estimatedTime: 60
+      };
+    }
+  },
+
+  'systems-equations': {
+    skillId: 'systems-equations',
+    baseDifficulty: 1.5,
+    baseDiscrimination: 1.5,
+
+    generate: (targetDifficulty = 1.5) => {
+      // Simple system of 2 equations
+      const x = random(-5, 5);
+      const y = random(-5, 5);
+
+      // Generate coefficients
+      const a1 = random(1, 3);
+      const b1 = random(1, 3);
+      const a2 = random(1, 3);
+      const b2 = random(-3, 3);
+
+      const c1 = a1 * x + b1 * y;
+      const c2 = a2 * x + b2 * y;
+
+      return {
+        content: `Solve the system:\n${a1}x + ${b1}y = ${c1}\n${a2}x + ${b2}y = ${c2}\n(Enter the value of x)`,
+        answer: x,
+        difficulty: targetDifficulty,
+        discrimination: 1.5,
+        estimatedTime: 90
+      };
+    }
+  },
+
+  'polynomials-operations': {
+    skillId: 'polynomials-operations',
+    baseDifficulty: 1.6,
+    baseDiscrimination: 1.4,
+
+    generate: (targetDifficulty = 1.6) => {
+      // Multiply binomials (FOIL)
+      const a = random(1, 4);
+      const b = random(-5, 5);
+      const c = random(1, 4);
+      const d = random(-5, 5);
+
+      // (ax + b)(cx + d) = acx² + (ad + bc)x + bd
+      const coeff_x2 = a * c;
+      const coeff_x = a * d + b * c;
+      const constant = b * d;
+
+      const formatBinomial = (coeff, const_term) => {
+        let term = coeff === 1 ? 'x' : `${coeff}x`;
+        if (const_term > 0) return `(${term} + ${const_term})`;
+        if (const_term < 0) return `(${term} - ${Math.abs(const_term)})`;
+        return `(${term})`;
+      };
+
+      return {
+        content: `Expand: ${formatBinomial(a, b)} × ${formatBinomial(c, d)}`,
+        answer: `${coeff_x2}x² ${coeff_x >= 0 ? '+' : '-'} ${Math.abs(coeff_x)}x ${constant >= 0 ? '+' : '-'} ${Math.abs(constant)}`,
+        answerType: 'expression',
+        difficulty: targetDifficulty,
+        discrimination: 1.4,
+        estimatedTime: 45
+      };
+    }
+  },
+
+  'slope': {
+    skillId: 'slope',
+    baseDifficulty: 1.0,
+    baseDiscrimination: 1.4,
+
+    generate: (targetDifficulty = 1.0) => {
+      // Generate slope problems at varying difficulties
+      // Higher difficulty = larger numbers or negative coordinates
+      const useLargeNumbers = targetDifficulty > 1.0;
+      const useNegatives = targetDifficulty > 0.5;
+
+      const maxCoord = useLargeNumbers ? 12 : 6;
+      let x1 = random(useNegatives ? -maxCoord : 0, maxCoord);
+      let y1 = random(useNegatives ? -maxCoord : 0, maxCoord);
+      let x2 = random(useNegatives ? -maxCoord : 0, maxCoord);
+      let y2 = random(useNegatives ? -maxCoord : 0, maxCoord);
+
+      // Ensure x1 != x2 (avoid undefined slope)
+      while (x1 === x2) {
+        x2 = random(useNegatives ? -maxCoord : 0, maxCoord);
+      }
+
+      // Calculate slope = (y2 - y1) / (x2 - x1)
+      const rise = y2 - y1;
+      const run = x2 - x1;
+      const gcd = (a, b) => b === 0 ? Math.abs(a) : gcd(b, a % b);
+      const divisor = gcd(rise, run);
+      const simplifiedRise = rise / divisor;
+      const simplifiedRun = run / divisor;
+
+      // Format answer as simplified fraction or integer
+      let answer;
+      if (simplifiedRun === 1) {
+        answer = simplifiedRise;
+      } else if (simplifiedRun === -1) {
+        answer = -simplifiedRise;
+      } else {
+        // Keep as fraction string for expression type
+        answer = simplifiedRun < 0
+          ? `${-simplifiedRise}/${-simplifiedRun}`
+          : `${simplifiedRise}/${simplifiedRun}`;
+      }
+
+      return {
+        content: `Find the slope between (${x1}, ${y1}) and (${x2}, ${y2})`,
+        answer,
+        difficulty: targetDifficulty,
+        discrimination: 1.4,
+        estimatedTime: 30
+      };
+    }
+  },
+
+  'permutations': {
+    skillId: 'permutations',
+    baseDifficulty: 1.8,
+    baseDiscrimination: 1.5,
+
+    generate: (targetDifficulty = 1.8) => {
+      // Permutation problems: nPr = n!/(n-r)!
+      const n = random(5, 10);
+      const r = random(2, Math.min(4, n - 1));
+
+      // Calculate nPr = n!/(n-r)!
+      const factorial = (num) => {
+        let result = 1;
+        for (let i = 2; i <= num; i++) result *= i;
+        return result;
+      };
+      const answer = factorial(n) / factorial(n - r);
+
+      const contexts = [
+        `How many ways can ${r} students be selected from ${n} students for first, second, and third place?`,
+        `In how many ways can ${r} letters be arranged from ${n} different letters?`,
+        `How many different ${r}-digit codes can be made from digits 1-${n} if no digit repeats?`
+      ];
+
+      return {
+        content: randomChoice(contexts),
+        answer,
+        difficulty: targetDifficulty,
+        discrimination: 1.5,
+        estimatedTime: 45
+      };
+    }
+  },
+
+  'add-fractions': {
+    skillId: 'add-fractions',
+    baseDifficulty: 0.0,
+    baseDiscrimination: 1.3,
+
+    generate: (targetDifficulty = 0.0) => {
+      // Scale difficulty by using different denominators
+      const useDifferentDenoms = targetDifficulty > 0.3;
+
+      let denom1, denom2, numer1, numer2;
+      if (useDifferentDenoms) {
+        // Different denominators - need to find common denominator
+        denom1 = randomChoice([2, 3, 4, 5, 6]);
+        denom2 = randomChoice([2, 3, 4, 5, 6].filter(d => d !== denom1));
+        numer1 = random(1, denom1 - 1);
+        numer2 = random(1, denom2 - 1);
+      } else {
+        // Same denominator - easier
+        const denom = randomChoice([4, 6, 8, 10]);
+        denom1 = denom;
+        denom2 = denom;
+        numer1 = random(1, denom - 2);
+        numer2 = random(1, denom - numer1);
+      }
+
+      // Calculate answer
+      const lcd = (denom1 * denom2) / gcd(denom1, denom2);
+      const sumNumer = (numer1 * (lcd / denom1)) + (numer2 * (lcd / denom2));
+      const g = gcd(sumNumer, lcd);
+      const answerNumer = sumNumer / g;
+      const answerDenom = lcd / g;
+
+      function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+      return {
+        content: `Add: ${numer1}/${denom1} + ${numer2}/${denom2}`,
+        answer: answerDenom === 1 ? `${answerNumer}` : `${answerNumer}/${answerDenom}`,
+        answerType: 'fraction',
+        difficulty: targetDifficulty,
+        discrimination: 1.3,
+        estimatedTime: 30
+      };
+    }
   }
 };
 

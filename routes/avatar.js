@@ -50,28 +50,8 @@ router.post('/', isAuthenticated, async (req, res) => { //
     }
 });
 
-// Route to get a user's avatar details (e.g., for frontend display or by other users/dashboards)
-// Frontend would call: GET /api/avatars/:userId
-router.get('/:userId', isAuthenticated, async (req, res) => { //
-    try {
-        const requestedId = req.params.userId;
-if (requestedId !== req.user._id.toString()) {
-  return res.status(403).json({ message: "Forbidden." });
-}
-        const { userId } = req.params; //
-        const user = await User.findById(userId).select('avatar').lean(); // Fetch only avatar field
-
-        if (!user) { //
-            return res.status(404).json({ message: 'User not found.' }); //
-        }
-        res.json(user.avatar); //
-    } catch (error) {
-        console.error('ERROR: Failed to fetch avatar:', error); //
-        res.status(500).json({ message: 'Server error fetching avatar.' }); //
-    }
-});
-
 // ============ DICEBEAR AVATAR ENDPOINTS ============
+// NOTE: Static routes MUST be defined BEFORE dynamic parameter routes (like /:userId)
 
 /**
  * GET /api/avatar/config
@@ -163,5 +143,30 @@ router.post('/dicebear', isAuthenticated, async (req, res) => {
     }
 });
 
+// ============ DYNAMIC PARAMETER ROUTES ============
+// NOTE: Dynamic parameter routes MUST come AFTER all static routes
 
-module.exports = router; //
+/**
+ * GET /api/avatar/:userId
+ * Get a user's avatar details (e.g., for frontend display or by other users/dashboards)
+ */
+router.get('/:userId', isAuthenticated, async (req, res) => {
+    try {
+        const requestedId = req.params.userId;
+        if (requestedId !== req.user._id.toString()) {
+            return res.status(403).json({ message: "Forbidden." });
+        }
+        const user = await User.findById(requestedId).select('avatar').lean();
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+        res.json(user.avatar);
+    } catch (error) {
+        console.error('ERROR: Failed to fetch avatar:', error);
+        res.status(500).json({ message: 'Server error fetching avatar.' });
+    }
+});
+
+
+module.exports = router;
