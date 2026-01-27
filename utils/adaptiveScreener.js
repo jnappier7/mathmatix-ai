@@ -20,6 +20,85 @@
 const { estimateAbility, estimateAbilityMAP, hasConverged, hasPlateaued, thetaToPercentile, calculateInformation } = require('./irt');
 
 // ===========================================================================
+// GRADE-BASED STARTING POINT
+// ===========================================================================
+
+/**
+ * Map grade level to starting theta (IRT ability scale)
+ *
+ * Instead of starting everyone at "name a 4-sided shape" (theta 0),
+ * we start at an appropriate level based on declared grade.
+ *
+ * Scale: -3 (very easy) to +3 (very hard)
+ *
+ * @param {String|Number} grade - Grade level or gradeBand
+ * @returns {Number} Starting theta for CAT
+ */
+function gradeToStartingTheta(grade) {
+  if (!grade) return 0; // Default to middle if no grade provided
+
+  const gradeStr = String(grade).toLowerCase().trim();
+
+  // Direct grade number mapping
+  const gradeNumber = parseInt(gradeStr, 10);
+  if (!isNaN(gradeNumber)) {
+    // K = 0, 1st = 1, etc.
+    // Map: K(-1.5) → 12(2.0)
+    // Linear interpolation: theta = (grade - 6) * 0.3
+    if (gradeNumber <= 0) return -1.5;      // Kindergarten
+    if (gradeNumber <= 2) return -1.0;      // 1st-2nd: basic operations
+    if (gradeNumber <= 4) return -0.5;      // 3rd-4th: multi-digit, fractions intro
+    if (gradeNumber <= 5) return 0;         // 5th: fractions, decimals
+    if (gradeNumber <= 6) return 0.3;       // 6th: ratios, intro algebra
+    if (gradeNumber <= 7) return 0.6;       // 7th: proportions, equations
+    if (gradeNumber <= 8) return 0.9;       // 8th: linear equations, geometry
+    if (gradeNumber <= 9) return 1.2;       // 9th: Algebra 1
+    if (gradeNumber <= 10) return 1.5;      // 10th: Geometry/Algebra 2
+    if (gradeNumber <= 11) return 1.8;      // 11th: Algebra 2/Precalc
+    return 2.0;                              // 12th+: Precalc/Calculus
+  }
+
+  // GradeBand mapping (from skill data)
+  const gradeBandMap = {
+    'prek': -2.0,
+    'pre-k': -2.0,
+    'prekindergarten': -2.0,
+    'k': -1.5,
+    'kindergarten': -1.5,
+    'k-5': -0.5,        // Elementary range - start middle
+    '5-8': 0.5,         // Middle school range
+    '8-12': 1.2,        // High school range
+    'algebra 1': 1.0,
+    'algebra-1': 1.0,
+    'geometry': 1.3,
+    'algebra 2': 1.6,
+    'algebra-2': 1.6,
+    'precalculus': 1.9,
+    'precalc': 1.9,
+    'calculus': 2.2,
+    'calc 1': 2.2,
+    'calc 2': 2.4,
+    'calc 3': 2.6,
+    'college': 2.0
+  };
+
+  // Check for gradeBand match
+  if (gradeBandMap[gradeStr]) {
+    return gradeBandMap[gradeStr];
+  }
+
+  // Check for partial matches
+  for (const [key, theta] of Object.entries(gradeBandMap)) {
+    if (gradeStr.includes(key) || key.includes(gradeStr)) {
+      return theta;
+    }
+  }
+
+  // Default to middle
+  return 0;
+}
+
+// ===========================================================================
 // DAMPENING CONVERGENCE ("THE WAVE")
 // ===========================================================================
 
@@ -79,27 +158,46 @@ function calculateJumpSize(isCorrect, questionNumber, standardError) {
 /**
  * Initialize a new adaptive screener session
  *
- * @param {Object} options - { userId, startingTheta }
+ * @param {Object} options - { userId, grade, startingTheta, pathway }
  * @returns {Object} Initial session state
  */
 function initializeSession(options = {}) {
   const {
     userId,
-    startingTheta = 0  // Default to average ability
+    grade,           // Student's grade level (e.g., 7, "8th", "Algebra 1")
+    pathway,         // Selected pathway (e.g., "ready-for-algebra-1")
+    startingTheta    // Override: explicit starting theta
   } = options;
+
+  // Determine starting theta from grade/pathway, or use explicit override
+  let theta;
+  if (startingTheta !== undefined) {
+    theta = startingTheta;
+    console.log(`[Screener] Using explicit startingTheta: ${theta}`);
+  } else if (grade) {
+    theta = gradeToStartingTheta(grade);
+    console.log(`[Screener] Grade "${grade}" → startingTheta: ${theta}`);
+  } else if (pathway) {
+    // Extract grade hint from pathway name
+    theta = gradeToStartingTheta(pathway);
+    console.log(`[Screener] Pathway "${pathway}" → startingTheta: ${theta}`);
+  } else {
+    theta = 0;
+    console.log(`[Screener] No grade/pathway provided, using default startingTheta: 0`);
+  }
 
   return {
     userId,
     sessionId: generateSessionId(),
 
     // Current ability estimate
-    theta: startingTheta,
+    theta: theta,
     standardError: Infinity,
     confidence: 0,  // 0 to 1
     cumulativeInformation: 0,  // Track total information gathered
 
     // Bayesian prior (for MAP estimation in early questions)
-    priorMean: startingTheta,  // Grade-based starting point
+    priorMean: theta,  // Grade-based starting point
     priorSD: 1.25,             // Wide prior allows data to dominate quickly
 
     // Response history
@@ -664,5 +762,6 @@ module.exports = {
   categorizeSkills,
 
   // Utilities
-  calculateJumpSize
+  calculateJumpSize,
+  gradeToStartingTheta
 };
