@@ -20,14 +20,6 @@ window.AVATAR_CONFIG = {
     description: 'Hit it out of the park!',
     unlocked: true
   },
-  'fox': {
-    name: '🦊 Fox',
-    image: 'fox.png',
-    category: 'clever',
-    rarity: 'common',
-    description: 'Quick thinking and creative!',
-    unlocked: true
-  },
   'tiger': {
     name: '🏈 Football Player',
     image: 'tiger.png',
@@ -112,6 +104,14 @@ window.AVATAR_CONFIG = {
   },
 
   // ===== UNLOCK AT LEVEL 5 =====
+  'fox': {
+    name: '🦊 Fox',
+    image: 'fox.png',
+    category: 'clever',
+    rarity: 'uncommon',
+    description: 'Quick thinking and creative!',
+    unlockLevel: 5
+  },
   'dragon': {
     name: '🐉 Dragon',
     image: 'dragon.png',
