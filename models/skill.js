@@ -114,6 +114,13 @@ const skillSchema = new mongoose.Schema({
       'mental-math',
       'linear-functions',
 
+      // Categories from cleaned JSON data
+      'area-approximation',
+      'calc3',
+      'data-displays',
+      'optimization',
+      'series',
+
       // Catch-all
       'advanced'
     ]
@@ -206,6 +213,18 @@ const skillSchema = new mongoose.Schema({
       max: 5.0,
       default: 2.0
     }
+  },
+
+  // Grade band classification
+  gradeBand: {
+    type: String,
+    enum: ['preK', 'K-5', '5-8', '8-12', 'Calculus', 'Calc 3'],
+    index: true
+  },
+
+  // Ohio Learning Standards domain
+  ohioDomain: {
+    type: String
   },
 
   // Active/inactive flag
