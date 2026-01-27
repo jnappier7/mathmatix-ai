@@ -768,6 +768,59 @@ const userSchema = new Schema({
     moduleId: { type: String },
     lessonId: { type: String },
     lastActiveAt: { type: Date }
+  },
+
+  /* ============================================================
+   * AUTOMATIC PATHWAY ASSIGNMENT (CAT-based)
+   *
+   * After CAT assessment, student is automatically placed in a pathway.
+   * They can venture off to fill gaps or extend beyond.
+   * ============================================================ */
+  pathwayAssignment: {
+    // Primary pathway (auto-assigned from CAT theta)
+    assignedPathwayId: { type: String },
+    assignedPathwayName: { type: String },
+    assignedAt: { type: Date },
+    assignedTheta: { type: Number },  // Theta at time of assignment
+
+    // Assignment source
+    assignmentSource: {
+      type: String,
+      enum: ['cat-assessment', 'teacher-override', 'self-selected', 'grade-inferred'],
+      default: 'cat-assessment'
+    },
+
+    // Gap-filling: when student works on skills BELOW their pathway
+    gapFilling: {
+      enabled: { type: Boolean, default: true },
+      currentGapSkillId: { type: String },
+      gapSkillsAddressed: [{
+        skillId: { type: String },
+        startedAt: { type: Date },
+        completedAt: { type: Date },
+        wasSuccessful: { type: Boolean }
+      }]
+    },
+
+    // Extension: when student works on skills ABOVE their pathway
+    extension: {
+      enabled: { type: Boolean, default: true },
+      currentExtensionSkillId: { type: String },
+      extensionSkillsAttempted: [{
+        skillId: { type: String },
+        startedAt: { type: Date },
+        completedAt: { type: Date },
+        wasSuccessful: { type: Boolean }
+      }]
+    },
+
+    // Pathway progression history
+    progressionHistory: [{
+      fromPathwayId: { type: String },
+      toPathwayId: { type: String },
+      progressedAt: { type: Date },
+      reason: { type: String }  // 'mastery', 'reassessment', 'teacher-override'
+    }]
   }
 }, { timestamps: true });
 
