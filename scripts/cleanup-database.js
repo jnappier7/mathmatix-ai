@@ -41,7 +41,13 @@ const VALID_CATEGORIES = [
   'geometry', 'trigonometry', 'identities', 'polar-coordinates', 'vectors',
   'matrices', 'limits', 'derivatives', 'integration', 'series-tests',
   'taylor-series', 'parametric-polar', 'differential-equations', 'multivariable',
-  'vector-calculus', 'statistics', 'probability', 'advanced'
+  'vector-calculus', 'statistics', 'probability',
+  // Additional categories
+  'word-problems', 'expressions-equations', 'exponential', 'rational',
+  'congruence', 'similarity', 'sequences', 'counting', 'number-theory',
+  'rates', 'conversions', 'proofs', 'circles', 'triangles',
+  'parallel-perpendicular', 'surface-area', 'right-triangles', 'coordinate-geometry',
+  'advanced'
 ];
 
 // Category mapping for invalid categories
