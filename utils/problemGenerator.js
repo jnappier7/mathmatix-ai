@@ -841,6 +841,40 @@ const TEMPLATES = {
     }
   },
 
+  'permutations': {
+    skillId: 'permutations',
+    baseDifficulty: 1.8,
+    baseDiscrimination: 1.5,
+
+    generate: (targetDifficulty = 1.8) => {
+      // Permutation problems: nPr = n!/(n-r)!
+      const n = random(5, 10);
+      const r = random(2, Math.min(4, n - 1));
+
+      // Calculate nPr = n!/(n-r)!
+      const factorial = (num) => {
+        let result = 1;
+        for (let i = 2; i <= num; i++) result *= i;
+        return result;
+      };
+      const answer = factorial(n) / factorial(n - r);
+
+      const contexts = [
+        `How many ways can ${r} students be selected from ${n} students for first, second, and third place?`,
+        `In how many ways can ${r} letters be arranged from ${n} different letters?`,
+        `How many different ${r}-digit codes can be made from digits 1-${n} if no digit repeats?`
+      ];
+
+      return {
+        content: randomChoice(contexts),
+        answer,
+        difficulty: targetDifficulty,
+        discrimination: 1.5,
+        estimatedTime: 45
+      };
+    }
+  },
+
   'add-fractions': {
     skillId: 'add-fractions',
     baseDifficulty: 0.0,

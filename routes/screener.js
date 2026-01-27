@@ -486,6 +486,11 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       'vector-calculus': 3.5,
       'statistics': 1.5,
       'probability': 1.3,
+      'counting': 1.8,          // Permutations, combinations (Algebra 2)
+      'number-theory': 1.5,     // Divisibility, primes
+      'word-problems': 0.8,     // Applied problems
+      'rates': 0.5,             // Rate problems
+      'conversions': 0.3,       // Unit conversions
       'advanced': 2.5
     };
 
