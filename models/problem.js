@@ -157,19 +157,32 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
       return true;
     }
 
-    // Numeric comparison (handles "0.5" vs "0.50" vs ".5")
-    const userNum = parseFloat(userStr);
-    const acceptableNum = parseFloat(acceptable);
-    if (!isNaN(userNum) && !isNaN(acceptableNum)) {
-      if (Math.abs(userNum - acceptableNum) < 0.0001) {
-        return true;
+    // Fraction comparison (handles "1/2" vs "2/4" vs "0.5")
+    // Check this BEFORE numeric comparison to handle fractions properly
+    const userIsFraction = userStr.includes('/');
+    const acceptableIsFraction = String(acceptable).includes('/');
+
+    if (userIsFraction || acceptableIsFraction) {
+      // Try to compare as fractions/decimals
+      const userVal = parseFractionOrDecimal(userStr);
+      const acceptableVal = parseFractionOrDecimal(acceptable);
+
+      if (userVal !== null && acceptableVal !== null) {
+        if (Math.abs(userVal - acceptableVal) < 0.0001) {
+          return true;
+        }
       }
     }
 
-    // Fraction comparison (handles "1/2" vs "2/4")
-    if (userStr.includes('/') && String(acceptable).includes('/')) {
-      if (compareFractions(userStr, acceptable)) {
-        return true;
+    // Numeric comparison (handles "0.5" vs "0.50" vs ".5")
+    // Only for pure decimal/integer values (no fractions)
+    if (!userIsFraction && !acceptableIsFraction) {
+      const userNum = parseFloat(userStr);
+      const acceptableNum = parseFloat(acceptable);
+      if (!isNaN(userNum) && !isNaN(acceptableNum)) {
+        if (Math.abs(userNum - acceptableNum) < 0.0001) {
+          return true;
+        }
       }
     }
   }
@@ -183,19 +196,44 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
 };
 
 /**
- * Compare two fractions for equivalence
+ * Parse a string as either a fraction or decimal number
+ * Handles: "2/3", "0.666", ".5", "1 1/2" (mixed), "-3/4"
+ *
+ * @param {String} str - The string to parse
+ * @returns {Number|null} The numeric value or null if unparseable
+ */
+function parseFractionOrDecimal(str) {
+  const s = String(str).trim();
+
+  // Check for mixed number like "1 1/2"
+  const mixedMatch = s.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+  if (mixedMatch) {
+    const whole = parseInt(mixedMatch[1], 10);
+    const num = parseInt(mixedMatch[2], 10);
+    const den = parseInt(mixedMatch[3], 10);
+    if (den === 0) return null;
+    return whole + (whole >= 0 ? 1 : -1) * (num / den);
+  }
+
+  // Check for simple fraction like "2/3"
+  const fracMatch = s.match(/^(-?\d+)\s*\/\s*(\d+)$/);
+  if (fracMatch) {
+    const num = parseInt(fracMatch[1], 10);
+    const den = parseInt(fracMatch[2], 10);
+    return den === 0 ? null : num / den;
+  }
+
+  // Try as decimal
+  const num = parseFloat(s);
+  return isNaN(num) ? null : num;
+}
+
+/**
+ * Compare two fractions for equivalence (legacy - kept for compatibility)
  */
 function compareFractions(frac1, frac2) {
-  const parse = (f) => {
-    const match = String(f).trim().match(/^(-?\d+)\s*\/\s*(\d+)$/);
-    if (!match) return null;
-    const num = parseInt(match[1], 10);
-    const den = parseInt(match[2], 10);
-    return den === 0 ? null : num / den;
-  };
-
-  const val1 = parse(frac1);
-  const val2 = parse(frac2);
+  const val1 = parseFractionOrDecimal(frac1);
+  const val2 = parseFractionOrDecimal(frac2);
 
   if (val1 === null || val2 === null) return false;
   return Math.abs(val1 - val2) < 0.0001;
