@@ -4,22 +4,6 @@
 
 window.AVATAR_CONFIG = {
   // ===== ALWAYS UNLOCKED (Starter Creatures) =====
-  'lion': {
-    name: '🦁 Lion',
-    image: 'lion.png',
-    category: 'wild',
-    rarity: 'common',
-    description: 'Bold, brave, and ready to conquer any math challenge!',
-    unlocked: true
-  },
-  'dragon': {
-    name: '🐉 Dragon',
-    image: 'dragon.png',
-    category: 'fantasy',
-    rarity: 'common',
-    description: 'Breathe fire through tough problems!',
-    unlocked: true
-  },
   'panda': {
     name: '🏀 Basketball Player',
     image: 'panda.png',
@@ -128,6 +112,14 @@ window.AVATAR_CONFIG = {
   },
 
   // ===== UNLOCK AT LEVEL 5 =====
+  'dragon': {
+    name: '🐉 Dragon',
+    image: 'dragon.png',
+    category: 'fantasy',
+    rarity: 'uncommon',
+    description: 'Breathe fire through tough problems!',
+    unlockLevel: 5
+  },
   'unicorn': {
     name: '🏒 Hockey Player',
     image: 'unicorn.png',
