@@ -358,11 +358,12 @@ class AvatarBuilder {
                 })
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error('Failed to save avatar');
+                throw new Error(data.message || 'Failed to save avatar');
             }
 
-            const data = await response.json();
             this.showToast('Avatar saved!', 'success');
 
             // Redirect back to the page we came from after a short delay

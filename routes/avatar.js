@@ -132,9 +132,9 @@ router.post('/dicebear', isAuthenticated, async (req, res) => {
         // Clear the old selectedAvatarId since they're using a custom avatar now
         user.selectedAvatarId = null;
 
-        // CRITICAL: Mongoose doesn't automatically detect changes to nested subdocuments
-        // We must explicitly mark the avatar path as modified for the save to persist
+        // Mark the avatar field as modified so Mongoose saves the nested changes
         user.markModified('avatar');
+        user.markModified('avatar.dicebearConfig');
 
         await user.save();
 
@@ -147,8 +147,9 @@ router.post('/dicebear', isAuthenticated, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('ERROR: Failed to save DiceBear avatar:', error);
-        res.status(500).json({ message: 'Server error saving avatar.' });
+        console.error('ERROR: Failed to save DiceBear avatar:', error.message);
+        console.error('Full error:', error);
+        res.status(500).json({ message: 'Server error saving avatar: ' + error.message });
     }
 });
 
