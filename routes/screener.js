@@ -775,7 +775,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
           throw new Error(`No problems available for skill: ${selectedSkillId}`);
         }
 
-        console.log(`[Screener] ✓ Found fallback problem at difficulty ${problem.irtParameters?.difficulty || 0}`);
+        console.log(`[Screener] ✓ Found fallback problem at difficulty ${problem.difficulty || 2}`);
       }
     }
 
@@ -792,7 +792,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     res.json({
       problem: {
         problemId: problem.problemId,
-        content: problem.content,
+        content: problem.prompt,  // Schema uses 'prompt', API returns as 'content' for backwards compat
         skillId: problem.skillId,
         answerType: problem.answerType,
         options: problem.options,
@@ -859,12 +859,8 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     const skill = await Skill.findOne({ skillId: problem.skillId }).select('category').lean();
     const skillCategory = skill?.category || 'unknown';
 
-    // DEBUG: Log problem IRT parameters to diagnose NaN issue
-    console.log(`[DEBUG] Problem ${problemId} IRT params:`, {
-      difficulty: problem.irtParameters?.difficulty,
-      discrimination: problem.irtParameters?.discrimination,
-      hasIrtParameters: !!problem.irtParameters
-    });
+    // DEBUG: Log problem difficulty
+    console.log(`[DEBUG] Problem ${problemId} difficulty: ${problem.difficulty}`);
 
     // Check if answer is correct
     const isCorrect = problem.checkAnswer(answer);
@@ -873,16 +869,19 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     const previousTheta = session.theta;
 
     // Process response
+    // Convert difficulty 1-5 to theta scale for IRT calculations
+    const difficultyTheta = Problem.difficultyToTheta(problem.difficulty);
+
     const response = {
       problemId: problem.problemId,
       skillId: problem.skillId,
       skillCategory: skillCategory,  // Pass category for diversity tracking
-      difficulty: problem.irtParameters.difficulty,
-      discrimination: problem.irtParameters.discrimination,
+      difficulty: difficultyTheta,  // IRT uses theta scale
+      discrimination: 1.0,  // Default discrimination for simplified model
       correct: isCorrect,
       responseTime: responseTime || null,
       userAnswer: answer,
-      correctAnswer: problem.answer
+      correctAnswer: problem.answer?.value ?? problem.answer
     };
 
     const result = processResponse(session, response);
