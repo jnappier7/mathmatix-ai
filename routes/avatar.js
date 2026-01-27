@@ -127,6 +127,10 @@ router.post('/dicebear', isAuthenticated, async (req, res) => {
         // Clear the old selectedAvatarId since they're using a custom avatar now
         user.selectedAvatarId = null;
 
+        // Mark the avatar field as modified so Mongoose saves the nested changes
+        user.markModified('avatar');
+        user.markModified('avatar.dicebearConfig');
+
         await user.save();
 
         console.log(`[Avatar] User ${userId} saved DiceBear avatar: ${config.style}`);
@@ -138,8 +142,9 @@ router.post('/dicebear', isAuthenticated, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('ERROR: Failed to save DiceBear avatar:', error);
-        res.status(500).json({ message: 'Server error saving avatar.' });
+        console.error('ERROR: Failed to save DiceBear avatar:', error.message);
+        console.error('Full error:', error);
+        res.status(500).json({ message: 'Server error saving avatar: ' + error.message });
     }
 });
 
