@@ -277,7 +277,8 @@ router.post('/start', isAuthenticated, async (req, res) => {
     // This provides a Bayesian prior for faster convergence
     // BETA FEEDBACK FIX: Now considers mathCourse (e.g., "Algebra 2") for better accuracy
     const startingTheta = gradeToTheta(user.gradeLevel, user.mathCourse);
-    console.log(`[Screener Start] Grade ${user.gradeLevel}, Course "${user.mathCourse || 'not set'}" → Starting θ=${startingTheta.toFixed(2)}`);
+    console.log(`[Screener Start] User: ${user.username || user._id}`);
+    console.log(`[Screener Start] Grade: "${user.gradeLevel}" | Course: "${user.mathCourse || 'not set'}" → Starting θ=${startingTheta.toFixed(2)}`);
 
     const sessionData = initializeSession({
       userId: user._id.toString(),
@@ -859,11 +860,18 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     const skill = await Skill.findOne({ skillId: problem.skillId }).select('category').lean();
     const skillCategory = skill?.category || 'unknown';
 
-    // DEBUG: Log problem difficulty
-    console.log(`[DEBUG] Problem ${problemId} difficulty: ${problem.difficulty}`);
+    // DEBUG: Log problem and answer details for diagnosis
+    console.log(`[DEBUG] Problem ${problemId}:`);
+    console.log(`[DEBUG]   Skill: ${problem.skillId}`);
+    console.log(`[DEBUG]   Prompt: ${problem.prompt?.substring(0, 80)}`);
+    console.log(`[DEBUG]   Difficulty: ${problem.difficulty}`);
+    console.log(`[DEBUG]   AnswerType: ${problem.answerType}`);
+    console.log(`[DEBUG]   Correct Answer: ${JSON.stringify(problem.answer)}`);
+    console.log(`[DEBUG]   User Answer: "${answer}" (type: ${typeof answer})`);
 
     // Check if answer is correct
     const isCorrect = problem.checkAnswer(answer);
+    console.log(`[DEBUG]   Result: ${isCorrect ? 'CORRECT' : 'INCORRECT'}`);
 
     // Capture previous theta for logging
     const previousTheta = session.theta;
@@ -901,7 +909,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     session.markModified('frontier');
     await session.save();
 
-    console.log(`[Screener] Q${session.questionCount} Result: ${response.correct ? 'CORRECT' : 'INCORRECT'} | Theta: ${previousTheta.toFixed(2)} → ${session.theta.toFixed(2)} (Δ${(session.theta - previousTheta).toFixed(2)}) | SE: ${session.standardError.toFixed(3)}`);
+    console.log(`[Screener] Q${session.questionCount} Result: ${response.correct ? 'CORRECT ✓' : 'INCORRECT ✗'} | Theta: ${previousTheta.toFixed(2)} → ${session.theta.toFixed(2)} (Δ${(session.theta - previousTheta) >= 0 ? '+' : ''}${(session.theta - previousTheta).toFixed(2)}) | SE: ${session.standardError.toFixed(3)}`);
+    console.log(`[Screener]   Answer: "${answer}" ${isCorrect ? '==' : '!='} "${response.correctAnswer}"`);
+    console.log(`[Screener]   Difficulty theta: ${difficultyTheta.toFixed(2)} | Info: ${calculateInformation ? 'yes' : 'via IRT'}`);
 
     // Determine next action
     if (result.action === 'continue') {
