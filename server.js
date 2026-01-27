@@ -113,7 +113,7 @@ const dailyQuestsRoutes = require('./routes/dailyQuests');  // Daily Quests & St
 const weeklyChallengesRoutes = require('./routes/weeklyChallenges');  // Weekly Challenges System
 const learningCurveRoutes = require('./routes/learningCurve');  // Learning Curve Visualization & IRT Transparency
 const celerationRoutes = require('./routes/celeration');  // Standard Celeration Charts (Precision Teaching)
-const characterRiggingRoutes = require('./routes/characterRigging');  // Character Rigging Portal for animation
+// REMOVED: Character Rigging Portal (beta feedback indicated this feature was not needed)
 const sessionRoutes = require('./routes/session');  // Session management and tracking
 const feedbackRoutes = require('./routes/feedback');  // User feedback and bug reports
 const tourSurveyRoutes = require('./routes/tourSurvey');  // Tour and survey for alpha testing
@@ -329,6 +329,7 @@ app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
 app.use('/api/memory', isAuthenticated, memoryRouter);
 app.use('/api/summary', isAuthenticated, summaryGeneratorRouter); // SECURITY FIX: Added authentication to prevent unauthorized access
 app.use('/api/avatars', isAuthenticated, avatarRoutes);
+app.use('/api/avatar', isAuthenticated, avatarRoutes); // DiceBear avatar customization endpoints
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
@@ -346,7 +347,7 @@ app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak Sy
 app.use('/api', isAuthenticated, weeklyChallengesRoutes); // Weekly Challenges System for engagement
 app.use('/api', isAuthenticated, learningCurveRoutes); // Learning Curve Visualization & IRT transparency
 app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Charts for fact fluency
-app.use('/api/character-rigging', isAuthenticated, characterRiggingRoutes); // Character Rigging Portal for animation
+// REMOVED: Character Rigging Portal route (beta feedback indicated this feature was not needed)
 app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (idle timeout, auto-save, summaries)
 app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and bug reports for Alpha testing
 app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for alpha testing
@@ -498,10 +499,13 @@ app.get("/admin-upload.html", isAuthenticated, isAdmin, (req, res) => res.sendFi
 // Teacher-specific protected routes
 app.get("/teacher-dashboard.html", isAuthenticated, isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-dashboard.html")));
 app.get("/teacher-celeration-dashboard.html", isAuthenticated, isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "teacher-celeration-dashboard.html")));
-app.get("/character-rigging.html", isAuthenticated, isTeacher, (req, res) => res.sendFile(path.join(__dirname, "public", "character-rigging.html")));
+// REMOVED: Character Rigging page (beta feedback indicated this feature was not needed)
 
 // Parent-specific protected routes
 app.get("/parent-dashboard.html", isAuthenticated, isParent, (req, res) => res.sendFile(path.join(__dirname, "public", "parent-dashboard.html")));
+
+// Avatar Builder page (authenticated users only)
+app.get("/avatar-builder.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "avatar-builder.html")));
 
 // Upload page (authenticated users only)
 app.get("/upload.html", isAuthenticated, (req, res) => res.sendFile(path.join(__dirname, "public", "upload.html")));

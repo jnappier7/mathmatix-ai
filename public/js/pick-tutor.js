@@ -93,6 +93,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!avatarSelectionGrid || !currentUser) return;
     avatarSelectionGrid.innerHTML = '';
 
+    // Add "Create Custom Avatar" card first
+    const customCard = document.createElement('div');
+    customCard.classList.add('avatar-card', 'unlocked', 'create-custom');
+    customCard.dataset.avatarId = 'custom';
+    customCard.innerHTML = `
+      <div class="avatar-card-image">
+        <i class="fas fa-magic"></i>
+      </div>
+      <h4 class="avatar-card-name">Create Your Own!</h4>
+      <p class="avatar-card-description">Design a custom avatar</p>`;
+    avatarSelectionGrid.appendChild(customCard);
+
+    // Check if user has a custom DiceBear avatar - show it as second option
+    if (currentUser.avatar?.dicebearUrl) {
+      const dicebearCard = document.createElement('div');
+      dicebearCard.classList.add('avatar-card', 'unlocked');
+      dicebearCard.dataset.avatarId = 'dicebear-custom';
+      dicebearCard.innerHTML = `
+        <div class="avatar-card-image">
+          <img src="${currentUser.avatar.dicebearUrl}" alt="My Custom Avatar" loading="lazy">
+        </div>
+        <h4 class="avatar-card-name">My Avatar</h4>
+        <p class="avatar-card-description">Your custom creation</p>
+        <span class="avatar-rarity rarity-legendary">custom</span>`;
+      avatarSelectionGrid.appendChild(dicebearCard);
+    }
+
     allAvatars.forEach(avatar => {
       const isUnlocked = avatar.unlocked || (currentUser.level >= (avatar.unlockLevel || 0));
       const card = document.createElement('div');
@@ -145,6 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
   avatarSelectionGrid.addEventListener('click', e => {
     const card = e.target.closest('.avatar-card');
     if (!card || card.classList.contains('locked')) return;
+
+    // If clicking "Create Custom Avatar", redirect to avatar builder
+    if (card.dataset.avatarId === 'custom') {
+      window.location.href = '/avatar-builder.html?from=pick-tutor';
+      return;
+    }
 
     document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');

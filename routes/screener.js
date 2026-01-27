@@ -39,15 +39,58 @@ const { generateInterviewQuestions, evaluateResponse } = require('../utils/dynam
 const LRU_EXCLUSION_WINDOW = 150;
 
 /**
- * Map grade level to starting theta (ability estimate)
+ * Map grade level AND math course to starting theta (ability estimate)
  *
  * Uses a Bayesian prior approach: start students slightly below their grade level
  * to build confidence with early success, then adapt upward.
  *
+ * BETA FEEDBACK FIX: Now considers specific math courses (like "Algebra 2")
+ * to provide more accurate starting difficulty for high school students.
+ *
  * @param {String|Number} grade - Student's grade level (K-12+)
+ * @param {String} mathCourse - Optional specific math course (e.g., 'Algebra 2', 'Pre-Calculus')
  * @returns {Number} Starting theta estimate
  */
-function gradeToTheta(grade) {
+function gradeToTheta(grade, mathCourse = null) {
+  // First, check if mathCourse provides a more specific starting point
+  // This addresses feedback that students in Algebra 2 were getting 3rd grade problems
+  if (mathCourse) {
+    const courseLower = mathCourse.toLowerCase();
+
+    // Map specific courses to appropriate theta values
+    // Higher-level courses get higher starting theta
+    if (courseLower.includes('calculus') || courseLower.includes('calc')) {
+      console.log(`[Screener] Course "${mathCourse}" → Using advanced theta (2.5)`);
+      return 2.5;  // Calculus: very advanced
+    }
+    if (courseLower.includes('pre-calc') || courseLower.includes('precalc') || courseLower.includes('pre calc')) {
+      console.log(`[Screener] Course "${mathCourse}" → Using pre-calc theta (2.0)`);
+      return 2.0;  // Pre-Calculus: advanced
+    }
+    if (courseLower.includes('trigonometry') || courseLower.includes('trig')) {
+      console.log(`[Screener] Course "${mathCourse}" → Using trig theta (1.8)`);
+      return 1.8;  // Trigonometry: advanced
+    }
+    if (courseLower.includes('algebra 2') || courseLower.includes('algebra ii')) {
+      console.log(`[Screener] Course "${mathCourse}" → Using Algebra 2 theta (1.5)`);
+      return 1.5;  // Algebra 2: upper high school
+    }
+    if (courseLower.includes('geometry')) {
+      console.log(`[Screener] Course "${mathCourse}" → Using Geometry theta (1.0)`);
+      return 1.0;  // Geometry: mid high school
+    }
+    if (courseLower.includes('algebra 1') || courseLower.includes('algebra i') ||
+        (courseLower.includes('algebra') && !courseLower.includes('pre'))) {
+      console.log(`[Screener] Course "${mathCourse}" → Using Algebra 1 theta (0.5)`);
+      return 0.5;  // Algebra 1: early high school
+    }
+    if (courseLower.includes('pre-algebra') || courseLower.includes('prealgebra') || courseLower.includes('pre algebra')) {
+      console.log(`[Screener] Course "${mathCourse}" → Using Pre-Algebra theta (0.0)`);
+      return 0.0;  // Pre-Algebra: middle school
+    }
+  }
+
+  // Fall back to grade-based theta if no specific course
   // Handle null/undefined
   if (!grade) return 0;
 
@@ -230,10 +273,11 @@ router.post('/start', isAuthenticated, async (req, res) => {
       console.log(`[Screener] Deleted existing session for restart - user ${userId}`);
     }
 
-    // Initialize new screener session with grade-based starting point
+    // Initialize new screener session with grade AND course-based starting point
     // This provides a Bayesian prior for faster convergence
-    const startingTheta = gradeToTheta(user.gradeLevel);
-    console.log(`[Screener Start] Grade ${user.gradeLevel} → Starting θ=${startingTheta.toFixed(2)}`);
+    // BETA FEEDBACK FIX: Now considers mathCourse (e.g., "Algebra 2") for better accuracy
+    const startingTheta = gradeToTheta(user.gradeLevel, user.mathCourse);
+    console.log(`[Screener Start] Grade ${user.gradeLevel}, Course "${user.mathCourse || 'not set'}" → Starting θ=${startingTheta.toFixed(2)}`);
 
     const sessionData = initializeSession({
       userId: user._id.toString(),
@@ -286,8 +330,10 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     // Determine target difficulty using DAMPENED JUMPS (not raw theta!)
     let targetDifficulty;
     if (session.questionCount === 0) {
-      // First question: medium difficulty
-      targetDifficulty = 0;
+      // First question: Use starting theta from grade level (not always 0!)
+      // This ensures high school students get high school problems from the start
+      targetDifficulty = session.theta;
+      console.log(`[Screener] First question using starting θ=${session.theta.toFixed(2)} based on grade level`);
     } else {
       // Get last response to determine jump direction
       const lastResponse = session.responses[session.responses.length - 1];

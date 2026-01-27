@@ -495,7 +495,19 @@ const userSchema = new Schema({
     top:    { type: String },
     bottom: { type: String },
     accessory:  { type: String },
-    lottiePath: { type: String }
+    lottiePath: { type: String },
+    // DiceBear custom avatar support
+    dicebearConfig: {
+      style: { type: String },        // e.g., 'adventurer', 'pixel-art', 'lorelei'
+      seed: { type: String },         // Random seed for avatar generation
+      skinColor: { type: String },    // Skin tone hex color
+      hairColor: { type: String },    // Hair color hex
+      backgroundColor: { type: String }, // Background color or 'transparent'
+      glasses: { type: Boolean, default: false },
+      earrings: { type: Boolean, default: false },
+      flip: { type: Boolean, default: false }
+    },
+    dicebearUrl: { type: String }     // Cached avatar URL for quick display
   },
 
   /* Preferences */

@@ -1,0 +1,285 @@
+/* Avatar Builder Styles - Mathmatix Branded */
+
+/* Main wrapper for the builder */
+.avatar-builder-wrapper {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+    .avatar-builder-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Preview Card */
+.avatar-preview-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+.avatar-preview-wrapper {
+    width: 220px;
+    height: 220px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+    border-radius: 50%;
+    padding: 12px;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 0 30px rgba(99, 102, 241, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-preview {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.avatar-preview.loading {
+    opacity: 0.5;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+}
+
+/* Customization Panel */
+.customization-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.option-group {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.option-group h3 {
+    font-size: 0.95rem;
+    color: var(--clr-text-dim, #94a3b8);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.option-group h3 i {
+    color: var(--clr-accent-1, #6366f1);
+}
+
+/* Style Grid */
+.style-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    gap: 0.75rem;
+}
+
+.style-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: inherit;
+}
+
+.style-btn img {
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+}
+
+.style-btn span {
+    font-size: 0.7rem;
+    color: var(--clr-text-dim, #94a3b8);
+}
+
+.style-btn:hover {
+    border-color: var(--clr-accent-1, #6366f1);
+    transform: translateY(-2px);
+}
+
+.style-btn.active {
+    border-color: var(--clr-accent-1, #6366f1);
+    background: rgba(99, 102, 241, 0.15);
+}
+
+.style-btn.active span {
+    color: var(--clr-accent-1, #6366f1);
+}
+
+/* Color Picker */
+.color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.color-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.color-btn:hover {
+    transform: scale(1.15);
+}
+
+.color-btn.active {
+    border-color: var(--clr-accent-1, #6366f1);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+.color-btn.transparent {
+    background: linear-gradient(45deg, #444 25%, transparent 25%),
+                linear-gradient(-45deg, #444 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #444 75%),
+                linear-gradient(-45deg, transparent 75%, #444 75%);
+    background-size: 10px 10px;
+    background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+    background-color: #222;
+}
+
+.color-btn.transparent i {
+    color: #888;
+    font-size: 0.8rem;
+}
+
+/* Toggle Options */
+.toggle-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+}
+
+.toggle-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.toggle-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--clr-accent-1, #6366f1);
+    cursor: pointer;
+}
+
+.toggle-label {
+    color: var(--clr-text-dim, #94a3b8);
+    font-size: 0.9rem;
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--clr-success, #22c55e);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast.error {
+    background: #ef4444;
+}
+
+/* Create Custom Avatar Card (for pick-tutor page) */
+.avatar-card.create-custom {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+    border: 2px dashed rgba(99, 102, 241, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.avatar-card.create-custom:hover {
+    border-color: var(--clr-accent-1, #6366f1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+}
+
+.avatar-card.create-custom .avatar-card-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.avatar-card.create-custom .avatar-card-image i {
+    color: var(--clr-accent-1, #6366f1);
+}
+
+.avatar-card.create-custom .avatar-card-name {
+    color: var(--clr-accent-1, #6366f1);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .avatar-preview-wrapper {
+        width: 180px;
+        height: 180px;
+    }
+
+    .style-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .style-btn img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .style-btn span {
+        display: none;
+    }
+
+    .color-btn {
+        width: 32px;
+        height: 32px;
+    }
+}
