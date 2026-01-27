@@ -786,6 +786,104 @@ const TEMPLATES = {
         estimatedTime: 45
       };
     }
+  },
+
+  'slope': {
+    skillId: 'slope',
+    baseDifficulty: 1.0,
+    baseDiscrimination: 1.4,
+
+    generate: (targetDifficulty = 1.0) => {
+      // Generate slope problems at varying difficulties
+      // Higher difficulty = larger numbers or negative coordinates
+      const useLargeNumbers = targetDifficulty > 1.0;
+      const useNegatives = targetDifficulty > 0.5;
+
+      const maxCoord = useLargeNumbers ? 12 : 6;
+      let x1 = random(useNegatives ? -maxCoord : 0, maxCoord);
+      let y1 = random(useNegatives ? -maxCoord : 0, maxCoord);
+      let x2 = random(useNegatives ? -maxCoord : 0, maxCoord);
+      let y2 = random(useNegatives ? -maxCoord : 0, maxCoord);
+
+      // Ensure x1 != x2 (avoid undefined slope)
+      while (x1 === x2) {
+        x2 = random(useNegatives ? -maxCoord : 0, maxCoord);
+      }
+
+      // Calculate slope = (y2 - y1) / (x2 - x1)
+      const rise = y2 - y1;
+      const run = x2 - x1;
+      const gcd = (a, b) => b === 0 ? Math.abs(a) : gcd(b, a % b);
+      const divisor = gcd(rise, run);
+      const simplifiedRise = rise / divisor;
+      const simplifiedRun = run / divisor;
+
+      // Format answer as simplified fraction or integer
+      let answer;
+      if (simplifiedRun === 1) {
+        answer = simplifiedRise;
+      } else if (simplifiedRun === -1) {
+        answer = -simplifiedRise;
+      } else {
+        // Keep as fraction string for expression type
+        answer = simplifiedRun < 0
+          ? `${-simplifiedRise}/${-simplifiedRun}`
+          : `${simplifiedRise}/${simplifiedRun}`;
+      }
+
+      return {
+        content: `Find the slope between (${x1}, ${y1}) and (${x2}, ${y2})`,
+        answer,
+        difficulty: targetDifficulty,
+        discrimination: 1.4,
+        estimatedTime: 30
+      };
+    }
+  },
+
+  'add-fractions': {
+    skillId: 'add-fractions',
+    baseDifficulty: 0.0,
+    baseDiscrimination: 1.3,
+
+    generate: (targetDifficulty = 0.0) => {
+      // Scale difficulty by using different denominators
+      const useDifferentDenoms = targetDifficulty > 0.3;
+
+      let denom1, denom2, numer1, numer2;
+      if (useDifferentDenoms) {
+        // Different denominators - need to find common denominator
+        denom1 = randomChoice([2, 3, 4, 5, 6]);
+        denom2 = randomChoice([2, 3, 4, 5, 6].filter(d => d !== denom1));
+        numer1 = random(1, denom1 - 1);
+        numer2 = random(1, denom2 - 1);
+      } else {
+        // Same denominator - easier
+        const denom = randomChoice([4, 6, 8, 10]);
+        denom1 = denom;
+        denom2 = denom;
+        numer1 = random(1, denom - 2);
+        numer2 = random(1, denom - numer1);
+      }
+
+      // Calculate answer
+      const lcd = (denom1 * denom2) / gcd(denom1, denom2);
+      const sumNumer = (numer1 * (lcd / denom1)) + (numer2 * (lcd / denom2));
+      const g = gcd(sumNumer, lcd);
+      const answerNumer = sumNumer / g;
+      const answerDenom = lcd / g;
+
+      function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+      return {
+        content: `Add: ${numer1}/${denom1} + ${numer2}/${denom2}`,
+        answer: answerDenom === 1 ? `${answerNumer}` : `${answerNumer}/${answerDenom}`,
+        answerType: 'fraction',
+        difficulty: targetDifficulty,
+        discrimination: 1.3,
+        estimatedTime: 30
+      };
+    }
   }
 };
 
