@@ -31,16 +31,21 @@ router.post('/', isAuthenticated, async (req, res) => { //
             }
         }
 
-        // Update avatar sub-document
-        user.avatar = { //
-            skin: skin !== undefined ? skin : user.avatar.skin, //
-            hair: hair !== undefined ? hair : user.avatar.hair, //
-            top: top !== undefined ? top : user.avatar.top, //
-            bottom: bottom !== undefined ? bottom : user.avatar.bottom, //
-            accessory: accessory !== undefined ? accessory : user.avatar.accessory, //
-            lottiePath: lottiePath !== undefined ? lottiePath : user.avatar.lottiePath // For custom Lottie
+        // Update avatar sub-document while preserving existing DiceBear config
+        user.avatar = {
+            // Preserve existing DiceBear data if present
+            dicebearConfig: user.avatar?.dicebearConfig,
+            dicebearUrl: user.avatar?.dicebearUrl,
+            // Update legacy avatar parts
+            skin: skin !== undefined ? skin : user.avatar?.skin,
+            hair: hair !== undefined ? hair : user.avatar?.hair,
+            top: top !== undefined ? top : user.avatar?.top,
+            bottom: bottom !== undefined ? bottom : user.avatar?.bottom,
+            accessory: accessory !== undefined ? accessory : user.avatar?.accessory,
+            lottiePath: lottiePath !== undefined ? lottiePath : user.avatar?.lottiePath
         };
-        await user.save(); //
+        user.markModified('avatar');
+        await user.save();
 
         res.json({ success: true, message: 'Avatar updated successfully!', avatar: user.avatar }); //
 
