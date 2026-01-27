@@ -214,6 +214,29 @@ function parseFraction(input) {
 
 // Instance method: Check if answer is correct
 problemSchema.methods.checkAnswer = function(userAnswer) {
+  const userStr = String(userAnswer).trim();
+
+  // First, check against equivalent answers if available
+  const equivalents = this.metadata?.equivalentAnswers || [];
+  if (equivalents.length > 0) {
+    // Normalize user answer for comparison
+    const normalizedUser = userStr.toLowerCase().replace(/\s+/g, '');
+
+    for (const equiv of equivalents) {
+      const normalizedEquiv = String(equiv).trim().toLowerCase().replace(/\s+/g, '');
+      if (normalizedUser === normalizedEquiv) {
+        return true;
+      }
+      // Also try numeric comparison for decimal equivalents
+      if (!isNaN(parseFloat(userStr)) && !isNaN(parseFloat(equiv))) {
+        if (Math.abs(parseFloat(userStr) - parseFloat(equiv)) < 0.0001) {
+          return true;
+        }
+      }
+    }
+  }
+
+  // Fall back to type-specific checking
   switch (this.answerType) {
     case 'integer':
     case 'decimal':

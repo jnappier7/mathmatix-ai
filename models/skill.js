@@ -212,6 +212,22 @@ const skillSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+
+  // CAT Navigation fields (from skill graph)
+  strand: {
+    type: String,
+    index: true
+  },
+
+  depth: {
+    type: Number,
+    min: 0
+  },
+
+  // Data source tracking
+  source: {
+    type: String
   }
 }, {
   timestamps: true
