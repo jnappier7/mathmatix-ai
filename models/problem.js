@@ -1,20 +1,17 @@
 /**
- * PROBLEM MODEL (IRT-Calibrated Assessment Items)
+ * PROBLEM MODEL
  *
- * Each problem has IRT (Item Response Theory) parameters that allow
- * precise ability estimation through adaptive testing.
- *
- * IRT Parameters:
- * - difficulty (β): How hard the problem is (-3 to +3, where 0 = average)
- * - discrimination (α): How well it separates high/low ability (0.5 to 2.5)
+ * Simplified schema matching the cleaned JSON format.
+ * Uses 1-5 difficulty scale and structured answer objects.
  *
  * @model Problem
  */
 
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const problemSchema = new mongoose.Schema({
-  // Unique identifier
+  // Unique identifier (UUID)
   problemId: {
     type: String,
     required: true,
@@ -22,7 +19,7 @@ const problemSchema = new mongoose.Schema({
     index: true
   },
 
-  // Associated skill
+  // Primary skill this problem tests
   skillId: {
     type: String,
     required: true,
@@ -30,287 +27,256 @@ const problemSchema = new mongoose.Schema({
     index: true
   },
 
-  // Problem content
-  content: {
+  // Secondary skills (for cross-skill problems)
+  secondarySkillIds: [{
+    type: String,
+    ref: 'Skill'
+  }],
+
+  // Problem prompt (the question text)
+  prompt: {
     type: String,
     required: true
   },
 
-  // Optional SVG diagram for visual problems (geometry, graphs, etc.)
+  // Optional SVG diagram for visual problems
   svg: {
-    type: String,
-    required: false
+    type: String
   },
 
-  // Correct answer (for auto-validation)
+  // Answer object with equivalents
   answer: {
-    type: mongoose.Schema.Types.Mixed,  // Can be number, string, or array
-    required: true
+    type: {
+      type: String,
+      enum: ['auto', 'exact', 'range'],
+      default: 'auto'
+    },
+    value: {
+      type: mongoose.Schema.Types.Mixed,  // Primary answer
+      required: true
+    },
+    equivalents: [{
+      type: String  // Equivalent forms: "2/3", "0.666...", "4/6"
+    }]
+  },
+
+  // Answer type for input validation
+  answerType: {
+    type: String,
+    enum: ['constructed-response', 'multiple-choice', 'integer', 'decimal', 'fraction', 'expression'],
+    default: 'constructed-response'
   },
 
   // Multiple choice options (if applicable)
   options: [{
     label: String,  // 'A', 'B', 'C', 'D'
-    text: String    // The option text
+    text: String
+  }],
+  correctOption: String,
+
+  // Simple 1-5 difficulty scale
+  difficulty: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5,
+    default: 2,
+    index: true
+  },
+
+  // Grade band (matches skill gradeBand)
+  gradeBand: {
+    type: String,
+    enum: ['preK', 'K-5', '5-8', '8-12', 'Calculus', 'Calc 3'],
+    index: true
+  },
+
+  // Ohio Learning Standards domain
+  ohioDomain: {
+    type: String
+  },
+
+  // Tags for filtering/searching
+  tags: [{
+    type: String
   }],
 
-  // Correct option letter (for multiple choice)
-  correctOption: String,  // 'A', 'B', 'C', or 'D'
-
-  // Answer type for validation
-  answerType: {
-    type: String,
-    enum: ['integer', 'decimal', 'fraction', 'expression', 'multiple-choice'],
-    default: 'integer'
-  },
-
-  // IRT PARAMETERS (2-Parameter Logistic Model)
-  irtParameters: {
-    // Difficulty (β): Where on the ability scale is this problem?
-    // Scale: -3 (very easy) to +3 (very hard), 0 = average
-    difficulty: {
-      type: Number,
-      required: true,
-      min: -3,
-      max: 3,
-      default: 0
-    },
-
-    // Discrimination (α): How well does this problem separate abilities?
-    // Scale: 0.5 (poor) to 2.5 (excellent), 1.0 = average
-    discrimination: {
-      type: Number,
-      required: true,
-      min: 0.5,
-      max: 2.5,
-      default: 1.0
-    },
-
-    // Calibration confidence (how sure are we about these parameters?)
-    calibrationConfidence: {
-      type: String,
-      enum: ['expert', 'simulated', 'live-calibrated'],
-      default: 'expert'  // Expert-assigned vs calibrated from student data
-    },
-
-    // Number of students who have attempted this problem
-    attemptsCount: {
-      type: Number,
-      default: 0
-    }
-  },
-
-  // DOK (Depth of Knowledge) level
-  dokLevel: {
-    type: Number,
-    min: 1,
-    max: 3,
-    default: 1
-    // 1 = Recall/Procedure
-    // 2 = Concept/Skill
-    // 3 = Strategy/Reasoning
-  },
-
-  // Metadata
-  metadata: {
-    // Estimated time to solve (seconds)
-    estimatedTime: {
-      type: Number,
-      default: 30
-    },
-
-    // Common errors students make
-    commonErrors: [String],
-
-    // Tags for organization
-    tags: [String],
-
-    // Source (template-generated, LLM-generated, expert-authored, imported)
-    source: {
-      type: String,
-      enum: ['template', 'llm', 'expert', 'imported'],
-      default: 'template'
-    },
-
-    // If template-generated, which template?
-    templateId: String,
-
-    // Generation parameters (for reproducibility)
-    generationParams: mongoose.Schema.Types.Mixed,
-
-    // Import-specific metadata
-    standardCode: String,      // e.g., '6EE7', '7NS1' (Common Core)
-    gradeLevel: String,         // e.g., '6', '7', '8'
-    pValues: [Number],          // Raw p-values from calibration
-    importDate: Date
-  },
-
-  // Active/inactive flag
+  // Active flag
   isActive: {
     type: Boolean,
-    default: true
+    default: true,
+    index: true
   },
 
-  // Quality control
-  qualityReview: {
-    reviewed: { type: Boolean, default: false },
-    reviewedBy: String,
-    reviewDate: Date,
-    notes: String
+  // Source tracking
+  source: {
+    type: String
   },
 
-  // Content hash for deduplication (auto-generated)
+  // Content hash for deduplication
   contentHash: {
     type: String,
+    index: true,
+    sparse: true
   }
 
 }, {
   timestamps: true
 });
 
-// INDEXES FOR PERFORMANCE
-problemSchema.index({ skillId: 1, 'irtParameters.difficulty': 1 });  // Adaptive problem selection
-problemSchema.index({ skillId: 1, isActive: 1 });  // Active problems by skill
-problemSchema.index({ contentHash: 1 }, { unique: true, sparse: true });  // Prevent duplicates
+// INDEXES
+problemSchema.index({ skillId: 1, difficulty: 1 });
+problemSchema.index({ skillId: 1, isActive: 1 });
+problemSchema.index({ gradeBand: 1, difficulty: 1 });
 
-// Helper function to compare two fractions for equivalence
-function compareFractions(userFraction, correctFraction) {
-  // First try exact string match (fastest path)
-  if (String(userFraction).trim() === String(correctFraction).trim()) {
-    return true;
-  }
+// ===========================================================================
+// ANSWER CHECKING
+// ===========================================================================
 
-  // Parse both fractions
-  const parseResult1 = parseFraction(userFraction);
-  const parseResult2 = parseFraction(correctFraction);
-
-  // If either parse failed, fall back to string comparison
-  if (!parseResult1 || !parseResult2) {
-    return String(userFraction).trim() === String(correctFraction).trim();
-  }
-
-  // Compare as decimals (handles equivalent fractions like 1/2 = 2/4)
-  const decimal1 = parseResult1.numerator / parseResult1.denominator;
-  const decimal2 = parseResult2.numerator / parseResult2.denominator;
-
-  // Use small epsilon for floating point comparison
-  return Math.abs(decimal1 - decimal2) < 0.0001;
-}
-
-// Helper function to parse a fraction string
-function parseFraction(input) {
-  const str = String(input).trim();
-  const match = str.match(/^(-?\d+)\/(\d+)$/);
-
-  if (!match) return null;
-
-  const numerator = parseInt(match[1], 10);
-  const denominator = parseInt(match[2], 10);
-
-  if (denominator === 0) return null;
-
-  return { numerator, denominator };
-}
-
-// Instance method: Check if answer is correct
+/**
+ * Check if user answer is correct
+ * Supports equivalent answers (e.g., "2/3" = "0.666..." = "4/6")
+ */
 problemSchema.methods.checkAnswer = function(userAnswer) {
-  switch (this.answerType) {
-    case 'integer':
-    case 'decimal':
-      return parseFloat(userAnswer) === parseFloat(this.answer);
+  const userStr = String(userAnswer).trim();
+  const normalizedUser = userStr.toLowerCase().replace(/\s+/g, '');
 
-    case 'fraction':
-      // Compare fractions by reducing to decimal OR comparing reduced forms
-      return compareFractions(userAnswer, this.answer);
+  // Get the correct answer value
+  const correctValue = this.answer?.value ?? this.answer;
+  const equivalents = this.answer?.equivalents || [];
 
-    case 'expression':
-      // TODO: Implement algebraic equivalence
-      return String(userAnswer).trim() === String(this.answer).trim();
+  // Build list of all acceptable answers
+  const acceptableAnswers = [String(correctValue), ...equivalents];
 
-    case 'multiple-choice':
-      // For multiple choice, userAnswer is the letter (A, B, C, D)
-      // Compare to correctOption, not answer
-      const userLetter = String(userAnswer).trim().toUpperCase();
-      const correctLetter = String(this.correctOption).trim().toUpperCase();
+  // Check against all acceptable answers
+  for (const acceptable of acceptableAnswers) {
+    const normalizedAcceptable = String(acceptable).trim().toLowerCase().replace(/\s+/g, '');
 
-      // DEBUG logging
-      console.log(`[MC Answer Check] User: "${userLetter}" | Correct: "${correctLetter}" | Match: ${userLetter === correctLetter}`);
+    // Exact string match
+    if (normalizedUser === normalizedAcceptable) {
+      return true;
+    }
 
-      return userLetter === correctLetter;
+    // Numeric comparison (handles "0.5" vs "0.50" vs ".5")
+    const userNum = parseFloat(userStr);
+    const acceptableNum = parseFloat(acceptable);
+    if (!isNaN(userNum) && !isNaN(acceptableNum)) {
+      if (Math.abs(userNum - acceptableNum) < 0.0001) {
+        return true;
+      }
+    }
 
-    default:
-      return false;
+    // Fraction comparison (handles "1/2" vs "2/4")
+    if (userStr.includes('/') && String(acceptable).includes('/')) {
+      if (compareFractions(userStr, acceptable)) {
+        return true;
+      }
+    }
   }
+
+  // Multiple choice special handling
+  if (this.answerType === 'multiple-choice' && this.correctOption) {
+    return userStr.toUpperCase() === this.correctOption.toUpperCase();
+  }
+
+  return false;
 };
 
-// Static method: Find problem at target difficulty
-problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficulty, excludeIds = []) {
-  // Try progressively wider difficulty windows before expensive aggregation
-  const windows = [0.3, 0.5, 0.8, 1.2];
+/**
+ * Compare two fractions for equivalence
+ */
+function compareFractions(frac1, frac2) {
+  const parse = (f) => {
+    const match = String(f).trim().match(/^(-?\d+)\s*\/\s*(\d+)$/);
+    if (!match) return null;
+    const num = parseInt(match[1], 10);
+    const den = parseInt(match[2], 10);
+    return den === 0 ? null : num / den;
+  };
 
-  for (const window of windows) {
+  const val1 = parse(frac1);
+  const val2 = parse(frac2);
+
+  if (val1 === null || val2 === null) return false;
+  return Math.abs(val1 - val2) < 0.0001;
+}
+
+// ===========================================================================
+// STATIC METHODS
+// ===========================================================================
+
+/**
+ * Find problem near target difficulty for a skill
+ * Uses simple 1-5 scale
+ */
+problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficulty, excludeIds = []) {
+  // Convert theta (-3 to +3) to difficulty (1-5) if needed
+  let difficulty = targetDifficulty;
+  if (targetDifficulty >= -3 && targetDifficulty <= 3) {
+    // Looks like theta scale, convert: theta -3→1, 0→3, +3→5
+    difficulty = Math.round(((targetDifficulty + 3) / 6) * 4 + 1);
+    difficulty = Math.max(1, Math.min(5, difficulty));
+  }
+
+  // Try exact difficulty first, then expand
+  for (const range of [0, 1, 2]) {
     const problems = await this.find({
       skillId,
       isActive: true,
       problemId: { $nin: excludeIds },
-      'irtParameters.difficulty': {
-        $gte: targetDifficulty - window,
-        $lte: targetDifficulty + window
+      difficulty: {
+        $gte: Math.max(1, difficulty - range),
+        $lte: Math.min(5, difficulty + range)
       }
-    }).sort({ 'irtParameters.discrimination': -1 }); // Prefer high discrimination
+    });
 
     if (problems.length > 0) {
-      // Return random problem from the set
       return problems[Math.floor(Math.random() * problems.length)];
     }
   }
 
-  // Last resort: expensive aggregation to find closest match across entire skill
-  const results = await this.aggregate([
-    {
-      $match: {
-        skillId,
-        isActive: true,
-        problemId: { $nin: excludeIds }
-      }
-    },
-    {
-      $addFields: {
-        difficultyDistance: {
-          $abs: { $subtract: ['$irtParameters.difficulty', targetDifficulty] }
-        }
-      }
-    },
-    {
-      $sort: { difficultyDistance: 1 }
-    },
-    {
-      $limit: 1
-    }
-  ]);
+  // Fallback: any problem for this skill
+  const anyProblem = await this.findOne({
+    skillId,
+    isActive: true,
+    problemId: { $nin: excludeIds }
+  });
 
-  // Convert aggregation result back to Mongoose document
-  if (results.length > 0) {
-    return await this.findById(results[0]._id);
-  }
-
-  return null;
+  return anyProblem;
 };
 
-// Static method: Get problems for a skill sorted by difficulty
+/**
+ * Get problems for a skill sorted by difficulty
+ */
 problemSchema.statics.getBySkill = async function(skillId) {
-  return await this.find({ skillId, isActive: true })
-    .sort({ 'irtParameters.difficulty': 1 });
+  return await this.find({ skillId, isActive: true }).sort({ difficulty: 1 });
 };
 
-// PRE-SAVE HOOK: Generate content hash for deduplication
-const crypto = require('crypto');
+/**
+ * Map theta (IRT scale) to difficulty (1-5)
+ */
+problemSchema.statics.thetaToDifficulty = function(theta) {
+  // theta: -3 to +3 → difficulty: 1 to 5
+  const difficulty = Math.round(((theta + 3) / 6) * 4 + 1);
+  return Math.max(1, Math.min(5, difficulty));
+};
+
+/**
+ * Map difficulty (1-5) to theta (IRT scale)
+ */
+problemSchema.statics.difficultyToTheta = function(difficulty) {
+  // difficulty: 1 to 5 → theta: -3 to +3
+  return ((difficulty - 1) / 4) * 6 - 3;
+};
+
+// ===========================================================================
+// PRE-SAVE HOOK
+// ===========================================================================
 
 problemSchema.pre('save', function(next) {
-  // Only generate hash if content or skillId changed (or it's a new document)
-  if (this.isModified('content') || this.isModified('skillId') || this.isNew) {
-    // Hash based on skillId + content (case-insensitive, trimmed)
-    const hashInput = `${this.skillId}:${String(this.content).trim().toLowerCase()}`;
+  // Generate content hash for deduplication
+  if (this.isModified('prompt') || this.isModified('skillId') || this.isNew) {
+    const hashInput = `${this.skillId}:${String(this.prompt).trim().toLowerCase()}`;
     this.contentHash = crypto.createHash('sha256').update(hashInput).digest('hex');
   }
   next();
