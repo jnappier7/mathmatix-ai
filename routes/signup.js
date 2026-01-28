@@ -16,31 +16,9 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
         return res.status(400).json({ message: 'All basic fields are required.' });
     }
 
-    // --- Date of Birth required for all students ---
-    if (role === 'student' && !dateOfBirth) {
-        console.warn("WARN: Signup failed - student missing date of birth.");
-        return res.status(400).json({ message: 'Date of birth is required for all students.' });
-    }
-
-    // --- COPPA Compliance: Check if student is under 13 ---
-    // Under 13 students MUST provide a valid parent invite code
-    if (role === 'student' && dateOfBirth) {
-        const birthDate = new Date(dateOfBirth);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-
-        if (age < 13 && !parentInviteCode) {
-            console.warn("WARN: Signup failed - under 13 student without parent invite code.");
-            return res.status(400).json({ message: 'Students under 13 require a parent\'s invite code. Please ask your parent to create an account first and give you their invite code.' });
-        }
-    }
-
-    // Note: Parent invite code is OPTIONAL for parents - they can sign up first and generate
-    // an invite code for their child, breaking the chicken-and-egg problem.
+    // Note: DOB is collected at complete-profile page, not signup.
+    // COPPA check happens there - under 13 must have parental consent to complete profile.
+    // Parent invite code at signup is optional but allows pre-linking for convenience.
 
     // Password strength validation (should match frontend)
     // SECURITY FIX: Strengthened password requirements to include special characters
@@ -73,8 +51,6 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
             passwordHash: password, // The pre-save hook in models/user.js will hash this
             role,
             needsProfileCompletion: true, // New users need to complete their profile
-            // Save dateOfBirth if provided (for students)
-            ...(dateOfBirth && role === 'student' && { dateOfBirth: new Date(dateOfBirth) }),
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 

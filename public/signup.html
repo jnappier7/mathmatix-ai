@@ -82,16 +82,6 @@
           </select>
         </div>
 
-        <div id="dobGroup" class="form-group" style="display: none;">
-          <label for="dateOfBirth">Date of Birth:</label>
-          <input type="date" name="dateOfBirth" id="dateOfBirth" autocomplete="bday" />
-          <p class="note">Required for all students.</p>
-        </div>
-
-        <div id="under13Warning" class="form-group" style="display: none; background: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-          <p style="margin: 0; color: #856404;"><strong>Parental consent required:</strong> Students under 13 need a parent's invite code to create an account. Ask your parent to sign up first and give you their invite code.</p>
-        </div>
-
         <div id="inviteCodeGroup" class="form-group" style="display: none;">
           <label for="inviteCode">Child's Invite Code (Optional):</label>
           <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" autocomplete="off" />
@@ -99,9 +89,9 @@
         </div>
 
         <div id="parentInviteCodeGroup" class="form-group" style="display: none;">
-          <label for="parentInviteCode" id="parentInviteCodeLabel">Parent's Invite Code:</label>
+          <label for="parentInviteCode">Parent's Invite Code (Optional):</label>
           <input type="text" name="parentInviteCode" id="parentInviteCode" placeholder="e.g. ABC123" autocomplete="off" />
-          <p class="note" id="parentInviteCodeNote">Optional: Enter your parent's invite code to link accounts.</p>
+          <p class="note">Have a parent's invite code? Enter it to link your accounts.</p>
         </div>
 
         <button type="submit" class="submit-btn btn-primary">Create Account</button>
@@ -125,83 +115,24 @@
   <script src="/js/csrf.js"></script>
   <script>
     const roleSelect = document.getElementById("role");
-    const dobGroup = document.getElementById("dobGroup");
-    const dobInput = document.getElementById("dateOfBirth");
-    const under13Warning = document.getElementById("under13Warning");
     const inviteCodeGroup = document.getElementById("inviteCodeGroup");
     const parentInviteCodeGroup = document.getElementById("parentInviteCodeGroup");
-    const parentInviteCodeInput = document.getElementById("parentInviteCode");
-    const parentInviteCodeLabel = document.getElementById("parentInviteCodeLabel");
-    const parentInviteCodeNote = document.getElementById("parentInviteCodeNote");
     const signupForm = document.getElementById("signupForm");
     const signupMessage = document.getElementById("signup-message");
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm-password");
 
-    let isUnder13 = false;
-
-    // Set max date for DOB to today
-    const today = new Date().toISOString().split('T')[0];
-    dobInput.setAttribute('max', today);
-
-    // Calculate age from date of birth
-    function calculateAge(dob) {
-      const birthDate = new Date(dob);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      return age;
-    }
-
-    // Check if user is under 13 and update UI accordingly
-    function checkAgeAndUpdateUI() {
-      if (roleSelect.value !== "student" || !dobInput.value) {
-        isUnder13 = false;
-        under13Warning.style.display = "none";
-        parentInviteCodeLabel.textContent = "Parent's Invite Code (Optional):";
-        parentInviteCodeNote.textContent = "Optional: Enter your parent's invite code to link accounts.";
-        parentInviteCodeInput.removeAttribute("required");
-        return;
-      }
-
-      const age = calculateAge(dobInput.value);
-      isUnder13 = age < 13;
-
-      if (isUnder13) {
-        under13Warning.style.display = "block";
-        parentInviteCodeLabel.textContent = "Parent's Invite Code (Required):";
-        parentInviteCodeNote.textContent = "Required: Your parent must create an account first and give you their invite code.";
-        parentInviteCodeInput.setAttribute("required", "required");
-      } else {
-        under13Warning.style.display = "none";
-        parentInviteCodeLabel.textContent = "Parent's Invite Code (Optional):";
-        parentInviteCodeNote.textContent = "Optional: Enter your parent's invite code to link accounts.";
-        parentInviteCodeInput.removeAttribute("required");
-      }
-    }
-
     // Function to update field visibility based on role
     function updateFieldsForRole() {
       if (roleSelect.value === "parent") {
-        dobGroup.style.display = "none";
-        under13Warning.style.display = "none";
         inviteCodeGroup.style.display = "block";
         parentInviteCodeGroup.style.display = "none";
-        isUnder13 = false;
       } else if (roleSelect.value === "student") {
-        dobGroup.style.display = "block";
         inviteCodeGroup.style.display = "none";
         parentInviteCodeGroup.style.display = "block";
-        checkAgeAndUpdateUI();
       } else {
-        dobGroup.style.display = "none";
-        under13Warning.style.display = "none";
         inviteCodeGroup.style.display = "none";
         parentInviteCodeGroup.style.display = "none";
-        isUnder13 = false;
       }
     }
 
@@ -209,7 +140,6 @@
     updateFieldsForRole();
 
     roleSelect.addEventListener("change", updateFieldsForRole);
-    dobInput.addEventListener("change", checkAgeAndUpdateUI);
 
     // Handle form submission with Fetch API
     signupForm.addEventListener("submit", async function (event) {
@@ -231,27 +161,6 @@
           signupMessage.className = 'error';
           signupMessage.style.display = 'block';
           return;
-        }
-
-        // DOB required for students
-        if (roleSelect.value === "student" && !dobInput.value) {
-          signupMessage.textContent = 'Date of birth is required for all students.';
-          signupMessage.className = 'error';
-          signupMessage.style.display = 'block';
-          dobInput.focus();
-          return;
-        }
-
-        // COPPA check: Under 13 requires parent invite code
-        if (roleSelect.value === "student" && dobInput.value) {
-          const age = calculateAge(dobInput.value);
-          if (age < 13 && !parentInviteCodeInput.value.trim()) {
-            signupMessage.textContent = 'Students under 13 require a parent\'s invite code. Please ask your parent to create an account first and give you their invite code.';
-            signupMessage.className = 'error';
-            signupMessage.style.display = 'block';
-            parentInviteCodeInput.focus();
-            return;
-          }
         }
 
         const formData = new FormData(signupForm);
