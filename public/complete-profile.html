@@ -36,6 +36,17 @@
             Required for COPPA compliance. Students under 13 require parental consent.
           </p>
 
+          <div id="parentConsentSection" style="display: none; background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <p style="margin: 0 0 10px 0; color: #856404; font-weight: bold;">Parental Consent Required</p>
+            <p style="margin: 0 0 10px 0; color: #856404; font-size: 0.9rem;">
+              Students under 13 need a parent's invite code. Ask your parent to create an account and give you their code.
+            </p>
+            <label for="parentInviteCode" style="color: #856404;">Parent's Invite Code:</label>
+            <input type="text" id="parentInviteCode" name="parentInviteCode" placeholder="e.g. ABC123" style="margin-bottom: 10px;" />
+            <button type="button" id="linkParentBtn" class="btn btn-secondary" style="width: 100%;">Link to Parent</button>
+            <p id="linkParentMessage" style="margin-top: 10px; font-size: 0.9rem;"></p>
+          </div>
+
           <label for="grade">Grade Level</label>
           <select id="grade" name="grade">
             <option value="">Select your grade</option>
