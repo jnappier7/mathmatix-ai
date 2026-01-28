@@ -347,7 +347,7 @@ class AvatarBuilder {
         try {
             const avatarUrl = this.buildAvatarUrl();
 
-            const response = await fetch('/api/avatar/dicebear', {
+            const response = await csrfFetch('/api/avatar/dicebear', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
