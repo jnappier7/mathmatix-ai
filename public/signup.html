@@ -84,7 +84,7 @@
 
         <div id="dobGroup" class="form-group" style="display: none;">
           <label for="dateOfBirth">Date of Birth:</label>
-          <input type="date" name="dateOfBirth" id="dateOfBirth" required autocomplete="bday" />
+          <input type="date" name="dateOfBirth" id="dateOfBirth" autocomplete="bday" />
           <p class="note">Required for all students.</p>
         </div>
 
@@ -230,6 +230,15 @@
           signupMessage.textContent = 'Password must be at least 8 characters long, include one capital letter, and one number.';
           signupMessage.className = 'error';
           signupMessage.style.display = 'block';
+          return;
+        }
+
+        // DOB required for students
+        if (roleSelect.value === "student" && !dobInput.value) {
+          signupMessage.textContent = 'Date of birth is required for all students.';
+          signupMessage.className = 'error';
+          signupMessage.style.display = 'block';
+          dobInput.focus();
           return;
         }
 
