@@ -16,6 +16,12 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
         return res.status(400).json({ message: 'All basic fields are required.' });
     }
 
+    // --- Date of Birth required for all students ---
+    if (role === 'student' && !dateOfBirth) {
+        console.warn("WARN: Signup failed - student missing date of birth.");
+        return res.status(400).json({ message: 'Date of birth is required for all students.' });
+    }
+
     // --- COPPA Compliance: Check if student is under 13 ---
     // Under 13 students MUST provide a valid parent invite code
     if (role === 'student' && dateOfBirth) {
