@@ -183,6 +183,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (currentUser.role === 'student') {
             const dob = formData.get('dateOfBirth');
+
+            // DOB is required for all students
+            if (!dob) {
+                alert('Date of birth is required for all students.');
+                dobInput.focus();
+                return;
+            }
+
             if (dob) {
                 // Calculate age for COPPA compliance check
                 const birthDate = new Date(dob);
