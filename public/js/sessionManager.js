@@ -88,7 +88,7 @@ class SessionManager {
 
   async sendHeartbeat() {
     try {
-      const response = await fetch('/api/session/heartbeat', {
+      const response = await csrfFetch('/api/session/heartbeat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

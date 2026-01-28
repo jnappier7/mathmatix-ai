@@ -27,7 +27,7 @@ class DailyQuestManager {
 
   async updateProgress(action, data) {
     try {
-      const response = await fetch('/api/daily-quests/update', {
+      const response = await csrfFetch('/api/daily-quests/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, data })

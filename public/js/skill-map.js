@@ -844,7 +844,7 @@ async function startPractice() {
 
     try {
         // Call API to set up active badge for this skill
-        const response = await fetch('/api/mastery/start-skill-practice', {
+        const response = await csrfFetch('/api/mastery/start-skill-practice', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',

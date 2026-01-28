@@ -169,7 +169,7 @@ function toggleBadgeWidget() {
  */
 async function claimBadge() {
   try {
-    const response = await fetch('/api/mastery/complete-badge', {
+    const response = await csrfFetch('/api/mastery/complete-badge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include'
