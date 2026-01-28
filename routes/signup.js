@@ -8,7 +8,7 @@ const { ensureNotAuthenticated } = require('../middleware/auth'); // Middleware 
 const passport = require('passport'); // For req.logIn after successful signup
 
 router.post('/', ensureNotAuthenticated, async (req, res, next) => {
-    const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode, parentInviteCode } = req.body;
+    const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth } = req.body;
 
     // --- 1. Basic Validation ---
     if (!firstName || !lastName || !email || !username || !password || !role) {
@@ -16,7 +16,24 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
         return res.status(400).json({ message: 'All basic fields are required.' });
     }
 
-    // Note: Parent invite code is now OPTIONAL - parents can sign up first and generate
+    // --- COPPA Compliance: Check if student is under 13 ---
+    // Under 13 students MUST provide a valid parent invite code
+    if (role === 'student' && dateOfBirth) {
+        const birthDate = new Date(dateOfBirth);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        if (age < 13 && !parentInviteCode) {
+            console.warn("WARN: Signup failed - under 13 student without parent invite code.");
+            return res.status(400).json({ message: 'Students under 13 require a parent\'s invite code. Please ask your parent to create an account first and give you their invite code.' });
+        }
+    }
+
+    // Note: Parent invite code is OPTIONAL for parents - they can sign up first and generate
     // an invite code for their child, breaking the chicken-and-egg problem.
 
     // Password strength validation (should match frontend)
@@ -50,6 +67,8 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
             passwordHash: password, // The pre-save hook in models/user.js will hash this
             role,
             needsProfileCompletion: true, // New users need to complete their profile
+            // Save dateOfBirth if provided (for students)
+            ...(dateOfBirth && role === 'student' && { dateOfBirth: new Date(dateOfBirth) }),
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 
