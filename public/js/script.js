@@ -3820,7 +3820,7 @@ What would you like to work on first?`;
 
         try {
             // Send to backend
-            const response = await fetch('/api/chat/reaction', {
+            const response = await csrfFetch('/api/chat/reaction', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
