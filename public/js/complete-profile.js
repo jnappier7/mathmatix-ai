@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mathCourseSection = document.getElementById('math-course-section');
     const studentOnlyDiv = document.getElementById('studentOnly');
     const parentOnlyDiv = document.getElementById('parentOnly');
+    const parentConsentSection = document.getElementById('parentConsentSection');
+    const parentInviteCodeInput = document.getElementById('parentInviteCode');
+    const linkParentBtn = document.getElementById('linkParentBtn');
+    const linkParentMessage = document.getElementById('linkParentMessage');
 
     let currentUser = null;
 
@@ -17,6 +21,82 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (dobInput) {
         const today = new Date().toISOString().split('T')[0];
         dobInput.setAttribute('max', today);
+    }
+
+    // Calculate age from DOB
+    function calculateAge(dob) {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    // Check if under 13 and show/hide parent consent section
+    function checkAgeAndShowConsent() {
+        if (!dobInput || !dobInput.value || !currentUser || currentUser.role !== 'student') {
+            if (parentConsentSection) parentConsentSection.style.display = 'none';
+            return;
+        }
+
+        const age = calculateAge(dobInput.value);
+        if (age < 13 && !currentUser.hasParentalConsent) {
+            parentConsentSection.style.display = 'block';
+        } else {
+            parentConsentSection.style.display = 'none';
+        }
+    }
+
+    // Handle linking to parent
+    async function linkToParent() {
+        const code = parentInviteCodeInput.value.trim();
+        if (!code) {
+            linkParentMessage.textContent = 'Please enter your parent\'s invite code.';
+            linkParentMessage.style.color = '#dc3545';
+            return;
+        }
+
+        linkParentBtn.disabled = true;
+        linkParentBtn.textContent = 'Linking...';
+        linkParentMessage.textContent = '';
+
+        try {
+            const res = await csrfFetch('/api/student/link-to-parent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ parentInviteCode: code })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                linkParentMessage.textContent = data.message + ' You can now complete your profile.';
+                linkParentMessage.style.color = '#28a745';
+                currentUser.hasParentalConsent = true;
+                parentConsentSection.style.display = 'none';
+            } else {
+                linkParentMessage.textContent = data.message || 'Failed to link. Check your code and try again.';
+                linkParentMessage.style.color = '#dc3545';
+            }
+        } catch (error) {
+            console.error('Link to parent error:', error);
+            linkParentMessage.textContent = 'Network error. Please try again.';
+            linkParentMessage.style.color = '#dc3545';
+        } finally {
+            linkParentBtn.disabled = false;
+            linkParentBtn.textContent = 'Link to Parent';
+        }
+    }
+
+    // Add event listeners
+    if (dobInput) {
+        dobInput.addEventListener('change', checkAgeAndShowConsent);
+    }
+    if (linkParentBtn) {
+        linkParentBtn.addEventListener('click', linkToParent);
     }
 
     async function fetchCurrentUser() {
@@ -60,6 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
             toggleMathCourseSection();
+            checkAgeAndShowConsent(); // Check if under 13 needs consent
         } else if (user.role === 'parent') {
             studentOnlyDiv.style.display = 'none';
             parentOnlyDiv.style.display = 'block';
@@ -114,7 +195,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // COPPA compliance: Under 13 requires parental consent
                 if (age < 13 && !currentUser.hasParentalConsent) {
-                    alert('Students under 13 require parental consent.\n\nTo get consent, your parent needs to:\n1. Create a parent account at our signup page\n2. Generate an invite code from their dashboard\n3. You can then link your account using their code from your Settings page\n\nOr, they can link to your account using your student invite code (generate one from Settings after completing profile).');
+                    alert('Students under 13 require parental consent. Please enter your parent\'s invite code above to continue.');
+                    parentConsentSection.style.display = 'block';
+                    parentInviteCodeInput.focus();
                     return;
                 }
 
