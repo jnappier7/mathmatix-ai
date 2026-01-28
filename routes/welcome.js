@@ -156,16 +156,35 @@ router.get('/', async (req, res) => {
 
         // 6-MONTH RE-ASSESSMENT: Returning user eligible for new placement (assessment > 6 months old)
         else if (assessmentNeeded && user.assessmentCompleted) {
+            const refreshStyles = [
+                'suggest a quick check-in to see how their skills have grown',
+                'mention you want to make sure the problems match where they are now',
+                'say you\'d like to update your sense of their level',
+                'casually offer to recalibrate the difficulty'
+            ];
+            const randomRefreshStyle = refreshStyles[Math.floor(Math.random() * refreshStyles.length)];
+
             messagesForAI.push({
                 role: "system",
-                content: `Returning student - last assessment was over 6 months ago. Time for a skills refresh. ${temporalContext}.`
+                content: `Returning student - last assessment was over 6 months ago. ${temporalContext}. Variety seed: ${Math.floor(Math.random() * 10000)}`
             });
-            userMessagePart = `Write a casual greeting for ${user.firstName}. Don't introduce yourself - they know you well. Mention it's been a while and you'd like to do a quick skills check-in to make sure you're giving them the right problems. Keep it optional and low-pressure - they can skip if they want. 2 sentences max.`;
+            userMessagePart = `Write a casual greeting for ${user.firstName}. Don't introduce yourself. ${randomRefreshStyle}. Make it totally optional - they can skip if they want. 1-2 sentences. Sound natural, not scripted.`;
         }
 
-        // FIRST ASSESSMENT NEEDED (new user, rapport complete)
-        else if (assessmentNeeded && user.learningProfile?.rapportBuildingComplete) {
-            userMessagePart = `Write a brief, natural transition for ${user.firstName} to start the placement assessment. Don't introduce yourself - they know you. Reference that you've chatted a bit, now you want to see where they're at. Make it sound exciting and low-pressure. 2 sentences max. Don't call it a "test" - just say you want to see what they know.`;
+        // FIRST ASSESSMENT NEEDED (new user, rapport complete but never took assessment)
+        // CRITICAL: Must check !user.assessmentCompleted AND user.level < 5 to avoid triggering
+        // for legacy users who have high levels but missing assessmentCompleted field
+        // High-level users have clearly been using the platform - skip assessment offer
+        else if (assessmentNeeded && !user.assessmentCompleted && (user.level || 1) < 5 && user.learningProfile?.rapportBuildingComplete) {
+            const assessStyles = [
+                'ask if they want to try a few problems so you can get a sense of their level',
+                'suggest doing some quick problems to figure out where to start',
+                'offer to ask them a few questions to find the right difficulty',
+                'mention you want to see what kind of math problems to give them'
+            ];
+            const randomAssessStyle = assessStyles[Math.floor(Math.random() * assessStyles.length)];
+
+            userMessagePart = `Write a brief, natural message for ${user.firstName}. Don't introduce yourself. ${randomAssessStyle}. Make it optional and low-pressure. 1-2 sentences. Sound like texting, not like a formal request.`;
         }
 
         // RETURNING USER: Natural welcome back
