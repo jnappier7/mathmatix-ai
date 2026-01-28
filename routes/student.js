@@ -70,7 +70,7 @@ router.post('/generate-link-code', isAuthenticated, isStudent, async (req, res) 
 // Allows a student to check if they are linked to a parent.
 router.get('/linked-parent', isAuthenticated, isStudent, async (req, res) => {
     try {
-        const student = await User.findById(req.user._id).select('parentIds').populate('parentIds', 'firstName lastName username role');
+        const student = await User.findById(req.user._id).select('parentIds hasParentalConsent').populate('parentIds', 'firstName lastName username role');
         if (!student) {
             return res.status(404).json({ message: 'Student not found.' });
         }
@@ -81,16 +81,81 @@ router.get('/linked-parent', isAuthenticated, isStudent, async (req, res) => {
             const parent = student.parentIds[0];
             res.json({
                 isLinked: true,
+                hasParentalConsent: student.hasParentalConsent || false,
                 parentId: parent._id,
                 parentName: `${parent.firstName} ${parent.lastName}`,
                 totalParents: student.parentIds.length
             });
         } else {
-            res.json({ isLinked: false, message: 'Not linked to a parent account.' });
+            res.json({ isLinked: false, hasParentalConsent: student.hasParentalConsent || false, message: 'Not linked to a parent account.' });
         }
     } catch (error) {
         console.error("ERROR: Failed to check linked parent status:", error);
         res.status(500).json({ message: "Server error checking link status." });
+    }
+});
+
+// POST /api/student/link-to-parent
+// Allows a student to link to a parent using the parent's invite code
+router.post('/link-to-parent', isAuthenticated, isStudent, async (req, res) => {
+    const { parentInviteCode } = req.body;
+
+    if (!parentInviteCode || parentInviteCode.trim() === '') {
+        return res.status(400).json({ message: "Parent invite code is required." });
+    }
+
+    try {
+        const student = await User.findById(req.user._id);
+        if (!student) {
+            return res.status(404).json({ message: "Student not found." });
+        }
+
+        // Find a parent with a matching, valid invite code
+        const parent = await User.findOne({
+            'parentToChildInviteCode.code': parentInviteCode.trim().toUpperCase(),
+            'parentToChildInviteCode.childLinked': false,
+            'parentToChildInviteCode.expiresAt': { $gt: new Date() },
+            role: 'parent'
+        });
+
+        if (!parent) {
+            return res.status(400).json({ message: "Invalid, expired, or already used parent invite code." });
+        }
+
+        // Check if already linked to this parent
+        if (student.parentIds && student.parentIds.some(pid => pid.equals(parent._id))) {
+            return res.status(400).json({ message: "Already linked to this parent." });
+        }
+
+        // Link the student to the parent
+        parent.children = parent.children || [];
+        if (!parent.children.some(childId => childId.equals(student._id))) {
+            parent.children.push(student._id);
+        }
+        parent.parentToChildInviteCode.childLinked = true;
+
+        // Add parent to student's parentIds array
+        student.parentIds = student.parentIds || [];
+        if (!student.parentIds.some(parentId => parentId.equals(parent._id))) {
+            student.parentIds.push(parent._id);
+        }
+
+        // Grant parental consent (COPPA compliance)
+        student.hasParentalConsent = true;
+
+        await parent.save();
+        await student.save();
+
+        console.log(`LOG: Student ${student.username} linked to parent ${parent.username} via parent invite code.`);
+        res.status(200).json({
+            success: true,
+            message: `Successfully linked to parent ${parent.firstName} ${parent.lastName}!`,
+            hasParentalConsent: true
+        });
+
+    } catch (error) {
+        console.error("ERROR: Failed to link to parent:", error);
+        res.status(500).json({ message: "Could not link to parent." });
     }
 });
 

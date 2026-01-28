@@ -82,10 +82,16 @@
           </select>
         </div>
 
-        <div id="inviteCodeGroup" class="form-group">
-          <label for="inviteCode">Child's Invite Code:</label>
+        <div id="inviteCodeGroup" class="form-group" style="display: none;">
+          <label for="inviteCode">Child's Invite Code (Optional):</label>
           <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" autocomplete="off" />
-          <p class="note">You must enter your child's invite code to create a parent account.</p>
+          <p class="note">If your child already has an account, enter their invite code to link accounts. Otherwise, you can generate an invite code for them after signing up.</p>
+        </div>
+
+        <div id="parentInviteCodeGroup" class="form-group" style="display: none;">
+          <label for="parentInviteCode">Parent's Invite Code:</label>
+          <input type="text" name="parentInviteCode" id="parentInviteCode" placeholder="e.g. ABC123" autocomplete="off" />
+          <p class="note">Under 13? Enter your parent's invite code to get parental consent. Your parent can generate this code from their dashboard.</p>
         </div>
 
         <button type="submit" class="submit-btn btn-primary">Create Account</button>
@@ -110,25 +116,30 @@
   <script>
     const roleSelect = document.getElementById("role");
     const inviteCodeGroup = document.getElementById("inviteCodeGroup");
+    const parentInviteCodeGroup = document.getElementById("parentInviteCodeGroup");
     const signupForm = document.getElementById("signupForm");
     const signupMessage = document.getElementById("signup-message");
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirm-password");
 
-    // Initial check on page load
-    if (roleSelect.value === "parent") {
+    // Function to update invite code field visibility based on role
+    function updateInviteCodeFields() {
+      if (roleSelect.value === "parent") {
         inviteCodeGroup.style.display = "block";
-    } else {
+        parentInviteCodeGroup.style.display = "none";
+      } else if (roleSelect.value === "student") {
         inviteCodeGroup.style.display = "none";
-    }
-
-    roleSelect.addEventListener("change", function () {
-      if (this.value === "parent") {
-        inviteCodeGroup.style.display = "block";
+        parentInviteCodeGroup.style.display = "block";
       } else {
         inviteCodeGroup.style.display = "none";
+        parentInviteCodeGroup.style.display = "none";
       }
-    });
+    }
+
+    // Initial check on page load
+    updateInviteCodeFields();
+
+    roleSelect.addEventListener("change", updateInviteCodeFields);
 
     // Handle form submission with Fetch API
     signupForm.addEventListener("submit", async function (event) {

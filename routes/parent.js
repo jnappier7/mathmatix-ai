@@ -87,6 +87,10 @@ router.post('/link-to-student', isAuthenticated, isParent, async (req, res) => {
             parent.children.push(student._id);
         }
         student.studentToParentLinkCode.parentLinked = true;
+
+        // Grant parental consent since student is now linked to a parent (COPPA compliance)
+        student.hasParentalConsent = true;
+
         await student.save();
         await parent.save();
         res.status(200).json({ success: true, message: `Successfully linked to student ${student.firstName} ${student.lastName}!` });

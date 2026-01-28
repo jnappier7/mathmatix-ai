@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // COPPA compliance: Under 13 requires parental consent
                 if (age < 13 && !currentUser.hasParentalConsent) {
-                    alert('Students under 13 require parental consent. Please have your parent or guardian create a parent account and link to your student account using your invite code: ' + (currentUser.inviteCode || '[loading...]'));
+                    alert('Students under 13 require parental consent.\n\nTo get consent, your parent needs to:\n1. Create a parent account at our signup page\n2. Generate an invite code from their dashboard\n3. You can then link your account using their code from your Settings page\n\nOr, they can link to your account using your student invite code (generate one from Settings after completing profile).');
                     return;
                 }
 
