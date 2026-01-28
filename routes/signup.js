@@ -8,7 +8,7 @@ const { ensureNotAuthenticated } = require('../middleware/auth'); // Middleware 
 const passport = require('passport'); // For req.logIn after successful signup
 
 router.post('/', ensureNotAuthenticated, async (req, res, next) => {
-    const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode } = req.body;
+    const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth } = req.body;
 
     // --- 1. Basic Validation ---
     if (!firstName || !lastName || !email || !username || !password || !role) {
@@ -16,10 +16,31 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
         return res.status(400).json({ message: 'All basic fields are required.' });
     }
 
-    if (role === 'parent' && !inviteCode) {
-        console.warn("WARN: Signup failed - parent missing invite code.");
-        return res.status(400).json({ message: 'Parent accounts require a child invite code.' });
+    // --- Date of Birth required for all students ---
+    if (role === 'student' && !dateOfBirth) {
+        console.warn("WARN: Signup failed - student missing date of birth.");
+        return res.status(400).json({ message: 'Date of birth is required for all students.' });
     }
+
+    // --- COPPA Compliance: Check if student is under 13 ---
+    // Under 13 students MUST provide a valid parent invite code
+    if (role === 'student' && dateOfBirth) {
+        const birthDate = new Date(dateOfBirth);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        if (age < 13 && !parentInviteCode) {
+            console.warn("WARN: Signup failed - under 13 student without parent invite code.");
+            return res.status(400).json({ message: 'Students under 13 require a parent\'s invite code. Please ask your parent to create an account first and give you their invite code.' });
+        }
+    }
+
+    // Note: Parent invite code is OPTIONAL for parents - they can sign up first and generate
+    // an invite code for their child, breaking the chicken-and-egg problem.
 
     // Password strength validation (should match frontend)
     // SECURITY FIX: Strengthened password requirements to include special characters
@@ -52,12 +73,14 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
             passwordHash: password, // The pre-save hook in models/user.js will hash this
             role,
             needsProfileCompletion: true, // New users need to complete their profile
+            // Save dateOfBirth if provided (for students)
+            ...(dateOfBirth && role === 'student' && { dateOfBirth: new Date(dateOfBirth) }),
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 
         await newUser.save(); // Save the new user to MongoDB
 
-        // --- 4. Handle Parent-Child Linking (if parent signup) ---
+        // --- 4. Handle Parent-Child Linking (if parent signup with child's invite code) ---
         if (role === 'parent' && inviteCode) {
             // Find a student with a matching, unlinked invite code
             const studentUser = await User.findOne({
@@ -80,13 +103,52 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
                     studentUser.parentIds.push(newUser._id);
                 }
 
+                // Grant parental consent since student is now linked to a parent
+                studentUser.hasParentalConsent = true;
+
                 await newUser.save(); // Save parent with new child reference
-                await studentUser.save(); // Save student with updated link status and parentIds
+                await studentUser.save(); // Save student with updated link status, parentIds, and consent
                 console.log(`LOG: Parent ${newUser.username} linked to student ${studentUser.username} via invite code.`);
             } else {
                 console.warn(`WARN: Parent ${newUser.username} signed up with invalid or already used invite code: ${inviteCode}.`);
-                // Decide how to handle this: still create parent account, or prevent it?
-                // For now, parent account is still created, but linking failed.
+                // Parent account is still created, but linking failed. They can link later.
+            }
+        }
+
+        // --- 4b. Handle Student-Parent Linking (if student signup with parent's invite code) ---
+        // This allows kids under 13 to sign up using a parent's invite code for COPPA compliance
+        if (role === 'student' && parentInviteCode) {
+            // Find a parent with a matching, valid invite code
+            const parentUser = await User.findOne({
+                'parentToChildInviteCode.code': parentInviteCode.trim().toUpperCase(),
+                'parentToChildInviteCode.childLinked': false,
+                'parentToChildInviteCode.expiresAt': { $gt: new Date() },
+                role: 'parent'
+            });
+
+            if (parentUser) {
+                // Link the new student to the parent
+                parentUser.children = parentUser.children || [];
+                if (!parentUser.children.some(childId => childId.equals(newUser._id))) {
+                    parentUser.children.push(newUser._id);
+                }
+                parentUser.parentToChildInviteCode.childLinked = true; // Mark parent's code as used
+
+                // Add parent to student's parentIds array
+                newUser.parentIds = newUser.parentIds || [];
+                if (!newUser.parentIds.some(parentId => parentId.equals(parentUser._id))) {
+                    newUser.parentIds.push(parentUser._id);
+                }
+
+                // Grant parental consent since student is linked to a parent
+                newUser.hasParentalConsent = true;
+
+                await parentUser.save(); // Save parent with new child reference
+                await newUser.save(); // Save student with parentIds and consent
+                console.log(`LOG: Student ${newUser.username} linked to parent ${parentUser.username} via parent invite code.`);
+            } else {
+                console.warn(`WARN: Student ${newUser.username} signed up with invalid, expired, or already used parent invite code: ${parentInviteCode}.`);
+                // Student account is still created, but linking failed. Parent can link later.
             }
         }
 
