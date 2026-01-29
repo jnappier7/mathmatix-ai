@@ -89,6 +89,11 @@ const conversationSchema = new Schema({
         type: Number,
         default: 0
     },
+    // Precise time tracking in seconds (activeMinutes is derived from this)
+    activeSeconds: {
+        type: Number,
+        default: 0
+    },
     // --- LIVE ACTIVITY TRACKING ---
     liveSummary: {
         type: String,
