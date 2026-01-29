@@ -80,6 +80,70 @@ class FloatingCalculator {
         this.floatingCalc.querySelectorAll('[data-action]').forEach(btn => {
             btn.addEventListener('click', () => this.handleAction(btn.dataset.action));
         });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+    }
+
+    handleKeyboard(e) {
+        // Only handle keyboard when calculator is visible
+        if (this.floatingCalc.style.display === 'none') return;
+
+        const key = e.key;
+
+        // Numbers
+        if (key >= '0' && key <= '9') {
+            this.handleNumber(key);
+            e.preventDefault();
+        }
+
+        // Operators
+        const opMap = {
+            '+': '+',
+            '-': '−',
+            '*': '×',
+            '/': '÷'
+        };
+        if (opMap[key]) {
+            this.handleOperator(opMap[key]);
+            e.preventDefault();
+        }
+
+        // Special keys
+        switch(key) {
+            case 'Enter':
+                if (this.menuMode) {
+                    this.selectMenuItem();
+                } else if (this.dataEntryMode) {
+                    this.addDataPoint();
+                } else if (this.statVarMode) {
+                    this.displayStatVar();
+                } else {
+                    this.calculate();
+                }
+                e.preventDefault();
+                break;
+            case 'Escape':
+                this.clear();
+                e.preventDefault();
+                break;
+            case 'Backspace':
+                this.deleteLastChar();
+                e.preventDefault();
+                break;
+            case '.':
+                this.handleFunction('decimal');
+                e.preventDefault();
+                break;
+            case '(':
+                this.handleFunction('lparen');
+                e.preventDefault();
+                break;
+            case ')':
+                this.handleFunction('rparen');
+                e.preventDefault();
+                break;
+        }
     }
 
     toggleCalculator() {
