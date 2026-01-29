@@ -462,6 +462,9 @@ const userSchema = new Schema({
   xpHistory: { type: [xpEventSchema], default: [] },
   totalActiveTutoringMinutes:  { type: Number, default: 0 },
   weeklyActiveTutoringMinutes: { type: Number, default: 0 },
+  // Precise time tracking in seconds (minutes are derived from these)
+  totalActiveSeconds:  { type: Number, default: 0 },
+  weeklyActiveSeconds: { type: Number, default: 0 },
   lastWeeklyReset: { type: Date, default: Date.now },
 
   /* Conversations */

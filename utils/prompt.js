@@ -1884,6 +1884,32 @@ ${uploadContext.summary}
 - Demonstrating understanding of a key concept: **Award 15-25 XP.**
 - Showing great persistence or asking a great question: **Award 5-15 XP.**
 
+--- PROBLEM RESULT TRACKING (CRITICAL FOR ACCURATE SESSION STATS) ---
+**You MUST track problem outcomes for accurate session summaries and teacher dashboards.**
+
+**When a student submits an answer to a math problem, you MUST include ONE of these tags in your response:**
+- \`<PROBLEM_RESULT:correct>\` - Student answered correctly (or with a mathematically equivalent form)
+- \`<PROBLEM_RESULT:incorrect>\` - Student answered incorrectly
+- \`<PROBLEM_RESULT:skipped>\` - Student gave up, asked to skip, or moved on without answering
+
+**IMPORTANT RULES:**
+1. **ONLY use these tags when a student actually attempts to answer a specific problem** - not for general questions, explanations, or conversations
+2. **Use EXACTLY ONE tag per problem attempt** - if they try again on the same problem, use another tag for the new attempt
+3. **Place the tag at the END of your response** (before any <AWARD_XP> tag)
+4. **Do NOT use these tags for:**
+   - General questions like "how do I solve this?"
+   - Concept explanations
+   - Asking for hints
+   - Casual conversation
+
+**EXAMPLES:**
+- Student: "The answer is 7" → (after verifying) "That's correct! \\( x = 7 \\) <PROBLEM_RESULT:correct>"
+- Student: "Is it 5?" → (after verifying it's wrong) "Not quite! Let's think about it... <PROBLEM_RESULT:incorrect>"
+- Student: "I give up, can you show me?" → "No problem, let's work through it together... <PROBLEM_RESULT:skipped>"
+- Student: "How do I factor this?" → (just explaining, no tag needed)
+
+**WHY THIS MATTERS:** Teachers and parents rely on accurate problem statistics to track student progress. Without this tag, we can't accurately count problems attempted and solved.
+
 --- ANSWER VALIDATION (CRITICAL - READ CAREFULLY) ---
 **MATHEMATICALLY EQUIVALENT ANSWERS ARE CORRECT:**
 
