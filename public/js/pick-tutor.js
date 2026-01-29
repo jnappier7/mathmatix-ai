@@ -50,15 +50,16 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTutors();
       renderAvatars();
 
-      // Check if returning from avatar builder - auto-select custom avatar
+      // Check if returning from avatar builder - auto-select the latest custom avatar
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('avatar') === 'custom' && currentUser.avatar?.dicebearUrl) {
-        // Find and click the custom avatar card
+      if (urlParams.get('avatar') === 'custom' && currentUser.avatarGallery?.length > 0) {
+        // Select the most recently created avatar (last in gallery)
+        const latestIndex = currentUser.avatarGallery.length - 1;
         setTimeout(() => {
-          const customAvatarCard = document.querySelector('.avatar-card[data-avatar-id="dicebear-custom"]');
-          if (customAvatarCard) {
-            customAvatarCard.classList.add('selected');
-            selectedAvatarId = 'dicebear-custom';
+          const latestAvatarCard = document.querySelector(`.avatar-card[data-avatar-id="gallery-${latestIndex}"]`);
+          if (latestAvatarCard) {
+            latestAvatarCard.classList.add('selected');
+            selectedAvatarId = `gallery-${latestIndex}`;
             checkBothSelected();
           }
         }, 100);
@@ -110,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     avatarSelectionGrid.innerHTML = '';
 
     // Add "Create Custom Avatar" card first
+    const galleryCount = (currentUser.avatarGallery || []).length;
     const customCard = document.createElement('div');
     customCard.classList.add('avatar-card', 'unlocked', 'create-custom');
     customCard.dataset.avatarId = 'custom';
@@ -118,22 +120,25 @@ document.addEventListener('DOMContentLoaded', () => {
         <i class="fas fa-magic"></i>
       </div>
       <h4 class="avatar-card-name">Create Your Own!</h4>
-      <p class="avatar-card-description">Design a custom avatar</p>`;
+      <p class="avatar-card-description">${galleryCount < 3 ? `${3 - galleryCount} slots left` : 'Replace oldest'}</p>`;
     avatarSelectionGrid.appendChild(customCard);
 
-    // Check if user has a custom DiceBear avatar - show it as second option
-    if (currentUser.avatar?.dicebearUrl) {
-      const dicebearCard = document.createElement('div');
-      dicebearCard.classList.add('avatar-card', 'unlocked');
-      dicebearCard.dataset.avatarId = 'dicebear-custom';
-      dicebearCard.innerHTML = `
-        <div class="avatar-card-image">
-          <img src="${currentUser.avatar.dicebearUrl}" alt="My Custom Avatar" loading="lazy">
-        </div>
-        <h4 class="avatar-card-name">My Avatar</h4>
-        <p class="avatar-card-description">Your custom creation</p>
-        <span class="avatar-rarity rarity-legendary">custom</span>`;
-      avatarSelectionGrid.appendChild(dicebearCard);
+    // Show all avatars from the gallery (up to 3)
+    if (currentUser.avatarGallery && currentUser.avatarGallery.length > 0) {
+      currentUser.avatarGallery.forEach((avatar, index) => {
+        const galleryCard = document.createElement('div');
+        galleryCard.classList.add('avatar-card', 'unlocked');
+        galleryCard.dataset.avatarId = `gallery-${index}`;
+        galleryCard.dataset.galleryIndex = index;
+        galleryCard.innerHTML = `
+          <div class="avatar-card-image">
+            <img src="${avatar.dicebearUrl}" alt="${avatar.name}" loading="lazy">
+          </div>
+          <h4 class="avatar-card-name">${avatar.name}</h4>
+          <p class="avatar-card-description">Custom creation</p>
+          <span class="avatar-rarity rarity-legendary">custom</span>`;
+        avatarSelectionGrid.appendChild(galleryCard);
+      });
     }
 
     allAvatars.forEach(avatar => {

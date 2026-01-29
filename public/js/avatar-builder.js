@@ -83,6 +83,9 @@ class AvatarBuilder {
             const response = await fetch('/api/avatar/config');
             if (response.ok) {
                 const data = await response.json();
+                this.gallery = data.gallery || [];
+                this.updateGalleryStatus();
+
                 if (data.config) {
                     this.config = { ...this.config, ...data.config };
                     this.updateUIFromConfig();
@@ -90,6 +93,21 @@ class AvatarBuilder {
             }
         } catch (error) {
             console.log('No saved avatar config found, using defaults');
+            this.gallery = [];
+        }
+    }
+
+    updateGalleryStatus() {
+        const statusEl = document.getElementById('gallery-status');
+        if (statusEl) {
+            const slotsUsed = this.gallery.length;
+            if (slotsUsed < 3) {
+                statusEl.textContent = `${3 - slotsUsed} of 3 avatar slots available`;
+                statusEl.style.color = '#28a745';
+            } else {
+                statusEl.textContent = 'All 3 slots full - saving will replace oldest';
+                statusEl.style.color = '#ffc107';
+            }
         }
     }
 
@@ -365,6 +383,14 @@ class AvatarBuilder {
                 throw new Error(data.message || 'Failed to save avatar');
             }
 
+            // Update gallery status with response
+            if (data.gallery) {
+                this.gallery = data.gallery;
+                this.updateGalleryStatus();
+            }
+
+            const slotNum = (data.slotIndex !== undefined) ? data.slotIndex + 1 : '?';
+
             // If tutor was pre-selected, save that too and go straight to chat
             if (this.preSelectedTutor) {
                 const tutorResponse = await csrfFetch('/api/user/settings', {
@@ -372,12 +398,12 @@ class AvatarBuilder {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         selectedTutorId: this.preSelectedTutor,
-                        selectedAvatarId: 'dicebear-custom'
+                        selectedAvatarId: `gallery-${data.slotIndex}`
                     })
                 });
 
                 if (tutorResponse.ok) {
-                    this.showToast('Avatar saved! Starting chat...', 'success');
+                    this.showToast(`Avatar saved to slot ${slotNum}! Starting chat...`, 'success');
                     setTimeout(() => {
                         window.location.href = '/chat.html';
                     }, 1000);
@@ -385,7 +411,7 @@ class AvatarBuilder {
                 }
             }
 
-            this.showToast('Avatar saved!', 'success');
+            this.showToast(`Avatar saved to slot ${slotNum}!`, 'success');
 
             // Redirect back to pick-tutor with flag to auto-select custom avatar
             setTimeout(() => {

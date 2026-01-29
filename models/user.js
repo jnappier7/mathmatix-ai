@@ -511,6 +511,27 @@ const userSchema = new Schema({
     dicebearUrl: { type: String }     // Cached avatar URL for quick display
   },
 
+  /* Avatar Gallery - up to 3 saved custom avatars */
+  avatarGallery: {
+    type: [{
+      name: { type: String, default: 'My Avatar' },
+      dicebearConfig: {
+        style: { type: String },
+        seed: { type: String },
+        skinColor: { type: String },
+        hairColor: { type: String },
+        backgroundColor: { type: String },
+        glasses: { type: Boolean, default: false },
+        earrings: { type: Boolean, default: false },
+        flip: { type: Boolean, default: false }
+      },
+      dicebearUrl: { type: String },
+      createdAt: { type: Date, default: Date.now }
+    }],
+    default: [],
+    validate: [arr => arr.length <= 3, 'Maximum 3 custom avatars allowed']
+  },
+
   /* Preferences */
   preferences: { type: userPreferencesSchema, default: () => ({}) },
 
