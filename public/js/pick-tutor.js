@@ -49,6 +49,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       renderTutors();
       renderAvatars();
+
+      // Check if returning from avatar builder - auto-select custom avatar
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('avatar') === 'custom' && currentUser.avatar?.dicebearUrl) {
+        // Find and click the custom avatar card
+        setTimeout(() => {
+          const customAvatarCard = document.querySelector('.avatar-card[data-avatar-id="dicebear-custom"]');
+          if (customAvatarCard) {
+            customAvatarCard.classList.add('selected');
+            selectedAvatarId = 'dicebear-custom';
+            checkBothSelected();
+          }
+        }, 100);
+        // Clean up the URL
+        window.history.replaceState({}, '', '/pick-tutor.html');
+      }
     } catch (err) {
       console.error('Error fetching initial data:', err);
       tutorSelectionGrid.innerHTML = `<p>Error loading tutors. Please refresh.</p>`;
@@ -175,7 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // If clicking "Create Custom Avatar", redirect to avatar builder
     if (card.dataset.avatarId === 'custom') {
-      window.location.href = '/avatar-builder.html?from=pick-tutor';
+      // Pass tutor selection if one is already made, so we can skip back here
+      let url = '/avatar-builder.html?from=pick-tutor';
+      if (selectedTutorId) {
+        url += `&tutor=${selectedTutorId}`;
+      }
+      window.location.href = url;
       return;
     }
 

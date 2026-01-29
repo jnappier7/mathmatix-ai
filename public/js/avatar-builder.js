@@ -8,9 +8,10 @@ class AvatarBuilder {
     constructor() {
         this.baseUrl = 'https://api.dicebear.com/7.x';
 
-        // Get redirect URL from query params
+        // Get redirect URL and tutor selection from query params
         const urlParams = new URLSearchParams(window.location.search);
         this.fromPage = urlParams.get('from') || 'index';
+        this.preSelectedTutor = urlParams.get('tutor') || null;
 
         // Update back link based on where we came from
         this.updateBackLink();
@@ -364,11 +365,35 @@ class AvatarBuilder {
                 throw new Error(data.message || 'Failed to save avatar');
             }
 
+            // If tutor was pre-selected, save that too and go straight to chat
+            if (this.preSelectedTutor) {
+                const tutorResponse = await csrfFetch('/api/user/settings', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        selectedTutorId: this.preSelectedTutor,
+                        selectedAvatarId: 'dicebear-custom'
+                    })
+                });
+
+                if (tutorResponse.ok) {
+                    this.showToast('Avatar saved! Starting chat...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/chat.html';
+                    }, 1000);
+                    return;
+                }
+            }
+
             this.showToast('Avatar saved!', 'success');
 
-            // Redirect back to the page we came from after a short delay
+            // Redirect back to pick-tutor with flag to auto-select custom avatar
             setTimeout(() => {
-                window.location.href = this.getRedirectUrl();
+                if (this.fromPage === 'pick-tutor') {
+                    window.location.href = '/pick-tutor.html?avatar=custom';
+                } else {
+                    window.location.href = this.getRedirectUrl();
+                }
             }, 1500);
 
         } catch (error) {
