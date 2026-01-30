@@ -7,6 +7,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
 const { isTeacher } = require('../middleware/auth');
 const { generateLiveSummary, detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
+const { cleanupStaleSessions } = require('../services/sessionService');
 
 // Fetches students assigned to the logged-in teacher
 router.get('/students', isTeacher, async (req, res) => {
@@ -105,6 +106,11 @@ router.get('/live-feed', isTeacher, async (req, res) => {
   try {
     const teacherId = req.user._id;
 
+    // Clean up stale sessions in background
+    cleanupStaleSessions(60).catch(err => {
+      console.error('Background cleanup failed:', err);
+    });
+
     // Get all students assigned to this teacher
     const students = await User.find(
       { role: 'student', teacherId: teacherId },
@@ -176,6 +182,11 @@ router.get('/activity-feed', isTeacher, async (req, res) => {
   try {
     const teacherId = req.user._id;
     const { studentId, topic, alertType, startDate, endDate, activeOnly } = req.query;
+
+    // Clean up stale sessions in background
+    cleanupStaleSessions(60).catch(err => {
+      console.error('Background cleanup failed:', err);
+    });
 
     // Get all students assigned to this teacher
     const students = await User.find(
