@@ -24,6 +24,10 @@ router.post('/heartbeat', isAuthenticated, async (req, res) => {
 
     const result = await recordHeartbeat(userId, sessionId, metrics);
 
+    // Run cleanup in background (throttled to once per 5 min)
+    // This ensures stale sessions from other users get cleaned up
+    throttledCleanup();
+
     res.json(result);
   } catch (error) {
     logger.error('Heartbeat error', { error, userId: req.user?._id });
