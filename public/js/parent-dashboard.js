@@ -3,6 +3,16 @@
 // individually from the new `/api/parent/child/:childId/progress` endpoint.
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // Add pulse animation for LIVE badge
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    `;
+    document.head.appendChild(style);
+
     // --- Dashboard Elements ---
     const childrenListContainer = document.getElementById("children-list-container");
     const loadingChildren = document.getElementById("loading-children");
@@ -273,9 +283,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     .map(s => {
                         const sessionDate = new Date(s.date);
                         const dateStr = isNaN(sessionDate.getTime()) ? 'Unknown date' : sessionDate.toLocaleDateString();
+                        const liveBadge = s.isActive ? '<span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-right: 8px; animation: pulse 2s infinite;">🟢 LIVE</span>' : '';
+                        const entryStyle = s.isActive ? 'background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-left: 4px solid #27ae60;' : '';
                         return `
-                        <div class="session-entry">
-                            <strong>${dateStr}:</strong> ${s.summary} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
+                        <div class="session-entry" style="${entryStyle}">
+                            ${liveBadge}<strong>${dateStr}:</strong> ${s.summary} <em>(${s.duration ? s.duration.toFixed(0) : 'N/A'} min)</em>
                         </div>
                     `;
                     }).join('') || '<p class="text-gray-500 text-sm">No recent sessions with summaries.</p>'
