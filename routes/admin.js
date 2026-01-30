@@ -11,8 +11,27 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
+const EnrollmentCode = require('../models/enrollmentCode');
 const { isAdmin } = require('../middleware/auth');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const multer = require('multer');
+const csv = require('csv-parser');
+const { Readable } = require('stream');
+
+// Configure multer for CSV uploads (in-memory)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'text/csv' || file.originalname.endsWith('.csv')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only CSV files are allowed'), false);
+    }
+  }
+});
 
 // --- Constants for Database Projections ---
 // Using constants improves readability and makes queries easier to manage.
@@ -57,6 +76,509 @@ router.get('/teachers', isAdmin, async (req, res) => {
   } catch (err) {
     console.error('Error fetching teachers for admin:', err);
     res.status(500).json({ message: 'Server error fetching teacher data.' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/teachers
+ * @desc    Create a new teacher account
+ * @access  Private (Admin)
+ */
+router.post('/teachers', isAdmin, async (req, res) => {
+  try {
+    const { firstName, lastName, email, username, password, generatePassword } = req.body;
+
+    // Validate required fields
+    if (!firstName || !lastName || !email) {
+      return res.status(400).json({ message: 'First name, last name, and email are required.' });
+    }
+
+    // Generate username if not provided
+    const finalUsername = username || email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Check for existing username or email
+    const existingUser = await User.findOne({
+      $or: [
+        { username: finalUsername.toLowerCase() },
+        { email: email.toLowerCase() }
+      ]
+    });
+
+    if (existingUser) {
+      if (existingUser.email.toLowerCase() === email.toLowerCase()) {
+        return res.status(409).json({ message: 'Email already registered.' });
+      }
+      if (existingUser.username === finalUsername.toLowerCase()) {
+        return res.status(409).json({ message: 'Username already taken.' });
+      }
+    }
+
+    // Generate or use provided password
+    let finalPassword = password;
+    if (generatePassword || !password) {
+      // Generate a random secure password
+      finalPassword = crypto.randomBytes(8).toString('hex') + 'A1!';
+    }
+
+    // Validate password strength
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
+    if (!passwordRegex.test(finalPassword)) {
+      return res.status(400).json({
+        message: 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.'
+      });
+    }
+
+    // Create teacher account
+    const newTeacher = new User({
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      username: finalUsername.toLowerCase(),
+      passwordHash: finalPassword, // Will be hashed by pre-save hook
+      role: 'teacher',
+      needsProfileCompletion: false // Teachers don't need onboarding flow
+    });
+
+    await newTeacher.save();
+
+    console.log(`[ADMIN] Teacher account created: ${email} by admin ${req.user.email}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Teacher account created successfully!',
+      teacher: {
+        _id: newTeacher._id,
+        firstName: newTeacher.firstName,
+        lastName: newTeacher.lastName,
+        email: newTeacher.email,
+        username: newTeacher.username
+      },
+      // Only return password if it was auto-generated (so admin can share it)
+      ...(generatePassword || !password ? { temporaryPassword: finalPassword } : {})
+    });
+
+  } catch (err) {
+    console.error('Error creating teacher account:', err);
+    if (err.code === 11000) {
+      return res.status(409).json({ message: 'Username or email already exists.' });
+    }
+    res.status(500).json({ message: 'Server error creating teacher account.' });
+  }
+});
+
+// -----------------------------------------------------------------------------
+// --- Enrollment Code Routes ---
+// -----------------------------------------------------------------------------
+
+/**
+ * @route   GET /api/admin/enrollment-codes
+ * @desc    Get all enrollment codes (optionally filtered by teacher)
+ * @access  Private (Admin)
+ */
+router.get('/enrollment-codes', isAdmin, async (req, res) => {
+  try {
+    const { teacherId } = req.query;
+    const filter = teacherId ? { teacherId } : {};
+
+    const codes = await EnrollmentCode.find(filter)
+      .populate('teacherId', 'firstName lastName email')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json(codes);
+  } catch (err) {
+    console.error('Error fetching enrollment codes:', err);
+    res.status(500).json({ message: 'Server error fetching enrollment codes.' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/enrollment-codes
+ * @desc    Create a new enrollment code for a teacher
+ * @access  Private (Admin)
+ */
+router.post('/enrollment-codes', isAdmin, async (req, res) => {
+  try {
+    const { teacherId, className, description, gradeLevel, mathCourse, customCode, expiresAt, maxUses } = req.body;
+
+    // Validate teacher exists
+    if (!teacherId) {
+      return res.status(400).json({ message: 'Teacher ID is required.' });
+    }
+
+    const teacher = await User.findOne({ _id: teacherId, role: 'teacher' });
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found.' });
+    }
+
+    // Generate or use custom code
+    let code;
+    if (customCode) {
+      // Check if custom code already exists
+      const existingCode = await EnrollmentCode.findOne({ code: customCode.toUpperCase() });
+      if (existingCode) {
+        return res.status(409).json({ message: 'This enrollment code already exists.' });
+      }
+      code = customCode.toUpperCase();
+    } else {
+      // Generate unique code with teacher's name prefix
+      const prefix = `${teacher.lastName.substring(0, 4).toUpperCase()}`;
+      code = await EnrollmentCode.generateUniqueCode(prefix);
+    }
+
+    // Create enrollment code
+    const newCode = new EnrollmentCode({
+      code,
+      teacherId,
+      className: className || 'My Class',
+      description,
+      gradeLevel,
+      mathCourse,
+      expiresAt: expiresAt ? new Date(expiresAt) : null,
+      maxUses: maxUses || null,
+      createdBy: req.user._id
+    });
+
+    await newCode.save();
+
+    console.log(`[ADMIN] Enrollment code created: ${code} for teacher ${teacher.email}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'Enrollment code created successfully!',
+      enrollmentCode: {
+        _id: newCode._id,
+        code: newCode.code,
+        className: newCode.className,
+        teacherId: newCode.teacherId,
+        teacherName: `${teacher.firstName} ${teacher.lastName}`,
+        gradeLevel: newCode.gradeLevel,
+        mathCourse: newCode.mathCourse,
+        expiresAt: newCode.expiresAt,
+        maxUses: newCode.maxUses,
+        useCount: newCode.useCount
+      }
+    });
+
+  } catch (err) {
+    console.error('Error creating enrollment code:', err);
+    res.status(500).json({ message: 'Server error creating enrollment code.' });
+  }
+});
+
+/**
+ * @route   PATCH /api/admin/enrollment-codes/:codeId
+ * @desc    Update an enrollment code (activate/deactivate, change settings)
+ * @access  Private (Admin)
+ */
+router.patch('/enrollment-codes/:codeId', isAdmin, async (req, res) => {
+  try {
+    const { codeId } = req.params;
+    const { isActive, className, description, expiresAt, maxUses } = req.body;
+
+    const code = await EnrollmentCode.findById(codeId);
+    if (!code) {
+      return res.status(404).json({ message: 'Enrollment code not found.' });
+    }
+
+    // Update fields
+    if (typeof isActive === 'boolean') code.isActive = isActive;
+    if (className) code.className = className;
+    if (description !== undefined) code.description = description;
+    if (expiresAt !== undefined) code.expiresAt = expiresAt ? new Date(expiresAt) : null;
+    if (maxUses !== undefined) code.maxUses = maxUses;
+
+    await code.save();
+
+    res.json({
+      success: true,
+      message: 'Enrollment code updated successfully!',
+      enrollmentCode: code
+    });
+
+  } catch (err) {
+    console.error('Error updating enrollment code:', err);
+    res.status(500).json({ message: 'Server error updating enrollment code.' });
+  }
+});
+
+/**
+ * @route   DELETE /api/admin/enrollment-codes/:codeId
+ * @desc    Delete an enrollment code
+ * @access  Private (Admin)
+ */
+router.delete('/enrollment-codes/:codeId', isAdmin, async (req, res) => {
+  try {
+    const { codeId } = req.params;
+
+    const code = await EnrollmentCode.findByIdAndDelete(codeId);
+    if (!code) {
+      return res.status(404).json({ message: 'Enrollment code not found.' });
+    }
+
+    console.log(`[ADMIN] Enrollment code deleted: ${code.code}`);
+
+    res.json({
+      success: true,
+      message: 'Enrollment code deleted successfully!'
+    });
+
+  } catch (err) {
+    console.error('Error deleting enrollment code:', err);
+    res.status(500).json({ message: 'Server error deleting enrollment code.' });
+  }
+});
+
+// -----------------------------------------------------------------------------
+// --- Roster Import Routes ---
+// -----------------------------------------------------------------------------
+
+/**
+ * @route   POST /api/admin/roster-import
+ * @desc    Bulk import students from a CSV file
+ * @body    CSV file with columns: firstName, lastName, email, username (optional), gradeLevel (optional), mathCourse (optional)
+ * @query   teacherId - Teacher to assign students to
+ * @query   enrollmentCodeId - Enrollment code to use (optional)
+ * @query   dryRun - If true, only validate without creating accounts
+ * @access  Private (Admin)
+ */
+router.post('/roster-import', isAdmin, upload.single('file'), async (req, res) => {
+  try {
+    const { teacherId, enrollmentCodeId, dryRun } = req.query;
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'CSV file is required.' });
+    }
+
+    // Validate teacher if provided
+    let teacher = null;
+    if (teacherId) {
+      teacher = await User.findOne({ _id: teacherId, role: 'teacher' });
+      if (!teacher) {
+        return res.status(404).json({ message: 'Teacher not found.' });
+      }
+    }
+
+    // Get enrollment code if provided
+    let enrollmentCode = null;
+    if (enrollmentCodeId) {
+      enrollmentCode = await EnrollmentCode.findById(enrollmentCodeId);
+      if (!enrollmentCode) {
+        return res.status(404).json({ message: 'Enrollment code not found.' });
+      }
+      // Use teacher from enrollment code if not explicitly provided
+      if (!teacher) {
+        teacher = await User.findById(enrollmentCode.teacherId);
+      }
+    }
+
+    // Parse CSV
+    const students = [];
+    const errors = [];
+    let rowNumber = 1;
+
+    const parseCSV = () => {
+      return new Promise((resolve, reject) => {
+        const stream = Readable.from(req.file.buffer.toString());
+
+        stream
+          .pipe(csv({
+            mapHeaders: ({ header }) => header.trim().toLowerCase().replace(/\s+/g, '')
+          }))
+          .on('data', (row) => {
+            rowNumber++;
+
+            // Normalize column names (handle variations)
+            const firstName = row.firstname || row.first_name || row['first name'] || '';
+            const lastName = row.lastname || row.last_name || row['last name'] || '';
+            const email = row.email || row.emailaddress || row['email address'] || '';
+            const username = row.username || row.user_name || '';
+            const gradeLevel = row.gradelevel || row.grade_level || row.grade || enrollmentCode?.gradeLevel || '';
+            const mathCourse = row.mathcourse || row.math_course || row.course || enrollmentCode?.mathCourse || '';
+
+            // Validate required fields
+            if (!firstName.trim()) {
+              errors.push({ row: rowNumber, field: 'firstName', message: 'First name is required' });
+              return;
+            }
+            if (!lastName.trim()) {
+              errors.push({ row: rowNumber, field: 'lastName', message: 'Last name is required' });
+              return;
+            }
+            if (!email.trim()) {
+              errors.push({ row: rowNumber, field: 'email', message: 'Email is required' });
+              return;
+            }
+
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.trim())) {
+              errors.push({ row: rowNumber, field: 'email', message: `Invalid email format: ${email}` });
+              return;
+            }
+
+            students.push({
+              firstName: firstName.trim(),
+              lastName: lastName.trim(),
+              email: email.trim().toLowerCase(),
+              username: username.trim().toLowerCase() || email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, ''),
+              gradeLevel: gradeLevel.trim(),
+              mathCourse: mathCourse.trim(),
+              rowNumber
+            });
+          })
+          .on('end', () => resolve())
+          .on('error', (err) => reject(err));
+      });
+    };
+
+    await parseCSV();
+
+    // Check for duplicates in CSV
+    const emailsSeen = new Set();
+    const usernamesSeen = new Set();
+    const duplicateStudents = [];
+
+    for (const student of students) {
+      if (emailsSeen.has(student.email)) {
+        errors.push({ row: student.rowNumber, field: 'email', message: `Duplicate email in CSV: ${student.email}` });
+        duplicateStudents.push(student.email);
+      }
+      if (usernamesSeen.has(student.username)) {
+        errors.push({ row: student.rowNumber, field: 'username', message: `Duplicate username in CSV: ${student.username}` });
+      }
+      emailsSeen.add(student.email);
+      usernamesSeen.add(student.username);
+    }
+
+    // Filter out duplicates for further processing
+    const validStudents = students.filter(s => !duplicateStudents.includes(s.email));
+
+    // Check for existing users in database
+    const existingEmails = await User.find({
+      email: { $in: validStudents.map(s => s.email) }
+    }).select('email').lean();
+
+    const existingUsernames = await User.find({
+      username: { $in: validStudents.map(s => s.username) }
+    }).select('username').lean();
+
+    const existingEmailSet = new Set(existingEmails.map(u => u.email));
+    const existingUsernameSet = new Set(existingUsernames.map(u => u.username));
+
+    const newStudents = [];
+    const skippedStudents = [];
+
+    for (const student of validStudents) {
+      if (existingEmailSet.has(student.email)) {
+        skippedStudents.push({
+          ...student,
+          reason: 'Email already registered'
+        });
+      } else if (existingUsernameSet.has(student.username)) {
+        // Try to generate a unique username
+        let uniqueUsername = student.username;
+        let counter = 1;
+        while (existingUsernameSet.has(uniqueUsername)) {
+          uniqueUsername = `${student.username}${counter}`;
+          counter++;
+        }
+        student.username = uniqueUsername;
+        newStudents.push(student);
+      } else {
+        newStudents.push(student);
+      }
+    }
+
+    // If dry run, return validation results
+    if (dryRun === 'true') {
+      return res.json({
+        success: true,
+        dryRun: true,
+        summary: {
+          totalRows: rowNumber - 1,
+          validStudents: newStudents.length,
+          skippedStudents: skippedStudents.length,
+          errors: errors.length
+        },
+        newStudents: newStudents.map(s => ({
+          firstName: s.firstName,
+          lastName: s.lastName,
+          email: s.email,
+          username: s.username,
+          gradeLevel: s.gradeLevel,
+          mathCourse: s.mathCourse
+        })),
+        skippedStudents,
+        errors
+      });
+    }
+
+    // Create student accounts
+    const createdStudents = [];
+    const creationErrors = [];
+
+    for (const student of newStudents) {
+      try {
+        // Generate a random password for each student
+        const temporaryPassword = crypto.randomBytes(6).toString('hex') + 'A1!';
+
+        const newUser = new User({
+          firstName: student.firstName,
+          lastName: student.lastName,
+          email: student.email,
+          username: student.username,
+          passwordHash: temporaryPassword,
+          role: 'student',
+          gradeLevel: student.gradeLevel,
+          mathCourse: student.mathCourse,
+          teacherId: teacher?._id,
+          needsProfileCompletion: true
+        });
+
+        await newUser.save();
+
+        // If enrollment code provided, record the enrollment
+        if (enrollmentCode) {
+          await enrollmentCode.enrollStudent(newUser._id, 'csv-import');
+        }
+
+        createdStudents.push({
+          _id: newUser._id,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          email: newUser.email,
+          username: newUser.username,
+          temporaryPassword
+        });
+
+      } catch (err) {
+        creationErrors.push({
+          student: `${student.firstName} ${student.lastName} (${student.email})`,
+          error: err.message
+        });
+      }
+    }
+
+    console.log(`[ADMIN] Roster import: ${createdStudents.length} students created by ${req.user.email}`);
+
+    res.json({
+      success: true,
+      message: `Successfully created ${createdStudents.length} student account(s).`,
+      summary: {
+        totalRows: rowNumber - 1,
+        created: createdStudents.length,
+        skipped: skippedStudents.length,
+        errors: errors.length + creationErrors.length
+      },
+      createdStudents,
+      skippedStudents,
+      errors: [...errors, ...creationErrors]
+    });
+
+  } catch (err) {
+    console.error('Error during roster import:', err);
+    res.status(500).json({ message: 'Server error during roster import.' });
   }
 });
 
