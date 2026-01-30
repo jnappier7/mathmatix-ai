@@ -789,7 +789,16 @@ class InlineChatVisuals {
         const params = this.parseParams(paramStr || '');
         const id = this.getUniqueId('unitcircle');
 
-        const angle = params.angle || params.highlight || 45;
+        // Handle plain number input like [UNIT_CIRCLE:60] or [UNIT_CIRCLE:45]
+        let angle = params.angle || params.highlight;
+        if (!angle && paramStr) {
+            const numMatch = paramStr.trim().match(/^(\d+(?:\.\d+)?)$/);
+            if (numMatch) {
+                angle = parseFloat(numMatch[1]);
+            }
+        }
+        angle = parseFloat(angle) || 45;
+
         const showCoords = params.coords !== false;
         const title = params.title || `Unit Circle at ${angle}°`;
 
