@@ -73,6 +73,8 @@ const BRAND_CONFIG = {
 
     // 8. Specific Feature Settings
     xpPerLevel: 100, // XP needed to level up
+    baseXpPerTurn: 2, // LEGACY: For backward compatibility with chatWithFile.js
+    xpAwardRange: { min: 1, max: 50 }, // LEGACY: For backward compatibility
     iepGoalCap: 10, // Max active goals per student
 
     // 9. XP Ladder System (Three Tiers)
