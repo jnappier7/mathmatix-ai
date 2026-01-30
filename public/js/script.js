@@ -1528,12 +1528,19 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // AI-generated personalized welcome message
+            // Show thinking indicator while waiting for AI response
+            showThinkingIndicator(true);
+
             const res = await fetch(`/api/welcome-message`, {credentials: 'include'});
             const data = await res.json();
+
+            showThinkingIndicator(false);
+
             if (data.greeting) {
                 appendMessage(data.greeting, "ai");
             }
         } catch (error) {
+            showThinkingIndicator(false);
             appendMessage("Hello! Let's solve some math problems.", "ai");
         }
     }
