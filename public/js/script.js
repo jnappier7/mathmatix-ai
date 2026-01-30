@@ -2539,19 +2539,7 @@ document.addEventListener("DOMContentLoaded", () => {
             triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
         }
 
-        // Smart streak tracking - only when AI explicitly signals problem correctness
-        // Prevents false negatives from breaking streaks unfairly
-        if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
-            // problemResult can be: 'correct', 'incorrect', 'partial'
-            // Only track definitive correct/incorrect (skip partial/ambiguous)
-            if (data.problemResult === 'correct') {
-                window.trackProblemAttempt(true);
-            } else if (data.problemResult === 'incorrect') {
-                // Still show streak counter but don't break it harshly
-                // Could add "Challenge this" button in future
-                window.trackProblemAttempt(false);
-            }
-        }
+        // STREAK COUNTER SHELVED FOR BETA
 
     } catch (error) {
         console.error("Chat error:", error);
