@@ -4,8 +4,54 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user'); // Import the User model
+const EnrollmentCode = require('../models/enrollmentCode'); // For class enrollment codes
 const { ensureNotAuthenticated } = require('../middleware/auth'); // Middleware to ensure user is not already logged in
 const passport = require('passport'); // For req.logIn after successful signup
+
+/**
+ * @route   GET /signup/validate-code
+ * @desc    Validate an enrollment code before signup
+ * @access  Public
+ */
+router.get('/validate-code', async (req, res) => {
+    try {
+        const { code } = req.query;
+
+        if (!code) {
+            return res.status(400).json({ valid: false, message: 'Enrollment code is required.' });
+        }
+
+        const enrollmentCode = await EnrollmentCode.findOne({ code: code.toUpperCase().trim() })
+            .populate('teacherId', 'firstName lastName');
+
+        if (!enrollmentCode) {
+            return res.status(404).json({ valid: false, message: 'Invalid enrollment code.' });
+        }
+
+        // Check if code is valid for use
+        const validation = enrollmentCode.isValidForUse();
+        if (!validation.valid) {
+            return res.status(400).json({ valid: false, message: validation.reason });
+        }
+
+        // Return code info (without sensitive data)
+        res.json({
+            valid: true,
+            enrollmentCode: {
+                className: enrollmentCode.className,
+                teacherName: enrollmentCode.teacherId
+                    ? `${enrollmentCode.teacherId.firstName} ${enrollmentCode.teacherId.lastName}`
+                    : 'Unknown Teacher',
+                gradeLevel: enrollmentCode.gradeLevel,
+                mathCourse: enrollmentCode.mathCourse
+            }
+        });
+
+    } catch (error) {
+        console.error('ERROR: Enrollment code validation failed:', error);
+        res.status(500).json({ valid: false, message: 'Server error validating enrollment code.' });
+    }
+});
 
 router.post('/', ensureNotAuthenticated, async (req, res, next) => {
     const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth } = req.body;
@@ -42,7 +88,36 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
             }
         }
 
-        // --- 3. Create New User ---
+        // --- 3. Process Enrollment Code (if provided for students) ---
+        let enrollmentCodeDoc = null;
+        let teacherIdFromCode = null;
+        let gradeLevelFromCode = null;
+        let mathCourseFromCode = null;
+
+        if (role === 'student' && enrollmentCode) {
+            enrollmentCodeDoc = await EnrollmentCode.findOne({
+                code: enrollmentCode.toUpperCase().trim()
+            });
+
+            if (enrollmentCodeDoc) {
+                // Validate the code is still usable
+                const validation = enrollmentCodeDoc.isValidForUse();
+                if (validation.valid) {
+                    teacherIdFromCode = enrollmentCodeDoc.teacherId;
+                    gradeLevelFromCode = enrollmentCodeDoc.gradeLevel;
+                    mathCourseFromCode = enrollmentCodeDoc.mathCourse;
+                    console.log(`LOG: Student using enrollment code ${enrollmentCode} for teacher ${teacherIdFromCode}`);
+                } else {
+                    console.warn(`WARN: Student tried to use invalid enrollment code: ${enrollmentCode} - ${validation.reason}`);
+                    // Don't fail signup, just don't link to teacher
+                    enrollmentCodeDoc = null;
+                }
+            } else {
+                console.warn(`WARN: Student signed up with non-existent enrollment code: ${enrollmentCode}`);
+            }
+        }
+
+        // --- 4. Create New User ---
         const newUser = new User({
             firstName,
             lastName,
@@ -51,12 +126,29 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
             passwordHash: password, // The pre-save hook in models/user.js will hash this
             role,
             needsProfileCompletion: true, // New users need to complete their profile
+            // Assign teacher from enrollment code if available
+            ...(teacherIdFromCode ? { teacherId: teacherIdFromCode } : {}),
+            // Use grade level from enrollment code if available
+            ...(gradeLevelFromCode ? { gradeLevel: gradeLevelFromCode } : {}),
+            // Use math course from enrollment code if available
+            ...(mathCourseFromCode ? { mathCourse: mathCourseFromCode } : {}),
             // Default values for other fields (e.g., XP, level) will come from the schema defaults
         });
 
         await newUser.save(); // Save the new user to MongoDB
 
-        // --- 4. Handle Parent-Child Linking (if parent signup with child's invite code) ---
+        // --- 4b. Record enrollment if code was used ---
+        if (enrollmentCodeDoc) {
+            try {
+                await enrollmentCodeDoc.enrollStudent(newUser._id, 'self-signup');
+                console.log(`LOG: Student ${newUser.username} enrolled via code ${enrollmentCodeDoc.code}`);
+            } catch (enrollError) {
+                console.error('ERROR: Failed to record enrollment:', enrollError);
+                // Don't fail signup if enrollment tracking fails
+            }
+        }
+
+        // --- 5. Handle Parent-Child Linking (if parent signup with child's invite code) ---
         if (role === 'parent' && inviteCode) {
             // Find a student with a matching, unlinked invite code
             const studentUser = await User.findOne({
@@ -91,7 +183,7 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
             }
         }
 
-        // --- 4b. Handle Student-Parent Linking (if student signup with parent's invite code) ---
+        // --- 5b. Handle Student-Parent Linking (if student signup with parent's invite code) ---
         // This allows kids under 13 to sign up using a parent's invite code for COPPA compliance
         if (role === 'student' && parentInviteCode) {
             // Find a parent with a matching, valid invite code
@@ -128,7 +220,7 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
             }
         }
 
-        // --- 5. Log the user in immediately after signup ---
+        // --- 6. Log the user in immediately after signup ---
         // This avoids making the user log in again right after registering.
         req.logIn(newUser, (err) => {
             if (err) {
@@ -136,7 +228,7 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
                 // If auto-login fails, still inform about successful signup
                 return res.status(500).json({ success: true, message: 'Account created successfully, but auto-login failed. Please try logging in manually.' });
             }
-            // --- 6. Determine Redirect URL ---
+            // --- 7. Determine Redirect URL ---
             let redirectUrl = '/complete-profile.html'; // Default for new users
             if (newUser.role === 'student' && !newUser.selectedTutorId) {
                 redirectUrl = '/pick-tutor.html'; // Student needs to pick a tutor

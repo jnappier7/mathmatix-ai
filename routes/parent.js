@@ -6,6 +6,7 @@ const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
 const { isParent, isAuthenticated } = require('../middleware/auth');
+const { cleanupStaleSessions } = require('../services/sessionService');
 
 // Helper to generate a unique short code
 function generateUniqueLinkCode() {
@@ -131,19 +132,55 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
             return res.status(404).json({ message: "Child not found." });
         }
 
-        // --- MODIFICATION START ---
-        // Fetch recent conversation summaries from the new 'Conversation' collection.
-        const recentSessions = await Conversation.find({ userId: childId })
-            .sort({ lastActivity: -1 })
-            .limit(5)
-            .select('summary lastActivity activeMinutes startDate');
-        // --- MODIFICATION END ---
+        // Clean up any stale sessions for this child (runs in background)
+        // This ensures sessions that weren't properly ended get summaries
+        cleanupStaleSessions(60).catch(err => {
+            console.error('Background cleanup failed:', err);
+        });
 
-        // NEW: Fetch active conversation for live stats
+        // Fetch active conversation first (for live stats and to include in recent sessions)
         const activeConversation = await Conversation.findOne({
             userId: childId,
             isActive: true
-        }).select('currentTopic problemsAttempted problemsCorrect strugglingWith alerts lastActivity liveSummary').lean();
+        }).select('currentTopic problemsAttempted problemsCorrect strugglingWith alerts lastActivity liveSummary startDate activeMinutes').lean();
+
+        // Fetch recent COMPLETED conversation summaries
+        const completedSessions = await Conversation.find({
+            userId: childId,
+            isActive: false,
+            summary: { $exists: true, $ne: null, $ne: '' }
+        })
+            .sort({ lastActivity: -1 })
+            .limit(6)  // Limit to 6 since active session might be added
+            .select('summary lastActivity activeMinutes startDate problemsAttempted problemsCorrect currentTopic');
+
+        // Build recent sessions array with active session at the top if it exists
+        let recentSessions = [];
+
+        // Add active session first (most recent) with a live summary
+        if (activeConversation && activeConversation.lastActivity) {
+            const activeSessionEntry = {
+                date: activeConversation.lastActivity || activeConversation.startDate,
+                summary: activeConversation.liveSummary ||
+                    `Currently working on ${activeConversation.currentTopic || 'mathematics'}. ` +
+                    (activeConversation.problemsAttempted > 0
+                        ? `${activeConversation.problemsAttempted} problems attempted with ${activeConversation.problemsCorrect || 0} correct.`
+                        : 'Session in progress.'),
+                duration: activeConversation.activeMinutes || 0,
+                isActive: true  // Flag to indicate this is a live session
+            };
+            recentSessions.push(activeSessionEntry);
+        }
+
+        // Add completed sessions
+        recentSessions = recentSessions.concat(completedSessions.map(session => ({
+            date: session.lastActivity || session.startDate,
+            summary: session.summary,
+            duration: session.activeMinutes,
+            problemsAttempted: session.problemsAttempted,
+            problemsCorrect: session.problemsCorrect,
+            isActive: false
+        })));
 
         // NEW: Build live stats object
         const liveStats = activeConversation ? {
@@ -172,12 +209,8 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
             gradeLevel: child.gradeLevel,
             mathCourse: child.mathCourse,
             totalActiveTutoringMinutes: child.totalActiveTutoringMinutes,
-            liveStats: liveStats, // NEW: Live activity stats
-            recentSessions: recentSessions.map(session => ({
-                date: session.lastActivity || session.startDate,
-                summary: session.summary,
-                duration: session.activeMinutes
-            })),
+            liveStats: liveStats,
+            recentSessions: recentSessions, // Already formatted with active session first
             iepPlan: child.iepPlan || null,
         };
 

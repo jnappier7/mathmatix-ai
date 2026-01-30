@@ -6,6 +6,7 @@ const { callLLM } = require('./llmGateway');
 /**
  * Generate a concise live summary of student activity
  * Privacy-safe: focuses on topics, progress, struggles - not full conversation
+ * Uses accurate stats from conversation record when available
  */
 async function generateLiveSummary(conversation, studentName) {
     try {
@@ -16,11 +17,27 @@ async function generateLiveSummary(conversation, studentName) {
             return `${studentName} just started a session`;
         }
 
-        // Create a prompt for the summarizer
+        // IMPROVED: Use stored stats from conversation record (more accurate)
+        const problemsAttempted = conversation.problemsAttempted || 0;
+        const problemsCorrect = conversation.problemsCorrect || 0;
+        const topic = conversation.currentTopic || detectTopic(recentMessages);
+        const strugglingWith = conversation.strugglingWith;
+
+        // Calculate accuracy
+        const accuracy = problemsAttempted > 0 ?
+            Math.round((problemsCorrect / problemsAttempted) * 100) : 0;
+
+        // Create a prompt for the summarizer with accurate stats
         const summaryPrompt = `You are analyzing a math tutoring session for a teacher dashboard. Generate a CONCISE summary (max 2 sentences) focusing on:
 - Current topic/concept
-- Progress indicators (problems attempted/solved)
+- Progress indicators (use the exact stats provided)
 - Struggle points if any
+
+Session Stats:
+- Topic: ${topic}
+- Problems attempted: ${problemsAttempted}
+- Problems correct: ${problemsCorrect} (${accuracy}% accuracy)
+${strugglingWith ? `- Currently struggling with: ${strugglingWith}` : ''}
 
 Recent conversation:
 ${recentMessages.map(m => `${m.role}: ${m.content}`).join('\n')}
@@ -132,21 +149,64 @@ function detectTopic(messages) {
 
 /**
  * Calculate problem accuracy from messages
+ * Uses structured problemResult field when available, falls back to keyword detection
  */
 function calculateProblemStats(messages) {
-    // Look for patterns like "correct!", "that's right!", "not quite", "try again"
     const aiMessages = messages.filter(m => m.role === 'assistant');
 
     let attempted = 0;
     let correct = 0;
+    let hasStructuredData = false;
 
+    // First pass: count messages with structured problemResult field
+    aiMessages.forEach(msg => {
+        if (msg.problemResult) {
+            hasStructuredData = true;
+            attempted++;
+            if (msg.problemResult === 'correct') {
+                correct++;
+            }
+        }
+    });
+
+    // If we found structured data, use those counts
+    if (hasStructuredData) {
+        return { attempted, correct };
+    }
+
+    // FALLBACK: Use keyword detection for older conversations without structured data
+    // This is less accurate but maintains backward compatibility
     aiMessages.forEach(msg => {
         if (!msg.content || typeof msg.content !== 'string') return;
         const content = msg.content.toLowerCase();
-        if (content.includes('correct') || content.includes('exactly') || content.includes('great job') || content.includes('perfect')) {
+
+        // More specific patterns to reduce false positives
+        const correctPatterns = [
+            /\bthat['']?s (exactly )?right\b/,
+            /\bcorrect[!.]/,
+            /\bgreat job[!.]/,
+            /\bperfect[!.]/,
+            /\bwell done[!.]/,
+            /\bexactly[!.]/,
+            /\bnice work[!.]/
+        ];
+
+        const incorrectPatterns = [
+            /\bnot quite\b/,
+            /\btry again\b/,
+            /\balmost\b/,
+            /\bincorrect\b/,
+            /\bnot exactly\b/,
+            /\blet['']?s (try|look|think)/
+        ];
+
+        const isCorrect = correctPatterns.some(pattern => pattern.test(content));
+        const isIncorrect = incorrectPatterns.some(pattern => pattern.test(content));
+
+        if (isCorrect && !isIncorrect) {
             attempted++;
             correct++;
-        } else if (content.includes('not quite') || content.includes('try again') || content.includes('almost')) {
+        } else if (isIncorrect && !isCorrect) {
             attempted++;
         }
     });
@@ -156,12 +216,27 @@ function calculateProblemStats(messages) {
 
 /**
  * Generate final session summary (when session ends)
+ * Uses accurate stats from conversation record when available
  */
 async function generateSessionSummary(conversation, studentName) {
     try {
         const messages = conversation.messages;
-        const stats = calculateProblemStats(messages);
-        const topic = detectTopic(messages);
+
+        // IMPROVED: Use stored stats from conversation record first (more accurate)
+        // Fall back to calculateProblemStats only if stored stats are missing
+        let stats;
+        if (conversation.problemsAttempted !== undefined && conversation.problemsAttempted > 0) {
+            // Use accurate incremental stats from the conversation record
+            stats = {
+                attempted: conversation.problemsAttempted,
+                correct: conversation.problemsCorrect || 0
+            };
+        } else {
+            // Fallback to calculating from messages (for older conversations)
+            stats = calculateProblemStats(messages);
+        }
+
+        const topic = conversation.currentTopic || detectTopic(messages);
 
         // Check if this is an assessment session with results
         if (conversation.isAssessment && conversation.assessmentResults) {
@@ -179,6 +254,10 @@ async function generateSessionSummary(conversation, studentName) {
             return assessmentSummary;
         }
 
+        // Calculate accuracy for the summary
+        const accuracy = stats.attempted > 0 ?
+            Math.round((stats.correct / stats.attempted) * 100) : 0;
+
         // Regular session summary for non-assessment sessions
         const summaryPrompt = `Summarize this math tutoring session in 2-3 sentences for a teacher. Focus on:
 - Main topic covered
@@ -189,8 +268,9 @@ Session details:
 - Student: ${studentName}
 - Topic: ${topic}
 - Problems attempted: ${stats.attempted}
-- Problems correct: ${stats.correct}
+- Problems correct: ${stats.correct} (${accuracy}% accuracy)
 - Duration: ${conversation.activeMinutes} minutes
+${conversation.strugglingWith ? `- Struggled with: ${conversation.strugglingWith}` : ''}
 
 Recent conversation (last 15 messages):
 ${messages.slice(-15).map(m => `${m.role}: ${m.content}`).join('\n')}
@@ -206,7 +286,7 @@ Generate a concise teacher summary:`;
         });
 
         return response.choices[0]?.message?.content?.trim() ||
-            `${studentName} worked on ${topic} for ${conversation.activeMinutes} minutes. Attempted ${stats.attempted} problems with ${stats.correct} correct.`;
+            `${studentName} worked on ${topic} for ${conversation.activeMinutes} minutes. Attempted ${stats.attempted} problems with ${stats.correct} correct (${accuracy}% accuracy).`;
     } catch (error) {
         console.error('Error generating session summary:', error);
         return `Session completed - ${conversation.activeMinutes} minutes of active learning`;

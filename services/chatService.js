@@ -340,6 +340,7 @@ async function getUserConversations(userId) {
 
 /**
  * Archive a conversation (set inactive)
+ * Also increments user's total session count for onboarding flow
  * @param {string} conversationId - Conversation ID
  * @returns {Promise<Conversation>} Archived conversation
  */
@@ -353,6 +354,24 @@ async function archiveConversation(conversationId) {
 
     conversation.isActive = false;
     await conversation.save();
+
+    // Increment user's session count (for "assessment on session 3" flow)
+    // Only count meaningful sessions (has at least 2 messages - user + AI)
+    if (conversation.messages && conversation.messages.length >= 2) {
+      const user = await User.findById(conversation.userId);
+      if (user) {
+        if (!user.learningProfile) user.learningProfile = {};
+        if (!user.learningProfile.stats) user.learningProfile.stats = {};
+        user.learningProfile.stats.totalSessions = (user.learningProfile.stats.totalSessions || 0) + 1;
+        user.markModified('learningProfile');
+        await user.save();
+
+        logger.info('Incremented session count', {
+          userId: conversation.userId,
+          totalSessions: user.learningProfile.stats.totalSessions
+        });
+      }
+    }
 
     logger.info('Archived conversation', {
       conversationId
@@ -381,8 +400,25 @@ async function needsAssessment(userId) {
       return false;
     }
 
-    // First time users need assessment
+    // ONBOARDING FLOW: Assessment on Session 3
+    // Session 1: Math + getting to know you
+    // Session 2: Building relationship
+    // Session 3: Offer assessment (earned the right to ask)
+    const totalSessions = user.learningProfile?.stats?.totalSessions || 0;
+    const MIN_SESSIONS_BEFORE_ASSESSMENT = 3;
+
+    // First time users need assessment - but only after 3 sessions
     if (!user.assessmentCompleted) {
+      if (totalSessions < MIN_SESSIONS_BEFORE_ASSESSMENT) {
+        // Not enough sessions yet - keep building trust
+        logger.debug('Assessment deferred - building trust first', {
+          userId,
+          totalSessions,
+          required: MIN_SESSIONS_BEFORE_ASSESSMENT
+        });
+        return false;
+      }
+      // 3+ sessions and no assessment - time to offer
       return true;
     }
 

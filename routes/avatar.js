@@ -64,7 +64,7 @@ router.post('/', isAuthenticated, async (req, res) => { //
  */
 router.get('/config', isAuthenticated, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('avatar.dicebearConfig avatar.dicebearUrl').lean();
+        const user = await User.findById(req.user._id).select('avatar.dicebearConfig avatar.dicebearUrl avatarGallery').lean();
 
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });
@@ -72,7 +72,8 @@ router.get('/config', isAuthenticated, async (req, res) => {
 
         res.json({
             config: user.avatar?.dicebearConfig || null,
-            avatarUrl: user.avatar?.dicebearUrl || null
+            avatarUrl: user.avatar?.dicebearUrl || null,
+            gallery: user.avatarGallery || []
         });
     } catch (error) {
         console.error('ERROR: Failed to fetch avatar config:', error);
@@ -81,13 +82,36 @@ router.get('/config', isAuthenticated, async (req, res) => {
 });
 
 /**
+ * GET /api/avatar/gallery
+ * Get the user's avatar gallery (up to 3 saved custom avatars)
+ */
+router.get('/gallery', isAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select('avatarGallery').lean();
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        res.json({
+            gallery: user.avatarGallery || [],
+            maxSlots: 3,
+            slotsUsed: (user.avatarGallery || []).length
+        });
+    } catch (error) {
+        console.error('ERROR: Failed to fetch avatar gallery:', error);
+        res.status(500).json({ message: 'Server error fetching avatar gallery.' });
+    }
+});
+
+/**
  * POST /api/avatar/dicebear
- * Save a DiceBear avatar configuration
+ * Save a DiceBear avatar to the gallery (max 3 slots)
  */
 router.post('/dicebear', isAuthenticated, async (req, res) => {
     try {
         const userId = req.user._id;
-        const { config, avatarUrl } = req.body;
+        const { config, avatarUrl, name, slotIndex } = req.body;
 
         if (!config || !avatarUrl) {
             return res.status(400).json({ message: 'Config and avatarUrl are required.' });
@@ -109,47 +133,162 @@ router.post('/dicebear', isAuthenticated, async (req, res) => {
             return res.status(404).json({ message: 'User not found.' });
         }
 
-        // Initialize avatar object if needed
+        // Initialize gallery if needed
+        if (!user.avatarGallery) {
+            user.avatarGallery = [];
+        }
+
+        const avatarData = {
+            name: name || `Avatar ${user.avatarGallery.length + 1}`,
+            dicebearConfig: {
+                style: config.style,
+                seed: config.seed || Math.random().toString(36).substring(2, 10),
+                skinColor: config.skinColor,
+                hairColor: config.hairColor,
+                backgroundColor: config.backgroundColor || 'transparent',
+                glasses: Boolean(config.glasses),
+                earrings: Boolean(config.earrings),
+                flip: Boolean(config.flip)
+            },
+            dicebearUrl: avatarUrl,
+            createdAt: new Date()
+        };
+
+        // If slotIndex is provided, replace that slot; otherwise add new or replace oldest
+        if (typeof slotIndex === 'number' && slotIndex >= 0 && slotIndex < 3) {
+            // Replace specific slot
+            user.avatarGallery[slotIndex] = avatarData;
+        } else if (user.avatarGallery.length < 3) {
+            // Add to gallery if under limit
+            user.avatarGallery.push(avatarData);
+        } else {
+            // Gallery full - replace oldest (index 0) and shift
+            user.avatarGallery.shift();
+            user.avatarGallery.push(avatarData);
+        }
+
+        // Also set as current active avatar
         if (!user.avatar) {
             user.avatar = {};
         }
-
-        // Update DiceBear config
-        user.avatar.dicebearConfig = {
-            style: config.style,
-            seed: config.seed || Math.random().toString(36).substring(2, 10),
-            skinColor: config.skinColor,
-            hairColor: config.hairColor,
-            backgroundColor: config.backgroundColor || 'transparent',
-            glasses: Boolean(config.glasses),
-            earrings: Boolean(config.earrings),
-            flip: Boolean(config.flip)
-        };
-
-        // Store the avatar URL for quick retrieval
-        user.avatar.dicebearUrl = avatarUrl;
+        user.avatar.dicebearConfig = avatarData.dicebearConfig;
+        user.avatar.dicebearUrl = avatarData.dicebearUrl;
 
         // Clear the old selectedAvatarId since they're using a custom avatar now
         user.selectedAvatarId = null;
 
-        // Mark the avatar field as modified so Mongoose saves the nested changes
         user.markModified('avatar');
-        user.markModified('avatar.dicebearConfig');
+        user.markModified('avatarGallery');
 
         await user.save();
 
-        console.log(`[Avatar] User ${userId} saved DiceBear avatar: ${config.style}`);
+        const savedIndex = typeof slotIndex === 'number' ? slotIndex : user.avatarGallery.length - 1;
+        console.log(`[Avatar] User ${userId} saved DiceBear avatar to slot ${savedIndex}: ${config.style}`);
 
         res.json({
             success: true,
             message: 'Avatar saved successfully!',
-            avatarUrl: avatarUrl
+            avatarUrl: avatarUrl,
+            slotIndex: savedIndex,
+            gallery: user.avatarGallery
         });
 
     } catch (error) {
         console.error('ERROR: Failed to save DiceBear avatar:', error.message);
         console.error('Full error:', error);
         res.status(500).json({ message: 'Server error saving avatar: ' + error.message });
+    }
+});
+
+/**
+ * DELETE /api/avatar/gallery/:index
+ * Delete an avatar from a specific gallery slot
+ */
+router.delete('/gallery/:index', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const slotIndex = parseInt(req.params.index, 10);
+
+        if (isNaN(slotIndex) || slotIndex < 0 || slotIndex > 2) {
+            return res.status(400).json({ message: 'Invalid slot index. Must be 0, 1, or 2.' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        if (!user.avatarGallery || slotIndex >= user.avatarGallery.length) {
+            return res.status(404).json({ message: 'No avatar in that slot.' });
+        }
+
+        // Remove the avatar at the specified index
+        user.avatarGallery.splice(slotIndex, 1);
+        user.markModified('avatarGallery');
+
+        await user.save();
+
+        console.log(`[Avatar] User ${userId} deleted avatar from slot ${slotIndex}`);
+
+        res.json({
+            success: true,
+            message: 'Avatar deleted successfully!',
+            gallery: user.avatarGallery
+        });
+
+    } catch (error) {
+        console.error('ERROR: Failed to delete avatar:', error);
+        res.status(500).json({ message: 'Server error deleting avatar.' });
+    }
+});
+
+/**
+ * POST /api/avatar/gallery/:index/select
+ * Select an avatar from the gallery as the active avatar
+ */
+router.post('/gallery/:index/select', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const slotIndex = parseInt(req.params.index, 10);
+
+        if (isNaN(slotIndex) || slotIndex < 0 || slotIndex > 2) {
+            return res.status(400).json({ message: 'Invalid slot index. Must be 0, 1, or 2.' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        if (!user.avatarGallery || slotIndex >= user.avatarGallery.length) {
+            return res.status(404).json({ message: 'No avatar in that slot.' });
+        }
+
+        const selectedAvatar = user.avatarGallery[slotIndex];
+
+        // Set as active avatar
+        if (!user.avatar) {
+            user.avatar = {};
+        }
+        user.avatar.dicebearConfig = selectedAvatar.dicebearConfig;
+        user.avatar.dicebearUrl = selectedAvatar.dicebearUrl;
+        user.selectedAvatarId = `gallery-${slotIndex}`;
+
+        user.markModified('avatar');
+
+        await user.save();
+
+        console.log(`[Avatar] User ${userId} selected gallery avatar slot ${slotIndex}`);
+
+        res.json({
+            success: true,
+            message: 'Avatar selected!',
+            avatarUrl: selectedAvatar.dicebearUrl
+        });
+
+    } catch (error) {
+        console.error('ERROR: Failed to select avatar:', error);
+        res.status(500).json({ message: 'Server error selecting avatar.' });
     }
 });
 

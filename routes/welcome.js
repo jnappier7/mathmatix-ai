@@ -113,6 +113,48 @@ router.get('/', async (req, res) => {
 
         // --- DYNAMIC WELCOME MESSAGE BASED ON USER STATE ---
 
+        // FAST PATH: For simple returning users, skip AI call entirely
+        // Only use AI for: new users, assessment needed, incomplete screeners, first visits
+        const isSimpleReturningUser =
+            user.learningProfile?.rapportBuildingComplete &&
+            user.assessmentCompleted &&
+            !activeScreenerSession &&
+            !assessmentNeeded &&
+            contextType !== 'none';
+
+        if (isSimpleReturningUser) {
+            // Quick static greeting - no AI needed
+            const quickGreetings = [
+                `Hey ${user.firstName}! What do you need help with?`,
+                `${user.firstName}! What are you working on?`,
+                `Hey! What's up?`,
+                `What do you need help with today?`,
+                `Ready to work on some math?`,
+                `Hey ${user.firstName}! What brings you back?`,
+                `${user.firstName}! What can I help with?`
+            ];
+
+            // Add time-aware greetings
+            if (hour < 12) quickGreetings.push(`Good morning! What are you working on?`);
+            else if (hour >= 21) quickGreetings.push(`Up late? What do you need help with?`);
+
+            const quickGreeting = quickGreetings[Math.floor(Math.random() * quickGreetings.length)];
+
+            // Still save to conversation for context
+            activeConversation.messages.push({
+                role: 'assistant',
+                content: quickGreeting,
+                timestamp: new Date()
+            });
+            activeConversation.lastActivity = new Date();
+            await activeConversation.save();
+
+            console.log(`LOG: Fast-path welcome for returning user ${user.firstName}`);
+            return res.json({ greeting: quickGreeting, voiceId: voiceIdForWelcome });
+        }
+
+        // SLOW PATH: Use AI for personalized messages (new users, special states)
+
         // NEW USER: Start with ONE casual question
         if (!user.learningProfile?.rapportBuildingComplete && !user.assessmentCompleted) {
             messagesForAI.push({

@@ -647,6 +647,22 @@
       <!-- RIGHT SIDEBAR - Quick Actions -->
       <aside class="right-sidebar">
         <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <i class="fas fa-chalkboard-teacher"></i> Teacher & Roster Setup
+          </div>
+          <p>Create teacher accounts, class codes, and import student rosters.</p>
+          <button id="openTeacherSetupBtn" class="btn btn-primary main-action-btn">
+            <i class="fas fa-user-plus"></i> Create Teacher
+          </button>
+          <button id="openEnrollmentCodeBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-key"></i> Create Class Code
+          </button>
+          <button id="openRosterImportBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-file-csv"></i> Import Roster
+          </button>
+        </div>
+
+        <div class="dashboard-panel">
           <div class="dashboard-panel-header">User Summaries</div>
           <p>Quickly view detailed student and parent profiles.</p>
           <button id="openSummariesBtn" class="btn btn-secondary main-action-btn">
@@ -1010,6 +1026,268 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Teacher Modal -->
+  <div id="createTeacherModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="modal-close-button" id="closeCreateTeacherBtn">&times;</button>
+      <h2><i class="fas fa-chalkboard-teacher"></i> Create Teacher Account</h2>
+      <p style="color: #666; margin-bottom: 20px;">Create a new teacher account. The teacher will be able to manage their assigned students.</p>
+
+      <form id="createTeacherForm">
+        <div class="modal-form-group">
+          <label for="teacherFirstName">First Name *</label>
+          <input type="text" id="teacherFirstName" name="firstName" required>
+        </div>
+        <div class="modal-form-group">
+          <label for="teacherLastName">Last Name *</label>
+          <input type="text" id="teacherLastName" name="lastName" required>
+        </div>
+        <div class="modal-form-group">
+          <label for="teacherEmail">Email *</label>
+          <input type="email" id="teacherEmail" name="email" required>
+        </div>
+        <div class="modal-form-group">
+          <label for="teacherUsername">Username (optional - will be generated from email if blank)</label>
+          <input type="text" id="teacherUsername" name="username" placeholder="Leave blank to auto-generate">
+        </div>
+        <div class="modal-form-group">
+          <label>
+            <input type="checkbox" id="generatePasswordCheck" checked> Auto-generate secure password
+          </label>
+        </div>
+        <div class="modal-form-group" id="passwordFieldGroup" style="display: none;">
+          <label for="teacherPassword">Password</label>
+          <input type="password" id="teacherPassword" name="password" placeholder="Min 8 chars with uppercase, lowercase, number, special char">
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary" id="createTeacherSubmit">
+            <i class="fas fa-user-plus"></i> Create Teacher
+          </button>
+          <button type="button" class="btn btn-tertiary" id="cancelCreateTeacher">Cancel</button>
+        </div>
+      </form>
+
+      <div id="teacherCreatedResult" style="display: none; margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 8px; border: 1px solid #c3e6cb;">
+        <h4 style="color: #155724; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Teacher Created Successfully!</h4>
+        <p><strong>Name:</strong> <span id="resultTeacherName"></span></p>
+        <p><strong>Email:</strong> <span id="resultTeacherEmail"></span></p>
+        <p><strong>Username:</strong> <span id="resultTeacherUsername"></span></p>
+        <p id="resultPasswordRow"><strong>Temporary Password:</strong> <code id="resultTeacherPassword" style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;"></code></p>
+        <p style="color: #856404; font-size: 0.9em; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> Share these credentials securely with the teacher.</p>
+        <button class="btn btn-secondary" id="createAnotherTeacher" style="margin-top: 10px;">
+          <i class="fas fa-plus"></i> Create Another Teacher
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Enrollment Code Modal -->
+  <div id="createEnrollmentCodeModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 600px;">
+      <button class="modal-close-button" id="closeEnrollmentCodeBtn">&times;</button>
+      <h2><i class="fas fa-key"></i> Create Class Enrollment Code</h2>
+      <p style="color: #666; margin-bottom: 20px;">Create a code that students can use to join a teacher's class during signup.</p>
+
+      <form id="createEnrollmentCodeForm">
+        <div class="modal-form-group">
+          <label for="codeTeacherSelect">Teacher *</label>
+          <select id="codeTeacherSelect" name="teacherId" required>
+            <option value="">Select a teacher...</option>
+          </select>
+        </div>
+        <div class="modal-form-group">
+          <label for="codeClassName">Class Name *</label>
+          <input type="text" id="codeClassName" name="className" placeholder="e.g., Period 3 Pre-Algebra" required>
+        </div>
+        <div class="modal-form-group">
+          <label for="codeGradeLevel">Grade Level (optional - will be applied to students who use this code)</label>
+          <input type="text" id="codeGradeLevel" name="gradeLevel" placeholder="e.g., 7th Grade">
+        </div>
+        <div class="modal-form-group">
+          <label for="codeMathCourse">Math Course (optional)</label>
+          <input type="text" id="codeMathCourse" name="mathCourse" placeholder="e.g., Pre-Algebra">
+        </div>
+        <div class="modal-form-group">
+          <label for="customCode">Custom Code (optional - leave blank to auto-generate)</label>
+          <input type="text" id="customCode" name="customCode" placeholder="e.g., SMITH-7A" style="text-transform: uppercase;">
+        </div>
+        <div class="modal-form-group">
+          <label for="codeMaxUses">Max Uses (optional - leave blank for unlimited)</label>
+          <input type="number" id="codeMaxUses" name="maxUses" min="1" placeholder="e.g., 35">
+        </div>
+        <div class="modal-form-group">
+          <label for="codeExpires">Expires On (optional)</label>
+          <input type="date" id="codeExpires" name="expiresAt">
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary" id="createEnrollmentCodeSubmit">
+            <i class="fas fa-key"></i> Create Code
+          </button>
+          <button type="button" class="btn btn-tertiary" id="cancelCreateCode">Cancel</button>
+        </div>
+      </form>
+
+      <div id="codeCreatedResult" style="display: none; margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 8px; border: 1px solid #c3e6cb;">
+        <h4 style="color: #155724; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Enrollment Code Created!</h4>
+        <div style="text-align: center; margin: 20px 0;">
+          <div style="font-size: 2em; font-weight: bold; letter-spacing: 4px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #28a745;">
+            <span id="resultEnrollmentCode"></span>
+          </div>
+        </div>
+        <p><strong>Class:</strong> <span id="resultCodeClassName"></span></p>
+        <p><strong>Teacher:</strong> <span id="resultCodeTeacher"></span></p>
+        <p style="color: #155724; font-size: 0.9em; margin-top: 10px;"><i class="fas fa-info-circle"></i> Students can enter this code during signup to automatically join this class.</p>
+        <button class="btn btn-secondary" id="createAnotherCode" style="margin-top: 10px;">
+          <i class="fas fa-plus"></i> Create Another Code
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roster Import Modal -->
+  <div id="rosterImportModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px;">
+      <button class="modal-close-button" id="closeRosterImportBtn">&times;</button>
+      <h2><i class="fas fa-file-csv"></i> Import Student Roster</h2>
+      <p style="color: #666; margin-bottom: 20px;">Upload a CSV file to create student accounts in bulk. Students will receive temporary passwords.</p>
+
+      <div class="modal-section">
+        <h3>1. CSV File Requirements</h3>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9em;">
+          <p style="margin-bottom: 10px;"><strong>Required columns:</strong> firstName, lastName, email</p>
+          <p style="margin-bottom: 10px;"><strong>Optional columns:</strong> username, gradeLevel, mathCourse</p>
+          <p style="margin-bottom: 10px;"><strong>Example:</strong></p>
+          <code style="display: block; white-space: pre; overflow-x: auto; background: #e9ecef; padding: 10px; border-radius: 4px;">firstName,lastName,email,gradeLevel
+John,Smith,john.smith@school.org,7th Grade
+Jane,Doe,jane.doe@school.org,7th Grade</code>
+        </div>
+        <a href="#" id="downloadSampleCSV" style="display: inline-block; margin-top: 10px; color: #e74c3c;">
+          <i class="fas fa-download"></i> Download Sample CSV Template
+        </a>
+      </div>
+
+      <div class="modal-section">
+        <h3>2. Assignment Options</h3>
+        <div class="modal-form-group">
+          <label for="rosterTeacherSelect">Assign to Teacher (optional)</label>
+          <select id="rosterTeacherSelect" name="teacherId">
+            <option value="">No teacher assignment</option>
+          </select>
+        </div>
+        <div class="modal-form-group">
+          <label for="rosterEnrollmentCodeSelect">Link to Enrollment Code (optional)</label>
+          <select id="rosterEnrollmentCodeSelect" name="enrollmentCodeId">
+            <option value="">No enrollment code</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>3. Upload CSV File</h3>
+        <form id="rosterImportForm" enctype="multipart/form-data">
+          <div class="modal-form-group">
+            <input type="file" id="rosterFile" name="file" accept=".csv" required style="padding: 10px; border: 2px dashed #ccc; border-radius: 8px; width: 100%; cursor: pointer;">
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="validateRosterBtn">
+              <i class="fas fa-check-circle"></i> Validate Only (Dry Run)
+            </button>
+            <button type="submit" class="btn btn-primary" id="importRosterBtn">
+              <i class="fas fa-upload"></i> Import Students
+            </button>
+            <button type="button" class="btn btn-tertiary" id="cancelRosterImport">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="rosterImportResults" style="display: none; margin-top: 20px;">
+        <div class="modal-section">
+          <h3><i class="fas fa-chart-pie"></i> Import Results</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px;">
+            <div class="stat-card">
+              <div class="stat-label">Total Rows</div>
+              <div class="stat-value" id="resultTotalRows">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Created</div>
+              <div class="stat-value" id="resultCreated" style="color: #27ae60;">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Skipped</div>
+              <div class="stat-value" id="resultSkipped" style="color: #f39c12;">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Errors</div>
+              <div class="stat-value" id="resultErrors" style="color: #e74c3c;">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="createdStudentsList" style="display: none;" class="modal-section">
+          <h3><i class="fas fa-user-check"></i> Created Students</h3>
+          <p style="color: #856404; font-size: 0.9em; margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> Save or export these credentials - temporary passwords are shown only once!</p>
+          <button class="btn btn-secondary" id="exportCredentialsBtn" style="margin-bottom: 10px;">
+            <i class="fas fa-download"></i> Export Credentials CSV
+          </button>
+          <div class="table-scroll-container" style="max-height: 300px;">
+            <table class="user-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Username</th>
+                  <th>Temp Password</th>
+                </tr>
+              </thead>
+              <tbody id="createdStudentsTableBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="skippedStudentsList" style="display: none;" class="modal-section">
+          <h3><i class="fas fa-user-times"></i> Skipped Students</h3>
+          <div class="table-scroll-container" style="max-height: 200px;">
+            <table class="user-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Reason</th>
+                </tr>
+              </thead>
+              <tbody id="skippedStudentsTableBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="importErrorsList" style="display: none;" class="modal-section">
+          <h3><i class="fas fa-exclamation-circle"></i> Errors</h3>
+          <div class="table-scroll-container" style="max-height: 200px;">
+            <table class="user-table">
+              <thead>
+                <tr>
+                  <th>Row</th>
+                  <th>Field</th>
+                  <th>Error</th>
+                </tr>
+              </thead>
+              <tbody id="importErrorsTableBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="importAnotherRoster" style="margin-top: 10px;">
+          <i class="fas fa-redo"></i> Import Another Roster
+        </button>
       </div>
     </div>
   </div>

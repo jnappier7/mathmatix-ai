@@ -111,6 +111,36 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         // Create new conversation if: no conversation, inactive, OR it's a mastery conversation
         // This prevents mastery messages from appearing in regular chat
         if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
+            // IMPROVED: End the old session properly before creating a new one
+            // This handles the case where student closed tab without logging out
+            if (activeConversation && activeConversation.isActive && activeConversation.messages.length > 0) {
+                try {
+                    const { generateSessionSummary: generateAISummary, detectTopic } = require('../utils/activitySummarizer');
+
+                    // Generate summary for the old session
+                    activeConversation.currentTopic = activeConversation.currentTopic || detectTopic(activeConversation.messages);
+                    const studentName = `${user.firstName} ${user.lastName}`;
+
+                    try {
+                        const aiSummary = await generateAISummary(activeConversation, studentName);
+                        activeConversation.summary = aiSummary;
+                    } catch (summaryError) {
+                        // Fallback summary
+                        activeConversation.summary = `${studentName} worked on ${activeConversation.currentTopic || 'mathematics'} for ${activeConversation.activeMinutes || 0} minutes.`;
+                    }
+
+                    activeConversation.isActive = false;
+                    await activeConversation.save();
+                    console.log(`📝 [Session] Auto-ended previous session ${activeConversation._id} for user ${user._id}`);
+                } catch (endError) {
+                    console.error('[Session] Error auto-ending previous session:', endError);
+                    // Still mark as inactive even if summary fails
+                    activeConversation.isActive = false;
+                    activeConversation.summary = `Session ended - ${activeConversation.activeMinutes || 0} minutes`;
+                    await activeConversation.save();
+                }
+            }
+
             activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
             user.activeConversationId = activeConversation._id;
             await user.save();
@@ -364,15 +394,47 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         aiResponseText = boardParsed.text; // Cleaned text with [BOARD_REF:...] removed
         const boardContext = boardParsed.boardContext; // { targetObjectId, type, allReferences }
 
-        const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
-        let bonusXpAwarded = 0;
-        let bonusXpReason = '';
-        if (xpAwardMatch) {
-            const rawXpAmount = parseInt(xpAwardMatch[1], 10);
-            // SECURITY FIX: Cap XP awards to prevent exploitation
-            bonusXpAwarded = Math.min(Math.max(rawXpAmount, BRAND_CONFIG.xpAwardRange.min), BRAND_CONFIG.xpAwardRange.max);
-            bonusXpReason = xpAwardMatch[2] || 'AI Bonus Award';
-            aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
+        // =====================================================
+        // XP LADDER SYSTEM (Three Tiers)
+        // Tier 1: Silent turn XP (engagement)
+        // Tier 2: Performance XP (correct answers)
+        // Tier 3: Core Behavior XP (learning identity)
+        // =====================================================
+
+        const xpLadder = BRAND_CONFIG.xpLadder;
+        const xpBreakdown = {
+            tier1: 0,       // Silent turn XP
+            tier2: 0,       // Performance XP
+            tier2Type: null, // 'correct' or 'clean'
+            tier3: 0,       // Core behavior XP
+            tier3Behavior: null, // The specific behavior being rewarded
+            total: 0
+        };
+
+        // TIER 3: Core Behavior XP (AI explicitly awards for learning identity moments)
+        // Format: <CORE_BEHAVIOR_XP:amount,behavior>
+        // Example: <CORE_BEHAVIOR_XP:50,caught_own_error>
+        const coreBehaviorMatch = aiResponseText.match(/<CORE_BEHAVIOR_XP:(\d+),([^>]+)>/);
+        if (coreBehaviorMatch) {
+            const rawAmount = parseInt(coreBehaviorMatch[1], 10);
+            const behavior = coreBehaviorMatch[2].trim();
+
+            // Security: Cap at max tier 3 amount
+            xpBreakdown.tier3 = Math.min(rawAmount, xpLadder.maxTier3PerTurn);
+            xpBreakdown.tier3Behavior = behavior;
+            aiResponseText = aiResponseText.replace(coreBehaviorMatch[0], '').trim();
+
+            console.log(`🎖️ [XP Tier 3] Core Behavior: +${xpBreakdown.tier3} XP for "${behavior}"`);
+        }
+
+        // LEGACY: Support old <AWARD_XP> tag (treat as Tier 2 for backward compatibility)
+        const legacyXpMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
+        if (legacyXpMatch && !coreBehaviorMatch) {
+            const rawAmount = parseInt(legacyXpMatch[1], 10);
+            // Treat legacy awards as Tier 2 (capped at tier 2 max)
+            xpBreakdown.tier2 = Math.min(rawAmount, xpLadder.maxTier2PerTurn);
+            xpBreakdown.tier2Type = 'legacy';
+            aiResponseText = aiResponseText.replace(legacyXpMatch[0], '').trim();
         }
 
         // SAFETY LOGGING: Check if AI flagged safety concern
@@ -547,11 +609,73 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             activeConversation.strugglingWith = struggleInfo.strugglingWith;
         }
 
+        // PROBLEM RESULT TRACKING: Parse structured tags for accurate stats
+        // Format: <PROBLEM_RESULT:correct|incorrect|skipped>
+        // This MUST happen before saving so stats are persisted correctly
+        const problemResultMatch = aiResponseText.match(/<PROBLEM_RESULT:(correct|incorrect|skipped)>/i);
+        let problemAnswered = false;
+        let wasCorrect = false;
+        let wasSkipped = false;
+
+        if (problemResultMatch) {
+            const result = problemResultMatch[1].toLowerCase();
+            problemAnswered = true;
+            wasCorrect = result === 'correct';
+            wasSkipped = result === 'skipped';
+            // Remove the tag from the response text
+            aiResponseText = aiResponseText.replace(problemResultMatch[0], '').trim();
+            console.log(`📊 [Problem Tracking] Result: ${result} (via structured tag)`);
+        } else {
+            // FALLBACK: Detect from AI response keywords (less accurate, for backward compatibility)
+            const latestAIResponse = aiResponseText.toLowerCase();
+
+            // Only use keyword fallback if student appears to have answered (message is short/answer-like)
+            // This reduces false positives from the AI using these words in explanations
+            const userMessage = message.trim();
+            const looksLikeAnswer = userMessage.length < 100 && (
+                /^-?\d+/.test(userMessage) || // Starts with a number
+                /^x\s*=/.test(userMessage.toLowerCase()) || // Variable assignment
+                /^[a-z]\s*=/.test(userMessage.toLowerCase()) || // Single variable
+                userMessage.split(' ').length <= 10 // Short response
+            );
+
+            if (looksLikeAnswer) {
+                // Detect correctness from AI response
+                if (latestAIResponse.includes('correct') || latestAIResponse.includes('exactly') ||
+                    latestAIResponse.includes('great job') || latestAIResponse.includes('perfect') ||
+                    latestAIResponse.includes('well done')) {
+                    problemAnswered = true;
+                    wasCorrect = true;
+                    console.log(`📊 [Problem Tracking] Result: correct (via keyword fallback)`);
+                } else if (latestAIResponse.includes('not quite') || latestAIResponse.includes('try again') ||
+                           latestAIResponse.includes('almost') || latestAIResponse.includes('incorrect') ||
+                           latestAIResponse.includes('not exactly')) {
+                    problemAnswered = true;
+                    wasCorrect = false;
+                    console.log(`📊 [Problem Tracking] Result: incorrect (via keyword fallback)`);
+                }
+            }
+        }
+
+        // Update conversation stats incrementally when a problem is answered
+        if (problemAnswered) {
+            // Increment the counters directly (don't recalculate from all messages)
+            activeConversation.problemsAttempted = (activeConversation.problemsAttempted || 0) + 1;
+            if (wasCorrect) {
+                activeConversation.problemsCorrect = (activeConversation.problemsCorrect || 0) + 1;
+            }
+            // Store the result in the last AI message for historical accuracy
+            const lastMsgIndex = activeConversation.messages.length - 1;
+            if (lastMsgIndex >= 0) {
+                activeConversation.messages[lastMsgIndex].problemResult =
+                    wasCorrect ? 'correct' : (wasSkipped ? 'skipped' : 'incorrect');
+            }
+        }
+
         // Update live tracking fields for teacher dashboard
         activeConversation.currentTopic = detectTopic(activeConversation.messages);
-        const stats = calculateProblemStats(activeConversation.messages);
-        activeConversation.problemsAttempted = stats.attempted;
-        activeConversation.problemsCorrect = stats.correct;
+        // NOTE: We no longer recalculate problemsAttempted/problemsCorrect from all messages
+        // Stats are now tracked incrementally above for accuracy
         activeConversation.lastActivity = new Date();
 
         // CRITICAL FIX: Clean invalid messages before save to prevent validation errors
@@ -567,25 +691,6 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         }
 
         await activeConversation.save();
-
-        // Detect if a problem was just answered based on AI response keywords
-        // This is used for both badge tracking AND live stats updates
-        const latestAIResponse = aiResponseText.toLowerCase();
-        let problemAnswered = false;
-        let wasCorrect = false;
-
-        // Detect correctness from AI response
-        if (latestAIResponse.includes('correct') || latestAIResponse.includes('exactly') ||
-            latestAIResponse.includes('great job') || latestAIResponse.includes('perfect') ||
-            latestAIResponse.includes('well done')) {
-            problemAnswered = true;
-            wasCorrect = true;
-        } else if (latestAIResponse.includes('not quite') || latestAIResponse.includes('try again') ||
-                   latestAIResponse.includes('almost') || latestAIResponse.includes('incorrect') ||
-                   latestAIResponse.includes('not exactly')) {
-            problemAnswered = true;
-            wasCorrect = false;
-        }
 
         // Track badge progress if user has an active badge
         if (user.masteryProgress?.activeBadge) {
@@ -626,26 +731,86 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             }
         }
 
-        let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
-        user.xp = (user.xp || 0) + xpAward;
-        
-        let specialXpAwardedMessage = bonusXpAwarded > 0 ? `${bonusXpAwarded} XP (${bonusXpReason})` : `${xpAward} XP`;
+        // =====================================================
+        // XP LADDER: Calculate all three tiers
+        // =====================================================
+
+        // TIER 1: Silent turn XP (always awarded, never shown)
+        xpBreakdown.tier1 = xpLadder.tier1.amount;
+
+        // TIER 2: Performance XP (awarded on correct answers)
+        // Determine if this was a "clean" solution (no hints used in recent turns)
+        if (wasCorrect && xpBreakdown.tier2 === 0) {
+            // Check if student used hints recently (look at last few messages for hint requests)
+            const recentMessages = activeConversation.messages.slice(-6);
+            const askedForHint = recentMessages.some(msg =>
+                msg.role === 'user' &&
+                /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(msg.content)
+            );
+
+            if (askedForHint) {
+                // Basic correct (used hints)
+                xpBreakdown.tier2 = xpLadder.tier2.correct;
+                xpBreakdown.tier2Type = 'correct';
+            } else {
+                // Clean solution (no hints)
+                xpBreakdown.tier2 = xpLadder.tier2.clean;
+                xpBreakdown.tier2Type = 'clean';
+            }
+            console.log(`✨ [XP Tier 2] Performance: +${xpBreakdown.tier2} XP (${xpBreakdown.tier2Type})`);
+        }
+
+        // Calculate total XP
+        xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
+        user.xp = (user.xp || 0) + xpBreakdown.total;
+
+        // Update XP Ladder analytics for "grinding vs growing" analysis
+        if (!user.xpLadderStats) {
+            user.xpLadderStats = { lifetimeTier1: 0, lifetimeTier2: 0, lifetimeTier3: 0, tier3Behaviors: [] };
+        }
+        user.xpLadderStats.lifetimeTier1 = (user.xpLadderStats.lifetimeTier1 || 0) + xpBreakdown.tier1;
+        user.xpLadderStats.lifetimeTier2 = (user.xpLadderStats.lifetimeTier2 || 0) + xpBreakdown.tier2;
+        user.xpLadderStats.lifetimeTier3 = (user.xpLadderStats.lifetimeTier3 || 0) + xpBreakdown.tier3;
+
+        // Track Tier 3 behavior types for detailed analytics
+        if (xpBreakdown.tier3 > 0 && xpBreakdown.tier3Behavior) {
+            const existingBehavior = user.xpLadderStats.tier3Behaviors.find(
+                b => b.behavior === xpBreakdown.tier3Behavior
+            );
+            if (existingBehavior) {
+                existingBehavior.count += 1;
+                existingBehavior.lastEarned = new Date();
+            } else {
+                user.xpLadderStats.tier3Behaviors.push({
+                    behavior: xpBreakdown.tier3Behavior,
+                    count: 1,
+                    lastEarned: new Date()
+                });
+            }
+        }
+        user.markModified('xpLadderStats');
+
+        // Check for level up
         let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
+        let leveledUp = false;
         if (user.xp >= xpForNextLevel) {
             user.level += 1;
-            specialXpAwardedMessage = `LEVEL_UP! New level: ${user.level}`;
+            leveledUp = true;
         }
 
         const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
-		if (tutorsJustUnlocked.length > 0) {
-			user.unlockedItems.push(...tutorsJustUnlocked);
-			user.markModified('unlockedItems');
-		}
+        if (tutorsJustUnlocked.length > 0) {
+            user.unlockedItems.push(...tutorsJustUnlocked);
+            user.markModified('unlockedItems');
+        }
 
         await user.save();
 
         const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
         const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
+
+        // Log XP breakdown for analytics
+        console.log(`📊 [XP Ladder] User ${user.firstName}: Tier1=${xpBreakdown.tier1} (silent), Tier2=${xpBreakdown.tier2} (${xpBreakdown.tier2Type || 'none'}), Tier3=${xpBreakdown.tier3} (${xpBreakdown.tier3Behavior || 'none'}) = Total ${xpBreakdown.total}`);
 
         // Prepare IEP accommodation features for frontend
         const iepFeatures = user.iepPlan?.accommodations ? {
@@ -662,19 +827,26 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             userXp: userXpInCurrentLevel,
             userLevel: user.level,
             xpNeeded: xpForNextLevel,
-            specialXpAwarded: specialXpAwardedMessage,
-            xpAwarded: xpAward, // NEW: XP earned this turn for live feed
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
             drawingSequence: dynamicDrawingSequence,
-            visualCommands: visualCommands, // Visual teaching: whiteboard, algebra tiles, images
-            boardContext: boardContext, // Board-first chat integration: spatial anchoring data
-            iepFeatures: iepFeatures, // IEP accommodations for frontend to auto-enable features
-            // NEW: Problem-solving stats for live stats tracker
+            visualCommands: visualCommands,
+            boardContext: boardContext,
+            iepFeatures: iepFeatures,
             problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
             sessionStats: {
                 problemsAttempted: activeConversation.problemsAttempted || 0,
                 problemsCorrect: activeConversation.problemsCorrect || 0
+            },
+            // XP LADDER: Tiered XP data for frontend rendering
+            xpLadder: {
+                tier1: xpBreakdown.tier1,           // Silent (frontend ignores)
+                tier2: xpBreakdown.tier2,           // Performance XP
+                tier2Type: xpBreakdown.tier2Type,   // 'correct', 'clean', or null
+                tier3: xpBreakdown.tier3,           // Core behavior XP
+                tier3Behavior: xpBreakdown.tier3Behavior, // Behavior name for display
+                total: xpBreakdown.total,
+                leveledUp: leveledUp
             }
         };
 
@@ -866,21 +1038,19 @@ Focus on concrete observations from ${childName}'s actual work and provide pract
 }
 
 // Track session time - receives heartbeat updates from frontend
+// Accumulates precise seconds and derives minutes for display
 router.post('/track-time', isAuthenticated, async (req, res) => {
     try {
         const { activeSeconds } = req.body;
         const userId = req.user?._id;
 
         if (!userId) return res.status(401).json({ message: "Not authenticated." });
-        if (activeSeconds === undefined) {
-            return res.status(400).json({ message: "activeSeconds is required" });
+        if (activeSeconds === undefined || activeSeconds < 0) {
+            return res.status(400).json({ message: "Valid activeSeconds is required" });
         }
 
-        // Convert seconds to minutes (rounded)
-        const activeMinutes = Math.round(activeSeconds / 60);
-
-        if (activeMinutes === 0) {
-            // Less than 30 seconds, acknowledge but don't update
+        // Don't track if less than 1 second
+        if (activeSeconds < 1) {
             return res.status(200).json({ message: "Time tracked (below minimum)" });
         }
 
@@ -889,15 +1059,33 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Update user's total active tutoring minutes
-        user.totalActiveTutoringMinutes = (user.totalActiveTutoringMinutes || 0) + activeMinutes;
-        user.weeklyActiveTutoringMinutes = (user.weeklyActiveTutoringMinutes || 0) + activeMinutes;
+        // IMPROVED: Track precise seconds and derive minutes
+        // This prevents loss of time from rounding (e.g., 5 heartbeats of 25 seconds each = 2 minutes, not 0)
+
+        // Initialize tracking fields if they don't exist
+        if (!user.totalActiveSeconds) user.totalActiveSeconds = (user.totalActiveTutoringMinutes || 0) * 60;
+        if (!user.weeklyActiveSeconds) user.weeklyActiveSeconds = (user.weeklyActiveTutoringMinutes || 0) * 60;
+
+        // Accumulate seconds
+        user.totalActiveSeconds = (user.totalActiveSeconds || 0) + activeSeconds;
+        user.weeklyActiveSeconds = (user.weeklyActiveSeconds || 0) + activeSeconds;
+
+        // Update minutes (derived from seconds for display)
+        user.totalActiveTutoringMinutes = Math.floor(user.totalActiveSeconds / 60);
+        user.weeklyActiveTutoringMinutes = Math.floor(user.weeklyActiveSeconds / 60);
 
         // Update active conversation if exists
         if (user.activeConversationId) {
             const conversation = await Conversation.findById(user.activeConversationId);
             if (conversation && conversation.isActive) {
-                conversation.activeMinutes = (conversation.activeMinutes || 0) + activeMinutes;
+                // Initialize activeSeconds if it doesn't exist (migrate from activeMinutes)
+                if (conversation.activeSeconds === undefined || conversation.activeSeconds === 0) {
+                    conversation.activeSeconds = (conversation.activeMinutes || 0) * 60;
+                }
+
+                // Accumulate seconds and derive minutes
+                conversation.activeSeconds = (conversation.activeSeconds || 0) + activeSeconds;
+                conversation.activeMinutes = Math.floor(conversation.activeSeconds / 60);
                 conversation.lastActivity = new Date();
 
                 // CRITICAL FIX: Clean invalid messages before save to prevent validation errors
@@ -920,7 +1108,9 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         res.status(200).json({
             message: "Time tracked successfully",
             totalMinutes: user.totalActiveTutoringMinutes,
-            weeklyMinutes: user.weeklyActiveTutoringMinutes
+            weeklyMinutes: user.weeklyActiveTutoringMinutes,
+            totalSeconds: user.totalActiveSeconds,
+            weeklySeconds: user.weeklyActiveSeconds
         });
 
     } catch (error) {

@@ -8,9 +8,10 @@ class AvatarBuilder {
     constructor() {
         this.baseUrl = 'https://api.dicebear.com/7.x';
 
-        // Get redirect URL from query params
+        // Get redirect URL and tutor selection from query params
         const urlParams = new URLSearchParams(window.location.search);
         this.fromPage = urlParams.get('from') || 'index';
+        this.preSelectedTutor = urlParams.get('tutor') || null;
 
         // Update back link based on where we came from
         this.updateBackLink();
@@ -82,6 +83,9 @@ class AvatarBuilder {
             const response = await fetch('/api/avatar/config');
             if (response.ok) {
                 const data = await response.json();
+                this.gallery = data.gallery || [];
+                this.updateGalleryStatus();
+
                 if (data.config) {
                     this.config = { ...this.config, ...data.config };
                     this.updateUIFromConfig();
@@ -89,6 +93,21 @@ class AvatarBuilder {
             }
         } catch (error) {
             console.log('No saved avatar config found, using defaults');
+            this.gallery = [];
+        }
+    }
+
+    updateGalleryStatus() {
+        const statusEl = document.getElementById('gallery-status');
+        if (statusEl) {
+            const slotsUsed = this.gallery.length;
+            if (slotsUsed < 3) {
+                statusEl.textContent = `${3 - slotsUsed} of 3 avatar slots available`;
+                statusEl.style.color = '#28a745';
+            } else {
+                statusEl.textContent = 'All 3 slots full - saving will replace oldest';
+                statusEl.style.color = '#ffc107';
+            }
         }
     }
 
@@ -364,11 +383,43 @@ class AvatarBuilder {
                 throw new Error(data.message || 'Failed to save avatar');
             }
 
-            this.showToast('Avatar saved!', 'success');
+            // Update gallery status with response
+            if (data.gallery) {
+                this.gallery = data.gallery;
+                this.updateGalleryStatus();
+            }
 
-            // Redirect back to the page we came from after a short delay
+            const slotNum = (data.slotIndex !== undefined) ? data.slotIndex + 1 : '?';
+
+            // If tutor was pre-selected, save that too and go straight to chat
+            if (this.preSelectedTutor) {
+                const tutorResponse = await csrfFetch('/api/user/settings', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        selectedTutorId: this.preSelectedTutor,
+                        selectedAvatarId: `gallery-${data.slotIndex}`
+                    })
+                });
+
+                if (tutorResponse.ok) {
+                    this.showToast(`Avatar saved to slot ${slotNum}! Starting chat...`, 'success');
+                    setTimeout(() => {
+                        window.location.href = '/chat.html';
+                    }, 1000);
+                    return;
+                }
+            }
+
+            this.showToast(`Avatar saved to slot ${slotNum}!`, 'success');
+
+            // Redirect back to pick-tutor with flag to auto-select custom avatar
             setTimeout(() => {
-                window.location.href = this.getRedirectUrl();
+                if (this.fromPage === 'pick-tutor') {
+                    window.location.href = '/pick-tutor.html?avatar=custom';
+                } else {
+                    window.location.href = this.getRedirectUrl();
+                }
             }, 1500);
 
         } catch (error) {

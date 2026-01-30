@@ -14,6 +14,7 @@ class SessionManager {
     this.IDLE_TIMEOUT = 20 * 60 * 1000; // 20 minutes in milliseconds
     this.WARNING_TIME = 2 * 60 * 1000;  // 2 minutes warning before timeout
     this.HEARTBEAT_INTERVAL = 30 * 1000; // 30 seconds
+    this.IDLE_THRESHOLD = 60 * 1000; // Consider idle after 60 seconds of no activity
 
     this.lastActivity = Date.now();
     this.warningShown = false;
@@ -21,6 +22,12 @@ class SessionManager {
     this.idleCheckTimer = null;
     this.warningTimer = null;
     this.sessionStartTime = Date.now();
+
+    // IMPROVED: Precise active time tracking
+    this.lastActiveTimestamp = Date.now(); // When we last recorded activity
+    this.accumulatedActiveSeconds = 0; // Seconds accumulated since last heartbeat
+    this.isCurrentlyActive = true; // Whether user is currently active (not idle)
+
     this.sessionData = {
       problemsAttempted: 0,
       problemsSolved: 0,
@@ -62,8 +69,22 @@ class SessionManager {
   recordActivity() {
     const now = Date.now();
     const wasIdle = (now - this.lastActivity) > this.IDLE_TIMEOUT;
+    const wasInactive = (now - this.lastActivity) > this.IDLE_THRESHOLD;
 
+    // IMPROVED: Track active time precisely
+    // If user was active (not idle), add the time since last activity
+    if (this.isCurrentlyActive && !wasInactive) {
+      const secondsSinceLastActivity = Math.floor((now - this.lastActiveTimestamp) / 1000);
+      // Only count time if it's reasonable (less than idle threshold to avoid counting idle time)
+      if (secondsSinceLastActivity > 0 && secondsSinceLastActivity < (this.IDLE_THRESHOLD / 1000)) {
+        this.accumulatedActiveSeconds += secondsSinceLastActivity;
+      }
+    }
+
+    // Update timestamps
     this.lastActivity = now;
+    this.lastActiveTimestamp = now;
+    this.isCurrentlyActive = true;
 
     // If user was idle and warning was shown, dismiss it
     if (this.warningShown) {
@@ -76,19 +97,48 @@ class SessionManager {
     }
   }
 
+  // Called periodically to check if user became idle
+  checkAndUpdateActiveTime() {
+    const now = Date.now();
+    const timeSinceLastActivity = now - this.lastActivity;
+
+    if (timeSinceLastActivity > this.IDLE_THRESHOLD) {
+      // User is idle - stop counting active time
+      this.isCurrentlyActive = false;
+    } else if (this.isCurrentlyActive) {
+      // User is still active - accumulate time
+      const secondsSinceLastRecord = Math.floor((now - this.lastActiveTimestamp) / 1000);
+      if (secondsSinceLastRecord > 0 && secondsSinceLastRecord < (this.IDLE_THRESHOLD / 1000)) {
+        this.accumulatedActiveSeconds += secondsSinceLastRecord;
+        this.lastActiveTimestamp = now;
+      }
+    }
+  }
+
   startHeartbeat() {
     // Send initial heartbeat
     this.sendHeartbeat();
 
     // Send heartbeat every 30 seconds
     this.heartbeatTimer = setInterval(() => {
+      // Check and update active time before sending
+      this.checkAndUpdateActiveTime();
       this.sendHeartbeat();
     }, this.HEARTBEAT_INTERVAL);
   }
 
   async sendHeartbeat() {
     try {
-      const response = await csrfFetch('/api/session/heartbeat', {
+      // Check active time one more time before sending
+      this.checkAndUpdateActiveTime();
+
+      // Get the accumulated active seconds and reset the counter
+      const activeSecondsToSend = this.accumulatedActiveSeconds;
+      this.accumulatedActiveSeconds = 0;
+      this.lastActiveTimestamp = Date.now();
+
+      // Send heartbeat for session keepalive
+      const heartbeatResponse = await csrfFetch('/api/session/heartbeat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -100,8 +150,30 @@ class SessionManager {
         credentials: 'include'
       });
 
-      if (!response.ok) {
-        console.error('[SessionManager] Heartbeat failed:', response.status);
+      if (!heartbeatResponse.ok) {
+        console.error('[SessionManager] Heartbeat failed:', heartbeatResponse.status);
+      }
+
+      // Send active time tracking if we have any active seconds
+      if (activeSecondsToSend > 0) {
+        const trackTimeResponse = await csrfFetch('/api/chat/track-time', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            activeSeconds: activeSecondsToSend
+          }),
+          credentials: 'include'
+        });
+
+        if (trackTimeResponse.ok) {
+          console.log(`[SessionManager] Tracked ${activeSecondsToSend}s of active time`);
+        } else {
+          console.error('[SessionManager] Track time failed:', trackTimeResponse.status);
+          // Add the seconds back if tracking failed
+          this.accumulatedActiveSeconds += activeSecondsToSend;
+        }
       }
     } catch (error) {
       console.error('[SessionManager] Heartbeat error:', error);
@@ -226,6 +298,23 @@ class SessionManager {
     // Calculate session duration
     this.sessionData.timeSpent = Date.now() - this.sessionStartTime;
 
+    // IMPROVED: Send any remaining active time before logging out
+    this.checkAndUpdateActiveTime();
+    if (this.accumulatedActiveSeconds > 0) {
+      try {
+        await csrfFetch('/api/chat/track-time', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ activeSeconds: this.accumulatedActiveSeconds }),
+          credentials: 'include'
+        });
+        console.log(`[SessionManager] Final time tracked: ${this.accumulatedActiveSeconds}s`);
+        this.accumulatedActiveSeconds = 0;
+      } catch (error) {
+        console.error('[SessionManager] Error tracking final time:', error);
+      }
+    }
+
     // Save mastery progress if on mastery page
     await this.saveMasteryProgress();
 
@@ -321,6 +410,14 @@ class SessionManager {
   setupUnloadHandler() {
     // Handle tab/browser close
     window.addEventListener('beforeunload', (e) => {
+      // IMPROVED: Track and send any remaining active time
+      this.checkAndUpdateActiveTime();
+      if (this.accumulatedActiveSeconds > 0) {
+        navigator.sendBeacon('/api/chat/track-time',
+          JSON.stringify({ activeSeconds: this.accumulatedActiveSeconds })
+        );
+      }
+
       // Use sendBeacon for reliable async request during page unload
       const payload = JSON.stringify({
         reason: 'browser_close',

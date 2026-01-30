@@ -1819,7 +1819,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 return `@@LATEX_BLOCK_${index}@@`;
             });
 
-            // Parse markdown with protected LaTeX
+            // Extract and protect inline visual HTML (SVG containers from inlineChatVisuals)
+            // These are already rendered HTML that shouldn't be parsed by marked
+            // Pattern matches: <div class="icv-container...>...</div> (outermost container)
+            const visualBlocks = [];
+            protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
+                const index = visualBlocks.length;
+                visualBlocks.push(match);
+                return `@@VISUAL_BLOCK_${index}@@`;
+            });
+            // Also protect non-SVG visuals (like fraction displays)
+            protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
+                const index = visualBlocks.length;
+                visualBlocks.push(match);
+                return `@@VISUAL_BLOCK_${index}@@`;
+            });
+
+            // Parse markdown with protected LaTeX and visuals
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
 
             // Restore LaTeX blocks
@@ -1828,10 +1844,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
             });
 
+            // Restore visual blocks
+            visualBlocks.forEach((block, index) => {
+                finalHtml = finalHtml.replace(`@@VISUAL_BLOCK_${index}@@`, block);
+            });
+
             // Sanitize HTML to prevent XSS attacks
+            // Extended to allow inline visual elements (SVG charts, graphs, etc.)
             const sanitizedHtml = DOMPurify.sanitize(finalHtml, {
-                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span'],
-                ALLOWED_ATTR: ['href', 'class', 'target', 'rel']
+                ALLOWED_TAGS: [
+                    // Basic formatting
+                    'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'label',
+                    // Form elements for interactive visuals
+                    'input', 'button',
+                    // SVG elements for charts/graphs
+                    'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
+                    // Images
+                    'img'
+                ],
+                ALLOWED_ATTR: [
+                    'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
+                    // SVG attributes
+                    'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
+                    'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
+                    'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
+                    // Form/interactive attributes
+                    'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
+                    // Data attributes for visuals
+                    'data-config', 'data-diagram-id', 'data-value', 'data-label'
+                ]
             });
             textNode.innerHTML = sanitizedHtml;
         } else {
@@ -2397,7 +2439,33 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // Process inline chat visuals (function graphs, number lines, fractions, charts)
+        let hasInlineVisuals = false;
+        if (window.inlineChatVisuals) {
+            try {
+                const visualResult = window.inlineChatVisuals.processMessage(aiText);
+                aiText = visualResult.html;
+                hasInlineVisuals = visualResult.hasVisuals;
+                if (hasInlineVisuals) {
+                    console.log('[InlineChatVisuals] Processed inline visual commands');
+                }
+            } catch (error) {
+                console.error('[InlineChatVisuals] Error processing visuals:', error);
+            }
+        }
+
         appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+
+        // Initialize inline visuals after message is in DOM
+        if (hasInlineVisuals && window.inlineChatVisuals) {
+            const messageElements = document.querySelectorAll('.message.ai');
+            const latestMessage = messageElements[messageElements.length - 1];
+            if (latestMessage) {
+                setTimeout(() => {
+                    window.inlineChatVisuals.initializeVisuals(latestMessage);
+                }, 100);
+            }
+        }
 
         // Notify whiteboard-chat layout manager about new AI message
         if (window.whiteboardChatLayout) {
@@ -2442,35 +2510,57 @@ document.addEventListener("DOMContentLoaded", () => {
             updateGamificationDisplay();
         }
 
-        if (data.specialXpAwarded) {
+        // =====================================================
+        // XP LADDER DISPLAY (Three Tiers)
+        // Tier 1: Silent (no display)
+        // Tier 2: Minimal (correct answer acknowledgment)
+        // Tier 3: Ceremonial (AI provides explanation, we animate)
+        // =====================================================
+        if (data.xpLadder) {
+            const xp = data.xpLadder;
+
+            // LEVEL UP - Always celebrate
+            if (xp.leveledUp) {
+                triggerXpAnimation(`LEVEL UP! Level ${data.userLevel}`, true, false);
+            }
+
+            // TIER 3: Core Behavior XP (ceremonial - AI already explained why)
+            if (xp.tier3 > 0 && xp.tier3Behavior) {
+                // Show big XP animation for identity-building moments
+                const behaviorLabels = {
+                    'explained_reasoning': 'Great reasoning!',
+                    'caught_own_error': 'Self-correction!',
+                    'strategy_selection': 'Smart strategy!',
+                    'persistence': 'Perseverance!',
+                    'transfer': 'Knowledge transfer!',
+                    'taught_back': 'Teaching mastery!'
+                };
+                const label = behaviorLabels[xp.tier3Behavior] || 'Exceptional!';
+                triggerXpAnimation(`🎖️ +${xp.tier3} XP - ${label}`, false, true);
+
+                if (typeof window.showXpNotification === 'function') {
+                    window.showXpNotification(xp.tier3, label);
+                }
+            }
+            // TIER 2: Performance XP (minimal acknowledgment)
+            else if (xp.tier2 > 0) {
+                // Subtle notification for correct answers
+                const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
+                if (typeof window.showXpNotification === 'function') {
+                    window.showXpNotification(xp.tier2, tier2Label);
+                }
+                // No big animation - just the notification
+            }
+            // TIER 1: Silent (no display at all)
+            // The +2 XP is added to their total but never shown
+        }
+        // Legacy fallback for old response format
+        else if (data.specialXpAwarded) {
             const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
             triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
-
-            // Show XP notification in live feed
-            if (typeof window.showXpNotification === 'function') {
-                // Use xpAwarded if available, otherwise parse from specialXpAwarded
-                const xpAmount = data.xpAwarded || (data.xpAmount || 10);
-                const reason = data.specialXpAwarded.replace('🎉 ', '').replace('⭐ ', '').replace('🎊 ', '').split('!')[0];
-                window.showXpNotification(xpAmount, reason);
-            }
-        } else if (data.xpAwarded && typeof window.showXpNotification === 'function') {
-            // Show regular XP notification even without bonus
-            window.showXpNotification(data.xpAwarded, 'Question answered');
         }
 
-        // Smart streak tracking - only when AI explicitly signals problem correctness
-        // Prevents false negatives from breaking streaks unfairly
-        if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
-            // problemResult can be: 'correct', 'incorrect', 'partial'
-            // Only track definitive correct/incorrect (skip partial/ambiguous)
-            if (data.problemResult === 'correct') {
-                window.trackProblemAttempt(true);
-            } else if (data.problemResult === 'incorrect') {
-                // Still show streak counter but don't break it harshly
-                // Could add "Challenge this" button in future
-                window.trackProblemAttempt(false);
-            }
-        }
+        // STREAK COUNTER SHELVED FOR BETA
 
     } catch (error) {
         console.error("Chat error:", error);

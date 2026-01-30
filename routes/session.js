@@ -8,7 +8,8 @@ const logger = require('../utils/logger').child({ service: 'session-routes' });
 const {
   endSession,
   recordHeartbeat,
-  saveMasteryProgress
+  saveMasteryProgress,
+  cleanupStaleSessions
 } = require('../services/sessionService');
 
 /**
@@ -23,6 +24,10 @@ router.post('/heartbeat', isAuthenticated, async (req, res) => {
 
     const result = await recordHeartbeat(userId, sessionId, metrics);
 
+    // Run cleanup in background (throttled to once per 5 min)
+    // This ensures stale sessions from other users get cleaned up
+    throttledCleanup();
+
     res.json(result);
   } catch (error) {
     logger.error('Heartbeat error', { error, userId: req.user?._id });
@@ -33,14 +38,37 @@ router.post('/heartbeat', isAuthenticated, async (req, res) => {
 /**
  * POST /api/session/end
  * End session and generate summary
+ * Handles both regular JSON requests and sendBeacon (text/plain)
  */
-router.post('/end', isAuthenticated, async (req, res) => {
+router.post('/end', async (req, res) => {
   try {
-    const userId = req.user._id.toString();
-    const sessionId = req.sessionID;
-    const { reason, sessionData } = req.body;
+    // Handle sendBeacon which sends as text/plain
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        logger.warn('Failed to parse session end body as JSON');
+      }
+    }
 
-    const summary = await endSession(userId, sessionId, reason, sessionData);
+    // Try to get user from session (regular requests) or skip if sendBeacon
+    let userId = req.user?._id?.toString();
+
+    // If no authenticated user, try to extract from the request or session
+    if (!userId && req.session?.passport?.user) {
+      userId = req.session.passport.user;
+    }
+
+    if (!userId) {
+      // For sendBeacon without auth, just acknowledge
+      return res.json({ success: true, message: 'Acknowledged' });
+    }
+
+    const sessionId = req.sessionID;
+    const { reason, sessionData } = body || {};
+
+    const summary = await endSession(userId, sessionId, reason || 'unknown', sessionData || {});
 
     res.json({
       success: true,
@@ -69,5 +97,46 @@ router.post('/save-mastery', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Failed to save mastery progress' });
   }
 });
+
+/**
+ * POST /api/session/cleanup-stale
+ * Clean up stale sessions (can be called manually or by cron)
+ */
+router.post('/cleanup-stale', isAuthenticated, async (req, res) => {
+  try {
+    // Only allow admins or run as system task
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+
+    const cleaned = await cleanupStaleSessions(60); // 1 hour threshold
+
+    res.json({
+      success: true,
+      cleanedSessions: cleaned
+    });
+  } catch (error) {
+    logger.error('Cleanup stale sessions error', { error });
+    res.status(500).json({ error: 'Failed to cleanup stale sessions' });
+  }
+});
+
+// Throttled cleanup - runs at most once every 5 minutes
+let lastCleanupTime = 0;
+const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
+async function throttledCleanup() {
+  const now = Date.now();
+  if (now - lastCleanupTime > CLEANUP_INTERVAL) {
+    lastCleanupTime = now;
+    // Run cleanup in background, don't wait
+    cleanupStaleSessions(60).catch(err => {
+      logger.error('Background cleanup failed', { error: err });
+    });
+  }
+}
+
+// Export throttledCleanup for use in other routes
+router.throttledCleanup = throttledCleanup;
 
 module.exports = router;

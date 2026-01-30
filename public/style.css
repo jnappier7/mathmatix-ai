@@ -6037,6 +6037,17 @@ body.landing-page-body:has(.hero-section) main {
     overflow: visible;
 }
 
+/* Allow login page to scroll when content overflows */
+body.landing-page-body:has(.login-container) {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+body.landing-page-body:has(.login-container) main {
+    overflow: visible;
+}
+
 /* Scrollable form wrapper for long forms */
 .scrollable-form-wrapper {
     max-height: none;
