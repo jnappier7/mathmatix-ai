@@ -111,6 +111,36 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         // Create new conversation if: no conversation, inactive, OR it's a mastery conversation
         // This prevents mastery messages from appearing in regular chat
         if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
+            // IMPROVED: End the old session properly before creating a new one
+            // This handles the case where student closed tab without logging out
+            if (activeConversation && activeConversation.isActive && activeConversation.messages.length > 0) {
+                try {
+                    const { generateSessionSummary: generateAISummary, detectTopic } = require('../utils/activitySummarizer');
+
+                    // Generate summary for the old session
+                    activeConversation.currentTopic = activeConversation.currentTopic || detectTopic(activeConversation.messages);
+                    const studentName = `${user.firstName} ${user.lastName}`;
+
+                    try {
+                        const aiSummary = await generateAISummary(activeConversation, studentName);
+                        activeConversation.summary = aiSummary;
+                    } catch (summaryError) {
+                        // Fallback summary
+                        activeConversation.summary = `${studentName} worked on ${activeConversation.currentTopic || 'mathematics'} for ${activeConversation.activeMinutes || 0} minutes.`;
+                    }
+
+                    activeConversation.isActive = false;
+                    await activeConversation.save();
+                    console.log(`📝 [Session] Auto-ended previous session ${activeConversation._id} for user ${user._id}`);
+                } catch (endError) {
+                    console.error('[Session] Error auto-ending previous session:', endError);
+                    // Still mark as inactive even if summary fails
+                    activeConversation.isActive = false;
+                    activeConversation.summary = `Session ended - ${activeConversation.activeMinutes || 0} minutes`;
+                    await activeConversation.save();
+                }
+            }
+
             activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
             user.activeConversationId = activeConversation._id;
             await user.save();
