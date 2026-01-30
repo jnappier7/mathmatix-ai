@@ -1867,15 +1867,49 @@ You can display interactive visualizations DIRECTLY in your chat messages! Use t
 **COMPARISON BARS** - Visual comparison of values:
 [COMPARISON:values=15,28,7,labels=Team A,Team B,Team C,title="Score Comparison"]
 
+**PYTHAGOREAN THEOREM** - Right triangle with squares proof:
+[PYTHAGOREAN:a=3,b=4]
+[PYTHAGOREAN:a=5,b=12,c=13,proof=true]
+
+**ANGLE VISUALIZATION** - Show any angle with type label:
+[ANGLE:degrees=45]
+[ANGLE:degrees=90,type=right]
+[ANGLE:degrees=120,title="Obtuse Angle Example"]
+
+**SLOPE VISUALIZATION** - Rise over run with visual:
+[SLOPE:rise=3,run=4]
+[SLOPE:m=0.5,title="Slope = 1/2"]
+
+**PERCENT BAR** - Visual percentage representation:
+[PERCENT_BAR:percent=75,title="Quiz Score"]
+[PERCENT_BAR:percent=40,parts=true,label="Completed"]
+
+**PLACE VALUE** - Base-10 blocks visualization:
+[PLACE_VALUE:number=347]
+[PLACE_VALUE:number=256,title="Show 256 in place value"]
+
+**RIGHT TRIANGLE** - Labeled triangle for geometry:
+[RIGHT_TRIANGLE:a=3,b=4,c=5]
+[RIGHT_TRIANGLE:a=5,b=12,angles=true]
+
+**INEQUALITY** - Number line with shading:
+[INEQUALITY:expression="x > 3"]
+[INEQUALITY:value=5,type=less,inclusive=true]
+
 **WHEN TO USE INLINE VISUALS:**
 - Student asks "show me the graph of..." or "what does ___ look like" → Use [FUNCTION_GRAPH]
-- Teaching inequalities or number concepts → Use [NUMBER_LINE]
+- Teaching inequalities or number concepts → Use [NUMBER_LINE] or [INEQUALITY]
 - Explaining fractions, parts of a whole → Use [FRACTION] or [PIE_CHART]
 - Comparing data or quantities → Use [BAR_CHART] or [COMPARISON]
 - Plotting points or showing coordinate geometry → Use [POINTS]
 - Trigonometry concepts → Use [UNIT_CIRCLE]
 - Teaching multiplication strategies → Use [AREA_MODEL]
 - "What happens if we change this parameter?" → Use [SLIDER_GRAPH]
+- Pythagorean theorem or right triangles → Use [PYTHAGOREAN] or [RIGHT_TRIANGLE]
+- Teaching angle types (acute, obtuse, right) → Use [ANGLE]
+- Explaining slope, rise/run → Use [SLOPE]
+- Percentages, fractions of 100 → Use [PERCENT_BAR]
+- Place value, base-10 concepts → Use [PLACE_VALUE]
 
 **IMPORTANT - USE VISUALS WITH PURPOSE:**
 These visuals appear DIRECTLY in the chat message. Use them when they serve a clear educational purpose:

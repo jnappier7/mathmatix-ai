@@ -531,7 +531,15 @@ function hasInlineVisualCommands(response) {
         /\[UNIT_CIRCLE/,
         /\[AREA_MODEL:/,
         /\[SLIDER_GRAPH:/,
-        /\[COMPARISON:/
+        /\[COMPARISON:/,
+        // New enhanced visuals
+        /\[PYTHAGOREAN:/,
+        /\[ANGLE:/,
+        /\[SLOPE:/,
+        /\[PERCENT_BAR:/,
+        /\[PLACE_VALUE:/,
+        /\[RIGHT_TRIANGLE:/,
+        /\[INEQUALITY:/
     ];
     return inlinePatterns.some(p => p.test(response));
 }
