@@ -408,33 +408,76 @@ class SessionManager {
   }
 
   setupUnloadHandler() {
-    // Handle tab/browser close
-    window.addEventListener('beforeunload', (e) => {
-      // IMPROVED: Track and send any remaining active time
+    // Track if we've already sent the end session request
+    this.sessionEndSent = false;
+
+    // Helper to send session end with proper content type
+    const sendSessionEnd = (reason) => {
+      if (this.sessionEndSent) return;
+      this.sessionEndSent = true;
+
+      // Track remaining active time
       this.checkAndUpdateActiveTime();
       if (this.accumulatedActiveSeconds > 0) {
-        navigator.sendBeacon('/api/chat/track-time',
-          JSON.stringify({ activeSeconds: this.accumulatedActiveSeconds })
+        const timeBlob = new Blob(
+          [JSON.stringify({ activeSeconds: this.accumulatedActiveSeconds })],
+          { type: 'application/json' }
         );
+        navigator.sendBeacon('/api/chat/track-time', timeBlob);
       }
 
-      // Use sendBeacon for reliable async request during page unload
-      const payload = JSON.stringify({
-        reason: 'browser_close',
+      // Save mastery progress
+      const masteryProgress = this.getMasteryProgressFromPage();
+      if (masteryProgress) {
+        const masteryBlob = new Blob(
+          [JSON.stringify({ masteryProgress })],
+          { type: 'application/json' }
+        );
+        navigator.sendBeacon('/api/session/save-mastery', masteryBlob);
+      }
+
+      // Send session end with proper content type (Blob ensures correct headers)
+      const payload = {
+        reason,
         sessionData: {
           ...this.sessionData,
           timeSpent: Date.now() - this.sessionStartTime
         }
-      });
+      };
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      navigator.sendBeacon('/api/session/end', blob);
 
-      // Try to save mastery progress synchronously
-      const masteryProgress = this.getMasteryProgressFromPage();
-      if (masteryProgress) {
-        navigator.sendBeacon('/api/session/save-mastery', JSON.stringify({ masteryProgress }));
+      console.log(`[SessionManager] Session end beacon sent: ${reason}`);
+    };
+
+    // 1. beforeunload - fires when user is leaving the page
+    window.addEventListener('beforeunload', () => {
+      sendSessionEnd('browser_close');
+    });
+
+    // 2. pagehide - more reliable than beforeunload on mobile and modern browsers
+    window.addEventListener('pagehide', (e) => {
+      // e.persisted indicates if page might be restored from bfcache
+      if (!e.persisted) {
+        sendSessionEnd('page_hide');
       }
+    });
 
-      // Send session end beacon
-      navigator.sendBeacon('/api/session/end', payload);
+    // 3. visibilitychange - detect tab becoming hidden (might be closing)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        // Save state but don't end session yet (user might come back)
+        // Just ensure we track time up to this point
+        this.checkAndUpdateActiveTime();
+        if (this.accumulatedActiveSeconds > 0) {
+          const timeBlob = new Blob(
+            [JSON.stringify({ activeSeconds: this.accumulatedActiveSeconds })],
+            { type: 'application/json' }
+          );
+          navigator.sendBeacon('/api/chat/track-time', timeBlob);
+          this.accumulatedActiveSeconds = 0;
+        }
+      }
     });
   }
 
