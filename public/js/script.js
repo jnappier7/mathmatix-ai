@@ -1829,9 +1829,30 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             // Sanitize HTML to prevent XSS attacks
+            // Extended to allow inline visual elements (SVG charts, graphs, etc.)
             const sanitizedHtml = DOMPurify.sanitize(finalHtml, {
-                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span'],
-                ALLOWED_ATTR: ['href', 'class', 'target', 'rel']
+                ALLOWED_TAGS: [
+                    // Basic formatting
+                    'p', 'br', 'strong', 'em', 'u', 'code', 'pre', 'ul', 'ol', 'li', 'blockquote',
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a', 'span', 'div', 'label',
+                    // Form elements for interactive visuals
+                    'input', 'button',
+                    // SVG elements for charts/graphs
+                    'svg', 'g', 'path', 'line', 'circle', 'rect', 'polygon', 'text', 'tspan',
+                    // Images
+                    'img'
+                ],
+                ALLOWED_ATTR: [
+                    'href', 'class', 'target', 'rel', 'id', 'style', 'title', 'alt', 'src',
+                    // SVG attributes
+                    'viewBox', 'width', 'height', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
+                    'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
+                    'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
+                    // Form/interactive attributes
+                    'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
+                    // Data attributes for visuals
+                    'data-config', 'data-diagram-id', 'data-value', 'data-label'
+                ]
             });
             textNode.innerHTML = sanitizedHtml;
         } else {
@@ -2397,7 +2418,33 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // Process inline chat visuals (function graphs, number lines, fractions, charts)
+        let hasInlineVisuals = false;
+        if (window.inlineChatVisuals) {
+            try {
+                const visualResult = window.inlineChatVisuals.processMessage(aiText);
+                aiText = visualResult.html;
+                hasInlineVisuals = visualResult.hasVisuals;
+                if (hasInlineVisuals) {
+                    console.log('[InlineChatVisuals] Processed inline visual commands');
+                }
+            } catch (error) {
+                console.error('[InlineChatVisuals] Error processing visuals:', error);
+            }
+        }
+
         appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+
+        // Initialize inline visuals after message is in DOM
+        if (hasInlineVisuals && window.inlineChatVisuals) {
+            const messageElements = document.querySelectorAll('.message.ai');
+            const latestMessage = messageElements[messageElements.length - 1];
+            if (latestMessage) {
+                setTimeout(() => {
+                    window.inlineChatVisuals.initializeVisuals(latestMessage);
+                }, 100);
+            }
+        }
 
         // Notify whiteboard-chat layout manager about new AI message
         if (window.whiteboardChatLayout) {
