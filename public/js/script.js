@@ -1527,21 +1527,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // AI-generated personalized welcome message
-            // Show thinking indicator while waiting for AI response
+            // AI-initiated greeting via chat endpoint
+            // The AI "initiates" the conversation using context about the student
             showThinkingIndicator(true);
 
-            const res = await fetch(`/api/welcome-message`, {credentials: 'include'});
-            const data = await res.json();
+            const res = await csrfFetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isGreeting: true })
+            });
 
+            const data = await res.json();
             showThinkingIndicator(false);
 
-            if (data.greeting) {
-                appendMessage(data.greeting, "ai");
+            if (data.text) {
+                appendMessage(data.text, "ai");
             }
         } catch (error) {
             showThinkingIndicator(false);
-            appendMessage("Hello! Let's solve some math problems.", "ai");
+            appendMessage("Hey! What do you need help with?", "ai");
         }
     }
 

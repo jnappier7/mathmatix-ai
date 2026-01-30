@@ -23,16 +23,20 @@ const { injectFewShotExamples } = require('../utils/visualCommandExamples');
 const { detectAndFetchResource } = require('../utils/resourceDetector');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 const { processAIResponse } = require('../utils/chatBoardParser');
+const ScreenerSession = require('../models/screenerSession');
+const { needsAssessment } = require('../services/chatService');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
 router.post('/', isAuthenticated, async (req, res) => {
-    const { message, role, childId, responseTime } = req.body;
-const userId = req.user?._id;
-if (!message) return res.status(400).json({ message: "Message is required." });
- if (message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
+    const { message, role, childId, responseTime, isGreeting } = req.body;
+    const userId = req.user?._id;
+
+    // Allow empty message only for greeting requests
+    if (!isGreeting && !message) return res.status(400).json({ message: "Message is required." });
+    if (message && message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
 
     // Log response time if provided (from ghost timer)
     if (responseTime) {
@@ -42,6 +46,13 @@ if (!message) return res.status(400).json({ message: "Message is required." });
     // Handle parent chat separately
     if (role === 'parent' && childId) {
         return handleParentChat(req, res, userId, childId, message);
+    }
+
+    // ========== GREETING MODE: AI initiates conversation ==========
+    // When isGreeting is true, we build a context-rich "introduction" message
+    // that the user doesn't see, but the AI responds to naturally
+    if (isGreeting) {
+        return handleGreetingRequest(req, res, userId);
     }
 
     // SAFETY FILTER: Block inappropriate content
@@ -1134,5 +1145,232 @@ router.get('/last-session', isAuthenticated, async (req, res) => {
         res.status(500).json({ message: "Failed to fetch last session" });
     }
 });
+
+// ========== GREETING HANDLER: AI-initiated conversation ==========
+// Builds a context-rich "ghost message" the user doesn't see,
+// but the AI responds to naturally - creating the illusion of AI initiating
+async function handleGreetingRequest(req, res, userId) {
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found." });
+
+        // Get or create conversation (same logic as main chat)
+        let activeConversation;
+        if (user.activeConversationId) {
+            activeConversation = await Conversation.findById(user.activeConversationId);
+        }
+        if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
+            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+            user.activeConversationId = activeConversation._id;
+            await user.save();
+        }
+
+        // Gather context for the ghost message
+        const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
+        const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+
+        // Get temporal context (EST/EDT)
+        const now = new Date();
+        const estTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+        const hour = estTime.getHours();
+        const dayOfWeek = estTime.getDay();
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        let timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isLateNight = hour >= 21 || hour < 6;
+
+        // Check assessment/screener status
+        const activeScreenerSession = await ScreenerSession.getActiveSession(userId);
+        const assessmentNeeded = await needsAssessment(userId);
+
+        // Get last conversation context
+        let lastSessionContext = '';
+        let strugglingWith = '';
+
+        if (activeConversation.messages && activeConversation.messages.length > 0) {
+            // Recent messages in current conversation
+            const recentTopics = activeConversation.messages
+                .filter(m => m.role === 'assistant')
+                .slice(-3)
+                .map(m => m.content.substring(0, 100))
+                .join(' ');
+            if (activeConversation.currentTopic) {
+                lastSessionContext = `Last time we worked on ${activeConversation.currentTopic}.`;
+            }
+            if (activeConversation.strugglingWith) {
+                strugglingWith = activeConversation.strugglingWith;
+            }
+        } else {
+            // Check archived conversations
+            const lastArchived = await Conversation.findOne({
+                userId: user._id,
+                summary: { $ne: null }
+            }).sort({ lastActivity: -1 });
+
+            if (lastArchived) {
+                if (lastArchived.summary) {
+                    lastSessionContext = `Last session: ${lastArchived.summary}`;
+                }
+                if (lastArchived.strugglingWith) {
+                    strugglingWith = lastArchived.strugglingWith;
+                }
+            }
+        }
+
+        // Build the context-rich ghost message (student "introducing" themselves)
+        let ghostMessageParts = [];
+
+        // Basic intro
+        ghostMessageParts.push(`Hi, I'm ${user.firstName}`);
+
+        // Grade/course context
+        if (user.gradeLevel) {
+            ghostMessageParts.push(`I'm in ${user.gradeLevel}`);
+        } else if (user.grade) {
+            ghostMessageParts.push(`I'm a ${user.grade} student`);
+        }
+        if (user.mathCourse) {
+            ghostMessageParts.push(`taking ${user.mathCourse}`);
+        }
+
+        // Time context
+        ghostMessageParts.push(`It's ${dayNames[dayOfWeek]} ${timeOfDay}${isLateNight ? ' (late)' : ''}${isWeekend ? ' (weekend)' : ''}`);
+
+        // User state context
+        if (!user.learningProfile?.rapportBuildingComplete) {
+            ghostMessageParts.push("This is my first time here");
+        } else if (activeScreenerSession && !user.assessmentCompleted) {
+            const questionsCompleted = activeScreenerSession.questionCount || 0;
+            ghostMessageParts.push(`I started a placement test but didn't finish (got through ${questionsCompleted} questions)`);
+        } else if (assessmentNeeded && user.assessmentCompleted) {
+            ghostMessageParts.push("It's been a while since my last placement test");
+        } else if (assessmentNeeded && !user.assessmentCompleted && (user.level || 1) < 5) {
+            ghostMessageParts.push("I haven't taken a placement test yet");
+        }
+
+        // Session context
+        if (lastSessionContext) {
+            ghostMessageParts.push(lastSessionContext);
+        }
+        if (strugglingWith) {
+            ghostMessageParts.push(`I've been having trouble with ${strugglingWith}`);
+        }
+
+        // Learning preferences from profile
+        if (user.learningProfile?.rapportAnswers) {
+            const answers = user.learningProfile.rapportAnswers;
+            if (answers.mathFeeling) ghostMessageParts.push(`Math makes me feel ${answers.mathFeeling}`);
+            if (answers.interests) ghostMessageParts.push(`I'm interested in ${answers.interests}`);
+        }
+
+        const ghostMessage = ghostMessageParts.join('. ') + '.';
+
+        console.log(`[Greeting] Ghost message for ${user.firstName}: "${ghostMessage.substring(0, 100)}..."`);
+
+        // Build messages for AI - the ghost message is the "user" message
+        // but we add a system instruction to respond as if initiating
+        const systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
+
+        const messagesForAI = [
+            { role: 'system', content: systemPrompt },
+            {
+                role: 'system',
+                content: `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.`
+            },
+            { role: 'user', content: ghostMessage }
+        ];
+
+        // Check if streaming is requested
+        const useStreaming = req.query.stream === 'true';
+
+        if (useStreaming) {
+            // STREAMING MODE
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+            res.flushHeaders();
+
+            try {
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 150 });
+                let fullResponse = '';
+
+                for await (const chunk of stream) {
+                    let content = '';
+                    if (chunk.choices?.[0]?.delta?.content) {
+                        content = chunk.choices[0].delta.content;
+                    }
+                    if (content) {
+                        fullResponse += content;
+                        res.write(`data: ${JSON.stringify({ chunk: content })}\n\n`);
+                    }
+                }
+
+                // Save greeting to conversation (AI message only, no user message)
+                activeConversation.messages.push({
+                    role: 'assistant',
+                    content: fullResponse.trim(),
+                    timestamp: new Date()
+                });
+                activeConversation.lastActivity = new Date();
+                await activeConversation.save();
+
+                // Send completion with metadata
+                res.write(`data: ${JSON.stringify({
+                    done: true,
+                    voiceId: currentTutor.voiceId,
+                    isGreeting: true
+                })}\n\n`);
+                res.end();
+
+            } catch (streamError) {
+                console.error('[Greeting] Stream error:', streamError);
+                res.write(`data: ${JSON.stringify({ error: 'Stream failed' })}\n\n`);
+                res.end();
+            }
+
+        } else {
+            // NON-STREAMING MODE
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 150 });
+            const greetingText = completion.choices[0].message.content.trim();
+
+            // Save greeting to conversation
+            activeConversation.messages.push({
+                role: 'assistant',
+                content: greetingText,
+                timestamp: new Date()
+            });
+            activeConversation.lastActivity = new Date();
+            await activeConversation.save();
+
+            res.json({
+                text: greetingText,
+                voiceId: currentTutor.voiceId,
+                isGreeting: true,
+                userXp: user.xp || 0,
+                userLevel: user.level || 1,
+                xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel
+            });
+        }
+
+    } catch (error) {
+        console.error('[Greeting] Error:', error);
+
+        // Fallback greeting
+        const fallbackGreetings = [
+            "Hey! What do you need help with?",
+            "Hi there! What are you working on?",
+            "Hey! Ready to do some math?"
+        ];
+        const fallback = fallbackGreetings[Math.floor(Math.random() * fallbackGreetings.length)];
+
+        res.json({
+            text: fallback,
+            voiceId: 'default',
+            isGreeting: true,
+            error: 'Greeting generation failed'
+        });
+    }
+}
 
 module.exports = router;
