@@ -1,0 +1,1312 @@
+/**
+ * INLINE CHAT VISUALS - Interactive math visualizations in chat messages
+ *
+ * Renders interactive visual elements directly in chat bubbles:
+ * - Function graphs (using function-plot library)
+ * - Number lines with points and intervals
+ * - Fraction visualizations
+ * - Pie charts and bar charts
+ * - Coordinate points
+ * - Interactive sliders for "what-if" exploration
+ *
+ * Command syntax: [VISUAL_TYPE:params]
+ */
+
+class InlineChatVisuals {
+    constructor() {
+        this.visualCounter = 0;
+        this.addStyles();
+        console.log('✅ InlineChatVisuals loaded - Interactive chat visuals ready!');
+    }
+
+    /**
+     * Process a message and replace visual commands with interactive elements
+     * @param {string} message - The AI response text
+     * @returns {Object} { html: string, hasVisuals: boolean }
+     */
+    processMessage(message) {
+        let html = message;
+        let hasVisuals = false;
+
+        // Process each visual type
+        const visualTypes = [
+            { regex: /\[FUNCTION_GRAPH:([^\]]+)\]/g, handler: this.createFunctionGraph.bind(this) },
+            { regex: /\[NUMBER_LINE:([^\]]+)\]/g, handler: this.createNumberLine.bind(this) },
+            { regex: /\[FRACTION:([^\]]+)\]/g, handler: this.createFraction.bind(this) },
+            { regex: /\[PIE_CHART:([^\]]+)\]/g, handler: this.createPieChart.bind(this) },
+            { regex: /\[BAR_CHART:([^\]]+)\]/g, handler: this.createBarChart.bind(this) },
+            { regex: /\[POINTS:([^\]]+)\]/g, handler: this.createPointsPlot.bind(this) },
+            { regex: /\[SLIDER_GRAPH:([^\]]+)\]/g, handler: this.createSliderGraph.bind(this) },
+            { regex: /\[UNIT_CIRCLE:?([^\]]*)\]/g, handler: this.createUnitCircle.bind(this) },
+            { regex: /\[AREA_MODEL:([^\]]+)\]/g, handler: this.createAreaModel.bind(this) },
+            { regex: /\[COMPARISON:([^\]]+)\]/g, handler: this.createComparison.bind(this) }
+        ];
+
+        for (const { regex, handler } of visualTypes) {
+            html = html.replace(regex, (match, params) => {
+                hasVisuals = true;
+                try {
+                    return handler(params);
+                } catch (error) {
+                    console.error(`[InlineChatVisuals] Error rendering ${match}:`, error);
+                    return `<div class="icv-error">⚠️ Could not render visual</div>`;
+                }
+            });
+        }
+
+        return { html, hasVisuals };
+    }
+
+    /**
+     * Parse parameters from command string
+     * Supports: key=value, key="value with spaces", arrays [1,2,3]
+     */
+    parseParams(paramStr) {
+        const params = {};
+        if (!paramStr) return params;
+
+        // Match key=value pairs, handling quoted strings and arrays
+        const regex = /(\w+)=(?:"([^"]+)"|'([^']+)'|\[([^\]]+)\]|([^\s,]+))/g;
+        let match;
+
+        while ((match = regex.exec(paramStr)) !== null) {
+            const key = match[1];
+            const value = match[2] || match[3] || (match[4] ? match[4].split(',').map(v => v.trim()) : match[5]);
+
+            // Try to parse as number if applicable
+            if (typeof value === 'string' && !isNaN(value)) {
+                params[key] = parseFloat(value);
+            } else if (value === 'true') {
+                params[key] = true;
+            } else if (value === 'false') {
+                params[key] = false;
+            } else {
+                params[key] = value;
+            }
+        }
+
+        // Handle simple comma-separated values if no key=value format
+        if (Object.keys(params).length === 0 && paramStr.includes(',')) {
+            const parts = paramStr.split(',').map(p => p.trim());
+            if (parts.length > 0) {
+                params.fn = parts[0];
+                if (parts[1]) params.xMin = parseFloat(parts[1]);
+                if (parts[2]) params.xMax = parseFloat(parts[2]);
+            }
+        } else if (Object.keys(params).length === 0) {
+            // Single value - assume it's a function
+            params.fn = paramStr.trim();
+        }
+
+        return params;
+    }
+
+    /**
+     * Generate unique ID for visual elements
+     */
+    getUniqueId(prefix = 'icv') {
+        return `${prefix}-${Date.now()}-${++this.visualCounter}`;
+    }
+
+    // ==========================================
+    // FUNCTION GRAPH
+    // [FUNCTION_GRAPH:fn=sin(x)/x,xMin=-10,xMax=10,title="Graph of sinc function"]
+    // ==========================================
+    createFunctionGraph(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('graph');
+
+        const fn = params.fn || params.function || 'x^2';
+        const xMin = params.xMin ?? params.xmin ?? -10;
+        const xMax = params.xMax ?? params.xmax ?? 10;
+        const yMin = params.yMin ?? params.ymin ?? null;
+        const yMax = params.yMax ?? params.ymax ?? null;
+        const title = params.title || `Graph of y = ${fn}`;
+        const color = params.color || '#667eea';
+
+        // Store graph config for later rendering
+        const graphConfig = JSON.stringify({
+            fn, xMin, xMax, yMin, yMax, color
+        }).replace(/"/g, '&quot;');
+
+        return `
+        <div class="icv-container icv-graph-container" id="${id}-wrapper">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-graph" id="${id}" data-config="${graphConfig}"></div>
+            <div class="icv-controls">
+                <button class="icv-btn icv-zoom-in" onclick="window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
+                <button class="icv-btn icv-reset" onclick="window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
+            </div>
+        </div>
+        `;
+    }
+
+    /**
+     * Render a function graph using function-plot (call after DOM insertion)
+     */
+    renderGraph(id) {
+        const container = document.getElementById(id);
+        if (!container || !window.functionPlot) {
+            console.warn(`[InlineChatVisuals] Cannot render graph ${id}: container or function-plot not found`);
+            return;
+        }
+
+        try {
+            const config = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
+            const width = container.offsetWidth || 300;
+
+            const plotConfig = {
+                target: `#${id}`,
+                width: width,
+                height: 250,
+                grid: true,
+                xAxis: { domain: [config.xMin, config.xMax] },
+                data: [{
+                    fn: config.fn,
+                    color: config.color
+                }]
+            };
+
+            if (config.yMin !== null && config.yMax !== null) {
+                plotConfig.yAxis = { domain: [config.yMin, config.yMax] };
+            }
+
+            const plot = functionPlot(plotConfig);
+            container._functionPlot = plot;
+            container._originalConfig = config;
+
+            console.log(`[InlineChatVisuals] Rendered graph for: ${config.fn}`);
+        } catch (error) {
+            console.error(`[InlineChatVisuals] Error rendering graph ${id}:`, error);
+            container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
+        }
+    }
+
+    zoomGraph(id, factor) {
+        const container = document.getElementById(id);
+        if (!container || !container._functionPlot) return;
+
+        const plot = container._functionPlot;
+        const config = container._originalConfig;
+        const xRange = config.xMax - config.xMin;
+        const newRange = xRange * factor;
+        const center = (config.xMax + config.xMin) / 2;
+
+        config.xMin = center - newRange / 2;
+        config.xMax = center + newRange / 2;
+        container.dataset.config = JSON.stringify(config).replace(/"/g, '&quot;');
+
+        this.renderGraph(id);
+    }
+
+    resetGraph(id) {
+        const container = document.getElementById(id);
+        if (!container) return;
+
+        const originalConfig = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
+        container._originalConfig = originalConfig;
+        this.renderGraph(id);
+    }
+
+    // ==========================================
+    // NUMBER LINE
+    // [NUMBER_LINE:min=-5,max=5,points=[-2,0,3],highlight=3,label="Number line showing -2, 0, and 3"]
+    // ==========================================
+    createNumberLine(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('numline');
+
+        const min = params.min ?? -10;
+        const max = params.max ?? 10;
+        const points = Array.isArray(params.points) ? params.points.map(Number) :
+                       (params.point ? [Number(params.point)] : []);
+        const highlight = params.highlight ?? null;
+        const label = params.label || '';
+        const showInterval = params.interval || null;
+        const openCircle = params.open === true || params.open === 'true';
+
+        const width = 320;
+        const height = 80;
+        const padding = 30;
+        const lineY = 45;
+
+        const scale = (width - 2 * padding) / (max - min);
+        const toX = (val) => padding + (val - min) * scale;
+
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-number-line">`;
+
+        // Draw main line
+        svg += `<line x1="${padding}" y1="${lineY}" x2="${width - padding}" y2="${lineY}"
+                      stroke="#333" stroke-width="2"/>`;
+
+        // Draw arrow heads
+        svg += `<polygon points="${width - padding},${lineY} ${width - padding - 8},${lineY - 5} ${width - padding - 8},${lineY + 5}" fill="#333"/>`;
+        svg += `<polygon points="${padding},${lineY} ${padding + 8},${lineY - 5} ${padding + 8},${lineY + 5}" fill="#333"/>`;
+
+        // Draw tick marks and labels
+        for (let i = min; i <= max; i++) {
+            const x = toX(i);
+            const isHighlight = highlight !== null && i === Number(highlight);
+            svg += `<line x1="${x}" y1="${lineY - 6}" x2="${x}" y2="${lineY + 6}"
+                          stroke="${isHighlight ? '#667eea' : '#333'}" stroke-width="${isHighlight ? 3 : 1}"/>`;
+            svg += `<text x="${x}" y="${lineY + 22}" text-anchor="middle"
+                          fill="${isHighlight ? '#667eea' : '#333'}" font-size="12"
+                          font-weight="${isHighlight ? 'bold' : 'normal'}">${i}</text>`;
+        }
+
+        // Draw interval shading if specified
+        if (showInterval) {
+            const [intMin, intMax] = showInterval.split(',').map(Number);
+            const x1 = toX(intMin);
+            const x2 = toX(intMax);
+            svg += `<rect x="${x1}" y="${lineY - 15}" width="${x2 - x1}" height="30"
+                          fill="rgba(102, 126, 234, 0.2)" rx="4"/>`;
+        }
+
+        // Draw points
+        points.forEach(point => {
+            const x = toX(point);
+            const isHighlighted = highlight !== null && point === Number(highlight);
+            const fillColor = isHighlighted ? '#667eea' : '#e74c3c';
+
+            if (openCircle) {
+                svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="white" stroke="${fillColor}" stroke-width="3"/>`;
+            } else {
+                svg += `<circle cx="${x}" cy="${lineY}" r="8" fill="${fillColor}"/>`;
+            }
+
+            // Point label above
+            svg += `<text x="${x}" y="${lineY - 15}" text-anchor="middle" fill="${fillColor}"
+                          font-size="14" font-weight="bold">${point}</text>`;
+        });
+
+        svg += `</svg>`;
+
+        return `
+        <div class="icv-container icv-numline-container" id="${id}">
+            ${label ? `<div class="icv-title">${this.escapeHtml(label)}</div>` : ''}
+            ${svg}
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // FRACTION VISUALIZATION
+    // [FRACTION:numerator=3,denominator=4,type=circle]
+    // [FRACTION:compare=1/2,3/4]
+    // ==========================================
+    createFraction(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('fraction');
+
+        const type = params.type || 'bar';
+        const numerator = params.numerator ?? params.num ?? 1;
+        const denominator = params.denominator ?? params.denom ?? 2;
+        const label = params.label || `${numerator}/${denominator}`;
+        const compare = params.compare || null;
+
+        if (compare) {
+            return this.createFractionComparison(compare, id);
+        }
+
+        const width = type === 'circle' ? 120 : 200;
+        const height = type === 'circle' ? 120 : 60;
+
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-fraction">`;
+
+        if (type === 'circle') {
+            // Pie-style fraction
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = 50;
+
+            // Draw segments
+            for (let i = 0; i < denominator; i++) {
+                const startAngle = (i / denominator) * 2 * Math.PI - Math.PI / 2;
+                const endAngle = ((i + 1) / denominator) * 2 * Math.PI - Math.PI / 2;
+
+                const x1 = centerX + radius * Math.cos(startAngle);
+                const y1 = centerY + radius * Math.sin(startAngle);
+                const x2 = centerX + radius * Math.cos(endAngle);
+                const y2 = centerY + radius * Math.sin(endAngle);
+
+                const largeArc = (1 / denominator) > 0.5 ? 1 : 0;
+                const filled = i < numerator;
+
+                svg += `<path d="M${centerX},${centerY} L${x1},${y1} A${radius},${radius} 0 ${largeArc},1 ${x2},${y2} Z"
+                              fill="${filled ? '#667eea' : '#e8e8e8'}" stroke="#333" stroke-width="1"/>`;
+            }
+        } else {
+            // Bar-style fraction
+            const barWidth = 180;
+            const barHeight = 30;
+            const startX = 10;
+            const startY = 15;
+            const segmentWidth = barWidth / denominator;
+
+            for (let i = 0; i < denominator; i++) {
+                const filled = i < numerator;
+                svg += `<rect x="${startX + i * segmentWidth}" y="${startY}"
+                              width="${segmentWidth - 2}" height="${barHeight}"
+                              fill="${filled ? '#667eea' : '#e8e8e8'}" stroke="#333" stroke-width="1" rx="3"/>`;
+            }
+        }
+
+        svg += `</svg>`;
+
+        return `
+        <div class="icv-container icv-fraction-container" id="${id}">
+            <div class="icv-title">${this.escapeHtml(label)}</div>
+            ${svg}
+            <div class="icv-caption">${numerator} out of ${denominator} parts shaded</div>
+        </div>
+        `;
+    }
+
+    createFractionComparison(compareStr, id) {
+        const fractions = compareStr.split(',').map(f => {
+            const [num, denom] = f.trim().split('/').map(Number);
+            return { num, denom, value: num / denom };
+        });
+
+        let html = `<div class="icv-container icv-fraction-compare" id="${id}">
+            <div class="icv-title">Fraction Comparison</div>
+            <div class="icv-fraction-row">`;
+
+        fractions.forEach((f, idx) => {
+            const barWidth = 100;
+            const filledWidth = (f.num / f.denom) * barWidth;
+
+            html += `
+            <div class="icv-fraction-item">
+                <div class="icv-fraction-label">${f.num}/${f.denom}</div>
+                <div class="icv-fraction-bar-wrapper">
+                    <div class="icv-fraction-bar" style="width: ${filledWidth}px; background: hsl(${240 - idx * 40}, 70%, 60%)"></div>
+                </div>
+                <div class="icv-fraction-decimal">${f.value.toFixed(3)}</div>
+            </div>`;
+        });
+
+        html += `</div></div>`;
+        return html;
+    }
+
+    // ==========================================
+    // PIE CHART
+    // [PIE_CHART:data="Apples:30,Oranges:25,Bananas:45",title="Fruit Distribution"]
+    // ==========================================
+    createPieChart(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('pie');
+
+        const dataStr = params.data || params.values || paramStr;
+        const title = params.title || 'Pie Chart';
+
+        // Parse data
+        const segments = [];
+        const items = dataStr.split(',');
+        const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#38f9d7'];
+
+        items.forEach((item, idx) => {
+            const parts = item.trim().split(':');
+            if (parts.length === 2) {
+                segments.push({
+                    label: parts[0].trim(),
+                    value: parseFloat(parts[1]),
+                    color: colors[idx % colors.length]
+                });
+            } else {
+                segments.push({
+                    label: `Segment ${idx + 1}`,
+                    value: parseFloat(parts[0]),
+                    color: colors[idx % colors.length]
+                });
+            }
+        });
+
+        const total = segments.reduce((sum, s) => sum + s.value, 0);
+        const width = 250;
+        const height = 180;
+        const centerX = 90;
+        const centerY = 90;
+        const radius = 70;
+
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-pie-chart">`;
+
+        let currentAngle = -Math.PI / 2;
+        segments.forEach((segment, idx) => {
+            const sliceAngle = (segment.value / total) * 2 * Math.PI;
+            const endAngle = currentAngle + sliceAngle;
+
+            const x1 = centerX + radius * Math.cos(currentAngle);
+            const y1 = centerY + radius * Math.sin(currentAngle);
+            const x2 = centerX + radius * Math.cos(endAngle);
+            const y2 = centerY + radius * Math.sin(endAngle);
+
+            const largeArc = sliceAngle > Math.PI ? 1 : 0;
+
+            svg += `<path d="M${centerX},${centerY} L${x1},${y1} A${radius},${radius} 0 ${largeArc},1 ${x2},${y2} Z"
+                          fill="${segment.color}" stroke="white" stroke-width="2"
+                          class="icv-pie-slice" data-value="${segment.value}" data-label="${segment.label}"/>`;
+
+            currentAngle = endAngle;
+        });
+
+        // Legend
+        svg += `<g class="icv-pie-legend">`;
+        segments.forEach((segment, idx) => {
+            const y = 15 + idx * 22;
+            const percent = ((segment.value / total) * 100).toFixed(1);
+            svg += `<rect x="175" y="${y}" width="14" height="14" fill="${segment.color}" rx="2"/>`;
+            svg += `<text x="195" y="${y + 12}" font-size="11" fill="#333">${segment.label} (${percent}%)</text>`;
+        });
+        svg += `</g>`;
+
+        svg += `</svg>`;
+
+        return `
+        <div class="icv-container icv-pie-container" id="${id}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            ${svg}
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // BAR CHART
+    // [BAR_CHART:data="Mon:5,Tue:8,Wed:3,Thu:10,Fri:7",title="Daily Values"]
+    // ==========================================
+    createBarChart(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('bar');
+
+        const dataStr = params.data || params.values || paramStr;
+        const title = params.title || 'Bar Chart';
+        const horizontal = params.horizontal === true;
+
+        // Parse data
+        const bars = [];
+        const items = dataStr.split(',');
+        const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'];
+
+        items.forEach((item, idx) => {
+            const parts = item.trim().split(':');
+            if (parts.length === 2) {
+                bars.push({
+                    label: parts[0].trim(),
+                    value: parseFloat(parts[1]),
+                    color: colors[idx % colors.length]
+                });
+            }
+        });
+
+        const maxValue = Math.max(...bars.map(b => b.value));
+        const width = 300;
+        const height = 160;
+        const barAreaWidth = 240;
+        const barAreaHeight = 120;
+        const barWidth = barAreaWidth / bars.length - 10;
+        const startX = 40;
+        const startY = 130;
+
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-bar-chart">`;
+
+        // Y-axis
+        svg += `<line x1="${startX}" y1="10" x2="${startX}" y2="${startY}" stroke="#333" stroke-width="1"/>`;
+
+        // X-axis
+        svg += `<line x1="${startX}" y1="${startY}" x2="${width - 20}" y2="${startY}" stroke="#333" stroke-width="1"/>`;
+
+        // Y-axis labels
+        for (let i = 0; i <= 4; i++) {
+            const value = (maxValue * i / 4).toFixed(0);
+            const y = startY - (barAreaHeight * i / 4);
+            svg += `<text x="${startX - 5}" y="${y + 4}" text-anchor="end" font-size="10" fill="#666">${value}</text>`;
+            svg += `<line x1="${startX}" y1="${y}" x2="${startX + 5}" y2="${y}" stroke="#333" stroke-width="1"/>`;
+        }
+
+        // Bars
+        bars.forEach((bar, idx) => {
+            const barHeight = (bar.value / maxValue) * barAreaHeight;
+            const x = startX + 15 + idx * (barWidth + 10);
+            const y = startY - barHeight;
+
+            svg += `<rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}"
+                          fill="${bar.color}" rx="3" class="icv-bar"/>`;
+
+            // Value label on top
+            svg += `<text x="${x + barWidth / 2}" y="${y - 5}" text-anchor="middle"
+                          font-size="11" font-weight="bold" fill="#333">${bar.value}</text>`;
+
+            // X-axis label
+            svg += `<text x="${x + barWidth / 2}" y="${startY + 15}" text-anchor="middle"
+                          font-size="10" fill="#333">${bar.label}</text>`;
+        });
+
+        svg += `</svg>`;
+
+        return `
+        <div class="icv-container icv-bar-container" id="${id}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            ${svg}
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // COORDINATE POINTS
+    // [POINTS:points=(1,2),(3,4),(-1,-2),xMin=-5,xMax=5]
+    // ==========================================
+    createPointsPlot(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('points');
+
+        // Parse points from various formats
+        let points = [];
+        const pointsMatch = paramStr.match(/\((-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\)/g);
+        if (pointsMatch) {
+            points = pointsMatch.map(p => {
+                const match = p.match(/\((-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\)/);
+                return { x: parseFloat(match[1]), y: parseFloat(match[2]) };
+            });
+        }
+
+        const xMin = params.xMin ?? params.xmin ?? -10;
+        const xMax = params.xMax ?? params.xmax ?? 10;
+        const yMin = params.yMin ?? params.ymin ?? -10;
+        const yMax = params.yMax ?? params.ymax ?? 10;
+        const title = params.title || params.label || 'Coordinate Points';
+        const connectPoints = params.connect === true || params.connect === 'true';
+
+        const width = 280;
+        const height = 280;
+        const padding = 30;
+
+        const scaleX = (width - 2 * padding) / (xMax - xMin);
+        const scaleY = (height - 2 * padding) / (yMax - yMin);
+
+        const toSvgX = (x) => padding + (x - xMin) * scaleX;
+        const toSvgY = (y) => height - padding - (y - yMin) * scaleY;
+
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-points-plot">`;
+
+        // Grid
+        svg += `<g class="icv-grid" stroke="#eee" stroke-width="1">`;
+        for (let x = Math.ceil(xMin); x <= xMax; x++) {
+            svg += `<line x1="${toSvgX(x)}" y1="${padding}" x2="${toSvgX(x)}" y2="${height - padding}"/>`;
+        }
+        for (let y = Math.ceil(yMin); y <= yMax; y++) {
+            svg += `<line x1="${padding}" y1="${toSvgY(y)}" x2="${width - padding}" y2="${toSvgY(y)}"/>`;
+        }
+        svg += `</g>`;
+
+        // Axes
+        if (xMin <= 0 && xMax >= 0) {
+            svg += `<line x1="${toSvgX(0)}" y1="${padding}" x2="${toSvgX(0)}" y2="${height - padding}"
+                          stroke="#333" stroke-width="2"/>`;
+        }
+        if (yMin <= 0 && yMax >= 0) {
+            svg += `<line x1="${padding}" y1="${toSvgY(0)}" x2="${width - padding}" y2="${toSvgY(0)}"
+                          stroke="#333" stroke-width="2"/>`;
+        }
+
+        // Axis labels
+        svg += `<text x="${width - 15}" y="${toSvgY(0) - 5}" font-size="12" font-weight="bold">x</text>`;
+        svg += `<text x="${toSvgX(0) + 5}" y="${padding - 5}" font-size="12" font-weight="bold">y</text>`;
+
+        // Connect points if requested
+        if (connectPoints && points.length > 1) {
+            let pathD = `M ${toSvgX(points[0].x)},${toSvgY(points[0].y)}`;
+            for (let i = 1; i < points.length; i++) {
+                pathD += ` L ${toSvgX(points[i].x)},${toSvgY(points[i].y)}`;
+            }
+            svg += `<path d="${pathD}" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="5,5"/>`;
+        }
+
+        // Points
+        const pointColors = ['#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#f39c12'];
+        points.forEach((point, idx) => {
+            const cx = toSvgX(point.x);
+            const cy = toSvgY(point.y);
+            const color = pointColors[idx % pointColors.length];
+
+            svg += `<circle cx="${cx}" cy="${cy}" r="8" fill="${color}" stroke="white" stroke-width="2"/>`;
+            svg += `<text x="${cx}" y="${cy - 12}" text-anchor="middle" font-size="11" font-weight="bold" fill="${color}">
+                    (${point.x}, ${point.y})</text>`;
+        });
+
+        svg += `</svg>`;
+
+        return `
+        <div class="icv-container icv-points-container" id="${id}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            ${svg}
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // SLIDER GRAPH - Interactive exploration
+    // [SLIDER_GRAPH:fn=a*x^2+b*x+c,params=a:1:-3:3,b:0:-5:5,c:0:-10:10]
+    // ==========================================
+    createSliderGraph(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('slider');
+
+        const baseFn = params.fn || 'a*x^2+b*x+c';
+        const title = params.title || `Explore: y = ${baseFn}`;
+
+        // Parse slider parameters: param:default:min:max
+        const sliderParams = [];
+        const paramsStr = params.params || 'a:1:-3:3';
+        paramsStr.split(',').forEach(p => {
+            const [name, defaultVal, min, max] = p.trim().split(':');
+            sliderParams.push({
+                name,
+                default: parseFloat(defaultVal) || 1,
+                min: parseFloat(min) || -10,
+                max: parseFloat(max) || 10
+            });
+        });
+
+        const sliderConfig = JSON.stringify({
+            baseFn,
+            sliders: sliderParams
+        }).replace(/"/g, '&quot;');
+
+        let slidersHtml = '';
+        sliderParams.forEach(sp => {
+            slidersHtml += `
+            <div class="icv-slider-row">
+                <label>${sp.name} = <span id="${id}-${sp.name}-val">${sp.default}</span></label>
+                <input type="range" id="${id}-${sp.name}"
+                       min="${sp.min}" max="${sp.max}" value="${sp.default}" step="0.1"
+                       oninput="window.inlineChatVisuals.updateSliderGraph('${id}', '${sp.name}', this.value)">
+            </div>`;
+        });
+
+        return `
+        <div class="icv-container icv-slider-container" id="${id}-wrapper" data-config="${sliderConfig}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-slider-graph" id="${id}"></div>
+            <div class="icv-slider-controls">${slidersHtml}</div>
+            <div class="icv-slider-equation" id="${id}-equation">y = ${baseFn}</div>
+        </div>
+        `;
+    }
+
+    updateSliderGraph(id, paramName, value) {
+        const wrapper = document.getElementById(`${id}-wrapper`);
+        if (!wrapper) return;
+
+        const config = JSON.parse(wrapper.dataset.config.replace(/&quot;/g, '"'));
+        const valueSpan = document.getElementById(`${id}-${paramName}-val`);
+        if (valueSpan) valueSpan.textContent = value;
+
+        // Build the function with current slider values
+        let fn = config.baseFn;
+        config.sliders.forEach(sp => {
+            const slider = document.getElementById(`${id}-${sp.name}`);
+            const val = slider ? parseFloat(slider.value) : sp.default;
+            fn = fn.replace(new RegExp(`\\b${sp.name}\\b`, 'g'), `(${val})`);
+        });
+
+        // Update equation display
+        const eqDisplay = document.getElementById(`${id}-equation`);
+        if (eqDisplay) {
+            let displayEq = config.baseFn;
+            config.sliders.forEach(sp => {
+                const slider = document.getElementById(`${id}-${sp.name}`);
+                const val = slider ? slider.value : sp.default;
+                displayEq = displayEq.replace(new RegExp(`\\b${sp.name}\\b`, 'g'), val);
+            });
+            eqDisplay.textContent = `y = ${displayEq}`;
+        }
+
+        // Re-render graph
+        const container = document.getElementById(id);
+        if (container && window.functionPlot) {
+            try {
+                functionPlot({
+                    target: `#${id}`,
+                    width: container.offsetWidth || 280,
+                    height: 200,
+                    grid: true,
+                    xAxis: { domain: [-10, 10] },
+                    yAxis: { domain: [-10, 10] },
+                    data: [{ fn: fn, color: '#667eea' }]
+                });
+            } catch (e) {
+                console.error('[SliderGraph] Render error:', e);
+            }
+        }
+    }
+
+    renderSliderGraph(id) {
+        const wrapper = document.getElementById(`${id}-wrapper`);
+        if (!wrapper) return;
+
+        const config = JSON.parse(wrapper.dataset.config.replace(/&quot;/g, '"'));
+
+        // Build initial function
+        let fn = config.baseFn;
+        config.sliders.forEach(sp => {
+            fn = fn.replace(new RegExp(`\\b${sp.name}\\b`, 'g'), `(${sp.default})`);
+        });
+
+        const container = document.getElementById(id);
+        if (container && window.functionPlot) {
+            try {
+                functionPlot({
+                    target: `#${id}`,
+                    width: container.offsetWidth || 280,
+                    height: 200,
+                    grid: true,
+                    xAxis: { domain: [-10, 10] },
+                    yAxis: { domain: [-10, 10] },
+                    data: [{ fn: fn, color: '#667eea' }]
+                });
+            } catch (e) {
+                console.error('[SliderGraph] Render error:', e);
+            }
+        }
+    }
+
+    // ==========================================
+    // UNIT CIRCLE
+    // [UNIT_CIRCLE:angle=45,highlight=true]
+    // ==========================================
+    createUnitCircle(paramStr) {
+        const params = this.parseParams(paramStr || '');
+        const id = this.getUniqueId('unitcircle');
+
+        const angle = params.angle || params.highlight || 45;
+        const showCoords = params.coords !== false;
+        const title = params.title || `Unit Circle at ${angle}°`;
+
+        const width = 280;
+        const height = 280;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = 100;
+
+        const angleRad = (angle * Math.PI) / 180;
+        const pointX = centerX + radius * Math.cos(angleRad);
+        const pointY = centerY - radius * Math.sin(angleRad);
+
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-unit-circle">`;
+
+        // Grid
+        svg += `<g stroke="#eee" stroke-width="1">`;
+        for (let x = 0; x <= width; x += 20) {
+            svg += `<line x1="${x}" y1="0" x2="${x}" y2="${height}"/>`;
+        }
+        for (let y = 0; y <= height; y += 20) {
+            svg += `<line x1="0" y1="${y}" x2="${width}" y2="${y}"/>`;
+        }
+        svg += `</g>`;
+
+        // Axes
+        svg += `<line x1="0" y1="${centerY}" x2="${width}" y2="${centerY}" stroke="#333" stroke-width="2"/>`;
+        svg += `<line x1="${centerX}" y1="0" x2="${centerX}" y2="${height}" stroke="#333" stroke-width="2"/>`;
+
+        // Circle
+        svg += `<circle cx="${centerX}" cy="${centerY}" r="${radius}" fill="none" stroke="#667eea" stroke-width="2"/>`;
+
+        // Standard angles (light markers)
+        [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330].forEach(a => {
+            const rad = (a * Math.PI) / 180;
+            const x = centerX + (radius + 10) * Math.cos(rad);
+            const y = centerY - (radius + 10) * Math.sin(rad);
+            svg += `<text x="${x}" y="${y}" text-anchor="middle" font-size="8" fill="#999">${a}°</text>`;
+        });
+
+        // Highlighted angle
+        svg += `<line x1="${centerX}" y1="${centerY}" x2="${pointX}" y2="${pointY}"
+                      stroke="#e74c3c" stroke-width="3"/>`;
+        svg += `<circle cx="${pointX}" cy="${pointY}" r="8" fill="#e74c3c"/>`;
+
+        // Angle arc
+        const arcRadius = 30;
+        const arcEndX = centerX + arcRadius;
+        const arcEndY = centerY;
+        const largeArc = angle > 180 ? 1 : 0;
+        svg += `<path d="M${arcEndX},${arcEndY} A${arcRadius},${arcRadius} 0 ${largeArc},0 ${centerX + arcRadius * Math.cos(angleRad)},${centerY - arcRadius * Math.sin(angleRad)}"
+                      fill="none" stroke="#e74c3c" stroke-width="2"/>`;
+
+        // Coordinates
+        if (showCoords) {
+            const cosVal = Math.cos(angleRad).toFixed(3);
+            const sinVal = Math.sin(angleRad).toFixed(3);
+            svg += `<text x="${pointX + 15}" y="${pointY - 10}" font-size="12" fill="#e74c3c" font-weight="bold">
+                    (${cosVal}, ${sinVal})</text>`;
+
+            // Reference lines
+            svg += `<line x1="${pointX}" y1="${pointY}" x2="${pointX}" y2="${centerY}"
+                          stroke="#e74c3c" stroke-width="1" stroke-dasharray="4,4"/>`;
+            svg += `<line x1="${pointX}" y1="${pointY}" x2="${centerX}" y2="${pointY}"
+                          stroke="#e74c3c" stroke-width="1" stroke-dasharray="4,4"/>`;
+        }
+
+        // Labels
+        svg += `<text x="${centerX}" y="${height - 10}" text-anchor="middle" font-size="12">cos(${angle}°) = ${Math.cos(angleRad).toFixed(3)}</text>`;
+        svg += `<text x="${centerX}" y="15" text-anchor="middle" font-size="12">sin(${angle}°) = ${Math.sin(angleRad).toFixed(3)}</text>`;
+
+        svg += `</svg>`;
+
+        return `
+        <div class="icv-container icv-unitcircle-container" id="${id}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            ${svg}
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // AREA MODEL (for multiplication)
+    // [AREA_MODEL:a=23,b=15]
+    // ==========================================
+    createAreaModel(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('area');
+
+        const a = params.a || 23;
+        const b = params.b || 15;
+        const title = params.title || `${a} × ${b} = ?`;
+
+        // Break into tens and ones
+        const aTens = Math.floor(a / 10) * 10;
+        const aOnes = a % 10;
+        const bTens = Math.floor(b / 10) * 10;
+        const bOnes = b % 10;
+
+        const width = 280;
+        const height = 220;
+        const startX = 50;
+        const startY = 40;
+        const cellWidth = 80;
+        const cellHeight = 60;
+
+        let svg = `<svg viewBox="0 0 ${width} ${height}" class="icv-area-model">`;
+
+        // Top labels
+        svg += `<text x="${startX + cellWidth/2}" y="20" text-anchor="middle" font-weight="bold" font-size="14">${aTens}</text>`;
+        svg += `<text x="${startX + cellWidth + cellWidth/2}" y="20" text-anchor="middle" font-weight="bold" font-size="14">${aOnes}</text>`;
+
+        // Left labels
+        svg += `<text x="${startX - 10}" y="${startY + cellHeight/2 + 5}" text-anchor="end" font-weight="bold" font-size="14">${bTens}</text>`;
+        svg += `<text x="${startX - 10}" y="${startY + cellHeight + cellHeight/2 + 5}" text-anchor="end" font-weight="bold" font-size="14">${bOnes}</text>`;
+
+        // Cells
+        const products = [
+            { x: 0, y: 0, val: aTens * bTens, color: '#667eea' },
+            { x: 1, y: 0, val: aOnes * bTens, color: '#764ba2' },
+            { x: 0, y: 1, val: aTens * bOnes, color: '#f093fb' },
+            { x: 1, y: 1, val: aOnes * bOnes, color: '#f5576c' }
+        ];
+
+        products.forEach(p => {
+            const x = startX + p.x * cellWidth;
+            const y = startY + p.y * cellHeight;
+            svg += `<rect x="${x}" y="${y}" width="${cellWidth}" height="${cellHeight}"
+                          fill="${p.color}" stroke="#333" stroke-width="2" rx="4"/>`;
+            svg += `<text x="${x + cellWidth/2}" y="${y + cellHeight/2 + 6}" text-anchor="middle"
+                          fill="white" font-size="18" font-weight="bold">${p.val}</text>`;
+        });
+
+        // Total
+        const total = products.reduce((sum, p) => sum + p.val, 0);
+        svg += `<text x="${width/2}" y="${startY + 2*cellHeight + 35}" text-anchor="middle"
+                      font-size="16" font-weight="bold">
+                ${products.map(p => p.val).join(' + ')} = ${total}</text>`;
+
+        svg += `</svg>`;
+
+        return `
+        <div class="icv-container icv-area-container" id="${id}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            ${svg}
+            <div class="icv-caption">${a} × ${b} = ${total}</div>
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // COMPARISON (visual comparison of values)
+    // [COMPARISON:values=15,28,7,label="Compare these values"]
+    // ==========================================
+    createComparison(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('compare');
+
+        const values = Array.isArray(params.values) ? params.values.map(Number) : [10, 20, 15];
+        const labels = Array.isArray(params.labels) ? params.labels : values.map((v, i) => `Value ${i + 1}`);
+        const title = params.title || params.label || 'Comparison';
+
+        const maxVal = Math.max(...values);
+        const width = 280;
+        const barMaxWidth = 200;
+
+        let html = `<div class="icv-container icv-compare-container" id="${id}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-compare-bars">`;
+
+        const colors = ['#667eea', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
+        values.forEach((val, idx) => {
+            const barWidth = (val / maxVal) * barMaxWidth;
+            const label = labels[idx] || `Item ${idx + 1}`;
+            html += `
+            <div class="icv-compare-row">
+                <span class="icv-compare-label">${this.escapeHtml(label)}</span>
+                <div class="icv-compare-bar-wrapper">
+                    <div class="icv-compare-bar" style="width: ${barWidth}px; background: ${colors[idx % colors.length]}"></div>
+                    <span class="icv-compare-value">${val}</span>
+                </div>
+            </div>`;
+        });
+
+        html += `</div></div>`;
+        return html;
+    }
+
+    // ==========================================
+    // UTILITY METHODS
+    // ==========================================
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    /**
+     * Initialize all visuals in a container (call after DOM insertion)
+     */
+    initializeVisuals(container) {
+        // Initialize function graphs
+        container.querySelectorAll('.icv-graph').forEach(graphEl => {
+            if (graphEl.id && !graphEl._functionPlot) {
+                setTimeout(() => this.renderGraph(graphEl.id), 50);
+            }
+        });
+
+        // Initialize slider graphs
+        container.querySelectorAll('.icv-slider-graph').forEach(graphEl => {
+            if (graphEl.id) {
+                setTimeout(() => this.renderSliderGraph(graphEl.id), 50);
+            }
+        });
+    }
+
+    /**
+     * Add CSS styles for visuals
+     */
+    addStyles() {
+        if (document.getElementById('icv-styles')) return;
+
+        const styles = `
+        <style id="icv-styles">
+            /* Inline Chat Visuals Container */
+            .icv-container {
+                margin: 15px 0;
+                padding: 15px;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+
+            .icv-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 12px;
+                text-align: center;
+            }
+
+            .icv-caption {
+                font-size: 12px;
+                color: #666;
+                text-align: center;
+                margin-top: 8px;
+            }
+
+            .icv-error {
+                background: #fee;
+                color: #c33;
+                padding: 10px;
+                border-radius: 8px;
+                font-size: 13px;
+            }
+
+            /* Graph Container */
+            .icv-graph-container .icv-graph {
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                min-height: 250px;
+            }
+
+            .icv-controls {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 10px;
+            }
+
+            .icv-btn {
+                padding: 6px 12px;
+                border: none;
+                border-radius: 6px;
+                background: #667eea;
+                color: white;
+                font-size: 14px;
+                cursor: pointer;
+                transition: background 0.2s, transform 0.1s;
+            }
+
+            .icv-btn:hover {
+                background: #5a6fd6;
+                transform: translateY(-1px);
+            }
+
+            .icv-btn:active {
+                transform: translateY(0);
+            }
+
+            /* Number Line */
+            .icv-number-line {
+                width: 100%;
+                max-width: 320px;
+                margin: 0 auto;
+                display: block;
+            }
+
+            /* Fraction Styles */
+            .icv-fraction-container .icv-fraction {
+                display: block;
+                margin: 0 auto;
+            }
+
+            .icv-fraction-compare {
+                text-align: center;
+            }
+
+            .icv-fraction-row {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .icv-fraction-item {
+                text-align: center;
+            }
+
+            .icv-fraction-label {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .icv-fraction-bar-wrapper {
+                width: 100px;
+                height: 20px;
+                background: #e8e8e8;
+                border-radius: 4px;
+                overflow: hidden;
+                margin: 8px 0;
+            }
+
+            .icv-fraction-bar {
+                height: 100%;
+                transition: width 0.3s;
+            }
+
+            .icv-fraction-decimal {
+                font-size: 12px;
+                color: #666;
+            }
+
+            /* Pie Chart */
+            .icv-pie-chart {
+                display: block;
+                margin: 0 auto;
+                max-width: 100%;
+            }
+
+            .icv-pie-slice {
+                transition: transform 0.2s;
+                transform-origin: center;
+            }
+
+            .icv-pie-slice:hover {
+                transform: scale(1.03);
+            }
+
+            /* Bar Chart */
+            .icv-bar-chart {
+                display: block;
+                margin: 0 auto;
+                max-width: 100%;
+            }
+
+            .icv-bar {
+                transition: opacity 0.2s;
+            }
+
+            .icv-bar:hover {
+                opacity: 0.85;
+            }
+
+            /* Points Plot */
+            .icv-points-plot {
+                display: block;
+                margin: 0 auto;
+                background: white;
+                border-radius: 8px;
+            }
+
+            /* Slider Graph */
+            .icv-slider-container {
+                text-align: center;
+            }
+
+            .icv-slider-graph {
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                min-height: 200px;
+            }
+
+            .icv-slider-controls {
+                margin-top: 15px;
+            }
+
+            .icv-slider-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 8px 0;
+                justify-content: center;
+            }
+
+            .icv-slider-row label {
+                min-width: 80px;
+                text-align: right;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .icv-slider-row input[type="range"] {
+                width: 150px;
+                accent-color: #667eea;
+            }
+
+            .icv-slider-equation {
+                margin-top: 10px;
+                font-size: 16px;
+                font-weight: 600;
+                color: #667eea;
+                font-family: 'Courier New', monospace;
+            }
+
+            /* Unit Circle */
+            .icv-unit-circle {
+                display: block;
+                margin: 0 auto;
+                background: white;
+                border-radius: 8px;
+            }
+
+            /* Area Model */
+            .icv-area-model {
+                display: block;
+                margin: 0 auto;
+            }
+
+            /* Comparison */
+            .icv-compare-bars {
+                max-width: 280px;
+                margin: 0 auto;
+            }
+
+            .icv-compare-row {
+                display: flex;
+                align-items: center;
+                margin: 8px 0;
+                gap: 10px;
+            }
+
+            .icv-compare-label {
+                min-width: 60px;
+                font-size: 13px;
+                text-align: right;
+            }
+
+            .icv-compare-bar-wrapper {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .icv-compare-bar {
+                height: 24px;
+                border-radius: 4px;
+                transition: width 0.3s;
+            }
+
+            .icv-compare-value {
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 480px) {
+                .icv-container {
+                    padding: 10px;
+                    margin: 10px 0;
+                }
+
+                .icv-slider-row input[type="range"] {
+                    width: 100px;
+                }
+
+                .icv-fraction-row {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+            }
+
+            /* Dark mode support */
+            @media (prefers-color-scheme: dark) {
+                .icv-container {
+                    background: linear-gradient(135deg, #1e1e2e 0%, #2d2d3d 100%);
+                }
+
+                .icv-title, .icv-fraction-label {
+                    color: #e0e0e0;
+                }
+
+                .icv-caption, .icv-compare-label {
+                    color: #aaa;
+                }
+
+                .icv-graph-container .icv-graph,
+                .icv-slider-graph,
+                .icv-points-plot,
+                .icv-unit-circle {
+                    background: #2d2d3d;
+                }
+            }
+        </style>
+        `;
+
+        document.head.insertAdjacentHTML('beforeend', styles);
+    }
+}
+
+// Initialize global instance
+window.inlineChatVisuals = new InlineChatVisuals();

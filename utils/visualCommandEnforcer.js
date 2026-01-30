@@ -27,10 +27,60 @@ const {
  */
 function enforceVisualTeaching(studentMessage, aiResponse, conversationHistory = '') {
     // ============================================
-    // WHITEBOARD SHELVED FOR BETA
-    // Visual command enforcement disabled
+    // INLINE CHAT VISUALS - No whiteboard needed!
+    // Auto-inject inline visual commands when appropriate
     // ============================================
-    console.log('[VisualEnforcer] DISABLED - Whiteboard shelved for beta');
+
+    const lowerMessage = studentMessage.toLowerCase();
+
+    // Skip if AI already used inline visual commands
+    if (hasInlineVisualCommands(aiResponse)) {
+        console.log('[VisualEnforcer] AI already used inline visual commands ✓');
+        return aiResponse;
+    }
+
+    // GRAPHING REQUESTS - inject [FUNCTION_GRAPH]
+    if (isGraphingRequest(lowerMessage)) {
+        const func = extractFunctionFromMessage(studentMessage, aiResponse);
+        if (func) {
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting FUNCTION_GRAPH: ${func}`);
+            return `Here's the graph!\n\n[FUNCTION_GRAPH:fn=${func},title="Graph of ${func}"]\n\n${shortenResponse(aiResponse)}`;
+        }
+    }
+
+    // FRACTION VISUALIZATION REQUESTS
+    if (isFractionVisualizationRequest(lowerMessage)) {
+        const fraction = extractFractionFromMessage(studentMessage);
+        if (fraction) {
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting FRACTION: ${fraction.num}/${fraction.denom}`);
+            return `Here's what ${fraction.num}/${fraction.denom} looks like!\n\n[FRACTION:numerator=${fraction.num},denominator=${fraction.denom},type=circle]\n\n${shortenResponse(aiResponse)}`;
+        }
+    }
+
+    // NUMBER LINE REQUESTS
+    if (isNumberLineRequest(lowerMessage)) {
+        const point = extractPointFromMessage(studentMessage);
+        console.log(`[VisualEnforcer] 🎯 Auto-injecting NUMBER_LINE`);
+        const pointParam = point !== null ? `,points=[${point}],highlight=${point}` : '';
+        return `Here's the number line!\n\n[NUMBER_LINE:min=-10,max=10${pointParam}]\n\n${shortenResponse(aiResponse)}`;
+    }
+
+    // UNIT CIRCLE / TRIG REQUESTS
+    if (isUnitCircleRequest(lowerMessage)) {
+        const angle = extractAngleFromMessage(studentMessage);
+        console.log(`[VisualEnforcer] 🎯 Auto-injecting UNIT_CIRCLE: ${angle}°`);
+        return `Let's see it on the unit circle!\n\n[UNIT_CIRCLE:angle=${angle}]\n\n${shortenResponse(aiResponse)}`;
+    }
+
+    // COORDINATE POINT REQUESTS
+    if (isPointPlottingRequest(lowerMessage)) {
+        const points = extractPointsFromMessage(studentMessage);
+        if (points) {
+            console.log(`[VisualEnforcer] 🎯 Auto-injecting POINTS: ${points}`);
+            return `Here are the points plotted!\n\n[POINTS:points=${points},title="Coordinate Points"]\n\n${shortenResponse(aiResponse)}`;
+        }
+    }
+
     return aiResponse;
 
     // ORIGINAL CODE BELOW - COMMENTED OUT FOR BETA
@@ -466,6 +516,181 @@ function extractAlgebraExpression(studentMsg, aiResponse) {
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
+
+/**
+ * Check if response already contains inline visual commands
+ */
+function hasInlineVisualCommands(response) {
+    const inlinePatterns = [
+        /\[FUNCTION_GRAPH:/,
+        /\[NUMBER_LINE:/,
+        /\[FRACTION:/,
+        /\[PIE_CHART:/,
+        /\[BAR_CHART:/,
+        /\[POINTS:/,
+        /\[UNIT_CIRCLE/,
+        /\[AREA_MODEL:/,
+        /\[SLIDER_GRAPH:/,
+        /\[COMPARISON:/
+    ];
+    return inlinePatterns.some(p => p.test(response));
+}
+
+/**
+ * Check if message is a graphing request
+ */
+function isGraphingRequest(message) {
+    const patterns = [
+        /graph/i,
+        /plot.*function/i,
+        /show.*graph/i,
+        /draw.*y\s*=/i,
+        /what.*look.*like.*function/i,
+        /visualize.*equation/i
+    ];
+    return patterns.some(p => p.test(message));
+}
+
+/**
+ * Extract function from message for graphing
+ */
+function extractFunctionFromMessage(studentMsg, aiResponse) {
+    // Common function patterns
+    const patterns = [
+        /(?:graph|plot|show)\s+(?:of\s+)?(?:y\s*=\s*)?([\w\d\(\)\^\*\/\+\-\s]+)/i,
+        /y\s*=\s*([\w\d\(\)\^\*\/\+\-\s]+)/i,
+        /f\(x\)\s*=\s*([\w\d\(\)\^\*\/\+\-\s]+)/i,
+        /(sin\(x\)\/x|sinc)/i,
+        /(x\^2|x\^3|sin\(x\)|cos\(x\)|tan\(x\)|sqrt\(x\)|log\(x\)|exp\(x\))/i
+    ];
+
+    for (const pattern of patterns) {
+        let match = studentMsg.match(pattern);
+        if (match) {
+            let func = match[1].trim();
+            // Clean up the function
+            func = func.replace(/\s+/g, '');
+            func = func.replace(/sinc/i, 'sin(x)/x');
+            return func;
+        }
+    }
+
+    // Try AI response
+    for (const pattern of patterns) {
+        let match = aiResponse.match(pattern);
+        if (match) {
+            let func = match[1].trim();
+            func = func.replace(/\s+/g, '');
+            return func;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Check if message requests fraction visualization
+ */
+function isFractionVisualizationRequest(message) {
+    const patterns = [
+        /what.*(?:does|is).*\/.*look/i,
+        /show.*fraction/i,
+        /visualize.*fraction/i,
+        /picture.*\/\d+/i,
+        /draw.*fraction/i
+    ];
+    return patterns.some(p => p.test(message));
+}
+
+/**
+ * Extract fraction from message
+ */
+function extractFractionFromMessage(message) {
+    const pattern = /(\d+)\s*\/\s*(\d+)/;
+    const match = message.match(pattern);
+    if (match) {
+        return { num: parseInt(match[1]), denom: parseInt(match[2]) };
+    }
+    return null;
+}
+
+/**
+ * Check if message requests number line
+ */
+function isNumberLineRequest(message) {
+    const patterns = [
+        /number\s*line/i,
+        /show.*on.*line/i,
+        /plot.*integer/i,
+        /mark.*point/i
+    ];
+    return patterns.some(p => p.test(message));
+}
+
+/**
+ * Extract point from message for number line
+ */
+function extractPointFromMessage(message) {
+    const match = message.match(/(?:point|number|mark)\s*(-?\d+)/i);
+    return match ? parseInt(match[1]) : null;
+}
+
+/**
+ * Check if message requests unit circle
+ */
+function isUnitCircleRequest(message) {
+    const patterns = [
+        /unit\s*circle/i,
+        /sin.*degree/i,
+        /cos.*degree/i,
+        /trig.*angle/i,
+        /show.*sin\s*\(?\s*\d+/i,
+        /show.*cos\s*\(?\s*\d+/i
+    ];
+    return patterns.some(p => p.test(message));
+}
+
+/**
+ * Extract angle from message
+ */
+function extractAngleFromMessage(message) {
+    const match = message.match(/(\d+)\s*(?:°|degree|deg)/i);
+    if (match) return parseInt(match[1]);
+
+    // Try common trig angles
+    const angleMatch = message.match(/sin\s*\(?\s*(\d+)|cos\s*\(?\s*(\d+)/i);
+    if (angleMatch) return parseInt(angleMatch[1] || angleMatch[2]);
+
+    return 45; // Default
+}
+
+/**
+ * Check if message requests point plotting
+ */
+function isPointPlottingRequest(message) {
+    const patterns = [
+        /plot.*point/i,
+        /graph.*\(\s*-?\d+\s*,\s*-?\d+\s*\)/i,
+        /coordinate.*point/i,
+        /show.*\(\s*-?\d+\s*,\s*-?\d+\s*\)/i
+    ];
+    return patterns.some(p => p.test(message));
+}
+
+/**
+ * Extract coordinate points from message
+ */
+function extractPointsFromMessage(message) {
+    const pointPattern = /\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)/g;
+    const points = [];
+    let match;
+
+    while ((match = pointPattern.exec(message)) !== null) {
+        points.push(`(${match[1]},${match[2]})`);
+    }
+
+    return points.length > 0 ? points.join(',') : null;
+}
 
 /**
  * Get appropriate teaching prompt based on operation and mode
