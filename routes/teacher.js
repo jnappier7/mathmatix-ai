@@ -107,7 +107,7 @@ router.get('/live-feed', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
 
     // Clean up stale sessions in background
-    cleanupStaleSessions(60).catch(err => {
+    cleanupStaleSessions(30).catch(err => {
       console.error('Background cleanup failed:', err);
     });
 
@@ -184,7 +184,7 @@ router.get('/activity-feed', isTeacher, async (req, res) => {
     const { studentId, topic, alertType, startDate, endDate, activeOnly } = req.query;
 
     // Clean up stale sessions in background
-    cleanupStaleSessions(60).catch(err => {
+    cleanupStaleSessions(30).catch(err => {
       console.error('Background cleanup failed:', err);
     });
 

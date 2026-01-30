@@ -134,7 +134,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
 
         // Clean up any stale sessions for this child (runs in background)
         // This ensures sessions that weren't properly ended get summaries
-        cleanupStaleSessions(60).catch(err => {
+        cleanupStaleSessions(30).catch(err => {
             console.error('Background cleanup failed:', err);
         });
 

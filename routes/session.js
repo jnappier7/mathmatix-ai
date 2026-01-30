@@ -109,7 +109,7 @@ router.post('/cleanup-stale', isAuthenticated, async (req, res) => {
       return res.status(403).json({ error: 'Admin access required' });
     }
 
-    const cleaned = await cleanupStaleSessions(60); // 1 hour threshold
+    const cleaned = await cleanupStaleSessions(30); // 30 min threshold
 
     res.json({
       success: true,
@@ -130,7 +130,7 @@ async function throttledCleanup() {
   if (now - lastCleanupTime > CLEANUP_INTERVAL) {
     lastCleanupTime = now;
     // Run cleanup in background, don't wait
-    cleanupStaleSessions(60).catch(err => {
+    cleanupStaleSessions(30).catch(err => {
       logger.error('Background cleanup failed', { error: err });
     });
   }
