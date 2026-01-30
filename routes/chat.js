@@ -364,15 +364,47 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         aiResponseText = boardParsed.text; // Cleaned text with [BOARD_REF:...] removed
         const boardContext = boardParsed.boardContext; // { targetObjectId, type, allReferences }
 
-        const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
-        let bonusXpAwarded = 0;
-        let bonusXpReason = '';
-        if (xpAwardMatch) {
-            const rawXpAmount = parseInt(xpAwardMatch[1], 10);
-            // SECURITY FIX: Cap XP awards to prevent exploitation
-            bonusXpAwarded = Math.min(Math.max(rawXpAmount, BRAND_CONFIG.xpAwardRange.min), BRAND_CONFIG.xpAwardRange.max);
-            bonusXpReason = xpAwardMatch[2] || 'AI Bonus Award';
-            aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
+        // =====================================================
+        // XP LADDER SYSTEM (Three Tiers)
+        // Tier 1: Silent turn XP (engagement)
+        // Tier 2: Performance XP (correct answers)
+        // Tier 3: Core Behavior XP (learning identity)
+        // =====================================================
+
+        const xpLadder = BRAND_CONFIG.xpLadder;
+        const xpBreakdown = {
+            tier1: 0,       // Silent turn XP
+            tier2: 0,       // Performance XP
+            tier2Type: null, // 'correct' or 'clean'
+            tier3: 0,       // Core behavior XP
+            tier3Behavior: null, // The specific behavior being rewarded
+            total: 0
+        };
+
+        // TIER 3: Core Behavior XP (AI explicitly awards for learning identity moments)
+        // Format: <CORE_BEHAVIOR_XP:amount,behavior>
+        // Example: <CORE_BEHAVIOR_XP:50,caught_own_error>
+        const coreBehaviorMatch = aiResponseText.match(/<CORE_BEHAVIOR_XP:(\d+),([^>]+)>/);
+        if (coreBehaviorMatch) {
+            const rawAmount = parseInt(coreBehaviorMatch[1], 10);
+            const behavior = coreBehaviorMatch[2].trim();
+
+            // Security: Cap at max tier 3 amount
+            xpBreakdown.tier3 = Math.min(rawAmount, xpLadder.maxTier3PerTurn);
+            xpBreakdown.tier3Behavior = behavior;
+            aiResponseText = aiResponseText.replace(coreBehaviorMatch[0], '').trim();
+
+            console.log(`🎖️ [XP Tier 3] Core Behavior: +${xpBreakdown.tier3} XP for "${behavior}"`);
+        }
+
+        // LEGACY: Support old <AWARD_XP> tag (treat as Tier 2 for backward compatibility)
+        const legacyXpMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
+        if (legacyXpMatch && !coreBehaviorMatch) {
+            const rawAmount = parseInt(legacyXpMatch[1], 10);
+            // Treat legacy awards as Tier 2 (capped at tier 2 max)
+            xpBreakdown.tier2 = Math.min(rawAmount, xpLadder.maxTier2PerTurn);
+            xpBreakdown.tier2Type = 'legacy';
+            aiResponseText = aiResponseText.replace(legacyXpMatch[0], '').trim();
         }
 
         // SAFETY LOGGING: Check if AI flagged safety concern
@@ -669,26 +701,60 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             }
         }
 
-        let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
-        user.xp = (user.xp || 0) + xpAward;
-        
-        let specialXpAwardedMessage = bonusXpAwarded > 0 ? `${bonusXpAwarded} XP (${bonusXpReason})` : `${xpAward} XP`;
+        // =====================================================
+        // XP LADDER: Calculate all three tiers
+        // =====================================================
+
+        // TIER 1: Silent turn XP (always awarded, never shown)
+        xpBreakdown.tier1 = xpLadder.tier1.amount;
+
+        // TIER 2: Performance XP (awarded on correct answers)
+        // Determine if this was a "clean" solution (no hints used in recent turns)
+        if (wasCorrect && xpBreakdown.tier2 === 0) {
+            // Check if student used hints recently (look at last few messages for hint requests)
+            const recentMessages = activeConversation.messages.slice(-6);
+            const askedForHint = recentMessages.some(msg =>
+                msg.role === 'user' &&
+                /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(msg.content)
+            );
+
+            if (askedForHint) {
+                // Basic correct (used hints)
+                xpBreakdown.tier2 = xpLadder.tier2.correct;
+                xpBreakdown.tier2Type = 'correct';
+            } else {
+                // Clean solution (no hints)
+                xpBreakdown.tier2 = xpLadder.tier2.clean;
+                xpBreakdown.tier2Type = 'clean';
+            }
+            console.log(`✨ [XP Tier 2] Performance: +${xpBreakdown.tier2} XP (${xpBreakdown.tier2Type})`);
+        }
+
+        // Calculate total XP
+        xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
+        user.xp = (user.xp || 0) + xpBreakdown.total;
+
+        // Check for level up
         let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
+        let leveledUp = false;
         if (user.xp >= xpForNextLevel) {
             user.level += 1;
-            specialXpAwardedMessage = `LEVEL_UP! New level: ${user.level}`;
+            leveledUp = true;
         }
 
         const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
-		if (tutorsJustUnlocked.length > 0) {
-			user.unlockedItems.push(...tutorsJustUnlocked);
-			user.markModified('unlockedItems');
-		}
+        if (tutorsJustUnlocked.length > 0) {
+            user.unlockedItems.push(...tutorsJustUnlocked);
+            user.markModified('unlockedItems');
+        }
 
         await user.save();
 
         const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
         const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
+
+        // Log XP breakdown for analytics
+        console.log(`📊 [XP Ladder] User ${user.firstName}: Tier1=${xpBreakdown.tier1} (silent), Tier2=${xpBreakdown.tier2} (${xpBreakdown.tier2Type || 'none'}), Tier3=${xpBreakdown.tier3} (${xpBreakdown.tier3Behavior || 'none'}) = Total ${xpBreakdown.total}`);
 
         // Prepare IEP accommodation features for frontend
         const iepFeatures = user.iepPlan?.accommodations ? {
@@ -705,19 +771,26 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             userXp: userXpInCurrentLevel,
             userLevel: user.level,
             xpNeeded: xpForNextLevel,
-            specialXpAwarded: specialXpAwardedMessage,
-            xpAwarded: xpAward, // NEW: XP earned this turn for live feed
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
             drawingSequence: dynamicDrawingSequence,
-            visualCommands: visualCommands, // Visual teaching: whiteboard, algebra tiles, images
-            boardContext: boardContext, // Board-first chat integration: spatial anchoring data
-            iepFeatures: iepFeatures, // IEP accommodations for frontend to auto-enable features
-            // NEW: Problem-solving stats for live stats tracker
+            visualCommands: visualCommands,
+            boardContext: boardContext,
+            iepFeatures: iepFeatures,
             problemResult: problemAnswered ? (wasCorrect ? 'correct' : 'incorrect') : null,
             sessionStats: {
                 problemsAttempted: activeConversation.problemsAttempted || 0,
                 problemsCorrect: activeConversation.problemsCorrect || 0
+            },
+            // XP LADDER: Tiered XP data for frontend rendering
+            xpLadder: {
+                tier1: xpBreakdown.tier1,           // Silent (frontend ignores)
+                tier2: xpBreakdown.tier2,           // Performance XP
+                tier2Type: xpBreakdown.tier2Type,   // 'correct', 'clean', or null
+                tier3: xpBreakdown.tier3,           // Core behavior XP
+                tier3Behavior: xpBreakdown.tier3Behavior, // Behavior name for display
+                total: xpBreakdown.total,
+                leveledUp: leveledUp
             }
         };
 

@@ -2489,20 +2489,54 @@ document.addEventListener("DOMContentLoaded", () => {
             updateGamificationDisplay();
         }
 
-        if (data.specialXpAwarded) {
+        // =====================================================
+        // XP LADDER DISPLAY (Three Tiers)
+        // Tier 1: Silent (no display)
+        // Tier 2: Minimal (correct answer acknowledgment)
+        // Tier 3: Ceremonial (AI provides explanation, we animate)
+        // =====================================================
+        if (data.xpLadder) {
+            const xp = data.xpLadder;
+
+            // LEVEL UP - Always celebrate
+            if (xp.leveledUp) {
+                triggerXpAnimation(`LEVEL UP! Level ${data.userLevel}`, true, false);
+            }
+
+            // TIER 3: Core Behavior XP (ceremonial - AI already explained why)
+            if (xp.tier3 > 0 && xp.tier3Behavior) {
+                // Show big XP animation for identity-building moments
+                const behaviorLabels = {
+                    'explained_reasoning': 'Great reasoning!',
+                    'caught_own_error': 'Self-correction!',
+                    'strategy_selection': 'Smart strategy!',
+                    'persistence': 'Perseverance!',
+                    'transfer': 'Knowledge transfer!',
+                    'taught_back': 'Teaching mastery!'
+                };
+                const label = behaviorLabels[xp.tier3Behavior] || 'Exceptional!';
+                triggerXpAnimation(`🎖️ +${xp.tier3} XP - ${label}`, false, true);
+
+                if (typeof window.showXpNotification === 'function') {
+                    window.showXpNotification(xp.tier3, label);
+                }
+            }
+            // TIER 2: Performance XP (minimal acknowledgment)
+            else if (xp.tier2 > 0) {
+                // Subtle notification for correct answers
+                const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
+                if (typeof window.showXpNotification === 'function') {
+                    window.showXpNotification(xp.tier2, tier2Label);
+                }
+                // No big animation - just the notification
+            }
+            // TIER 1: Silent (no display at all)
+            // The +2 XP is added to their total but never shown
+        }
+        // Legacy fallback for old response format
+        else if (data.specialXpAwarded) {
             const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
             triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
-
-            // Show XP notification in live feed
-            if (typeof window.showXpNotification === 'function') {
-                // Use xpAwarded if available, otherwise parse from specialXpAwarded
-                const xpAmount = data.xpAwarded || (data.xpAmount || 10);
-                const reason = data.specialXpAwarded.replace('🎉 ', '').replace('⭐ ', '').replace('🎊 ', '').split('!')[0];
-                window.showXpNotification(xpAmount, reason);
-            }
-        } else if (data.xpAwarded && typeof window.showXpNotification === 'function') {
-            // Show regular XP notification even without bonus
-            window.showXpNotification(data.xpAwarded, 'Question answered');
         }
 
         // Smart streak tracking - only when AI explicitly signals problem correctness
