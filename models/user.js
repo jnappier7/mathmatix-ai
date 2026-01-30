@@ -460,6 +460,20 @@ const userSchema = new Schema({
   xp:        { type: Number, default: 0, min: 0 },
   level:     { type: Number, default: 1, min: 1 },
   xpHistory: { type: [xpEventSchema], default: [] },
+
+  // XP Ladder Analytics (Three Tiers)
+  // Enables "grinding vs growing" analysis
+  xpLadderStats: {
+    lifetimeTier1: { type: Number, default: 0 },  // Total turn XP (engagement)
+    lifetimeTier2: { type: Number, default: 0 },  // Total performance XP (competence)
+    lifetimeTier3: { type: Number, default: 0 },  // Total behavior XP (identity)
+    tier3Behaviors: [{
+      behavior: { type: String },      // 'caught_own_error', 'persistence', etc.
+      count: { type: Number, default: 0 },
+      lastEarned: { type: Date }
+    }]
+  },
+
   totalActiveTutoringMinutes:  { type: Number, default: 0 },
   weeklyActiveTutoringMinutes: { type: Number, default: 0 },
   // Precise time tracking in seconds (minutes are derived from these)

@@ -734,6 +734,32 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
         user.xp = (user.xp || 0) + xpBreakdown.total;
 
+        // Update XP Ladder analytics for "grinding vs growing" analysis
+        if (!user.xpLadderStats) {
+            user.xpLadderStats = { lifetimeTier1: 0, lifetimeTier2: 0, lifetimeTier3: 0, tier3Behaviors: [] };
+        }
+        user.xpLadderStats.lifetimeTier1 = (user.xpLadderStats.lifetimeTier1 || 0) + xpBreakdown.tier1;
+        user.xpLadderStats.lifetimeTier2 = (user.xpLadderStats.lifetimeTier2 || 0) + xpBreakdown.tier2;
+        user.xpLadderStats.lifetimeTier3 = (user.xpLadderStats.lifetimeTier3 || 0) + xpBreakdown.tier3;
+
+        // Track Tier 3 behavior types for detailed analytics
+        if (xpBreakdown.tier3 > 0 && xpBreakdown.tier3Behavior) {
+            const existingBehavior = user.xpLadderStats.tier3Behaviors.find(
+                b => b.behavior === xpBreakdown.tier3Behavior
+            );
+            if (existingBehavior) {
+                existingBehavior.count += 1;
+                existingBehavior.lastEarned = new Date();
+            } else {
+                user.xpLadderStats.tier3Behaviors.push({
+                    behavior: xpBreakdown.tier3Behavior,
+                    count: 1,
+                    lastEarned: new Date()
+                });
+            }
+        }
+        user.markModified('xpLadderStats');
+
         // Check for level up
         let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
         let leveledUp = false;
