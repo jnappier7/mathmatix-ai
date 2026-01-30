@@ -2470,6 +2470,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (latestMessage) {
                 setTimeout(() => {
                     window.inlineChatVisuals.initializeVisuals(latestMessage);
+                    // Re-render MathJax after visuals are inserted
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        window.MathJax.typesetPromise([latestMessage]).catch(err => console.log('MathJax error:', err));
+                    }
                 }, 100);
             }
         }
