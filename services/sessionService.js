@@ -208,11 +208,18 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
 
     if (activeConversation && activeConversation.messages.length > 0) {
       try {
-        // Update tracking fields one final time
-        activeConversation.currentTopic = detectTopic(activeConversation.messages);
-        const stats = calculateProblemStats(activeConversation.messages);
-        activeConversation.problemsAttempted = stats.attempted;
-        activeConversation.problemsCorrect = stats.correct;
+        // Update tracking fields one final time (only if not already set)
+        if (!activeConversation.currentTopic) {
+          activeConversation.currentTopic = detectTopic(activeConversation.messages);
+        }
+
+        // IMPROVED: Use stored stats if available (more accurate than recalculating)
+        // Only recalculate if stats are missing (old conversations)
+        if (!activeConversation.problemsAttempted || activeConversation.problemsAttempted === 0) {
+          const stats = calculateProblemStats(activeConversation.messages);
+          activeConversation.problemsAttempted = stats.attempted;
+          activeConversation.problemsCorrect = stats.correct;
+        }
 
         // Detect if struggling
         const struggleInfo = detectStruggle(activeConversation.messages.slice(-10));
@@ -236,11 +243,15 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
           userId,
           topic: activeConversation.currentTopic,
           problemsAttempted: activeConversation.problemsAttempted,
+          problemsCorrect: activeConversation.problemsCorrect,
           summary: aiSummary.substring(0, 100)
         });
       } catch (error) {
         logger.error('Failed to generate conversation summary', { userId, error });
-        // Continue with session end even if summary generation fails
+        // Still mark as inactive even if summary fails, with a basic summary
+        activeConversation.isActive = false;
+        activeConversation.summary = `Session completed - ${activeConversation.activeMinutes || 0} minutes`;
+        await activeConversation.save();
       }
     }
 
@@ -304,11 +315,96 @@ async function recordHeartbeat(userId, sessionId, metrics = {}) {
   }
 }
 
+/**
+ * Clean up stale sessions that were never properly ended
+ * Sessions older than the threshold with isActive: true get summaries generated
+ * @param {number} staleThresholdMinutes - Minutes of inactivity before considered stale (default: 60)
+ * @returns {Promise<number>} Number of sessions cleaned up
+ */
+async function cleanupStaleSessions(staleThresholdMinutes = 60) {
+  try {
+    const staleThreshold = new Date(Date.now() - staleThresholdMinutes * 60 * 1000);
+
+    // Find all stale active sessions
+    const staleSessions = await Conversation.find({
+      isActive: true,
+      lastActivity: { $lt: staleThreshold },
+      messages: { $exists: true, $ne: [] }
+    }).limit(50); // Process in batches
+
+    let cleanedCount = 0;
+
+    for (const session of staleSessions) {
+      try {
+        // Get the user for this session
+        const user = await User.findById(session.userId);
+        if (!user) {
+          // No user, just mark as inactive
+          session.isActive = false;
+          session.summary = 'Session ended (user not found)';
+          await session.save();
+          cleanedCount++;
+          continue;
+        }
+
+        // Update tracking fields if not set
+        if (!session.currentTopic) {
+          session.currentTopic = detectTopic(session.messages);
+        }
+
+        // Use stored stats or recalculate
+        if (!session.problemsAttempted || session.problemsAttempted === 0) {
+          const stats = calculateProblemStats(session.messages);
+          session.problemsAttempted = stats.attempted;
+          session.problemsCorrect = stats.correct;
+        }
+
+        // Generate AI summary
+        const studentName = `${user.firstName} ${user.lastName}`;
+        try {
+          const aiSummary = await generateAISummary(session, studentName);
+          session.summary = aiSummary;
+        } catch (summaryError) {
+          // Fallback summary if AI fails
+          session.summary = `${studentName} worked on ${session.currentTopic || 'mathematics'} for ${session.activeMinutes || 0} minutes. ` +
+            `${session.problemsAttempted > 0 ? `Attempted ${session.problemsAttempted} problems with ${session.problemsCorrect || 0} correct.` : 'Session ended due to inactivity.'}`;
+        }
+
+        // Mark as inactive
+        session.isActive = false;
+        await session.save();
+
+        cleanedCount++;
+        logger.info('Stale session cleaned up', {
+          conversationId: session._id,
+          userId: session.userId,
+          lastActivity: session.lastActivity
+        });
+      } catch (sessionError) {
+        logger.error('Error cleaning up stale session', {
+          conversationId: session._id,
+          error: sessionError.message
+        });
+      }
+    }
+
+    if (cleanedCount > 0) {
+      logger.info(`Cleaned up ${cleanedCount} stale sessions`);
+    }
+
+    return cleanedCount;
+  } catch (error) {
+    logger.error('Failed to cleanup stale sessions', { error });
+    return 0;
+  }
+}
+
 module.exports = {
   SESSION_CONFIG,
   generateSessionSummary,
   saveMasteryProgress,
   notifyDashboards,
   endSession,
-  recordHeartbeat
+  recordHeartbeat,
+  cleanupStaleSessions
 };
