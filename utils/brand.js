@@ -73,9 +73,53 @@ const BRAND_CONFIG = {
 
     // 8. Specific Feature Settings
     xpPerLevel: 100, // XP needed to level up
-    xpAwardRange: { min: 1, max: 50 }, // Max XP an AI can award in one go
-    baseXpPerTurn: 2, // NEW: Small XP awarded for every valid chat turn
     iepGoalCap: 10, // Max active goals per student
+
+    // 9. XP Ladder System (Three Tiers)
+    // Tier 1: Turn XP - silent background reinforcement for engagement
+    // Tier 2: Performance XP - visible reward for correct answers
+    // Tier 3: Core Behavior XP - ceremonial reward for learning identity
+    xpLadder: {
+        // Tier 1: Silent turn XP (no notification to student)
+        tier1: {
+            name: 'turn',
+            amount: 2,
+            silent: true,  // No UI notification
+            description: 'Background engagement reinforcement'
+        },
+
+        // Tier 2: Performance XP (minimal notification)
+        tier2: {
+            name: 'performance',
+            correct: 5,      // Basic correct answer
+            clean: 10,       // Correct without hints, good pace
+            description: 'Competence reinforcement'
+        },
+
+        // Tier 3: Core Behavior XP (ceremonial, AI explains why)
+        tier3: {
+            name: 'behavior',
+            amounts: {
+                small: 25,   // Good reasoning shown
+                medium: 50,  // Caught own error, strategy selection
+                large: 100   // Transfer, persistence through struggle
+            },
+            triggers: [
+                'explained_reasoning',      // Student articulated their thinking
+                'caught_own_error',         // Student found and corrected mistake
+                'strategy_selection',       // Chose right approach before solving
+                'persistence',              // Kept trying through difficulty (3+ attempts)
+                'transfer',                 // Applied learned concept to new context
+                'taught_back'               // Explained concept as if teaching
+            ],
+            description: 'Learning identity reinforcement'
+        },
+
+        // Security caps
+        maxTier2PerTurn: 10,
+        maxTier3PerTurn: 100
+    },
+
     digestEmailSchedule: "Sunday 7 AM ET", //
     digestEmailProvider: "SendGrid", //
 
