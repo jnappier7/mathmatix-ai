@@ -1161,6 +1161,465 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // -------------------------------------------------------------------------
+    // --- Teacher & Roster Setup Functionality ---
+    // -------------------------------------------------------------------------
+
+    // --- Create Teacher Modal ---
+    const createTeacherModal = document.getElementById('createTeacherModal');
+    const openTeacherSetupBtn = document.getElementById('openTeacherSetupBtn');
+    const closeCreateTeacherBtn = document.getElementById('closeCreateTeacherBtn');
+    const cancelCreateTeacher = document.getElementById('cancelCreateTeacher');
+    const createTeacherForm = document.getElementById('createTeacherForm');
+    const generatePasswordCheck = document.getElementById('generatePasswordCheck');
+    const passwordFieldGroup = document.getElementById('passwordFieldGroup');
+    const teacherCreatedResult = document.getElementById('teacherCreatedResult');
+    const createAnotherTeacher = document.getElementById('createAnotherTeacher');
+
+    function openCreateTeacherModal() {
+        createTeacherModal?.classList.add('is-visible');
+        createTeacherForm?.reset();
+        teacherCreatedResult.style.display = 'none';
+        createTeacherForm.style.display = 'block';
+    }
+
+    function closeCreateTeacherModal() {
+        createTeacherModal?.classList.remove('is-visible');
+    }
+
+    if (openTeacherSetupBtn) {
+        openTeacherSetupBtn.addEventListener('click', openCreateTeacherModal);
+    }
+
+    if (closeCreateTeacherBtn) {
+        closeCreateTeacherBtn.addEventListener('click', closeCreateTeacherModal);
+    }
+
+    if (cancelCreateTeacher) {
+        cancelCreateTeacher.addEventListener('click', closeCreateTeacherModal);
+    }
+
+    if (generatePasswordCheck) {
+        generatePasswordCheck.addEventListener('change', () => {
+            passwordFieldGroup.style.display = generatePasswordCheck.checked ? 'none' : 'block';
+        });
+    }
+
+    if (createAnotherTeacher) {
+        createAnotherTeacher.addEventListener('click', () => {
+            teacherCreatedResult.style.display = 'none';
+            createTeacherForm.style.display = 'block';
+            createTeacherForm.reset();
+        });
+    }
+
+    if (createTeacherForm) {
+        createTeacherForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('createTeacherSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const formData = {
+                    firstName: document.getElementById('teacherFirstName').value.trim(),
+                    lastName: document.getElementById('teacherLastName').value.trim(),
+                    email: document.getElementById('teacherEmail').value.trim(),
+                    username: document.getElementById('teacherUsername').value.trim() || undefined,
+                    generatePassword: generatePasswordCheck.checked,
+                    password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined
+                };
+
+                const response = await csrfFetch('/api/admin/teachers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // Show success result
+                    document.getElementById('resultTeacherName').textContent = `${result.teacher.firstName} ${result.teacher.lastName}`;
+                    document.getElementById('resultTeacherEmail').textContent = result.teacher.email;
+                    document.getElementById('resultTeacherUsername').textContent = result.teacher.username;
+
+                    if (result.temporaryPassword) {
+                        document.getElementById('resultTeacherPassword').textContent = result.temporaryPassword;
+                        document.getElementById('resultPasswordRow').style.display = 'block';
+                    } else {
+                        document.getElementById('resultPasswordRow').style.display = 'none';
+                    }
+
+                    createTeacherForm.style.display = 'none';
+                    teacherCreatedResult.style.display = 'block';
+
+                    // Refresh dashboard to show new teacher
+                    await initializeDashboard();
+                } else {
+                    throw new Error(result.message || 'Failed to create teacher');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Teacher';
+            }
+        });
+    }
+
+    // --- Create Enrollment Code Modal ---
+    const createEnrollmentCodeModal = document.getElementById('createEnrollmentCodeModal');
+    const openEnrollmentCodeBtn = document.getElementById('openEnrollmentCodeBtn');
+    const closeEnrollmentCodeBtn = document.getElementById('closeEnrollmentCodeBtn');
+    const cancelCreateCode = document.getElementById('cancelCreateCode');
+    const createEnrollmentCodeForm = document.getElementById('createEnrollmentCodeForm');
+    const codeTeacherSelect = document.getElementById('codeTeacherSelect');
+    const codeCreatedResult = document.getElementById('codeCreatedResult');
+    const createAnotherCode = document.getElementById('createAnotherCode');
+
+    async function populateTeacherSelects() {
+        try {
+            const response = await fetch('/api/admin/teachers', { credentials: 'include' });
+            if (!response.ok) return;
+
+            const teachers = await response.json();
+            const teacherOptions = teachers.map(t =>
+                `<option value="${t._id}">${t.firstName} ${t.lastName}</option>`
+            ).join('');
+
+            // Populate all teacher selects
+            if (codeTeacherSelect) {
+                codeTeacherSelect.innerHTML = '<option value="">Select a teacher...</option>' + teacherOptions;
+            }
+            const rosterTeacherSelect = document.getElementById('rosterTeacherSelect');
+            if (rosterTeacherSelect) {
+                rosterTeacherSelect.innerHTML = '<option value="">No teacher assignment</option>' + teacherOptions;
+            }
+        } catch (error) {
+            console.error('Error loading teachers for selects:', error);
+        }
+    }
+
+    async function populateEnrollmentCodeSelect() {
+        try {
+            const response = await fetch('/api/admin/enrollment-codes', { credentials: 'include' });
+            if (!response.ok) return;
+
+            const codes = await response.json();
+            const codeOptions = codes.map(c =>
+                `<option value="${c._id}">${c.code} - ${c.className} (${c.teacherId?.firstName || 'Unknown'})</option>`
+            ).join('');
+
+            const rosterEnrollmentCodeSelect = document.getElementById('rosterEnrollmentCodeSelect');
+            if (rosterEnrollmentCodeSelect) {
+                rosterEnrollmentCodeSelect.innerHTML = '<option value="">No enrollment code</option>' + codeOptions;
+            }
+        } catch (error) {
+            console.error('Error loading enrollment codes:', error);
+        }
+    }
+
+    function openCreateEnrollmentCodeModal() {
+        createEnrollmentCodeModal?.classList.add('is-visible');
+        createEnrollmentCodeForm?.reset();
+        codeCreatedResult.style.display = 'none';
+        createEnrollmentCodeForm.style.display = 'block';
+        populateTeacherSelects();
+    }
+
+    function closeCreateEnrollmentCodeModal() {
+        createEnrollmentCodeModal?.classList.remove('is-visible');
+    }
+
+    if (openEnrollmentCodeBtn) {
+        openEnrollmentCodeBtn.addEventListener('click', openCreateEnrollmentCodeModal);
+    }
+
+    if (closeEnrollmentCodeBtn) {
+        closeEnrollmentCodeBtn.addEventListener('click', closeCreateEnrollmentCodeModal);
+    }
+
+    if (cancelCreateCode) {
+        cancelCreateCode.addEventListener('click', closeCreateEnrollmentCodeModal);
+    }
+
+    if (createAnotherCode) {
+        createAnotherCode.addEventListener('click', () => {
+            codeCreatedResult.style.display = 'none';
+            createEnrollmentCodeForm.style.display = 'block';
+            createEnrollmentCodeForm.reset();
+        });
+    }
+
+    if (createEnrollmentCodeForm) {
+        createEnrollmentCodeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('createEnrollmentCodeSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const formData = {
+                    teacherId: document.getElementById('codeTeacherSelect').value,
+                    className: document.getElementById('codeClassName').value.trim(),
+                    gradeLevel: document.getElementById('codeGradeLevel').value.trim() || undefined,
+                    mathCourse: document.getElementById('codeMathCourse').value.trim() || undefined,
+                    customCode: document.getElementById('customCode').value.trim() || undefined,
+                    maxUses: document.getElementById('codeMaxUses').value || undefined,
+                    expiresAt: document.getElementById('codeExpires').value || undefined
+                };
+
+                const response = await csrfFetch('/api/admin/enrollment-codes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    document.getElementById('resultEnrollmentCode').textContent = result.enrollmentCode.code;
+                    document.getElementById('resultCodeClassName').textContent = result.enrollmentCode.className;
+                    document.getElementById('resultCodeTeacher').textContent = result.enrollmentCode.teacherName;
+
+                    createEnrollmentCodeForm.style.display = 'none';
+                    codeCreatedResult.style.display = 'block';
+                } else {
+                    throw new Error(result.message || 'Failed to create enrollment code');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-key"></i> Create Code';
+            }
+        });
+    }
+
+    // --- Roster Import Modal ---
+    const rosterImportModal = document.getElementById('rosterImportModal');
+    const openRosterImportBtn = document.getElementById('openRosterImportBtn');
+    const closeRosterImportBtn = document.getElementById('closeRosterImportBtn');
+    const cancelRosterImport = document.getElementById('cancelRosterImport');
+    const rosterImportForm = document.getElementById('rosterImportForm');
+    const validateRosterBtn = document.getElementById('validateRosterBtn');
+    const rosterImportResults = document.getElementById('rosterImportResults');
+    const importAnotherRoster = document.getElementById('importAnotherRoster');
+    const downloadSampleCSV = document.getElementById('downloadSampleCSV');
+    const exportCredentialsBtn = document.getElementById('exportCredentialsBtn');
+
+    let lastImportedStudents = [];
+
+    function openRosterImportModal() {
+        rosterImportModal?.classList.add('is-visible');
+        rosterImportForm?.reset();
+        rosterImportResults.style.display = 'none';
+        document.querySelectorAll('#rosterImportModal .modal-section').forEach(s => {
+            if (!s.closest('#rosterImportResults')) s.style.display = 'block';
+        });
+        populateTeacherSelects();
+        populateEnrollmentCodeSelect();
+    }
+
+    function closeRosterImportModal() {
+        rosterImportModal?.classList.remove('is-visible');
+    }
+
+    if (openRosterImportBtn) {
+        openRosterImportBtn.addEventListener('click', openRosterImportModal);
+    }
+
+    if (closeRosterImportBtn) {
+        closeRosterImportBtn.addEventListener('click', closeRosterImportModal);
+    }
+
+    if (cancelRosterImport) {
+        cancelRosterImport.addEventListener('click', closeRosterImportModal);
+    }
+
+    if (importAnotherRoster) {
+        importAnotherRoster.addEventListener('click', () => {
+            rosterImportResults.style.display = 'none';
+            document.querySelectorAll('#rosterImportModal .modal-section').forEach(s => {
+                if (!s.closest('#rosterImportResults')) s.style.display = 'block';
+            });
+            rosterImportForm.reset();
+        });
+    }
+
+    if (downloadSampleCSV) {
+        downloadSampleCSV.addEventListener('click', (e) => {
+            e.preventDefault();
+            const csvContent = 'firstName,lastName,email,gradeLevel,mathCourse\nJohn,Smith,john.smith@school.org,7th Grade,Pre-Algebra\nJane,Doe,jane.doe@school.org,7th Grade,Pre-Algebra\n';
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'student-roster-template.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    if (exportCredentialsBtn) {
+        exportCredentialsBtn.addEventListener('click', () => {
+            if (lastImportedStudents.length === 0) {
+                alert('No students to export');
+                return;
+            }
+
+            const csvContent = 'firstName,lastName,email,username,temporaryPassword\n' +
+                lastImportedStudents.map(s =>
+                    `${s.firstName},${s.lastName},${s.email},${s.username},${s.temporaryPassword}`
+                ).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `student-credentials-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    async function performRosterImport(dryRun = false) {
+        const fileInput = document.getElementById('rosterFile');
+        const teacherId = document.getElementById('rosterTeacherSelect')?.value || '';
+        const enrollmentCodeId = document.getElementById('rosterEnrollmentCodeSelect')?.value || '';
+
+        if (!fileInput.files[0]) {
+            alert('Please select a CSV file');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        let url = `/api/admin/roster-import?dryRun=${dryRun}`;
+        if (teacherId) url += `&teacherId=${teacherId}`;
+        if (enrollmentCodeId) url += `&enrollmentCodeId=${enrollmentCodeId}`;
+
+        const submitBtn = dryRun ? validateRosterBtn : document.getElementById('importRosterBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Import failed');
+            }
+
+            displayImportResults(result, dryRun);
+
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    }
+
+    function displayImportResults(result, dryRun) {
+        // Hide input sections, show results
+        document.querySelectorAll('#rosterImportModal .modal-section').forEach(s => {
+            if (!s.closest('#rosterImportResults')) s.style.display = 'none';
+        });
+        rosterImportResults.style.display = 'block';
+
+        // Update stats
+        document.getElementById('resultTotalRows').textContent = result.summary?.totalRows || result.summary?.totalStudents || 0;
+        document.getElementById('resultCreated').textContent = dryRun ? result.summary?.validStudents || 0 : result.summary?.created || 0;
+        document.getElementById('resultSkipped').textContent = result.summary?.skippedStudents || result.skippedStudents?.length || 0;
+        document.getElementById('resultErrors').textContent = result.summary?.errors || result.errors?.length || 0;
+
+        // Created students table
+        const createdList = document.getElementById('createdStudentsList');
+        const createdTbody = document.getElementById('createdStudentsTableBody');
+        const studentsToShow = dryRun ? result.newStudents : result.createdStudents;
+
+        if (studentsToShow && studentsToShow.length > 0) {
+            createdList.style.display = 'block';
+            lastImportedStudents = studentsToShow;
+            createdTbody.innerHTML = studentsToShow.map(s => `
+                <tr>
+                    <td>${s.firstName} ${s.lastName}</td>
+                    <td>${s.email}</td>
+                    <td>${s.username}</td>
+                    <td><code style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">${s.temporaryPassword || (dryRun ? 'N/A (dry run)' : 'N/A')}</code></td>
+                </tr>
+            `).join('');
+
+            // Hide export button for dry runs
+            exportCredentialsBtn.style.display = dryRun ? 'none' : 'inline-block';
+        } else {
+            createdList.style.display = 'none';
+        }
+
+        // Skipped students table
+        const skippedList = document.getElementById('skippedStudentsList');
+        const skippedTbody = document.getElementById('skippedStudentsTableBody');
+
+        if (result.skippedStudents && result.skippedStudents.length > 0) {
+            skippedList.style.display = 'block';
+            skippedTbody.innerHTML = result.skippedStudents.map(s => `
+                <tr>
+                    <td>${s.firstName} ${s.lastName}</td>
+                    <td>${s.email}</td>
+                    <td>${s.reason}</td>
+                </tr>
+            `).join('');
+        } else {
+            skippedList.style.display = 'none';
+        }
+
+        // Errors table
+        const errorsList = document.getElementById('importErrorsList');
+        const errorsTbody = document.getElementById('importErrorsTableBody');
+
+        if (result.errors && result.errors.length > 0) {
+            errorsList.style.display = 'block';
+            errorsTbody.innerHTML = result.errors.map(e => `
+                <tr>
+                    <td>${e.row || '-'}</td>
+                    <td>${e.field || '-'}</td>
+                    <td>${e.message || e.error || 'Unknown error'}</td>
+                </tr>
+            `).join('');
+        } else {
+            errorsList.style.display = 'none';
+        }
+
+        // Refresh dashboard if not dry run
+        if (!dryRun && result.createdStudents?.length > 0) {
+            initializeDashboard();
+        }
+    }
+
+    if (validateRosterBtn) {
+        validateRosterBtn.addEventListener('click', () => performRosterImport(true));
+    }
+
+    if (rosterImportForm) {
+        rosterImportForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            performRosterImport(false);
+        });
+    }
+
+    // -------------------------------------------------------------------------
     // --- Initial Load ---
     // -------------------------------------------------------------------------
     initializeDashboard();
