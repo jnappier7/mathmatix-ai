@@ -1819,13 +1819,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 return `@@LATEX_BLOCK_${index}@@`;
             });
 
-            // Parse markdown with protected LaTeX
+            // Extract and protect inline visual HTML (SVG containers from inlineChatVisuals)
+            // These are already rendered HTML that shouldn't be parsed by marked
+            // Pattern matches: <div class="icv-container...>...</div> (outermost container)
+            const visualBlocks = [];
+            protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>[\s\S]*?<\/svg>\s*<\/div>/g, (match) => {
+                const index = visualBlocks.length;
+                visualBlocks.push(match);
+                return `@@VISUAL_BLOCK_${index}@@`;
+            });
+            // Also protect non-SVG visuals (like fraction displays)
+            protectedText = protectedText.replace(/<div class="icv-container[^"]*"[^>]*>(?:(?!<svg)[\s\S])*?<\/div>\s*<\/div>/g, (match) => {
+                const index = visualBlocks.length;
+                visualBlocks.push(match);
+                return `@@VISUAL_BLOCK_${index}@@`;
+            });
+
+            // Parse markdown with protected LaTeX and visuals
             const dirtyHtml = marked.parse(protectedText, { breaks: true });
 
             // Restore LaTeX blocks
             let finalHtml = dirtyHtml;
             latexBlocks.forEach((block, index) => {
                 finalHtml = finalHtml.replace(`@@LATEX_BLOCK_${index}@@`, block);
+            });
+
+            // Restore visual blocks
+            visualBlocks.forEach((block, index) => {
+                finalHtml = finalHtml.replace(`@@VISUAL_BLOCK_${index}@@`, block);
             });
 
             // Sanitize HTML to prevent XSS attacks
