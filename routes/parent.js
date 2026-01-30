@@ -6,6 +6,7 @@ const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
 const { isParent, isAuthenticated } = require('../middleware/auth');
+const { cleanupStaleSessions } = require('../services/sessionService');
 
 // Helper to generate a unique short code
 function generateUniqueLinkCode() {
@@ -131,12 +132,23 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
             return res.status(404).json({ message: "Child not found." });
         }
 
+        // Clean up any stale sessions for this child (runs in background)
+        // This ensures sessions that weren't properly ended get summaries
+        cleanupStaleSessions(60).catch(err => {
+            console.error('Background cleanup failed:', err);
+        });
+
         // --- MODIFICATION START ---
-        // Fetch recent conversation summaries from the new 'Conversation' collection.
-        const recentSessions = await Conversation.find({ userId: childId })
+        // Fetch recent COMPLETED conversation summaries from the 'Conversation' collection.
+        // Only fetch sessions that are inactive and have summaries (properly ended sessions)
+        const recentSessions = await Conversation.find({
+            userId: childId,
+            isActive: false,  // Only completed sessions
+            summary: { $exists: true, $ne: null, $ne: '' }  // Only sessions with summaries
+        })
             .sort({ lastActivity: -1 })
-            .limit(5)
-            .select('summary lastActivity activeMinutes startDate');
+            .limit(7)  // Fetch a few more since some might get filtered
+            .select('summary lastActivity activeMinutes startDate problemsAttempted problemsCorrect currentTopic');
         // --- MODIFICATION END ---
 
         // NEW: Fetch active conversation for live stats
