@@ -105,20 +105,38 @@
         });
 
         // Also reset when textarea is cleared programmatically
-        const originalValue = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
-        Object.defineProperty(textarea, 'value', {
-            get: function() {
-                return originalValue.get.call(this);
-            },
-            set: function(newValue) {
-                originalValue.set.call(this, newValue);
-                if (newValue === '') {
-                    resetHeight();
-                } else {
-                    setTimeout(autoExpand, 0);
+        // Only apply custom value property to actual textarea elements
+        if (textarea.tagName === 'TEXTAREA') {
+            const originalValue = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+            Object.defineProperty(textarea, 'value', {
+                get: function() {
+                    return originalValue.get.call(this);
+                },
+                set: function(newValue) {
+                    originalValue.set.call(this, newValue);
+                    if (newValue === '') {
+                        resetHeight();
+                    } else {
+                        setTimeout(autoExpand, 0);
+                    }
                 }
-            }
-        });
+            });
+        } else if (textarea.hasAttribute('contenteditable')) {
+            // For contenteditable elements, use textContent
+            Object.defineProperty(textarea, 'value', {
+                get: function() {
+                    return this.textContent || '';
+                },
+                set: function(newValue) {
+                    this.textContent = newValue;
+                    if (newValue === '') {
+                        resetHeight();
+                    } else {
+                        setTimeout(autoExpand, 0);
+                    }
+                }
+            });
+        }
 
         // Initial height adjustment in case there's default content
         setTimeout(autoExpand, 0);
