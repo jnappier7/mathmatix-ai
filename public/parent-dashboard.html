@@ -605,6 +605,59 @@
             <span class="dot"></span><span class="dot"></span><span class="dot"></span>
             <span><i class="fas fa-spinner fa-spin"></i> AI Tutor is thinking...</span>
           </div>
+
+          <!-- Quick Action Helper Buttons -->
+          <div id="parent-helper-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+            <span style="width: 100%; font-size: 0.8em; color: #666; margin-bottom: 5px;"><i class="fas fa-lightbulb"></i> Quick Questions:</span>
+            <button class="helper-btn" data-message="Tell me about my child's recent progress. What topics have they been working on and how are they doing?">
+              <i class="fas fa-chart-line"></i> Progress Report
+            </button>
+            <button class="helper-btn" data-message="What math concepts is my child currently learning? Show me what topics they've been working on.">
+              <i class="fas fa-book-open"></i> Current Topics
+            </button>
+            <button class="helper-btn" data-message="Can you teach me the math concept my child is learning right now? Explain it like I'm learning it for the first time so I can help them at home.">
+              <i class="fas fa-graduation-cap"></i> Teach Me
+            </button>
+            <button class="helper-btn" data-message="What specific things can I do at home to help my child with the math they're learning? Give me practical activities or practice tips.">
+              <i class="fas fa-home"></i> Help at Home
+            </button>
+            <button class="helper-btn" data-message="What areas is my child struggling with? What concepts need more practice?">
+              <i class="fas fa-exclamation-triangle"></i> Struggles
+            </button>
+            <button class="helper-btn" data-message="What are my child's strengths in math? What are they doing well?">
+              <i class="fas fa-star"></i> Strengths
+            </button>
+          </div>
+
+          <style>
+            .helper-btn {
+              background: white;
+              border: 2px solid #3498db;
+              color: #2980b9;
+              padding: 8px 14px;
+              border-radius: 20px;
+              font-size: 0.85em;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+            }
+            .helper-btn:hover {
+              background: #3498db;
+              color: white;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            }
+            .helper-btn:active {
+              transform: translateY(0);
+            }
+            .helper-btn i {
+              font-size: 0.9em;
+            }
+          </style>
+
           <div class="chat-input-widget">
             <textarea id="parent-user-input" placeholder="Ask about your child's learning progress, strengths, areas for improvement..." rows="3"></textarea>
             <button id="parent-send-button" class="submit-btn send-button-widget" style="width: 100%; margin-top: 10px;">

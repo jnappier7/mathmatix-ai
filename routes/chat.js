@@ -927,8 +927,14 @@ async function handleParentChat(req, res, parentId, childId, message) {
 
         parentConversation.messages.push({ role: 'user', content: message });
 
+        // Get the tutor personality the student uses
+        const selectedTutorKey = child.selectedTutorId && TUTOR_CONFIG[child.selectedTutorId]
+            ? child.selectedTutorId
+            : "default";
+        const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+
         // Build system prompt for parent-teacher conference
-        const systemPrompt = generateParentTeacherPrompt(child, recentSessions, curriculumContext, parent);
+        const systemPrompt = generateParentTeacherPrompt(child, recentSessions, curriculumContext, parent, currentTutor);
 
         const recentMessages = parentConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
         const formattedMessages = recentMessages
@@ -955,7 +961,9 @@ async function handleParentChat(req, res, parentId, childId, message) {
             userLevel: 0,
             xpNeeded: 0,
             specialXpAwarded: "",
-            voiceId: "default",
+            voiceId: currentTutor.voiceId,
+            tutorName: currentTutor.name,
+            tutorImage: currentTutor.image,
             newlyUnlockedTutors: [],
             drawingSequence: null
         });
@@ -967,83 +975,101 @@ async function handleParentChat(req, res, parentId, childId, message) {
 }
 
 // Generate system prompt for parent-teacher conference
-function generateParentTeacherPrompt(child, recentSessions, curriculumContext, parent) {
-    const childName = `${child.firstName} ${child.lastName}`;
-    const parentName = `${parent.firstName} ${parent.lastName}`;
+function generateParentTeacherPrompt(child, recentSessions, curriculumContext, parent, tutor) {
+    const childName = child.firstName;
+    const parentName = parent.firstName;
+    const tutorName = tutor?.name || 'Mr. Nappier';
+    const tutorPersonality = tutor?.personality || '';
 
-    let prompt = `You are a knowledgeable, supportive math teacher having a conference with a parent.
+    // Build session summaries section - this is the CORE data the AI must reference
+    let sessionData = '';
+    let hasRealData = false;
 
-PARENT: ${parentName}
-STUDENT: ${childName}
-Grade: ${child.gradeLevel || 'Not specified'}
-Math Course: ${child.mathCourse || 'Not specified'}
+    if (recentSessions && recentSessions.length > 0) {
+        const validSessions = recentSessions.filter(s => s.summary || s.currentTopic);
 
-STUDENT PROFILE:
-- Current Level: ${child.level || 1}
-- Total XP: ${child.xp || 0}
-- Total Active Learning Time: ${child.totalActiveTutoringMinutes || 0} minutes
-`;
+        if (validSessions.length > 0) {
+            hasRealData = true;
+            sessionData = validSessions.slice(0, 6).map((session, idx) => {
+                const date = session.lastActivity ? new Date(session.lastActivity).toLocaleDateString() : 'Recent';
+                const duration = session.activeMinutes ? `${session.activeMinutes} min` : '';
+                const topic = session.currentTopic && session.currentTopic !== 'mathematics' ? session.currentTopic : '';
+                const accuracy = session.problemsAttempted > 0
+                    ? `${session.problemsCorrect || 0}/${session.problemsAttempted} correct (${Math.round((session.problemsCorrect || 0) / session.problemsAttempted * 100)}%)`
+                    : 'No problems attempted';
+                const struggle = session.strugglingWith || '';
+                const summary = session.summary || '';
 
-    // Add IEP information if available
+                return `SESSION ${idx + 1} (${date}${duration ? ', ' + duration : ''}):
+${topic ? `- Topic: ${topic}` : ''}
+- Performance: ${accuracy}
+${struggle ? `- Struggled with: ${struggle}` : ''}
+${summary ? `- Summary: ${summary}` : ''}`;
+            }).join('\n\n');
+        }
+    }
+
+    // Build IEP section
+    let iepSection = '';
     if (child.iepPlan) {
-        prompt += `\nIEP ACCOMMODATIONS:\n`;
         const accom = child.iepPlan.accommodations || {};
-        if (accom.extendedTime) prompt += `- Extended time on assignments\n`;
-        if (accom.calculatorAllowed) prompt += `- Calculator permitted\n`;
-        if (accom.audioReadAloud) prompt += `- Audio read-aloud support\n`;
-        if (accom.chunkedAssignments) prompt += `- Assignments broken into smaller chunks\n`;
-        if (accom.mathAnxietySupport) prompt += `- Math anxiety support strategies\n`;
+        const accommodations = [];
+        if (accom.extendedTime) accommodations.push('Extended Time');
+        if (accom.calculatorAllowed) accommodations.push('Calculator Allowed');
+        if (accom.audioReadAloud) accommodations.push('Audio Read-Aloud');
+        if (accom.chunkedAssignments) accommodations.push('Chunked Assignments');
+        if (accom.mathAnxietySupport) accommodations.push('Math Anxiety Support');
+
+        if (accommodations.length > 0) {
+            iepSection += `\nACCOMMODATIONS: ${accommodations.join(', ')}`;
+        }
 
         if (child.iepPlan.goals && child.iepPlan.goals.length > 0) {
-            prompt += `\nIEP GOALS:\n`;
+            iepSection += `\nIEP GOALS:\n`;
             child.iepPlan.goals.forEach(goal => {
-                prompt += `- ${goal.description} (Status: ${goal.status}, Progress: ${goal.currentProgress || 0}%)\n`;
+                iepSection += `- ${goal.description} (${goal.status}, ${goal.currentProgress || 0}% complete)\n`;
             });
         }
     }
 
-    // Add recent learning activity
-    if (recentSessions && recentSessions.length > 0) {
-        prompt += `\nRECENT LEARNING ACTIVITY:\n`;
-        recentSessions.slice(0, 5).forEach(session => {
-            const topic = session.currentTopic && session.currentTopic !== 'mathematics'
-                ? session.currentTopic
-                : null;
+    const prompt = `You are ${tutorName}, ${childName}'s math tutor. You're chatting with their parent, ${parentName}.
 
-            if (topic) {
-                prompt += `- Topic: ${topic}`;
-                if (session.problemsAttempted) {
-                    prompt += ` (${session.problemsCorrect || 0}/${session.problemsAttempted} correct)`;
-                }
-                if (session.strugglingWith) {
-                    prompt += ` - Struggling with: ${session.strugglingWith}`;
-                }
-                prompt += `\n`;
-            }
+YOUR PERSONALITY (use it, but slightly more professional for parent chat):
+${tutorPersonality}
 
-            // Always include summary if available (provides context even when topic detection failed)
-            if (session.summary) {
-                prompt += `  Summary: ${session.summary}\n`;
-            }
-        });
-    }
+STUDENT INFO:
+- Name: ${childName}
+- Grade: ${child.gradeLevel || 'Not specified'}
+- Course: ${child.mathCourse || 'Not specified'}
+- Level: ${child.level || 1} (${child.xp || 0} XP)
+- Total Time Learning: ${child.totalActiveTutoringMinutes || 0} minutes${iepSection}
+${curriculumContext ? `\nCURRICULUM CONTEXT:\n${curriculumContext}` : ''}
 
-    // Add curriculum context
-    if (curriculumContext) {
-        prompt += `\nCURRENT CURRICULUM:\n${curriculumContext}\n`;
-    }
+=== ${childName.toUpperCase()}'S ACTUAL SESSION DATA ===
+${hasRealData ? sessionData : 'No session data available yet.'}
+=== END SESSION DATA ===
 
-    prompt += `\nYOUR ROLE:
-- Discuss ${childName}'s progress, strengths, and areas for improvement
-- Answer parent questions about their child's learning
-- Suggest specific strategies parents can use to support their child at home
-- Be encouraging but honest about challenges
-- Reference specific topics and skills from their recent work
-- If discussing struggles, explain them clearly and offer actionable advice
-- Keep responses concise (2-3 paragraphs maximum)
-- Use a warm, professional teacher tone
+CRITICAL RULES:
+1. ONLY discuss topics, performance, and struggles that appear in the SESSION DATA above
+2. DO NOT invent or assume topics the student worked on - if it's not in the data, don't mention it
+3. DO NOT make up generic claims about "algebra" or "geometry" unless those words appear in the session data
+4. If the parent asks about something not in the data, say you'd need to check or that you haven't covered that topic yet
+5. Reference SPECIFIC sessions, dates, accuracy rates, and summaries from the data above
+6. If there's no session data, be honest: "${childName} and I haven't had many sessions yet"
 
-Focus on concrete observations from ${childName}'s actual work and provide practical, actionable guidance for ${parentName}.`;
+SPECIAL REQUESTS:
+- If parent asks to "teach me" or "explain the concept": Teach them the math topic from the SESSION DATA at a beginner level. Use simple examples, step-by-step explanations, and relatable analogies. Make it practical so they can help their child.
+- If parent asks about "help at home": Give specific, actionable activities like practice problems, real-world applications, or study tips based on what ${childName} is learning.
+- If parent asks about "struggles": Be honest but constructive. Explain WHY a concept might be challenging and suggest how to address it.
+
+TONE:
+- Be yourself (${tutorName}) but slightly more professional for a parent conversation
+- Be warm, approachable, and conversational - not formal or stiff
+- Keep responses concise (2-3 short paragraphs max)
+- Be honest about challenges while staying encouraging
+- Give specific, actionable suggestions for home practice
+
+Chat naturally with ${parentName} about ${childName}'s ACTUAL progress based on the session data above.`;
 
     return prompt;
 }
