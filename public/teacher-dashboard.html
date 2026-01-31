@@ -552,6 +552,116 @@
       color: white;
     }
 
+    /* Publish/Unpublish Styles */
+    .resource-unpublished {
+      opacity: 0.7;
+      border-left-color: #95a5a6 !important;
+    }
+
+    .publish-badge {
+      margin-left: 8px;
+      font-size: 0.75em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      vertical-align: middle;
+    }
+
+    .publish-badge.published {
+      background: #e8f5e9;
+      color: #16C86D;
+    }
+
+    .publish-badge.unpublished {
+      background: #f5f5f5;
+      color: #95a5a6;
+    }
+
+    .btn-icon.btn-published {
+      color: #16C86D;
+    }
+
+    .btn-icon.btn-published:hover {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .btn-icon.btn-unpublished {
+      color: #95a5a6;
+    }
+
+    .btn-icon.btn-unpublished:hover {
+      background: #e8f5e9;
+      color: #16C86D;
+    }
+
+    /* ============================================
+       DATA TABLE (Curriculum)
+       ============================================ */
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .data-table thead {
+      background: linear-gradient(135deg, #27ae60, #16a085);
+      color: white;
+    }
+
+    .data-table th {
+      padding: 14px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #e9ecef;
+      vertical-align: top;
+    }
+
+    .data-table tbody tr:hover {
+      background: #f0fdf4;
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.8em;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-sm.btn-primary {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-sm.btn-primary:hover {
+      background: #16a085;
+    }
+
+    .btn-sm.btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .btn-sm.btn-secondary:hover {
+      background: #7f8c8d;
+    }
+
     /* ============================================
        SCHEDULE IFRAME
        ============================================ */
@@ -715,6 +825,566 @@
         margin: 10px auto;
       }
     }
+
+    /* ============================================
+       CLASS OVERVIEW SECTION
+       ============================================ */
+
+    .class-overview-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #e9ecef;
+    }
+
+    .overview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #27ae60;
+    }
+
+    .overview-header h2 {
+      margin: 0;
+      font-size: 1.1em;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .overview-header h2 i {
+      color: #27ae60;
+    }
+
+    .overview-updated {
+      font-size: 0.8em;
+      color: #7f8c8d;
+    }
+
+    .overview-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 1400px) {
+      .overview-stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .overview-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .stat-card.clickable {
+      cursor: pointer;
+    }
+
+    .stat-card.clickable:hover {
+      border-color: #27ae60;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      flex-shrink: 0;
+    }
+
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .stat-number {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #2c3e50;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 0.75em;
+      color: #7f8c8d;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Stat card color variants */
+    .stat-total .stat-icon { background: #e3f2fd; color: #1976d2; }
+    .stat-active .stat-icon { background: #e8f5e9; color: #16C86D; }
+    .stat-active .stat-icon i { animation: pulse-dot 2s infinite; }
+    .stat-attention .stat-icon { background: #fff3e0; color: #f57c00; }
+    .stat-progress .stat-icon { background: #f3e5f5; color: #7b1fa2; }
+    .stat-time .stat-icon { background: #e0f7fa; color: #00838f; }
+    .stat-streak .stat-icon { background: #fce4ec; color: #e91e63; }
+
+    /* ============================================
+       INSIGHTS ROW
+       ============================================ */
+
+    .insights-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .insights-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .insight-card {
+      background: white;
+      border-radius: 10px;
+      padding: 14px;
+      border: 1px solid #e9ecef;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .insight-header {
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #5B6876;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .insight-struggling .insight-header i { color: #FFC24B; }
+    .insight-excelling .insight-header i { color: #16C86D; }
+    .insight-inactive .insight-header i { color: #95a5a6; }
+
+    .insight-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .insight-chip {
+      background: #f8f9fa;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      color: #2c3e50;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #e9ecef;
+    }
+
+    .insight-chip:hover {
+      background: #27ae60;
+      color: white;
+      border-color: #27ae60;
+    }
+
+    .insight-struggling .insight-chip {
+      background: #fff8f0;
+      border-color: #FFC24B;
+    }
+
+    .insight-excelling .insight-chip {
+      background: #f0fdf4;
+      border-color: #16C86D;
+    }
+
+    .insight-inactive .insight-chip {
+      background: #f8f9fa;
+      border-color: #95a5a6;
+    }
+
+    .insight-empty {
+      font-size: 0.8em;
+      color: #95a5a6;
+      font-style: italic;
+    }
+
+    /* ============================================
+       STUDENT SEARCH & FILTER
+       ============================================ */
+
+    .student-search-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .student-search-input {
+      padding: 8px 12px !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 6px !important;
+      font-size: 0.9em !important;
+      width: 180px !important;
+      margin-bottom: 0 !important;
+    }
+
+    .student-search-input:focus {
+      border-color: #27ae60 !important;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+    }
+
+    .student-filter-select {
+      padding: 8px 12px !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 6px !important;
+      font-size: 0.9em !important;
+      margin-bottom: 0 !important;
+      cursor: pointer;
+    }
+
+    /* ============================================
+       ENHANCED STUDENT CARDS
+       ============================================ */
+
+    .student-card {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .student-card:hover {
+      border-color: #27ae60;
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.1);
+    }
+
+    .student-card.status-struggling {
+      border-left: 4px solid #FFC24B;
+    }
+
+    .student-card.status-inactive {
+      border-left: 4px solid #95a5a6;
+      opacity: 0.85;
+    }
+
+    .student-card.status-active {
+      border-left: 4px solid #16C86D;
+    }
+
+    .student-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .student-status-badge {
+      font-size: 0.7em;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-active {
+      background: #e8f5e9;
+      color: #16C86D;
+    }
+
+    .badge-struggling {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .badge-inactive {
+      background: #f5f5f5;
+      color: #95a5a6;
+    }
+
+    .student-metrics {
+      display: flex;
+      gap: 16px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .student-metric {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85em;
+      color: #5B6876;
+    }
+
+    .student-metric i {
+      color: #27ae60;
+      font-size: 0.9em;
+    }
+
+    .card-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .card-buttons .submit-btn {
+      padding: 6px 12px;
+      font-size: 0.85em;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #27ae60;
+      color: white;
+    }
+
+    .card-buttons .submit-btn:hover {
+      background: #16a085;
+      transform: translateY(-1px);
+    }
+
+    .card-buttons .btn-tertiary {
+      background: transparent;
+      border: 1px solid #e9ecef;
+      color: #5B6876;
+    }
+
+    .card-buttons .btn-tertiary:hover {
+      background: #f8f9fa;
+      border-color: #27ae60;
+      color: #27ae60;
+    }
+
+    /* ============================================
+       QUICK ACTIONS PANEL
+       ============================================ */
+
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .quick-action-btn {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quick-action-btn i {
+      font-size: 1.2em;
+      color: #27ae60;
+    }
+
+    .quick-action-btn span {
+      font-size: 0.75em;
+      color: #5B6876;
+      font-weight: 500;
+    }
+
+    .quick-action-btn:hover {
+      background: #27ae60;
+      border-color: #27ae60;
+    }
+
+    .quick-action-btn:hover i,
+    .quick-action-btn:hover span {
+      color: white;
+    }
+
+    /* ============================================
+       TODAY'S SUMMARY PANEL
+       ============================================ */
+
+    .summary-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .summary-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .summary-value {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #27ae60;
+    }
+
+    .summary-label {
+      font-size: 0.85em;
+      color: #5B6876;
+    }
+
+    /* ============================================
+       MILESTONES PANEL
+       ============================================ */
+
+    .milestones-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .milestone-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: #f0fdf4;
+      border-radius: 8px;
+      border-left: 3px solid #16C86D;
+    }
+
+    .milestone-icon {
+      font-size: 1.2em;
+    }
+
+    .milestone-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .milestone-student {
+      font-weight: 600;
+      font-size: 0.9em;
+      color: #2c3e50;
+    }
+
+    .milestone-text {
+      font-size: 0.8em;
+      color: #5B6876;
+    }
+
+    .milestone-empty {
+      font-size: 0.85em;
+      color: #95a5a6;
+      font-style: italic;
+      padding: 10px;
+      text-align: center;
+    }
+
+    /* ============================================
+       SHORTCUTS PANEL
+       ============================================ */
+
+    .shortcuts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .shortcut-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85em;
+      color: #5B6876;
+    }
+
+    .shortcut-item kbd {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-family: monospace;
+      font-size: 0.9em;
+      min-width: 28px;
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    /* ============================================
+       TOAST NOTIFICATIONS
+       ============================================ */
+
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: #2c3e50;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+      max-width: 350px;
+    }
+
+    .toast.success {
+      background: #27ae60;
+    }
+
+    .toast.warning {
+      background: #f57c00;
+    }
+
+    .toast.error {
+      background: #e74c3c;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 <body>
@@ -778,6 +1448,58 @@
 
       <!-- CENTER CONTENT - Tabs with Students/Curriculum/Schedule/Resources -->
       <section class="center-content">
+        <!-- Class Overview Stats -->
+        <div class="class-overview-section" id="class-overview">
+          <div class="overview-header">
+            <h2><i class="fas fa-chart-pie"></i> Class Overview</h2>
+            <span class="overview-updated" id="overview-updated">Updated just now</span>
+          </div>
+          <div class="overview-stats-grid">
+            <div class="stat-card stat-total">
+              <div class="stat-icon"><i class="fas fa-users"></i></div>
+              <div class="stat-content">
+                <span class="stat-number" id="stat-total-students">--</span>
+                <span class="stat-label">Total Students</span>
+              </div>
+            </div>
+            <div class="stat-card stat-active">
+              <div class="stat-icon"><i class="fas fa-circle"></i></div>
+              <div class="stat-content">
+                <span class="stat-number" id="stat-active-now">--</span>
+                <span class="stat-label">Active Now</span>
+              </div>
+            </div>
+            <div class="stat-card stat-attention clickable" id="attention-card">
+              <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+              <div class="stat-content">
+                <span class="stat-number" id="stat-needs-attention">--</span>
+                <span class="stat-label">Need Attention</span>
+              </div>
+            </div>
+            <div class="stat-card stat-progress">
+              <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+              <div class="stat-content">
+                <span class="stat-number" id="stat-avg-progress">--</span>
+                <span class="stat-label">Avg. Level</span>
+              </div>
+            </div>
+            <div class="stat-card stat-time">
+              <div class="stat-icon"><i class="fas fa-clock"></i></div>
+              <div class="stat-content">
+                <span class="stat-number" id="stat-weekly-minutes">--</span>
+                <span class="stat-label">Weekly Mins (Avg)</span>
+              </div>
+            </div>
+            <div class="stat-card stat-streak clickable" id="streak-card">
+              <div class="stat-icon"><i class="fas fa-fire"></i></div>
+              <div class="stat-content">
+                <span class="stat-number" id="stat-on-streak">--</span>
+                <span class="stat-label">On a Streak</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Tab Navigation -->
         <div class="dashboard-tabs">
           <button class="tab-btn active" data-tab="students">
@@ -796,8 +1518,47 @@
 
         <!-- Students Tab -->
         <div class="tab-content active" id="students-tab">
+          <!-- Quick Insights Row -->
+          <div class="insights-row" id="insights-row">
+            <div class="insight-card insight-struggling" id="insight-struggling">
+              <div class="insight-header">
+                <i class="fas fa-hand-paper"></i> Need Help
+              </div>
+              <div class="insight-list" id="struggling-list">
+                <span class="insight-empty">No students struggling</span>
+              </div>
+            </div>
+            <div class="insight-card insight-excelling" id="insight-excelling">
+              <div class="insight-header">
+                <i class="fas fa-star"></i> Top Performers
+              </div>
+              <div class="insight-list" id="excelling-list">
+                <span class="insight-empty">Loading...</span>
+              </div>
+            </div>
+            <div class="insight-card insight-inactive" id="insight-inactive">
+              <div class="insight-header">
+                <i class="fas fa-user-clock"></i> Inactive (7+ days)
+              </div>
+              <div class="insight-list" id="inactive-list">
+                <span class="insight-empty">All students active!</span>
+              </div>
+            </div>
+          </div>
+
           <div class="dashboard-panel flex-panel-content">
-            <div class="dashboard-panel-header">My Assigned Students</div>
+            <div class="dashboard-panel-header">
+              <span>My Assigned Students</span>
+              <div class="student-search-container">
+                <input type="text" id="student-search" placeholder="Search students..." class="student-search-input">
+                <select id="student-filter" class="student-filter-select">
+                  <option value="all">All Students</option>
+                  <option value="active">Active Today</option>
+                  <option value="struggling">Needs Attention</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
             <div id="student-list" class="table-scroll-container">
               Loading students...
             </div>
@@ -861,14 +1622,71 @@
         </div>
       </section>
 
-      <!-- RIGHT SIDEBAR - Quick Actions -->
+      <!-- RIGHT SIDEBAR - Quick Actions & Insights -->
       <aside class="right-sidebar">
-        <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Performance Reports</div>
-          <p>Generate detailed student performance reports.</p>
-          <button class="btn btn-secondary main-action-btn">
-            <i class="fas fa-chart-bar"></i> Generate Report
-          </button>
+        <!-- Quick Actions Panel -->
+        <div class="dashboard-panel quick-actions-panel">
+          <div class="dashboard-panel-header"><i class="fas fa-bolt"></i> Quick Actions</div>
+          <div class="quick-actions-grid">
+            <button class="quick-action-btn" id="qa-export-progress" title="Export class progress to CSV">
+              <i class="fas fa-download"></i>
+              <span>Export Data</span>
+            </button>
+            <button class="quick-action-btn" id="qa-celeration" title="View fact fluency charts">
+              <i class="fas fa-chart-line"></i>
+              <span>Fluency Charts</span>
+            </button>
+            <button class="quick-action-btn" id="qa-refresh" title="Refresh all data">
+              <i class="fas fa-sync-alt"></i>
+              <span>Refresh</span>
+            </button>
+            <button class="quick-action-btn" id="qa-help" title="View help & shortcuts">
+              <i class="fas fa-keyboard"></i>
+              <span>Shortcuts</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Today's Summary Panel -->
+        <div class="dashboard-panel today-summary-panel">
+          <div class="dashboard-panel-header"><i class="fas fa-calendar-day"></i> Today's Summary</div>
+          <div class="summary-stats">
+            <div class="summary-stat">
+              <span class="summary-value" id="summary-logins">--</span>
+              <span class="summary-label">Student Logins</span>
+            </div>
+            <div class="summary-stat">
+              <span class="summary-value" id="summary-problems">--</span>
+              <span class="summary-label">Problems Solved</span>
+            </div>
+            <div class="summary-stat">
+              <span class="summary-value" id="summary-time">--</span>
+              <span class="summary-label">Total Minutes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Milestones Panel -->
+        <div class="dashboard-panel milestones-panel">
+          <div class="dashboard-panel-header"><i class="fas fa-medal"></i> Recent Milestones</div>
+          <div class="milestones-list" id="recent-milestones">
+            <div class="milestone-item">
+              <span class="milestone-empty">No recent milestones</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Keyboard Shortcuts Help (hidden by default) -->
+        <div class="dashboard-panel shortcuts-panel" id="shortcuts-panel" style="display: none;">
+          <div class="dashboard-panel-header"><i class="fas fa-keyboard"></i> Keyboard Shortcuts</div>
+          <div class="shortcuts-list">
+            <div class="shortcut-item"><kbd>S</kbd> <span>Students tab</span></div>
+            <div class="shortcut-item"><kbd>C</kbd> <span>Curriculum tab</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Resources tab</span></div>
+            <div class="shortcut-item"><kbd>/</kbd> <span>Search students</span></div>
+            <div class="shortcut-item"><kbd>?</kbd> <span>Toggle shortcuts</span></div>
+            <div class="shortcut-item"><kbd>Esc</kbd> <span>Close modal</span></div>
+          </div>
         </div>
       </aside>
     </main>

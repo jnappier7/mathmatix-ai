@@ -190,13 +190,42 @@ router.get('/list', isAuthenticated, isTeacher, async (req, res) => {
                 keywords: r.keywords,
                 uploadedAt: r.uploadedAt,
                 accessCount: r.accessCount,
-                publicUrl: r.publicUrl
+                publicUrl: r.publicUrl,
+                isPublished: r.isPublished !== false // Default true for backwards compatibility
             }))
         });
 
     } catch (error) {
         console.error('Error fetching resources:', error);
         res.status(500).json({ message: 'Failed to fetch resources' });
+    }
+});
+
+// Toggle publish status of a resource
+router.patch('/:id/toggle-publish', isAuthenticated, isTeacher, validateObjectId('id'), async (req, res) => {
+    try {
+        const resource = await TeacherResource.findOne({
+            _id: req.params.id,
+            teacherId: req.user._id
+        });
+
+        if (!resource) {
+            return res.status(404).json({ message: 'Resource not found' });
+        }
+
+        // Toggle the publish status
+        resource.isPublished = !resource.isPublished;
+        await resource.save();
+
+        res.json({
+            success: true,
+            message: resource.isPublished ? 'Resource published to students' : 'Resource unpublished',
+            isPublished: resource.isPublished
+        });
+
+    } catch (error) {
+        console.error('Error toggling publish status:', error);
+        res.status(500).json({ message: 'Failed to toggle publish status' });
     }
 });
 
@@ -215,8 +244,11 @@ router.get('/my-teacher-resources', isAuthenticated, async (req, res) => {
             });
         }
 
-        // Fetch resources from the student's teacher
-        const resources = await TeacherResource.find({ teacherId: req.user.teacherId })
+        // Fetch ONLY PUBLISHED resources from the student's teacher
+        const resources = await TeacherResource.find({
+            teacherId: req.user.teacherId,
+            isPublished: true  // Only show published resources to students
+        })
             .sort({ uploadedAt: -1 })
             .select('-extractedText'); // Don't send full extracted text
 
@@ -348,11 +380,16 @@ router.get('/download/:id', isAuthenticated, validateObjectId('id'), async (req,
             return res.status(404).json({ message: 'Resource not found' });
         }
 
-        // Authorization check: Allow teachers to access their own resources, students to access their teacher's resources
-        const isTeacher = req.user.role === 'teacher' && resource.teacherId.toString() === req.user._id.toString();
+        // Authorization check: Allow teachers to access their own resources, students to access their teacher's PUBLISHED resources
+        const isResourceOwner = req.user.role === 'teacher' && resource.teacherId.toString() === req.user._id.toString();
         const isStudentOfTeacher = req.user.role === 'student' && req.user.teacherId && resource.teacherId.toString() === req.user.teacherId.toString();
 
-        if (!isTeacher && !isStudentOfTeacher) {
+        // Students can only access published resources
+        if (isStudentOfTeacher && resource.isPublished === false) {
+            return res.status(403).json({ message: 'This resource is not currently available' });
+        }
+
+        if (!isResourceOwner && !isStudentOfTeacher) {
             return res.status(403).json({ message: 'You do not have permission to access this resource' });
         }
 

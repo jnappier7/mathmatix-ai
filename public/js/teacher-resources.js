@@ -112,12 +112,17 @@ document.addEventListener('DOMContentLoaded', () => {
             resourcesList.innerHTML = `
                 <div class="resources-grid">
                     ${resources.map(resource => `
-                        <div class="resource-card" data-resource-id="${resource.id}">
+                        <div class="resource-card ${resource.isPublished ? '' : 'resource-unpublished'}" data-resource-id="${resource.id}">
                             <div class="resource-icon">
                                 <i class="fas ${getFileIcon(resource.fileType)}"></i>
                             </div>
                             <div class="resource-info">
-                                <h4>${resource.displayName}</h4>
+                                <h4>
+                                    ${resource.displayName}
+                                    ${resource.isPublished
+                                        ? '<span class="publish-badge published" title="Visible to students"><i class="fas fa-eye"></i></span>'
+                                        : '<span class="publish-badge unpublished" title="Hidden from students"><i class="fas fa-eye-slash"></i></span>'}
+                                </h4>
                                 <p class="resource-meta">
                                     <span class="resource-type">${resource.fileType.toUpperCase()}</span>
                                     <span>•</span>
@@ -127,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </p>
                                 ${resource.description ? `<p class="resource-description">${resource.description}</p>` : ''}
                                 <p class="resource-stats">
-                                    <i class="fas fa-eye"></i> Accessed ${resource.accessCount} times
+                                    <i class="fas fa-chart-bar"></i> Accessed ${resource.accessCount} times
                                 </p>
                                 ${resource.keywords && resource.keywords.length > 0 ? `
                                     <div class="resource-keywords">
@@ -136,6 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 ` : ''}
                             </div>
                             <div class="resource-actions">
+                                <button class="btn-icon ${resource.isPublished ? 'btn-published' : 'btn-unpublished'}"
+                                    title="${resource.isPublished ? 'Click to hide from students' : 'Click to publish to students'}"
+                                    onclick="togglePublish('${resource.id}', ${resource.isPublished})">
+                                    <i class="fas ${resource.isPublished ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
+                                </button>
                                 <button class="btn-icon" title="Download" onclick="window.open('${resource.publicUrl}', '_blank')">
                                     <i class="fas fa-download"></i>
                                 </button>
@@ -158,6 +168,34 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
     }
+
+    // Toggle publish status
+    window.togglePublish = async function(resourceId, currentStatus) {
+        try {
+            const response = await csrfFetch(`/api/teacher-resources/${resourceId}/toggle-publish`, {
+                method: 'PATCH'
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                // Show toast notification if available
+                if (typeof showToast === 'function') {
+                    showToast(result.message, 'success');
+                } else {
+                    // Fallback: brief visual feedback
+                    console.log(result.message);
+                }
+                await loadResources(); // Reload resources list
+            } else {
+                alert('Failed to update: ' + (result.message || 'Unknown error'));
+            }
+
+        } catch (error) {
+            console.error('Toggle publish error:', error);
+            alert('Error updating resource. Please try again.');
+        }
+    };
 
     // Delete resource
     window.deleteResource = async function(resourceId, resourceName) {
