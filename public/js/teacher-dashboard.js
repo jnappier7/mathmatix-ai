@@ -1,5 +1,5 @@
 // public/js/teacher-dashboard.js
-// MODIFIED: Verified to correctly consume data from the updated /api/teacher/.../conversations route.
+// ENHANCED: Added class overview, insights, search/filter, keyboard shortcuts, and improved UX
 
 document.addEventListener("DOMContentLoaded", async () => {
     const studentListDiv = document.getElementById("student-list");
@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const currentIepStudentIdInput = document.getElementById("current-iep-student-id");
     const saveIepBtn = document.getElementById("save-iep-btn");
     const closeIepModalBtn = document.getElementById("close-iep-modal-btn");
+
+    // Search and Filter Elements
+    const studentSearchInput = document.getElementById("student-search");
+    const studentFilterSelect = document.getElementById("student-filter");
 
     // IEP Form Elements
     const iepAccommodations = {
@@ -63,6 +67,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Initial Load ---
     await fetchAssignedStudents();
+
+    // Initialize search and filter
+    initializeSearchAndFilter();
+
+    // Initialize quick actions
+    initializeQuickActions();
+
+    // Initialize keyboard shortcuts
+    initializeKeyboardShortcuts();
 
     // --- Modal Control Functions ---
     function showModal(modalElement) {
@@ -224,29 +237,108 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    function renderStudentList(students) {
+    function renderStudentList(students, filterType = 'all', searchQuery = '') {
         studentListDiv.innerHTML = '';
-        if (students.length === 0) {
-            studentListDiv.innerHTML = "<p>No students have been assigned to you. Please contact an administrator.</p>";
+
+        // Filter and search students
+        let filteredStudents = students.filter(student => {
+            const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim().toLowerCase();
+            const username = (student.username || '').toLowerCase();
+            const query = searchQuery.toLowerCase();
+
+            // Search match
+            const searchMatch = !query || fullName.includes(query) || username.includes(query);
+
+            // Filter match
+            const status = getStudentStatus(student);
+            let filterMatch = true;
+            if (filterType === 'active') filterMatch = status === 'active';
+            else if (filterType === 'struggling') filterMatch = status === 'struggling';
+            else if (filterType === 'inactive') filterMatch = status === 'inactive';
+
+            return searchMatch && filterMatch;
+        });
+
+        if (filteredStudents.length === 0) {
+            studentListDiv.innerHTML = searchQuery || filterType !== 'all'
+                ? "<p style='padding: 20px; color: #7f8c8d; text-align: center;'>No students match your search/filter criteria.</p>"
+                : "<p>No students have been assigned to you. Please contact an administrator.</p>";
             return;
         }
-        students.forEach(student => {
+
+        // Sort: struggling first, then active, then inactive
+        filteredStudents.sort((a, b) => {
+            const statusOrder = { struggling: 0, active: 1, inactive: 2 };
+            return (statusOrder[getStudentStatus(a)] || 1) - (statusOrder[getStudentStatus(b)] || 1);
+        });
+
+        filteredStudents.forEach(student => {
             const studentCard = document.createElement('div');
-            studentCard.className = 'student-card';
+            const status = getStudentStatus(student);
+            studentCard.className = `student-card status-${status}`;
+            studentCard.dataset.studentId = student._id;
+
             const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+            const lastLoginDate = student.lastLogin ? new Date(student.lastLogin) : null;
+            const lastLoginText = lastLoginDate ? formatTimeAgo(lastLoginDate) : 'Never';
+
+            // Status badge
+            const badgeClass = status === 'active' ? 'badge-active' : status === 'struggling' ? 'badge-struggling' : 'badge-inactive';
+            const badgeText = status === 'active' ? 'Active' : status === 'struggling' ? 'Needs Help' : 'Inactive';
+
             studentCard.innerHTML = `
-                <strong><a href="#" class="student-name-link" data-student-id="${student._id}" style="color: #27ae60; text-decoration: none; cursor: pointer;">${fullName}</a></strong>
-                <p>Username: ${student.username}</p>
-                <p>Grade: ${student.gradeLevel || 'N/A'}</p>
+                <div class="student-card-header">
+                    <strong><a href="#" class="student-name-link" data-student-id="${student._id}" style="color: #27ae60; text-decoration: none; cursor: pointer;">${fullName}</a></strong>
+                    <span class="student-status-badge ${badgeClass}">${badgeText}</span>
+                </div>
+                <div class="student-metrics">
+                    <span class="student-metric"><i class="fas fa-user"></i> ${student.username}</span>
+                    <span class="student-metric"><i class="fas fa-graduation-cap"></i> Grade ${student.gradeLevel || 'N/A'}</span>
+                    <span class="student-metric"><i class="fas fa-trophy"></i> Level ${student.level || 1}</span>
+                    <span class="student-metric"><i class="fas fa-clock"></i> ${lastLoginText}</span>
+                    <span class="student-metric"><i class="fas fa-bolt"></i> ${student.weeklyActiveTutoringMinutes || 0} min/wk</span>
+                </div>
                 <div class="card-buttons">
-                    <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}">View/Edit IEP</button>
-                    <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}">View History</button>
-                    <button class="reset-screener-btn submit-btn btn-tertiary" data-student-id="${student._id}" data-student-name="${fullName}">Reset Screener</button>
+                    <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-clipboard-list"></i> IEP</button>
+                    <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-history"></i> History</button>
+                    <button class="reset-screener-btn submit-btn btn-tertiary" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-redo"></i> Reset</button>
                 </div>
             `;
             studentListDiv.appendChild(studentCard);
         });
         addEventListenersToButtons();
+    }
+
+    // Determine student status based on activity and performance
+    function getStudentStatus(student) {
+        const lastLogin = student.lastLogin ? new Date(student.lastLogin) : null;
+        const daysSinceLogin = lastLogin ? (Date.now() - lastLogin) / (1000 * 60 * 60 * 24) : Infinity;
+
+        // Check if inactive (7+ days since login)
+        if (daysSinceLogin > 7) return 'inactive';
+
+        // Check if struggling (low weekly minutes or flagged)
+        const weeklyMinutes = student.weeklyActiveTutoringMinutes || 0;
+        if (weeklyMinutes < 10 && daysSinceLogin <= 7) return 'struggling';
+
+        // Active and doing well
+        if (daysSinceLogin <= 1) return 'active';
+
+        return 'active';
+    }
+
+    // Format time ago helper
+    function formatTimeAgo(date) {
+        const seconds = Math.floor((Date.now() - date) / 1000);
+        if (seconds < 60) return 'Just now';
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}m ago`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}h ago`;
+        const days = Math.floor(hours / 24);
+        if (days === 1) return 'Yesterday';
+        if (days < 7) return `${days}d ago`;
+        return date.toLocaleDateString();
     }
 
     function addEventListenersToButtons() {
@@ -424,4 +516,389 @@ document.addEventListener("DOMContentLoaded", async () => {
             alert(`❌ Failed to reset assessment: ${error.message}`);
         }
     }
+
+    // ============================================
+    // CLASS OVERVIEW STATS
+    // ============================================
+
+    function updateClassOverview(students) {
+        // Total students
+        document.getElementById('stat-total-students').textContent = students.length;
+
+        // Count by status
+        let activeCount = 0;
+        let strugglingCount = 0;
+        let inactiveCount = 0;
+        let totalLevel = 0;
+        let totalWeeklyMinutes = 0;
+        let streakCount = 0;
+
+        students.forEach(student => {
+            const status = getStudentStatus(student);
+            if (status === 'active') activeCount++;
+            else if (status === 'struggling') strugglingCount++;
+            else if (status === 'inactive') inactiveCount++;
+
+            totalLevel += student.level || 1;
+            totalWeeklyMinutes += student.weeklyActiveTutoringMinutes || 0;
+
+            // Count students with streaks (placeholder - would need streak data)
+            if (student.currentStreak && student.currentStreak >= 3) streakCount++;
+        });
+
+        document.getElementById('stat-active-now').textContent = activeCount;
+        document.getElementById('stat-needs-attention').textContent = strugglingCount + inactiveCount;
+        document.getElementById('stat-avg-progress').textContent = students.length > 0
+            ? (totalLevel / students.length).toFixed(1)
+            : '--';
+        document.getElementById('stat-weekly-minutes').textContent = students.length > 0
+            ? Math.round(totalWeeklyMinutes / students.length)
+            : '--';
+        document.getElementById('stat-on-streak').textContent = streakCount;
+
+        // Update timestamp
+        document.getElementById('overview-updated').textContent = 'Updated just now';
+
+        // Make clickable cards work
+        document.getElementById('attention-card').onclick = () => {
+            studentFilterSelect.value = 'struggling';
+            applyFilters();
+            showToast('Showing students who need attention', 'info');
+        };
+
+        document.getElementById('streak-card').onclick = () => {
+            showToast('Streak tracking coming soon!', 'info');
+        };
+    }
+
+    // ============================================
+    // INSIGHTS CARDS
+    // ============================================
+
+    function updateInsightsCards(students) {
+        // Struggling students (low engagement)
+        const strugglingList = document.getElementById('struggling-list');
+        const strugglingStudents = students.filter(s => getStudentStatus(s) === 'struggling').slice(0, 5);
+
+        if (strugglingStudents.length > 0) {
+            strugglingList.innerHTML = strugglingStudents.map(s => {
+                const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+                return `<span class="insight-chip" data-student-id="${s._id}">${name}</span>`;
+            }).join('');
+        } else {
+            strugglingList.innerHTML = '<span class="insight-empty">No students struggling</span>';
+        }
+
+        // Top performers (highest level)
+        const excellingList = document.getElementById('excelling-list');
+        const excellingStudents = [...students]
+            .sort((a, b) => (b.level || 1) - (a.level || 1))
+            .slice(0, 5);
+
+        if (excellingStudents.length > 0) {
+            excellingList.innerHTML = excellingStudents.map(s => {
+                const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+                return `<span class="insight-chip" data-student-id="${s._id}">${name} (L${s.level || 1})</span>`;
+            }).join('');
+        } else {
+            excellingList.innerHTML = '<span class="insight-empty">No data yet</span>';
+        }
+
+        // Inactive students
+        const inactiveList = document.getElementById('inactive-list');
+        const inactiveStudents = students.filter(s => getStudentStatus(s) === 'inactive').slice(0, 5);
+
+        if (inactiveStudents.length > 0) {
+            inactiveList.innerHTML = inactiveStudents.map(s => {
+                const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+                return `<span class="insight-chip" data-student-id="${s._id}">${name}</span>`;
+            }).join('');
+        } else {
+            inactiveList.innerHTML = '<span class="insight-empty">All students active!</span>';
+        }
+
+        // Add click handlers to chips
+        document.querySelectorAll('.insight-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const studentId = chip.dataset.studentId;
+                const student = currentStudentsData.find(s => s._id === studentId);
+                if (student) {
+                    // Trigger student detail view
+                    const link = document.querySelector(`.student-name-link[data-student-id="${studentId}"]`);
+                    if (link) link.click();
+                }
+            });
+        });
+    }
+
+    // ============================================
+    // SEARCH AND FILTER
+    // ============================================
+
+    function initializeSearchAndFilter() {
+        if (studentSearchInput) {
+            studentSearchInput.addEventListener('input', debounce(applyFilters, 300));
+        }
+
+        if (studentFilterSelect) {
+            studentFilterSelect.addEventListener('change', applyFilters);
+        }
+    }
+
+    function applyFilters() {
+        const searchQuery = studentSearchInput ? studentSearchInput.value : '';
+        const filterType = studentFilterSelect ? studentFilterSelect.value : 'all';
+        renderStudentList(currentStudentsData, filterType, searchQuery);
+    }
+
+    // Debounce helper
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // ============================================
+    // QUICK ACTIONS
+    // ============================================
+
+    function initializeQuickActions() {
+        // Export Data
+        const exportBtn = document.getElementById('qa-export-progress');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', exportStudentData);
+        }
+
+        // Celeration Charts
+        const celerationBtn = document.getElementById('qa-celeration');
+        if (celerationBtn) {
+            celerationBtn.addEventListener('click', () => {
+                window.location.href = '/teacher-celeration-dashboard.html';
+            });
+        }
+
+        // Refresh
+        const refreshBtn = document.getElementById('qa-refresh');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', async () => {
+                refreshBtn.querySelector('i').classList.add('fa-spin');
+                await fetchAssignedStudents();
+                refreshBtn.querySelector('i').classList.remove('fa-spin');
+                showToast('Data refreshed!', 'success');
+            });
+        }
+
+        // Shortcuts toggle
+        const helpBtn = document.getElementById('qa-help');
+        const shortcutsPanel = document.getElementById('shortcuts-panel');
+        if (helpBtn && shortcutsPanel) {
+            helpBtn.addEventListener('click', () => {
+                shortcutsPanel.style.display = shortcutsPanel.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+    }
+
+    function exportStudentData() {
+        if (currentStudentsData.length === 0) {
+            showToast('No student data to export', 'warning');
+            return;
+        }
+
+        // Create CSV content
+        const headers = ['Name', 'Username', 'Grade', 'Level', 'XP', 'Weekly Minutes', 'Total Minutes', 'Last Login', 'Status'];
+        const rows = currentStudentsData.map(s => {
+            const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+            const lastLogin = s.lastLogin ? new Date(s.lastLogin).toLocaleDateString() : 'Never';
+            const status = getStudentStatus(s);
+            return [
+                name,
+                s.username,
+                s.gradeLevel || 'N/A',
+                s.level || 1,
+                s.xp || 0,
+                s.weeklyActiveTutoringMinutes || 0,
+                s.totalActiveTutoringMinutes || 0,
+                lastLogin,
+                status
+            ].join(',');
+        });
+
+        const csv = [headers.join(','), ...rows].join('\n');
+
+        // Download
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `student-progress-${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showToast('Export downloaded!', 'success');
+    }
+
+    // ============================================
+    // KEYBOARD SHORTCUTS
+    // ============================================
+
+    function initializeKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Don't trigger shortcuts when typing in inputs
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                // Allow Escape to close modals even in inputs
+                if (e.key === 'Escape') {
+                    closeAllModals();
+                }
+                return;
+            }
+
+            switch (e.key.toLowerCase()) {
+                case 's':
+                    e.preventDefault();
+                    document.querySelector('[data-tab="students"]')?.click();
+                    break;
+                case 'c':
+                    e.preventDefault();
+                    document.querySelector('[data-tab="curriculum"]')?.click();
+                    break;
+                case 'r':
+                    e.preventDefault();
+                    document.querySelector('[data-tab="resources"]')?.click();
+                    break;
+                case '/':
+                    e.preventDefault();
+                    studentSearchInput?.focus();
+                    break;
+                case '?':
+                    e.preventDefault();
+                    const shortcutsPanel = document.getElementById('shortcuts-panel');
+                    if (shortcutsPanel) {
+                        shortcutsPanel.style.display = shortcutsPanel.style.display === 'none' ? 'block' : 'none';
+                    }
+                    break;
+                case 'escape':
+                    closeAllModals();
+                    break;
+            }
+        });
+    }
+
+    function closeAllModals() {
+        document.querySelectorAll('.modal-overlay.is-visible').forEach(modal => {
+            modal.classList.remove('is-visible');
+        });
+    }
+
+    // ============================================
+    // TOAST NOTIFICATIONS
+    // ============================================
+
+    function showToast(message, type = 'info') {
+        // Create container if needed
+        let container = document.querySelector('.toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+
+        // Create toast
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        const icon = type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'times-circle' : 'info-circle';
+        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+
+        container.appendChild(toast);
+
+        // Auto remove
+        setTimeout(() => {
+            toast.style.animation = 'slideIn 0.3s ease reverse';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // ============================================
+    // UPDATE RIGHT SIDEBAR
+    // ============================================
+
+    function updateRightSidebar(students) {
+        // Today's summary (simulated data - would need real API)
+        const today = new Date().toDateString();
+        const loginsToday = students.filter(s => {
+            const lastLogin = s.lastLogin ? new Date(s.lastLogin).toDateString() : null;
+            return lastLogin === today;
+        }).length;
+
+        document.getElementById('summary-logins').textContent = loginsToday;
+
+        // Calculate approximate problems solved (would need real data)
+        const totalMinutesToday = students.reduce((sum, s) => {
+            const lastLogin = s.lastLogin ? new Date(s.lastLogin) : null;
+            if (lastLogin && lastLogin.toDateString() === today) {
+                return sum + (s.weeklyActiveTutoringMinutes || 0) / 7; // Rough daily estimate
+            }
+            return sum;
+        }, 0);
+
+        document.getElementById('summary-problems').textContent = Math.round(totalMinutesToday * 2); // ~2 problems per minute
+        document.getElementById('summary-time').textContent = Math.round(totalMinutesToday);
+
+        // Milestones (would need real milestone data)
+        const milestonesDiv = document.getElementById('recent-milestones');
+        const topStudents = [...students]
+            .filter(s => (s.level || 1) >= 3)
+            .sort((a, b) => (b.level || 1) - (a.level || 1))
+            .slice(0, 3);
+
+        if (topStudents.length > 0) {
+            milestonesDiv.innerHTML = topStudents.map(s => {
+                const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+                return `
+                    <div class="milestone-item">
+                        <span class="milestone-icon">🏆</span>
+                        <div class="milestone-content">
+                            <div class="milestone-student">${name}</div>
+                            <div class="milestone-text">Reached Level ${s.level || 1}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    // Update the fetchAssignedStudents to call our new update functions
+    const originalFetchAssignedStudents = fetchAssignedStudents;
+    fetchAssignedStudents = async function() {
+        if (!studentListDiv) return;
+        studentListDiv.innerHTML = 'Loading students...';
+        try {
+            const response = await fetch("/api/teacher/students");
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) window.location.href = "/login.html";
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const students = await response.json();
+            currentStudentsData = students;
+
+            // Render student list with current filters
+            const searchQuery = studentSearchInput ? studentSearchInput.value : '';
+            const filterType = studentFilterSelect ? studentFilterSelect.value : 'all';
+            renderStudentList(students, filterType, searchQuery);
+
+            // Update all the new UX components
+            updateClassOverview(students);
+            updateInsightsCards(students);
+            updateRightSidebar(students);
+
+        } catch (error) {
+            console.error("Failed to fetch students:", error);
+            studentListDiv.innerHTML = "<p>Error loading student data. Please refresh.</p>";
+        }
+    };
 });
