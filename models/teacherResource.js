@@ -64,6 +64,11 @@ const teacherResourceSchema = new mongoose.Schema({
         enum: ['worksheet', 'practice', 'homework', 'notes', 'test', 'quiz', 'handout', 'other'],
         default: 'other'
     },
+    // Whether the resource is published and available to students
+    isPublished: {
+        type: Boolean,
+        default: true // New resources are published by default
+    },
     // Extracted text content (for searchability and AI context)
     extractedText: {
         type: String,
