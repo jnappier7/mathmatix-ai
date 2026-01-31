@@ -1597,29 +1597,31 @@ class InlineChatVisuals {
 
         const styles = `
         <style id="icv-styles">
-            /* Inline Chat Visuals Container */
+            /* Apple-esque Clean Design */
             .icv-container {
-                margin: 15px 0;
-                padding: 15px;
-                background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
-                border-radius: 12px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                margin: 16px 0;
+                padding: 20px;
+                background: #ffffff;
+                border-radius: 16px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+                border: 1px solid rgba(0,0,0,0.06);
             }
 
             .icv-title {
-                font-size: 14px;
+                font-size: 15px;
                 font-weight: 600;
-                color: #333;
-                margin-bottom: 12px;
+                color: #1d1d1f;
+                margin-bottom: 14px;
                 text-align: center;
+                letter-spacing: -0.01em;
             }
 
             .icv-caption {
-                font-size: 12px;
-                color: #666;
+                font-size: 13px;
+                color: #86868b;
                 text-align: center;
-                margin-top: 8px;
+                margin-top: 12px;
             }
 
             .icv-error {
@@ -1646,19 +1648,20 @@ class InlineChatVisuals {
             }
 
             .icv-btn {
-                padding: 6px 12px;
+                padding: 8px 16px;
                 border: none;
-                border-radius: 6px;
-                background: #667eea;
+                border-radius: 8px;
+                background: #007aff;
                 color: white;
                 font-size: 14px;
+                font-weight: 500;
                 cursor: pointer;
-                transition: background 0.2s, transform 0.1s;
+                transition: all 0.2s ease;
             }
 
             .icv-btn:hover {
-                background: #5a6fd6;
-                transform: translateY(-1px);
+                background: #0066d6;
+                transform: scale(1.02);
             }
 
             .icv-btn:active {
@@ -1791,15 +1794,15 @@ class InlineChatVisuals {
 
             .icv-slider-row input[type="range"] {
                 width: 150px;
-                accent-color: #667eea;
+                accent-color: #007aff;
             }
 
             .icv-slider-equation {
-                margin-top: 10px;
+                margin-top: 12px;
                 font-size: 16px;
                 font-weight: 600;
-                color: #667eea;
-                font-family: 'Courier New', monospace;
+                color: #007aff;
+                font-family: 'SF Mono', 'Menlo', monospace;
             }
 
             /* Unit Circle */
@@ -1870,26 +1873,44 @@ class InlineChatVisuals {
                 }
             }
 
-            /* Dark mode support */
-            @media (prefers-color-scheme: dark) {
-                .icv-container {
-                    background: linear-gradient(135deg, #1e1e2e 0%, #2d2d3d 100%);
-                }
+            /* Force light mode for visuals */
+            .icv-container,
+            .icv-container * {
+                color-scheme: light;
+            }
 
-                .icv-title, .icv-fraction-label {
-                    color: #e0e0e0;
-                }
+            /* Function-plot library overrides for clean white graphs */
+            .icv-graph-container .function-plot,
+            .icv-slider-graph .function-plot {
+                background: #ffffff !important;
+            }
 
-                .icv-caption, .icv-compare-label {
-                    color: #aaa;
-                }
+            .icv-container .function-plot .x.axis path,
+            .icv-container .function-plot .y.axis path,
+            .icv-container .function-plot .x.axis line,
+            .icv-container .function-plot .y.axis line {
+                stroke: #d1d1d6 !important;
+            }
 
-                .icv-graph-container .icv-graph,
-                .icv-slider-graph,
-                .icv-points-plot,
-                .icv-unit-circle {
-                    background: #2d2d3d;
-                }
+            .icv-container .function-plot .x.axis text,
+            .icv-container .function-plot .y.axis text {
+                fill: #86868b !important;
+                font-size: 11px !important;
+            }
+
+            .icv-container .function-plot .x.grid line,
+            .icv-container .function-plot .y.grid line {
+                stroke: #f0f0f5 !important;
+            }
+
+            /* SVG elements - clean grays */
+            .icv-container svg text {
+                fill: #1d1d1f;
+            }
+
+            .icv-container svg line[stroke="#eee"],
+            .icv-container svg line[stroke="#ccc"] {
+                stroke: #e5e5ea !important;
             }
         </style>
         `;
