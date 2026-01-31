@@ -2526,6 +2526,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // =====================================================
+        // SESSION STATS TRACKER UPDATE
+        // Update the onscreen tracker (problems completed, accuracy)
+        // =====================================================
+        if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
+            const isCorrect = data.problemResult === 'correct';
+            window.trackProblemAttempt(isCorrect);
+            console.log(`[SessionStats] Problem tracked: ${data.problemResult}`);
+        }
+
+        // =====================================================
         // XP LADDER DISPLAY (Three Tiers)
         // Tier 1: Silent (no display)
         // Tier 2: Minimal (correct answer acknowledgment)
