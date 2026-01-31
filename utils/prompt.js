@@ -467,7 +467,7 @@ function buildCourseProgressionContext(mathCourse, firstName) {
   }
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -2070,6 +2070,53 @@ ${curriculumContext}
 - Follow teacher's preferred terminology and methods
 - Watch for common mistakes the teacher has flagged
 - Apply the scaffolding approach the teacher prefers
+` : ''}
+
+${!masteryContext && teacherAISettings ? `--- TEACHER'S CLASS AI SETTINGS ---
+${firstName}'s teacher has configured specific preferences for how you should teach their class:
+
+${teacherAISettings.calculatorAccess ? `**CALCULATOR POLICY:** ${
+  teacherAISettings.calculatorAccess === 'never' ? '🚫 NO CALCULATOR - Do not suggest or allow calculator use. Encourage mental math and written computation.' :
+  teacherAISettings.calculatorAccess === 'always' ? '✅ CALCULATOR ALLOWED - Student may use calculator freely.' :
+  teacherAISettings.calculatorAccess === 'skill-based' ? '📊 SKILL-BASED - Allow calculator for complex arithmetic but encourage mental math for basic operations.' :
+  '🎯 TEACHER DISCRETION - Use your judgment based on the problem type.'
+}${teacherAISettings.calculatorNote ? ` Teacher note: "${teacherAISettings.calculatorNote}"` : ''}` : ''}
+
+${teacherAISettings.scaffoldingLevel ? `**SCAFFOLDING LEVEL:** ${teacherAISettings.scaffoldingLevel}/5 - ${
+  teacherAISettings.scaffoldingLevel <= 2 ? 'Minimal hints. Let student struggle productively. Only intervene after multiple failed attempts.' :
+  teacherAISettings.scaffoldingLevel === 3 ? 'Balanced approach. Guide with questions, provide hints when stuck.' :
+  teacherAISettings.scaffoldingLevel >= 4 ? 'More support. Break problems into smaller steps, provide more guidance and encouragement.'
+: 'Standard guidance.'}` : ''}
+
+${teacherAISettings.vocabularyPreferences?.orderOfOperations ? `**ORDER OF OPERATIONS TERMINOLOGY:** Use "${teacherAISettings.vocabularyPreferences.orderOfOperations}" (not other mnemonics like ${teacherAISettings.vocabularyPreferences.orderOfOperations === 'PEMDAS' ? 'GEMS or BODMAS' : teacherAISettings.vocabularyPreferences.orderOfOperations === 'GEMS' ? 'PEMDAS or BODMAS' : 'PEMDAS or GEMS'})` : ''}
+
+${teacherAISettings.vocabularyPreferences?.customVocabulary?.length > 0 ? `**CUSTOM VOCABULARY:** Use these teacher-preferred terms: ${teacherAISettings.vocabularyPreferences.customVocabulary.join(', ')}` : ''}
+
+${teacherAISettings.solutionApproaches ? `**PREFERRED SOLUTION METHODS:**
+${teacherAISettings.solutionApproaches.equationSolving && teacherAISettings.solutionApproaches.equationSolving !== 'any' ? `- Equations: Use "${teacherAISettings.solutionApproaches.equationSolving.replace(/-/g, ' ')}" approach` : ''}
+${teacherAISettings.solutionApproaches.fractionOperations && teacherAISettings.solutionApproaches.fractionOperations !== 'any' ? `- Fractions: Use "${teacherAISettings.solutionApproaches.fractionOperations.replace(/-/g, ' ')}" method` : ''}
+${teacherAISettings.solutionApproaches.wordProblems && teacherAISettings.solutionApproaches.wordProblems !== 'any' ? `- Word Problems: Use "${teacherAISettings.solutionApproaches.wordProblems}" strategy` : ''}
+${teacherAISettings.solutionApproaches.customApproaches ? `- Custom methods: ${teacherAISettings.solutionApproaches.customApproaches}` : ''}` : ''}
+
+${teacherAISettings.manipulatives ? `**MANIPULATIVES:** ${teacherAISettings.manipulatives.allowed !== false ? '✅ Visual manipulatives and models are encouraged' : '🚫 Avoid visual manipulatives - focus on abstract/symbolic representations'}${teacherAISettings.manipulatives.preferred?.length > 0 ? ` (Preferred: ${teacherAISettings.manipulatives.preferred.join(', ')})` : ''}` : ''}
+
+${teacherAISettings.currentTeaching?.topic ? `**CURRENT CLASS TOPIC:** "${teacherAISettings.currentTeaching.topic}"${teacherAISettings.currentTeaching.approach ? ` - Teacher's approach: ${teacherAISettings.currentTeaching.approach}` : ''}${teacherAISettings.currentTeaching.pacing ? ` (Pacing: ${teacherAISettings.currentTeaching.pacing})` : ''}
+
+**IMPORTANT:** Align your tutoring with what's being taught in class. When relevant, reference this topic.` : ''}
+
+${teacherAISettings.responseStyle?.encouragementLevel ? `**ENCOURAGEMENT STYLE:** ${
+  teacherAISettings.responseStyle.encouragementLevel === 'minimal' ? 'Keep praise minimal - focus on the work, not generic encouragement.' :
+  teacherAISettings.responseStyle.encouragementLevel === 'moderate' ? 'Balanced encouragement - acknowledge progress without overdoing it.' :
+  teacherAISettings.responseStyle.encouragementLevel === 'high' ? 'Be encouraging and supportive - celebrate wins, motivate through challenges.'
+: 'Standard encouragement.'}` : ''}
+
+${teacherAISettings.responseStyle?.showWorkRequirement ? `**SHOW WORK:** ${
+  teacherAISettings.responseStyle.showWorkRequirement === 'always' ? 'Always require students to show their work step-by-step.' :
+  teacherAISettings.responseStyle.showWorkRequirement === 'encouraged' ? 'Encourage showing work but don\'t require it.' :
+  teacherAISettings.responseStyle.showWorkRequirement === 'optional' ? 'Showing work is optional - accept answers without steps.'
+: 'Encourage showing work when appropriate.'}` : ''}
+
+**RESPECT TEACHER PREFERENCES:** These settings reflect what ${firstName}'s teacher wants. Follow them closely to maintain consistency between classroom instruction and tutoring.
 ` : ''}
 
 ${!masteryContext && conversationContext ? `--- SESSION CONTEXT ---

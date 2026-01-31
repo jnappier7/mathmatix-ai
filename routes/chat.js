@@ -187,6 +187,21 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         }
 
+        // Fetch teacher's class AI settings if student has a teacher
+        let teacherAISettings = null;
+        if (user.teacherId) {
+            try {
+                const teacher = await User.findById(user.teacherId).select('classAISettings').lean();
+                if (teacher && teacher.classAISettings) {
+                    teacherAISettings = teacher.classAISettings;
+                    console.log(`🎛️ [AI Settings] Loaded teacher settings for ${user.firstName}: calculator=${teacherAISettings.calculatorAccess || 'default'}, scaffolding=${teacherAISettings.scaffoldingLevel || 3}/5`);
+                }
+            } catch (error) {
+                console.error('Error fetching teacher AI settings:', error);
+                // Continue without teacher settings if there's an error
+            }
+        }
+
         // Detect and fetch teacher resource if mentioned in message
         let resourceContext = null;
         if (user.teacherId) {
@@ -306,7 +321,7 @@ router.post('/', isAuthenticated, async (req, res) => {
         // Inject few-shot examples for new conversations to teach visual command usage
         formattedMessagesForLLM = injectFewShotExamples(formattedMessagesForLLM);
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt);
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)

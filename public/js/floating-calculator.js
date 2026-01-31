@@ -5,6 +5,7 @@ class FloatingCalculator {
         this.toggleBtn = document.getElementById('toggle-calculator-btn');
         this.closeBtn = document.getElementById('close-calculator-btn');
         this.dragHandle = document.getElementById('calculator-drag-handle');
+        this.sidebarCalcBtn = document.getElementById('sidebar-calculator-btn');
 
         // Display elements
         this.inputLine = document.getElementById('calc-input-line');
@@ -43,7 +44,82 @@ class FloatingCalculator {
         this.xOffset = 0;
         this.yOffset = 0;
 
+        // Teacher access control state
+        this.calculatorAccess = 'always'; // 'always', 'never', 'skill-based', 'teacher-discretion'
+        this.calculatorNote = '';
+        this.accessChecked = false;
+
         this.initializeEventListeners();
+        this.checkCalculatorAccess(); // Check teacher settings on init
+    }
+
+    // Check teacher's calculator access setting
+    async checkCalculatorAccess() {
+        try {
+            const response = await fetch('/api/teacher/my-calculator-access');
+            const data = await response.json();
+
+            if (data.success) {
+                this.calculatorAccess = data.calculatorAccess;
+                this.calculatorNote = data.calculatorNote || '';
+                this.accessChecked = true;
+
+                console.log(`🧮 Calculator access: ${this.calculatorAccess}`);
+
+                // Apply access restrictions
+                this.applyAccessRestrictions();
+            }
+        } catch (error) {
+            console.warn('Could not check calculator access:', error);
+            // Default to allowing calculator if check fails
+            this.calculatorAccess = 'skill-based';
+            this.accessChecked = true;
+        }
+    }
+
+    // Apply calculator access restrictions based on teacher settings
+    applyAccessRestrictions() {
+        if (this.calculatorAccess === 'never') {
+            // Hide calculator completely
+            if (this.sidebarCalcBtn) {
+                this.sidebarCalcBtn.style.display = 'none';
+            }
+            if (this.toggleBtn) {
+                this.toggleBtn.style.display = 'none';
+            }
+            // Make sure calculator is hidden
+            this.hideCalculator();
+            console.log('🚫 Calculator disabled by teacher');
+        } else if (this.calculatorAccess === 'skill-based' || this.calculatorAccess === 'teacher-discretion') {
+            // Show calculator but add visual indicator
+            if (this.sidebarCalcBtn) {
+                this.sidebarCalcBtn.style.display = '';
+                this.sidebarCalcBtn.title = this.calculatorAccess === 'skill-based'
+                    ? 'Calculator (use for complex calculations only)'
+                    : 'Calculator (teacher discretion)';
+            }
+        } else {
+            // 'always' - full access
+            if (this.sidebarCalcBtn) {
+                this.sidebarCalcBtn.style.display = '';
+                this.sidebarCalcBtn.title = 'Calculator';
+            }
+        }
+    }
+
+    // Override toggle to check access
+    toggleCalculator() {
+        // Check if calculator is blocked
+        if (this.calculatorAccess === 'never') {
+            console.log('🚫 Calculator access denied by teacher');
+            return;
+        }
+
+        if (this.floatingCalc.style.display === 'none') {
+            this.showCalculator();
+        } else {
+            this.hideCalculator();
+        }
     }
 
     initializeEventListeners() {
@@ -143,14 +219,6 @@ class FloatingCalculator {
                 this.handleFunction('rparen');
                 e.preventDefault();
                 break;
-        }
-    }
-
-    toggleCalculator() {
-        if (this.floatingCalc.style.display === 'none') {
-            this.showCalculator();
-        } else {
-            this.hideCalculator();
         }
     }
 
