@@ -461,4 +461,139 @@ router.get('/students/:studentId/skill-report', isTeacher, async (req, res) => {
   }
 });
 
+// ============================================
+// CLASS AI SETTINGS
+// ============================================
+
+/**
+ * Get teacher's class AI settings
+ * GET /api/teacher/class-ai-settings
+ *
+ * Returns the teacher's preferences for how the AI should tutor their students
+ */
+router.get('/class-ai-settings', isTeacher, async (req, res) => {
+  try {
+    const teacher = await User.findById(req.user._id).select('classAISettings').lean();
+
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+
+    // Return settings with defaults if not set
+    const defaultSettings = {
+      calculatorAccess: 'skill-based',
+      calculatorNote: '',
+      scaffoldingLevel: 3,
+      scaffoldingNote: '',
+      vocabularyPreferences: {
+        orderOfOperations: 'PEMDAS',
+        customVocabulary: [],
+        vocabularyNote: ''
+      },
+      solutionApproaches: {
+        equationSolving: 'any',
+        fractionOperations: 'any',
+        wordProblems: 'any',
+        customApproaches: ''
+      },
+      manipulatives: {
+        allowed: true,
+        preferred: [],
+        note: ''
+      },
+      currentTeaching: {
+        topic: '',
+        approach: '',
+        pacing: '',
+        additionalContext: ''
+      },
+      responseStyle: {
+        encouragementLevel: 'moderate',
+        errorCorrectionStyle: 'socratic',
+        showWorkRequirement: 'always'
+      }
+    };
+
+    res.json({
+      success: true,
+      settings: teacher.classAISettings || defaultSettings
+    });
+
+  } catch (error) {
+    console.error('Error fetching class AI settings:', error);
+    res.status(500).json({ message: 'Error fetching class AI settings' });
+  }
+});
+
+/**
+ * Update teacher's class AI settings
+ * PUT /api/teacher/class-ai-settings
+ *
+ * Saves the teacher's preferences for how the AI should tutor their students
+ */
+router.put('/class-ai-settings', isTeacher, async (req, res) => {
+  try {
+    const settings = req.body;
+
+    // Add timestamp
+    settings.lastUpdated = new Date();
+
+    const result = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { classAISettings: settings } },
+      { new: true, runValidators: true }
+    );
+
+    if (!result) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+
+    console.log(`[Teacher] Class AI settings updated by ${req.user._id}`);
+
+    res.json({
+      success: true,
+      message: 'Class AI settings saved successfully',
+      settings: result.classAISettings
+    });
+
+  } catch (error) {
+    console.error('Error saving class AI settings:', error);
+    res.status(500).json({ message: 'Error saving class AI settings' });
+  }
+});
+
+/**
+ * Get class AI settings for a student's teacher (used by AI during tutoring)
+ * GET /api/teacher/class-ai-settings/for-student/:studentId
+ *
+ * Used internally when starting a tutoring session to fetch teacher preferences
+ */
+router.get('/class-ai-settings/for-student/:studentId', async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    // Get student's teacher
+    const student = await User.findById(studentId).select('teacherId').lean();
+    if (!student || !student.teacherId) {
+      return res.json({ success: true, settings: null, message: 'Student has no assigned teacher' });
+    }
+
+    // Get teacher's settings
+    const teacher = await User.findById(student.teacherId).select('classAISettings firstName lastName').lean();
+    if (!teacher) {
+      return res.json({ success: true, settings: null, message: 'Teacher not found' });
+    }
+
+    res.json({
+      success: true,
+      teacherName: `${teacher.firstName} ${teacher.lastName}`,
+      settings: teacher.classAISettings || null
+    });
+
+  } catch (error) {
+    console.error('Error fetching class AI settings for student:', error);
+    res.status(500).json({ message: 'Error fetching class AI settings' });
+  }
+});
+
 module.exports = router;
