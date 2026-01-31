@@ -338,6 +338,10 @@ router.post('/',
 
         const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
 		if (tutorsJustUnlocked.length > 0) {
+			// Ensure unlockedItems is initialized before pushing
+			if (!user.unlockedItems) {
+				user.unlockedItems = [];
+			}
 			user.unlockedItems.push(...tutorsJustUnlocked);
 			user.markModified('unlockedItems');
 		}
