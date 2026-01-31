@@ -75,22 +75,59 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // Current tutor info for chat bubbles
+    let currentTutorInfo = { name: 'Math Tutor', image: 'default-tutor.png' };
+
     // --- Helper for appending messages to parent chat widget ---
-    function appendParentMessage(sender, text) {
+    function appendParentMessage(sender, text, tutorInfo = null) {
+        // Update tutor info if provided
+        if (tutorInfo && tutorInfo.tutorName) {
+            currentTutorInfo = { name: tutorInfo.tutorName, image: tutorInfo.tutorImage || 'default-tutor.png' };
+        }
+
+        const container = document.createElement("div");
+        container.className = `message-container ${sender}`;
+        container.style.cssText = 'display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; width: 100%;';
+
+        if (sender === 'user') {
+            container.style.justifyContent = 'flex-end';
+            container.style.flexDirection = 'row-reverse';
+        } else {
+            container.style.justifyContent = 'flex-start';
+        }
+
+        // Create avatar for AI messages
+        if (sender === 'ai') {
+            const avatar = document.createElement("div");
+            avatar.className = 'message-avatar';
+            avatar.style.cssText = 'flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 2px solid #e0e0e0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background: #fff;';
+
+            const avatarImg = document.createElement("img");
+            avatarImg.src = `/images/tutor_avatars/${currentTutorInfo.image}`;
+            avatarImg.alt = currentTutorInfo.name;
+            avatarImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover; object-position: center top;';
+            avatarImg.onerror = () => { avatarImg.src = '/images/tutor_avatars/default-tutor.png'; };
+
+            avatar.appendChild(avatarImg);
+            container.appendChild(avatar);
+        }
+
         const msg = document.createElement("div");
         msg.className = `message ${sender} message-widget`;
 
-        // Apply distinct parent chat styling
+        // Match main chat bubble styling
         if (sender === 'user') {
-            msg.style.cssText = 'background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; padding: 12px 16px; border-radius: 12px 12px 4px 12px; margin: 8px 0; max-width: 80%; align-self: flex-end; box-shadow: 0 2px 4px rgba(155,89,182,0.3);';
+            msg.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 16px; border-radius: 18px 18px 4px 18px; max-width: 80%; box-shadow: 0 2px 8px rgba(102,126,234,0.3); line-height: 1.5; font-size: 0.95em;';
         } else if (sender === 'ai') {
-            msg.style.cssText = 'background: #f3e5f5; color: #4a148c; padding: 12px 16px; border-radius: 12px 12px 12px 4px; margin: 8px 0; max-width: 80%; align-self: flex-start; border-left: 4px solid #9b59b6; box-shadow: 0 2px 4px rgba(155,89,182,0.15);';
+            msg.style.cssText = 'background-color: #f5f5f5; color: #333; padding: 12px 16px; border-radius: 18px 18px 18px 4px; max-width: 80%; border: 1px solid #e0e0e0; line-height: 1.5; font-size: 0.95em; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
         }
 
         msg.innerText = text;
+        container.appendChild(msg);
+
         parentChatContainer.style.display = 'flex';
         parentChatContainer.style.flexDirection = 'column';
-        parentChatContainer.appendChild(msg);
+        parentChatContainer.appendChild(container);
         parentChatContainer.scrollTop = parentChatContainer.scrollHeight;
     }
 
@@ -101,17 +138,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         const tutorNameDisplay = document.getElementById('tutor-name');
 
         if (!child || !child.selectedTutorId) {
-            tutorAvatarContainer.style.display = 'none';
+            // Reset to default tutor
+            currentTutorInfo = { name: 'Math Tutor', image: 'default-tutor.png' };
+            if (tutorAvatarContainer) tutorAvatarContainer.style.display = 'none';
             return;
         }
 
         const tutorId = child.selectedTutorId;
         const tutor = TUTOR_CONFIG[tutorId] || TUTOR_CONFIG['default'];
 
-        tutorAvatarImg.src = `/images/tutor_avatars/${tutor.image}`;
-        tutorAvatarImg.alt = tutor.name;
-        tutorNameDisplay.textContent = tutor.name;
-        tutorAvatarContainer.style.display = 'block';
+        // Update current tutor info for chat bubbles
+        currentTutorInfo = { name: tutor.name, image: tutor.image };
+
+        if (tutorAvatarImg) {
+            tutorAvatarImg.src = `/images/tutor_avatars/${tutor.image}`;
+            tutorAvatarImg.alt = tutor.name;
+        }
+        if (tutorNameDisplay) tutorNameDisplay.textContent = tutor.name;
+        if (tutorAvatarContainer) tutorAvatarContainer.style.display = 'block';
     }
 
     // --- MODIFICATION: Updated function to load children and their progress ---
@@ -375,7 +419,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error(`Chat error: ${res.status} - ${errorText}`);
                 }
                 const data = await res.json();
-                appendParentMessage("ai", data.text || "No response from tutor.");
+                // Pass tutor info from response to show avatar with correct tutor
+                appendParentMessage("ai", data.text || "No response from tutor.", {
+                    tutorName: data.tutorName,
+                    tutorImage: data.tutorImage
+                });
             } catch (err) {
                 console.error("Parent chat error:", err);
                 appendParentMessage("ai", "Error connecting to the tutor. Please try again.");
