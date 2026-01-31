@@ -442,6 +442,55 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // --- Helper Button Click Handlers ---
+    // These buttons let parents quickly ask common questions
+    const helperButtons = document.querySelectorAll('.helper-btn');
+    helperButtons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const message = btn.getAttribute('data-message');
+            if (!message || !selectedChild || !currentParentId) {
+                alert("Please select a child first.");
+                return;
+            }
+
+            // Show user's question in chat
+            appendParentMessage("user", message);
+
+            // Show thinking indicator
+            if (parentThinkingIndicator) parentThinkingIndicator.style.display = "flex";
+
+            try {
+                const res = await csrfFetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        userId: currentParentId,
+                        message,
+                        role: "parent",
+                        childId: selectedChild._id,
+                    })
+                });
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`Chat error: ${res.status} - ${errorText}`);
+                }
+                const data = await res.json();
+                // Pass tutor info from response
+                appendParentMessage("ai", data.text || "No response from tutor.", {
+                    tutorName: data.tutorName,
+                    tutorImage: data.tutorImage
+                });
+            } catch (err) {
+                console.error("Parent chat error:", err);
+                appendParentMessage("ai", "Error connecting to the tutor. Please try again.");
+            } finally {
+                if (parentThinkingIndicator) parentThinkingIndicator.style.display = "none";
+            }
+        });
+    });
+
     if (generateCodeBtn) {
         generateCodeBtn.addEventListener('click', async () => {
             try {
