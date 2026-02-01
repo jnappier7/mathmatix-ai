@@ -1228,6 +1228,251 @@
       color: white;
     }
 
+    .quick-action-btn.qa-highlight {
+      background: linear-gradient(135deg, #27ae60, #16a085);
+      border-color: #27ae60;
+      animation: pulse-glow 2s infinite;
+    }
+
+    .quick-action-btn.qa-highlight i,
+    .quick-action-btn.qa-highlight span {
+      color: white;
+    }
+
+    .quick-action-btn.qa-highlight:hover {
+      background: linear-gradient(135deg, #16a085, #27ae60);
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(39, 174, 96, 0.5); }
+      50% { box-shadow: 0 0 15px rgba(39, 174, 96, 0.8); }
+    }
+
+    /* ============================================
+       AI SETTINGS MODAL
+       ============================================ */
+
+    .ai-settings-modal .modal-content {
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .ai-settings-section {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .ai-settings-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .ai-settings-section h3 {
+      font-size: 1em;
+      color: #27ae60;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .setting-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .setting-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .setting-group label {
+      display: block;
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #5B6876;
+      margin-bottom: 6px;
+    }
+
+    .setting-group select,
+    .setting-group input[type="text"],
+    .setting-group input[type="number"],
+    .setting-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      font-size: 0.9em;
+      transition: border-color 0.2s;
+    }
+
+    .setting-group select:focus,
+    .setting-group input:focus,
+    .setting-group textarea:focus {
+      border-color: #27ae60;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+    }
+
+    .setting-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .setting-hint {
+      font-size: 0.75em;
+      color: #95a5a6;
+      margin-top: 4px;
+    }
+
+    .scaffolding-slider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .scaffolding-slider input[type="range"] {
+      flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      background: linear-gradient(to right, #27ae60 0%, #27ae60 50%, #e9ecef 50%, #e9ecef 100%);
+      border-radius: 3px;
+    }
+
+    .scaffolding-slider input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #27ae60;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .scaffolding-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75em;
+      color: #95a5a6;
+      margin-top: 4px;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+    }
+
+    .checkbox-grid label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85em;
+      color: #5B6876;
+      cursor: pointer;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .checkbox-grid label:hover {
+      background: #e8f5e9;
+    }
+
+    .checkbox-grid input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #27ae60;
+    }
+
+    .vocab-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .vocab-chip {
+      background: #e8f5e9;
+      color: #27ae60;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .vocab-chip .remove-chip {
+      cursor: pointer;
+      opacity: 0.7;
+    }
+
+    .vocab-chip .remove-chip:hover {
+      opacity: 1;
+    }
+
+    .add-vocab-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .add-vocab-row input {
+      flex: 1;
+    }
+
+    .add-vocab-row button {
+      padding: 10px 16px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .modal-footer .btn {
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-footer .btn-primary {
+      background: #27ae60;
+      color: white;
+      border: none;
+    }
+
+    .modal-footer .btn-primary:hover {
+      background: #16a085;
+    }
+
+    .modal-footer .btn-secondary {
+      background: white;
+      color: #5B6876;
+      border: 1px solid #e9ecef;
+    }
+
+    .modal-footer .btn-secondary:hover {
+      background: #f8f9fa;
+    }
+
     /* ============================================
        TODAY'S SUMMARY PANEL
        ============================================ */
@@ -1628,6 +1873,10 @@
         <div class="dashboard-panel quick-actions-panel">
           <div class="dashboard-panel-header"><i class="fas fa-bolt"></i> Quick Actions</div>
           <div class="quick-actions-grid">
+            <button class="quick-action-btn qa-highlight" id="qa-ai-settings" title="Configure how AI tutors your students">
+              <i class="fas fa-robot"></i>
+              <span>AI Settings</span>
+            </button>
             <button class="quick-action-btn" id="qa-export-progress" title="Export class progress to CSV">
               <i class="fas fa-download"></i>
               <span>Export Data</span>
@@ -1639,10 +1888,6 @@
             <button class="quick-action-btn" id="qa-refresh" title="Refresh all data">
               <i class="fas fa-sync-alt"></i>
               <span>Refresh</span>
-            </button>
-            <button class="quick-action-btn" id="qa-help" title="View help & shortcuts">
-              <i class="fas fa-keyboard"></i>
-              <span>Shortcuts</span>
             </button>
           </div>
         </div>
@@ -1940,6 +2185,7 @@
   <script src="/js/teacher-dashboard.js"></script>
   <script src="/js/teacher-curriculum.js"></script>
   <script src="/js/teacher-resources.js"></script>
+  <script src="/js/teacher-ai-settings.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="/js/sessionManager.js"></script>
 </body>

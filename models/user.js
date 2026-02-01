@@ -503,6 +503,97 @@ const userSchema = new Schema({
   parentToChildInviteCode:   { type: inviteCodeSchema,          default: () => ({}) },
   studentToParentLinkCode:   { type: studentToParentLinkCodeSchema, default: () => ({}) },
 
+  /* Teacher Class AI Settings - Controls how AI tutors students in this teacher's class */
+  classAISettings: {
+    // Calculator access
+    calculatorAccess: {
+      type: String,
+      enum: ['always', 'never', 'skill-based', 'teacher-discretion'],
+      default: 'skill-based'
+    },
+    calculatorNote: { type: String, default: '' },  // e.g., "Allow for computation-heavy problems only"
+
+    // Scaffolding/prompt level (how much support the AI provides)
+    scaffoldingLevel: {
+      type: Number,
+      min: 1,
+      max: 5,
+      default: 3  // 1=Minimal hints, 5=Maximum support
+    },
+    scaffoldingNote: { type: String, default: '' },
+
+    // Vocabulary preferences
+    vocabularyPreferences: {
+      orderOfOperations: {
+        type: String,
+        enum: ['PEMDAS', 'GEMS', 'BODMAS', 'BEDMAS', 'teacher-custom'],
+        default: 'PEMDAS'
+      },
+      customVocabulary: [{ type: String }],  // Array of custom terms: ["Use 'rate of change' not 'slope'"]
+      vocabularyNote: { type: String, default: '' }
+    },
+
+    // Solution approach preferences
+    solutionApproaches: {
+      equationSolving: {
+        type: String,
+        enum: ['opposite-operations', 'balance-method', 'algebraic-manipulation', 'any'],
+        default: 'any'
+      },
+      fractionOperations: {
+        type: String,
+        enum: ['butterfly-method', 'traditional-lcd', 'visual-models', 'any'],
+        default: 'any'
+      },
+      wordProblems: {
+        type: String,
+        enum: ['CUBES', 'UPS-Check', 'draw-first', 'any'],
+        default: 'any'
+      },
+      customApproaches: { type: String, default: '' }  // Freeform teacher notes
+    },
+
+    // Manipulatives and visual aids
+    manipulatives: {
+      allowed: { type: Boolean, default: true },
+      preferred: [{
+        type: String,
+        enum: ['number-line', 'algebra-tiles', 'fraction-bars', 'area-model', 'base-ten-blocks', 'graph-paper', 'coordinate-plane']
+      }],
+      note: { type: String, default: '' }
+    },
+
+    // Current teaching context
+    currentTeaching: {
+      topic: { type: String, default: '' },  // "We're currently learning quadratic equations"
+      approach: { type: String, default: '' },  // "I teach factoring before the quadratic formula"
+      pacing: { type: String, default: '' },  // "We're taking it slow - emphasize understanding over speed"
+      additionalContext: { type: String, default: '' }
+    },
+
+    // Response style
+    responseStyle: {
+      encouragementLevel: {
+        type: String,
+        enum: ['minimal', 'moderate', 'high'],
+        default: 'moderate'
+      },
+      errorCorrectionStyle: {
+        type: String,
+        enum: ['direct', 'socratic', 'discovery'],
+        default: 'socratic'
+      },
+      showWorkRequirement: {
+        type: String,
+        enum: ['always', 'sometimes', 'never'],
+        default: 'always'
+      }
+    },
+
+    // Last updated timestamp
+    lastUpdated: { type: Date }
+  },
+
   /* IEP Plan */
   iepPlan: { type: iepPlanSchema, default: () => ({}) },
 
