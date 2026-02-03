@@ -1,0 +1,334 @@
+/**
+ * Dark Mode Theme for MATHMATIX AI
+ *
+ * Activates when [data-theme="dark"] is set on the html element.
+ * Uses CSS custom properties to override light theme colors.
+ *
+ * @module dark-mode
+ */
+
+/* Dark theme variable overrides */
+[data-theme="dark"] {
+    /* Core colors - dark backgrounds, light text */
+    --clr-bg-light: #0F1A24;
+    --clr-bg-dark: #FFFFFF;
+    --clr-text: #F0F4F8;
+    --clr-text-dim: #8B9AAB;
+
+    /* Text colors for dark mode */
+    --text-primary: #F0F4F8;
+    --text-secondary: #8B9AAB;
+    --text-light: #0F1A24;
+    --text-dark: #F0F4F8;
+
+    /* Adjusted brand colors for dark mode (slightly brighter for visibility) */
+    --clr-primary-teal: #14C8C8;
+    --clr-accent-hotpink: #FF4D8B;
+    --clr-success-green: #1AD97A;
+    --clr-warning-gold: #FFD066;
+    --clr-error-red: #FF6B6B;
+
+    /* RGB versions for rgba() */
+    --clr-primary-teal-rgb: 20, 200, 200;
+    --clr-accent-hotpink-rgb: 255, 77, 139;
+
+    /* Shadows - darker, more subtle for dark mode */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 10px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 20px rgba(0,0,0,0.5);
+    --shadow-card-primary: 0 4px 8px rgba(var(--clr-primary-teal-rgb), 0.2);
+}
+
+/* Body styles for dark mode */
+[data-theme="dark"] body {
+    background-color: #0A1118;
+    color: var(--text-primary);
+}
+
+/* Cards and panels */
+[data-theme="dark"] .panel,
+[data-theme="dark"] .card,
+[data-theme="dark"] .dashboard-card,
+[data-theme="dark"] .stat-box,
+[data-theme="dark"] .widget {
+    background-color: #141E29;
+    border-color: #243040;
+}
+
+/* Modal backgrounds */
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .modal-body,
+[data-theme="dark"] .dialog-content {
+    background-color: #141E29;
+    border-color: #243040;
+}
+
+/* Table styles */
+[data-theme="dark"] table,
+[data-theme="dark"] .table {
+    background-color: #141E29;
+}
+
+[data-theme="dark"] th,
+[data-theme="dark"] thead {
+    background-color: #1A2633;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] td {
+    border-color: #243040;
+}
+
+[data-theme="dark"] tr:hover {
+    background-color: #1A2633;
+}
+
+/* Input fields */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+    background-color: #1A2633;
+    border-color: #243040;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+    border-color: var(--clr-primary-teal);
+    box-shadow: 0 0 0 3px rgba(var(--clr-primary-teal-rgb), 0.2);
+}
+
+/* Sidebar and navigation */
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .nav-sidebar,
+[data-theme="dark"] .dashboard-sidebar {
+    background-color: #0D151D;
+    border-color: #243040;
+}
+
+[data-theme="dark"] .sidebar-item:hover,
+[data-theme="dark"] .nav-item:hover {
+    background-color: #1A2633;
+}
+
+[data-theme="dark"] .sidebar-item.active,
+[data-theme="dark"] .nav-item.active {
+    background-color: rgba(var(--clr-primary-teal-rgb), 0.15);
+}
+
+/* Header styles */
+[data-theme="dark"] header,
+[data-theme="dark"] .site-header,
+[data-theme="dark"] .dashboard-header {
+    background-color: #0D151D;
+    border-color: #243040;
+}
+
+/* Footer styles */
+[data-theme="dark"] footer,
+[data-theme="dark"] .site-footer {
+    background-color: #0A1118;
+    border-color: #243040;
+}
+
+/* Chat message bubbles */
+[data-theme="dark"] .chat-message.user-message {
+    background-color: var(--clr-primary-teal);
+    color: white;
+}
+
+[data-theme="dark"] .chat-message.ai-message,
+[data-theme="dark"] .chat-message.tutor-message {
+    background-color: #1A2633;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .chat-container,
+[data-theme="dark"] .chat-messages {
+    background-color: #0F1A24;
+}
+
+/* Code and math blocks */
+[data-theme="dark"] code,
+[data-theme="dark"] pre,
+[data-theme="dark"] .math-block,
+[data-theme="dark"] .code-block {
+    background-color: #1A2633;
+    border-color: #243040;
+    color: #E8F0F8;
+}
+
+/* Calculator and equation input */
+[data-theme="dark"] .calculator-display,
+[data-theme="dark"] .equation-input,
+[data-theme="dark"] #inputDisplay,
+[data-theme="dark"] #resultDisplay {
+    background-color: #1A2633;
+    border-color: #243040;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .calculator-btn {
+    background-color: #1A2633;
+    border-color: #243040;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .calculator-btn:hover {
+    background-color: #243040;
+}
+
+[data-theme="dark"] .calculator-btn.primary,
+[data-theme="dark"] .calculator-btn.operator {
+    background-color: var(--clr-primary-teal);
+    color: white;
+}
+
+/* Dropdowns and menus */
+[data-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .dropdown-content,
+[data-theme="dark"] .menu-dropdown {
+    background-color: #141E29;
+    border-color: #243040;
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: #1A2633;
+}
+
+/* Tooltips */
+[data-theme="dark"] .tooltip,
+[data-theme="dark"] [data-tooltip]:after {
+    background-color: #1A2633;
+    color: var(--text-primary);
+    border-color: #243040;
+}
+
+/* Progress bars */
+[data-theme="dark"] .progress,
+[data-theme="dark"] .progress-bar-bg,
+[data-theme="dark"] .skill-progress-bg {
+    background-color: #1A2633;
+}
+
+/* Badges and tags */
+[data-theme="dark"] .badge,
+[data-theme="dark"] .tag {
+    background-color: #1A2633;
+    color: var(--text-primary);
+}
+
+/* Alerts and notifications - keep their colors for visibility */
+[data-theme="dark"] .alert-success {
+    background-color: rgba(22, 200, 109, 0.15);
+    border-color: var(--clr-success-green);
+    color: var(--clr-success-green);
+}
+
+[data-theme="dark"] .alert-error,
+[data-theme="dark"] .alert-danger {
+    background-color: rgba(255, 78, 78, 0.15);
+    border-color: var(--clr-error-red);
+    color: var(--clr-error-red);
+}
+
+[data-theme="dark"] .alert-warning {
+    background-color: rgba(255, 194, 75, 0.15);
+    border-color: var(--clr-warning-gold);
+    color: var(--clr-warning-gold);
+}
+
+[data-theme="dark"] .alert-info {
+    background-color: rgba(var(--clr-primary-teal-rgb), 0.15);
+    border-color: var(--clr-primary-teal);
+    color: var(--clr-primary-teal);
+}
+
+/* Scrollbar styling for dark mode (webkit browsers) */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #0F1A24;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #243040;
+    border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: #344050;
+}
+
+/* Avatar and profile elements */
+[data-theme="dark"] .avatar,
+[data-theme="dark"] .profile-avatar {
+    border-color: #243040;
+}
+
+/* Activity items and lists */
+[data-theme="dark"] .activity-item,
+[data-theme="dark"] .list-item {
+    border-color: #243040;
+}
+
+[data-theme="dark"] .activity-item:hover,
+[data-theme="dark"] .list-item:hover {
+    background-color: #1A2633;
+}
+
+/* Skeleton loading states */
+[data-theme="dark"] .skeleton,
+[data-theme="dark"] .loading-skeleton {
+    background: linear-gradient(90deg, #1A2633 25%, #243040 50%, #1A2633 75%);
+}
+
+/* Selection color */
+[data-theme="dark"] ::selection {
+    background-color: rgba(var(--clr-primary-teal-rgb), 0.4);
+    color: white;
+}
+
+/* Links in dark mode */
+[data-theme="dark"] a {
+    color: var(--clr-primary-teal);
+}
+
+[data-theme="dark"] a:hover {
+    color: #16DADA;
+}
+
+/* Borders general */
+[data-theme="dark"] hr {
+    border-color: #243040;
+}
+
+/* Empty states */
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .no-data {
+    color: var(--text-secondary);
+}
+
+/* Checkbox and radio custom styling */
+[data-theme="dark"] input[type="checkbox"],
+[data-theme="dark"] input[type="radio"] {
+    accent-color: var(--clr-primary-teal);
+}
+
+/* Transition for smooth theme switching */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}

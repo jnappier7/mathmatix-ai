@@ -118,6 +118,8 @@ const sessionRoutes = require('./routes/session');  // Session management and tr
 const feedbackRoutes = require('./routes/feedback');  // User feedback and bug reports
 const tourSurveyRoutes = require('./routes/tourSurvey');  // Tour and survey for alpha testing
 const diagramRoutes = require('./routes/diagram');  // Diagram generation for visual learners
+const messagingRoutes = require('./routes/messaging');  // Teacher-parent messaging system
+const iepTemplatesRoutes = require('./routes/iepTemplates');  // IEP templates for teachers
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // --- 5. EXPRESS APP SETUP ---
@@ -351,6 +353,8 @@ app.use('/api', isAuthenticated, celerationRoutes); // Standard Celeration Chart
 app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (idle timeout, auto-save, summaries)
 app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and bug reports for Alpha testing
 app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for alpha testing
+app.use('/api/messages', isAuthenticated, messagingRoutes); // Teacher-parent messaging system
+app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {

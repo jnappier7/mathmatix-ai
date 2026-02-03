@@ -1,34 +1,37 @@
 /**
- * Context Cache - In-memory caching for frequently accessed data
+ * Context Cache - Redis with in-memory fallback
  *
  * Reduces database queries by caching:
  * - User profiles (curriculum, teacher settings)
  * - Recent conversations
  * - Curriculum data
  *
- * Uses Map-based LRU cache with TTL expiration
+ * Uses Redis when available, falls back to Map-based LRU cache
  *
  * @module contextCache
  */
 
 // Cache configuration
 const CACHE_CONFIG = {
-    user: { ttl: 60 * 1000, maxSize: 500 },           // User data: 1 min TTL
-    curriculum: { ttl: 5 * 60 * 1000, maxSize: 100 }, // Curriculum: 5 min TTL
-    teacherSettings: { ttl: 5 * 60 * 1000, maxSize: 100 }, // Teacher AI settings: 5 min TTL
-    conversation: { ttl: 30 * 1000, maxSize: 200 }    // Conversation: 30 sec TTL
+    user: { ttl: 60, maxSize: 500 },           // User data: 1 min TTL
+    curriculum: { ttl: 300, maxSize: 100 },    // Curriculum: 5 min TTL
+    teacherSettings: { ttl: 300, maxSize: 100 }, // Teacher AI settings: 5 min TTL
+    conversation: { ttl: 30, maxSize: 200 }    // Conversation: 30 sec TTL
 };
 
-// Cache stores
-const caches = {
+// Redis client (lazy initialized)
+let redisClient = null;
+let useRedis = false;
+
+// In-memory fallback stores
+const memoryCaches = {
     user: new Map(),
     curriculum: new Map(),
     teacherSettings: new Map(),
     conversation: new Map()
 };
 
-// Timestamps for TTL checking
-const timestamps = {
+const memoryTimestamps = {
     user: new Map(),
     curriculum: new Map(),
     teacherSettings: new Map(),
@@ -36,55 +39,135 @@ const timestamps = {
 };
 
 /**
- * Get item from cache if not expired
- * @param {string} type - Cache type (user, curriculum, teacherSettings, conversation)
- * @param {string} key - Cache key (usually an ID)
- * @returns {*} Cached value or null if expired/missing
+ * Initialize Redis connection if available
  */
-function get(type, key) {
-    if (!caches[type] || !timestamps[type]) {
+async function initRedis() {
+    if (redisClient !== null) return useRedis;
+
+    const redisUrl = process.env.REDIS_URL || process.env.REDIS_HOST;
+    if (!redisUrl) {
+        console.log('[ContextCache] No REDIS_URL configured, using in-memory cache');
+        redisClient = false; // Mark as attempted
+        return false;
+    }
+
+    try {
+        // Dynamic import to avoid errors if ioredis not installed
+        const Redis = require('ioredis');
+        redisClient = new Redis(redisUrl, {
+            maxRetriesPerRequest: 3,
+            retryDelayOnFailover: 100,
+            lazyConnect: true
+        });
+
+        await redisClient.connect();
+        useRedis = true;
+        console.log('✅ [ContextCache] Redis connected successfully');
+
+        redisClient.on('error', (err) => {
+            console.error('[ContextCache] Redis error:', err.message);
+            useRedis = false;
+        });
+
+        redisClient.on('reconnecting', () => {
+            console.log('[ContextCache] Redis reconnecting...');
+        });
+
+        return true;
+    } catch (error) {
+        console.log(`[ContextCache] Redis not available (${error.message}), using in-memory cache`);
+        redisClient = false;
+        useRedis = false;
+        return false;
+    }
+}
+
+// Try to init Redis on module load
+initRedis().catch(() => {});
+
+/**
+ * Build Redis key with namespace
+ */
+function buildKey(type, key) {
+    return `mathmatix:cache:${type}:${key}`;
+}
+
+/**
+ * Get item from cache (Redis or memory)
+ * @param {string} type - Cache type
+ * @param {string} key - Cache key
+ * @returns {Promise<*>} Cached value or null
+ */
+async function get(type, key) {
+    if (useRedis && redisClient) {
+        try {
+            const redisKey = buildKey(type, key);
+            const value = await redisClient.get(redisKey);
+            return value ? JSON.parse(value) : null;
+        } catch (error) {
+            console.error('[ContextCache] Redis get error:', error.message);
+            // Fall through to memory cache
+        }
+    }
+
+    // Memory fallback
+    if (!memoryCaches[type] || !memoryTimestamps[type]) {
         return null;
     }
 
-    const timestamp = timestamps[type].get(key);
+    const timestamp = memoryTimestamps[type].get(key);
     if (!timestamp) {
         return null;
     }
 
-    const ttl = CACHE_CONFIG[type]?.ttl || 60000;
-    const isExpired = Date.now() - timestamp > ttl;
+    const ttlMs = (CACHE_CONFIG[type]?.ttl || 60) * 1000;
+    const isExpired = Date.now() - timestamp > ttlMs;
 
     if (isExpired) {
-        caches[type].delete(key);
-        timestamps[type].delete(key);
+        memoryCaches[type].delete(key);
+        memoryTimestamps[type].delete(key);
         return null;
     }
 
-    return caches[type].get(key) || null;
+    return memoryCaches[type].get(key) || null;
 }
 
 /**
- * Set item in cache with timestamp
+ * Set item in cache (Redis or memory)
  * @param {string} type - Cache type
  * @param {string} key - Cache key
  * @param {*} value - Value to cache
  */
-function set(type, key, value) {
-    if (!caches[type] || !timestamps[type]) {
+async function set(type, key, value) {
+    const ttl = CACHE_CONFIG[type]?.ttl || 60;
+
+    if (useRedis && redisClient) {
+        try {
+            const redisKey = buildKey(type, key);
+            await redisClient.setex(redisKey, ttl, JSON.stringify(value));
+            return;
+        } catch (error) {
+            console.error('[ContextCache] Redis set error:', error.message);
+            // Fall through to memory cache
+        }
+    }
+
+    // Memory fallback
+    if (!memoryCaches[type] || !memoryTimestamps[type]) {
         return;
     }
 
     const config = CACHE_CONFIG[type] || { maxSize: 100 };
 
-    // Enforce max size (simple LRU - remove oldest entries)
-    if (caches[type].size >= config.maxSize) {
-        const oldestKey = caches[type].keys().next().value;
-        caches[type].delete(oldestKey);
-        timestamps[type].delete(oldestKey);
+    // Enforce max size (simple LRU)
+    if (memoryCaches[type].size >= config.maxSize) {
+        const oldestKey = memoryCaches[type].keys().next().value;
+        memoryCaches[type].delete(oldestKey);
+        memoryTimestamps[type].delete(oldestKey);
     }
 
-    caches[type].set(key, value);
-    timestamps[type].set(key, Date.now());
+    memoryCaches[type].set(key, value);
+    memoryTimestamps[type].set(key, Date.now());
 }
 
 /**
@@ -92,12 +175,21 @@ function set(type, key, value) {
  * @param {string} type - Cache type
  * @param {string} key - Cache key to invalidate
  */
-function invalidate(type, key) {
-    if (caches[type]) {
-        caches[type].delete(key);
+async function invalidate(type, key) {
+    if (useRedis && redisClient) {
+        try {
+            await redisClient.del(buildKey(type, key));
+        } catch (error) {
+            console.error('[ContextCache] Redis invalidate error:', error.message);
+        }
     }
-    if (timestamps[type]) {
-        timestamps[type].delete(key);
+
+    // Also clear from memory
+    if (memoryCaches[type]) {
+        memoryCaches[type].delete(key);
+    }
+    if (memoryTimestamps[type]) {
+        memoryTimestamps[type].delete(key);
     }
 }
 
@@ -105,37 +197,83 @@ function invalidate(type, key) {
  * Clear entire cache type
  * @param {string} type - Cache type to clear
  */
-function clearType(type) {
-    if (caches[type]) {
-        caches[type].clear();
+async function clearType(type) {
+    if (useRedis && redisClient) {
+        try {
+            const pattern = buildKey(type, '*');
+            const keys = await redisClient.keys(pattern);
+            if (keys.length > 0) {
+                await redisClient.del(...keys);
+            }
+        } catch (error) {
+            console.error('[ContextCache] Redis clearType error:', error.message);
+        }
     }
-    if (timestamps[type]) {
-        timestamps[type].clear();
+
+    // Also clear memory
+    if (memoryCaches[type]) {
+        memoryCaches[type].clear();
+    }
+    if (memoryTimestamps[type]) {
+        memoryTimestamps[type].clear();
     }
 }
 
 /**
  * Clear all caches
  */
-function clearAll() {
-    Object.keys(caches).forEach(type => {
-        caches[type].clear();
-        timestamps[type].clear();
+async function clearAll() {
+    if (useRedis && redisClient) {
+        try {
+            const keys = await redisClient.keys('mathmatix:cache:*');
+            if (keys.length > 0) {
+                await redisClient.del(...keys);
+            }
+        } catch (error) {
+            console.error('[ContextCache] Redis clearAll error:', error.message);
+        }
+    }
+
+    // Also clear memory
+    Object.keys(memoryCaches).forEach(type => {
+        memoryCaches[type].clear();
+        memoryTimestamps[type].clear();
     });
 }
 
 /**
  * Get cache statistics for monitoring
- * @returns {Object} Cache stats
+ * @returns {Promise<Object>} Cache stats
  */
-function getStats() {
-    const stats = {};
-    Object.keys(caches).forEach(type => {
-        stats[type] = {
-            size: caches[type].size,
+async function getStats() {
+    const stats = {
+        backend: useRedis ? 'redis' : 'memory',
+        types: {}
+    };
+
+    if (useRedis && redisClient) {
+        try {
+            for (const type of Object.keys(CACHE_CONFIG)) {
+                const keys = await redisClient.keys(buildKey(type, '*'));
+                stats.types[type] = {
+                    size: keys.length,
+                    maxSize: CACHE_CONFIG[type]?.maxSize || 0
+                };
+            }
+            return stats;
+        } catch (error) {
+            console.error('[ContextCache] Redis stats error:', error.message);
+        }
+    }
+
+    // Memory stats
+    Object.keys(memoryCaches).forEach(type => {
+        stats.types[type] = {
+            size: memoryCaches[type].size,
             maxSize: CACHE_CONFIG[type]?.maxSize || 0
         };
     });
+
     return stats;
 }
 
@@ -148,7 +286,7 @@ function getStats() {
  */
 async function getOrFetch(type, key, fetchFn) {
     // Try cache first
-    const cached = get(type, key);
+    const cached = await get(type, key);
     if (cached !== null) {
         return cached;
     }
@@ -157,13 +295,21 @@ async function getOrFetch(type, key, fetchFn) {
     try {
         const value = await fetchFn();
         if (value !== null && value !== undefined) {
-            set(type, key, value);
+            await set(type, key, value);
         }
         return value;
     } catch (error) {
         console.error(`[ContextCache] Error fetching ${type}:${key}:`, error.message);
         throw error;
     }
+}
+
+/**
+ * Check if Redis is available
+ * @returns {boolean}
+ */
+function isRedisAvailable() {
+    return useRedis;
 }
 
 module.exports = {
@@ -174,5 +320,7 @@ module.exports = {
     clearAll,
     getStats,
     getOrFetch,
+    isRedisAvailable,
+    initRedis,
     CACHE_CONFIG
 };

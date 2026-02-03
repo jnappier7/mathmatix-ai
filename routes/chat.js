@@ -290,6 +290,28 @@ router.post('/', isAuthenticated, async (req, res) => {
             }
         }
 
+        // MATH VERIFICATION: Inject verified answer into context for LLM accuracy
+        let mathVerificationContext = null;
+        if (mathResult.hasMath && mathResult.solution?.success) {
+            mathVerificationContext = {
+                problemType: mathResult.problem.type,
+                verifiedAnswer: mathResult.solution.answer,
+                steps: mathResult.solution.steps || []
+            };
+
+            // Inject verification hint into the last user message
+            if (formattedMessagesForLLM.length > 0) {
+                const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+                if (lastMessage.role === 'user') {
+                    // Add hidden verification context that the LLM can use
+                    const verificationHint = `\n\n[MATH_VERIFICATION: The correct answer for this ${mathResult.problem.type} problem is ${mathResult.solution.answer}. Use this to verify your response but do NOT give the answer directly - guide the student to discover it.]`;
+                    lastMessage.content = lastMessage.content + verificationHint;
+                }
+            }
+
+            console.log(`✅ [Math Verification] Injected verified answer: ${mathResult.solution.answer} (${mathResult.problem.type})`);
+        }
+
         // Pass mastery mode context if student has an active badge
         const masteryContext = user.masteryProgress?.activeBadge ? {
             mode: 'badge-earning',
