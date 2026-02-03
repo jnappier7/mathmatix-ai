@@ -24,11 +24,20 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
         }
 
         // If authentication is successful, establish a session for the user
-        req.logIn(user, (err) => {
+        req.logIn(user, async (err) => {
             if (err) {
                 console.error("ERROR: req.logIn error:", err);
                 return res.status(500).json({ success: false, message: 'Login successful, but session creation failed.' });
             }
+
+            // Update lastLogin timestamp
+            try {
+                await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+            } catch (updateErr) {
+                console.error("ERROR: Failed to update lastLogin:", updateErr);
+                // Don't fail the login if this update fails
+            }
+
             console.log(`LOG: User ${user.username} successfully logged in.`);
 
             // Determine redirect URL based on user's role and completion status

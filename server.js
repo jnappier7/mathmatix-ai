@@ -282,8 +282,14 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
-        req.logIn(user, (err) => {
+        req.logIn(user, async (err) => {
             if (err) { return next(err); }
+            // Update lastLogin timestamp
+            try {
+                await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+            } catch (updateErr) {
+                console.error("ERROR: Failed to update lastLogin:", updateErr);
+            }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
             if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
@@ -302,8 +308,14 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
-        req.logIn(user, (err) => {
+        req.logIn(user, async (err) => {
             if (err) { return next(err); }
+            // Update lastLogin timestamp
+            try {
+                await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+            } catch (updateErr) {
+                console.error("ERROR: Failed to update lastLogin:", updateErr);
+            }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
             if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
