@@ -965,6 +965,15 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+/* ---------- DATABASE INDEXES ---------- */
+// Critical indexes for dashboard performance
+userSchema.index({ role: 1, teacherId: 1 });  // Teacher dashboard: find students by teacher
+userSchema.index({ teacherId: 1 });            // Student lookups by teacher
+userSchema.index({ role: 1 });                 // Role-based queries
+userSchema.index({ parentIds: 1 });            // Parent dashboard: find children
+userSchema.index({ lastLogin: -1 });           // Activity reports sorted by login
+userSchema.index({ role: 1, lastLogin: -1 });  // Admin usage reports
+
 /* ---------- EXPORT MODEL ---------- */
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 module.exports = User;
