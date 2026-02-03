@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
-const { sendTestEmail, sendParentWeeklyReport } = require('../utils/emailService');
+const { sendTestEmail, sendParentWeeklyReport, getEmailConfig } = require('../utils/emailService');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 
@@ -167,12 +167,20 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
  */
 router.get('/status', isAuthenticated, async (req, res) => {
   const isConfigured = !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+  const emailConfig = getEmailConfig();
 
   res.json({
     configured: isConfigured,
-    host: process.env.SMTP_HOST || 'Not configured',
-    user: process.env.SMTP_USER || 'Not configured',
-    port: process.env.SMTP_PORT || 587
+    smtp: {
+      host: process.env.SMTP_HOST || 'Not configured',
+      port: process.env.SMTP_PORT || 587,
+      user: process.env.SMTP_USER ? '(configured)' : 'Not configured'
+    },
+    sender: {
+      from: emailConfig.from || 'Not configured',
+      fromName: emailConfig.fromName,
+      replyTo: emailConfig.replyTo || 'Not configured'
+    }
   });
 });
 
