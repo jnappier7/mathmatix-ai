@@ -28,7 +28,7 @@ const DELAY_BETWEEN_EMAILS = 1000; // 1 second delay between emails to avoid rat
  * @returns {boolean} - Whether to send report
  */
 function shouldSendReport(parent) {
-    const frequency = parent.parentSettings?.reportFrequency || 'weekly';
+    const frequency = parent.reportFrequency || 'weekly';
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
@@ -66,7 +66,7 @@ async function calculateStudentProgress(studentId) {
 
     // Get conversation stats
     const conversationStats = await Conversation.aggregate([
-        { $match: { userId: student._id, updatedAt: { $gte: oneWeekAgo } } },
+        { $match: { userId: student._id, lastActivity: { $gte: oneWeekAgo } } },
         {
             $group: {
                 _id: null,
@@ -194,7 +194,7 @@ async function main() {
 
     try {
         // Connect to MongoDB
-        await mongoose.connect(process.env.MONGODB_URI);
+        await mongoose.connect(process.env.MONGO_URI);
         console.log('✅ Connected to MongoDB');
 
         // Get all parents who have children linked

@@ -1160,6 +1160,19 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         if (!user.totalActiveSeconds) user.totalActiveSeconds = (user.totalActiveTutoringMinutes || 0) * 60;
         if (!user.weeklyActiveSeconds) user.weeklyActiveSeconds = (user.weeklyActiveTutoringMinutes || 0) * 60;
 
+        // WEEKLY RESET: Check if we need to reset weekly counters
+        // Reset occurs if lastWeeklyReset was more than 7 days ago
+        const now = new Date();
+        const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+        const daysSinceReset = (now - lastReset) / (1000 * 60 * 60 * 24);
+
+        if (daysSinceReset >= 7) {
+            console.log(`[Track-Time] Weekly reset for user ${userId}: ${user.weeklyActiveTutoringMinutes || 0} minutes -> 0`);
+            user.weeklyActiveSeconds = 0;
+            user.weeklyActiveTutoringMinutes = 0;
+            user.lastWeeklyReset = now;
+        }
+
         // Accumulate seconds
         user.totalActiveSeconds = (user.totalActiveSeconds || 0) + activeSeconds;
         user.weeklyActiveSeconds = (user.weeklyActiveSeconds || 0) + activeSeconds;
