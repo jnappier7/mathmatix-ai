@@ -1624,4 +1624,392 @@ document.addEventListener("DOMContentLoaded", async () => {
     // -------------------------------------------------------------------------
     initializeDashboard();
     fetchSurveyStatsPreview(); // Load survey stats preview
+
+    // =========================================================================
+    // ADMIN UX ENHANCEMENTS (3x Better UX)
+    // =========================================================================
+
+    // -------------------------------------------------------------------------
+    // --- AUDIT TRAIL (FERPA Compliance) ---
+    // -------------------------------------------------------------------------
+
+    const auditLog = [];
+
+    function logAdminAction(action, details, targetUserId = null) {
+        const entry = {
+            timestamp: new Date().toISOString(),
+            action,
+            details,
+            targetUserId,
+            adminSession: window.location.href
+        };
+        auditLog.push(entry);
+
+        // Also send to server for persistent logging
+        fetch('/api/admin/audit-log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(entry)
+        }).catch(err => console.log('[Audit] Failed to send audit log:', err.message));
+
+        // Update UI if audit panel exists
+        updateAuditTrailUI();
+    }
+
+    function updateAuditTrailUI() {
+        const auditPanel = document.getElementById('audit-trail-panel');
+        if (!auditPanel) return;
+
+        const recentEntries = auditLog.slice(-10).reverse();
+        auditPanel.innerHTML = recentEntries.map(entry => {
+            const time = new Date(entry.timestamp).toLocaleTimeString();
+            return `
+                <div class="audit-entry" style="padding: 8px; border-bottom: 1px solid #eee; font-size: 0.85em;">
+                    <span style="color: #888;">${time}</span>
+                    <strong style="color: #333; margin-left: 8px;">${entry.action}</strong>
+                    <span style="color: #666; margin-left: 8px;">${entry.details}</span>
+                </div>
+            `;
+        }).join('') || '<p style="color: #888; padding: 10px;">No recent actions</p>';
+    }
+
+    // Wrap existing admin actions with audit logging
+    const originalInitializeDashboard = initializeDashboard;
+    initializeDashboard = async function() {
+        await originalInitializeDashboard();
+        logAdminAction('DASHBOARD_LOADED', `Loaded ${students.length} students`);
+    };
+
+    // -------------------------------------------------------------------------
+    // --- REAL-TIME POLLING ---
+    // -------------------------------------------------------------------------
+
+    let adminPollingInterval = null;
+    let lastStudentCount = 0;
+    let lastActiveSessionCount = 0;
+
+    function startAdminPolling() {
+        adminPollingInterval = setInterval(async () => {
+            try {
+                // Quick health check
+                const healthRes = await fetch('/api/admin/health-check', { credentials: 'include' });
+                if (healthRes.ok) {
+                    const health = await healthRes.json();
+                    const dbStatus = document.getElementById("dbStatus");
+                    const aiStatus = document.getElementById("aiStatus");
+                    const lastSyncTime = document.getElementById("lastSyncTime");
+
+                    if (dbStatus) dbStatus.textContent = 'Online';
+                    if (aiStatus) aiStatus.textContent = health.status || 'Operational';
+                    if (lastSyncTime) lastSyncTime.textContent = new Date().toLocaleTimeString();
+                }
+
+                // Check for live activity changes
+                const liveRes = await fetch('/api/admin/reports/live-activity', { credentials: 'include' });
+                if (liveRes.ok) {
+                    const liveData = await liveRes.json();
+                    const currentActiveCount = liveData.sessions?.length || 0;
+
+                    // Notify if more students are active
+                    if (currentActiveCount > lastActiveSessionCount && lastActiveSessionCount > 0) {
+                        showAdminNotification(
+                            `${currentActiveCount - lastActiveSessionCount} new active session${currentActiveCount - lastActiveSessionCount > 1 ? 's' : ''}`,
+                            'info'
+                        );
+                    }
+                    lastActiveSessionCount = currentActiveCount;
+
+                    // Update live activity badge
+                    const liveCount = document.getElementById('liveActivityCount');
+                    if (liveCount) {
+                        liveCount.textContent = currentActiveCount;
+                        liveCount.style.display = currentActiveCount > 0 ? 'inline-block' : 'none';
+                    }
+                }
+            } catch (error) {
+                console.log('[Admin Polling] Error:', error.message);
+            }
+        }, 45000); // Poll every 45 seconds
+    }
+
+    function stopAdminPolling() {
+        if (adminPollingInterval) {
+            clearInterval(adminPollingInterval);
+            adminPollingInterval = null;
+        }
+    }
+
+    function showAdminNotification(message, type = 'info') {
+        let notification = document.getElementById('admin-notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'admin-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 16px 24px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            `;
+            document.body.appendChild(notification);
+        }
+
+        const colors = {
+            info: '#3498db',
+            success: '#27ae60',
+            warning: '#f39c12',
+            error: '#e74c3c'
+        };
+
+        notification.style.background = colors[type] || colors.info;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; font-size: 1.2em; cursor: pointer; margin-left: 10px;">&times;</button>
+        `;
+
+        setTimeout(() => {
+            if (notification && notification.parentElement) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+
+    // Start polling
+    startAdminPolling();
+
+    // Handle visibility changes
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopAdminPolling();
+        } else {
+            startAdminPolling();
+        }
+    });
+
+    window.addEventListener('beforeunload', stopAdminPolling);
+
+    // -------------------------------------------------------------------------
+    // --- ENHANCED BULK OPERATIONS ---
+    // -------------------------------------------------------------------------
+
+    let selectedUserIds = new Set();
+
+    function updateBulkSelectionUI() {
+        const count = selectedUserIds.size;
+        let bulkBar = document.getElementById('admin-bulk-bar');
+
+        if (!bulkBar) {
+            bulkBar = document.createElement('div');
+            bulkBar.id = 'admin-bulk-bar';
+            bulkBar.style.cssText = `
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: #2c3e50;
+                color: white;
+                padding: 15px 30px;
+                display: none;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+                z-index: 9999;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+            `;
+            document.body.appendChild(bulkBar);
+        }
+
+        if (count > 0) {
+            bulkBar.innerHTML = `
+                <span style="font-weight: 600;">${count} user${count > 1 ? 's' : ''} selected</span>
+                <button onclick="bulkAssignTeacher()" style="background: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-chalkboard-teacher"></i> Assign Teacher
+                </button>
+                <button onclick="bulkExportUsers()" style="background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <button onclick="bulkResetScreeners()" style="background: #f39c12; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-redo"></i> Reset Screeners
+                </button>
+                <button onclick="clearBulkSelection()" style="background: transparent; color: #ccc; border: 1px solid #666; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            `;
+            bulkBar.style.display = 'flex';
+        } else {
+            bulkBar.style.display = 'none';
+        }
+    }
+
+    window.clearBulkSelection = function() {
+        selectedUserIds.clear();
+        document.querySelectorAll('.select-student:checked').forEach(cb => cb.checked = false);
+        updateBulkSelectionUI();
+    };
+
+    window.bulkAssignTeacher = async function() {
+        const teacherId = prompt('Enter teacher ID or leave blank to unassign:');
+        if (teacherId === null) return; // Cancelled
+
+        const ids = Array.from(selectedUserIds);
+        try {
+            const res = await csrfFetch("/api/admin/assign-teacher", {
+                method: "PATCH",
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ studentIds: ids, teacherId: teacherId || null })
+            });
+            const result = await res.json();
+            if (res.ok) {
+                logAdminAction('BULK_ASSIGN_TEACHER', `Assigned ${ids.length} students to teacher ${teacherId || 'none'}`, ids.join(','));
+                showAdminNotification(`Assigned ${ids.length} students`, 'success');
+                clearBulkSelection();
+                await initializeDashboard();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            showAdminNotification(`Error: ${error.message}`, 'error');
+        }
+    };
+
+    window.bulkExportUsers = function() {
+        const selected = students.filter(s => selectedUserIds.has(s._id));
+        if (selected.length === 0) return;
+
+        logAdminAction('BULK_EXPORT', `Exported ${selected.length} users`);
+
+        const headers = ['Name', 'Email', 'Username', 'Grade', 'Teacher', 'Level', 'XP'];
+        const rows = selected.map(s => [
+            `${s.firstName} ${s.lastName}`,
+            s.email || '',
+            s.username || '',
+            s.gradeLevel || '',
+            teacherMap.get(s.teacherId) || '',
+            s.level || 1,
+            s.xp || 0
+        ]);
+
+        const csv = [headers.join(','), ...rows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bulk-export-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showAdminNotification(`Exported ${selected.length} users`, 'success');
+        clearBulkSelection();
+    };
+
+    window.bulkResetScreeners = async function() {
+        const count = selectedUserIds.size;
+        if (!confirm(`Reset placement screeners for ${count} selected users?`)) return;
+
+        const ids = Array.from(selectedUserIds);
+        let successCount = 0;
+
+        for (const studentId of ids) {
+            try {
+                const response = await csrfFetch(`/api/admin/students/${studentId}/reset-assessment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ reason: 'Bulk reset by admin' })
+                });
+                if (response.ok) successCount++;
+            } catch (error) {
+                console.error(`Failed to reset ${studentId}:`, error);
+            }
+        }
+
+        logAdminAction('BULK_RESET_SCREENERS', `Reset ${successCount}/${count} screeners`);
+        showAdminNotification(`Reset ${successCount}/${count} screeners`, successCount === count ? 'success' : 'warning');
+        clearBulkSelection();
+        await initializeDashboard();
+    };
+
+    // Listen for checkbox changes
+    if (userTableBody) {
+        userTableBody.addEventListener('change', (e) => {
+            if (e.target.classList.contains('select-student')) {
+                const studentId = e.target.value;
+                if (e.target.checked) {
+                    selectedUserIds.add(studentId);
+                } else {
+                    selectedUserIds.delete(studentId);
+                }
+                updateBulkSelectionUI();
+            }
+        });
+    }
+
+    // Select all checkbox
+    const selectAllCheckbox = document.getElementById('selectAllStudents');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', () => {
+            const checkboxes = document.querySelectorAll('.select-student');
+            checkboxes.forEach(cb => {
+                cb.checked = selectAllCheckbox.checked;
+                if (selectAllCheckbox.checked) {
+                    selectedUserIds.add(cb.value);
+                } else {
+                    selectedUserIds.delete(cb.value);
+                }
+            });
+            updateBulkSelectionUI();
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // --- KEYBOARD SHORTCUTS ---
+    // -------------------------------------------------------------------------
+
+    document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + F: Focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            if (studentSearch) studentSearch.focus();
+        }
+
+        // Escape: Close modals and clear selection
+        if (e.key === 'Escape') {
+            closeModal();
+            closeSurveyResponsesModal();
+            if (usageReportModal) usageReportModal.classList.remove('is-visible');
+            if (liveActivityModal) liveActivityModal.classList.remove('is-visible');
+            if (summariesModal) summariesModal.classList.remove('is-visible');
+            clearBulkSelection();
+        }
+
+        // Ctrl/Cmd + R: Refresh dashboard
+        if ((e.ctrlKey || e.metaKey) && e.key === 'r' && !e.shiftKey) {
+            e.preventDefault();
+            showAdminNotification('Refreshing dashboard...', 'info');
+            initializeDashboard();
+        }
+    });
+
+    // Add slideIn animation for notifications
+    const adminStyleEl = document.createElement('style');
+    adminStyleEl.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(adminStyleEl);
+
+    console.log('[Admin Dashboard] 3x UX enhancements loaded: Audit Trail, Real-time Polling, Bulk Operations');
 });

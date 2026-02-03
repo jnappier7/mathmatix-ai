@@ -673,4 +673,169 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadChildren();
         loadParentSettings();
     }
+
+    // ============================================
+    // REAL-TIME UPDATES (3x Better UX)
+    // ============================================
+
+    let parentPollingInterval = null;
+    let lastLiveSessionCount = 0;
+
+    function startParentPolling() {
+        // Poll every 60 seconds for live session updates
+        parentPollingInterval = setInterval(async () => {
+            if (children.length === 0) return;
+
+            try {
+                // Check for live sessions
+                let currentLiveSessions = 0;
+
+                for (const child of children) {
+                    try {
+                        const res = await fetch(`/api/parent/child/${child._id}/progress`, { credentials: 'include' });
+                        if (res.ok) {
+                            const progress = await res.json();
+                            const liveSessions = progress.recentSessions?.filter(s => s.isActive) || [];
+                            currentLiveSessions += liveSessions.length;
+
+                            // Update live indicator on child cards
+                            updateChildLiveStatus(child._id, liveSessions.length > 0);
+                        }
+                    } catch (err) {
+                        console.log(`[Polling] Failed to check ${child.firstName}'s status`);
+                    }
+                }
+
+                // Notify if a child just started a session
+                if (currentLiveSessions > lastLiveSessionCount && lastLiveSessionCount >= 0) {
+                    showLiveSessionNotification(currentLiveSessions - lastLiveSessionCount);
+                }
+                lastLiveSessionCount = currentLiveSessions;
+
+            } catch (error) {
+                console.log('[Parent Polling] Error:', error.message);
+            }
+        }, 60000); // Check every 60 seconds
+    }
+
+    function stopParentPolling() {
+        if (parentPollingInterval) {
+            clearInterval(parentPollingInterval);
+            parentPollingInterval = null;
+        }
+    }
+
+    function updateChildLiveStatus(childId, isLive) {
+        // Find the child card and update its live indicator
+        const cards = document.querySelectorAll('.child-card');
+        cards.forEach(card => {
+            // Check if this card is for the right child
+            const childName = children.find(c => c._id === childId);
+            if (!childName) return;
+
+            const fullName = `${childName.firstName} ${childName.lastName}`;
+            const cardHeader = card.querySelector('h2');
+            if (cardHeader && cardHeader.textContent.includes(childName.firstName)) {
+                // Add or remove live indicator
+                let liveIndicator = card.querySelector('.live-indicator');
+
+                if (isLive && !liveIndicator) {
+                    liveIndicator = document.createElement('span');
+                    liveIndicator.className = 'live-indicator';
+                    liveIndicator.innerHTML = '<span class="live-dot"></span> LIVE NOW';
+                    liveIndicator.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; background: #27ae60; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75em; font-weight: bold; margin-left: 10px;';
+                    cardHeader.appendChild(liveIndicator);
+
+                    // Highlight the card
+                    card.style.borderLeft = '4px solid #27ae60';
+                    card.style.boxShadow = '0 0 20px rgba(39, 174, 96, 0.2)';
+                } else if (!isLive && liveIndicator) {
+                    liveIndicator.remove();
+                    card.style.borderLeft = '';
+                    card.style.boxShadow = '';
+                }
+            }
+        });
+    }
+
+    function showLiveSessionNotification(count) {
+        // Create notification banner
+        let notification = document.getElementById('live-session-notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'live-session-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #27ae60, #2ecc71);
+                color: white;
+                padding: 16px 24px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(39, 174, 96, 0.4);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            `;
+            document.body.appendChild(notification);
+        }
+
+        notification.innerHTML = `
+            <span style="font-size: 1.5em;">📚</span>
+            <div>
+                <div style="font-weight: 600;">Your child is learning!</div>
+                <div style="font-size: 0.85em; opacity: 0.9;">${count === 1 ? 'A session just started' : `${count} sessions active`}</div>
+            </div>
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; font-size: 1.3em; cursor: pointer; margin-left: 10px;">&times;</button>
+        `;
+
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (notification && notification.parentElement) {
+                notification.remove();
+            }
+        }, 10000);
+
+        // Play notification sound
+        try {
+            const audio = new Audio('/sounds/notification.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(() => {});
+        } catch (e) {}
+    }
+
+    // Start polling if we have children
+    if (children.length > 0) {
+        startParentPolling();
+    }
+
+    // Handle visibility changes
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopParentPolling();
+        } else {
+            startParentPolling();
+        }
+    });
+
+    window.addEventListener('beforeunload', stopParentPolling);
+
+    // Add slideIn animation
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+    `;
+    document.head.appendChild(styleEl);
 });

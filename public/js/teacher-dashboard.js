@@ -896,9 +896,243 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateInsightsCards(students);
             updateRightSidebar(students);
 
+            // Check for new struggling alerts
+            checkForStrugglingAlerts(students);
+
         } catch (error) {
             console.error("Failed to fetch students:", error);
             studentListDiv.innerHTML = "<p>Error loading student data. Please refresh.</p>";
         }
     };
+
+    // ============================================
+    // REAL-TIME POLLING (3x Better UX)
+    // ============================================
+
+    let pollingInterval = null;
+    let previousStrugglingCount = 0;
+
+    function startRealtimePolling() {
+        // Poll every 30 seconds for updates
+        pollingInterval = setInterval(async () => {
+            try {
+                const response = await fetch("/api/teacher/students");
+                if (response.ok) {
+                    const students = await response.json();
+                    currentStudentsData = students;
+
+                    // Silent update - don't replace list if user is searching/filtering
+                    const searchQuery = studentSearchInput ? studentSearchInput.value : '';
+                    const filterType = studentFilterSelect ? studentFilterSelect.value : 'all';
+
+                    // Update stats without disrupting user
+                    updateClassOverview(students);
+                    updateInsightsCards(students);
+                    updateRightSidebar(students);
+
+                    // Only re-render list if no active search
+                    if (!searchQuery) {
+                        renderStudentList(students, filterType, searchQuery);
+                    }
+
+                    // Check for new alerts
+                    checkForStrugglingAlerts(students);
+
+                    // Update timestamp
+                    const timestampEl = document.getElementById('overview-updated');
+                    if (timestampEl) {
+                        timestampEl.textContent = 'Updated just now';
+                    }
+                }
+            } catch (error) {
+                console.log('[Polling] Fetch failed, will retry:', error.message);
+            }
+        }, 30000); // 30 seconds
+    }
+
+    function stopRealtimePolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+    }
+
+    // Start polling when page loads
+    startRealtimePolling();
+
+    // Stop polling when user leaves page
+    window.addEventListener('beforeunload', stopRealtimePolling);
+
+    // Pause polling when tab is hidden, resume when visible
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopRealtimePolling();
+        } else {
+            startRealtimePolling();
+            fetchAssignedStudents(); // Immediate refresh when returning
+        }
+    });
+
+    // ============================================
+    // STRUGGLING STUDENT ALERTS
+    // ============================================
+
+    function checkForStrugglingAlerts(students) {
+        const currentStruggling = students.filter(s => getStudentStatus(s) === 'struggling');
+        const currentCount = currentStruggling.length;
+
+        // If there are new struggling students, show alert
+        if (currentCount > previousStrugglingCount && previousStrugglingCount > 0) {
+            const newCount = currentCount - previousStrugglingCount;
+            showStrugglingAlert(newCount, currentStruggling);
+        }
+
+        previousStrugglingCount = currentCount;
+    }
+
+    function showStrugglingAlert(newCount, strugglingStudents) {
+        // Create alert banner if it doesn't exist
+        let alertBanner = document.getElementById('struggling-alert-banner');
+        if (!alertBanner) {
+            alertBanner = document.createElement('div');
+            alertBanner.id = 'struggling-alert-banner';
+            alertBanner.className = 'struggling-alert-banner';
+            document.body.insertBefore(alertBanner, document.body.firstChild);
+        }
+
+        const names = strugglingStudents.slice(0, 3).map(s =>
+            `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username
+        );
+        const nameText = names.join(', ') + (strugglingStudents.length > 3 ? ` and ${strugglingStudents.length - 3} more` : '');
+
+        alertBanner.innerHTML = `
+            <div class="alert-content">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span><strong>${newCount} student${newCount > 1 ? 's' : ''} need${newCount === 1 ? 's' : ''} help!</strong> ${nameText}</span>
+                <button class="alert-action-btn" onclick="document.getElementById('student-filter').value='struggling'; document.getElementById('student-filter').dispatchEvent(new Event('change'));">View</button>
+                <button class="alert-dismiss-btn" onclick="this.parentElement.parentElement.style.display='none';">&times;</button>
+            </div>
+        `;
+        alertBanner.style.display = 'flex';
+
+        // Play notification sound if available
+        try {
+            const audio = new Audio('/sounds/notification.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(() => {}); // Ignore if blocked
+        } catch (e) {}
+
+        // Auto-hide after 10 seconds
+        setTimeout(() => {
+            if (alertBanner) alertBanner.style.display = 'none';
+        }, 10000);
+    }
+
+    // ============================================
+    // BULK SELECTION
+    // ============================================
+
+    let selectedStudents = new Set();
+
+    function toggleStudentSelection(studentId, cardElement) {
+        if (selectedStudents.has(studentId)) {
+            selectedStudents.delete(studentId);
+            cardElement.classList.remove('selected');
+        } else {
+            selectedStudents.add(studentId);
+            cardElement.classList.add('selected');
+        }
+        updateBulkActionsBar();
+    }
+
+    function updateBulkActionsBar() {
+        let bulkBar = document.getElementById('bulk-actions-bar');
+        if (!bulkBar) {
+            bulkBar = document.createElement('div');
+            bulkBar.id = 'bulk-actions-bar';
+            bulkBar.className = 'bulk-actions-bar';
+            document.body.appendChild(bulkBar);
+        }
+
+        if (selectedStudents.size > 0) {
+            bulkBar.innerHTML = `
+                <div class="bulk-content">
+                    <span class="bulk-count">${selectedStudents.size} student${selectedStudents.size > 1 ? 's' : ''} selected</span>
+                    <button class="bulk-btn" onclick="bulkExportSelected()"><i class="fas fa-download"></i> Export</button>
+                    <button class="bulk-btn" onclick="bulkResetAssessments()"><i class="fas fa-redo"></i> Reset Assessments</button>
+                    <button class="bulk-btn bulk-clear" onclick="clearSelection()"><i class="fas fa-times"></i> Clear</button>
+                </div>
+            `;
+            bulkBar.style.display = 'flex';
+        } else {
+            bulkBar.style.display = 'none';
+        }
+    }
+
+    window.clearSelection = function() {
+        selectedStudents.clear();
+        document.querySelectorAll('.student-card.selected').forEach(card => {
+            card.classList.remove('selected');
+        });
+        updateBulkActionsBar();
+    };
+
+    window.bulkExportSelected = function() {
+        const selected = currentStudentsData.filter(s => selectedStudents.has(s._id));
+        if (selected.length === 0) return;
+
+        const headers = ['Name', 'Username', 'Grade', 'Level', 'XP', 'Weekly Minutes', 'Status'];
+        const rows = selected.map(s => {
+            const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+            const status = getStudentStatus(s);
+            return [name, s.username, s.gradeLevel || 'N/A', s.level || 1, s.xp || 0, s.weeklyActiveTutoringMinutes || 0, status].join(',');
+        });
+
+        const csv = [headers.join(','), ...rows].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `selected-students-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showToast(`Exported ${selected.length} students`, 'success');
+        clearSelection();
+    };
+
+    window.bulkResetAssessments = async function() {
+        const count = selectedStudents.size;
+        if (!confirm(`Reset assessments for ${count} selected students?`)) return;
+
+        let successCount = 0;
+        for (const studentId of selectedStudents) {
+            try {
+                const response = await csrfFetch(`/api/teacher/students/${studentId}/reset-assessment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason: 'Bulk reset by teacher' })
+                });
+                if (response.ok) successCount++;
+            } catch (error) {
+                console.error(`Failed to reset ${studentId}:`, error);
+            }
+        }
+
+        showToast(`Reset ${successCount}/${count} assessments`, successCount === count ? 'success' : 'warning');
+        clearSelection();
+        fetchAssignedStudents();
+    };
+
+    // Add click handler for bulk selection (Ctrl/Cmd + click)
+    document.addEventListener('click', (e) => {
+        const card = e.target.closest('.student-card');
+        if (card && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            const studentId = card.dataset.studentId;
+            if (studentId) {
+                toggleStudentSelection(studentId, card);
+            }
+        }
+    });
 });

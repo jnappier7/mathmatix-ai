@@ -280,27 +280,38 @@
         <button id="close-inline-palette" class="palette-close-btn" title="Close">&times;</button>
       </div>
       <div class="equation-symbols-grid">
-        <button class="symbol-btn" data-latex="\frac{#0}{#1}">x/y</button>
-        <button class="symbol-btn" data-latex="#0^{#1}">x²</button>
-        <button class="symbol-btn" data-latex="\sqrt{#0}">√</button>
-        <button class="symbol-btn" data-latex="\sqrt[#1]{#0}">ⁿ√</button>
-        <button class="symbol-btn" data-latex="\sum_{#0}^{#1}">∑</button>
-        <button class="symbol-btn" data-latex="\int_{#0}^{#1}">∫</button>
-        <button class="symbol-btn" data-latex="\lim_{#0 \to #1}">lim</button>
-        <button class="symbol-btn" data-latex="\pi">π</button>
-        <button class="symbol-btn" data-latex="\alpha">α</button>
-        <button class="symbol-btn" data-latex="\beta">β</button>
-        <button class="symbol-btn" data-latex="\theta">θ</button>
-        <button class="symbol-btn" data-latex="\infty">∞</button>
-        <button class="symbol-btn" data-latex="\pm">±</button>
-        <button class="symbol-btn" data-latex="\times">×</button>
-        <button class="symbol-btn" data-latex="\div">÷</button>
-        <button class="symbol-btn" data-latex="\leq">≤</button>
-        <button class="symbol-btn" data-latex="\geq">≥</button>
-        <button class="symbol-btn" data-latex="\neq">≠</button>
-        <button class="symbol-btn" data-latex="\approx">≈</button>
-        <button class="symbol-btn" data-latex="\equiv">≡</button>
+        <!-- Common operations -->
+        <button class="symbol-btn" data-latex="\frac{#0}{#1}" title="Fraction">x/y</button>
+        <button class="symbol-btn" data-latex="#0^{#1}" title="Superscript/Power">x<sup>n</sup></button>
+        <button class="symbol-btn" data-latex="#0_{#1}" title="Subscript">x<sub>n</sub></button>
+        <button class="symbol-btn" data-latex="\sqrt{#0}" title="Square root">√</button>
+        <button class="symbol-btn" data-latex="\sqrt[#1]{#0}" title="Nth root">ⁿ√</button>
+        <!-- Sequences (common subscript use) -->
+        <button class="symbol-btn" data-latex="a_{n}" title="Sequence term a_n">a<sub>n</sub></button>
+        <button class="symbol-btn" data-latex="a_{n+1}" title="Next term">a<sub>n+1</sub></button>
+        <button class="symbol-btn" data-latex="a_{1}" title="First term">a<sub>1</sub></button>
+        <!-- Calculus -->
+        <button class="symbol-btn" data-latex="\sum_{#0}^{#1}" title="Summation">∑</button>
+        <button class="symbol-btn" data-latex="\int_{#0}^{#1}" title="Integral">∫</button>
+        <button class="symbol-btn" data-latex="\lim_{#0 \to #1}" title="Limit">lim</button>
+        <!-- Greek letters -->
+        <button class="symbol-btn" data-latex="\pi" title="Pi">π</button>
+        <button class="symbol-btn" data-latex="\alpha" title="Alpha">α</button>
+        <button class="symbol-btn" data-latex="\beta" title="Beta">β</button>
+        <button class="symbol-btn" data-latex="\theta" title="Theta">θ</button>
+        <button class="symbol-btn" data-latex="\Delta" title="Delta (change)">Δ</button>
+        <!-- Common symbols -->
+        <button class="symbol-btn" data-latex="\infty" title="Infinity">∞</button>
+        <button class="symbol-btn" data-latex="\pm" title="Plus-minus">±</button>
+        <button class="symbol-btn" data-latex="\times" title="Multiplication">×</button>
+        <button class="symbol-btn" data-latex="\div" title="Division">÷</button>
+        <!-- Comparisons -->
+        <button class="symbol-btn" data-latex="\leq" title="Less than or equal">≤</button>
+        <button class="symbol-btn" data-latex="\geq" title="Greater than or equal">≥</button>
+        <button class="symbol-btn" data-latex="\neq" title="Not equal">≠</button>
+        <button class="symbol-btn" data-latex="\approx" title="Approximately">≈</button>
       </div>
+      <p class="palette-tip">Tip: Type _ for subscript (a_n), ^ for superscript (x^2)</p>
       <div class="inline-math-field-container">
         <label>Edit equation:</label>
         <math-field id="inline-math-editor" class="inline-math-field"></math-field>
