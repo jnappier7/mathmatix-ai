@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
-const { isTeacher } = require('../middleware/auth');
+const { isTeacher, isAuthenticated } = require('../middleware/auth');
 const { generateLiveSummary, detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
 const { cleanupStaleSessions } = require('../services/sessionService');
 
