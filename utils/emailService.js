@@ -6,6 +6,25 @@ const nodemailer = require('nodemailer');
 // Create reusable SMTP transporter
 let transporter = null;
 
+// Email sender configuration
+// These are separate from SMTP credentials to allow sending from custom domain addresses
+function getEmailConfig() {
+  return {
+    // Primary sender address (e.g., noreply@mathmatix.ai)
+    from: process.env.EMAIL_FROM || process.env.SMTP_USER,
+    // Display name for emails
+    fromName: process.env.EMAIL_FROM_NAME || 'MATHMATIX AI',
+    // Reply-to address (e.g., support@mathmatix.ai)
+    replyTo: process.env.EMAIL_REPLY_TO || process.env.EMAIL_FROM || process.env.SMTP_USER
+  };
+}
+
+// Format the "from" field with display name
+function getFromAddress() {
+  const config = getEmailConfig();
+  return `"${config.fromName}" <${config.from}>`;
+}
+
 function initializeTransporter() {
   if (transporter) return transporter;
 
@@ -25,7 +44,10 @@ function initializeTransporter() {
     }
   });
 
+  const emailConfig = getEmailConfig();
   console.log('✅ Email service initialized');
+  console.log(`   From: ${emailConfig.from}`);
+  console.log(`   Reply-To: ${emailConfig.replyTo}`);
   return transporter;
 }
 
@@ -42,8 +64,10 @@ async function sendParentWeeklyReport(parent, studentData) {
   }
 
   try {
+    const emailConfig = getEmailConfig();
     const mailOptions = {
-      from: `"MATHMATIX AI" <${process.env.SMTP_USER}>`,
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
       to: parent.email,
       subject: `${studentData.studentName}'s Weekly Math Progress`,
       html: getWeeklyReportTemplate(parent, studentData)
@@ -75,9 +99,11 @@ async function sendParentalConsentRequest(parentEmail, studentName, consentToken
   try {
     const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
     const consentUrl = `${baseUrl}/parental-consent.html?token=${consentToken}&student=${studentId}`;
+    const emailConfig = getEmailConfig();
 
     const mailOptions = {
-      from: `"MATHMATIX AI" <${process.env.SMTP_USER}>`,
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
       to: parentEmail,
       subject: 'Parental Consent Required - MATHMATIX AI',
       html: getParentalConsentTemplate(studentName, consentUrl)
@@ -107,9 +133,11 @@ async function sendPasswordResetEmail(email, resetToken) {
   try {
     const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
     const resetUrl = `${baseUrl}/reset-password.html?token=${resetToken}`;
+    const emailConfig = getEmailConfig();
 
     const mailOptions = {
-      from: `"MATHMATIX AI" <${process.env.SMTP_USER}>`,
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
       to: email,
       subject: 'Reset Your Password - MATHMATIX AI',
       html: getPasswordResetTemplate(resetUrl)
@@ -135,8 +163,10 @@ async function sendTestEmail(recipientEmail) {
   }
 
   try {
+    const emailConfig = getEmailConfig();
     const mailOptions = {
-      from: `"MATHMATIX AI" <${process.env.SMTP_USER}>`,
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
       to: recipientEmail,
       subject: 'Test Email - MATHMATIX AI',
       html: `
@@ -146,7 +176,8 @@ async function sendTestEmail(recipientEmail) {
           <p>If you're seeing this, your email configuration is working correctly.</p>
           <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
           <p style="font-size: 12px; color: #666;">
-            Sent from MATHMATIX AI Email Service<br>
+            Sent from: ${emailConfig.from}<br>
+            Reply-To: ${emailConfig.replyTo}<br>
             ${new Date().toLocaleString()}
           </p>
         </div>
@@ -429,9 +460,11 @@ async function sendMessageNotification(recipient, sender, message) {
     const dashboardUrl = recipient.role === 'teacher'
       ? `${baseUrl}/teacher-dashboard.html?tab=messages`
       : `${baseUrl}/parent-dashboard.html?tab=messages`;
+    const emailConfig = getEmailConfig();
 
     const mailOptions = {
-      from: `"MATHMATIX AI" <${process.env.SMTP_USER}>`,
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
       to: recipient.email,
       subject: message.isUrgent
         ? `🔔 URGENT: New message from ${sender.firstName} ${sender.lastName}`
@@ -535,5 +568,6 @@ module.exports = {
   sendPasswordResetEmail,
   sendTestEmail,
   sendMessageNotification,
-  initializeTransporter
+  initializeTransporter,
+  getEmailConfig
 };
