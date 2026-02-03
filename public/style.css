@@ -2053,6 +2053,137 @@ form label, .password-label-row label {
     font-size: 0.9em;
 }
 
+/* Student card selected state (bulk selection) */
+.student-card.selected {
+    border: 2px solid var(--clr-primary-teal);
+    background-color: rgba(18, 179, 179, 0.05);
+    box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.2);
+}
+
+/* Struggling student alert banner */
+.struggling-alert-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #ff4e4e 0%, #ff6b6b 100%);
+    color: white;
+    padding: 12px 20px;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(255, 78, 78, 0.3);
+    animation: slideDown 0.3s ease;
+}
+
+.struggling-alert-banner .alert-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 1200px;
+}
+
+.struggling-alert-banner i {
+    font-size: 1.3em;
+    animation: pulse 1s infinite;
+}
+
+.struggling-alert-banner .alert-action-btn {
+    background: white;
+    color: #ff4e4e;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.struggling-alert-banner .alert-action-btn:hover {
+    transform: scale(1.05);
+}
+
+.struggling-alert-banner .alert-dismiss-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    opacity: 0.8;
+    padding: 0 5px;
+}
+
+.struggling-alert-banner .alert-dismiss-btn:hover {
+    opacity: 1;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Bulk actions bar */
+.bulk-actions-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--clr-bg-dark);
+    color: white;
+    padding: 12px 20px;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.bulk-actions-bar .bulk-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 1200px;
+}
+
+.bulk-actions-bar .bulk-count {
+    font-weight: 600;
+    color: var(--clr-primary-teal);
+}
+
+.bulk-actions-bar .bulk-btn {
+    background: var(--clr-primary-teal);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.bulk-actions-bar .bulk-btn:hover {
+    background: #109a9a;
+}
+
+.bulk-actions-bar .bulk-btn.bulk-clear {
+    background: transparent;
+    border: 1px solid #666;
+    color: #aaa;
+}
+
+.bulk-actions-bar .bulk-btn.bulk-clear:hover {
+    background: #333;
+    color: white;
+}
 
 /* Parent Dashboard Specifics */
 .child-card {
@@ -2356,6 +2487,17 @@ form label, .password-label-row label {
     border-color: #12B3B3;
     transform: translateY(-2px);
     box-shadow: 0 2px 6px rgba(18, 179, 179, 0.3);
+}
+
+/* Palette keyboard tip */
+.palette-tip {
+    font-size: 0.75em;
+    color: #888;
+    text-align: center;
+    margin: 8px 0;
+    padding: 6px;
+    background: #f5f5f5;
+    border-radius: 4px;
 }
 
 .inline-math-field-container {

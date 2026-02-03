@@ -26,6 +26,11 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 
+// Performance optimizations
+const contextCache = require('../utils/contextCache');
+const { buildSystemPrompt: buildCompressedPrompt, determineTier } = require('../utils/promptCompressor');
+const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
+
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
@@ -173,83 +178,98 @@ router.post('/', isAuthenticated, async (req, res) => {
         const currentTutor = TUTOR_CONFIG[selectedTutorKey];
         const studentProfileForPrompt = user.toObject();
 
-        // Fetch curriculum context if student has a teacher
-        let curriculumContext = null;
+        // PERFORMANCE OPTIMIZATION: Parallel fetch of all context data
+        // These queries are independent and can run simultaneously
+        const contextStartTime = Date.now();
+
+        // Build parallel fetch promises
+        const contextPromises = [];
+
+        // 1. Curriculum context (with caching)
         if (user.teacherId) {
-            try {
-                const curriculum = await Curriculum.getActiveCurriculum(user.teacherId);
-                if (curriculum && curriculum.autoSyncWithAI) {
-                    curriculumContext = curriculum.getAIContext();
-                }
-            } catch (error) {
-                console.error('Error fetching curriculum context:', error);
-                // Continue without curriculum context if there's an error
-            }
+            contextPromises.push(
+                contextCache.getOrFetch('curriculum', user.teacherId.toString(), async () => {
+                    const curriculum = await Curriculum.getActiveCurriculum(user.teacherId);
+                    if (curriculum && curriculum.autoSyncWithAI) {
+                        return curriculum.getAIContext();
+                    }
+                    return null;
+                }).catch(err => { console.error('Error fetching curriculum:', err.message); return null; })
+            );
+        } else {
+            contextPromises.push(Promise.resolve(null));
         }
 
-        // Fetch teacher's class AI settings if student has a teacher
-        let teacherAISettings = null;
+        // 2. Teacher AI settings (with caching)
         if (user.teacherId) {
-            try {
-                const teacher = await User.findById(user.teacherId).select('classAISettings').lean();
-                if (teacher && teacher.classAISettings) {
-                    teacherAISettings = teacher.classAISettings;
-                    console.log(`🎛️ [AI Settings] Loaded teacher settings for ${user.firstName}: calculator=${teacherAISettings.calculatorAccess || 'default'}, scaffolding=${teacherAISettings.scaffoldingLevel || 3}/5`);
-                }
-            } catch (error) {
-                console.error('Error fetching teacher AI settings:', error);
-                // Continue without teacher settings if there's an error
-            }
+            contextPromises.push(
+                contextCache.getOrFetch('teacherSettings', user.teacherId.toString(), async () => {
+                    const teacher = await User.findById(user.teacherId).select('classAISettings').lean();
+                    return teacher?.classAISettings || null;
+                }).catch(err => { console.error('Error fetching teacher settings:', err.message); return null; })
+            );
+        } else {
+            contextPromises.push(Promise.resolve(null));
         }
 
-        // Detect and fetch teacher resource if mentioned in message
-        let resourceContext = null;
+        // 3. Resource detection
         if (user.teacherId) {
-            try {
-                const detectedResource = await detectAndFetchResource(user.teacherId, message);
-                if (detectedResource) {
-                    console.log(`📚 Resource detected and fetched: ${detectedResource.displayName}`);
-                    resourceContext = detectedResource;
-                }
-            } catch (error) {
-                console.error('Error detecting/fetching resource:', error);
-                // Continue without resource context if there's an error
-            }
+            contextPromises.push(
+                detectAndFetchResource(user.teacherId, message)
+                    .catch(err => { console.error('Error detecting resource:', err.message); return null; })
+            );
+        } else {
+            contextPromises.push(Promise.resolve(null));
         }
 
-        // Fetch recent student uploads for AI context (personalization)
-        let uploadContext = null;
-        try {
-            const recentUploads = await StudentUpload.find({ userId: user._id })
+        // 4. Recent uploads
+        contextPromises.push(
+            StudentUpload.find({ userId: user._id })
                 .sort({ uploadedAt: -1 })
                 .limit(5)
                 .select('originalFilename extractedText uploadedAt fileType')
-                .lean();
+                .lean()
+                .catch(err => { console.error('Error fetching uploads:', err.message); return []; })
+        );
 
-            if (recentUploads && recentUploads.length > 0) {
-                // Build a context summary of recent uploads
-                const uploadsSummary = recentUploads.map((upload, idx) => {
-                    const daysAgo = Math.floor((Date.now() - new Date(upload.uploadedAt)) / (1000 * 60 * 60 * 24));
-                    const timeStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`;
+        // 5. Math verification (runs in parallel with everything else)
+        const mathResult = processMathMessage(message);
 
-                    // Include excerpt of extracted text (first 200 chars)
-                    const textExcerpt = upload.extractedText ?
-                        upload.extractedText.substring(0, 200) + (upload.extractedText.length > 200 ? '...' : '') :
-                        '';
+        // Execute all fetches in parallel
+        const [curriculumContext, teacherAISettings, resourceContext, recentUploads] = await Promise.all(contextPromises);
 
-                    return `${idx + 1}. "${upload.originalFilename}" (${upload.fileType}, uploaded ${timeStr})${textExcerpt ? `\n   Content excerpt: "${textExcerpt}"` : ''}`;
-                }).join('\n');
+        // Log teacher settings if loaded
+        if (teacherAISettings) {
+            console.log(`🎛️ [AI Settings] Loaded teacher settings for ${user.firstName}: calculator=${teacherAISettings.calculatorAccess || 'default'}, scaffolding=${teacherAISettings.scaffoldingLevel || 3}/5`);
+        }
 
-                uploadContext = {
-                    count: recentUploads.length,
-                    summary: uploadsSummary
-                };
+        // Log resource if detected
+        if (resourceContext) {
+            console.log(`📚 Resource detected and fetched: ${resourceContext.displayName}`);
+        }
 
-                console.log(`📁 Injected ${recentUploads.length} recent uploads into AI context`);
-            }
-        } catch (error) {
-            console.error('Error fetching student uploads for context:', error);
-            // Continue without upload context if there's an error
+        // Process uploads into context
+        let uploadContext = null;
+        if (recentUploads && recentUploads.length > 0) {
+            const uploadsSummary = recentUploads.map((upload, idx) => {
+                const daysAgo = Math.floor((Date.now() - new Date(upload.uploadedAt)) / (1000 * 60 * 60 * 24));
+                const timeStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`;
+                const textExcerpt = upload.extractedText ?
+                    upload.extractedText.substring(0, 200) + (upload.extractedText.length > 200 ? '...' : '') : '';
+                return `${idx + 1}. "${upload.originalFilename}" (${upload.fileType}, uploaded ${timeStr})${textExcerpt ? `\n   Content excerpt: "${textExcerpt}"` : ''}`;
+            }).join('\n');
+
+            uploadContext = { count: recentUploads.length, summary: uploadsSummary };
+            console.log(`📁 Injected ${recentUploads.length} recent uploads into AI context`);
+        }
+
+        // Log parallel fetch performance
+        const contextFetchTime = Date.now() - contextStartTime;
+        console.log(`⚡ [Performance] Parallel context fetch completed in ${contextFetchTime}ms`);
+
+        // Log math detection result
+        if (mathResult.hasMath) {
+            console.log(`🧮 [Math Solver] Detected ${mathResult.problem.type} problem, answer: ${mathResult.solution?.answer || 'N/A'}`);
         }
 
         const recentMessagesForAI = activeConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
@@ -268,6 +288,28 @@ router.post('/', isAuthenticated, async (req, res) => {
                     lastMessage.content = resourceMessage + '\n\nStudent question: ' + lastMessage.content;
                 }
             }
+        }
+
+        // MATH VERIFICATION: Inject verified answer into context for LLM accuracy
+        let mathVerificationContext = null;
+        if (mathResult.hasMath && mathResult.solution?.success) {
+            mathVerificationContext = {
+                problemType: mathResult.problem.type,
+                verifiedAnswer: mathResult.solution.answer,
+                steps: mathResult.solution.steps || []
+            };
+
+            // Inject verification hint into the last user message
+            if (formattedMessagesForLLM.length > 0) {
+                const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+                if (lastMessage.role === 'user') {
+                    // Add hidden verification context that the LLM can use
+                    const verificationHint = `\n\n[MATH_VERIFICATION: The correct answer for this ${mathResult.problem.type} problem is ${mathResult.solution.answer}. Use this to verify your response but do NOT give the answer directly - guide the student to discover it.]`;
+                    lastMessage.content = lastMessage.content + verificationHint;
+                }
+            }
+
+            console.log(`✅ [Math Verification] Injected verified answer: ${mathResult.solution.answer} (${mathResult.problem.type})`);
         }
 
         // Pass mastery mode context if student has an active badge

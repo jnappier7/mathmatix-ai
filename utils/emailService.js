@@ -411,10 +411,129 @@ function getParentalConsentTemplate(studentName, consentUrl) {
   `;
 }
 
+/**
+ * Send email notification for new message
+ * @param {Object} recipient - Recipient user object
+ * @param {Object} sender - Sender user object
+ * @param {Object} message - Message object
+ */
+async function sendMessageNotification(recipient, sender, message) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping message notification');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const dashboardUrl = recipient.role === 'teacher'
+      ? `${baseUrl}/teacher-dashboard.html?tab=messages`
+      : `${baseUrl}/parent-dashboard.html?tab=messages`;
+
+    const mailOptions = {
+      from: `"MATHMATIX AI" <${process.env.SMTP_USER}>`,
+      to: recipient.email,
+      subject: message.isUrgent
+        ? `🔔 URGENT: New message from ${sender.firstName} ${sender.lastName}`
+        : `New message from ${sender.firstName} ${sender.lastName} - MATHMATIX AI`,
+      html: getMessageNotificationTemplate(recipient, sender, message, dashboardUrl)
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Message notification sent to ${recipient.email}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending message notification:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+function getMessageNotificationTemplate(recipient, sender, message, dashboardUrl) {
+  const categoryLabels = {
+    general: 'General',
+    progress: 'Progress Update',
+    concern: 'Concern',
+    achievement: 'Achievement',
+    iep: 'IEP Related',
+    schedule: 'Schedule',
+    other: 'Other'
+  };
+
+  const urgentBanner = message.isUrgent ? `
+    <div style="background: #fff5f5; border-left: 4px solid #e74c3c; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
+      <p style="margin: 0; color: #c0392b; font-weight: 600;">
+        ⚠️ This message is marked as URGENT
+      </p>
+    </div>
+  ` : '';
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #12B3B3 0%, #0D8686 100%); color: white; padding: 30px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">MATHMATIX AI</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">New Message</p>
+    </div>
+
+    <!-- Content -->
+    <div style="padding: 30px 20px;">
+      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">Hi ${recipient.firstName || 'there'},</h2>
+
+      ${urgentBanner}
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        You have a new message from <strong>${sender.firstName} ${sender.lastName}</strong> (${sender.role === 'teacher' ? 'Teacher' : 'Parent'}).
+      </p>
+
+      <!-- Message Preview -->
+      <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        ${message.subject ? `<p style="margin: 0 0 10px 0; font-weight: 600; color: #2c3e50; font-size: 16px;">${message.subject}</p>` : ''}
+        <p style="margin: 0 0 10px 0; color: #12B3B3; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">${categoryLabels[message.category] || 'General'}</p>
+        <p style="margin: 0; color: #555; font-size: 15px; line-height: 1.6;">
+          ${message.body.substring(0, 200)}${message.body.length > 200 ? '...' : ''}
+        </p>
+      </div>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${dashboardUrl}"
+           style="display: inline-block; background: linear-gradient(135deg, #12B3B3, #0D8686); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+          View & Reply
+        </a>
+      </div>
+
+      <p style="margin: 20px 0 0 0; color: #666; font-size: 14px; text-align: center;">
+        Log in to your MATHMATIX AI account to view the full message and reply.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0; font-size: 12px; color: #999;">
+        © ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.<br>
+        <a href="${process.env.BASE_URL || 'http://localhost:3000'}/settings.html" style="color: #999; text-decoration: underline;">Manage notification preferences</a>
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
 module.exports = {
   sendParentWeeklyReport,
   sendParentalConsentRequest,
   sendPasswordResetEmail,
   sendTestEmail,
+  sendMessageNotification,
   initializeTransporter
 };
