@@ -465,7 +465,7 @@ const userSchema = new Schema({
   hasParentalConsent: { type: Boolean, default: false }, // True when linked to a parent account (required for under 13)
   tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual', 'motivational', 'Motivational', 'chill', 'Chill'], default: 'encouraging' },
   learningStyle: { type: String, trim: true },           // 'Visual', 'Auditory', 'Kinesthetic'
-  preferredLanguage: { type: String, enum: ['English', 'Spanish', 'Russian', 'Chinese', 'Vietnamese', 'Arabic'], default: 'English' }, // Student's preferred language for tutoring
+  preferredLanguage: { type: String, enum: ['English', 'Spanish', 'Russian', 'Chinese', 'Vietnamese', 'Arabic', 'Somali', 'French', 'German'], default: 'English' }, // Student's preferred language for tutoring
   interests: [{ type: String, trim: true }],             // ['Gaming', 'Basketball', 'Music']
 
   /* Tutor selection */
