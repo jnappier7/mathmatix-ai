@@ -461,6 +461,62 @@ router.get('/students/:studentId/skill-report', isTeacher, async (req, res) => {
   }
 });
 
+/**
+ * Get student's growth check history
+ * GET /api/teacher/students/:studentId/growth-history
+ *
+ * Returns all growth check results for a student
+ * Useful for tracking progress over time
+ */
+router.get('/students/:studentId/growth-history', isTeacher, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+
+    // Verify teacher has access to this student
+    const student = await User.findOne({ _id: studentId, teacherId: teacherId }).lean();
+    if (!student) {
+      return res.status(403).json({ message: 'Not authorized. Student not assigned to you.' });
+    }
+
+    const growthHistory = student.learningProfile?.growthCheckHistory || [];
+    const currentTheta = student.learningProfile?.currentTheta || 0;
+
+    // Calculate growth trajectory
+    let totalGrowth = 0;
+    let checksCompleted = growthHistory.length;
+    if (checksCompleted > 0) {
+      const firstTheta = growthHistory[0].previousTheta || 0;
+      const latestTheta = growthHistory[checksCompleted - 1].newTheta || currentTheta;
+      totalGrowth = latestTheta - firstTheta;
+    }
+
+    res.json({
+      student: {
+        id: student._id,
+        name: `${student.firstName} ${student.lastName}`,
+        username: student.username
+      },
+      currentTheta,
+      totalGrowth: Math.round(totalGrowth * 100) / 100,
+      checksCompleted,
+      history: growthHistory.map(check => ({
+        date: check.date,
+        previousTheta: check.previousTheta,
+        newTheta: check.newTheta,
+        thetaChange: check.thetaChange,
+        growthStatus: check.growthStatus,
+        accuracy: check.accuracy,
+        questionsAnswered: check.questionsAnswered
+      }))
+    });
+
+  } catch (error) {
+    console.error('Error fetching growth history:', error);
+    res.status(500).json({ message: 'Error fetching growth history' });
+  }
+});
+
 // ============================================
 // CLASS AI SETTINGS
 // ============================================

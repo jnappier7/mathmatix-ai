@@ -65,6 +65,62 @@ router.get('/users', isAdmin, async (req, res) => {
 });
 
 /**
+ * @route   GET /api/admin/students/:studentId/growth-history
+ * @desc    Get a student's growth check history (admin can view any student)
+ * @access  Private (Admin)
+ */
+router.get('/students/:studentId/growth-history', isAdmin, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const student = await User.findById(studentId).lean();
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found.' });
+    }
+
+    const growthHistory = student.learningProfile?.growthCheckHistory || [];
+    const currentTheta = student.learningProfile?.currentTheta || 0;
+
+    // Calculate growth trajectory
+    let totalGrowth = 0;
+    let checksCompleted = growthHistory.length;
+    if (checksCompleted > 0) {
+      const firstTheta = growthHistory[0].previousTheta || 0;
+      const latestTheta = growthHistory[checksCompleted - 1].newTheta || currentTheta;
+      totalGrowth = latestTheta - firstTheta;
+    }
+
+    res.json({
+      student: {
+        id: student._id,
+        name: `${student.firstName} ${student.lastName}`,
+        username: student.username,
+        email: student.email,
+        gradeLevel: student.gradeLevel,
+        teacherId: student.teacherId
+      },
+      currentTheta,
+      totalGrowth: Math.round(totalGrowth * 100) / 100,
+      checksCompleted,
+      history: growthHistory.map(check => ({
+        sessionId: check.sessionId,
+        date: check.date,
+        previousTheta: check.previousTheta,
+        newTheta: check.newTheta,
+        thetaChange: check.thetaChange,
+        growthStatus: check.growthStatus,
+        accuracy: check.accuracy,
+        questionsAnswered: check.questionsAnswered
+      }))
+    });
+
+  } catch (err) {
+    console.error('Error fetching growth history for admin:', err);
+    res.status(500).json({ message: 'Server error fetching growth history.' });
+  }
+});
+
+/**
  * @route   GET /api/admin/teachers
  * @desc    Get a list of all users with the 'teacher' role.
  * @access  Private (Admin)
