@@ -462,6 +462,79 @@ async function needsAssessment(userId) {
   }
 }
 
+/**
+ * Smart auto-naming: Detect topic from conversation and update name if generic
+ * Called after messages are added to give the session a meaningful name
+ * @param {string} conversationId - Conversation ID
+ * @returns {Promise<string|null>} New name if updated, null otherwise
+ */
+async function smartAutoName(conversationId) {
+  try {
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) return null;
+
+    // Only auto-name if:
+    // 1. It's a general conversation (not a topic session)
+    // 2. Has enough messages (4+ for meaningful context)
+    // 3. Doesn't already have a custom name
+    // 4. Current name is generic
+    const genericNames = ['Math Session', 'General Chat', null, ''];
+
+    if (conversation.conversationType === 'topic') return null; // Already has a topic
+    if (conversation.customName) return null; // User set a custom name
+    if (!genericNames.includes(conversation.conversationName)) return null; // Already named
+    if (conversation.messages.length < 4) return null; // Not enough context
+
+    // Detect topic from messages
+    const recentText = conversation.messages.slice(-8).map(m => m.content).join(' ').toLowerCase();
+
+    const topicPatterns = {
+      'Calculus Practice': /calculus|derivative|integral|limit|differenti|antiderivative/i,
+      'Trigonometry Help': /trigonometr|sin|cos|tan|angle measure|unit circle/i,
+      'Algebra Practice': /algebra|variable|equation|expression|simplif|solve for/i,
+      'Linear Equations': /linear\s+equation|solve.*equation|2x\s*[\+\-]|isolat.*variable/i,
+      'Quadratic Equations': /quadratic|parabola|x\^2|ax²|factoring|completing the square/i,
+      'Fractions Help': /fraction|numerator|denominator|mixed number|improper/i,
+      'Geometry Practice': /geometry|triangle|circle|angle|perimeter|area|volume/i,
+      'Graphing Practice': /graph|coordinate|plot|x-axis|y-axis|slope|intercept/i,
+      'Statistics Help': /statistic|mean|median|mode|standard deviation|probability/i,
+      'Polynomials': /polynomial|monomial|binomial|trinomial|factor.*poly/i,
+      'Word Problems': /word problem|story problem|application|real.?world/i,
+      'Exponents & Powers': /exponent|power|square root|cube root|radical/i,
+      'Ratios & Proportions': /ratio|proportion|rate|percent/i,
+    };
+
+    let detectedTopic = null;
+    for (const [topicName, regex] of Object.entries(topicPatterns)) {
+      if (regex.test(recentText)) {
+        detectedTopic = topicName;
+        break;
+      }
+    }
+
+    if (!detectedTopic) return null;
+
+    // Update the conversation name
+    conversation.conversationName = detectedTopic;
+    conversation.currentTopic = detectedTopic;
+    await conversation.save();
+
+    logger.info('Auto-named conversation', {
+      conversationId,
+      newName: detectedTopic
+    });
+
+    return detectedTopic;
+  } catch (error) {
+    logger.error('Failed to auto-name conversation', {
+      conversationId,
+      error
+    });
+    return null;
+  }
+}
+
 module.exports = {
   getOrCreateConversation,
   addMessage,
@@ -471,5 +544,6 @@ module.exports = {
   clearConversation,
   getUserConversations,
   archiveConversation,
-  needsAssessment
+  needsAssessment,
+  smartAutoName
 };

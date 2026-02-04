@@ -4041,5 +4041,143 @@ What would you like to work on first?`;
         console.log('[updateChatForSession] Loaded', messages?.length || 0, 'messages');
     };
 
+    /**
+     * Resume Banner - "Continue where you left off"
+     * Shows when user returns to the app with recent session context
+     */
+    async function checkAndShowResumeBanner() {
+        try {
+            const response = await fetch('/api/chat/resume-context', {
+                credentials: 'include'
+            });
+            const data = await response.json();
+
+            if (!data.hasResumeContext) {
+                console.log('[ResumeBanner] No resume context available');
+                return;
+            }
+
+            // Don't show if this is the currently active session already loaded
+            const currentSessionId = window.currentConversationId;
+            if (currentSessionId && currentSessionId === data.sessionId) {
+                console.log('[ResumeBanner] Already on this session');
+                return;
+            }
+
+            // Don't show for very recent activity (< 5 minutes)
+            if (data.timeAgo === 'Just now') {
+                return;
+            }
+
+            showResumeBanner(data);
+        } catch (error) {
+            console.error('[ResumeBanner] Failed to fetch resume context:', error);
+        }
+    }
+
+    function showResumeBanner(context) {
+        // Remove any existing banner
+        const existingBanner = document.getElementById('resume-banner');
+        if (existingBanner) existingBanner.remove();
+
+        // Build context description
+        let contextDescription = '';
+        if (context.lastContext?.userMessage) {
+            contextDescription = `You asked: "${context.lastContext.userMessage}${context.lastContext.userMessage.length >= 100 ? '...' : ''}"`;
+        } else if (context.strugglingWith) {
+            contextDescription = `Working on: ${context.strugglingWith}`;
+        } else if (context.topic) {
+            contextDescription = `Topic: ${context.topic}`;
+        }
+
+        // Build stats string
+        let statsStr = '';
+        if (context.stats.problemsAttempted > 0) {
+            const accuracy = context.stats.problemsCorrect > 0
+                ? Math.round((context.stats.problemsCorrect / context.stats.problemsAttempted) * 100)
+                : 0;
+            statsStr = `${context.stats.problemsAttempted} problems • ${accuracy}% correct`;
+        } else if (context.stats.messageCount > 0) {
+            statsStr = `${context.stats.messageCount} messages`;
+        }
+
+        const banner = document.createElement('div');
+        banner.id = 'resume-banner';
+        banner.className = 'resume-banner';
+        banner.innerHTML = `
+            <div class="resume-banner-content">
+                <div class="resume-banner-icon">${context.topicEmoji || '📚'}</div>
+                <div class="resume-banner-text">
+                    <div class="resume-banner-title">Continue where you left off?</div>
+                    <div class="resume-banner-session">
+                        <strong>${escapeHtml(context.displayName)}</strong>
+                        <span class="resume-banner-time">${context.timeAgo}</span>
+                    </div>
+                    ${contextDescription ? `<div class="resume-banner-context">${escapeHtml(contextDescription)}</div>` : ''}
+                    ${statsStr ? `<div class="resume-banner-stats">${statsStr}</div>` : ''}
+                </div>
+            </div>
+            <div class="resume-banner-actions">
+                <button class="resume-banner-btn resume-btn-primary" id="resume-continue-btn">
+                    <i class="fas fa-play"></i> Continue
+                </button>
+                <button class="resume-banner-btn resume-btn-secondary" id="resume-dismiss-btn">
+                    Start Fresh
+                </button>
+            </div>
+        `;
+
+        // Insert at top of chat container
+        const chatContainer = document.getElementById('chat-container');
+        if (chatContainer) {
+            chatContainer.insertBefore(banner, chatContainer.firstChild);
+
+            // Add event listeners
+            document.getElementById('resume-continue-btn').addEventListener('click', () => {
+                resumeSession(context.sessionId);
+                banner.remove();
+            });
+
+            document.getElementById('resume-dismiss-btn').addEventListener('click', () => {
+                banner.classList.add('resume-banner-dismissed');
+                setTimeout(() => banner.remove(), 300);
+                // Store dismissal in session storage so it doesn't show again this session
+                sessionStorage.setItem('resume-banner-dismissed', 'true');
+            });
+        }
+    }
+
+    async function resumeSession(sessionId) {
+        try {
+            // Use the sidebar's switchSession if available
+            if (window.sidebar && typeof window.sidebar.switchSession === 'function') {
+                await window.sidebar.switchSession(sessionId);
+            } else {
+                // Fallback: call the API directly and reload
+                await fetch(`/api/conversations/${sessionId}/switch`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('[ResumeBanner] Failed to resume session:', error);
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Check for resume context after a short delay (let the page settle)
+    setTimeout(() => {
+        if (!sessionStorage.getItem('resume-banner-dismissed')) {
+            checkAndShowResumeBanner();
+        }
+    }, 1000);
+
     initializeApp();
 });

@@ -565,6 +565,179 @@
     color: #333;
 }
 
+/* Resume Banner - "Continue where you left off" */
+.resume-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resume-banner-dismissed {
+    animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+.resume-banner-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+}
+
+.resume-banner-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.resume-banner-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.resume-banner-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    opacity: 0.9;
+}
+
+.resume-banner-session {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.resume-banner-time {
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.resume-banner-context {
+    font-size: 13px;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+}
+
+.resume-banner-stats {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-top: 4px;
+}
+
+.resume-banner-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.resume-banner-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.resume-btn-primary {
+    background: white;
+    color: #667eea;
+}
+
+.resume-btn-primary:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+}
+
+.resume-btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.resume-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+    .resume-banner {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px 16px;
+        margin: 12px;
+    }
+
+    .resume-banner-content {
+        margin-bottom: 12px;
+    }
+
+    .resume-banner-icon {
+        font-size: 28px;
+    }
+
+    .resume-banner-session {
+        font-size: 15px;
+    }
+
+    .resume-banner-context {
+        max-width: 100%;
+    }
+
+    .resume-banner-actions {
+        justify-content: stretch;
+    }
+
+    .resume-banner-btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
 #sidebar-leaderboard-table {
     width: 100%;
     font-size: 13px;

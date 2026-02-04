@@ -11,6 +11,33 @@ const fs = require('fs');
 const path = require('path');
 
 /**
+ * Check if a topic name represents a structured course (vs a single topic)
+ * Courses get special treatment - AI will guide through a curriculum sequence
+ */
+function isCourseSession(topic) {
+  if (!topic) return false;
+  const topicLower = topic.toLowerCase();
+
+  // Common course name patterns
+  const coursePatterns = [
+    /algebra\s*[12i]?/i,
+    /geometry/i,
+    /pre[-\s]?algebra/i,
+    /pre[-\s]?calculus/i,
+    /calculus\s*[123ab]?/i,
+    /trigonometry/i,
+    /statistics/i,
+    /ap\s+(calculus|statistics|math)/i,
+    /integrated\s+math\s*[123]/i,
+    /math\s+[1-8]/i,
+    /grade\s*\d+\s*math/i,
+    /honors\s+(algebra|geometry|calculus)/i
+  ];
+
+  return coursePatterns.some(pattern => pattern.test(topicLower));
+}
+
+/**
  * Build skill mastery context for AI prompt
  * @param {Object} userProfile - User profile object
  * @param {string|null} filterToSkill - Optional skill ID to filter to (for mastery mode)
@@ -2140,9 +2167,18 @@ ${!masteryContext && conversationContext ? `--- SESSION CONTEXT ---
 ${conversationContext.conversationName ? `**Session Name:** ${conversationContext.conversationName}` : ''}
 ${conversationContext.topic ? `**Current Topic:** ${conversationContext.topic} ${conversationContext.topicEmoji || ''}` : ''}
 
-**IMPORTANT:** This session has a specific focus. ${firstName} has chosen to work on this topic:
+**SESSION TYPE:** ${isCourseSession(conversationContext.topic) ? 'COURSE SESSION' : 'TOPIC SESSION'}
+
+${isCourseSession(conversationContext.topic) ? `**COURSE MODE:** ${firstName} is studying ${conversationContext.topic}. This is a structured math course:
+- Treat this like a tutoring session for someone enrolled in ${conversationContext.topic}
+- Cover topics appropriate for this course level (e.g., Calculus 1 = limits, derivatives, integrals)
+- Progress through concepts in a logical order for the course
+- If ${firstName} asks "what should I learn next?", suggest the next topic in the typical course sequence
+- Reference course prerequisites when helpful ("This builds on what you learned about...")
+` : `**TOPIC MODE:** ${firstName} wants focused practice on ${conversationContext.topic || conversationContext.conversationName || 'this specific topic'}:
 - DO NOT ask generic questions like "What would you like to work on today?"
-- Jump directly into helping with ${conversationContext.topic || conversationContext.conversationName || 'the specified topic'}
+- Jump directly into helping with the topic
+`}
 - Stay focused on the session's purpose unless ${firstName} explicitly asks to switch topics
 - Reference the session context naturally in your responses
 ` : ''}
