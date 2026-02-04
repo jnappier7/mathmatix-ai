@@ -3470,8 +3470,8 @@ What would you like to work on first?`;
         });
     }
 
-    // Handle symbol button clicks
-    document.querySelectorAll('.symbol-btn').forEach(btn => {
+    // Handle symbol button clicks (both .symbol-btn and .script-btn)
+    document.querySelectorAll('.symbol-btn, .script-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const latex = btn.getAttribute('data-latex');
             if (inlineMathEditor && latex) {
