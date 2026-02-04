@@ -301,16 +301,16 @@
         <!-- Get Started Card (No Assessment) -->
         <div id="no-assessment-card" class="dashboard-card" style="display: none;">
           <div class="card-header">
-            <div class="card-icon">🚀</div>
+            <div class="card-icon">🌱</div>
             <div>
-              <h3 class="card-title">Get Started</h3>
+              <h3 class="card-title">Find Your Starting Point</h3>
             </div>
           </div>
           <div class="card-content">
-            <p>Take a quick 10-15 minute assessment so I can understand where you're at with math and suggest what to learn next.</p>
+            <p>A quick 10-15 minute check-in helps me understand where you're at and suggest what to work on next.</p>
           </div>
           <button class="btn-primary" onclick="startAssessment()">
-            <i class="fas fa-clipboard-check"></i> Take Assessment
+            <i class="fas fa-seedling"></i> Let's Go
           </button>
           <button class="btn-secondary" onclick="location.href='/chat.html'">
             Just Chat Instead
@@ -329,8 +329,8 @@
           <div>View Progress</div>
         </a>
         <a href="/assessment.html" class="quick-action-btn" id="placement-test-btn">
-          <i class="fas fa-clipboard-check"></i>
-          <div id="placement-btn-text">Take Placement Test</div>
+          <i class="fas fa-seedling"></i>
+          <div id="placement-btn-text">Find Your Starting Point</div>
         </a>
         <a href="#" class="quick-action-btn" onclick="location.href='/chat.html'; return false;">
           <i class="fas fa-book"></i>
@@ -391,8 +391,8 @@
           return;
         }
 
-        // Assessment completed - update button text to "Retake"
-        document.getElementById('placement-btn-text').textContent = 'Retake Placement Test';
+        // Assessment completed - update button text to "Growth Check"
+        document.getElementById('placement-btn-text').textContent = 'Growth Check';
 
         // Has completed assessment - show progress cards
         if (data.currentLearning) {
