@@ -652,7 +652,7 @@ const userSchema = new Schema({
     enabled: { type: Boolean, default: true },  // Can be disabled by user
     lastShownAt: { type: Date },
     nextShowAfter: { type: Date },
-    frequency: { type: String, enum: ['every-session', 'daily', 'weekly', 'never'], default: 'daily' },
+    frequency: { type: String, enum: ['every-session', 'daily', 'weekly', 'never'], default: 'every-session' },
     responsesCount: { type: Number, default: 0 },
     consecutiveDismissals: { type: Number, default: 0 },  // Track if user keeps dismissing
     responses: [{

@@ -68,14 +68,14 @@ router.get('/survey-status', isAuthenticated, async (req, res) => {
 
     const surveys = user.sessionSurveys || {
       enabled: true,
-      frequency: 'daily',
+      frequency: 'every-session',
       lastShownAt: null,
       consecutiveDismissals: 0
     };
 
     res.json({
       enabled: surveys.enabled !== false,
-      frequency: surveys.frequency || 'daily',
+      frequency: surveys.frequency || 'every-session',
       lastShownAt: surveys.lastShownAt,
       consecutiveDismissals: surveys.consecutiveDismissals || 0
     });
@@ -115,17 +115,24 @@ router.post('/survey-dismissed', isAuthenticated, async (req, res) => {
     const consecutiveDismissals = (user.sessionSurveys?.consecutiveDismissals || 0) + 1;
 
     // If user dismisses 3 times in a row, reduce frequency
-    let frequency = user.sessionSurveys?.frequency || 'daily';
+    // Note: During beta, we keep 'every-session' to maximize feedback collection
+    let frequency = user.sessionSurveys?.frequency || 'every-session';
     if (consecutiveDismissals >= 3) {
-      if (frequency === 'every-session') frequency = 'daily';
-      else if (frequency === 'daily') frequency = 'weekly';
+      // Don't downgrade from 'every-session' during beta - we need the feedback
+      if (frequency === 'daily') frequency = 'weekly';
     }
 
-    await User.findByIdAndUpdate(req.user._id, {
+    const updateData = {
       'sessionSurveys.consecutiveDismissals': consecutiveDismissals,
-      'sessionSurveys.frequency': frequency,
-      'sessionSurveys.nextShowAfter': new Date(Date.now() + 24 * 60 * 60 * 1000) // 1 day from now
-    });
+      'sessionSurveys.frequency': frequency
+    };
+
+    // Only set cooldown for non-every-session frequencies
+    if (frequency !== 'every-session') {
+      updateData['sessionSurveys.nextShowAfter'] = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day from now
+    }
+
+    await User.findByIdAndUpdate(req.user._id, updateData);
 
     res.json({
       success: true,
@@ -162,6 +169,11 @@ router.post('/survey-submit', isAuthenticated, async (req, res) => {
       return res.status(400).json({ error: 'Rating is required' });
     }
 
+    // Get user's current frequency to determine if we should set cooldown
+    const user = await User.findById(req.user._id).select('sessionSurveys.frequency');
+    const currentFrequency = user.sessionSurveys?.frequency || 'every-session';
+    const effectiveFrequency = frequencyPreference || currentFrequency;
+
     // Create survey response object
     const surveyResponse = {
       submittedAt: new Date(),
@@ -186,10 +198,14 @@ router.post('/survey-submit', isAuthenticated, async (req, res) => {
       },
       $set: {
         'sessionSurveys.consecutiveDismissals': 0, // Reset dismissals
-        'sessionSurveys.lastShownAt': new Date(),
-        'sessionSurveys.nextShowAfter': new Date(Date.now() + 24 * 60 * 60 * 1000) // 1 day from now
+        'sessionSurveys.lastShownAt': new Date()
       }
     };
+
+    // Only set cooldown for non-every-session frequencies (for beta, we want every session)
+    if (effectiveFrequency !== 'every-session') {
+      updateData.$set['sessionSurveys.nextShowAfter'] = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day from now
+    }
 
     // Update frequency preference if provided
     if (frequencyPreference) {
