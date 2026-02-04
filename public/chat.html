@@ -1353,7 +1353,8 @@
     </div>
   </div>
 
-  <!-- Load storage utilities FIRST to prevent tracking prevention errors -->
+  <!-- Load CSRF and storage utilities FIRST -->
+  <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/sanitize-util.js"></script>
@@ -1394,7 +1395,6 @@
   <script src="/js/mobile-more-tools.js"></script>
   <script src="/js/auto-expand-textarea.js"></script>
   <script src="/js/chat-pinch-zoom.js"></script>
-<script src="/js/csrf.js"></script>
   <script src="/js/file-upload.js"></script>
   <script src="/js/student-resources.js"></script>
   <script src="/js/settings.js"></script>

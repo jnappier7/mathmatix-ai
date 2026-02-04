@@ -124,7 +124,7 @@
    */
   async function exit() {
     try {
-      const response = await fetch('/api/impersonation/end', {
+      const response = await csrfFetch('/api/impersonation/end', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -162,7 +162,7 @@
    */
   async function start(targetId, options = {}) {
     try {
-      const response = await fetch('/api/impersonation/start', {
+      const response = await csrfFetch('/api/impersonation/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
