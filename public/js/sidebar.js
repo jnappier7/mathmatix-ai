@@ -510,6 +510,7 @@ class Sidebar {
     }
 
     async createNewTopic() {
+        console.log('[Sidebar] createNewTopic called');
         // Show topic selection modal
         this.showNewTopicModal();
     }
@@ -518,6 +519,7 @@ class Sidebar {
      * Show new topic modal with suggestions
      */
     showNewTopicModal() {
+        console.log('[Sidebar] showNewTopicModal called');
         // Create modal if it doesn't exist
         let modal = document.getElementById('new-topic-modal');
         if (!modal) {
