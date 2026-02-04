@@ -293,7 +293,6 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
-<<<<<<< claude/setup-email-system-WBure
 
         // Check if this is a new user requiring enrollment code
         if (user.isPendingEnrollment) {
@@ -303,10 +302,7 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             return res.redirect('/oauth-enrollment.html');
         }
 
-        req.logIn(user, (err) => {
-=======
         req.logIn(user, async (err) => {
->>>>>>> main
             if (err) { return next(err); }
             // Update lastLogin timestamp
             try {
@@ -332,7 +328,6 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
-<<<<<<< claude/setup-email-system-WBure
 
         // Check if this is a new user requiring enrollment code
         if (user.isPendingEnrollment) {
@@ -342,10 +337,7 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
             return res.redirect('/oauth-enrollment.html');
         }
 
-        req.logIn(user, (err) => {
-=======
         req.logIn(user, async (err) => {
->>>>>>> main
             if (err) { return next(err); }
             // Update lastLogin timestamp
             try {
