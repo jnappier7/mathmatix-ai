@@ -414,6 +414,23 @@ const learningProfileSchema = new Schema({
     // Notes from teacher/system
     notes: { type: String },
     generatedBy: { type: String, enum: ['auto', 'manual', 'teacher'], default: 'auto' }
+  }],
+
+  // Growth Check tracking (short progress assessments)
+  currentTheta: { type: Number, default: 0 },  // Current ability estimate from IRT
+  standardError: { type: Number, default: 1.0 },  // Uncertainty in theta estimate
+  lastGrowthCheck: { type: Date },  // When the last growth check was completed
+
+  // Growth Check history
+  growthCheckHistory: [{
+    sessionId: { type: String },
+    date: { type: Date, default: Date.now },
+    previousTheta: { type: Number },
+    newTheta: { type: Number },
+    thetaChange: { type: Number },
+    growthStatus: { type: String, enum: ['significant-growth', 'some-growth', 'stable', 'review-needed'] },
+    questionsAnswered: { type: Number },
+    accuracy: { type: Number, min: 0, max: 100 }
   }]
 }, { _id: false });
 
