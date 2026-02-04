@@ -122,7 +122,11 @@ const tourSurveyRoutes = require('./routes/tourSurvey');  // Tour and survey for
 const diagramRoutes = require('./routes/diagram');  // Diagram generation for visual learners
 const messagingRoutes = require('./routes/messaging');  // Teacher-parent messaging system
 const iepTemplatesRoutes = require('./routes/iepTemplates');  // IEP templates for teachers
+const impersonationRoutes = require('./routes/impersonation');  // User impersonation (student view)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
+
+// Impersonation middleware
+const { handleImpersonation, enforceReadOnly } = require('./middleware/impersonation');
 
 // --- 5. EXPRESS APP SETUP ---
 const app = express();
@@ -158,6 +162,10 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Impersonation middleware - must run after passport to access req.user
+app.use(handleImpersonation);
+app.use(enforceReadOnly);
 
 // Security Headers with Helmet.js
 app.use(helmet({
@@ -397,6 +405,7 @@ app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and 
 app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for alpha testing
 app.use('/api/messages', isAuthenticated, messagingRoutes); // Teacher-parent messaging system
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
+app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {

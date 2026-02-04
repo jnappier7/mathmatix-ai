@@ -188,6 +188,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${s.role}</td>
                 <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
                 <td>
+                    <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}">
+                        <i class="fas fa-eye"></i>
+                    </button>
                     <button class="btn-icon reset-screener-btn" data-studentid="${s._id}" data-studentname="${s.firstName} ${s.lastName}" title="Reset Screener">
                         <i class="fas fa-redo"></i>
                     </button>
@@ -350,6 +353,33 @@ document.addEventListener("DOMContentLoaded", async () => {
                 } finally {
                     resetBtn.disabled = false;
                     resetBtn.innerHTML = '<i class="fas fa-redo"></i>';
+                }
+                return;
+            }
+
+            // Handle view-as-user button click
+            const viewAsBtn = e.target.closest('.view-as-user-btn');
+            if (viewAsBtn) {
+                e.preventDefault();
+                const userId = viewAsBtn.dataset.userid;
+                const username = viewAsBtn.dataset.username;
+                const role = viewAsBtn.dataset.role;
+
+                if (!confirm(`View the app as ${username}?\n\nYou'll see exactly what this ${role} sees.\nChanges are disabled in view mode.`)) {
+                    return;
+                }
+
+                try {
+                    viewAsBtn.disabled = true;
+                    viewAsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    await window.ImpersonationBanner.start(userId, { readOnly: true });
+                    // Redirect happens automatically in the start function
+                } catch (error) {
+                    console.error('Failed to start user view:', error);
+                    alert(`❌ Error: ${error.message || 'Failed to start user view'}`);
+                    viewAsBtn.disabled = false;
+                    viewAsBtn.innerHTML = '<i class="fas fa-eye"></i>';
                 }
                 return;
             }

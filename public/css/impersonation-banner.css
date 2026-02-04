@@ -1,0 +1,197 @@
+/* Impersonation Banner Styles
+ * A prominent, unmissable banner shown when viewing as another user
+ */
+
+.impersonation-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  animation: impersonation-slide-in 0.3s ease-out;
+}
+
+@keyframes impersonation-slide-in {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Push page content down when banner is visible */
+body.impersonation-active {
+  padding-top: 56px !important;
+}
+
+body.impersonation-active .sidebar,
+body.impersonation-active .fixed-header,
+body.impersonation-active [class*="fixed-top"] {
+  top: 56px !important;
+}
+
+.impersonation-banner__icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.impersonation-banner__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.impersonation-banner__title {
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.impersonation-banner__subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.impersonation-banner__user {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.impersonation-banner__timer {
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.impersonation-banner__timer.warning {
+  background: rgba(255, 0, 0, 0.4);
+  animation: timer-pulse 1s infinite;
+}
+
+@keyframes timer-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.impersonation-banner__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.impersonation-banner__btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.impersonation-banner__btn--exit {
+  background: white;
+  color: #ff6b35;
+}
+
+.impersonation-banner__btn--exit:hover {
+  background: #fff5f0;
+  transform: translateY(-1px);
+}
+
+.impersonation-banner__badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Read-only indicator */
+.impersonation-banner--readonly .impersonation-banner__badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .impersonation-banner {
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .impersonation-banner__content {
+    flex-basis: calc(100% - 40px);
+    order: 1;
+  }
+
+  .impersonation-banner__icon {
+    order: 0;
+  }
+
+  .impersonation-banner__timer {
+    order: 2;
+  }
+
+  .impersonation-banner__actions {
+    order: 3;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  body.impersonation-active {
+    padding-top: 90px !important;
+  }
+
+  body.impersonation-active .sidebar,
+  body.impersonation-active .fixed-header,
+  body.impersonation-active [class*="fixed-top"] {
+    top: 90px !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .impersonation-banner {
+    background: #000;
+    border-bottom: 3px solid #ff6b35;
+  }
+
+  .impersonation-banner__btn--exit {
+    border: 2px solid #ff6b35;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .impersonation-banner {
+    animation: none;
+  }
+
+  .impersonation-banner__timer.warning {
+    animation: none;
+  }
+}
