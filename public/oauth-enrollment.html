@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Sign Up - M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <a href="#" id="cancel-btn" class="btn btn-secondary">Cancel</a>
+    </nav>
+  </header>
+
+  <main class="login-page-wrapper">
+    <div class="login-container">
+      <!-- Loading State -->
+      <div id="loading-state" style="text-align: center; padding: 30px 0;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: #667eea;"></i>
+        <p style="margin-top: 15px; color: #666;">Loading...</p>
+      </div>
+
+      <!-- No Pending Profile -->
+      <div id="no-profile-state" style="display: none; text-align: center;">
+        <div style="background: #fff5f5; border-left: 4px solid #e74c3c; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #e74c3c; margin-bottom: 15px;"></i>
+          <h2 style="margin: 0 0 10px 0; color: #2c3e50;">Session Expired</h2>
+          <p style="margin: 0; color: #555;">Your signup session has expired. Please try again.</p>
+        </div>
+        <a href="/login.html" class="submit-btn" style="display: inline-block; text-decoration: none;">
+          Back to Login
+        </a>
+      </div>
+
+      <!-- Enrollment Code Form -->
+      <div id="enrollment-form" style="display: none;">
+        <h1>Almost Done!</h1>
+        <p class="subtitle" id="welcome-text">Welcome! Enter your class enrollment code to complete sign up.</p>
+
+        <div id="profile-info" style="background: #f0f9ff; border-left: 4px solid #667eea; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <p style="margin: 0; color: #555;">
+            <strong>Signing in as:</strong><br>
+            <span id="user-name"></span><br>
+            <span id="user-email" style="font-size: 14px; color: #666;"></span>
+          </p>
+        </div>
+
+        <form id="codeForm">
+          <label for="enrollmentCode">Class Enrollment Code:</label>
+          <input type="text" id="enrollmentCode" name="enrollmentCode" required
+                 placeholder="Enter code from your teacher"
+                 style="text-transform: uppercase; letter-spacing: 2px; font-size: 18px; text-align: center;" />
+          <p style="font-size: 12px; color: #666; margin-top: 5px;">
+            Your teacher will provide this code. It looks like: ABC123
+          </p>
+
+          <button type="submit" class="submit-btn" id="submitBtn" style="margin-top: 20px;">
+            <span id="btnText">Complete Sign Up</span>
+            <span id="btnLoading" style="display: none;">
+              <i class="fas fa-spinner fa-spin"></i> Creating Account...
+            </span>
+          </button>
+        </form>
+
+        <div id="message" class="error-message" style="display: none; text-align: center; margin-top: 15px;"></div>
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center;">
+          <p style="color: #666; font-size: 14px;">
+            <i class="fas fa-info-circle"></i> Don't have an enrollment code?
+          </p>
+          <p style="color: #555; font-size: 14px;">
+            Ask your teacher for the class enrollment code, or contact your school administrator.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+      const loadingState = document.getElementById('loading-state');
+      const noProfileState = document.getElementById('no-profile-state');
+      const enrollmentForm = document.getElementById('enrollment-form');
+
+      // Check for pending OAuth profile
+      try {
+        const response = await fetch('/api/auth/pending-oauth');
+        const data = await response.json();
+
+        loadingState.style.display = 'none';
+
+        if (!data.success) {
+          noProfileState.style.display = 'block';
+          return;
+        }
+
+        // Show enrollment form
+        enrollmentForm.style.display = 'block';
+
+        // Populate user info
+        const fullName = `${data.firstName} ${data.lastName}`;
+        document.getElementById('user-name').textContent = fullName;
+        document.getElementById('user-email').textContent = data.email;
+
+        const providerIcon = data.provider === 'google' ? 'fab fa-google' : 'fab fa-microsoft';
+        document.getElementById('welcome-text').innerHTML =
+          `<i class="${providerIcon}" style="color: ${data.provider === 'google' ? '#4285F4' : '#00A4EF'};"></i> ` +
+          `Welcome! Enter your class enrollment code to complete sign up.`;
+
+      } catch (error) {
+        console.error('Error checking pending OAuth:', error);
+        loadingState.style.display = 'none';
+        noProfileState.style.display = 'block';
+      }
+    });
+
+    // Handle cancel button
+    document.getElementById('cancel-btn').addEventListener('click', async function(e) {
+      e.preventDefault();
+      try {
+        await fetch('/api/auth/cancel-oauth-enrollment', { method: 'POST' });
+      } catch (err) {
+        // Ignore errors
+      }
+      window.location.href = '/login.html';
+    });
+
+    // Handle form submission
+    document.getElementById('codeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const btnLoading = document.getElementById('btnLoading');
+      const messageDiv = document.getElementById('message');
+      const enrollmentCode = document.getElementById('enrollmentCode').value.trim().toUpperCase();
+
+      // Show loading state
+      submitBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline';
+      messageDiv.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/auth/complete-oauth-enrollment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enrollmentCode })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Redirect to the appropriate page
+          window.location.href = data.redirect || '/complete-profile.html';
+        } else {
+          messageDiv.textContent = data.message || 'Invalid enrollment code.';
+          messageDiv.style.display = 'block';
+          messageDiv.className = 'error-message';
+        }
+
+      } catch (error) {
+        console.error('Error completing enrollment:', error);
+        messageDiv.textContent = 'An error occurred. Please try again.';
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'error-message';
+      } finally {
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

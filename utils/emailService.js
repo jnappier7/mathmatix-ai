@@ -153,6 +153,41 @@ async function sendPasswordResetEmail(email, resetToken) {
 }
 
 /**
+ * Send email verification link to new user
+ * @param {String} email - User's email address
+ * @param {String} firstName - User's first name
+ * @param {String} verificationToken - Token for verification
+ */
+async function sendEmailVerification(email, firstName, verificationToken) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping email verification');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${verificationToken}`;
+    const emailConfig = getEmailConfig();
+
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: email,
+      subject: 'Verify Your Email - MATHMATIX AI',
+      html: getEmailVerificationTemplate(firstName, verifyUrl)
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Verification email sent to ${email}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending verification email:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Send test email (for configuration verification)
  * @param {String} recipientEmail - Email to send test to
  */
@@ -371,6 +406,73 @@ function getPasswordResetTemplate(resetUrl) {
   `;
 }
 
+function getEmailVerificationTemplate(firstName, verifyUrl) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">MATHMATIX AI</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">Verify Your Email Address</p>
+    </div>
+
+    <!-- Content -->
+    <div style="padding: 30px 20px;">
+      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">Welcome, ${firstName}!</h2>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        Thank you for creating a MATHMATIX AI account. Please verify your email address to get started.
+      </p>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        Click the button below to verify your email. This link will expire in <strong>24 hours</strong>.
+      </p>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${verifyUrl}"
+           style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+          Verify Email
+        </a>
+      </div>
+
+      <div style="background: #f0fdf4; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
+          Once verified, you'll be able to access all MATHMATIX AI features including personalized AI tutoring.
+        </p>
+      </div>
+
+      <p style="margin: 20px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">
+        If the button doesn't work, copy and paste this link into your browser:
+      </p>
+      <p style="margin: 10px 0 0 0; color: #667eea; font-size: 12px; word-break: break-all;">
+        ${verifyUrl}
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">
+        Didn't create an account? You can safely ignore this email.
+      </p>
+      <p style="margin: 0; font-size: 12px; color: #999;">
+        © ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
 function getParentalConsentTemplate(studentName, consentUrl) {
   return `
 <!DOCTYPE html>
@@ -566,6 +668,7 @@ module.exports = {
   sendParentWeeklyReport,
   sendParentalConsentRequest,
   sendPasswordResetEmail,
+  sendEmailVerification,
   sendTestEmail,
   sendMessageNotification,
   initializeTransporter,

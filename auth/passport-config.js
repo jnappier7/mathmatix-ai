@@ -140,24 +140,27 @@ passport.use(
           }
         }
 
-        /* ---------- 3. Brand-new user ------------------------------- */
+        /* ---------- 3. Brand-new user - Require enrollment code ------ */
+        // Instead of creating user immediately, store pending profile for enrollment code verification
         const { firstName, lastName, needsFix } = extractNames(profile);
 
-        const newUser = new User({
-          username: await generateUniqueUsername(profile.displayName, profile.id),
-          email:    userEmail || undefined,
-          googleId: profile.id,
-          role:     "student",
+        const pendingOAuthProfile = {
+          provider: 'google',
+          providerId: profile.id,
+          email: userEmail,
+          displayName: profile.displayName,
           firstName,
           lastName,
-          needsProfileCompletion: needsFix,          // 🔑 triggers /complete-profile.html redirect
-          linkCode: await generateUniqueStudentLinkCode(),
-          avatar:   profile.photos?.[0]?.value
-        });
+          needsFix,
+          avatar: profile.photos?.[0]?.value
+        };
 
-        await newUser.save();
-        console.log("LOG: GoogleStrategy created new user:", newUser.username);
-        return done(null, newUser);
+        // Return a special "pending" user object that will trigger enrollment code page
+        // The session will store the pending profile
+        return done(null, {
+          isPendingEnrollment: true,
+          pendingProfile: pendingOAuthProfile
+        });
       } catch (err) {
         console.error("ERROR: GoogleStrategy error:", err);
         return done(err, null);
@@ -200,21 +203,23 @@ passport.use(
           }
         }
 
-        // 3. New user
-        const newUser = new User({
-          username: await generateUniqueUsername(profile.displayName, profile.id),
-          email: userEmail || undefined,
-          microsoftId: profile.id,
-          role: "student",
+        // 3. Brand-new user - Require enrollment code
+        const pendingOAuthProfile = {
+          provider: 'microsoft',
+          providerId: profile.id,
+          email: userEmail,
+          displayName: profile.displayName,
           firstName: profile.name?.givenName || "NoFirst",
-          lastName:  profile.name?.familyName || "NoLast",
-          needsProfileCompletion: true,              // Microsoft profile data is often sparse
-          linkCode: await generateUniqueStudentLinkCode(),
+          lastName: profile.name?.familyName || "NoLast",
+          needsFix: true,  // Microsoft profile data is often sparse
           avatar: profile.photos?.[0]?.value
+        };
+
+        // Return a special "pending" user object that will trigger enrollment code page
+        return done(null, {
+          isPendingEnrollment: true,
+          pendingProfile: pendingOAuthProfile
         });
-        await newUser.save();
-        console.log("LOG: MicrosoftStrategy created new user:", newUser.username);
-        return done(null, newUser);
       } catch (err) {
         console.error("ERROR: MicrosoftStrategy error:", err);
         return done(err, null);

@@ -430,6 +430,11 @@ const userSchema = new Schema({
   resetPasswordToken:   { type: String },
   resetPasswordExpires: { type: Date },
 
+  /* Email Verification */
+  emailVerified: { type: Boolean, default: false },
+  emailVerificationToken: { type: String },
+  emailVerificationExpires: { type: Date },
+
   /* Profile */
   firstName: { type: String, trim: true, required: true },
   lastName:  { type: String, trim: true, required: true },
