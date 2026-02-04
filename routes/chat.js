@@ -5,6 +5,8 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
+const { promptInjectionFilter } = require('../middleware/promptInjection');
+const { sendSafetyConcernAlert } = require('../utils/emailService');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const Curriculum = require('../models/curriculum');
@@ -219,7 +221,7 @@ async function updateQuestProgress(userId, wasCorrect, topic) {
     }
 }
 
-router.post('/', isAuthenticated, async (req, res) => {
+router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
     const { message, role, childId, responseTime, isGreeting } = req.body;
     const userId = req.user?._id;
 
@@ -699,9 +701,22 @@ router.post('/', isAuthenticated, async (req, res) => {
         // SAFETY LOGGING: Check if AI flagged safety concern
         const safetyConcernMatch = aiResponseText.match(/<SAFETY_CONCERN>([^<]+)<\/SAFETY_CONCERN>/);
         if (safetyConcernMatch) {
-            console.error(`🚨 SAFETY CONCERN - User ${userId} (${user.firstName} ${user.lastName}) - ${safetyConcernMatch[1]}`);
+            const concernDescription = safetyConcernMatch[1];
+            console.error(`🚨 SAFETY CONCERN - User ${userId} (${user.firstName} ${user.lastName}) - ${concernDescription}`);
             aiResponseText = aiResponseText.replace(safetyConcernMatch[0], '').trim();
-            // TODO: Consider sending alert email to admin or incrementing warning counter on user
+
+            // Send urgent alert email to admin (fire and forget - don't block response)
+            sendSafetyConcernAlert(
+                {
+                    userId: userId.toString(),
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    username: user.username,
+                    gradeLevel: user.gradeLevel
+                },
+                concernDescription,
+                message // The student's message for context
+            ).catch(err => console.error('Failed to send safety alert email:', err));
         }
 
         // SKILL MASTERY TRACKING: Parse AI skill progression tags
