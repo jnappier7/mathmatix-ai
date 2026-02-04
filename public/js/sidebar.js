@@ -649,6 +649,7 @@ class Sidebar {
     }
 
     async switchSession(conversationId) {
+        console.log('[Sidebar] switchSession called with:', conversationId);
         try {
             const response = await window.csrfFetch(`/api/conversations/${conversationId}/switch`, {
                 method: 'POST',
@@ -656,6 +657,7 @@ class Sidebar {
             });
 
             const data = await response.json();
+            console.log('[Sidebar] Switch response:', data);
 
             // Update active session in UI
             document.querySelectorAll('.session-item').forEach(item => {
@@ -668,8 +670,13 @@ class Sidebar {
             }
 
             // Update chat view
+            console.log('[Sidebar] updateChatForSession available:', typeof window.updateChatForSession);
             if (window.updateChatForSession) {
                 window.updateChatForSession(data.conversation, data.messages);
+            } else {
+                console.error('[Sidebar] window.updateChatForSession is not defined!');
+                // Fallback: reload page to switch session
+                window.location.reload();
             }
 
             this.activeConversationId = conversationId;

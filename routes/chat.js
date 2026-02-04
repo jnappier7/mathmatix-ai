@@ -966,6 +966,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         await activeConversation.save();
 
+        // Smart auto-naming: Update session name if it's still generic
+        // Fire-and-forget to not block the response
+        const { smartAutoName } = require('../services/chatService');
+        smartAutoName(activeConversation._id).catch(err =>
+            console.error('[Chat] Smart auto-name failed:', err)
+        );
+
         // Track badge progress if user has an active badge
         if (user.masteryProgress?.activeBadge) {
 
@@ -1485,6 +1492,91 @@ router.get('/last-session', isAuthenticated, async (req, res) => {
     } catch (error) {
         console.error("ERROR: Fetch last session failed:", error);
         res.status(500).json({ message: "Failed to fetch last session" });
+    }
+});
+
+/**
+ * GET /api/chat/resume-context
+ * Get context for "Continue where you left off" banner
+ * Checks active sessions first, then falls back to recent completed sessions
+ */
+router.get('/resume-context', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+        // First, check for active sessions with meaningful content
+        let session = await Conversation.findOne({
+            userId,
+            isActive: true,
+            lastActivity: { $gte: sevenDaysAgo },
+            'messages.1': { $exists: true } // At least 2 messages
+        })
+        .sort({ lastActivity: -1 })
+        .select('_id topic topicEmoji conversationName customName currentTopic strugglingWith lastActivity messages problemsAttempted problemsCorrect conversationType')
+        .lean();
+
+        // If no active session, check for recent completed sessions
+        if (!session) {
+            session = await Conversation.findOne({
+                userId,
+                isActive: false,
+                lastActivity: { $gte: sevenDaysAgo },
+                'messages.1': { $exists: true }
+            })
+            .sort({ lastActivity: -1 })
+            .select('_id topic topicEmoji conversationName customName currentTopic strugglingWith lastActivity messages problemsAttempted problemsCorrect conversationType summary')
+            .lean();
+        }
+
+        if (!session) {
+            return res.json({ hasResumeContext: false });
+        }
+
+        // Get last few messages for context
+        const recentMessages = session.messages.slice(-4);
+        const lastUserMessage = [...recentMessages].reverse().find(m => m.role === 'user');
+        const lastAiMessage = [...recentMessages].reverse().find(m => m.role === 'assistant');
+
+        // Calculate time since last activity
+        const msSinceActivity = Date.now() - new Date(session.lastActivity).getTime();
+        const hoursSince = Math.floor(msSinceActivity / (1000 * 60 * 60));
+        const daysSince = Math.floor(hoursSince / 24);
+
+        let timeAgo;
+        if (hoursSince < 1) timeAgo = 'Just now';
+        else if (hoursSince < 24) timeAgo = `${hoursSince} hour${hoursSince > 1 ? 's' : ''} ago`;
+        else if (daysSince === 1) timeAgo = 'Yesterday';
+        else timeAgo = `${daysSince} days ago`;
+
+        // Determine display name
+        const displayName = session.customName || session.currentTopic || session.topic || session.conversationName || 'Math Session';
+
+        res.json({
+            hasResumeContext: true,
+            sessionId: session._id,
+            displayName,
+            topic: session.currentTopic || session.topic,
+            topicEmoji: session.topicEmoji || '📚',
+            strugglingWith: session.strugglingWith,
+            timeAgo,
+            isActive: session.isActive !== false,
+            conversationType: session.conversationType,
+            stats: {
+                messageCount: session.messages.length,
+                problemsAttempted: session.problemsAttempted || 0,
+                problemsCorrect: session.problemsCorrect || 0
+            },
+            lastContext: {
+                userMessage: lastUserMessage?.content?.substring(0, 100) || null,
+                aiMessage: lastAiMessage?.content?.substring(0, 150) || null
+            },
+            summary: session.summary || null
+        });
+
+    } catch (error) {
+        console.error("ERROR: Fetch resume context failed:", error);
+        res.status(500).json({ message: "Failed to fetch resume context" });
     }
 });
 
