@@ -299,6 +299,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <span class="student-metric"><i class="fas fa-bolt"></i> ${student.weeklyActiveTutoringMinutes || 0} min/wk</span>
                 </div>
                 <div class="card-buttons">
+                    <button class="view-as-student-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}" title="See what ${fullName} sees"><i class="fas fa-eye"></i> View</button>
                     <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-clipboard-list"></i> IEP</button>
                     <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-history"></i> History</button>
                     <button class="reset-screener-btn submit-btn btn-tertiary" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-redo"></i> Reset</button>
@@ -342,6 +343,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function addEventListenersToButtons() {
+        document.querySelectorAll('.view-as-student-btn').forEach(button => {
+            button.addEventListener('click', handleViewAsStudent);
+        });
         document.querySelectorAll('.view-iep-btn').forEach(button => {
             button.addEventListener('click', handleViewIep);
         });
@@ -433,6 +437,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             showModal(conversationHistoryModal);
             handleViewHistory({ target: { dataset: { studentId, studentName: fullName } } });
         };
+    }
+
+    async function handleViewAsStudent(event) {
+        const studentId = event.target.closest('button').dataset.studentId;
+        const studentName = event.target.closest('button').dataset.studentName;
+
+        if (!confirm(`View the app as ${studentName}?\n\nYou'll see exactly what this student sees. Changes are disabled in view mode.`)) {
+            return;
+        }
+
+        try {
+            await window.ImpersonationBanner.start(studentId, { readOnly: true });
+            // Redirect happens automatically in the start function
+        } catch (error) {
+            console.error('Failed to start student view:', error);
+            alert(error.message || 'Failed to start student view. Please try again.');
+        }
     }
 
     async function handleViewIep(event) {
