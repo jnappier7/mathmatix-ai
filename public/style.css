@@ -2489,6 +2489,54 @@ form label, .password-label-row label {
     box-shadow: 0 2px 6px rgba(18, 179, 179, 0.3);
 }
 
+/* Subscript/Superscript Section */
+.equation-section-header {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+}
+
+.subscript-superscript-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.script-btn {
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+}
+
+.script-btn:hover {
+    background: #3a3a3a;
+    border-color: #12B3B3;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(18, 179, 179, 0.3);
+}
+
+.script-btn:hover .script-icon {
+    color: #12B3B3;
+}
+
+.script-icon {
+    width: 100%;
+    height: 100%;
+    max-width: 40px;
+    max-height: 40px;
+    color: #888;
+    transition: color 0.2s;
+}
+
 /* Palette keyboard tip */
 .palette-tip {
     font-size: 0.75em;
