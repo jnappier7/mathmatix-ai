@@ -2074,7 +2074,7 @@ ${masteryContext ?
 
 ${buildLearningProfileContext(userProfile)}
 
-${buildCourseProgressionContext(mathCourse, firstName)}`}
+${buildCourseProgressionContext(conversationContext?.topic || mathCourse, firstName)}`}
 
 ${!masteryContext && curriculumContext ? `--- CURRICULUM CONTEXT (FROM TEACHER) ---
 ${curriculumContext}
