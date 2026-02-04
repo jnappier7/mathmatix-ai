@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
+const { promptInjectionFilter } = require('../middleware/promptInjection');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
@@ -126,7 +127,7 @@ async function checkMasteryCompletion(user, activeBadge) {
  * POST /api/mastery/chat
  * Handle chat messages in mastery mode (badge earning sessions)
  */
-router.post("/", isAuthenticated, async (req, res) => {
+router.post("/", isAuthenticated, promptInjectionFilter, async (req, res) => {
    const { message, responseTime } = req.body;
 const userId = req.user?._id;
 

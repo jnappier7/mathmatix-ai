@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs').promises;
 const fsSync = require('fs');
 const { isAuthenticated } = require('../middleware/auth');
+const { promptInjectionFilter } = require('../middleware/promptInjection');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const StudentUpload = require('../models/studentUpload');
@@ -31,6 +32,7 @@ const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model
 
 router.post('/',
     isAuthenticated,
+    promptInjectionFilter,
     uploadRateLimiter,
     upload.any(),
     validateUpload,
