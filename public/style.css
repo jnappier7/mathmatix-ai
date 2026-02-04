@@ -1033,6 +1033,20 @@ a:hover {
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
+/* Queued message style - for back-to-back messages waiting to be sent */
+.message.user.queued {
+    opacity: 0.7;
+    background: linear-gradient(135deg, #9ba3d4 0%, #a98bb5 100%);
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.15);
+}
+
+.message.user.queued .queued-indicator {
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 4px;
+    font-style: italic;
+}
+
 /* Styles for AI messages (left aligned) */
 .message.ai {
     align-self: flex-start; /* Pushes message to the left */
