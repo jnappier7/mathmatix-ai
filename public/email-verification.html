@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Verification - M∆THM∆TIΧ AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <a href="/login.html" class="btn btn-secondary">Login</a>
+    </nav>
+  </header>
+
+  <main class="login-page-wrapper">
+    <div class="login-container">
+      <!-- Success State -->
+      <div id="success-state" style="display: none; text-align: center;">
+        <div style="background: #f0fdf4; border-left: 4px solid #27ae60; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
+          <i class="fas fa-check-circle" style="font-size: 64px; color: #27ae60; margin-bottom: 15px;"></i>
+          <h2 style="margin: 0 0 10px 0; color: #2c3e50;">Email Verified!</h2>
+          <p style="margin: 0; color: #555;">Your email address has been verified successfully.</p>
+          <p style="margin: 10px 0 0 0; color: #555;">You can now access all features of MATHMATIX AI.</p>
+        </div>
+        <a href="/login.html" class="submit-btn" style="display: inline-block; text-decoration: none;">
+          Continue to Login
+        </a>
+      </div>
+
+      <!-- Error State -->
+      <div id="error-state" style="display: none; text-align: center;">
+        <div style="background: #fff5f5; border-left: 4px solid #e74c3c; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
+          <i class="fas fa-times-circle" style="font-size: 64px; color: #e74c3c; margin-bottom: 15px;"></i>
+          <h2 style="margin: 0 0 10px 0; color: #2c3e50;">Verification Failed</h2>
+          <p id="error-message" style="margin: 0; color: #555;">The verification link is invalid or has expired.</p>
+        </div>
+        <div id="resend-section">
+          <p style="color: #666; margin-bottom: 15px;">Enter your email to receive a new verification link:</p>
+          <form id="resend-form" style="max-width: 300px; margin: 0 auto;">
+            <input type="email" id="resend-email" placeholder="your@email.com" required
+                   style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 15px;" />
+            <button type="submit" class="submit-btn" style="width: 100%;">
+              <span id="resend-btn-text">Resend Verification Email</span>
+              <span id="resend-btn-loading" style="display: none;">
+                <i class="fas fa-spinner fa-spin"></i> Sending...
+              </span>
+            </button>
+          </form>
+          <div id="resend-result" style="margin-top: 15px; display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Pending State (check your email) -->
+      <div id="pending-state" style="display: none; text-align: center;">
+        <div style="background: #f0f9ff; border-left: 4px solid #667eea; padding: 30px; border-radius: 8px; margin-bottom: 20px;">
+          <i class="fas fa-envelope" style="font-size: 64px; color: #667eea; margin-bottom: 15px;"></i>
+          <h2 style="margin: 0 0 10px 0; color: #2c3e50;">Check Your Email</h2>
+          <p style="margin: 0; color: #555;">We've sent a verification link to your email address.</p>
+          <p style="margin: 10px 0 0 0; color: #555;">Click the link in the email to verify your account.</p>
+        </div>
+        <p style="color: #666; font-size: 14px;">Didn't receive the email? Check your spam folder or</p>
+        <button id="resend-from-pending" class="btn btn-secondary" style="margin-top: 10px;">
+          Resend Verification Email
+        </button>
+      </div>
+
+      <!-- Default/No params - redirect to login -->
+      <div id="default-state" style="display: none; text-align: center;">
+        <p style="color: #666;">Redirecting to login...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 M∆THM∆TIΧ AI. All rights reserved.</p>
+    <p>
+      <a href="/privacy.html">Privacy Policy</a> |
+      <a href="/terms.html">Terms of Use</a>
+    </p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const status = urlParams.get('status');
+      const message = urlParams.get('message');
+      const email = urlParams.get('email');
+
+      const successState = document.getElementById('success-state');
+      const errorState = document.getElementById('error-state');
+      const pendingState = document.getElementById('pending-state');
+      const defaultState = document.getElementById('default-state');
+
+      if (status === 'success') {
+        successState.style.display = 'block';
+      } else if (status === 'error') {
+        errorState.style.display = 'block';
+        if (message) {
+          document.getElementById('error-message').textContent = decodeURIComponent(message);
+        }
+      } else if (status === 'pending') {
+        pendingState.style.display = 'block';
+      } else {
+        // No status - redirect to login
+        defaultState.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = '/login.html';
+        }, 1500);
+      }
+
+      // Handle resend form
+      const resendForm = document.getElementById('resend-form');
+      if (resendForm) {
+        resendForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          await resendVerificationEmail(document.getElementById('resend-email').value);
+        });
+      }
+
+      // Handle resend from pending state
+      const resendFromPending = document.getElementById('resend-from-pending');
+      if (resendFromPending && email) {
+        resendFromPending.addEventListener('click', async function() {
+          await resendVerificationEmail(email);
+        });
+      }
+    });
+
+    async function resendVerificationEmail(email) {
+      const btnText = document.getElementById('resend-btn-text');
+      const btnLoading = document.getElementById('resend-btn-loading');
+      const resultDiv = document.getElementById('resend-result');
+
+      if (btnText) btnText.style.display = 'none';
+      if (btnLoading) btnLoading.style.display = 'inline';
+
+      try {
+        const response = await fetch('/api/auth/resend-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (resultDiv) {
+          resultDiv.style.display = 'block';
+          if (data.success) {
+            resultDiv.innerHTML = '<p style="color: #27ae60; background: #f0fdf4; padding: 10px; border-radius: 6px;">' + data.message + '</p>';
+          } else {
+            resultDiv.innerHTML = '<p style="color: #e74c3c; background: #fff5f5; padding: 10px; border-radius: 6px;">' + data.message + '</p>';
+          }
+        }
+      } catch (error) {
+        if (resultDiv) {
+          resultDiv.style.display = 'block';
+          resultDiv.innerHTML = '<p style="color: #e74c3c; background: #fff5f5; padding: 10px; border-radius: 6px;">Failed to send email. Please try again.</p>';
+        }
+      } finally {
+        if (btnText) btnText.style.display = 'inline';
+        if (btnLoading) btnLoading.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

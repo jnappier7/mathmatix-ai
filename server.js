@@ -80,6 +80,7 @@ const { csrfProtection } = require("./middleware/csrf");
 const loginRoutes = require('./routes/login');
 const signupRoutes = require('./routes/signup');
 const passwordResetRoutes = require('./routes/passwordReset');
+const authRoutes = require('./routes/auth');  // Email verification and auth utilities
 const studentRoutes = require('./routes/student');
 const teacherRoutes = require('./routes/teacher');
 const adminRoutes = require('./routes/admin');
@@ -271,6 +272,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/login', authLimiter, loginRoutes);
 app.use('/signup', authLimiter, signupRoutes);
 app.use('/api/password-reset', authLimiter, passwordResetRoutes);
+app.use('/api/auth', authLimiter, authRoutes);  // Email verification (public routes)
 app.post('/logout', isAuthenticated, handleLogout);
 
 // --- Google Auth Routes ---
@@ -283,7 +285,20 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
+<<<<<<< claude/setup-email-system-WBure
+
+        // Check if this is a new user requiring enrollment code
+        if (user.isPendingEnrollment) {
+            // Store pending profile in session (not logged in yet)
+            req.session.pendingOAuthProfile = user.pendingProfile;
+            console.log('LOG: New Google OAuth user requires enrollment code');
+            return res.redirect('/oauth-enrollment.html');
+        }
+
+        req.logIn(user, (err) => {
+=======
         req.logIn(user, async (err) => {
+>>>>>>> main
             if (err) { return next(err); }
             // Update lastLogin timestamp
             try {
@@ -309,7 +324,20 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
+<<<<<<< claude/setup-email-system-WBure
+
+        // Check if this is a new user requiring enrollment code
+        if (user.isPendingEnrollment) {
+            // Store pending profile in session (not logged in yet)
+            req.session.pendingOAuthProfile = user.pendingProfile;
+            console.log('LOG: New Microsoft OAuth user requires enrollment code');
+            return res.redirect('/oauth-enrollment.html');
+        }
+
+        req.logIn(user, (err) => {
+=======
         req.logIn(user, async (err) => {
+>>>>>>> main
             if (err) { return next(err); }
             // Update lastLogin timestamp
             try {
