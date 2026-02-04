@@ -18,7 +18,7 @@
  */
 
 const { getBroadCategory, getCategoryDifficulty, getFallbackSkills,
-        SESSION_DEFAULTS, BROAD_CATEGORIES } = require('./catConfig');
+        SESSION_DEFAULTS, BROAD_CATEGORIES, isScreenerExcluded } = require('./catConfig');
 const { expectedInformation } = require('./irt');
 
 // ===========================================================================
@@ -258,8 +258,11 @@ function selectSkill(availableSkills, session, targetDifficulty, options = {}) {
     testedCategories: testedSkillCategories || {},
   };
 
-  // Score all available skills
-  let candidates = availableSkills.map(skill => {
+  // Filter out excluded skills (conceptual/vague questions)
+  const eligibleSkills = availableSkills.filter(skill => !isScreenerExcluded(skill.skillId));
+
+  // Score all eligible skills
+  let candidates = eligibleSkills.map(skill => {
     // Use best available difficulty estimate
     const enhancedSkill = {
       ...skill,

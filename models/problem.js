@@ -246,8 +246,12 @@ function compareFractions(frac1, frac2) {
 /**
  * Find problem near target difficulty for a skill
  * Uses simple 1-5 scale
+ * @param {Object} options - Optional preferences
+ * @param {boolean} options.preferMultipleChoice - Prefer multiple-choice problems (for screener)
  */
-problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficulty, excludeIds = []) {
+problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficulty, excludeIds = [], options = {}) {
+  const { preferMultipleChoice = false } = options;
+
   // Convert theta (-3 to +3) to difficulty (1-5) if needed
   let difficulty = targetDifficulty;
   if (targetDifficulty >= -3 && targetDifficulty <= 3) {
@@ -256,12 +260,35 @@ problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficu
     difficulty = Math.max(1, Math.min(5, difficulty));
   }
 
+  // Build base query
+  const baseQuery = {
+    skillId,
+    isActive: true,
+    problemId: { $nin: excludeIds }
+  };
+
+  // If preferring multiple choice, try those first
+  if (preferMultipleChoice) {
+    for (const range of [0, 1, 2]) {
+      const problems = await this.find({
+        ...baseQuery,
+        answerType: 'multiple-choice',
+        difficulty: {
+          $gte: Math.max(1, difficulty - range),
+          $lte: Math.min(5, difficulty + range)
+        }
+      });
+
+      if (problems.length > 0) {
+        return problems[Math.floor(Math.random() * problems.length)];
+      }
+    }
+  }
+
   // Try exact difficulty first, then expand
   for (const range of [0, 1, 2]) {
     const problems = await this.find({
-      skillId,
-      isActive: true,
-      problemId: { $nin: excludeIds },
+      ...baseQuery,
       difficulty: {
         $gte: Math.max(1, difficulty - range),
         $lte: Math.min(5, difficulty + range)
@@ -269,15 +296,18 @@ problemSchema.statics.findNearDifficulty = async function(skillId, targetDifficu
     });
 
     if (problems.length > 0) {
+      // Prefer multiple choice even in fallback
+      const mcProblems = problems.filter(p => p.answerType === 'multiple-choice');
+      if (mcProblems.length > 0) {
+        return mcProblems[Math.floor(Math.random() * mcProblems.length)];
+      }
       return problems[Math.floor(Math.random() * problems.length)];
     }
   }
 
   // Fallback: any problem for this skill
   const anyProblem = await this.findOne({
-    skillId,
-    isActive: true,
-    problemId: { $nin: excludeIds }
+    ...baseQuery
   });
 
   return anyProblem;

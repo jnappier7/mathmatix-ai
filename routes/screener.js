@@ -255,7 +255,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     }
 
     // SIMPLIFIED PROBLEM SELECTION
-    // Strategy: Database first, generate if needed, single fallback
+    // Strategy: Prefer multiple-choice for screener reliability
     const recentProblemIds = session.responses
       .slice(-LRU_EXCLUSION_WINDOW)
       .map(r => r.problemId);
@@ -263,7 +263,8 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     let problem = await Problem.findNearDifficulty(
       selectedSkillId,
       targetDifficulty,
-      recentProblemIds
+      recentProblemIds,
+      { preferMultipleChoice: true }  // Screener uses MC for clarity
     );
 
     // Fallback: Generate or find any problem
@@ -277,12 +278,35 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
         // No template - find any existing problem for this skill
         problem = await Problem.findOne({
           skillId: selectedSkillId,
-          isActive: true
+          isActive: true,
+          answerType: 'multiple-choice'  // Prefer MC even in fallback
         });
+
+        // Last resort: any problem type
+        if (!problem) {
+          problem = await Problem.findOne({
+            skillId: selectedSkillId,
+            isActive: true
+          });
+        }
       }
 
+      // If still no problem, try a different skill instead of crashing
       if (!problem) {
-        throw new Error(`No problems available for skill: ${selectedSkillId}`);
+        console.warn(`[Screener] No problems for skill ${selectedSkillId}, selecting alternative`);
+        // Find any skill with available problems near target difficulty
+        const alternativeProblem = await Problem.findOne({
+          isActive: true,
+          answerType: 'multiple-choice',
+          problemId: { $nin: recentProblemIds }
+        });
+
+        if (alternativeProblem) {
+          problem = alternativeProblem;
+          console.log(`[Screener] Using alternative skill: ${problem.skillId}`);
+        } else {
+          throw new Error(`No problems available for screener`);
+        }
       }
     }
 

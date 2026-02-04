@@ -479,6 +479,42 @@ function calculateJumpSize(isCorrect, questionNumber, standardError) {
 // ===========================================================================
 
 /**
+ * Skills to EXCLUDE from placement screener
+ * These have vague/conceptual questions that don't work well for adaptive testing
+ */
+const SCREENER_EXCLUDED_SKILLS = [
+  // Statistics - conceptual questions like "what display is best"
+  'statistical-questions',
+  'measures-of-center',
+  'measures-of-variation',
+  'sampling',
+  'data-displays',
+  'interpreting-data',
+  'scatter-plots',
+
+  // Probability - often requires explanation
+  'probability-basics',
+  'probability-models',
+  'compound-probability',
+
+  // Word problem skills (often too open-ended)
+  'word-problems',
+  'multi-step-word-problems',
+
+  // Proof-based (can't be multiple choice effectively)
+  'proofs',
+  'geometric-proofs',
+  'algebraic-proofs',
+];
+
+/**
+ * Check if a skill should be excluded from screener
+ */
+function isScreenerExcluded(skillId) {
+  return SCREENER_EXCLUDED_SKILLS.includes(skillId);
+}
+
+/**
  * Fallback skills by category when no candidates found
  */
 const FALLBACK_SKILLS = {
@@ -524,6 +560,10 @@ module.exports = {
   // Jump calculations
   JUMP_PARAMS,
   calculateJumpSize,
+
+  // Screener exclusions
+  SCREENER_EXCLUDED_SKILLS,
+  isScreenerExcluded,
 
   // Fallbacks
   FALLBACK_SKILLS,
