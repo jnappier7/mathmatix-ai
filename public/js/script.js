@@ -256,6 +256,11 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
         // Show celebration video modal
         showLevelUpCelebration();
 
+        // Track milestone for survey triggers
+        if (window.MathMatixSurvey) {
+            window.MathMatixSurvey.trackMilestone('level_up');
+        }
+
         if (typeof confetti === 'function') {
             const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
@@ -2578,6 +2583,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             // TIER 1: Silent (no display at all)
             // The +2 XP is added to their total but never shown
+
+            // Track problem solved for survey triggers (any XP tier = correct answer)
+            if ((xp.tier1 > 0 || xp.tier2 > 0 || xp.tier3 > 0) && window.MathMatixSurvey) {
+                window.MathMatixSurvey.trackProblemSolved();
+            }
         }
         // Legacy fallback for old response format
         else if (data.specialXpAwarded) {
