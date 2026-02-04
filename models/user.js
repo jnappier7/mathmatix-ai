@@ -672,9 +672,16 @@ const userSchema = new Schema({
     frequency: { type: String, enum: ['every-session', 'daily', 'weekly', 'never'], default: 'daily' },
     responsesCount: { type: Number, default: 0 },
     consecutiveDismissals: { type: Number, default: 0 },  // Track if user keeps dismissing
+    lastTrigger: String,  // What triggered the survey: 'problems_completed', 'milestone', 'time_based', 'tab_return', 'manual'
+    lastTriggerContext: {
+      problemsSolved: Number,
+      sessionDuration: Number,
+      timestamp: Date
+    },
     responses: [{
       submittedAt: { type: Date, default: Date.now },
       sessionDuration: Number,  // Minutes in session
+      problemsSolved: Number,  // Problems solved this session
       rating: Number,  // 1-5 star rating
       experience: String,  // 'excellent', 'good', 'okay', 'frustrating', 'confusing'
       feedback: String,  // Open-ended feedback
@@ -682,7 +689,8 @@ const userSchema = new Schema({
       features: String,  // Feature requests
       helpfulness: Number,  // 1-5 rating
       difficulty: Number,  // 1-5 rating
-      willingness: Number  // 1-5 - how likely to recommend
+      willingness: Number,  // 0-10 NPS score
+      isQuickResponse: { type: Boolean, default: false }  // Was this a quick 1-tap response
     }]
   },
 

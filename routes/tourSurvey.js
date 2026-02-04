@@ -70,13 +70,22 @@ router.get('/survey-status', isAuthenticated, async (req, res) => {
       enabled: true,
       frequency: 'daily',
       lastShownAt: null,
-      consecutiveDismissals: 0
+      consecutiveDismissals: 0,
+      responsesCount: 0
     };
+
+    // Find last response time
+    const responses = surveys.responses || [];
+    const lastResponse = responses.length > 0
+      ? responses.reduce((latest, r) => r.submittedAt > latest ? r.submittedAt : latest, responses[0].submittedAt)
+      : null;
 
     res.json({
       enabled: surveys.enabled !== false,
       frequency: surveys.frequency || 'daily',
       lastShownAt: surveys.lastShownAt,
+      lastRespondedAt: lastResponse,
+      responsesCount: surveys.responsesCount || responses.length,
       consecutiveDismissals: surveys.consecutiveDismissals || 0
     });
   } catch (error) {
@@ -91,10 +100,16 @@ router.get('/survey-status', isAuthenticated, async (req, res) => {
  */
 router.post('/survey-shown', isAuthenticated, async (req, res) => {
   try {
-    const { shownAt } = req.body;
+    const { shownAt, trigger, problemsSolved, sessionDuration } = req.body;
 
     await User.findByIdAndUpdate(req.user._id, {
-      'sessionSurveys.lastShownAt': shownAt || new Date()
+      'sessionSurveys.lastShownAt': shownAt || new Date(),
+      'sessionSurveys.lastTrigger': trigger,
+      'sessionSurveys.lastTriggerContext': {
+        problemsSolved: problemsSolved || 0,
+        sessionDuration: sessionDuration || 0,
+        timestamp: new Date()
+      }
     });
 
     res.json({ success: true, message: 'Survey shown tracked' });
@@ -114,7 +129,7 @@ router.post('/survey-dismissed', isAuthenticated, async (req, res) => {
 
     const consecutiveDismissals = (user.sessionSurveys?.consecutiveDismissals || 0) + 1;
 
-    // If user dismisses 3 times in a row, reduce frequency
+    // Auto-downgrade frequency after 3 consecutive dismissals
     let frequency = user.sessionSurveys?.frequency || 'daily';
     if (consecutiveDismissals >= 3) {
       if (frequency === 'every-session') frequency = 'daily';
@@ -123,8 +138,7 @@ router.post('/survey-dismissed', isAuthenticated, async (req, res) => {
 
     await User.findByIdAndUpdate(req.user._id, {
       'sessionSurveys.consecutiveDismissals': consecutiveDismissals,
-      'sessionSurveys.frequency': frequency,
-      'sessionSurveys.nextShowAfter': new Date(Date.now() + 24 * 60 * 60 * 1000) // 1 day from now
+      'sessionSurveys.frequency': frequency
     });
 
     res.json({
@@ -146,6 +160,7 @@ router.post('/survey-submit', isAuthenticated, async (req, res) => {
   try {
     const {
       sessionDuration,
+      problemsSolved,
       rating,
       experience,
       helpfulness,
@@ -154,7 +169,8 @@ router.post('/survey-submit', isAuthenticated, async (req, res) => {
       bugs,
       features,
       willingness,
-      frequencyPreference
+      frequencyPreference,
+      isQuickResponse
     } = req.body;
 
     // Validate required fields
@@ -166,6 +182,7 @@ router.post('/survey-submit', isAuthenticated, async (req, res) => {
     const surveyResponse = {
       submittedAt: new Date(),
       sessionDuration: sessionDuration || 0,
+      problemsSolved: problemsSolved || 0,
       rating,
       experience,
       helpfulness,
@@ -173,7 +190,8 @@ router.post('/survey-submit', isAuthenticated, async (req, res) => {
       feedback,
       bugs,
       features,
-      willingness
+      willingness,
+      isQuickResponse: isQuickResponse || false
     };
 
     // Update user's survey data
@@ -185,9 +203,8 @@ router.post('/survey-submit', isAuthenticated, async (req, res) => {
         'sessionSurveys.responsesCount': 1
       },
       $set: {
-        'sessionSurveys.consecutiveDismissals': 0, // Reset dismissals
-        'sessionSurveys.lastShownAt': new Date(),
-        'sessionSurveys.nextShowAfter': new Date(Date.now() + 24 * 60 * 60 * 1000) // 1 day from now
+        'sessionSurveys.consecutiveDismissals': 0,
+        'sessionSurveys.lastShownAt': new Date()
       }
     };
 
