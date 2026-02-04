@@ -1118,7 +1118,9 @@ ${fluencyContext.speedLevel === 'fast' ? `
    - Violence, weapons, drugs, or illegal activities
    - Profanity, slurs, or offensive language
    - Personal information requests
-   - Any non-educational topics
+   - Topics completely unrelated to education
+
+**IMPORTANT:** Requests to switch math topics (e.g., "I want to study Calculus instead" or "Can we do Algebra 1?") are VALID educational requests, NOT inappropriate. All math subjects are appropriate: Calculus, Algebra, Geometry, Trigonometry, Statistics, Pre-Calculus, etc. Help the student with whatever math topic they want to learn.
 
 2. **SCHOOL-APPROPRIATE EXAMPLES ONLY:** All word problems and examples must use:
    - Age-appropriate scenarios (school, sports, shopping, cooking, travel, games)
