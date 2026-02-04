@@ -291,6 +291,63 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
     }
 });
 
+// Get a child's growth check history for parent dashboard
+router.get('/child/:childId/growth-history', isAuthenticated, isParent, async (req, res) => {
+    const parentId = req.user._id;
+    const { childId } = req.params;
+
+    try {
+        const parent = await User.findById(parentId);
+        if (!parent || !parent.children.some(child => child._id.toString() === childId)) {
+            return res.status(403).json({ message: "Forbidden: You are not authorized to view this child's data." });
+        }
+
+        const child = await User.findById(childId).lean();
+        if (!child) {
+            return res.status(404).json({ message: "Child not found." });
+        }
+
+        const growthHistory = child.learningProfile?.growthCheckHistory || [];
+        const currentTheta = child.learningProfile?.currentTheta || 0;
+
+        // Calculate growth trajectory
+        let totalGrowth = 0;
+        let checksCompleted = growthHistory.length;
+        if (checksCompleted > 0) {
+            const firstTheta = growthHistory[0].previousTheta || 0;
+            const latestTheta = growthHistory[checksCompleted - 1].newTheta || currentTheta;
+            totalGrowth = latestTheta - firstTheta;
+        }
+
+        // Format growth status into parent-friendly messages
+        const statusMessages = {
+            'significant-growth': 'Great Progress!',
+            'some-growth': 'Nice Growth!',
+            'stable': 'Holding Steady',
+            'review-needed': 'Needs Practice'
+        };
+
+        res.json({
+            childName: `${child.firstName} ${child.lastName}`,
+            currentTheta,
+            totalGrowth: Math.round(totalGrowth * 100) / 100,
+            checksCompleted,
+            history: growthHistory.map(check => ({
+                date: check.date,
+                thetaChange: check.thetaChange,
+                growthStatus: check.growthStatus,
+                growthMessage: statusMessages[check.growthStatus] || check.growthStatus,
+                accuracy: check.accuracy,
+                questionsAnswered: check.questionsAnswered
+            }))
+        });
+
+    } catch (error) {
+        console.error("ERROR: Failed to fetch child's growth history:", error);
+        res.status(500).json({ message: "Could not fetch growth history." });
+    }
+});
+
 // Get parent settings
 router.get('/settings', isAuthenticated, isParent, async (req, res) => {
     const parentId = req.user._id;

@@ -109,6 +109,22 @@ async function calculateStudentProgress(studentId) {
         }
     }
 
+    // Get recent growth checks
+    const growthChecks = [];
+    if (student.learningProfile?.growthCheckHistory) {
+        for (const check of student.learningProfile.growthCheckHistory) {
+            if (check.date >= oneWeekAgo) {
+                growthChecks.push({
+                    date: check.date,
+                    thetaChange: check.thetaChange,
+                    growthStatus: check.growthStatus,
+                    accuracy: check.accuracy,
+                    questionsAnswered: check.questionsAnswered
+                });
+            }
+        }
+    }
+
     return {
         studentName: `${student.firstName} ${student.lastName}`,
         problemsCompleted: stats.totalCorrect,
@@ -121,7 +137,8 @@ async function calculateStudentProgress(studentId) {
         sessionCount: stats.sessionCount,
         masteryGained,
         strugglingSkills: strugglingSkills.slice(0, 5), // Limit to top 5
-        achievements
+        achievements,
+        growthChecks // NEW: Include growth check results for parent report
     };
 }
 
