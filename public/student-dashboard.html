@@ -391,8 +391,11 @@
           return;
         }
 
-        // Assessment completed - update button text to "Growth Check"
+        // Assessment completed - update button for Growth Check
+        const placementBtn = document.getElementById('placement-test-btn');
         document.getElementById('placement-btn-text').textContent = 'Growth Check';
+        placementBtn.href = '/growth-check.html';
+        placementBtn.querySelector('i').className = 'fas fa-chart-line'; // Change icon
 
         // Has completed assessment - show progress cards
         if (data.currentLearning) {

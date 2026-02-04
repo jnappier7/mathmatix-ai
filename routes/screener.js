@@ -138,12 +138,14 @@ router.post('/start', isAuthenticated, async (req, res) => {
       console.log(`[Screener] Deleted existing session for restart - user ${userId}`);
     }
 
-    // Initialize new screener session with grade AND course-based starting point
+    // Initialize new screener session with PREVIOUS grade level
+    // Start one grade below current to build confidence before probing frontier
     // This provides a Bayesian prior for faster convergence
-    // BETA FEEDBACK FIX: Now considers mathCourse (e.g., "Algebra 2") for better accuracy
-    const startingTheta = gradeToTheta(user.gradeLevel, user.mathCourse);
+    const currentGrade = parseInt(user.gradeLevel, 10);
+    const previousGrade = !isNaN(currentGrade) && currentGrade > 1 ? currentGrade - 1 : user.gradeLevel;
+    const startingTheta = gradeToTheta(previousGrade, null); // Ignore course for initial placement
     console.log(`[Screener Start] User: ${user.username || user._id}`);
-    console.log(`[Screener Start] Grade: "${user.gradeLevel}" | Course: "${user.mathCourse || 'not set'}" → Starting θ=${startingTheta.toFixed(2)}`);
+    console.log(`[Screener Start] Current grade: "${user.gradeLevel}" → Starting at previous grade (${previousGrade}) → θ=${startingTheta.toFixed(2)}`);
 
     const sessionData = initializeSession({
       userId: user._id.toString(),
