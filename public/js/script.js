@@ -1559,7 +1559,51 @@ document.addEventListener("DOMContentLoaded", () => {
             window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
         }
     }
-    
+
+    /**
+     * Auto-convert common math notation to LaTeX for MathJax rendering
+     * Converts patterns like x^2, a_n, sqrt(12) to \(x^2\), \(a_n\), \(\sqrt{12}\)
+     */
+    function autoConvertMathNotation(text) {
+        if (!text) return text;
+
+        // Skip if text already has LaTeX delimiters (AI already formatted it)
+        if (text.includes('\\(') || text.includes('\\[') || text.includes('$')) {
+            return text;
+        }
+
+        let result = text;
+
+        // Convert sqrt(n) or sqrt{n} to \(\sqrt{n}\)
+        result = result.replace(/\bsqrt\s*[\(\{]([^\)\}]+)[\)\}]/gi, '\\(\\sqrt{$1}\\)');
+
+        // Convert variable^exponent patterns (e.g., x^2, y^3, a^n)
+        // Match: letter(s) followed by ^ and a number or letter or (expression)
+        result = result.replace(/\b([a-zA-Z]+)\^(\d+|\([^\)]+\)|[a-zA-Z])\b/g, '\\($1^{$2}\\)');
+
+        // Convert variable_subscript patterns (e.g., a_n, x_1, a_i)
+        // Match: letter(s) followed by _ and a number or letter
+        result = result.replace(/\b([a-zA-Z]+)_(\d+|[a-zA-Z])\b/g, '\\($1_{$2}\\)');
+
+        // Convert combined patterns like x_1^2
+        result = result.replace(/\b([a-zA-Z]+)_(\d+|[a-zA-Z])\^(\d+|[a-zA-Z])\b/g, '\\($1_{$2}^{$3}\\)');
+
+        // Convert pi to π symbol when standalone
+        result = result.replace(/\bpi\b/gi, '\\(\\pi\\)');
+
+        // Convert infinity
+        result = result.replace(/\binfinity\b/gi, '\\(\\infty\\)');
+
+        // Convert common fractions like 1/2, 3/4 (only simple numeric fractions)
+        // Be careful not to match dates or other patterns
+        result = result.replace(/(?<![\/\d])(\d+)\/(\d+)(?![\/\d])/g, '\\(\\frac{$1}{$2}\\)');
+
+        return result;
+    }
+
+    // Expose for use elsewhere
+    window.autoConvertMathNotation = autoConvertMathNotation;
+
   // ============================================
   // ELEGANT MULTI-FILE UPLOAD SYSTEM
   // ============================================
@@ -1817,9 +1861,12 @@ document.addEventListener("DOMContentLoaded", () => {
         textNode.className = 'message-text';
         
         if (sender === 'ai' && typeof marked !== 'undefined' && marked.parse) {
+            // Auto-convert common math notation (x^2, a_n, sqrt(12)) to LaTeX
+            let processedText = autoConvertMathNotation(text);
+
             // Protect entire LaTeX blocks from markdown parsing
             const latexBlocks = [];
-            let protectedText = text;
+            let protectedText = processedText;
 
             // Extract and protect display math \[...\]
             protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
@@ -1893,7 +1940,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             textNode.innerHTML = sanitizedHtml;
         } else {
-            textNode.textContent = text;
+            // For user messages, also auto-convert math notation
+            const convertedText = autoConvertMathNotation(text);
+            textNode.innerHTML = convertedText;
         }
         bubble.appendChild(textNode);
 
