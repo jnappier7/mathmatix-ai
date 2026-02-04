@@ -1,6 +1,7 @@
 // ============================================
 // COLLAPSIBLE SIDEBAR
 // Modern sidebar with tools, leaderboard, progress
+// Enhanced with session management features
 // ============================================
 
 class Sidebar {
@@ -11,10 +12,54 @@ class Sidebar {
         this.sessionsExpanded = true;
         this.toolsExpanded = true;
         this.leaderboardExpanded = false;
+        this.questsExpanded = false;
         this.activeConversationId = null;
+        this.conversations = []; // Cache for search
+        this.searchTimeout = null;
+
+        // Topic suggestions for new sessions
+        this.topicSuggestions = [
+            { name: 'Fractions', emoji: '🍰' },
+            { name: 'Algebra', emoji: '📐' },
+            { name: 'Geometry', emoji: '📏' },
+            { name: 'Word Problems', emoji: '📝' },
+            { name: 'Decimals', emoji: '🔢' },
+            { name: 'Percentages', emoji: '💯' },
+            { name: 'Graphing', emoji: '📈' },
+            { name: 'Equations', emoji: '⚖️' },
+            { name: 'Trigonometry', emoji: '📊' },
+            { name: 'Statistics', emoji: '📉' },
+            { name: 'Calculus', emoji: '∫' },
+            { name: 'Probability', emoji: '🎲' }
+        ];
 
         console.log('📂 Sidebar initializing...');
         this.init();
+    }
+
+    /**
+     * Format a timestamp as relative time (e.g., "2 hours ago", "Yesterday")
+     */
+    formatRelativeTime(date) {
+        if (!date) return '';
+
+        const now = new Date();
+        const then = new Date(date);
+        const diffMs = now - then;
+        const diffSecs = Math.floor(diffMs / 1000);
+        const diffMins = Math.floor(diffSecs / 60);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffSecs < 60) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays}d ago`;
+        if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+
+        // Format as date for older sessions
+        return then.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 
     init() {
@@ -81,6 +126,29 @@ class Sidebar {
         if (newTopicBtn) {
             newTopicBtn.addEventListener('click', () => this.createNewTopic());
         }
+
+        // Session search input
+        const searchInput = document.getElementById('session-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.searchSessions(e.target.value);
+            });
+
+            // Clear search on escape
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    this.renderSessions(this.conversations);
+                }
+            });
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.session-actions')) {
+                document.querySelectorAll('.session-dropdown.show').forEach(d => d.classList.remove('show'));
+            }
+        });
 
         // Tool button handlers
         this.setupToolHandlers();
@@ -179,68 +247,387 @@ class Sidebar {
         const sessionsList = document.getElementById('sessions-list');
         if (!sessionsList) return;
 
-        // Clear existing (except general chat)
+        // Cache conversations for search
+        this.conversations = conversations;
+
+        // Clear existing
         sessionsList.innerHTML = '';
 
+        // Find general conversation
+        const generalConv = conversations.find(c => c.conversationType === 'general');
+
         // Add general chat (always first)
-        const generalChat = document.createElement('button');
-        generalChat.className = 'session-item active';
+        const generalChat = document.createElement('div');
+        generalChat.className = 'session-item' + (generalConv && this.activeConversationId === generalConv._id ? ' active' : '');
+        if (generalConv) {
+            generalChat.dataset.conversationId = generalConv._id;
+        }
         generalChat.innerHTML = `
-            <span class="session-emoji">💬</span>
-            <span class="session-name">General Chat</span>
+            <div class="session-main">
+                <span class="session-emoji">💬</span>
+                <div class="session-info">
+                    <span class="session-name">General Chat</span>
+                    ${generalConv && generalConv.lastMessage ? `
+                        <span class="session-preview">${this.escapeHtml(generalConv.lastMessage.content)}</span>
+                    ` : '<span class="session-preview">Start a new conversation</span>'}
+                </div>
+            </div>
+            <div class="session-meta">
+                ${generalConv ? `<span class="session-time">${this.formatRelativeTime(generalConv.lastActivity)}</span>` : ''}
+                ${generalConv && generalConv.messageCount > 0 ? `<span class="session-count">${generalConv.messageCount}</span>` : ''}
+            </div>
         `;
-        generalChat.addEventListener('click', () => this.switchToGeneralChat());
+        generalChat.addEventListener('click', (e) => {
+            if (!e.target.closest('.session-actions')) {
+                this.switchToGeneralChat();
+            }
+        });
         sessionsList.appendChild(generalChat);
 
-        // Add topic-based conversations
-        conversations.forEach(conv => {
-            if (conv.conversationType === 'topic' && conv.topic) {
-                const sessionItem = document.createElement('button');
-                sessionItem.className = 'session-item';
-                sessionItem.dataset.conversationId = conv._id;
-                sessionItem.innerHTML = `
-                    <span class="session-emoji">${conv.topicEmoji || '📚'}</span>
-                    <span class="session-name">${conv.name}</span>
-                    <button class="session-delete" title="Archive">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
+        // Separate pinned and regular sessions
+        const pinnedSessions = conversations.filter(c => c.isPinned && c.conversationType === 'topic');
+        const regularSessions = conversations.filter(c => !c.isPinned && c.conversationType === 'topic');
 
-                sessionItem.addEventListener('click', (e) => {
-                    if (!e.target.closest('.session-delete')) {
-                        this.switchSession(conv._id);
-                    }
-                });
+        // Add pinned sessions header if any exist
+        if (pinnedSessions.length > 0) {
+            const pinnedHeader = document.createElement('div');
+            pinnedHeader.className = 'session-divider';
+            pinnedHeader.innerHTML = '<span><i class="fas fa-thumbtack"></i> Pinned</span>';
+            sessionsList.appendChild(pinnedHeader);
 
-                const deleteBtn = sessionItem.querySelector('.session-delete');
-                deleteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.archiveSession(conv._id);
-                });
+            pinnedSessions.forEach(conv => this.renderSessionItem(conv, sessionsList, true));
+        }
 
-                sessionsList.appendChild(sessionItem);
+        // Add regular sessions
+        if (regularSessions.length > 0) {
+            if (pinnedSessions.length > 0) {
+                const recentHeader = document.createElement('div');
+                recentHeader.className = 'session-divider';
+                recentHeader.innerHTML = '<span>Recent</span>';
+                sessionsList.appendChild(recentHeader);
             }
+
+            regularSessions.forEach(conv => this.renderSessionItem(conv, sessionsList, false));
+        }
+    }
+
+    /**
+     * Render a single session item
+     */
+    renderSessionItem(conv, container, isPinned) {
+        const sessionItem = document.createElement('div');
+        sessionItem.className = 'session-item' + (this.activeConversationId === conv._id ? ' active' : '');
+        sessionItem.dataset.conversationId = conv._id;
+
+        // Format stats if available
+        let statsHtml = '';
+        if (conv.stats && conv.stats.problemsAttempted > 0) {
+            const accuracy = conv.stats.problemsCorrect > 0
+                ? Math.round((conv.stats.problemsCorrect / conv.stats.problemsAttempted) * 100)
+                : 0;
+            statsHtml = `<span class="session-stats">${accuracy}% accuracy</span>`;
+        }
+
+        sessionItem.innerHTML = `
+            <div class="session-main">
+                <span class="session-emoji">${conv.topicEmoji || '📚'}</span>
+                <div class="session-info">
+                    <div class="session-name-row">
+                        ${isPinned ? '<i class="fas fa-thumbtack session-pin-icon"></i>' : ''}
+                        <span class="session-name">${this.escapeHtml(conv.name)}</span>
+                    </div>
+                    ${conv.lastMessage ? `
+                        <span class="session-preview">${this.escapeHtml(conv.lastMessage.content)}</span>
+                    ` : '<span class="session-preview">No messages yet</span>'}
+                    ${statsHtml}
+                </div>
+            </div>
+            <div class="session-meta">
+                <span class="session-time">${this.formatRelativeTime(conv.lastActivity)}</span>
+                ${conv.messageCount > 0 ? `<span class="session-count">${conv.messageCount}</span>` : ''}
+                <div class="session-actions">
+                    <button class="session-action-btn session-menu-btn" title="More options">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="session-dropdown">
+                        <button class="session-dropdown-item" data-action="rename">
+                            <i class="fas fa-edit"></i> Rename
+                        </button>
+                        <button class="session-dropdown-item" data-action="pin">
+                            <i class="fas fa-thumbtack"></i> ${isPinned ? 'Unpin' : 'Pin'}
+                        </button>
+                        <button class="session-dropdown-item session-dropdown-danger" data-action="archive">
+                            <i class="fas fa-archive"></i> Archive
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Main click handler
+        sessionItem.addEventListener('click', (e) => {
+            if (!e.target.closest('.session-actions')) {
+                this.switchSession(conv._id);
+            }
+        });
+
+        // Menu button handler
+        const menuBtn = sessionItem.querySelector('.session-menu-btn');
+        const dropdown = sessionItem.querySelector('.session-dropdown');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Close other dropdowns
+            document.querySelectorAll('.session-dropdown.show').forEach(d => d.classList.remove('show'));
+            dropdown.classList.toggle('show');
+        });
+
+        // Dropdown action handlers
+        dropdown.querySelectorAll('.session-dropdown-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.remove('show');
+                const action = item.dataset.action;
+
+                if (action === 'rename') {
+                    this.renameSession(conv._id, conv.name);
+                } else if (action === 'pin') {
+                    this.togglePinSession(conv._id);
+                } else if (action === 'archive') {
+                    this.archiveSession(conv._id);
+                }
+            });
+        });
+
+        container.appendChild(sessionItem);
+    }
+
+    /**
+     * Escape HTML to prevent XSS
+     */
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    /**
+     * Rename a session
+     */
+    async renameSession(conversationId, currentName) {
+        const newName = prompt('Enter a new name for this session:', currentName);
+        if (!newName || newName.trim() === '' || newName === currentName) return;
+
+        try {
+            const response = await window.csrfFetch(`/api/conversations/${conversationId}/rename`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newName.trim() }),
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Failed to rename');
+            }
+
+            await this.loadSessions();
+            console.log('[Sidebar] Session renamed successfully');
+        } catch (error) {
+            console.error('[Sidebar] Failed to rename session:', error);
+            alert('Failed to rename session. Please try again.');
+        }
+    }
+
+    /**
+     * Toggle pin status for a session
+     */
+    async togglePinSession(conversationId) {
+        try {
+            const response = await window.csrfFetch(`/api/conversations/${conversationId}/pin`, {
+                method: 'PATCH',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update pin status');
+            }
+
+            await this.loadSessions();
+            console.log('[Sidebar] Pin status toggled successfully');
+        } catch (error) {
+            console.error('[Sidebar] Failed to toggle pin:', error);
+        }
+    }
+
+    /**
+     * Search sessions
+     */
+    async searchSessions(query) {
+        if (!query || query.trim() === '') {
+            this.renderSessions(this.conversations);
+            return;
+        }
+
+        // Debounce search
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(async () => {
+            try {
+                const response = await window.csrfFetch(`/api/conversations/search?q=${encodeURIComponent(query)}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+                this.renderSearchResults(data.conversations, query);
+            } catch (error) {
+                console.error('[Sidebar] Search failed:', error);
+            }
+        }, 300);
+    }
+
+    /**
+     * Render search results
+     */
+    renderSearchResults(results, query) {
+        const sessionsList = document.getElementById('sessions-list');
+        if (!sessionsList) return;
+
+        sessionsList.innerHTML = '';
+
+        if (results.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'session-no-results';
+            noResults.innerHTML = `<i class="fas fa-search"></i><span>No sessions found for "${this.escapeHtml(query)}"</span>`;
+            sessionsList.appendChild(noResults);
+            return;
+        }
+
+        results.forEach(conv => {
+            this.renderSessionItem(conv, sessionsList, conv.isPinned);
         });
     }
 
     async createNewTopic() {
-        const topic = prompt('Enter a topic name (e.g., "Fractions", "Algebra", "Geometry"):');
-        if (!topic || topic.trim() === '') return;
+        // Show topic selection modal
+        this.showNewTopicModal();
+    }
 
+    /**
+     * Show new topic modal with suggestions
+     */
+    showNewTopicModal() {
+        // Create modal if it doesn't exist
+        let modal = document.getElementById('new-topic-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'new-topic-modal';
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-content new-topic-modal-content">
+                    <button class="modal-close-button" id="close-new-topic-modal">&times;</button>
+                    <h2><i class="fas fa-plus-circle"></i> New Topic Session</h2>
+                    <p style="color: #666; margin-bottom: 20px;">Create a focused session for a specific math topic.</p>
+
+                    <div class="form-group">
+                        <label for="custom-topic-input">Custom Topic</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="custom-topic-input" class="form-input" placeholder="Enter a topic name..." maxlength="50" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button id="create-custom-topic-btn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Create
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="topic-divider">
+                        <span>or choose a suggestion</span>
+                    </div>
+
+                    <div class="topic-suggestions-grid" id="topic-suggestions-grid">
+                        ${this.topicSuggestions.map(t => `
+                            <button class="topic-suggestion-btn" data-topic="${t.name}" data-emoji="${t.emoji}">
+                                <span class="topic-emoji">${t.emoji}</span>
+                                <span class="topic-name">${t.name}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Close button handler
+            document.getElementById('close-new-topic-modal').addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            // Click outside to close
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Custom topic creation
+            const customInput = document.getElementById('custom-topic-input');
+            const createBtn = document.getElementById('create-custom-topic-btn');
+
+            createBtn.addEventListener('click', () => {
+                const topic = customInput.value.trim();
+                if (topic) {
+                    this.createTopicSession(topic);
+                    modal.style.display = 'none';
+                }
+            });
+
+            customInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const topic = customInput.value.trim();
+                    if (topic) {
+                        this.createTopicSession(topic);
+                        modal.style.display = 'none';
+                    }
+                }
+            });
+
+            // Suggestion buttons
+            document.querySelectorAll('.topic-suggestion-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const topic = btn.dataset.topic;
+                    const emoji = btn.dataset.emoji;
+                    this.createTopicSession(topic, emoji);
+                    modal.style.display = 'none';
+                });
+            });
+        }
+
+        // Reset and show modal
+        const customInput = document.getElementById('custom-topic-input');
+        if (customInput) customInput.value = '';
+        modal.style.display = 'flex';
+    }
+
+    /**
+     * Create a topic session
+     */
+    async createTopicSession(topic, emoji = null) {
         const emojiMap = {
             'fractions': '🍰',
             'algebra': '📐',
             'geometry': '📏',
-            'calculus': '📊',
-            'trigonometry': '📈',
-            'statistics': '📊',
+            'calculus': '∫',
+            'trigonometry': '📊',
+            'statistics': '📉',
             'probability': '🎲',
             'word problems': '📝',
-            'equations': '➕'
+            'equations': '⚖️',
+            'decimals': '🔢',
+            'percentages': '💯',
+            'graphing': '📈'
         };
 
         const topicLower = topic.toLowerCase();
-        const topicEmoji = emojiMap[topicLower] || '📚';
+        const topicEmoji = emoji || emojiMap[topicLower] || '📚';
 
         try {
             const response = await window.csrfFetch('/api/conversations', {

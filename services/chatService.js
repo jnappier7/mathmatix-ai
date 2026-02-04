@@ -316,19 +316,38 @@ async function getUserConversations(userId) {
       userId,
       isActive: true
     })
-    .sort({ lastActivity: -1 })
-    .select('_id topic topicEmoji conversationType conversationName lastActivity messages currentTopic');
+    .sort({ isPinned: -1, lastActivity: -1 }) // Pinned first, then by activity
+    .select('_id topic topicEmoji conversationType conversationName customName lastActivity messages currentTopic isPinned problemsAttempted problemsCorrect');
 
-    return conversations.map(conv => ({
-      _id: conv._id,
-      topic: conv.topic,
-      topicEmoji: conv.topicEmoji,
-      conversationType: conv.conversationType,
-      name: conv.conversationName || conv.topic || 'General Chat',
-      lastActivity: conv.lastActivity,
-      messageCount: conv.messages.length,
-      currentTopic: conv.currentTopic
-    }));
+    return conversations.map(conv => {
+      // Get last message preview (truncated)
+      let lastMessage = null;
+      if (conv.messages.length > 0) {
+        const lastMsg = conv.messages[conv.messages.length - 1];
+        lastMessage = {
+          content: lastMsg.content.substring(0, 80) + (lastMsg.content.length > 80 ? '...' : ''),
+          role: lastMsg.role,
+          timestamp: lastMsg.timestamp
+        };
+      }
+
+      return {
+        _id: conv._id,
+        topic: conv.topic,
+        topicEmoji: conv.topicEmoji,
+        conversationType: conv.conversationType,
+        name: conv.customName || conv.conversationName || conv.topic || 'General Chat',
+        lastActivity: conv.lastActivity,
+        messageCount: conv.messages.length,
+        currentTopic: conv.currentTopic,
+        isPinned: conv.isPinned || false,
+        lastMessage,
+        stats: {
+          problemsAttempted: conv.problemsAttempted || 0,
+          problemsCorrect: conv.problemsCorrect || 0
+        }
+      };
+    });
   } catch (error) {
     logger.error('Failed to get user conversations', {
       userId,
