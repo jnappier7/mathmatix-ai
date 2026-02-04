@@ -693,6 +693,23 @@
             <div><strong>Tour Completion:</strong> <span id="tourCompletionRate">-</span>%</div>
           </div>
         </div>
+
+        <div class="dashboard-panel">
+          <div class="dashboard-panel-header">
+            <i class="fas fa-envelope"></i> Bulk Email
+          </div>
+          <p>Send emails to students, parents, teachers, or classes.</p>
+          <button id="openBulkEmailBtn" class="btn btn-primary main-action-btn">
+            <i class="fas fa-paper-plane"></i> Compose Email
+          </button>
+          <button id="viewEmailCampaignsBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-history"></i> Email History
+          </button>
+          <div id="emailQuickStats" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
+            <div style="margin-bottom: 5px;"><strong>Emails Today:</strong> <span id="emailsSentToday">-</span></div>
+            <div><strong>Total Campaigns:</strong> <span id="totalCampaigns">-</span></div>
+          </div>
+        </div>
       </aside>
     </main>
 
@@ -1290,12 +1307,112 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
     </div>
   </div>
 
+  <!-- Bulk Email Modal -->
+  <div id="bulkEmailModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 700px;">
+      <button class="modal-close-button" id="closeBulkEmailModal">&times;</button>
+      <h2><i class="fas fa-envelope"></i> Send Bulk Email</h2>
+
+      <div class="modal-section">
+        <h3>Recipients</h3>
+        <div class="modal-form-group">
+          <label for="emailAudienceType">Send To</label>
+          <select id="emailAudienceType">
+            <option value="">Select audience...</option>
+            <option value="all_students">All Students</option>
+            <option value="all_parents">All Parents</option>
+            <option value="all_teachers">All Teachers</option>
+            <option value="class">Specific Class</option>
+          </select>
+        </div>
+
+        <div id="classSelectContainer" class="modal-form-group" style="display: none;">
+          <label for="emailClassSelect">Select Class</label>
+          <select id="emailClassSelect">
+            <option value="">Loading classes...</option>
+          </select>
+        </div>
+
+        <div id="recipientPreview" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; display: none;">
+          <strong>Recipients:</strong> <span id="recipientCount">0</span> users will receive this email
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Email Content</h3>
+        <div class="modal-form-group">
+          <label for="emailSubject">Subject</label>
+          <input type="text" id="emailSubject" placeholder="Enter email subject..." maxlength="200">
+        </div>
+
+        <div class="modal-form-group">
+          <label for="emailTemplate">Use Template (optional)</label>
+          <select id="emailTemplate">
+            <option value="">Start from scratch...</option>
+          </select>
+        </div>
+
+        <div class="modal-form-group">
+          <label for="emailBody">Message</label>
+          <textarea id="emailBody" rows="10" placeholder="Write your email message here..." style="font-family: inherit;"></textarea>
+          <p style="font-size: 0.8em; color: #666; margin-top: 5px;">You can use basic HTML formatting: &lt;b&gt;bold&lt;/b&gt;, &lt;i&gt;italic&lt;/i&gt;, &lt;a href="..."&gt;links&lt;/a&gt;</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="modal-form-group">
+            <label for="emailCategory">Category</label>
+            <select id="emailCategory">
+              <option value="announcement">Announcement</option>
+              <option value="newsletter">Newsletter</option>
+              <option value="alert">Alert</option>
+              <option value="reminder">Reminder</option>
+              <option value="maintenance">Maintenance</option>
+            </select>
+          </div>
+          <div class="modal-form-group">
+            <label for="emailPriority">Priority</label>
+            <select id="emailPriority">
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="previewEmailBtn">
+          <i class="fas fa-eye"></i> Preview
+        </button>
+        <button class="btn btn-primary" id="sendBulkEmailBtn" disabled>
+          <i class="fas fa-paper-plane"></i> Send Email
+        </button>
+      </div>
+
+      <div id="emailSendStatus" style="margin-top: 15px; display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Email History Modal -->
+  <div id="emailHistoryModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 900px;">
+      <button class="modal-close-button" id="closeEmailHistoryModal">&times;</button>
+      <h2><i class="fas fa-history"></i> Email Campaign History</h2>
+
+      <div id="emailCampaignsList" style="max-height: 60vh; overflow-y: auto;">
+        <p style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Loading campaigns...</p>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/admin-dashboard.js"></script>
+  <script src="/js/admin-bulk-email.js"></script>
+  <script src="/js/guided-tour.js"></script>
   <script src="/js/sessionManager.js"></script>
 </body>
 </html>
