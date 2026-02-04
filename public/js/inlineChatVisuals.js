@@ -16,7 +16,79 @@ class InlineChatVisuals {
     constructor() {
         this.visualCounter = 0;
         this.addStyles();
+        this.setupModal();
         console.log('✅ InlineChatVisuals loaded - Interactive chat visuals ready!');
+    }
+
+    /**
+     * Setup modal for expanded visual view (iMessage-style)
+     */
+    setupModal() {
+        if (document.getElementById('icv-modal')) return;
+
+        const modalHTML = `
+        <div id="icv-modal" class="icv-modal" onclick="window.inlineChatVisuals.closeModal(event)">
+            <div class="icv-modal-content" onclick="event.stopPropagation()">
+                <button class="icv-modal-close" onclick="window.inlineChatVisuals.closeModal()">&times;</button>
+                <div id="icv-modal-body" class="icv-modal-body"></div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    /**
+     * Expand a visual into the modal for interaction
+     */
+    expandVisual(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const modal = document.getElementById('icv-modal');
+        const modalBody = document.getElementById('icv-modal-body');
+        if (!modal || !modalBody) return;
+
+        // Clone the container content for the modal
+        const clone = container.cloneNode(true);
+        clone.classList.remove('icv-collapsed');
+        clone.classList.add('icv-expanded');
+        clone.removeAttribute('onclick');
+        clone.id = containerId + '-modal';
+
+        // Remove the expand hint from the clone
+        const hint = clone.querySelector('.icv-expand-hint');
+        if (hint) hint.remove();
+
+        modalBody.innerHTML = '';
+        modalBody.appendChild(clone);
+        modal.classList.add('icv-modal-open');
+        document.body.style.overflow = 'hidden';
+
+        // Re-render graphs in modal if needed
+        const graphEl = clone.querySelector('.icv-graph');
+        if (graphEl && graphEl.dataset.config) {
+            graphEl.id = containerId + '-modal-graph';
+            setTimeout(() => this.renderGraph(graphEl.id), 100);
+        }
+
+        // Re-render slider graphs if needed
+        const sliderGraphEl = clone.querySelector('.icv-slider-graph');
+        if (sliderGraphEl && sliderGraphEl.dataset.config) {
+            sliderGraphEl.id = containerId + '-modal-slider';
+            setTimeout(() => this.renderSliderGraph(sliderGraphEl.id), 100);
+        }
+    }
+
+    /**
+     * Close the modal
+     */
+    closeModal(event) {
+        if (event && event.target && !event.target.classList.contains('icv-modal')) return;
+        const modal = document.getElementById('icv-modal');
+        if (modal) {
+            modal.classList.remove('icv-modal-open');
+            document.body.style.overflow = '';
+        }
     }
 
     /**
@@ -138,13 +210,17 @@ class InlineChatVisuals {
         }).replace(/"/g, '&quot;');
 
         return `
-        <div class="icv-container icv-graph-container" id="${id}-wrapper">
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-graph" id="${id}" data-config="${graphConfig}"></div>
             <div class="icv-controls">
-                <button class="icv-btn icv-zoom-in" onclick="window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
-                <button class="icv-btn icv-zoom-out" onclick="window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
-                <button class="icv-btn icv-reset" onclick="window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
             </div>
         </div>
         `;
@@ -695,7 +771,11 @@ class InlineChatVisuals {
         });
 
         return `
-        <div class="icv-container icv-slider-container" id="${id}-wrapper" data-config="${sliderConfig}">
+        <div class="icv-container icv-slider-container icv-collapsed" id="${id}-wrapper" data-config="${sliderConfig}" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-slider-graph" id="${id}"></div>
             <div class="icv-slider-controls">${slidersHtml}</div>
@@ -1630,6 +1710,132 @@ class InlineChatVisuals {
                 padding: 10px;
                 border-radius: 8px;
                 font-size: 13px;
+            }
+
+            /* Collapsed thumbnail state (iMessage-style) */
+            .icv-collapsed {
+                max-width: 200px;
+                max-height: 150px;
+                overflow: hidden;
+                cursor: pointer;
+                position: relative;
+                padding: 12px;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .icv-collapsed:hover {
+                transform: scale(1.02);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            }
+
+            .icv-collapsed:active {
+                transform: scale(0.98);
+            }
+
+            .icv-collapsed .icv-graph,
+            .icv-collapsed .icv-slider-graph {
+                min-height: 100px !important;
+                max-height: 100px !important;
+                pointer-events: none;
+                transform: scale(0.6);
+                transform-origin: top left;
+            }
+
+            .icv-collapsed .icv-controls,
+            .icv-collapsed .icv-slider-controls,
+            .icv-collapsed .icv-slider-equation {
+                display: none;
+            }
+
+            .icv-collapsed .icv-title {
+                font-size: 12px;
+                margin-bottom: 8px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .icv-expand-hint {
+                position: absolute;
+                bottom: 8px;
+                right: 8px;
+                background: rgba(0,0,0,0.6);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 6px;
+                font-size: 11px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                z-index: 10;
+                backdrop-filter: blur(4px);
+            }
+
+            .icv-expand-icon {
+                font-size: 14px;
+            }
+
+            .icv-expanded .icv-expand-hint {
+                display: none;
+            }
+
+            /* Modal styles */
+            .icv-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.85);
+                z-index: 10000;
+                justify-content: center;
+                align-items: center;
+                backdrop-filter: blur(8px);
+            }
+
+            .icv-modal-open {
+                display: flex;
+            }
+
+            .icv-modal-content {
+                position: relative;
+                max-width: 90vw;
+                max-height: 90vh;
+                overflow: auto;
+            }
+
+            .icv-modal-body {
+                background: transparent;
+            }
+
+            .icv-modal-body .icv-container {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .icv-modal-body .icv-graph,
+            .icv-modal-body .icv-slider-graph {
+                min-height: 300px !important;
+            }
+
+            .icv-modal-close {
+                position: absolute;
+                top: -45px;
+                right: 0;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 32px;
+                cursor: pointer;
+                padding: 8px;
+                line-height: 1;
+                opacity: 0.8;
+                transition: opacity 0.2s;
+            }
+
+            .icv-modal-close:hover {
+                opacity: 1;
             }
 
             /* Graph Container */

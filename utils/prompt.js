@@ -554,6 +554,18 @@ ${preferredLanguage === 'Arabic' ? `- Respond PRIMARILY in Arabic (العربي�
 - Use Arabic mathematical terminology
 - You may occasionally use English for specific math terms if clearer
 - Remember Arabic reads right-to-left` : ''}
+${preferredLanguage === 'Somali' ? `- Respond PRIMARILY in Somali (Soomaali)
+- Explain all math concepts in Somali
+- Use Somali mathematical terminology
+- You may occasionally use English for specific math terms if clearer` : ''}
+${preferredLanguage === 'French' ? `- Respond PRIMARILY in French (Français)
+- Explain all math concepts in French
+- Use French mathematical terminology (équation, variable, fraction, etc.)
+- You may occasionally use English for specific math terms if clearer` : ''}
+${preferredLanguage === 'German' ? `- Respond PRIMARILY in German (Deutsch)
+- Explain all math concepts in German
+- Use German mathematical terminology (Gleichung, Variable, Bruch, etc.)
+- You may occasionally use English for specific math terms if clearer` : ''}
 
 **Balance:** Maintain your personality while respecting the language preference. Your teaching style should shine through regardless of language.
 ` : ''}
