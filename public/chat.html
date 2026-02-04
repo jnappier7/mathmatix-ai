@@ -147,16 +147,27 @@
       </button>
 
       <div id="sidebar-sessions" class="sidebar-sessions-list">
+        <!-- Session Search -->
+        <div class="session-search-container">
+          <i class="fas fa-search session-search-icon"></i>
+          <input type="text" id="session-search-input" class="session-search-input" placeholder="Search sessions...">
+        </div>
+
         <button id="new-topic-btn" class="sidebar-tool-btn special">
           <i class="fas fa-plus-circle"></i>
-          <span>New Topic</span>
+          <span>New Topic Session</span>
         </button>
         <div id="sessions-list">
           <!-- Sessions will be loaded here dynamically -->
-          <button class="session-item active">
-            <span class="session-emoji">💬</span>
-            <span class="session-name">General Chat</span>
-          </button>
+          <div class="session-item active">
+            <div class="session-main">
+              <span class="session-emoji">💬</span>
+              <div class="session-info">
+                <span class="session-name">General Chat</span>
+                <span class="session-preview">Start a new conversation</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

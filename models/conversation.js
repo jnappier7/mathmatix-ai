@@ -77,6 +77,15 @@ const conversationSchema = new Schema({
         type: String,
         default: null
     },
+    // Session management enhancements
+    isPinned: {
+        type: Boolean,
+        default: false
+    },
+    customName: {
+        type: String,
+        default: null // User-defined name (overrides auto-generated name)
+    },
     messages: {
         type: [messageSchema],
         default: []
