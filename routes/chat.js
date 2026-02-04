@@ -28,7 +28,7 @@ const { needsAssessment } = require('../services/chatService');
 
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
-const { buildSystemPrompt: buildCompressedPrompt, determineTier } = require('../utils/promptCompressor');
+const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
@@ -671,12 +671,19 @@ router.post('/', isAuthenticated, async (req, res) => {
             const rawAmount = parseInt(coreBehaviorMatch[1], 10);
             const behavior = coreBehaviorMatch[2].trim();
 
-            // Security: Cap at max tier 3 amount
-            xpBreakdown.tier3 = Math.min(rawAmount, xpLadder.maxTier3PerTurn);
+            // Calculate new user XP boost (fades over time based on level)
+            const xpBoostInfo = calculateXpBoostFactor(user.level);
+            const boostedAmount = Math.round(rawAmount * xpBoostInfo.factor);
+
+            // Security: Cap at max tier 3 amount (cap is also boosted for new users)
+            const maxAllowed = Math.round(xpLadder.maxTier3PerTurn * xpBoostInfo.factor);
+            xpBreakdown.tier3 = Math.min(boostedAmount, maxAllowed);
             xpBreakdown.tier3Behavior = behavior;
+            xpBreakdown.tier3Boosted = xpBoostInfo.factor > 1;
             aiResponseText = aiResponseText.replace(coreBehaviorMatch[0], '').trim();
 
-            console.log(`🎖️ [XP Tier 3] Core Behavior: +${xpBreakdown.tier3} XP for "${behavior}"`);
+            const boostLabel = xpBoostInfo.factor > 1 ? ` (${xpBoostInfo.factor}x new user boost!)` : '';
+            console.log(`🎖️ [XP Tier 3] Core Behavior: +${xpBreakdown.tier3} XP for "${behavior}"${boostLabel}`);
         }
 
         // LEGACY: Support old <AWARD_XP> tag (treat as Tier 2 for backward compatibility)
