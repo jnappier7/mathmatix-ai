@@ -328,6 +328,10 @@
           <i class="fas fa-chart-line"></i>
           <div>View Progress</div>
         </a>
+        <a href="/assessment.html" class="quick-action-btn" id="placement-test-btn">
+          <i class="fas fa-clipboard-check"></i>
+          <div id="placement-btn-text">Take Placement Test</div>
+        </a>
         <a href="#" class="quick-action-btn" onclick="location.href='/chat.html'; return false;">
           <i class="fas fa-book"></i>
           <div>Get Homework Help</div>
@@ -383,8 +387,12 @@
           document.getElementById('no-assessment-card').style.display = 'block';
           document.getElementById('welcome-subtitle').textContent =
             'Let\'s find out what you know and build your learning path!';
+          // Keep placement test button visible with original text
           return;
         }
+
+        // Assessment completed - update button text to "Retake"
+        document.getElementById('placement-btn-text').textContent = 'Retake Placement Test';
 
         // Has completed assessment - show progress cards
         if (data.currentLearning) {

@@ -298,9 +298,9 @@ function determineNextAction(session) {
   // 1. High confidence convergence (IDEAL STOP)
   if (session.converged && session.questionCount >= session.minQuestions) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'converged',
-      message: 'We\'ve found your level with high confidence! Let\'s explore a bit deeper.',
+      message: 'Assessment complete! We\'ve found your level with high confidence.',
       theta: session.theta,
       confidence: session.confidence,
       standardError: session.standardError,
@@ -312,7 +312,7 @@ function determineNextAction(session) {
   // 2. Target questions reached with acceptable confidence
   if (session.questionCount >= session.targetQuestions && session.standardError <= session.seThresholdFallback) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'target-reached',
       message: 'Great progress! I have a good sense of your abilities.',
       theta: session.theta,
@@ -325,7 +325,7 @@ function determineNextAction(session) {
   // 3. Max questions reached (HARD STOP)
   if (session.questionCount >= session.maxQuestions) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'max-questions',
       message: 'Excellent work! I\'ve gathered enough information about your abilities.',
       theta: session.theta,
@@ -338,9 +338,9 @@ function determineNextAction(session) {
   // 4. Plateau detected (EFFICIENCY STOP)
   if (session.plateaued && session.questionCount >= session.minQuestions) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'plateaued',
-      message: 'I see where your frontier is. Let\'s dig into that.',
+      message: 'Assessment complete! We\'ve identified your current level.',
       theta: session.theta,
       frontier: session.frontier,
       standardError: session.standardError
@@ -352,9 +352,9 @@ function determineNextAction(session) {
       session.standardError <= session.seThresholdStringent &&
       session.responses.slice(-5).every(r => r.correct)) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'early-mastery',
-      message: 'Impressive! You\'re clearly advanced. Let\'s confirm your level.',
+      message: 'Impressive! You\'re clearly advanced. Assessment complete!',
       theta: session.theta,
       confidence: session.confidence,
       standardError: session.standardError,
@@ -374,9 +374,9 @@ function determineNextAction(session) {
     // Advanced student: 5 correct in a row at high difficulty
     if (allCorrect && avgDifficulty > 1.0 && session.theta > 1.5 && session.standardError <= 0.35) {
       return {
-        action: 'interview',
+        action: 'complete',
         reason: 'very-advanced',
-        message: 'Exceptional! You\'re performing at an advanced level. Let\'s verify your mastery.',
+        message: 'Exceptional! You\'re performing at an advanced level. Assessment complete!',
         theta: session.theta,
         confidence: session.confidence,
         standardError: session.standardError,
@@ -387,9 +387,9 @@ function determineNextAction(session) {
     // Struggling student: 5 incorrect in a row at low difficulty
     if (allIncorrect && avgDifficulty < -0.5 && session.theta < -1.5 && session.standardError <= 0.35) {
       return {
-        action: 'interview',
+        action: 'complete',
         reason: 'foundational-needs',
-        message: 'I have a clear sense of where to start. Let\'s explore the foundations together.',
+        message: 'Assessment complete! We have a clear sense of where to focus.',
         theta: session.theta,
         confidence: session.confidence,
         standardError: session.standardError,
@@ -517,7 +517,7 @@ function generateReport(session) {
     frontierSkills: skillLevelEstimates.frontier,
 
     // Next steps
-    recommendedAction: session.phase === 'interview' ? 'interview' : 'complete'
+    recommendedAction: 'complete'
   };
 }
 

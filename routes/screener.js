@@ -252,61 +252,40 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       }
     }
 
-    // Try to find existing problem in database
-    // CTO REVIEW FIX: Use LRU strategy - only exclude last N problems (not all history)
+    // SIMPLIFIED PROBLEM SELECTION
+    // Strategy: Database first, generate if needed, single fallback
     const recentProblemIds = session.responses
-      .slice(-LRU_EXCLUSION_WINDOW)  // Take only the last 100 responses
+      .slice(-LRU_EXCLUSION_WINDOW)
       .map(r => r.problemId);
 
     let problem = await Problem.findNearDifficulty(
       selectedSkillId,
       targetDifficulty,
-      recentProblemIds  // Bounded array size (max 100 items) instead of O(N)
+      recentProblemIds
     );
 
-    // If no problem found at target difficulty, try to generate or find any problem for this skill
+    // Fallback: Generate or find any problem
     if (!problem) {
-      console.log(`[Screener] No problem found at difficulty ${targetDifficulty.toFixed(2)} for ${selectedSkillId}`);
-
+      // Try generation first (templates are optimized for target difficulty)
       try {
-        // Try to generate a problem
-        console.log(`[Screener] Attempting to generate problem...`);
         const generated = generateProblem(selectedSkillId, { difficulty: targetDifficulty });
         problem = new Problem(generated);
         await problem.save();
-        console.log(`[Screener] ✓ Generated and saved problem`);
-      } catch (genError) {
-        // Generation failed (no template) - find ANY existing problem for this skill
-        console.log(`[Screener] Generation failed: ${genError.message}`);
-        console.log(`[Screener] Falling back to ANY problem for skill ${selectedSkillId}`);
-
+      } catch {
+        // No template - find any existing problem for this skill
         problem = await Problem.findOne({
           skillId: selectedSkillId,
-          isActive: true,
-          problemId: { $nin: recentProblemIds }
+          isActive: true
         });
+      }
 
-        if (!problem) {
-          // Even fallback failed - try without excluding recent problems
-          console.log(`[Screener] No unused problems found, allowing repeats...`);
-          problem = await Problem.findOne({
-            skillId: selectedSkillId,
-            isActive: true
-          });
-        }
-
-        if (!problem) {
-          // Absolute last resort - throw error
-          throw new Error(`No problems available for skill: ${selectedSkillId}`);
-        }
-
-        console.log(`[Screener] ✓ Found fallback problem at difficulty ${problem.difficulty || 2}`);
+      if (!problem) {
+        throw new Error(`No problems available for skill: ${selectedSkillId}`);
       }
     }
 
-    // AUTO-FIX: If problem has options but wrong answerType, fix it
-    if (problem.options && problem.options.length > 0 && problem.answerType !== 'multiple-choice') {
-      console.log(`[Screener Fix] Problem ${problem.problemId} has options but answerType="${problem.answerType}". Auto-fixing to "multiple-choice"`);
+    // Fix mismatched answer types
+    if (problem.options?.length > 0 && problem.answerType !== 'multiple-choice') {
       problem.answerType = 'multiple-choice';
       await problem.save();
     }
@@ -460,28 +439,29 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
         // DO NOT send: feedback text, theta, standardError (student shouldn't see these)
       });
 
-    } else if (result.action === 'interview') {
-      // Move to interview phase
-      session.phase = 'interview';
+    } else if (result.action === 'interview' || result.action === 'complete') {
+      // SIMPLIFIED: Skip interview phase, go directly to complete
+      // Interview phase was removed - it added latency and cost without clear diagnostic value
+      session.phase = 'complete';
       session.endTime = Date.now();
 
       // Generate report
-      const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
+      const report = generateReport(session.toObject());
 
-      // Identify skills to probe
-      const interviewSkills = identifyInterviewSkills(session.toObject(), []);
+      // CTO REVIEW FIX: Persist session state
+      await session.save();
 
       res.json({
-        nextAction: 'interview',
+        nextAction: 'complete',
         reason: result.reason,
-        message: result.message,
+        message: result.message || 'Assessment complete!',
         report: {
-          // Students see: score percentage only
+          // Students see: score percentage and time only
           accuracy: report.accuracy,
-          questionsAnswered: report.questionsAnswered
-          // Teachers/admin see in separate endpoint: theta, percentile, confidence, SE
-        },
-        interviewSkills
+          questionsAnswered: report.questionsAnswered,
+          duration: report.duration
+          // Teachers/admin see full report via /admin/student-detail endpoint
+        }
       });
 
     } else {

@@ -382,12 +382,9 @@ function determineNextAction(session) {
   const { theta, standardError, questionCount, frontier } = session;
 
   if (convergence.canStop) {
-    // Decide between interview and complete
-    const shouldInterview = frontier?.firstFailureTheta != null ||
-                           convergence.reason === 'plateau-detected';
-
+    // SIMPLIFIED: Always go to complete (interview phase removed)
     return {
-      action: shouldInterview ? 'interview' : 'complete',
+      action: 'complete',
       reason: convergence.reason,
       confidence: convergence.confidence,
       message: getActionMessage(convergence.reason),
