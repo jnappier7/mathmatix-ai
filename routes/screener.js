@@ -20,9 +20,18 @@ const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const ScreenerSession = require('../models/screenerSession'); // CTO REVIEW FIX: Persistent session storage
 const { initializeSession, processResponse, generateReport, identifyInterviewSkills, calculateJumpSize } = require('../utils/adaptiveScreener');
-const { generateProblem } = require('../utils/problemGenerator');
+const { generateProblem, TEMPLATES } = require('../utils/problemGenerator');
 const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 const { generateInterviewQuestions, evaluateResponse } = require('../utils/dynamicInterviewGenerator');
+
+// NEW: Import refactored CAT modules
+const { gradeToTheta, SESSION_DEFAULTS, getBroadCategory, getCategoryDifficulty } = require('../utils/catConfig');
+const { selectSkill, formatScoringLog } = require('../utils/skillSelector');
+const { calculateProgress } = require('../utils/catConvergence');
+const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
+
+// Warm up cache on module load
+warmupCache().catch(err => console.error('[Screener] Cache warmup failed:', err));
 
 /**
  * CTO REVIEW FIX: LRU (Least Recently Used) Strategy for Problem Exclusion
@@ -30,182 +39,38 @@ const { generateInterviewQuestions, evaluateResponse } = require('../utils/dynam
  * PROBLEM: Using $nin with all historical problemIds causes O(N) database queries
  * as students answer 1000+ problems over a school year.
  *
- * SOLUTION: Only exclude the LAST 150 problems (LRU window). This:
+ * SOLUTION: Only exclude the LAST N problems (LRU window). This:
  * - Prevents immediate repeats (boring for students)
  * - Keeps database query size bounded to O(1) constant
  * - Allows old problems to resurface for spaced repetition (pedagogically sound)
- * - Increased from 100 to 150 to improve variety with larger item bank
+ *
+ * Now uses centralized config from catConfig.js
  */
-const LRU_EXCLUSION_WINDOW = 150;
+const LRU_EXCLUSION_WINDOW = SESSION_DEFAULTS.lruExclusionWindow;
 
 /**
  * Map grade level AND math course to starting theta (ability estimate)
  *
- * Uses a Bayesian prior approach: start students slightly below their grade level
- * to build confidence with early success, then adapt upward.
- *
- * BETA FEEDBACK FIX: Now considers specific math courses (like "Algebra 2")
- * to provide more accurate starting difficulty for high school students.
+ * DEPRECATED: Now uses centralized gradeToTheta from catConfig.js
+ * This local function is kept for backwards compatibility during transition.
  *
  * @param {String|Number} grade - Student's grade level (K-12+)
- * @param {String} mathCourse - Optional specific math course (e.g., 'Algebra 2', 'Pre-Calculus')
+ * @param {String} mathCourse - Optional specific math course
  * @returns {Number} Starting theta estimate
  */
-function gradeToTheta(grade, mathCourse = null) {
-  // First, check if mathCourse provides a more specific starting point
-  // This addresses feedback that students in Algebra 2 were getting 3rd grade problems
-  if (mathCourse) {
-    const courseLower = mathCourse.toLowerCase();
-
-    // Map specific courses to appropriate theta values
-    // Higher-level courses get higher starting theta
-    if (courseLower.includes('calculus') || courseLower.includes('calc')) {
-      console.log(`[Screener] Course "${mathCourse}" → Using advanced theta (2.5)`);
-      return 2.5;  // Calculus: very advanced
-    }
-    if (courseLower.includes('pre-calc') || courseLower.includes('precalc') || courseLower.includes('pre calc')) {
-      console.log(`[Screener] Course "${mathCourse}" → Using pre-calc theta (2.0)`);
-      return 2.0;  // Pre-Calculus: advanced
-    }
-    if (courseLower.includes('trigonometry') || courseLower.includes('trig')) {
-      console.log(`[Screener] Course "${mathCourse}" → Using trig theta (1.8)`);
-      return 1.8;  // Trigonometry: advanced
-    }
-    if (courseLower.includes('algebra 2') || courseLower.includes('algebra ii')) {
-      console.log(`[Screener] Course "${mathCourse}" → Using Algebra 2 theta (1.5)`);
-      return 1.5;  // Algebra 2: upper high school
-    }
-    if (courseLower.includes('geometry')) {
-      console.log(`[Screener] Course "${mathCourse}" → Using Geometry theta (1.0)`);
-      return 1.0;  // Geometry: mid high school
-    }
-    if (courseLower.includes('algebra 1') || courseLower.includes('algebra i') ||
-        (courseLower.includes('algebra') && !courseLower.includes('pre'))) {
-      console.log(`[Screener] Course "${mathCourse}" → Using Algebra 1 theta (0.5)`);
-      return 0.5;  // Algebra 1: early high school
-    }
-    if (courseLower.includes('pre-algebra') || courseLower.includes('prealgebra') || courseLower.includes('pre algebra')) {
-      console.log(`[Screener] Course "${mathCourse}" → Using Pre-Algebra theta (0.0)`);
-      return 0.0;  // Pre-Algebra: middle school
-    }
-  }
-
-  // Fall back to grade-based theta if no specific course
-  // Handle null/undefined
-  if (!grade) return 0;
-
-  // Parse grade (handle 'K', 'kindergarten', numbers, and college)
-  let g;
-  if (typeof grade === 'string') {
-    const lower = grade.toLowerCase();
-
-    // Handle special grade levels
-    if (lower === 'k' || lower.includes('kinder')) {
-      g = 0;
-    } else if (lower.includes('college') || lower.includes('university') ||
-               lower.includes('undergrad') || lower.includes('freshman') ||
-               lower.includes('sophomore') || lower.includes('junior') || lower.includes('senior')) {
-      g = 13;  // College = grade 13+
-    } else if (lower.includes('graduate') || lower.includes('masters') ||
-               lower.includes('phd') || lower.includes('doctoral')) {
-      g = 17;  // Graduate school
-    } else {
-      g = parseInt(grade, 10);
-    }
-  } else {
-    g = grade;
-  }
-
-  // Default to average if parsing failed
-  if (Number.isNaN(g)) return 0;
-
-  // Map grade to theta based on curriculum progression
-  // Conservative: Start one level below to build confidence
-  // θ scale: -3 (very basic) to +3 (very advanced), 0 = middle school average
-
-  if (g <= 0) return -2.5;  // Kindergarten: foundations
-  if (g <= 2) return -2.0;  // K-2: early elementary
-  if (g <= 5) return -1.0;  // 3-5: elementary mastery
-  if (g <= 8) return 0;     // 6-8: middle school
-  if (g <= 12) return 1.0;  // 9-12: high school
-  return 2.0;               // College+: advanced
-}
+// gradeToTheta is now imported from catConfig.js at the top of the file
 
 /**
  * Calculate adaptive progress with confidence metrics for UI visualization
  *
- * PHILOSOPHY: For adaptive tests, progress should reflect "how confident we are"
- * not "how many questions answered". This allows showing a confidence meter with
- * a visual indicator when confidence threshold is achieved.
- *
- * ALGORITHM:
- * - Phase 1 (Questions 1 to min): Linear progress 0% → 50% (building baseline)
- * - Phase 2 (After min): Confidence-based progress 50% → 100% (refining estimate)
- *
- * UI VISUALIZATION:
- * - Show progress bar with confidence meter
- * - Display marker/threshold line when confidenceAchieved = true
- * - Color-code: gathering (yellow) → confident (green)
+ * DEPRECATED: Now uses calculateProgress from catConvergence.js
  *
  * @param {Object} session - Current screener session
  * @returns {Object} Progress metrics including percentage and confidence state
  */
 function calculateAdaptiveProgress(session) {
-  const { questionCount, minQuestions, standardError, seThresholdAcceptable, seThresholdStringent } = session;
-
-  // Phase 1: Before minimum questions, show linear progress toward 50%
-  let percentComplete;
-  if (questionCount < minQuestions) {
-    percentComplete = Math.round((questionCount / minQuestions) * 50);
-  } else {
-    // Phase 2: After minimum, show confidence-based progress from 50% to 100%
-    const startingSE = 1.0;  // Typical starting SE after min questions
-    const targetSE = seThresholdAcceptable;  // Target SE for completion (0.30)
-
-    // Clamp SE to reasonable range
-    const currentSE = Math.max(targetSE, Math.min(startingSE, standardError));
-
-    // Calculate how much confidence we've gained (inverse of SE reduction)
-    const confidenceGained = startingSE - currentSE;
-    const totalConfidenceNeeded = startingSE - targetSE;
-    const confidenceRatio = confidenceGained / totalConfidenceNeeded;
-
-    // Map confidence to 50%-100% range
-    const confidenceProgress = 50 + (confidenceRatio * 50);
-    percentComplete = Math.min(100, Math.round(confidenceProgress));
-  }
-
-  // Determine confidence level for UI styling
-  let confidenceLevel, confidenceAchieved, confidenceDescription;
-
-  if (questionCount < minQuestions) {
-    // Still gathering baseline
-    confidenceLevel = 'gathering';
-    confidenceAchieved = false;
-    confidenceDescription = 'Building baseline';
-  } else if (standardError <= seThresholdStringent) {
-    // High confidence achieved
-    confidenceLevel = 'high';
-    confidenceAchieved = true;
-    confidenceDescription = 'High confidence';
-  } else if (standardError <= seThresholdAcceptable) {
-    // Acceptable confidence achieved
-    confidenceLevel = 'medium';
-    confidenceAchieved = true;
-    confidenceDescription = 'Confident';
-  } else {
-    // Still refining estimate
-    confidenceLevel = 'low';
-    confidenceAchieved = false;
-    confidenceDescription = 'Refining estimate';
-  }
-
-  return {
-    percentComplete,
-    confidenceLevel,      // 'gathering' | 'low' | 'medium' | 'high'
-    confidenceAchieved,   // Boolean: true when SE <= acceptable threshold
-    confidenceDescription // Human-readable status
-  };
+  // Use centralized progress calculation from catConvergence
+  return calculateProgress(session);
 }
 
 /**
@@ -356,376 +221,35 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       console.log(`[Screener Jump] Q${session.questionCount}: ${wasCorrect ? 'CORRECT' : 'INCORRECT'} at d=${lastDifficulty.toFixed(2)} → jump ${jumpSize.toFixed(2)} → target ${targetDifficulty.toFixed(2)} (θ=${session.theta.toFixed(2)}, SE=${session.standardError.toFixed(2)})`);
     }
 
-    // ADAPTIVE SKILL SELECTION - Use FULL curriculum from database (not hardcoded!)
-    // Query all skills from database with estimated difficulty ranges
-    const allSkills = await Skill.find({}).select('skillId name category irtDifficulty').lean();
+    // ADAPTIVE SKILL SELECTION - Use new modular skill selection system
+    // Get cached skill data for efficient selection
+    const { skills: filteredSkills, templateDifficulties } = await getSkillSelectionData();
 
-    console.log(`[DEBUG] Queried ${allSkills.length} skills from database`);
-
-    // Filter to only include skills that have either:
-    // 1. Existing problems in the database
-    // 2. Problem generation templates
-    // BUG FIX: Extract actual skillId from each template, not the template keys
-    // Template keys (e.g., 'multi-step-equation') differ from skillIds (e.g., 'solving-multi-step-equations')
-    const { TEMPLATES } = require('../utils/problemGenerator');
-    const templateSkillIds = Object.values(TEMPLATES).map(t => t.skillId);
-
-    // Get list of skill IDs that have problems in the database
-    const skillsWithProblems = await Problem.distinct('skillId');
-
-    // Combine: skills that have templates OR problems
-    const availableSkillIds = new Set([...templateSkillIds, ...skillsWithProblems]);
-
-    // DEBUG: Log available skill IDs for diagnosis
-    console.log(`[DEBUG] Template skillIds: [${templateSkillIds.join(', ')}]`);
-    console.log(`[DEBUG] Skills with problems in DB: [${skillsWithProblems.slice(0, 20).join(', ')}${skillsWithProblems.length > 20 ? '...' : ''}]`);
-    console.log(`[DEBUG] Target difficulty: ${targetDifficulty.toFixed(2)}`);
-
-    // Filter allSkills to only include available skills
-    const filteredSkills = allSkills.filter(skill => availableSkillIds.has(skill.skillId));
-
-    console.log(`[DEBUG] Filtered to ${filteredSkills.length} skills with problems or templates (${allSkills.length - filteredSkills.length} pattern-based skills skipped until problems are generated)`);
-
-    // Map specific skill categories to broad categories for diversity tracking
-    const categoryToBroadCategory = (category) => {
-      // Number operations (Elementary K-5)
-      if (['counting-cardinality', 'number-recognition', 'addition-subtraction', 'multiplication-division',
-           'place-value', 'arrays', 'decimals', 'fractions', 'number-system', 'operations'].includes(category)) {
-        return 'number-operations';
-      }
-      // Algebra (Middle School through High School)
-      if (['integers-rationals', 'scientific-notation', 'ratios-proportions', 'percent',
-           'expressions', 'equations', 'linear-equations', 'systems', 'inequalities',
-           'polynomials', 'factoring', 'quadratics', 'radicals', 'rational-expressions',
-           'complex-numbers', 'exponentials-logarithms', 'sequences-series', 'conics',
-           'functions', 'graphing', 'coordinate-plane'].includes(category)) {
-        return 'algebra';
-      }
-      // Geometry
-      if (['shapes-geometry', 'measurement', 'area-perimeter', 'volume', 'angles',
-           'pythagorean-theorem', 'transformations', 'geometry', 'trigonometry',
-           'identities', 'polar-coordinates', 'vectors', 'matrices'].includes(category)) {
-        return 'geometry';
-      }
-      // Advanced (Calculus, Statistics, etc.)
-      if (['limits', 'derivatives', 'integration', 'series-tests', 'taylor-series',
-           'parametric-polar', 'differential-equations', 'multivariable', 'vector-calculus',
-           'statistics', 'probability', 'advanced'].includes(category)) {
-        return 'advanced';
-      }
-      // Default
-      return 'number-operations';
-    };
-
-    // If no IRT difficulty in database, use category-based estimates
-    // Maps skill.category (from Skill model enum) to estimated IRT difficulty
-    // These categories match the enum in models/skill.js
-    const categoryDifficultyMap = {
-      // Elementary (K-5)
-      'counting-cardinality': -2.5,
-      'number-recognition': -2.3,
-      'addition-subtraction': -2.0,
-      'place-value': -1.8,
-      'multiplication-division': -1.5,
-      'shapes-geometry': -1.0,
-      'measurement': -0.8,
-      'time': -1.5,
-      'data': -0.5,
-      'money': -1.2,
-      'arrays': -1.5,
-
-      // Middle School (6-8)
-      'integers-rationals': -0.3,
-      'scientific-notation': 0.5,
-      'area-perimeter': 0.0,
-      'volume': 0.3,
-      'angles': 0.2,
-      'pythagorean-theorem': 0.7,
-      'transformations': 0.8,
-      'scatter-plots': 0.6,
-
-      // High School & College Algebra (these are the actual category enum values)
-      'number-system': -0.5,
-      'operations': -0.3,
-      'decimals': -0.8,
-      'fractions': -0.5,
-      'ratios-proportions': 0.2,
-      'percent': 0.0,
-      'expressions': 0.5,
-      'equations': 0.8,           // General equations category
-      'linear-equations': 1.0,    // Linear equations
-      'systems': 1.5,             // Systems of equations
-      'inequalities': 1.2,
-      'polynomials': 1.6,
-      'factoring': 1.4,
-      'quadratics': 1.8,
-      'radicals': 1.5,
-      'rational-expressions': 2.0,
-      'complex-numbers': 2.2,
-      'exponentials-logarithms': 2.0,
-      'sequences-series': 2.3,
-      'conics': 2.5,
-      'functions': 1.4,
-      'graphing': 1.0,
-      'coordinate-plane': 0.8,
-      'geometry': 1.2,
-
-      // Advanced (Precalculus through Calculus)
-      'trigonometry': 2.0,
-      'identities': 2.3,
-      'polar-coordinates': 2.5,
-      'vectors': 2.5,
-      'matrices': 2.3,
-      'limits': 2.8,
-      'derivatives': 3.0,
-      'integration': 3.2,
-      'series-tests': 3.3,
-      'taylor-series': 3.5,
-      'parametric-polar': 3.0,
-      'differential-equations': 3.5,
-      'multivariable': 3.5,
-      'vector-calculus': 3.5,
-      'statistics': 1.5,
-      'probability': 1.3,
-      'counting': 1.8,          // Permutations, combinations (Algebra 2)
-      'number-theory': 1.5,     // Divisibility, primes
-      'word-problems': 0.8,     // Applied problems
-      'rates': 0.5,             // Rate problems
-      'conversions': 0.3,       // Unit conversions
-
-      // Additional categories from curriculum data
-      'expressions-equations': 0.8,  // Combo category
-      'exponential': 2.0,            // Exponential functions
-      'rational': 2.0,               // Rational expressions/equations
-      'congruence': 1.3,             // Geometry congruence
-      'similarity': 1.3,             // Geometry similarity
-      'sequences': 2.0,              // Sequences (not series)
-      'proofs': 1.8,                 // Geometric proofs
-      'circles': 1.4,                // Circle properties
-      'triangles': 1.0,              // Triangle properties
-      'parallel-perpendicular': 1.0, // Lines geometry
-      'surface-area': 0.8,           // 3D surface area
-      'right-triangles': 1.2,        // Right triangle trig
-      'coordinate-geometry': 1.2,    // Coordinate plane geometry
-
-      // Additional categories from database audit
-      'integrals': 3.0,              // Definite/indefinite integrals
-      'estimation': -1.5,            // Estimating sums, checking reasonableness
-      'number-sense': -2.0,          // Number bonds, basic number relationships
-      'mental-math': -1.8,           // Make-ten, doubles, mental strategies
-      'linear-functions': 1.0,       // Slope concepts, graphing linear equations
-
-      'advanced': 2.5
-    };
-
-    // Build candidate skills with estimated difficulties
-    let candidateSkills = [];
-
-    // Build a map of skillId -> template baseDifficulty for more accurate difficulty estimates
-    const templateDifficultyMap = {};
-    for (const template of Object.values(TEMPLATES)) {
-      if (template.skillId && template.baseDifficulty !== undefined) {
-        templateDifficultyMap[template.skillId] = template.baseDifficulty;
-      }
-    }
-    console.log(`[DEBUG] Template difficulty map:`, templateDifficultyMap);
-
-    // Get count of actual problems for each skill (not just templates)
-    const problemCounts = await Problem.aggregate([
-      { $match: { isActive: true } },
-      { $group: { _id: '$skillId', count: { $sum: 1 } } }
-    ]);
-    const problemCountMap = new Map(problemCounts.map(p => [p._id, p.count]));
-
-    for (const skill of filteredSkills) {
-      // Note: Skills can have templates OR database problems (or both)
-      // We allow template-only skills since generateProblem() can create on-demand
-      const actualProblemCount = problemCountMap.get(skill.skillId) || 0;
-
-      // Use difficulty in priority order:
-      // 1. Skill's irtDifficulty (if non-zero, meaning explicitly calibrated)
-      // 2. Template's baseDifficulty (most accurate for template-based skills)
-      // 3. Category-based estimate (fallback)
-      let estimatedDifficulty;
-      if (skill.irtDifficulty && skill.irtDifficulty !== 0) {
-        estimatedDifficulty = skill.irtDifficulty;
-      } else if (templateDifficultyMap[skill.skillId] !== undefined) {
-        estimatedDifficulty = templateDifficultyMap[skill.skillId];
-      } else {
-        estimatedDifficulty = categoryDifficultyMap[skill.category] || 0;
-      }
-
-      // Count how many times this skill has been tested
-      const testCount = session.testedSkills.filter(s => s === skill.skillId).length;
-
-      // Calculate recency penalty (skills tested recently should be heavily penalized)
-      let recencyPenalty = 0;
-      const skillIndices = session.testedSkills
-        .map((s, idx) => s === skill.skillId ? idx : -1)
-        .filter(idx => idx >= 0);
-
-      if (skillIndices.length > 0) {
-        // Most recent test gets highest penalty
-        const mostRecentIndex = Math.max(...skillIndices);
-        const questionsSinceLastTest = session.testedSkills.length - mostRecentIndex;
-
-        // Exponential decay: recently tested skills get massive penalty
-        // Just tested (1 question ago) = 50 penalty, 2 ago = 25, 3 ago = 12.5, etc.
-        recencyPenalty = 50 * Math.pow(0.5, questionsSinceLastTest - 1);
-      }
-
-      // Calculate category balance penalty
-      const broadCategory = categoryToBroadCategory(skill.category);
-      const categoryTestCount = session.testedSkillCategories[broadCategory] || 0;
-      const categoryPenalty = categoryTestCount * 5; // 5 points per category test
-
-      // Calculate distance from target difficulty
-      const difficultyDistance = Math.abs(estimatedDifficulty - targetDifficulty);
-
-      // Scoring formula:
-      // - Difficulty match is most important (10x weight)
-      // - Recency penalty is severe for just-tested skills (exponential)
-      // - Category balancing encourages diversity (5x per category test)
-      // - Test count provides base repetition penalty (exponential: 2^testCount)
-      const score = (difficultyDistance * 10) +
-                    recencyPenalty +
-                    categoryPenalty +
-                    (Math.pow(2, testCount) - 1);  // Exponential: 0, 1, 3, 7, 15, 31...
-
-      candidateSkills.push({
-        skillId: skill.skillId,
-        difficulty: estimatedDifficulty,
-        category: skill.category,
-        broadCategory,
-        testCount,
-        recencyPenalty,
-        categoryPenalty,
-        difficultyDistance,
-        score
-      });
-    }
-
-    console.log(`[DEBUG] Built ${candidateSkills.length} candidate skills`);
+    console.log(`[Screener] Using ${filteredSkills.length} available skills from cache`);
     console.log(`[DEBUG] Target difficulty: ${targetDifficulty.toFixed(2)}`);
     console.log(`[DEBUG] Tested skills so far: [${session.testedSkills.join(', ')}]`);
     console.log(`[DEBUG] Category counts:`, session.testedSkillCategories);
 
-    // DEBUG: Show top 5 candidates by score (lower is better = closer to target difficulty)
-    const sortedByScore = [...candidateSkills].sort((a, b) => a.score - b.score);
-    const top5 = sortedByScore.slice(0, 5);
-    console.log(`[DEBUG] Top 5 skill candidates (by score, lower=better):`);
-    top5.forEach((s, i) => {
-      console.log(`  ${i+1}. ${s.skillId} (cat=${s.category}, d=${s.difficulty.toFixed(2)}, dist=${s.difficultyDistance.toFixed(2)}, score=${s.score.toFixed(1)})`);
+    // Use the new modular skill selection system
+    // This replaces 300+ lines of inline skill scoring, clustering, and balancing logic
+    const selectionResult = selectSkill(filteredSkills, session, targetDifficulty, {
+      templateDifficultyMap: templateDifficulties,
     });
 
-    // SKILL CLUSTERING: Group skills by difficulty bins to prevent wild jumps
-    // Test 2-3 skills at similar difficulty before moving to next level
-    const DIFFICULTY_BIN_SIZE = 1.4; // Skills within 1.4 difficulty are "similar level" (DOUBLED for more variety)
-    const MIN_SKILLS_PER_BIN = 2;     // Test at least 2 skills before jumping
+    const { selectedSkill, scoredCandidates, reason } = selectionResult;
+    const selectedSkillId = selectedSkill.skillId;
 
-    // Determine current difficulty bin (if we've tested any skills)
-    let currentBin = null;
-    if (session.responses.length > 0) {
-      const recentDifficulties = session.responses.slice(-3).map(r => r.difficulty);
-      const avgRecentDifficulty = recentDifficulties.reduce((a, b) => a + b, 0) / recentDifficulties.length;
-      currentBin = {
-        center: avgRecentDifficulty,
-        min: avgRecentDifficulty - DIFFICULTY_BIN_SIZE / 2,
-        max: avgRecentDifficulty + DIFFICULTY_BIN_SIZE / 2
-      };
-
-      // Count how many skills we've tested in this bin
-      const skillsInCurrentBin = session.responses.filter(r =>
-        r.difficulty >= currentBin.min && r.difficulty <= currentBin.max
-      ).length;
-
-      console.log(`[DEBUG] Current difficulty bin: [${currentBin.min.toFixed(2)}, ${currentBin.max.toFixed(2)}], tested ${skillsInCurrentBin} skills in bin`);
-
-      // If we've tested fewer than MIN_SKILLS_PER_BIN in current bin, prefer skills in this bin
-      if (skillsInCurrentBin < MIN_SKILLS_PER_BIN) {
-        const skillsInBin = candidateSkills.filter(s =>
-          s.difficulty >= currentBin.min && s.difficulty <= currentBin.max && s.testCount < 2
-        );
-
-        if (skillsInBin.length > 0) {
-          console.log(`[DEBUG] Clustering: Staying in current bin, ${skillsInBin.length} skills available (testCount < 2)`);
-          candidateSkills = skillsInBin; // Focus on current difficulty level
-        }
-      }
-    }
-
-    // Filter out skills tested 3+ times (ensure diversity)
-    const fresherSkills = candidateSkills.filter(s => s.testCount < 3);
-    console.log(`[DEBUG] After filtering (testCount < 3): ${fresherSkills.length} fresher skills`);
-
-    if (fresherSkills.length > 0) {
-      candidateSkills = fresherSkills;
-    }
-
-    // Sort by score (lower is better) and pick best match
-    candidateSkills.sort((a, b) => a.score - b.score);
-
-    // CONTENT BALANCING: When multiple skills have similar scores, prefer least-covered category
-    // This ensures balanced coverage across math domains (algebra, geometry, etc.)
-    if (candidateSkills.length > 1) {
-      const bestScore = candidateSkills[0].score;
-      const scoreThreshold = 2.0;  // Skills within 2 points are "similar enough"
-
-      // Find all skills with similar scores to the best
-      const similarSkills = candidateSkills.filter(s => s.score <= bestScore + scoreThreshold);
-
-      if (similarSkills.length > 1) {
-        // Find least-covered category
-        const categoryCounts = session.testedSkillCategories;
-        const leastCoveredCount = Math.min(...Object.values(categoryCounts));
-
-        // Prefer skills from least-covered categories
-        const balancedSkills = similarSkills.filter(s => {
-          const category = s.category || 'algebra';  // Default if missing
-          return categoryCounts[category] === leastCoveredCount;
-        });
-
-        if (balancedSkills.length > 0) {
-          // Replace candidates with balanced selection
-          candidateSkills = balancedSkills;
-          console.log(`[Content Balance] Selected from least-covered category (count=${leastCoveredCount}), ${balancedSkills.length} options`);
-        }
-      }
-    }
-
-    // BUGFIX: Declare selectedSkillId before use
-    let selectedSkillId;
-
-    if (candidateSkills.length === 0) {
-      console.error('[Screener] No candidate skills found! Using intelligent fallback.');
-
-      // Fallback: Rotate through different skill categories to maintain diversity
-      const fallbackSkillsByCategory = {
-        'number-operations': ['addition-subtraction', 'multiplication-division', 'fractions'],
-        'algebra': ['one-step-equations-addition', 'linear-equations', 'expressions'],
-        'geometry': ['shapes-geometry', 'area-perimeter', 'pythagorean-theorem'],
-        'advanced': ['quadratics', 'functions', 'limits']
-      };
-
-      // Find the least-tested category
-      let leastTestedCategory = 'algebra'; // default
-      let minCount = Infinity;
-      for (const [category, count] of Object.entries(session.testedSkillCategories)) {
-        if (count < minCount) {
-          minCount = count;
-          leastTestedCategory = category;
-        }
-      }
-
-      // Pick a skill from the least-tested category
-      const fallbackOptions = fallbackSkillsByCategory[leastTestedCategory] || fallbackSkillsByCategory['algebra'];
-      selectedSkillId = fallbackOptions[session.questionCount % fallbackOptions.length];
-
-      console.log(`[Screener Fallback] Using "${selectedSkillId}" from least-tested category "${leastTestedCategory}" (count=${minCount})`);
+    // Log selection results
+    if (reason === 'fallback') {
+      console.log(`[Screener Fallback] Using "${selectedSkillId}" - no optimal candidates found`);
     } else {
-      selectedSkillId = candidateSkills[0].skillId;
-      const selected = candidateSkills[0];
-      console.log(`[Screener Q${session.questionCount + 1}] Target d=${targetDifficulty.toFixed(2)} → "${selectedSkillId}" (d=${selected.difficulty.toFixed(2)}, Δ=${selected.difficultyDistance.toFixed(2)}, score=${selected.score.toFixed(1)} [diff=${(selected.difficultyDistance * 10).toFixed(1)} + recency=${selected.recencyPenalty.toFixed(1)} + cat=${selected.categoryPenalty.toFixed(1)} + tests=${(Math.pow(2, selected.testCount) - 1).toFixed(1)}])`);
+      console.log(`[Screener Q${session.questionCount + 1}] Target d=${targetDifficulty.toFixed(2)} → "${selectedSkillId}" (d=${selectedSkill.difficulty.toFixed(2)})`);
+      if (scoredCandidates.length > 0) {
+        console.log(`[DEBUG] Top candidates:`);
+        scoredCandidates.slice(0, 3).forEach((s, i) => {
+          console.log(`  ${i+1}. ${formatScoringLog(s)}`);
+        });
+      }
     }
 
     // Try to find existing problem in database
