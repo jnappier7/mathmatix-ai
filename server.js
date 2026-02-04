@@ -206,7 +206,8 @@ app.use(helmet({
         "https://api.anthropic.com", // Claude API
         "https://api.openai.com", // OpenAI API
         "https://api.mathpix.com", // Mathpix OCR
-        "https://api.elevenlabs.io" // ElevenLabs TTS
+        "https://api.elevenlabs.io", // ElevenLabs TTS
+        "https://cdn.jsdelivr.net" // CDN resources and source maps
       ],
       workerSrc: ["'self'", "blob:"], // Allow blob workers for confetti effects
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
