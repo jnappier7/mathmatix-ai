@@ -2446,17 +2446,45 @@ document.addEventListener("DOMContentLoaded", () => {
      * Display a queued message in the chat with a visual indicator
      */
     function appendQueuedMessage(text, messageId) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message user queued';
-        messageDiv.setAttribute('data-queue-id', messageId);
-        messageDiv.innerHTML = `
-            <div class="queued-indicator" style="font-size: 0.75em; color: #888; margin-bottom: 4px;">
-                Queued - will send shortly
-            </div>
-            <div class="message-content">${text}</div>
+        if (!chatBox) return;
+
+        // Create message container matching appendMessage structure
+        const messageContainer = document.createElement("div");
+        messageContainer.className = 'message-container user';
+        messageContainer.setAttribute('data-queue-id', messageId);
+
+        // Add user avatar (matching appendMessage logic)
+        if (currentUser) {
+            const avatar = document.createElement("div");
+            avatar.className = "message-avatar";
+
+            if (currentUser.avatar?.dicebearUrl) {
+                avatar.innerHTML = `<img src="${currentUser.avatar.dicebearUrl}" alt="My Avatar" />`;
+            } else if (currentUser.selectedAvatarId && window.AVATAR_CONFIG) {
+                const avatarConfig = window.AVATAR_CONFIG[currentUser.selectedAvatarId];
+                if (avatarConfig) {
+                    const avatarImage = avatarConfig.image || 'default-avatar.png';
+                    avatar.innerHTML = `<img src="/images/avatars/${avatarImage}" alt="${avatarConfig.name}" />`;
+                } else {
+                    avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
+                }
+            } else {
+                avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
+            }
+            messageContainer.appendChild(avatar);
+        }
+
+        // Create the message bubble
+        const bubble = document.createElement("div");
+        bubble.className = 'message user queued';
+        bubble.innerHTML = `
+            <div class="queued-indicator">Queued - will send shortly</div>
+            <span class="message-text">${text}</span>
         `;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        messageContainer.appendChild(bubble);
+        chatBox.appendChild(messageContainer);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     /**
