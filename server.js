@@ -123,6 +123,8 @@ const diagramRoutes = require('./routes/diagram');  // Diagram generation for vi
 const messagingRoutes = require('./routes/messaging');  // Teacher-parent messaging system
 const iepTemplatesRoutes = require('./routes/iepTemplates');  // IEP templates for teachers
 const impersonationRoutes = require('./routes/impersonation');  // User impersonation (student view)
+const announcementsRoutes = require('./routes/announcements');  // Teacher-to-student announcements
+const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // Impersonation middleware
@@ -396,6 +398,8 @@ app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (
 app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and bug reports for Alpha testing
 app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for alpha testing
 app.use('/api/messages', isAuthenticated, messagingRoutes); // Teacher-parent messaging system
+app.use('/api/announcements', isAuthenticated, announcementsRoutes); // Teacher-to-student announcements (IM style)
+app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes); // Admin bulk email campaigns
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
 app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
 
