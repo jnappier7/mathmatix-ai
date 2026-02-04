@@ -28,12 +28,196 @@ const { needsAssessment } = require('../services/chatService');
 
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
-const { buildSystemPrompt: buildCompressedPrompt, determineTier } = require('../utils/promptCompressor');
+const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
+
+/**
+ * Update daily quests and weekly challenges when a problem is answered
+ * This runs in the background and doesn't block the chat response
+ * @param {ObjectId} userId - The user's ID
+ * @param {boolean} wasCorrect - Whether the problem was answered correctly
+ * @param {string} topic - The current topic/skill being practiced
+ */
+async function updateQuestProgress(userId, wasCorrect, topic) {
+    try {
+        const user = await User.findById(userId);
+        if (!user) return;
+
+        // Helper to calculate streak
+        function calculateStreak(user) {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const lastPractice = user.dailyQuests?.lastPracticeDate
+                ? new Date(user.dailyQuests.lastPracticeDate) : null;
+            if (!lastPractice) return 1;
+            lastPractice.setHours(0, 0, 0, 0);
+            const daysDiff = Math.floor((now - lastPractice) / (1000 * 60 * 60 * 24));
+            if (daysDiff === 0) return user.dailyQuests?.currentStreak || 1;
+            if (daysDiff === 1) return (user.dailyQuests?.currentStreak || 0) + 1;
+            return 1; // Streak broken
+        }
+
+        // Helper to check if current week
+        function isCurrentWeek(date) {
+            if (!date) return false;
+            const d = new Date();
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            d.setDate(diff);
+            d.setHours(0, 0, 0, 0);
+            return new Date(date) >= d;
+        }
+
+        let questsCompleted = [];
+        let challengesCompleted = [];
+
+        // ============= DAILY QUESTS =============
+        if (user.dailyQuests && user.dailyQuests.quests && user.dailyQuests.quests.length > 0) {
+            // Update streak
+            const newStreak = calculateStreak(user);
+            user.dailyQuests.currentStreak = newStreak;
+            user.dailyQuests.lastPracticeDate = new Date();
+            if (newStreak > (user.dailyQuests.longestStreak || 0)) {
+                user.dailyQuests.longestStreak = newStreak;
+            }
+
+            if (!user.dailyQuests.todayProgress) {
+                user.dailyQuests.todayProgress = {};
+            }
+
+            user.dailyQuests.quests.forEach(quest => {
+                if (quest.completed) return;
+
+                let progressIncrease = 0;
+
+                switch (quest.target) {
+                    case 'problemsCorrect':
+                        if (wasCorrect) progressIncrease = 1;
+                        break;
+                    case 'dailyPractice':
+                        progressIncrease = 1; // Auto-complete streak keeper
+                        break;
+                    case 'consecutiveCorrect':
+                        if (!user.dailyQuests.todayProgress.consecutiveCorrect) {
+                            user.dailyQuests.todayProgress.consecutiveCorrect = 0;
+                        }
+                        if (wasCorrect) {
+                            user.dailyQuests.todayProgress.consecutiveCorrect++;
+                            quest.progress = Math.max(quest.progress || 0,
+                                user.dailyQuests.todayProgress.consecutiveCorrect);
+                        } else {
+                            user.dailyQuests.todayProgress.consecutiveCorrect = 0;
+                        }
+                        break;
+                    case 'skillsPracticed':
+                        if (topic) {
+                            if (!user.dailyQuests.todayProgress.skillsPracticed) {
+                                user.dailyQuests.todayProgress.skillsPracticed = [];
+                            }
+                            if (!user.dailyQuests.todayProgress.skillsPracticed.includes(topic)) {
+                                user.dailyQuests.todayProgress.skillsPracticed.push(topic);
+                            }
+                            quest.progress = user.dailyQuests.todayProgress.skillsPracticed.length;
+                        }
+                        break;
+                }
+
+                if (progressIncrease > 0 && quest.target !== 'consecutiveCorrect' && quest.target !== 'skillsPracticed') {
+                    quest.progress = Math.min((quest.progress || 0) + progressIncrease, quest.targetCount);
+                }
+
+                // Check if quest completed
+                if (quest.progress >= quest.targetCount && !quest.completed) {
+                    quest.completed = true;
+                    quest.completedAt = new Date();
+                    user.dailyQuests.totalQuestsCompleted = (user.dailyQuests.totalQuestsCompleted || 0) + 1;
+                    user.xp = (user.xp || 0) + quest.xpReward;
+                    questsCompleted.push(quest.name);
+                }
+            });
+
+            user.markModified('dailyQuests');
+        }
+
+        // ============= WEEKLY CHALLENGES =============
+        if (user.weeklyChallenges && user.weeklyChallenges.challenges &&
+            isCurrentWeek(user.weeklyChallenges.weekStartDate)) {
+
+            if (!user.weeklyChallenges.weeklyProgress) {
+                user.weeklyChallenges.weeklyProgress = {};
+            }
+
+            user.weeklyChallenges.challenges.forEach(challenge => {
+                if (challenge.completed) return;
+
+                let progressIncrease = 0;
+
+                switch (challenge.targetType) {
+                    case 'problemsSolved':
+                        if (wasCorrect) progressIncrease = 1;
+                        break;
+                    case 'weeklyAccuracy':
+                        if (!user.weeklyChallenges.weeklyProgress.totalProblems) {
+                            user.weeklyChallenges.weeklyProgress.totalProblems = 0;
+                            user.weeklyChallenges.weeklyProgress.correctProblems = 0;
+                        }
+                        user.weeklyChallenges.weeklyProgress.totalProblems++;
+                        if (wasCorrect) {
+                            user.weeklyChallenges.weeklyProgress.correctProblems++;
+                        }
+                        const accuracy = Math.round(
+                            (user.weeklyChallenges.weeklyProgress.correctProblems /
+                                user.weeklyChallenges.weeklyProgress.totalProblems) * 100
+                        );
+                        if (accuracy >= challenge.targetCount) {
+                            challenge.progress = challenge.targetCount;
+                        }
+                        break;
+                    case 'domainsPracticed':
+                        if (topic) {
+                            if (!user.weeklyChallenges.weeklyProgress.domainsPracticed) {
+                                user.weeklyChallenges.weeklyProgress.domainsPracticed = [];
+                            }
+                            if (!user.weeklyChallenges.weeklyProgress.domainsPracticed.includes(topic)) {
+                                user.weeklyChallenges.weeklyProgress.domainsPracticed.push(topic);
+                            }
+                            challenge.progress = user.weeklyChallenges.weeklyProgress.domainsPracticed.length;
+                        }
+                        break;
+                }
+
+                if (progressIncrease > 0 && challenge.targetType !== 'weeklyAccuracy' &&
+                    challenge.targetType !== 'domainsPracticed') {
+                    challenge.progress = Math.min((challenge.progress || 0) + progressIncrease, challenge.targetCount);
+                }
+
+                // Check if challenge completed
+                if (challenge.progress >= challenge.targetCount && !challenge.completed) {
+                    challenge.completed = true;
+                    challenge.completedAt = new Date();
+                    user.weeklyChallenges.completedChallengesAllTime =
+                        (user.weeklyChallenges.completedChallengesAllTime || 0) + 1;
+                    user.xp = (user.xp || 0) + challenge.xpReward;
+                    challengesCompleted.push(challenge.name);
+                }
+            });
+
+            user.markModified('weeklyChallenges');
+        }
+
+        await user.save();
+
+        if (questsCompleted.length > 0 || challengesCompleted.length > 0) {
+            console.log(`[Quest] User ${user.firstName} completed: Daily=[${questsCompleted.join(', ')}], Weekly=[${challengesCompleted.join(', ')}]`);
+        }
+    } catch (error) {
+        console.error('[Quest] Error updating progress:', error.message);
+    }
+}
 
 router.post('/', isAuthenticated, async (req, res) => {
     const { message, role, childId, responseTime, isGreeting } = req.body;
@@ -487,12 +671,19 @@ router.post('/', isAuthenticated, async (req, res) => {
             const rawAmount = parseInt(coreBehaviorMatch[1], 10);
             const behavior = coreBehaviorMatch[2].trim();
 
-            // Security: Cap at max tier 3 amount
-            xpBreakdown.tier3 = Math.min(rawAmount, xpLadder.maxTier3PerTurn);
+            // Calculate new user XP boost (fades over time based on level)
+            const xpBoostInfo = calculateXpBoostFactor(user.level);
+            const boostedAmount = Math.round(rawAmount * xpBoostInfo.factor);
+
+            // Security: Cap at max tier 3 amount (cap is also boosted for new users)
+            const maxAllowed = Math.round(xpLadder.maxTier3PerTurn * xpBoostInfo.factor);
+            xpBreakdown.tier3 = Math.min(boostedAmount, maxAllowed);
             xpBreakdown.tier3Behavior = behavior;
+            xpBreakdown.tier3Boosted = xpBoostInfo.factor > 1;
             aiResponseText = aiResponseText.replace(coreBehaviorMatch[0], '').trim();
 
-            console.log(`🎖️ [XP Tier 3] Core Behavior: +${xpBreakdown.tier3} XP for "${behavior}"`);
+            const boostLabel = xpBoostInfo.factor > 1 ? ` (${xpBoostInfo.factor}x new user boost!)` : '';
+            console.log(`🎖️ [XP Tier 3] Core Behavior: +${xpBreakdown.tier3} XP for "${behavior}"${boostLabel}`);
         }
 
         // LEGACY: Support old <AWARD_XP> tag (treat as Tier 2 for backward compatibility)
@@ -874,6 +1065,16 @@ router.post('/', isAuthenticated, async (req, res) => {
 
         await user.save();
 
+        // =====================================================
+        // QUEST SYSTEM INTEGRATION: Update daily/weekly progress
+        // =====================================================
+        // Fire-and-forget: Don't block chat response for quest updates
+        if (problemAnswered) {
+            updateQuestProgress(user._id, wasCorrect, activeConversation.currentTopic).catch(err => {
+                console.error('[Quest] Failed to update quest progress:', err.message);
+            });
+        }
+
         const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
         const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
 
@@ -1159,6 +1360,19 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         // Initialize tracking fields if they don't exist
         if (!user.totalActiveSeconds) user.totalActiveSeconds = (user.totalActiveTutoringMinutes || 0) * 60;
         if (!user.weeklyActiveSeconds) user.weeklyActiveSeconds = (user.weeklyActiveTutoringMinutes || 0) * 60;
+
+        // WEEKLY RESET: Check if we need to reset weekly counters
+        // Reset occurs if lastWeeklyReset was more than 7 days ago
+        const now = new Date();
+        const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+        const daysSinceReset = (now - lastReset) / (1000 * 60 * 60 * 24);
+
+        if (daysSinceReset >= 7) {
+            console.log(`[Track-Time] Weekly reset for user ${userId}: ${user.weeklyActiveTutoringMinutes || 0} minutes -> 0`);
+            user.weeklyActiveSeconds = 0;
+            user.weeklyActiveTutoringMinutes = 0;
+            user.lastWeeklyReset = now;
+        }
 
         // Accumulate seconds
         user.totalActiveSeconds = (user.totalActiveSeconds || 0) + activeSeconds;

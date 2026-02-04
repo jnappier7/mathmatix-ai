@@ -3,6 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
 const { isParent, isAuthenticated } = require('../middleware/auth');
@@ -200,15 +201,83 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, async (req, re
             isActive: false
         };
 
+        // ENHANCED: Get weekly stats from conversations
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        // Convert childId to ObjectId for aggregation (handles string from .lean())
+        const childObjectId = new mongoose.Types.ObjectId(childId);
+
+        const weeklyStats = await Conversation.aggregate([
+            { $match: { userId: childObjectId, lastActivity: { $gte: oneWeekAgo } } },
+            {
+                $group: {
+                    _id: null,
+                    totalProblems: { $sum: { $ifNull: ['$problemsAttempted', 0] } },
+                    totalCorrect: { $sum: { $ifNull: ['$problemsCorrect', 0] } },
+                    totalMinutes: { $sum: { $ifNull: ['$activeMinutes', 0] } },
+                    sessionCount: { $sum: 1 }
+                }
+            }
+        ]);
+
+        const stats = weeklyStats[0] || { totalProblems: 0, totalCorrect: 0, totalMinutes: 0, sessionCount: 0 };
+
+        // Get badges earned this week
+        const recentBadges = [];
+        if (child.badges && Array.isArray(child.badges)) {
+            for (const badge of child.badges) {
+                if (badge.unlockedAt && new Date(badge.unlockedAt) >= oneWeekAgo) {
+                    recentBadges.push({
+                        key: badge.key,
+                        badgeId: badge.badgeId,
+                        unlockedAt: badge.unlockedAt
+                    });
+                }
+            }
+        }
+
+        // Get skill mastery summary
+        let skillsSummary = { mastered: 0, learning: 0, needsReview: 0 };
+        if (child.skillMastery && child.skillMastery instanceof Map) {
+            for (const [skillId, mastery] of child.skillMastery) {
+                if (mastery.status === 'mastered') skillsSummary.mastered++;
+                else if (mastery.status === 'learning' || mastery.status === 'practicing') skillsSummary.learning++;
+                else if (mastery.status === 'needs-review' || mastery.status === 're-fragile') skillsSummary.needsReview++;
+            }
+        } else if (child.skillMastery && typeof child.skillMastery === 'object') {
+            // Handle if skillMastery is a plain object (from .lean())
+            for (const skillId in child.skillMastery) {
+                const mastery = child.skillMastery[skillId];
+                if (mastery.status === 'mastered') skillsSummary.mastered++;
+                else if (mastery.status === 'learning' || mastery.status === 'practicing') skillsSummary.learning++;
+                else if (mastery.status === 'needs-review' || mastery.status === 're-fragile') skillsSummary.needsReview++;
+            }
+        }
+
         const progressData = {
             _id: child._id,
             firstName: child.firstName,
             lastName: child.lastName,
-            level: child.level,
-            xp: child.xp,
+            level: child.level || 1,
+            xp: child.xp || 0,
             gradeLevel: child.gradeLevel,
             mathCourse: child.mathCourse,
-            totalActiveTutoringMinutes: child.totalActiveTutoringMinutes,
+            totalActiveTutoringMinutes: child.totalActiveTutoringMinutes || 0,
+            weeklyActiveTutoringMinutes: child.weeklyActiveTutoringMinutes || 0,
+            // Weekly performance stats
+            weeklyStats: {
+                problemsAttempted: stats.totalProblems,
+                problemsCorrect: stats.totalCorrect,
+                accuracy: stats.totalProblems > 0 ? Math.round((stats.totalCorrect / stats.totalProblems) * 100) : 0,
+                activeMinutes: stats.totalMinutes,
+                sessionCount: stats.sessionCount
+            },
+            // Skills summary
+            skillsSummary: skillsSummary,
+            // Recent badges
+            recentBadges: recentBadges,
+            // Live activity
             liveStats: liveStats,
             recentSessions: recentSessions, // Already formatted with active session first
             iepPlan: child.iepPlan || null,

@@ -441,7 +441,7 @@ const userSchema = new Schema({
   mathCourse: { type: String, trim: true },              // e.g., 'Algebra 1', 'Geometry', 'Pre-Calculus'
   dateOfBirth: { type: Date },                           // For COPPA compliance (under 13 requires parental consent)
   hasParentalConsent: { type: Boolean, default: false }, // True when linked to a parent account (required for under 13)
-  tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual', 'motivational', 'Motivational'], default: 'encouraging' },
+  tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual', 'motivational', 'Motivational', 'chill', 'Chill'], default: 'encouraging' },
   learningStyle: { type: String, trim: true },           // 'Visual', 'Auditory', 'Kinesthetic'
   preferredLanguage: { type: String, enum: ['English', 'Spanish', 'Russian', 'Chinese', 'Vietnamese', 'Arabic'], default: 'English' }, // Student's preferred language for tutoring
   interests: [{ type: String, trim: true }],             // ['Gaming', 'Basketball', 'Music']
@@ -964,6 +964,15 @@ userSchema.pre('save', async function (next) {
   }
   next();
 });
+
+/* ---------- DATABASE INDEXES ---------- */
+// Critical indexes for dashboard performance
+userSchema.index({ role: 1, teacherId: 1 });  // Teacher dashboard: find students by teacher
+userSchema.index({ teacherId: 1 });            // Student lookups by teacher
+userSchema.index({ role: 1 });                 // Role-based queries
+userSchema.index({ parentIds: 1 });            // Parent dashboard: find children
+userSchema.index({ lastLogin: -1 });           // Activity reports sorted by login
+userSchema.index({ role: 1, lastLogin: -1 });  // Admin usage reports
 
 /* ---------- EXPORT MODEL ---------- */
 const User = mongoose.models.User || mongoose.model('User', userSchema);

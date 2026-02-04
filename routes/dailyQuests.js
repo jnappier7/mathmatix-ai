@@ -216,13 +216,13 @@ router.get('/daily-quests', isAuthenticated, async (req, res) => {
 });
 
 // POST /api/daily-quests/update - Update quest progress
-router.post('/daily-quests/update', async (req, res) => {
+router.post('/daily-quests/update', isAuthenticated, async (req, res) => {
   try {
     const { action, data } = req.body;
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
-      return res.status(401).json({ success: false, error: 'Not authenticated' });
+      return res.status(401).json({ success: false, error: 'User not found' });
     }
 
     if (!user.dailyQuests) {
