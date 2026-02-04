@@ -396,7 +396,11 @@ class GuidedTour {
         // Add button listeners
         this.tooltip.querySelectorAll('[data-action]').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const action = e.target.dataset.action;
+                e.preventDefault();
+                e.stopPropagation();
+                const button = e.target.closest('[data-action]');
+                if (!button) return;
+                const action = button.dataset.action;
                 if (action === 'next') this.next();
                 else if (action === 'prev') this.prev();
                 else if (action === 'skip') this.skip();
