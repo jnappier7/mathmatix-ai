@@ -101,7 +101,8 @@ const summaryGeneratorRouter = require('./routes/summary_generator');
 const avatarRoutes = require('./routes/avatar');
 const curriculumRoutes = require('./routes/curriculum');
 const assessmentRoutes = require('./routes/assessment');
-const screenerRoutes = require('./routes/screener');  // IRT-based adaptive screener
+const screenerRoutes = require('./routes/screener');  // IRT-based adaptive screener (Starting Point)
+const growthCheckRoutes = require('./routes/growthCheck');  // Growth Check (short progress assessment)
 const masteryRoutes = require('./routes/mastery');  // Mastery mode (placement + interview + badges)
 const masteryChatRoutes = require('./routes/masteryChat');  // Mastery mode chat endpoint
 const teacherResourceRoutes = require('./routes/teacherResources');
@@ -284,6 +285,7 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
+<<<<<<< claude/setup-email-system-WBure
 
         // Check if this is a new user requiring enrollment code
         if (user.isPendingEnrollment) {
@@ -294,7 +296,16 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
         }
 
         req.logIn(user, (err) => {
+=======
+        req.logIn(user, async (err) => {
+>>>>>>> main
             if (err) { return next(err); }
+            // Update lastLogin timestamp
+            try {
+                await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+            } catch (updateErr) {
+                console.error("ERROR: Failed to update lastLogin:", updateErr);
+            }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
             if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
@@ -313,6 +324,7 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
+<<<<<<< claude/setup-email-system-WBure
 
         // Check if this is a new user requiring enrollment code
         if (user.isPendingEnrollment) {
@@ -323,7 +335,16 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
         }
 
         req.logIn(user, (err) => {
+=======
+        req.logIn(user, async (err) => {
+>>>>>>> main
             if (err) { return next(err); }
+            // Update lastLogin timestamp
+            try {
+                await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+            } catch (updateErr) {
+                console.error("ERROR: Failed to update lastLogin:", updateErr);
+            }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
             if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
@@ -357,7 +378,8 @@ app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum sch
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
-app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive screener (CAT)
+app.use('/api/screener', isAuthenticated, screenerRoutes); // IRT-based adaptive screener (Starting Point)
+app.use('/api/growth-check', isAuthenticated, growthCheckRoutes); // Growth Check (short progress assessment)
 app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placement → interview → badges)
 app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, masteryChatRoutes); // Mastery mode dedicated chat
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management

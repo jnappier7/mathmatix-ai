@@ -167,6 +167,98 @@ function buildMasteryContext(masteryContext) {
 }
 
 /**
+ * Calculate XP boost factor based on user level
+ * @param {number} level - User's current level
+ * @returns {Object} Boost info: { factor, isNewUser, guidance }
+ */
+function calculateXpBoostFactor(level) {
+    const boost = BRAND_CONFIG.newUserBoost;
+    const userLevel = level || 1;
+
+    // Full boost for levels 1-5
+    if (userLevel <= boost.fullBoostUntilLevel) {
+        return {
+            factor: boost.tier3Multiplier,
+            isNewUser: true,
+            guidance: 'high' // Actively look for opportunities
+        };
+    }
+
+    // Fading boost for levels 6-14
+    if (userLevel < boost.fadeEndLevel) {
+        const fadeRange = boost.fadeEndLevel - boost.fadeStartLevel;
+        const fadeProgress = (userLevel - boost.fadeStartLevel) / fadeRange;
+        const fadedMultiplier = boost.tier3Multiplier - (fadeProgress * (boost.tier3Multiplier - 1));
+        return {
+            factor: Math.max(1, fadedMultiplier),
+            isNewUser: false,
+            guidance: fadeProgress < 0.5 ? 'moderate' : 'normal'
+        };
+    }
+
+    // No boost for level 15+
+    return {
+        factor: 1,
+        isNewUser: false,
+        guidance: 'normal'
+    };
+}
+
+/**
+ * Build XP guidance section based on user level
+ * Newer users get more encouragement to award XP
+ * @param {Object} user - User profile
+ * @returns {string} XP guidance section
+ */
+function buildXpGuidance(user) {
+    const boostInfo = calculateXpBoostFactor(user?.level);
+
+    // Base format instructions
+    let guidance = `
+RESPONSE TAGS:
+- <PROBLEM_RESULT:correct|incorrect|skipped> after evaluating answers
+- <CORE_BEHAVIOR_XP:amount,behavior> to award XP for positive learning behaviors
+- Use \\( LaTeX \\) for inline math, \\[ LaTeX \\] for display math`;
+
+    // Add XP opportunity guidance based on user level
+    if (boostInfo.guidance === 'high') {
+        guidance += `
+
+XP OPPORTUNITIES (ACTIVELY LOOK FOR THESE):
+This is a newer student - be generous with recognition! Award XP when you notice:
+- First correct answer on a new topic (25-50 XP, "first_success")
+- Asked a thoughtful question (25 XP, "asked_good_question")
+- Tried solving before asking for help (25-50 XP, "tried_first")
+- Admitted confusion or mistake honestly (25 XP, "acknowledged_mistake")
+- Showed their thinking/work (50 XP, "showed_work")
+- Kept trying after getting something wrong (50 XP, "persistence")
+- Caught their own error (50-75 XP, "caught_own_error")
+- Explained reasoning clearly (50 XP, "explained_reasoning")
+
+Award XP frequently to build momentum! Use format: <CORE_BEHAVIOR_XP:amount,behavior>`;
+    } else if (boostInfo.guidance === 'moderate') {
+        guidance += `
+
+XP OPPORTUNITIES:
+Look for chances to award XP for positive learning behaviors:
+- Caught own error (50 XP, "caught_own_error")
+- Clear explanation of reasoning (50 XP, "explained_reasoning")
+- Persistence through difficulty (50 XP, "persistence")
+- Applied concept to new context (75-100 XP, "transfer")
+- Strategy selection before solving (50 XP, "strategy_selection")
+
+Use format: <CORE_BEHAVIOR_XP:amount,behavior>`;
+    } else {
+        guidance += `
+
+XP: Award <CORE_BEHAVIOR_XP:amount,behavior> for exceptional learning behaviors (50-100 XP):
+caught_own_error, explained_reasoning, persistence, transfer, strategy_selection, taught_back`;
+    }
+
+    return guidance;
+}
+
+/**
  * Response format instructions - included for proper tagging
  * @returns {string} Format instructions
  */
@@ -211,20 +303,22 @@ function buildSystemPrompt(options) {
         return parts.join('\n');
     }
 
-    // TIER: STANDARD
+    // TIER: STANDARD - includes XP guidance based on user level
     parts.push(buildStudentContext(user));
     parts.push(buildCurriculumContext(curriculumContext));
     parts.push(buildTeacherSettings(teacherSettings));
 
     if (tier === 'standard') {
-        parts.push(buildFormatInstructions());
+        // Use level-aware XP guidance instead of basic format instructions
+        parts.push(buildXpGuidance(user));
         return parts.join('\n');
     }
 
-    // TIER: FULL
+    // TIER: FULL - includes XP guidance based on user level
     parts.push(buildIepContext(user?.iepPlan));
     parts.push(buildMasteryContext(masteryContext));
-    parts.push(buildFormatInstructions());
+    // Use level-aware XP guidance instead of basic format instructions
+    parts.push(buildXpGuidance(user));
 
     return parts.join('\n');
 }
@@ -259,6 +353,7 @@ function determineTier(context) {
 module.exports = {
     buildSystemPrompt,
     determineTier,
+    calculateXpBoostFactor,
     // Export individual builders for testing/customization
     buildCoreIdentity,
     buildSafetyRules,
@@ -267,5 +362,6 @@ module.exports = {
     buildTeacherSettings,
     buildIepContext,
     buildMasteryContext,
+    buildXpGuidance,
     buildFormatInstructions
 };

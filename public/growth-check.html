@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Growth Check - M∆THM∆TIX AI</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    .growth-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      min-height: calc(100vh - 100px);
+    }
+
+    .growth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .growth-header h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .growth-header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .growth-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-tracker {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      transition: background 0.3s;
+    }
+
+    .progress-dot.active {
+      background: #12B3B3;
+    }
+
+    .progress-dot.completed {
+      background: #4CAF50;
+    }
+
+    .question-counter {
+      color: #666;
+      font-size: 0.9rem;
+      margin-left: auto;
+    }
+
+    .skill-badge {
+      display: inline-block;
+      background: #f0f0f0;
+      color: #666;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .problem-text {
+      font-size: 1.3rem;
+      color: #333;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .choices-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .choice-btn {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      text-align: left;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .choice-btn:hover {
+      border-color: #12B3B3;
+      background: #f9fffe;
+    }
+
+    .choice-btn.selected {
+      border-color: #12B3B3;
+      background: #e6f7f7;
+    }
+
+    .choice-btn.correct {
+      border-color: #4CAF50;
+      background: #e8f5e9;
+    }
+
+    .choice-btn.incorrect {
+      border-color: #f44336;
+      background: #ffebee;
+    }
+
+    .choice-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.8;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #12B3B3, #0a8f8f);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(18, 179, 179, 0.3);
+    }
+
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .feedback-text {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .feedback-text.correct {
+      color: #2e7d32;
+      background: #e8f5e9;
+    }
+
+    .feedback-text.incorrect {
+      color: #c62828;
+      background: #ffebee;
+    }
+
+    /* Results Styles */
+    .results-container {
+      text-align: center;
+    }
+
+    .results-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .growth-status {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .growth-status.significant-growth { color: #2e7d32; }
+    .growth-status.some-growth { color: #558b2f; }
+    .growth-status.stable { color: #f9a825; }
+    .growth-status.review-needed { color: #e65100; }
+
+    .growth-message {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #f5f5f5;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #12B3B3;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .back-btn {
+      background: white;
+      color: #12B3B3;
+      border: 2px solid #12B3B3;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: #12B3B3;
+      color: white;
+    }
+
+    /* Loading & States */
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #12B3B3;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .not-eligible {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .not-eligible i {
+      font-size: 3rem;
+      color: #f9a825;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .growth-container {
+        padding: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .problem-text {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <a href="/student-dashboard.html">
+        <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
+      </a>
+    </div>
+  </header>
+
+  <main class="growth-container">
+    <!-- Loading State -->
+    <div id="loading-state" class="loading">
+      <div class="spinner"></div>
+      <p>Checking eligibility...</p>
+    </div>
+
+    <!-- Not Eligible State -->
+    <div id="not-eligible-state" class="growth-card not-eligible" style="display: none;">
+      <i class="fas fa-clock"></i>
+      <h2 id="not-eligible-title">Not Available Yet</h2>
+      <p id="not-eligible-message"></p>
+      <button class="back-btn" onclick="location.href='/student-dashboard.html'">
+        Back to Dashboard
+      </button>
+    </div>
+
+    <!-- Start State -->
+    <div id="start-state" style="display: none;">
+      <div class="growth-header">
+        <h1>Growth Check</h1>
+        <p>Let's see how much you've grown!</p>
+      </div>
+
+      <div class="growth-card">
+        <h2>Quick Progress Check</h2>
+        <p>This is a short assessment (5-8 questions) to measure your progress since you started learning.</p>
+        <ul style="margin: 1.5rem 0; padding-left: 1.5rem; color: #666;">
+          <li>Questions from topics you've studied</li>
+          <li>Compares your growth over time</li>
+          <li>Takes just a few minutes</li>
+        </ul>
+        <button class="submit-btn" onclick="startGrowthCheck()">
+          <i class="fas fa-play"></i> Start Growth Check
+        </button>
+      </div>
+    </div>
+
+    <!-- Question State -->
+    <div id="question-state" style="display: none;">
+      <div class="growth-header">
+        <h1>Growth Check</h1>
+      </div>
+
+      <div class="growth-card">
+        <div class="progress-tracker" id="progress-tracker">
+          <!-- Dots will be generated dynamically -->
+        </div>
+
+        <div class="skill-badge" id="skill-badge"></div>
+        <div class="problem-text" id="problem-text"></div>
+
+        <div class="choices-container" id="choices-container">
+          <!-- Choices will be generated dynamically -->
+        </div>
+
+        <div id="feedback" class="feedback-text" style="display: none;"></div>
+
+        <button id="submit-btn" class="submit-btn" onclick="submitAnswer()" disabled>
+          Submit Answer
+        </button>
+        <button id="next-btn" class="submit-btn" onclick="loadNextProblem()" style="display: none;">
+          Next Question
+        </button>
+      </div>
+    </div>
+
+    <!-- Results State -->
+    <div id="results-state" style="display: none;">
+      <div class="growth-header">
+        <h1>Growth Check Complete!</h1>
+      </div>
+
+      <div class="growth-card results-container">
+        <div class="results-icon" id="results-icon"></div>
+        <div class="growth-status" id="growth-status"></div>
+        <div class="growth-message" id="growth-message"></div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="accuracy-stat">-</div>
+            <div class="stat-label">Accuracy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="questions-stat">-</div>
+            <div class="stat-label">Questions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="growth-stat">-</div>
+            <div class="stat-label">Growth</div>
+          </div>
+        </div>
+
+        <button class="back-btn" onclick="location.href='/student-dashboard.html'">
+          Back to Dashboard
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/csrf.js"></script>
+  <script>
+    let sessionId = null;
+    let currentProblem = null;
+    let selectedAnswer = null;
+    let questionStartTime = null;
+
+    // Initialize
+    async function init() {
+      try {
+        // Check eligibility
+        const res = await fetch('/api/growth-check/eligible');
+        const data = await res.json();
+
+        document.getElementById('loading-state').style.display = 'none';
+
+        if (!data.eligible) {
+          showNotEligible(data);
+          return;
+        }
+
+        document.getElementById('start-state').style.display = 'block';
+
+      } catch (error) {
+        console.error('Error checking eligibility:', error);
+        showNotEligible({
+          reason: 'error',
+          message: 'Failed to check eligibility. Please try again later.'
+        });
+      }
+    }
+
+    function showNotEligible(data) {
+      document.getElementById('not-eligible-state').style.display = 'block';
+      document.getElementById('not-eligible-message').textContent = data.message;
+
+      const titleMap = {
+        'no-progress': 'Complete Starting Point First',
+        'no-initial-assessment': 'Complete Starting Point First',
+        'insufficient-history': 'Keep Learning!',
+        'cooldown': 'Come Back Tomorrow',
+        'error': 'Oops!'
+      };
+
+      document.getElementById('not-eligible-title').textContent =
+        titleMap[data.reason] || 'Not Available';
+    }
+
+    async function startGrowthCheck() {
+      try {
+        const res = await csrfFetch('/api/growth-check/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          alert(data.error);
+          return;
+        }
+
+        sessionId = data.sessionId;
+        document.getElementById('start-state').style.display = 'none';
+        document.getElementById('question-state').style.display = 'block';
+
+        await loadNextProblem();
+
+      } catch (error) {
+        console.error('Error starting growth check:', error);
+        alert('Failed to start growth check. Please try again.');
+      }
+    }
+
+    async function loadNextProblem() {
+      try {
+        // Hide feedback and next button
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'block';
+        document.getElementById('submit-btn').disabled = true;
+        selectedAnswer = null;
+
+        const res = await fetch(`/api/growth-check/${sessionId}/next-problem`);
+        const data = await res.json();
+
+        if (data.complete) {
+          // If complete during load, show message and go to dashboard
+          alert(data.message || 'Growth check complete');
+          location.href = '/student-dashboard.html';
+          return;
+        }
+
+        currentProblem = data.problem;
+        questionStartTime = Date.now();
+
+        // Update progress tracker
+        updateProgressTracker(data.progress);
+
+        // Display problem
+        document.getElementById('skill-badge').textContent = data.problem.skillName;
+        document.getElementById('problem-text').innerHTML = data.problem.problemText;
+
+        // Generate choices
+        const choicesContainer = document.getElementById('choices-container');
+        choicesContainer.innerHTML = '';
+
+        if (data.problem.choices && data.problem.choices.length > 0) {
+          data.problem.choices.forEach((choice, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.textContent = choice;
+            btn.onclick = () => selectChoice(index, btn);
+            choicesContainer.appendChild(btn);
+          });
+        } else {
+          // Free response (not common in growth check)
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'choice-btn';
+          input.placeholder = 'Type your answer...';
+          input.oninput = (e) => {
+            selectedAnswer = e.target.value;
+            document.getElementById('submit-btn').disabled = !selectedAnswer;
+          };
+          choicesContainer.appendChild(input);
+        }
+
+      } catch (error) {
+        console.error('Error loading problem:', error);
+        alert('Failed to load problem. Please try again.');
+      }
+    }
+
+    function updateProgressTracker(progress) {
+      const tracker = document.getElementById('progress-tracker');
+      tracker.innerHTML = '';
+
+      for (let i = 1; i <= progress.max; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        if (i < progress.current) {
+          dot.classList.add('completed');
+        } else if (i === progress.current) {
+          dot.classList.add('active');
+        }
+        tracker.appendChild(dot);
+      }
+
+      const counter = document.createElement('span');
+      counter.className = 'question-counter';
+      counter.textContent = `${progress.current} of ${progress.max}`;
+      tracker.appendChild(counter);
+    }
+
+    function selectChoice(index, btn) {
+      // Deselect all
+      document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+
+      // Select this one
+      btn.classList.add('selected');
+      selectedAnswer = index;
+      document.getElementById('submit-btn').disabled = false;
+    }
+
+    async function submitAnswer() {
+      if (selectedAnswer === null) return;
+
+      const responseTime = Date.now() - questionStartTime;
+
+      // Disable buttons
+      document.getElementById('submit-btn').disabled = true;
+      document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = true);
+
+      try {
+        const res = await csrfFetch(`/api/growth-check/${sessionId}/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            problemId: currentProblem.problemId,
+            answer: selectedAnswer,
+            responseTime
+          })
+        });
+
+        const data = await res.json();
+
+        // Show feedback
+        const feedback = document.getElementById('feedback');
+        feedback.style.display = 'block';
+
+        if (data.correct) {
+          feedback.className = 'feedback-text correct';
+          feedback.textContent = 'Correct!';
+          document.querySelectorAll('.choice-btn')[selectedAnswer].classList.add('correct');
+        } else {
+          feedback.className = 'feedback-text incorrect';
+          feedback.textContent = 'Not quite.';
+          document.querySelectorAll('.choice-btn')[selectedAnswer].classList.add('incorrect');
+        }
+
+        if (data.complete) {
+          // Show results after a brief delay
+          setTimeout(() => showResults(data.results), 1500);
+        } else {
+          // Show next button
+          document.getElementById('submit-btn').style.display = 'none';
+          document.getElementById('next-btn').style.display = 'block';
+        }
+
+      } catch (error) {
+        console.error('Error submitting answer:', error);
+        alert('Failed to submit answer. Please try again.');
+        document.getElementById('submit-btn').disabled = false;
+        document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = false);
+      }
+    }
+
+    function showResults(results) {
+      document.getElementById('question-state').style.display = 'none';
+      document.getElementById('results-state').style.display = 'block';
+
+      // Set icon and status based on growth
+      const iconMap = {
+        'significant-growth': '🚀',
+        'some-growth': '📈',
+        'stable': '✨',
+        'review-needed': '📚'
+      };
+
+      document.getElementById('results-icon').textContent = iconMap[results.growthStatus] || '✨';
+      document.getElementById('growth-status').textContent = formatGrowthStatus(results.growthStatus);
+      document.getElementById('growth-status').className = `growth-status ${results.growthStatus}`;
+      document.getElementById('growth-message').textContent = results.growthMessage;
+
+      // Stats
+      document.getElementById('accuracy-stat').textContent = `${results.accuracy}%`;
+      document.getElementById('questions-stat').textContent = results.questionsAnswered;
+
+      // Growth indicator
+      const growthChange = results.thetaChange;
+      let growthText;
+      if (growthChange > 0) {
+        growthText = `+${(growthChange * 10).toFixed(1)}`;
+      } else if (growthChange < 0) {
+        growthText = (growthChange * 10).toFixed(1);
+      } else {
+        growthText = '0';
+      }
+      document.getElementById('growth-stat').textContent = growthText;
+    }
+
+    function formatGrowthStatus(status) {
+      const map = {
+        'significant-growth': 'Great Progress!',
+        'some-growth': 'Nice Growth!',
+        'stable': 'Holding Steady',
+        'review-needed': 'Review Time'
+      };
+      return map[status] || status;
+    }
+
+    // Initialize on load
+    init();
+  </script>
+  <script src="/js/sessionManager.js"></script>
+</body>
+</html>

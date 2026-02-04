@@ -279,17 +279,41 @@
         <span>Insert Math Symbol</span>
         <button id="close-inline-palette" class="palette-close-btn" title="Close">&times;</button>
       </div>
+      <!-- Subscripts and Superscripts Section -->
+      <div class="equation-section-header">Subscripts and Superscripts</div>
+      <div class="subscript-superscript-grid">
+        <button class="script-btn" data-latex="#0^{#1}" title="Superscript/Power">
+          <svg viewBox="0 0 40 40" class="script-icon">
+            <rect x="4" y="8" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="24" y="4" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+          </svg>
+        </button>
+        <button class="script-btn" data-latex="#0_{#1}" title="Subscript">
+          <svg viewBox="0 0 40 40" class="script-icon">
+            <rect x="4" y="4" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="24" y="24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+          </svg>
+        </button>
+        <button class="script-btn" data-latex="#0_{#1}^{#2}" title="Subscript and Superscript">
+          <svg viewBox="0 0 40 40" class="script-icon">
+            <rect x="4" y="10" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="22" y="4" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="22" y="26" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+          </svg>
+        </button>
+        <button class="script-btn" data-latex="{}_{#0}#1" title="Left Subscript">
+          <svg viewBox="0 0 40 40" class="script-icon">
+            <rect x="12" y="4" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="4" y="24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+          </svg>
+        </button>
+      </div>
+
       <div class="equation-symbols-grid">
         <!-- Common operations -->
         <button class="symbol-btn" data-latex="\frac{#0}{#1}" title="Fraction">x/y</button>
-        <button class="symbol-btn" data-latex="#0^{#1}" title="Superscript/Power">x<sup>n</sup></button>
-        <button class="symbol-btn" data-latex="#0_{#1}" title="Subscript">x<sub>n</sub></button>
         <button class="symbol-btn" data-latex="\sqrt{#0}" title="Square root">√</button>
         <button class="symbol-btn" data-latex="\sqrt[#1]{#0}" title="Nth root">ⁿ√</button>
-        <!-- Sequences (common subscript use) -->
-        <button class="symbol-btn" data-latex="a_{n}" title="Sequence term a_n">a<sub>n</sub></button>
-        <button class="symbol-btn" data-latex="a_{n+1}" title="Next term">a<sub>n+1</sub></button>
-        <button class="symbol-btn" data-latex="a_{1}" title="First term">a<sub>1</sub></button>
         <!-- Calculus -->
         <button class="symbol-btn" data-latex="\sum_{#0}^{#1}" title="Summation">∑</button>
         <button class="symbol-btn" data-latex="\int_{#0}^{#1}" title="Integral">∫</button>

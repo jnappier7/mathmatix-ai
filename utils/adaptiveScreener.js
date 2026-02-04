@@ -14,10 +14,16 @@
  * - Struggling students: Drop to foundations fast, no extended frustration
  * - "Downward Inference": If you can solve calculus, you can add
  *
+ * REFACTORED: Now uses centralized modules for configuration, skill selection,
+ * and convergence. See catConfig.js, skillSelector.js, catConvergence.js.
+ *
  * @module adaptiveScreener
  */
 
 const { estimateAbility, estimateAbilityMAP, hasConverged, hasPlateaued, thetaToPercentile, calculateInformation } = require('./irt');
+const { gradeToTheta, SESSION_DEFAULTS, getBroadCategory, calculateJumpSize: configCalculateJumpSize } = require('./catConfig');
+const { checkConvergence, calculateProgress, determineNextAction: convergenceDetermineNextAction } = require('./catConvergence');
+const { initializeCategoryTracking } = require('./skillSelector');
 
 // ===========================================================================
 // GRADE-BASED STARTING POINT
@@ -26,76 +32,15 @@ const { estimateAbility, estimateAbilityMAP, hasConverged, hasPlateaued, thetaTo
 /**
  * Map grade level to starting theta (IRT ability scale)
  *
- * Instead of starting everyone at "name a 4-sided shape" (theta 0),
- * we start at an appropriate level based on declared grade.
- *
- * Scale: -3 (very easy) to +3 (very hard)
+ * DEPRECATED: Use gradeToTheta from catConfig.js directly.
+ * This wrapper exists for backwards compatibility.
  *
  * @param {String|Number} grade - Grade level or gradeBand
  * @returns {Number} Starting theta for CAT
  */
 function gradeToStartingTheta(grade) {
-  if (!grade) return 0; // Default to middle if no grade provided
-
-  const gradeStr = String(grade).toLowerCase().trim();
-
-  // Direct grade number mapping
-  const gradeNumber = parseInt(gradeStr, 10);
-  if (!isNaN(gradeNumber)) {
-    // K = 0, 1st = 1, etc.
-    // Map: K(-1.5) → 12(2.0)
-    // Linear interpolation: theta = (grade - 6) * 0.3
-    if (gradeNumber <= 0) return -1.5;      // Kindergarten
-    if (gradeNumber <= 2) return -1.0;      // 1st-2nd: basic operations
-    if (gradeNumber <= 4) return -0.5;      // 3rd-4th: multi-digit, fractions intro
-    if (gradeNumber <= 5) return 0;         // 5th: fractions, decimals
-    if (gradeNumber <= 6) return 0.3;       // 6th: ratios, intro algebra
-    if (gradeNumber <= 7) return 0.6;       // 7th: proportions, equations
-    if (gradeNumber <= 8) return 0.9;       // 8th: linear equations, geometry
-    if (gradeNumber <= 9) return 1.2;       // 9th: Algebra 1
-    if (gradeNumber <= 10) return 1.5;      // 10th: Geometry/Algebra 2
-    if (gradeNumber <= 11) return 1.8;      // 11th: Algebra 2/Precalc
-    return 2.0;                              // 12th+: Precalc/Calculus
-  }
-
-  // GradeBand mapping (from skill data)
-  const gradeBandMap = {
-    'prek': -2.0,
-    'pre-k': -2.0,
-    'prekindergarten': -2.0,
-    'k': -1.5,
-    'kindergarten': -1.5,
-    'k-5': -0.5,        // Elementary range - start middle
-    '5-8': 0.5,         // Middle school range
-    '8-12': 1.2,        // High school range
-    'algebra 1': 1.0,
-    'algebra-1': 1.0,
-    'geometry': 1.3,
-    'algebra 2': 1.6,
-    'algebra-2': 1.6,
-    'precalculus': 1.9,
-    'precalc': 1.9,
-    'calculus': 2.2,
-    'calc 1': 2.2,
-    'calc 2': 2.4,
-    'calc 3': 2.6,
-    'college': 2.0
-  };
-
-  // Check for gradeBand match
-  if (gradeBandMap[gradeStr]) {
-    return gradeBandMap[gradeStr];
-  }
-
-  // Check for partial matches
-  for (const [key, theta] of Object.entries(gradeBandMap)) {
-    if (gradeStr.includes(key) || key.includes(gradeStr)) {
-      return theta;
-    }
-  }
-
-  // Default to middle
-  return 0;
+  // Use centralized function from catConfig
+  return gradeToTheta(grade, null);
 }
 
 // ===========================================================================
@@ -105,9 +50,8 @@ function gradeToStartingTheta(grade) {
 /**
  * Calculate adaptive jump size based on correctness and confidence
  *
- * THE "BACK AND DOWN" LOGIC:
- * - Correct: Large jump early (+1.5), dampens to small jump (+0.3) as confidence grows
- * - Incorrect: Consistent small step (-0.5) always
+ * DEPRECATED: Use calculateJumpSize from catConfig.js directly.
+ * This wrapper exists for backwards compatibility.
  *
  * @param {Boolean} isCorrect - Was the answer correct?
  * @param {Number} questionNumber - Question count (1-indexed)
@@ -115,40 +59,8 @@ function gradeToStartingTheta(grade) {
  * @returns {Number} Difficulty adjustment
  */
 function calculateJumpSize(isCorrect, questionNumber, standardError) {
-  if (isCorrect) {
-    // UPWARD JUMP (dampens with confidence)
-    const baseJump = 1.5;  // Start with large jumps
-
-    // Dampening factor: Higher confidence (lower SE) = smaller jumps
-    // SE of 1.0 (low confidence) → dampen by 1.0x (full jump)
-    // SE of 0.3 (high confidence) → dampen by 0.3x (small jump)
-    const confidenceDampen = Math.max(standardError, 0.3);
-
-    // Time-based dampening: Later questions = smaller jumps
-    const timeDampen = Math.pow(0.9, questionNumber - 1);
-
-    const jumpSize = baseJump * confidenceDampen * timeDampen;
-
-    // Minimum jump of 0.3 (always move up at least a little)
-    return Math.max(0.3, Math.min(jumpSize, 1.5));
-
-  } else {
-    // DOWNWARD STEP (dampened with confidence, like upward jumps)
-    // High confidence (low SE) → smaller adjustment (might be careless error)
-    // Low confidence (high SE) → larger adjustment (still calibrating)
-    const baseStep = -0.7;
-
-    // Dampening: Higher confidence (lower SE) = smaller drops
-    const confidenceDampen = Math.max(standardError, 0.3);
-
-    // Later in test = smaller drops (more confident in ability estimate)
-    const timeDampen = Math.pow(0.9, questionNumber - 1);
-
-    const stepSize = baseStep * confidenceDampen * timeDampen;
-
-    // Minimum drop of 0.2, maximum of 0.7
-    return Math.max(-0.7, Math.min(stepSize, -0.2));
-  }
+  // Use centralized function from catConfig
+  return configCalculateJumpSize(isCorrect, questionNumber, standardError);
 }
 
 // ===========================================================================
@@ -186,6 +98,13 @@ function initializeSession(options = {}) {
     console.log(`[Screener] No grade/pathway provided, using default startingTheta: 0`);
   }
 
+  // Use centralized session defaults from catConfig
+  const {
+    minQuestions, targetQuestions, maxQuestions,
+    seThresholdStringent, seThresholdAcceptable, seThresholdFallback,
+    minInformationGain, priorSD
+  } = SESSION_DEFAULTS;
+
   return {
     userId,
     sessionId: generateSessionId(),
@@ -198,7 +117,7 @@ function initializeSession(options = {}) {
 
     // Bayesian prior (for MAP estimation in early questions)
     priorMean: theta,  // Grade-based starting point
-    priorSD: 1.25,             // Wide prior allows data to dominate quickly
+    priorSD: priorSD,  // From centralized config
 
     // Response history
     responses: [],
@@ -220,23 +139,18 @@ function initializeSession(options = {}) {
     startTime: Date.now(),
     endTime: null,
 
-    // Completion criteria (TRULY ADAPTIVE - stops when confident, not at fixed count)
-    minQuestions: 8,        // Minimum for basic reliability (can stop earlier if very confident)
-    targetQuestions: 15,    // Soft target for typical students
-    maxQuestions: 30,       // Hard cap to prevent fatigue (should rarely hit this)
-    seThresholdStringent: 0.25,  // High confidence (early stop after min questions)
-    seThresholdAcceptable: 0.30,  // Acceptable confidence (normal stop)
-    seThresholdFallback: 0.40,    // Minimum at max questions (relaxed since max is higher)
-    minInformationGain: 0.08,     // Stop if gains < this for 3 questions (more aggressive)
+    // Completion criteria from centralized config
+    minQuestions,
+    targetQuestions,
+    maxQuestions,
+    seThresholdStringent,
+    seThresholdAcceptable,
+    seThresholdFallback,
+    minInformationGain,
 
-    // Skill coverage tracking
+    // Skill coverage tracking (use centralized initializer)
     testedSkills: [],
-    testedSkillCategories: {
-      'number-operations': 0,
-      'algebra': 0,
-      'geometry': 0,
-      'advanced': 0
-    },
+    testedSkillCategories: initializeCategoryTracking(),
 
     // Phase tracking
     phase: 'screener'  // 'screener' | 'interview' | 'complete'
@@ -314,47 +228,12 @@ function processResponse(session, response) {
 
   // Track category coverage for diversity balancing
   if (response.skillCategory) {
-    // Map specific skill category to broad category
-    const categoryToBroadCategory = (category) => {
-      // Number operations (Elementary K-5)
-      if (['counting-cardinality', 'number-recognition', 'addition-subtraction', 'multiplication-division',
-           'place-value', 'arrays', 'decimals', 'fractions', 'number-system', 'operations'].includes(category)) {
-        return 'number-operations';
-      }
-      // Algebra (Middle School through High School)
-      if (['integers-rationals', 'scientific-notation', 'ratios-proportions', 'percent',
-           'expressions', 'equations', 'linear-equations', 'systems', 'inequalities',
-           'polynomials', 'factoring', 'quadratics', 'radicals', 'rational-expressions',
-           'complex-numbers', 'exponentials-logarithms', 'sequences-series', 'conics',
-           'functions', 'graphing', 'coordinate-plane'].includes(category)) {
-        return 'algebra';
-      }
-      // Geometry
-      if (['shapes-geometry', 'measurement', 'area-perimeter', 'volume', 'angles',
-           'pythagorean-theorem', 'transformations', 'geometry', 'trigonometry',
-           'identities', 'polar-coordinates', 'vectors', 'matrices'].includes(category)) {
-        return 'geometry';
-      }
-      // Advanced (Calculus, Statistics, etc.)
-      if (['limits', 'derivatives', 'integration', 'series-tests', 'taylor-series',
-           'parametric-polar', 'differential-equations', 'multivariable', 'vector-calculus',
-           'statistics', 'probability', 'advanced'].includes(category)) {
-        return 'advanced';
-      }
-      // Default
-      return 'number-operations';
-    };
-
-    const broadCategory = categoryToBroadCategory(response.skillCategory);
+    // Use centralized category mapping from catConfig
+    const broadCategory = getBroadCategory(response.skillCategory);
 
     // Initialize category tracking if not exists
     if (!session.testedSkillCategories) {
-      session.testedSkillCategories = {
-        'number-operations': 0,
-        'algebra': 0,
-        'geometry': 0,
-        'advanced': 0
-      };
+      session.testedSkillCategories = initializeCategoryTracking();
     }
 
     // Increment category counter
@@ -392,49 +271,16 @@ function processResponse(session, response) {
 /**
  * Check if multiple convergence criteria are met (like ALEKS/Scantron)
  *
- * STOPPING RULES (research-based):
- * 1. Standard Error below threshold (primary)
- * 2. Minimum questions answered (reliability)
- * 3. Confidence interval width acceptable
- * 4. Information gains plateauing (efficiency)
+ * DEPRECATED: Use checkConvergence from catConvergence.js for full details.
+ * This wrapper exists for backwards compatibility.
  *
  * @param {Object} session - Current session state
  * @returns {Boolean} True if converged with high confidence
  */
 function checkConvergenceCriteria(session) {
-  const { questionCount, standardError, responses, minQuestions, seThresholdStringent, seThresholdAcceptable } = session;
-
-  // Must meet minimum questions first
-  if (questionCount < minQuestions) {
-    return false;
-  }
-
-  // CRITERION 1: Standard Error below threshold
-  const seConverged = standardError <= seThresholdAcceptable;
-
-  // CRITERION 2: Confidence Interval width < 1.0 logit (95% CI = theta ± 1.96*SE)
-  const confidenceIntervalWidth = 2 * 1.96 * standardError;
-  const ciNarrow = confidenceIntervalWidth < 1.0;
-
-  // CRITERION 3: Information gains plateauing (last 3 questions added < 0.05 each)
-  let informationPlateaued = false;
-  if (responses.length >= 3) {
-    const last3 = responses.slice(-3);
-    const avgRecentInfo = last3.reduce((sum, r) => sum + (r.informationGained || 0), 0) / 3;
-    informationPlateaued = avgRecentInfo < session.minInformationGain;
-  }
-
-  // High confidence: SE below stringent threshold + narrow CI
-  if (standardError <= seThresholdStringent && ciNarrow) {
-    return true;
-  }
-
-  // Normal confidence: SE below acceptable + (narrow CI OR information plateau)
-  if (seConverged && (ciNarrow || informationPlateaued)) {
-    return true;
-  }
-
-  return false;
+  // Use the new convergence module for comprehensive checking
+  const result = checkConvergence(session);
+  return result.converged;
 }
 
 /**
@@ -452,9 +298,9 @@ function determineNextAction(session) {
   // 1. High confidence convergence (IDEAL STOP)
   if (session.converged && session.questionCount >= session.minQuestions) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'converged',
-      message: 'We\'ve found your level with high confidence! Let\'s explore a bit deeper.',
+      message: 'Assessment complete! We\'ve found your level with high confidence.',
       theta: session.theta,
       confidence: session.confidence,
       standardError: session.standardError,
@@ -466,7 +312,7 @@ function determineNextAction(session) {
   // 2. Target questions reached with acceptable confidence
   if (session.questionCount >= session.targetQuestions && session.standardError <= session.seThresholdFallback) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'target-reached',
       message: 'Great progress! I have a good sense of your abilities.',
       theta: session.theta,
@@ -479,7 +325,7 @@ function determineNextAction(session) {
   // 3. Max questions reached (HARD STOP)
   if (session.questionCount >= session.maxQuestions) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'max-questions',
       message: 'Excellent work! I\'ve gathered enough information about your abilities.',
       theta: session.theta,
@@ -492,9 +338,9 @@ function determineNextAction(session) {
   // 4. Plateau detected (EFFICIENCY STOP)
   if (session.plateaued && session.questionCount >= session.minQuestions) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'plateaued',
-      message: 'I see where your frontier is. Let\'s dig into that.',
+      message: 'Assessment complete! We\'ve identified your current level.',
       theta: session.theta,
       frontier: session.frontier,
       standardError: session.standardError
@@ -506,9 +352,9 @@ function determineNextAction(session) {
       session.standardError <= session.seThresholdStringent &&
       session.responses.slice(-5).every(r => r.correct)) {
     return {
-      action: 'interview',
+      action: 'complete',
       reason: 'early-mastery',
-      message: 'Impressive! You\'re clearly advanced. Let\'s confirm your level.',
+      message: 'Impressive! You\'re clearly advanced. Assessment complete!',
       theta: session.theta,
       confidence: session.confidence,
       standardError: session.standardError,
@@ -528,9 +374,9 @@ function determineNextAction(session) {
     // Advanced student: 5 correct in a row at high difficulty
     if (allCorrect && avgDifficulty > 1.0 && session.theta > 1.5 && session.standardError <= 0.35) {
       return {
-        action: 'interview',
+        action: 'complete',
         reason: 'very-advanced',
-        message: 'Exceptional! You\'re performing at an advanced level. Let\'s verify your mastery.',
+        message: 'Exceptional! You\'re performing at an advanced level. Assessment complete!',
         theta: session.theta,
         confidence: session.confidence,
         standardError: session.standardError,
@@ -541,9 +387,9 @@ function determineNextAction(session) {
     // Struggling student: 5 incorrect in a row at low difficulty
     if (allIncorrect && avgDifficulty < -0.5 && session.theta < -1.5 && session.standardError <= 0.35) {
       return {
-        action: 'interview',
+        action: 'complete',
         reason: 'foundational-needs',
-        message: 'I have a clear sense of where to start. Let\'s explore the foundations together.',
+        message: 'Assessment complete! We have a clear sense of where to focus.',
         theta: session.theta,
         confidence: session.confidence,
         standardError: session.standardError,
@@ -671,7 +517,7 @@ function generateReport(session) {
     frontierSkills: skillLevelEstimates.frontier,
 
     // Next steps
-    recommendedAction: session.phase === 'interview' ? 'interview' : 'complete'
+    recommendedAction: 'complete'
   };
 }
 

@@ -414,6 +414,23 @@ const learningProfileSchema = new Schema({
     // Notes from teacher/system
     notes: { type: String },
     generatedBy: { type: String, enum: ['auto', 'manual', 'teacher'], default: 'auto' }
+  }],
+
+  // Growth Check tracking (short progress assessments)
+  currentTheta: { type: Number, default: 0 },  // Current ability estimate from IRT
+  standardError: { type: Number, default: 1.0 },  // Uncertainty in theta estimate
+  lastGrowthCheck: { type: Date },  // When the last growth check was completed
+
+  // Growth Check history
+  growthCheckHistory: [{
+    sessionId: { type: String },
+    date: { type: Date, default: Date.now },
+    previousTheta: { type: Number },
+    newTheta: { type: Number },
+    thetaChange: { type: Number },
+    growthStatus: { type: String, enum: ['significant-growth', 'some-growth', 'stable', 'review-needed'] },
+    questionsAnswered: { type: Number },
+    accuracy: { type: Number, min: 0, max: 100 }
   }]
 }, { _id: false });
 
@@ -446,7 +463,7 @@ const userSchema = new Schema({
   mathCourse: { type: String, trim: true },              // e.g., 'Algebra 1', 'Geometry', 'Pre-Calculus'
   dateOfBirth: { type: Date },                           // For COPPA compliance (under 13 requires parental consent)
   hasParentalConsent: { type: Boolean, default: false }, // True when linked to a parent account (required for under 13)
-  tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual', 'motivational', 'Motivational'], default: 'encouraging' },
+  tonePreference: { type: String, enum: ['encouraging', 'straightforward', 'casual', 'motivational', 'Motivational', 'chill', 'Chill'], default: 'encouraging' },
   learningStyle: { type: String, trim: true },           // 'Visual', 'Auditory', 'Kinesthetic'
   preferredLanguage: { type: String, enum: ['English', 'Spanish', 'Russian', 'Chinese', 'Vietnamese', 'Arabic'], default: 'English' }, // Student's preferred language for tutoring
   interests: [{ type: String, trim: true }],             // ['Gaming', 'Basketball', 'Music']
@@ -660,9 +677,16 @@ const userSchema = new Schema({
     frequency: { type: String, enum: ['every-session', 'daily', 'weekly', 'never'], default: 'daily' },
     responsesCount: { type: Number, default: 0 },
     consecutiveDismissals: { type: Number, default: 0 },  // Track if user keeps dismissing
+    lastTrigger: String,  // What triggered the survey: 'problems_completed', 'milestone', 'time_based', 'tab_return', 'manual'
+    lastTriggerContext: {
+      problemsSolved: Number,
+      sessionDuration: Number,
+      timestamp: Date
+    },
     responses: [{
       submittedAt: { type: Date, default: Date.now },
       sessionDuration: Number,  // Minutes in session
+      problemsSolved: Number,  // Problems solved this session
       rating: Number,  // 1-5 star rating
       experience: String,  // 'excellent', 'good', 'okay', 'frustrating', 'confusing'
       feedback: String,  // Open-ended feedback
@@ -670,7 +694,8 @@ const userSchema = new Schema({
       features: String,  // Feature requests
       helpfulness: Number,  // 1-5 rating
       difficulty: Number,  // 1-5 rating
-      willingness: Number  // 1-5 - how likely to recommend
+      willingness: Number,  // 0-10 NPS score
+      isQuickResponse: { type: Boolean, default: false }  // Was this a quick 1-tap response
     }]
   },
 
@@ -969,6 +994,15 @@ userSchema.pre('save', async function (next) {
   }
   next();
 });
+
+/* ---------- DATABASE INDEXES ---------- */
+// Critical indexes for dashboard performance
+userSchema.index({ role: 1, teacherId: 1 });  // Teacher dashboard: find students by teacher
+userSchema.index({ teacherId: 1 });            // Student lookups by teacher
+userSchema.index({ role: 1 });                 // Role-based queries
+userSchema.index({ parentIds: 1 });            // Parent dashboard: find children
+userSchema.index({ lastLogin: -1 });           // Activity reports sorted by login
+userSchema.index({ role: 1, lastLogin: -1 });  // Admin usage reports
 
 /* ---------- EXPORT MODEL ---------- */
 const User = mongoose.models.User || mongoose.model('User', userSchema);
