@@ -1323,6 +1323,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
             <option value="all_parents">All Parents</option>
             <option value="all_teachers">All Teachers</option>
             <option value="class">Specific Class</option>
+            <option value="custom">Select Individual Users...</option>
           </select>
         </div>
 
@@ -1331,6 +1332,29 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
           <select id="emailClassSelect">
             <option value="">Loading classes...</option>
           </select>
+        </div>
+
+        <div id="customSelectContainer" class="modal-form-group" style="display: none;">
+          <label>Search & Select Users</label>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="text" id="userSearchInput" placeholder="Search by name or email..." style="flex: 1;">
+            <select id="userRoleFilter" style="width: 120px;">
+              <option value="">All Roles</option>
+              <option value="student">Students</option>
+              <option value="parent">Parents</option>
+              <option value="teacher">Teachers</option>
+            </select>
+            <button type="button" id="searchUsersBtn" class="btn btn-secondary" style="padding: 8px 15px;">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div id="userSearchResults" style="max-height: 150px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9;">
+            <p style="padding: 15px; color: #666; text-align: center; margin: 0;">Search for users above</p>
+          </div>
+          <div id="selectedUsersContainer" style="margin-top: 10px; display: none;">
+            <label style="font-size: 0.9em; color: #333;">Selected Users (<span id="selectedUsersCount">0</span>):</label>
+            <div id="selectedUsersList" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;"></div>
+          </div>
         </div>
 
         <div id="recipientPreview" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; display: none;">
