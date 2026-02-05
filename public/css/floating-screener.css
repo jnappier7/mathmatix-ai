@@ -138,8 +138,13 @@
 
 /* Instruction Screen */
 .screener-instruction {
+  display: none;
   text-align: center;
   padding: 20px;
+}
+
+.screener-instruction.active {
+  display: block;
 }
 
 .screener-instruction h2 {
@@ -338,58 +343,33 @@
   flex: 1;
 }
 
-/* Confidence Meter */
-.confidence-meter {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 16px;
+/* Skip Skill Button */
+.skip-skill-section {
   margin: 20px 0;
-}
-
-.confidence-meter h4 {
-  font-size: 0.9em;
-  color: #666;
-  margin-bottom: 12px;
   text-align: center;
 }
 
-.confidence-options {
-  display: flex;
-  justify-content: space-around;
-  gap: 8px;
-}
-
-.confidence-option {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12px 8px;
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+.btn-skip-skill {
+  background: transparent;
+  color: #888;
+  border: 1px dashed #ccc;
+  padding: 12px 24px;
+  font-size: 0.95em;
+  font-weight: 500;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
 }
 
-.confidence-option:hover {
+.btn-skip-skill:hover {
+  color: #667eea;
   border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
 }
 
-.confidence-option.selected {
-  background: #e8edff;
-  border-color: #667eea;
-}
-
-.confidence-option .level {
-  font-size: 1.5em;
-  margin-bottom: 4px;
-}
-
-.confidence-option .label {
-  font-size: 0.75em;
-  color: #666;
-  text-align: center;
+.btn-skip-skill i {
+  margin-right: 6px;
 }
 
 /* Submit Button */
@@ -712,20 +692,9 @@
     padding: 12px;
   }
 
-  .confidence-options {
-    flex-wrap: nowrap;
-  }
-
-  .confidence-option {
-    padding: 10px 6px;
-  }
-
-  .confidence-option .level {
-    font-size: 1.2em;
-  }
-
-  .confidence-option .label {
-    font-size: 0.65em;
+  .btn-skip-skill {
+    padding: 10px 16px;
+    font-size: 0.9em;
   }
 
   .results-stats {

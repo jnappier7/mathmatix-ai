@@ -432,13 +432,13 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
  */
 router.post('/submit-answer', isAuthenticated, async (req, res) => {
   try {
-    const { sessionId, problemId, answer, responseTime } = req.body;
+    const { sessionId, problemId, answer, responseTime, skipped } = req.body;
 
-    if (!sessionId || !problemId || answer === undefined) {
+    if (!sessionId || !problemId || (answer === undefined && !skipped)) {
       const missing = [];
       if (!sessionId) missing.push('sessionId');
       if (!problemId) missing.push('problemId');
-      if (answer === undefined) missing.push('answer');
+      if (answer === undefined && !skipped) missing.push('answer');
       console.error(`[Screener] Submit answer failed - Missing fields: ${missing.join(', ')}`);
       return res.status(400).json({
         error: 'Missing required fields',
@@ -473,9 +473,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     console.log(`[DEBUG]   Options: ${JSON.stringify(problem.options?.map(o => o.text || o)?.slice(0, 4))}`);
     console.log(`[DEBUG]   User Answer: "${answer}" (type: ${typeof answer})`);
 
-    // Check if answer is correct
-    const isCorrect = problem.checkAnswer(answer);
-    console.log(`[DEBUG]   Result: ${isCorrect ? 'CORRECT ✓' : 'INCORRECT ✗'}`);
+    // Check if answer is correct (skipped questions are treated as incorrect)
+    const isCorrect = skipped ? false : problem.checkAnswer(answer);
+    console.log(`[DEBUG]   Result: ${skipped ? 'SKIPPED ⏭' : (isCorrect ? 'CORRECT ✓' : 'INCORRECT ✗')}`);
 
     // Capture previous theta for logging
     const previousTheta = session.theta;
@@ -491,8 +491,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       difficulty: difficultyTheta,  // IRT uses theta scale
       discrimination: 1.0,  // Default discrimination for simplified model
       correct: isCorrect,
+      skipped: !!skipped,
       responseTime: responseTime || null,
-      userAnswer: answer,
+      userAnswer: skipped ? '__SKIP__' : answer,
       correctAnswer: problem.answer?.value ?? problem.answer
     };
 
@@ -513,8 +514,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     session.markModified('frontier');
     await session.save();
 
-    console.log(`[Screener] Q${session.questionCount} Result: ${response.correct ? 'CORRECT ✓' : 'INCORRECT ✗'} | Theta: ${previousTheta.toFixed(2)} → ${session.theta.toFixed(2)} (Δ${(session.theta - previousTheta) >= 0 ? '+' : ''}${(session.theta - previousTheta).toFixed(2)}) | SE: ${session.standardError.toFixed(3)}`);
-    console.log(`[Screener]   Answer: "${answer}" ${isCorrect ? '==' : '!='} "${response.correctAnswer}"`);
+    const resultLabel = skipped ? 'SKIPPED ⏭' : (response.correct ? 'CORRECT ✓' : 'INCORRECT ✗');
+    console.log(`[Screener] Q${session.questionCount} Result: ${resultLabel} | Theta: ${previousTheta.toFixed(2)} → ${session.theta.toFixed(2)} (Δ${(session.theta - previousTheta) >= 0 ? '+' : ''}${(session.theta - previousTheta).toFixed(2)}) | SE: ${session.standardError.toFixed(3)}`);
+    console.log(`[Screener]   Answer: "${skipped ? 'SKIPPED' : answer}" ${isCorrect ? '==' : '!='} "${response.correctAnswer}"`);
     console.log(`[Screener]   Difficulty theta: ${difficultyTheta.toFixed(2)}`);
 
     // Determine next action

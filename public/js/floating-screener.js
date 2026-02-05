@@ -23,7 +23,6 @@ class FloatingScreener {
     this.sessionId = null;
     this.currentProblem = null;
     this.selectedAnswer = null;
-    this.selectedConfidence = null;
     this.textSize = 'medium'; // small, medium, large, xlarge
 
     // Drag state
@@ -101,6 +100,12 @@ class FloatingScreener {
     const submitBtn = document.getElementById('screener-submit-btn');
     if (submitBtn) {
       submitBtn.addEventListener('click', () => this.submitAnswer());
+    }
+
+    // Skip skill button
+    const skipBtn = document.getElementById('screener-skip-btn');
+    if (skipBtn) {
+      skipBtn.addEventListener('click', () => this.skipQuestion());
     }
 
     // Results continue button
@@ -204,7 +209,6 @@ class FloatingScreener {
     this.sessionId = null;
     this.currentProblem = null;
     this.selectedAnswer = null;
-    this.selectedConfidence = null;
   }
 
   centerModule() {
@@ -387,7 +391,6 @@ class FloatingScreener {
 
       this.currentProblem = data.problem;
       this.selectedAnswer = null;
-      this.selectedConfidence = null;
 
       this.renderProblem(data.problem);
       this.showScreen('question');
@@ -442,9 +445,6 @@ class FloatingScreener {
       optionsContainer.style.display = 'block';
     }
 
-    // Reset confidence meter
-    this.resetConfidenceMeter();
-
     // Update submit button state
     this.updateSubmitButton();
 
@@ -486,30 +486,44 @@ class FloatingScreener {
     this.updateSubmitButton();
   }
 
-  selectConfidence(level) {
-    // Remove selection from all confidence options
-    document.querySelectorAll('.confidence-option').forEach(opt => {
-      opt.classList.remove('selected');
-    });
+  async skipQuestion() {
+    if (!this.currentProblem) return;
 
-    // Select this level
-    const option = document.querySelector(`.confidence-option[data-level="${level}"]`);
-    if (option) {
-      option.classList.add('selected');
-      this.selectedConfidence = level;
+    this.showLoading('Skipping...');
+
+    try {
+      const response = await window.csrfFetch('/api/screener/submit-answer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          sessionId: this.sessionId,
+          problemId: this.currentProblem.problemId,
+          answer: '__SKIP__',
+          skipped: true,
+          responseTime: null
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to skip question');
+      }
+
+      console.log('[FloatingScreener] Question skipped, action:', data.nextAction);
+
+      if (data.nextAction === 'continue') {
+        await this.getNextProblem();
+      } else if (data.nextAction === 'complete') {
+        this.showResults(data);
+      }
+
+    } catch (error) {
+      console.error('[FloatingScreener] Error skipping question:', error);
+      alert('Failed to skip question. Please try again.');
+      this.showScreen('question');
     }
-  }
-
-  resetConfidenceMeter() {
-    document.querySelectorAll('.confidence-option').forEach(opt => {
-      opt.classList.remove('selected');
-    });
-    this.selectedConfidence = null;
-
-    // Re-attach click handlers
-    document.querySelectorAll('.confidence-option').forEach(opt => {
-      opt.onclick = () => this.selectConfidence(parseInt(opt.dataset.level));
-    });
   }
 
   updateSubmitButton() {
@@ -540,8 +554,7 @@ class FloatingScreener {
           sessionId: this.sessionId,
           problemId: this.currentProblem.problemId,
           answer: answer,
-          confidence: this.selectedConfidence,
-          responseTime: null // Could track time spent on question
+          responseTime: null
         })
       });
 
