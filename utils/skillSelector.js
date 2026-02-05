@@ -148,21 +148,20 @@ function scoreSkill(skill, context) {
  * @returns {Array} Filtered candidates (may be same or subset)
  */
 function applySkillClustering(candidates, session) {
-  const { responses, testedSkillCategories } = session;
+  const { responses, testedSkillCategories, theta } = session;
   const { difficultyBinSize, minSkillsPerBin, minCategoriesPerBin } = SESSION_DEFAULTS;
 
   if (responses.length < 3) {
     return candidates; // Not enough data for clustering
   }
 
-  // Determine current difficulty bin from recent responses
-  const recentDifficulties = responses.slice(-3).map(r => r.difficulty);
-  const avgRecentDifficulty = recentDifficulties.reduce((a, b) => a + b, 0) / recentDifficulties.length;
-
+  // FIXED: Use session theta (stable IRT estimate) instead of recent difficulties
+  // Recent difficulties are volatile and cause wild swings in difficulty selection
+  // Theta represents best current estimate of ability
   const currentBin = {
-    center: avgRecentDifficulty,
-    min: avgRecentDifficulty - difficultyBinSize / 2,
-    max: avgRecentDifficulty + difficultyBinSize / 2,
+    center: theta,
+    min: theta - difficultyBinSize / 2,
+    max: theta + difficultyBinSize / 2,
   };
 
   // Get responses in current bin

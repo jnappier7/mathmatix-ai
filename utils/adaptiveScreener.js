@@ -220,6 +220,15 @@ function processResponse(session, response) {
   session.standardError = abilityEstimate.standardError;
   session.confidence = 1 / (1 + session.standardError);  // Convert SE to confidence (0-1)
 
+  // FLOOR: Prevent theta from dropping more than 2.0 below starting level
+  // A college student should never see kindergarten questions, even if struggling
+  // This ensures the assessment stays in a reasonable range for the student's grade
+  const thetaFloor = session.priorMean - 2.0;
+  if (session.theta < thetaFloor) {
+    console.log(`[Screener] FLOOR: θ=${session.theta.toFixed(2)} below floor ${thetaFloor.toFixed(2)}, clamping`);
+    session.theta = thetaFloor;
+  }
+
   // Update cumulative information
   session.cumulativeInformation = informationBefore + questionInfo;
 

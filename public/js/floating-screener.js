@@ -589,7 +589,8 @@ class FloatingScreener {
     const durationEl = document.getElementById('screener-result-duration');
 
     if (accuracyEl && data.report?.accuracy !== undefined) {
-      accuracyEl.textContent = `${Math.round(data.report.accuracy * 100)}%`;
+      // Backend already returns accuracy as percentage (0-100), not decimal
+      accuracyEl.textContent = `${Math.round(data.report.accuracy)}%`;
     }
 
     if (questionsEl && data.report?.questionsAnswered !== undefined) {
