@@ -13,9 +13,30 @@
 | Valid JSON | Yes | PASS |
 | Duplicate Problems | 0 | PASS |
 | Missing Required Fields | 0 | PASS |
+| **Wrong answerType** | **12,619** | **CRITICAL** |
+| **Missing MC options** | **12,619** | **CRITICAL** |
 | Answer Verification Errors | 28 | WARN |
 | Skills with <10 problems | 146 | FAIL |
 | Skills with 0 problems | 63 | FAIL |
+
+---
+
+## CRITICAL ISSUE: Wrong Answer Type
+
+**All 12,619 problems have incorrect answer type configuration:**
+
+| Field | Current Value | Required Value |
+|-------|---------------|----------------|
+| `answerType` | `constructed-response` | `multiple-choice` |
+| `options` | `[]` (empty) | Array of MC choices |
+
+**Impact:** These problems cannot function as multiple-choice questions because:
+1. They are marked as free-response instead of MC
+2. They have no answer options defined for students to select
+
+**Resolution Required:** Either:
+- Generate MC options for all 12,619 problems and update `answerType`, OR
+- Replace with properly formatted MC problems
 
 ---
 
@@ -292,8 +313,9 @@ These skills are defined in `skills.json` but have no problems:
 | tags | 2 missing | Minor issue |
 
 ### Answer Type Distribution
-- All 12,619 problems are `constructed-response`
-- No multiple-choice problems in dataset
+- All 12,619 problems are `constructed-response` - **SHOULD BE `multiple-choice`**
+- No multiple-choice problems in dataset - **CRITICAL: ALL SHOULD BE MC**
+- All problems have empty `options` arrays - **CRITICAL: MC OPTIONS REQUIRED**
 
 ### Active Status
 - All 12,619 problems are marked `isActive: true`
@@ -303,19 +325,22 @@ These skills are defined in `skills.json` but have no problems:
 
 ## 6. Recommendations
 
+### CRITICAL Priority
+1. **Convert all problems to multiple-choice** - All 12,619 problems have wrong `answerType`
+2. **Generate MC options for all problems** - All 12,619 problems have empty `options` arrays
+
 ### High Priority
-1. **Generate problems for 63 empty skills** - These skills are defined but have no content
-2. **Increase coverage for 83 skills with <10 problems** - Minimum of 10 problems recommended per skill
+3. **Generate problems for 63 empty skills** - These skills are defined but have no content
+4. **Increase coverage for 83 skills with <10 problems** - Minimum of 10 problems recommended per skill
 
 ### Medium Priority
-3. **Simplify fraction answers** - Update 28 fraction problems to use lowest terms
-4. **Add multiple-choice problems** - All problems are constructed-response; consider diversity
-5. **Populate secondarySkillIds** - Enable cross-skill relationships
+5. **Simplify fraction answers** - Update 28 fraction problems to use lowest terms
+6. **Populate secondarySkillIds** - Enable cross-skill relationships
 
 ### Low Priority
-6. **Add contentHash values** - Enable content-based deduplication
-7. **Review skill naming consistency** - Some potentially redundant skills (e.g., `adding-*` vs `addition-*`)
-8. **Add missing tags** - 2 problems have empty tag arrays
+7. **Add contentHash values** - Enable content-based deduplication
+8. **Review skill naming consistency** - Some potentially redundant skills (e.g., `adding-*` vs `addition-*`)
+9. **Add missing tags** - 2 problems have empty tag arrays
 
 ---
 
