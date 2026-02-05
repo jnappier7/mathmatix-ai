@@ -2476,6 +2476,93 @@ const generators = {
     }
     return problems;
   },
+
+  'vertical-shift': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'f(x) = x² + 4 is f(x) = x² shifted how?', a: '4 units up', w: ['4 units down', '4 units left', '4 units right'] },
+      { q: 'f(x) = x² - 3 is f(x) = x² shifted how?', a: '3 units down', w: ['3 units up', '3 units left', '3 units right'] },
+      { q: 'f(x) = |x| + 7 is f(x) = |x| shifted how?', a: '7 units up', w: ['7 units down', '7 units left', '7 units right'] },
+      { q: 'f(x) = √x - 2 is f(x) = √x shifted how?', a: '2 units down', w: ['2 units up', '2 units left', '2 units right'] },
+      { q: 'To shift y = x² up 5 units, write:', a: 'y = x² + 5', w: ['y = x² - 5', 'y = (x + 5)²', 'y = (x - 5)²'] },
+      { q: 'To shift y = |x| down 6 units, write:', a: 'y = |x| - 6', w: ['y = |x| + 6', 'y = |x - 6|', 'y = |x + 6|'] },
+      { q: 'The vertex of y = x² + 3 is at:', a: '(0, 3)', w: ['(3, 0)', '(0, -3)', '(-3, 0)'] },
+      { q: 'The vertex of y = x² - 5 is at:', a: '(0, -5)', w: ['(0, 5)', '(-5, 0)', '(5, 0)'] },
+      { q: 'Adding k to f(x) moves the graph:', a: 'up if k > 0, down if k < 0', w: ['left if k > 0', 'right if k > 0', 'no change'] },
+      { q: 'y = 2^x + 1 has horizontal asymptote at:', a: 'y = 1', w: ['y = 0', 'y = 2', 'x = 1'] },
+      { q: 'y = log(x) - 4 is y = log(x) shifted:', a: '4 units down', w: ['4 units up', '4 units left', '4 units right'] },
+      { q: 'If f(x) passes through (2, 5), then f(x) + 3 passes through:', a: '(2, 8)', w: ['(5, 5)', '(2, 2)', '(5, 8)'] },
+      { q: 'y = sin(x) + 2 oscillates between:', a: '1 and 3', w: ['-1 and 1', '0 and 2', '-2 and 2'] },
+      { q: 'The minimum value of y = x² + 4 is:', a: '4', w: ['0', '-4', 'none'] },
+      { q: 'y = 1/x + 3 has horizontal asymptote at:', a: 'y = 3', w: ['y = 0', 'y = 1', 'x = 3'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('vertical-shift', p.q, p.a, p.w, 2, '8-12', 'Functions', ['functions', 'transformations', 'vertical']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'horizontal-shift': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'f(x) = (x - 3)² is f(x) = x² shifted how?', a: '3 units right', w: ['3 units left', '3 units up', '3 units down'] },
+      { q: 'f(x) = (x + 2)² is f(x) = x² shifted how?', a: '2 units left', w: ['2 units right', '2 units up', '2 units down'] },
+      { q: 'f(x) = |x - 5| is f(x) = |x| shifted how?', a: '5 units right', w: ['5 units left', '5 units up', '5 units down'] },
+      { q: 'f(x) = √(x + 4) is f(x) = √x shifted how?', a: '4 units left', w: ['4 units right', '4 units up', '4 units down'] },
+      { q: 'To shift y = x² right 6 units, write:', a: 'y = (x - 6)²', w: ['y = (x + 6)²', 'y = x² + 6', 'y = x² - 6'] },
+      { q: 'To shift y = |x| left 3 units, write:', a: 'y = |x + 3|', w: ['y = |x - 3|', 'y = |x| + 3', 'y = |x| - 3'] },
+      { q: 'The vertex of y = (x - 4)² is at:', a: '(4, 0)', w: ['(-4, 0)', '(0, 4)', '(0, -4)'] },
+      { q: 'The vertex of y = (x + 1)² is at:', a: '(-1, 0)', w: ['(1, 0)', '(0, 1)', '(0, -1)'] },
+      { q: 'f(x - h) shifts the graph:', a: 'right if h > 0, left if h < 0', w: ['left if h > 0', 'up if h > 0', 'down if h > 0'] },
+      { q: 'y = 2^(x-1) has y-intercept at:', a: '(0, 1/2)', w: ['(0, 2)', '(0, 1)', '(1, 2)'] },
+      { q: 'y = log(x - 2) has vertical asymptote at:', a: 'x = 2', w: ['x = 0', 'x = -2', 'y = 2'] },
+      { q: 'If f(x) passes through (3, 7), then f(x - 2) passes through:', a: '(5, 7)', w: ['(1, 7)', '(3, 5)', '(3, 9)'] },
+      { q: 'y = sin(x - π/2) is y = sin(x) shifted:', a: 'π/2 units right', w: ['π/2 units left', 'π/2 units up', 'π/2 units down'] },
+      { q: 'The domain of y = √(x - 3) is:', a: 'x ≥ 3', w: ['x ≥ 0', 'x ≥ -3', 'all real numbers'] },
+      { q: 'y = 1/(x + 2) has vertical asymptote at:', a: 'x = -2', w: ['x = 2', 'x = 0', 'y = -2'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('horizontal-shift', p.q, p.a, p.w, 2, '8-12', 'Functions', ['functions', 'transformations', 'horizontal']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'function-composition': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'If f(x) = 2x and g(x) = x + 3, find (f ∘ g)(x).', a: '2(x + 3) = 2x + 6', w: ['2x + 3', 'x + 6', '2x · (x + 3)'] },
+      { q: 'If f(x) = x² and g(x) = x + 1, find (f ∘ g)(x).', a: '(x + 1)²', w: ['x² + 1', 'x² + x + 1', 'x³'] },
+      { q: 'If f(x) = x + 5 and g(x) = 3x, find (g ∘ f)(x).', a: '3(x + 5) = 3x + 15', w: ['3x + 5', 'x + 15', '3x · 5'] },
+      { q: 'If f(x) = √x and g(x) = x - 4, find (f ∘ g)(x).', a: '√(x - 4)', w: ['√x - 4', '√x - √4', 'x - 4'] },
+      { q: '(f ∘ g)(x) means:', a: 'f(g(x))', w: ['g(f(x))', 'f(x) · g(x)', 'f(x) + g(x)'] },
+      { q: 'If f(x) = 2x and g(x) = x², find (f ∘ g)(3).', a: '18', w: ['36', '12', '9'] },
+      { q: 'If f(x) = x - 1 and g(x) = x², find (g ∘ f)(4).', a: '9', w: ['15', '16', '8'] },
+      { q: 'If f(x) = 3x and g(x) = x + 2, find (f ∘ g)(1).', a: '9', w: ['5', '6', '7'] },
+      { q: 'If f(x) = x² and g(x) = 2x, find (g ∘ f)(3).', a: '18', w: ['36', '12', '6'] },
+      { q: 'For f(x) = x + 1 and g(x) = x - 1, (f ∘ g)(x) = ?', a: 'x', w: ['x + 2', 'x - 2', '2x'] },
+      { q: 'If f(x) = 1/x and g(x) = x + 2, find (f ∘ g)(x).', a: '1/(x + 2)', w: ['1/x + 2', '(1/x) + 2', 'x + 2'] },
+      { q: 'If h(x) = (f ∘ g)(x) where f(x) = x³ and g(x) = 2x, then h(x) = ?', a: '(2x)³ = 8x³', w: ['2x³', '6x³', '2x + 3'] },
+      { q: 'The domain of (f ∘ g)(x) depends on:', a: 'domain of g and range of g fitting domain of f', w: ['domain of f only', 'domain of g only', 'range of f'] },
+      { q: 'If f(x) = |x| and g(x) = x - 3, find (f ∘ g)(1).', a: '2', w: ['-2', '4', '3'] },
+      { q: 'Is (f ∘ g)(x) always equal to (g ∘ f)(x)?', a: 'No, composition is not commutative', w: ['Yes, always', 'Only for linear functions', 'Only when f = g'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('function-composition', p.q, p.a, p.w, 3, '8-12', 'Functions', ['functions', 'composition']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
