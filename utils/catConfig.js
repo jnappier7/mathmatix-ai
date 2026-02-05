@@ -471,19 +471,20 @@ function getCategoryDifficulty(category) {
 
 const JUMP_PARAMS = {
   // Correct answer jumps
-  correctBaseJump: 1.5,      // Maximum upward jump
+  correctBaseJump: 1.2,      // Maximum upward jump (reduced from 1.5)
   correctMinJump: 0.3,       // Minimum upward jump
 
-  // Incorrect answer steps
-  incorrectBaseStep: -0.7,   // Maximum downward step
-  incorrectMinStep: -0.2,    // Minimum downward step
+  // Incorrect answer steps - REDUCED to prevent dramatic drops
+  // A high schooler getting a few wrong shouldn't drop to kindergarten
+  incorrectBaseStep: -0.4,   // Maximum downward step (was -0.7)
+  incorrectMinStep: -0.15,   // Minimum downward step (was -0.2)
 
   // Dampening factors
-  timeDampenBase: 0.9,       // Decay rate per question
+  timeDampenBase: 0.92,      // Decay rate per question (slower decay)
   minConfidenceDampen: 0.3,  // Minimum confidence dampening
 
   // Bounds
-  maxJumpFromTheta: 1.5,     // Max distance from current theta
+  maxJumpFromTheta: 1.0,     // Max distance from current theta (was 1.5)
 };
 
 /**
