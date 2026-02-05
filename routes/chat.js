@@ -1706,11 +1706,25 @@ async function handleGreetingRequest(req, res, userId) {
         // but we add a system instruction to respond as if initiating
         const systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
 
+        // Check if we should offer Starting Point in this greeting (only once, ever)
+        const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
+
+        let greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.`;
+
+        // Add Starting Point offer (only on first session, never again)
+        if (shouldOfferStartingPoint) {
+            greetingInstruction += `
+
+IMPORTANT: This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar. Say something like: "Oh, and when you're ready, hit that glowing Starting Point button on the left - it's a quick quiz to figure out where you're at so I can help you better. No rush though!"
+
+Keep it casual and low-pressure. Don't make it sound like a test they need to take right now. Just let them know it's there when they're ready.`;
+        }
+
         const messagesForAI = [
             { role: 'system', content: systemPrompt },
             {
                 role: 'system',
-                content: `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.`
+                content: greetingInstruction
             },
             { role: 'user', content: ghostMessage }
         ];
@@ -1749,6 +1763,15 @@ async function handleGreetingRequest(req, res, userId) {
                 activeConversation.lastActivity = new Date();
                 await activeConversation.save();
 
+                // Mark Starting Point as offered (only do this once, ever)
+                if (shouldOfferStartingPoint) {
+                    await User.findByIdAndUpdate(userId, {
+                        startingPointOffered: true,
+                        startingPointOfferedAt: new Date()
+                    });
+                    console.log(`[Greeting] Marked Starting Point as offered for user ${userId}`);
+                }
+
                 // Send completion with metadata
                 res.write(`data: ${JSON.stringify({
                     done: true,
@@ -1776,6 +1799,15 @@ async function handleGreetingRequest(req, res, userId) {
             });
             activeConversation.lastActivity = new Date();
             await activeConversation.save();
+
+            // Mark Starting Point as offered (only do this once, ever)
+            if (shouldOfferStartingPoint) {
+                await User.findByIdAndUpdate(userId, {
+                    startingPointOffered: true,
+                    startingPointOfferedAt: new Date()
+                });
+                console.log(`[Greeting] Marked Starting Point as offered for user ${userId}`);
+            }
 
             res.json({
                 text: greetingText,

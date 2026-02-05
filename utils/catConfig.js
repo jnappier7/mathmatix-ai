@@ -31,13 +31,16 @@ const SESSION_DEFAULTS = {
   // Problem exclusion window (LRU)
   lruExclusionWindow: 150,     // Exclude last N problems from selection
 
-  // Skill clustering
-  difficultyBinSize: 1.4,      // Skills within this range are "similar level"
-  minSkillsPerBin: 2,          // Test at least N skills before jumping bins
+  // Skill clustering - HORIZONTAL PROBING BEFORE VERTICAL MOVEMENT
+  // A grade level has multiple skills/domains - test breadth before jumping difficulty
+  difficultyBinSize: 1.0,      // Skills within this theta range are "same level"
+  minSkillsPerBin: 3,          // Test at least 3 different skills at same level before moving up/down
+  minCategoriesPerBin: 2,      // Must test at least 2 different categories before jumping
 
-  // Content balancing
+  // Content balancing - ensure coverage across domains
   scoreThreshold: 2.0,         // Skills within this score are "similar enough"
   maxSkillTests: 3,            // Max times to test same skill
+  categoryBalanceWeight: 8,    // Stronger weight for category diversity
 };
 
 // ===========================================================================
@@ -193,6 +196,42 @@ function gradeToTheta(grade, mathCourse = null) {
   }
 
   return 0;
+}
+
+/**
+ * Convert theta back to human-readable grade level (like STAR testing)
+ * Returns a descriptive string that students/parents can understand
+ *
+ * @param {Number} theta - IRT ability estimate
+ * @returns {Object} { gradeLevel: string, description: string }
+ */
+function thetaToGradeLevel(theta) {
+  // Map theta ranges to grade levels
+  const gradeLevelMap = [
+    { maxTheta: -2.5, gradeLevel: 'Kindergarten', description: 'Working on counting and number recognition' },
+    { maxTheta: -2.0, gradeLevel: '1st Grade', description: 'Building addition and subtraction skills' },
+    { maxTheta: -1.5, gradeLevel: '2nd Grade', description: 'Strengthening basic operations' },
+    { maxTheta: -1.0, gradeLevel: '3rd Grade', description: 'Developing multiplication and division' },
+    { maxTheta: -0.5, gradeLevel: '4th Grade', description: 'Working with fractions and multi-digit operations' },
+    { maxTheta: 0.0, gradeLevel: '5th Grade', description: 'Mastering fractions and decimals' },
+    { maxTheta: 0.3, gradeLevel: '6th Grade', description: 'Learning ratios and introductory algebra' },
+    { maxTheta: 0.6, gradeLevel: '7th Grade', description: 'Building equation-solving skills' },
+    { maxTheta: 0.9, gradeLevel: '8th Grade', description: 'Ready for linear equations and geometry' },
+    { maxTheta: 1.2, gradeLevel: 'Algebra 1', description: 'Working through algebraic foundations' },
+    { maxTheta: 1.5, gradeLevel: 'Geometry', description: 'Developing geometric reasoning' },
+    { maxTheta: 1.8, gradeLevel: 'Algebra 2', description: 'Advancing through higher algebra' },
+    { maxTheta: 2.2, gradeLevel: 'Pre-Calculus', description: 'Preparing for calculus concepts' },
+    { maxTheta: 2.6, gradeLevel: 'Calculus', description: 'Working with limits and derivatives' },
+    { maxTheta: Infinity, gradeLevel: 'Advanced Math', description: 'College-level mathematics' },
+  ];
+
+  for (const { maxTheta, gradeLevel, description } of gradeLevelMap) {
+    if (theta <= maxTheta) {
+      return { gradeLevel, description };
+    }
+  }
+
+  return { gradeLevel: 'Advanced Math', description: 'College-level mathematics' };
 }
 
 // ===========================================================================
@@ -544,6 +583,7 @@ module.exports = {
 
   // Grade mapping
   gradeToTheta,
+  thetaToGradeLevel,
   COURSE_THETA_MAP,
   GRADE_BAND_THETA_MAP,
   GRADE_NUMBER_THETA,

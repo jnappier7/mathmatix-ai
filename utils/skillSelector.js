@@ -138,16 +138,18 @@ function scoreSkill(skill, context) {
 /**
  * Apply skill clustering to prevent wild difficulty jumps
  *
- * Groups skills into difficulty bins and ensures we test multiple
- * skills at similar difficulty before jumping to next level.
+ * HORIZONTAL PROBING BEFORE VERTICAL MOVEMENT:
+ * - Grade levels comprise multiple skills and domains
+ * - Before moving up/down in difficulty, test breadth at current level
+ * - Ensures we have a complete picture before making level decisions
  *
  * @param {Array} candidates - Scored skill candidates
  * @param {Object} session - Current session state
  * @returns {Array} Filtered candidates (may be same or subset)
  */
 function applySkillClustering(candidates, session) {
-  const { responses } = session;
-  const { difficultyBinSize, minSkillsPerBin } = SESSION_DEFAULTS;
+  const { responses, testedSkillCategories } = session;
+  const { difficultyBinSize, minSkillsPerBin, minCategoriesPerBin } = SESSION_DEFAULTS;
 
   if (responses.length < 3) {
     return candidates; // Not enough data for clustering
@@ -163,18 +165,44 @@ function applySkillClustering(candidates, session) {
     max: avgRecentDifficulty + difficultyBinSize / 2,
   };
 
-  // Count skills tested in current bin
-  const skillsInBin = responses.filter(r =>
+  // Get responses in current bin
+  const responsesInBin = responses.filter(r =>
     r.difficulty >= currentBin.min && r.difficulty <= currentBin.max
-  ).length;
+  );
 
-  // If we've tested fewer than minimum, prefer staying in bin
-  if (skillsInBin < minSkillsPerBin) {
+  const skillsInBin = responsesInBin.length;
+
+  // Count unique categories tested in current bin
+  const categoriesInBin = new Set();
+  for (const r of responsesInBin) {
+    if (r.skillCategory) {
+      categoriesInBin.add(getBroadCategory(r.skillCategory));
+    }
+  }
+
+  // HORIZONTAL PROBING: Stay in current bin if we haven't tested enough
+  // breadth (skills AND categories) before making vertical decisions
+  const needMoreSkills = skillsInBin < minSkillsPerBin;
+  const needMoreCategories = categoriesInBin.size < (minCategoriesPerBin || 2);
+
+  if (needMoreSkills || needMoreCategories) {
+    // Find candidates at current level that haven't been over-tested
     const binCandidates = candidates.filter(s =>
       s.difficulty >= currentBin.min &&
       s.difficulty <= currentBin.max &&
       s.testCount < 2
     );
+
+    // If we need more category coverage, prioritize untested categories
+    if (needMoreCategories && binCandidates.length > 0) {
+      const untestedCategoryCandidates = binCandidates.filter(s =>
+        !categoriesInBin.has(s.broadCategory)
+      );
+
+      if (untestedCategoryCandidates.length > 0) {
+        return untestedCategoryCandidates;
+      }
+    }
 
     if (binCandidates.length > 0) {
       return binCandidates;

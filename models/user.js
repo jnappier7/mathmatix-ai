@@ -670,6 +670,27 @@ const userSchema = new Schema({
   tourCompletedAt: { type: Date },
   tourDismissed: { type: Boolean, default: false },  // If user dismissed without completing
 
+  /* CAT Screener (Starting Point) Tracking */
+  startingPointOffered: { type: Boolean, default: false },  // True after AI offers in chat (never ask again)
+  startingPointOfferedAt: { type: Date },  // When it was first offered
+
+  /* Assessment History & Growth Tracking */
+  assessmentHistory: [{
+    type: { type: String, enum: ['starting-point', 'growth-check'], required: true },
+    date: { type: Date, default: Date.now },
+    theta: { type: Number },  // Raw theta score
+    standardError: { type: Number },
+    gradeLevel: { type: String },  // Human-readable grade level (e.g., "5th Grade", "Algebra 1")
+    questionsAnswered: { type: Number },
+    accuracy: { type: Number },  // 0-1
+    duration: { type: Number },  // seconds
+    skillsAssessed: [{ type: String }],  // skillIds that were tested
+    sessionId: { type: String }  // Reference to screenerSession
+  }],
+  lastGrowthCheck: { type: Date },  // When last growth check was completed
+  nextGrowthCheckDue: { type: Date },  // When next growth check becomes available (3 months after last)
+  assessmentExpiresAt: { type: Date },  // When current Starting Point expires (1 year after completion)
+
   sessionSurveys: {
     enabled: { type: Boolean, default: true },  // Can be disabled by user
     lastShownAt: { type: Date },
