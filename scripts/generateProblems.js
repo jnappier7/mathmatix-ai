@@ -3433,6 +3433,64 @@ const generators = {
     }
     return problems;
   },
+
+  'prek-compare-sets': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Which has MORE? 🍎🍎🍎 or 🍊🍊', a: '🍎🍎🍎 (3 is more than 2)', w: ['🍊🍊', 'They are equal', 'Cannot tell'] },
+      { q: 'Which has FEWER? 🐶🐶🐶🐶 or 🐱🐱', a: '🐱🐱 (2 is fewer than 4)', w: ['🐶🐶🐶🐶', 'They are equal', 'Cannot tell'] },
+      { q: 'Which has MORE? ⭐⭐⭐⭐⭐ or ⭐⭐⭐', a: '⭐⭐⭐⭐⭐ (5 is more than 3)', w: ['⭐⭐⭐', 'They are equal', 'Cannot tell'] },
+      { q: 'Are these EQUAL? 🔵🔵🔵 and 🔴🔴🔴', a: 'Yes, both have 3', w: ['No, blue has more', 'No, red has more', 'Cannot tell'] },
+      { q: 'Which has FEWER? 🌸🌸🌸🌸🌸 or 🌻🌻🌻🌻🌻🌻', a: '🌸🌸🌸🌸🌸 (5 is fewer than 6)', w: ['🌻🌻🌻🌻🌻🌻', 'They are equal', 'Cannot tell'] },
+      { q: 'Which group has MORE? 4 balls or 2 balls', a: '4 balls', w: ['2 balls', 'They are equal', 'Neither'] },
+      { q: 'Which group has FEWER? 1 cookie or 5 cookies', a: '1 cookie', w: ['5 cookies', 'They are equal', 'Neither'] },
+      { q: 'Are these EQUAL? 🐟🐟 and 🦋🦋', a: 'Yes, both have 2', w: ['No, fish has more', 'No, butterfly has more', 'Cannot tell'] },
+      { q: 'Which has MORE? 🍌🍌🍌🍌🍌🍌 or 🍇🍇🍇🍇', a: '🍌🍌🍌🍌🍌🍌 (6 is more than 4)', w: ['🍇🍇🍇🍇', 'They are equal', 'Cannot tell'] },
+      { q: '3 apples or 3 oranges - which has more?', a: 'They are equal (both 3)', w: ['3 apples', '3 oranges', 'Cannot tell'] },
+      { q: 'Which has FEWER? 🎈🎈🎈🎈🎈🎈🎈 or 🎁🎁🎁', a: '🎁🎁🎁 (3 is fewer than 7)', w: ['🎈🎈🎈🎈🎈🎈🎈', 'They are equal', 'Cannot tell'] },
+      { q: 'Sam has 5 toys. Kim has 5 toys. Who has more?', a: 'They have the same amount', w: ['Sam', 'Kim', 'Cannot tell'] },
+      { q: 'Which has MORE? 🚗🚗 or 🚌🚌🚌🚌', a: '🚌🚌🚌🚌 (4 is more than 2)', w: ['🚗🚗', 'They are equal', 'Cannot tell'] },
+      { q: '0 birds or 1 bird - which has fewer?', a: '0 birds', w: ['1 bird', 'They are equal', 'Cannot tell'] },
+      { q: 'Which has MORE? 🍪🍪🍪🍪 or 🧁🧁🧁🧁', a: 'They are equal (both 4)', w: ['🍪🍪🍪🍪', '🧁🧁🧁🧁', 'Cannot tell'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('prek-compare-sets', p.q, p.a, p.w, 1, 'K-2', 'Counting & Cardinality', ['comparing', 'sets', 'prek']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'prek-position-words': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'The bird is IN the nest. Where is the bird?', a: 'inside the nest', w: ['under the nest', 'above the nest', 'beside the nest'] },
+      { q: 'The cat is UNDER the table. Where is the cat?', a: 'below the table', w: ['on top of the table', 'beside the table', 'inside the table'] },
+      { q: 'The ball is ON the box. Where is the ball?', a: 'on top of the box', w: ['under the box', 'inside the box', 'behind the box'] },
+      { q: 'The dog is BEHIND the tree. Where is the dog?', a: 'at the back of the tree', w: ['in front of the tree', 'on the tree', 'under the tree'] },
+      { q: 'The book is NEXT TO the lamp. Where is the book?', a: 'beside the lamp', w: ['on the lamp', 'under the lamp', 'inside the lamp'] },
+      { q: 'The airplane is ABOVE the clouds. Where is it?', a: 'higher than the clouds', w: ['below the clouds', 'inside the clouds', 'beside the clouds'] },
+      { q: 'The fish is IN the water. Where is the fish?', a: 'inside the water', w: ['above the water', 'next to the water', 'under the water'] },
+      { q: 'The toy is BETWEEN the two pillows. Where is it?', a: 'in the middle of the pillows', w: ['on top of the pillows', 'under the pillows', 'behind the pillows'] },
+      { q: 'The apple is IN FRONT OF the orange. Which fruit is closer to you?', a: 'the apple', w: ['the orange', 'they are the same', 'cannot tell'] },
+      { q: 'The sun is UP in the sky. Where is the sun?', a: 'high above', w: ['down low', 'beside us', 'behind us'] },
+      { q: 'Put the cup ON the shelf. Where should the cup go?', a: 'on top of the shelf', w: ['under the shelf', 'behind the shelf', 'beside the shelf'] },
+      { q: 'The shoes are UNDER the bed. Where are the shoes?', a: 'below the bed', w: ['on top of the bed', 'next to the bed', 'in the bed'] },
+      { q: 'The clock is ON the wall. Where is the clock?', a: 'attached to the wall surface', w: ['behind the wall', 'under the wall', 'next to the wall'] },
+      { q: 'Stand BEHIND your chair. Where should you stand?', a: 'at the back of the chair', w: ['in front of the chair', 'on the chair', 'under the chair'] },
+      { q: 'The flower is BESIDE the vase. Where is the flower?', a: 'next to the vase', w: ['in the vase', 'under the vase', 'on top of the vase'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('prek-position-words', p.q, p.a, p.w, 1, 'K-2', 'Geometry', ['position', 'spatial', 'prek']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
