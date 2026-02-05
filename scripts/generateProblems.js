@@ -4100,6 +4100,35 @@ const generators = {
     }
     return problems;
   },
+
+  'simplify-expressions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Simplify: 3x + 5x', a: '8x', w: ['15x', '8x²', '2x'] },
+      { q: 'Simplify: 7y - 2y + 4y', a: '9y', w: ['5y', '13y', '9y²'] },
+      { q: 'Simplify: 2(x + 3)', a: '2x + 6', w: ['2x + 3', 'x + 6', '2x + 5'] },
+      { q: 'Simplify: 4a + 3b - 2a + b', a: '2a + 4b', w: ['6a + 4b', '2a + 2b', '6a + 2b'] },
+      { q: 'Simplify: 5(2m - 1)', a: '10m - 5', w: ['10m - 1', '7m - 5', '10m + 5'] },
+      { q: 'Simplify: 6x² + 2x²', a: '8x²', w: ['12x²', '8x⁴', '8x'] },
+      { q: 'Simplify: 3(a + 2) - 4', a: '3a + 2', w: ['3a + 6', '3a - 2', '3a - 4'] },
+      { q: 'Simplify: -2(3x - 4)', a: '-6x + 8', w: ['-6x - 8', '6x - 8', '-6x - 4'] },
+      { q: 'Simplify: 4n + 7 - 2n + 3', a: '2n + 10', w: ['6n + 10', '2n + 4', '6n + 4'] },
+      { q: 'Simplify: 2x + 3y + 5x - y', a: '7x + 2y', w: ['7x + 4y', '3x + 2y', '10xy'] },
+      { q: 'Simplify: 8 - 3(x - 2)', a: '14 - 3x', w: ['2 - 3x', '8 - 3x + 6', '5x - 2'] },
+      { q: 'Simplify: ½(4x + 6)', a: '2x + 3', w: ['4x + 3', '2x + 6', '8x + 12'] },
+      { q: 'Simplify: 5a - (2a + 3)', a: '3a - 3', w: ['3a + 3', '7a - 3', '7a + 3'] },
+      { q: 'Simplify: 2(x + y) + 3(x - y)', a: '5x - y', w: ['5x + y', '5x - 5y', 'x + 5y'] },
+      { q: 'Simplify: -4(m - 3) + 2m', a: '-2m + 12', w: ['-6m + 12', '-2m - 12', '6m + 12'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('simplify-expressions', p.q, p.a, p.w, 2, '5-8', 'Expressions & Equations', ['simplify', 'expressions', 'algebra']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
