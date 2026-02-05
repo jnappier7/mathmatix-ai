@@ -128,6 +128,9 @@ class FloatingScreener {
         const data = await response.json();
         this.assessmentCompleted = data.assessmentCompleted;
         this.startingPointOffered = data.startingPointOffered;
+        this.assessmentExpired = data.assessmentExpired;
+        this.growthCheckDue = data.growthCheckDue;
+        this.currentGradeLevel = data.currentGradeLevel;
         this.updateSidebarButton();
       }
     } catch (error) {
@@ -138,30 +141,58 @@ class FloatingScreener {
   updateSidebarButton() {
     if (!this.sidebarBtn) return;
 
-    if (this.assessmentCompleted) {
-      this.sidebarBtn.classList.remove('needs-attention');
-      this.sidebarBtn.classList.add('completed');
-      this.sidebarBtn.title = 'Starting Point - Completed';
-    } else {
+    // Reset classes
+    this.sidebarBtn.classList.remove('needs-attention', 'completed', 'growth-due', 'expired');
+
+    if (!this.assessmentCompleted || this.assessmentExpired) {
+      // Needs initial assessment (or assessment expired - annual renewal)
       this.sidebarBtn.classList.add('needs-attention');
-      this.sidebarBtn.classList.remove('completed');
-      this.sidebarBtn.title = 'Starting Point - Find your level';
+      this.sidebarBtn.title = this.assessmentExpired
+        ? 'Starting Point - Annual renewal due'
+        : 'Starting Point - Find your level';
+
+      // Update button text for expired assessments
+      const spanEl = this.sidebarBtn.querySelector('span');
+      if (spanEl && this.assessmentExpired) {
+        spanEl.textContent = 'Starting Point';
+      }
+    } else if (this.growthCheckDue) {
+      // Growth check is available (every 3 months)
+      this.sidebarBtn.classList.add('growth-due');
+      this.sidebarBtn.title = `Growth Check available - See how you've grown! (Current: ${this.currentGradeLevel || 'Unknown'})`;
+
+      // Update button text
+      const spanEl = this.sidebarBtn.querySelector('span');
+      if (spanEl) {
+        spanEl.textContent = 'Growth Check';
+      }
+    } else {
+      // Assessment completed, not expired, growth check not due
+      this.sidebarBtn.classList.add('completed');
+      this.sidebarBtn.title = `Starting Point - Completed (${this.currentGradeLevel || 'Unknown'})`;
     }
   }
 
   open() {
-    if (this.assessmentCompleted) {
-      // Show a message that they've already completed it
+    // Determine what mode we're in
+    if (this.growthCheckDue) {
+      // Growth Check mode
+      this.isGrowthCheck = true;
+      this.showInstructions('growth-check');
+    } else if (this.assessmentCompleted && !this.assessmentExpired) {
+      // Already completed, not expired - ask if they want to retake
       if (confirm('You have already completed your Starting Point assessment. Would you like to retake it?')) {
-        this.showInstructions();
-        this.container.classList.add('active');
-        this.isOpen = true;
-        this.centerModule();
+        this.isGrowthCheck = false;
+        this.showInstructions('starting-point');
+      } else {
+        return;
       }
-      return;
+    } else {
+      // New assessment or expired - Starting Point mode
+      this.isGrowthCheck = false;
+      this.showInstructions('starting-point');
     }
 
-    this.showInstructions();
     this.container.classList.add('active');
     this.isOpen = true;
     this.centerModule();
@@ -262,8 +293,34 @@ class FloatingScreener {
     }
   }
 
-  showInstructions() {
+  showInstructions(mode = 'starting-point') {
     this.showScreen('instruction');
+
+    // Update instruction screen content based on mode
+    const titleEl = document.querySelector('#screener-instruction-screen h2');
+    const subtitleEl = document.querySelector('#screener-instruction-screen .subtitle');
+    const whatIsEl = document.querySelector('#screener-instruction-screen .instruction-card h3');
+    const descriptionEl = document.querySelector('#screener-instruction-screen .instruction-card p');
+    const durationEl = document.querySelector('#screener-instruction-screen .duration span');
+    const headerTitleEl = document.querySelector('.screener-title');
+
+    if (mode === 'growth-check') {
+      // Growth Check mode - shorter, focused assessment
+      if (titleEl) titleEl.textContent = 'Growth Check';
+      if (subtitleEl) subtitleEl.textContent = `Let's see how much you've grown since ${this.currentGradeLevel || 'your last assessment'}!`;
+      if (whatIsEl) whatIsEl.innerHTML = '<i class="fas fa-chart-line"></i> What is this?';
+      if (descriptionEl) descriptionEl.innerHTML = `This is a shorter assessment to measure your progress. We'll focus on skills you've been working on recently. <strong>There's no penalty for wrong answers</strong> - we just want to see how you've grown!`;
+      if (durationEl) durationEl.innerHTML = '<strong>Time:</strong> Usually 5-15 minutes';
+      if (headerTitleEl) headerTitleEl.innerHTML = '<i class="fas fa-chart-line"></i> Growth Check';
+    } else {
+      // Starting Point mode - full initial assessment
+      if (titleEl) titleEl.textContent = 'Find Your Starting Point';
+      if (subtitleEl) subtitleEl.textContent = "Let's figure out where you are, so we can help you get where you're going.";
+      if (whatIsEl) whatIsEl.innerHTML = '<i class="fas fa-info-circle"></i> What is this?';
+      if (descriptionEl) descriptionEl.innerHTML = `This short assessment helps us understand your current math level. It's <strong>not a test you can fail</strong> - we're just finding the best place to start your learning journey.`;
+      if (durationEl) durationEl.innerHTML = '<strong>Time:</strong> Usually 10-30 minutes, depending on your level';
+      if (headerTitleEl) headerTitleEl.innerHTML = '<i class="fas fa-crosshairs"></i> Starting Point';
+    }
   }
 
   showLoading(message = 'Loading...') {
@@ -276,14 +333,17 @@ class FloatingScreener {
 
   // Assessment flow
   async startAssessment() {
-    this.showLoading('Starting assessment...');
+    this.showLoading(this.isGrowthCheck ? 'Starting growth check...' : 'Starting assessment...');
 
     try {
       const response = await window.csrfFetch('/api/screener/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ restart: this.assessmentCompleted })
+        body: JSON.stringify({
+          restart: this.assessmentCompleted && !this.isGrowthCheck,
+          isGrowthCheck: this.isGrowthCheck
+        })
       });
 
       const data = await response.json();

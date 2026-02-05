@@ -17,6 +17,13 @@ const screenerSessionSchema = new mongoose.Schema({
         unique: true,
     },
 
+    // Session type: starting-point (full initial) or growth-check (shorter progress)
+    sessionType: {
+        type: String,
+        enum: ['starting-point', 'growth-check'],
+        default: 'starting-point'
+    },
+
     // Current ability estimate
     theta: {
         type: Number,

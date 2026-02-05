@@ -634,6 +634,41 @@
   justify-content: center;
 }
 
+/* Growth Check due state - blue glow with chart icon */
+.sidebar-starting-point-btn.growth-due {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  animation: growth-pulse 2.5s ease-in-out infinite;
+}
+
+.sidebar-starting-point-btn.growth-due::after {
+  content: '\f201';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: white;
+  color: #17a2b8;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes growth-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(23, 162, 184, 0.4),
+                0 0 16px rgba(23, 162, 184, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(23, 162, 184, 0.6),
+                0 0 32px rgba(23, 162, 184, 0.4);
+  }
+}
+
 /* Resize Handle */
 .floating-screener .resize-handle {
   position: absolute;

@@ -76,10 +76,15 @@ function calculateAdaptiveProgress(session) {
 /**
  * POST /api/screener/start
  * Initialize a new adaptive screener session
+ *
+ * Supports two modes:
+ * - Starting Point: Full initial assessment (10-30 questions)
+ * - Growth Check: Shorter progress check (5-15 questions), starts at current level
  */
 router.post('/start', isAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
+    const { restart, isGrowthCheck } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {
@@ -96,30 +101,41 @@ router.post('/start', isAuthenticated, async (req, res) => {
       await user.save();
     }
 
-    // Check if assessment already completed
-    // Students can re-take after 6 months; teachers/admins/parents can reset anytime via dashboard
-    if (user.assessmentCompleted) {
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setDate(sixMonthsAgo.getDate() - 180);
-      const isEligibleForReassessment = user.assessmentDate && user.assessmentDate < sixMonthsAgo;
-
-      if (!isEligibleForReassessment) {
-        return res.status(403).json({
-          error: 'Assessment already completed',
-          alreadyCompleted: true,
-          message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
-          completedDate: user.assessmentDate,
-          theta: user.initialPlacement,
-          canReset: false  // Teachers/admins/parents can reset anytime via dashboard
+    // Handle Growth Check mode
+    if (isGrowthCheck) {
+      // Growth check requires a completed assessment first
+      if (!user.assessmentCompleted) {
+        return res.status(400).json({
+          error: 'Complete Starting Point first',
+          message: 'Please complete your Starting Point assessment before taking a Growth Check.'
         });
       }
-      // Assessment is > 6 months old, allow re-assessment
-      console.log(`[Screener] Allowing 6-month re-assessment for user ${user._id} - last assessment: ${user.assessmentDate}`);
+
+      console.log(`[Screener] Starting GROWTH CHECK for user ${userId}`);
+    } else {
+      // Starting Point mode - check if already completed
+      if (user.assessmentCompleted && !restart) {
+        // Check if assessment expired (annual renewal)
+        const assessmentExpired = user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) < new Date();
+
+        if (!assessmentExpired) {
+          return res.status(403).json({
+            error: 'Assessment already completed',
+            alreadyCompleted: true,
+            message: 'You have already completed your placement assessment. Your results are saved and being used to personalize your learning experience.',
+            completedDate: user.assessmentDate,
+            gradeLevel: user.initialPlacement,
+            canReset: false
+          });
+        }
+        // Assessment expired, allow re-assessment
+        console.log(`[Screener] Assessment expired for user ${userId} - allowing annual re-assessment`);
+      }
     }
 
     // Check for existing incomplete session
     const existingSession = await ScreenerSession.getActiveSession(userId);
-    const forceRestart = req.body.restart === true;
+    const forceRestart = restart === true || isGrowthCheck; // Growth checks always start fresh
 
     if (existingSession && !forceRestart) {
       // Return existing session for resume
@@ -138,31 +154,44 @@ router.post('/start', isAuthenticated, async (req, res) => {
       console.log(`[Screener] Deleted existing session for restart - user ${userId}`);
     }
 
-    // Initialize new screener session with PREVIOUS grade level
-    // Start one grade below current to build confidence before probing frontier
-    // This provides a Bayesian prior for faster convergence
-    const currentGrade = parseInt(user.gradeLevel, 10);
-    const previousGrade = !isNaN(currentGrade) && currentGrade > 1 ? currentGrade - 1 : user.gradeLevel;
-    const startingTheta = gradeToTheta(previousGrade, null); // Ignore course for initial placement
+    // Determine starting theta based on mode
+    let startingTheta;
+
+    if (isGrowthCheck) {
+      // Growth Check: Start at user's current level (from previous assessment)
+      startingTheta = user.learningProfile?.abilityEstimate?.theta || 0;
+      console.log(`[Screener Start] GROWTH CHECK - Starting at current level θ=${startingTheta.toFixed(2)}`);
+    } else {
+      // Starting Point: Start one grade below current to build confidence
+      const currentGrade = parseInt(user.gradeLevel, 10);
+      const previousGrade = !isNaN(currentGrade) && currentGrade > 1 ? currentGrade - 1 : user.gradeLevel;
+      startingTheta = gradeToTheta(previousGrade, null);
+      console.log(`[Screener Start] STARTING POINT - Current grade: "${user.gradeLevel}" → Starting at previous grade (${previousGrade}) → θ=${startingTheta.toFixed(2)}`);
+    }
+
     console.log(`[Screener Start] User: ${user.username || user._id}`);
-    console.log(`[Screener Start] Current grade: "${user.gradeLevel}" → Starting at previous grade (${previousGrade}) → θ=${startingTheta.toFixed(2)}`);
 
     const sessionData = initializeSession({
       userId: user._id.toString(),
-      startingTheta
+      startingTheta,
+      isGrowthCheck: isGrowthCheck || false
     });
 
     // CTO REVIEW FIX: Store session in database (prevents data loss on restart)
     const session = new ScreenerSession({
       ...sessionData,
-      userId: user._id // Convert to ObjectId
+      userId: user._id,
+      sessionType: isGrowthCheck ? 'growth-check' : 'starting-point'
     });
     await session.save();
 
     res.json({
       sessionId: session.sessionId,
-      message: "Let's find your level! Answer these problems as best you can.",
-      started: true
+      message: isGrowthCheck
+        ? "Let's check your progress! This will be quick."
+        : "Let's find your level! Answer these problems as best you can.",
+      started: true,
+      isGrowthCheck: isGrowthCheck || false
     });
 
   } catch (error) {
