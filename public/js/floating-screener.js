@@ -415,12 +415,18 @@ class FloatingScreener {
     // Render options for MC questions
     const optionsContainer = document.getElementById('screener-options-container');
     if (optionsContainer && problem.answerType === 'multiple-choice' && problem.options) {
-      optionsContainer.innerHTML = problem.options.map((option, index) => `
-        <div class="mc-option" data-value="${option.label}" data-index="${index}">
-          <span class="mc-option-label">${option.label}</span>
-          <span class="mc-option-text">${this.formatOptionText(option.text)}</span>
-        </div>
-      `).join('');
+      const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+      optionsContainer.innerHTML = problem.options.map((option, index) => {
+        // Handle both {label, text} format and plain string options
+        const label = option.label || labels[index] || String.fromCharCode(65 + index);
+        const text = option.text || option || '';
+        return `
+          <div class="mc-option" data-value="${label}" data-index="${index}">
+            <span class="mc-option-label">${label}</span>
+            <span class="mc-option-text">${this.formatOptionText(text)}</span>
+          </div>
+        `;
+      }).join('');
 
       // Add click handlers
       optionsContainer.querySelectorAll('.mc-option').forEach(option => {
@@ -591,8 +597,16 @@ class FloatingScreener {
     }
 
     if (durationEl && data.report?.duration !== undefined) {
-      const minutes = Math.round(data.report.duration / 60);
-      durationEl.textContent = `${minutes} min`;
+      // Duration is in milliseconds, convert to readable format
+      const totalSeconds = Math.round(data.report.duration / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      if (minutes > 0) {
+        durationEl.textContent = seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes} min`;
+      } else {
+        durationEl.textContent = `${seconds} sec`;
+      }
     }
   }
 

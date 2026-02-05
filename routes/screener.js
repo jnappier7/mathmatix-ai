@@ -345,6 +345,50 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       await problem.save();
     }
 
+    // CRITICAL: Normalize options with proper labels (A, B, C, D)
+    // Many problems in DB have options without labels or with incorrect labels
+    const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+    let normalizedOptions = [];
+    let needsSave = false;
+
+    if (problem.options && problem.options.length > 0) {
+      normalizedOptions = problem.options.map((opt, idx) => {
+        const label = labels[idx];
+        const text = opt.text || opt || '';
+        if (!opt.label || opt.label !== label) {
+          needsSave = true;
+        }
+        return { label, text: String(text) };
+      });
+
+      // Fix correctOption if not set or if it doesn't match the answer
+      const answerValue = problem.answer?.value ?? problem.answer;
+      let correctLabel = problem.correctOption;
+
+      // Find which option matches the correct answer
+      if (!correctLabel || !labels.includes(correctLabel?.toUpperCase())) {
+        for (let i = 0; i < normalizedOptions.length; i++) {
+          const optText = normalizedOptions[i].text.trim().toLowerCase();
+          const ansStr = String(answerValue).trim().toLowerCase();
+          if (optText === ansStr || optText.includes(ansStr) || ansStr.includes(optText)) {
+            correctLabel = labels[i];
+            needsSave = true;
+            break;
+          }
+        }
+      }
+
+      // Update problem in DB if we fixed anything
+      if (needsSave) {
+        problem.options = normalizedOptions;
+        if (correctLabel) {
+          problem.correctOption = correctLabel;
+        }
+        await problem.save();
+        console.log(`[Screener] Fixed options/correctOption for problem ${problem.problemId} - correctOption: ${correctLabel}`);
+      }
+    }
+
     // Calculate progress with confidence metrics for UI
     const progressMetrics = calculateAdaptiveProgress(session);
 
@@ -354,7 +398,7 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
         content: problem.prompt,  // Schema uses 'prompt', API returns as 'content' for backwards compat
         skillId: problem.skillId,
         answerType: problem.answerType,
-        options: problem.options,
+        options: normalizedOptions.length > 0 ? normalizedOptions : problem.options,
         // SECURITY: Never send correctOption to client - validates server-side only
         questionNumber: session.questionCount + 1,
         progress: {
@@ -425,11 +469,13 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
     console.log(`[DEBUG]   Difficulty: ${problem.difficulty}`);
     console.log(`[DEBUG]   AnswerType: ${problem.answerType}`);
     console.log(`[DEBUG]   Correct Answer: ${JSON.stringify(problem.answer)}`);
+    console.log(`[DEBUG]   CorrectOption: ${problem.correctOption || 'NOT SET'}`);
+    console.log(`[DEBUG]   Options: ${JSON.stringify(problem.options?.map(o => o.text || o)?.slice(0, 4))}`);
     console.log(`[DEBUG]   User Answer: "${answer}" (type: ${typeof answer})`);
 
     // Check if answer is correct
     const isCorrect = problem.checkAnswer(answer);
-    console.log(`[DEBUG]   Result: ${isCorrect ? 'CORRECT' : 'INCORRECT'}`);
+    console.log(`[DEBUG]   Result: ${isCorrect ? 'CORRECT ✓' : 'INCORRECT ✗'}`);
 
     // Capture previous theta for logging
     const previousTheta = session.theta;
