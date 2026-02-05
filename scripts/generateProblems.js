@@ -2302,6 +2302,35 @@ const generators = {
     }
     return problems;
   },
+
+  'position-words': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A lamp sits on top of a desk. The lamp is ___ the desk.', a: 'on', w: ['under', 'beside', 'behind'] },
+      { q: 'A rug is directly below a table. The rug is ___ the table.', a: 'under', w: ['on', 'above', 'beside'] },
+      { q: 'A kite flies higher than the trees. The kite is ___ the trees.', a: 'above', w: ['under', 'beside', 'below'] },
+      { q: 'Tom is in line. Sara is right after Tom. Sara is ___ Tom.', a: 'behind', w: ['in front of', 'above', 'under'] },
+      { q: 'A chair is to the left of a couch. The chair is ___ the couch.', a: 'beside', w: ['on', 'under', 'above'] },
+      { q: 'Amy stands with Joe on her left and Max on her right. Amy is ___ Joe and Max.', a: 'between', w: ['beside', 'behind', 'above'] },
+      { q: 'A subway runs underneath a street. The subway is ___ the street.', a: 'below', w: ['above', 'beside', 'on'] },
+      { q: 'A boat floats on top of the lake. The boat is ___ the water.', a: 'on', w: ['in', 'under', 'beside'] },
+      { q: 'A bridge goes from one side of the river to the other. You walk ___ the bridge.', a: 'across', w: ['under', 'beside', 'into'] },
+      { q: 'A tunnel goes through a mountain. Cars drive ___ the tunnel.', a: 'through', w: ['on', 'above', 'beside'] },
+      { q: 'A clock hangs higher than a door. The clock is ___ the door.', a: 'above', w: ['under', 'beside', 'below'] },
+      { q: 'A cat hides directly underneath a bed. The cat is ___ the bed.', a: 'under', w: ['on', 'beside', 'above'] },
+      { q: 'Two houses are side by side. House A is ___ House B.', a: 'next to', w: ['on', 'under', 'above'] },
+      { q: 'A plane is higher than the clouds. The plane is ___ the clouds.', a: 'above', w: ['below', 'beside', 'under'] },
+      { q: 'A fish swims inside a tank of water. The fish is ___ the water.', a: 'in', w: ['on', 'above', 'beside'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('position-words', p.q, p.a, p.w, 1, 'K-5', 'Geometry', ['position', 'spatial']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
