@@ -2563,6 +2563,93 @@ const generators = {
     }
     return problems;
   },
+
+  'nested-operations': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Evaluate: 2 × (3 + 4)', a: '14', w: ['10', '9', '24'] },
+      { q: 'Evaluate: (8 - 2) × 5', a: '30', w: ['35', '3', '38'] },
+      { q: 'Evaluate: 20 ÷ (2 + 3)', a: '4', w: ['13', '7', '25'] },
+      { q: 'Evaluate: 3 × (4 × 2)', a: '24', w: ['14', '20', '9'] },
+      { q: 'Evaluate: (12 ÷ 4) + (3 × 2)', a: '9', w: ['5', '12', '7'] },
+      { q: 'Evaluate: 5 + 2 × (6 - 1)', a: '15', w: ['35', '25', '30'] },
+      { q: 'Evaluate: (9 + 3) ÷ (6 - 2)', a: '3', w: ['2', '4', '6'] },
+      { q: 'Evaluate: 4 × (5 + 3) - 10', a: '22', w: ['32', '12', '27'] },
+      { q: 'Evaluate: 100 ÷ (5 × 4)', a: '5', w: ['80', '20', '500'] },
+      { q: 'Evaluate: (2 + 3) × (4 + 1)', a: '25', w: ['10', '15', '20'] },
+      { q: 'Evaluate: 6 + (8 ÷ 2) × 3', a: '18', w: ['21', '12', '24'] },
+      { q: 'Evaluate: (15 - 5) ÷ (1 + 1)', a: '5', w: ['10', '4', '6'] },
+      { q: 'Evaluate: 2 × ((4 + 2) × 3)', a: '36', w: ['18', '14', '24'] },
+      { q: 'Evaluate: (3 + 7) × (10 - 8)', a: '20', w: ['12', '2', '100'] },
+      { q: 'Evaluate: 50 ÷ (2 × (3 + 2))', a: '5', w: ['10', '25', '100'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('nested-operations', p.q, p.a, p.w, 2, 'K-5', 'Operations & Algebraic Thinking', ['operations', 'order-of-operations']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'simplify-rational-expressions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Simplify: (2x)/(4x)', a: '1/2', w: ['2', 'x/2', '2/x'] },
+      { q: 'Simplify: (6x²)/(3x)', a: '2x', w: ['2x²', '3x', '2'] },
+      { q: 'Simplify: (x² - 4)/(x - 2)', a: 'x + 2', w: ['x - 2', 'x² - 2', '2x'] },
+      { q: 'Simplify: (x² - 9)/(x + 3)', a: 'x - 3', w: ['x + 3', 'x² - 3', '3x'] },
+      { q: 'Simplify: (x² + 5x)/(x)', a: 'x + 5', w: ['x² + 5', '5x', '5'] },
+      { q: 'Simplify: (3x + 6)/(3)', a: 'x + 2', w: ['3x + 2', 'x + 6', '9x'] },
+      { q: 'Simplify: (x² - x)/(x)', a: 'x - 1', w: ['x² - 1', 'x', '-1'] },
+      { q: 'Simplify: (4x² - 4x)/(4x)', a: 'x - 1', w: ['x² - 1', '4x - 4', 'x - 4'] },
+      { q: 'Simplify: (x² - 1)/(x - 1)', a: 'x + 1', w: ['x - 1', '1', 'x² + 1'] },
+      { q: 'Simplify: (2x² + 4x)/(2x)', a: 'x + 2', w: ['x² + 2', '2x + 4', 'x + 4'] },
+      { q: 'Simplify: (x³)/(x²)', a: 'x', w: ['x²', 'x³', '1'] },
+      { q: 'Simplify: (5x - 10)/(x - 2)', a: '5', w: ['x - 2', '5x', '5x - 5'] },
+      { q: 'Simplify: (x² + 2x + 1)/(x + 1)', a: 'x + 1', w: ['x + 2', 'x² + 1', '2x + 1'] },
+      { q: 'When simplifying rational expressions, we can cancel:', a: 'common factors only', w: ['any terms', 'any numbers', 'anything that looks the same'] },
+      { q: 'Simplify: (x² - 4x)/(x² - 16) when x ≠ ±4', a: 'x/(x + 4)', w: ['(x-4)/(x+4)', '4/16', 'x/4'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('simplify-rational-expressions', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['rational', 'simplify']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'add-subtract-rational-expressions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Add: (2/x) + (3/x)', a: '5/x', w: ['5/2x', '6/x²', '5/x²'] },
+      { q: 'Subtract: (5/x) - (2/x)', a: '3/x', w: ['3/2x', '7/x', '3'] },
+      { q: 'Add: (1/x) + (1/y)', a: '(y + x)/(xy)', w: ['2/xy', '1/(x+y)', '(x+y)/2'] },
+      { q: 'Add: (x/2) + (x/3)', a: '(5x)/6', w: ['2x/5', 'x/5', '(x²)/6'] },
+      { q: 'Subtract: (3/x) - (1/x)', a: '2/x', w: ['2/x²', '4/x', '3/x²'] },
+      { q: 'Add: (2/(x+1)) + (3/(x+1))', a: '5/(x+1)', w: ['5/(2x+2)', '6/(x+1)²', '5/2(x+1)'] },
+      { q: 'The LCD of 1/x and 1/(x+1) is:', a: 'x(x+1)', w: ['x + (x+1)', 'x²', '(x+1)²'] },
+      { q: 'Add: (1/2) + (1/x)', a: '(x + 2)/(2x)', w: ['3/2x', '(1+x)/2x', '2/x'] },
+      { q: 'Subtract: (x/(x-1)) - (1/(x-1))', a: '(x-1)/(x-1) = 1', w: ['(x-1)/1', 'x/1', '(x+1)/(x-1)'] },
+      { q: 'Add: (a/b) + (c/b)', a: '(a + c)/b', w: ['(a+c)/2b', 'ac/b²', '(a·c)/b'] },
+      { q: 'To add rational expressions with different denominators:', a: 'find LCD, rewrite each fraction, then add numerators', w: ['add denominators', 'multiply numerators', 'cross multiply'] },
+      { q: 'Subtract: (4/x²) - (1/x)', a: '(4 - x)/x²', w: ['3/x²', '3/x', '(4-1)/(x²-x)'] },
+      { q: 'Add: ((x+1)/x) + (1/x)', a: '(x + 2)/x', w: ['(x+2)/2x', '(x+1)/x²', '2(x+1)/x'] },
+      { q: 'The LCD of 1/x² and 1/x is:', a: 'x²', w: ['x', 'x³', '2x'] },
+      { q: 'Subtract: (2x/(x+2)) - (4/(x+2))', a: '(2x - 4)/(x+2)', w: ['(2x-4)/(2x+4)', '-2/(x+2)', '2x-4'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('add-subtract-rational-expressions', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['rational', 'addition', 'subtraction']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
