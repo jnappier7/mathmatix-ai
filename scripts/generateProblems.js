@@ -78,6 +78,29 @@ function wrongAnswers(correct, type, count = 3) {
   return wrongs.slice(0, count);
 }
 
+// Ensure unique wrong answers that don't match correct answer
+function uniqueWrongs(correct, candidates) {
+  const seen = new Set([String(correct).toLowerCase().trim()]);
+  const result = [];
+  for (const c of candidates) {
+    const key = String(c).toLowerCase().trim();
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push(c);
+    }
+  }
+  // Pad if needed
+  let pad = 1;
+  while (result.length < 3) {
+    const filler = `Option ${pad++}`;
+    if (!seen.has(filler.toLowerCase())) {
+      result.push(filler);
+      seen.add(filler.toLowerCase());
+    }
+  }
+  return result.slice(0, 3);
+}
+
 function createMCProblem(skillId, prompt, correctAnswer, wrongOptions, difficulty, gradeBand, category, tags = []) {
   // Shuffle options
   const allOptions = shuffle([correctAnswer, ...wrongOptions]);
@@ -300,9 +323,10 @@ const generators = {
       }
 
       if (!existingPrompts.has(prompt.toLowerCase())) {
+        const expWrongs = uniqueWrongs(correct, [`${base}^3`, `${base}^5`, `${base}^7`, `${base}^2`, `${base * 2}^2`]);
         problems.push(createMCProblem(
           'exponent-properties', prompt, correct,
-          type === 3 ? wrongAnswers(correct, 'integer') : [`${base}^${Math.floor(Math.random() * 5) + 1}`, `${base}^${Math.floor(Math.random() * 5) + 6}`, `${base * 2}^2`],
+          type === 3 ? wrongAnswers(correct, 'integer') : expWrongs,
           3, 'K-5', 'Expressions & Equations', ['exponents']
         ));
         existingPrompts.add(prompt.toLowerCase());
@@ -315,7 +339,7 @@ const generators = {
     const problems = [];
     for (let i = 0; i < count; i++) {
       const type = i % 3;
-      let prompt, correct, wrongs;
+      let prompt, correct, wrongCandidates;
 
       if (type === 0) {
         // Simple interest
@@ -325,7 +349,7 @@ const generators = {
         const interest = (principal * rate * years) / 100;
         prompt = `Calculate simple interest: Principal = $${principal}, Rate = ${rate}%, Time = ${years} year${years > 1 ? 's' : ''}`;
         correct = `$${interest}`;
-        wrongs = [`$${interest + 10}`, `$${interest - 5}`, `$${principal}`];
+        wrongCandidates = [`$${interest + 10}`, `$${interest - 5}`, `$${principal}`, `$${interest * 2}`];
       } else if (type === 1) {
         // Percent discount
         const price = [50, 80, 100, 120][i % 4];
@@ -334,7 +358,7 @@ const generators = {
         const final = price - savings;
         prompt = `A $${price} item is ${discount}% off. What is the sale price?`;
         correct = `$${final}`;
-        wrongs = [`$${price - discount}`, `$${savings}`, `$${price + savings}`];
+        wrongCandidates = [`$${final + 5}`, `$${final - 10}`, `$${savings}`, `$${price}`];
       } else {
         // Tax calculation
         const price = [40, 60, 80, 100][i % 4];
@@ -343,9 +367,10 @@ const generators = {
         const total = price + taxAmt;
         prompt = `A $${price} item has ${tax}% sales tax. What is the total cost?`;
         correct = `$${total}`;
-        wrongs = [`$${price + tax}`, `$${taxAmt}`, `$${price}`];
+        wrongCandidates = [`$${total + 5}`, `$${total - 3}`, `$${taxAmt}`, `$${price}`];
       }
 
+      const wrongs = uniqueWrongs(correct, wrongCandidates);
       if (!existingPrompts.has(prompt.toLowerCase())) {
         problems.push(createMCProblem(
           'financial-literacy', prompt, correct, wrongs,
@@ -892,9 +917,9 @@ const generators = {
       const c = a * x + b;
       const prompt = `Solve: ${a}x + ${b} = ${c}`;
       if (!existingPrompts.has(prompt.toLowerCase())) {
+        const wrongs = uniqueWrongs(`x = ${x}`, [`x = ${x + 1}`, `x = ${x - 1}`, `x = ${x + 2}`, `x = ${Math.abs(x - 2)}`]);
         problems.push(createMCProblem(
-          'solving-equations', prompt, `x = ${x}`,
-          [`x = ${x + 1}`, `x = ${x - 1}`, `x = ${Math.round(c / a)}`], 3, '8-12', 'Expressions & Equations', ['equations', 'two-step']
+          'solving-equations', prompt, `x = ${x}`, wrongs, 3, '8-12', 'Expressions & Equations', ['equations', 'two-step']
         ));
         existingPrompts.add(prompt.toLowerCase());
       }
@@ -912,9 +937,9 @@ const generators = {
       const d = a * x + b - c * x;
       const prompt = `Solve: ${a}x + ${b} = ${c}x + ${d}`;
       if (!existingPrompts.has(prompt.toLowerCase())) {
+        const wrongs = uniqueWrongs(`x = ${x}`, [`x = ${x + 2}`, `x = ${x - 1}`, `x = ${x + 3}`, `x = ${Math.abs(x - 2)}`]);
         problems.push(createMCProblem(
-          'solving-linear-equations', prompt, `x = ${x}`,
-          [`x = ${x + 2}`, `x = ${-x}`, `x = ${x * 2}`], 3, '8-12', 'Expressions & Equations', ['equations', 'linear']
+          'solving-linear-equations', prompt, `x = ${x}`, wrongs, 3, '8-12', 'Expressions & Equations', ['equations', 'linear']
         ));
         existingPrompts.add(prompt.toLowerCase());
       }
@@ -931,9 +956,9 @@ const generators = {
       const y = m * x + b;
       const prompt = `If y = ${m}x ${b >= 0 ? '+' : ''} ${b}, find y when x = ${x}.`;
       if (!existingPrompts.has(prompt.toLowerCase())) {
+        const wrongs = uniqueWrongs(`y = ${y}`, [`y = ${y + 2}`, `y = ${y - 3}`, `y = ${y + 5}`, `y = ${m * x}`, `y = ${b}`]);
         problems.push(createMCProblem(
-          'linear-equations', prompt, `y = ${y}`,
-          [`y = ${y + 2}`, `y = ${y - 3}`, `y = ${-y}`], 2, '8-12', 'Functions', ['linear', 'equations']
+          'linear-equations', prompt, `y = ${y}`, wrongs, 2, '8-12', 'Functions', ['linear', 'equations']
         ));
         existingPrompts.add(prompt.toLowerCase());
       }
@@ -1120,9 +1145,11 @@ const generators = {
       const vol = l * w * h;
       const prompt = `Find the volume of a rectangular prism: length=${l}, width=${w}, height=${h}`;
       if (!existingPrompts.has(prompt.toLowerCase())) {
+        const wrongs = uniqueWrongs(`${vol} cubic units`, [
+          `${vol + 10} cubic units`, `${l * w} cubic units`, `${2 * (l * w + w * h + l * h)} cubic units`, `${l + w + h} cubic units`
+        ]);
         problems.push(createMCProblem(
-          'volume-rectangular-prisms', prompt, `${vol} cubic units`,
-          [`${vol + 10} cubic units`, `${l * w} cubic units`, `${2 * (l + w + h)} cubic units`],
+          'volume-rectangular-prisms', prompt, `${vol} cubic units`, wrongs,
           2, '8-12', 'Geometry', ['volume', '3d-shapes']
         ));
         existingPrompts.add(prompt.toLowerCase());
@@ -1161,9 +1188,9 @@ const generators = {
       }
 
       if (!existingPrompts.has(prompt.toLowerCase())) {
+        const wrongs = uniqueWrongs(correct, [`${t.adj}/${t.opp}`, `${t.hyp}/${t.opp}`, `${t.hyp}/${t.adj}`, `${t.opp}/${t.opp}`, `1`]);
         problems.push(createMCProblem(
-          'trig-right-triangle-ratios', prompt, correct,
-          [`${t.adj}/${t.opp}`, `${t.hyp}/${t.opp}`, `${t.adj}/${t.hyp}`],
+          'trig-right-triangle-ratios', prompt, correct, wrongs,
           3, '8-12', 'Trigonometry', ['trigonometry', 'ratios']
         ));
         existingPrompts.add(prompt.toLowerCase());
@@ -1231,11 +1258,13 @@ const generators = {
         `Convert ${c.deg}° to radians.` :
         `Convert ${c.rad} radians to degrees.`;
       const correct = toRad ? c.rad : `${c.deg}°`;
+      const radWrongs = uniqueWrongs(correct, ['π/5', '2π/5', 'π/8', 'π/7', '3π/5', '5π/8']);
+      const degWrongs = uniqueWrongs(correct, [`${c.deg + 30}°`, `${c.deg - 30}°`, `${c.deg * 2}°`, `${Math.abs(c.deg - 45)}°`]);
 
       if (!existingPrompts.has(prompt.toLowerCase())) {
         problems.push(createMCProblem(
           'trig-degree-radian-conversion', prompt, correct,
-          toRad ? ['π/5', '2π/5', 'π/8'] : ['45°', '90°', '120°'],
+          toRad ? radWrongs : degWrongs,
           2, '8-12', 'Trigonometry', ['trigonometry', 'conversion']
         ));
         existingPrompts.add(prompt.toLowerCase());
@@ -1423,9 +1452,10 @@ const generators = {
       const t = triangles[i % triangles.length];
       if (!existingPrompts.has(t.desc.toLowerCase())) {
         const correct = i % 2 === 0 ? t.b : t.c || t.a;
+        const val = parseFloat(correct);
+        const wrongs = uniqueWrongs(String(correct), [`${(val + 0.1).toFixed(2)}`, `${(val - 0.5).toFixed(2)}`, `${(val + 1).toFixed(2)}`, `${(val * 1.1).toFixed(2)}`]);
         problems.push(createMCProblem(
-          'trig-law-of-sines', t.desc, String(correct),
-          wrongAnswers(parseFloat(correct), 'decimal'),
+          'trig-law-of-sines', t.desc, String(correct), wrongs,
           4, '8-12', 'Trigonometry', ['trigonometry', 'law-of-sines']
         ));
         existingPrompts.add(t.desc.toLowerCase());
@@ -1466,11 +1496,11 @@ const generators = {
   'statistics': (count) => {
     const problems = [];
     const datasets = [
-      { data: [2, 4, 6, 8, 10], mean: '6', median: '6', mode: 'none', range: '8' },
+      { data: [2, 4, 6, 8, 10], mean: '6', median: '6', mode: 'no mode', range: '8' },
       { data: [3, 3, 5, 7, 9, 9], mean: '6', median: '6', mode: '3 and 9', range: '6' },
-      { data: [10, 20, 30, 40, 50], mean: '30', median: '30', mode: 'none', range: '40' },
+      { data: [10, 20, 30, 40, 50], mean: '30', median: '30', mode: 'no mode', range: '40' },
       { data: [1, 2, 2, 3, 4, 4, 4, 5], mean: '3.125', median: '3.5', mode: '4', range: '4' },
-      { data: [15, 18, 22, 25, 30], mean: '22', median: '22', mode: 'none', range: '15' },
+      { data: [15, 18, 22, 25, 30], mean: '22', median: '22', mode: 'no mode', range: '15' },
     ];
     const measures = ['mean', 'median', 'mode', 'range'];
     for (let i = 0; i < count; i++) {
@@ -1478,10 +1508,15 @@ const generators = {
       const m = measures[i % measures.length];
       const prompt = `Find the ${m} of: ${d.data.join(', ')}`;
       const correct = d[m];
+      let wrongs;
+      if (m === 'mode') {
+        wrongs = correct === 'no mode' ? ['2', '6', '10'] : ['no mode', '2', '6'];
+      } else {
+        wrongs = wrongAnswers(parseFloat(correct) || 0, 'integer');
+      }
       if (!existingPrompts.has(prompt.toLowerCase())) {
         problems.push(createMCProblem(
-          'statistics', prompt, correct,
-          m === 'mode' ? ['2', 'none', '3'] : wrongAnswers(parseFloat(correct) || 0, 'integer'),
+          'statistics', prompt, correct, wrongs,
           2, '5-8', 'Statistics', ['statistics', m]
         ));
         existingPrompts.add(prompt.toLowerCase());
@@ -1627,10 +1662,11 @@ const generators = {
         `Find a · b where a = ${v.a} and b = ${v.b}` :
         `Find a × b where a = ${v.a} and b = ${v.b}`;
       const correct = isDot ? v.dot : v.cross;
+      const crossWrongs = uniqueWrongs(v.cross, ['⟨1, 0, 0⟩', '⟨0, 1, 0⟩', '⟨0, 0, 1⟩', '⟨1, 1, 1⟩', '⟨-1, -1, -1⟩']);
       if (!existingPrompts.has(prompt.toLowerCase())) {
         problems.push(createMCProblem(
           'calc3-dot-cross', prompt, correct,
-          isDot ? wrongAnswers(parseInt(v.dot), 'integer') : ['⟨1, 0, 0⟩', '⟨0, 1, 0⟩', '⟨0, 0, 1⟩'],
+          isDot ? wrongAnswers(parseInt(v.dot), 'integer') : crossWrongs,
           4, 'Calc 3', 'Calculus', ['vectors', isDot ? 'dot-product' : 'cross-product']
         ));
         existingPrompts.add(prompt.toLowerCase());
@@ -1695,21 +1731,20 @@ const generators = {
   'calc3-divergence-theorem': (count) => {
     const problems = [];
     const questions = [
-      { q: 'The Divergence Theorem relates a surface integral to:', a: 'A triple integral over the enclosed volume' },
-      { q: 'In the Divergence Theorem: ∬_S F · n dS = ?', a: '∭_E div F dV' },
-      { q: 'If F = ⟨x, y, z⟩, find div F', a: '3' },
-      { q: 'The divergence of F = ⟨x², y², z²⟩ is:', a: '2x + 2y + 2z' },
-      { q: 'Divergence Theorem requires S to be:', a: 'A closed surface' },
-      { q: 'Physical interpretation of divergence:', a: 'Rate of fluid expansion' },
-      { q: 'If div F = 0 everywhere, F is called:', a: 'Incompressible or solenoidal' },
-      { q: 'For F = ⟨yz, xz, xy⟩, div F =', a: '0' },
+      { q: 'The Divergence Theorem relates a surface integral to:', a: 'A triple integral over the enclosed volume', w: ['A line integral', 'A double integral', 'A path integral'] },
+      { q: 'In the Divergence Theorem: ∬_S F · n dS = ?', a: '∭_E div F dV', w: ['∮_C F · dr', '∬_S curl F · dS', '∭_E F dV'] },
+      { q: 'If F = ⟨x, y, z⟩, find div F', a: '3', w: ['0', '1', 'xyz'] },
+      { q: 'The divergence of F = ⟨x², y², z²⟩ is:', a: '2x + 2y + 2z', w: ['6', 'x + y + z', '2xyz'] },
+      { q: 'Divergence Theorem requires S to be:', a: 'A closed surface', w: ['An open surface', 'A simple curve', 'Any surface'] },
+      { q: 'Physical interpretation of divergence:', a: 'Rate of fluid expansion', w: ['Rate of rotation', 'Total mass', 'Pressure gradient'] },
+      { q: 'If div F = 0 everywhere, F is called:', a: 'Incompressible or solenoidal', w: ['Irrotational', 'Conservative', 'Harmonic'] },
+      { q: 'For F = ⟨yz, xz, xy⟩, div F =', a: '0', w: ['xyz', '3', 'x + y + z'] },
     ];
     for (let i = 0; i < count && i < questions.length; i++) {
       const q = questions[i];
       if (!existingPrompts.has(q.q.toLowerCase())) {
         problems.push(createMCProblem(
-          'calc3-divergence-theorem', q.q, q.a,
-          ['A line integral', '0', '1'].slice(0, 3),
+          'calc3-divergence-theorem', q.q, q.a, q.w,
           5, 'Calc 3', 'Calculus', ['calculus', 'divergence']
         ));
         existingPrompts.add(q.q.toLowerCase());
@@ -2300,6 +2335,676 @@ const generators = {
         existingPrompts.add(p.q.toLowerCase());
       }
     }
+    return problems;
+  },
+
+  'exponential-growth': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A population doubles every 3 years. Starting at 100, what is it after 6 years?', a: '400', w: ['200', '600', '800'] },
+      { q: 'f(x) = 2^x. Find f(3).', a: '8', w: ['6', '9', '16'] },
+      { q: 'y = 3(2)^x represents:', a: 'exponential growth', w: ['exponential decay', 'linear growth', 'quadratic'] },
+      { q: 'Bacteria triple every hour. Starting at 50, count after 2 hours?', a: '450', w: ['150', '300', '100'] },
+      { q: 'For y = a(b)^x, growth occurs when:', a: 'b > 1', w: ['b < 1', 'b = 1', 'b < 0'] },
+      { q: 'y = 5(1.1)^x. The growth rate is:', a: '10%', w: ['1%', '110%', '1.1%'] },
+      { q: 'f(x) = 100(1.05)^x models 5% annual growth. f(0) = ?', a: '100', w: ['105', '5', '0'] },
+      { q: 'Which grows faster: y=2^x or y=3^x?', a: 'y = 3^x', w: ['y = 2^x', 'Same rate', 'Cannot compare'] },
+      { q: 'If growth rate is 25%, the multiplier is:', a: '1.25', w: ['0.25', '25', '1.025'] },
+      { q: 'y = 50(2)^(t/3). After how long does y double?', a: '3 time units', w: ['2', '6', '1'] },
+      { q: 'Investment doubles every 5 years. Time to 8x?', a: '15 years', w: ['20', '10', '40'] },
+      { q: 'A colony grows from 200 to 800 in 2 hours. Growth factor per hour?', a: '2', w: ['4', '600', '3'] },
+      { q: 'Which is exponential growth? A:y=2x B:y=x² C:y=2^x', a: 'C', w: ['A', 'B', 'All'] },
+      { q: 'Bank account at 10% annually. $1000 after 2 years?', a: '$1210', w: ['$1200', '$1100', '$1020'] },
+      { q: 'y = 1000(1.08)^t. Initial value?', a: '1000', w: ['1080', '1.08', '0'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('exponential-growth', p.q, p.a, p.w, 3, '8-12', 'Functions', ['exponential'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'exponential-decay': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A car loses 20% value yearly. Worth $10000 now, value after 1 year?', a: '$8000', w: ['$2000', '$9000', '$7000'] },
+      { q: 'Half-life is 5 days. Starting at 80g, how much after 10 days?', a: '20g', w: ['40g', '10g', '0g'] },
+      { q: 'y = 100(0.8)^x represents:', a: 'exponential decay', w: ['exponential growth', 'linear decay', 'no change'] },
+      { q: 'For y = a(b)^x, decay occurs when:', a: '0 < b < 1', w: ['b > 1', 'b < 0', 'b = 1'] },
+      { q: 'Drug has 4-hour half-life. 200mg dose, amount after 8 hours?', a: '50mg', w: ['100mg', '25mg', '0mg'] },
+      { q: 'y = 500(0.9)^t. The decay rate is:', a: '10%', w: ['90%', '0.9%', '9%'] },
+      { q: 'Half-life 3 years. Time to reach 1/8 of original?', a: '9 years', w: ['6', '8', '24'] },
+      { q: 'y = 1000(0.95)^x. Initial amount?', a: '1000', w: ['950', '0.95', '50'] },
+      { q: 'If decay rate is 15%, the multiplier is:', a: '0.85', w: ['1.15', '0.15', '85'] },
+      { q: 'Sample decays from 64g to 8g in 6 hours. Half-life?', a: '2 hours', w: ['3', '1', '6'] },
+      { q: 'y = 200(1/2)^(t/4). After 4 units, y = ?', a: '100', w: ['50', '200', '25'] },
+      { q: 'Which decay is faster: y=100(0.5)^x or y=100(0.9)^x?', a: 'y = 100(0.5)^x', w: ['y = 100(0.9)^x', 'Same', 'Cannot tell'] },
+      { q: 'If 75% remains each period, what percent decays?', a: '25%', w: ['75%', '0.75%', '125%'] },
+      { q: '$20000 car loses 10% yearly. Value after 3 years?', a: '$14580', w: ['$17000', '$12000', '$18000'] },
+      { q: 'f(x) = 1000e^(-0.1x) represents:', a: 'continuous decay', w: ['growth', 'linear', 'no change'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('exponential-decay', p.q, p.a, p.w, 3, '8-12', 'Functions', ['exponential'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'probability-basics': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A fair coin is flipped. P(heads)?', a: '1/2', w: ['1', '0', '1/4'] },
+      { q: 'Roll a fair die. P(rolling 3)?', a: '1/6', w: ['1/3', '3/6', '1'] },
+      { q: 'Probability ranges from:', a: '0 to 1', w: ['0 to 100', '-1 to 1', '1 to 10'] },
+      { q: 'P(impossible event) = ?', a: '0', w: ['1', '-1', '0.5'] },
+      { q: 'P(certain event) = ?', a: '1', w: ['0', '100', '0.5'] },
+      { q: 'Bag has 3 red, 2 blue marbles. P(red)?', a: '3/5', w: ['2/5', '3/2', '1/3'] },
+      { q: 'Roll die. P(even number)?', a: '1/2', w: ['1/3', '2/6', '3'] },
+      { q: 'If P(A) = 0.3, P(not A) = ?', a: '0.7', w: ['0.3', '1.3', '-0.3'] },
+      { q: 'Spinner has 4 equal sections. P(landing on blue)?', a: '1/4', w: ['1/2', '4', '3/4'] },
+      { q: 'P(A) + P(not A) = ?', a: '1', w: ['0', '2', 'depends'] },
+      { q: 'Deck of 52 cards. P(ace)?', a: '4/52 or 1/13', w: ['1/52', '4/13', '1/4'] },
+      { q: 'Favorable outcomes / Total outcomes = ?', a: 'Probability', w: ['Odds', 'Ratio', 'Percentage'] },
+      { q: 'P(A or B) when mutually exclusive = ?', a: 'P(A) + P(B)', w: ['P(A) × P(B)', 'P(A) - P(B)', '0'] },
+      { q: 'Roll die. P(less than 5)?', a: '4/6 or 2/3', w: ['5/6', '4/5', '1/6'] },
+      { q: 'Box has 5 items, 2 defective. P(defective)?', a: '2/5', w: ['3/5', '2/3', '5/2'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('probability-basics', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['probability'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'simple-probability': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Bag: 4 red, 6 blue marbles. P(blue)?', a: '6/10 or 3/5', w: ['4/10', '6/4', '1/6'] },
+      { q: 'Spinner: 3 red, 2 yellow, 3 green. P(yellow)?', a: '2/8 or 1/4', w: ['3/8', '2/3', '1/2'] },
+      { q: 'Roll die. P(5 or 6)?', a: '2/6 or 1/3', w: ['5/6', '11/6', '1/6'] },
+      { q: 'Flip coin twice. P(two heads)?', a: '1/4', w: ['1/2', '2/4', '1'] },
+      { q: 'Draw from deck. P(heart)?', a: '13/52 or 1/4', w: ['1/13', '4/52', '1/2'] },
+      { q: 'Jar: 5 red, 3 green, 2 blue. P(not red)?', a: '5/10 or 1/2', w: ['5/10', '3/10', '8/10'] },
+      { q: 'Roll two dice. P(both show 6)?', a: '1/36', w: ['1/6', '2/36', '1/12'] },
+      { q: 'Bag: 7 white, 3 black. P(white)?', a: '7/10', w: ['3/10', '7/3', '10/7'] },
+      { q: '20 tickets, 4 winners. P(winning)?', a: '4/20 or 1/5', w: ['4/16', '16/20', '1/4'] },
+      { q: 'Draw card. P(face card)?', a: '12/52 or 3/13', w: ['4/52', '3/52', '1/4'] },
+      { q: 'Roll die. P(prime: 2,3,5)?', a: '3/6 or 1/2', w: ['2/6', '4/6', '5/6'] },
+      { q: 'Pick letter from MATH. P(A)?', a: '1/4', w: ['2/4', '1/3', '0'] },
+      { q: '15 students: 9 girls. P(picking girl)?', a: '9/15 or 3/5', w: ['6/15', '9/6', '15/9'] },
+      { q: 'Spin 5-section spinner. P(landing on 3)?', a: '1/5', w: ['3/5', '1/3', '5'] },
+      { q: 'Bag has equal red and blue. P(red)?', a: '1/2', w: ['1', '2', '1/4'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('simple-probability', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['probability'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'inequality-notation': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'x > 5 means x is:', a: 'greater than 5', w: ['less than 5', 'equal to 5', 'at least 5'] },
+      { q: 'x ≤ 3 means x is:', a: 'less than or equal to 3', w: ['less than 3', 'greater than 3', 'equal to 3 only'] },
+      { q: 'The symbol ≥ means:', a: 'greater than or equal to', w: ['greater than', 'less than', 'not equal'] },
+      { q: 'Write "at least 18" as inequality:', a: 'x ≥ 18', w: ['x > 18', 'x < 18', 'x ≤ 18'] },
+      { q: 'Write "less than 100":', a: 'x < 100', w: ['x ≤ 100', 'x > 100', 'x = 100'] },
+      { q: '2 < x < 7 means x is:', a: 'between 2 and 7 (exclusive)', w: ['less than 2', 'greater than 7', 'equal to 2 or 7'] },
+      { q: 'Write "no more than 50":', a: 'x ≤ 50', w: ['x < 50', 'x ≥ 50', 'x > 50'] },
+      { q: 'Write "at most 20":', a: 'x ≤ 20', w: ['x < 20', 'x ≥ 20', 'x > 20'] },
+      { q: 'x ≠ 5 means:', a: 'x is not equal to 5', w: ['x equals 5', 'x > 5', 'x < 5'] },
+      { q: '-3 ≤ x ≤ 3 is called:', a: 'compound inequality', w: ['simple inequality', 'equation', 'expression'] },
+      { q: 'Write "more than 0":', a: 'x > 0', w: ['x ≥ 0', 'x < 0', 'x = 0'] },
+      { q: 'Symbol < means:', a: 'less than (strict)', w: ['less than or equal', 'greater than', 'equal'] },
+      { q: 'Interval notation for x ≥ 3:', a: '[3, ∞)', w: ['(3, ∞)', '[3, ∞]', '(3, ∞]'] },
+      { q: 'Write "between -5 and 5 inclusive":', a: '-5 ≤ x ≤ 5', w: ['-5 < x < 5', 'x ≤ 5', '|x| < 5'] },
+      { q: 'If x > -2 and x < 4, combined:', a: '-2 < x < 4', w: ['x > -2 or x < 4', '-2 > x > 4', 'x < -2'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('inequality-notation', p.q, p.a, p.w, 1, '5-8', 'Expressions & Equations', ['inequalities'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'graphing-inequalities': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Graph of x > 3 uses:', a: 'open circle at 3, arrow right', w: ['closed circle', 'arrow left', 'line segment'] },
+      { q: 'Graph of x ≤ -2 uses:', a: 'closed circle at -2, arrow left', w: ['open circle', 'arrow right', 'no circle'] },
+      { q: 'y < 2x + 1 is graphed with:', a: 'dashed line, shade below', w: ['solid line, above', 'dashed, above', 'solid, below'] },
+      { q: 'y ≥ -x + 3 is graphed with:', a: 'solid line, shade above', w: ['dashed, above', 'solid, below', 'dashed, below'] },
+      { q: 'Open circle means:', a: 'value not included', w: ['value included', 'equals', 'no solution'] },
+      { q: 'Closed circle means:', a: 'value included', w: ['value not included', 'less than', 'greater than'] },
+      { q: 'x ≥ 5: arrow points?', a: 'right (toward larger)', w: ['left', 'both ways', 'neither'] },
+      { q: '-3 ≤ x < 2 is graphed as:', a: 'closed at -3, open at 2', w: ['open both', 'closed both', 'open -3, closed 2'] },
+      { q: 'For y > mx + b, shade:', a: 'above the line', w: ['below', 'on the line', 'neither'] },
+      { q: 'Dashed boundary line means:', a: 'strict inequality (< or >)', w: ['≤ or ≥', 'equals', 'no boundary'] },
+      { q: 'Solid boundary line means:', a: 'includes equal (≤ or ≥)', w: ['< or >', 'infinite', 'no solution'] },
+      { q: 'x < 0: shade which part?', a: 'left of 0', w: ['right of 0', 'at 0', 'entire line'] },
+      { q: 'Graph -1 < x ≤ 4:', a: 'open at -1, closed at 4', w: ['closed both', 'open both', 'arrows both'] },
+      { q: 'To test shading for y > 2x:', a: 'pick test point not on line', w: ['use origin always', 'guess', 'no test needed'] },
+      { q: 'If (0,0) satisfies y < x + 1, shade:', a: 'region containing origin', w: ['opposite region', 'neither', 'both'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('graphing-inequalities', p.q, p.a, p.w, 2, '8-12', 'Expressions & Equations', ['inequalities', 'graphing'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'multi-step-inequalities': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Solve: 2x + 3 > 7', a: 'x > 2', w: ['x > 5', 'x < 2', 'x > 4'] },
+      { q: 'Solve: 3x - 5 ≤ 10', a: 'x ≤ 5', w: ['x ≤ 15', 'x ≥ 5', 'x < 5'] },
+      { q: 'Solve: -2x > 8', a: 'x < -4', w: ['x > -4', 'x > 4', 'x < 4'] },
+      { q: 'Solve: 4x + 1 < 2x + 9', a: 'x < 4', w: ['x < 8', 'x > 4', 'x < 5'] },
+      { q: 'Solve: 5 - x ≥ 2', a: 'x ≤ 3', w: ['x ≥ 3', 'x ≤ -3', 'x ≥ -3'] },
+      { q: 'When dividing by negative, sign:', a: 'reverses', w: ['stays same', 'disappears', 'becomes equal'] },
+      { q: 'Solve: -3x + 6 < 0', a: 'x > 2', w: ['x < 2', 'x > -2', 'x < -2'] },
+      { q: 'Solve: 2(x - 1) > 6', a: 'x > 4', w: ['x > 3', 'x > 5', 'x < 4'] },
+      { q: 'Solve: x/3 + 2 ≤ 5', a: 'x ≤ 9', w: ['x ≤ 7', 'x ≤ 3', 'x ≥ 9'] },
+      { q: 'Solve: -4x - 8 ≥ 12', a: 'x ≤ -5', w: ['x ≥ -5', 'x ≤ 5', 'x ≥ 5'] },
+      { q: 'Solve: 3(x + 2) < x + 10', a: 'x < 2', w: ['x < 4', 'x > 2', 'x < 8'] },
+      { q: 'Solve: 5x - 3 ≥ 2x + 9', a: 'x ≥ 4', w: ['x ≥ 6', 'x ≤ 4', 'x ≥ 2'] },
+      { q: 'Solve: (x + 4)/2 > 3', a: 'x > 2', w: ['x > 6', 'x > 10', 'x < 2'] },
+      { q: 'Solve: 6 - 2x ≤ 4x', a: 'x ≥ 1', w: ['x ≤ 1', 'x ≥ 6', 'x ≤ 6'] },
+      { q: 'Solve: -5(x - 1) < 15', a: 'x > -2', w: ['x < -2', 'x > 2', 'x < 2'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('multi-step-inequalities', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['inequalities'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'definite-integrals': (count) => {
+    const problems = [];
+    const qs = [
+      { q: '∫₀² 3 dx = ?', a: '6', w: ['3', '2', '0'] },
+      { q: '∫₁³ 2x dx = ?', a: '8', w: ['4', '6', '12'] },
+      { q: '∫₀¹ x² dx = ?', a: '1/3', w: ['1', '1/2', '2/3'] },
+      { q: '∫₋₁¹ x dx = ?', a: '0', w: ['1', '-1', '2'] },
+      { q: '∫₀^π sin(x) dx = ?', a: '2', w: ['0', '1', '-2'] },
+      { q: '∫₀² (x + 1) dx = ?', a: '4', w: ['3', '6', '2'] },
+      { q: '∫₂⁵ 1 dx = ?', a: '3', w: ['5', '2', '7'] },
+      { q: '∫₀¹ e^x dx = ?', a: 'e - 1', w: ['e', '1', 'e + 1'] },
+      { q: '∫₁² 1/x dx = ?', a: 'ln(2)', w: ['1', '2', 'ln(1)'] },
+      { q: '∫₀^(π/2) cos(x) dx = ?', a: '1', w: ['0', '-1', 'π/2'] },
+      { q: '∫₋₂² x³ dx = ?', a: '0', w: ['8', '-8', '16'] },
+      { q: '∫₀³ 4x dx = ?', a: '18', w: ['12', '6', '36'] },
+      { q: '∫₁⁴ 3x² dx = ?', a: '63', w: ['21', '48', '36'] },
+      { q: '∫₁⁴ √x dx = ?', a: '14/3', w: ['4', '7/3', '2'] },
+      { q: 'If ∫ₐᵇ f dx = 5, ∫ₐᵇ g dx = 3, then ∫ₐᵇ (f+g) dx = ?', a: '8', w: ['15', '2', '53'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('definite-integrals', p.q, p.a, p.w, 4, 'Calculus', 'Calculus', ['integrals'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'graph-quadratic-functions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'The graph of y = x² is a:', a: 'parabola opening upward', w: ['line', 'circle', 'parabola down'] },
+      { q: 'Vertex of y = (x - 2)² + 3 is:', a: '(2, 3)', w: ['(-2, 3)', '(2, -3)', '(3, 2)'] },
+      { q: 'y = -x² opens:', a: 'downward', w: ['upward', 'left', 'right'] },
+      { q: 'Axis of symmetry for y = x² - 4x + 3:', a: 'x = 2', w: ['x = 4', 'x = -2', 'x = 3'] },
+      { q: 'y = (x + 1)² shifts y = x² by:', a: '1 unit left', w: ['1 right', '1 up', '1 down'] },
+      { q: 'y = x² + 5 shifts y = x² by:', a: '5 units up', w: ['5 down', '5 left', '5 right'] },
+      { q: 'Vertex form of quadratic is:', a: 'y = a(x - h)² + k', w: ['y = ax² + bx + c', 'y = mx + b', 'y = a/x'] },
+      { q: 'For y = ax², if a > 0, parabola opens:', a: 'upward', w: ['downward', 'left', 'neither'] },
+      { q: 'y = 2x² compared to y = x² is:', a: 'narrower', w: ['wider', 'same', 'shifted'] },
+      { q: 'y = (1/2)x² compared to y = x² is:', a: 'wider', w: ['narrower', 'same', 'inverted'] },
+      { q: 'x-intercepts of y = (x-1)(x-3):', a: 'x = 1 and x = 3', w: ['x = -1, -3', 'x = 1 only', 'x = 3 only'] },
+      { q: 'If vertex is (0,0), quadratic could be:', a: 'y = x²', w: ['y = x² + 1', 'y = (x-1)²', 'y = x² - 1'] },
+      { q: 'Minimum of y = x² - 6x + 9:', a: '0 at x = 3', w: ['9 at x=0', '3 at x=6', '-9 at x=3'] },
+      { q: 'y = -(x - 4)² + 2 has vertex:', a: '(4, 2)', w: ['(-4, 2)', '(4, -2)', '(2, 4)'] },
+      { q: 'Quadratic with no real x-intercepts has discriminant:', a: 'negative', w: ['positive', 'zero', 'undefined'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('graph-quadratic-functions', p.q, p.a, p.w, 3, '8-12', 'Functions', ['quadratic'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  // === STATISTICS & DATA ANALYSIS ===
+  'data-displays': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A bar graph is best for showing:', a: 'categorical data comparison', w: ['continuous change', 'parts of whole', 'paired data'] },
+      { q: 'Which shows data over time best?', a: 'line graph', w: ['pie chart', 'bar graph', 'dot plot'] },
+      { q: 'Circle graphs (pie charts) show:', a: 'parts of a whole', w: ['change over time', 'frequency', 'paired data'] },
+      { q: 'A stem-and-leaf plot preserves:', a: 'individual data values', w: ['only the mean', 'percentages', 'categories'] },
+      { q: 'Scatter plots show relationship between:', a: 'two numerical variables', w: ['categories', 'parts of whole', 'one variable'] },
+      { q: 'Pictographs use:', a: 'symbols to represent data', w: ['bars only', 'connected lines', 'angles'] },
+      { q: 'Which display uses intervals on x-axis?', a: 'histogram', w: ['pie chart', 'pictograph', 'stem plot'] },
+      { q: 'A dot plot is best for:', a: 'small data sets showing frequency', w: ['large continuous data', 'percentages', 'time series'] },
+      { q: 'Double bar graphs compare:', a: 'two data sets across categories', w: ['time series', 'parts of whole', 'single values'] },
+      { q: 'The key in a pictograph tells:', a: 'what each symbol represents', w: ['the title', 'data range', 'the mean'] },
+      { q: 'Misleading graphs often:', a: 'use manipulated scales', w: ['show all data', 'use consistent axes', 'label clearly'] },
+      { q: 'A frequency table shows:', a: 'how often each value occurs', w: ['percentages', 'averages', 'predictions'] },
+      { q: 'Choose line graph when data shows:', a: 'trends over time', w: ['categories', 'parts of whole', 'single values'] },
+      { q: 'Box plots display:', a: 'five-number summary', w: ['individual values', 'percentages', 'means only'] },
+      { q: 'Back-to-back stem plots compare:', a: 'two distributions', w: ['percentages', 'single values', 'categories'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('data-displays', p.q, p.a, p.w, 2, 'K-5', 'Statistics', ['data'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'histograms': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Histogram bars should:', a: 'touch each other', w: ['have gaps', 'overlap', 'vary in width'] },
+      { q: 'Histogram x-axis shows:', a: 'intervals (bins)', w: ['categories', 'individual values', 'percentages'] },
+      { q: 'Histogram y-axis typically shows:', a: 'frequency', w: ['categories', 'individual values', 'time'] },
+      { q: 'Histogram intervals of 0-9, 10-19, 20-29 have width:', a: '10', w: ['9', '19', '3'] },
+      { q: 'A histogram shows data that is:', a: 'numerical and continuous', w: ['categorical', 'paired', 'circular'] },
+      { q: 'Histogram with tall bars on left is:', a: 'skewed right', w: ['skewed left', 'symmetric', 'uniform'] },
+      { q: 'Histogram with tall bars on right is:', a: 'skewed left', w: ['skewed right', 'symmetric', 'bimodal'] },
+      { q: 'Symmetric histogram has:', a: 'mean ≈ median', w: ['mean > median', 'mean < median', 'no mode'] },
+      { q: 'Histogram interval 20-29 includes:', a: '20, 21, 22, ..., 29', w: ['only 20-28', '21-30', '19-29'] },
+      { q: 'Bimodal histogram has:', a: 'two peaks', w: ['one peak', 'no peaks', 'flat distribution'] },
+      { q: 'Total frequency in histogram found by:', a: 'adding all bar heights', w: ['counting bars', 'max height', 'bar width'] },
+      { q: 'Histogram vs bar graph: histogram has:', a: 'numerical intervals', w: ['categories', 'gaps between bars', 'pictures'] },
+      { q: 'Relative frequency histogram y-axis shows:', a: 'proportions or percentages', w: ['raw counts', 'cumulative totals', 'ranges'] },
+      { q: 'Histogram with bars decreasing left to right is:', a: 'skewed left (negative)', w: ['skewed right', 'symmetric', 'uniform'] },
+      { q: 'Uniform histogram has:', a: 'roughly equal bar heights', w: ['one tall bar', 'increasing heights', 'decreasing heights'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('histograms', p.q, p.a, p.w, 3, '5-8', 'Statistics', ['histogram'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'box-plots': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Box plot shows the:', a: 'five-number summary', w: ['mean and mode', 'all data points', 'frequency'] },
+      { q: 'The box in a box plot spans:', a: 'Q1 to Q3', w: ['min to max', 'mean to median', 'Q2 to Q4'] },
+      { q: 'The line inside the box shows:', a: 'median (Q2)', w: ['mean', 'mode', 'range'] },
+      { q: 'Whiskers in box plot extend to:', a: 'minimum and maximum', w: ['Q1 and Q3', 'mean ± SD', 'outliers only'] },
+      { q: 'IQR in box plot is:', a: 'box width (Q3 - Q1)', w: ['whisker length', 'total range', 'median position'] },
+      { q: 'Box plot with long right whisker is:', a: 'skewed right', w: ['skewed left', 'symmetric', 'bimodal'] },
+      { q: 'Outliers in box plots shown as:', a: 'individual points beyond whiskers', w: ['inside box', 'at median', 'not shown'] },
+      { q: 'For data: min=5, Q1=10, Q2=15, Q3=20, max=25, box spans:', a: '10 to 20', w: ['5 to 25', '15 to 20', '5 to 15'] },
+      { q: '50% of data lies within:', a: 'the box (Q1 to Q3)', w: ['the whiskers', 'above median', 'below Q1'] },
+      { q: 'Box plot median is 50 means:', a: 'half the data is below 50', w: ['mean is 50', 'mode is 50', 'range is 50'] },
+      { q: 'Comparing box plots, larger box means:', a: 'more spread in middle 50%', w: ['larger range', 'higher mean', 'more data'] },
+      { q: 'Side-by-side box plots useful for:', a: 'comparing distributions', w: ['showing trends', 'displaying percentages', 'individual values'] },
+      { q: 'If Q1=20 and Q3=50, IQR is:', a: '30', w: ['70', '35', '20'] },
+      { q: 'Box plot cannot directly show:', a: 'sample size', w: ['median', 'range', 'quartiles'] },
+      { q: 'Symmetric box plot has:', a: 'equal whisker lengths', w: ['no whiskers', 'unequal whiskers', 'no box'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('box-plots', p.q, p.a, p.w, 3, '5-8', 'Statistics', ['boxplot'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'measures-of-center': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Mean of 2, 4, 6, 8, 10 is:', a: '6', w: ['5', '7', '8'] },
+      { q: 'Median of 3, 7, 9, 12, 15 is:', a: '9', w: ['7', '12', '9.2'] },
+      { q: 'Mode of 2, 3, 3, 5, 7, 3 is:', a: '3', w: ['2', '5', '3.83'] },
+      { q: 'Mean is affected most by:', a: 'outliers', w: ['mode', 'median', 'sample size'] },
+      { q: 'Best measure for skewed data:', a: 'median', w: ['mean', 'mode', 'range'] },
+      { q: 'Mean of 10, 20, 30:', a: '20', w: ['10', '30', '60'] },
+      { q: 'Median of 4, 8, 12, 16:', a: '10', w: ['8', '12', '9'] },
+      { q: 'Data: 5, 5, 5, 5, 100. Mean vs median?', a: 'mean > median', w: ['mean < median', 'mean = median', 'cannot tell'] },
+      { q: 'Adding 10 to all values changes mean by:', a: '+10', w: ['+0', '×10', '+5'] },
+      { q: 'Mode is useful for:', a: 'categorical data', w: ['continuous data', 'skewed data', 'paired data'] },
+      { q: 'No mode exists when:', a: 'all values occur equally', w: ['data is numeric', 'n is odd', 'n is even'] },
+      { q: 'Bimodal means:', a: 'two modes', w: ['no mode', 'one mode', 'mean = median'] },
+      { q: 'Mean of 0, 0, 0, 12:', a: '3', w: ['0', '12', '4'] },
+      { q: 'Sum of 5 values with mean 8:', a: '40', w: ['8', '13', '35'] },
+      { q: 'Median position for n=9 values:', a: '5th value', w: ['4th', '4.5th', '9th'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('measures-of-center', p.q, p.a, p.w, 2, '5-8', 'Statistics', ['center'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'iqr': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'IQR stands for:', a: 'Interquartile Range', w: ['Inner Quality Range', 'Integer Quartile Ratio', 'Index of Quartile Results'] },
+      { q: 'IQR = Q3 - Q1. If Q1=25, Q3=75, IQR is:', a: '50', w: ['100', '25', '75'] },
+      { q: 'IQR measures:', a: 'spread of middle 50%', w: ['total spread', 'center', 'outliers'] },
+      { q: 'IQR is resistant to:', a: 'outliers', w: ['large samples', 'skewness', 'negative values'] },
+      { q: 'Data: 2,4,6,8,10,12,14. Q1 is:', a: '4', w: ['2', '6', '8'] },
+      { q: 'Data: 2,4,6,8,10,12,14. Q3 is:', a: '12', w: ['10', '14', '8'] },
+      { q: 'If IQR=20 and median=50, Q1 could be:', a: '40', w: ['50', '30', '60'] },
+      { q: 'Outlier rule: value is outlier if beyond:', a: 'Q1 - 1.5×IQR or Q3 + 1.5×IQR', w: ['Q1-Q3', 'mean ± 2SD', 'min/max'] },
+      { q: 'Q1=10, Q3=30, IQR=20. Upper fence:', a: '60', w: ['30', '50', '40'] },
+      { q: 'Q1=10, Q3=30, IQR=20. Lower fence:', a: '-20', w: ['10', '0', '-10'] },
+      { q: 'IQR of 5,5,5,5,5 is:', a: '0', w: ['5', '25', 'undefined'] },
+      { q: 'Small IQR means data is:', a: 'clustered in middle', w: ['widely spread', 'skewed', 'bimodal'] },
+      { q: 'IQR vs range: IQR is more:', a: 'resistant to outliers', w: ['sensitive to outliers', 'useful for categories', 'complex'] },
+      { q: 'For symmetric data, Q1 and Q3 are equidistant from:', a: 'median', w: ['mean', 'mode', 'range'] },
+      { q: 'Quartiles divide data into:', a: '4 equal parts', w: ['2 equal parts', '3 equal parts', '100 parts'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('iqr', p.q, p.a, p.w, 3, '5-8', 'Statistics', ['iqr', 'quartile'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'standard-deviation': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Standard deviation measures:', a: 'spread around the mean', w: ['center', 'range', 'skewness'] },
+      { q: 'SD of 5, 5, 5, 5, 5 is:', a: '0', w: ['5', '1', '25'] },
+      { q: 'Larger SD means data is:', a: 'more spread out', w: ['more clustered', 'more symmetric', 'larger'] },
+      { q: 'SD cannot be:', a: 'negative', w: ['zero', 'larger than range', 'a decimal'] },
+      { q: 'Variance is:', a: 'SD squared', w: ['SD divided by n', 'range/4', 'IQR/2'] },
+      { q: 'If SD = 4, variance is:', a: '16', w: ['4', '2', '8'] },
+      { q: 'Adding 10 to all values changes SD by:', a: '0 (no change)', w: ['+10', '×10', '+√10'] },
+      { q: 'Multiplying all values by 2 multiplies SD by:', a: '2', w: ['4', '0', '√2'] },
+      { q: 'In normal distribution, 68% within:', a: '1 SD of mean', w: ['2 SD', '3 SD', '0.5 SD'] },
+      { q: 'In normal distribution, 95% within:', a: '2 SD of mean', w: ['1 SD', '3 SD', '1.5 SD'] },
+      { q: 'Population SD uses:', a: 'n in denominator', w: ['n-1', 'n+1', 'n²'] },
+      { q: 'Sample SD uses:', a: 'n-1 in denominator', w: ['n', 'n+1', '2n'] },
+      { q: 'Z-score = (x - mean) / SD. If z = 2:', a: 'x is 2 SD above mean', w: ['x is 2', 'x equals mean', 'x is 2 SD below'] },
+      { q: 'SD is in same units as:', a: 'original data', w: ['squared units', 'no units', 'percentage'] },
+      { q: 'Coefficient of variation = SD/mean measures:', a: 'relative variability', w: ['absolute spread', 'center', 'skew'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('standard-deviation', p.q, p.a, p.w, 4, '8-12', 'Statistics', ['sd', 'deviation'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  // === PROBABILITY ===
+  'conditional-probability': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'P(A|B) means:', a: 'probability of A given B occurred', w: ['P(A) × P(B)', 'P(A) + P(B)', 'P(A and B)'] },
+      { q: 'P(A|B) = P(A and B) / ?', a: 'P(B)', w: ['P(A)', 'P(A or B)', 'P(A)×P(B)'] },
+      { q: 'If P(A and B) = 0.3, P(B) = 0.5, then P(A|B) =', a: '0.6', w: ['0.8', '0.15', '0.2'] },
+      { q: 'If A and B independent, P(A|B) =', a: 'P(A)', w: ['P(B)', '0', '1'] },
+      { q: 'P(rain|cloudy) = 0.7 means:', a: '70% chance of rain when cloudy', w: ['70% of days are rainy', '70% cloudy', '30% rain'] },
+      { q: 'Bayes formula relates P(A|B) to:', a: 'P(B|A)', w: ['P(A×B)', 'P(A-B)', 'P(A÷B)'] },
+      { q: 'P(B|A) × P(A) = ?', a: 'P(A and B)', w: ['P(A|B)', 'P(A or B)', 'P(A) + P(B)'] },
+      { q: 'If P(pass|studied) = 0.9, P(pass|not studied) = 0.3:', a: 'studying helps', w: ['studying hurts', 'no effect', 'cannot tell'] },
+      { q: 'Two-way table helps find:', a: 'conditional probabilities', w: ['only joint probs', 'SD', 'mean'] },
+      { q: 'P(male|glasses) from table with 30 males with glasses, 50 total with glasses:', a: '0.6', w: ['0.3', '0.5', '30'] },
+      { q: 'If P(A|B) = P(A), events are:', a: 'independent', w: ['dependent', 'mutually exclusive', 'complementary'] },
+      { q: 'P(A|B) + P(A\'|B) = ?', a: '1', w: ['P(A)', 'P(B)', '0'] },
+      { q: 'Tree diagrams show conditional probability on:', a: 'branches', w: ['roots', 'leaves only', 'trunk'] },
+      { q: 'Sensitivity in testing is:', a: 'P(positive test | disease)', w: ['P(disease | positive)', 'P(negative | healthy)', 'P(disease)'] },
+      { q: 'Specificity in testing is:', a: 'P(negative test | no disease)', w: ['P(disease | negative)', 'P(positive | disease)', 'P(no disease)'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('conditional-probability', p.q, p.a, p.w, 4, '8-12', 'Statistics', ['conditional'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'compound-probability': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'P(A and B) for independent events:', a: 'P(A) × P(B)', w: ['P(A) + P(B)', 'P(A) - P(B)', 'P(A)/P(B)'] },
+      { q: 'P(A or B) for mutually exclusive:', a: 'P(A) + P(B)', w: ['P(A) × P(B)', 'P(A) - P(B)', '0'] },
+      { q: 'P(A or B) general formula:', a: 'P(A) + P(B) - P(A and B)', w: ['P(A) + P(B)', 'P(A) × P(B)', 'P(A)/P(B)'] },
+      { q: 'P(heads AND heads) for 2 fair coins:', a: '0.25', w: ['0.5', '0.75', '1'] },
+      { q: 'P(6 OR 5) on one die roll:', a: '1/3', w: ['1/6', '1/36', '2/36'] },
+      { q: 'P(red or blue) if P(red)=0.3, P(blue)=0.2, no overlap:', a: '0.5', w: ['0.06', '0.44', '0.1'] },
+      { q: 'Flip coin 3 times, P(all heads):', a: '1/8', w: ['1/2', '1/3', '3/8'] },
+      { q: 'P(at least one head in 2 flips):', a: '3/4', w: ['1/4', '1/2', '1'] },
+      { q: 'With replacement means:', a: 'probabilities stay constant', w: ['probs change', 'events exclusive', 'no repeats'] },
+      { q: 'Without replacement means:', a: 'probabilities change', w: ['probs constant', 'events independent', 'use multiplication only'] },
+      { q: 'P(A\') means:', a: 'probability A does not occur', w: ['P(A) squared', 'P(A) prime number', 'P after A'] },
+      { q: 'P(A) + P(A\') = ?', a: '1', w: ['0', '2', 'P(A)²'] },
+      { q: 'Draw 2 cards without replacement, P(both aces):', a: '(4/52)(3/51)', w: ['(4/52)²', '4/52 + 3/51', '8/52'] },
+      { q: 'Roll die twice, P(sum = 7):', a: '6/36', w: ['7/36', '1/36', '2/36'] },
+      { q: 'P(not rolling 6 on two dice):', a: '(5/6)² = 25/36', w: ['10/36', '1/36', '11/36'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('compound-probability', p.q, p.a, p.w, 3, '5-8', 'Statistics', ['compound'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'fundamental-counting-principle': (count) => {
+    const problems = [];
+    const qs = [
+      { q: '3 shirts, 4 pants: total outfits?', a: '12', w: ['7', '34', '1'] },
+      { q: '5 appetizers, 8 entrees, 3 desserts: total meals?', a: '120', w: ['16', '583', '15'] },
+      { q: '26 letters, 10 digits: 2-char codes (letter then digit)?', a: '260', w: ['36', '2610', '520'] },
+      { q: 'Coin flip 4 times: total outcomes?', a: '16', w: ['8', '4', '24'] },
+      { q: 'Die roll 3 times: total outcomes?', a: '216', w: ['18', '36', '63'] },
+      { q: '4 choices then 5 choices: total paths?', a: '20', w: ['9', '45', '54'] },
+      { q: 'True/false quiz, 5 questions: total answer sets?', a: '32', w: ['10', '25', '5'] },
+      { q: '3-digit code, digits 0-9, repetition allowed:', a: '1000', w: ['30', '720', '27'] },
+      { q: 'License plate: 3 letters then 3 digits:', a: '17,576,000', w: ['36³', '26+10³', '156'] },
+      { q: '2 routes to A, 3 routes from A to B: total paths?', a: '6', w: ['5', '23', '1'] },
+      { q: 'Password: 2 letters then 2 digits (no repeat):', a: '26×25×10×9', w: ['26²×10²', '36⁴', '26×10×25×9'] },
+      { q: 'Menu: 3 soups, 2 salads, pick one of each:', a: '6', w: ['5', '32', '1'] },
+      { q: '4-digit PIN, all different digits:', a: '5040', w: ['10000', '40', '4536'] },
+      { q: 'Ice cream: 5 flavors, 3 toppings, 2 cones:', a: '30', w: ['10', '532', '15'] },
+      { q: 'Fundamental principle uses:', a: 'multiplication', w: ['addition', 'subtraction', 'division'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('fundamental-counting-principle', p.q, p.a, p.w, 2, '5-8', 'Statistics', ['counting'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'permutations': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Permutation means:', a: 'arrangement where order matters', w: ['selection, order irrelevant', 'repetition allowed', 'replacement'] },
+      { q: 'P(5,3) = 5!/(5-3)! =', a: '60', w: ['10', '15', '120'] },
+      { q: 'P(n,n) = ?', a: 'n!', w: ['n', '1', 'n²'] },
+      { q: 'P(n,1) = ?', a: 'n', w: ['1', 'n!', '0'] },
+      { q: 'Arrange 4 books on shelf: ways?', a: '24', w: ['4', '16', '12'] },
+      { q: '8 runners, gold/silver/bronze: ways?', a: '336', w: ['56', '24', '512'] },
+      { q: '5 people in a line: arrangements?', a: '120', w: ['25', '5', '60'] },
+      { q: 'P(6,2) =', a: '30', w: ['15', '12', '36'] },
+      { q: 'First, second, third from 10 people:', a: 'P(10,3) = 720', w: ['C(10,3) = 120', '30', '1000'] },
+      { q: 'Arrange letters of CAT:', a: '6', w: ['3', '9', '27'] },
+      { q: 'Arrange letters of BOOK (repeated O):', a: '12', w: ['24', '6', '4'] },
+      { q: 'Circular permutation of n objects:', a: '(n-1)!', w: ['n!', 'n', 'n!/2'] },
+      { q: '4 people around circular table:', a: '6', w: ['24', '4', '12'] },
+      { q: 'P(4,4) =', a: '24', w: ['4', '16', '1'] },
+      { q: 'With repetition, n objects, r positions:', a: 'n^r', w: ['n!', 'P(n,r)', 'C(n,r)'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('permutations', p.q, p.a, p.w, 3, '8-12', 'Statistics', ['permutation'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'combinations': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Combination means:', a: 'selection where order does not matter', w: ['arrangement, order matters', 'with repetition', 'permutation'] },
+      { q: 'C(5,3) =', a: '10', w: ['60', '15', '6'] },
+      { q: 'C(n,0) = ?', a: '1', w: ['0', 'n', 'n!'] },
+      { q: 'C(n,n) = ?', a: '1', w: ['n', 'n!', '0'] },
+      { q: 'C(n,1) = ?', a: 'n', w: ['1', 'n!', 'n-1'] },
+      { q: 'Choose 3 from 7 people for committee:', a: 'C(7,3) = 35', w: ['P(7,3) = 210', '21', '10'] },
+      { q: 'C(6,2) =', a: '15', w: ['30', '12', '36'] },
+      { q: 'C(n,r) = C(n, ?)', a: 'n-r', w: ['r', 'n', 'r-n'] },
+      { q: 'C(8,3) = C(8, ?)', a: '5', w: ['3', '8', '11'] },
+      { q: 'Choose 2 pizza toppings from 8:', a: '28', w: ['56', '16', '36'] },
+      { q: 'C(10,4) =', a: '210', w: ['5040', '40', '24'] },
+      { q: 'Handshakes among 6 people:', a: 'C(6,2) = 15', w: ['30', '6', '36'] },
+      { q: 'Lottery: choose 6 from 49:', a: 'C(49,6) = 13,983,816', w: ['49⁶', 'P(49,6)', '49×6'] },
+      { q: 'C(5,2) + C(5,3) =', a: '20', w: ['15', '25', '30'] },
+      { q: 'Pascals triangle row 5: 1,5,10,10,5,1 gives C(5,2)=', a: '10', w: ['5', '15', '20'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('combinations', p.q, p.a, p.w, 3, '8-12', 'Statistics', ['combination'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'probability-language': (count) => {
+    const problems = [];
+    const qs = [
+      { q: '"Certain" means probability:', a: '1 (100%)', w: ['0', '0.5', 'unknown'] },
+      { q: '"Impossible" means probability:', a: '0 (0%)', w: ['1', '0.5', '-1'] },
+      { q: '"Likely" means probability is:', a: 'greater than 0.5', w: ['exactly 0.5', 'less than 0.5', 'exactly 1'] },
+      { q: '"Unlikely" means probability is:', a: 'less than 0.5', w: ['exactly 0', 'greater than 0.5', 'exactly 0.5'] },
+      { q: 'Equally likely means probability:', a: '0.5 (50-50)', w: ['0', '1', '0.25'] },
+      { q: '"Even chance" means:', a: 'probability is 0.5', w: ['probability is 1', 'certain', 'impossible'] },
+      { q: 'Fair coin has P(heads) =', a: '0.5', w: ['0', '1', '0.25'] },
+      { q: 'Probability must be between:', a: '0 and 1', w: ['-1 and 1', '0 and 100', '-∞ and ∞'] },
+      { q: 'Sum of all outcome probabilities:', a: '1', w: ['0', '0.5', 'varies'] },
+      { q: '"At random" means:', a: 'each outcome equally likely', w: ['no pattern', 'unpredictable', 'chosen with bias'] },
+      { q: 'Experimental probability comes from:', a: 'data/trials', w: ['theory', 'guessing', 'symmetry'] },
+      { q: 'Theoretical probability comes from:', a: 'logic/symmetry', w: ['experiments', 'surveys', 'sampling'] },
+      { q: 'Law of large numbers says:', a: 'experimental → theoretical with more trials', w: ['results become certain', 'outcomes alternate', 'probability changes'] },
+      { q: '"50-50 chance" is probability:', a: '0.5', w: ['50', '100', '0'] },
+      { q: 'A probability of 0.9 means event is:', a: 'very likely', w: ['certain', 'unlikely', 'impossible'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('probability-language', p.q, p.a, p.w, 1, 'K-5', 'Statistics', ['probability'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'likely-unlikely': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Bag has 8 red, 2 blue. Drawing red is:', a: 'likely', w: ['unlikely', 'impossible', 'certain'] },
+      { q: 'Bag has 1 red, 9 blue. Drawing red is:', a: 'unlikely', w: ['likely', 'certain', 'impossible'] },
+      { q: 'Spinner has equal red/blue. Landing red is:', a: 'equally likely', w: ['likely', 'unlikely', 'certain'] },
+      { q: 'Die shows 7 is:', a: 'impossible', w: ['unlikely', 'likely', 'certain'] },
+      { q: 'Sun rises tomorrow is:', a: 'certain (practically)', w: ['unlikely', 'impossible', 'equally likely'] },
+      { q: 'Coin lands heads or tails is:', a: 'certain', w: ['likely', 'unlikely', 'impossible'] },
+      { q: 'Roll even on die (1-6):', a: 'equally likely as odd', w: ['likely', 'unlikely', 'certain'] },
+      { q: 'Pick hearts from full deck:', a: 'unlikely (1/4 = 25%)', w: ['likely', 'impossible', 'certain'] },
+      { q: '10 marbles: 7 green, 3 yellow. Green is:', a: 'likely', w: ['unlikely', 'certain', 'impossible'] },
+      { q: 'Weather forecast: 90% rain means:', a: 'rain is likely', w: ['rain certain', 'rain unlikely', 'no rain'] },
+      { q: 'Weather forecast: 10% snow means:', a: 'snow is unlikely', w: ['snow certain', 'snow likely', 'no snow'] },
+      { q: 'Flip coin twice, both heads is:', a: 'unlikely (25%)', w: ['likely', 'certain', 'impossible'] },
+      { q: 'All 10 red balls, draw red is:', a: 'certain', w: ['likely', 'unlikely', 'impossible'] },
+      { q: 'No blue balls, draw blue is:', a: 'impossible', w: ['unlikely', 'likely', 'certain'] },
+      { q: 'More likely: 3/4 or 1/4?', a: '3/4', w: ['1/4', 'same', 'cannot compare'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('likely-unlikely', p.q, p.a, p.w, 1, 'K-5', 'Statistics', ['probability'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'probability-fractions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'P(heads on fair coin) =', a: '1/2', w: ['1/4', '1/3', '2/3'] },
+      { q: 'P(roll 3 on die) =', a: '1/6', w: ['1/3', '3/6', '1/36'] },
+      { q: '5 red, 3 blue marbles. P(red) =', a: '5/8', w: ['3/8', '5/3', '1/5'] },
+      { q: 'Deck of 52: P(ace) =', a: '4/52 = 1/13', w: ['1/52', '4/13', '1/4'] },
+      { q: 'Spinner: 3 of 8 sections blue. P(blue) =', a: '3/8', w: ['8/3', '1/3', '1/8'] },
+      { q: 'Bag: 2 red, 3 green, 5 blue. P(green) =', a: '3/10', w: ['1/3', '3/5', '2/10'] },
+      { q: 'P(not 6 on die) =', a: '5/6', w: ['1/6', '4/6', '6/6'] },
+      { q: 'P(red or blue) if P(red)=1/4, P(blue)=1/4:', a: '1/2', w: ['1/8', '1/16', '1'] },
+      { q: '6 balls numbered 1-6. P(even) =', a: '3/6 = 1/2', w: ['2/6', '4/6', '1/6'] },
+      { q: '10 cards numbered 1-10. P(>7) =', a: '3/10', w: ['7/10', '4/10', '1/10'] },
+      { q: 'P(vowel from MATH) =', a: '1/4', w: ['2/4', '3/4', '0'] },
+      { q: 'P(consonant from HELLO) =', a: '3/5', w: ['2/5', '4/5', '1/5'] },
+      { q: '12 eggs, 3 broken. P(good egg) =', a: '9/12 = 3/4', w: ['3/12', '1/4', '1/3'] },
+      { q: 'P(prime number 1-10) =', a: '4/10 = 2/5', w: ['5/10', '3/10', '6/10'] },
+      { q: '4 red, 4 blue. P(red then red) without replacement:', a: '(4/8)(3/7) = 3/14', w: ['1/4', '4/7', '16/64'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('probability-fractions', p.q, p.a, p.w, 2, 'K-5', 'Statistics', ['probability', 'fraction'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  // === SEQUENCES & SERIES ===
+  'geometric-series': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Geometric series has:', a: 'constant ratio between terms', w: ['constant difference', 'no pattern', 'alternating signs only'] },
+      { q: 'Sum of infinite geometric series |r|<1:', a: 'a/(1-r)', w: ['a/(1+r)', 'a×r', 'does not exist'] },
+      { q: 'First term 3, ratio 1/2: infinite sum =', a: '6', w: ['3', '1.5', '∞'] },
+      { q: '1 + 1/2 + 1/4 + 1/8 + ... =', a: '2', w: ['1', '∞', '1.5'] },
+      { q: 'Sum of first n terms: S_n = a(1-r^n)/(1-r) when:', a: 'r ≠ 1', w: ['r = 1', 'r > 1', 'always'] },
+      { q: '2 + 6 + 18 + 54: sum of 4 terms =', a: '80', w: ['72', '162', '26'] },
+      { q: 'If r = -1/2, series:', a: 'converges (|r|<1)', w: ['diverges', 'undefined', 'oscillates forever'] },
+      { q: 'If r = 2, infinite series:', a: 'diverges', w: ['converges to a/(1-2)', 'equals 0', 'converges'] },
+      { q: 'Sum 3 + 3/4 + 3/16 + ... (r=1/4):', a: '4', w: ['3', '12', '∞'] },
+      { q: 'Geometric series: a=10, r=0.9, S_∞=', a: '100', w: ['90', '10', '∞'] },
+      { q: 'Which converges: r=1.1 or r=0.9?', a: 'r = 0.9', w: ['r = 1.1', 'both', 'neither'] },
+      { q: 'Bouncing ball: 10m drop, bounces 80% height. Total distance:', a: '90m', w: ['50m', '∞', '18m'] },
+      { q: '1 - 1/3 + 1/9 - 1/27 + ... (r=-1/3):', a: '3/4', w: ['1', '2/3', '∞'] },
+      { q: 'Sum of 5 + 5 + 5 + 5 (r=1) for 4 terms:', a: '20', w: ['5', 'undefined by formula', '∞'] },
+      { q: 'Partial sum formula uses r^n, where n is:', a: 'number of terms', w: ['last term', 'first term', 'common ratio'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('geometric-series', p.q, p.a, p.w, 4, '8-12', 'Algebra', ['series'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'arithmetic-series': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Arithmetic series sum formula: S_n =', a: 'n(a₁ + aₙ)/2', w: ['a₁ × n', 'aₙ - a₁', 'n × d'] },
+      { q: 'Sum 1+2+3+...+100 =', a: '5050', w: ['100', '5000', '10000'] },
+      { q: 'Sum of first 10 positive integers:', a: '55', w: ['50', '45', '100'] },
+      { q: 'Arithmetic series: first=2, last=20, n=10. Sum=', a: '110', w: ['220', '100', '200'] },
+      { q: '3+7+11+15+19: sum =', a: '55', w: ['50', '60', '45'] },
+      { q: 'Sum formula S_n = n/2 × (2a₁ + (n-1)d) uses:', a: 'first term and common difference', w: ['last term only', 'ratio', 'middle term'] },
+      { q: 'Sum of first n odd numbers:', a: 'n²', w: ['n(n+1)', '2n', 'n(n-1)/2'] },
+      { q: '1+3+5+7+9 = 5² =', a: '25', w: ['20', '15', '30'] },
+      { q: 'Sum of first n even numbers:', a: 'n(n+1)', w: ['n²', '2n', 'n(n-1)'] },
+      { q: '2+4+6+8+10 =', a: '30', w: ['25', '20', '40'] },
+      { q: 'If a₁=5, d=3, n=8, then S_8=', a: '124', w: ['40', '64', '88'] },
+      { q: 'Sum 10+20+30+...+100:', a: '550', w: ['500', '1000', '450'] },
+      { q: 'Gauss sum formula: 1+2+...+n =', a: 'n(n+1)/2', w: ['n²', 'n!', '2n'] },
+      { q: 'Average of arithmetic sequence × n =', a: 'sum', w: ['difference', 'first term', 'last term'] },
+      { q: 'Sum of -5+(-2)+1+4+7:', a: '5', w: ['0', '-5', '10'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('arithmetic-series', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['series'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'finite-series': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A finite series has:', a: 'limited number of terms', w: ['infinite terms', 'no last term', 'unbounded sum'] },
+      { q: 'Σ(i=1 to 5) i =', a: '15', w: ['5', '10', '25'] },
+      { q: 'Σ(i=1 to 4) 3 =', a: '12', w: ['3', '9', '6'] },
+      { q: 'Σ(i=1 to 3) i² = 1+4+9 =', a: '14', w: ['6', '36', '9'] },
+      { q: 'Σ(k=0 to 3) 2^k = 1+2+4+8 =', a: '15', w: ['16', '14', '8'] },
+      { q: 'Σ(n=1 to 5) 2n = 2+4+6+8+10 =', a: '30', w: ['20', '25', '50'] },
+      { q: 'Sum 1² + 2² + 3² + 4² =', a: '30', w: ['10', '100', '20'] },
+      { q: 'Σ(i=1 to n) i = n(n+1)/2 is:', a: 'triangular number formula', w: ['square formula', 'cube formula', 'factorial'] },
+      { q: 'Σ(i=1 to 6) 1 =', a: '6', w: ['1', '0', '21'] },
+      { q: 'Σ(k=2 to 5) k = 2+3+4+5 =', a: '14', w: ['15', '10', '20'] },
+      { q: 'Finite series: first term 1, ratio 2, 5 terms:', a: '1+2+4+8+16=31', w: ['32', '15', '30'] },
+      { q: 'Σ(i=0 to 4) (i+1) =', a: '15', w: ['10', '20', '5'] },
+      { q: 'Telescoping series: sum of (1/n - 1/(n+1)) from 1 to 99 =', a: '99/100', w: ['1', '1/100', '1/99'] },
+      { q: 'Sum of (-1)^n from n=1 to 4:', a: '0', w: ['1', '-1', '4'] },
+      { q: 'Σ notation means:', a: 'summation', w: ['product', 'difference', 'division'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('finite-series', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['series'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'sigma-notation': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Σ symbol means:', a: 'sum', w: ['product', 'standard deviation', 'difference'] },
+      { q: 'In Σ(i=1 to n) aᵢ, i is called:', a: 'index of summation', w: ['sum', 'limit', 'coefficient'] },
+      { q: 'Σ(i=1 to 5) i² means sum of:', a: '1² + 2² + 3² + 4² + 5²', w: ['1+2+3+4+5', '5²', '(1+2+3+4+5)²'] },
+      { q: 'Lower limit in Σ(k=2 to 7) is:', a: '2', w: ['7', 'k', '0'] },
+      { q: 'Upper limit in Σ(k=2 to 7) is:', a: '7', w: ['2', 'k', '∞'] },
+      { q: 'Σ(i=1 to 4) c = ?', a: '4c', w: ['c', 'c⁴', '4+c'] },
+      { q: 'Σ(i=1 to n) c =', a: 'nc', w: ['c', 'n+c', 'cⁿ'] },
+      { q: 'Σ(i=1 to 3) (2i+1) = 3+5+7 =', a: '15', w: ['9', '21', '6'] },
+      { q: 'Write 2+4+6+8 in sigma notation:', a: 'Σ(i=1 to 4) 2i', w: ['Σ(i=1 to 8) i', 'Σ(i=2 to 8) i', 'Σ(i=1 to 4) i'] },
+      { q: 'Σ(i=1 to n) aᵢ + Σ(i=1 to n) bᵢ =', a: 'Σ(i=1 to n) (aᵢ + bᵢ)', w: ['Σaᵢbᵢ', '(Σaᵢ)(Σbᵢ)', 'cannot combine'] },
+      { q: 'c·Σ(i=1 to n) aᵢ =', a: 'Σ(i=1 to n) (c·aᵢ)', w: ['Σ(caᵢ)ⁿ', 'cⁿΣaᵢ', 'Σc + Σaᵢ'] },
+      { q: 'Σ(j=0 to 2) 3ʲ = 3⁰+3¹+3² =', a: '13', w: ['9', '27', '6'] },
+      { q: 'Changing index: Σ(i=1 to 5) aᵢ = Σ(j=0 to 4) a_?', a: 'a_(j+1)', w: ['aⱼ', 'a_(j-1)', 'a₅'] },
+      { q: 'Σ(k=1 to 100) 1 =', a: '100', w: ['1', '0', '5050'] },
+      { q: '∑ is the capital Greek letter:', a: 'sigma', w: ['pi', 'omega', 'delta'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('sigma-notation', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['sigma', 'notation'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'summation-notation': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Summation notation uses symbol:', a: 'Σ (sigma)', w: ['Π (pi)', 'Δ (delta)', '∫ (integral)'] },
+      { q: 'Σ(n=1 to 4) n = 1+2+3+4 =', a: '10', w: ['4', '24', '8'] },
+      { q: 'In Σ(k=a to b) f(k), how many terms?', a: 'b - a + 1', w: ['b - a', 'b', 'a'] },
+      { q: 'Σ(i=3 to 6) i has how many terms?', a: '4', w: ['3', '6', '9'] },
+      { q: 'Σ(m=1 to 3) m³ = 1+8+27 =', a: '36', w: ['27', '9', '216'] },
+      { q: 'Property: Σ(aᵢ + bᵢ) = Σaᵢ + Σbᵢ is:', a: 'true', w: ['false', 'sometimes', 'undefined'] },
+      { q: 'Σ(i=1 to 5) 3 = 3+3+3+3+3 =', a: '15', w: ['3', '5', '243'] },
+      { q: 'Σ(k=1 to n) k² = n(n+1)(2n+1)/?', a: '6', w: ['2', '3', '4'] },
+      { q: 'Σ(i=1 to 10) 2i = 2·Σ(i=1 to 10) i =', a: '110', w: ['55', '20', '100'] },
+      { q: 'Empty sum Σ(i=5 to 3) i =', a: '0', w: ['undefined', '-8', '5'] },
+      { q: 'Σ(j=1 to 2) Σ(k=1 to 3) jk means:', a: 'double summation', w: ['subtraction', 'division', 'single sum'] },
+      { q: 'Split: Σ(i=1 to 10) aᵢ = Σ(i=1 to 5) aᵢ + Σ(i=? to 10) aᵢ', a: '6', w: ['5', '1', '11'] },
+      { q: 'Σ(i=1 to n) i³ = [n(n+1)/2]²:', a: 'perfect square', w: ['cube', 'triangle number', 'prime'] },
+      { q: 'Sum 1³+2³+3³+4³ = (1+2+3+4)² =', a: '100', w: ['64', '36', '30'] },
+      { q: 'Σ notation invented by:', a: 'Euler', w: ['Newton', 'Gauss', 'Leibniz'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('summation-notation', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['summation'])); existingPrompts.add(p.q.toLowerCase()); } }
+    return problems;
+  },
+
+  'series-formulas': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Sum of 1+2+...+n:', a: 'n(n+1)/2', w: ['n²', 'n!', '2n'] },
+      { q: 'Sum of 1²+2²+...+n²:', a: 'n(n+1)(2n+1)/6', w: ['n²(n+1)/4', 'n³/3', 'n(n+1)/2'] },
+      { q: 'Sum of 1³+2³+...+n³:', a: '[n(n+1)/2]²', w: ['n³(n+1)/4', 'n(n+1)²/4', 'n⁴/4'] },
+      { q: 'Geometric sum a+ar+ar²+...+ar^(n-1):', a: 'a(1-rⁿ)/(1-r)', w: ['a(rⁿ-1)/(r+1)', 'arⁿ', 'na'] },
+      { q: 'Infinite geometric sum (|r|<1):', a: 'a/(1-r)', w: ['a/(1+r)', 'ar/(1-r)', '∞'] },
+      { q: 'For 1+2+3+...+50, use formula with n=', a: '50', w: ['49', '51', '100'] },
+      { q: '1+2+...+100 = 100(101)/2 =', a: '5050', w: ['5000', '10100', '10000'] },
+      { q: 'Sum of first 10 squares = 10(11)(21)/6 =', a: '385', w: ['55', '100', '330'] },
+      { q: 'Sum of first 5 cubes = (5×6/2)² =', a: '225', w: ['125', '625', '55'] },
+      { q: 'Arithmetic series: S = n(first + last)/2 works when:', a: 'constant difference between terms', w: ['constant ratio', 'any sequence', 'only for n²'] },
+      { q: 'To find Σ(i=1 to n) (3i), factor out:', a: '3', w: ['i', 'n', '1'] },
+      { q: 'Σ(i=1 to n) (ai + b) = a·Σi + ?', a: 'nb', w: ['b', 'Σb', 'ab'] },
+      { q: 'Sum 2+4+6+...+20 = 2(1+2+...+10) =', a: '110', w: ['100', '20', '55'] },
+      { q: 'Formula Σ(i=1 to n) i = n(n+1)/2 named after:', a: 'Gauss', w: ['Euler', 'Newton', 'Riemann'] },
+      { q: 'Sum of odd: 1+3+5+...+(2n-1) =', a: 'n²', w: ['n(n+1)', '2n²', '(2n-1)n'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) { const p = qs[i]; if (!existingPrompts.has(p.q.toLowerCase())) { problems.push(createMCProblem('series-formulas', p.q, p.a, p.w, 4, '8-12', 'Algebra', ['series', 'formula'])); existingPrompts.add(p.q.toLowerCase()); } }
     return problems;
   },
 };
