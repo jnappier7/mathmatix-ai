@@ -2911,6 +2911,93 @@ const generators = {
     }
     return problems;
   },
+
+  'line-symmetry': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A line of symmetry divides a shape into:', a: 'two identical mirror-image halves', w: ['two different halves', 'three equal parts', 'unequal pieces'] },
+      { q: 'Which letter has a vertical line of symmetry?', a: 'A', w: ['F', 'G', 'J'] },
+      { q: 'Which letter has a horizontal line of symmetry?', a: 'B', w: ['F', 'G', 'L'] },
+      { q: 'A heart shape typically has:', a: '1 vertical line of symmetry', w: ['2 lines', 'no lines', '4 lines'] },
+      { q: 'Which shape has exactly 1 line of symmetry?', a: 'isosceles triangle', w: ['square', 'equilateral triangle', 'circle'] },
+      { q: 'A line of symmetry is also called:', a: 'axis of symmetry or mirror line', w: ['diagonal', 'median', 'altitude'] },
+      { q: 'If you fold along a line of symmetry:', a: 'both sides match up perfectly', w: ['one side is larger', 'the shape becomes 3D', 'nothing happens'] },
+      { q: 'Which number has a horizontal line of symmetry?', a: '8', w: ['2', '5', '7'] },
+      { q: 'Which number has a vertical line of symmetry?', a: '8', w: ['2', '5', '6'] },
+      { q: 'A butterfly typically has:', a: '1 vertical line of symmetry', w: ['no symmetry', '2 lines', '4 lines'] },
+      { q: 'Which word has a vertical line of symmetry through its center?', a: 'MOM', w: ['DAD', 'SIS', 'CAT'] },
+      { q: 'A regular polygon with n sides has:', a: 'n lines of symmetry', w: ['1 line', '2 lines', 'n/2 lines'] },
+      { q: 'Which capital letter has both horizontal and vertical symmetry?', a: 'H', w: ['A', 'B', 'D'] },
+      { q: 'An irregular shape typically has:', a: 'no lines of symmetry', w: ['1 line', 'many lines', 'infinite lines'] },
+      { q: 'To test for line symmetry, you can:', a: 'fold the shape along the line', w: ['rotate the shape', 'stretch the shape', 'color the shape'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('line-symmetry', p.q, p.a, p.w, 2, 'K-5', 'Geometry', ['symmetry', 'line']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'create-symmetry': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'To complete a symmetrical design, you must:', a: 'mirror the existing part across the line of symmetry', w: ['copy it exactly beside it', 'rotate it 90°', 'make it larger'] },
+      { q: 'If the left half of a symmetric shape has a triangle pointing right, the right half has:', a: 'a triangle pointing left', w: ['a triangle pointing right', 'no triangle', 'a square'] },
+      { q: 'When creating symmetry with a vertical axis, a point 3 units left of the axis maps to:', a: '3 units right of the axis', w: ['3 units up', '3 units down', 'the same spot'] },
+      { q: 'To make pattern symmetric about a horizontal line, reflect shapes:', a: 'above the line to below, and vice versa', w: ['left to right', 'diagonally', 'at 45 degrees'] },
+      { q: 'A half-finished symmetric drawing shows a star on the left. To complete it:', a: 'draw a mirror image star on the right', w: ['draw another star next to it', 'color the star', 'erase the star'] },
+      { q: 'When reflecting a shape over a line, distances from the line are:', a: 'preserved (equal on both sides)', w: ['doubled', 'halved', 'changed randomly'] },
+      { q: 'To create a design with 2 lines of symmetry:', a: 'make it symmetric both horizontally and vertically', w: ['use only diagonal lines', 'make it circular', 'use only one reflection'] },
+      { q: 'If a dot is at coordinates (2, 5) and the axis is x = 0, its reflection is at:', a: '(-2, 5)', w: ['(2, -5)', '(-2, -5)', '(5, 2)'] },
+      { q: 'Creating rotational symmetry involves:', a: 'rotating a design around a center point', w: ['folding in half', 'stretching equally', 'translating sideways'] },
+      { q: 'A snowflake design typically uses:', a: '6-fold rotational symmetry', w: ['no symmetry', '2-fold symmetry', '3-fold symmetry'] },
+      { q: 'To complete a pattern with point symmetry (180° rotation):', a: 'rotate the partial design 180° around the center', w: ['flip it horizontally', 'flip it vertically', 'make it larger'] },
+      { q: 'If the top half of a symmetric face shows a smile, the bottom half shows:', a: 'nothing (smiles have vertical, not horizontal symmetry)', w: ['an upside-down smile', 'a frown', 'another smile'] },
+      { q: 'When creating a symmetric border pattern, you repeat:', a: 'the same motif with consistent spacing', w: ['random shapes', 'different sizes each time', 'only one shape total'] },
+      { q: 'A kaleidoscope creates patterns using:', a: 'multiple lines of symmetry from mirrors', w: ['random generation', 'magnification', 'color filters only'] },
+      { q: 'To create bilateral symmetry in art:', a: 'make both sides mirror images of each other', w: ['use only one color', 'make sides different', 'avoid any patterns'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('create-symmetry', p.q, p.a, p.w, 2, 'K-5', 'Geometry', ['symmetry', 'create']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'scale-factor': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A scale factor of 2 means the new figure is:', a: 'twice as large (each dimension doubled)', w: ['half as large', 'the same size', 'four times as large'] },
+      { q: 'A scale factor of 1/2 means the new figure is:', a: 'half as large (each dimension halved)', w: ['twice as large', 'the same size', 'one-fourth as large'] },
+      { q: 'A rectangle 4 cm by 6 cm scaled by factor 3 becomes:', a: '12 cm by 18 cm', w: ['7 cm by 9 cm', '12 cm by 6 cm', '4 cm by 18 cm'] },
+      { q: 'If original length is 5 and new length is 15, the scale factor is:', a: '3', w: ['10', '15', '5'] },
+      { q: 'A scale factor of 1 produces:', a: 'an identical copy (congruent figure)', w: ['a larger figure', 'a smaller figure', 'no figure'] },
+      { q: 'Original side: 8 cm. Scale factor: 1/4. New side:', a: '2 cm', w: ['32 cm', '4 cm', '12 cm'] },
+      { q: 'When scale factor > 1, the figure is:', a: 'enlarged', w: ['reduced', 'unchanged', 'rotated'] },
+      { q: 'When scale factor < 1, the figure is:', a: 'reduced', w: ['enlarged', 'unchanged', 'reflected'] },
+      { q: 'A triangle with sides 3, 4, 5 scaled by 2 has sides:', a: '6, 8, 10', w: ['5, 6, 7', '6, 8, 5', '3, 4, 10'] },
+      { q: 'If a map has scale 1:100, then 1 cm on map = :', a: '100 cm in reality', w: ['1 cm in reality', '0.01 cm in reality', '10 cm in reality'] },
+      { q: 'A photo is enlarged by scale factor 4. Original area 6 sq cm. New area:', a: '96 sq cm (area scales by factor²)', w: ['24 sq cm', '10 sq cm', '6 sq cm'] },
+      { q: 'To find scale factor: divide:', a: 'new length by original length', w: ['original by new', 'add lengths', 'multiply lengths'] },
+      { q: 'Scale factor 2.5 applied to length 4 gives:', a: '10', w: ['6.5', '8', '1.6'] },
+      { q: 'If corresponding sides are 9 and 3, scale factor (small to large) is:', a: '3', w: ['1/3', '6', '27'] },
+      { q: 'Similar figures have:', a: 'same shape, proportional sides', w: ['same size only', 'same area', 'different shapes'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('scale-factor', p.q, p.a, p.w, 2, '5-8', 'Geometry', ['scale', 'similarity']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
