@@ -3752,6 +3752,93 @@ const generators = {
     }
     return problems;
   },
+
+  'fundamental-counting-principle': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'If you have 3 shirts and 4 pants, how many outfits can you make?', a: '12', w: ['7', '3', '4'] },
+      { q: 'A menu has 5 appetizers, 8 entrees, and 3 desserts. Total meal combinations?', a: '120', w: ['16', '15', '24'] },
+      { q: 'A lock has 4 dials, each with digits 0-9. How many combinations?', a: '10,000', w: ['40', '1,000', '100'] },
+      { q: 'Flipping a coin 3 times. Total possible outcomes?', a: '8', w: ['3', '6', '9'] },
+      { q: 'Rolling 2 dice. Total possible outcomes?', a: '36', w: ['12', '6', '24'] },
+      { q: '4 roads from A to B, 3 roads from B to C. Routes from A to C through B?', a: '12', w: ['7', '4', '3'] },
+      { q: 'License plate: 3 letters then 3 digits. Total possibilities (with repeats)?', a: '17,576,000', w: ['26 × 10', '29', '1,000'] },
+      { q: 'A password is 2 letters followed by 2 digits. Total combinations?', a: '676 × 100 = 67,600', w: ['26 + 10', '52 + 20', '28'] },
+      { q: 'Ice cream: 5 flavors, 3 toppings. One flavor + one topping combinations?', a: '15', w: ['8', '5', '3'] },
+      { q: 'A true/false quiz has 5 questions. Total ways to answer?', a: '32', w: ['10', '5', '25'] },
+      { q: 'If event A has m outcomes and event B has n outcomes, total for both?', a: 'm × n', w: ['m + n', 'm - n', 'm ÷ n'] },
+      { q: '3 types of bread, 4 types of meat, 2 types of cheese. Sandwich combinations?', a: '24', w: ['9', '12', '6'] },
+      { q: 'A phone PIN is 4 digits. How many PINs have all different digits?', a: '5,040', w: ['10,000', '40', '4'] },
+      { q: 'Arranging 4 different books on a shelf. Total arrangements?', a: '24', w: ['4', '16', '12'] },
+      { q: 'Choosing 1 card from each of 2 separate decks. Total combinations?', a: '52 × 52 = 2,704', w: ['52', '104', '26'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('fundamental-counting-principle', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['counting', 'multiplication-principle']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'probability-language': (count) => {
+    const problems = [];
+    const qs = [
+      { q: '"Certain" in probability means the event:', a: 'will definitely happen (P = 1)', w: ['might happen', 'will not happen', 'is random'] },
+      { q: '"Impossible" in probability means:', a: 'the event cannot happen (P = 0)', w: ['the event is unlikely', 'the event will happen', 'we are unsure'] },
+      { q: '"Equally likely" means:', a: 'outcomes have the same chance', w: ['one is more likely', 'both are impossible', 'both are certain'] },
+      { q: 'A "random" event is one where:', a: 'the outcome is unpredictable', w: ['the outcome is certain', 'the outcome is impossible', 'we choose the outcome'] },
+      { q: '"Fair" coin or die means:', a: 'all outcomes are equally likely', w: ['it always lands on heads', 'it is weighted', 'outcomes are not equal'] },
+      { q: 'An "experiment" in probability is:', a: 'a process with uncertain outcomes', w: ['a certain result', 'a laboratory test only', 'impossible to perform'] },
+      { q: 'An "outcome" is:', a: 'a possible result of an experiment', w: ['the probability', 'the sample space', 'the event'] },
+      { q: 'The "sample space" is:', a: 'the set of all possible outcomes', w: ['one outcome', 'the probability', 'the most likely outcome'] },
+      { q: 'An "event" in probability is:', a: 'a set of one or more outcomes', w: ['always one outcome', 'the sample space', 'impossible'] },
+      { q: '"Mutually exclusive" events:', a: 'cannot happen at the same time', w: ['always happen together', 'are the same event', 'have equal probability'] },
+      { q: '"Independent" events:', a: 'one does not affect the other', w: ['always occur together', 'are mutually exclusive', 'have the same outcome'] },
+      { q: 'A "trial" is:', a: 'one instance of an experiment', w: ['the final result', 'impossible', 'always the same'] },
+      { q: '"At random" means:', a: 'each outcome has equal chance of selection', w: ['choosing a specific item', 'impossible selection', 'certain selection'] },
+      { q: '"Theoretical probability" is based on:', a: 'mathematical reasoning', w: ['actual experiments', 'guessing', 'impossible events'] },
+      { q: '"Experimental probability" is based on:', a: 'actual trials and results', w: ['theory only', 'guessing', 'impossible events'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('probability-language', p.q, p.a, p.w, 1, 'K-5', 'Statistics & Probability', ['probability', 'vocabulary', 'language']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'compound-probability': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'P(A and B) for independent events equals:', a: 'P(A) × P(B)', w: ['P(A) + P(B)', 'P(A) - P(B)', 'P(A) ÷ P(B)'] },
+      { q: 'P(A or B) for mutually exclusive events equals:', a: 'P(A) + P(B)', w: ['P(A) × P(B)', 'P(A) - P(B)', 'P(A) ÷ P(B)'] },
+      { q: 'Flipping a coin twice. P(heads and heads) =', a: '1/4', w: ['1/2', '1', '2/4'] },
+      { q: 'Rolling a die twice. P(6 and 6) =', a: '1/36', w: ['1/6', '2/6', '1/12'] },
+      { q: 'P(A or B) general formula: P(A) + P(B) - P(A and B). Why subtract?', a: 'to avoid counting overlap twice', w: ['to make it smaller', 'because events are exclusive', 'to find P(A and B)'] },
+      { q: 'Bag has 3 red, 2 blue. Draw 2 WITH replacement. P(red and red) =', a: '9/25', w: ['6/25', '3/5', '6/20'] },
+      { q: 'Bag has 3 red, 2 blue. Draw 2 WITHOUT replacement. P(red and red) =', a: '6/20 = 3/10', w: ['9/25', '3/5', '6/25'] },
+      { q: 'Deck of cards. P(heart or diamond) =', a: '26/52 = 1/2', w: ['13/52', '39/52', '2/52'] },
+      { q: 'Die roll. P(even or greater than 4) = P(even) + P(>4) - P(even and >4) =', a: '3/6 + 2/6 - 1/6 = 4/6', w: ['5/6', '3/6', '2/6'] },
+      { q: 'Two independent events each with P = 0.5. P(both occur) =', a: '0.25', w: ['1', '0.5', '0'] },
+      { q: 'P(at least one head in 2 flips) = 1 - P(no heads) =', a: '3/4', w: ['1/2', '1/4', '1'] },
+      { q: 'Rolling two dice. P(sum = 7 or sum = 11) =', a: '8/36 = 2/9', w: ['7/36', '6/36', '11/36'] },
+      { q: 'Deck of cards. P(King or Heart) = 4/52 + 13/52 - 1/52 =', a: '16/52 = 4/13', w: ['17/52', '13/52', '4/52'] },
+      { q: 'If A and B are mutually exclusive, P(A and B) =', a: '0', w: ['1', 'P(A) + P(B)', 'P(A) × P(B)'] },
+      { q: 'For dependent events, P(A and B) = P(A) × P(B|A). This accounts for:', a: 'how A affects B', w: ['independence', 'mutual exclusivity', 'randomness'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('compound-probability', p.q, p.a, p.w, 3, '8-12', 'Statistics & Probability', ['compound', 'probability', 'and-or']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
