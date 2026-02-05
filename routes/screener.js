@@ -25,7 +25,7 @@ const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 const { generateInterviewQuestions, evaluateResponse } = require('../utils/dynamicInterviewGenerator');
 
 // NEW: Import refactored CAT modules
-const { gradeToTheta, SESSION_DEFAULTS, getBroadCategory, getCategoryDifficulty } = require('../utils/catConfig');
+const { gradeToTheta, thetaToGradeLevel, SESSION_DEFAULTS, getBroadCategory, getCategoryDifficulty } = require('../utils/catConfig');
 const { selectSkill, formatScoringLog } = require('../utils/skillSelector');
 const { calculateProgress } = require('../utils/catConvergence');
 const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
@@ -583,6 +583,11 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // Generate final report
     const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
+    // Convert theta to human-readable grade level (like STAR testing)
+    const gradeLevelResult = thetaToGradeLevel(report.theta);
+    report.gradeLevel = gradeLevelResult.gradeLevel;
+    report.gradeLevelDescription = gradeLevelResult.description;
+
     // Update user's skill mastery based on screener results
     for (const skillId of report.masteredSkills) {
       user.skillMastery.set(skillId, {
@@ -623,16 +628,43 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     report.badgeCount = earnedBadges.length;
 
     // Mark assessment as completed
+    const now = new Date();
     user.assessmentCompleted = true;
-    user.assessmentDate = new Date();
-    user.initialPlacement = `Theta: ${report.theta} (${report.percentile}th percentile)`;
+    user.assessmentDate = now;
+    user.initialPlacement = gradeLevelResult.gradeLevel;
 
     // Store theta in the format expected by badge system
     user.learningProfile.abilityEstimate = {
       theta: report.theta,
       standardError: report.standardError,
-      percentile: report.percentile
+      percentile: report.percentile,
+      gradeLevel: gradeLevelResult.gradeLevel
     };
+
+    // Store assessment in history for tracking growth over time
+    if (!user.assessmentHistory) user.assessmentHistory = [];
+    user.assessmentHistory.push({
+      type: 'starting-point',
+      date: now,
+      theta: report.theta,
+      standardError: report.standardError,
+      gradeLevel: gradeLevelResult.gradeLevel,
+      questionsAnswered: report.questionsAnswered,
+      accuracy: report.accuracy,
+      duration: report.duration,
+      skillsAssessed: session.testedSkills || [],
+      sessionId: session.sessionId
+    });
+
+    // Set assessment expiration (1 year from now)
+    const oneYearLater = new Date(now);
+    oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+    user.assessmentExpiresAt = oneYearLater;
+
+    // Set next growth check due date (3 months from now)
+    const threeMonthsLater = new Date(now);
+    threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+    user.nextGrowthCheckDue = threeMonthsLater;
 
     await user.save();
 
@@ -1031,20 +1063,42 @@ function thetaToPercentile(theta) {
 }
 
 /**
- * GET /api/user/assessment-status
- * Check if user has completed assessment (for floating screener)
+ * GET /api/screener/status
+ * Check assessment status including growth check availability
  */
 router.get('/status', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('assessmentCompleted assessmentDate startingPointOffered').lean();
+    const user = await User.findById(req.user._id).select(
+      'assessmentCompleted assessmentDate startingPointOffered assessmentExpiresAt nextGrowthCheckDue lastGrowthCheck assessmentHistory learningProfile'
+    ).lean();
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    const now = new Date();
+
+    // Check if assessment has expired (annual expiration)
+    const assessmentExpired = user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) < now;
+
+    // Check if growth check is due (every 3 months)
+    const growthCheckDue = user.nextGrowthCheckDue && new Date(user.nextGrowthCheckDue) < now;
+
+    // Get current grade level from most recent assessment
+    const lastAssessment = user.assessmentHistory?.length > 0
+      ? user.assessmentHistory[user.assessmentHistory.length - 1]
+      : null;
+
     res.json({
       assessmentCompleted: user.assessmentCompleted || false,
       assessmentDate: user.assessmentDate || null,
-      startingPointOffered: user.startingPointOffered || false
+      startingPointOffered: user.startingPointOffered || false,
+      assessmentExpired,
+      growthCheckDue: growthCheckDue && user.assessmentCompleted,
+      nextGrowthCheckDue: user.nextGrowthCheckDue || null,
+      assessmentExpiresAt: user.assessmentExpiresAt || null,
+      currentGradeLevel: lastAssessment?.gradeLevel || user.learningProfile?.abilityEstimate?.gradeLevel || null,
+      assessmentCount: user.assessmentHistory?.length || 0
     });
   } catch (error) {
     console.error('[Screener] Error checking assessment status:', error);
@@ -1067,6 +1121,47 @@ router.post('/mark-offered', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('[Screener] Error marking as offered:', error);
     res.status(500).json({ error: 'Failed to mark as offered' });
+  }
+});
+
+/**
+ * POST /api/screener/reset
+ * Reset a student's assessment status (teacher/admin only)
+ */
+router.post('/reset', isAuthenticated, async (req, res) => {
+  try {
+    const { studentId } = req.body;
+
+    // Only teachers and admins can reset
+    if (!['teacher', 'admin'].includes(req.user.role)) {
+      return res.status(403).json({ error: 'Only teachers and admins can reset assessments' });
+    }
+
+    const targetUserId = studentId || req.user._id; // Default to self for testing
+    const student = await User.findById(targetUserId);
+
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    // Reset assessment status but preserve history
+    student.assessmentCompleted = false;
+    student.assessmentDate = null;
+    student.assessmentExpiresAt = null;
+    student.nextGrowthCheckDue = null;
+    // Keep assessmentHistory for historical tracking
+
+    await student.save();
+
+    console.log(`[Screener] Assessment reset for student ${targetUserId} by ${req.user.role} ${req.user._id}`);
+
+    res.json({
+      success: true,
+      message: 'Assessment status reset. Student can now retake the Starting Point assessment.'
+    });
+  } catch (error) {
+    console.error('[Screener] Error resetting assessment:', error);
+    res.status(500).json({ error: 'Failed to reset assessment' });
   }
 });
 

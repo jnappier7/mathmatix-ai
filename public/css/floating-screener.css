@@ -190,6 +190,24 @@
   font-size: 1.2em;
 }
 
+.instruction-card .warning-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  color: #856404;
+}
+
+.instruction-card .warning-box i {
+  color: #e67e22;
+  font-size: 1.2em;
+  margin-top: 2px;
+}
+
 .screener-actions {
   display: flex;
   flex-direction: column;
@@ -427,6 +445,38 @@
 .results-hero p {
   color: #666;
   font-size: 1.1em;
+}
+
+/* Grade Level Result (like STAR testing) */
+.grade-level-result {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px 0;
+  text-align: center;
+  color: white;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.grade-level-label {
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.grade-level-value {
+  font-size: 2.5em;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.grade-level-description {
+  font-size: 0.95em;
+  opacity: 0.9;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 .results-stats {

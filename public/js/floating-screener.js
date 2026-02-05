@@ -505,6 +505,18 @@ class FloatingScreener {
   async showResults(data) {
     this.showScreen('results');
 
+    // Update grade level display (like STAR testing)
+    const gradeLevelEl = document.getElementById('screener-result-grade-level');
+    const descriptionEl = document.getElementById('screener-result-description');
+
+    if (gradeLevelEl && data.report?.gradeLevel) {
+      gradeLevelEl.textContent = data.report.gradeLevel;
+    }
+
+    if (descriptionEl && data.report?.gradeLevelDescription) {
+      descriptionEl.textContent = data.report.gradeLevelDescription;
+    }
+
     // Update result stats
     const accuracyEl = document.getElementById('screener-result-accuracy');
     const questionsEl = document.getElementById('screener-result-questions');
