@@ -68,6 +68,8 @@ class InlineChatVisuals {
         const graphEl = clone.querySelector('.icv-graph');
         if (graphEl && graphEl.dataset.config) {
             graphEl.id = containerId + '-modal-graph';
+            // Clear any cloned content (errors, previously rendered graphs)
+            graphEl.innerHTML = '';
             setTimeout(() => this.renderGraph(graphEl.id), 100);
         }
 
@@ -232,7 +234,7 @@ class InlineChatVisuals {
     normalizeFunctionString(fn) {
         if (!fn || typeof fn !== 'string') return 'x^2';
 
-        let normalized = fn.trim().toLowerCase();
+        let normalized = fn.trim().toLowerCase().replace(/\s+/g, '');
 
         // Map common text descriptions to actual functions
         const functionMappings = {
@@ -267,8 +269,40 @@ class InlineChatVisuals {
             return functionMappings[normalized];
         }
 
-        // Return original if it looks like a valid function expression
-        return fn;
+        // Check if the string contains keywords that suggest a function type
+        const keywordPatterns = [
+            { pattern: /bounce|parabola|quadratic|squared/, fn: 'x^2' },
+            { pattern: /cubic|cubed/, fn: 'x^3' },
+            { pattern: /tangent|tan/, fn: 'tan(x)' },
+            { pattern: /sine|sin/, fn: 'sin(x)' },
+            { pattern: /cosine|cos/, fn: 'cos(x)' },
+            { pattern: /exponential|exp|growth/, fn: 'exp(x)' },
+            { pattern: /logarithm|log|ln/, fn: 'log(x)' },
+            { pattern: /sqrt|squareroot|root/, fn: 'sqrt(x)' },
+            { pattern: /absolute|abs/, fn: 'abs(x)' },
+            { pattern: /linear|line|straight/, fn: 'x' }
+        ];
+
+        for (const { pattern, fn: defaultFn } of keywordPatterns) {
+            if (pattern.test(normalized)) {
+                console.log(`[InlineChatVisuals] Mapped "${fn}" to "${defaultFn}" via keyword pattern`);
+                return defaultFn;
+            }
+        }
+
+        // Check if it looks like a valid math expression
+        // Valid expressions contain: x, numbers, operators (+,-,*,/,^), parentheses, or known functions
+        const validMathPattern = /^[\d\sx\+\-\*\/\^\(\)\.\,]+$|^(sin|cos|tan|log|ln|exp|sqrt|abs|pow)\s*\(/i;
+        const looksLikeMath = validMathPattern.test(fn.trim()) ||
+                             /[x\d]/.test(fn) && /[\+\-\*\/\^]/.test(fn);
+
+        if (looksLikeMath) {
+            return fn;
+        }
+
+        // If it doesn't look like math and no keywords matched, default to x^2
+        console.warn(`[InlineChatVisuals] Unrecognized function "${fn}", defaulting to x^2`);
+        return 'x^2';
     }
 
     /**
@@ -288,6 +322,9 @@ class InlineChatVisuals {
                 container.innerHTML = `<div class="icv-error">Graph configuration missing</div>`;
                 return;
             }
+
+            // Clear any existing content (including error divs from previous attempts)
+            container.innerHTML = '';
 
             const config = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
 
