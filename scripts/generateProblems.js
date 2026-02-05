@@ -2331,6 +2331,64 @@ const generators = {
     }
     return problems;
   },
+
+  'make-ten': (count) => {
+    const problems = [];
+    const qs = [
+      { q: '8 + 5 = ? (Hint: 8 + 2 = 10, then add 3 more)', a: '13', w: ['12', '14', '15'] },
+      { q: '7 + 6 = ? (Hint: 7 + 3 = 10, then add 3 more)', a: '13', w: ['12', '14', '11'] },
+      { q: '9 + 4 = ? (Hint: 9 + 1 = 10, then add 3 more)', a: '13', w: ['12', '14', '11'] },
+      { q: '6 + 5 = ? (Hint: 6 + 4 = 10, then add 1 more)', a: '11', w: ['10', '12', '9'] },
+      { q: '8 + 7 = ? (Hint: 8 + 2 = 10, then add 5 more)', a: '15', w: ['14', '16', '13'] },
+      { q: '9 + 6 = ? (Hint: 9 + 1 = 10, then add 5 more)', a: '15', w: ['14', '16', '13'] },
+      { q: '7 + 5 = ? (Hint: 7 + 3 = 10, then add 2 more)', a: '12', w: ['11', '13', '10'] },
+      { q: '8 + 4 = ? (Hint: 8 + 2 = 10, then add 2 more)', a: '12', w: ['11', '13', '10'] },
+      { q: '9 + 7 = ? (Hint: 9 + 1 = 10, then add 6 more)', a: '16', w: ['15', '17', '14'] },
+      { q: '6 + 8 = ? (Hint: 8 + 2 = 10, then add 4 more)', a: '14', w: ['13', '15', '12'] },
+      { q: 'What number added to 7 makes 10?', a: '3', w: ['2', '4', '7'] },
+      { q: 'What number added to 6 makes 10?', a: '4', w: ['3', '5', '6'] },
+      { q: 'What number added to 8 makes 10?', a: '2', w: ['1', '3', '8'] },
+      { q: 'What number added to 9 makes 10?', a: '1', w: ['0', '2', '9'] },
+      { q: '5 + 7 = ? (Hint: 5 + 5 = 10, then add 2 more)', a: '12', w: ['11', '13', '10'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('make-ten', p.q, p.a, p.w, 1, 'K-5', 'Operations & Algebraic Thinking', ['addition', 'make-ten']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'doubles-near-doubles': (count) => {
+    const problems = [];
+    const qs = [
+      { q: '6 + 7 = ? (Hint: 6 + 6 = 12, then add 1 more)', a: '13', w: ['12', '14', '11'] },
+      { q: '7 + 8 = ? (Hint: 7 + 7 = 14, then add 1 more)', a: '15', w: ['14', '16', '13'] },
+      { q: '8 + 9 = ? (Hint: 8 + 8 = 16, then add 1 more)', a: '17', w: ['16', '18', '15'] },
+      { q: '5 + 6 = ? (Hint: 5 + 5 = 10, then add 1 more)', a: '11', w: ['10', '12', '9'] },
+      { q: '4 + 5 = ? (Hint: 4 + 4 = 8, then add 1 more)', a: '9', w: ['8', '10', '7'] },
+      { q: '3 + 4 = ? (Hint: 3 + 3 = 6, then add 1 more)', a: '7', w: ['6', '8', '5'] },
+      { q: '9 + 10 = ? (Hint: 9 + 9 = 18, then add 1 more)', a: '19', w: ['18', '20', '17'] },
+      { q: '6 + 6 = ? (This is a doubles fact)', a: '12', w: ['11', '13', '10'] },
+      { q: '7 + 7 = ? (This is a doubles fact)', a: '14', w: ['13', '15', '12'] },
+      { q: '8 + 8 = ? (This is a doubles fact)', a: '16', w: ['15', '17', '14'] },
+      { q: '9 + 9 = ? (This is a doubles fact)', a: '18', w: ['17', '19', '16'] },
+      { q: '5 + 5 = ? (This is a doubles fact)', a: '10', w: ['9', '11', '8'] },
+      { q: '4 + 4 = ? (This is a doubles fact)', a: '8', w: ['7', '9', '6'] },
+      { q: '3 + 3 = ? (This is a doubles fact)', a: '6', w: ['5', '7', '4'] },
+      { q: '6 + 5 = ? (Hint: 5 + 5 = 10, then add 1 more)', a: '11', w: ['10', '12', '9'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('doubles-near-doubles', p.q, p.a, p.w, 1, 'K-5', 'Operations & Algebraic Thinking', ['addition', 'doubles']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
