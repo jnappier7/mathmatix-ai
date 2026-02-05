@@ -360,7 +360,12 @@ class InlineChatVisuals {
             console.log(`[InlineChatVisuals] Rendered graph for: ${fn}`);
         } catch (error) {
             console.error(`[InlineChatVisuals] Error rendering graph ${id}:`, error);
-            container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
+            // Only show error if graph didn't actually render
+            // (function-plot may render successfully then throw during interactivity setup)
+            const hasRenderedContent = container.querySelector('svg') || container.querySelector('canvas');
+            if (!hasRenderedContent) {
+                container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
+            }
         }
     }
 
