@@ -142,21 +142,29 @@ function generateAlgebraicDistractors(answer) {
 
 function generateTextDistractors(answer, prompt) {
   const distractors = [];
-  const lowerAnswer = answer.toLowerCase();
+  const lowerAnswer = answer.toLowerCase().trim();
+
+  // For comparison operators (>, <, =, >=, <=)
+  if (['>', '<', '=', '>=', '<=', '≥', '≤', '≠'].includes(lowerAnswer) ||
+      prompt.toLowerCase().includes('compare')) {
+    const comparisonOptions = ['>', '<', '='];
+    distractors.push(...comparisonOptions.filter(c => c !== lowerAnswer));
+    return distractors;
+  }
 
   // For yes/no questions
   if (lowerAnswer === 'yes' || lowerAnswer === 'no') {
     distractors.push(lowerAnswer === 'yes' ? 'No' : 'Yes');
-    distractors.push('Sometimes');
-    distractors.push('Cannot be determined');
+    distractors.push('Maybe');
+    distractors.push('It depends');
     return distractors;
   }
 
   // For true/false
   if (lowerAnswer === 'true' || lowerAnswer === 'false') {
     distractors.push(lowerAnswer === 'true' ? 'False' : 'True');
-    distractors.push('Cannot be determined');
-    distractors.push('Not enough information');
+    distractors.push('Sometimes true');
+    distractors.push('Not always');
     return distractors;
   }
 
@@ -168,16 +176,27 @@ function generateTextDistractors(answer, prompt) {
     return distractors;
   }
 
-  // Generic distractors based on prompt keywords
-  if (prompt.toLowerCase().includes('which')) {
-    distractors.push('None of these');
-    distractors.push('All of these');
-    distractors.push('Cannot be determined');
-  } else {
-    distractors.push('Not enough information');
-    distractors.push('None of the above');
-    distractors.push('Cannot be determined');
+  // For place value answers (ones, tens, hundreds, etc.)
+  const placeValues = ['ones', 'tens', 'hundreds', 'thousands', 'ten-thousands', 'tenths', 'hundredths'];
+  if (placeValues.some(p => lowerAnswer.includes(p))) {
+    const otherPlaces = placeValues.filter(p => !lowerAnswer.includes(p));
+    distractors.push(...otherPlaces.slice(0, 3).map(p => p.charAt(0).toUpperCase() + p.slice(1)));
+    return distractors;
   }
+
+  // For operation keywords
+  const operations = ['addition', 'subtraction', 'multiplication', 'division', 'add', 'subtract', 'multiply', 'divide'];
+  if (operations.some(o => lowerAnswer.includes(o))) {
+    const otherOps = operations.filter(o => !lowerAnswer.includes(o));
+    distractors.push(...otherOps.slice(0, 3).map(o => o.charAt(0).toUpperCase() + o.slice(1)));
+    return distractors;
+  }
+
+  // Generic fallback - try to make sensible alternatives
+  // Avoid "Cannot be determined", "Not enough information" etc. for math
+  distractors.push(`Not ${answer}`);
+  distractors.push('Different answer');
+  distractors.push('Other');
 
   return distractors;
 }
