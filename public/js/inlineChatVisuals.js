@@ -68,6 +68,8 @@ class InlineChatVisuals {
         const graphEl = clone.querySelector('.icv-graph');
         if (graphEl && graphEl.dataset.config) {
             graphEl.id = containerId + '-modal-graph';
+            // Clear any cloned content (errors, previously rendered graphs)
+            graphEl.innerHTML = '';
             setTimeout(() => this.renderGraph(graphEl.id), 100);
         }
 
@@ -288,6 +290,9 @@ class InlineChatVisuals {
                 container.innerHTML = `<div class="icv-error">Graph configuration missing</div>`;
                 return;
             }
+
+            // Clear any existing content (including error divs from previous attempts)
+            container.innerHTML = '';
 
             const config = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
 
