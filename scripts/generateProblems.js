@@ -3578,6 +3578,93 @@ const generators = {
     }
     return problems;
   },
+
+  'measures-of-center': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'The mean is calculated by:', a: 'sum of values ÷ number of values', w: ['finding the middle value', 'finding the most frequent', 'max - min'] },
+      { q: 'The median is:', a: 'the middle value when data is ordered', w: ['the average', 'the most frequent value', 'the range'] },
+      { q: 'The mode is:', a: 'the most frequently occurring value', w: ['the middle value', 'the average', 'the range'] },
+      { q: 'Data: 2, 4, 6, 8, 10. What is the mean?', a: '6', w: ['4', '8', '5'] },
+      { q: 'Data: 3, 5, 7, 9, 11. What is the median?', a: '7', w: ['5', '9', '7.5'] },
+      { q: 'Data: 2, 3, 3, 5, 7. What is the mode?', a: '3', w: ['2', '5', '4'] },
+      { q: 'Data: 10, 20, 30, 40. What is the mean?', a: '25', w: ['20', '30', '100'] },
+      { q: 'Data: 1, 2, 3, 4, 5, 6. What is the median?', a: '3.5', w: ['3', '4', '3 or 4'] },
+      { q: 'Which measure is most affected by outliers?', a: 'mean', w: ['median', 'mode', 'all equally'] },
+      { q: 'Data: 5, 5, 5, 5, 5. The mean, median, and mode are:', a: 'all equal to 5', w: ['all different', 'undefined', 'only mode is 5'] },
+      { q: 'Data: 1, 1, 2, 3, 100. Which measure best represents the center?', a: 'median (2)', w: ['mean (21.4)', 'mode (1)', 'range'] },
+      { q: 'Data: 4, 6, 8, 10, 12. Sum is 40, count is 5. Mean is:', a: '8', w: ['40', '6', '10'] },
+      { q: 'If no value repeats, the data set has:', a: 'no mode', w: ['mode = 0', 'mode = mean', 'multiple modes'] },
+      { q: 'Data: 2, 2, 3, 4, 4. This data set is:', a: 'bimodal (modes 2 and 4)', w: ['unimodal', 'no mode', 'mode = 3'] },
+      { q: 'Data: 15, 20, 25, 30, 35. Adding 10 to each value changes the mean by:', a: '10 (mean increases by 10)', w: ['0', '50', '100'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('measures-of-center', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['mean', 'median', 'mode', 'center']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'iqr': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'IQR stands for:', a: 'Interquartile Range', w: ['Internal Quality Ratio', 'Integer Quotient Range', 'Interval Quartile Rank'] },
+      { q: 'IQR is calculated as:', a: 'Q3 - Q1', w: ['Q2 - Q1', 'max - min', 'mean - median'] },
+      { q: 'IQR measures:', a: 'spread of the middle 50% of data', w: ['the average', 'total spread', 'the center'] },
+      { q: 'Data: Q1 = 10, Q3 = 25. What is the IQR?', a: '15', w: ['35', '17.5', '10'] },
+      { q: 'Data: Q1 = 4, Q2 = 8, Q3 = 14. What is the IQR?', a: '10', w: ['4', '6', '14'] },
+      { q: 'A smaller IQR indicates:', a: 'less spread in the middle 50%', w: ['more spread', 'higher median', 'more outliers'] },
+      { q: 'Data: 2, 4, 6, 8, 10, 12, 14. Q1=4, Q3=12. IQR?', a: '8', w: ['12', '4', '6'] },
+      { q: 'Outliers are typically values beyond:', a: '1.5 × IQR from Q1 or Q3', w: ['Q1 or Q3', '2 × IQR', 'the mean'] },
+      { q: 'Data: Q1 = 20, Q3 = 50. Lower fence for outliers is:', a: '20 - 1.5(30) = -25', w: ['20', '50', '35'] },
+      { q: 'Data: Q1 = 20, Q3 = 50. Upper fence for outliers is:', a: '50 + 1.5(30) = 95', w: ['50', '80', '65'] },
+      { q: 'The IQR is resistant to outliers because:', a: 'it only uses Q1 and Q3, not extreme values', w: ['it uses all values', 'it includes the mean', 'outliers increase it'] },
+      { q: 'Data: min=5, Q1=10, Q2=15, Q3=22, max=30. IQR?', a: '12', w: ['25', '15', '7'] },
+      { q: 'If Q1 = 30 and IQR = 20, then Q3 =', a: '50', w: ['10', '40', '60'] },
+      { q: 'Which is larger: IQR or Range?', a: 'Range (max - min) is always ≥ IQR', w: ['IQR', 'They are equal', 'Cannot determine'] },
+      { q: 'The IQR contains what percentage of the data?', a: '50%', w: ['25%', '75%', '100%'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('iqr', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['iqr', 'quartiles', 'spread']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'standard-deviation': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Standard deviation measures:', a: 'how spread out data is from the mean', w: ['the center of data', 'the range', 'the mode'] },
+      { q: 'A standard deviation of 0 means:', a: 'all values are the same', w: ['values are spread out', 'mean is 0', 'data is invalid'] },
+      { q: 'Which data set has greater standard deviation? A: 5,5,5,5 or B: 1,5,5,9', a: 'B (values more spread out)', w: ['A', 'They are equal', 'Cannot tell'] },
+      { q: 'Standard deviation is always:', a: 'non-negative (≥ 0)', w: ['positive', 'negative', 'between -1 and 1'] },
+      { q: 'If data values are farther from the mean:', a: 'standard deviation is larger', w: ['standard deviation is smaller', 'standard deviation is 0', 'no effect'] },
+      { q: 'Variance is:', a: 'standard deviation squared', w: ['standard deviation ÷ 2', 'IQR squared', 'range squared'] },
+      { q: 'For normal distribution, about 68% of data falls within:', a: '1 standard deviation of the mean', w: ['2 standard deviations', '3 standard deviations', 'the IQR'] },
+      { q: 'For normal distribution, about 95% of data falls within:', a: '2 standard deviations of the mean', w: ['1 standard deviation', '3 standard deviations', '4 standard deviations'] },
+      { q: 'Population standard deviation uses N; sample uses:', a: 'n - 1 (degrees of freedom)', w: ['n', 'n + 1', 'n/2'] },
+      { q: 'Data: 2, 4, 6. Mean = 4. Deviations: -2, 0, 2. Sum of squared deviations:', a: '8', w: ['0', '4', '12'] },
+      { q: 'Adding a constant to all data values:', a: 'does not change standard deviation', w: ['increases standard deviation', 'decreases standard deviation', 'doubles it'] },
+      { q: 'Multiplying all data by 2:', a: 'doubles the standard deviation', w: ['does not change it', 'halves it', 'squares it'] },
+      { q: 'The symbol σ (sigma) represents:', a: 'population standard deviation', w: ['sample standard deviation', 'variance', 'mean'] },
+      { q: 'The symbol s represents:', a: 'sample standard deviation', w: ['population standard deviation', 'sum', 'sigma'] },
+      { q: 'Standard deviation is preferred over variance because:', a: 'it is in the same units as the data', w: ['it is always larger', 'it is easier to calculate', 'variance is outdated'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('standard-deviation', p.q, p.a, p.w, 3, '8-12', 'Statistics & Probability', ['standard-deviation', 'spread', 'variance']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
