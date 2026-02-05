@@ -3172,6 +3172,93 @@ const generators = {
     }
     return problems;
   },
+
+  'area-approximation': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'To approximate area under a curve, we can use:', a: 'rectangles (Riemann sums)', w: ['only triangles', 'the derivative', 'tangent lines'] },
+      { q: 'Using more rectangles in an approximation generally:', a: 'gives a more accurate result', w: ['gives a less accurate result', 'has no effect', 'always gives exact area'] },
+      { q: 'The trapezoidal rule uses which shapes?', a: 'trapezoids', w: ['rectangles', 'triangles', 'circles'] },
+      { q: 'Approximate area of a rectangle 5 units wide and 3 units tall:', a: '15 square units', w: ['8 square units', '5 square units', '3 square units'] },
+      { q: 'If f(x) is always positive, the area under the curve is:', a: 'positive', w: ['negative', 'zero', 'undefined'] },
+      { q: 'Simpson\'s rule uses which shapes for approximation?', a: 'parabolic arcs', w: ['straight lines only', 'rectangles', 'circles'] },
+      { q: 'Grid method: count squares. 8 full squares + 4 half squares ≈', a: '10 square units', w: ['12 square units', '8 square units', '4 square units'] },
+      { q: 'Overestimate occurs when rectangles are:', a: 'taller than the curve at each point', w: ['shorter than the curve', 'exactly on the curve', 'negative'] },
+      { q: 'Underestimate occurs when rectangles are:', a: 'shorter than the curve at each point', w: ['taller than the curve', 'exactly on the curve', 'outside the region'] },
+      { q: 'Area under y = 4 from x = 0 to x = 3 is:', a: '12', w: ['4', '7', '3'] },
+      { q: 'For irregular shapes, we can approximate area by:', a: 'counting grid squares', w: ['using only formulas', 'guessing', 'measuring perimeter'] },
+      { q: 'The exact area under a curve is found using:', a: 'the definite integral', w: ['only rectangles', 'approximation only', 'the derivative'] },
+      { q: 'Area between curve and x-axis where f(x) < 0 is:', a: 'counted as negative in integrals', w: ['always positive', 'always zero', 'undefined'] },
+      { q: 'Approximating π using inscribed polygons gives:', a: 'an underestimate', w: ['an overestimate', 'the exact value', 'a negative value'] },
+      { q: 'Monte Carlo method approximates area using:', a: 'random points and probability', w: ['exact formulas', 'rectangles only', 'derivatives'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('area-approximation', p.q, p.a, p.w, 3, '8-12', 'Geometry', ['area', 'approximation']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'exponential-patterns': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Sequence: 2, 4, 8, 16, ... The pattern is:', a: 'multiply by 2 (exponential)', w: ['add 2', 'add 4', 'multiply by 4'] },
+      { q: 'Sequence: 3, 9, 27, 81, ... The next term is:', a: '243', w: ['108', '162', '324'] },
+      { q: 'Sequence: 1, 2, 4, 8, 16, ... This is:', a: 'powers of 2', w: ['multiples of 2', 'prime numbers', 'squares'] },
+      { q: 'Bacteria double every hour. Start: 100. After 3 hours:', a: '800', w: ['300', '600', '400'] },
+      { q: 'Pattern: 5, 10, 20, 40, ... The 6th term is:', a: '160', w: ['80', '120', '200'] },
+      { q: 'If a population triples yearly, starting at 10, after 2 years:', a: '90', w: ['30', '60', '20'] },
+      { q: 'Sequence: 1000, 500, 250, 125, ... The pattern is:', a: 'divide by 2 (exponential decay)', w: ['subtract 500', 'subtract 250', 'divide by 4'] },
+      { q: 'Compound interest shows:', a: 'exponential growth', w: ['linear growth', 'no growth', 'decreasing pattern'] },
+      { q: 'Sequence: 2, 6, 18, 54, ... Common ratio is:', a: '3', w: ['4', '2', '6'] },
+      { q: 'Half-life decay: 80, 40, 20, 10, ... The pattern:', a: 'multiply by 1/2', w: ['subtract 40', 'subtract 10', 'divide by 4'] },
+      { q: 'Term formula for 3, 6, 12, 24, ... is:', a: '3 × 2^(n-1)', w: ['3 + 3n', '3n', '3 × n'] },
+      { q: 'A rumor spreads: each person tells 3 others. People who heard after 4 rounds:', a: '1 + 3 + 9 + 27 = 40 (exponential spread)', w: ['12', '4', '81'] },
+      { q: 'Exponential patterns have a constant:', a: 'ratio between consecutive terms', w: ['difference between terms', 'sum of terms', 'product'] },
+      { q: 'Linear vs exponential: 2, 4, 6, 8 is ___ while 2, 4, 8, 16 is ___', a: 'linear, exponential', w: ['exponential, linear', 'both linear', 'both exponential'] },
+      { q: 'Paper folded in half n times has 2^n layers. After 5 folds:', a: '32 layers', w: ['10 layers', '25 layers', '64 layers'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('exponential-patterns', p.q, p.a, p.w, 2, '5-8', 'Functions', ['patterns', 'exponential']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'ratio-concepts': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A ratio compares:', a: 'two or more quantities', w: ['only one quantity', 'percentages only', 'differences only'] },
+      { q: 'The ratio of 15 to 5 in simplest form is:', a: '3:1', w: ['15:5', '1:3', '5:15'] },
+      { q: 'If the ratio of boys to girls is 2:3 and there are 10 boys, how many girls?', a: '15', w: ['6', '12', '5'] },
+      { q: 'A ratio of 4:6 is equivalent to:', a: '2:3', w: ['4:3', '3:2', '6:4'] },
+      { q: 'Part-to-whole ratio: 3 red out of 12 total. Ratio of red to total:', a: '3:12 or 1:4', w: ['3:9', '12:3', '1:3'] },
+      { q: 'Part-to-part ratio: 5 cats, 3 dogs. Ratio of cats to dogs:', a: '5:3', w: ['3:5', '5:8', '8:5'] },
+      { q: 'If ratio is 1:4 and total is 20, the smaller part is:', a: '4', w: ['5', '1', '16'] },
+      { q: 'Scale on a map is 1:1000. 5 cm on map equals:', a: '5000 cm (50 m) in reality', w: ['1000 cm', '5 cm', '200 cm'] },
+      { q: 'Ratio of 3:4:5 means if smallest is 6, the largest is:', a: '10', w: ['5', '8', '15'] },
+      { q: 'Recipe ratio flour:sugar is 3:1. For 12 cups flour, sugar needed:', a: '4 cups', w: ['3 cups', '1 cup', '9 cups'] },
+      { q: 'Two ratios are equivalent if:', a: 'their cross products are equal', w: ['they look similar', 'they add to same number', 'they have same numbers'] },
+      { q: 'Is 6:9 equivalent to 10:15?', a: 'Yes (both simplify to 2:3)', w: ['No', 'Cannot determine', 'Only if multiplied'] },
+      { q: 'A gear ratio of 3:1 means the first gear turns 3 times for every:', a: '1 turn of the second gear', w: ['3 turns of second', '0 turns', '9 turns'] },
+      { q: 'Ratio of angles in a triangle is 1:2:3. The angles are:', a: '30°, 60°, 90°', w: ['10°, 20°, 30°', '60°, 120°, 180°', '45°, 90°, 135°'] },
+      { q: 'Golden ratio is approximately:', a: '1.618:1', w: ['2:1', '1:1', '3:2'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('ratio-concepts', p.q, p.a, p.w, 2, '5-8', 'Ratios & Proportional Relationships', ['ratios', 'concepts']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
