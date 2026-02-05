@@ -2998,6 +2998,93 @@ const generators = {
     }
     return problems;
   },
+
+  'geometric-proofs': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'In a two-column proof, the left column contains:', a: 'statements', w: ['reasons', 'diagrams', 'conclusions only'] },
+      { q: 'In a two-column proof, the right column contains:', a: 'reasons', w: ['statements', 'diagrams', 'givens only'] },
+      { q: 'The first statement in a proof is usually:', a: 'the given information', w: ['the conclusion', 'a theorem', 'an assumption'] },
+      { q: 'The last statement in a proof is:', a: 'what you are trying to prove', w: ['the given', 'always a definition', 'a postulate'] },
+      { q: 'SSS, SAS, ASA, and AAS are used to prove:', a: 'triangle congruence', w: ['parallel lines', 'angle measures', 'area formulas'] },
+      { q: 'If two angles are supplementary, their measures add to:', a: '180°', w: ['90°', '360°', '270°'] },
+      { q: 'If two angles are complementary, their measures add to:', a: '90°', w: ['180°', '360°', '45°'] },
+      { q: 'Vertical angles are always:', a: 'congruent', w: ['supplementary', 'complementary', 'adjacent'] },
+      { q: 'CPCTC stands for:', a: 'Corresponding Parts of Congruent Triangles are Congruent', w: ['Congruent Parts Create Two Congruences', 'Central Points Connect Two Circles', 'None of the above'] },
+      { q: 'A postulate is:', a: 'accepted as true without proof', w: ['proven from other statements', 'always about circles', 'a type of conclusion'] },
+      { q: 'A theorem is:', a: 'a statement that has been proven', w: ['assumed true', 'never used in proofs', 'only about triangles'] },
+      { q: 'The Reflexive Property states that:', a: 'any segment or angle is congruent to itself', w: ['all segments are equal', 'nothing equals itself', 'angles sum to 180°'] },
+      { q: 'If AB = CD and CD = EF, then AB = EF. This is the:', a: 'Transitive Property', w: ['Reflexive Property', 'Symmetric Property', 'Addition Property'] },
+      { q: 'To prove two triangles similar, you can use:', a: 'AA, SSS~, or SAS~', w: ['only SSS', 'only angles', 'CPCTC'] },
+      { q: 'The reason "Given" is used when:', a: 'stating information provided in the problem', w: ['concluding the proof', 'using a theorem', 'making an assumption'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('geometric-proofs', p.q, p.a, p.w, 3, '8-12', 'Geometry', ['proofs', 'reasoning']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'frequency-tables': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A frequency table shows:', a: 'how often each value occurs', w: ['only the highest value', 'only the average', 'the order of data'] },
+      { q: 'In a frequency table, the sum of all frequencies equals:', a: 'the total number of data points', w: ['the mean', 'the mode', '100'] },
+      { q: 'Data: 2, 3, 3, 4, 4, 4, 5. Frequency of 4 is:', a: '3', w: ['4', '1', '7'] },
+      { q: 'Data: red, blue, red, green, red, blue. Frequency of red:', a: '3', w: ['2', '1', '6'] },
+      { q: 'A relative frequency is:', a: 'the frequency divided by total count', w: ['the highest frequency', 'frequency times 100', 'the mode'] },
+      { q: 'If 15 out of 50 students chose pizza, the relative frequency is:', a: '0.3 or 30%', w: ['15%', '50%', '0.15'] },
+      { q: 'The mode of a data set can be found from a frequency table by:', a: 'finding the value with highest frequency', w: ['adding all frequencies', 'finding the middle value', 'dividing by count'] },
+      { q: 'Cumulative frequency shows:', a: 'running total of frequencies up to each value', w: ['only the last frequency', 'frequency minus mean', 'the range'] },
+      { q: 'Data: 1, 1, 2, 2, 2, 3. Total frequency:', a: '6', w: ['3', '8', '2'] },
+      { q: 'A two-way frequency table shows:', a: 'data categorized by two variables', w: ['only one variable', 'time data only', 'percentages only'] },
+      { q: 'In a grouped frequency table, data is organized into:', a: 'intervals or ranges', w: ['individual values only', 'alphabetical order', 'random groups'] },
+      { q: 'Scores: 70-79 (5), 80-89 (12), 90-99 (8). Most common range:', a: '80-89', w: ['70-79', '90-99', 'all equal'] },
+      { q: 'If frequency of A is 4 and B is 6, P(selecting A) =', a: '4/10 or 0.4', w: ['4/6', '6/4', '4'] },
+      { q: 'A histogram is related to frequency tables because it:', a: 'displays frequencies as bar heights', w: ['shows only means', 'uses pie slices', 'connects points with lines'] },
+      { q: 'Data: cat(3), dog(5), bird(2). Relative freq. of dog:', a: '5/10 = 0.5', w: ['5/8', '3/10', '2/5'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('frequency-tables', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['statistics', 'frequency']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'tally-charts': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'In a tally chart, each mark represents:', a: 'one item or occurrence', w: ['five items', 'ten items', 'half an item'] },
+      { q: 'In tally marks, a group of 5 is shown as:', a: 'four vertical lines crossed by one diagonal', w: ['five vertical lines', 'one big mark', 'a circle'] },
+      { q: 'Tally: |||| ||| represents:', a: '8', w: ['7', '5', '13'] },
+      { q: 'Tally: |||| |||| || represents:', a: '12', w: ['10', '11', '7'] },
+      { q: 'To show 7 in tally marks:', a: '|||| ||', w: ['|||||  ||', '|||||||', '|||| |||'] },
+      { q: 'To show 15 in tally marks:', a: '|||| |||| |||||', w: ['|||| |||| |||| |', '|||||||||||||', '|||| |||| ||||'] },
+      { q: 'Tally charts are useful for:', a: 'recording data as it is collected', w: ['calculating means', 'showing percentages', 'comparing two datasets'] },
+      { q: 'Why do we group tally marks in fives?', a: 'to make counting easier', w: ['because there are 5 fingers', 'it is required', 'to save space only'] },
+      { q: 'Tally: |||| represents:', a: '4', w: ['5', '3', '1'] },
+      { q: 'Count the tally: |||| |||| |||| |', a: '16', w: ['15', '14', '20'] },
+      { q: 'A tally chart differs from a frequency table because:', a: 'it uses marks instead of numbers for counting', w: ['it shows percentages', 'it has more columns', 'it uses decimals'] },
+      { q: 'Votes: Pizza |||| |||, Tacos |||| ||. Pizza received:', a: '8 votes', w: ['7 votes', '5 votes', '13 votes'] },
+      { q: 'Colors: Blue |||| |||| |, Red |||| Total:', a: '15', w: ['14', '11', '9'] },
+      { q: 'To convert tally |||| |||| ||| to a number:', a: '5 + 5 + 3 = 13', w: ['4 + 4 + 3 = 11', '5 + 3 = 8', '4 + 5 + 3 = 12'] },
+      { q: 'Survey results: Yes |||| |||| ||||, No |||| ||. How many more Yes than No?', a: '8', w: ['7', '15', '22'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('tally-charts', p.q, p.a, p.w, 1, 'K-5', 'Statistics & Probability', ['data', 'tally']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
