@@ -183,6 +183,7 @@ app.use(helmet({
         "https://cdn.jsdelivr.net", // Various CDN resources
         "https://unpkg.com" // MathLive and other packages
       ],
+      scriptSrcAttr: ["'unsafe-inline'"], // Required for inline event handlers (onclick, etc.)
       styleSrc: [
         "'self'",
         "'unsafe-inline'", // Required for inline styles
@@ -482,6 +483,60 @@ app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
     }
 });
 
+// Calculator access route - accessible by any authenticated user
+// Students check their teacher's calculator settings, others get full access
+app.get('/api/calculator/access', isAuthenticated, async (req, res) => {
+    try {
+        // Non-students always have access
+        if (req.user.role !== 'student') {
+            return res.json({
+                success: true,
+                calculatorAccess: 'always',
+                message: 'Non-student users have full calculator access'
+            });
+        }
+
+        // Student without teacher = no restrictions
+        if (!req.user.teacherId) {
+            return res.json({
+                success: true,
+                calculatorAccess: 'always',
+                message: 'No assigned teacher'
+            });
+        }
+
+        // Get teacher's calculator settings
+        const teacher = await User.findById(req.user.teacherId)
+            .select('classAISettings.calculatorAccess classAISettings.calculatorNote firstName lastName')
+            .lean();
+
+        if (!teacher || !teacher.classAISettings) {
+            return res.json({
+                success: true,
+                calculatorAccess: 'skill-based',
+                message: 'Teacher has not configured settings'
+            });
+        }
+
+        const calcAccess = teacher.classAISettings.calculatorAccess || 'skill-based';
+        const calcNote = teacher.classAISettings.calculatorNote || '';
+
+        res.json({
+            success: true,
+            calculatorAccess: calcAccess,
+            calculatorNote: calcNote,
+            teacherName: `${teacher.firstName} ${teacher.lastName}`
+        });
+
+    } catch (error) {
+        console.error('Error fetching calculator access:', error);
+        res.status(500).json({
+            success: false,
+            calculatorAccess: 'skill-based',
+            message: 'Error fetching settings'
+        });
+    }
+});
 
 // --- 9. HTML ROUTES (MUST BE BEFORE STATIC MIDDLEWARE) ---
 

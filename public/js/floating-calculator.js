@@ -56,7 +56,7 @@ class FloatingCalculator {
     // Check teacher's calculator access setting
     async checkCalculatorAccess() {
         try {
-            const response = await fetch('/api/teacher/my-calculator-access');
+            const response = await fetch('/api/calculator/access');
             const data = await response.json();
 
             if (data.success) {
