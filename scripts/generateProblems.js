@@ -2824,6 +2824,93 @@ const generators = {
     }
     return problems;
   },
+
+  'linear-programming': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'In linear programming, the objective function is:', a: 'what you want to maximize or minimize', w: ['a constraint', 'the feasible region', 'a boundary line'] },
+      { q: 'The feasible region in linear programming is:', a: 'the set of points satisfying all constraints', w: ['the objective function', 'always a triangle', 'always unbounded'] },
+      { q: 'The optimal solution in linear programming occurs at:', a: 'a vertex (corner point) of the feasible region', w: ['the center of the region', 'any point in the region', 'outside the region'] },
+      { q: 'Maximize P = 3x + 2y with vertices (0,0), (4,0), (0,3). Max P is:', a: '12 at (4,0)', w: ['6 at (0,3)', '0 at (0,0)', '14 at (4,3)'] },
+      { q: 'Constraints x ≥ 0 and y ≥ 0 restrict solutions to:', a: 'the first quadrant', w: ['the third quadrant', 'the x-axis only', 'the origin only'] },
+      { q: 'Minimize C = 5x + 4y at vertices (0,6), (3,2), (6,0). Min C is:', a: '23 at (3,2)', w: ['24 at (0,6)', '30 at (6,0)', '0'] },
+      { q: 'If the feasible region is empty, the problem is:', a: 'infeasible (no solution)', w: ['unbounded', 'has infinite solutions', 'optimal at origin'] },
+      { q: 'If P = 2x + 2y and the feasible region is a line segment:', a: 'infinitely many optimal solutions may exist', w: ['no solution', 'exactly one solution', 'the problem is infeasible'] },
+      { q: 'A company makes x chairs ($50 profit) and y tables ($80 profit). Objective function:', a: 'Maximize P = 50x + 80y', w: ['P = 50 + 80', 'Minimize 50x + 80y', 'P = x + y'] },
+      { q: 'Evaluate P = 4x + 5y at (2, 3):', a: '23', w: ['14', '17', '20'] },
+      { q: 'If a constraint is x + y ≤ 10 and another is x ≥ 2, vertices include:', a: 'the intersection of boundary lines and axes', w: ['only (0,0)', 'no vertices', 'infinite points'] },
+      { q: 'A bounded feasible region has:', a: 'a finite area enclosed by constraints', w: ['infinite area', 'no area', 'negative area'] },
+      { q: 'To solve a linear programming problem, first:', a: 'graph constraints and find the feasible region', w: ['guess and check', 'solve the objective function', 'ignore constraints'] },
+      { q: 'Maximize P = x + 3y with constraint y ≤ 4 and x ≥ 0. If no upper bound on x:', a: 'the problem is unbounded', w: ['P max = 12', 'P max = 4', 'no solution'] },
+      { q: 'Vertices of x ≥ 0, y ≥ 0, x + y ≤ 6, x ≤ 4 are:', a: '(0,0), (4,0), (4,2), (0,6)', w: ['(0,0), (6,0), (0,6)', '(4,2) only', '(0,0), (4,4), (0,6)'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('linear-programming', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['linear-programming', 'optimization']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'spatial-relationships': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Two lines that never intersect and are in the same plane are:', a: 'parallel', w: ['perpendicular', 'intersecting', 'skew'] },
+      { q: 'Two lines that intersect at a 90° angle are:', a: 'perpendicular', w: ['parallel', 'skew', 'coincident'] },
+      { q: 'Lines in different planes that never intersect are:', a: 'skew', w: ['parallel', 'perpendicular', 'coincident'] },
+      { q: 'A point that lies on a line is said to be:', a: 'collinear with other points on that line', w: ['parallel to the line', 'perpendicular', 'skew'] },
+      { q: 'Points that lie in the same plane are called:', a: 'coplanar', w: ['collinear', 'perpendicular', 'parallel'] },
+      { q: 'The intersection of two planes is:', a: 'a line', w: ['a point', 'a plane', 'empty'] },
+      { q: 'A line and a plane can intersect in:', a: 'a point, a line, or not at all', w: ['only a point', 'only a line', 'only in parallel'] },
+      { q: 'If two planes are parallel, they:', a: 'never intersect', w: ['intersect in a line', 'intersect at a point', 'are the same plane'] },
+      { q: 'A transversal is a line that:', a: 'intersects two or more lines at different points', w: ['is parallel to other lines', 'is perpendicular to all lines', 'never intersects'] },
+      { q: 'The distance from a point to a line is measured:', a: 'along the perpendicular from the point to the line', w: ['along any path', 'parallel to the line', 'it cannot be measured'] },
+      { q: 'Two segments with the same length are:', a: 'congruent', w: ['parallel', 'perpendicular', 'similar'] },
+      { q: 'A ray has:', a: 'one endpoint and extends infinitely in one direction', w: ['two endpoints', 'no endpoints', 'finite length'] },
+      { q: 'If point B is between points A and C on a line, then:', a: 'AB + BC = AC', w: ['AB = BC = AC', 'AB × BC = AC', 'AB - BC = AC'] },
+      { q: 'Vertical angles are:', a: 'congruent (equal in measure)', w: ['supplementary', 'complementary', 'adjacent'] },
+      { q: 'Adjacent angles share:', a: 'a common vertex and a common side', w: ['no common elements', 'only a vertex', 'only a side'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('spatial-relationships', p.q, p.a, p.w, 2, '5-8', 'Geometry', ['spatial', 'relationships']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'symmetry-shapes': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A shape with line symmetry can be folded so that:', a: 'both halves match exactly', w: ['it forms a triangle', 'it becomes 3D', 'the halves are different'] },
+      { q: 'How many lines of symmetry does a square have?', a: '4', w: ['2', '1', '8'] },
+      { q: 'How many lines of symmetry does a rectangle (not square) have?', a: '2', w: ['4', '1', '0'] },
+      { q: 'How many lines of symmetry does an equilateral triangle have?', a: '3', w: ['1', '2', '6'] },
+      { q: 'How many lines of symmetry does a circle have?', a: 'infinite', w: ['1', '4', '0'] },
+      { q: 'A regular hexagon has how many lines of symmetry?', a: '6', w: ['3', '4', '2'] },
+      { q: 'How many lines of symmetry does a scalene triangle have?', a: '0', w: ['1', '2', '3'] },
+      { q: 'An isosceles triangle has how many lines of symmetry?', a: '1', w: ['2', '3', '0'] },
+      { q: 'A regular pentagon has how many lines of symmetry?', a: '5', w: ['2', '3', '10'] },
+      { q: 'Rotational symmetry means a shape looks the same after:', a: 'being rotated less than 360°', w: ['being flipped', 'being stretched', 'only at 360°'] },
+      { q: 'A square has rotational symmetry of order:', a: '4 (90°, 180°, 270°, 360°)', w: ['2', '1', '8'] },
+      { q: 'The letter H has how many lines of symmetry?', a: '2', w: ['1', '0', '4'] },
+      { q: 'The letter A has how many lines of symmetry?', a: '1 (vertical)', w: ['2', '0', '3'] },
+      { q: 'A parallelogram (not rectangle) has how many lines of symmetry?', a: '0', w: ['2', '1', '4'] },
+      { q: 'A regular octagon has how many lines of symmetry?', a: '8', w: ['4', '2', '16'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('symmetry-shapes', p.q, p.a, p.w, 2, 'K-5', 'Geometry', ['symmetry', 'shapes']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
