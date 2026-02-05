@@ -2650,6 +2650,93 @@ const generators = {
     }
     return problems;
   },
+
+  'multiply-rational-expressions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Multiply: (2/x) × (3/y)', a: '6/(xy)', w: ['5/xy', '6/(x+y)', '6xy'] },
+      { q: 'Multiply: (x/2) × (4/x)', a: '2', w: ['4x/2x', '2x', '4/2'] },
+      { q: 'Multiply: (x²/3) × (6/x)', a: '2x', w: ['6x²/3x', '2x²', '6x/3'] },
+      { q: 'Multiply: ((x+1)/x) × (x/(x+2))', a: '(x+1)/(x+2)', w: ['1', 'x²/((x+1)(x+2))', '(x+1)(x+2)'] },
+      { q: 'Multiply: (3/a) × (a²/9)', a: 'a/3', w: ['3a/9', 'a²/3', '3a²/9a'] },
+      { q: 'Multiply: ((x-1)/(x+1)) × ((x+1)/(x-1))', a: '1', w: ['(x-1)²/(x+1)²', '(x+1)/(x-1)', '0'] },
+      { q: 'Multiply: (5x/2) × (4/10x)', a: '1', w: ['20x/20x', 'x', '2'] },
+      { q: 'Multiply: ((x²-4)/(x+3)) × (1/(x-2))', a: '(x+2)/(x+3)', w: ['(x²-4)/(x+3)(x-2)', '(x-2)/(x+3)', '1'] },
+      { q: 'When multiplying rational expressions:', a: 'multiply numerators together and denominators together', w: ['cross multiply', 'find LCD', 'add numerators'] },
+      { q: 'Multiply: (2x/5) × (15/4x²)', a: '3/(2x)', w: ['30x/20x²', '6/x', '3/2x²'] },
+      { q: 'Multiply: ((a+b)/c) × (c/(a-b))', a: '(a+b)/(a-b)', w: ['c²/((a+b)(a-b))', '1', '(a+b)(a-b)/c²'] },
+      { q: 'Simplify after multiplying: (x/3) × (9/x²)', a: '3/x', w: ['9x/3x²', '3x', '9/3x'] },
+      { q: 'Multiply: ((x²-1)/(x)) × ((x)/(x+1))', a: 'x - 1', w: ['x² - 1', '(x²-1)/(x+1)', 'x/(x+1)'] },
+      { q: 'Before multiplying, you should first:', a: 'factor and cancel common factors', w: ['find LCD', 'add fractions', 'flip the second fraction'] },
+      { q: 'Multiply: (4/(x-2)) × ((x-2)/8)', a: '1/2', w: ['4/8', '(x-2)²/32', '32/(x-2)²'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('multiply-rational-expressions', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['rational', 'multiplication']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'divide-rational-expressions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Divide: (2/x) ÷ (4/x)', a: '1/2', w: ['2', '8/x²', 'x/2'] },
+      { q: 'Divide: (x/2) ÷ (x/4)', a: '2', w: ['1/2', 'x²/8', '4/2'] },
+      { q: 'Divide: (6/a) ÷ (3/a²)', a: '2a', w: ['2/a', '18/a³', '2a²'] },
+      { q: 'To divide rational expressions:', a: 'multiply by the reciprocal of the divisor', w: ['divide numerators and denominators', 'cross multiply', 'find LCD'] },
+      { q: 'Divide: (x²/4) ÷ (x/2)', a: 'x/2', w: ['x²/2x', 'x/4', '2x'] },
+      { q: 'Divide: ((x+1)/3) ÷ ((x+1)/6)', a: '2', w: ['1/2', '(x+1)²/18', '6/3'] },
+      { q: 'Divide: (a/b) ÷ (c/d)', a: '(ad)/(bc)', w: ['(ac)/(bd)', '(a/b)·(c/d)', '(a+c)/(b+d)'] },
+      { q: 'Divide: ((x²-9)/(x+2)) ÷ ((x-3)/(x+2))', a: 'x + 3', w: ['x - 3', '(x²-9)/(x-3)', '(x+2)²'] },
+      { q: 'Divide: (5x/7) ÷ (10x/21)', a: '3/2', w: ['2/3', '50x²/147', '15/2'] },
+      { q: 'Divide: (1/x) ÷ (1/x²)', a: 'x', w: ['1/x³', 'x²', '1'] },
+      { q: 'The reciprocal of (x+1)/(x-1) is:', a: '(x-1)/(x+1)', w: ['(x+1)/(x-1)', '-(x+1)/(x-1)', '1'] },
+      { q: 'Divide: ((x²-4)/(x)) ÷ ((x+2)/(x²))', a: 'x(x-2)', w: ['(x-2)/x', '(x²-4)/x³', 'x²(x-2)'] },
+      { q: 'Divide: (3/(x-1)) ÷ (9/(x-1)²)', a: '(x-1)/3', w: ['27/(x-1)³', '3(x-1)', '1/3'] },
+      { q: 'Divide: (4x²/5) ÷ (2x/15)', a: '6x', w: ['8x³/75', '2x/3', '6x²'] },
+      { q: 'Divide: ((a-b)/(a+b)) ÷ ((a-b)/(a+b))', a: '1', w: ['(a-b)²/(a+b)²', '0', '(a+b)/(a-b)'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('divide-rational-expressions', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['rational', 'division']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'systems-special-cases': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'If two lines are parallel, the system has:', a: 'no solution', w: ['one solution', 'infinitely many solutions', 'two solutions'] },
+      { q: 'If two lines are the same (coincident), the system has:', a: 'infinitely many solutions', w: ['no solution', 'one solution', 'two solutions'] },
+      { q: 'y = 2x + 3 and y = 2x + 5 have:', a: 'no solution (parallel lines)', w: ['one solution', 'infinitely many solutions', 'two solutions'] },
+      { q: '2x + 4y = 8 and x + 2y = 4 have:', a: 'infinitely many solutions (same line)', w: ['no solution', 'one solution', 'two solutions'] },
+      { q: 'A system with no solution is called:', a: 'inconsistent', w: ['consistent', 'dependent', 'independent'] },
+      { q: 'A system with infinitely many solutions is called:', a: 'dependent', w: ['inconsistent', 'independent', 'unsolvable'] },
+      { q: 'x + y = 5 and x + y = 7 have:', a: 'no solution', w: ['one solution at (6, -1)', 'infinitely many', '(5, 7)'] },
+      { q: '3x - 6y = 12 and x - 2y = 4 have:', a: 'infinitely many solutions', w: ['no solution', 'one solution', 'two solutions'] },
+      { q: 'When solving and you get 0 = 5, the system has:', a: 'no solution', w: ['x = 5', 'infinitely many', 'one solution'] },
+      { q: 'When solving and you get 0 = 0, the system has:', a: 'infinitely many solutions', w: ['no solution', 'x = 0', 'one solution'] },
+      { q: 'Lines with same slope but different y-intercepts are:', a: 'parallel (no solution)', w: ['identical', 'intersecting', 'perpendicular'] },
+      { q: 'y = 3x + 2 and 6x - 2y = -4 have:', a: 'infinitely many solutions', w: ['no solution', 'one solution', 'the lines are perpendicular'] },
+      { q: 'If a/d = b/e ≠ c/f for ax+by=c and dx+ey=f:', a: 'no solution (parallel)', w: ['one solution', 'infinitely many', 'cannot determine'] },
+      { q: 'If a/d = b/e = c/f for ax+by=c and dx+ey=f:', a: 'infinitely many solutions', w: ['no solution', 'one solution', 'two solutions'] },
+      { q: '4x + 2y = 10 and 2x + y = 5 are:', a: 'the same line (dependent)', w: ['parallel lines', 'intersecting at one point', 'perpendicular'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('systems-special-cases', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['systems', 'special-cases']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
