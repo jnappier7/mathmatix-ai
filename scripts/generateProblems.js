@@ -3839,6 +3839,93 @@ const generators = {
     }
     return problems;
   },
+
+  'skip-counting': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Count by 2s: 2, 4, 6, ___, 10', a: '8', w: ['7', '9', '5'] },
+      { q: 'Count by 5s: 5, 10, 15, 20, ___', a: '25', w: ['21', '30', '22'] },
+      { q: 'Count by 10s: 10, 20, 30, ___, 50', a: '40', w: ['35', '45', '31'] },
+      { q: 'Count by 3s: 3, 6, 9, 12, ___', a: '15', w: ['13', '14', '18'] },
+      { q: 'Count by 4s: 4, 8, 12, ___, 20', a: '16', w: ['14', '15', '18'] },
+      { q: 'Count by 2s starting at 1: 1, 3, 5, 7, ___', a: '9', w: ['8', '10', '6'] },
+      { q: 'Count by 5s: 25, 30, 35, ___, 45', a: '40', w: ['38', '42', '36'] },
+      { q: 'Count by 10s: 30, 40, 50, ___, 70', a: '60', w: ['55', '65', '80'] },
+      { q: 'Count backward by 2s: 10, 8, 6, ___', a: '4', w: ['5', '3', '7'] },
+      { q: 'Count by 100s: 100, 200, 300, ___', a: '400', w: ['350', '310', '500'] },
+      { q: 'Count by 25s: 25, 50, 75, ___', a: '100', w: ['80', '90', '125'] },
+      { q: 'Count by 6s: 6, 12, 18, 24, ___', a: '30', w: ['28', '26', '36'] },
+      { q: 'Count backward by 5s: 30, 25, 20, ___', a: '15', w: ['18', '10', '16'] },
+      { q: 'Count by 7s: 7, 14, 21, ___', a: '28', w: ['27', '35', '24'] },
+      { q: 'Count by 9s: 9, 18, 27, ___', a: '36', w: ['35', '45', '30'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('skip-counting', p.q, p.a, p.w, 1, 'K-2', 'Counting & Cardinality', ['skip-counting', 'patterns']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'permutations': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A permutation is an arrangement where:', a: 'order matters', w: ['order does not matter', 'repetition is required', 'selection is random'] },
+      { q: 'The formula for permutations P(n,r) is:', a: 'n! / (n-r)!', w: ['n! / r!', 'n! / (r!(n-r)!)', 'n × r'] },
+      { q: 'P(5,3) = 5!/(5-3)! =', a: '60', w: ['10', '15', '120'] },
+      { q: 'How many ways can 4 people finish a race (1st, 2nd, 3rd, 4th)?', a: '24', w: ['4', '16', '12'] },
+      { q: 'Arranging 3 books from 5 different books. P(5,3) =', a: '60', w: ['10', '15', '125'] },
+      { q: 'How many 3-letter "words" from ABCDE (no repeats)?', a: '60', w: ['15', '125', '10'] },
+      { q: 'P(n,n) = n! because:', a: 'you arrange all n items', w: ['you choose none', 'order does not matter', 'items repeat'] },
+      { q: 'P(6,2) =', a: '30', w: ['12', '15', '36'] },
+      { q: 'Seating 5 people in 5 chairs. Total arrangements?', a: '120', w: ['25', '5', '32'] },
+      { q: 'How many ways can President, VP, Secretary be chosen from 10 people?', a: '720', w: ['30', '120', '1000'] },
+      { q: 'P(4,1) =', a: '4', w: ['1', '24', '0'] },
+      { q: 'P(n,0) =', a: '1', w: ['0', 'n', 'n!'] },
+      { q: 'Difference: permutation vs combination?', a: 'permutation: order matters; combination: order does not', w: ['they are the same', 'permutation has no order', 'combination requires order'] },
+      { q: 'Arranging letters in MATH (all different). Total arrangements?', a: '24', w: ['4', '16', '256'] },
+      { q: 'How many 4-digit PINs with no repeated digits?', a: '5040', w: ['10000', '40', '24'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('permutations', p.q, p.a, p.w, 3, '8-12', 'Statistics & Probability', ['permutations', 'counting', 'arrangements']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'combinations': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A combination is a selection where:', a: 'order does NOT matter', w: ['order matters', 'repetition is required', 'all items must be used'] },
+      { q: 'The formula for combinations C(n,r) is:', a: 'n! / (r!(n-r)!)', w: ['n! / (n-r)!', 'n! / r!', 'n × r'] },
+      { q: 'C(5,3) =', a: '10', w: ['60', '15', '125'] },
+      { q: 'Choosing 3 toppings from 5 options. C(5,3) =', a: '10', w: ['60', '15', '5'] },
+      { q: 'C(n,r) = C(n, n-r). Why?', a: 'choosing r items leaves n-r unchosen; same grouping', w: ['formulas are different', 'order matters', 'r must equal n-r'] },
+      { q: 'C(6,2) =', a: '15', w: ['30', '12', '36'] },
+      { q: 'Choosing a committee of 4 from 10 people. C(10,4) =', a: '210', w: ['5040', '40', '10000'] },
+      { q: 'C(n,0) =', a: '1', w: ['0', 'n', 'undefined'] },
+      { q: 'C(n,n) =', a: '1', w: ['n', 'n!', '0'] },
+      { q: 'C(4,2) =', a: '6', w: ['12', '8', '24'] },
+      { q: 'Handshakes among 5 people (each pair shakes once). C(5,2) =', a: '10', w: ['20', '25', '5'] },
+      { q: 'C(7,3) =', a: '35', w: ['21', '210', '343'] },
+      { q: 'Lottery: choose 6 numbers from 49. C(49,6) represents:', a: 'total possible tickets', w: ['winning probability', 'number of winners', 'prize amount'] },
+      { q: 'Why is C(n,r) always ≤ P(n,r)?', a: 'combinations ignore order, counting fewer arrangements', w: ['they are equal', 'combinations count more', 'permutations ignore order'] },
+      { q: 'Choosing 2 fruits from {apple, banana, cherry}. Combinations?', a: '3', w: ['6', '2', '9'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('combinations', p.q, p.a, p.w, 3, '8-12', 'Statistics & Probability', ['combinations', 'counting', 'selections']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
