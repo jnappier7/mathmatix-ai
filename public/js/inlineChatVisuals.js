@@ -227,6 +227,51 @@ class InlineChatVisuals {
     }
 
     /**
+     * Normalize function string - convert common text descriptions to math functions
+     */
+    normalizeFunctionString(fn) {
+        if (!fn || typeof fn !== 'string') return 'x^2';
+
+        let normalized = fn.trim().toLowerCase();
+
+        // Map common text descriptions to actual functions
+        const functionMappings = {
+            'tangent': 'tan(x)',
+            'thetangent': 'tan(x)',
+            'thetangentfunction': 'tan(x)',
+            'thetangentfunctions': 'tan(x)',
+            'tangentfunction': 'tan(x)',
+            'tangentfunctions': 'tan(x)',
+            'sine': 'sin(x)',
+            'thesine': 'sin(x)',
+            'thesinefunction': 'sin(x)',
+            'sinefunction': 'sin(x)',
+            'cosine': 'cos(x)',
+            'thecosine': 'cos(x)',
+            'thecosinefunction': 'cos(x)',
+            'cosinefunction': 'cos(x)',
+            'quadratic': 'x^2',
+            'parabola': 'x^2',
+            'linear': 'x',
+            'cubic': 'x^3',
+            'exponential': 'exp(x)',
+            'logarithm': 'log(x)',
+            'logarithmic': 'log(x)',
+            'squareroot': 'sqrt(x)',
+            'absolute': 'abs(x)',
+            'absolutevalue': 'abs(x)'
+        };
+
+        // Check if it's a text description that needs mapping
+        if (functionMappings[normalized]) {
+            return functionMappings[normalized];
+        }
+
+        // Return original if it looks like a valid function expression
+        return fn;
+    }
+
+    /**
      * Render a function graph using function-plot (call after DOM insertion)
      */
     renderGraph(id) {
@@ -237,7 +282,22 @@ class InlineChatVisuals {
         }
 
         try {
+            // Validate data-config exists
+            if (!container.dataset.config) {
+                console.warn(`[InlineChatVisuals] No config found for graph ${id}`);
+                container.innerHTML = `<div class="icv-error">Graph configuration missing</div>`;
+                return;
+            }
+
             const config = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
+
+            // Validate config has required properties
+            if (!config || typeof config !== 'object') {
+                throw new Error('Invalid graph configuration');
+            }
+
+            // Normalize and validate the function string
+            const fn = this.normalizeFunctionString(config.fn);
             const width = container.offsetWidth || 300;
 
             const plotConfig = {
@@ -245,10 +305,10 @@ class InlineChatVisuals {
                 width: width,
                 height: 250,
                 grid: true,
-                xAxis: { domain: [config.xMin, config.xMax] },
+                xAxis: { domain: [config.xMin ?? -10, config.xMax ?? 10] },
                 data: [{
-                    fn: config.fn,
-                    color: config.color
+                    fn: fn,
+                    color: config.color || '#667eea'
                 }]
             };
 
@@ -258,9 +318,9 @@ class InlineChatVisuals {
 
             const plot = functionPlot(plotConfig);
             container._functionPlot = plot;
-            container._originalConfig = config;
+            container._originalConfig = { ...config, fn }; // Store normalized fn
 
-            console.log(`[InlineChatVisuals] Rendered graph for: ${config.fn}`);
+            console.log(`[InlineChatVisuals] Rendered graph for: ${fn}`);
         } catch (error) {
             console.error(`[InlineChatVisuals] Error rendering graph ${id}:`, error);
             container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
@@ -271,8 +331,12 @@ class InlineChatVisuals {
         const container = document.getElementById(id);
         if (!container || !container._functionPlot) return;
 
-        const plot = container._functionPlot;
         const config = container._originalConfig;
+        if (!config || typeof config.xMax !== 'number' || typeof config.xMin !== 'number') {
+            console.warn(`[InlineChatVisuals] Cannot zoom graph ${id}: invalid config`);
+            return;
+        }
+
         const xRange = config.xMax - config.xMin;
         const newRange = xRange * factor;
         const center = (config.xMax + config.xMin) / 2;
@@ -286,11 +350,15 @@ class InlineChatVisuals {
 
     resetGraph(id) {
         const container = document.getElementById(id);
-        if (!container) return;
+        if (!container || !container.dataset.config) return;
 
-        const originalConfig = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
-        container._originalConfig = originalConfig;
-        this.renderGraph(id);
+        try {
+            const originalConfig = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
+            container._originalConfig = originalConfig;
+            this.renderGraph(id);
+        } catch (error) {
+            console.error(`[InlineChatVisuals] Error resetting graph ${id}:`, error);
+        }
     }
 
     // ==========================================
