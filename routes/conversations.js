@@ -32,9 +32,14 @@ router.get('/', isAuthenticated, async (req, res) => {
     // Check if assessment is needed
     const assessmentNeeded = await needsAssessment(userId);
 
+    // Get user's active conversation ID for session persistence
+    const user = await User.findById(userId).select('activeConversationId').lean();
+    const activeConversationId = user?.activeConversationId || null;
+
     res.json({
       conversations,
-      assessmentNeeded
+      assessmentNeeded,
+      activeConversationId
     });
   } catch (error) {
     logger.error('Failed to get conversations', { error });

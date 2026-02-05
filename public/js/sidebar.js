@@ -232,6 +232,20 @@ class Sidebar {
             });
 
             const data = await response.json();
+
+            // Restore active conversation ID from server
+            if (data.activeConversationId && !this.activeConversationId) {
+                this.activeConversationId = data.activeConversationId;
+                console.log('[Sidebar] Restored active conversation:', this.activeConversationId);
+
+                // Store pending session data for script.js to load when ready
+                // This avoids race condition where updateChatForSession may not exist yet
+                window.pendingActiveSession = {
+                    conversationId: data.activeConversationId,
+                    conversation: data.conversations.find(c => c._id === data.activeConversationId)
+                };
+            }
+
             this.renderSessions(data.conversations);
 
             // Check if assessment is needed
