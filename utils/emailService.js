@@ -153,6 +153,41 @@ async function sendPasswordResetEmail(email, resetToken) {
 }
 
 /**
+ * Send email verification link to new user
+ * @param {String} email - User's email address
+ * @param {String} firstName - User's first name
+ * @param {String} verificationToken - Token for verification
+ */
+async function sendEmailVerification(email, firstName, verificationToken) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping email verification');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${verificationToken}`;
+    const emailConfig = getEmailConfig();
+
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: email,
+      subject: 'Verify Your Email - MATHMATIX AI',
+      html: getEmailVerificationTemplate(firstName, verifyUrl)
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Verification email sent to ${email}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending verification email:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Send test email (for configuration verification)
  * @param {String} recipientEmail - Email to send test to
  */
@@ -371,6 +406,73 @@ function getPasswordResetTemplate(resetUrl) {
   `;
 }
 
+function getEmailVerificationTemplate(firstName, verifyUrl) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">MATHMATIX AI</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">Verify Your Email Address</p>
+    </div>
+
+    <!-- Content -->
+    <div style="padding: 30px 20px;">
+      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">Welcome, ${firstName}!</h2>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        Thank you for creating a MATHMATIX AI account. Please verify your email address to get started.
+      </p>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        Click the button below to verify your email. This link will expire in <strong>24 hours</strong>.
+      </p>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${verifyUrl}"
+           style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+          Verify Email
+        </a>
+      </div>
+
+      <div style="background: #f0fdf4; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
+          Once verified, you'll be able to access all MATHMATIX AI features including personalized AI tutoring.
+        </p>
+      </div>
+
+      <p style="margin: 20px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">
+        If the button doesn't work, copy and paste this link into your browser:
+      </p>
+      <p style="margin: 10px 0 0 0; color: #667eea; font-size: 12px; word-break: break-all;">
+        ${verifyUrl}
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">
+        Didn't create an account? You can safely ignore this email.
+      </p>
+      <p style="margin: 0; font-size: 12px; color: #999;">
+        © ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
 function getParentalConsentTemplate(studentName, consentUrl) {
   return `
 <!DOCTYPE html>
@@ -562,12 +664,167 @@ function getMessageNotificationTemplate(recipient, sender, message, dashboardUrl
   `;
 }
 
+/**
+ * Send urgent safety concern alert to admin
+ * Used when AI detects potential safety issues in student messages
+ * @param {Object} studentData - Student information
+ * @param {string} concernDescription - Description of the safety concern
+ * @param {string} originalMessage - The message that triggered the concern (truncated)
+ */
+async function sendSafetyConcernAlert(studentData, concernDescription, originalMessage = '') {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - logging safety concern only');
+    console.error(`🚨 SAFETY ALERT (email not sent): ${studentData.firstName} ${studentData.lastName} - ${concernDescription}`);
+    return { success: false, error: 'Email not configured' };
+  }
+
+  // Get admin email from environment
+  const adminEmail = process.env.ADMIN_ALERT_EMAIL || process.env.SMTP_USER;
+  if (!adminEmail) {
+    console.error('🚨 SAFETY ALERT: No admin email configured. Set ADMIN_ALERT_EMAIL in .env');
+    return { success: false, error: 'No admin email configured' };
+  }
+
+  try {
+    const emailConfig = getEmailConfig();
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: adminEmail,
+      subject: `🚨 URGENT: Safety Concern - ${studentData.firstName} ${studentData.lastName}`,
+      html: getSafetyConcernTemplate(studentData, concernDescription, originalMessage, baseUrl)
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`🚨 Safety concern alert sent to admin (${adminEmail}):`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending safety concern alert:', error);
+    // Still log the concern even if email fails
+    console.error(`🚨 SAFETY ALERT (email failed): ${studentData.firstName} ${studentData.lastName} - ${concernDescription}`);
+    return { success: false, error: error.message };
+  }
+}
+
+function getSafetyConcernTemplate(studentData, concernDescription, originalMessage, baseUrl) {
+  const timestamp = new Date().toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZoneName: 'short'
+  });
+
+  // Truncate message for privacy but provide context
+  const truncatedMessage = originalMessage
+    ? (originalMessage.length > 200 ? originalMessage.substring(0, 200) + '...' : originalMessage)
+    : 'Not available';
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px; border: 3px solid #e74c3c;">
+
+    <!-- Header -->
+    <div style="background: #e74c3c; color: white; padding: 30px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">🚨 SAFETY CONCERN ALERT</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">Immediate attention may be required</p>
+    </div>
+
+    <!-- Content -->
+    <div style="padding: 30px 20px;">
+      <div style="background: #fff5f5; border-left: 4px solid #e74c3c; padding: 20px; margin-bottom: 20px; border-radius: 4px;">
+        <h2 style="margin: 0 0 10px 0; color: #c0392b; font-size: 18px;">AI-Detected Safety Concern</h2>
+        <p style="margin: 0; color: #333; font-size: 16px; line-height: 1.6;">
+          <strong>${concernDescription}</strong>
+        </p>
+      </div>
+
+      <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">Student Information</h3>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666; width: 40%;">Name</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333; font-weight: 600;">${studentData.firstName} ${studentData.lastName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">Username</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333;">${studentData.username || 'N/A'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">Grade Level</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333;">${studentData.gradeLevel || 'Not specified'}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">User ID</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333; font-family: monospace; font-size: 12px;">${studentData.userId}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">Detected At</td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; color: #333;">${timestamp}</td>
+        </tr>
+      </table>
+
+      <h3 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px;">Message Context</h3>
+      <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 20px; font-family: monospace; font-size: 13px; color: #555; word-wrap: break-word;">
+        ${truncatedMessage}
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${baseUrl}/admin-dashboard.html?student=${studentData.userId}"
+           style="display: inline-block; background: #e74c3c; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; margin-right: 10px;">
+          View Student Profile
+        </a>
+        <a href="${baseUrl}/admin-dashboard.html?tab=conversations&user=${studentData.userId}"
+           style="display: inline-block; background: #3498db; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px;">
+          View Conversation
+        </a>
+      </div>
+
+      <div style="background: #ebf5fb; border-left: 4px solid #3498db; padding: 15px; margin-top: 20px; border-radius: 4px;">
+        <h4 style="margin: 0 0 10px 0; color: #2980b9; font-size: 14px;">Recommended Actions</h4>
+        <ul style="margin: 0; padding-left: 20px; color: #555; line-height: 1.8; font-size: 14px;">
+          <li>Review the full conversation history</li>
+          <li>Contact the student's teacher or parent if appropriate</li>
+          <li>Document the incident in accordance with your policies</li>
+          <li>If immediate danger is suspected, contact appropriate authorities</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0; font-size: 12px; color: #999;">
+        This is an automated safety alert from MATHMATIX AI.<br>
+        © ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
 module.exports = {
   sendParentWeeklyReport,
   sendParentalConsentRequest,
   sendPasswordResetEmail,
+  sendEmailVerification,
   sendTestEmail,
   sendMessageNotification,
+  sendSafetyConcernAlert,
   initializeTransporter,
   getEmailConfig
 };

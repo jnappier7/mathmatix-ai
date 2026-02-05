@@ -77,6 +77,15 @@ const conversationSchema = new Schema({
         type: String,
         default: null
     },
+    // Session management enhancements
+    isPinned: {
+        type: Boolean,
+        default: false
+    },
+    customName: {
+        type: String,
+        default: null // User-defined name (overrides auto-generated name)
+    },
     messages: {
         type: [messageSchema],
         default: []
@@ -136,6 +145,8 @@ const conversationSchema = new Schema({
 conversationSchema.index({ isActive: 1, lastActivity: -1 });
 conversationSchema.index({ userId: 1, topic: 1, isActive: 1 }); // For topic-based lookups
 conversationSchema.index({ userId: 1, conversationType: 1, isActive: 1 }); // For conversation type filtering
+conversationSchema.index({ userId: 1, lastActivity: -1 }); // For user activity history (dashboard queries)
+conversationSchema.index({ userId: 1, isActive: 1 }); // For finding active sessions
 
 // Pre-save hook to validate and clean messages
 conversationSchema.pre('save', function(next) {

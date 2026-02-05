@@ -299,8 +299,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         card.innerHTML = `
             <div class="child-header">
-                <h2>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h2>
-                <span class="child-stats">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
+                <div>
+                    <h2>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h2>
+                    <span class="child-stats">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
+                </div>
+                <button class="view-as-child-btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="See what ${progress.firstName || 'your child'} sees" style="background: #9b59b6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9em; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-eye"></i> View
+                </button>
             </div>
             <div class="child-summary-details">
                 ${progress.gradeLevel || 'N/A'} · ${progress.mathCourse || 'N/A'} · ${progress.totalActiveTutoringMinutes || '0'} min total
@@ -339,6 +344,32 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
         `;
         childrenListContainer.appendChild(card);
+
+        // Add event listener for View as Child button
+        const viewAsChildBtn = card.querySelector('.view-as-child-btn');
+        if (viewAsChildBtn) {
+            viewAsChildBtn.addEventListener('click', async (e) => {
+                const childId = e.currentTarget.dataset.childid;
+                const childName = e.currentTarget.dataset.childname;
+
+                if (!confirm(`View the app as ${childName}?\n\nYou'll see exactly what your child sees.\nChanges are disabled in view mode.`)) {
+                    return;
+                }
+
+                try {
+                    viewAsChildBtn.disabled = true;
+                    viewAsChildBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
+                    await window.ImpersonationBanner.start(childId, { readOnly: true });
+                    // Redirect happens automatically in the start function
+                } catch (error) {
+                    console.error('Failed to start child view:', error);
+                    alert(error.message || 'Failed to start child view. Please try again.');
+                    viewAsChildBtn.disabled = false;
+                    viewAsChildBtn.innerHTML = '<i class="fas fa-eye"></i> View';
+                }
+            });
+        }
     }
 
     // --- Load Parent Settings ---

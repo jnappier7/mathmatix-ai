@@ -15,7 +15,7 @@ router.get('/students', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
     const students = await User.find(
       { role: 'student', teacherId: teacherId },
-      'firstName lastName username gradeLevel iepPlan'
+      'firstName lastName username gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes iepPlan currentStreak'
     ).lean();
     res.json(students);
   } catch (err) {
@@ -623,8 +623,9 @@ router.put('/class-ai-settings', isTeacher, async (req, res) => {
  * GET /api/teacher/class-ai-settings/for-student/:studentId
  *
  * Used internally when starting a tutoring session to fetch teacher preferences
+ * SECURITY: Requires authentication to prevent enumeration of teacher-student relationships
  */
-router.get('/class-ai-settings/for-student/:studentId', async (req, res) => {
+router.get('/class-ai-settings/for-student/:studentId', isAuthenticated, async (req, res) => {
   try {
     const { studentId } = req.params;
 

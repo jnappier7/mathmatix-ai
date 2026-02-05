@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Dashboard - MATHMATIX AI</title>
   <link rel="stylesheet" href="/css/teacher-live-feed.css">
+  <link rel="stylesheet" href="/css/impersonation-banner.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <style>
     /* ============================================
@@ -1759,6 +1760,13 @@
           <button class="tab-btn" data-tab="resources">
             <i class="fas fa-file-upload"></i> Resources
           </button>
+          <button class="tab-btn" data-tab="announcements">
+            <i class="fas fa-bullhorn"></i> Announcements
+          </button>
+          <button class="tab-btn" data-tab="messages">
+            <i class="fas fa-envelope"></i> Messages
+            <span id="unread-messages-badge" class="tab-badge" style="display: none;">0</span>
+          </button>
         </div>
 
         <!-- Students Tab -->
@@ -1862,6 +1870,119 @@
             </div>
             <div id="resources-list" class="table-scroll-container">
               Loading resources...
+            </div>
+          </div>
+        </div>
+
+        <!-- Announcements Tab -->
+        <div class="tab-content" id="announcements-tab">
+          <div class="announcements-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%;">
+            <!-- Compose Announcement -->
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-header">
+                <i class="fas fa-bullhorn"></i> Send Announcement
+              </div>
+              <div style="padding: 20px;">
+                <form id="announcement-form">
+                  <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #333;">Send To</label>
+                    <select id="announcement-target" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                      <option value="class">All My Students</option>
+                      <option value="individual">Select Students...</option>
+                    </select>
+                  </div>
+
+                  <div id="student-select-container" style="display: none; margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #333;">Select Students</label>
+                    <div id="student-checkboxes" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 10px; background: #f9f9f9;">
+                      Loading students...
+                    </div>
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #333;">Title</label>
+                    <input type="text" id="announcement-title" placeholder="e.g., Homework Reminder" maxlength="200" required
+                           style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #333;">Message</label>
+                    <textarea id="announcement-body" rows="5" placeholder="Write your message to students..." maxlength="5000" required
+                              style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical;"></textarea>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="form-group">
+                      <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #333;">Priority</label>
+                      <select id="announcement-priority" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <option value="normal">Normal</option>
+                        <option value="important">Important</option>
+                        <option value="urgent">Urgent</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #333;">Category</label>
+                      <select id="announcement-category" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+                        <option value="general">General</option>
+                        <option value="assignment">Assignment</option>
+                        <option value="reminder">Reminder</option>
+                        <option value="encouragement">Encouragement</option>
+                        <option value="achievement">Achievement</option>
+                        <option value="event">Event</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px;">
+                    <i class="fas fa-paper-plane"></i> Send Announcement
+                  </button>
+                </form>
+                <div id="announcement-status" style="margin-top: 15px; display: none;"></div>
+              </div>
+            </div>
+
+            <!-- Sent Announcements -->
+            <div class="dashboard-panel">
+              <div class="dashboard-panel-header">
+                <i class="fas fa-history"></i> Sent Announcements
+              </div>
+              <div id="sent-announcements-list" class="table-scroll-container" style="padding: 15px;">
+                Loading announcements...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages Tab (Parent Communication) -->
+        <div class="tab-content" id="messages-tab">
+          <div class="messages-layout" style="display: grid; grid-template-columns: 300px 1fr; gap: 20px; height: 100%;">
+            <!-- Conversations List -->
+            <div class="dashboard-panel" style="display: flex; flex-direction: column;">
+              <div class="dashboard-panel-header">
+                <i class="fas fa-comments"></i> Conversations
+              </div>
+              <div id="conversations-list" style="flex: 1; overflow-y: auto; padding: 10px;">
+                Loading conversations...
+              </div>
+            </div>
+
+            <!-- Message Thread -->
+            <div class="dashboard-panel" style="display: flex; flex-direction: column;">
+              <div class="dashboard-panel-header" id="message-thread-header">
+                <i class="fas fa-envelope-open"></i> Select a conversation
+              </div>
+              <div id="message-thread" style="flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9;">
+                <p style="color: #666; text-align: center; padding: 40px;">Select a conversation from the left to view messages.</p>
+              </div>
+              <div id="message-compose" style="padding: 15px; border-top: 1px solid #e0e0e0; display: none;">
+                <div style="display: flex; gap: 10px;">
+                  <textarea id="message-reply-input" rows="2" placeholder="Type your reply..."
+                            style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: none;"></textarea>
+                  <button id="send-reply-btn" class="btn btn-primary" style="align-self: flex-end;">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2177,15 +2298,19 @@
     </div>
   </div>
 
+  <script src="/js/csrf.js"></script>
+  <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
-  <script src="/js/csrf.js"></script>
   <script src="/js/teacher-live-feed.js"></script>
   <script src="/js/teacher-dashboard.js"></script>
   <script src="/js/teacher-curriculum.js"></script>
   <script src="/js/teacher-resources.js"></script>
   <script src="/js/teacher-ai-settings.js"></script>
+  <script src="/js/teacher-announcements.js"></script>
+  <script src="/js/teacher-messaging.js"></script>
+  <script src="/js/guided-tour.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="/js/sessionManager.js"></script>
 </body>

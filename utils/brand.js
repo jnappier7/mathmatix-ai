@@ -122,6 +122,33 @@ const BRAND_CONFIG = {
         maxTier3PerTurn: 100
     },
 
+    // 10. New User XP Boost System
+    // Newer users get more opportunities for XP to build momentum
+    // Fades gradually as they level up
+    newUserBoost: {
+        // Level thresholds for boost
+        fullBoostUntilLevel: 5,      // 100% boost for levels 1-5
+        fadeStartLevel: 6,            // Start fading at level 6
+        fadeEndLevel: 15,             // No boost at level 15+
+
+        // Boost multipliers
+        tier3Multiplier: 2.0,         // 2x Tier 3 XP for new users
+
+        // AI behavior guidance
+        lookForOpportunities: true,   // AI actively seeks reasons to award XP
+        celebrateSmallWins: true,     // Celebrate incremental progress
+
+        // Behaviors to look for in new users
+        newUserBehaviors: [
+            'first_correct_answer',     // Very first correct answer ever
+            'asked_good_question',      // Showed curiosity
+            'tried_before_asking',      // Attempted before asking for help
+            'acknowledged_mistake',     // Admitted confusion or error
+            'showed_work',              // Explained their thinking
+            'stayed_engaged'            // Continued after getting something wrong
+        ]
+    },
+
     digestEmailSchedule: "Sunday 7 AM ET", //
     digestEmailProvider: "SendGrid", //
 

@@ -25,6 +25,7 @@
   <!-- <link rel="stylesheet" href="/css/algebra-tiles.css" /> -->
   <link rel="stylesheet" href="/css/sidebar-layout.css" />
   <link rel="stylesheet" href="/css/tour-survey.css" />
+  <link rel="stylesheet" href="/css/impersonation-banner.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -146,16 +147,27 @@
       </button>
 
       <div id="sidebar-sessions" class="sidebar-sessions-list">
+        <!-- Session Search -->
+        <div class="session-search-container">
+          <i class="fas fa-search session-search-icon"></i>
+          <input type="text" id="session-search-input" class="session-search-input" placeholder="Search sessions...">
+        </div>
+
         <button id="new-topic-btn" class="sidebar-tool-btn special">
           <i class="fas fa-plus-circle"></i>
-          <span>New Topic</span>
+          <span>New Topic Session</span>
         </button>
         <div id="sessions-list">
           <!-- Sessions will be loaded here dynamically -->
-          <button class="session-item active">
-            <span class="session-emoji">💬</span>
-            <span class="session-name">General Chat</span>
-          </button>
+          <div class="session-item active">
+            <div class="session-main">
+              <span class="session-emoji">💬</span>
+              <div class="session-info">
+                <span class="session-name">General Chat</span>
+                <span class="session-preview">Start a new conversation</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -279,17 +291,41 @@
         <span>Insert Math Symbol</span>
         <button id="close-inline-palette" class="palette-close-btn" title="Close">&times;</button>
       </div>
+      <!-- Subscripts and Superscripts Section -->
+      <div class="equation-section-header">Subscripts and Superscripts</div>
+      <div class="subscript-superscript-grid">
+        <button class="script-btn" data-latex="#0^{#1}" title="Superscript/Power">
+          <svg viewBox="0 0 40 40" class="script-icon">
+            <rect x="4" y="8" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="24" y="4" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+          </svg>
+        </button>
+        <button class="script-btn" data-latex="#0_{#1}" title="Subscript">
+          <svg viewBox="0 0 40 40" class="script-icon">
+            <rect x="4" y="4" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="24" y="24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+          </svg>
+        </button>
+        <button class="script-btn" data-latex="#0_{#1}^{#2}" title="Subscript and Superscript">
+          <svg viewBox="0 0 40 40" class="script-icon">
+            <rect x="4" y="10" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="22" y="4" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="22" y="26" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+          </svg>
+        </button>
+        <button class="script-btn" data-latex="{}_{#0}#1" title="Left Subscript">
+          <svg viewBox="0 0 40 40" class="script-icon">
+            <rect x="12" y="4" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+            <rect x="4" y="24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4,2"/>
+          </svg>
+        </button>
+      </div>
+
       <div class="equation-symbols-grid">
         <!-- Common operations -->
         <button class="symbol-btn" data-latex="\frac{#0}{#1}" title="Fraction">x/y</button>
-        <button class="symbol-btn" data-latex="#0^{#1}" title="Superscript/Power">x<sup>n</sup></button>
-        <button class="symbol-btn" data-latex="#0_{#1}" title="Subscript">x<sub>n</sub></button>
         <button class="symbol-btn" data-latex="\sqrt{#0}" title="Square root">√</button>
         <button class="symbol-btn" data-latex="\sqrt[#1]{#0}" title="Nth root">ⁿ√</button>
-        <!-- Sequences (common subscript use) -->
-        <button class="symbol-btn" data-latex="a_{n}" title="Sequence term a_n">a<sub>n</sub></button>
-        <button class="symbol-btn" data-latex="a_{n+1}" title="Next term">a<sub>n+1</sub></button>
-        <button class="symbol-btn" data-latex="a_{1}" title="First term">a<sub>1</sub></button>
         <!-- Calculus -->
         <button class="symbol-btn" data-latex="\sum_{#0}^{#1}" title="Summation">∑</button>
         <button class="symbol-btn" data-latex="\int_{#0}^{#1}" title="Integral">∫</button>
@@ -515,6 +551,9 @@
             <option value="Chinese">Chinese (中文)</option>
             <option value="Vietnamese">Vietnamese (Tiếng Việt)</option>
             <option value="Arabic">Arabic (العربية)</option>
+            <option value="Somali">Somali (Soomaali)</option>
+            <option value="French">French (Français)</option>
+            <option value="German">German (Deutsch)</option>
           </select>
           <p class="setting-description">Choose the language you'd like your tutor to use when explaining math concepts.</p>
         </div>
@@ -1328,7 +1367,9 @@
     </div>
   </div>
 
-  <!-- Load storage utilities FIRST to prevent tracking prevention errors -->
+  <!-- Load CSRF and storage utilities FIRST -->
+  <script src="/js/csrf.js"></script>
+  <script src="/js/impersonationBanner.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/sanitize-util.js"></script>
   <script src="/js/logout.js"></script>
@@ -1368,7 +1409,6 @@
   <script src="/js/mobile-more-tools.js"></script>
   <script src="/js/auto-expand-textarea.js"></script>
   <script src="/js/chat-pinch-zoom.js"></script>
-<script src="/js/csrf.js"></script>
   <script src="/js/file-upload.js"></script>
   <script src="/js/student-resources.js"></script>
   <script src="/js/settings.js"></script>
@@ -1383,5 +1423,7 @@
 <script src="/js/feedback.js"></script>
 <script src="/js/tour.js"></script>
 <script src="/js/survey.js"></script>
+<script src="/js/student-announcements.js"></script>
+<script src="/js/guided-tour.js"></script>
 </body>
 </html>

@@ -12,6 +12,14 @@ let whiteboard = null; // New whiteboard instance
 let attachedFile = null;
 let isRapportBuilding = false; // Track if user is in rapport building phase
 
+// --- Message Queue State ---
+// Handles back-to-back messages by queuing them and processing one at a time
+let messageQueue = {
+    queue: [],           // Array of pending messages
+    isProcessing: false, // True when actively processing a message
+    currentMessageId: 0  // Unique ID for each queued message
+};
+
 // Enhanced audio playback state
 let audioState = {
     context: null,
@@ -255,6 +263,11 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
 
         // Show celebration video modal
         showLevelUpCelebration();
+
+        // Track milestone for survey triggers
+        if (window.MathMatixSurvey) {
+            window.MathMatixSurvey.trackMilestone('level_up');
+        }
 
         if (typeof confetti === 'function') {
             const duration = 3 * 1000;
@@ -1399,6 +1412,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getWelcomeMessage() {
         try {
+            // Check if there's a pending active session from sidebar
+            // This happens when user refreshes and has an active conversation
+            if (window.pendingActiveSession && window.pendingActiveSession.conversationId) {
+                console.log('[Chat] Loading pending active session:', window.pendingActiveSession.conversationId);
+                const { conversationId, conversation } = window.pendingActiveSession;
+                window.pendingActiveSession = null; // Clear it
+
+                try {
+                    const response = await csrfFetch(`/api/conversations/${conversationId}/switch`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.messages && data.messages.length > 0) {
+                            window.updateChatForSession(data.conversation, data.messages);
+                            console.log('[Chat] Restored', data.messages.length, 'messages from active session');
+                            return; // Skip welcome message - session restored
+                        }
+                    }
+                } catch (err) {
+                    console.error('[Chat] Failed to load pending session:', err);
+                    // Fall through to normal welcome
+                }
+            }
+
+            // Check if session messages were already loaded from sidebar
+            // Skip welcome message if we restored an existing session
+            if (window.sessionMessagesLoaded) {
+                console.log('[Chat] Session messages already loaded, skipping welcome');
+                window.sessionMessagesLoaded = false; // Reset for next time
+                return;
+            }
+
             // Check rapport building status first
             await checkRapportStatus();
 
@@ -1554,7 +1602,51 @@ document.addEventListener("DOMContentLoaded", () => {
             window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
         }
     }
-    
+
+    /**
+     * Auto-convert common math notation to LaTeX for MathJax rendering
+     * Converts patterns like x^2, a_n, sqrt(12) to \(x^2\), \(a_n\), \(\sqrt{12}\)
+     */
+    function autoConvertMathNotation(text) {
+        if (!text) return text;
+
+        // Skip if text already has LaTeX delimiters (AI already formatted it)
+        if (text.includes('\\(') || text.includes('\\[') || text.includes('$')) {
+            return text;
+        }
+
+        let result = text;
+
+        // Convert sqrt(n) or sqrt{n} to \(\sqrt{n}\)
+        result = result.replace(/\bsqrt\s*[\(\{]([^\)\}]+)[\)\}]/gi, '\\(\\sqrt{$1}\\)');
+
+        // Convert variable^exponent patterns (e.g., x^2, y^3, a^n)
+        // Match: letter(s) followed by ^ and a number or letter or (expression)
+        result = result.replace(/\b([a-zA-Z]+)\^(\d+|\([^\)]+\)|[a-zA-Z])\b/g, '\\($1^{$2}\\)');
+
+        // Convert variable_subscript patterns (e.g., a_n, x_1, a_i)
+        // Match: letter(s) followed by _ and a number or letter
+        result = result.replace(/\b([a-zA-Z]+)_(\d+|[a-zA-Z])\b/g, '\\($1_{$2}\\)');
+
+        // Convert combined patterns like x_1^2
+        result = result.replace(/\b([a-zA-Z]+)_(\d+|[a-zA-Z])\^(\d+|[a-zA-Z])\b/g, '\\($1_{$2}^{$3}\\)');
+
+        // Convert pi to π symbol when standalone
+        result = result.replace(/\bpi\b/gi, '\\(\\pi\\)');
+
+        // Convert infinity
+        result = result.replace(/\binfinity\b/gi, '\\(\\infty\\)');
+
+        // Convert common fractions like 1/2, 3/4 (only simple numeric fractions)
+        // Be careful not to match dates or other patterns
+        result = result.replace(/(?<![\/\d])(\d+)\/(\d+)(?![\/\d])/g, '\\(\\frac{$1}{$2}\\)');
+
+        return result;
+    }
+
+    // Expose for use elsewhere
+    window.autoConvertMathNotation = autoConvertMathNotation;
+
   // ============================================
   // ELEGANT MULTI-FILE UPLOAD SYSTEM
   // ============================================
@@ -1812,9 +1904,12 @@ document.addEventListener("DOMContentLoaded", () => {
         textNode.className = 'message-text';
         
         if (sender === 'ai' && typeof marked !== 'undefined' && marked.parse) {
+            // Auto-convert common math notation (x^2, a_n, sqrt(12)) to LaTeX
+            let processedText = autoConvertMathNotation(text);
+
             // Protect entire LaTeX blocks from markdown parsing
             const latexBlocks = [];
-            let protectedText = text;
+            let protectedText = processedText;
 
             // Extract and protect display math \[...\]
             protectedText = protectedText.replace(/\\\[([\s\S]*?)\\\]/g, (match) => {
@@ -1888,7 +1983,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             textNode.innerHTML = sanitizedHtml;
         } else {
-            textNode.textContent = text;
+            // For user messages, also auto-convert math notation
+            const convertedText = autoConvertMathNotation(text);
+            textNode.innerHTML = convertedText;
         }
         bubble.appendChild(textNode);
 
@@ -2321,32 +2418,247 @@ document.addEventListener("DOMContentLoaded", () => {
         return result;
     }
 
-    async function sendMessage() {
-    const messageText = extractMessageText(userInput).trim();
-    if (!messageText && attachedFiles.length === 0) return;
+    /**
+     * Send a message - uses the message queue to handle back-to-back messages gracefully
+     */
+    function sendMessage() {
+        const messageText = extractMessageText(userInput).trim();
+        if (!messageText && attachedFiles.length === 0) return;
 
-    // CAPTURE RESPONSE TIME from ghost timer
-    let responseTime = null;
-    if (typeof getResponseTimeAndStop === 'function') {
-        responseTime = getResponseTimeAndStop();
+        // Capture response time from ghost timer
+        let responseTime = null;
+        if (typeof getResponseTimeAndStop === 'function') {
+            responseTime = getResponseTimeAndStop();
+        }
+
+        // Clear input immediately for responsive UX
+        userInput.textContent = "";
+        userInput.setAttribute('data-placeholder', "Ask a math question...");
+
+        // Copy attached files and clear them from UI
+        const filesToSend = attachedFiles.length > 0 ? [...attachedFiles] : [];
+        if (filesToSend.length > 0) {
+            console.log(`[Frontend] Queuing ${filesToSend.length} file(s)`);
+            clearAllFiles();
+        }
+
+        // Queue the message for processing
+        queueMessage(messageText, filesToSend, responseTime);
+    }
+    
+    function showThinkingIndicator(show) {
+        if (thinkingIndicator) thinkingIndicator.style.display = show ? "flex" : "none";
     }
 
-    appendMessage(messageText, "user");
-    userInput.textContent = "";
-    userInput.setAttribute('data-placeholder', "Ask a math question..."); // Reset placeholder
-    showThinkingIndicator(true);
+    /**
+     * Queue a message for processing
+     * Shows the message immediately as "queued" and processes when ready
+     */
+    function queueMessage(messageText, files, responseTime) {
+        const queuedMessage = {
+            id: ++messageQueue.currentMessageId,
+            text: messageText,
+            files: files ? [...files] : [],
+            responseTime: responseTime,
+            timestamp: Date.now()
+        };
 
-    try {
-        let response;
+        messageQueue.queue.push(queuedMessage);
+        console.log(`[MessageQueue] Message queued (ID: ${queuedMessage.id}, Queue length: ${messageQueue.queue.length})`);
 
-        // RAPPORT BUILDING MODE: Route to rapport endpoint
-        if (isRapportBuilding && attachedFiles.length === 0) {
-            response = await csrfFetch('/api/rapport/respond', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: messageText }),
-                credentials: 'include'
-            });
+        // Show queued message in UI with "queued" indicator if we're already processing
+        if (messageQueue.isProcessing && messageText) {
+            appendQueuedMessage(messageText, queuedMessage.id);
+        }
+
+        // Start processing if not already processing
+        if (!messageQueue.isProcessing) {
+            processMessageQueue();
+        }
+    }
+
+    /**
+     * Display a queued message in the chat with a visual indicator
+     */
+    function appendQueuedMessage(text, messageId) {
+        if (!chatBox) return;
+
+        // Create message container matching appendMessage structure
+        const messageContainer = document.createElement("div");
+        messageContainer.className = 'message-container user';
+        messageContainer.setAttribute('data-queue-id', messageId);
+
+        // Add user avatar (matching appendMessage logic)
+        if (currentUser) {
+            const avatar = document.createElement("div");
+            avatar.className = "message-avatar";
+
+            if (currentUser.avatar?.dicebearUrl) {
+                avatar.innerHTML = `<img src="${currentUser.avatar.dicebearUrl}" alt="My Avatar" />`;
+            } else if (currentUser.selectedAvatarId && window.AVATAR_CONFIG) {
+                const avatarConfig = window.AVATAR_CONFIG[currentUser.selectedAvatarId];
+                if (avatarConfig) {
+                    const avatarImage = avatarConfig.image || 'default-avatar.png';
+                    avatar.innerHTML = `<img src="/images/avatars/${avatarImage}" alt="${avatarConfig.name}" />`;
+                } else {
+                    avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
+                }
+            } else {
+                avatar.innerHTML = `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">${currentUser.firstName?.charAt(0) || '?'}</div>`;
+            }
+            messageContainer.appendChild(avatar);
+        }
+
+        // Create the message bubble
+        const bubble = document.createElement("div");
+        bubble.className = 'message user queued';
+        bubble.innerHTML = `
+            <div class="queued-indicator">Queued - will send shortly</div>
+            <span class="message-text">${text}</span>
+        `;
+
+        messageContainer.appendChild(bubble);
+        chatBox.appendChild(messageContainer);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    /**
+     * Process the message queue one message at a time
+     */
+    async function processMessageQueue() {
+        if (messageQueue.isProcessing || messageQueue.queue.length === 0) {
+            return;
+        }
+
+        messageQueue.isProcessing = true;
+
+        while (messageQueue.queue.length > 0) {
+            const message = messageQueue.queue.shift();
+            console.log(`[MessageQueue] Processing message ID: ${message.id}`);
+
+            // Remove queued indicator if this message was shown as queued
+            const queuedElement = document.querySelector(`[data-queue-id="${message.id}"]`);
+            if (queuedElement) {
+                // Update to show it's being sent now
+                const indicator = queuedElement.querySelector('.queued-indicator');
+                if (indicator) {
+                    indicator.textContent = 'Sending...';
+                    indicator.style.color = '#4CAF50';
+                }
+            }
+
+            try {
+                await processQueuedMessage(message);
+            } catch (error) {
+                console.error('[MessageQueue] Error processing message:', error);
+            }
+
+            // Remove the queued message element (the real message was appended by processQueuedMessage)
+            if (queuedElement) {
+                queuedElement.remove();
+            }
+        }
+
+        messageQueue.isProcessing = false;
+        console.log('[MessageQueue] Queue empty, processing complete');
+    }
+
+    /**
+     * Process a single queued message (the actual send logic)
+     */
+    async function processQueuedMessage(queuedMsg) {
+        const messageText = queuedMsg.text;
+        const responseTime = queuedMsg.responseTime;
+        const queuedFiles = queuedMsg.files;
+
+        // Only append if not already shown as queued
+        const queuedElement = document.querySelector(`[data-queue-id="${queuedMsg.id}"]`);
+        if (!queuedElement && messageText) {
+            appendMessage(messageText, "user");
+        } else if (queuedElement && messageText) {
+            // Replace queued message with proper user message
+            queuedElement.remove();
+            appendMessage(messageText, "user");
+        }
+
+        showThinkingIndicator(true);
+
+        try {
+            let response;
+
+            // RAPPORT BUILDING MODE: Route to rapport endpoint
+            if (isRapportBuilding && queuedFiles.length === 0) {
+                response = await csrfFetch('/api/rapport/respond', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: messageText }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`;
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+
+                // Update rapport status
+                if (data.rapportComplete) {
+                    isRapportBuilding = false;
+                    console.log('[Rapport] Building complete!');
+                }
+
+                // Display AI response
+                appendMessage(data.message, "ai");
+
+                // If rapport is complete, show assessment pitch
+                if (data.triggerAssessment) {
+                    setTimeout(() => showAssessmentPitch(), 1000);
+                }
+
+                showThinkingIndicator(false);
+                return;
+            }
+
+            // Multi-file upload support
+            if (queuedFiles.length > 0) {
+                console.log(`[Frontend] Sending ${queuedFiles.length} file(s) to /api/chat-with-file`);
+
+                const formData = new FormData();
+
+                // Append all files
+                queuedFiles.forEach((file, index) => {
+                    formData.append(index === 0 ? 'file' : `file${index}`, file);
+                });
+
+                formData.append('message', messageText);
+                formData.append('fileCount', queuedFiles.length);
+
+                if (responseTime !== null) {
+                    formData.append('responseTime', responseTime);
+                }
+
+                response = await csrfFetch("/api/chat-with-file", {
+                    method: "POST",
+                    body: formData,
+                    credentials: 'include'
+                });
+            } else {
+                // Regular chat (no files)
+                const payload = { message: messageText };
+
+                if (responseTime !== null) {
+                    payload.responseTime = responseTime;
+                }
+
+                response = await csrfFetch("/api/chat", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
+                });
+            }
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
@@ -2356,264 +2668,156 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await response.json();
 
-            // Update rapport status
-            if (data.rapportComplete) {
-                isRapportBuilding = false;
-                console.log('[Rapport] Building complete!');
+            // Process AI response (same logic as original sendMessage)
+            let aiText = data.text;
+            let graphData = null;
+            const graphRegex = /\[GRAPH:({.*})\]/;
+            const graphMatch = aiText.match(graphRegex);
+            if (graphMatch) {
+                try {
+                    aiText = aiText.replace(graphRegex, "").trim();
+                    graphData = JSON.parse(graphMatch[1]);
+                } catch (e) { console.error("Failed to parse graph JSON:", e); }
             }
 
-            // Display AI response
-            appendMessage(data.message, "ai");
-
-            // If rapport is complete, show assessment pitch
-            if (data.triggerAssessment) {
-                setTimeout(() => showAssessmentPitch(), 1000);
-            }
-
-            showThinkingIndicator(false);
-            return;
-        }
-
-        // Multi-file upload support
-        if (attachedFiles.length > 0) {
-            console.log(`[Frontend] Sending ${attachedFiles.length} file(s) to /api/chat-with-file`);
-            console.log(`[Frontend] Files:`, attachedFiles.map(f => ({ name: f.name, type: f.type, size: f.size })));
-
-            const formData = new FormData();
-
-            // Append all files
-            attachedFiles.forEach((file, index) => {
-                formData.append(index === 0 ? 'file' : `file${index}`, file);
-            });
-
-            formData.append('message', messageText);
-        
-            formData.append('fileCount', attachedFiles.length);
-
-            // Add response time if captured
-            if (responseTime !== null) {
-                formData.append('responseTime', responseTime);
-            }
-
-            // Clear files from UI immediately
-            clearAllFiles();
-
-            response = await csrfFetch("/api/chat-with-file", {
-                method: "POST",
-                body: formData,
-                credentials: 'include'
-            });
-        } else {
-            // Regular chat (no files)
-            const payload = {
-                message: messageText
-            };
-
-            if (responseTime !== null) {
-                payload.responseTime = responseTime;
-            }
-
-            // Fetch without streaming - message appears all at once like real texting
-            response = await csrfFetch("/api/chat", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                credentials: 'include'
-            });
-        }
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`;
-            throw new Error(errorMessage);
-        }
-        const data = await response.json();
-
-        // The rest of this function handles the AI response and is mostly the same
-        let aiText = data.text;
-        let graphData = null;
-        const graphRegex = /\[GRAPH:({.*})\]/;
-        const graphMatch = aiText.match(graphRegex);
-        if (graphMatch) {
-            try {
-                aiText = aiText.replace(graphRegex, "").trim();
-                graphData = JSON.parse(graphMatch[1]);
-            } catch (e) { console.error("Failed to parse graph JSON:", e); }
-        }
-
-        // Process diagram commands and replace with inline images
-        if (window.diagramDisplay) {
-            try {
-                aiText = await window.diagramDisplay.processMessage(aiText);
-            } catch (error) {
-                console.error('[Diagrams] Error processing diagrams:', error);
-            }
-        }
-
-        // Process inline chat visuals (function graphs, number lines, fractions, charts)
-        let hasInlineVisuals = false;
-        if (window.inlineChatVisuals) {
-            try {
-                const visualResult = window.inlineChatVisuals.processMessage(aiText);
-                aiText = visualResult.html;
-                hasInlineVisuals = visualResult.hasVisuals;
-                if (hasInlineVisuals) {
-                    console.log('[InlineChatVisuals] Processed inline visual commands');
+            // Process diagram commands
+            if (window.diagramDisplay) {
+                try {
+                    aiText = await window.diagramDisplay.processMessage(aiText);
+                } catch (error) {
+                    console.error('[Diagrams] Error processing diagrams:', error);
                 }
-            } catch (error) {
-                console.error('[InlineChatVisuals] Error processing visuals:', error);
             }
-        }
 
-        appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+            // Process inline chat visuals
+            let hasInlineVisuals = false;
+            if (window.inlineChatVisuals) {
+                try {
+                    const visualResult = window.inlineChatVisuals.processMessage(aiText);
+                    aiText = visualResult.html;
+                    hasInlineVisuals = visualResult.hasVisuals;
+                } catch (error) {
+                    console.error('[InlineChatVisuals] Error processing visuals:', error);
+                }
+            }
 
-        // Initialize inline visuals after message is in DOM
-        if (hasInlineVisuals && window.inlineChatVisuals) {
-            const messageElements = document.querySelectorAll('.message.ai');
-            const latestMessage = messageElements[messageElements.length - 1];
-            if (latestMessage) {
-                setTimeout(() => {
-                    window.inlineChatVisuals.initializeVisuals(latestMessage);
-                    // Re-render MathJax after visuals are inserted
-                    if (window.MathJax && window.MathJax.typesetPromise) {
-                        window.MathJax.typesetPromise([latestMessage]).catch(err => console.log('MathJax error:', err));
+            appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
+
+            // Initialize inline visuals after message is in DOM
+            if (hasInlineVisuals && window.inlineChatVisuals) {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    setTimeout(() => {
+                        window.inlineChatVisuals.initializeVisuals(latestMessage);
+                        if (window.MathJax && window.MathJax.typesetPromise) {
+                            window.MathJax.typesetPromise([latestMessage]).catch(err => console.log('MathJax error:', err));
+                        }
+                    }, 100);
+                }
+            }
+
+            // Notify whiteboard-chat layout manager
+            if (window.whiteboardChatLayout) {
+                document.dispatchEvent(new CustomEvent('newAIMessage', { detail: { message: aiText } }));
+            }
+
+            // Board-first chat integration
+            if (data.boardContext && window.chatBoardController) {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    window.chatBoardController.enhanceChatMessage(latestMessage, 'ai', data.boardContext);
+                }
+            }
+
+            if (data.drawingSequence) {
+                renderDrawing(data.drawingSequence);
+            }
+
+            // Execute visual teaching commands
+            if (data.visualCommands && window.visualTeachingHandler) {
+                try {
+                    await window.visualTeachingHandler.executeCommands(data.visualCommands);
+                } catch (error) {
+                    console.error('[VisualTeaching] Failed to execute commands:', error);
+                }
+            }
+
+            if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
+                showTutorUnlockCelebration(data.newlyUnlockedTutors);
+            }
+
+            if (data.userXp !== undefined) {
+                currentUser.level = data.userLevel;
+                currentUser.xpForCurrentLevel = data.userXp;
+                currentUser.xpForNextLevel = data.xpNeeded;
+                updateGamificationDisplay();
+            }
+
+            // Session stats tracker update
+            if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
+                const isCorrect = data.problemResult === 'correct';
+                window.trackProblemAttempt(isCorrect);
+            }
+
+            // XP Ladder display
+            if (data.xpLadder) {
+                const xp = data.xpLadder;
+
+                if (xp.leveledUp) {
+                    triggerXpAnimation(`LEVEL UP! Level ${data.userLevel}`, true, false);
+                }
+
+                if (xp.tier3 > 0 && xp.tier3Behavior) {
+                    const behaviorLabels = {
+                        'explained_reasoning': 'Great reasoning!',
+                        'caught_own_error': 'Self-correction!',
+                        'strategy_selection': 'Smart strategy!',
+                        'persistence': 'Perseverance!',
+                        'transfer': 'Knowledge transfer!',
+                        'taught_back': 'Teaching mastery!'
+                    };
+                    const label = behaviorLabels[xp.tier3Behavior] || 'Exceptional!';
+                    triggerXpAnimation(`+${xp.tier3} XP - ${label}`, false, true);
+
+                    if (typeof window.showXpNotification === 'function') {
+                        window.showXpNotification(xp.tier3, label);
                     }
-                }, 100);
-            }
-        }
+                } else if (xp.tier2 > 0) {
+                    const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
+                    if (typeof window.showXpNotification === 'function') {
+                        window.showXpNotification(xp.tier2, tier2Label);
+                    }
+                }
 
-        // Notify whiteboard-chat layout manager about new AI message
-        if (window.whiteboardChatLayout) {
-            document.dispatchEvent(new CustomEvent('newAIMessage', {
-                detail: { message: aiText }
-            }));
-        }
-
-        // BOARD-FIRST CHAT INTEGRATION: Handle spatial anchoring if boardContext exists
-        if (data.boardContext && window.chatBoardController) {
-            const messageElements = document.querySelectorAll('.message.ai');
-            const latestMessage = messageElements[messageElements.length - 1];
-            if (latestMessage) {
-                window.chatBoardController.enhanceChatMessage(latestMessage, 'ai', data.boardContext);
-                console.log('[ChatBoard] Enhanced message with board context:', data.boardContext);
-            }
-        }
-
-        if (data.drawingSequence) {
-            renderDrawing(data.drawingSequence);
-        }
-
-        // Execute visual teaching commands (whiteboard, algebra tiles, images, manipulatives)
-        if (data.visualCommands && window.visualTeachingHandler) {
-            try {
-                await window.visualTeachingHandler.executeCommands(data.visualCommands);
-                console.log('[VisualTeaching] Executed commands:', data.visualCommands);
-            } catch (error) {
-                console.error('[VisualTeaching] Failed to execute commands:', error);
-            }
-        }
-
-        if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
-            // Show dramatic unlock screen for each tutor
-            showTutorUnlockCelebration(data.newlyUnlockedTutors);
-        }
-        
-        if (data.userXp !== undefined) {
-            currentUser.level = data.userLevel;
-            currentUser.xpForCurrentLevel = data.userXp;
-            currentUser.xpForNextLevel = data.xpNeeded;
-            updateGamificationDisplay();
-        }
-
-        // =====================================================
-        // SESSION STATS TRACKER UPDATE
-        // Update the onscreen tracker (problems completed, accuracy)
-        // =====================================================
-        if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
-            const isCorrect = data.problemResult === 'correct';
-            window.trackProblemAttempt(isCorrect);
-            console.log(`[SessionStats] Problem tracked: ${data.problemResult}`);
-        }
-
-        // =====================================================
-        // XP LADDER DISPLAY (Three Tiers)
-        // Tier 1: Silent (no display)
-        // Tier 2: Minimal (correct answer acknowledgment)
-        // Tier 3: Ceremonial (AI provides explanation, we animate)
-        // =====================================================
-        if (data.xpLadder) {
-            const xp = data.xpLadder;
-
-            // LEVEL UP - Always celebrate
-            if (xp.leveledUp) {
-                triggerXpAnimation(`LEVEL UP! Level ${data.userLevel}`, true, false);
+                if ((xp.tier1 > 0 || xp.tier2 > 0 || xp.tier3 > 0) && window.MathMatixSurvey) {
+                    window.MathMatixSurvey.trackProblemSolved();
+                }
+            } else if (data.specialXpAwarded) {
+                const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
+                triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
             }
 
-            // TIER 3: Core Behavior XP (ceremonial - AI already explained why)
-            if (xp.tier3 > 0 && xp.tier3Behavior) {
-                // Show big XP animation for identity-building moments
-                const behaviorLabels = {
-                    'explained_reasoning': 'Great reasoning!',
-                    'caught_own_error': 'Self-correction!',
-                    'strategy_selection': 'Smart strategy!',
-                    'persistence': 'Perseverance!',
-                    'transfer': 'Knowledge transfer!',
-                    'taught_back': 'Teaching mastery!'
-                };
-                const label = behaviorLabels[xp.tier3Behavior] || 'Exceptional!';
-                triggerXpAnimation(`🎖️ +${xp.tier3} XP - ${label}`, false, true);
+        } catch (error) {
+            console.error("Chat error:", error);
 
-                if (typeof window.showXpNotification === 'function') {
-                    window.showXpNotification(xp.tier3, label);
+            let errorMessage = "I'm having trouble connecting. Please try again.";
+            if (error.message) {
+                if (error.message.includes('Mathpix') || error.message.includes('API credentials')) {
+                    errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable. Please try again later or contact support.";
+                } else if (error.message.includes('PDF processing failed') || error.message.includes('Image OCR failed')) {
+                    errorMessage = `File processing error: ${error.message}. Please try a different file or contact support if the issue persists.`;
+                } else if (!error.message.includes('Server error')) {
+                    errorMessage = error.message;
                 }
             }
-            // TIER 2: Performance XP (minimal acknowledgment)
-            else if (xp.tier2 > 0) {
-                // Subtle notification for correct answers
-                const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
-                if (typeof window.showXpNotification === 'function') {
-                    window.showXpNotification(xp.tier2, tier2Label);
-                }
-                // No big animation - just the notification
-            }
-            // TIER 1: Silent (no display at all)
-            // The +2 XP is added to their total but never shown
+
+            appendMessage(errorMessage, "system-error");
+        } finally {
+            showThinkingIndicator(false);
+            setTimeout(() => showDefaultSuggestions(), 500);
         }
-        // Legacy fallback for old response format
-        else if (data.specialXpAwarded) {
-            const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
-            triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
-        }
-
-        // STREAK COUNTER SHELVED FOR BETA
-
-    } catch (error) {
-        console.error("Chat error:", error);
-
-        // Show specific error message if available, otherwise generic message
-        let errorMessage = "I'm having trouble connecting. Please try again.";
-        if (error.message) {
-            // Check if it's a specific error we can help with
-            if (error.message.includes('Mathpix') || error.message.includes('API credentials')) {
-                errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable. Please try again later or contact support.";
-            } else if (error.message.includes('PDF processing failed') || error.message.includes('Image OCR failed')) {
-                errorMessage = `File processing error: ${error.message}. Please try a different file or contact support if the issue persists.`;
-            } else if (!error.message.includes('Server error')) {
-                errorMessage = error.message;
-            }
-        }
-
-        appendMessage(errorMessage, "system-error");
-    } finally {
-        showThinkingIndicator(false);
-
-        // Show suggestions after response (even on error)
-        setTimeout(() => showDefaultSuggestions(), 500);
-    }
-}
-    
-    function showThinkingIndicator(show) {
-        if (thinkingIndicator) thinkingIndicator.style.display = show ? "flex" : "none";
     }
 
     /**
@@ -3294,7 +3498,7 @@ What would you like to work on first?`;
     async function updateSettings(setting) {
         if (!currentUser) return;
         try {
-            const res = await fetch('/api/user/settings', {
+            const res = await csrfFetch('/api/user/settings', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(setting),
@@ -3470,8 +3674,8 @@ What would you like to work on first?`;
         });
     }
 
-    // Handle symbol button clicks
-    document.querySelectorAll('.symbol-btn').forEach(btn => {
+    // Handle symbol button clicks (both .symbol-btn and .script-btn)
+    document.querySelectorAll('.symbol-btn, .script-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const latex = btn.getAttribute('data-latex');
             if (inlineMathEditor && latex) {
@@ -3979,6 +4183,9 @@ What would you like to work on first?`;
     window.updateChatForSession = function(conversation, messages) {
         console.log('[updateChatForSession] Switching to conversation:', conversation);
 
+        // Track current conversation ID globally
+        window.currentConversationId = conversation._id;
+
         // Clear current chat
         if (chatBox) {
             chatBox.innerHTML = '';
@@ -4030,6 +4237,144 @@ What would you like to work on first?`;
 
         console.log('[updateChatForSession] Loaded', messages?.length || 0, 'messages');
     };
+
+    /**
+     * Resume Banner - "Continue where you left off"
+     * Shows when user returns to the app with recent session context
+     */
+    async function checkAndShowResumeBanner() {
+        try {
+            const response = await fetch('/api/chat/resume-context', {
+                credentials: 'include'
+            });
+            const data = await response.json();
+
+            if (!data.hasResumeContext) {
+                console.log('[ResumeBanner] No resume context available');
+                return;
+            }
+
+            // Don't show if this is the currently active session already loaded
+            const currentSessionId = window.currentConversationId;
+            if (currentSessionId && currentSessionId === data.sessionId) {
+                console.log('[ResumeBanner] Already on this session');
+                return;
+            }
+
+            // Don't show for very recent activity (< 5 minutes)
+            if (data.timeAgo === 'Just now') {
+                return;
+            }
+
+            showResumeBanner(data);
+        } catch (error) {
+            console.error('[ResumeBanner] Failed to fetch resume context:', error);
+        }
+    }
+
+    function showResumeBanner(context) {
+        // Remove any existing banner
+        const existingBanner = document.getElementById('resume-banner');
+        if (existingBanner) existingBanner.remove();
+
+        // Build context description
+        let contextDescription = '';
+        if (context.lastContext?.userMessage) {
+            contextDescription = `You asked: "${context.lastContext.userMessage}${context.lastContext.userMessage.length >= 100 ? '...' : ''}"`;
+        } else if (context.strugglingWith) {
+            contextDescription = `Working on: ${context.strugglingWith}`;
+        } else if (context.topic) {
+            contextDescription = `Topic: ${context.topic}`;
+        }
+
+        // Build stats string
+        let statsStr = '';
+        if (context.stats.problemsAttempted > 0) {
+            const accuracy = context.stats.problemsCorrect > 0
+                ? Math.round((context.stats.problemsCorrect / context.stats.problemsAttempted) * 100)
+                : 0;
+            statsStr = `${context.stats.problemsAttempted} problems • ${accuracy}% correct`;
+        } else if (context.stats.messageCount > 0) {
+            statsStr = `${context.stats.messageCount} messages`;
+        }
+
+        const banner = document.createElement('div');
+        banner.id = 'resume-banner';
+        banner.className = 'resume-banner';
+        banner.innerHTML = `
+            <div class="resume-banner-content">
+                <div class="resume-banner-icon">${context.topicEmoji || '📚'}</div>
+                <div class="resume-banner-text">
+                    <div class="resume-banner-title">Continue where you left off?</div>
+                    <div class="resume-banner-session">
+                        <strong>${escapeHtml(context.displayName)}</strong>
+                        <span class="resume-banner-time">${context.timeAgo}</span>
+                    </div>
+                    ${contextDescription ? `<div class="resume-banner-context">${escapeHtml(contextDescription)}</div>` : ''}
+                    ${statsStr ? `<div class="resume-banner-stats">${statsStr}</div>` : ''}
+                </div>
+            </div>
+            <div class="resume-banner-actions">
+                <button class="resume-banner-btn resume-btn-primary" id="resume-continue-btn">
+                    <i class="fas fa-play"></i> Continue
+                </button>
+                <button class="resume-banner-btn resume-btn-secondary" id="resume-dismiss-btn">
+                    Start Fresh
+                </button>
+            </div>
+        `;
+
+        // Insert at top of chat container
+        const chatContainer = document.getElementById('chat-container');
+        if (chatContainer) {
+            chatContainer.insertBefore(banner, chatContainer.firstChild);
+
+            // Add event listeners
+            document.getElementById('resume-continue-btn').addEventListener('click', () => {
+                resumeSession(context.sessionId);
+                banner.remove();
+            });
+
+            document.getElementById('resume-dismiss-btn').addEventListener('click', () => {
+                banner.classList.add('resume-banner-dismissed');
+                setTimeout(() => banner.remove(), 300);
+                // Store dismissal in session storage so it doesn't show again this session
+                sessionStorage.setItem('resume-banner-dismissed', 'true');
+            });
+        }
+    }
+
+    async function resumeSession(sessionId) {
+        try {
+            // Use the sidebar's switchSession if available
+            if (window.sidebar && typeof window.sidebar.switchSession === 'function') {
+                await window.sidebar.switchSession(sessionId);
+            } else {
+                // Fallback: call the API directly and reload
+                await fetch(`/api/conversations/${sessionId}/switch`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('[ResumeBanner] Failed to resume session:', error);
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Check for resume context after a short delay (let the page settle)
+    setTimeout(() => {
+        if (!sessionStorage.getItem('resume-banner-dismissed')) {
+            checkAndShowResumeBanner();
+        }
+    }, 1000);
 
     initializeApp();
 });

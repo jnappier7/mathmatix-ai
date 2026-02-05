@@ -32,9 +32,14 @@ router.get('/', isAuthenticated, async (req, res) => {
     // Check if assessment is needed
     const assessmentNeeded = await needsAssessment(userId);
 
+    // Get user's active conversation ID for session persistence
+    const user = await User.findById(userId).select('activeConversationId').lean();
+    const activeConversationId = user?.activeConversationId || null;
+
     res.json({
       conversations,
-      assessmentNeeded
+      assessmentNeeded,
+      activeConversationId
     });
   } catch (error) {
     logger.error('Failed to get conversations', { error });
@@ -119,6 +124,143 @@ router.post('/:id/switch', isAuthenticated, validateObjectId('id'), async (req, 
   } catch (error) {
     logger.error('Failed to switch conversation', { error });
     res.status(500).json({ message: 'Failed to switch conversation' });
+  }
+});
+
+/**
+ * PATCH /api/conversations/:id/rename
+ * Rename a conversation
+ */
+router.patch('/:id/rename', isAuthenticated, validateObjectId('id'), async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const conversationId = req.params.id;
+    const { name } = req.body;
+
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      return res.status(400).json({ message: 'Name is required' });
+    }
+
+    if (name.length > 50) {
+      return res.status(400).json({ message: 'Name must be 50 characters or less' });
+    }
+
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      userId,
+      isActive: true
+    });
+
+    if (!conversation) {
+      return res.status(404).json({ message: 'Conversation not found' });
+    }
+
+    conversation.customName = name.trim();
+    await conversation.save();
+
+    logger.info('Renamed conversation', {
+      userId,
+      conversationId,
+      newName: name.trim()
+    });
+
+    res.json({
+      success: true,
+      conversation: {
+        _id: conversation._id,
+        name: conversation.customName || conversation.conversationName || conversation.topic || 'General Chat'
+      }
+    });
+  } catch (error) {
+    logger.error('Failed to rename conversation', { error });
+    res.status(500).json({ message: 'Failed to rename conversation' });
+  }
+});
+
+/**
+ * PATCH /api/conversations/:id/pin
+ * Toggle pin status for a conversation
+ */
+router.patch('/:id/pin', isAuthenticated, validateObjectId('id'), async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const conversationId = req.params.id;
+
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      userId,
+      isActive: true
+    });
+
+    if (!conversation) {
+      return res.status(404).json({ message: 'Conversation not found' });
+    }
+
+    conversation.isPinned = !conversation.isPinned;
+    await conversation.save();
+
+    logger.info('Toggled conversation pin status', {
+      userId,
+      conversationId,
+      isPinned: conversation.isPinned
+    });
+
+    res.json({
+      success: true,
+      isPinned: conversation.isPinned
+    });
+  } catch (error) {
+    logger.error('Failed to toggle pin status', { error });
+    res.status(500).json({ message: 'Failed to update pin status' });
+  }
+});
+
+/**
+ * GET /api/conversations/search
+ * Search conversations by name or topic
+ */
+router.get('/search', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { q } = req.query;
+
+    if (!q || q.trim().length === 0) {
+      return res.json({ conversations: [] });
+    }
+
+    const searchRegex = new RegExp(q.trim(), 'i');
+
+    const conversations = await Conversation.find({
+      userId,
+      isActive: true,
+      $or: [
+        { customName: searchRegex },
+        { conversationName: searchRegex },
+        { topic: searchRegex },
+        { currentTopic: searchRegex }
+      ]
+    })
+    .sort({ isPinned: -1, lastActivity: -1 })
+    .limit(20)
+    .select('_id topic topicEmoji conversationType conversationName customName lastActivity messages currentTopic isPinned');
+
+    const formattedConversations = conversations.map(conv => ({
+      _id: conv._id,
+      topic: conv.topic,
+      topicEmoji: conv.topicEmoji,
+      conversationType: conv.conversationType,
+      name: conv.customName || conv.conversationName || conv.topic || 'General Chat',
+      lastActivity: conv.lastActivity,
+      messageCount: conv.messages.length,
+      lastMessage: conv.messages.length > 0 ? conv.messages[conv.messages.length - 1].content.substring(0, 100) : null,
+      currentTopic: conv.currentTopic,
+      isPinned: conv.isPinned
+    }));
+
+    res.json({ conversations: formattedConversations });
+  } catch (error) {
+    logger.error('Failed to search conversations', { error });
+    res.status(500).json({ message: 'Failed to search conversations' });
   }
 });
 

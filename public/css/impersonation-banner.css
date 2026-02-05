@@ -1,0 +1,121 @@
+/* Impersonation Indicator Styles
+ * Subtle teal glow + small floating pill when viewing as another user
+ */
+
+/* Teal glow effect on body when impersonating */
+body.impersonation-active {
+  box-shadow: inset 0 0 0 3px rgba(18, 179, 179, 0.6);
+}
+
+/* Target common chat containers for the glow effect */
+body.impersonation-active .chat-container,
+body.impersonation-active .main-content,
+body.impersonation-active #chat-area,
+body.impersonation-active .page-layout {
+  box-shadow: inset 0 0 20px rgba(18, 179, 179, 0.15);
+}
+
+/* Small floating pill indicator */
+.impersonation-pill {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #12B3B3 0%, #0d9999 100%);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 12px rgba(18, 179, 179, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: impersonation-fade-in 0.3s ease-out;
+}
+
+.impersonation-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(18, 179, 179, 0.5);
+}
+
+@keyframes impersonation-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.impersonation-pill__icon {
+  font-size: 14px;
+}
+
+.impersonation-pill__text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.impersonation-pill__name {
+  font-weight: 600;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.impersonation-pill__exit {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.impersonation-pill__exit:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Expanded state on hover - show more details */
+.impersonation-pill__details {
+  display: none;
+  font-size: 11px;
+  opacity: 0.85;
+  margin-left: 4px;
+}
+
+.impersonation-pill:hover .impersonation-pill__details {
+  display: inline;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .impersonation-pill {
+    bottom: 80px; /* Above mobile nav */
+    left: 10px;
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .impersonation-pill__name {
+    max-width: 80px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .impersonation-pill {
+    animation: none;
+  }
+}

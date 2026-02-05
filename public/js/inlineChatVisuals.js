@@ -16,7 +16,81 @@ class InlineChatVisuals {
     constructor() {
         this.visualCounter = 0;
         this.addStyles();
+        this.setupModal();
         console.log('✅ InlineChatVisuals loaded - Interactive chat visuals ready!');
+    }
+
+    /**
+     * Setup modal for expanded visual view (iMessage-style)
+     */
+    setupModal() {
+        if (document.getElementById('icv-modal')) return;
+
+        const modalHTML = `
+        <div id="icv-modal" class="icv-modal" onclick="window.inlineChatVisuals.closeModal(event)">
+            <div class="icv-modal-content" onclick="event.stopPropagation()">
+                <button class="icv-modal-close" onclick="window.inlineChatVisuals.closeModal()">&times;</button>
+                <div id="icv-modal-body" class="icv-modal-body"></div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    /**
+     * Expand a visual into the modal for interaction
+     */
+    expandVisual(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const modal = document.getElementById('icv-modal');
+        const modalBody = document.getElementById('icv-modal-body');
+        if (!modal || !modalBody) return;
+
+        // Clone the container content for the modal
+        const clone = container.cloneNode(true);
+        clone.classList.remove('icv-collapsed');
+        clone.classList.add('icv-expanded');
+        clone.removeAttribute('onclick');
+        clone.id = containerId + '-modal';
+
+        // Remove the expand hint from the clone
+        const hint = clone.querySelector('.icv-expand-hint');
+        if (hint) hint.remove();
+
+        modalBody.innerHTML = '';
+        modalBody.appendChild(clone);
+        modal.classList.add('icv-modal-open');
+        document.body.style.overflow = 'hidden';
+
+        // Re-render graphs in modal if needed
+        const graphEl = clone.querySelector('.icv-graph');
+        if (graphEl && graphEl.dataset.config) {
+            graphEl.id = containerId + '-modal-graph';
+            // Clear any cloned content (errors, previously rendered graphs)
+            graphEl.innerHTML = '';
+            setTimeout(() => this.renderGraph(graphEl.id), 100);
+        }
+
+        // Re-render slider graphs if needed
+        const sliderGraphEl = clone.querySelector('.icv-slider-graph');
+        if (sliderGraphEl && sliderGraphEl.dataset.config) {
+            sliderGraphEl.id = containerId + '-modal-slider';
+            setTimeout(() => this.renderSliderGraph(sliderGraphEl.id), 100);
+        }
+    }
+
+    /**
+     * Close the modal
+     */
+    closeModal(event) {
+        if (event && event.target && !event.target.classList.contains('icv-modal')) return;
+        const modal = document.getElementById('icv-modal');
+        if (modal) {
+            modal.classList.remove('icv-modal-open');
+            document.body.style.overflow = '';
+        }
     }
 
     /**
@@ -138,16 +212,97 @@ class InlineChatVisuals {
         }).replace(/"/g, '&quot;');
 
         return `
-        <div class="icv-container icv-graph-container" id="${id}-wrapper">
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-graph" id="${id}" data-config="${graphConfig}"></div>
             <div class="icv-controls">
-                <button class="icv-btn icv-zoom-in" onclick="window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
-                <button class="icv-btn icv-zoom-out" onclick="window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
-                <button class="icv-btn icv-reset" onclick="window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
             </div>
         </div>
         `;
+    }
+
+    /**
+     * Normalize function string - convert common text descriptions to math functions
+     */
+    normalizeFunctionString(fn) {
+        if (!fn || typeof fn !== 'string') return 'x^2';
+
+        let normalized = fn.trim().toLowerCase().replace(/\s+/g, '');
+
+        // Map common text descriptions to actual functions
+        const functionMappings = {
+            'tangent': 'tan(x)',
+            'thetangent': 'tan(x)',
+            'thetangentfunction': 'tan(x)',
+            'thetangentfunctions': 'tan(x)',
+            'tangentfunction': 'tan(x)',
+            'tangentfunctions': 'tan(x)',
+            'sine': 'sin(x)',
+            'thesine': 'sin(x)',
+            'thesinefunction': 'sin(x)',
+            'sinefunction': 'sin(x)',
+            'cosine': 'cos(x)',
+            'thecosine': 'cos(x)',
+            'thecosinefunction': 'cos(x)',
+            'cosinefunction': 'cos(x)',
+            'quadratic': 'x^2',
+            'parabola': 'x^2',
+            'linear': 'x',
+            'cubic': 'x^3',
+            'exponential': 'exp(x)',
+            'logarithm': 'log(x)',
+            'logarithmic': 'log(x)',
+            'squareroot': 'sqrt(x)',
+            'absolute': 'abs(x)',
+            'absolutevalue': 'abs(x)'
+        };
+
+        // Check if it's a text description that needs mapping
+        if (functionMappings[normalized]) {
+            return functionMappings[normalized];
+        }
+
+        // Check if the string contains keywords that suggest a function type
+        const keywordPatterns = [
+            { pattern: /bounce|parabola|quadratic|squared/, fn: 'x^2' },
+            { pattern: /cubic|cubed/, fn: 'x^3' },
+            { pattern: /tangent|tan/, fn: 'tan(x)' },
+            { pattern: /sine|sin/, fn: 'sin(x)' },
+            { pattern: /cosine|cos/, fn: 'cos(x)' },
+            { pattern: /exponential|exp|growth/, fn: 'exp(x)' },
+            { pattern: /logarithm|log|ln/, fn: 'log(x)' },
+            { pattern: /sqrt|squareroot|root/, fn: 'sqrt(x)' },
+            { pattern: /absolute|abs/, fn: 'abs(x)' },
+            { pattern: /linear|line|straight/, fn: 'x' }
+        ];
+
+        for (const { pattern, fn: defaultFn } of keywordPatterns) {
+            if (pattern.test(normalized)) {
+                console.log(`[InlineChatVisuals] Mapped "${fn}" to "${defaultFn}" via keyword pattern`);
+                return defaultFn;
+            }
+        }
+
+        // Check if it looks like a valid math expression
+        // Valid expressions contain: x, numbers, operators (+,-,*,/,^), parentheses, or known functions
+        const validMathPattern = /^[\d\sx\+\-\*\/\^\(\)\.\,]+$|^(sin|cos|tan|log|ln|exp|sqrt|abs|pow)\s*\(/i;
+        const looksLikeMath = validMathPattern.test(fn.trim()) ||
+                             /[x\d]/.test(fn) && /[\+\-\*\/\^]/.test(fn);
+
+        if (looksLikeMath) {
+            return fn;
+        }
+
+        // If it doesn't look like math and no keywords matched, default to x^2
+        console.warn(`[InlineChatVisuals] Unrecognized function "${fn}", defaulting to x^2`);
+        return 'x^2';
     }
 
     /**
@@ -161,7 +316,25 @@ class InlineChatVisuals {
         }
 
         try {
+            // Validate data-config exists
+            if (!container.dataset.config) {
+                console.warn(`[InlineChatVisuals] No config found for graph ${id}`);
+                container.innerHTML = `<div class="icv-error">Graph configuration missing</div>`;
+                return;
+            }
+
+            // Clear any existing content (including error divs from previous attempts)
+            container.innerHTML = '';
+
             const config = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
+
+            // Validate config has required properties
+            if (!config || typeof config !== 'object') {
+                throw new Error('Invalid graph configuration');
+            }
+
+            // Normalize and validate the function string
+            const fn = this.normalizeFunctionString(config.fn);
             const width = container.offsetWidth || 300;
 
             const plotConfig = {
@@ -169,10 +342,10 @@ class InlineChatVisuals {
                 width: width,
                 height: 250,
                 grid: true,
-                xAxis: { domain: [config.xMin, config.xMax] },
+                xAxis: { domain: [config.xMin ?? -10, config.xMax ?? 10] },
                 data: [{
-                    fn: config.fn,
-                    color: config.color
+                    fn: fn,
+                    color: config.color || '#667eea'
                 }]
             };
 
@@ -182,12 +355,17 @@ class InlineChatVisuals {
 
             const plot = functionPlot(plotConfig);
             container._functionPlot = plot;
-            container._originalConfig = config;
+            container._originalConfig = { ...config, fn }; // Store normalized fn
 
-            console.log(`[InlineChatVisuals] Rendered graph for: ${config.fn}`);
+            console.log(`[InlineChatVisuals] Rendered graph for: ${fn}`);
         } catch (error) {
             console.error(`[InlineChatVisuals] Error rendering graph ${id}:`, error);
-            container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
+            // Only show error if graph didn't actually render
+            // (function-plot may render successfully then throw during interactivity setup)
+            const hasRenderedContent = container.querySelector('svg') || container.querySelector('canvas');
+            if (!hasRenderedContent) {
+                container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
+            }
         }
     }
 
@@ -195,8 +373,12 @@ class InlineChatVisuals {
         const container = document.getElementById(id);
         if (!container || !container._functionPlot) return;
 
-        const plot = container._functionPlot;
         const config = container._originalConfig;
+        if (!config || typeof config.xMax !== 'number' || typeof config.xMin !== 'number') {
+            console.warn(`[InlineChatVisuals] Cannot zoom graph ${id}: invalid config`);
+            return;
+        }
+
         const xRange = config.xMax - config.xMin;
         const newRange = xRange * factor;
         const center = (config.xMax + config.xMin) / 2;
@@ -210,11 +392,15 @@ class InlineChatVisuals {
 
     resetGraph(id) {
         const container = document.getElementById(id);
-        if (!container) return;
+        if (!container || !container.dataset.config) return;
 
-        const originalConfig = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
-        container._originalConfig = originalConfig;
-        this.renderGraph(id);
+        try {
+            const originalConfig = JSON.parse(container.dataset.config.replace(/&quot;/g, '"'));
+            container._originalConfig = originalConfig;
+            this.renderGraph(id);
+        } catch (error) {
+            console.error(`[InlineChatVisuals] Error resetting graph ${id}:`, error);
+        }
     }
 
     // ==========================================
@@ -688,14 +874,18 @@ class InlineChatVisuals {
             slidersHtml += `
             <div class="icv-slider-row">
                 <label>${sp.name} = <span id="${id}-${sp.name}-val">${sp.default}</span></label>
-                <input type="range" id="${id}-${sp.name}"
+                <input type="range" class="icv-slider-input" id="${id}-${sp.name}"
                        min="${sp.min}" max="${sp.max}" value="${sp.default}" step="0.1"
-                       oninput="window.inlineChatVisuals.updateSliderGraph('${id}', '${sp.name}', this.value)">
+                       data-param="${sp.name}">
             </div>`;
         });
 
         return `
-        <div class="icv-container icv-slider-container" id="${id}-wrapper" data-config="${sliderConfig}">
+        <div class="icv-container icv-slider-container icv-collapsed" id="${id}-wrapper" data-config="${sliderConfig}" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-slider-graph" id="${id}"></div>
             <div class="icv-slider-controls">${slidersHtml}</div>
@@ -1574,6 +1764,58 @@ class InlineChatVisuals {
      * Initialize all visuals in a container (call after DOM insertion)
      */
     initializeVisuals(container) {
+        // Attach click handlers to collapsed containers (inline onclick may be stripped by DOMPurify)
+        container.querySelectorAll('.icv-collapsed').forEach(collapsedEl => {
+            if (collapsedEl.id && !collapsedEl._clickHandlerAttached) {
+                collapsedEl._clickHandlerAttached = true;
+                collapsedEl.addEventListener('click', (e) => {
+                    // Don't expand if clicking on control buttons
+                    if (e.target.closest('.icv-controls') || e.target.closest('.icv-btn')) {
+                        return;
+                    }
+                    this.expandVisual(collapsedEl.id);
+                });
+            }
+        });
+
+        // Attach click handlers to graph control buttons
+        container.querySelectorAll('.icv-graph-container').forEach(graphContainer => {
+            const graphEl = graphContainer.querySelector('.icv-graph');
+            if (!graphEl || !graphEl.id) return;
+
+            const graphId = graphEl.id;
+
+            // Zoom in button
+            const zoomInBtn = graphContainer.querySelector('.icv-zoom-in');
+            if (zoomInBtn && !zoomInBtn._clickHandlerAttached) {
+                zoomInBtn._clickHandlerAttached = true;
+                zoomInBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.zoomGraph(graphId, 0.8);
+                });
+            }
+
+            // Zoom out button
+            const zoomOutBtn = graphContainer.querySelector('.icv-zoom-out');
+            if (zoomOutBtn && !zoomOutBtn._clickHandlerAttached) {
+                zoomOutBtn._clickHandlerAttached = true;
+                zoomOutBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.zoomGraph(graphId, 1.25);
+                });
+            }
+
+            // Reset button
+            const resetBtn = graphContainer.querySelector('.icv-reset');
+            if (resetBtn && !resetBtn._clickHandlerAttached) {
+                resetBtn._clickHandlerAttached = true;
+                resetBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.resetGraph(graphId);
+                });
+            }
+        });
+
         // Initialize function graphs
         container.querySelectorAll('.icv-graph').forEach(graphEl => {
             if (graphEl.id && !graphEl._functionPlot) {
@@ -1586,6 +1828,23 @@ class InlineChatVisuals {
             if (graphEl.id) {
                 setTimeout(() => this.renderSliderGraph(graphEl.id), 50);
             }
+        });
+
+        // Attach slider input handlers
+        container.querySelectorAll('.icv-slider-container').forEach(sliderContainer => {
+            sliderContainer.querySelectorAll('.icv-slider-input').forEach(slider => {
+                if (slider._inputHandlerAttached) return;
+                slider._inputHandlerAttached = true;
+
+                const containerId = sliderContainer.id?.replace('-wrapper', '');
+                const paramName = slider.dataset.param;
+
+                if (containerId && paramName) {
+                    slider.addEventListener('input', (e) => {
+                        this.updateSliderGraph(containerId, paramName, e.target.value);
+                    });
+                }
+            });
         });
     }
 
@@ -1630,6 +1889,132 @@ class InlineChatVisuals {
                 padding: 10px;
                 border-radius: 8px;
                 font-size: 13px;
+            }
+
+            /* Collapsed thumbnail state (iMessage-style) */
+            .icv-collapsed {
+                max-width: 200px;
+                max-height: 150px;
+                overflow: hidden;
+                cursor: pointer;
+                position: relative;
+                padding: 12px;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .icv-collapsed:hover {
+                transform: scale(1.02);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            }
+
+            .icv-collapsed:active {
+                transform: scale(0.98);
+            }
+
+            .icv-collapsed .icv-graph,
+            .icv-collapsed .icv-slider-graph {
+                min-height: 100px !important;
+                max-height: 100px !important;
+                pointer-events: none;
+                transform: scale(0.6);
+                transform-origin: top left;
+            }
+
+            .icv-collapsed .icv-controls,
+            .icv-collapsed .icv-slider-controls,
+            .icv-collapsed .icv-slider-equation {
+                display: none;
+            }
+
+            .icv-collapsed .icv-title {
+                font-size: 12px;
+                margin-bottom: 8px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .icv-expand-hint {
+                position: absolute;
+                bottom: 8px;
+                right: 8px;
+                background: rgba(0,0,0,0.6);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 6px;
+                font-size: 11px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                z-index: 10;
+                backdrop-filter: blur(4px);
+            }
+
+            .icv-expand-icon {
+                font-size: 14px;
+            }
+
+            .icv-expanded .icv-expand-hint {
+                display: none;
+            }
+
+            /* Modal styles */
+            .icv-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.85);
+                z-index: 10000;
+                justify-content: center;
+                align-items: center;
+                backdrop-filter: blur(8px);
+            }
+
+            .icv-modal-open {
+                display: flex;
+            }
+
+            .icv-modal-content {
+                position: relative;
+                max-width: 90vw;
+                max-height: 90vh;
+                overflow: auto;
+            }
+
+            .icv-modal-body {
+                background: transparent;
+            }
+
+            .icv-modal-body .icv-container {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .icv-modal-body .icv-graph,
+            .icv-modal-body .icv-slider-graph {
+                min-height: 300px !important;
+            }
+
+            .icv-modal-close {
+                position: absolute;
+                top: -45px;
+                right: 0;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 32px;
+                cursor: pointer;
+                padding: 8px;
+                line-height: 1;
+                opacity: 0.8;
+                transition: opacity 0.2s;
+            }
+
+            .icv-modal-close:hover {
+                opacity: 1;
             }
 
             /* Graph Container */

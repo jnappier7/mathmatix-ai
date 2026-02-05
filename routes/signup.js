@@ -3,10 +3,12 @@
 
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const User = require('../models/user'); // Import the User model
 const EnrollmentCode = require('../models/enrollmentCode'); // For class enrollment codes
 const { ensureNotAuthenticated } = require('../middleware/auth'); // Middleware to ensure user is not already logged in
 const passport = require('passport'); // For req.logIn after successful signup
+const { sendEmailVerification } = require('../utils/emailService'); // For email verification
 
 /**
  * @route   GET /signup/validate-code
@@ -118,6 +120,10 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
         }
 
         // --- 4. Create New User ---
+        // Generate email verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const hashedToken = crypto.createHash('sha256').update(verificationToken).digest('hex');
+
         const newUser = new User({
             firstName,
             lastName,
@@ -126,6 +132,10 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
             passwordHash: password, // The pre-save hook in models/user.js will hash this
             role,
             needsProfileCompletion: true, // New users need to complete their profile
+            // Email verification
+            emailVerified: false,
+            emailVerificationToken: hashedToken,
+            emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
             // Assign teacher from enrollment code if available
             ...(teacherIdFromCode ? { teacherId: teacherIdFromCode } : {}),
             // Use grade level from enrollment code if available
@@ -136,6 +146,19 @@ router.post('/', ensureNotAuthenticated, async (req, res, next) => {
         });
 
         await newUser.save(); // Save the new user to MongoDB
+
+        // Send verification email (non-blocking - don't fail signup if email fails)
+        sendEmailVerification(newUser.email, newUser.firstName, verificationToken)
+            .then(result => {
+                if (result.success) {
+                    console.log(`LOG: Verification email sent to ${newUser.email}`);
+                } else {
+                    console.warn(`WARN: Failed to send verification email to ${newUser.email}:`, result.error);
+                }
+            })
+            .catch(err => {
+                console.error(`ERROR: Failed to send verification email to ${newUser.email}:`, err);
+            });
 
         // --- 4b. Record enrollment if code was used ---
         if (enrollmentCodeDoc) {

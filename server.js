@@ -80,6 +80,7 @@ const { csrfProtection } = require("./middleware/csrf");
 const loginRoutes = require('./routes/login');
 const signupRoutes = require('./routes/signup');
 const passwordResetRoutes = require('./routes/passwordReset');
+const authRoutes = require('./routes/auth');  // Email verification and auth utilities
 const studentRoutes = require('./routes/student');
 const teacherRoutes = require('./routes/teacher');
 const adminRoutes = require('./routes/admin');
@@ -121,7 +122,13 @@ const tourSurveyRoutes = require('./routes/tourSurvey');  // Tour and survey for
 const diagramRoutes = require('./routes/diagram');  // Diagram generation for visual learners
 const messagingRoutes = require('./routes/messaging');  // Teacher-parent messaging system
 const iepTemplatesRoutes = require('./routes/iepTemplates');  // IEP templates for teachers
+const impersonationRoutes = require('./routes/impersonation');  // User impersonation (student view)
+const announcementsRoutes = require('./routes/announcements');  // Teacher-to-student announcements
+const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
 const TUTOR_CONFIG = require('./utils/tutorConfig');
+
+// Impersonation middleware
+const { handleImpersonation, enforceReadOnly } = require('./middleware/impersonation');
 
 // --- 5. EXPRESS APP SETUP ---
 const app = express();
@@ -158,6 +165,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Impersonation middleware - must run after passport to access req.user
+app.use(handleImpersonation);
+app.use(enforceReadOnly);
+
 // Security Headers with Helmet.js
 app.use(helmet({
   // Content Security Policy - allows necessary external resources
@@ -172,6 +183,7 @@ app.use(helmet({
         "https://cdn.jsdelivr.net", // Various CDN resources
         "https://unpkg.com" // MathLive and other packages
       ],
+      scriptSrcAttr: ["'unsafe-inline'"], // Required for inline event handlers (onclick, etc.)
       styleSrc: [
         "'self'",
         "'unsafe-inline'", // Required for inline styles
@@ -195,7 +207,8 @@ app.use(helmet({
         "https://api.anthropic.com", // Claude API
         "https://api.openai.com", // OpenAI API
         "https://api.mathpix.com", // Mathpix OCR
-        "https://api.elevenlabs.io" // ElevenLabs TTS
+        "https://api.elevenlabs.io", // ElevenLabs TTS
+        "https://cdn.jsdelivr.net" // CDN resources and source maps
       ],
       workerSrc: ["'self'", "blob:"], // Allow blob workers for confetti effects
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
@@ -271,6 +284,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/login', authLimiter, loginRoutes);
 app.use('/signup', authLimiter, signupRoutes);
 app.use('/api/password-reset', authLimiter, passwordResetRoutes);
+app.use('/api/auth', authLimiter, authRoutes);  // Email verification (public routes)
 app.post('/logout', isAuthenticated, handleLogout);
 
 // --- Google Auth Routes ---
@@ -283,8 +297,23 @@ app.get('/auth/google/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
-        req.logIn(user, (err) => {
+
+        // Check if this is a new user requiring enrollment code
+        if (user.isPendingEnrollment) {
+            // Store pending profile in session (not logged in yet)
+            req.session.pendingOAuthProfile = user.pendingProfile;
+            console.log('LOG: New Google OAuth user requires enrollment code');
+            return res.redirect('/oauth-enrollment.html');
+        }
+
+        req.logIn(user, async (err) => {
             if (err) { return next(err); }
+            // Update lastLogin timestamp
+            try {
+                await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+            } catch (updateErr) {
+                console.error("ERROR: Failed to update lastLogin:", updateErr);
+            }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
             if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
@@ -303,8 +332,23 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
             const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
             return res.redirect(`/login.html?error=${errorMessage}`);
         }
-        req.logIn(user, (err) => {
+
+        // Check if this is a new user requiring enrollment code
+        if (user.isPendingEnrollment) {
+            // Store pending profile in session (not logged in yet)
+            req.session.pendingOAuthProfile = user.pendingProfile;
+            console.log('LOG: New Microsoft OAuth user requires enrollment code');
+            return res.redirect('/oauth-enrollment.html');
+        }
+
+        req.logIn(user, async (err) => {
             if (err) { return next(err); }
+            // Update lastLogin timestamp
+            try {
+                await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+            } catch (updateErr) {
+                console.error("ERROR: Failed to update lastLogin:", updateErr);
+            }
             if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
             if (user.role === 'student' && (!user.selectedTutorId || !user.selectedAvatarId)) return res.redirect('/pick-tutor.html');
             const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
@@ -356,7 +400,10 @@ app.use('/api/session', isAuthenticated, sessionRoutes); // Session management (
 app.use('/api/feedback', isAuthenticated, feedbackRoutes); // User feedback and bug reports for Alpha testing
 app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for alpha testing
 app.use('/api/messages', isAuthenticated, messagingRoutes); // Teacher-parent messaging system
+app.use('/api/announcements', isAuthenticated, announcementsRoutes); // Teacher-to-student announcements (IM style)
+app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes); // Admin bulk email campaigns
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
+app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
@@ -437,6 +484,60 @@ app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
     }
 });
 
+// Calculator access route - accessible by any authenticated user
+// Students check their teacher's calculator settings, others get full access
+app.get('/api/calculator/access', isAuthenticated, async (req, res) => {
+    try {
+        // Non-students always have access
+        if (req.user.role !== 'student') {
+            return res.json({
+                success: true,
+                calculatorAccess: 'always',
+                message: 'Non-student users have full calculator access'
+            });
+        }
+
+        // Student without teacher = no restrictions
+        if (!req.user.teacherId) {
+            return res.json({
+                success: true,
+                calculatorAccess: 'always',
+                message: 'No assigned teacher'
+            });
+        }
+
+        // Get teacher's calculator settings
+        const teacher = await User.findById(req.user.teacherId)
+            .select('classAISettings.calculatorAccess classAISettings.calculatorNote firstName lastName')
+            .lean();
+
+        if (!teacher || !teacher.classAISettings) {
+            return res.json({
+                success: true,
+                calculatorAccess: 'skill-based',
+                message: 'Teacher has not configured settings'
+            });
+        }
+
+        const calcAccess = teacher.classAISettings.calculatorAccess || 'skill-based';
+        const calcNote = teacher.classAISettings.calculatorNote || '';
+
+        res.json({
+            success: true,
+            calculatorAccess: calcAccess,
+            calculatorNote: calcNote,
+            teacherName: `${teacher.firstName} ${teacher.lastName}`
+        });
+
+    } catch (error) {
+        console.error('Error fetching calculator access:', error);
+        res.status(500).json({
+            success: false,
+            calculatorAccess: 'skill-based',
+            message: 'Error fetching settings'
+        });
+    }
+});
 
 // --- 9. HTML ROUTES (MUST BE BEFORE STATIC MIDDLEWARE) ---
 
