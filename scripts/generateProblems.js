@@ -2389,6 +2389,93 @@ const generators = {
     }
     return problems;
   },
+
+  'parent-functions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'The parent function f(x) = x² is called a:', a: 'quadratic function', w: ['linear function', 'cubic function', 'absolute value function'] },
+      { q: 'The parent function f(x) = |x| is called a:', a: 'absolute value function', w: ['linear function', 'quadratic function', 'square root function'] },
+      { q: 'The parent function f(x) = √x is called a:', a: 'square root function', w: ['quadratic function', 'cubic function', 'linear function'] },
+      { q: 'The parent function f(x) = x is called a:', a: 'linear function', w: ['quadratic function', 'constant function', 'identity function'] },
+      { q: 'The parent function f(x) = x³ is called a:', a: 'cubic function', w: ['quadratic function', 'linear function', 'exponential function'] },
+      { q: 'The parent function f(x) = 1/x is called a:', a: 'reciprocal function', w: ['linear function', 'rational function', 'inverse function'] },
+      { q: 'The parent function f(x) = 2^x is called a:', a: 'exponential function', w: ['quadratic function', 'power function', 'logarithmic function'] },
+      { q: 'The parent function f(x) = log(x) is called a:', a: 'logarithmic function', w: ['exponential function', 'rational function', 'power function'] },
+      { q: 'Which parent function has a V-shaped graph?', a: 'f(x) = |x|', w: ['f(x) = x²', 'f(x) = x', 'f(x) = √x'] },
+      { q: 'Which parent function has a U-shaped graph (parabola)?', a: 'f(x) = x²', w: ['f(x) = |x|', 'f(x) = x³', 'f(x) = x'] },
+      { q: 'Which parent function passes through the origin with slope 1?', a: 'f(x) = x', w: ['f(x) = x²', 'f(x) = |x|', 'f(x) = 1/x'] },
+      { q: 'Which parent function has domain x ≥ 0?', a: 'f(x) = √x', w: ['f(x) = x²', 'f(x) = |x|', 'f(x) = x'] },
+      { q: 'Which parent function has a horizontal asymptote at y = 0?', a: 'f(x) = 2^x', w: ['f(x) = x²', 'f(x) = x', 'f(x) = |x|'] },
+      { q: 'Which parent function has vertical asymptote at x = 0?', a: 'f(x) = 1/x', w: ['f(x) = x²', 'f(x) = √x', 'f(x) = |x|'] },
+      { q: 'The graph of f(x) = x³ passes through which point?', a: '(1, 1) and (-1, -1)', w: ['(1, 1) only', '(0, 1)', '(-1, 1)'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('parent-functions', p.q, p.a, p.w, 3, '8-12', 'Functions', ['functions', 'parent']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'function-families': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'f(x) = 3x² - 2x + 1 belongs to which function family?', a: 'quadratic', w: ['linear', 'cubic', 'exponential'] },
+      { q: 'f(x) = 5x - 7 belongs to which function family?', a: 'linear', w: ['quadratic', 'constant', 'exponential'] },
+      { q: 'f(x) = 2^x + 3 belongs to which function family?', a: 'exponential', w: ['quadratic', 'linear', 'logarithmic'] },
+      { q: 'f(x) = log₂(x) - 1 belongs to which function family?', a: 'logarithmic', w: ['exponential', 'rational', 'polynomial'] },
+      { q: 'f(x) = (x+1)/(x-2) belongs to which function family?', a: 'rational', w: ['linear', 'polynomial', 'exponential'] },
+      { q: 'f(x) = x⁴ - 3x² + 2 belongs to which function family?', a: 'polynomial', w: ['quadratic', 'exponential', 'rational'] },
+      { q: 'f(x) = |2x - 5| belongs to which function family?', a: 'absolute value', w: ['linear', 'quadratic', 'piecewise'] },
+      { q: 'f(x) = √(x + 4) belongs to which function family?', a: 'square root (radical)', w: ['quadratic', 'rational', 'exponential'] },
+      { q: 'f(x) = sin(x) belongs to which function family?', a: 'trigonometric', w: ['exponential', 'polynomial', 'rational'] },
+      { q: 'Which family has graphs that are parabolas?', a: 'quadratic', w: ['linear', 'exponential', 'cubic'] },
+      { q: 'Which family has graphs that are straight lines?', a: 'linear', w: ['quadratic', 'absolute value', 'exponential'] },
+      { q: 'Which family shows rapid growth or decay?', a: 'exponential', w: ['linear', 'quadratic', 'polynomial'] },
+      { q: 'f(x) = 5 (constant) belongs to which family?', a: 'constant (polynomial degree 0)', w: ['linear', 'zero function', 'undefined'] },
+      { q: 'f(x) = x³ + 2x belongs to which function family?', a: 'cubic (polynomial)', w: ['quadratic', 'exponential', 'linear'] },
+      { q: 'Which family has graphs with asymptotes?', a: 'rational and exponential', w: ['linear only', 'quadratic only', 'polynomial only'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('function-families', p.q, p.a, p.w, 3, '8-12', 'Functions', ['functions', 'families']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'function-transformations': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'g(x) = f(x) + 3 shifts the graph of f(x) how?', a: '3 units up', w: ['3 units down', '3 units left', '3 units right'] },
+      { q: 'g(x) = f(x) - 5 shifts the graph of f(x) how?', a: '5 units down', w: ['5 units up', '5 units left', '5 units right'] },
+      { q: 'g(x) = f(x - 2) shifts the graph of f(x) how?', a: '2 units right', w: ['2 units left', '2 units up', '2 units down'] },
+      { q: 'g(x) = f(x + 4) shifts the graph of f(x) how?', a: '4 units left', w: ['4 units right', '4 units up', '4 units down'] },
+      { q: 'g(x) = -f(x) transforms the graph of f(x) how?', a: 'reflects over x-axis', w: ['reflects over y-axis', 'shifts up', 'shifts down'] },
+      { q: 'g(x) = f(-x) transforms the graph of f(x) how?', a: 'reflects over y-axis', w: ['reflects over x-axis', 'shifts left', 'shifts right'] },
+      { q: 'g(x) = 2f(x) transforms the graph of f(x) how?', a: 'vertical stretch by factor of 2', w: ['horizontal stretch', 'shifts up 2', 'vertical compression'] },
+      { q: 'g(x) = f(2x) transforms the graph of f(x) how?', a: 'horizontal compression by factor of 2', w: ['horizontal stretch', 'vertical stretch', 'shifts right'] },
+      { q: 'g(x) = (1/2)f(x) transforms the graph how?', a: 'vertical compression by factor of 1/2', w: ['vertical stretch', 'horizontal compression', 'shifts down'] },
+      { q: 'g(x) = f(x/2) transforms the graph how?', a: 'horizontal stretch by factor of 2', w: ['horizontal compression', 'vertical stretch', 'shifts right'] },
+      { q: 'y = (x - 3)² + 2 is y = x² shifted how?', a: '3 right and 2 up', w: ['3 left and 2 up', '3 right and 2 down', '3 left and 2 down'] },
+      { q: 'y = |x + 1| - 4 is y = |x| shifted how?', a: '1 left and 4 down', w: ['1 right and 4 down', '1 left and 4 up', '1 right and 4 up'] },
+      { q: 'To shift f(x) = x² right 5 units, write:', a: 'f(x) = (x - 5)²', w: ['f(x) = (x + 5)²', 'f(x) = x² - 5', 'f(x) = x² + 5'] },
+      { q: 'To reflect f(x) = √x over the x-axis, write:', a: 'g(x) = -√x', w: ['g(x) = √(-x)', 'g(x) = √x - 1', 'g(x) = -√(-x)'] },
+      { q: 'g(x) = 3f(x - 1) + 2 combines which transformations?', a: 'right 1, stretch ×3, up 2', w: ['left 1, stretch ×3, up 2', 'right 1, compress, down 2', 'left 1, compress, up 2'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('function-transformations', p.q, p.a, p.w, 3, '8-12', 'Functions', ['functions', 'transformations']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
