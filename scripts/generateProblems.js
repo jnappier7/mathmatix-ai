@@ -3665,6 +3665,93 @@ const generators = {
     }
     return problems;
   },
+
+  'conditional-probability': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'P(A|B) represents:', a: 'probability of A given that B occurred', w: ['probability of A and B', 'probability of A or B', 'probability of B given A'] },
+      { q: 'The formula for conditional probability P(A|B) is:', a: 'P(A and B) / P(B)', w: ['P(A) × P(B)', 'P(A) + P(B)', 'P(A) / P(B)'] },
+      { q: 'If P(A and B) = 0.3 and P(B) = 0.5, then P(A|B) =', a: '0.6', w: ['0.15', '0.8', '0.2'] },
+      { q: 'If events A and B are independent, then P(A|B) =', a: 'P(A)', w: ['P(B)', 'P(A and B)', '0'] },
+      { q: '80% of students pass math. 60% pass both math and science. P(science|math) =', a: '0.75', w: ['0.48', '0.60', '0.80'] },
+      { q: 'A bag has 3 red and 2 blue balls. You draw red first (no replacement). P(red on 2nd draw) =', a: '2/4 = 1/2', w: ['3/5', '3/4', '2/5'] },
+      { q: 'Two-way table: P(female|likes pizza) means:', a: 'among pizza likers, what fraction are female', w: ['among females, what fraction like pizza', 'probability of female and pizza', 'probability of female or pizza'] },
+      { q: 'P(rain|cloudy) vs P(cloudy|rain). These are:', a: 'generally different values', w: ['always equal', 'always 0', 'always 1'] },
+      { q: 'If P(A|B) = P(A), the events are:', a: 'independent', w: ['mutually exclusive', 'dependent', 'complementary'] },
+      { q: 'Bayes theorem relates P(A|B) to:', a: 'P(B|A), P(A), and P(B)', w: ['only P(A and B)', 'only P(A or B)', 'nothing'] },
+      { q: 'If P(disease) = 0.01 and P(positive test|disease) = 0.95, this is:', a: 'sensitivity of the test', w: ['specificity', 'prevalence', 'false positive rate'] },
+      { q: 'P(A|B) can be greater than P(A) when:', a: 'knowing B makes A more likely', w: ['A and B are independent', 'A and B are mutually exclusive', 'never'] },
+      { q: 'In a deck of cards, P(King|Face card) =', a: '4/12 = 1/3', w: ['4/52', '12/52', '3/4'] },
+      { q: 'P(A and B) = P(A|B) × P(B). This is called:', a: 'multiplication rule for dependent events', w: ['addition rule', 'complement rule', 'Bayes theorem'] },
+      { q: 'If P(B) = 0, then P(A|B) is:', a: 'undefined', w: ['0', '1', 'P(A)'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('conditional-probability', p.q, p.a, p.w, 3, '8-12', 'Statistics & Probability', ['conditional', 'probability', 'dependent']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'probability-fractions': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A spinner has 4 equal sections. P(landing on red) if 1 section is red:', a: '1/4', w: ['1/2', '3/4', '4/4'] },
+      { q: 'A bag has 3 blue and 2 red marbles. P(blue) =', a: '3/5', w: ['2/5', '3/2', '1/2'] },
+      { q: 'Rolling a die, P(even number) =', a: '3/6 = 1/2', w: ['2/6', '4/6', '1/6'] },
+      { q: 'A coin is flipped. P(heads) as a fraction:', a: '1/2', w: ['1/4', '2/2', '0/2'] },
+      { q: '10 cards numbered 1-10. P(picking a prime) =', a: '4/10 = 2/5', w: ['5/10', '3/10', '6/10'] },
+      { q: 'A jar has 6 red, 4 green, 2 yellow candies. P(green) =', a: '4/12 = 1/3', w: ['4/6', '2/12', '6/12'] },
+      { q: 'P(impossible event) as a fraction:', a: '0/n = 0', w: ['1/2', 'n/n', '1/n'] },
+      { q: 'P(certain event) as a fraction:', a: 'n/n = 1', w: ['0', '1/2', 'n/1'] },
+      { q: 'A spinner has 8 equal sections, 3 are blue. P(not blue) =', a: '5/8', w: ['3/8', '8/8', '3/5'] },
+      { q: 'Drawing from a standard deck, P(heart) =', a: '13/52 = 1/4', w: ['4/52', '26/52', '1/13'] },
+      { q: 'Probability must always be between:', a: '0 and 1 (inclusive)', w: ['-1 and 1', '0 and 100', '1 and 10'] },
+      { q: 'If P(A) = 3/8, then P(not A) =', a: '5/8', w: ['3/8', '8/8', '8/3'] },
+      { q: 'A basket has 5 apples and 7 oranges. P(apple) =', a: '5/12', w: ['5/7', '7/12', '12/5'] },
+      { q: 'Rolling a die, P(greater than 4) =', a: '2/6 = 1/3', w: ['4/6', '3/6', '1/6'] },
+      { q: 'If 2 out of 5 students are boys, P(randomly selecting a girl) =', a: '3/5', w: ['2/5', '2/3', '5/3'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('probability-fractions', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['probability', 'fractions']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'likely-unlikely': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Rolling a number less than 7 on a standard die is:', a: 'certain (will always happen)', w: ['impossible', 'unlikely', 'somewhat likely'] },
+      { q: 'Flipping a coin and getting heads is:', a: 'equally likely as tails', w: ['certain', 'impossible', 'unlikely'] },
+      { q: 'Rolling a 7 on a standard 6-sided die is:', a: 'impossible', w: ['unlikely', 'likely', 'certain'] },
+      { q: 'Picking a red marble from a bag with only blue marbles is:', a: 'impossible', w: ['unlikely', 'likely', 'certain'] },
+      { q: 'It will rain tomorrow. This event is:', a: 'possible but not certain', w: ['certain', 'impossible', 'always likely'] },
+      { q: 'Drawing a heart from a standard deck (13 hearts out of 52) is:', a: 'somewhat likely (1 in 4 chance)', w: ['certain', 'impossible', 'very unlikely'] },
+      { q: 'The sun rising tomorrow is:', a: 'almost certain', w: ['impossible', 'unlikely', 'equally likely'] },
+      { q: 'An event with probability 0.95 is:', a: 'very likely', w: ['impossible', 'unlikely', 'equally likely'] },
+      { q: 'An event with probability 0.01 is:', a: 'very unlikely', w: ['certain', 'likely', 'equally likely'] },
+      { q: 'An event with probability 0.5 is:', a: 'equally likely to happen or not', w: ['certain', 'impossible', 'unlikely'] },
+      { q: 'Winning the lottery is typically:', a: 'very unlikely', w: ['likely', 'certain', 'equally likely'] },
+      { q: 'Picking any card from a deck and it being a card is:', a: 'certain', w: ['impossible', 'unlikely', 'equally likely'] },
+      { q: 'A spinner with 7 red and 1 blue section landing on red is:', a: 'very likely', w: ['unlikely', 'impossible', 'equally likely'] },
+      { q: 'Snow in summer (in most places) is:', a: 'very unlikely or impossible', w: ['certain', 'likely', 'equally likely'] },
+      { q: 'If P(event) = 0, the event is:', a: 'impossible', w: ['certain', 'likely', 'unlikely'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('likely-unlikely', p.q, p.a, p.w, 1, 'K-5', 'Statistics & Probability', ['probability', 'likely', 'unlikely']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
