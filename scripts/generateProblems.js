@@ -2737,6 +2737,93 @@ const generators = {
     }
     return problems;
   },
+
+  'systems-of-inequalities': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A solution to a system of inequalities must satisfy:', a: 'all inequalities in the system', w: ['at least one inequality', 'exactly one inequality', 'the average of all'] },
+      { q: 'The solution region for y > x and y < 3 is:', a: 'the overlap of both shaded regions', w: ['either shaded region', 'the boundary lines', 'outside both regions'] },
+      { q: 'Is (2, 4) a solution to y > x and y ≤ 5?', a: 'Yes (4 > 2 and 4 ≤ 5)', w: ['No', 'Only satisfies one', 'Cannot determine'] },
+      { q: 'Is (0, 0) a solution to y ≥ x + 1 and y < 2x?', a: 'No (0 ≥ 1 is false)', w: ['Yes', 'Only satisfies second', 'Cannot determine'] },
+      { q: 'For y < 2x + 1 and y > -x + 4, the solution is:', a: 'the region where both conditions are true', w: ['the entire plane', 'no solution', 'a single point'] },
+      { q: 'A system of two linear inequalities typically has:', a: 'infinitely many solutions (a region)', w: ['exactly one solution', 'no solutions', 'two solutions'] },
+      { q: 'If two inequality regions don\'t overlap, the system has:', a: 'no solution', w: ['infinitely many solutions', 'one solution', 'two solutions'] },
+      { q: 'Test point (0,0) for y > 2x - 3 and y ≤ x + 1:', a: 'Yes (0 > -3 ✓ and 0 ≤ 1 ✓)', w: ['No', 'Satisfies only first', 'Satisfies only second'] },
+      { q: 'The boundary lines of y ≥ x and y ≤ -x + 4 intersect at:', a: '(2, 2)', w: ['(0, 0)', '(4, 4)', '(1, 3)'] },
+      { q: 'For x ≥ 0, y ≥ 0, and x + y ≤ 5, the solution region is:', a: 'a triangle in the first quadrant', w: ['the entire plane', 'a line', 'no region'] },
+      { q: 'To graph y < x + 2 and y > x - 1, the solution is:', a: 'the region between two parallel lines', w: ['no solution', 'a single line', 'the entire plane'] },
+      { q: 'Is (-1, 0) in the solution set of x + y > -2 and 2x - y < 0?', a: 'Yes (-1 > -2 ✓ and -2 < 0 ✓)', w: ['No', 'Satisfies only first', 'Cannot tell'] },
+      { q: 'A feasible region is:', a: 'the set of all points satisfying all constraints', w: ['any shaded region', 'the boundary only', 'points outside constraints'] },
+      { q: 'The vertices of the solution region are important for:', a: 'linear programming (finding optimal values)', w: ['nothing special', 'graphing only', 'finding no solution'] },
+      { q: 'y > x - 1 and y > -x + 3 overlap:', a: 'above both lines', w: ['below both lines', 'between the lines', 'nowhere'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('systems-of-inequalities', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['systems', 'inequalities']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'graphing-systems-inequalities': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'For y ≤ 2x + 1, the boundary line is:', a: 'solid (includes equality)', w: ['dashed', 'dotted', 'no line'] },
+      { q: 'For y < 3x - 2, the boundary line is:', a: 'dashed (excludes equality)', w: ['solid', 'bold', 'double'] },
+      { q: 'To graph y ≥ x, you shade:', a: 'above the line y = x', w: ['below the line', 'on the line only', 'left of the line'] },
+      { q: 'For y < -x + 4, shade:', a: 'below the line', w: ['above the line', 'on the line', 'to the right'] },
+      { q: 'The solution region of a system is shown by:', a: 'where all shadings overlap', w: ['any shaded area', 'the darkest region', 'boundary lines only'] },
+      { q: 'When graphing x ≥ 2, you draw:', a: 'a solid vertical line at x = 2, shade right', w: ['dashed line, shade left', 'horizontal line', 'shade entire plane'] },
+      { q: 'To check if (1, 5) is in the solution of y > 2x + 1:', a: 'substitute: 5 > 2(1) + 1 = 3, yes', w: ['no, 5 < 3', 'cannot check', 'only check boundary'] },
+      { q: 'The intersection of the boundary lines y = x + 2 and y = -x + 4 is:', a: '(1, 3)', w: ['(2, 4)', '(0, 2)', '(3, 1)'] },
+      { q: 'For the system y ≤ x and y ≥ 0 and x ≤ 3:', a: 'solution is a triangle', w: ['solution is a line', 'no solution exists', 'solution is infinite strip'] },
+      { q: 'When two inequalities have parallel boundary lines:', a: 'solution may be a strip, one region, or empty', w: ['always no solution', 'always infinite strip', 'always a triangle'] },
+      { q: 'A test point is used to determine:', a: 'which side of the boundary to shade', w: ['where lines intersect', 'if the line is solid', 'the slope'] },
+      { q: 'If (0,0) does NOT satisfy y > 2x + 1, shade:', a: 'the side not containing (0,0)', w: ['the side with (0,0)', 'both sides', 'neither side'] },
+      { q: 'The corner points (vertices) of a solution region are found by:', a: 'solving pairs of boundary equations', w: ['guessing', 'using only test points', 'taking derivatives'] },
+      { q: 'For y > x - 1 and y < x + 3, the solution is:', a: 'a strip between two parallel lines', w: ['no solution', 'a triangle', 'a single line'] },
+      { q: 'Graphing y ≤ |x| produces:', a: 'V-shape boundary, shading below/inside', w: ['straight line', 'parabola', 'circle'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('graphing-systems-inequalities', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['graphing', 'systems', 'inequalities']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'absolute-value-inequalities': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Solve: |x| < 3', a: '-3 < x < 3', w: ['x < 3', 'x > -3', 'x < -3 or x > 3'] },
+      { q: 'Solve: |x| > 5', a: 'x < -5 or x > 5', w: ['-5 < x < 5', 'x > 5', 'x < -5'] },
+      { q: 'Solve: |x| ≤ 2', a: '-2 ≤ x ≤ 2', w: ['x ≤ 2', 'x ≥ -2', 'x ≤ -2 or x ≥ 2'] },
+      { q: 'Solve: |x| ≥ 4', a: 'x ≤ -4 or x ≥ 4', w: ['-4 ≤ x ≤ 4', 'x ≥ 4', 'x ≤ -4'] },
+      { q: 'Solve: |x - 2| < 3', a: '-1 < x < 5', w: ['x < 5', '-3 < x < 3', 'x > -1'] },
+      { q: 'Solve: |x + 1| > 4', a: 'x < -5 or x > 3', w: ['-5 < x < 3', 'x > 3', 'x < -5'] },
+      { q: 'Solve: |2x| < 6', a: '-3 < x < 3', w: ['x < 3', '-6 < x < 6', 'x < 6'] },
+      { q: 'Solve: |x - 3| ≤ 0', a: 'x = 3 (only solution)', w: ['no solution', 'all real numbers', 'x ≤ 3'] },
+      { q: 'Solve: |x| < -1', a: 'no solution (absolute value is never negative)', w: ['x < -1', '-1 < x < 1', 'all real numbers'] },
+      { q: 'Solve: |x + 2| ≥ 0', a: 'all real numbers', w: ['x ≥ -2', 'x ≥ 0', 'no solution'] },
+      { q: '|x| < a (where a > 0) means:', a: '-a < x < a', w: ['x < a', 'x > -a', 'x < -a or x > a'] },
+      { q: '|x| > a (where a > 0) means:', a: 'x < -a or x > a', w: ['-a < x < a', 'x > a', 'x < -a'] },
+      { q: 'Solve: |3x - 6| ≤ 9', a: '-1 ≤ x ≤ 5', w: ['x ≤ 5', '-3 ≤ x ≤ 3', '0 ≤ x ≤ 5'] },
+      { q: 'The graph of |x| < 2 on a number line shows:', a: 'open circles at -2 and 2, shaded between', w: ['closed circles, shaded outside', 'one point at 0', 'shaded to the right of 2'] },
+      { q: 'Solve: |x - 1| > 0', a: 'all real numbers except x = 1', w: ['x > 1', 'x < 1', 'all real numbers'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('absolute-value-inequalities', p.q, p.a, p.w, 3, '8-12', 'Expressions & Equations', ['absolute-value', 'inequalities']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
