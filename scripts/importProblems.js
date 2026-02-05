@@ -26,7 +26,7 @@ async function main() {
   console.log(`Mode: ${DRY_RUN ? 'DRY RUN (no changes)' : 'LIVE'}\n`);
 
   // Connect to database
-  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/mathmatix';
+  const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/mathmatix';
   console.log(`Connecting to: ${mongoUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@')}`);
 
   await mongoose.connect(mongoUri);
