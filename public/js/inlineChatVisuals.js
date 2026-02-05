@@ -764,9 +764,9 @@ class InlineChatVisuals {
             slidersHtml += `
             <div class="icv-slider-row">
                 <label>${sp.name} = <span id="${id}-${sp.name}-val">${sp.default}</span></label>
-                <input type="range" id="${id}-${sp.name}"
+                <input type="range" class="icv-slider-input" id="${id}-${sp.name}"
                        min="${sp.min}" max="${sp.max}" value="${sp.default}" step="0.1"
-                       oninput="window.inlineChatVisuals.updateSliderGraph('${id}', '${sp.name}', this.value)">
+                       data-param="${sp.name}">
             </div>`;
         });
 
@@ -1654,6 +1654,58 @@ class InlineChatVisuals {
      * Initialize all visuals in a container (call after DOM insertion)
      */
     initializeVisuals(container) {
+        // Attach click handlers to collapsed containers (inline onclick may be stripped by DOMPurify)
+        container.querySelectorAll('.icv-collapsed').forEach(collapsedEl => {
+            if (collapsedEl.id && !collapsedEl._clickHandlerAttached) {
+                collapsedEl._clickHandlerAttached = true;
+                collapsedEl.addEventListener('click', (e) => {
+                    // Don't expand if clicking on control buttons
+                    if (e.target.closest('.icv-controls') || e.target.closest('.icv-btn')) {
+                        return;
+                    }
+                    this.expandVisual(collapsedEl.id);
+                });
+            }
+        });
+
+        // Attach click handlers to graph control buttons
+        container.querySelectorAll('.icv-graph-container').forEach(graphContainer => {
+            const graphEl = graphContainer.querySelector('.icv-graph');
+            if (!graphEl || !graphEl.id) return;
+
+            const graphId = graphEl.id;
+
+            // Zoom in button
+            const zoomInBtn = graphContainer.querySelector('.icv-zoom-in');
+            if (zoomInBtn && !zoomInBtn._clickHandlerAttached) {
+                zoomInBtn._clickHandlerAttached = true;
+                zoomInBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.zoomGraph(graphId, 0.8);
+                });
+            }
+
+            // Zoom out button
+            const zoomOutBtn = graphContainer.querySelector('.icv-zoom-out');
+            if (zoomOutBtn && !zoomOutBtn._clickHandlerAttached) {
+                zoomOutBtn._clickHandlerAttached = true;
+                zoomOutBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.zoomGraph(graphId, 1.25);
+                });
+            }
+
+            // Reset button
+            const resetBtn = graphContainer.querySelector('.icv-reset');
+            if (resetBtn && !resetBtn._clickHandlerAttached) {
+                resetBtn._clickHandlerAttached = true;
+                resetBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.resetGraph(graphId);
+                });
+            }
+        });
+
         // Initialize function graphs
         container.querySelectorAll('.icv-graph').forEach(graphEl => {
             if (graphEl.id && !graphEl._functionPlot) {
@@ -1666,6 +1718,23 @@ class InlineChatVisuals {
             if (graphEl.id) {
                 setTimeout(() => this.renderSliderGraph(graphEl.id), 50);
             }
+        });
+
+        // Attach slider input handlers
+        container.querySelectorAll('.icv-slider-container').forEach(sliderContainer => {
+            sliderContainer.querySelectorAll('.icv-slider-input').forEach(slider => {
+                if (slider._inputHandlerAttached) return;
+                slider._inputHandlerAttached = true;
+
+                const containerId = sliderContainer.id?.replace('-wrapper', '');
+                const paramName = slider.dataset.param;
+
+                if (containerId && paramName) {
+                    slider.addEventListener('input', (e) => {
+                        this.updateSliderGraph(containerId, paramName, e.target.value);
+                    });
+                }
+            });
         });
     }
 
