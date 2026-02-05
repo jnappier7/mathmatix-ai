@@ -145,7 +145,64 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
   const correctValue = this.answer?.value ?? this.answer;
   const equivalents = this.answer?.equivalents || [];
 
-  // Build list of all acceptable answers
+  // MULTIPLE CHOICE: Handle first since user sends letters (A, B, C, D)
+  if (this.answerType === 'multiple-choice') {
+    const userUpper = userStr.toUpperCase();
+
+    // Method 1: Direct correctOption comparison
+    if (this.correctOption) {
+      if (userUpper === this.correctOption.toUpperCase()) {
+        return true;
+      }
+    }
+
+    // Method 2: If user sent a letter (A-F), look up that option's text
+    // and compare to the correct answer value
+    if (/^[A-F]$/.test(userUpper) && this.options && this.options.length > 0) {
+      const optionIndex = userUpper.charCodeAt(0) - 65; // A=0, B=1, etc.
+
+      if (optionIndex >= 0 && optionIndex < this.options.length) {
+        const selectedOption = this.options[optionIndex];
+        const selectedText = (selectedOption.text || selectedOption || '').toString().trim().toLowerCase();
+        const correctStr = String(correctValue).trim().toLowerCase();
+
+        // Compare selected option text to correct answer
+        if (selectedText === correctStr) {
+          return true;
+        }
+
+        // Check against equivalents too
+        for (const equiv of equivalents) {
+          if (selectedText === String(equiv).trim().toLowerCase()) {
+            return true;
+          }
+        }
+
+        // Special handling for comparison symbols
+        // User might select ">" and answer might be ">" or "greater than"
+        const symbolMap = {
+          '>': ['>', 'greater than', 'greater', 'gt'],
+          '<': ['<', 'less than', 'less', 'lt'],
+          '=': ['=', 'equal', 'equals', 'equal to'],
+          '>=': ['>=', 'greater than or equal', 'gte'],
+          '<=': ['<=', 'less than or equal', 'lte']
+        };
+
+        for (const [symbol, variants] of Object.entries(symbolMap)) {
+          if (variants.includes(selectedText) && variants.includes(correctStr)) {
+            return true;
+          }
+        }
+      }
+    }
+
+    // If we have correctOption but user didn't match, it's wrong
+    if (this.correctOption) {
+      return false;
+    }
+  }
+
+  // Build list of all acceptable answers for non-MC or fallback
   const acceptableAnswers = [String(correctValue), ...equivalents];
 
   // Check against all acceptable answers
@@ -185,11 +242,6 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
         }
       }
     }
-  }
-
-  // Multiple choice special handling
-  if (this.answerType === 'multiple-choice' && this.correctOption) {
-    return userStr.toUpperCase() === this.correctOption.toUpperCase();
   }
 
   return false;
