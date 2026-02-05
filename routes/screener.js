@@ -469,7 +469,7 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
 
     console.log(`[Screener] Q${session.questionCount} Result: ${response.correct ? 'CORRECT ✓' : 'INCORRECT ✗'} | Theta: ${previousTheta.toFixed(2)} → ${session.theta.toFixed(2)} (Δ${(session.theta - previousTheta) >= 0 ? '+' : ''}${(session.theta - previousTheta).toFixed(2)}) | SE: ${session.standardError.toFixed(3)}`);
     console.log(`[Screener]   Answer: "${answer}" ${isCorrect ? '==' : '!='} "${response.correctAnswer}"`);
-    console.log(`[Screener]   Difficulty theta: ${difficultyTheta.toFixed(2)} | Info: ${calculateInformation ? 'yes' : 'via IRT'}`);
+    console.log(`[Screener]   Difficulty theta: ${difficultyTheta.toFixed(2)}`);
 
     // Determine next action
     if (result.action === 'continue') {
@@ -503,6 +503,11 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       // Generate report
       const report = generateReport(session.toObject());
 
+      // Convert theta to human-readable grade level (like STAR testing)
+      const gradeLevelResult = thetaToGradeLevel(report.theta);
+      report.gradeLevel = gradeLevelResult.gradeLevel;
+      report.gradeLevelDescription = gradeLevelResult.description;
+
       // CTO REVIEW FIX: Persist session state
       await session.save();
 
@@ -511,7 +516,9 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
         reason: result.reason,
         message: result.message || 'Assessment complete!',
         report: {
-          // Students see: score percentage and time only
+          // Students see: grade level, accuracy, time
+          gradeLevel: report.gradeLevel,
+          gradeLevelDescription: report.gradeLevelDescription,
           accuracy: report.accuracy,
           questionsAnswered: report.questionsAnswered,
           duration: report.duration
@@ -526,10 +533,17 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
 
       const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
+      // Convert theta to human-readable grade level
+      const gradeLevelResult = thetaToGradeLevel(report.theta);
+      report.gradeLevel = gradeLevelResult.gradeLevel;
+      report.gradeLevelDescription = gradeLevelResult.description;
+
       res.json({
         nextAction: 'complete',
         report: {
-          // Students see: final score and time only
+          // Students see: grade level, accuracy, time
+          gradeLevel: report.gradeLevel,
+          gradeLevelDescription: report.gradeLevelDescription,
           accuracy: report.accuracy,
           questionsAnswered: report.questionsAnswered,
           duration: report.duration
