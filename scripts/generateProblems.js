@@ -3491,6 +3491,93 @@ const generators = {
     }
     return problems;
   },
+
+  'data-displays': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Which display is best for showing parts of a whole?', a: 'pie chart (circle graph)', w: ['line graph', 'scatter plot', 'histogram'] },
+      { q: 'Which display shows change over time?', a: 'line graph', w: ['pie chart', 'bar graph', 'stem-and-leaf plot'] },
+      { q: 'A bar graph uses ___ to represent data.', a: 'rectangular bars', w: ['dots', 'lines only', 'circles'] },
+      { q: 'Which display is best for comparing categories?', a: 'bar graph', w: ['line graph', 'scatter plot', 'pie chart'] },
+      { q: 'A scatter plot shows the relationship between:', a: 'two variables', w: ['one variable', 'three variables', 'categories only'] },
+      { q: 'Which display shows the distribution of numerical data in intervals?', a: 'histogram', w: ['pie chart', 'bar graph', 'line plot'] },
+      { q: 'A pictograph uses ___ to represent data.', a: 'pictures or symbols', w: ['bars', 'lines', 'dots only'] },
+      { q: 'Which display shows the five-number summary?', a: 'box plot', w: ['pie chart', 'bar graph', 'line graph'] },
+      { q: 'A stem-and-leaf plot organizes data by:', a: 'place value (stems and leaves)', w: ['categories', 'time', 'percentages'] },
+      { q: 'Which display is best for showing frequency of each value?', a: 'dot plot (line plot)', w: ['pie chart', 'scatter plot', 'line graph'] },
+      { q: 'To show 25%, 50%, and 25% of a budget, use a:', a: 'pie chart', w: ['line graph', 'scatter plot', 'histogram'] },
+      { q: 'A double bar graph compares:', a: 'two sets of categorical data', w: ['one data set', 'continuous data', 'percentages only'] },
+      { q: 'Which display would show correlation between height and weight?', a: 'scatter plot', w: ['pie chart', 'bar graph', 'histogram'] },
+      { q: 'A frequency table shows:', a: 'how often each value occurs', w: ['the average', 'the median only', 'percentages only'] },
+      { q: 'Which display uses a number line with X marks?', a: 'line plot (dot plot)', w: ['line graph', 'bar graph', 'histogram'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('data-displays', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['data', 'displays', 'graphs']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'histograms': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A histogram displays data in:', a: 'intervals (bins)', w: ['individual categories', 'single points', 'percentages'] },
+      { q: 'In a histogram, the bars:', a: 'touch each other (no gaps)', w: ['have gaps between them', 'overlap', 'are always the same height'] },
+      { q: 'The height of a bar in a histogram represents:', a: 'frequency (count)', w: ['the data value', 'percentage only', 'the mean'] },
+      { q: 'Histogram: 0-10 has 5, 10-20 has 8, 20-30 has 3. Which interval has the most?', a: '10-20', w: ['0-10', '20-30', 'All equal'] },
+      { q: 'A histogram is best for:', a: 'showing distribution of numerical data', w: ['comparing categories', 'showing parts of whole', 'showing trends over time'] },
+      { q: 'The x-axis of a histogram shows:', a: 'intervals of data values', w: ['frequency', 'categories', 'percentages'] },
+      { q: 'If bin width is 10 and data ranges from 0-50, how many bars?', a: '5 bars', w: ['10 bars', '50 bars', '2 bars'] },
+      { q: 'A right-skewed histogram has:', a: 'a tail extending to the right', w: ['a tail extending to the left', 'equal sides', 'no pattern'] },
+      { q: 'Total frequency from histogram: bars show 4, 7, 5, 2. Total data points?', a: '18', w: ['4', '7', '14'] },
+      { q: 'Histogram vs bar graph: histograms are for ___ data.', a: 'continuous (numerical)', w: ['categorical', 'qualitative', 'nominal'] },
+      { q: 'A symmetric histogram has:', a: 'roughly equal halves on each side', w: ['more data on the left', 'more data on the right', 'one tall bar'] },
+      { q: 'Changing bin width in a histogram:', a: 'changes the shape of the distribution', w: ['does not affect the graph', 'changes the data', 'always improves accuracy'] },
+      { q: 'Histogram: 0-5 has 2, 5-10 has 6, 10-15 has 4, 15-20 has 1. What is the mode class?', a: '5-10', w: ['0-5', '10-15', '15-20'] },
+      { q: 'A uniform histogram has bars that are:', a: 'approximately the same height', w: ['increasing', 'decreasing', 'one very tall'] },
+      { q: 'Bimodal histogram means:', a: 'two peaks (high points)', w: ['two data points', 'no peaks', 'one peak'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('histograms', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['histograms', 'data', 'distribution']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'box-plots': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A box plot displays the:', a: 'five-number summary', w: ['mean and mode', 'all data points', 'frequency'] },
+      { q: 'The five-number summary includes: min, Q1, median, Q3, and:', a: 'max', w: ['mean', 'mode', 'range'] },
+      { q: 'The "box" in a box plot spans from:', a: 'Q1 to Q3', w: ['min to max', 'mean to median', 'Q1 to median'] },
+      { q: 'The line inside the box represents the:', a: 'median (Q2)', w: ['mean', 'mode', 'Q1'] },
+      { q: 'The whiskers of a box plot extend to:', a: 'the minimum and maximum (or outlier boundaries)', w: ['Q1 and Q3', 'the mean', 'zero'] },
+      { q: 'IQR (Interquartile Range) is:', a: 'Q3 - Q1', w: ['max - min', 'median - mean', 'Q2 - Q1'] },
+      { q: 'Box plot: min=10, Q1=15, median=20, Q3=28, max=35. What is the IQR?', a: '13', w: ['25', '20', '5'] },
+      { q: 'In a box plot, 50% of the data lies within:', a: 'the box (Q1 to Q3)', w: ['the whiskers', 'above the median', 'below Q1'] },
+      { q: 'An outlier in a box plot is typically shown as:', a: 'a separate dot or asterisk', w: ['inside the box', 'as a longer whisker', 'not shown'] },
+      { q: 'Box plot: min=5, Q1=12, median=18, Q3=24, max=30. What is the median?', a: '18', w: ['12', '24', '17.5'] },
+      { q: 'A longer box in a box plot indicates:', a: 'greater spread in the middle 50%', w: ['less variation', 'more outliers', 'higher median'] },
+      { q: 'Q1 represents the ___ percentile.', a: '25th', w: ['50th', '75th', '10th'] },
+      { q: 'Q3 represents the ___ percentile.', a: '75th', w: ['25th', '50th', '90th'] },
+      { q: 'If the median line is closer to Q1, the distribution is:', a: 'right-skewed (positively skewed)', w: ['left-skewed', 'symmetric', 'uniform'] },
+      { q: 'Box plot: min=2, Q1=4, median=6, Q3=10, max=12. What is the range?', a: '10', w: ['6', '8', '4'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('box-plots', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['box-plots', 'five-number-summary', 'quartiles']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
