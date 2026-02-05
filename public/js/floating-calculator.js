@@ -53,7 +53,7 @@ class FloatingCalculator {
         this.checkCalculatorAccess(); // Check teacher settings on init
     }
 
-    // Check teacher's calculator access setting
+    // Check teacher's calculator access setting for this student
     async checkCalculatorAccess() {
         try {
             const response = await fetch('/api/calculator/access');

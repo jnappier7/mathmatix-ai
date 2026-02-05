@@ -427,7 +427,8 @@ select,
 /* Chat messages container supports font scaling */
 #chat-messages-container {
     /* Default scale is 1.0, adjusted by pinch-zoom script */
-    font-size: var(--chat-font-scale, 1em);
+    /* Must use calc() to multiply unitless scale value with base unit */
+    font-size: calc(1em * var(--chat-font-scale, 1));
 }
 
 /* Ensure all message elements inherit the scaled size */

@@ -1,19 +1,17 @@
 // public/js/impersonationBanner.js
-// Impersonation banner component - shows when viewing as another user
+// Impersonation indicator - subtle teal glow + floating pill when viewing as another user
 
 (function() {
   'use strict';
 
   const POLL_INTERVAL = 30000; // Check status every 30 seconds
-  const WARNING_THRESHOLD = 5; // Show warning when 5 minutes remaining
 
   let pollInterval = null;
-  let bannerElement = null;
+  let pillElement = null;
   let currentStatus = null;
 
   /**
-   * Initialize the impersonation banner
-   * Call this on page load for any authenticated page
+   * Initialize the impersonation indicator
    */
   async function init() {
     await checkImpersonationStatus();
@@ -37,9 +35,9 @@
       currentStatus = status;
 
       if (status.active) {
-        showBanner(status);
+        showIndicator(status);
       } else {
-        hideBanner();
+        hideIndicator();
       }
     } catch (err) {
       console.error('Failed to check impersonation status:', err);
@@ -47,75 +45,59 @@
   }
 
   /**
-   * Show the impersonation banner
+   * Show the impersonation indicator (glow + pill)
    */
-  function showBanner(status) {
-    // Add body class to push content down
+  function showIndicator(status) {
+    // Add body class for teal glow effect
     document.body.classList.add('impersonation-active');
 
-    // Create or update banner
-    if (!bannerElement) {
-      bannerElement = createBannerElement();
-      document.body.prepend(bannerElement);
+    // Create or update pill
+    if (!pillElement) {
+      pillElement = createPillElement();
+      document.body.appendChild(pillElement);
     }
 
-    updateBannerContent(status);
+    updatePillContent(status);
   }
 
   /**
-   * Hide the impersonation banner
+   * Hide the impersonation indicator
    */
-  function hideBanner() {
+  function hideIndicator() {
     document.body.classList.remove('impersonation-active');
 
-    if (bannerElement) {
-      bannerElement.remove();
-      bannerElement = null;
+    if (pillElement) {
+      pillElement.remove();
+      pillElement = null;
     }
   }
 
   /**
-   * Create the banner DOM element
+   * Create the floating pill element
    */
-  function createBannerElement() {
-    const banner = document.createElement('div');
-    banner.className = 'impersonation-banner';
-    banner.id = 'impersonation-banner';
-    banner.setAttribute('role', 'alert');
-    banner.setAttribute('aria-live', 'polite');
+  function createPillElement() {
+    const pill = document.createElement('div');
+    pill.className = 'impersonation-pill';
+    pill.id = 'impersonation-pill';
+    pill.setAttribute('role', 'status');
+    pill.setAttribute('aria-live', 'polite');
 
-    return banner;
+    return pill;
   }
 
   /**
-   * Update banner content with current status
+   * Update pill content with current status
    */
-  function updateBannerContent(status) {
-    const isWarning = status.remainingMinutes <= WARNING_THRESHOLD;
-    const readOnlyClass = status.readOnly ? 'impersonation-banner--readonly' : '';
-
-    bannerElement.className = `impersonation-banner ${readOnlyClass}`;
-    bannerElement.innerHTML = `
-      <span class="impersonation-banner__icon" aria-hidden="true">&#128065;</span>
-      <div class="impersonation-banner__content">
-        <div class="impersonation-banner__title">
-          Viewing as
-          <span class="impersonation-banner__user">${escapeHtml(status.targetName)}</span>
-          <span class="impersonation-banner__badge">${status.targetRole}</span>
-          ${status.readOnly ? '<span class="impersonation-banner__badge">Read-Only</span>' : ''}
-        </div>
-        <div class="impersonation-banner__subtitle">
-          Changes are ${status.readOnly ? 'disabled' : 'limited'} while viewing as another user
-        </div>
-      </div>
-      <div class="impersonation-banner__timer ${isWarning ? 'warning' : ''}">
-        ${status.remainingMinutes} min remaining
-      </div>
-      <div class="impersonation-banner__actions">
-        <button class="impersonation-banner__btn impersonation-banner__btn--exit" onclick="window.ImpersonationBanner.exit()">
-          Exit View
-        </button>
-      </div>
+  function updatePillContent(status) {
+    pillElement.innerHTML = `
+      <span class="impersonation-pill__icon">&#128065;</span>
+      <span class="impersonation-pill__text">
+        <span class="impersonation-pill__name">${escapeHtml(status.targetName)}</span>
+        <span class="impersonation-pill__details">${status.remainingMinutes}m left</span>
+      </span>
+      <button class="impersonation-pill__exit" onclick="window.ImpersonationBanner.exit(); event.stopPropagation();">
+        Exit
+      </button>
     `;
   }
 

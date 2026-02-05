@@ -3463,7 +3463,7 @@ What would you like to work on first?`;
     async function updateSettings(setting) {
         if (!currentUser) return;
         try {
-            const res = await fetch('/api/user/settings', {
+            const res = await csrfFetch('/api/user/settings', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(setting),

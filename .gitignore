@@ -23,3 +23,11 @@ logs/
 # Testing
 coverage/
 *.test.log
+
+# Generated problem data files (can be regenerated with scripts)
+docs/duplicate-ids-to-remove.json
+docs/generated-problems.json
+docs/generation-worklist.json
+docs/problems-deduped.json
+docs/skills-needing-generators.json
+scripts/generators-batch2.js

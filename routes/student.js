@@ -460,6 +460,54 @@ router.get('/uploads/:uploadId/file', isAuthenticated, isStudent, async (req, re
     }
 });
 
+// GET /api/student/my-calculator-access
+// Get calculator access setting for the current student based on teacher's settings
+router.get('/my-calculator-access', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        // Check if student has a teacher
+        if (!req.user.teacherId) {
+            return res.json({
+                success: true,
+                calculatorAccess: 'always', // No teacher = no restrictions
+                message: 'No assigned teacher'
+            });
+        }
+
+        // Get teacher's calculator settings
+        const teacher = await User.findById(req.user.teacherId)
+            .select('classAISettings.calculatorAccess classAISettings.calculatorNote firstName lastName')
+            .lean();
+
+        if (!teacher || !teacher.classAISettings) {
+            return res.json({
+                success: true,
+                calculatorAccess: 'skill-based', // Default
+                message: 'Teacher has not configured settings'
+            });
+        }
+
+        const calcAccess = teacher.classAISettings.calculatorAccess || 'skill-based';
+        const calcNote = teacher.classAISettings.calculatorNote || '';
+
+        console.log(`[Calculator] ${req.user.firstName} checked access: ${calcAccess} (Teacher: ${teacher.firstName})`);
+
+        res.json({
+            success: true,
+            calculatorAccess: calcAccess,
+            calculatorNote: calcNote,
+            teacherName: `${teacher.firstName} ${teacher.lastName}`
+        });
+
+    } catch (error) {
+        console.error('Error fetching calculator access:', error);
+        res.status(500).json({
+            success: false,
+            calculatorAccess: 'skill-based', // Default on error
+            message: 'Error fetching settings'
+        });
+    }
+});
+
 module.exports = {
     router,
     generateUniqueStudentLinkCode
