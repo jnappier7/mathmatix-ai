@@ -3259,6 +3259,93 @@ const generators = {
     }
     return problems;
   },
+
+  'prek-count-0-5': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Count the apples: 🍎🍎🍎. How many apples?', a: '3', w: ['2', '4', '5'] },
+      { q: 'Count the stars: ⭐⭐. How many stars?', a: '2', w: ['1', '3', '4'] },
+      { q: 'Count the balls: 🔵🔵🔵🔵. How many balls?', a: '4', w: ['3', '5', '2'] },
+      { q: 'Count the hearts: ❤️. How many hearts?', a: '1', w: ['2', '0', '3'] },
+      { q: 'Count the fish: 🐟🐟🐟🐟🐟. How many fish?', a: '5', w: ['4', '6', '3'] },
+      { q: 'There are no birds on the branch. How many birds?', a: '0', w: ['1', '2', '3'] },
+      { q: 'Count the flowers: 🌸🌸. How many flowers?', a: '2', w: ['1', '3', '4'] },
+      { q: 'Count the cats: 🐱🐱🐱. How many cats?', a: '3', w: ['2', '4', '1'] },
+      { q: 'Count the trees: 🌳🌳🌳🌳🌳. How many trees?', a: '5', w: ['4', '3', '6'] },
+      { q: 'Count the dogs: 🐕. How many dogs?', a: '1', w: ['2', '0', '3'] },
+      { q: 'Count the suns: 🌞🌞🌞🌞. How many suns?', a: '4', w: ['3', '5', '2'] },
+      { q: 'An empty box has how many toys inside?', a: '0', w: ['1', '2', '5'] },
+      { q: 'Count the moons: 🌙🌙. How many moons?', a: '2', w: ['1', '3', '0'] },
+      { q: 'Count the bees: 🐝🐝🐝🐝🐝. How many bees?', a: '5', w: ['4', '6', '3'] },
+      { q: 'Count the butterflies: 🦋🦋🦋. How many butterflies?', a: '3', w: ['2', '4', '5'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('prek-count-0-5', p.q, p.a, p.w, 1, 'K-2', 'Counting & Cardinality', ['counting', 'prek']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'prek-count-0-10': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Count the circles: ⚪⚪⚪⚪⚪⚪. How many circles?', a: '6', w: ['5', '7', '8'] },
+      { q: 'Count the leaves: 🍃🍃🍃🍃🍃🍃🍃. How many leaves?', a: '7', w: ['6', '8', '5'] },
+      { q: 'Count the bananas: 🍌🍌🍌🍌🍌🍌🍌🍌. How many bananas?', a: '8', w: ['7', '9', '6'] },
+      { q: 'Count the grapes: 🍇🍇🍇🍇🍇🍇🍇🍇🍇. How many grapes?', a: '9', w: ['8', '10', '7'] },
+      { q: 'Count the cherries: 🍒🍒🍒🍒🍒🍒🍒🍒🍒🍒. How many cherries?', a: '10', w: ['9', '8', '11'] },
+      { q: 'Count the ducks: 🦆🦆🦆🦆🦆🦆. How many ducks?', a: '6', w: ['5', '7', '4'] },
+      { q: 'Count the clouds: ☁️☁️☁️☁️☁️☁️☁️☁️. How many clouds?', a: '8', w: ['7', '9', '6'] },
+      { q: 'Count the raindrops: 💧💧💧💧💧💧💧💧💧💧. How many raindrops?', a: '10', w: ['9', '11', '8'] },
+      { q: 'Count the snowflakes: ❄️❄️❄️❄️❄️❄️❄️. How many snowflakes?', a: '7', w: ['6', '8', '5'] },
+      { q: 'Count the bells: 🔔🔔🔔🔔🔔🔔🔔🔔🔔. How many bells?', a: '9', w: ['8', '10', '7'] },
+      { q: 'Count the pencils: ✏️✏️✏️✏️✏️✏️. How many pencils?', a: '6', w: ['5', '7', '8'] },
+      { q: 'Count the carrots: 🥕🥕🥕🥕🥕🥕🥕🥕🥕🥕. How many carrots?', a: '10', w: ['9', '8', '11'] },
+      { q: 'Count the presents: 🎁🎁🎁🎁🎁🎁🎁🎁. How many presents?', a: '8', w: ['7', '9', '10'] },
+      { q: 'Count the balloons: 🎈🎈🎈🎈🎈🎈🎈. How many balloons?', a: '7', w: ['6', '8', '9'] },
+      { q: 'Count the cookies: 🍪🍪🍪🍪🍪🍪🍪🍪🍪. How many cookies?', a: '9', w: ['8', '10', '7'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('prek-count-0-10', p.q, p.a, p.w, 1, 'K-2', 'Counting & Cardinality', ['counting', 'prek']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'prek-sort-attributes': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Which one is RED? 🔵 🔴 🟢', a: '🔴', w: ['🔵', '🟢', 'None'] },
+      { q: 'Which one is the BIGGEST? small ball, medium ball, large ball', a: 'large ball', w: ['small ball', 'medium ball', 'They are equal'] },
+      { q: 'Which one is a CIRCLE? ⬜ 🔺 ⭕', a: '⭕', w: ['⬜', '🔺', 'None'] },
+      { q: 'Which one is BLUE? 🟡 🔵 🟠', a: '🔵', w: ['🟡', '🟠', 'None'] },
+      { q: 'Which one is the SMALLEST? big dog, tiny ant, medium cat', a: 'tiny ant', w: ['big dog', 'medium cat', 'They are equal'] },
+      { q: 'Which one is a TRIANGLE? ⭕ ⬜ 🔺', a: '🔺', w: ['⭕', '⬜', 'None'] },
+      { q: 'Which one is GREEN? 🟢 🔴 🟣', a: '🟢', w: ['🔴', '🟣', 'None'] },
+      { q: 'Which one is a SQUARE? ⬜ ⭕ 🔺', a: '⬜', w: ['⭕', '🔺', 'None'] },
+      { q: 'Sort by color: Which does NOT belong? 🔴🔴🔴🔵', a: '🔵 (it is blue)', w: ['All belong', 'First 🔴', 'Last 🔴'] },
+      { q: 'Which one is YELLOW? 🟣 🟤 🟡', a: '🟡', w: ['🟣', '🟤', 'None'] },
+      { q: 'Which is TALLER? A giraffe or a mouse?', a: 'giraffe', w: ['mouse', 'They are the same', 'Cannot tell'] },
+      { q: 'Sort by size: Which is the ODD one? big elephant, big whale, tiny mouse', a: 'tiny mouse (it is small)', w: ['big elephant', 'big whale', 'All are the same'] },
+      { q: 'Which one is ORANGE? 🟠 🟢 🔵', a: '🟠', w: ['🟢', '🔵', 'None'] },
+      { q: 'Which is LONGER? A pencil or a crayon?', a: 'pencil', w: ['crayon', 'They are equal', 'Cannot tell'] },
+      { q: 'Which shape has 4 sides? circle, triangle, square', a: 'square', w: ['circle', 'triangle', 'None'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('prek-sort-attributes', p.q, p.a, p.w, 1, 'K-2', 'Measurement & Data', ['sorting', 'attributes', 'prek']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
