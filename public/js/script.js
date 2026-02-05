@@ -1412,6 +1412,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function getWelcomeMessage() {
         try {
+            // Check if there's a pending active session from sidebar
+            // This happens when user refreshes and has an active conversation
+            if (window.pendingActiveSession && window.pendingActiveSession.conversationId) {
+                console.log('[Chat] Loading pending active session:', window.pendingActiveSession.conversationId);
+                const { conversationId, conversation } = window.pendingActiveSession;
+                window.pendingActiveSession = null; // Clear it
+
+                try {
+                    const response = await csrfFetch(`/api/conversations/${conversationId}/switch`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.messages && data.messages.length > 0) {
+                            window.updateChatForSession(data.conversation, data.messages);
+                            console.log('[Chat] Restored', data.messages.length, 'messages from active session');
+                            return; // Skip welcome message - session restored
+                        }
+                    }
+                } catch (err) {
+                    console.error('[Chat] Failed to load pending session:', err);
+                    // Fall through to normal welcome
+                }
+            }
+
+            // Check if session messages were already loaded from sidebar
+            // Skip welcome message if we restored an existing session
+            if (window.sessionMessagesLoaded) {
+                console.log('[Chat] Session messages already loaded, skipping welcome');
+                window.sessionMessagesLoaded = false; // Reset for next time
+                return;
+            }
+
             // Check rapport building status first
             await checkRapportStatus();
 
@@ -4147,6 +4182,9 @@ What would you like to work on first?`;
      */
     window.updateChatForSession = function(conversation, messages) {
         console.log('[updateChatForSession] Switching to conversation:', conversation);
+
+        // Track current conversation ID globally
+        window.currentConversationId = conversation._id;
 
         // Clear current chat
         if (chatBox) {
