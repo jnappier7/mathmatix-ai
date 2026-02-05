@@ -3085,6 +3085,93 @@ const generators = {
     }
     return problems;
   },
+
+  'data-collection': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A survey is a type of data collection that:', a: 'asks questions to gather information', w: ['measures physical objects', 'observes without asking', 'uses only numbers'] },
+      { q: 'Primary data is:', a: 'data you collect yourself', w: ['data from another source', 'always numerical', 'collected only online'] },
+      { q: 'Secondary data is:', a: 'data collected by someone else', w: ['data you collect yourself', 'always more accurate', 'never reliable'] },
+      { q: 'A sample is:', a: 'a subset of a population used for study', w: ['the entire population', 'always 100 people', 'randomly selected items only'] },
+      { q: 'A census collects data from:', a: 'every member of the population', w: ['a random sample only', 'volunteers only', 'half the population'] },
+      { q: 'Bias in data collection means:', a: 'the data systematically favors certain outcomes', w: ['the data is random', 'the sample is too large', 'all data is accurate'] },
+      { q: 'A random sample helps to:', a: 'reduce bias and represent the population fairly', w: ['increase bias', 'collect less data', 'avoid all errors'] },
+      { q: 'An observation study involves:', a: 'watching and recording without interfering', w: ['changing the environment', 'asking questions', 'manipulating variables'] },
+      { q: 'An experiment differs from observation by:', a: 'deliberately changing conditions to test effects', w: ['only watching', 'asking fewer questions', 'using smaller samples'] },
+      { q: 'A questionnaire should have questions that are:', a: 'clear, unbiased, and easy to understand', w: ['confusing', 'leading', 'very long'] },
+      { q: 'Qualitative data describes:', a: 'qualities or characteristics (non-numerical)', w: ['only quantities', 'only measurements', 'only percentages'] },
+      { q: 'Quantitative data is:', a: 'numerical and can be measured', w: ['descriptive only', 'always opinions', 'non-numerical'] },
+      { q: 'To collect data about favorite colors, the best method is:', a: 'a survey or questionnaire', w: ['measuring with a ruler', 'a science experiment', 'weighing samples'] },
+      { q: 'A leading question is problematic because it:', a: 'suggests a particular answer', w: ['is too short', 'collects too much data', 'is always accurate'] },
+      { q: 'Reliable data collection means:', a: 'consistent results when repeated', w: ['different results each time', 'only one measurement', 'random outcomes always'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('data-collection', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['data', 'collection']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'counting-methods': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'The Fundamental Counting Principle states: if event A has m outcomes and event B has n outcomes, then A and B together have:', a: 'm × n outcomes', w: ['m + n outcomes', 'm - n outcomes', 'm ÷ n outcomes'] },
+      { q: '3 shirts and 4 pants. How many outfits?', a: '12', w: ['7', '3', '4'] },
+      { q: '2 appetizers, 5 entrees, 3 desserts. How many different meals?', a: '30', w: ['10', '15', '8'] },
+      { q: 'A password has 3 digits (0-9 each). How many possible passwords?', a: '1000', w: ['30', '100', '27'] },
+      { q: 'A coin flipped 4 times has how many possible outcomes?', a: '16', w: ['8', '4', '24'] },
+      { q: 'A die rolled twice has how many outcomes?', a: '36', w: ['12', '6', '18'] },
+      { q: 'License plates: 3 letters then 3 digits. Possible plates:', a: '17,576,000', w: ['15,600', '1,000,000', '263'] },
+      { q: '4 routes to school, 3 routes home. Different round trips:', a: '12', w: ['7', '4', '1'] },
+      { q: 'True/False quiz with 5 questions. Possible answer patterns:', a: '32', w: ['10', '5', '25'] },
+      { q: '5 books arranged on a shelf. Arrangements:', a: '120', w: ['25', '5', '60'] },
+      { q: 'Choosing 2 from 5 people (order matters): arrangements:', a: '20', w: ['10', '25', '7'] },
+      { q: 'A tree diagram helps to:', a: 'visualize and count all possible outcomes', w: ['plant trees', 'calculate averages', 'graph data'] },
+      { q: 'A lock has 3 dials with 10 digits each. Combinations:', a: '1000', w: ['30', '100', '13'] },
+      { q: 'Menu: 4 drinks, 3 sizes. Different orders:', a: '12', w: ['7', '4', '1'] },
+      { q: 'If each choice is independent, multiply:', a: 'the number of options at each stage', w: ['add all options', 'subtract options', 'divide by stages'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('counting-methods', p.q, p.a, p.w, 2, '5-8', 'Statistics & Probability', ['counting', 'probability']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'riemann-sums': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A Riemann sum approximates:', a: 'the area under a curve', w: ['the slope of a curve', 'the maximum value', 'the derivative'] },
+      { q: 'In a left Riemann sum, the height of each rectangle is taken from:', a: 'the left endpoint of each subinterval', w: ['the right endpoint', 'the midpoint', 'the average'] },
+      { q: 'In a right Riemann sum, the height is taken from:', a: 'the right endpoint of each subinterval', w: ['the left endpoint', 'the midpoint', 'the minimum'] },
+      { q: 'Increasing the number of rectangles in a Riemann sum:', a: 'generally improves the approximation', w: ['always makes it worse', 'has no effect', 'decreases accuracy'] },
+      { q: 'The width of each rectangle in a Riemann sum equals:', a: '(b - a) / n, where n is the number of rectangles', w: ['b - a', 'a + b', 'n / (b - a)'] },
+      { q: 'For f(x) = 2 on [0, 3] with 3 rectangles, left sum =', a: '6', w: ['3', '2', '9'] },
+      { q: 'For f(x) = x on [0, 2] with 2 rectangles, left sum =', a: '1', w: ['2', '3', '4'] },
+      { q: 'For f(x) = x on [0, 2] with 2 rectangles, right sum =', a: '3', w: ['1', '2', '4'] },
+      { q: 'A midpoint Riemann sum uses heights from:', a: 'the midpoint of each subinterval', w: ['the left endpoint', 'the right endpoint', 'the maximum'] },
+      { q: 'As n → ∞, the Riemann sum approaches:', a: 'the definite integral', w: ['zero', 'infinity', 'the derivative'] },
+      { q: 'For an increasing function, left sums tend to:', a: 'underestimate the area', w: ['overestimate', 'equal exactly', 'be negative'] },
+      { q: 'For an increasing function, right sums tend to:', a: 'overestimate the area', w: ['underestimate', 'equal exactly', 'be zero'] },
+      { q: 'For f(x) = 3 on [1, 4] with any number of rectangles:', a: 'the sum equals 9 (constant function)', w: ['depends on n', 'equals 12', 'equals 3'] },
+      { q: 'Riemann sums are the foundation for:', a: 'the definite integral', w: ['the derivative', 'limits only', 'algebra'] },
+      { q: 'The notation Σf(xᵢ)Δx represents:', a: 'a Riemann sum', w: ['a derivative', 'an average', 'a limit only'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('riemann-sums', p.q, p.a, p.w, 4, 'Calculus', 'Calculus', ['integration', 'riemann']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
