@@ -385,6 +385,162 @@ router.delete('/enrollment-codes/:codeId', isAdmin, async (req, res) => {
   }
 });
 
+/**
+ * @route   POST /api/admin/enrollment-codes/:codeId/students
+ * @desc    Add existing students to a class (enrollment code)
+ * @body    { studentIds: [array of student IDs] }
+ * @access  Private (Admin)
+ */
+router.post('/enrollment-codes/:codeId/students', isAdmin, async (req, res) => {
+  try {
+    const { codeId } = req.params;
+    const { studentIds } = req.body;
+
+    if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
+      return res.status(400).json({ message: 'studentIds array is required.' });
+    }
+
+    const code = await EnrollmentCode.findById(codeId);
+    if (!code) {
+      return res.status(404).json({ message: 'Enrollment code not found.' });
+    }
+
+    // Verify all students exist and are actually students
+    const students = await User.find({
+      _id: { $in: studentIds },
+      role: 'student'
+    });
+
+    if (students.length === 0) {
+      return res.status(400).json({ message: 'No valid students found.' });
+    }
+
+    // Add students to the enrollment code
+    let addedCount = 0;
+    let alreadyEnrolledCount = 0;
+
+    for (const student of students) {
+      const alreadyEnrolled = code.enrolledStudents.some(
+        e => e.studentId.toString() === student._id.toString()
+      );
+
+      if (!alreadyEnrolled) {
+        code.enrolledStudents.push({
+          studentId: student._id,
+          enrolledAt: new Date(),
+          enrollmentMethod: 'admin-added'
+        });
+
+        // Also assign the teacher if the student doesn't have one
+        if (!student.teacherId && code.teacherId) {
+          student.teacherId = code.teacherId;
+          await student.save();
+        }
+
+        addedCount++;
+      } else {
+        alreadyEnrolledCount++;
+      }
+    }
+
+    await code.save();
+
+    console.log(`[ADMIN] Added ${addedCount} students to class ${code.code}`);
+
+    res.json({
+      success: true,
+      message: `Added ${addedCount} student(s) to class. ${alreadyEnrolledCount > 0 ? `${alreadyEnrolledCount} were already enrolled.` : ''}`,
+      addedCount,
+      alreadyEnrolledCount,
+      totalEnrolled: code.enrolledStudents.length
+    });
+
+  } catch (err) {
+    console.error('Error adding students to class:', err);
+    res.status(500).json({ message: 'Server error adding students to class.' });
+  }
+});
+
+/**
+ * @route   DELETE /api/admin/enrollment-codes/:codeId/students/:studentId
+ * @desc    Remove a student from a class (enrollment code)
+ * @access  Private (Admin)
+ */
+router.delete('/enrollment-codes/:codeId/students/:studentId', isAdmin, async (req, res) => {
+  try {
+    const { codeId, studentId } = req.params;
+
+    const code = await EnrollmentCode.findById(codeId);
+    if (!code) {
+      return res.status(404).json({ message: 'Enrollment code not found.' });
+    }
+
+    const initialCount = code.enrolledStudents.length;
+    code.enrolledStudents = code.enrolledStudents.filter(
+      e => e.studentId.toString() !== studentId
+    );
+
+    if (code.enrolledStudents.length === initialCount) {
+      return res.status(404).json({ message: 'Student not found in this class.' });
+    }
+
+    await code.save();
+
+    console.log(`[ADMIN] Removed student ${studentId} from class ${code.code}`);
+
+    res.json({
+      success: true,
+      message: 'Student removed from class.',
+      totalEnrolled: code.enrolledStudents.length
+    });
+
+  } catch (err) {
+    console.error('Error removing student from class:', err);
+    res.status(500).json({ message: 'Server error removing student from class.' });
+  }
+});
+
+/**
+ * @route   GET /api/admin/enrollment-codes/:codeId/students
+ * @desc    Get all students in a class (enrollment code)
+ * @access  Private (Admin)
+ */
+router.get('/enrollment-codes/:codeId/students', isAdmin, async (req, res) => {
+  try {
+    const { codeId } = req.params;
+
+    const code = await EnrollmentCode.findById(codeId)
+      .populate('enrolledStudents.studentId', 'firstName lastName email username gradeLevel');
+
+    if (!code) {
+      return res.status(404).json({ message: 'Enrollment code not found.' });
+    }
+
+    const students = code.enrolledStudents.map(e => ({
+      _id: e.studentId._id,
+      firstName: e.studentId.firstName,
+      lastName: e.studentId.lastName,
+      email: e.studentId.email,
+      username: e.studentId.username,
+      gradeLevel: e.studentId.gradeLevel,
+      enrolledAt: e.enrolledAt,
+      enrollmentMethod: e.enrollmentMethod
+    }));
+
+    res.json({
+      success: true,
+      className: code.className,
+      code: code.code,
+      students,
+      totalEnrolled: students.length
+    });
+
+  } catch (err) {
+    console.error('Error fetching class students:', err);
+    res.status(500).json({ message: 'Server error fetching class students.' });
+  }
+});
+
 // -----------------------------------------------------------------------------
 // --- Roster Import Routes ---
 // -----------------------------------------------------------------------------
