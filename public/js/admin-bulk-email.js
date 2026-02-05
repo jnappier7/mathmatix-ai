@@ -1,6 +1,6 @@
 /**
  * Admin Bulk Email - Campaign Management UI
- * Handles bulk email sending to students, parents, teachers, or classes
+ * Handles bulk email sending to students, parents, teachers, classes, or custom selections
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,6 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const audienceTypeSelect = document.getElementById('emailAudienceType');
     const classSelectContainer = document.getElementById('classSelectContainer');
     const classSelect = document.getElementById('emailClassSelect');
+    const customSelectContainer = document.getElementById('customSelectContainer');
+    const userSearchInput = document.getElementById('userSearchInput');
+    const userRoleFilter = document.getElementById('userRoleFilter');
+    const searchUsersBtn = document.getElementById('searchUsersBtn');
+    const userSearchResults = document.getElementById('userSearchResults');
+    const selectedUsersContainer = document.getElementById('selectedUsersContainer');
+    const selectedUsersList = document.getElementById('selectedUsersList');
+    const selectedUsersCountEl = document.getElementById('selectedUsersCount');
     const recipientPreview = document.getElementById('recipientPreview');
     const recipientCount = document.getElementById('recipientCount');
     const emailSubject = document.getElementById('emailSubject');
@@ -38,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let audienceData = null;
     let templates = [];
+    let selectedUsers = new Map(); // userId -> user object
 
     // Initialize
     loadEmailStats();
@@ -48,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
             openModal(bulkEmailModal);
             loadAudienceData();
             loadTemplates();
+            resetCustomSelection();
         });
     }
 
@@ -80,12 +90,12 @@ document.addEventListener('DOMContentLoaded', () => {
         audienceTypeSelect.addEventListener('change', async (e) => {
             const type = e.target.value;
 
-            // Show/hide class select
+            // Show/hide appropriate containers
+            classSelectContainer.style.display = type === 'class' ? 'block' : 'none';
+            customSelectContainer.style.display = type === 'custom' ? 'block' : 'none';
+
             if (type === 'class') {
-                classSelectContainer.style.display = 'block';
                 await loadClasses();
-            } else {
-                classSelectContainer.style.display = 'none';
             }
 
             // Update recipient preview
@@ -101,6 +111,19 @@ document.addEventListener('DOMContentLoaded', () => {
         classSelect.addEventListener('change', () => {
             updateRecipientPreview('class');
             validateForm();
+        });
+    }
+
+    // Custom user search
+    if (searchUsersBtn) {
+        searchUsersBtn.addEventListener('click', searchUsers);
+    }
+    if (userSearchInput) {
+        userSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchUsers();
+            }
         });
     }
 
@@ -153,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <option value="all_parents">All Parents (${audiences.all_parents.count})</option>
                     <option value="all_teachers">All Teachers (${audiences.all_teachers.count})</option>
                     <option value="class">Specific Class</option>
+                    <option value="custom">Select Individual Users...</option>
                 `;
             }
         } catch (error) {
@@ -192,6 +216,143 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Search users for custom selection
+    async function searchUsers() {
+        const search = userSearchInput?.value?.trim();
+        const role = userRoleFilter?.value;
+
+        if (!search && !role) {
+            userSearchResults.innerHTML = '<p style="padding: 15px; color: #666; text-align: center; margin: 0;">Enter a search term or select a role</p>';
+            return;
+        }
+
+        userSearchResults.innerHTML = '<p style="padding: 15px; text-align: center; margin: 0;"><i class="fas fa-spinner fa-spin"></i></p>';
+
+        try {
+            const params = new URLSearchParams();
+            if (search) params.append('search', search);
+            if (role) params.append('role', role);
+            params.append('limit', '50');
+
+            const response = await fetch(`/api/admin/email/users?${params}`);
+            if (!response.ok) throw new Error('Search failed');
+
+            const data = await response.json();
+            const users = data.users || [];
+
+            if (users.length === 0) {
+                userSearchResults.innerHTML = '<p style="padding: 15px; color: #666; text-align: center; margin: 0;">No users found</p>';
+                return;
+            }
+
+            userSearchResults.innerHTML = users.map(user => {
+                const isSelected = selectedUsers.has(user._id);
+                const roleColors = {
+                    student: '#667eea',
+                    parent: '#27ae60',
+                    teacher: '#e67e22'
+                };
+                return `
+                    <div class="user-search-item" data-user-id="${user._id}"
+                         style="padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; ${isSelected ? 'background: #e8f5e9;' : ''}"
+                         data-user='${JSON.stringify(user).replace(/'/g, "&#39;")}'>
+                        <div>
+                            <span style="font-weight: 500;">${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}</span>
+                            <span style="color: #999; font-size: 0.85em; margin-left: 8px;">${escapeHtml(user.email)}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="background: ${roleColors[user.role] || '#999'}20; color: ${roleColors[user.role] || '#999'}; padding: 2px 8px; border-radius: 4px; font-size: 11px; text-transform: uppercase;">${user.role}</span>
+                            ${isSelected
+                                ? '<i class="fas fa-check-circle" style="color: #27ae60;"></i>'
+                                : '<i class="fas fa-plus-circle" style="color: #999;"></i>'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click handlers to search results
+            userSearchResults.querySelectorAll('.user-search-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const userId = item.dataset.userId;
+                    const userData = JSON.parse(item.dataset.user);
+
+                    if (selectedUsers.has(userId)) {
+                        selectedUsers.delete(userId);
+                        item.style.background = '';
+                        item.querySelector('.fa-check-circle')?.classList.replace('fa-check-circle', 'fa-plus-circle');
+                        item.querySelector('.fa-plus-circle').style.color = '#999';
+                    } else {
+                        selectedUsers.set(userId, userData);
+                        item.style.background = '#e8f5e9';
+                        item.querySelector('.fa-plus-circle')?.classList.replace('fa-plus-circle', 'fa-check-circle');
+                        item.querySelector('.fa-check-circle').style.color = '#27ae60';
+                    }
+
+                    updateSelectedUsersDisplay();
+                    validateForm();
+                });
+            });
+
+        } catch (error) {
+            console.error('[BulkEmail] Search error:', error);
+            userSearchResults.innerHTML = '<p style="color: #e74c3c; padding: 15px; text-align: center; margin: 0;">Error searching users</p>';
+        }
+    }
+
+    // Update selected users display
+    function updateSelectedUsersDisplay() {
+        const count = selectedUsers.size;
+        selectedUsersCountEl.textContent = count;
+
+        if (count > 0) {
+            selectedUsersContainer.style.display = 'block';
+            selectedUsersList.innerHTML = Array.from(selectedUsers.values()).map(user => `
+                <span class="selected-user-tag" data-user-id="${user._id}"
+                      style="display: inline-flex; align-items: center; gap: 6px; background: #e8f5e9; color: #2e7d32; padding: 4px 10px; border-radius: 16px; font-size: 12px;">
+                    ${escapeHtml(user.firstName)} ${escapeHtml(user.lastName)}
+                    <i class="fas fa-times" style="cursor: pointer; opacity: 0.7;"></i>
+                </span>
+            `).join('');
+
+            // Add remove handlers
+            selectedUsersList.querySelectorAll('.selected-user-tag').forEach(tag => {
+                tag.querySelector('.fa-times').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const userId = tag.dataset.userId;
+                    selectedUsers.delete(userId);
+                    updateSelectedUsersDisplay();
+                    validateForm();
+
+                    // Update search results if visible
+                    const searchItem = userSearchResults.querySelector(`[data-user-id="${userId}"]`);
+                    if (searchItem) {
+                        searchItem.style.background = '';
+                        searchItem.querySelector('.fa-check-circle')?.classList.replace('fa-check-circle', 'fa-plus-circle');
+                    }
+                });
+            });
+        } else {
+            selectedUsersContainer.style.display = 'none';
+        }
+
+        // Update recipient preview for custom
+        if (audienceTypeSelect?.value === 'custom') {
+            updateRecipientPreview('custom');
+        }
+    }
+
+    // Reset custom selection
+    function resetCustomSelection() {
+        selectedUsers.clear();
+        if (userSearchInput) userSearchInput.value = '';
+        if (userRoleFilter) userRoleFilter.value = '';
+        if (userSearchResults) {
+            userSearchResults.innerHTML = '<p style="padding: 15px; color: #666; text-align: center; margin: 0;">Search for users above</p>';
+        }
+        if (selectedUsersContainer) selectedUsersContainer.style.display = 'none';
+        if (selectedUsersList) selectedUsersList.innerHTML = '';
+    }
+
     // Update recipient preview
     async function updateRecipientPreview(audienceType) {
         if (!audienceType) {
@@ -209,6 +370,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const selectedClass = audienceData?.classes?.find(c => c._id === classId);
             count = selectedClass?.studentCount || 0;
+        } else if (audienceType === 'custom') {
+            count = selectedUsers.size;
+            if (count === 0) {
+                recipientPreview.style.display = 'none';
+                return;
+            }
         } else if (audienceData?.audiences?.[audienceType]) {
             count = audienceData.audiences[audienceType].count;
         }
@@ -226,6 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let valid = audienceType && subject && body;
 
         if (audienceType === 'class' && !classSelect?.value) {
+            valid = false;
+        }
+
+        if (audienceType === 'custom' && selectedUsers.size === 0) {
             valid = false;
         }
 
@@ -282,6 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const audienceType = audienceTypeSelect.value;
         const enrollmentCodeId = audienceType === 'class' ? classSelect.value : null;
+        const customRecipientIds = audienceType === 'custom' ? Array.from(selectedUsers.keys()) : null;
 
         sendBulkEmailBtn.disabled = true;
         sendBulkEmailBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
@@ -294,6 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     audienceType,
                     enrollmentCodeId,
+                    customRecipientIds,
                     subject: emailSubject.value.trim(),
                     body: emailBody.value.trim(),
                     isHtml: true,
@@ -311,10 +484,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     audienceTypeSelect.value = '';
                     classSelectContainer.style.display = 'none';
+                    customSelectContainer.style.display = 'none';
                     recipientPreview.style.display = 'none';
                     emailSubject.value = '';
                     emailBody.value = '';
                     emailTemplate.value = '';
+                    resetCustomSelection();
                     closeModal(bulkEmailModal);
                     loadEmailStats();
                 }, 2000);

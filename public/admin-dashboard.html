@@ -658,6 +658,9 @@
           <button id="openRosterImportBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-file-csv"></i> Import Roster
           </button>
+          <button id="openManageClassesBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-users-cog"></i> Manage Classes
+          </button>
         </div>
 
         <div class="dashboard-panel">
@@ -1323,6 +1326,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
             <option value="all_parents">All Parents</option>
             <option value="all_teachers">All Teachers</option>
             <option value="class">Specific Class</option>
+            <option value="custom">Select Individual Users...</option>
           </select>
         </div>
 
@@ -1331,6 +1335,29 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
           <select id="emailClassSelect">
             <option value="">Loading classes...</option>
           </select>
+        </div>
+
+        <div id="customSelectContainer" class="modal-form-group" style="display: none;">
+          <label>Search & Select Users</label>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="text" id="userSearchInput" placeholder="Search by name or email..." style="flex: 1;">
+            <select id="userRoleFilter" style="width: 120px;">
+              <option value="">All Roles</option>
+              <option value="student">Students</option>
+              <option value="parent">Parents</option>
+              <option value="teacher">Teachers</option>
+            </select>
+            <button type="button" id="searchUsersBtn" class="btn btn-secondary" style="padding: 8px 15px;">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div id="userSearchResults" style="max-height: 150px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px; background: #f9f9f9;">
+            <p style="padding: 15px; color: #666; text-align: center; margin: 0;">Search for users above</p>
+          </div>
+          <div id="selectedUsersContainer" style="margin-top: 10px; display: none;">
+            <label style="font-size: 0.9em; color: #333;">Selected Users (<span id="selectedUsersCount">0</span>):</label>
+            <div id="selectedUsersList" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;"></div>
+          </div>
         </div>
 
         <div id="recipientPreview" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; display: none;">
@@ -1405,6 +1432,61 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
     </div>
   </div>
 
+  <!-- Manage Classes Modal -->
+  <div id="manageClassesModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 900px;">
+      <button class="modal-close-button" id="closeManageClassesModal">&times;</button>
+      <h2><i class="fas fa-users-cog"></i> Manage Classes</h2>
+
+      <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px; min-height: 400px;">
+        <!-- Class List -->
+        <div style="border-right: 1px solid #e0e0e0; padding-right: 20px;">
+          <h3 style="margin: 0 0 15px 0; font-size: 1em; color: #666;">Select a Class</h3>
+          <div id="classListContainer" style="max-height: 350px; overflow-y: auto;">
+            <p style="color: #999; text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i></p>
+          </div>
+        </div>
+
+        <!-- Class Details & Student Management -->
+        <div id="classDetailsPanel">
+          <div id="noClassSelected" style="text-align: center; padding: 60px; color: #666;">
+            <i class="fas fa-arrow-left" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+            <p>Select a class from the left to manage students</p>
+          </div>
+
+          <div id="classStudentManagement" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3 id="selectedClassName" style="margin: 0;">Class Name</h3>
+              <span id="selectedClassCode" style="background: #e0e0e0; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-family: monospace;"></span>
+            </div>
+
+            <!-- Add Students Section -->
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+              <h4 style="margin: 0 0 10px 0; font-size: 0.9em;">Add Existing Students</h4>
+              <div style="display: flex; gap: 10px;">
+                <input type="text" id="addStudentSearch" placeholder="Search students by name..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <button id="searchStudentsToAddBtn" class="btn btn-secondary" style="padding: 8px 15px;">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <div id="studentSearchResultsForClass" style="max-height: 120px; overflow-y: auto; margin-top: 10px; display: none; border: 1px solid #e0e0e0; border-radius: 4px; background: white;"></div>
+            </div>
+
+            <!-- Current Students List -->
+            <div>
+              <h4 style="margin: 0 0 10px 0; font-size: 0.9em;">
+                Students in Class (<span id="classStudentCount">0</span>)
+              </h4>
+              <div id="classStudentsList" style="max-height: 200px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px;">
+                <p style="padding: 20px; color: #666; text-align: center; margin: 0;">Loading students...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
@@ -1412,6 +1494,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/admin-dashboard.js"></script>
   <script src="/js/admin-bulk-email.js"></script>
+  <script src="/js/admin-manage-classes.js"></script>
   <script src="/js/guided-tour.js"></script>
   <script src="/js/sessionManager.js"></script>
 </body>
