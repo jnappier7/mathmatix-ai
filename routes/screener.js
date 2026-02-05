@@ -1031,6 +1031,46 @@ function thetaToPercentile(theta) {
 }
 
 /**
+ * GET /api/user/assessment-status
+ * Check if user has completed assessment (for floating screener)
+ */
+router.get('/status', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('assessmentCompleted assessmentDate startingPointOffered').lean();
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      assessmentCompleted: user.assessmentCompleted || false,
+      assessmentDate: user.assessmentDate || null,
+      startingPointOffered: user.startingPointOffered || false
+    });
+  } catch (error) {
+    console.error('[Screener] Error checking assessment status:', error);
+    res.status(500).json({ error: 'Failed to check assessment status' });
+  }
+});
+
+/**
+ * POST /api/screener/mark-offered
+ * Mark that Starting Point has been offered to user in chat (so AI won't ask again)
+ */
+router.post('/mark-offered', isAuthenticated, async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.user._id, {
+      startingPointOffered: true,
+      startingPointOfferedAt: new Date()
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[Screener] Error marking as offered:', error);
+    res.status(500).json({ error: 'Failed to mark as offered' });
+  }
+});
+
+/**
  * POST /api/screener/skip
  * Record that user skipped the assessment
  * They'll be offered again on next login

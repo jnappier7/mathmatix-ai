@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="/css/sidebar-layout.css" />
   <link rel="stylesheet" href="/css/tour-survey.css" />
   <link rel="stylesheet" href="/css/impersonation-banner.css" />
+  <link rel="stylesheet" href="/css/floating-screener.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css">
   <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css">
@@ -180,6 +181,12 @@
       </button>
 
       <div id="sidebar-tools" class="sidebar-tools-list">
+        <!-- Starting Point (CAT Screener) - Glowing button -->
+        <button id="sidebar-starting-point-btn" class="sidebar-tool-btn sidebar-starting-point-btn needs-attention">
+          <i class="fas fa-crosshairs"></i>
+          <span>Starting Point</span>
+        </button>
+
         <button id="sidebar-resources-btn" class="sidebar-tool-btn">
           <i class="fas fa-book-open"></i>
           <span>Resources</span>
@@ -1134,6 +1141,134 @@
     </div>
   </div>
 
+  <!-- Floating CAT Screener (Starting Point) -->
+  <div id="floating-screener" class="floating-screener">
+    <!-- Header Bar (Draggable) -->
+    <div class="screener-header-bar" id="screener-drag-handle">
+      <div class="screener-title">
+        <i class="fas fa-crosshairs"></i> Starting Point
+      </div>
+      <div class="screener-header-controls">
+        <!-- Text Size Controls -->
+        <div class="text-size-controls">
+          <span class="text-size-label">Text:</span>
+          <button class="screener-control-btn text-size-btn" id="screener-text-smaller" title="Smaller text">A-</button>
+          <button class="screener-control-btn text-size-btn" id="screener-text-larger" title="Larger text">A+</button>
+        </div>
+        <button class="screener-control-btn screener-close-btn" id="close-screener-btn" title="Close">&times;</button>
+      </div>
+    </div>
+
+    <!-- Body Content -->
+    <div id="screener-body" class="screener-body text-size-medium">
+
+      <!-- Instruction Screen -->
+      <div id="screener-instruction-screen" class="screener-instruction active">
+        <h2>Find Your Starting Point</h2>
+        <p class="subtitle">Let's figure out where you are, so we can help you get where you're going.</p>
+
+        <div class="instruction-card">
+          <h3><i class="fas fa-info-circle"></i> What is this?</h3>
+          <p>This short assessment helps us understand your current math level. It's <strong>not a test you can fail</strong> - we're just finding the best place to start your learning journey.</p>
+          <p>The questions will adapt to your level. Answer each one as best you can - there's no penalty for wrong answers!</p>
+
+          <div class="duration">
+            <i class="fas fa-clock"></i>
+            <span><strong>Time:</strong> Usually 10-30 minutes, depending on your level</span>
+          </div>
+        </div>
+
+        <div class="screener-actions">
+          <button class="btn-start-now" id="screener-start-btn">
+            <i class="fas fa-play"></i> Start Now
+          </button>
+          <button class="btn-wait-later" id="screener-wait-btn">
+            I'll Do This Later
+          </button>
+        </div>
+      </div>
+
+      <!-- Question Screen -->
+      <div id="screener-question-screen" class="screener-question">
+        <div class="question-card">
+          <div class="question-header">
+            <span class="question-number" id="screener-question-num">Question 1</span>
+          </div>
+
+          <div class="question-content" id="screener-question-content">
+            <!-- Question text will be loaded here -->
+          </div>
+
+          <!-- Multiple Choice Options -->
+          <div class="mc-options" id="screener-options-container">
+            <!-- Options will be loaded here -->
+          </div>
+
+          <!-- Optional Confidence Meter -->
+          <div class="confidence-meter">
+            <h4>How sure are you?</h4>
+            <div class="confidence-options">
+              <div class="confidence-option" data-level="1">
+                <span class="level">1</span>
+                <span class="label">I pretty much guessed</span>
+              </div>
+              <div class="confidence-option" data-level="2">
+                <span class="level">2</span>
+                <span class="label">In the middle</span>
+              </div>
+              <div class="confidence-option" data-level="3">
+                <span class="level">3</span>
+                <span class="label">I've got this!</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-submit-answer" id="screener-submit-btn" disabled>
+            Submit Answer <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading Screen -->
+      <div id="screener-loading-screen" class="screener-loading">
+        <i class="fas fa-spinner fa-spin spinner"></i>
+        <p id="screener-loading-text">Loading...</p>
+      </div>
+
+      <!-- Results Screen -->
+      <div id="screener-results-screen" class="screener-results">
+        <div class="results-hero">
+          <div class="trophy-icon"><i class="fas fa-trophy"></i></div>
+          <h2>Assessment Complete!</h2>
+          <p>We've found your starting point</p>
+        </div>
+
+        <div class="results-stats">
+          <div class="result-stat">
+            <div class="stat-label">Accuracy</div>
+            <div class="stat-value" id="screener-result-accuracy">--</div>
+          </div>
+          <div class="result-stat">
+            <div class="stat-label">Questions</div>
+            <div class="stat-value" id="screener-result-questions">--</div>
+          </div>
+          <div class="result-stat">
+            <div class="stat-label">Time</div>
+            <div class="stat-value" id="screener-result-duration">--</div>
+          </div>
+        </div>
+
+        <button class="btn-continue-learning" id="screener-continue-btn">
+          <i class="fas fa-arrow-right"></i> Continue to Learning
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Resize Handle -->
+    <div class="resize-handle"></div>
+  </div>
+
   <!-- Tutor Unlock Celebration Screen -->
   <div id="tutor-unlock-screen" class="tutor-unlock-overlay" style="display: none;">
     <div class="tutor-unlock-content">
@@ -1387,6 +1522,7 @@
   <!-- <script src="/js/chat-board-integration.js"></script> -->
   <script src="/js/voice-controller.js"></script>
   <script src="/js/floating-calculator.js"></script>
+  <script src="/js/floating-screener.js"></script>
   <script src="/js/sidebar.js"></script>
   <script src="/js/diagram-display.js"></script>
   <script src="/js/inlineChatVisuals.js"></script>

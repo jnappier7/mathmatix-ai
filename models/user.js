@@ -670,6 +670,10 @@ const userSchema = new Schema({
   tourCompletedAt: { type: Date },
   tourDismissed: { type: Boolean, default: false },  // If user dismissed without completing
 
+  /* CAT Screener (Starting Point) Tracking */
+  startingPointOffered: { type: Boolean, default: false },  // True after AI offers in chat (never ask again)
+  startingPointOfferedAt: { type: Date },  // When it was first offered
+
   sessionSurveys: {
     enabled: { type: Boolean, default: true },  // Can be disabled by user
     lastShownAt: { type: Date },
