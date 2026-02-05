@@ -3926,6 +3926,93 @@ const generators = {
     }
     return problems;
   },
+
+  'geometric-series': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A geometric series has terms with a constant:', a: 'ratio between consecutive terms', w: ['difference', 'sum', 'product of all terms'] },
+      { q: 'Sum of finite geometric series: a(1-rⁿ)/(1-r) when:', a: 'r ≠ 1', w: ['r = 1', 'r = 0', 'r < 0'] },
+      { q: 'Sum: 2 + 6 + 18 + 54. a=2, r=3, n=4. Sum =', a: '80', w: ['72', '162', '54'] },
+      { q: 'Infinite geometric series converges when:', a: '|r| < 1', w: ['|r| > 1', 'r = 1', '|r| = 1'] },
+      { q: 'Sum of infinite series with a=10, r=0.5:', a: '20', w: ['10', '15', '∞'] },
+      { q: 'Series: 1 + 1/2 + 1/4 + 1/8 + ... Sum =', a: '2', w: ['1', '∞', '1.5'] },
+      { q: 'If |r| > 1, the infinite geometric series:', a: 'diverges (no finite sum)', w: ['converges to 0', 'converges to a/r', 'equals 1'] },
+      { q: 'Sum formula for infinite geometric series (|r|<1):', a: 'a / (1 - r)', w: ['a × r', 'a / r', 'a(1 - r)'] },
+      { q: 'Series: 3 + 3(0.1) + 3(0.01) + ... Sum =', a: '10/3 ≈ 3.33', w: ['3', '30', '0.3'] },
+      { q: 'Geometric series 4 + 8 + 16 + 32 has r =', a: '2', w: ['4', '8', '1/2'] },
+      { q: 'Sum: 1 - 1/3 + 1/9 - 1/27 + ... (r = -1/3) =', a: '3/4', w: ['1', '2/3', '1/3'] },
+      { q: 'First term 5, r = 2, n = 6. Sum =', a: '315', w: ['160', '640', '63'] },
+      { q: 'Bouncing ball: heights 10, 8, 6.4, ... Total distance if infinite bounces?', a: 'Uses geometric series with r = 0.8', w: ['infinite', '10 meters', 'undefined'] },
+      { q: 'Sum: 100 + 50 + 25 + 12.5 + ... =', a: '200', w: ['187.5', '∞', '150'] },
+      { q: 'Geometric series differs from arithmetic by:', a: 'multiplying vs adding to get next term', w: ['having negative terms', 'always converging', 'starting at 0'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('geometric-series', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['series', 'geometric', 'sequences']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'finite-series': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'A finite series has:', a: 'a limited number of terms', w: ['infinite terms', 'no first term', 'no last term'] },
+      { q: 'Sum: 1 + 2 + 3 + 4 + 5 =', a: '15', w: ['10', '14', '20'] },
+      { q: 'Sum of first n positive integers: n(n+1)/2. Sum of 1 to 10?', a: '55', w: ['50', '45', '100'] },
+      { q: 'Sum: 2 + 4 + 6 + 8 + 10 =', a: '30', w: ['20', '28', '32'] },
+      { q: 'Arithmetic series sum: n(a₁ + aₙ)/2. For 3+5+7+9 (n=4)?', a: '24', w: ['21', '20', '28'] },
+      { q: 'Sum: 5 + 10 + 15 + 20 + 25 =', a: '75', w: ['70', '60', '80'] },
+      { q: 'Sum of first 5 squares: 1+4+9+16+25 =', a: '55', w: ['50', '45', '70'] },
+      { q: 'Finite vs infinite series: finite has:', a: 'a definite last term', w: ['no terms', 'infinitely many terms', 'no sum'] },
+      { q: 'Sum: 1 + 3 + 5 + 7 + 9 (first 5 odd numbers) =', a: '25', w: ['20', '16', '30'] },
+      { q: 'For arithmetic series, sum = (# of terms) × (average of first and last). 2+4+6+8?', a: '4 × 5 = 20', w: ['4 × 8 = 32', '4 × 2 = 8', '2 × 8 = 16'] },
+      { q: 'Sum: 10 + 20 + 30 =', a: '60', w: ['50', '30', '100'] },
+      { q: 'Sum of first n odd numbers = n². First 4 odd: 1+3+5+7 =', a: '16', w: ['12', '14', '20'] },
+      { q: 'Finite geometric series: 1+2+4+8 =', a: '15', w: ['16', '14', '12'] },
+      { q: 'Sum: 100 + 200 + 300 + 400 =', a: '1000', w: ['900', '1100', '400'] },
+      { q: 'Finding partial sum means:', a: 'summing a finite portion of a series', w: ['finding the last term', 'summing infinite terms', 'finding the ratio'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('finite-series', p.q, p.a, p.w, 2, '5-8', 'Algebra', ['series', 'finite', 'sums']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'arithmetic-series': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'An arithmetic series has a constant:', a: 'difference between consecutive terms', w: ['ratio', 'product', 'quotient'] },
+      { q: 'Sum formula for arithmetic series: Sₙ = n(a₁ + aₙ)/2 or:', a: 'Sₙ = n/2 × (2a₁ + (n-1)d)', w: ['Sₙ = a₁ × rⁿ', 'Sₙ = n × d', 'Sₙ = a₁ + aₙ'] },
+      { q: 'Sum: 2 + 5 + 8 + 11 + 14. a₁=2, d=3, n=5. Sum =', a: '40', w: ['35', '42', '45'] },
+      { q: 'Sum of first 20 positive integers (1+2+...+20) =', a: '210', w: ['200', '190', '400'] },
+      { q: 'Arithmetic series: 10 + 15 + 20 + 25. n=4, a₁=10, a₄=25. Sum =', a: '70', w: ['60', '80', '75'] },
+      { q: 'Sum: 3 + 7 + 11 + 15 + 19 (d=4, n=5) =', a: '55', w: ['50', '45', '60'] },
+      { q: 'If a₁ = 5, d = 2, n = 10, then S₁₀ =', a: '140', w: ['100', '130', '150'] },
+      { q: 'The sum of an arithmetic series equals n times the average of:', a: 'first and last terms', w: ['first two terms', 'last two terms', 'all terms individually'] },
+      { q: 'Series: 1 + 4 + 7 + 10 + 13 + 16. Sum =', a: '51', w: ['46', '56', '48'] },
+      { q: 'Sum of first 100 positive integers: 100(101)/2 =', a: '5050', w: ['5000', '10100', '5100'] },
+      { q: 'If sum = 100, n = 10, a₁ = 1, find d: Use S = n(2a₁+(n-1)d)/2', a: 'd = 2', w: ['d = 1', 'd = 3', 'd = 10'] },
+      { q: 'Series: 50 + 45 + 40 + 35 + 30 (d=-5, n=5) =', a: '200', w: ['210', '190', '250'] },
+      { q: 'Gauss found 1+2+...+100 by pairing: (1+100)+(2+99)+...=', a: '50 pairs of 101 = 5050', w: ['100 pairs of 50', '101 pairs', '50 pairs of 100'] },
+      { q: 'Sum: 6 + 9 + 12 + 15 + 18 + 21 =', a: '81', w: ['72', '78', '90'] },
+      { q: 'An arithmetic series always has a finite sum if:', a: 'it has a finite number of terms', w: ['d is positive', 'd is negative', 'a₁ is 0'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('arithmetic-series', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['series', 'arithmetic', 'sequences']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
