@@ -4013,6 +4013,93 @@ const generators = {
     }
     return problems;
   },
+
+  'sigma-notation': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'The symbol Σ (sigma) represents:', a: 'summation (adding terms)', w: ['multiplication', 'division', 'subtraction'] },
+      { q: 'In Σᵢ₌₁⁵ i, the variable i is called the:', a: 'index of summation', w: ['coefficient', 'exponent', 'constant'] },
+      { q: 'Σᵢ₌₁⁴ i = 1+2+3+4 =', a: '10', w: ['4', '24', '8'] },
+      { q: 'Σₖ₌₁³ k² = 1²+2²+3² =', a: '14', w: ['6', '9', '36'] },
+      { q: 'Σⱼ₌₀² 2ʲ = 2⁰+2¹+2² =', a: '7', w: ['6', '8', '4'] },
+      { q: 'In Σₙ₌₁¹⁰ n, the upper limit is:', a: '10', w: ['1', 'n', '∞'] },
+      { q: 'In Σᵢ₌₃⁷ i, the lower limit is:', a: '3', w: ['7', 'i', '1'] },
+      { q: 'Σᵢ₌₁⁵ 2 = 2+2+2+2+2 =', a: '10', w: ['5', '2', '32'] },
+      { q: 'Σₙ₌₁³ (2n+1) = 3+5+7 =', a: '15', w: ['12', '21', '9'] },
+      { q: 'Write 4+5+6+7+8 in sigma notation:', a: 'Σᵢ₌₄⁸ i', w: ['Σᵢ₌₁⁸ i', 'Σᵢ₌₁⁵ i', 'Σᵢ₌₄⁵ i'] },
+      { q: 'Σᵢ₌₁⁴ 3i = 3+6+9+12 =', a: '30', w: ['24', '12', '36'] },
+      { q: 'Σₖ₌₂⁴ (k-1) = 1+2+3 =', a: '6', w: ['9', '3', '12'] },
+      { q: 'Constant multiple rule: Σ c·aᵢ = c·Σ aᵢ means:', a: 'constants can be factored out', w: ['constants must stay inside', 'only for c=1', 'rule does not exist'] },
+      { q: 'Σᵢ₌₁ⁿ 1 equals:', a: 'n (adding 1, n times)', w: ['1', '0', 'n²'] },
+      { q: 'Σᵢ₌₁¹⁰⁰ i can be computed using:', a: 'n(n+1)/2 = 5050', w: ['n² = 10000', 'n = 100', '2n = 200'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('sigma-notation', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['sigma', 'notation', 'summation']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'series-formulas': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Formula for sum of first n integers: 1+2+...+n =', a: 'n(n+1)/2', w: ['n²', 'n(n-1)/2', '2n'] },
+      { q: 'Sum of first n squares: 1²+2²+...+n² =', a: 'n(n+1)(2n+1)/6', w: ['n²(n+1)/2', 'n³/3', 'n(n+1)/2'] },
+      { q: 'Sum of first n cubes: 1³+2³+...+n³ =', a: '[n(n+1)/2]²', w: ['n³(n+1)/3', 'n⁴/4', 'n(n+1)(n+2)/6'] },
+      { q: 'Arithmetic series sum: Sₙ =', a: 'n(a₁+aₙ)/2 or n(2a₁+(n-1)d)/2', w: ['a₁·rⁿ', 'n·d', 'a₁+aₙ'] },
+      { q: 'Geometric series sum (r≠1): Sₙ =', a: 'a(1-rⁿ)/(1-r)', w: ['a·rⁿ', 'n·a·r', 'a/(1-r)'] },
+      { q: 'Infinite geometric series sum (|r|<1): S =', a: 'a/(1-r)', w: ['a·r/(1-r)', 'a(1-r)', '∞'] },
+      { q: 'Using n(n+1)/2: sum of 1 to 50 =', a: '1275', w: ['2500', '1250', '2550'] },
+      { q: 'Sum of first 10 squares using formula:', a: '385', w: ['100', '550', '330'] },
+      { q: 'For arithmetic series, if a₁=3, d=2, n=20, sum =', a: '440', w: ['400', '460', '380'] },
+      { q: 'Geometric series: a=2, r=3, n=5. Sum =', a: '242', w: ['162', '486', '80'] },
+      { q: 'Formula for sum of first n odd numbers: 1+3+5+...+(2n-1) =', a: 'n²', w: ['n(n+1)', '2n', 'n(n-1)'] },
+      { q: 'Sum of first n even numbers: 2+4+6+...+2n =', a: 'n(n+1)', w: ['n²', '2n²', 'n(n-1)'] },
+      { q: 'Telescoping series: Σ(1/k - 1/(k+1)) from 1 to n =', a: '1 - 1/(n+1)', w: ['n', '1/n', '0'] },
+      { q: 'If Σᵢ₌₁ⁿ i² = n(n+1)(2n+1)/6, then Σᵢ₌₁⁵ i² =', a: '55', w: ['30', '91', '25'] },
+      { q: 'Partial sum formula helps find:', a: 'sum of first n terms without adding individually', w: ['only infinite sums', 'only odd terms', 'the last term'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('series-formulas', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['series', 'formulas', 'summation']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'summation-notation': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'Summation notation uses which Greek letter?', a: 'Σ (sigma)', w: ['π (pi)', 'Δ (delta)', 'θ (theta)'] },
+      { q: 'Σᵢ₌₁⁶ i means:', a: 'add i for i = 1, 2, 3, 4, 5, 6', w: ['multiply i values', 'find the 6th term', 'subtract terms'] },
+      { q: 'Expand Σₖ₌₂⁵ k:', a: '2 + 3 + 4 + 5', w: ['1 + 2 + 3 + 4 + 5', '2 × 3 × 4 × 5', '5 - 2'] },
+      { q: 'Σᵢ₌₁⁵ 3 equals:', a: '15 (3 added 5 times)', w: ['3', '5', '8'] },
+      { q: 'Σₙ₌₀³ 2ⁿ = 2⁰+2¹+2²+2³ =', a: '15', w: ['8', '16', '14'] },
+      { q: 'The index in Σᵢ₌₁¹⁰ (2i-1) is:', a: 'i', w: ['1', '10', '2i-1'] },
+      { q: 'Σₘ₌₄⁷ m = 4+5+6+7 =', a: '22', w: ['28', '18', '24'] },
+      { q: 'Write 5+10+15+20 using summation:', a: 'Σᵢ₌₁⁴ 5i', w: ['Σᵢ₌₅²⁰ i', 'Σᵢ₌₁⁴ i', 'Σᵢ₌₁⁴ (i+5)'] },
+      { q: 'Σᵢ₌₁ⁿ (aᵢ+bᵢ) = Σᵢ₌₁ⁿ aᵢ + Σᵢ₌₁ⁿ bᵢ. This is:', a: 'the sum rule for summation', w: ['product rule', 'chain rule', 'quotient rule'] },
+      { q: 'Σⱼ₌₁⁴ j² = 1+4+9+16 =', a: '30', w: ['16', '100', '10'] },
+      { q: 'If Σᵢ₌₁⁵ aᵢ = 20, then Σᵢ₌₁⁵ 2aᵢ =', a: '40', w: ['20', '10', '100'] },
+      { q: 'Σₖ₌₁⁴ (k+1) = 2+3+4+5 =', a: '14', w: ['10', '20', '8'] },
+      { q: 'Empty sum: Σᵢ₌₅³ i (lower > upper) equals:', a: '0 (by convention)', w: ['undefined', '8', '-2'] },
+      { q: 'Σᵢ₌₁³ i! = 1!+2!+3! =', a: '9', w: ['6', '12', '3'] },
+      { q: 'Changing index: Σᵢ₌₁⁴ aᵢ = Σⱼ₌₁⁴ aⱼ because:', a: 'index variable is a dummy variable', w: ['i = j always', 'they are different sums', 'only for specific a values'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('summation-notation', p.q, p.a, p.w, 3, '8-12', 'Algebra', ['summation', 'notation', 'sigma']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
