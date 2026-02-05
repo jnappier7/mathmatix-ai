@@ -3346,6 +3346,93 @@ const generators = {
     }
     return problems;
   },
+
+  'prek-patterns': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'What comes next? 🔴🔵🔴🔵🔴___', a: '🔵', w: ['🔴', '🟢', '🟡'] },
+      { q: 'What comes next? ⭐🌙⭐🌙⭐___', a: '🌙', w: ['⭐', '☀️', '🌟'] },
+      { q: 'What comes next? 🍎🍎🍊🍎🍎___', a: '🍊', w: ['🍎', '🍋', '🍇'] },
+      { q: 'What comes next? 🔺⬜🔺⬜🔺___', a: '⬜', w: ['🔺', '⭕', '🔶'] },
+      { q: 'What comes next? 🐱🐶🐱🐶🐱___', a: '🐶', w: ['🐱', '🐰', '🐻'] },
+      { q: 'What comes next? 🟢🟢🟡🟢🟢___', a: '🟡', w: ['🟢', '🔴', '🔵'] },
+      { q: 'What comes next? 🌸🌸🌸🌻🌸🌸🌸___', a: '🌻', w: ['🌸', '🌹', '🌷'] },
+      { q: 'What comes next? big small big small big ___', a: 'small', w: ['big', 'medium', 'tiny'] },
+      { q: 'What comes next? 1 2 1 2 1 ___', a: '2', w: ['1', '3', '0'] },
+      { q: 'What comes next? clap stomp clap stomp clap ___', a: 'stomp', w: ['clap', 'jump', 'sit'] },
+      { q: 'What comes next? 🔵🔵🔴🔵🔵___', a: '🔴', w: ['🔵', '🟢', '🟡'] },
+      { q: 'What comes next? up down up down up ___', a: 'down', w: ['up', 'left', 'right'] },
+      { q: 'What comes next? A B A B A ___', a: 'B', w: ['A', 'C', 'D'] },
+      { q: 'What comes next? 🌞🌧️🌞🌧️🌞___', a: '🌧️', w: ['🌞', '❄️', '🌈'] },
+      { q: 'What comes next? 🐟🐟🐢🐟🐟___', a: '🐢', w: ['🐟', '🦀', '🐙'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('prek-patterns', p.q, p.a, p.w, 1, 'K-2', 'Operations & Algebraic Thinking', ['patterns', 'prek']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'prek-shapes-basic': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'What shape is this? ⭕', a: 'circle', w: ['square', 'triangle', 'rectangle'] },
+      { q: 'What shape is this? ⬜', a: 'square', w: ['circle', 'triangle', 'oval'] },
+      { q: 'What shape is this? 🔺', a: 'triangle', w: ['circle', 'square', 'rectangle'] },
+      { q: 'A ball is shaped like a:', a: 'circle (sphere)', w: ['square', 'triangle', 'rectangle'] },
+      { q: 'A door is shaped like a:', a: 'rectangle', w: ['circle', 'triangle', 'oval'] },
+      { q: 'How many sides does a triangle have?', a: '3', w: ['4', '2', '5'] },
+      { q: 'How many sides does a square have?', a: '4', w: ['3', '5', '6'] },
+      { q: 'A circle has how many corners?', a: '0', w: ['1', '2', '4'] },
+      { q: 'A pizza slice is shaped like a:', a: 'triangle', w: ['circle', 'square', 'rectangle'] },
+      { q: 'A wheel is shaped like a:', a: 'circle', w: ['square', 'triangle', 'star'] },
+      { q: 'Which shape has 4 equal sides?', a: 'square', w: ['triangle', 'circle', 'oval'] },
+      { q: 'An egg is shaped like an:', a: 'oval', w: ['circle', 'square', 'triangle'] },
+      { q: 'A stop sign has how many sides?', a: '8 (octagon)', w: ['4', '6', '3'] },
+      { q: 'A window is usually shaped like a:', a: 'rectangle or square', w: ['circle', 'triangle', 'oval'] },
+      { q: 'Which shape can roll? circle, square, or triangle?', a: 'circle', w: ['square', 'triangle', 'All of them'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('prek-shapes-basic', p.q, p.a, p.w, 1, 'K-2', 'Geometry', ['shapes', 'prek']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
+
+  'prek-number-words': (count) => {
+    const problems = [];
+    const qs = [
+      { q: 'What number is "one"?', a: '1', w: ['2', '0', '3'] },
+      { q: 'What number is "two"?', a: '2', w: ['1', '3', '4'] },
+      { q: 'What number is "three"?', a: '3', w: ['2', '4', '5'] },
+      { q: 'What number is "four"?', a: '4', w: ['3', '5', '6'] },
+      { q: 'What number is "five"?', a: '5', w: ['4', '6', '3'] },
+      { q: 'What number is "zero"?', a: '0', w: ['1', '2', '10'] },
+      { q: 'What number is "six"?', a: '6', w: ['5', '7', '4'] },
+      { q: 'What number is "seven"?', a: '7', w: ['6', '8', '5'] },
+      { q: 'What number is "eight"?', a: '8', w: ['7', '9', '6'] },
+      { q: 'What number is "nine"?', a: '9', w: ['8', '10', '7'] },
+      { q: 'What number is "ten"?', a: '10', w: ['9', '11', '1'] },
+      { q: 'How do you write the word for 3?', a: 'three', w: ['tree', 'free', 'thee'] },
+      { q: 'How do you write the word for 5?', a: 'five', w: ['fiv', 'fife', 'vive'] },
+      { q: 'How do you write the word for 8?', a: 'eight', w: ['ate', 'eit', 'eigt'] },
+      { q: 'How do you write the word for 2?', a: 'two', w: ['to', 'too', 'tow'] },
+    ];
+    for (let i = 0; i < count && i < qs.length; i++) {
+      const p = qs[i];
+      if (!existingPrompts.has(p.q.toLowerCase())) {
+        problems.push(createMCProblem('prek-number-words', p.q, p.a, p.w, 1, 'K-2', 'Counting & Cardinality', ['number-words', 'prek']));
+        existingPrompts.add(p.q.toLowerCase());
+      }
+    }
+    return problems;
+  },
 };
 
 // ============================================================================
