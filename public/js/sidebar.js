@@ -17,22 +17,6 @@ class Sidebar {
         this.conversations = []; // Cache for search
         this.searchTimeout = null;
 
-        // Topic suggestions for new sessions
-        this.topicSuggestions = [
-            { name: 'Fractions', emoji: '🍰' },
-            { name: 'Algebra', emoji: '📐' },
-            { name: 'Geometry', emoji: '📏' },
-            { name: 'Word Problems', emoji: '📝' },
-            { name: 'Decimals', emoji: '🔢' },
-            { name: 'Percentages', emoji: '💯' },
-            { name: 'Graphing', emoji: '📈' },
-            { name: 'Equations', emoji: '⚖️' },
-            { name: 'Trigonometry', emoji: '📊' },
-            { name: 'Statistics', emoji: '📉' },
-            { name: 'Calculus', emoji: '∫' },
-            { name: 'Probability', emoji: '🎲' }
-        ];
-
         console.log('📂 Sidebar initializing...');
         this.init();
     }
@@ -121,10 +105,10 @@ class Sidebar {
             leaderboardToggle.addEventListener('click', () => this.toggleLeaderboard());
         }
 
-        // New topic button
-        const newTopicBtn = document.getElementById('new-topic-btn');
-        if (newTopicBtn) {
-            newTopicBtn.addEventListener('click', () => this.createNewTopic());
+        // New session button
+        const newSessionBtn = document.getElementById('new-session-btn');
+        if (newSessionBtn) {
+            newSessionBtn.addEventListener('click', () => this.createNewSession());
         }
 
         // Session search input
@@ -267,40 +251,14 @@ class Sidebar {
         // Clear existing
         sessionsList.innerHTML = '';
 
-        // Find general conversation
-        const generalConv = conversations.find(c => c.conversationType === 'general');
-
-        // Add general chat (always first)
-        const generalChat = document.createElement('div');
-        generalChat.className = 'session-item' + (generalConv && this.activeConversationId === generalConv._id ? ' active' : '');
-        if (generalConv) {
-            generalChat.dataset.conversationId = generalConv._id;
-        }
-        generalChat.innerHTML = `
-            <div class="session-main">
-                <span class="session-emoji">💬</span>
-                <div class="session-info">
-                    <span class="session-name">General Chat</span>
-                    ${generalConv && generalConv.lastMessage ? `
-                        <span class="session-preview">${this.escapeHtml(generalConv.lastMessage.content)}</span>
-                    ` : '<span class="session-preview">Start a new conversation</span>'}
-                </div>
-            </div>
-            <div class="session-meta">
-                ${generalConv ? `<span class="session-time">${this.formatRelativeTime(generalConv.lastActivity)}</span>` : ''}
-                ${generalConv && generalConv.messageCount > 0 ? `<span class="session-count">${generalConv.messageCount}</span>` : ''}
-            </div>
-        `;
-        generalChat.addEventListener('click', (e) => {
-            if (!e.target.closest('.session-actions')) {
-                this.switchToGeneralChat();
-            }
-        });
-        sessionsList.appendChild(generalChat);
+        // Filter out assessment/mastery conversations from the list
+        const chatConversations = conversations.filter(c =>
+            c.conversationType === 'general' || c.conversationType === 'topic'
+        );
 
         // Separate pinned and regular sessions
-        const pinnedSessions = conversations.filter(c => c.isPinned && c.conversationType === 'topic');
-        const regularSessions = conversations.filter(c => !c.isPinned && c.conversationType === 'topic');
+        const pinnedSessions = chatConversations.filter(c => c.isPinned);
+        const regularSessions = chatConversations.filter(c => !c.isPinned);
 
         // Add pinned sessions header if any exist
         if (pinnedSessions.length > 0) {
@@ -323,6 +281,18 @@ class Sidebar {
 
             regularSessions.forEach(conv => this.renderSessionItem(conv, sessionsList, false));
         }
+
+        // Show empty state if no conversations
+        if (chatConversations.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'session-empty-state';
+            emptyState.innerHTML = `
+                <span style="color: #888; font-size: 13px; padding: 12px; display: block; text-align: center;">
+                    No sessions yet. Click <strong>New Session</strong> to start!
+                </span>
+            `;
+            sessionsList.appendChild(emptyState);
+        }
     }
 
     /**
@@ -344,7 +314,7 @@ class Sidebar {
 
         sessionItem.innerHTML = `
             <div class="session-main">
-                <span class="session-emoji">${conv.topicEmoji || '📚'}</span>
+                <span class="session-emoji">${conv.topicEmoji || '💬'}</span>
                 <div class="session-info">
                     <div class="session-name-row">
                         ${isPinned ? '<i class="fas fa-thumbtack session-pin-icon"></i>' : ''}
@@ -523,142 +493,24 @@ class Sidebar {
         });
     }
 
-    async createNewTopic() {
-        console.log('[Sidebar] createNewTopic called');
-        // Show topic selection modal
-        this.showNewTopicModal();
-    }
-
     /**
-     * Show new topic modal with suggestions
+     * Create a new blank session immediately (Claude-like UX)
      */
-    showNewTopicModal() {
-        console.log('[Sidebar] showNewTopicModal called');
-        // Create modal if it doesn't exist
-        let modal = document.getElementById('new-topic-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'new-topic-modal';
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal-content new-topic-modal-content">
-                    <button class="modal-close-button" id="close-new-topic-modal">&times;</button>
-                    <h2><i class="fas fa-plus-circle"></i> New Topic Session</h2>
-                    <p style="color: #666; margin-bottom: 20px;">Create a focused session for a specific math topic.</p>
-
-                    <div class="form-group">
-                        <label for="custom-topic-input">Custom Topic</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="custom-topic-input" class="form-input" placeholder="Enter a topic name..." maxlength="50" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                            <button id="create-custom-topic-btn" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Create
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="topic-divider">
-                        <span>or choose a suggestion</span>
-                    </div>
-
-                    <div class="topic-suggestions-grid" id="topic-suggestions-grid">
-                        ${this.topicSuggestions.map(t => `
-                            <button class="topic-suggestion-btn" data-topic="${t.name}" data-emoji="${t.emoji}">
-                                <span class="topic-emoji">${t.emoji}</span>
-                                <span class="topic-name">${t.name}</span>
-                            </button>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-
-            // Close button handler
-            document.getElementById('close-new-topic-modal').addEventListener('click', () => {
-                modal.style.display = 'none';
-            });
-
-            // Click outside to close
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-
-            // Custom topic creation
-            const customInput = document.getElementById('custom-topic-input');
-            const createBtn = document.getElementById('create-custom-topic-btn');
-
-            createBtn.addEventListener('click', () => {
-                const topic = customInput.value.trim();
-                if (topic) {
-                    this.createTopicSession(topic);
-                    modal.style.display = 'none';
-                }
-            });
-
-            customInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const topic = customInput.value.trim();
-                    if (topic) {
-                        this.createTopicSession(topic);
-                        modal.style.display = 'none';
-                    }
-                }
-            });
-
-            // Suggestion buttons
-            document.querySelectorAll('.topic-suggestion-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const topic = btn.dataset.topic;
-                    const emoji = btn.dataset.emoji;
-                    this.createTopicSession(topic, emoji);
-                    modal.style.display = 'none';
-                });
-            });
-        }
-
-        // Reset and show modal
-        const customInput = document.getElementById('custom-topic-input');
-        if (customInput) customInput.value = '';
-        modal.style.display = 'flex';
-    }
-
-    /**
-     * Create a topic session
-     */
-    async createTopicSession(topic, emoji = null) {
-        const emojiMap = {
-            'fractions': '🍰',
-            'algebra': '📐',
-            'geometry': '📏',
-            'calculus': '∫',
-            'trigonometry': '📊',
-            'statistics': '📉',
-            'probability': '🎲',
-            'word problems': '📝',
-            'equations': '⚖️',
-            'decimals': '🔢',
-            'percentages': '💯',
-            'graphing': '📈'
-        };
-
-        const topicLower = topic.toLowerCase();
-        const topicEmoji = emoji || emojiMap[topicLower] || '📚';
-
+    async createNewSession() {
+        console.log('[Sidebar] createNewSession called');
         try {
             const response = await window.csrfFetch('/api/conversations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ topic, topicEmoji }),
+                body: JSON.stringify({}),
                 credentials: 'include'
             });
 
             const data = await response.json();
-            await this.loadSessions(); // Reload to show new topic
-            this.switchSession(data.conversation._id); // Switch to new topic
+            await this.loadSessions();
+            this.switchSession(data.conversation._id);
         } catch (error) {
-            console.error('[Sidebar] Failed to create topic:', error);
-            alert('Failed to create new topic. Please try again.');
+            console.error('[Sidebar] Failed to create new session:', error);
         }
     }
 
@@ -696,28 +548,6 @@ class Sidebar {
             this.activeConversationId = conversationId;
         } catch (error) {
             console.error('[Sidebar] Failed to switch session:', error);
-        }
-    }
-
-    async switchToGeneralChat() {
-        // Clear active conversation (will create new general conversation)
-        try {
-            const response = await window.csrfFetch('/api/conversations', {
-                method: 'GET',
-                credentials: 'include'
-            });
-
-            const data = await response.json();
-            const generalConv = data.conversations.find(c => c.conversationType === 'general');
-
-            if (generalConv) {
-                this.switchSession(generalConv._id);
-            } else {
-                // Reload page to create new general conversation
-                window.location.reload();
-            }
-        } catch (error) {
-            console.error('[Sidebar] Failed to switch to general chat:', error);
         }
     }
 

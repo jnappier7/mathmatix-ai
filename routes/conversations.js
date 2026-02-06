@@ -49,23 +49,42 @@ router.get('/', isAuthenticated, async (req, res) => {
 
 /**
  * POST /api/conversations
- * Create a new topic-based conversation
+ * Create a new conversation (with or without a topic)
  */
 router.post('/', isAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const { topic, topicEmoji } = req.body;
 
-    if (!topic) {
-      return res.status(400).json({ message: 'Topic is required' });
-    }
+    let conversation;
 
-    const conversation = await getOrCreateConversation(userId, { topic });
+    if (topic) {
+      // Topic-based session: find existing or create new
+      conversation = await getOrCreateConversation(userId, { topic });
 
-    // Update emoji if provided
-    if (topicEmoji) {
-      conversation.topicEmoji = topicEmoji;
+      if (topicEmoji) {
+        conversation.topicEmoji = topicEmoji;
+        await conversation.save();
+      }
+    } else {
+      // New blank session (Claude-like): always create fresh
+      conversation = new Conversation({
+        userId,
+        conversationType: 'general',
+        conversationName: 'New Chat',
+        messages: []
+      });
       await conversation.save();
+
+      // Set as user's active conversation
+      const user = await User.findById(userId);
+      user.activeConversationId = conversation._id;
+      await user.save();
+
+      logger.info('Created new blank session', {
+        userId,
+        conversationId: conversation._id
+      });
     }
 
     res.json({
@@ -73,7 +92,8 @@ router.post('/', isAuthenticated, async (req, res) => {
         _id: conversation._id,
         topic: conversation.topic,
         topicEmoji: conversation.topicEmoji,
-        name: conversation.conversationName,
+        name: conversation.conversationName || conversation.topic || 'New Chat',
+        conversationType: conversation.conversationType,
         messageCount: conversation.messages.length
       }
     });
