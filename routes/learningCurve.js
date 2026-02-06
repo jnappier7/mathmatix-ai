@@ -2,13 +2,14 @@
 
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 
 // GET /api/learning-curve/:skillId - Get learning curve data for a skill
-router.get('/learning-curve/:skillId', async (req, res) => {
+router.get('/learning-curve/:skillId', isAuthenticated, async (req, res) => {
   try {
     const { skillId } = req.params;
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -55,9 +56,9 @@ router.get('/learning-curve/:skillId', async (req, res) => {
 });
 
 // GET /api/learning-curve/overview - Get overview of all skills
-router.get('/learning-curve/overview', async (req, res) => {
+router.get('/learning-curve/overview', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -157,9 +158,9 @@ function getSkillDisplayName(skillId) {
 }
 
 // GET /api/learning-curve/milestones - Get achievement milestones
-router.get('/learning-curve/milestones', async (req, res) => {
+router.get('/learning-curve/milestones', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });

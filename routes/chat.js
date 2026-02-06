@@ -37,6 +37,27 @@ const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 40;
 
+// Per-user request lock to prevent concurrent chat processing (race condition fix).
+// If user A sends message 1 and message 2 before message 1 finishes saving,
+// message 2 waits until message 1 completes to prevent data loss.
+const userChatLocks = new Map();
+function acquireUserLock(userId) {
+    const key = userId.toString();
+    if (!userChatLocks.has(key)) {
+        userChatLocks.set(key, Promise.resolve());
+    }
+    let release;
+    const newLock = new Promise(resolve => { release = resolve; });
+    const previousLock = userChatLocks.get(key);
+    userChatLocks.set(key, newLock);
+    return previousLock.then(() => release);
+}
+// Cleanup stale locks periodically (prevent memory leak for inactive users)
+setInterval(() => {
+    // Map only holds resolved promises for inactive users — safe to clear
+    if (userChatLocks.size > 1000) userChatLocks.clear();
+}, 10 * 60 * 1000);
+
 /**
  * Update daily quests and weekly challenges when a problem is answered
  * This runs in the background and doesn't block the chat response
@@ -221,6 +242,21 @@ async function updateQuestProgress(userId, wasCorrect, topic) {
     }
 }
 
+/**
+ * Detect problem context type from student message for transfer pillar tracking.
+ * Returns a context category or null if undetectable.
+ */
+function detectProblemContext(message) {
+    if (!message || typeof message !== 'string') return null;
+    const lower = message.toLowerCase();
+    if (/\b(word problem|story|scenario|real.?world|application)\b/.test(lower)) return 'word-problem';
+    if (/\b(graph|plot|chart|coordinate|axis|slope)\b/.test(lower)) return 'graphical';
+    if (/\b(draw|picture|diagram|model|visual)\b/.test(lower)) return 'visual';
+    if (/\d+\s*[+\-*/÷×^=<>]\s*\d+/.test(message)) return 'numeric';
+    if (/\b(explain|why|how|what does|prove|show that)\b/.test(lower)) return 'conceptual';
+    return 'numeric'; // Default: most math interactions are numeric
+}
+
 router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
     const { message, role, childId, responseTime, isGreeting } = req.body;
     const userId = req.user?._id;
@@ -245,6 +281,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
     if (isGreeting) {
         return handleGreetingRequest(req, res, userId);
     }
+
+    // Acquire per-user lock to prevent concurrent message processing
+    // This ensures messages are saved sequentially, preventing data loss
+    const releaseLock = await acquireUserLock(userId);
+
+    try { // Lock-guarded block — finally releases lock at end
 
     // SAFETY FILTER: Block inappropriate content
     const inappropriatePatterns = [
@@ -557,6 +599,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         let aiResponseText = '';
 
+        // Track client disconnect for streaming mode (declared here for scope access)
+        let clientDisconnected = false;
+
         if (useStreaming) {
             // STREAMING MODE: Use Server-Sent Events for real-time response
             console.log('📡 Streaming mode activated');
@@ -566,6 +611,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
             res.flushHeaders();
+
+            req.on('close', () => { clientDisconnected = true; });
 
             try {
                 const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.7, max_tokens: 1500 });
@@ -578,6 +625,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 const isClaudeModel = PRIMARY_CHAT_MODEL.startsWith('claude-');
 
                 for await (const chunk of stream) {
+                    if (clientDisconnected) {
+                        console.log('[Stream] Client disconnected mid-stream, stopping');
+                        break;
+                    }
                     let content = '';
 
                     if (isClaudeModel) {
@@ -720,35 +771,99 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         }
 
         // SKILL MASTERY TRACKING: Parse AI skill progression tags
+        // AI sends <SKILL_MASTERED:skillId> as evidence — NOT an instant decree.
+        // We record it as a correct demonstration and only promote to 'mastered'
+        // when the 4-Pillar thresholds are genuinely met.
         const skillMasteredMatch = aiResponseText.match(/<SKILL_MASTERED:([^>]+)>/);
         if (skillMasteredMatch) {
             const skillId = skillMasteredMatch[1].trim();
             user.skillMastery = user.skillMastery || new Map();
+            const existing = user.skillMastery.get(skillId) || {};
+
+            // Initialize pillar data if missing
+            const pillars = existing.pillars || {
+                accuracy: { correct: 0, total: 0, percentage: 0, threshold: 0.90 },
+                independence: { hintsUsed: 0, hintsAvailable: 15, hintThreshold: 3, autoStepUsed: false },
+                transfer: { contextsAttempted: [], contextsRequired: 3, formatVariety: false },
+                retention: { retentionChecks: [], failed: false }
+            };
+
+            // Record this as a correct demonstration
+            pillars.accuracy.correct = (pillars.accuracy.correct || 0) + 1;
+            pillars.accuracy.total = (pillars.accuracy.total || 0) + 1;
+            pillars.accuracy.percentage = pillars.accuracy.total > 0
+                ? pillars.accuracy.correct / pillars.accuracy.total : 0;
+
+            // Check if hint was used recently (independence pillar)
+            const recentMsgs = activeConversation.messages.slice(-6);
+            const usedHint = recentMsgs.some(msg =>
+                msg.role === 'user' && /\b(hint|help|stuck|don't know|idk|confused)\b/i.test(msg.content)
+            );
+            if (usedHint) {
+                pillars.independence.hintsUsed = (pillars.independence.hintsUsed || 0) + 1;
+            }
+
+            // Detect context type for transfer pillar
+            const contextType = detectProblemContext(message);
+            if (contextType && !pillars.transfer.contextsAttempted.includes(contextType)) {
+                pillars.transfer.contextsAttempted.push(contextType);
+            }
+
+            // Calculate overall mastery score (0-100) from pillar progress
+            const accuracyScore = Math.min(pillars.accuracy.percentage / 0.90, 1.0);
+            const independenceScore = pillars.independence.hintsUsed <= pillars.independence.hintThreshold ? 1.0
+                : Math.max(0, 1.0 - (pillars.independence.hintsUsed - pillars.independence.hintThreshold) * 0.15);
+            const transferScore = Math.min(pillars.transfer.contextsAttempted.length / pillars.transfer.contextsRequired, 1.0);
+            const masteryScore = Math.round(((accuracyScore + independenceScore + transferScore) / 3) * 100);
+
+            // Determine status: only 'mastered' if all pillars meet thresholds
+            const meetsAccuracy = pillars.accuracy.percentage >= 0.90 && pillars.accuracy.total >= 3;
+            const meetsIndependence = pillars.independence.hintsUsed <= pillars.independence.hintThreshold;
+            const meetsTransfer = pillars.transfer.contextsAttempted.length >= pillars.transfer.contextsRequired;
+            const allPillarsMet = meetsAccuracy && meetsIndependence && meetsTransfer;
+
+            let newStatus = existing.status || 'practicing';
+            if (allPillarsMet) {
+                newStatus = 'mastered';
+            } else if (pillars.accuracy.total >= 2) {
+                newStatus = 'practicing';
+            } else {
+                newStatus = 'learning';
+            }
+
             user.skillMastery.set(skillId, {
-                status: 'mastered',
-                masteryScore: 1.0,
-                masteredDate: new Date(),
-                notes: 'AI-determined mastery through conversation'
+                ...existing,
+                status: newStatus,
+                masteryScore: masteryScore,
+                masteryType: 'verified',
+                lastPracticed: new Date(),
+                consecutiveCorrect: (existing.consecutiveCorrect || 0) + 1,
+                totalAttempts: (existing.totalAttempts || 0) + 1,
+                masteredDate: newStatus === 'mastered' ? (existing.masteredDate || new Date()) : existing.masteredDate,
+                pillars: pillars,
+                notes: `AI-verified demonstration (${pillars.accuracy.correct}/${pillars.accuracy.total} correct)`
             });
 
-            // Add to recent wins
-            if (!user.learningProfile.recentWins) {
-                user.learningProfile.recentWins = [];
+            // Only add to recent wins if genuinely mastered
+            if (newStatus === 'mastered' && existing.status !== 'mastered') {
+                if (!user.learningProfile.recentWins) {
+                    user.learningProfile.recentWins = [];
+                }
+                const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                user.learningProfile.recentWins.unshift({
+                    skill: skillId,
+                    description: `Mastered ${displayName}`,
+                    date: new Date()
+                });
+                user.learningProfile.recentWins = user.learningProfile.recentWins.slice(0, 10);
+                user.markModified('learningProfile');
+                console.log(`✓ Student ${user.firstName} MASTERED skill: ${skillId} (all pillars met)`);
+            } else {
+                console.log(`→ Student ${user.firstName} demonstrated skill: ${skillId} (${masteryScore}% mastery, status: ${newStatus})`);
             }
-            const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            user.learningProfile.recentWins.unshift({
-                skill: skillId,
-                description: `Mastered ${displayName}`,
-                date: new Date()
-            });
-            // Keep only last 10 wins
-            user.learningProfile.recentWins = user.learningProfile.recentWins.slice(0, 10);
 
             user.markModified('skillMastery');
-            user.markModified('learningProfile');
             aiResponseText = aiResponseText.replace(skillMasteredMatch[0], '').trim();
-
-            console.log(`✓ Student ${user.firstName} mastered skill: ${skillId}`);
         }
 
         const skillStartedMatch = aiResponseText.match(/<SKILL_STARTED:([^>]+)>/);
@@ -1142,9 +1257,15 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         };
 
         if (useStreaming) {
-            // Send final metadata as 'complete' event
-            res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
-            res.end();
+            // Send final metadata as 'complete' event (skip if client already gone)
+            if (!clientDisconnected) {
+                try {
+                    res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
+                    res.end();
+                } catch (writeErr) {
+                    console.error('[Stream] Failed to send completion event:', writeErr.message);
+                }
+            }
         } else {
             // Non-streaming: send as regular JSON
             res.json(responseData);
@@ -1152,7 +1273,22 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
     } catch (error) {
         console.error("ERROR: Chat route failed:", error);
-        res.status(500).json({ message: "An internal server error occurred." });
+        // Prevent "headers already sent" crash during streaming mode
+        if (res.headersSent) {
+            try {
+                res.write(`data: ${JSON.stringify({ type: 'error', message: 'Something went wrong. Please try again.' })}\n\n`);
+                res.end();
+            } catch (writeErr) {
+                console.error("ERROR: Failed to send error event on stream:", writeErr.message);
+            }
+        } else {
+            res.status(500).json({ message: "An internal server error occurred." });
+        }
+    }
+
+    } finally {
+        // Always release the per-user lock so the next message can proceed
+        releaseLock();
     }
 });
 
