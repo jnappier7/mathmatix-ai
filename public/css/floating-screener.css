@@ -138,8 +138,13 @@
 
 /* Instruction Screen */
 .screener-instruction {
+  display: none;
   text-align: center;
   padding: 20px;
+}
+
+.screener-instruction.active {
+  display: block;
 }
 
 .screener-instruction h2 {
@@ -257,11 +262,36 @@
   display: block;
 }
 
+/* Progress Bar */
+.screener-progress {
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.screener-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 4px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .question-card {
   background: white;
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* Answer feedback flash - green for correct, neutral for miss */
+.question-card.flash-correct {
+  border-color: #2ecc71;
+  box-shadow: 0 0 16px rgba(46, 204, 113, 0.3);
 }
 
 .question-header {
@@ -338,58 +368,33 @@
   flex: 1;
 }
 
-/* Confidence Meter */
-.confidence-meter {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 16px;
+/* Skip Skill Button */
+.skip-skill-section {
   margin: 20px 0;
-}
-
-.confidence-meter h4 {
-  font-size: 0.9em;
-  color: #666;
-  margin-bottom: 12px;
   text-align: center;
 }
 
-.confidence-options {
-  display: flex;
-  justify-content: space-around;
-  gap: 8px;
-}
-
-.confidence-option {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12px 8px;
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+.btn-skip-skill {
+  background: transparent;
+  color: #888;
+  border: 1px dashed #ccc;
+  padding: 12px 24px;
+  font-size: 0.95em;
+  font-weight: 500;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
+  width: 100%;
 }
 
-.confidence-option:hover {
+.btn-skip-skill:hover {
+  color: #667eea;
   border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
 }
 
-.confidence-option.selected {
-  background: #e8edff;
-  border-color: #667eea;
-}
-
-.confidence-option .level {
-  font-size: 1.5em;
-  margin-bottom: 4px;
-}
-
-.confidence-option .label {
-  font-size: 0.75em;
-  color: #666;
-  text-align: center;
+.btn-skip-skill i {
+  margin-right: 6px;
 }
 
 /* Submit Button */
@@ -413,6 +418,24 @@
 .btn-submit-answer:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Keyboard Hint */
+.keyboard-hint {
+  text-align: center;
+  font-size: 0.75em;
+  color: #aaa;
+  margin-top: 12px;
+}
+
+.keyboard-hint kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  font-size: 0.9em;
+  font-family: inherit;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 3px;
 }
 
 /* Results Screen */
@@ -681,27 +704,37 @@
   border-radius: 0 0 16px 0;
 }
 
-/* Mobile Responsive */
+/* Mobile Responsive - full-screen overlay instead of floating */
 @media (max-width: 768px) {
   .floating-screener {
-    width: 95vw;
-    max-width: 95vw;
-    min-width: 320px;
-    max-height: 85vh;
-    top: 55%;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    top: 0;
+    left: 0;
+    transform: none;
+    border-radius: 0;
     resize: none;
+  }
+
+  .floating-screener.active {
+    display: flex;
   }
 
   .screener-header-bar {
     padding: 10px 12px;
-  }
-
-  .screener-title {
-    font-size: 14px;
+    border-radius: 0;
+    cursor: default;
   }
 
   .screener-body {
     padding: 16px;
+  }
+
+  .screener-title {
+    font-size: 14px;
   }
 
   .mc-options {
@@ -712,20 +745,17 @@
     padding: 12px;
   }
 
-  .confidence-options {
-    flex-wrap: nowrap;
+  .btn-skip-skill {
+    padding: 10px 16px;
+    font-size: 0.9em;
   }
 
-  .confidence-option {
-    padding: 10px 6px;
+  .keyboard-hint {
+    display: none;
   }
 
-  .confidence-option .level {
-    font-size: 1.2em;
-  }
-
-  .confidence-option .label {
-    font-size: 0.65em;
+  .floating-screener .resize-handle {
+    display: none;
   }
 
   .results-stats {
