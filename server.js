@@ -125,7 +125,11 @@ const iepTemplatesRoutes = require('./routes/iepTemplates');  // IEP templates f
 const impersonationRoutes = require('./routes/impersonation');  // User impersonation (student view)
 const announcementsRoutes = require('./routes/announcements');  // Teacher-to-student announcements
 const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
+const billingRoutes = require('./routes/billing');  // Stripe subscription billing
 const TUTOR_CONFIG = require('./utils/tutorConfig');
+
+// Usage gate middleware for free tier enforcement
+const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
 
 // Impersonation middleware
 const { handleImpersonation, enforceReadOnly } = require('./middleware/impersonation');
@@ -140,6 +144,9 @@ app.use(cors({
   origin: process.env.CLIENT_URL || "http://localhost:3000",
   credentials: true
 }));
+// Stripe webhook needs raw body for signature verification — MUST be before express.json()
+app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -364,12 +371,13 @@ app.use('/api/teacher', isAuthenticated, isTeacher, teacherRoutes);
 app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
 app.use('/api/student', isAuthenticated, isStudent, studentRoutes.router);
 app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
-app.use('/api/chat', isAuthenticated, aiEndpointLimiter, chatRoutes); // SECURITY FIX: Added per-user rate limiting
+app.use('/api/billing', billingRoutes); // Stripe billing (webhook is pre-parsed with raw body above)
+app.use('/api/chat', isAuthenticated, aiEndpointLimiter, usageGate, chatRoutes); // Usage-gated for free tier
 app.use('/api/conversations', isAuthenticated, conversationsRoutes); // Topic-based conversations & assessment
 app.use('/api/speak', isAuthenticated, speakRoutes);
-app.use('/api/voice', isAuthenticated, aiEndpointLimiter, voiceRoutes); // Real-time voice chat with Whisper + TTS
+app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes); // Premium: voice chat
 app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (no rate limit on test endpoint)
-app.use('/api/upload', isAuthenticated, aiEndpointLimiter, uploadRoutes); // SECURITY FIX: Added per-user rate limiting
+app.use('/api/upload', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, chatWithFileRoutes); // SECURITY FIX: Added per-user rate limiting 
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
@@ -388,7 +396,7 @@ app.use('/api/mastery', isAuthenticated, masteryRoutes); // Mastery mode (placem
 app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, masteryChatRoutes); // Mastery mode dedicated chat
 app.use('/api/settings', isAuthenticated, settingsRoutes); // User settings and password management
 app.use('/api/email', isAuthenticated, emailRoutes); // Email service for parent reports and notifications
-app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, gradeWorkRoutes); // AI grading for student work
+app.use('/api/grade-work', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Work grading'), gradeWorkRoutes); // Premium: AI grading
 app.use('/api/quarterly-growth', isAuthenticated, quarterlyGrowthRoutes); // Quarterly growth tracking and retention analytics
 app.use('/api/fact-fluency', isAuthenticated, factFluencyRoutes); // M∆THBL∆ST Fact Fluency - Math facts practice game
 app.use('/api', isAuthenticated, dailyQuestsRoutes); // Daily Quests & Streak System for mastery mode
