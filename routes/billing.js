@@ -16,6 +16,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // ---- Configuration ----
 const PREMIUM_PRICE = 1995; // $19.95 in cents
 const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week
+const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 
 // =====================================================
 // POST /create-checkout-session
@@ -189,6 +190,17 @@ router.get('/portal', isAuthenticated, async (req, res) => {
 // =====================================================
 router.get('/status', isAuthenticated, async (req, res) => {
   try {
+    // When billing is off, report unlimited access (pre-launch mode)
+    if (!BILLING_ENABLED) {
+      return res.json({
+        success: true,
+        billingEnabled: false,
+        tier: 'unlimited',
+        isPremium: true,
+        usage: { weeklySecondsUsed: 0, weeklySecondsRemaining: Infinity, weeklyLimitReached: false, percentUsed: 0 }
+      });
+    }
+
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 

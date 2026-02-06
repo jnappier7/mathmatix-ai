@@ -3,19 +3,27 @@
 // Blocks chat/voice/upload requests when a free-tier user has exceeded
 // their weekly allotment. Premium users pass through unconditionally.
 //
+// MASTER SWITCH: Set BILLING_ENABLED=true in .env to activate.
+// When disabled, all users get unlimited access (pre-launch mode).
+//
 // Usage: app.use('/api/chat', isAuthenticated, usageGate, chatRoutes);
 
 const User = require('../models/user');
 
 const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week
+const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 
 /**
  * Middleware that gates AI-powered endpoints behind the free tier limit.
+ * - If BILLING_ENABLED is false: everyone passes (pre-launch mode)
  * - Premium users: always pass
  * - Free users under limit: pass, with remaining time in response header
  * - Free users over limit: 402 Payment Required with upgrade prompt
  */
 async function usageGate(req, res, next) {
+  // Master switch — when billing is off, everyone gets unlimited access
+  if (!BILLING_ENABLED) return next();
+
   try {
     // Only gate POST requests (actual AI usage), not GETs
     if (req.method !== 'POST') return next();
@@ -78,6 +86,8 @@ async function usageGate(req, res, next) {
  */
 function premiumFeatureGate(featureName) {
   return (req, res, next) => {
+    if (!BILLING_ENABLED) return next(); // Master switch off — all features open
+
     const user = req.user;
     if (!user) return next();
 

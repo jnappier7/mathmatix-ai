@@ -335,6 +335,9 @@ async function checkBillingStatus() {
         // Store for quick access
         window._billingStatus = data;
 
+        // When billing is off (pre-launch), skip all UI
+        if (data.billingEnabled === false) return data;
+
         // Show remaining time indicator for free users
         if (!data.isPremium && data.usage) {
             updateFreeTimeIndicator(data.usage);
