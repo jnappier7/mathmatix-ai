@@ -23,6 +23,7 @@ class FloatingScreener {
     this.sessionId = null;
     this.currentProblem = null;
     this.selectedAnswer = null;
+    this.submitting = false;
     this.textSize = 'medium'; // small, medium, large, xlarge
 
     // Drag state
@@ -114,10 +115,34 @@ class FloatingScreener {
       continueBtn.addEventListener('click', () => this.finishAssessment());
     }
 
-    // Escape key to close
+    // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.isOpen) {
+      if (!this.isOpen) return;
+
+      // Escape to close
+      if (e.key === 'Escape') {
         this.close();
+        return;
+      }
+
+      // Only handle shortcuts on question screen
+      if (!this.questionScreen?.classList.contains('active')) return;
+      if (this.submitting) return;
+
+      // A-F to select MC option
+      const key = e.key.toUpperCase();
+      if (['A', 'B', 'C', 'D', 'E', 'F'].includes(key)) {
+        const option = document.querySelector(`.mc-option[data-value="${key}"]`);
+        if (option) {
+          this.selectOption(option);
+          e.preventDefault();
+        }
+      }
+
+      // Enter to submit
+      if (e.key === 'Enter' && this.selectedAnswer) {
+        this.submitAnswer();
+        e.preventDefault();
       }
     });
   }
@@ -209,16 +234,25 @@ class FloatingScreener {
     this.sessionId = null;
     this.currentProblem = null;
     this.selectedAnswer = null;
+    this.submitting = false;
   }
 
   centerModule() {
-    this.container.style.transform = 'translate(-50%, -50%)';
+    // On mobile, no transform needed (full-screen)
+    if (window.innerWidth <= 768) {
+      this.container.style.transform = 'none';
+    } else {
+      this.container.style.transform = 'translate(-50%, -50%)';
+    }
     this.xOffset = 0;
     this.yOffset = 0;
   }
 
   // Drag functionality
   dragStart(e) {
+    // Disable drag on mobile (full-screen mode)
+    if (window.innerWidth <= 768) return;
+
     if (e.type === 'touchstart') {
       this.initialX = e.touches[0].clientX - this.xOffset;
       this.initialY = e.touches[0].clientY - this.yOffset;
@@ -335,6 +369,64 @@ class FloatingScreener {
     this.showScreen('loading');
   }
 
+  // Utility: wait for a duration
+  wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Flash the question card border green for correct answers
+  flashCard(type) {
+    return new Promise(resolve => {
+      const card = document.querySelector('.question-card');
+      if (!card) { resolve(); return; }
+
+      card.classList.add(`flash-${type}`);
+      setTimeout(() => {
+        card.classList.remove(`flash-${type}`);
+        resolve();
+      }, 400);
+    });
+  }
+
+  // Fetch next problem without showing a loading screen
+  async fetchNextProblem() {
+    const response = await window.csrfFetch(`/api/screener/next-problem?sessionId=${this.sessionId}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to get problem');
+    }
+
+    return data;
+  }
+
+  // Update progress bar from submit-answer response
+  updateProgressBar(progress) {
+    if (!progress) return;
+
+    const fill = document.getElementById('screener-progress-fill');
+    if (fill) {
+      fill.style.width = `${progress.percentComplete || 0}%`;
+    }
+  }
+
+  // Lock/unlock answer controls during submit
+  setControlsLocked(locked) {
+    const submitBtn = document.getElementById('screener-submit-btn');
+    const skipBtn = document.getElementById('screener-skip-btn');
+    if (submitBtn) submitBtn.disabled = locked;
+    if (skipBtn) skipBtn.disabled = locked;
+
+    // Disable MC option clicks
+    document.querySelectorAll('.mc-option').forEach(opt => {
+      opt.style.pointerEvents = locked ? 'none' : '';
+    });
+  }
+
   // Assessment flow
   async startAssessment() {
     this.showLoading(this.isGrowthCheck ? 'Starting growth check...' : 'Starting assessment...');
@@ -364,41 +456,17 @@ class FloatingScreener {
       this.sessionId = data.sessionId;
       console.log('[FloatingScreener] Assessment started, sessionId:', this.sessionId);
 
-      // Get first problem
-      await this.getNextProblem();
+      // Get first problem (loading spinner is already visible)
+      const nextData = await this.fetchNextProblem();
+      this.currentProblem = nextData.problem;
+      this.selectedAnswer = null;
+      this.renderProblem(nextData.problem);
+      this.showScreen('question');
 
     } catch (error) {
       console.error('[FloatingScreener] Error starting assessment:', error);
       alert('Failed to start assessment. Please try again.');
       this.showInstructions();
-    }
-  }
-
-  async getNextProblem() {
-    this.showLoading('Loading question...');
-
-    try {
-      const response = await window.csrfFetch(`/api/screener/next-problem?sessionId=${this.sessionId}`, {
-        method: 'GET',
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to get problem');
-      }
-
-      this.currentProblem = data.problem;
-      this.selectedAnswer = null;
-
-      this.renderProblem(data.problem);
-      this.showScreen('question');
-
-    } catch (error) {
-      console.error('[FloatingScreener] Error getting problem:', error);
-      alert('Failed to load question. Please try again.');
-      this.close();
     }
   }
 
@@ -486,10 +554,93 @@ class FloatingScreener {
     this.updateSubmitButton();
   }
 
-  async skipQuestion() {
-    if (!this.currentProblem) return;
+  updateSubmitButton() {
+    const submitBtn = document.getElementById('screener-submit-btn');
+    if (!submitBtn) return;
 
-    this.showLoading('Skipping...');
+    const hasAnswer = this.selectedAnswer || document.getElementById('screener-answer-input')?.value;
+    submitBtn.disabled = !hasAnswer;
+  }
+
+  async submitAnswer() {
+    const answer = this.selectedAnswer || document.getElementById('screener-answer-input')?.value;
+
+    if (!answer || this.submitting) return;
+
+    this.submitting = true;
+    this.setControlsLocked(true);
+
+    try {
+      const response = await window.csrfFetch('/api/screener/submit-answer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          sessionId: this.sessionId,
+          problemId: this.currentProblem.problemId,
+          answer: answer,
+          responseTime: null
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit answer');
+      }
+
+      console.log('[FloatingScreener] Answer submitted:', data.correct ? 'correct' : 'miss');
+
+      // Update progress bar
+      this.updateProgressBar(data.progress);
+
+      if (data.nextAction === 'continue') {
+        // Start fetching next problem NOW (runs in parallel with flash)
+        const nextProblemPromise = this.fetchNextProblem();
+
+        // Green flash for correct, brief neutral pause for miss
+        if (data.correct) {
+          await this.flashCard('correct');
+        } else {
+          await this.wait(200);
+        }
+
+        // Render the prefetched problem (or wait if still loading)
+        try {
+          const nextData = await nextProblemPromise;
+          this.currentProblem = nextData.problem;
+          this.selectedAnswer = null;
+          this.renderProblem(nextData.problem);
+          this.showScreen('question');
+        } catch (fetchError) {
+          console.error('[FloatingScreener] Error prefetching next problem:', fetchError);
+          alert('Failed to load next question. Please try again.');
+          this.close();
+        }
+
+      } else if (data.nextAction === 'complete') {
+        // Flash green for a correct final answer
+        if (data.correct) {
+          await this.flashCard('correct');
+        }
+        this.showResults(data);
+      }
+
+    } catch (error) {
+      console.error('[FloatingScreener] Error submitting answer:', error);
+      alert('Failed to submit answer. Please try again.');
+      this.showScreen('question');
+    } finally {
+      this.submitting = false;
+      this.setControlsLocked(false);
+    }
+  }
+
+  async skipQuestion() {
+    if (!this.currentProblem || this.submitting) return;
+
+    this.submitting = true;
+    this.setControlsLocked(true);
 
     try {
       const response = await window.csrfFetch('/api/screener/submit-answer', {
@@ -513,8 +664,16 @@ class FloatingScreener {
 
       console.log('[FloatingScreener] Question skipped, action:', data.nextAction);
 
+      // Update progress bar
+      this.updateProgressBar(data.progress);
+
       if (data.nextAction === 'continue') {
-        await this.getNextProblem();
+        // Fetch next problem and transition immediately (no flash for skips)
+        const nextData = await this.fetchNextProblem();
+        this.currentProblem = nextData.problem;
+        this.selectedAnswer = null;
+        this.renderProblem(nextData.problem);
+        this.showScreen('question');
       } else if (data.nextAction === 'complete') {
         this.showResults(data);
       }
@@ -523,61 +682,9 @@ class FloatingScreener {
       console.error('[FloatingScreener] Error skipping question:', error);
       alert('Failed to skip question. Please try again.');
       this.showScreen('question');
-    }
-  }
-
-  updateSubmitButton() {
-    const submitBtn = document.getElementById('screener-submit-btn');
-    if (!submitBtn) return;
-
-    // Enable if answer is selected (confidence is optional)
-    const hasAnswer = this.selectedAnswer || document.getElementById('screener-answer-input')?.value;
-    submitBtn.disabled = !hasAnswer;
-  }
-
-  async submitAnswer() {
-    const answer = this.selectedAnswer || document.getElementById('screener-answer-input')?.value;
-
-    if (!answer) {
-      alert('Please select an answer');
-      return;
-    }
-
-    this.showLoading('Checking answer...');
-
-    try {
-      const response = await window.csrfFetch('/api/screener/submit-answer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          sessionId: this.sessionId,
-          problemId: this.currentProblem.problemId,
-          answer: answer,
-          responseTime: null
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit answer');
-      }
-
-      console.log('[FloatingScreener] Answer submitted, action:', data.nextAction);
-
-      if (data.nextAction === 'continue') {
-        // Get next problem
-        await this.getNextProblem();
-      } else if (data.nextAction === 'complete') {
-        // Show results
-        this.showResults(data);
-      }
-
-    } catch (error) {
-      console.error('[FloatingScreener] Error submitting answer:', error);
-      alert('Failed to submit answer. Please try again.');
-      this.showScreen('question');
+    } finally {
+      this.submitting = false;
+      this.setControlsLocked(false);
     }
   }
 
