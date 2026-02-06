@@ -129,7 +129,7 @@ class FloatingScreener {
       if (!this.questionScreen?.classList.contains('active')) return;
       if (this.submitting) return;
 
-      // A-F to select MC option
+      // A-F to select MC option (auto-submits via selectOption)
       const key = e.key.toUpperCase();
       if (['A', 'B', 'C', 'D', 'E', 'F'].includes(key)) {
         const option = document.querySelector(`.mc-option[data-value="${key}"]`);
@@ -137,12 +137,6 @@ class FloatingScreener {
           this.selectOption(option);
           e.preventDefault();
         }
-      }
-
-      // Enter to submit
-      if (e.key === 'Enter' && this.selectedAnswer) {
-        this.submitAnswer();
-        e.preventDefault();
       }
     });
   }
@@ -505,16 +499,35 @@ class FloatingScreener {
       });
 
       optionsContainer.style.display = 'flex';
+
+      // Hide submit button for MC — tap to answer
+      const submitBtn = document.getElementById('screener-submit-btn');
+      if (submitBtn) submitBtn.style.display = 'none';
     } else if (optionsContainer) {
-      // Fallback for non-MC (shouldn't happen in screener but just in case)
+      // Fallback for non-MC — show text input with submit button
       optionsContainer.innerHTML = `
         <input type="text" id="screener-answer-input" class="form-input" placeholder="Type your answer..." />
       `;
       optionsContainer.style.display = 'block';
-    }
 
-    // Update submit button state
-    this.updateSubmitButton();
+      const submitBtn = document.getElementById('screener-submit-btn');
+      if (submitBtn) {
+        submitBtn.style.display = '';
+        submitBtn.disabled = true;
+      }
+
+      // Enable submit when they type something
+      const input = document.getElementById('screener-answer-input');
+      if (input) {
+        input.addEventListener('input', () => this.updateSubmitButton());
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && input.value.trim()) {
+            this.selectedAnswer = input.value.trim();
+            this.submitAnswer();
+          }
+        });
+      }
+    }
 
     // Typeset any math
     if (window.MathJax) {
@@ -542,6 +555,8 @@ class FloatingScreener {
   }
 
   selectOption(optionElement) {
+    if (this.submitting) return;
+
     // Remove selection from all options
     document.querySelectorAll('.mc-option').forEach(opt => {
       opt.classList.remove('selected');
@@ -551,7 +566,8 @@ class FloatingScreener {
     optionElement.classList.add('selected');
     this.selectedAnswer = optionElement.dataset.value;
 
-    this.updateSubmitButton();
+    // Auto-submit for MC — no extra click needed
+    this.submitAnswer();
   }
 
   updateSubmitButton() {
