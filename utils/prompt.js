@@ -411,6 +411,7 @@ function buildCourseProgressionContext(mathCourse, firstName) {
     'pre-calculus': 'precalculus-pathway.json',
     'trigonometry': 'precalculus-pathway.json',
     // College courses
+    'calculus': 'calculus-1-pathway.json',
     'calculus 1': 'calculus-1-pathway.json',
     'calculus i': 'calculus-1-pathway.json',
     'calc 1': 'calculus-1-pathway.json',

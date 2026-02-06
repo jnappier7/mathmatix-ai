@@ -724,6 +724,11 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     user.assessmentDate = now;
     user.initialPlacement = gradeLevelResult.gradeLevel;
 
+    // Update mathCourse to match assessed level so the tutor loads the right pathway
+    // (Without this, mathCourse stays at whatever was set at signup/enrollment,
+    // causing the tutor to teach from the wrong grade level)
+    user.mathCourse = gradeLevelResult.gradeLevel;
+
     // Store theta in the format expected by badge system
     user.learningProfile.abilityEstimate = {
       theta: report.theta,
