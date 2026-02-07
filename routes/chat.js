@@ -23,6 +23,7 @@ const { parseVisualTeaching } = require('../utils/visualTeachingParser');
 const { enforceVisualTeaching } = require('../utils/visualCommandEnforcer');
 const { injectFewShotExamples } = require('../utils/visualCommandExamples');
 const { detectAndFetchResource } = require('../utils/resourceDetector');
+const GradingResult = require('../models/gradingResult');
 const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit } = require('../utils/adaptiveFluency');
 const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
@@ -460,11 +461,21 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 .catch(err => { console.error('Error fetching uploads:', err.message); return []; })
         );
 
-        // 5. Math verification (runs in parallel with everything else)
+        // 5. Recent grading/analysis results (Show Your Work)
+        contextPromises.push(
+            GradingResult.find({ userId: user._id })
+                .sort({ createdAt: -1 })
+                .limit(3)
+                .select('problemCount correctCount problems overallFeedback whatWentWell practiceRecommendations createdAt')
+                .lean()
+                .catch(err => { console.error('Error fetching grading results:', err.message); return []; })
+        );
+
+        // 6. Math verification (runs in parallel with everything else)
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        const [curriculumContext, teacherAISettings, resourceContext, recentUploads] = await Promise.all(contextPromises);
+        const [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
@@ -591,7 +602,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         // Inject few-shot examples for new conversations to teach visual command usage
         formattedMessagesForLLM = injectFewShotExamples(formattedMessagesForLLM);
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings);
+        // Build grading context (only include if there are recent results)
+        const gradingContext = recentGradingResults && recentGradingResults.length > 0 ? recentGradingResults : null;
+
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)
