@@ -11,18 +11,27 @@ const router = express.Router();
 const User = require('../models/user');
 const { isAuthenticated } = require('../middleware/auth');
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 // ---- Configuration ----
 const PREMIUM_PRICE = 1995; // $19.95 in cents
 const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
+
+// Defer Stripe init — only create client when billing is enabled and key exists
+let stripe;
+if (BILLING_ENABLED && process.env.STRIPE_SECRET_KEY) {
+  stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+} else if (!process.env.STRIPE_SECRET_KEY) {
+  console.warn('[Billing] STRIPE_SECRET_KEY not set — billing endpoints disabled');
+} else {
+  console.log('[Billing] BILLING_ENABLED=false — billing endpoints disabled');
+}
 
 // =====================================================
 // POST /create-checkout-session
 // Creates a Stripe Checkout Session and returns the URL
 // =====================================================
 router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
   try {
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -78,6 +87,7 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
 // This route is mounted separately in server.js with express.raw().
 // =====================================================
 router.post('/webhook', async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -166,6 +176,7 @@ router.post('/webhook', async (req, res) => {
 // Redirects to Stripe Customer Portal for subscription management
 // =====================================================
 router.get('/portal', isAuthenticated, async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
   try {
     const user = await User.findById(req.user._id);
     if (!user || !user.stripeCustomerId) {
