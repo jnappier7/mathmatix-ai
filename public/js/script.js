@@ -325,6 +325,102 @@ function triggerConfetti() {
 }
 
 
+// --- Billing & Usage Gate ---
+async function checkBillingStatus() {
+    try {
+        const res = await csrfFetch('/api/billing/status', { credentials: 'include' });
+        if (!res.ok) return null;
+        const data = await res.json();
+
+        // Store for quick access
+        window._billingStatus = data;
+
+        // When billing is off (pre-launch), skip all UI
+        if (data.billingEnabled === false) return data;
+
+        // Show remaining time indicator for free users
+        if (!data.isPremium && data.usage) {
+            updateFreeTimeIndicator(data.usage);
+        }
+
+        return data;
+    } catch (e) {
+        console.error('[Billing] Status check failed:', e.message);
+        return null;
+    }
+}
+
+function updateFreeTimeIndicator(usage) {
+    let indicator = document.getElementById('free-time-indicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'free-time-indicator';
+        indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:9000;cursor:pointer;border:1px solid #333;transition:all 0.3s;';
+        indicator.addEventListener('click', () => initiateUpgrade());
+        document.body.appendChild(indicator);
+    }
+
+    const mins = Math.floor(usage.weeklySecondsRemaining / 60);
+    const pct = usage.percentUsed;
+
+    if (usage.weeklyLimitReached) {
+        indicator.innerHTML = '<strong>Free time used</strong> &mdash; <span style="color:#00d4ff;text-decoration:underline">Upgrade</span>';
+        indicator.style.borderColor = '#ff4444';
+    } else if (pct >= 75) {
+        indicator.innerHTML = `<strong>${mins} min</strong> free time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Upgrade</span>`;
+        indicator.style.borderColor = '#ffaa00';
+    } else {
+        indicator.innerHTML = `<strong>${mins} min</strong> free this week`;
+        indicator.style.borderColor = '#333';
+    }
+}
+
+function showUpgradePrompt(errorData) {
+    // Remove existing prompt if any
+    const existing = document.getElementById('upgrade-modal');
+    if (existing) existing.remove();
+
+    const isFeatureBlock = errorData.premiumFeatureBlocked;
+    const title = isFeatureBlock ? `${errorData.feature} is a Premium Feature` : "You've Hit Your Free Limit";
+    const body = isFeatureBlock
+        ? `Unlock ${errorData.feature.toLowerCase()}, unlimited tutoring, OCR, and more.`
+        : "You've used your 20 free minutes this week. Upgrade for unlimited access.";
+
+    const modal = document.createElement('div');
+    modal.id = 'upgrade-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;';
+    modal.innerHTML = `
+        <div style="background:#1a1a2e;border-radius:16px;padding:32px;max-width:400px;width:90%;text-align:center;color:#fff;border:1px solid #333;">
+            <h2 style="margin:0 0 12px;font-size:22px;">${title}</h2>
+            <p style="color:#aaa;margin:0 0 24px;line-height:1.5;">${body}</p>
+            <div style="font-size:28px;font-weight:bold;margin:0 0 8px;">$19.95<span style="font-size:14px;color:#aaa;font-weight:normal">/month</span></div>
+            <p style="color:#888;font-size:12px;margin:0 0 24px;">Cancel anytime. Less than the cost of one hour with a human tutor.</p>
+            <button id="upgrade-btn" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;width:100%;margin-bottom:12px;">Upgrade to Premium</button>
+            <button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:8px;cursor:pointer;font-size:13px;">Maybe later</button>
+        </div>`;
+    document.body.appendChild(modal);
+
+    document.getElementById('upgrade-btn').addEventListener('click', () => initiateUpgrade());
+    document.getElementById('upgrade-dismiss').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+}
+
+async function initiateUpgrade() {
+    try {
+        const res = await csrfFetch('/api/billing/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+        if (!res.ok) throw new Error('Failed to create checkout session');
+        const data = await res.json();
+        window.location.href = data.url;
+    } catch (e) {
+        console.error('[Billing] Upgrade error:', e);
+        showToast('Something went wrong. Please try again.');
+    }
+}
+
 // --- Main Application Logic ---
 document.addEventListener("DOMContentLoaded", () => {
     // --- Element Caching ---
@@ -411,6 +507,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Initialize session time tracking
             initSessionTracking();
+
+            // Check billing status (free tier remaining time)
+            checkBillingStatus();
+
+            // Show upgrade success toast if redirected from Stripe
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('upgraded') === 'true') {
+                showToast('Welcome to Premium! Unlimited tutoring unlocked.', 5000);
+                window.history.replaceState({}, '', window.location.pathname);
+            }
 
             // WHITEBOARD SHELVED FOR BETA
             // initializeWhiteboard();
@@ -2662,6 +2768,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
+
+                // Handle usage limit (402) — show upgrade prompt instead of error
+                if (response.status === 402 && (errorData.usageLimitReached || errorData.premiumFeatureBlocked)) {
+                    showThinkingIndicator(false);
+                    showUpgradePrompt(errorData);
+                    return;
+                }
+
                 const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`;
                 throw new Error(errorMessage);
             }

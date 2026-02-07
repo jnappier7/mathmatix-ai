@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 
 // Morningside fluency aims by grade level
@@ -99,10 +100,10 @@ function projectAimDate(currentRate, aim, celeration, lastSessionDate) {
 }
 
 // GET /api/celeration/:operation/:familyName - Get celeration data for specific fact family
-router.get('/celeration/:operation/:familyName', async (req, res) => {
+router.get('/celeration/:operation/:familyName', isAuthenticated, async (req, res) => {
   try {
     const { operation, familyName } = req.params;
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -175,9 +176,9 @@ router.get('/celeration/:operation/:familyName', async (req, res) => {
 });
 
 // GET /api/celeration/overview - Get celeration overview for all practiced fact families
-router.get('/celeration/overview', async (req, res) => {
+router.get('/celeration/overview', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -234,9 +235,9 @@ router.get('/celeration/overview', async (req, res) => {
 });
 
 // GET /api/celeration/class-summary - Teacher view: celeration data for all students
-router.get('/celeration/class-summary', async (req, res) => {
+router.get('/celeration/class-summary', isAuthenticated, async (req, res) => {
   try {
-    const teacher = await User.findById(req.session.userId);
+    const teacher = await User.findById(req.user._id);
 
     if (!teacher || teacher.role !== 'teacher') {
       return res.status(403).json({ success: false, error: 'Not authorized' });

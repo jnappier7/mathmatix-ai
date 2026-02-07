@@ -72,6 +72,7 @@
     "passport-microsoft": "^2.1.0",
     "pdfjs-dist": "^5.4.530",
     "puppeteer": "^24.10.2",
+    "stripe": "^20.3.1",
     "uuid": "^9.0.1",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"

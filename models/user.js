@@ -507,6 +507,13 @@ const userSchema = new Schema({
   activeConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
   activeMasteryConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
 
+  /* Subscription & Billing */
+  subscriptionTier: { type: String, enum: ['free', 'premium'], default: 'free' },
+  stripeCustomerId: { type: String, default: null },
+  stripeSubscriptionId: { type: String, default: null },
+  subscriptionStartDate: { type: Date, default: null },
+  subscriptionEndDate: { type: Date, default: null },
+
   /* Timestamps */
   lastLogin:  { type: Date },
   createdAt:  { type: Date, default: Date.now },

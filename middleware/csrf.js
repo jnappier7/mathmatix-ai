@@ -20,7 +20,8 @@ const CSRF_EXEMPT_ROUTES = [
   '/api/session/heartbeat',    // Session activity tracking (read-only)
   '/api/chat/track-time',      // Time tracking heartbeat (read-only)
   '/api/session/end',          // Session end via sendBeacon (can't send custom headers)
-  '/api/session/save-mastery'  // Mastery save via sendBeacon (can't send custom headers)
+  '/api/session/save-mastery', // Mastery save via sendBeacon (can't send custom headers)
+  '/api/billing/webhook'       // Stripe webhook (external, uses signature verification)
 ];
 
 /**

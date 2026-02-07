@@ -9,6 +9,8 @@ const { isTeacher, isAuthenticated } = require('../middleware/auth');
 const { generateLiveSummary, detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
 const { cleanupStaleSessions } = require('../services/sessionService');
 
+const ScreenerSession = require('../models/screenerSession');
+
 // Fetches students assigned to the logged-in teacher
 router.get('/students', isTeacher, async (req, res) => {
   try {
@@ -706,6 +708,186 @@ router.get('/my-calculator-access', isAuthenticated, async (req, res) => {
       calculatorAccess: 'skill-based', // Default on error
       message: 'Error fetching settings'
     });
+  }
+});
+
+// =====================================================
+// LEARNING CURVE: View student's skill progression over time
+// =====================================================
+router.get('/students/:studentId/learning-curve', isTeacher, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+    const student = await User.findOne({ _id: studentId, teacherId }).lean();
+    if (!student) return res.status(403).json({ message: 'Not authorized.' });
+
+    const skillsOverview = [];
+    for (const [skillId, skillData] of Object.entries(student.skillMastery || {})) {
+      const practiceHistory = skillData.practiceHistory || [];
+      const practiceCount = practiceHistory.length;
+      if (practiceCount === 0) continue;
+
+      const firstTheta = practiceHistory[0]?.theta || 0;
+      const currentTheta = skillData.theta || 0;
+
+      skillsOverview.push({
+        skillId,
+        displayName: skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        currentTheta,
+        growth: currentTheta - firstTheta,
+        practiceCount,
+        masteryScore: skillData.masteryScore || 0,
+        pillars: skillData.pillars || null,
+        status: skillData.status || 'learning',
+        lastPracticed: skillData.lastPracticed,
+        curveData: practiceHistory.map(e => ({
+          timestamp: e.timestamp,
+          theta: e.theta || 0,
+          standardError: e.standardError || 1.0,
+          correct: e.correct,
+          problemDifficulty: e.difficulty || 0
+        }))
+      });
+    }
+
+    skillsOverview.sort((a, b) => {
+      const dateA = a.lastPracticed ? new Date(a.lastPracticed) : new Date(0);
+      const dateB = b.lastPracticed ? new Date(b.lastPracticed) : new Date(0);
+      return dateB - dateA;
+    });
+
+    res.json({
+      success: true,
+      student: { id: student._id, name: `${student.firstName} ${student.lastName}` },
+      skills: skillsOverview,
+      totalSkillsPracticed: skillsOverview.length
+    });
+  } catch (error) {
+    console.error('Error fetching student learning curve:', error);
+    res.status(500).json({ message: 'Error fetching learning curve data' });
+  }
+});
+
+// =====================================================
+// CELERATION: View student's fact fluency progress
+// =====================================================
+router.get('/students/:studentId/celeration', isTeacher, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+    const student = await User.findOne({ _id: studentId, teacherId }).lean();
+    if (!student) return res.status(403).json({ message: 'Not authorized.' });
+
+    const grade = parseInt(student.gradeLevel);
+    const aim = grade >= 9 ? 60 : grade >= 6 ? 50 : 40;
+    const familiesData = [];
+
+    for (const [familyKey, familyData] of Object.entries(student.factFluencyProgress?.factFamilies || {})) {
+      if (!familyData.sessions || familyData.sessions.length === 0) continue;
+
+      const sessions = familyData.sessions.map(s => ({
+        date: s.date, rate: s.rate, accuracy: s.accuracy,
+        problemsAttempted: s.problemsAttempted, problemsCorrect: s.problemsCorrect
+      })).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      const recentSessions = sessions.slice(-3);
+      const recentRates = recentSessions.map(s => s.rate).sort((a, b) => a - b);
+      const currentRate = recentRates[Math.floor(recentRates.length / 2)];
+
+      familiesData.push({
+        familyKey,
+        operation: familyData.operation,
+        familyName: familyData.familyName,
+        displayName: familyData.displayName,
+        currentRate,
+        bestRate: familyData.bestRate || 0,
+        atAim: currentRate >= aim,
+        mastered: familyData.mastered || false,
+        sessionCount: sessions.length,
+        lastPracticed: familyData.lastPracticed,
+        sessions
+      });
+    }
+
+    familiesData.sort((a, b) => {
+      const dateA = a.lastPracticed ? new Date(a.lastPracticed) : new Date(0);
+      const dateB = b.lastPracticed ? new Date(b.lastPracticed) : new Date(0);
+      return dateB - dateA;
+    });
+
+    res.json({
+      success: true,
+      student: { id: student._id, name: `${student.firstName} ${student.lastName}` },
+      aim,
+      families: familiesData
+    });
+  } catch (error) {
+    console.error('Error fetching student celeration:', error);
+    res.status(500).json({ message: 'Error fetching celeration data' });
+  }
+});
+
+// =====================================================
+// PLACEMENT RESULTS: View student's screener/placement details
+// =====================================================
+router.get('/students/:studentId/placement-results', isTeacher, async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+    const student = await User.findOne({ _id: studentId, teacherId }).lean();
+    if (!student) return res.status(403).json({ message: 'Not authorized.' });
+
+    // Parse theta from initialPlacement
+    let theta = null, percentile = null;
+    if (student.initialPlacement) {
+      const match = student.initialPlacement.match(/Theta:\s*([-\d.]+)\s*\((\d+)th percentile\)/);
+      if (match) { theta = parseFloat(match[1]); percentile = parseInt(match[2]); }
+    }
+
+    // Get screener sessions for this student
+    const screenerSessions = await ScreenerSession.find({ userId: studentId })
+      .sort({ startTime: -1 })
+      .limit(5)
+      .lean();
+
+    const sessions = screenerSessions.map(s => ({
+      id: s._id,
+      type: s.mode || 'starting-point',
+      startTime: s.startTime,
+      endTime: s.endTime,
+      duration: s.endTime && s.startTime ? s.endTime - s.startTime : null,
+      questionsAnswered: s.questionCount || 0,
+      finalTheta: s.theta,
+      standardError: s.standardError,
+      completed: !!s.endTime
+    }));
+
+    // Growth check history
+    const growthHistory = student.learningProfile?.growthCheckHistory || [];
+
+    res.json({
+      success: true,
+      student: { id: student._id, name: `${student.firstName} ${student.lastName}`, gradeLevel: student.gradeLevel, mathCourse: student.mathCourse },
+      initialPlacement: {
+        completed: student.learningProfile?.assessmentCompleted || false,
+        date: student.learningProfile?.assessmentDate,
+        theta,
+        percentile,
+        raw: student.initialPlacement
+      },
+      screenerSessions: sessions,
+      growthHistory: growthHistory.map(g => ({
+        date: g.date,
+        theta: g.theta,
+        previousTheta: g.previousTheta,
+        growth: g.thetaChange,
+        status: g.growthStatus,
+        questionsAnswered: g.questionsAnswered
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching placement results:', error);
+    res.status(500).json({ message: 'Error fetching placement results' });
   }
 });
 
