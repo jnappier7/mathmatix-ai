@@ -5,10 +5,11 @@ const fs = require('fs');
 const path = require('path');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
-const { gradeWithVision } = require('../utils/llmGateway'); // CTO REVIEW FIX: Use unified LLMGateway
+const GradingResult = require('../models/gradingResult');
+const { gradeWithVision } = require('../utils/llmGateway');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 
-// CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
+// Disk storage to avoid memory bloat on large uploads
 const upload = multer({
     storage: multer.diskStorage({
         destination: '/tmp',
@@ -17,15 +18,140 @@ const upload = multer({
             cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
         }
     }),
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB
 });
 
-/**
- * POST /api/grade-work
- * Analyzes student's written math work and provides grading with feedback
- *
- * Security: Rate limited, file validation, access control
- */
+// ============================================================================
+// ANALYSIS PROMPT — feedback-first, no numerical grading
+// ============================================================================
+
+const ANALYSIS_PROMPT = `You are a warm, Socratic math tutor looking at a student's handwritten work.
+Your job is to GUIDE them toward understanding — not grade them or hand them answers.
+Be MATHEMATICALLY RIGOROUS but talk like a supportive teacher, not a rubric.
+
+# YOUR APPROACH
+
+## 1. SOLVE EVERY PROBLEM YOURSELF (privately)
+Before looking at the student's work, solve each problem from scratch.
+You need a verified answer key, but the student never sees your scratch work.
+
+## 2. COMPARE — then GUIDE
+For correct problems: celebrate SPECIFICALLY what they did well ("nice use of distribution here").
+For incorrect problems: DON'T just state the error and correction. Instead, write feedback that:
+- Acknowledges what they DID right (setup, approach, partial steps)
+- Points to the area where things went off track
+- Asks a guiding question so they can discover the mistake ("look at step 3 — what happens to the sign when you distribute a negative?")
+- Optionally offers to walk through a similar problem ("let me show you one like this...")
+
+The goal: the student should be able to re-attempt the problem after reading your feedback.
+
+## 3. CATEGORIZE ERRORS (for internal tracking)
+Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing | notation | conceptual | incomplete | other
+
+## 4. ANNOTATE THE IMAGE
+Mark the work with positioned annotations:
+- check: correct step or answer
+- miss: incorrect step or answer
+- circle: highlight a key area
+- note: brief comment (e.g. "check this sign", "nice!")
+x ranges 0-100 (left to right), y ranges 0-100 (top to bottom).
+
+# OUTPUT — RESPOND WITH ONLY THIS JSON (inside \`\`\`json fences)
+
+\`\`\`json
+{
+  "problems": [
+    {
+      "problemNumber": 1,
+      "problemStatement": "Brief restatement of the problem",
+      "studentAnswer": "What the student wrote",
+      "correctAnswer": "Your verified correct answer",
+      "isCorrect": true,
+      "strengths": "Specific praise: what concept or technique they nailed",
+      "errors": [],
+      "annotations": [
+        { "type": "check", "x": 15, "y": 25, "mark": "✓" }
+      ],
+      "feedback": "This looks right — you distributed correctly and combined like terms. Solid work."
+    },
+    {
+      "problemNumber": 2,
+      "problemStatement": "...",
+      "studentAnswer": "...",
+      "correctAnswer": "...",
+      "isCorrect": false,
+      "strengths": "You set up the equation correctly and showed every step — that's great.",
+      "errors": [
+        {
+          "step": "Step 3",
+          "description": "Distributed the negative incorrectly: -(2x - 6) became -2x - 6 instead of -2x + 6",
+          "category": "sign",
+          "correction": "When you distribute a negative across parentheses, every sign inside flips."
+        }
+      ],
+      "annotations": [
+        { "type": "miss", "x": 15, "y": 50, "mark": "✗" },
+        { "type": "note", "x": 40, "y": 55, "mark": "check this sign" }
+      ],
+      "feedback": "Your setup was solid. Take another look at step 3 — when you distributed the negative, what should happen to the minus sign inside the parentheses? Try reworking from that step and see if you get a different answer."
+    }
+  ],
+  "overallFeedback": "Conversational summary. Start by naming what looks correct. Then gently point to the problems that need another look. End with encouragement or an offer to walk through a similar problem together.",
+  "whatWentWell": "Specific strengths — what does this student clearly understand?",
+  "practiceRecommendations": ["Distributing negatives across parentheses", "Checking signs after each step"],
+  "skillsAssessed": ["linear-equations", "distribution"]
+}
+\`\`\`
+
+RULES:
+- Respond ONLY with the JSON block (inside \`\`\`json fences). No preamble.
+- Do NOT assign numerical scores, grades, or percentages anywhere.
+- Feedback must be CONVERSATIONAL and SOCRATIC — ask guiding questions, don't just state corrections.
+- Always find strengths, even in wrong answers.
+- For incorrect problems: guide the student toward discovering the error, don't just hand them the fix.
+- Annotation positions should correspond to where the work appears in the image.
+- Write like you're talking to the student, not writing a report about them.
+- Use LaTeX notation for ALL math expressions in feedback, answers, and corrections. Wrap inline math with \\( and \\), and display math with \\[ and \\]. Example: "You wrote \\(x = -3\\) but check what happens when you distribute the negative — you should get \\(-(2x - 6) = -2x + 6\\)."
+- The studentAnswer and correctAnswer fields MUST also use LaTeX for any math.`;
+
+// ============================================================================
+// PARSE AI RESPONSE
+// ============================================================================
+
+function parseAnalysisResponse(raw) {
+    let jsonStr = raw;
+    const fenceMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fenceMatch) {
+        jsonStr = fenceMatch[1].trim();
+    }
+
+    const parsed = JSON.parse(jsonStr);
+
+    if (!parsed.problems || !Array.isArray(parsed.problems)) {
+        throw new Error('AI response missing problems array');
+    }
+
+    return parsed;
+}
+
+// ============================================================================
+// XP — rewards effort, not correctness
+// ============================================================================
+
+function calculateXP(problemCount, correctCount) {
+    // 10 XP base for submitting work
+    let xp = 10;
+    // 3 XP per problem analyzed (rewards more work shown)
+    xp += problemCount * 3;
+    // Small bonus for each correct problem (2 XP each)
+    xp += correctCount * 2;
+    return xp;
+}
+
+// ============================================================================
+// POST /api/grade-work — Analyze student work image
+// ============================================================================
+
 router.post('/',
     isAuthenticated,
     uploadRateLimiter,
@@ -37,212 +163,188 @@ router.post('/',
         const user = await User.findById(req.user._id);
 
         if (!file) {
-            return res.status(400).json({
-                success: false,
-                message: 'No file uploaded'
-            });
+            return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
 
         if (!file.mimetype.startsWith('image/')) {
-            // Clean up temp file
             if (file.path) fs.unlinkSync(file.path);
-            return res.status(400).json({
-                success: false,
-                message: 'Only image files are supported'
-            });
+            return res.status(400).json({ success: false, message: 'Only image files are supported' });
         }
 
-        console.log(`[gradeWork] Processing work for user: ${user.firstName} ${user.lastName}`);
+        console.log(`[gradeWork] Analyzing work for user: ${user.firstName} ${user.lastName}`);
 
-        // Read file from disk and convert to base64 for vision API
+        // Read file and convert to base64 data URL for vision API
         const fileBuffer = fs.readFileSync(file.path);
         const base64Image = fileBuffer.toString('base64');
         const dataUrl = `data:${file.mimetype};base64,${base64Image}`;
 
-        // Prepare grading prompt for AI with rigorous mathematical verification
-        const gradingPrompt = `You are an expert math teacher grading a student's work. You must be MATHEMATICALLY RIGOROUS and ACCURATE.
-
-# YOUR GRADING PROCESS (CRITICAL - FOLLOW EXACTLY):
-
-## STEP 1: SOLVE EACH PROBLEM YOURSELF FIRST
-Before grading, solve each problem in the image from scratch. Show your work:
-- Identify each problem/question
-- Solve it step-by-step with complete mathematical rigor
-- Write out the correct answer
-- This is your ANSWER KEY
-
-## STEP 2: VERIFY STUDENT'S WORK AGAINST YOUR SOLUTION
-Compare each step of the student's work to your correct solution:
-- Check if they used the correct method
-- Verify each arithmetic operation (addition, subtraction, multiplication, division)
-- Check algebraic manipulations (combining like terms, factoring, distributing)
-- Verify signs (positive/negative)
-- Check if they simplified correctly
-- Verify final answer matches yours
-
-## STEP 3: COMMON ERROR PATTERNS TO CHECK
-- **Arithmetic errors**: Did they add/subtract/multiply/divide correctly?
-- **Sign errors**: Did they lose a negative sign? Distribute incorrectly?
-- **Algebraic errors**: Did they combine unlike terms? Forget to apply operations to both sides?
-- **Order of operations**: Did they follow PEMDAS correctly?
-- **Graphing errors**: Did they plot points correctly? Choose correct direction for inequality?
-- **Solution set errors**: Did they write the solution in correct notation?
-
-## STEP 4: ASSIGN GRADE
-Score out of 100 based on:
-- **Correct final answer (40 points)**: Full credit only if answer is exactly correct
-- **Correct methodology (40 points)**: Full credit only if approach and steps are sound
-- **Work shown clearly (20 points)**: Partial credit based on clarity
-
-BE STRICT: Mathematical correctness is binary. x = 8 is not the same as x = 64.
-
-# OUTPUT FORMAT:
-
-**SOLUTION KEY (YOUR WORK FIRST):**
-[Solve each problem yourself step-by-step. This proves you know the correct answer.]
-
-Problem 1: [Problem statement]
-Step 1: [Your step]
-Step 2: [Your step]
-...
-✓ CORRECT ANSWER: [Your answer]
-
-Problem 2: [Problem statement]
-[Your solution steps]
-✓ CORRECT ANSWER: [Your answer]
-
-[Continue for all problems...]
-
-**SCORE: [number]/100**
-
-**VERIFICATION:**
-Problem 1:
-- Student's answer: [Their answer]
-- Correct answer: [Your answer from solution key]
-- ✅ CORRECT / ❌ INCORRECT: [Explanation]
-- Method used: ✅ VALID / ❌ INVALID: [Why]
-
-Problem 2:
-- Student's answer: [Their answer]
-- Correct answer: [Your answer]
-- ✅ CORRECT / ❌ INCORRECT: [Explanation]
-- Method used: ✅ VALID / ❌ INVALID: [Why]
-
-[Continue for all problems...]
-
-**ANNOTATIONS:**
-Study the image layout carefully. For each annotation:
-ANNOTATION|type|x|y|mark
-
-Where:
-- type: "check" (✓), "miss" (✗), "partial" (-pts), "circle" (circle answer), "note" (brief text)
-- x: horizontal % (0=left, 100=right)
-- y: vertical % (0=top, 100=bottom)
-- mark: Brief mark (✓, ✗, -2, "Check algebra", "Wrong sign", etc.)
-
-**POSITIONING TIPS:**
-- Top-left area: x=10-20, y=15-25
-- Middle: x=30-70, y=40-60
-- Right side: x=70-85, y=[appropriate vertical]
-- Use 5-10% margins from edges
-
-Examples:
-ANNOTATION|check|15|20|✓
-ANNOTATION|miss|15|45|✗
-ANNOTATION|partial|40|30|-3
-ANNOTATION|circle|75|50|
-ANNOTATION|note|15|65|Wrong sign
-
-**DETAILED ERROR ANALYSIS:**
-[For each error found, explain precisely what went wrong]
-
-Problem X, Step Y:
-❌ ERROR: [Specific mistake]
-→ WHY IT'S WRONG: [Mathematical explanation]
-→ CORRECT APPROACH: [What they should have done]
-
-**OVERALL FEEDBACK:**
-[2-3 sentences: encouraging but honest about errors]
-
-**WHAT TO PRACTICE:**
-- [Specific skill: "Division with negative numbers", "Distributing across parentheses", etc.]
-- [Another specific skill if needed]
-
-REMEMBER: Accuracy matters. Be mathematically rigorous. Verify your own solution first, then grade accordingly.`;
-
-        // CTO REVIEW FIX: Call LLMGateway for consistent AI interaction
-        // Using lower temperature (0.3) for mathematical accuracy, higher tokens for detailed analysis
+        // Call vision model — low temperature for mathematical accuracy
         const aiResponse = await gradeWithVision({
             imageDataUrl: dataUrl,
-            prompt: gradingPrompt
+            prompt: ANALYSIS_PROMPT
         }, {
-            maxTokens: 3000,      // More tokens for detailed step-by-step verification
-            temperature: 0.3      // Lower temperature for mathematical precision
+            maxTokens: 4000,
+            temperature: 0.2
         });
 
-        console.log('[gradeWork] AI grading response received (via LLMGateway)');
+        console.log('[gradeWork] AI analysis received');
 
-        // Parse the score from the response
-        const scoreMatch = aiResponse.match(/\*\*SCORE:\s*(\d+)\/100\*\*/);
-        const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+        // Parse structured JSON
+        const parsed = parseAnalysisResponse(aiResponse);
+        const correctCount = parsed.problems.filter(p => p.isCorrect).length;
 
-        // Parse annotations from the response
-        const annotations = [];
-        const annotationRegex = /ANNOTATION\|(\w+)\|([\d\.]+)\|([\d\.]+)\|(.*)$/gm;
-        let match;
-        while ((match = annotationRegex.exec(aiResponse)) !== null) {
-            annotations.push({
-                type: match[1], // check, miss, partial, circle, note
-                x: parseFloat(match[2]), // x position as percentage (0-100)
-                y: parseFloat(match[3]), // y position as percentage (0-100)
-                mark: match[4].trim() // The mark to draw (✓, ✗, -1, text, etc.)
-            });
-        }
-
-        console.log(`[gradeWork] Parsed ${annotations.length} annotations`);
-
-        // Award XP based on completion (not score, to encourage practice)
-        const xpEarned = 15; // Base XP for submitting work for grading
-        const bonusXp = score >= 80 ? 10 : 0; // Bonus for high scores
-
-        user.xp = (user.xp || 0) + xpEarned + bonusXp;
+        // Calculate XP
+        const xpEarned = calculateXP(parsed.problems.length, correctCount);
+        user.xp = (user.xp || 0) + xpEarned;
         await user.save();
 
-        // Clean up temp file after successful processing
-        if (file.path) {
-            fs.unlinkSync(file.path);
-            console.log('[gradeWork] Cleaned up temp file:', file.path);
-        }
+        // Persist to database
+        const result = await GradingResult.create({
+            userId: user._id,
+            problemCount: parsed.problems.length,
+            correctCount,
+            problems: parsed.problems,
+            overallFeedback: parsed.overallFeedback || '',
+            whatWentWell: parsed.whatWentWell || '',
+            practiceRecommendations: parsed.practiceRecommendations || [],
+            skillsAssessed: parsed.skillsAssessed || [],
+            imageFilename: path.basename(file.path),
+            imageMimetype: file.mimetype,
+            xpEarned
+        });
 
-        // Return grading results with annotations
+        console.log(`[gradeWork] Saved analysis ${result._id}`);
+
+        // Clean up temp file
+        if (file.path) fs.unlinkSync(file.path);
+
+        // Return structured result (no base64 image echo)
         res.json({
             success: true,
-            score: `${score}/100`,
-            scorePercent: score,
-            feedback: aiResponse,
-            annotations: annotations,
-            imageData: dataUrl, // Return the image so frontend can draw on it
-            xpEarned: xpEarned + bonusXp,
-            message: 'Work graded successfully'
+            id: result._id,
+            problemCount: parsed.problems.length,
+            correctCount,
+            problems: parsed.problems,
+            overallFeedback: parsed.overallFeedback || '',
+            whatWentWell: parsed.whatWentWell || '',
+            practiceRecommendations: parsed.practiceRecommendations || [],
+            xpEarned,
+            message: 'Work analyzed successfully'
         });
 
     } catch (error) {
         console.error('[gradeWork] Error:', error.message);
 
-        // Clean up temp file on error
         if (req.file && req.file.path) {
-            try {
-                fs.unlinkSync(req.file.path);
-            } catch (cleanupErr) {
-                console.error('[gradeWork] Failed to cleanup temp file:', cleanupErr.message);
-            }
+            try { fs.unlinkSync(req.file.path); } catch (_) { /* ignore */ }
+        }
+
+        if (error instanceof SyntaxError) {
+            return res.status(502).json({
+                success: false,
+                message: 'The AI returned an unexpected format. Please try again.'
+            });
         }
 
         res.status(500).json({
             success: false,
-            message: 'Failed to grade work. Please try again.',
+            message: 'Failed to analyze work. Please try again.',
             error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
+    }
+});
+
+// ============================================================================
+// GET /api/grade-work/history — Student's analysis history
+// ============================================================================
+
+router.get('/history',
+    isAuthenticated,
+    async (req, res) => {
+    try {
+        const limit = Math.min(parseInt(req.query.limit) || 20, 50);
+        const results = await GradingResult.getHistory(req.user._id, limit);
+
+        res.json({
+            success: true,
+            results: results.map(r => ({
+                id: r._id,
+                problemCount: r.problemCount,
+                correctCount: r.correctCount,
+                status: r.status,
+                teacherComment: r.teacherReview?.comment || null,
+                xpEarned: r.xpEarned,
+                createdAt: r.createdAt
+            }))
+        });
+    } catch (error) {
+        console.error('[gradeWork] History error:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to load history' });
+    }
+});
+
+// ============================================================================
+// GET /api/grade-work/:id — Full analysis detail
+// ============================================================================
+
+router.get('/:id',
+    isAuthenticated,
+    async (req, res) => {
+    try {
+        const result = await GradingResult.findById(req.params.id);
+
+        if (!result) {
+            return res.status(404).json({ success: false, message: 'Result not found' });
+        }
+
+        // Students can only view their own results
+        if (result.userId.toString() !== req.user._id.toString() && req.user.role === 'student') {
+            return res.status(403).json({ success: false, message: 'Access denied' });
+        }
+
+        res.json({ success: true, result: result.toStudentView() });
+    } catch (error) {
+        console.error('[gradeWork] Detail error:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to load result' });
+    }
+});
+
+// ============================================================================
+// POST /api/grade-work/:id/review — Teacher review / comment
+// ============================================================================
+
+router.post('/:id/review',
+    isAuthenticated,
+    async (req, res) => {
+    try {
+        if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+            return res.status(403).json({ success: false, message: 'Only teachers can review work' });
+        }
+
+        const result = await GradingResult.findById(req.params.id);
+        if (!result) {
+            return res.status(404).json({ success: false, message: 'Result not found' });
+        }
+
+        const review = {
+            teacherId: req.user._id,
+            comment: req.body.comment || '',
+            problemComments: req.body.problemComments || []
+        };
+
+        result.applyTeacherReview(review);
+        await result.save();
+
+        console.log(`[gradeWork] Teacher ${req.user._id} reviewed result ${result._id}`);
+
+        res.json({
+            success: true,
+            result: result.toStudentView(),
+            message: 'Review saved'
+        });
+    } catch (error) {
+        console.error('[gradeWork] Review error:', error.message);
+        res.status(500).json({ success: false, message: 'Failed to save review' });
     }
 });
 
