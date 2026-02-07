@@ -122,6 +122,21 @@ function detectType(problem) {
   // Positive/Negative
   if (['positive', 'negative', 'zero'].includes(answerLower)) return 'positiveNegative';
 
+  // INEQUALITIES: x < 13, x ≥ 10, x ≤ 1, etc.
+  if (/^[a-z]\s*[<>≤≥]\s*-?\d+$/.test(answer) || /^[a-z]\s*[<>]=?\s*-?\d+$/.test(answer)) return 'inequality';
+  if (skillId.includes('inequalit')) return 'inequality';
+
+  // SYSTEMS OF EQUATIONS: x = 3, y = 6 or (3, 6) style
+  if (/^[a-z]\s*=\s*-?\d+,?\s*[a-z]\s*=\s*-?\d+$/.test(answer)) return 'systemSolution';
+  if (skillId.includes('system')) return 'systemSolution';
+
+  // Special system cases: Infinite, No solution
+  if (['infinite', 'no solution', 'infinitely many', 'no solutions'].includes(answerLower)) return 'systemSpecial';
+
+  // Probability language: likely, unlikely, certain, impossible
+  const probWords = ['likely', 'unlikely', 'certain', 'impossible', 'possible', 'probable'];
+  if (probWords.includes(answerLower)) return 'probability';
+
   // Simple fractions like 1/2, 3/4, 2/5
   if (/^\d+\/\d+$/.test(answer)) return 'fraction';
 
@@ -314,6 +329,85 @@ function generateDistractors(answer, type) {
       ].filter(d => d !== answer && !d.startsWith('$-'));
       return distractors.slice(0, 4);
     }
+  }
+
+  // INEQUALITY: x < 13, x ≥ 10, etc.
+  if (type === 'inequality') {
+    // Match patterns like "x < 13", "x >= 5", "x ≤ -2"
+    const match = answer.match(/^([a-z])\s*([<>≤≥]|[<>]=?)\s*(-?\d+)$/);
+    if (match) {
+      const variable = match[1];
+      const op = match[2];
+      const num = parseInt(match[3]);
+
+      // Determine if using unicode symbols or ASCII
+      const usesUnicode = op.includes('≤') || op.includes('≥');
+
+      // Map operators to their alternatives (matching style)
+      const opAlternatives = usesUnicode ? {
+        '<': ['>', '≤', '≥'],
+        '>': ['<', '≤', '≥'],
+        '≤': ['≥', '<', '>'],
+        '≥': ['≤', '<', '>'],
+      } : {
+        '<': ['>', '<=', '>='],
+        '>': ['<', '<=', '>='],
+        '<=': ['>=', '<', '>'],
+        '>=': ['<=', '<', '>'],
+      };
+
+      const altOps = opAlternatives[op] || ['<', '>', '<='];
+      const distractors = [
+        // Different operators, same number
+        `${variable} ${altOps[0]} ${num}`,
+        `${variable} ${altOps[1]} ${num}`,
+        `${variable} ${altOps[2]} ${num}`,
+        // Same operator, different number
+        `${variable} ${op} ${num + 1}`,
+        `${variable} ${op} ${num - 1}`,
+        // Same operator, negated number
+        `${variable} ${op} ${-num}`,
+      ].filter(d => d !== answer);
+      return distractors.slice(0, 4);
+    }
+  }
+
+  // SYSTEM SOLUTION: x = 3, y = 6
+  if (type === 'systemSolution') {
+    const match = answer.match(/^([a-z])\s*=\s*(-?\d+),?\s*([a-z])\s*=\s*(-?\d+)$/);
+    if (match) {
+      const var1 = match[1];
+      const val1 = parseInt(match[2]);
+      const var2 = match[3];
+      const val2 = parseInt(match[4]);
+
+      const distractors = [
+        // Swap values
+        `${var1} = ${val2}, ${var2} = ${val1}`,
+        // Change first value
+        `${var1} = ${val1 + 1}, ${var2} = ${val2}`,
+        `${var1} = ${val1 - 1}, ${var2} = ${val2}`,
+        // Change second value
+        `${var1} = ${val1}, ${var2} = ${val2 + 1}`,
+        `${var1} = ${val1}, ${var2} = ${val2 - 1}`,
+        // Negate values
+        `${var1} = ${-val1}, ${var2} = ${val2}`,
+        `${var1} = ${val1}, ${var2} = ${-val2}`,
+      ].filter(d => d !== answer);
+      return distractors.slice(0, 4);
+    }
+  }
+
+  // SYSTEM SPECIAL CASES: Infinite, No solution
+  if (type === 'systemSpecial') {
+    const options = ['Infinite solutions', 'No solution', 'One solution', 'Infinitely many'];
+    return options.filter(d => d.toLowerCase() !== answerLower).slice(0, 3);
+  }
+
+  // PROBABILITY LANGUAGE: likely, unlikely, certain, etc.
+  if (type === 'probability') {
+    const options = ['Likely', 'Unlikely', 'Certain', 'Impossible', 'Possible'];
+    return options.filter(d => d.toLowerCase() !== answerLower).slice(0, 4);
   }
 
   return null; // Can't auto-generate
