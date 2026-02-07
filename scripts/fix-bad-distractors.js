@@ -48,12 +48,20 @@ function hasBadDistractors(options) {
 function detectProblemType(problem) {
   const prompt = (problem.prompt || problem.content || '').toLowerCase();
   const skillId = (problem.skillId || '').toLowerCase();
-  const answer = (problem.answer?.value || problem.answer || '').toString().toLowerCase();
+  const answer = (problem.answer?.value || problem.answer || '').toString();
+  const answerLower = answer.toLowerCase();
+
+  // Coordinate pair detection - answers like (5, -6) or (-3, 4)
+  if (/\(\s*-?\d+\s*,\s*-?\d+\s*\)/.test(answer) ||
+      prompt.includes('coordinate') || prompt.includes('quadrant') ||
+      prompt.includes('ordered pair') || skillId.includes('coordinate')) {
+    return 'coordinates';
+  }
 
   // Place value detection
   if (prompt.includes('place') || prompt.includes('digit') ||
       skillId.includes('place-value') || skillId.includes('place_value') ||
-      PLACE_VALUE_OPTIONS.some(p => answer.includes(p))) {
+      PLACE_VALUE_OPTIONS.some(p => answerLower.includes(p))) {
     return 'place-value';
   }
 
@@ -66,7 +74,7 @@ function detectProblemType(problem) {
 
   // Shape detection
   const shapes = ['triangle', 'square', 'rectangle', 'circle', 'pentagon', 'hexagon'];
-  if (shapes.some(s => prompt.includes(s) || answer.includes(s))) {
+  if (shapes.some(s => prompt.includes(s) || answerLower.includes(s))) {
     return 'shapes';
   }
 
@@ -76,6 +84,29 @@ function detectProblemType(problem) {
 function generateGoodOptions(problem, problemType) {
   const answer = (problem.answer?.value || problem.answer || '').toString();
   const answerLower = answer.toLowerCase().trim();
+
+  if (problemType === 'coordinates') {
+    // Parse the coordinate pair (x, y)
+    const match = answer.match(/\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)/);
+    if (match) {
+      const x = parseInt(match[1]);
+      const y = parseInt(match[2]);
+      // Generate wrong answers by flipping signs
+      const distractors = [
+        `(${-x}, ${y})`,    // flip x
+        `(${x}, ${-y})`,    // flip y (if not already negative this is different)
+        `(${-x}, ${-y})`,   // flip both
+        `(${y}, ${x})`,     // swap x and y
+      ].filter(d => d !== answer);
+
+      const allOptions = [answer, ...distractors.slice(0, 3)];
+      const shuffled = allOptions.sort(() => Math.random() - 0.5);
+      return shuffled.map((text, idx) => ({
+        label: String.fromCharCode(65 + idx),
+        text
+      }));
+    }
+  }
 
   if (problemType === 'place-value') {
     // For place value, use place value terms as options
@@ -145,7 +176,7 @@ async function main() {
 
   let fixed = 0;
   let skipped = 0;
-  let byType = { 'place-value': 0, 'comparison': 0, 'shapes': 0, 'unknown': 0 };
+  let byType = { 'coordinates': 0, 'place-value': 0, 'comparison': 0, 'shapes': 0, 'unknown': 0 };
 
   for (const problem of problemsWithBadDistractors) {
     const problemType = detectProblemType(problem);
@@ -193,6 +224,7 @@ async function main() {
   console.log(`Fixed: ${fixed}`);
   console.log(`Skipped (need manual review): ${skipped}`);
   console.log(`\nBy type:`);
+  console.log(`  Coordinates: ${byType['coordinates']}`);
   console.log(`  Place value: ${byType['place-value']}`);
   console.log(`  Comparison: ${byType['comparison']}`);
   console.log(`  Shapes: ${byType['shapes']}`);
