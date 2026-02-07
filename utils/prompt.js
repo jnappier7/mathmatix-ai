@@ -495,7 +495,7 @@ function buildCourseProgressionContext(mathCourse, firstName) {
   }
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -2247,6 +2247,30 @@ ${uploadContext.summary}
 5. **Be Natural:** Don't force references to previous work, only mention when genuinely relevant
 
 **IMPORTANT:** Only reference uploaded files when it adds value to the current conversation. Don't mention them just for the sake of it.
+` : ''}
+
+${!masteryContext && gradingContext ? `--- RECENT WORK ANALYSIS (SHOW YOUR WORK) ---
+${firstName} recently submitted handwritten work for AI analysis. Here's what was found:
+
+${gradingContext.map(r => {
+  const date = new Date(r.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const problemSummaries = (r.problems || []).map(p => {
+    const status = p.isCorrect ? 'Correct' : 'Incorrect';
+    const errorTypes = (p.errors || []).map(e => e.category).filter(Boolean).join(', ');
+    return `  - Problem ${p.problemNumber}: ${status}${p.feedback ? ` — ${p.feedback}` : ''}${errorTypes ? ` [${errorTypes}]` : ''}`;
+  }).join('\n');
+  return `**${date}** (${r.correctCount}/${r.problemCount} correct):
+${problemSummaries}
+${r.overallFeedback ? `  Overall: ${r.overallFeedback}` : ''}
+${r.practiceRecommendations?.length ? `  Practice: ${r.practiceRecommendations.join(', ')}` : ''}`;
+}).join('\n\n')}
+
+**HOW TO USE THIS:**
+1. **Reference recent work** when it's relevant — "I noticed from your last work check that you had trouble with sign errors. Let's practice that."
+2. **Build on strengths** — Acknowledge what they got right in previous work.
+3. **Don't repeat AI analysis verbatim** — You have the context, but rephrase naturally.
+4. **Connect to current conversation** — If they're working on a related topic, tie it back.
+5. **Be natural** — Only mention past work when it genuinely helps. Don't force it.
 ` : ''}
 
 --- XP LADDER SYSTEM (THREE TIERS) ---

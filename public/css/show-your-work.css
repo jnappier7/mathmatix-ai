@@ -1,0 +1,543 @@
+/* ============================================
+   SHOW YOUR WORK — AI Work Analysis (v2)
+   Feedback-first, Socratic, per-problem UI
+   ============================================ */
+
+/* ---- Loading ---- */
+.syw-loading-inner {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.syw-spinner {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 20px;
+    border: 4px solid #e5e7eb;
+    border-top-color: #8b5cf6;
+    border-radius: 50%;
+    animation: syw-spin 0.7s linear infinite;
+}
+
+@keyframes syw-spin {
+    to { transform: rotate(360deg); }
+}
+
+.syw-progress-msg {
+    font-size: 16px;
+    color: #6b7280;
+    transition: opacity 0.15s ease;
+    min-height: 24px;
+}
+
+/* ---- Summary Header ---- */
+.syw-summary-header {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.syw-summary-header.syw-all-correct {
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+    border-color: #86efac;
+}
+
+.syw-summary-counts {
+    font-size: 18px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.syw-count-correct {
+    font-size: 32px;
+    font-weight: 700;
+    color: #8b5cf6;
+}
+
+.syw-count-sep,
+.syw-count-label {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.syw-count-total {
+    font-size: 32px;
+    font-weight: 700;
+    color: #374151;
+}
+
+.syw-went-well {
+    color: #059669;
+    font-size: 14px;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.syw-xp-badge {
+    display: inline-block;
+    background: #8b5cf6;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-top: 10px;
+}
+
+/* ---- Section Titles ---- */
+.syw-section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 12px;
+}
+
+.syw-section-title i {
+    color: #8b5cf6;
+    margin-right: 6px;
+}
+
+/* ---- Problem Cards ---- */
+.syw-problems-list {
+    margin-bottom: 20px;
+}
+
+.syw-problem-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: white;
+    transition: border-color 0.2s;
+}
+
+.syw-problem-card.syw-problem-correct {
+    border-left: 4px solid #10b981;
+}
+
+.syw-problem-card.syw-problem-incorrect {
+    border-left: 4px solid #f59e0b;
+}
+
+.syw-problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.syw-problem-num {
+    font-weight: 600;
+    font-size: 14px;
+    color: #374151;
+}
+
+.syw-problem-status {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 12px;
+}
+
+.syw-status-correct {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.syw-status-incorrect {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.syw-problem-statement {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+/* Feedback is the hero content in each card */
+.syw-problem-feedback {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.syw-strengths {
+    font-size: 14px;
+    color: #059669;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: #f0fdf4;
+    border-radius: 6px;
+    line-height: 1.5;
+}
+
+.syw-problem-answers {
+    background: #f9fafb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+
+.syw-answer-row {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.syw-answer-row:last-child {
+    margin-bottom: 0;
+}
+
+.syw-answer-label {
+    color: #6b7280;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.syw-answer-value {
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.syw-correct-answer {
+    color: #059669;
+}
+
+/* Error details (collapsed by default) */
+.syw-error-details {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.syw-error-details summary {
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 13px;
+    padding: 4px 0;
+}
+
+.syw-error-details summary:hover {
+    color: #374151;
+}
+
+.syw-error-item {
+    padding: 6px 0;
+    border-bottom: 1px solid #f3f4f6;
+    line-height: 1.5;
+    color: #4b5563;
+}
+
+.syw-error-item:last-child {
+    border-bottom: none;
+}
+
+.syw-error-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 6px;
+}
+
+/* ---- Overall Feedback ---- */
+.syw-overall-feedback {
+    background: #f9fafb;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+
+.syw-overall-feedback p {
+    margin: 0;
+    color: #374151;
+    font-size: 15px;
+}
+
+/* ---- Practice Recommendations ---- */
+.syw-practice-recs {
+    margin-bottom: 20px;
+}
+
+.syw-practice-recs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.syw-practice-recs li {
+    padding: 8px 12px;
+    background: #ede9fe;
+    color: #5b21b6;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.syw-practice-recs li::before {
+    content: "\f0eb"; /* lightbulb */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 8px;
+}
+
+/* ---- History ---- */
+.syw-history-list {
+    margin-bottom: 16px;
+}
+
+.syw-history-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.syw-history-item:hover {
+    background: #f9fafb;
+}
+
+.syw-history-counts {
+    font-size: 18px;
+    font-weight: 700;
+    color: #8b5cf6;
+    min-width: 50px;
+    text-align: center;
+}
+
+.syw-history-info {
+    flex: 1;
+    font-size: 14px;
+    color: #374151;
+}
+
+.syw-history-date {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.syw-history-teacher-comment {
+    font-size: 12px;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.syw-history-xp {
+    font-size: 13px;
+    font-weight: 600;
+    color: #8b5cf6;
+}
+
+/* ---- Buttons ---- */
+.syw-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.syw-btn:active {
+    transform: scale(0.97);
+}
+
+.syw-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.syw-btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+/* ---- Camera Overlay ---- */
+.syw-live-camera-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+}
+
+.syw-camera-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+}
+
+.syw-camera-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.syw-camera-header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.syw-camera-viewfinder {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.syw-camera-viewfinder video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.syw-camera-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.syw-camera-flash {
+    position: absolute;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s;
+}
+
+.syw-flash-active {
+    opacity: 0.8;
+}
+
+.syw-camera-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    gap: 12px;
+}
+
+.syw-camera-footer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.syw-cam-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.syw-cam-btn-ghost {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.syw-cam-btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.syw-cam-btn-primary {
+    background: #8b5cf6;
+    color: white;
+    padding: 12px 28px;
+    font-size: 16px;
+    border-radius: 12px;
+}
+
+.syw-cam-btn-primary:hover {
+    background: #7c3aed;
+}
+
+/* ---- Chat Snippet Card ---- */
+.work-snippet-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px;
+    margin: 10px 0;
+    max-width: 360px;
+    transition: box-shadow 0.15s;
+}
+
+.work-snippet-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.work-snippet-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.work-snippet-icon {
+    font-size: 20px;
+}
+
+.work-snippet-title {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.work-snippet-time {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.work-snippet-counts {
+    font-size: 14px;
+    font-weight: 600;
+    color: #8b5cf6;
+    margin-bottom: 4px;
+}
+
+.work-snippet-feedback {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.work-snippet-xp {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8b5cf6;
+    margin-top: 6px;
+}
