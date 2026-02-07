@@ -546,12 +546,49 @@ class FloatingScreener {
     // Convert markdown-style bold
     formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
+    // Auto-wrap math expressions in LaTeX delimiters if not already wrapped
+    // This handles content like "2^3 × 2^1" that should render as math
+    if (!formatted.includes('\\(') && !formatted.includes('$')) {
+      // Detect if content has math-like patterns
+      const hasMathPatterns = /[\^_]|\d+\/\d+|×|÷|√|∑|∫|π|θ/.test(formatted);
+
+      if (hasMathPatterns) {
+        // Wrap the math portion in LaTeX delimiters
+        // Replace common patterns with LaTeX equivalents
+        formatted = formatted
+          // Wrap expressions with exponents: 2^3 → \(2^3\)
+          .replace(/(\d+)\^(\d+)/g, '\\($1^{$2}\\)')
+          // Handle multiplication symbol
+          .replace(/×/g, '\\times ')
+          // Handle division symbol
+          .replace(/÷/g, '\\div ')
+          // Handle fractions like 1/2 (but not dates like 1/15)
+          .replace(/(\d+)\/(\d+)(?!\d)/g, '\\(\\frac{$1}{$2}\\)')
+          // Square root
+          .replace(/√(\d+)/g, '\\(\\sqrt{$1}\\)');
+      }
+    }
+
     return formatted;
   }
 
   formatOptionText(text) {
     if (!text) return '';
-    return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    let formatted = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    // Auto-wrap math expressions in LaTeX delimiters for options too
+    if (!formatted.includes('\\(') && !formatted.includes('$')) {
+      const hasMathPatterns = /[\^_]|\d+\/\d+|×|÷|√/.test(formatted);
+      if (hasMathPatterns) {
+        formatted = formatted
+          .replace(/(\d+)\^(\d+)/g, '\\($1^{$2}\\)')
+          .replace(/×/g, '\\(\\times\\)')
+          .replace(/÷/g, '\\(\\div\\)')
+          .replace(/(\d+)\/(\d+)(?!\d)/g, '\\(\\frac{$1}{$2}\\)')
+          .replace(/√(\d+)/g, '\\(\\sqrt{$1}\\)');
+      }
+    }
+    return formatted;
   }
 
   selectOption(optionElement) {
