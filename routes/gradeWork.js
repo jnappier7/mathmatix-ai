@@ -48,13 +48,6 @@ The goal: the student should be able to re-attempt the problem after reading you
 ## 3. CATEGORIZE ERRORS (for internal tracking)
 Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing | notation | conceptual | incomplete | other
 
-## 4. ANNOTATE THE IMAGE
-Mark a few key spots on the student's work with positioned annotations. Keep it minimal — a tutor's margin notes, not a grading rubric.
-- highlight: draw attention to a specific area (a step, an answer, a key spot)
-- note: brief written comment in the margin (e.g. "look here", "nice approach", "check this step")
-x ranges 0-100 (left to right), y ranges 0-100 (top to bottom).
-Do NOT use checkmarks, X marks, or pass/fail symbols. Just highlights and notes.
-
 # OUTPUT — RESPOND WITH ONLY THIS JSON (inside \`\`\`json fences)
 
 \`\`\`json
@@ -68,9 +61,6 @@ Do NOT use checkmarks, X marks, or pass/fail symbols. Just highlights and notes.
       "isCorrect": true,
       "strengths": "Specific praise: what concept or technique they nailed",
       "errors": [],
-      "annotations": [
-        { "type": "note", "x": 15, "y": 25, "mark": "nice approach" }
-      ],
       "feedback": "This looks right — you distributed correctly and combined like terms. Solid work."
     },
     {
@@ -88,10 +78,6 @@ Do NOT use checkmarks, X marks, or pass/fail symbols. Just highlights and notes.
           "correction": "When you distribute a negative across parentheses, every sign inside flips."
         }
       ],
-      "annotations": [
-        { "type": "highlight", "x": 15, "y": 50, "mark": "" },
-        { "type": "note", "x": 40, "y": 55, "mark": "check this sign" }
-      ],
       "feedback": "Your setup was solid. Take another look at step 3 — when you distributed the negative, what should happen to the minus sign inside the parentheses? Try reworking from that step and see if you get a different answer."
     }
   ],
@@ -108,7 +94,6 @@ RULES:
 - Feedback must be CONVERSATIONAL and SOCRATIC — ask guiding questions, don't just state corrections.
 - Always find strengths, even in wrong answers.
 - For incorrect problems: guide the student toward discovering the error, don't just hand them the fix.
-- Annotation positions should correspond to where the work appears in the image.
 - Write like you're talking to the student, not writing a report about them.
 - Use LaTeX notation for ALL math expressions in feedback, answers, and corrections. Wrap inline math with \\( and \\), and display math with \\[ and \\]. Example: "You wrote \\(x = -3\\) but check what happens when you distribute the negative — you should get \\(-(2x - 6) = -2x + 6\\)."
 - The studentAnswer and correctAnswer fields MUST also use LaTeX for any math.`;

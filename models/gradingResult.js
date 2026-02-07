@@ -31,18 +31,6 @@ const problemResultSchema = new Schema({
         correction: { type: String, default: '' }
     }],
 
-    // AI-generated annotation markers for this problem
-    annotations: [{
-        type: {
-            type: String,
-            enum: ['highlight', 'note'],
-            default: 'note'
-        },
-        x: { type: Number, min: 0, max: 100 },
-        y: { type: Number, min: 0, max: 100 },
-        mark: { type: String, default: '' }
-    }],
-
     // One-sentence per-problem feedback
     feedback: { type: String, default: '' }
 }, { _id: false });
@@ -152,7 +140,6 @@ gradingResultSchema.methods.toStudentView = function () {
             isCorrect: p.isCorrect,
             strengths: p.strengths,
             errors: p.errors,
-            annotations: p.annotations,
             feedback: p.feedback
         })),
         overallFeedback: this.overallFeedback,

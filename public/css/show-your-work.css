@@ -101,17 +101,6 @@
     margin-right: 6px;
 }
 
-/* ---- Annotated Image ---- */
-.syw-annotated-section {
-    margin-bottom: 20px;
-}
-
-.syw-annotated-canvas {
-    max-width: 100%;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
 /* ---- Problem Cards ---- */
 .syw-problems-list {
     margin-bottom: 20px;

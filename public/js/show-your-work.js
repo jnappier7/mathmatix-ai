@@ -103,7 +103,6 @@ class ShowYourWorkManager {
         if (this.fileInput) this.fileInput.value = '';
         if (this.cameraInput) this.cameraInput.value = '';
 
-        document.getElementById('syw-annotated-section')?.remove();
         document.getElementById('syw-live-camera-section')?.remove();
     }
 
@@ -275,14 +274,6 @@ class ShowYourWorkManager {
         const correct = result.correctCount || 0;
         const allCorrect = total > 0 && correct === total;
 
-        // Collect all annotations from all problems
-        const allAnnotations = [];
-        if (result.problems) {
-            result.problems.forEach(p => {
-                if (p.annotations) allAnnotations.push(...p.annotations);
-            });
-        }
-
         this.resultsContainer.innerHTML = `
             <!-- Summary header -->
             <div class="syw-summary-header ${allCorrect ? 'syw-all-correct' : ''}">
@@ -295,13 +286,6 @@ class ShowYourWorkManager {
                 ${result.whatWentWell ? `<div class="syw-went-well">${this.escapeHtml(result.whatWentWell)}</div>` : ''}
                 <div class="syw-xp-badge">+${result.xpEarned || 0} XP</div>
             </div>
-
-            <!-- Annotated image -->
-            ${this.currentImageData ? `
-            <div class="syw-annotated-section">
-                <h4 class="syw-section-title"><i class="fas fa-edit"></i> Your Work</h4>
-                <canvas id="syw-annotated-canvas" class="syw-annotated-canvas"></canvas>
-            </div>` : ''}
 
             <!-- Per-problem feedback cards -->
             <div class="syw-problems-list">
@@ -324,11 +308,6 @@ class ShowYourWorkManager {
                 </ul>
             </div>` : ''}
         `;
-
-        // Draw annotations on the preview image
-        if (this.currentImageData && allAnnotations.length > 0) {
-            this.drawAnnotatedImage(this.currentImageData, allAnnotations);
-        }
 
         // Render any LaTeX in the feedback
         this.typesetMath(this.resultsContainer);
@@ -379,107 +358,6 @@ class ShowYourWorkManager {
 
             ${errorsHtml ? `<details class="syw-error-details"><summary>Error details</summary>${errorsHtml}</details>` : ''}
         </div>`;
-    }
-
-    // ----------------------------------------------------------------
-    // ANNOTATED IMAGE (canvas drawing)
-    // ----------------------------------------------------------------
-
-    drawAnnotatedImage(imageData, annotations) {
-        const canvas = document.getElementById('syw-annotated-canvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-
-        const img = new Image();
-        img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-
-            annotations.forEach((ann, i) => {
-                setTimeout(() => this.drawAnnotation(ctx, canvas.width, canvas.height, ann), i * 150);
-            });
-        };
-        img.src = imageData;
-    }
-
-    drawAnnotation(ctx, w, h, ann) {
-        const x = w * (ann.x / 100);
-        const y = h * (ann.y / 100);
-        const baseSize = Math.max(50, Math.min(w, h) / 14);
-        const purple = '#8b5cf6';
-        const glow = 'rgba(139, 92, 246, 0.25)';
-
-        ctx.save();
-
-        if (ann.type === 'highlight') {
-            // Subtle underline bracket — draws attention without stamping pass/fail
-            const halfW = baseSize * 0.8;
-            const tick = baseSize * 0.15;
-            ctx.strokeStyle = purple;
-            ctx.lineWidth = Math.max(2, baseSize / 8);
-            ctx.lineCap = 'round';
-            ctx.shadowColor = glow;
-            ctx.shadowBlur = 6;
-            ctx.beginPath();
-            ctx.moveTo(x - halfW, y + tick);
-            ctx.lineTo(x - halfW, y);
-            ctx.lineTo(x + halfW, y);
-            ctx.lineTo(x + halfW, y + tick);
-            ctx.stroke();
-
-        } else if (ann.type === 'note') {
-            // Margin note — small text label with pill background
-            const text = ann.mark || '';
-            if (!text) { ctx.restore(); return; }
-
-            const fontSize = Math.max(12, baseSize * 0.5);
-            ctx.font = `600 ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial`;
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'middle';
-            const metrics = ctx.measureText(text);
-            const padX = fontSize * 0.4;
-            const padY = fontSize * 0.3;
-            const pillW = metrics.width + padX * 2;
-            const pillH = fontSize + padY * 2;
-            const pillX = x;
-            const pillY = y - pillH / 2;
-
-            // Pill background
-            ctx.shadowColor = 'rgba(0,0,0,0.08)';
-            ctx.shadowBlur = 4;
-            ctx.shadowOffsetY = 1;
-            ctx.fillStyle = 'rgba(139, 92, 246, 0.12)';
-            this.roundRect(ctx, pillX, pillY, pillW, pillH, pillH / 2);
-            ctx.fill();
-
-            // Pill border
-            ctx.shadowColor = 'transparent';
-            ctx.strokeStyle = 'rgba(139, 92, 246, 0.35)';
-            ctx.lineWidth = 1;
-            this.roundRect(ctx, pillX, pillY, pillW, pillH, pillH / 2);
-            ctx.stroke();
-
-            // Text
-            ctx.fillStyle = purple;
-            ctx.fillText(text, pillX + padX, y);
-        }
-
-        ctx.restore();
-    }
-
-    roundRect(ctx, x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + w - r, y);
-        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-        ctx.lineTo(x + w, y + h - r);
-        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-        ctx.lineTo(x + r, y + h);
-        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-        ctx.lineTo(x, y + r);
-        ctx.quadraticCurveTo(x, y, x + r, y);
-        ctx.closePath();
     }
 
     // ----------------------------------------------------------------
