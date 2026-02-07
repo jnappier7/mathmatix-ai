@@ -49,12 +49,11 @@ The goal: the student should be able to re-attempt the problem after reading you
 Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing | notation | conceptual | incomplete | other
 
 ## 4. ANNOTATE THE IMAGE
-Mark the work with positioned annotations:
-- check: correct step or answer
-- miss: incorrect step or answer
-- circle: highlight a key area
-- note: brief comment (e.g. "check this sign", "nice!")
+Mark a few key spots on the student's work with positioned annotations. Keep it minimal — a tutor's margin notes, not a grading rubric.
+- highlight: draw attention to a specific area (a step, an answer, a key spot)
+- note: brief written comment in the margin (e.g. "look here", "nice approach", "check this step")
 x ranges 0-100 (left to right), y ranges 0-100 (top to bottom).
+Do NOT use checkmarks, X marks, or pass/fail symbols. Just highlights and notes.
 
 # OUTPUT — RESPOND WITH ONLY THIS JSON (inside \`\`\`json fences)
 
@@ -70,7 +69,7 @@ x ranges 0-100 (left to right), y ranges 0-100 (top to bottom).
       "strengths": "Specific praise: what concept or technique they nailed",
       "errors": [],
       "annotations": [
-        { "type": "check", "x": 15, "y": 25, "mark": "✓" }
+        { "type": "note", "x": 15, "y": 25, "mark": "nice approach" }
       ],
       "feedback": "This looks right — you distributed correctly and combined like terms. Solid work."
     },
@@ -90,7 +89,7 @@ x ranges 0-100 (left to right), y ranges 0-100 (top to bottom).
         }
       ],
       "annotations": [
-        { "type": "miss", "x": 15, "y": 50, "mark": "✗" },
+        { "type": "highlight", "x": 15, "y": 50, "mark": "" },
         { "type": "note", "x": 40, "y": 55, "mark": "check this sign" }
       ],
       "feedback": "Your setup was solid. Take another look at step 3 — when you distributed the negative, what should happen to the minus sign inside the parentheses? Try reworking from that step and see if you get a different answer."

@@ -355,7 +355,7 @@ class ShowYourWorkManager {
             <div class="syw-problem-header">
                 <span class="syw-problem-num">Problem ${problem.problemNumber}</span>
                 <span class="syw-problem-status ${correct ? 'syw-status-correct' : 'syw-status-incorrect'}">
-                    ${correct ? '&#10003; Correct' : '&#10007; Needs another look'}
+                    ${correct ? 'Got it' : 'Take another look'}
                 </span>
             </div>
             ${problem.problemStatement ? `<div class="syw-problem-statement">${this.escapeHtml(problem.problemStatement)}</div>` : ''}
@@ -408,61 +408,61 @@ class ShowYourWorkManager {
         const y = h * (ann.y / 100);
         const baseSize = Math.max(50, Math.min(w, h) / 14);
         const purple = '#8b5cf6';
-        const glow = 'rgba(139, 92, 246, 0.3)';
+        const glow = 'rgba(139, 92, 246, 0.25)';
 
         ctx.save();
-        ctx.shadowColor = glow;
-        ctx.shadowBlur = baseSize / 3;
-        ctx.strokeStyle = purple;
-        ctx.lineWidth = baseSize / 5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
 
-        if (ann.type === 'check') {
+        if (ann.type === 'highlight') {
+            // Subtle underline bracket — draws attention without stamping pass/fail
+            const halfW = baseSize * 0.8;
+            const tick = baseSize * 0.15;
+            ctx.strokeStyle = purple;
+            ctx.lineWidth = Math.max(2, baseSize / 8);
+            ctx.lineCap = 'round';
+            ctx.shadowColor = glow;
+            ctx.shadowBlur = 6;
             ctx.beginPath();
-            ctx.moveTo(x - baseSize * 0.35, y);
-            ctx.lineTo(x - baseSize * 0.05, y + baseSize * 0.35);
-            ctx.lineTo(x + baseSize * 0.4, y - baseSize * 0.35);
-            ctx.stroke();
-
-        } else if (ann.type === 'miss') {
-            const s = baseSize * 0.35;
-            ctx.beginPath();
-            ctx.moveTo(x - s, y - s);
-            ctx.lineTo(x + s, y + s);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(x + s, y - s);
-            ctx.lineTo(x - s, y + s);
-            ctx.stroke();
-
-        } else if (ann.type === 'circle') {
-            ctx.beginPath();
-            ctx.arc(x, y, baseSize * 0.7, 0, Math.PI * 2);
+            ctx.moveTo(x - halfW, y + tick);
+            ctx.lineTo(x - halfW, y);
+            ctx.lineTo(x + halfW, y);
+            ctx.lineTo(x + halfW, y + tick);
             ctx.stroke();
 
         } else if (ann.type === 'note') {
-            const fontSize = baseSize * 0.6;
-            ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+            // Margin note — small text label with pill background
             const text = ann.mark || '';
-            const metrics = ctx.measureText(text);
-            const pad = fontSize * 0.35;
+            if (!text) { ctx.restore(); return; }
 
-            ctx.shadowColor = 'transparent';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-            this.roundRect(ctx, x - metrics.width / 2 - pad, y - fontSize / 2 - pad,
-                metrics.width + pad * 2, fontSize + pad * 2, 6);
+            const fontSize = Math.max(12, baseSize * 0.5);
+            ctx.font = `600 ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial`;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            const metrics = ctx.measureText(text);
+            const padX = fontSize * 0.4;
+            const padY = fontSize * 0.3;
+            const pillW = metrics.width + padX * 2;
+            const pillH = fontSize + padY * 2;
+            const pillX = x;
+            const pillY = y - pillH / 2;
+
+            // Pill background
+            ctx.shadowColor = 'rgba(0,0,0,0.08)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetY = 1;
+            ctx.fillStyle = 'rgba(139, 92, 246, 0.12)';
+            this.roundRect(ctx, pillX, pillY, pillW, pillH, pillH / 2);
             ctx.fill();
-            ctx.strokeStyle = purple;
-            ctx.lineWidth = 2;
-            this.roundRect(ctx, x - metrics.width / 2 - pad, y - fontSize / 2 - pad,
-                metrics.width + pad * 2, fontSize + pad * 2, 6);
+
+            // Pill border
+            ctx.shadowColor = 'transparent';
+            ctx.strokeStyle = 'rgba(139, 92, 246, 0.35)';
+            ctx.lineWidth = 1;
+            this.roundRect(ctx, pillX, pillY, pillW, pillH, pillH / 2);
             ctx.stroke();
 
+            // Text
             ctx.fillStyle = purple;
-            ctx.fillText(text, x, y);
+            ctx.fillText(text, pillX + padX, y);
         }
 
         ctx.restore();

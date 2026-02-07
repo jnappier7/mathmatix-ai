@@ -35,7 +35,7 @@ const problemResultSchema = new Schema({
     annotations: [{
         type: {
             type: String,
-            enum: ['check', 'miss', 'circle', 'note'],
+            enum: ['highlight', 'note'],
             default: 'note'
         },
         x: { type: Number, min: 0, max: 100 },
