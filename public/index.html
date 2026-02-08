@@ -65,141 +65,502 @@
   }
   </script>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <style>
-    /* Landing Page Specific Styles */
-    .hero-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    /* ── Landing Page Overrides ─────────────────────────────── */
+    .landing-main {
+      max-width: 100%;
+      padding: 0;
+      gap: 0;
+      overflow-x: hidden;
+    }
+
+    .lp-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 var(--page-horizontal-padding);
+    }
+
+    /* ── Hero ───────────────────────────────────────────────── */
+    .lp-hero {
+      background: linear-gradient(160deg, #f0fafa 0%, #e4f3f3 40%, #f8fbfb 100%);
+      padding: 4rem var(--page-horizontal-padding) 2.5rem;
       text-align: center;
-      padding: 4rem var(--page-horizontal-padding);
-      min-height: 60vh;
-      background: linear-gradient(135deg, #f8fcfc 0%, #e8f4f4 100%);
     }
 
-    .hero-section h1 {
-      font-size: 2.5rem;
-      color: var(--clr-text);
-      margin-bottom: 1rem;
-      max-width: 800px;
-    }
-
-    .hero-section .tagline {
-      font-size: 1.25rem;
-      color: var(--clr-text-dim);
-      margin-bottom: 2rem;
-      max-width: 600px;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .hero-buttons .btn {
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
-    }
-
-    /* Features Section */
-    .features-section {
-      padding: 4rem var(--page-horizontal-padding);
-      background: var(--clr-bg-light);
-    }
-
-    .features-section h2 {
-      text-align: center;
-      margin-bottom: 3rem;
-      color: var(--clr-text);
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      max-width: var(--content-max-width);
+    .lp-hero-inner {
+      max-width: 720px;
       margin: 0 auto;
     }
 
-    .feature-card {
-      background: var(--clr-bg-light);
-      border: 1px solid #e0e0e0;
-      border-radius: var(--border-radius-base);
-      padding: 2rem;
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .feature-card i {
-      font-size: 2.5rem;
-      color: var(--clr-primary-teal);
+    .lp-hero h1 {
+      font-size: 2.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--clr-text);
       margin-bottom: 1rem;
     }
 
-    .feature-card h3 {
-      font-size: 1.2rem;
+    .lp-hero .lp-hero-sub {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: var(--clr-text-dim);
+      margin-bottom: 2rem;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .lp-hero-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .lp-hero-buttons .btn {
+      padding: 0.85rem 2rem;
+      font-size: 1.05rem;
+      border-radius: var(--border-radius-base);
+    }
+
+    /* Trust bar (inside hero) */
+    .lp-trust-bar {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(18, 179, 179, 0.12);
+    }
+
+    .lp-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--clr-text-dim);
+    }
+
+    .lp-trust-item i {
+      color: var(--clr-primary-teal);
+      font-size: 1rem;
+    }
+
+    /* ── Features ───────────────────────────────────────────── */
+    .lp-features {
+      padding: 3.5rem var(--page-horizontal-padding);
+      background: var(--clr-bg-light);
+    }
+
+    .lp-section-heading {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--clr-text);
+    }
+
+    .lp-section-sub {
+      text-align: center;
+      color: var(--clr-text-dim);
+      font-size: 1.05rem;
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    .lp-features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .lp-feature-card {
+      background: var(--clr-bg-light);
+      border: 1px solid #e8ecf0;
+      border-radius: var(--border-radius-base);
+      padding: 1.5rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .lp-feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .lp-feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(18, 179, 179, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .lp-feature-icon i {
+      font-size: 1.25rem;
+      color: var(--clr-primary-teal);
+    }
+
+    .lp-feature-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--clr-text);
+    }
+
+    .lp-feature-card p {
+      font-size: 0.92rem;
+      color: var(--clr-text-dim);
+      line-height: 1.55;
+      margin-bottom: 0;
+    }
+
+    /* ── Audience Sections (Students / Parents) ──────────── */
+    .lp-audience {
+      padding: 3.5rem var(--page-horizontal-padding);
+    }
+
+    .lp-audience--alt {
+      background: #f7fbfb;
+    }
+
+    .lp-audience-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .lp-audience-content h2 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
       margin-bottom: 0.75rem;
       color: var(--clr-text);
     }
 
-    .feature-card p {
+    .lp-audience-content > p {
+      font-size: 1rem;
       color: var(--clr-text-dim);
-      font-size: 0.95rem;
-      margin-bottom: 0;
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
     }
 
-    /* CTA Section */
-    .cta-section {
-      padding: 4rem var(--page-horizontal-padding);
-      background: var(--clr-primary-teal);
+    .lp-benefit-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .lp-benefit-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.95rem;
+      color: var(--clr-text);
+      line-height: 1.5;
+    }
+
+    .lp-benefit-list li i {
+      color: var(--clr-primary-teal);
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .lp-audience-visual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .lp-stat-card {
+      background: var(--clr-bg-light);
+      border: 1px solid #e8ecf0;
+      border-radius: var(--border-radius-base);
+      padding: 1.25rem;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .lp-stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .lp-stat-card i {
+      font-size: 1.5rem;
+      color: var(--clr-primary-teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .lp-stat-card .lp-stat-label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--clr-text-dim);
+      line-height: 1.4;
+    }
+
+    /* Parent section visual cards */
+    .lp-parent-cards {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .lp-parent-card {
+      background: var(--clr-bg-light);
+      border: 1px solid #e8ecf0;
+      border-radius: var(--border-radius-base);
+      padding: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .lp-parent-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .lp-parent-card i {
+      font-size: 1.25rem;
+      color: var(--clr-primary-teal);
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+    }
+
+    .lp-parent-card strong {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      color: var(--clr-text);
+    }
+
+    .lp-parent-card span {
+      font-size: 0.88rem;
+      color: var(--clr-text-dim);
+      line-height: 1.45;
+    }
+
+    /* ── Mission ────────────────────────────────────────────── */
+    .lp-mission {
+      padding: 3.5rem var(--page-horizontal-padding);
+      background: var(--clr-bg-dark);
+      color: var(--clr-bg-light);
+    }
+
+    .lp-mission-inner {
+      max-width: 680px;
+      margin: 0 auto;
       text-align: center;
     }
 
-    .cta-section h2 {
+    .lp-mission h2 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
       color: var(--clr-bg-light);
+      margin-bottom: 1.25rem;
+    }
+
+    .lp-mission p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.8);
       margin-bottom: 1rem;
     }
 
-    .cta-section p {
-      color: rgba(255, 255, 255, 0.9);
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
+    .lp-mission p:last-child {
+      margin-bottom: 0;
     }
 
-    .cta-section .btn {
-      background: var(--clr-bg-light);
+    .lp-mission-accent {
       color: var(--clr-primary-teal);
-      padding: 1rem 2rem;
+      font-weight: 600;
+    }
+
+    /* ── How It Works ───────────────────────────────────────── */
+    .lp-steps {
+      padding: 3.5rem var(--page-horizontal-padding);
+      background: #f7fbfb;
+    }
+
+    .lp-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .lp-step {
+      text-align: center;
+    }
+
+    .lp-step-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--clr-primary-teal);
+      color: var(--clr-bg-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
       font-size: 1.1rem;
+      margin: 0 auto 0.85rem;
     }
 
-    .cta-section .btn:hover {
-      background: #f0f0f0;
+    .lp-step h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--clr-text);
     }
 
-    /* Responsive adjustments */
+    .lp-step p {
+      font-size: 0.9rem;
+      color: var(--clr-text-dim);
+      line-height: 1.55;
+      margin-bottom: 0;
+    }
+
+    /* ── Final CTA ──────────────────────────────────────────── */
+    .lp-final-cta {
+      padding: 3.5rem var(--page-horizontal-padding);
+      background: var(--clr-bg-light);
+      text-align: center;
+    }
+
+    .lp-final-cta h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--clr-text);
+      margin-bottom: 0.75rem;
+    }
+
+    .lp-final-cta p {
+      font-size: 1.05rem;
+      color: var(--clr-text-dim);
+      margin-bottom: 1.75rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .lp-final-cta .btn {
+      padding: 0.85rem 2.25rem;
+      font-size: 1.05rem;
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 768px) {
-      .hero-section h1 {
-        font-size: 1.8rem;
+      .lp-hero {
+        padding: 3rem var(--page-horizontal-padding) 2rem;
       }
 
-      .hero-section .tagline {
+      .lp-hero h1 {
+        font-size: 2rem;
+      }
+
+      .lp-hero .lp-hero-sub {
         font-size: 1rem;
       }
 
-      .hero-buttons .btn {
+      .lp-hero-buttons .btn {
         width: 100%;
         max-width: 280px;
+      }
+
+      .lp-trust-bar {
+        gap: 1rem;
+      }
+
+      .lp-trust-item {
+        font-size: 0.82rem;
+      }
+
+      .lp-section-heading {
+        font-size: 1.6rem;
+      }
+
+      .lp-features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .lp-audience {
+        padding: 2.5rem var(--page-horizontal-padding);
+      }
+
+      .lp-audience-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .lp-audience-content h2 {
+        font-size: 1.55rem;
+      }
+
+      .lp-audience-visual {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .lp-mission {
+        padding: 2.5rem var(--page-horizontal-padding);
+      }
+
+      .lp-mission h2 {
+        font-size: 1.55rem;
+      }
+
+      .lp-mission p {
+        font-size: 0.95rem;
+      }
+
+      .lp-steps {
+        padding: 2.5rem var(--page-horizontal-padding);
+      }
+
+      .lp-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .lp-final-cta {
+        padding: 2.5rem var(--page-horizontal-padding);
+      }
+
+      .lp-final-cta h2 {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .lp-features-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
@@ -207,7 +568,9 @@
 <body>
   <header class="landing-header">
     <div class="header-logo-container">
-      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+      <a href="/">
+        <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
+      </a>
     </div>
     <nav class="landing-nav">
       <a href="/login.html" class="btn btn-primary-outline">Log In</a>
@@ -215,57 +578,190 @@
     </nav>
   </header>
 
-  <main>
-    <!-- Hero Section -->
-    <section class="hero-section">
-      <h1>An Affordable Math Tutor for Every Child</h1>
-      <p class="tagline">
-        Personalized, AI-powered math tutoring that adapts to your child's learning style.
-        Get one-on-one help anytime, anywhere.
-      </p>
-      <div class="hero-buttons">
-        <a href="/signup.html" class="btn btn-primary">Get Started</a>
-        <a href="/login.html" class="btn btn-primary-outline">Log In</a>
+  <main class="landing-main">
+    <!-- ── Hero ──────────────────────────────────────────── -->
+    <section class="lp-hero">
+      <div class="lp-hero-inner">
+        <h1>An Affordable Math Tutor for Every Child</h1>
+        <p class="lp-hero-sub">
+          Personalized, AI-powered tutoring that adapts to how your student learns &mdash; available anytime, for a fraction of the cost of private tutoring.
+        </p>
+        <div class="lp-hero-buttons">
+          <a href="/signup.html" class="btn btn-primary">Get Started</a>
+          <a href="#how-it-works" class="btn btn-primary-outline">See How It Works</a>
+        </div>
+      </div>
+      <div class="lp-trust-bar">
+        <div class="lp-trust-item"><i class="fas fa-chalkboard-teacher"></i> Built by a Teacher</div>
+        <div class="lp-trust-item"><i class="fas fa-brain"></i> AI-Powered</div>
+        <div class="lp-trust-item"><i class="fas fa-clock"></i> Available 24/7</div>
+        <div class="lp-trust-item"><i class="fas fa-chart-line"></i> Real-Time Progress</div>
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-section">
-      <h2>Why Mathmatix AI?</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <i class="fas fa-brain"></i>
-          <h3>Adaptive Learning</h3>
-          <p>Our AI tutor adjusts to each student's pace and skill level, providing the right challenge at the right time.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-comments"></i>
-          <h3>Conversational Tutoring</h3>
-          <p>Students can ask questions naturally and get step-by-step explanations that make sense to them.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-chart-line"></i>
-          <h3>Progress Tracking</h3>
-          <p>Parents and teachers can monitor student progress with detailed dashboards and learning analytics.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-clock"></i>
-          <h3>Available 24/7</h3>
-          <p>Help with homework at midnight? No problem. Mathmatix AI is always ready when your child needs support.</p>
+    <!-- ── Features ─────────────────────────────────────── -->
+    <section class="lp-features">
+      <div class="lp-inner">
+        <h2 class="lp-section-heading">Everything Your Student Needs to Succeed</h2>
+        <p class="lp-section-sub">A complete learning system that meets students where they are and grows with them.</p>
+        <div class="lp-features-grid">
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon"><i class="fas fa-brain"></i></div>
+            <h3>Adaptive Learning</h3>
+            <p>Our AI adjusts to each student's pace and skill level in real time &mdash; never too easy, never too hard.</p>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon"><i class="fas fa-comments"></i></div>
+            <h3>Conversational Tutoring</h3>
+            <p>Students ask questions naturally and get patient, step-by-step explanations that actually make sense.</p>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon"><i class="fas fa-chart-line"></i></div>
+            <h3>Progress Dashboards</h3>
+            <p>Parents and teachers see exactly where students are excelling and where they need support.</p>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon"><i class="fas fa-clock"></i></div>
+            <h3>Always Available</h3>
+            <p>Homework help at midnight? Test prep on the weekend? Mathmatix is always ready when they need it.</p>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon"><i class="fas fa-gamepad"></i></div>
+            <h3>Mastery Arcade</h3>
+            <p>Gamified practice that builds math fluency and makes repetition feel like play.</p>
+          </div>
+          <div class="lp-feature-card">
+            <div class="lp-feature-icon"><i class="fas fa-microphone"></i></div>
+            <h3>Voice &amp; Image Support</h3>
+            <p>Students can speak their questions or upload a photo of their work for instant help.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-      <h2>Ready to Transform Math Learning?</h2>
-      <p>Join schools and families who are making math accessible for every student.</p>
-      <a href="/signup.html" class="btn">Create Your Account</a>
+    <!-- ── For Students ─────────────────────────────────── -->
+    <section class="lp-audience lp-audience--alt">
+      <div class="lp-audience-grid">
+        <div class="lp-audience-content">
+          <h2>A Tutor That Gets You</h2>
+          <p>Whether you're stuck on fractions or tackling algebra, Mathmatix works at your pace, speaks your language, and never makes you feel rushed.</p>
+          <ul class="lp-benefit-list">
+            <li><i class="fas fa-check"></i> Ask anything, anytime &mdash; no judgment, no waiting</li>
+            <li><i class="fas fa-check"></i> Earn XP, level up, and unlock achievement badges</li>
+            <li><i class="fas fa-check"></i> Build fluency with games in the Mastery Arcade</li>
+            <li><i class="fas fa-check"></i> Get step-by-step explanations that actually make sense</li>
+          </ul>
+        </div>
+        <div class="lp-audience-visual">
+          <div class="lp-stat-card">
+            <i class="fas fa-bolt"></i>
+            <div class="lp-stat-label">Instant Help</div>
+          </div>
+          <div class="lp-stat-card">
+            <i class="fas fa-trophy"></i>
+            <div class="lp-stat-label">Earn Badges</div>
+          </div>
+          <div class="lp-stat-card">
+            <i class="fas fa-gamepad"></i>
+            <div class="lp-stat-label">Play &amp; Learn</div>
+          </div>
+          <div class="lp-stat-card">
+            <i class="fas fa-chart-simple"></i>
+            <div class="lp-stat-label">Track Growth</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── For Parents ──────────────────────────────────── -->
+    <section class="lp-audience">
+      <div class="lp-audience-grid">
+        <div class="lp-audience-content">
+          <h2>Stay Connected to Their Learning</h2>
+          <p>You don't need to be a math expert. Mathmatix gives you the tools to support your child's growth &mdash; or to learn alongside them.</p>
+          <ul class="lp-benefit-list">
+            <li><i class="fas fa-check"></i> Track progress with real-time dashboards</li>
+            <li><i class="fas fa-check"></i> See strengths, gaps, and growth over time</li>
+            <li><i class="fas fa-check"></i> Brush up on the math to help with homework</li>
+            <li><i class="fas fa-check"></i> Affordable alternative to private tutoring</li>
+          </ul>
+        </div>
+        <div class="lp-parent-cards">
+          <div class="lp-parent-card">
+            <i class="fas fa-chart-pie"></i>
+            <div>
+              <strong>Parent Dashboard</strong>
+              <span>See exactly where your child is excelling and where they need more practice.</span>
+            </div>
+          </div>
+          <div class="lp-parent-card">
+            <i class="fas fa-book-open"></i>
+            <div>
+              <strong>Learn It Yourself</strong>
+              <span>Use the tutor to brush up on concepts so you can support homework time with confidence.</span>
+            </div>
+          </div>
+          <div class="lp-parent-card">
+            <i class="fas fa-bell"></i>
+            <div>
+              <strong>Weekly Digests</strong>
+              <span>Get updates on your child's activity, progress, and accomplishments delivered to your inbox.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Mission ──────────────────────────────────────── -->
+    <section class="lp-mission">
+      <div class="lp-mission-inner">
+        <h2>Why We Built This</h2>
+        <p>
+          As a math teacher, I watched some students thrive because they had support at home and access to private tutoring. Others &mdash; just as bright, just as capable &mdash; fell behind simply because their families couldn't afford the same resources.
+        </p>
+        <p>
+          <span class="lp-mission-accent">Mathmatix AI exists to close that gap.</span> Every child deserves a patient, personal tutor. Now they can have one.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── How It Works ─────────────────────────────────── -->
+    <section id="how-it-works" class="lp-steps">
+      <div class="lp-inner">
+        <h2 class="lp-section-heading">Getting Started Is Simple</h2>
+        <p class="lp-section-sub">Up and running in under a minute.</p>
+        <div class="lp-steps-grid">
+          <div class="lp-step">
+            <div class="lp-step-number">1</div>
+            <h3>Create Your Account</h3>
+            <p>Sign up as a student or parent. Quick, easy, and free to start.</p>
+          </div>
+          <div class="lp-step">
+            <div class="lp-step-number">2</div>
+            <h3>Start Learning</h3>
+            <p>Jump into a conversation with your AI tutor or take a quick placement screener.</p>
+          </div>
+          <div class="lp-step">
+            <div class="lp-step-number">3</div>
+            <h3>Track &amp; Grow</h3>
+            <p>Watch progress unfold with dashboards, badges, skill maps, and weekly digests.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Final CTA ────────────────────────────────────── -->
+    <section class="lp-final-cta">
+      <div class="lp-inner">
+        <h2>Every child deserves a great math tutor.</h2>
+        <p>Join the families and students already building math confidence with Mathmatix AI.</p>
+        <a href="/signup.html" class="btn btn-primary">Create Your Account</a>
+      </div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2026 Mathmatix AI. All rights reserved.</p>
+    <p>&copy; 2026 M&#916;THM&#916;TI&#935; AI. All rights reserved.</p>
     <p>
       <a href="/privacy.html">Privacy Policy</a> |
       <a href="/terms.html">Terms of Use</a> |
