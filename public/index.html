@@ -130,6 +130,63 @@
       border-radius: var(--border-radius-base);
     }
 
+    /* Product preview (chat mockup) */
+    .lp-hero-preview {
+      max-width: 460px;
+      margin: 0 auto 2.5rem;
+      background: var(--clr-bg-light);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      padding: 1.25rem;
+      text-align: left;
+    }
+
+    .lp-preview-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.85rem;
+      margin-bottom: 0.85rem;
+      border-bottom: 1px solid #eef1f4;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--clr-text-dim);
+    }
+
+    .lp-preview-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--clr-success-green);
+      flex-shrink: 0;
+    }
+
+    .lp-chat-bubble {
+      padding: 0.65rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin-bottom: 0.6rem;
+      max-width: 88%;
+    }
+
+    .lp-chat-bubble:last-child {
+      margin-bottom: 0;
+    }
+
+    .lp-chat-student {
+      background: #f0f2f5;
+      color: var(--clr-text);
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+
+    .lp-chat-tutor {
+      background: rgba(18, 179, 179, 0.08);
+      color: var(--clr-text);
+      border-bottom-left-radius: 4px;
+    }
+
     /* Trust bar (inside hero) */
     .lp-trust-bar {
       display: flex;
@@ -229,7 +286,7 @@
       margin-bottom: 0;
     }
 
-    /* ── Audience Sections (Students / Parents) ──────────── */
+    /* ── Audience Sections (Students / Parents / Teachers) ─── */
     .lp-audience {
       padding: 3.5rem var(--page-horizontal-padding);
     }
@@ -319,13 +376,13 @@
       line-height: 1.4;
     }
 
-    /* Parent section visual cards */
-    .lp-parent-cards {
+    /* Horizontal info cards (parents, teachers) */
+    .lp-info-cards {
       display: grid;
       gap: 0.75rem;
     }
 
-    .lp-parent-card {
+    .lp-info-card {
       background: var(--clr-bg-light);
       border: 1px solid #e8ecf0;
       border-radius: var(--border-radius-base);
@@ -336,19 +393,19 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .lp-parent-card:hover {
+    .lp-info-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-sm);
     }
 
-    .lp-parent-card i {
+    .lp-info-card i {
       font-size: 1.25rem;
       color: var(--clr-primary-teal);
       flex-shrink: 0;
       margin-top: 0.15rem;
     }
 
-    .lp-parent-card strong {
+    .lp-info-card strong {
       display: block;
       font-size: 0.95rem;
       font-weight: 600;
@@ -356,7 +413,7 @@
       color: var(--clr-text);
     }
 
-    .lp-parent-card span {
+    .lp-info-card span {
       font-size: 0.88rem;
       color: var(--clr-text-dim);
       line-height: 1.45;
@@ -397,6 +454,59 @@
     .lp-mission-accent {
       color: var(--clr-primary-teal);
       font-weight: 600;
+    }
+
+    /* ── Testimonials ───────────────────────────────────────── */
+    .lp-testimonials {
+      padding: 3.5rem var(--page-horizontal-padding);
+      background: var(--clr-bg-light);
+    }
+
+    .lp-testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .lp-testimonial {
+      background: #f7fbfb;
+      border-radius: var(--border-radius-base);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lp-testimonial-quote {
+      font-size: 0.95rem;
+      color: var(--clr-text);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+      flex-grow: 1;
+      font-style: italic;
+    }
+
+    .lp-testimonial-quote::before {
+      content: "\201C";
+      font-size: 1.5rem;
+      color: var(--clr-primary-teal);
+      font-style: normal;
+      line-height: 0;
+      vertical-align: -0.25em;
+      margin-right: 0.1em;
+    }
+
+    .lp-testimonial-author {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--clr-text);
+    }
+
+    .lp-testimonial-role {
+      font-size: 0.8rem;
+      color: var(--clr-text-dim);
+      margin-top: 0.1rem;
     }
 
     /* ── How It Works ───────────────────────────────────────── */
@@ -464,7 +574,7 @@
       font-size: 1.05rem;
       color: var(--clr-text-dim);
       margin-bottom: 1.75rem;
-      max-width: 480px;
+      max-width: 500px;
       margin-left: auto;
       margin-right: auto;
       line-height: 1.6;
@@ -473,6 +583,13 @@
     .lp-final-cta .btn {
       padding: 0.85rem 2.25rem;
       font-size: 1.05rem;
+    }
+
+    .lp-final-cta .lp-cta-note {
+      font-size: 0.82rem;
+      color: var(--clr-text-dim);
+      margin-top: 0.75rem;
+      margin-bottom: 0;
     }
 
     /* ── Responsive ─────────────────────────────────────────── */
@@ -492,6 +609,10 @@
       .lp-hero-buttons .btn {
         width: 100%;
         max-width: 280px;
+      }
+
+      .lp-hero-preview {
+        max-width: 100%;
       }
 
       .lp-trust-bar {
@@ -540,6 +661,15 @@
         font-size: 0.95rem;
       }
 
+      .lp-testimonials {
+        padding: 2.5rem var(--page-horizontal-padding);
+      }
+
+      .lp-testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
       .lp-steps {
         padding: 2.5rem var(--page-horizontal-padding);
       }
@@ -561,6 +691,16 @@
     @media (min-width: 769px) and (max-width: 1024px) {
       .lp-features-grid {
         grid-template-columns: repeat(2, 1fr);
+      }
+
+      .lp-testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .lp-testimonials-grid .lp-testimonial:last-child {
+        grid-column: 1 / -1;
+        max-width: 50%;
+        justify-self: center;
       }
     }
   </style>
@@ -584,13 +724,26 @@
       <div class="lp-hero-inner">
         <h1>An Affordable Math Tutor for Every Child</h1>
         <p class="lp-hero-sub">
-          Personalized, AI-powered tutoring that adapts to how your student learns &mdash; available anytime, for a fraction of the cost of private tutoring.
+          Personalized, AI-powered tutoring that adapts to how your student learns &mdash; available anytime, for a fraction of what a private tutor costs.
         </p>
         <div class="lp-hero-buttons">
           <a href="/signup.html" class="btn btn-primary">Get Started</a>
           <a href="#how-it-works" class="btn btn-primary-outline">See How It Works</a>
         </div>
       </div>
+
+      <!-- Product preview — shows what the tutoring feels like -->
+      <div class="lp-hero-preview">
+        <div class="lp-preview-header">
+          <div class="lp-preview-dot"></div>
+          Mathmatix AI Tutor
+        </div>
+        <div class="lp-chat-bubble lp-chat-student">How do I add ⅓ + ¼?</div>
+        <div class="lp-chat-bubble lp-chat-tutor">Great question! Let's figure it out together. First &mdash; can you think of a number that both 3 and 4 divide into evenly?</div>
+        <div class="lp-chat-bubble lp-chat-student">12?</div>
+        <div class="lp-chat-bubble lp-chat-tutor">That's it! Now we can rewrite both fractions with 12 as the denominator. What would ⅓ become?</div>
+      </div>
+
       <div class="lp-trust-bar">
         <div class="lp-trust-item"><i class="fas fa-chalkboard-teacher"></i> Built by a Teacher</div>
         <div class="lp-trust-item"><i class="fas fa-brain"></i> AI-Powered</div>
@@ -686,26 +839,65 @@
             <li><i class="fas fa-check"></i> Affordable alternative to private tutoring</li>
           </ul>
         </div>
-        <div class="lp-parent-cards">
-          <div class="lp-parent-card">
+        <div class="lp-info-cards">
+          <div class="lp-info-card">
             <i class="fas fa-chart-pie"></i>
             <div>
               <strong>Parent Dashboard</strong>
               <span>See exactly where your child is excelling and where they need more practice.</span>
             </div>
           </div>
-          <div class="lp-parent-card">
+          <div class="lp-info-card">
             <i class="fas fa-book-open"></i>
             <div>
               <strong>Learn It Yourself</strong>
               <span>Use the tutor to brush up on concepts so you can support homework time with confidence.</span>
             </div>
           </div>
-          <div class="lp-parent-card">
+          <div class="lp-info-card">
             <i class="fas fa-bell"></i>
             <div>
               <strong>Weekly Digests</strong>
               <span>Get updates on your child's activity, progress, and accomplishments delivered to your inbox.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── For Teachers ─────────────────────────────────── -->
+    <section class="lp-audience lp-audience--alt">
+      <div class="lp-audience-grid">
+        <div class="lp-audience-content">
+          <h2>Built for Your Classroom</h2>
+          <p>Mathmatix was designed by a teacher, for teachers. Get the visibility you need to differentiate instruction and support every learner.</p>
+          <ul class="lp-benefit-list">
+            <li><i class="fas fa-check"></i> See which students are struggling and on what</li>
+            <li><i class="fas fa-check"></i> Track individual growth with celeration charts</li>
+            <li><i class="fas fa-check"></i> Monitor real-time activity across your class</li>
+            <li><i class="fas fa-check"></i> Give every student a personal tutor &mdash; without the cost</li>
+          </ul>
+        </div>
+        <div class="lp-info-cards">
+          <div class="lp-info-card">
+            <i class="fas fa-users"></i>
+            <div>
+              <strong>Class Overview</strong>
+              <span>One dashboard to see every student's progress, activity, and areas of need at a glance.</span>
+            </div>
+          </div>
+          <div class="lp-info-card">
+            <i class="fas fa-chart-area"></i>
+            <div>
+              <strong>Celeration Charts</strong>
+              <span>Track fluency growth over time with precision-teaching-style data visualization.</span>
+            </div>
+          </div>
+          <div class="lp-info-card">
+            <i class="fas fa-lightbulb"></i>
+            <div>
+              <strong>Actionable Insights</strong>
+              <span>Know which skills to reteach, which students need intervention, and where the class is thriving.</span>
             </div>
           </div>
         </div>
@@ -725,6 +917,32 @@
       </div>
     </section>
 
+    <!-- ── Testimonials ─────────────────────────────────── -->
+    <!-- Replace these with real testimonials as they come in -->
+    <section class="lp-testimonials">
+      <div class="lp-inner">
+        <h2 class="lp-section-heading">What People Are Saying</h2>
+        <p class="lp-section-sub">Students, parents, and teachers using Mathmatix AI every day.</p>
+        <div class="lp-testimonials-grid">
+          <div class="lp-testimonial">
+            <p class="lp-testimonial-quote">I used to hate asking for help because I felt dumb. With Mathmatix, I can ask the same question five times and it never gets annoyed.</p>
+            <div class="lp-testimonial-author">Maya</div>
+            <div class="lp-testimonial-role">7th Grade Student</div>
+          </div>
+          <div class="lp-testimonial">
+            <p class="lp-testimonial-quote">I can finally see what my daughter is working on and where she needs help. I even use it myself to brush up before homework time.</p>
+            <div class="lp-testimonial-author">David</div>
+            <div class="lp-testimonial-role">Parent of Two</div>
+          </div>
+          <div class="lp-testimonial">
+            <p class="lp-testimonial-quote">I can see exactly which students are struggling and on what skill. It's like having a teaching assistant that never sleeps.</p>
+            <div class="lp-testimonial-author">Mrs. Rodriguez</div>
+            <div class="lp-testimonial-role">6th Grade Math Teacher</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── How It Works ─────────────────────────────────── -->
     <section id="how-it-works" class="lp-steps">
       <div class="lp-inner">
@@ -734,7 +952,7 @@
           <div class="lp-step">
             <div class="lp-step-number">1</div>
             <h3>Create Your Account</h3>
-            <p>Sign up as a student or parent. Quick, easy, and free to start.</p>
+            <p>Sign up as a student, parent, or teacher. Quick and easy.</p>
           </div>
           <div class="lp-step">
             <div class="lp-step-number">2</div>
@@ -754,8 +972,9 @@
     <section class="lp-final-cta">
       <div class="lp-inner">
         <h2>Every child deserves a great math tutor.</h2>
-        <p>Join the families and students already building math confidence with Mathmatix AI.</p>
+        <p>For less than the cost of a single tutoring session, give your student unlimited access to personalized math help.</p>
         <a href="/signup.html" class="btn btn-primary">Create Your Account</a>
+        <p class="lp-cta-note">Used by students, parents, and teachers.</p>
       </div>
     </section>
   </main>
