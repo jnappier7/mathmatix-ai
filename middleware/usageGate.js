@@ -1,7 +1,9 @@
-// middleware/usageGate.js — Free tier usage enforcement
+// middleware/usageGate.js — Usage enforcement for minute packs & unlimited tier
 //
-// Blocks chat/voice/upload requests when a free-tier user has exceeded
-// their weekly allotment. Premium users pass through unconditionally.
+// Blocks chat/voice/upload requests when a user has no active pack or subscription.
+// Pack users: must have packSecondsRemaining > 0 and pack not expired.
+// Unlimited users: always pass.
+// Teachers/admins: always pass.
 //
 // MASTER SWITCH: Set BILLING_ENABLED=true in .env to activate.
 // When disabled, all users get unlimited access (pre-launch mode).
@@ -10,15 +12,14 @@
 
 const User = require('../models/user');
 
-const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 
 /**
- * Middleware that gates AI-powered endpoints behind the free tier limit.
+ * Middleware that gates AI-powered endpoints behind pack/subscription limits.
  * - If BILLING_ENABLED is false: everyone passes (pre-launch mode)
- * - Premium users: always pass
- * - Free users under limit: pass, with remaining time in response header
- * - Free users over limit: 402 Payment Required with upgrade prompt
+ * - Unlimited users: always pass
+ * - Pack users with balance: pass, with remaining time in response header
+ * - Free users / expired packs: 402 Payment Required with upgrade prompt
  */
 async function usageGate(req, res, next) {
   // Master switch — when billing is off, everyone gets unlimited access
@@ -31,48 +32,50 @@ async function usageGate(req, res, next) {
     const user = req.user;
     if (!user) return next(); // Let auth middleware handle this
 
-    // Premium users pass unconditionally
-    if (user.subscriptionTier === 'premium') return next();
-
     // Teachers and admins are exempt from usage limits
     if (user.role === 'teacher' || user.role === 'admin') return next();
 
-    // Check for weekly reset
-    const now = new Date();
-    const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
-    const daysSinceReset = (now - lastReset) / (1000 * 60 * 60 * 24);
+    // Unlimited users pass unconditionally
+    if (user.subscriptionTier === 'unlimited') return next();
 
-    let weeklySeconds = user.weeklyActiveSeconds || 0;
-    if (daysSinceReset >= 7) {
-      // Reset inline — don't block the request to save
-      weeklySeconds = 0;
-      User.findByIdAndUpdate(user._id, {
-        weeklyActiveSeconds: 0,
-        weeklyActiveTutoringMinutes: 0,
-        lastWeeklyReset: now
-      }).catch(err => console.error('[UsageGate] Reset error:', err.message));
+    // Pack users — check balance and expiry
+    if (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') {
+      const now = new Date();
+      const expired = user.packExpiresAt && now > user.packExpiresAt;
+      const remaining = expired ? 0 : (user.packSecondsRemaining || 0);
+
+      if (remaining <= 0) {
+        // Auto-downgrade
+        User.findByIdAndUpdate(user._id, { subscriptionTier: 'free' })
+          .catch(err => console.error('[UsageGate] Downgrade error:', err.message));
+
+        return res.status(402).json({
+          message: expired
+            ? 'Your minute pack has expired. Purchase a new pack to continue.'
+            : 'Your minutes are used up. Purchase a new pack to continue.',
+          usageLimitReached: true,
+          tier: 'free',
+          expired,
+          upgradeRequired: true
+        });
+      }
+
+      // Warn when under 2 minutes remaining
+      if (remaining <= 120) {
+        res.setHeader('X-Usage-Warning', 'low');
+        res.setHeader('X-Usage-Remaining-Seconds', remaining.toString());
+      }
+
+      return next();
     }
 
-    const remaining = FREE_WEEKLY_SECONDS - weeklySeconds;
-
-    if (remaining <= 0) {
-      return res.status(402).json({
-        message: "You've used your free tutoring time this week! Upgrade to Premium for unlimited access.",
-        usageLimitReached: true,
-        tier: 'free',
-        weeklySecondsUsed: weeklySeconds,
-        weeklyLimitSeconds: FREE_WEEKLY_SECONDS,
-        upgradeRequired: true
-      });
-    }
-
-    // Warn when under 2 minutes remaining
-    if (remaining <= 120) {
-      res.setHeader('X-Usage-Warning', 'low');
-      res.setHeader('X-Usage-Remaining-Seconds', remaining.toString());
-    }
-
-    next();
+    // Free users — no access
+    return res.status(402).json({
+      message: 'Purchase a tutoring pack to get started.',
+      usageLimitReached: true,
+      tier: 'free',
+      upgradeRequired: true
+    });
   } catch (error) {
     console.error('[UsageGate] Error:', error.message);
     // Don't block the user on gate errors — let them through
@@ -82,7 +85,7 @@ async function usageGate(req, res, next) {
 
 /**
  * Feature gate for premium-only features (voice, OCR, uploads).
- * Returns 402 if free-tier user tries to access a premium feature.
+ * Only unlimited subscribers get access.
  */
 function premiumFeatureGate(featureName) {
   return (req, res, next) => {
@@ -91,15 +94,15 @@ function premiumFeatureGate(featureName) {
     const user = req.user;
     if (!user) return next();
 
-    if (user.subscriptionTier === 'premium' || user.role === 'teacher' || user.role === 'admin') {
+    if (user.subscriptionTier === 'unlimited' || user.role === 'teacher' || user.role === 'admin') {
       return next();
     }
 
     return res.status(402).json({
-      message: `${featureName} is a Premium feature. Upgrade for $19.95/month to unlock it.`,
+      message: `${featureName} requires the Unlimited plan ($19.95/month).`,
       premiumFeatureBlocked: true,
       feature: featureName,
-      tier: 'free',
+      tier: user.subscriptionTier || 'free',
       upgradeRequired: true
     });
   };

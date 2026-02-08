@@ -1554,6 +1554,11 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         user.totalActiveTutoringMinutes = Math.floor(user.totalActiveSeconds / 60);
         user.weeklyActiveTutoringMinutes = Math.floor(user.weeklyActiveSeconds / 60);
 
+        // Deduct from minute pack balance (pack_60 / pack_120 users)
+        if ((user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') && user.packSecondsRemaining > 0) {
+            user.packSecondsRemaining = Math.max(0, user.packSecondsRemaining - activeSeconds);
+        }
+
         // Update active conversation if exists
         if (user.activeConversationId) {
             const conversation = await Conversation.findById(user.activeConversationId);

@@ -508,11 +508,14 @@ const userSchema = new Schema({
   activeMasteryConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
 
   /* Subscription & Billing */
-  subscriptionTier: { type: String, enum: ['free', 'premium'], default: 'free' },
+  subscriptionTier: { type: String, enum: ['free', 'pack_60', 'pack_120', 'unlimited'], default: 'free' },
   stripeCustomerId: { type: String, default: null },
-  stripeSubscriptionId: { type: String, default: null },
+  stripeSubscriptionId: { type: String, default: null },  // For unlimited monthly only
   subscriptionStartDate: { type: Date, default: null },
   subscriptionEndDate: { type: Date, default: null },
+  // Minute-pack fields (60-min and 120-min packs)
+  packSecondsRemaining: { type: Number, default: 0 },
+  packExpiresAt: { type: Date, default: null },
 
   /* Timestamps */
   lastLogin:  { type: Date },
