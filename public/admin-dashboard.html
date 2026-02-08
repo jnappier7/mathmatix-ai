@@ -1462,14 +1462,16 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
 
             <!-- Add Students Section -->
             <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-              <h4 style="margin: 0 0 10px 0; font-size: 0.9em;">Add Existing Students</h4>
-              <div style="display: flex; gap: 10px;">
-                <input type="text" id="addStudentSearch" placeholder="Search students by name..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                <button id="searchStudentsToAddBtn" class="btn btn-secondary" style="padding: 8px 15px;">
-                  <i class="fas fa-search"></i>
+              <h4 style="margin: 0 0 10px 0; font-size: 0.9em;">Add Students</h4>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="addStudentSearch" placeholder="Filter students by name or email..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <button id="addSelectedStudentsBtn" class="btn btn-secondary" style="padding: 8px 15px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap; display: none;">
+                  <i class="fas fa-plus"></i> Add Selected (<span id="selectedStudentCount">0</span>)
                 </button>
               </div>
-              <div id="studentSearchResultsForClass" style="max-height: 120px; overflow-y: auto; margin-top: 10px; display: none; border: 1px solid #e0e0e0; border-radius: 4px; background: white;"></div>
+              <div id="availableStudentsList" style="max-height: 180px; overflow-y: auto; margin-top: 10px; border: 1px solid #e0e0e0; border-radius: 4px; background: white;">
+                <p style="padding: 10px; color: #666; text-align: center; margin: 0;">Select a class to see available students</p>
+              </div>
             </div>
 
             <!-- Current Students List -->

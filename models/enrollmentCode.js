@@ -80,7 +80,7 @@ const enrollmentCodeSchema = new Schema({
   enrolledStudents: [{
     studentId: { type: Schema.Types.ObjectId, ref: 'User' },
     enrolledAt: { type: Date, default: Date.now },
-    enrollmentMethod: { type: String, enum: ['self-signup', 'csv-import', 'admin-created'], default: 'self-signup' }
+    enrollmentMethod: { type: String, enum: ['self-signup', 'csv-import', 'admin-created', 'admin-added'], default: 'self-signup' }
   }],
 
   // Audit trail
