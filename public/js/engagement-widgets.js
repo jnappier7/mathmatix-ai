@@ -232,19 +232,21 @@ window.renderDailyQuests = function(quests) {
     const container = document.getElementById('daily-quests-container');
     if (!container || !quests || quests.length === 0) return;
 
-    const questsHTML = quests.map(quest => `
+    const questsHTML = quests.map(quest => {
+        const progressPercent = quest.targetCount > 0 ? Math.min((quest.progress / quest.targetCount) * 100, 100) : 0;
+        return `
         <div class="quest-item ${quest.completed ? 'completed' : ''}">
-            <div class="quest-name">${quest.type || quest.title}</div>
-            <div class="quest-description">${quest.description || getQuestDescription(quest.type)}</div>
+            <div class="quest-name">${quest.name || quest.type || quest.title}</div>
+            <div class="quest-description">${quest.description || getQuestDescription(quest.name)}</div>
             <div class="quest-progress-bar">
-                <div class="quest-progress-fill" style="width: ${quest.progress || 0}%"></div>
+                <div class="quest-progress-fill" style="width: ${progressPercent}%"></div>
             </div>
             <div class="quest-progress-text">
-                <span>${quest.currentValue || 0}/${quest.targetValue || 0}</span>
+                <span>${quest.progress || 0}/${quest.targetCount || 0}</span>
                 <span class="quest-xp-reward">+${quest.xpReward || 50} XP</span>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     container.innerHTML = questsHTML;
 
@@ -263,19 +265,21 @@ window.renderWeeklyChallenges = function(challenges) {
     const container = document.getElementById('weekly-challenges-container');
     if (!container || !challenges || challenges.length === 0) return;
 
-    const challengesHTML = challenges.map(challenge => `
+    const challengesHTML = challenges.map(challenge => {
+        const progressPercent = challenge.targetCount > 0 ? Math.min((challenge.progress / challenge.targetCount) * 100, 100) : 0;
+        return `
         <div class="quest-item ${challenge.completed ? 'completed' : ''}">
-            <div class="quest-name">⭐ ${challenge.type || challenge.title}</div>
-            <div class="quest-description">${challenge.description || getQuestDescription(challenge.type)}</div>
+            <div class="quest-name">⭐ ${challenge.name || challenge.type || challenge.title}</div>
+            <div class="quest-description">${challenge.description || getQuestDescription(challenge.name)}</div>
             <div class="quest-progress-bar">
-                <div class="quest-progress-fill" style="width: ${challenge.progress || 0}%"></div>
+                <div class="quest-progress-fill" style="width: ${progressPercent}%"></div>
             </div>
             <div class="quest-progress-text">
-                <span>${challenge.currentValue || 0}/${challenge.targetValue || 0}</span>
+                <span>${challenge.progress || 0}/${challenge.targetCount || 0}</span>
                 <span class="quest-xp-reward">+${challenge.xpReward || 300} XP</span>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     container.innerHTML = challengesHTML;
 
