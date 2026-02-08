@@ -6,6 +6,7 @@
   <title>M∆THM∆TIΧ AI - Dashboard</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
   <style>
     .dashboard-container {
       max-width: 1200px;
@@ -18,13 +19,14 @@
     }
 
     .dashboard-header h1 {
-      font-size: 2rem;
+      font-size: clamp(1.5rem, 4vw, 2rem);
       margin-bottom: 0.5rem;
+      font-weight: 700;
     }
 
     .dashboard-header p {
       color: #666;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
 
     .dashboard-grid {
@@ -36,15 +38,16 @@
 
     .dashboard-card {
       background: white;
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #f0f0f0;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
     .dashboard-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
     }
 
     .card-header {
@@ -56,12 +59,21 @@
     .card-icon {
       font-size: 2rem;
       margin-right: 1rem;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 179, 179, 0.08);
+      border-radius: 12px;
+      flex-shrink: 0;
     }
 
     .card-title {
-      font-size: 1.3rem;
+      font-size: 1.15rem;
       font-weight: 600;
       margin: 0;
+      color: #1a1a2e;
     }
 
     .card-content {
@@ -71,7 +83,7 @@
     .progress-bar {
       width: 100%;
       height: 8px;
-      background: #e0e0e0;
+      background: #e8f0f0;
       border-radius: 4px;
       overflow: hidden;
       margin: 0.5rem 0;
@@ -79,9 +91,9 @@
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #12B3B3, #0a8f8f);
+      background: linear-gradient(90deg, #12B3B3, #0FB5B5);
       border-radius: 4px;
-      transition: width 0.3s ease;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .skill-name {
@@ -91,15 +103,15 @@
     }
 
     .skill-meta {
-      font-size: 0.9rem;
-      color: #666;
+      font-size: 0.875rem;
+      color: #888;
     }
 
     .recent-item {
       display: flex;
       align-items: center;
       padding: 0.75rem 0;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f5f5f5;
     }
 
     .recent-item:last-child {
@@ -109,24 +121,34 @@
     .recent-item i {
       color: #12B3B3;
       margin-right: 0.75rem;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(18, 179, 179, 0.08);
+      border-radius: 8px;
+      flex-shrink: 0;
     }
 
     .recent-item-text {
       flex: 1;
+      min-width: 0;
     }
 
     .recent-item-date {
-      font-size: 0.85rem;
-      color: #999;
+      font-size: 0.8rem;
+      color: #aaa;
+      flex-shrink: 0;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #12B3B3, #0a8f8f);
+      background: linear-gradient(135deg, #12B3B3, #0a9f9f);
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
@@ -136,73 +158,85 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      min-height: 48px;
+      box-shadow: 0 2px 8px rgba(18, 179, 179, 0.2);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(18, 179, 179, 0.3);
+      box-shadow: 0 6px 20px rgba(18, 179, 179, 0.3);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
     }
 
     .btn-secondary {
       background: white;
       color: #12B3B3;
-      border: 2px solid #12B3B3;
+      border: 1.5px solid #12B3B3;
       padding: 0.75rem 1.5rem;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
       width: 100%;
       margin-top: 0.5rem;
+      min-height: 48px;
     }
 
     .btn-secondary:hover {
-      background: #12B3B3;
-      color: white;
+      background: rgba(18, 179, 179, 0.06);
     }
 
     .empty-state {
       text-align: center;
       padding: 2rem;
-      color: #666;
+      color: #888;
     }
 
     .empty-state i {
-      font-size: 3rem;
+      font-size: 2.5rem;
       color: #ddd;
       margin-bottom: 1rem;
     }
 
     .quick-actions {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 1rem;
       margin-top: 2rem;
     }
 
     .quick-action-btn {
       background: white;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      padding: 1.5rem;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 1.5rem 1rem;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s ease;
       text-decoration: none;
       color: #333;
     }
 
     .quick-action-btn:hover {
       border-color: #12B3B3;
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(18, 179, 179, 0.12);
     }
 
     .quick-action-btn i {
-      font-size: 2rem;
+      font-size: 1.75rem;
       color: #12B3B3;
       display: block;
       margin-bottom: 0.5rem;
+    }
+
+    .quick-action-btn span {
+      font-weight: 500;
+      font-size: 0.95rem;
     }
 
     .loading {
@@ -211,13 +245,13 @@
     }
 
     .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #12B3B3;
+      border: 3px solid #f0f0f0;
+      border-top: 3px solid #12B3B3;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
+      width: 36px;
+      height: 36px;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
     }
 
     @keyframes spin {
@@ -225,13 +259,74 @@
       100% { transform: rotate(360deg); }
     }
 
+    /* Dark mode support */
+    [data-theme="dark"] .dashboard-card {
+      background: #141E29;
+      border-color: #243040;
+    }
+    [data-theme="dark"] .card-title { color: #F0F4F8; }
+    [data-theme="dark"] .card-icon { background: rgba(20, 200, 200, 0.1); }
+    [data-theme="dark"] .progress-bar { background: #1A2633; }
+    [data-theme="dark"] .skill-name { color: #F0F4F8; }
+    [data-theme="dark"] .recent-item { border-color: #243040; }
+    [data-theme="dark"] .recent-item i { background: rgba(20, 200, 200, 0.1); }
+    [data-theme="dark"] .quick-action-btn {
+      background: #141E29;
+      border-color: #243040;
+      color: #F0F4F8;
+    }
+    [data-theme="dark"] .quick-action-btn:hover { border-color: #14C8C8; }
+    [data-theme="dark"] .btn-secondary {
+      background: transparent;
+      color: #14C8C8;
+      border-color: #14C8C8;
+    }
+    [data-theme="dark"] .btn-secondary:hover {
+      background: rgba(20, 200, 200, 0.08);
+    }
+    [data-theme="dark"] .dashboard-header p { color: #8B9AAB; }
+    [data-theme="dark"] .empty-state { color: #8B9AAB; }
+
+    /* Mobile responsive */
     @media (max-width: 768px) {
       .dashboard-container {
         padding: 1rem;
       }
 
+      .dashboard-header {
+        margin-bottom: 1.5rem;
+      }
+
       .dashboard-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+
+      .quick-action-btn {
+        padding: 1rem 0.75rem;
+      }
+
+      .quick-action-btn i {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dashboard-container {
+        padding: 0.75rem;
+      }
+
+      .dashboard-card {
+        padding: 1.25rem;
+      }
+
+      .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>

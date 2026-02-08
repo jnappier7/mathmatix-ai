@@ -5,15 +5,27 @@
 
 :root {
     /* Sizing & Layout */
-    --header-height: 80px;
-    --footer-height: 50px; /* Reduced from 80px to fit content without scrolling */
+    --header-height: 72px;
+    --footer-height: 48px;
     --page-horizontal-padding: 20px;
-    --section-gap: 50px;
-    --content-max-width: 1100px; /* Updated from 1000px */
+    --section-gap: 48px;
+    --content-max-width: 1100px;
 
-    /* NEW: Size Controls */
-    --logo-header-height: 50px;
-    --icon-size-default: 3rem;
+    /* Size Controls */
+    --logo-header-height: 44px;
+    --icon-size-default: 2.5rem;
+
+    /* Spacing Scale (4px base) */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
 
     /* Dashboard Specific Sizing */
     --dashboard-panel-padding: 20px;
@@ -22,22 +34,32 @@
     --sidebar-width-desktop: 280px;
     --chat-min-width: 400px;
 
-    /* Brand Colors (from utils/brand.js) */
+    /* Brand Colors */
     --clr-primary-teal: #12B3B3;
+    --clr-primary-teal-light: #E6F7F7;
+    --clr-primary-teal-dark: #0E8F8F;
     --clr-accent-hotpink: #FF3B7F;
+    --clr-accent-hotpink-light: #FFF0F5;
     --clr-success-green: #16C86D;
+    --clr-success-green-light: #E8FAF0;
     --clr-warning-gold: #FFC24B;
+    --clr-warning-gold-light: #FFF8EB;
     --clr-error-red: #FF4E4E;
+    --clr-error-red-light: #FFF0F0;
     --clr-bg-light: #FFFFFF;
+    --clr-bg-subtle: #F8FAFB;
     --clr-bg-dark: #0F1A24;
     --clr-text: #18202B;
     --clr-text-dim: #5B6876;
+    --clr-border: #E2E8F0;
+    --clr-border-light: #F1F5F9;
 
-    /* NEW: RGB versions for rgba() usage */
+    /* RGB versions for rgba() usage */
     --clr-primary-teal-rgb: 18, 179, 179;
     --clr-accent-hotpink-rgb: 255, 59, 127;
+    --clr-success-green-rgb: 22, 200, 109;
 
-    /* Text Colors (derived from brand colors) */
+    /* Text Colors */
     --text-primary: var(--clr-text);
     --text-secondary: var(--clr-text-dim);
     --text-light: var(--clr-bg-light);
@@ -45,24 +67,59 @@
     --text-green: var(--clr-success-green);
     --text-hotpink: var(--clr-accent-hotpink);
 
-    /* Shadows (derived from brand rules) - Made slightly softer for cleaner look */
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 10px rgba(0,0,0,0.1);
-    --shadow-lg: 0 8px 20px rgba(0,0,0,0.15);
-    --shadow-card-primary: 0 4px 8px rgba(var(--clr-primary-teal-rgb), 0.1); /* Example for a themed card shadow */
+    /* Shadows — Multi-layer for richer depth */
+    --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.03);
+    --shadow-card-primary: 0 4px 14px rgba(var(--clr-primary-teal-rgb), 0.12);
+    --shadow-card-hover: 0 12px 28px rgba(var(--clr-primary-teal-rgb), 0.16);
+    --shadow-glow-teal: 0 0 20px rgba(var(--clr-primary-teal-rgb), 0.15);
+    --shadow-glow-pink: 0 0 20px rgba(var(--clr-accent-hotpink-rgb), 0.15);
 
     /* Typography Defaults */
-    --font-family-headlines: "Inter", sans-serif;
-    --font-family-body: "Inter", sans-serif;
-    --font-family-code-math: "ui-monospace", Menlo, Consolas;
+    --font-family-headlines: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-family-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-family-code-math: "ui-monospace", "SF Mono", Menlo, Consolas, monospace;
     --font-weight-headlines: 700;
+    --font-weight-semibold: 600;
+    --font-weight-medium: 500;
     --font-weight-body: 400;
-    --brand-base-font-size: 1rem; /* 16px */
-    --brand-h1-font-size: 2.8em; /* Slightly smaller for hero impact, Apple-like */
-    --brand-h3-font-size: 1.4em; /* Slightly smaller than original 1.5em for cleaner look */
+    --brand-base-font-size: 1rem;
+    --brand-h1-font-size: clamp(2rem, 5vw, 2.8rem);
+    --brand-h2-font-size: clamp(1.6rem, 4vw, 2.2rem);
+    --brand-h3-font-size: clamp(1.15rem, 3vw, 1.4rem);
+    --line-height-tight: 1.2;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.65;
+    --letter-spacing-tight: -0.02em;
+    --letter-spacing-normal: 0;
 
     /* Border Radius */
-    --border-radius-base: 8px; /* General rounded corners */
+    --radius-sm: 6px;
+    --radius-base: 10px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+    --border-radius-base: 10px;
+
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 300ms cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Z-index scale */
+    --z-base: 1;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-header: 1000;
+    --z-sidebar: 1100;
+    --z-drawer: 2000;
+    --z-modal: 9999;
+    --z-toast: 10000;
 }
 
 * {
@@ -76,18 +133,35 @@
 
 html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* This is the key: makes sure the body is at least as tall as the screen */
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
     background-color: var(--clr-bg-light);
     color: var(--text-primary);
     font-size: var(--brand-base-font-size);
-    line-height: 1.6;
+    line-height: var(--line-height-relaxed);
     position: relative;
     min-width: 320px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 /* --- 2. Typography & General Elements --- */
@@ -97,12 +171,13 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: var(--font-weight-headlines);
     color: var(--clr-text);
     margin-bottom: 0.5em;
-    line-height: 1.2;
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
 }
 h1 { font-size: var(--brand-h1-font-size); }
-h2 { font-size: 2.2em; }
-h3 { font-size: var(--brand-h3-font-size); } /* Corrected to use variable */
-h4 { font-size: 1.3em; }
+h2 { font-size: var(--brand-h2-font-size); }
+h3 { font-size: var(--brand-h3-font-size); }
+h4 { font-size: clamp(1.05rem, 2vw, 1.3rem); }
 
 p {
     margin-bottom: 1em;
@@ -111,12 +186,12 @@ p {
 a {
     color: var(--clr-primary-teal);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color var(--transition-fast);
 }
 
 a:hover {
     text-decoration: underline;
-    color: var(--clr-primary-teal);
+    color: var(--clr-primary-teal-dark);
 }
 
 button {
@@ -125,15 +200,26 @@ button {
     background: none;
     font-size: 1rem;
     padding: 0.75em 1.25em;
-    border-radius: var(--border-radius-base);
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.2s ease;
-    box-shadow: var(--shadow-sm); /* Default button shadow */
+    border-radius: var(--radius-base);
+    font-weight: 600;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-xs);
+    -webkit-tap-highlight-color: transparent;
 }
 
 button:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: var(--shadow-md);
+}
+
+button:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-sm);
+}
+
+button:focus-visible {
+    outline: 2px solid var(--clr-primary-teal);
+    outline-offset: 2px;
 }
 
 /* Common form elements */
@@ -145,18 +231,50 @@ input[type="date"],
 textarea,
 select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid var(--clr-text-dim);
-    border-radius: var(--border-radius-base);
+    padding: 12px 14px;
+    border: 1.5px solid var(--clr-border);
+    border-radius: var(--radius-base);
     font-size: 1rem;
     box-sizing: border-box;
     background-color: var(--clr-bg-light);
     color: var(--clr-text);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="number"]:hover,
+input[type="date"]:hover,
+textarea:hover,
+select:hover {
+    border-color: var(--clr-text-dim);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--clr-primary-teal);
+    box-shadow: 0 0 0 3px rgba(var(--clr-primary-teal-rgb), 0.12);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--clr-text-dim);
+    opacity: 0.7;
 }
 
 input[type="checkbox"] {
     width: auto;
     margin-right: 5px;
+    accent-color: var(--clr-primary-teal);
 }
 
 /* --- 3. Global Button Styles --- */
@@ -164,26 +282,48 @@ input[type="checkbox"] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem 1.5rem;
-    font-weight: var(--font-weight-headlines);
-    border-radius: var(--border-radius-base);
+    gap: var(--space-2);
+    padding: 0.7rem 1.4rem;
+    font-weight: var(--font-weight-semibold);
+    font-size: 0.95rem;
+    border-radius: var(--radius-base);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all var(--transition-base);
     box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+    min-height: 44px; /* Touch-friendly minimum */
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.01em;
 }
 
 .btn:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
+    text-decoration: none;
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--clr-primary-teal);
+    outline-offset: 2px;
 }
 
 /* Primary Button (Hot Pink) */
 .btn-primary {
-    background-color: var(--clr-accent-hotpink);
+    background: linear-gradient(135deg, var(--clr-accent-hotpink) 0%, #e63273 100%);
     color: var(--clr-bg-light);
+    border: none;
 }
 .btn-primary:hover {
-    background-color: #e63273; /* Darken manually */
+    background: linear-gradient(135deg, #e63273 0%, #d12866 100%);
+    box-shadow: var(--shadow-glow-pink);
+    color: white;
 }
 
 /* Primary Outline Button (Hot Pink Border) */
@@ -196,71 +336,86 @@ input[type="checkbox"] {
 .btn-primary-outline:hover {
     background-color: var(--clr-accent-hotpink);
     color: var(--clr-bg-light);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-glow-pink);
 }
 
 /* Secondary Button (Teal) */
 .btn-secondary {
-    background-color: var(--clr-primary-teal);
+    background: linear-gradient(135deg, var(--clr-primary-teal) 0%, #0E9494 100%);
     color: var(--clr-bg-light);
+    border: none;
 }
 .btn-secondary:hover {
-    background-color: #109a9a; /* Darken manually */
+    background: linear-gradient(135deg, #0E9494 0%, #0C8282 100%);
+    box-shadow: var(--shadow-glow-teal);
+    color: white;
 }
 
-/* Tertiary Button (Gray) */
+/* Tertiary Button (Subtle) */
 .btn-tertiary {
-    background-color: var(--clr-text-dim);
-    color: var(--clr-bg-light);
+    background-color: var(--clr-bg-subtle);
+    color: var(--clr-text-dim);
+    border: 1px solid var(--clr-border);
+    box-shadow: none;
 }
 .btn-tertiary:hover {
-    background-color: #4a5763; /* Darken manually */
+    background-color: var(--clr-border-light);
+    color: var(--clr-text);
+    border-color: var(--clr-text-dim);
 }
 
 /* Hero specific buttons */
 .btn-hero-primary {
-    background-color: var(--clr-accent-hotpink);
+    background: linear-gradient(135deg, var(--clr-accent-hotpink) 0%, #e63273 100%);
     color: var(--clr-bg-light);
-    font-size: 1.15rem;
-    padding: 1rem 2rem;
-    box-shadow: var(--shadow-lg);
+    font-size: 1.1rem;
+    padding: 0.9rem 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg), var(--shadow-glow-pink);
 }
 .btn-hero-primary:hover {
-    background-color: #e63273;
+    background: linear-gradient(135deg, #e63273 0%, #d12866 100%);
+    box-shadow: var(--shadow-xl), var(--shadow-glow-pink);
 }
 
 .btn-hero-secondary {
     background-color: transparent;
     color: var(--clr-primary-teal);
     border: 2px solid var(--clr-primary-teal);
-    font-size: 1.15rem;
-    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    padding: 0.9rem 2rem;
+    border-radius: var(--radius-md);
     box-shadow: none;
 }
 .btn-hero-secondary:hover {
     background-color: var(--clr-primary-teal);
     color: var(--clr-bg-light);
+    box-shadow: var(--shadow-glow-teal);
 }
 
 
 /* --- 4. Card Styles (Reusable) --- */
 .card-style-1 {
     background-color: var(--clr-bg-light);
-    border-radius: var(--border-radius-base);
-    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
     padding: var(--dashboard-panel-padding);
-    border: 1px solid rgba(var(--clr-primary-teal-rgb), 0.05); /* Very subtle teal border */
-    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Added transition for hover */
+    border: 1px solid var(--clr-border-light);
+    transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
 }
 .card-style-1:hover {
-    transform: translateY(-3px); /* Slight lift on hover for all cards */
-    box-shadow: var(--shadow-lg); /* More pronounced shadow on hover */
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(var(--clr-primary-teal-rgb), 0.15);
 }
 
 
 .card-style-1.card-hotpink-border {
     border: 2px solid var(--clr-accent-hotpink);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
+}
+.card-style-1.card-hotpink-border:hover {
+    box-shadow: var(--shadow-lg), var(--shadow-glow-pink);
 }
 
 
@@ -269,37 +424,42 @@ input[type="checkbox"] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px var(--page-horizontal-padding);
-    background-color: var(--clr-bg-light);
-    box-shadow: var(--shadow-sm);
+    padding: 12px var(--page-horizontal-padding);
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
     flex-shrink: 0;
-    flex-wrap: wrap;
-    z-index: 100; /* Ensure header is above scrolling content */
+    flex-wrap: nowrap;
+    z-index: var(--z-header);
+    position: sticky;
+    top: 0;
+    min-height: var(--header-height);
+    gap: var(--space-2);
 }
 
 .header-logo-container {
-    flex-grow: 1;
+    flex-shrink: 0;
     display: flex;
-    justify-content: flex-start; /* Align logo left, like in mockup */
+    justify-content: flex-start;
     align-items: center;
     padding: 0;
 }
 
 /* Main Logo Styling */
 .main-logo-hero {
-    max-height: var(--logo-header-height); /* Using new variable */
+    max-height: var(--logo-header-height);
     width: auto;
     display: block;
-    filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.08)); /* Softer shadow */
-    transition: all 0.3s ease;
+    transition: opacity var(--transition-fast);
 }
 .main-logo-hero:hover {
-    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
+    opacity: 0.85;
 }
 
 /* Main logo (used in headers across arcade/admin pages) */
 .main-logo {
-    max-height: var(--logo-header-height); /* 50px */
+    max-height: var(--logo-header-height);
     width: auto;
     display: block;
     object-fit: contain;
@@ -308,9 +468,15 @@ input[type="checkbox"] {
 
 .landing-nav {
     display: flex;
-    gap: 15px;
+    gap: var(--space-2);
     flex-shrink: 0;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
 }
+.landing-nav::-webkit-scrollbar { display: none; }
 /* Adjust nav spacing for wrapped state */
 .landing-header.wrapped .landing-nav {
     margin-top: 10px;
@@ -372,14 +538,14 @@ main {
 footer {
     width: 100%;
     flex-shrink: 0;
-    height: var(--footer-height);
-    padding: 0.5rem; /* Reduced from 1rem for compact footer */
+    min-height: var(--footer-height);
+    padding: var(--space-3) var(--page-horizontal-padding);
     background-color: var(--clr-bg-dark);
-    color: var(--clr-bg-light);
-    font-size: 0.8rem; /* Slightly smaller text */
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
     text-align: center;
     box-sizing: border-box;
-    z-index: 100;
+    z-index: var(--z-base);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -948,37 +1114,53 @@ a:hover {
 
 
 /* Chat messages inner container */
-#chat-messages-container { /* Renamed from #messages and adjusted styles */
-    display: flex; /* Use flexbox for message container */
-    flex-direction: column; /* Stack messages vertically */
-    gap: 10px; /* Space between messages */
-    padding: 1rem;
-    overflow-y: auto; /* THIS IS THE KEY for chat messages scrolling */
-    flex-grow: 1; /* Allows it to take available space */
-    background-color: var(--clr-bg-light); /* Assuming this is your light background color */
-    border-radius: var(--border-radius-base);
-    box-shadow: var(--shadow-small);
-    min-height: 0; /* Ensure it has a minimum height */
-    border: 1px solid var(--clr-text-dim); /* Match your original #messages border */
+#chat-messages-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    overflow-y: auto;
+    flex-grow: 1;
+    background-color: var(--clr-bg-subtle);
+    border-radius: var(--radius-md);
+    min-height: 0;
+    border: 1px solid var(--clr-border);
+    scroll-behavior: smooth;
+    /* Better scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--clr-primary-teal-rgb), 0.2) transparent;
+}
+
+#chat-messages-container::-webkit-scrollbar { width: 6px; }
+#chat-messages-container::-webkit-scrollbar-track { background: transparent; }
+#chat-messages-container::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--clr-primary-teal-rgb), 0.2);
+    border-radius: 3px;
 }
 
 .message {
-    max-width: 80%; /* IMPROVED: More room for message content */
-    padding: 10px 15px;
-    border-radius: 18px; /* More rounded bubbles */
-    line-height: 1.5;
-    word-wrap: break-word; /* Ensure long words wrap */
-    font-size: 0.95em; /* Inherit font size */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for all messages */
-    /* Base styles, will be overridden by .user and .ai */
+    max-width: 82%;
+    padding: 12px 16px;
+    border-radius: var(--radius-lg);
+    line-height: var(--line-height-normal);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 0.95rem;
+    box-shadow: var(--shadow-xs);
+    animation: messageIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes messageIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* Message Container with Avatar */
 .message-container {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 12px;
+    align-items: flex-end;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
     width: 100%;
 }
 
@@ -994,13 +1176,13 @@ a:hover {
 /* Avatar Styling */
 .message-avatar {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid #e0e0e0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background: #ffffff;
+    border: 2px solid var(--clr-border-light);
+    box-shadow: var(--shadow-xs);
+    background: var(--clr-bg-light);
 }
 
 .message-avatar img {
@@ -1024,13 +1206,13 @@ a:hover {
 
 /* Styles for user messages (right aligned) */
 .message.user {
-    align-self: flex-end; /* Pushes message to the right */
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Modern gradient */
-    color: white; /* Example: White text for user messages */
-    border-bottom-right-radius: 4px; /* Slightly less rounded corner at the bottom right for user */
-    margin-left: auto; /* FIXED: Use auto to prevent width overflow */
-    margin-right: 20px; /* INCREASED AGAIN: Prevent cutoff on right edge */
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    align-self: flex-end;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: var(--radius-sm);
+    margin-left: auto;
+    margin-right: var(--space-2);
+    box-shadow: 0 2px 12px rgba(102, 126, 234, 0.25);
 }
 
 /* Queued message style - for back-to-back messages waiting to be sent */
@@ -1049,14 +1231,14 @@ a:hover {
 
 /* Styles for AI messages (left aligned) */
 .message.ai {
-    align-self: flex-start; /* Pushes message to the left */
-    background-color: #f5f5f5; /* Slightly lighter for modern look */
-    color: var(--clr-text-primary); /* Example: Dark text for AI messages */
-    border-bottom-left-radius: 4px; /* Slightly less rounded corner at the bottom left for AI */
-    position: relative; /* For absolute positioning of reaction elements */
-    margin-right: 15%; /* IMPROVED: Better spacing from right edge */
-    margin-left: 5px; /* Prevent cutoff on left edge */
-    border: 1px solid #e0e0e0;
+    align-self: flex-start;
+    background-color: var(--clr-bg-light);
+    color: var(--text-primary);
+    border-bottom-left-radius: var(--radius-sm);
+    position: relative;
+    margin-right: 12%;
+    margin-left: var(--space-1);
+    border: 1px solid var(--clr-border);
 }
 
 /* Message Timestamps */
@@ -1193,20 +1375,22 @@ a:hover {
 #input-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  border-top: 1px solid var(--clr-text-dim);
-  padding-top: 15px;
+  gap: var(--space-2);
+  border-top: 1px solid var(--clr-border);
+  padding: var(--space-3) 0 0;
   flex-shrink: 0;
+  background: var(--clr-bg-light);
 }
 
 /* Toolbar Above Message Box */
 .input-toolbar {
   display: flex;
-  gap: 8px;
-  padding: 8px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  background: var(--clr-bg-subtle);
+  border-radius: var(--radius-base);
   flex-wrap: wrap;
+  border: 1px solid var(--clr-border-light);
 }
 
 .input-toolbar .btn {
@@ -1216,16 +1400,19 @@ a:hover {
 
 #user-input {
   width: 100%;
-  min-height: 60px;
+  min-height: 52px;
   max-height: 200px;
   overflow-y: auto;
-  padding: 12px;
-  border-radius: var(--border-radius-base);
-  border: 1px solid #ccc;
-  font-size: 1rem; /* Use var for consistency */
-  resize: vertical;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--clr-border);
+  font-size: 1rem;
+  resize: none;
   white-space: pre-wrap;
   word-wrap: break-word;
+  background: var(--clr-bg-light);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  line-height: var(--line-height-normal);
 }
 
 /* Placeholder for contenteditable */
@@ -1253,11 +1440,22 @@ a:hover {
 
 #send-button {
   padding: 10px 18px;
-  background-color: var(--clr-primary-teal); /* Changed to primary teal */
+  background: linear-gradient(135deg, var(--clr-primary-teal) 0%, #0E9494 100%);
   color: var(--clr-bg-light);
-  border-radius: var(--border-radius-base);
+  border-radius: var(--radius-full);
+  min-width: 48px;
+  min-height: 44px;
+  box-shadow: var(--shadow-card-primary);
+  transition: all var(--transition-base);
 }
-#send-button:hover { background-color: #109a9a; } /* Darker teal */
+#send-button:hover {
+  background: linear-gradient(135deg, #0E9494 0%, #0C8282 100%);
+  box-shadow: var(--shadow-glow-teal);
+  transform: scale(1.05);
+}
+#send-button:active {
+  transform: scale(0.95);
+}
 
 /* Input Tools (Mic, Equation, Attach) */
 #tools-left, #tools-right { /* These don't exist in chat.html, but keeping for consistency if added later */
@@ -1569,54 +1767,73 @@ a:hover {
 
 
 .login-container, .signup-container, .profile-container {
-  max-width: 600px;
+  max-width: 520px;
   width: 100%;
-  padding: 30px;
+  padding: 40px 36px;
   background: var(--clr-bg-light);
-  border-radius: var(--border-radius-base);
-  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--clr-border-light);
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-grow: 0; /* Important: Don't let the inner card grow unnecessarily */
-  overflow-y: visible; /* Content within card will not scroll independently unless explicitly set */
+  flex-grow: 0;
+  overflow-y: visible;
   min-height: fit-content;
 }
-.login-container { max-width: 400px; }
+.login-container { max-width: 420px; }
 
 /* The logo-header in these pages (login, signup, profile) - will be mostly removed by main header */
 
 .subtitle {
     text-align: center;
     color: var(--text-secondary);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    font-size: 1rem;
+    line-height: 1.5;
 }
 
 form label, .password-label-row label {
   display: block;
-  margin: 15px 0 5px;
-  font-weight: bold;
+  margin: 14px 0 6px;
+  font-weight: 600;
+  font-size: 0.875rem;
   color: var(--clr-text);
+  letter-spacing: 0.01em;
 }
 
 .submit-btn {
-  margin-top: 25px;
+  margin-top: 24px;
   width: 100%;
-  padding: 12px;
-  font-size: 1.1rem;
-  background: var(--clr-primary-teal);
-  color: var(--clr-bg-light);
-  border-radius: var(--border-radius-base);
-  font-weight: bold;
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--clr-primary-teal), var(--clr-primary-teal-dark, #0FB5B5));
+  color: white;
+  border: none;
+  border-radius: var(--radius-md, 12px);
+  cursor: pointer;
+  transition: var(--transition-smooth, all 0.2s ease);
+  min-height: 48px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(var(--clr-primary-teal-rgb, 18,179,179), 0.25);
 }
-.submit-btn:hover { background: #109a9a; }
+.submit-btn:hover {
+  background: linear-gradient(135deg, var(--clr-primary-teal-dark, #0FB5B5), var(--clr-primary-teal));
+  box-shadow: 0 4px 16px rgba(var(--clr-primary-teal-rgb, 18,179,179), 0.35);
+  transform: translateY(-1px);
+}
+.submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(var(--clr-primary-teal-rgb, 18,179,179), 0.2);
+}
 
 /* Centering the "OR" text */
 .or-separator {
     text-align: center;
-    margin: 20px 0;
+    margin: 24px 0;
     position: relative;
     display: flex;
     align-items: center;
@@ -1628,60 +1845,81 @@ form label, .password-label-row label {
     content: '';
     flex-grow: 1;
     height: 1px;
-    background-color: var(--clr-text-dim);
+    background-color: var(--clr-border, #e0e0e0);
 }
 .or-separator span {
-    padding: 0 15px;
+    padding: 0 16px;
     color: var(--text-secondary);
-    font-weight: bold;
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 .social-login-buttons {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 8px;
   width: 100%;
-  flex-wrap: wrap;
 }
 
 .social-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: var(--border-radius-base);
-  font-weight: bold;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid var(--clr-border, #ddd);
+  border-radius: var(--radius-md, 12px);
+  font-weight: 500;
   font-size: 0.95rem;
-  min-width: 120px;
-  flex-grow: 1;
+  width: 100%;
   color: var(--clr-text);
   background-color: var(--clr-bg-light);
   text-decoration: none;
+  transition: var(--transition-smooth, all 0.2s ease);
+  min-height: 48px;
+  cursor: pointer;
 }
-.social-btn:hover { background-color: #f0f0f0; }
+.social-btn:hover {
+  background-color: var(--clr-bg-subtle, #f5f5f5);
+  border-color: var(--clr-border, #ccc);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+.social-btn:active {
+  transform: translateY(0);
+}
 .social-btn img {
     width: 20px;
     height: 20px;
-    margin-right: 8px;
+    flex-shrink: 0;
 }
 
 .password-label-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  width: 100%;
 }
-.password-label-row a { color: var(--clr-primary-teal); text-decoration: none; font-size: 0.85rem;}
-.password-label-row a:hover { text-decoration: underline; }
+.password-label-row a {
+  color: var(--clr-primary-teal);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+.password-label-row a:hover { text-decoration: underline; color: var(--clr-primary-teal-dark, #0FB5B5); }
 
 .signup-link {
-    margin-top: 20px;
-    font-size: 0.95rem;
+    margin-top: 24px;
+    font-size: 0.9rem;
     text-align: center;
+    color: var(--text-secondary);
 }
-.signup-link a { color: var(--clr-primary-teal); font-weight: bold; text-decoration: none; }
-.signup-link a:hover { text-decoration: underline; }
+.signup-link a { color: var(--clr-primary-teal); font-weight: 600; text-decoration: none; }
+.signup-link a:hover { text-decoration: underline; color: var(--clr-primary-teal-dark, #0FB5B5); }
 
 .checkbox-group {
     display: flex;
@@ -3833,41 +4071,37 @@ form label, .password-label-row label {
     height: 100%;
 }
 
-/* Add these styles to make the login form more compact */
-
-.login-container {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem; /* Reduces top/bottom padding */
-}
-
-.login-container .main-logo-hero {
-    margin-bottom: 1.25rem; /* Reduces space below logo */
-    max-height: 50px;
-}
+/* Login form refinements */
 
 .login-container h1 {
-    margin-bottom: 0.25em; /* Tucks the subtitle closer to the title */
+    margin-bottom: 0.25em;
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--clr-text), var(--clr-primary-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.login-container .subtitle {
-    margin-bottom: 1rem; /* Reduces space below subtitle */
+.login-container form {
+    width: 100%;
 }
 
 .login-container form label {
-  margin-top: 0.75rem; /* Reduces space above form labels */
+  margin-top: 0.75rem;
 }
 
 .login-container .submit-btn {
-  margin-top: 1.25rem; /* Reduces space above the main login button */
+  margin-top: 1.25rem;
 }
 
 .login-container .or-separator {
-    margin-top: 1rem;
-    margin-bottom: 1rem; /* Reduces space around the "OR" text */
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
 .login-container .signup-link {
-    margin-top: 1rem; /* Reduces space at the very bottom */
+    margin-top: 1rem;
 }
 
 /* --- UI Layout Fix for Scrollable Chat --- */
@@ -4112,34 +4346,54 @@ body:not(.landing-page-body) {
   object-fit: contain; /* Keeps the image's aspect ratio without stretching */
 }
 
-/* --- Compact Signup Form Styles --- */
+/* --- Signup Form Styles --- */
 
-/* Reduce the signup form's main top/bottom padding */
 .signup-container {
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding: 36px 32px;
 }
 
-/* This is the most important change: it reduces the large space above each form field label */
+.signup-container h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--clr-text), var(--clr-primary-teal));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.signup-container form {
+    width: 100%;
+}
+
 .signup-container form label {
     margin-top: 12px;
     margin-bottom: 4px;
 }
 
-/* Reduces the space below the descriptive paragraphs */
-.signup-container p {
-    margin-bottom: 12px;
+.signup-container .form-group {
+    margin-bottom: 0;
 }
 
-/* Tucks the checkbox/radio button group closer to its label */
+.signup-container p.note {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
 .signup-container .checkbox-group {
     margin-top: 5px;
     margin-bottom: 15px;
 }
 
-/* Reduces the space above the final submit button */
 .signup-container .submit-btn {
-    margin-top: 20px;
+    margin-top: 24px;
+}
+
+.signup-container select {
+    width: 100%;
 }
 
 /* --- Enhanced Locked Tutor Silhouette Styles --- */

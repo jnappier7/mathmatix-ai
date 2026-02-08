@@ -1,15 +1,18 @@
-/* Mobile-specific fixes for button interactions */
+/* ============================================
+   MOBILE UX OPTIMIZATION — MATHMATIX AI
+   Comprehensive mobile-first responsive design
+   ============================================ */
 
-/* Ensure all buttons are touchable */
+/* --- 1. GLOBAL TOUCH & INTERACTION FIXES --- */
+
 button,
 .btn,
-.tab-btn {
-    -webkit-tap-highlight-color: rgba(18, 179, 179, 0.2);
+.tab-btn,
+a {
+    -webkit-tap-highlight-color: rgba(18, 179, 179, 0.15);
     touch-action: manipulation;
-    cursor: pointer;
 }
 
-/* Remove any pointer-events blocking */
 .input-toolbar,
 .header-nav {
     pointer-events: auto;
@@ -20,58 +23,124 @@ button,
     pointer-events: auto;
 }
 
-/* Increase tap target for toolbar buttons on mobile */
+/* Fix for iOS Safari button tap delay */
+@media (hover: none) {
+    button { cursor: default; }
+}
+
+/* Prevent accidental zoom on double-tap */
+* { touch-action: manipulation; }
+
+/* Allow natural scrolling and zoom on inputs */
+input, textarea, select, .math-field {
+    touch-action: auto;
+}
+
+/* Ensure proper safe area insets for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* --- 2. MOBILE HEADER (<=768px) --- */
+
 @media (max-width: 768px) {
-    /* CRITICAL FIX: Hide desktop sidebar toggle on mobile to prevent duplicate hamburger menus */
+    /* Hide desktop sidebar toggle on mobile */
     #sidebar-toggle {
         display: none !important;
     }
 
-    /* OPTIMIZATION: Hide header logo on mobile - watermark provides branding, saves ~50px */
-    .header-logo-container {
-        display: none !important;
-    }
-
-    /* Optimize header height on mobile to maximize content space */
+    /* Streamlined header: Glass-morphism, compact, sticky */
     .landing-header {
-        min-height: 40px !important; /* Minimal height - logo removed */
-        height: 40px !important;
-        padding: 2px 6px !important;
+        min-height: 48px;
+        height: 48px;
+        padding: 4px 8px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        position: sticky !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 1000 !important;
-        background: #ffffff !important;
-        width: 100% !important;
-        overflow: hidden !important;
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1100;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        width: 100%;
+        overflow: visible;
+        box-shadow: none;
+        gap: 2px;
     }
 
-    /* Compact header navigation on mobile */
-    .landing-nav {
-        gap: 2px !important; /* Tighter spacing */
+    /* Show logo on mobile but make it smaller */
+    .header-logo-container {
         display: flex !important;
+        flex-shrink: 0;
+    }
+
+    .header-logo-container .main-logo-hero {
+        max-height: 28px;
+    }
+
+    /* Compact nav with scrollable icons */
+    .landing-nav {
+        gap: 1px;
+        display: flex;
         align-items: center;
-        position: relative !important;
-        z-index: 1001 !important;
-        flex-wrap: nowrap !important;
-        overflow: visible !important;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+    .landing-nav::-webkit-scrollbar { display: none; }
+
+    /* Compact nav buttons */
+    .landing-nav button,
+    .landing-nav .btn {
+        padding: 6px 8px;
+        font-size: 0.95rem;
+        min-width: 40px;
+        min-height: 40px;
+        border-radius: 8px;
+        flex-shrink: 0;
+        background: transparent;
+        box-shadow: none;
+        color: var(--clr-text-dim);
+        transition: all 150ms ease;
     }
 
-    .landing-nav button {
-        padding: 6px !important;
-        font-size: 1rem !important;
-        min-width: 42px !important;
-        min-height: 42px !important;
+    .landing-nav button:active,
+    .landing-nav .btn:active {
+        background: rgba(var(--clr-primary-teal-rgb), 0.08);
+        transform: scale(0.92);
     }
 
-    /* Hide less important header buttons on mobile - move to drawer menu */
+    .landing-nav button i,
+    .landing-nav .btn i {
+        font-size: 1.15rem;
+    }
+
+    /* Hide less important header buttons on mobile */
     #open-resources-modal-btn,
     #restart-audio-btn,
     #pause-audio-btn {
+        display: none !important;
+    }
+
+    /* Hide text labels on mobile */
+    .mobile-hide {
+        display: none !important;
+    }
+
+    /* Desktop-only elements */
+    .desktop-only {
         display: none !important;
     }
 
@@ -79,51 +148,70 @@ button,
     .drawer-toggle-btn {
         min-width: 44px;
         min-height: 40px;
-        padding: 8px;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-        position: relative !important;
-        z-index: 1002 !important;
-        flex-shrink: 0 !important;
-    }
-
-    .drawer-toggle-btn:active {
-        background: rgba(18, 179, 179, 0.1);
-        transform: scale(0.95);
-    }
-
-    /* Ensure drawer toggles are properly sized and accessible */
-    #left-drawer-toggle,
-    #right-drawer-toggle {
+        padding: 6px 10px;
+        border-radius: 10px;
+        transition: all 150ms ease;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        position: relative !important;
+        background: transparent;
+        color: var(--clr-text);
     }
 
-    /* Add subtle visual feedback for drawer buttons */
-    #left-drawer-toggle:hover,
-    #right-drawer-toggle:hover {
-        background: rgba(18, 179, 179, 0.05);
+    .drawer-toggle-btn i {
+        font-size: 1.2rem;
     }
 
-    /* Optimize chat message container spacing on mobile */
-    #chat-messages-container {
-        padding: 10px 12px !important;
-        gap: 8px !important;
+    .drawer-toggle-btn:active {
+        background: rgba(var(--clr-primary-teal-rgb), 0.1);
+        transform: scale(0.92);
+    }
+}
+
+/* --- 3. MOBILE CHAT LAYOUT --- */
+
+@media (max-width: 768px) {
+    /* Main layout adjustments */
+    #app-layout-wrapper {
         position: relative;
+        z-index: 1;
+        padding-top: 0;
+        margin-top: 0;
     }
 
-    /* EXPERIMENTAL: Logo watermark on mobile
-     * OPTION 1: Very subtle watermark always visible (3% opacity)
-     * OPTION 2: More visible when chat is empty (6% opacity)
-     *
-     * Uncomment ONE option below to test.
-     * RECOMMENDATION: Start with OPTION 2 for best balance.
-     */
+    #app-layout-wrapper.sidebar-layout {
+        padding-top: 0;
+    }
 
-    /* OPTION 1: Always visible, very subtle */
-    /*
+    /* Chat container with proper header offset */
+    #chat-container {
+        position: relative;
+        z-index: 1;
+        margin-top: 0;
+        margin-bottom: 0 !important;
+        padding-top: 4px;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+    }
+
+    /* Chat messages with subtle branding watermark */
+    #chat-messages-container {
+        padding: 10px 12px;
+        padding-bottom: 16px;
+        gap: 6px;
+        position: relative;
+        z-index: 1;
+        border-radius: 0;
+        border: none;
+        border-top: 1px solid var(--clr-border, #e2e8f0);
+        background: var(--clr-bg-subtle, #f8fafb);
+        /* Base font that scales with pinch-to-zoom */
+        font-size: calc(16px * var(--chat-font-scale, 1));
+    }
+
+    /* Subtle logo watermark */
     #chat-messages-container::before {
         content: '';
         position: absolute;
@@ -134,222 +222,238 @@ button,
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
-        width: 60%;
-        max-width: 250px;
+        width: 55%;
+        max-width: 240px;
         height: 200px;
         opacity: 0.03;
         z-index: 0;
         pointer-events: none;
     }
-    */
 
-    /* Logo watermark - consistent throughout for branding */
-    #chat-messages-container::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-image: url('/images/mathmatix-ai-logo.png');
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        width: 65%;
-        max-width: 280px;
-        height: 220px;
-        opacity: 0.035; /* Subtle but visible - consistent branding */
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    /* Reduce message bubble padding on mobile to maximize content area */
-    .message-wrapper,
+    /* Message bubbles: touch-friendly, readable */
     .message {
-        margin-bottom: 8px !important;
+        max-width: 90%;
+        padding: 10px 14px;
+        margin-bottom: 2px;
+        font-size: inherit;
+        line-height: 1.55;
+        border-radius: 16px;
     }
 
-    .input-toolbar {
-        display: flex;
-        gap: 8px;
-        padding: 10px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    .message-container {
+        margin-bottom: 4px;
+    }
+
+    .message.user,
+    .message.user-message {
+        margin-left: auto;
+        margin-right: 4px;
+        border-bottom-right-radius: 6px;
+    }
+
+    .message.ai,
+    .message.ai-message {
+        margin-right: auto;
+        margin-left: 4px;
+        border-bottom-left-radius: 6px;
+        background: var(--clr-bg-light, #ffffff);
+        border: 1px solid var(--clr-border, #e2e8f0);
+    }
+
+    /* Compact avatars */
+    .message-avatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    .message-avatar img {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+    }
+
+    /* Timestamps */
+    .message-timestamp {
+        font-size: 0.65rem;
+        color: #999;
+        margin-top: 2px;
+    }
+
+    /* Thinking indicator */
+    #thinking-indicator {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+}
+
+/* --- 4. MOBILE INPUT AREA --- */
+
+@media (max-width: 768px) {
+    /* Input container */
+    #input-container {
         position: relative;
-        /* Hide scrollbar but keep functionality */
-        scrollbar-width: thin;
-        scrollbar-color: rgba(18, 179, 179, 0.3) transparent;
+        z-index: 100;
+        padding: 6px 8px;
+        padding-bottom: max(env(safe-area-inset-bottom, 6px), 6px);
+        background: var(--clr-bg-light, #fff);
+        border-top: 1px solid var(--clr-border, #e2e8f0);
     }
 
-    /* Webkit scrollbar styling */
-    .input-toolbar::-webkit-scrollbar {
-        height: 4px;
+    /* User input: prevent iOS zoom (16px min), comfortable padding */
+    #user-input {
+        font-size: 16px;
+        padding: 10px 14px;
+        min-height: 44px;
+        border-radius: 22px;
+        background: var(--clr-bg-subtle, #f8fafb);
+        border: 1.5px solid var(--clr-border, #e2e8f0);
+        line-height: 1.5;
+        resize: none;
     }
 
-    .input-toolbar::-webkit-scrollbar-track {
-        background: transparent;
+    #user-input:focus {
+        background: var(--clr-bg-light, #fff);
+        border-color: var(--clr-primary-teal, #12B3B3);
+        box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.1);
     }
 
-    .input-toolbar::-webkit-scrollbar-thumb {
-        background: rgba(18, 179, 179, 0.3);
-        border-radius: 2px;
-    }
-
-    .input-toolbar::-webkit-scrollbar-thumb:hover {
-        background: rgba(18, 179, 179, 0.5);
-    }
-
-    /* Scroll indicator shadows */
-    .input-toolbar::before,
-    .input-toolbar::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 4px;
-        width: 20px;
-        pointer-events: none;
-        z-index: 10;
-        transition: opacity 0.3s ease;
-    }
-
-    /* Left shadow indicator */
-    .input-toolbar::before {
-        left: 0;
-        background: linear-gradient(to right, rgba(255, 255, 255, 0.9), transparent);
-    }
-
-    /* Right shadow indicator */
-    .input-toolbar::after {
-        right: 0;
-        background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
+    #user-input::placeholder {
+        color: #999;
         opacity: 1;
     }
 
-    .input-toolbar button {
+    /* Send button: prominent, tappable */
+    #send-button {
+        min-height: 44px;
         min-width: 48px;
-        min-height: 48px;
-        flex-shrink: 0;
-        padding: 12px;
-        font-size: 1.1em;
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 22px;
+        margin-top: 4px;
     }
 
-    /* Header buttons */
-    .header-nav button {
+    #send-button:active {
+        transform: scale(0.93);
+    }
+
+    /* Scrollable toolbar with fade edges */
+    .input-toolbar {
+        display: flex;
+        gap: 4px;
+        padding: 6px 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        scrollbar-width: none;
+        border: none;
+        background: transparent;
+    }
+
+    .input-toolbar::-webkit-scrollbar { display: none; }
+
+    .input-toolbar button {
         min-width: 44px;
         min-height: 44px;
-        padding: 10px 15px;
+        flex-shrink: 0;
+        padding: 10px;
+        font-size: 1.1rem;
+        border-radius: 10px;
+        background: var(--clr-bg-subtle, #f8fafb);
+        border: 1px solid var(--clr-border-light, #f1f5f9);
+        color: var(--clr-text-dim, #5B6876);
     }
 
-    /* Ensure modals are on top */
-    .modal-overlay {
-        z-index: 9999;
-        touch-action: none;
+    .input-toolbar button:active {
+        background: rgba(var(--clr-primary-teal-rgb), 0.08);
+        border-color: var(--clr-primary-teal);
+        color: var(--clr-primary-teal);
+        transform: scale(0.93);
     }
 
-    .modal-content {
-        touch-action: auto;
-    }
-}
-
-/* Fix for iOS Safari button tap delay */
-@media (hover: none) {
-    button {
-        cursor: default;
+    .input-toolbar button i {
+        font-size: 1.15rem;
     }
 }
 
-/* Prevent accidental zoom on double-tap */
-* {
-    touch-action: manipulation;
-}
+/* --- 5. STREAMLINED MOBILE TOOLBAR --- */
 
-input,
-textarea,
-select,
-.math-field {
-    touch-action: auto;
-}
+.toolbar-more { display: none; }
 
-/* ============================================
-   STREAMLINED MOBILE TOOLBAR
-   ============================================ */
-
-/* Hide More button on desktop */
-.toolbar-more {
-    display: none;
-}
-
-/* Mobile: Show only primary tools + More button */
 @media (max-width: 767px) {
-    /* Hide secondary tools on mobile */
-    .toolbar-secondary {
-        display: none !important;
-    }
+    .toolbar-secondary { display: none !important; }
+    .toolbar-more { display: flex; }
 
-    /* Show More button on mobile */
-    .toolbar-more {
-        display: flex;
-    }
-
-    /* More Tools Menu - Bottom Sheet Style */
+    /* Bottom Sheet More Tools Menu */
     .more-tools-menu {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        background: var(--clr-bg-light);
+        background: var(--clr-bg-light, #fff);
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        padding: 20px;
-        padding-bottom: max(env(safe-area-inset-bottom), 20px);
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+        z-index: 2100;
+        padding: 12px 16px;
+        padding-bottom: max(env(safe-area-inset-bottom, 16px), 16px);
         transform: translateY(100%);
-        transition: transform 0.3s ease;
+        transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .more-tools-menu.active {
         transform: translateY(0);
     }
 
+    /* Drag handle */
+    .more-tools-menu::before {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 4px;
+        background: #d1d5db;
+        border-radius: 2px;
+        margin: 0 auto 12px;
+    }
+
     .more-tools-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 12px;
-        border-bottom: 2px solid var(--clr-primary-teal);
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--clr-border, #e2e8f0);
     }
 
     .more-tools-header span {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 600;
-        color: var(--clr-text);
+        color: var(--clr-text, #18202B);
     }
 
     .close-more-tools {
-        background: none;
+        background: var(--clr-bg-subtle, #f8fafb);
         border: none;
-        font-size: 2rem;
-        color: var(--clr-text-dim);
-        cursor: pointer;
+        font-size: 1.4rem;
+        color: var(--clr-text-dim, #5B6876);
         width: 36px;
         height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        transition: all 0.2s ease;
+        box-shadow: none;
+        padding: 0;
     }
 
-    .close-more-tools:hover {
-        background: rgba(0, 0, 0, 0.05);
-        color: var(--clr-text);
+    .close-more-tools:active {
+        background: var(--clr-border, #e2e8f0);
     }
 
     .more-tools-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 10px;
     }
 
     .more-tool-item {
@@ -357,46 +461,44 @@ select,
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 20px;
-        background: var(--clr-bg-light);
-        border: 2px solid rgba(0, 0, 0, 0.1);
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        min-height: 100px;
+        padding: 16px 12px;
+        background: var(--clr-bg-subtle, #f8fafb);
+        border: 1.5px solid var(--clr-border-light, #f1f5f9);
+        border-radius: 14px;
+        min-height: 88px;
         gap: 8px;
+        transition: all 150ms ease;
     }
 
     .more-tool-item:active {
         transform: scale(0.95);
-        background: rgba(18, 179, 179, 0.05);
+        background: rgba(var(--clr-primary-teal-rgb), 0.06);
         border-color: var(--clr-primary-teal);
     }
 
     .more-tool-item i {
-        font-size: 2rem;
+        font-size: 1.6rem;
         color: var(--clr-primary-teal);
     }
 
     .more-tool-item span {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 500;
         color: var(--clr-text);
         text-align: center;
     }
 
-    /* Overlay for More Tools menu */
+    /* Overlay */
     .more-tools-overlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 999;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: 2099;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
+        transition: opacity 300ms ease, visibility 300ms ease;
     }
 
     .more-tools-overlay.active {
@@ -405,59 +507,33 @@ select,
     }
 }
 
-/* Desktop: Show all tools, hide More button */
 @media (min-width: 768px) {
-    .toolbar-secondary {
-        display: flex !important;
-    }
-
-    .toolbar-more {
-        display: none !important;
-    }
-
-    .more-tools-menu {
-        display: none !important;
-    }
+    .toolbar-secondary { display: flex !important; }
+    .toolbar-more { display: none !important; }
+    .more-tools-menu { display: none !important; }
 }
 
-/* ============================================
-   PINCH-TO-ZOOM CHAT FONT SIZE
-   ============================================ */
+/* --- 6. PINCH-TO-ZOOM CHAT FONT SIZE --- */
 
-/* Chat messages container supports font scaling */
 #chat-messages-container {
-    /* Default scale is 1.0, adjusted by pinch-zoom script */
-    /* Must use calc() to multiply unitless scale value with base unit */
     font-size: calc(1em * var(--chat-font-scale, 1));
 }
 
-/* Ensure all message elements inherit the scaled size */
-#chat-messages-container .message,
-#chat-messages-container .message p,
-#chat-messages-container .message span,
-#chat-messages-container .message div {
-    /* Inherit from parent container */
-}
+#font-scale-indicator { /* Styled via JS */ }
 
-/* Font scale indicator (created by JS) */
-#font-scale-indicator {
-    /* Styled via JS for dynamic positioning */
-}
-
-/* Pinch zoom hint (optional - shows on first visit) */
 .pinch-zoom-hint {
     position: fixed;
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(18, 179, 179, 0.9);
+    background: rgba(18, 179, 179, 0.92);
     color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    padding: 10px 18px;
+    border-radius: 22px;
+    font-size: 0.88rem;
     text-align: center;
     z-index: 1001;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(18, 179, 179, 0.3);
     animation: fadeInOut 4s ease-in-out;
     pointer-events: none;
 }
@@ -469,46 +545,38 @@ select,
     100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
 }
 
-/* ============================================
-   MOBILE DRAWERS
-   Side-sliding drawers for mobile navigation
-   ============================================ */
+/* --- 7. MOBILE DRAWERS --- */
 
-/* Drawer Container */
 .mobile-drawer {
     position: fixed;
     top: 0;
     bottom: 0;
     width: 85%;
-    max-width: 320px;
+    max-width: 340px;
     background: #ffffff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
     z-index: 2000;
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
 }
 
-/* Left Drawer */
 .left-drawer {
     left: 0;
     transform: translateX(-100%);
 }
-
 .left-drawer.open {
     transform: translateX(0);
 }
 
-/* Right Drawer */
 .right-drawer {
     right: 0;
     left: auto;
     transform: translateX(100%);
 }
-
 .right-drawer.open {
     transform: translateX(0);
 }
@@ -518,16 +586,16 @@ select,
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    border-bottom: 2px solid var(--clr-primary-teal);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--clr-primary-teal, #12B3B3) 0%, #0E9494 100%);
     color: white;
     flex-shrink: 0;
+    padding-top: max(env(safe-area-inset-top, 16px), 16px);
 }
 
 .drawer-header h3 {
     margin: 0;
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: white;
 }
@@ -535,21 +603,23 @@ select,
 .drawer-close-btn {
     background: rgba(255, 255, 255, 0.2);
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: white;
-    cursor: pointer;
-    padding: 8px;
+    padding: 0;
     width: 36px;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: all 0.2s ease;
+    transition: background 150ms ease;
+    box-shadow: none;
 }
 
-.drawer-close-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+.drawer-close-btn:hover,
+.drawer-close-btn:active {
+    background: rgba(255, 255, 255, 0.35);
+    transform: none;
 }
 
 /* Drawer Content */
@@ -561,8 +631,8 @@ select,
 }
 
 .drawer-section {
-    padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--clr-border-light, #f1f5f9);
 }
 
 .drawer-section:last-child {
@@ -570,56 +640,59 @@ select,
 }
 
 .drawer-section h4 {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    color: #333;
-    margin: 0 0 15px 0;
+    color: var(--clr-text, #333);
+    margin: 0 0 12px 0;
     display: flex;
     align-items: center;
     gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.8rem;
 }
 
 .drawer-section h4 i {
     color: var(--clr-primary-teal);
+    font-size: 0.9rem;
 }
 
 /* Progress Section in Drawer */
 .drawer-progress-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--clr-primary-teal, #12B3B3) 0%, #0E9494 100%);
     color: white;
+    padding: 0;
 }
 
 .drawer-progress-card {
     padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
 }
 
 .drawer-progress-level {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     text-align: center;
 }
 
 .drawer-progress-bar {
     width: 100%;
-    height: 12px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 6px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 5px;
     overflow: hidden;
-    margin: 12px 0;
+    margin: 10px 0;
 }
 
 .drawer-progress-fill {
     height: 100%;
     background: white;
-    border-radius: 6px;
-    transition: width 0.3s ease;
+    border-radius: 5px;
+    transition: width 400ms ease;
 }
 
 .drawer-progress-xp {
-    font-size: 1rem;
+    font-size: 0.95rem;
     opacity: 0.9;
     text-align: center;
     font-weight: 500;
@@ -629,26 +702,27 @@ select,
 .drawer-stats-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
 }
 
 .drawer-stat-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    background: #f5f5f5;
-    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--clr-bg-subtle, #f8fafb);
+    border-radius: 10px;
+    border: 1px solid var(--clr-border-light, #f1f5f9);
 }
 
 .drawer-stat-label {
-    font-size: 0.95rem;
-    color: #666;
+    font-size: 0.88rem;
+    color: var(--clr-text-dim, #666);
     font-weight: 500;
 }
 
 .drawer-stat-value {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--clr-primary-teal);
 }
@@ -656,60 +730,61 @@ select,
 /* Leaderboard Table */
 .leaderboard-table-mobile {
     width: 100%;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     border-collapse: collapse;
 }
 
 .leaderboard-table-mobile th {
     font-weight: 600;
-    color: #666;
-    padding: 8px 4px;
+    color: var(--clr-text-dim, #666);
+    padding: 8px 6px;
     text-align: left;
-    border-bottom: 2px solid #e0e0e0;
-    font-size: 0.85rem;
+    border-bottom: 1.5px solid var(--clr-border, #e2e8f0);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .leaderboard-table-mobile td {
-    padding: 10px 4px;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--clr-border-light, #f1f5f9);
 }
 
-.leaderboard-table-mobile tr:hover {
-    background: #f9f9f9;
+.leaderboard-table-mobile tr:last-child td {
+    border-bottom: none;
 }
 
 /* Link Code */
 .drawer-link-code {
     padding: 12px;
-    background: #f0f7ff;
-    border: 2px dashed var(--clr-primary-teal);
-    border-radius: 8px;
+    background: rgba(var(--clr-primary-teal-rgb), 0.05);
+    border: 2px dashed rgba(var(--clr-primary-teal-rgb), 0.3);
+    border-radius: 10px;
     text-align: center;
-    font-family: monospace;
-    font-size: 1.2rem;
+    font-family: var(--font-family-code-math, monospace);
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--clr-primary-teal);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 150ms ease;
 }
 
-.drawer-link-code:hover {
-    background: #e0f0ff;
-    transform: scale(1.02);
+.drawer-link-code:active {
+    background: rgba(var(--clr-primary-teal-rgb), 0.1);
+    transform: scale(0.98);
 }
 
 /* Drawer Overlay */
 .drawer-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     z-index: 1999;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: opacity 300ms ease, visibility 300ms ease;
 }
 
 .drawer-overlay.active {
@@ -718,437 +793,96 @@ select,
 }
 
 /* Hide drawers on desktop */
-@media (min-width: 768px) {
+@media (min-width: 769px) {
     .mobile-drawer,
     .drawer-overlay {
         display: none !important;
     }
 }
 
-/* ============================================
-   MOBILE LAYOUT FIXES
-   Fix overlapping and z-index issues
-   ============================================ */
+/* --- 8. MOBILE Z-INDEX STACKING --- */
 
 @media (max-width: 768px) {
-    /* Ensure proper z-index stacking */
-    .landing-header {
-        z-index: 1100;
-        position: relative;
-    }
-
-    #app-sidebar {
-        z-index: 1500;
-    }
-
-    #sidebar-toggle {
-        z-index: 1501;
-    }
-
-    .mobile-drawer {
-        z-index: 2000;
-    }
-
-    .drawer-overlay {
-        z-index: 1999;
-    }
-
-    .modal-overlay {
-        z-index: 9999;
-    }
-
-    /* Main content should not overlap or be hidden */
-    #app-layout-wrapper {
-        position: relative;
-        z-index: 1;
-    }
-
-    #chat-container {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Input container should stay at bottom */
-    #input-container {
-        position: relative;
-        z-index: 1003;
-    }
-
-    /* Footer should be at the very bottom */
-    footer {
-        position: relative;
-        z-index: 1005;
-    }
-
-    /* Session stats bar */
-    .session-stats-bar {
-        padding: 8px 12px;
-        font-size: 0.85rem;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .stat-item {
-        flex: 1 1 auto;
-        min-width: 80px;
-    }
-
-    .stat-label {
-        font-size: 0.75rem;
-    }
-
-    .stat-value {
-        font-size: 0.9rem;
-    }
-
-    /* Hide text labels in header buttons on very small screens */
-    .mobile-hide {
-        display: none !important;
-    }
-
-    /* Desktop-only elements */
-    .desktop-only {
-        display: none !important;
-    }
-
-    /* Make sure chat messages don't get cut off */
-    #chat-messages-container {
-        padding: 12px 8px;
-        padding-bottom: 20px;
-    }
-
-    /* Compact message bubbles on mobile */
-    .message {
-        max-width: 92%;
-        margin-bottom: 12px;
-    }
-
-    /* User messages */
-    .message.user-message,
-    .message.user {
-        margin-left: auto;
-        margin-right: 8px;
-    }
-
-    /* AI messages */
-    .message.ai-message,
-    .message.ai {
-        margin-right: auto;
-        margin-left: 8px;
-    }
-
-    /* Prevent content from hiding under header */
-    #app-layout-wrapper.sidebar-layout {
-        padding-top: 0;
-    }
-
-    /* Ensure whiteboard and calculator don't overlap */
-    #whiteboard-panel,
-    #floating-calculator {
-        z-index: 1600;
-    }
-
-    /* XP feed positioning */
-    #xp-feed {
-        top: 70px;
-        right: 10px;
-        max-width: calc(100vw - 20px);
-        z-index: 1400;
-    }
-
-    /* Streak counter positioning */
-    #streak-counter {
-        top: 70px;
-        left: 10px;
-        z-index: 1400;
-    }
-
-    /* Level-up and badge modals */
+    .landing-header { z-index: 1100; }
+    #app-sidebar { z-index: 1500; }
+    .mobile-drawer { z-index: 2000; }
+    .drawer-overlay { z-index: 1999; }
+    .modal-overlay { z-index: 9999; touch-action: none; }
+    .modal-content { touch-action: auto; }
     #levelup-celebration-modal,
-    #badge-celebration-modal {
-        z-index: 10000;
-    }
+    #badge-celebration-modal { z-index: 10000; }
+    #whiteboard-panel,
+    #floating-calculator { z-index: 1600; }
+    #xp-feed { top: 55px; right: 10px; max-width: calc(100vw - 20px); z-index: 1400; }
+    #streak-counter { top: 55px; left: 10px; z-index: 1400; }
 
-    /* File grid container */
-    #file-grid-container {
-        padding: 8px;
-        max-width: 100%;
-    }
-
-    /* Compact toolbar */
-    .input-toolbar-compact {
-        gap: 4px;
-    }
-
-    .input-toolbar-compact .btn {
-        min-width: 40px;
-        min-height: 40px;
-        padding: 8px;
-        font-size: 1rem;
-    }
-
-    /* Send button full width on mobile */
-    .send-button-fullwidth {
-        width: 100%;
-        margin-top: 8px;
-    }
-
-    /* Hide session stats bar on mobile - saves ~40px vertical space
-     * Stats are still accessible in the right drawer menu */
+    /* Session stats bar - hidden on mobile (available in drawer) */
     #session-stats-bar,
     .session-stats-bar {
         display: none !important;
     }
-}
 
-/* ============================================
-   PRINT STYLESHEET
-   Hide watermark and UI elements when printing
-   ============================================ */
-@media print {
-    /* Hide watermark logo when printing/screenshotting */
-    #chat-messages-container::before {
-        display: none !important;
-    }
-
-    /* Hide UI chrome when printing */
-    header,
-    .landing-header,
-    .drawer-toggle-btn,
-    .input-toolbar,
-    #send-button,
-    .modal-overlay,
-    #app-sidebar {
-        display: none !important;
-    }
-
-    /* Optimize chat for printing */
-    #chat-messages-container {
-        padding: 0 !important;
-        max-width: 100% !important;
-    }
-
-    .message {
-        page-break-inside: avoid;
-        margin-bottom: 12px !important;
+    /* File grid */
+    #file-grid-container {
+        padding: 8px;
+        max-width: 100%;
     }
 }
 
-/* ============================================
-   MESSAGE TIMESTAMPS
-   Subtle timestamps for better context
-   ============================================ */
-@media (max-width: 768px) {
-    .message-timestamp {
-        font-size: 0.7rem;
-        color: #999;
-        margin-top: 4px;
-        display: block;
-        text-align: right;
-    }
+/* --- 9. ORIENTATION HANDLING --- */
 
-    .message.user .message-timestamp {
-        text-align: left;
-    }
-
-    .message-container {
-        position: relative;
-    }
-}
-
-/* ============================================
-   ADDITIONAL MOBILE OPTIMIZATIONS
-   ============================================ */
-@media (max-width: 768px) {
-    /* Optimize message bubbles for mobile readability */
-    .message {
-        padding: 12px 16px !important; /* Increased for better touch/readability */
-        margin-bottom: 8px !important;
-        /* NO fixed font-size - allows pinch-to-zoom to work */
-        font-size: inherit; /* Inherit from container scaling */
-        line-height: 1.6; /* Improved readability */
-        min-font-size: 16px; /* iOS minimum to prevent zoom */
-    }
-
-    /* Set base font size on chat container for better readability */
-    #chat-messages-container {
-        /* Base 17px that scales with pinch-to-zoom (80%-150%) */
-        font-size: calc(17px * var(--chat-font-scale, 1)) !important;
-    }
-
-    /* Tighter message containers */
-    .message-container {
-        margin-bottom: 8px !important;
-    }
-
-    /* Optimize avatar sizes on mobile */
-    .message-avatar {
-        width: 32px !important;
-        height: 32px !important;
-    }
-
-    .message-avatar img {
-        width: 32px !important;
-        height: 32px !important;
-        border-radius: 50%;
-    }
-
-    /* Compact thinking indicator */
-    #thinking-indicator {
-        padding: 8px 12px !important;
-        font-size: 0.9rem !important;
-    }
-
-    /* Optimize input area */
-    #user-input {
-        font-size: 16px !important; /* Prevent iOS zoom */
-        padding: 10px 12px !important;
-        min-height: 44px !important;
-    }
-
-    /* Send button optimization - more compact */
-    #send-button {
-        min-height: 44px !important;
-        font-size: 1rem !important;
-        padding: 10px 20px !important;
-        margin-top: 6px !important;
-        margin-bottom: 6px !important;
-    }
-
-    /* Compact input toolbar */
-    .input-toolbar {
-        padding: 6px 8px !important;
-        gap: 6px !important;
-    }
-
-    .input-toolbar button {
-        min-width: 44px !important;
-        min-height: 44px !important;
-        padding: 10px !important;
-    }
-}
-
-/* ============================================
-   ENHANCED TEXT READABILITY ON MOBILE
-   ============================================ */
-@media (max-width: 768px) {
-    /* Improve message text contrast and readability */
-    .message-text {
-        color: #1a1a1a !important; /* Darker text for better contrast */
-        font-weight: 400; /* Normal weight */
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-
-    /* Ensure AI message bubbles have good contrast */
-    .message.ai {
-        background: #f5f5f5 !important; /* Slightly darker for contrast with watermark */
-        color: #1a1a1a !important;
-    }
-
-    /* User message bubbles - maintain readability */
-    .message.user {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #ffffff !important;
-    }
-
-    /* Better text rendering on mobile */
-    body, .message, .message-text, #user-input {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-rendering: optimizeLegibility;
-    }
-
-    /* Increase input text size for readability */
-    #user-input {
-        font-size: 17px !important; /* Match message font size */
-        line-height: 1.5 !important;
-    }
-
-    /* Make placeholder text more visible */
-    #user-input::placeholder {
-        color: #888 !important;
-        opacity: 1;
-    }
-}
-
-/* ============================================
-   ORIENTATION & RESPONSIVE FIXES
-   Handles landscape, portrait, and rotation
-   ============================================ */
-
-/* Mobile styles for touch devices (regardless of width/orientation) */
-body.is-touch-device .landing-header,
-body.is-mobile .landing-header {
-    min-height: 40px !important;
-    height: 40px !important;
-    padding: 2px 6px !important;
-}
-
-body.is-touch-device .header-logo-container,
-body.is-mobile .header-logo-container {
-    display: none !important;
-}
-
-body.is-touch-device #sidebar-toggle,
-body.is-mobile #sidebar-toggle {
-    display: none !important;
-}
-
-/* Landscape-specific fixes for mobile devices */
+/* Landscape mobile */
 @media (max-height: 500px) and (orientation: landscape) {
-    /* Even more compact header in landscape */
     .landing-header {
-        min-height: 36px !important;
-        height: 36px !important;
-        padding: 2px 4px !important;
+        min-height: 36px;
+        height: 36px;
+        padding: 2px 6px;
     }
 
     .landing-nav button {
-        min-width: 38px !important;
-        min-height: 38px !important;
-        padding: 4px !important;
-        font-size: 0.9rem !important;
+        min-width: 36px;
+        min-height: 36px;
+        padding: 4px;
     }
 
-    /* Reduce toolbar heights */
     .input-toolbar button {
-        min-width: 40px !important;
-        min-height: 40px !important;
+        min-width: 38px;
+        min-height: 38px;
     }
 
     #send-button {
-        min-height: 40px !important;
-        padding: 8px 18px !important;
+        min-height: 38px;
+        padding: 6px 16px;
     }
 
-    /* More compact chat area */
     #chat-messages-container {
-        padding: 6px 10px !important;
+        padding: 4px 8px;
     }
 
     .message {
-        padding: 8px 12px !important;
-        margin-bottom: 4px !important;
+        padding: 8px 12px;
+        margin-bottom: 2px;
     }
 
-    /* Smaller avatars in landscape */
     .message-avatar {
-        width: 28px !important;
-        height: 28px !important;
+        width: 24px;
+        height: 24px;
     }
 
     .message-avatar img {
-        width: 28px !important;
-        height: 28px !important;
+        width: 24px;
+        height: 24px;
     }
 }
 
-/* Tablet landscape - ensure proper layout */
+/* Tablet landscape with touch */
 @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-    /* Use mobile layout for tablets in landscape if touch device */
     body.is-touch-device .landing-header {
-        min-height: 44px !important;
+        min-height: 44px;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        width: 100%;
     }
 
     body.is-touch-device .drawer-toggle-btn {
@@ -1160,174 +894,208 @@ body.is-mobile #sidebar-toggle {
     }
 }
 
-/* Fix for when returning from landscape to portrait */
-@media (orientation: portrait) {
-    body, .landing-header, #chat-messages-container {
-        /* Force reflow */
-        transform: translateZ(0);
-    }
+/* Touch device overrides */
+body.is-touch-device .landing-header,
+body.is-mobile .landing-header {
+    min-height: 48px;
+    height: 48px;
+    padding: 4px 8px;
 }
 
-/* Prevent layout shift during rotation */
-* {
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+body.is-touch-device #sidebar-toggle,
+body.is-mobile #sidebar-toggle {
+    display: none !important;
 }
 
-#app-layout-wrapper {
-    will-change: auto;
-}
+/* --- 10. PRINT STYLESHEET --- */
 
-/* ============================================
-   CRITICAL HEADER POSITIONING FIX
-   Prevents header icons from floating over content
-   ============================================ */
-@media (max-width: 768px) {
-    /* Ensure main app container accounts for header */
-    #app-layout-wrapper {
-        padding-top: 0 !important;
-        margin-top: 0 !important;
-    }
+@media print {
+    #chat-messages-container::before { display: none !important; }
 
-    /* Chat container must not overlap header */
-    #chat-container {
-        margin-top: 0 !important;
-        padding-top: 45px !important; /* Account for 40px header + 5px buffer */
-        position: relative !important;
-    }
+    header, .landing-header, .drawer-toggle-btn,
+    .input-toolbar, #send-button, .modal-overlay,
+    #app-sidebar { display: none !important; }
 
     #chat-messages-container {
-        position: relative !important;
-        z-index: 1 !important; /* Below header */
+        padding: 0 !important;
+        max-width: 100% !important;
+        background: white !important;
     }
 
-    /* Input container should also respect header */
-    #input-container {
-        position: relative !important;
-        z-index: 100 !important; /* Above chat, below modals, below header */
-    }
-
-    /* Ensure header buttons don't wrap or overflow */
-    .landing-nav button {
-        flex-shrink: 0 !important;
-        white-space: nowrap !important;
-    }
-
-    /* Fix hamburger positioning */
-    #left-drawer-toggle {
-        margin-right: 4px !important;
-    }
-
-    #right-drawer-toggle {
-        margin-left: 4px !important;
+    .message {
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #eee !important;
     }
 }
 
-/* Tablet landscape - ensure header stays put */
-@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
-    body.is-touch-device .landing-header {
-        position: sticky !important;
-        top: 0 !important;
-        z-index: 1000 !important;
-        width: 100% !important;
-    }
+/* --- 11. RESPONSIVE FORM PAGES (Login/Signup/Auth) --- */
 
-    body.is-touch-device #chat-container {
-        padding-top: 48px !important;
-    }
-}
-
-/* ============================================
-   ENHANCED BUTTON READABILITY
-   Larger, clearer icons and text on all buttons
-   ============================================ */
 @media (max-width: 768px) {
-    /* Send button - larger, bolder text */
-    #send-button {
-        font-size: 1.125rem !important; /* 18px - larger */
-        font-weight: 600 !important; /* Semi-bold */
-        letter-spacing: 0.5px !important;
-        text-transform: none !important;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+    .login-page-wrapper,
+    .signup-page-wrapper {
+        padding: 16px;
+        justify-content: flex-start;
+        padding-top: 24px;
     }
 
-    #send-button i {
-        font-size: 1.25rem !important; /* Larger send icon */
-        margin-right: 6px !important;
+    .login-container,
+    .signup-container {
+        max-width: 100%;
+        padding: 24px 20px;
+        border-radius: 16px;
     }
 
-    /* Toolbar buttons - larger icons */
-    .input-toolbar button {
-        font-size: 1.3em !important; /* Larger icons */
+    .login-container h1,
+    .signup-container h1 {
+        font-size: 1.6rem;
     }
 
-    .input-toolbar button i,
-    .input-toolbar button .fa,
-    .input-toolbar button .fas {
-        font-size: 1.4em !important; /* Even larger for FontAwesome icons */
+    .login-container input,
+    .signup-container input,
+    .login-container select,
+    .signup-container select {
+        font-size: 16px; /* Prevent iOS zoom */
+        padding: 12px 14px;
+        border-radius: 10px;
     }
 
-    /* Header navigation buttons - larger icons */
-    .landing-nav button {
-        font-size: 1.125rem !important; /* Larger icons */
+    .social-login-buttons {
+        flex-direction: column;
+        gap: 10px;
     }
 
-    .landing-nav button i,
-    .landing-nav button .fa,
-    .landing-nav button .fas {
-        font-size: 1.25rem !important;
-    }
-
-    /* Drawer toggle buttons - larger hamburger/user icons */
-    .drawer-toggle-btn {
-        font-size: 1.25rem !important;
-    }
-
-    .drawer-toggle-btn i,
-    .drawer-toggle-btn .fa,
-    .drawer-toggle-btn .fas {
-        font-size: 1.4rem !important;
-    }
-
-    /* All buttons - better contrast and clarity */
-    button,
-    .btn {
-        -webkit-font-smoothing: antialiased !important;
-        -moz-osx-font-smoothing: grayscale !important;
-        text-rendering: optimizeLegibility !important;
-    }
-
-    /* Button text should be bold and clear */
-    .btn-primary,
-    .btn-secondary,
-    .btn-tertiary {
-        font-weight: 500 !important;
-    }
-
-    /* Ensure icon buttons have good contrast */
-    .btn-tertiary {
-        background-color: #5a6b7d !important; /* Darker for better visibility */
-    }
-
-    .btn-tertiary:hover,
-    .btn-tertiary:active {
-        background-color: #4a5763 !important;
+    .social-btn {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 0.95rem;
     }
 }
 
-/* Landscape mode - slightly smaller but still readable */
-@media (max-height: 500px) and (orientation: landscape) {
-    #send-button {
-        font-size: 1.0625rem !important; /* 17px */
-        font-weight: 600 !important;
+/* --- 12. RESPONSIVE DASHBOARD PAGES --- */
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 12px;
     }
 
-    .input-toolbar button {
-        font-size: 1.2em !important;
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 
-    .landing-nav button {
-        font-size: 1.0625rem !important;
+    .dashboard-card {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Tab scrolling for dashboard tabs */
+    .dashboard-tabs {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 4px;
+        padding-bottom: 4px;
+    }
+
+    .dashboard-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        border-radius: 10px;
+        min-height: 44px;
+    }
+}
+
+/* --- 13. RESPONSIVE LANDING PAGE FIXES --- */
+
+@media (max-width: 480px) {
+    /* Extra-small screens */
+    .lp-hero h1 { font-size: 1.75rem; }
+    .lp-hero .lp-hero-sub { font-size: 0.95rem; }
+
+    .lp-hero-buttons .btn {
+        width: 100%;
+        max-width: 260px;
+        padding: 12px 20px;
+    }
+
+    .lp-section-heading { font-size: 1.4rem; }
+
+    .lp-feature-card,
+    .lp-testimonial,
+    .lp-compare-card {
+        padding: 16px;
+    }
+
+    .lp-role-tabs {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+    }
+
+    .lp-role-tab {
+        padding: 10px 4px;
+    }
+
+    .lp-role-tab-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .lp-role-tab-label {
+        font-size: 0.75rem;
+    }
+}
+
+/* --- 14. RESPONSIVE GAME/INTERACTIVE PAGES --- */
+
+@media (max-width: 768px) {
+    /* Mastery Arcade */
+    .arcade-container,
+    .game-container {
+        padding: 8px;
+        max-width: 100%;
+    }
+
+    /* Number Run / Fact Fluency */
+    .game-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .game-controls button {
+        min-height: 48px;
+        min-width: 48px;
+        font-size: 1.1rem;
+    }
+}
+
+/* --- 15. ENHANCED ACCESSIBILITY --- */
+
+@media (max-width: 768px) {
+    /* Ensure all interactive elements meet 44px touch target */
+    a[href],
+    button,
+    input[type="submit"],
+    input[type="button"],
+    .btn,
+    .tab-btn,
+    select {
+        min-height: 44px;
+    }
+
+    /* Better focus states for mobile keyboard users */
+    :focus-visible {
+        outline: 2px solid var(--clr-primary-teal, #12B3B3);
+        outline-offset: 2px;
     }
 }
