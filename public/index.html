@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Mathmatix AI | An Affordable Math Tutor for Every Child</title>
+  <title>Mathmatix AI | A Math Tutor That Actually Knows Your Child</title>
   <meta name="description" content="Mathmatix AI is an intelligent math tutoring platform that provides personalized, one-on-one learning for students of all levels. Affordable, accessible, and effective." />
 
   <!-- SEO Meta Tags -->
@@ -15,7 +15,7 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.mathmatix.ai/" />
-  <meta property="og:title" content="Mathmatix AI | An Affordable Math Tutor for Every Child" />
+  <meta property="og:title" content="Mathmatix AI | A Math Tutor That Actually Knows Your Child" />
   <meta property="og:description" content="Personalized, AI-powered math tutoring that adapts to your child's learning style. Get one-on-one help anytime, anywhere." />
   <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
   <meta property="og:site_name" content="Mathmatix AI" />
@@ -24,7 +24,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://www.mathmatix.ai/" />
-  <meta name="twitter:title" content="Mathmatix AI | An Affordable Math Tutor for Every Child" />
+  <meta name="twitter:title" content="Mathmatix AI | A Math Tutor That Actually Knows Your Child" />
   <meta name="twitter:description" content="Personalized, AI-powered math tutoring that adapts to your child's learning style. Get one-on-one help anytime, anywhere." />
   <meta name="twitter:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
 
@@ -653,9 +653,9 @@
       box-shadow: var(--shadow-md);
     }
 
-    .lp-testimonial:nth-child(1) { border-top-color: var(--clr-primary-teal); }
-    .lp-testimonial:nth-child(2) { border-top-color: var(--clr-accent-hotpink); }
-    .lp-testimonial:nth-child(3) { border-top-color: var(--clr-warning-gold); }
+    .lp-testimonial:nth-child(2) { border-top-color: var(--clr-primary-teal); }
+    .lp-testimonial:nth-child(3) { border-top-color: var(--clr-accent-hotpink); }
+    .lp-testimonial:nth-child(4) { border-top-color: var(--clr-warning-gold); }
 
     .lp-testimonial-quote {
       font-size: 0.95rem; color: var(--clr-text);
@@ -679,9 +679,14 @@
 
     .lp-testimonial--featured {
       grid-column: 1 / -1;
-      max-width: 700px; justify-self: center;
+      max-width: 780px; justify-self: center;
       border-left: 3px solid var(--clr-primary-teal);
       border-top: none;
+      padding: 1.75rem 2rem;
+    }
+
+    .lp-testimonial--featured .lp-testimonial-quote {
+      font-size: 1.02rem;
     }
 
     /* ── Mission ────────────────────────────────────────────── */
@@ -708,6 +713,31 @@
     .lp-mission p:last-child { margin-bottom: 0; }
 
     .lp-mission-accent { color: var(--clr-primary-teal); font-weight: 600; }
+
+    .lp-mission-founder {
+      font-size: 0.92rem; font-weight: 500; font-style: italic;
+      color: rgba(255, 255, 255, 0.55); margin-top: 0.5rem;
+    }
+
+    /* ── Mid-page CTA links ───────────────────────────────── */
+    .lp-mid-cta {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .lp-mid-cta-link {
+      display: inline-block;
+      font-size: 0.95rem; font-weight: 600;
+      color: var(--clr-primary-teal);
+      text-decoration: none;
+      padding: 0.5rem 0;
+      transition: color 0.2s ease;
+    }
+
+    .lp-mid-cta-link:hover {
+      color: #0E9494;
+      text-decoration: underline;
+    }
 
     /* ── How It Works ───────────────────────────────────────── */
     .lp-steps {
@@ -860,9 +890,6 @@
       .lp-feature-card:nth-child(-n+2) .lp-feature-icon { margin-bottom: 1rem; }
       .lp-compare-grid { grid-template-columns: repeat(3, 1fr); }
       .lp-testimonials-grid { grid-template-columns: repeat(2, 1fr); }
-      .lp-testimonials-grid .lp-testimonial:last-child {
-        grid-column: 1 / -1; max-width: 50%; justify-self: center;
-      }
     }
 
     /* ── Mobile (≤768px) ───────────────────────────────────── */
@@ -967,7 +994,9 @@
       .lp-testimonial--featured {
         grid-column: auto; max-width: none;
         border-left: none; border-top: 3px solid var(--clr-primary-teal);
+        padding: 1.5rem;
       }
+      .lp-testimonial--featured .lp-testimonial-quote { font-size: 0.95rem; }
 
       /* -- Steps: horizontal layout -- */
       .lp-steps-grid { grid-template-columns: 1fr; gap: 1.25rem; }
@@ -1052,9 +1081,9 @@
     <section class="lp-hero">
       <div class="lp-hero-layout">
         <div class="lp-hero-content">
-          <h1>An Affordable Math Tutor for Every Child</h1>
+          <h1>A Math Tutor That Actually Knows Your Child</h1>
           <p class="lp-hero-sub">
-            Personalized, AI-powered tutoring that adapts to how your student learns &mdash; available anytime, for a fraction of what a private tutor costs.
+            Personalized, AI-powered tutoring that remembers how your student learns, adapts to their level, and is available anytime &mdash; for a fraction of what a private tutor costs.
           </p>
           <div class="lp-hero-buttons">
             <a href="/signup.html" class="btn btn-primary">Get Started</a>
@@ -1129,6 +1158,9 @@
             <h3>Progress Dashboards</h3>
             <p>Parents and teachers see exactly where students are excelling and where they need support.</p>
           </div>
+        </div>
+        <div class="lp-mid-cta">
+          <a href="/signup.html" class="lp-mid-cta-link">Try it free &rarr;</a>
         </div>
       </div>
     </section>
@@ -1263,6 +1295,24 @@
             </div>
           </div>
         </div>
+
+        <div class="lp-mid-cta">
+          <a href="/signup.html" class="lp-mid-cta-link">Get started free &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Mission ──────────────────────────────────────── -->
+    <section class="lp-mission lp-reveal">
+      <div class="lp-mission-inner">
+        <h2>Why I Built This</h2>
+        <p>
+          As a math teacher, I watched some students thrive because they had support at home and access to private tutoring. Others &mdash; just as bright, just as capable &mdash; fell behind simply because their families couldn't afford the same resources.
+        </p>
+        <p>
+          <span class="lp-mission-accent">Mathmatix AI exists to close that gap.</span> Every child deserves a patient, personal tutor. Now they can have one.
+        </p>
+        <p class="lp-mission-founder">&mdash; Jason Nappier, Math Teacher &amp; Founder</p>
       </div>
     </section>
 
@@ -1285,9 +1335,9 @@
             </ul>
           </div>
           <div class="lp-compare-card lp-compare-card--highlight">
-            <div class="lp-compare-badge">Built Different</div>
+            <div class="lp-compare-badge">Best Value</div>
             <h3>Mathmatix AI</h3>
-            <div class="lp-compare-price">Affordable<span>/mo</span></div>
+            <div class="lp-compare-price">A fraction of the cost</div>
             <ul>
               <li class="lp-compare-yes"><i class="fas fa-check"></i> Deeply personalized over time</li>
               <li class="lp-compare-yes"><i class="fas fa-check"></i> Available 24/7</li>
@@ -1319,8 +1369,13 @@
         <h2 class="lp-section-heading">What People Are Saying</h2>
         <p class="lp-section-sub">Students, parents, and teachers using Mathmatix AI every day.</p>
         <div class="lp-testimonials-grid lp-stagger">
+          <div class="lp-testimonial lp-testimonial--featured">
+            <p class="lp-testimonial-quote">I've never been good at math. For years, that &ldquo;math anxiety&rdquo; made helping with my daughter's homework one of the most stressful parts of my day. I hated feeling like I couldn't support her. But now with Mathmatix, I can hop on for a five-minute refresher and walk to the kitchen table feeling at the top of my game. It's turned a point of stress into a point of connection for us.</p>
+            <div class="lp-testimonial-author">Keenan</div>
+            <div class="lp-testimonial-role">Parent</div>
+          </div>
           <div class="lp-testimonial">
-            <p class="lp-testimonial-quote">It's really helpful.</p>
+            <p class="lp-testimonial-quote">I like it. My favorite part is how fast it replies and how it goes into detail about the different steps for solving the equation.</p>
             <div class="lp-testimonial-author">Ryley</div>
             <div class="lp-testimonial-role">Student</div>
           </div>
@@ -1334,25 +1389,7 @@
             <div class="lp-testimonial-author">Mrs. Hodges</div>
             <div class="lp-testimonial-role">6th Grade Teacher</div>
           </div>
-          <div class="lp-testimonial lp-testimonial--featured">
-            <p class="lp-testimonial-quote">I've never been good at math. For years, that "math anxiety" made helping with my daughter's homework one of the most stressful parts of my day. I hated feeling like I couldn't support her. But now with Mathmatix, I can hop on for a five-minute refresher and walk to the kitchen table feeling at the top of my game. It's turned a point of stress into a point of connection for us.</p>
-            <div class="lp-testimonial-author">Keenan</div>
-            <div class="lp-testimonial-role">Parent</div>
-          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- ── Mission ──────────────────────────────────────── -->
-    <section class="lp-mission lp-reveal">
-      <div class="lp-mission-inner">
-        <h2>Why We Built This</h2>
-        <p>
-          As a math teacher, I watched some students thrive because they had support at home and access to private tutoring. Others &mdash; just as bright, just as capable &mdash; fell behind simply because their families couldn't afford the same resources.
-        </p>
-        <p>
-          <span class="lp-mission-accent">Mathmatix AI exists to close that gap.</span> Every child deserves a patient, personal tutor. Now they can have one.
-        </p>
       </div>
     </section>
 
