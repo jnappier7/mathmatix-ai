@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Mathmatix AI | An Affordable Math Tutor for Every Child</title>
   <meta name="description" content="Mathmatix AI is an intelligent math tutoring platform that provides personalized, one-on-one learning for students of all levels. Affordable, accessible, and effective." />
 
@@ -839,53 +839,21 @@
 
     .lp-sticky-cta .btn { padding: 0.55rem 1.35rem; font-size: 0.88rem; }
 
-    /* ── Responsive ─────────────────────────────────────────── */
-    @media (max-width: 768px) {
-      .lp-hero { padding: 3rem var(--page-horizontal-padding) 2rem; }
-      .lp-hero h1 { font-size: 2rem; }
-      .lp-hero .lp-hero-sub { font-size: 1rem; }
-      .lp-hero-content { text-align: center; }
-      .lp-hero-buttons { justify-content: center; }
-      .lp-hero-buttons .btn { width: 100%; max-width: 280px; }
-      .lp-hero-preview { max-width: 100%; }
-      .lp-trust-bar { gap: 1rem; }
-      .lp-trust-item { font-size: 0.82rem; }
-      .lp-section-heading { font-size: 1.6rem; }
-
-      .lp-features, .lp-roles, .lp-compare,
-      .lp-testimonials, .lp-steps, .lp-faq,
-      .lp-final-cta, .lp-mission {
-        padding: 2.5rem var(--page-horizontal-padding);
-      }
-
-      .lp-features-grid { grid-template-columns: 1fr; gap: 1rem; }
-      .lp-feature-card:nth-child(-n+2) { grid-column: span 1; display: block; }
-      .lp-feature-card:nth-child(-n+2) .lp-feature-icon { margin-bottom: 1rem; }
-
-      .lp-role-tabs { max-width: 100%; }
-      .lp-role-tab { padding: 1rem 0.5rem; }
-      .lp-role-tab-icon { width: 44px; height: 44px; }
-      .lp-role-tab-icon i { font-size: 1.1rem; }
-      .lp-role-tab-label { font-size: 0.82rem; }
-
-      .lp-audience-grid { grid-template-columns: 1fr; gap: 2rem; }
-      .lp-audience-content h2 { font-size: 1.55rem; }
-      .lp-audience-visual { grid-template-columns: 1fr 1fr; }
-      .lp-info-cards { grid-template-columns: 1fr; }
-      .lp-info-card { flex-direction: row; text-align: left; align-items: flex-start; }
-
-      .lp-mission h2 { font-size: 1.55rem; }
-      .lp-mission p { font-size: 0.95rem; }
-
-      .lp-compare-grid { grid-template-columns: 1fr; max-width: 380px; }
-      .lp-compare-card--highlight { order: -1; }
-
-      .lp-testimonials-grid { grid-template-columns: 1fr; gap: 1rem; }
-      .lp-steps-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-      .lp-final-cta h2 { font-size: 1.6rem; }
-      .lp-sticky-cta p { display: none; }
+    /* ── Global Mobile Polish ──────────────────────────────── */
+    .lp-role-tab,
+    .lp-feature-card,
+    .lp-stat-card,
+    .lp-info-card,
+    .lp-compare-card,
+    .lp-testimonial,
+    .lp-faq-question,
+    .lp-step,
+    .btn {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
+    /* ── Tablet (769–1024px) ───────────────────────────────── */
     @media (min-width: 769px) and (max-width: 1024px) {
       .lp-features-grid { grid-template-columns: repeat(2, 1fr); }
       .lp-feature-card:nth-child(-n+2) { grid-column: span 1; display: block; }
@@ -895,6 +863,174 @@
       .lp-testimonials-grid .lp-testimonial:last-child {
         grid-column: 1 / -1; max-width: 50%; justify-self: center;
       }
+    }
+
+    /* ── Mobile (≤768px) ───────────────────────────────────── */
+    @media (max-width: 768px) {
+      /* -- Hero -- */
+      .lp-hero { padding: 2.5rem var(--page-horizontal-padding) 1.75rem; }
+      .lp-hero h1 { font-size: 1.85rem; line-height: 1.2; }
+      .lp-hero .lp-hero-sub { font-size: 0.95rem; line-height: 1.55; margin-bottom: 1.5rem; }
+      .lp-hero-layout { margin-bottom: 1.75rem; }
+      .lp-hero-content { text-align: center; }
+      .lp-hero-buttons { justify-content: center; flex-direction: column; align-items: center; }
+      .lp-hero-buttons .btn { width: 100%; max-width: 320px; padding: 0.9rem 1.5rem; font-size: 1rem; }
+      .lp-hero-preview { max-width: 100%; margin-top: 1.5rem; }
+      .lp-chat-messages { min-height: 120px; }
+
+      /* -- Trust bar: horizontal scroll on mobile -- */
+      .lp-trust-bar {
+        flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        gap: 1.25rem; padding: 1.5rem 0 0.75rem; justify-content: flex-start;
+        scrollbar-width: none; -ms-overflow-style: none;
+      }
+      .lp-trust-bar::-webkit-scrollbar { display: none; }
+      .lp-trust-item { flex-shrink: 0; font-size: 0.82rem; white-space: nowrap; }
+
+      /* -- Section spacing -- */
+      .lp-section-heading { font-size: 1.5rem; }
+      .lp-section-sub { font-size: 0.95rem; margin-bottom: 1.75rem; }
+
+      .lp-features, .lp-roles, .lp-compare,
+      .lp-testimonials, .lp-steps, .lp-faq,
+      .lp-final-cta, .lp-mission {
+        padding: 2.25rem var(--page-horizontal-padding);
+      }
+
+      /* -- Features: all cards horizontal icon-left layout -- */
+      .lp-features-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+      .lp-feature-card { padding: 1.25rem; }
+      .lp-feature-card:nth-child(-n+2) { grid-column: span 1; }
+      .lp-feature-card:nth-child(-n+2) .lp-feature-icon { margin-bottom: 0; }
+      .lp-feature-card:nth-child(n+3) { display: flex; align-items: flex-start; gap: 1rem; }
+      .lp-feature-card:nth-child(n+3) .lp-feature-icon { flex-shrink: 0; margin-bottom: 0; }
+      .lp-feature-card h3 { font-size: 0.98rem; }
+      .lp-feature-card p { font-size: 0.88rem; }
+
+      /* -- Role selector tabs -- */
+      .lp-role-tabs { max-width: 100%; gap: 0.65rem; margin-bottom: 1.75rem; }
+      .lp-role-tab { padding: 0.85rem 0.4rem; border-radius: 10px; }
+      .lp-role-tab:hover { transform: none; }
+      .lp-role-tab-icon { width: 40px; height: 40px; margin-bottom: 0.45rem; }
+      .lp-role-tab-icon i { font-size: 1rem; }
+      .lp-role-tab-label { font-size: 0.78rem; font-weight: 600; }
+
+      /* -- Audience panels -- */
+      .lp-audience-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .lp-audience-content h2 { font-size: 1.35rem; text-align: center; }
+      .lp-audience-content > p { font-size: 0.92rem; text-align: center; }
+      .lp-benefit-list { gap: 0.55rem; }
+      .lp-benefit-list li { font-size: 0.9rem; }
+
+      /* Stat cards */
+      .lp-audience-visual { gap: 0.6rem; }
+      .lp-stat-card { padding: 1rem; }
+      .lp-stat-card i { font-size: 1.25rem; }
+      .lp-stat-card .lp-stat-label { font-size: 0.78rem; }
+
+      /* Info cards: compact horizontal rows */
+      .lp-info-cards { grid-template-columns: 1fr; gap: 0.6rem; }
+      .lp-info-card {
+        flex-direction: row; text-align: left; align-items: center;
+        padding: 1rem; gap: 0.75rem;
+      }
+      .lp-info-card i { font-size: 1.15rem; flex-shrink: 0; }
+      .lp-info-card strong { font-size: 0.88rem; }
+      .lp-info-card span { font-size: 0.8rem; }
+
+      /* -- Comparison: swipeable horizontal scroll, edge-to-edge -- */
+      .lp-compare-grid {
+        grid-template-columns: repeat(3, 80vw);
+        max-width: none; gap: 0.75rem;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        padding: 0 var(--page-horizontal-padding) 0.5rem;
+        margin: 0 calc(-1 * var(--page-horizontal-padding));
+        scrollbar-width: none; -ms-overflow-style: none;
+      }
+      .lp-compare-grid::-webkit-scrollbar { display: none; }
+      .lp-compare-card { scroll-snap-align: center; min-width: 0; }
+      .lp-compare-card--highlight { order: -1; }
+
+      /* -- Testimonials: swipeable horizontal scroll, edge-to-edge -- */
+      .lp-testimonials-grid {
+        grid-template-columns: repeat(4, 80vw);
+        gap: 0.75rem;
+        overflow-x: auto; -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        padding: 0 var(--page-horizontal-padding) 0.5rem;
+        margin: 0 calc(-1 * var(--page-horizontal-padding));
+        scrollbar-width: none; -ms-overflow-style: none;
+      }
+      .lp-testimonials-grid::-webkit-scrollbar { display: none; }
+      .lp-testimonial { scroll-snap-align: start; min-width: 0; }
+      .lp-testimonial--featured {
+        grid-column: auto; max-width: none;
+        border-left: none; border-top: 3px solid var(--clr-primary-teal);
+      }
+
+      /* -- Steps: horizontal layout -- */
+      .lp-steps-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+      .lp-step { display: flex; align-items: flex-start; gap: 1rem; text-align: left; }
+      .lp-step-number { margin: 0; flex-shrink: 0; width: 40px; height: 40px; font-size: 0.95rem; }
+      .lp-step h3 { font-size: 0.98rem; }
+      .lp-step p { font-size: 0.88rem; }
+
+      /* -- Mission -- */
+      .lp-mission h2 { font-size: 1.45rem; }
+      .lp-mission p { font-size: 0.92rem; }
+
+      /* -- FAQ: bigger touch targets -- */
+      .lp-faq-question { padding: 1.1rem 0; min-height: 48px; font-size: 0.95rem; }
+
+      /* -- Final CTA -- */
+      .lp-final-cta h2 { font-size: 1.45rem; }
+      .lp-final-cta p { font-size: 0.95rem; }
+      .lp-final-cta .btn { width: 100%; max-width: 320px; }
+
+      /* -- Sticky CTA: full-width button, safe-area aware -- */
+      .lp-sticky-cta {
+        flex-direction: column; gap: 0;
+        padding: 0.6rem var(--page-horizontal-padding);
+        padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
+      }
+      .lp-sticky-cta p { display: none; }
+      .lp-sticky-cta .btn {
+        width: 100%; padding: 0.75rem 1rem; font-size: 0.95rem;
+        border-radius: 10px;
+      }
+
+      /* -- Disable hover effects on touch -- */
+      .lp-feature-card:hover,
+      .lp-stat-card:hover,
+      .lp-info-card:hover,
+      .lp-testimonial:hover {
+        transform: none;
+        box-shadow: var(--shadow-sm);
+      }
+    }
+
+    /* ── Small phones (≤375px) ─────────────────────────────── */
+    @media (max-width: 375px) {
+      .lp-hero h1 { font-size: 1.6rem; }
+      .lp-hero .lp-hero-sub { font-size: 0.9rem; }
+      .lp-section-heading { font-size: 1.35rem; }
+
+      .lp-role-tab { padding: 0.7rem 0.25rem; }
+      .lp-role-tab-icon { width: 36px; height: 36px; }
+      .lp-role-tab-icon i { font-size: 0.9rem; }
+      .lp-role-tab-label { font-size: 0.72rem; }
+
+      .lp-audience-content h2 { font-size: 1.25rem; }
+
+      .lp-compare-grid { grid-template-columns: repeat(3, 90vw); }
+      .lp-testimonials-grid { grid-template-columns: repeat(4, 88vw); }
+
+      .lp-chat-bubble { font-size: 0.82rem; padding: 0.55rem 0.75rem; }
+
+      .lp-feature-card { padding: 1rem; }
+      .lp-feature-icon { width: 40px; height: 40px; }
+      .lp-feature-icon i { font-size: 1.1rem; }
     }
   </style>
 </head>
