@@ -897,6 +897,8 @@ footer {
 /* Ensure chat container has space for footer */
 #chat-container {
     margin-bottom: 52px !important;
+    gap: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 /* Input container needs to be above footer */
@@ -904,7 +906,7 @@ footer {
     position: relative;
     z-index: 1003 !important;
     background: var(--clr-bg-light, #fff);
-    padding-bottom: 12px !important;
+    padding-bottom: 4px !important;
 }
 
 /* Mobile Responsive */
