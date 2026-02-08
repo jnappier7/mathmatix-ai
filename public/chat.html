@@ -984,7 +984,7 @@
   <div id="floating-calculator" class="floating-calculator" style="display: none;">
     <div class="calculator-header-bar" id="calculator-drag-handle">
       <div class="calculator-title">
-        <i class="fas fa-calculator"></i> TI-30XIIS Calculator
+        <i class="fas fa-calculator"></i> TI-30XS MultiView
       </div>
       <button class="calculator-close-btn" id="close-calculator-btn">&times;</button>
     </div>
@@ -995,9 +995,11 @@
           <span id="calc-angle-mode">DEG</span>
           <span id="calc-hyp-indicator"></span>
           <span id="calc-memory-indicator"></span>
+          <span id="calc-2nd-indicator"></span>
         </div>
         <div class="display">
-          <div class="display-line" id="calc-input-line"></div>
+          <div class="display-history" id="calc-display-history"></div>
+          <div class="display-line mathprint" id="calc-input-line"></div>
           <div class="display-line result-line" id="calc-result-line">0</div>
         </div>
       </div>
@@ -1015,15 +1017,15 @@
         <button class="calc-btn btn-function" data-action="del">DEL</button>
 
         <!-- Row 2 -->
-        <button class="calc-btn btn-function" data-fn="asin" data-fn2="sin-1">
+        <button class="calc-btn btn-function" data-fn="sin" data-fn2="asin">
           <span class="secondary">sin⁻¹</span>
           <span class="primary">sin</span>
         </button>
-        <button class="calc-btn btn-function" data-fn="acos" data-fn2="cos-1">
+        <button class="calc-btn btn-function" data-fn="cos" data-fn2="acos">
           <span class="secondary">cos⁻¹</span>
           <span class="primary">cos</span>
         </button>
-        <button class="calc-btn btn-function" data-fn="atan" data-fn2="tan-1">
+        <button class="calc-btn btn-function" data-fn="tan" data-fn2="atan">
           <span class="secondary">tan⁻¹</span>
           <span class="primary">tan</span>
         </button>
@@ -1063,7 +1065,10 @@
           <span class="secondary">EXIT STAT</span>
           <span class="primary">STATVAR</span>
         </button>
-        <button class="calc-btn btn-function" data-fn="pi">^</button>
+        <button class="calc-btn btn-function" data-fn="power" data-fn2="pi">
+          <span class="secondary">π</span>
+          <span class="primary">^</span>
+        </button>
 
         <!-- Row 5 -->
         <button class="calc-btn btn-function" data-fn="nd" data-fn2="factorial">
@@ -1079,7 +1084,7 @@
         <button class="calc-btn btn-operator" data-op="÷">÷</button>
 
         <!-- Row 6 -->
-        <button class="calc-btn btn-function" data-fn="sto">
+        <button class="calc-btn btn-function" data-fn="sto" data-fn2="rcl">
           <span class="secondary">RCL</span>
           <span class="primary">STO</span>
         </button>
@@ -1096,7 +1101,7 @@
         <button class="calc-btn btn-number" data-num="4">4</button>
         <button class="calc-btn btn-number" data-num="5">5</button>
         <button class="calc-btn btn-number" data-num="6">6</button>
-        <button class="calc-btn btn-operator" data-op="-">−</button>
+        <button class="calc-btn btn-operator" data-op="−">−</button>
 
         <!-- Row 8 -->
         <button class="calc-btn btn-function" data-fn="ud" data-fn2="toggle">
@@ -1112,7 +1117,10 @@
         <button class="calc-btn btn-function" data-action="on">ON</button>
         <button class="calc-btn btn-number" data-num="0">0</button>
         <button class="calc-btn btn-function" data-fn="decimal">.</button>
-        <button class="calc-btn btn-function" data-fn="negative">(-)</button>
+        <button class="calc-btn btn-function" data-fn="negative" data-fn2="ans">
+          <span class="secondary">ANS</span>
+          <span class="primary">(-)</span>
+        </button>
         <button class="calc-btn btn-enter" data-action="enter">ENTER</button>
       </div>
     </div>
