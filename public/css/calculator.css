@@ -140,6 +140,46 @@ body.standalone-calculator-page {
     font-family: 'Courier New', monospace;
 }
 
+/* MultiView 4-line display */
+.multiview-display .display {
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.display-history {
+    overflow: hidden;
+    max-height: 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.history-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1px 0;
+    opacity: 0.55;
+    font-size: 12px;
+    color: #2d3436;
+    gap: 8px;
+}
+
+.history-entry .history-input {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-entry .history-result {
+    font-weight: bold;
+    text-align: right;
+    white-space: nowrap;
+}
+
 .display-line {
     min-height: 20px;
     color: #000;
@@ -152,6 +192,86 @@ body.standalone-calculator-page {
     font-weight: bold;
     text-align: right;
     margin-top: 5px;
+}
+
+/* MathPrint styles */
+.mp-frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 2px;
+    line-height: 1;
+}
+
+.mp-frac .mp-num {
+    border-bottom: 1.5px solid #000;
+    padding: 0 3px 1px;
+    font-size: 0.8em;
+    text-align: center;
+    min-width: 10px;
+}
+
+.mp-frac .mp-den {
+    padding: 1px 3px 0;
+    font-size: 0.8em;
+    text-align: center;
+    min-width: 10px;
+}
+
+.mp-mixed {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.mp-mixed .mp-whole {
+    margin-right: 2px;
+}
+
+.mp-sup {
+    font-size: 0.7em;
+    vertical-align: super;
+    line-height: 0;
+}
+
+.mp-sqrt {
+    display: inline-flex;
+    align-items: stretch;
+    vertical-align: middle;
+}
+
+.mp-sqrt .mp-radical {
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.mp-sqrt .mp-radicand {
+    border-top: 1.5px solid #000;
+    padding: 0 2px;
+    margin-top: 1px;
+}
+
+.mp-nthroot {
+    display: inline-flex;
+    align-items: flex-start;
+    vertical-align: middle;
+}
+
+.mp-nthroot .mp-index {
+    font-size: 0.6em;
+    vertical-align: super;
+    line-height: 0;
+    margin-right: -2px;
+    position: relative;
+    top: -4px;
+}
+
+.mathprint {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 24px;
 }
 
 .buttons {
@@ -416,9 +536,12 @@ body.standalone-calculator-page {
     background: #b4c9b8;
     border-radius: 4px;
     padding: 10px;
-    min-height: 60px;
+    min-height: 90px;
     font-family: 'Courier New', monospace;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 /* Override button class names for floating calculator */

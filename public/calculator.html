@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TI-30XIIS Calculator</title>
+    <title>TI-30XS MultiView Calculator</title>
     <link rel="stylesheet" href="/css/calculator.css">
 </head>
 <body class="standalone-calculator-page">
@@ -22,18 +22,20 @@
             <!-- Calculator Header -->
             <div class="calculator-header">
                 <div class="brand">TEXAS INSTRUMENTS</div>
-                <div class="model">TI-30XIIS</div>
+                <div class="model">TI-30XS MultiView</div>
             </div>
 
-            <!-- Display -->
-            <div class="display-container">
+            <!-- Display (4-line MultiView) -->
+            <div class="display-container multiview-display">
                 <div class="display-indicators">
                     <span id="angle-mode">DEG</span>
                     <span id="hyp-indicator"></span>
                     <span id="memory-indicator"></span>
+                    <span id="2nd-indicator"></span>
                 </div>
                 <div class="display">
-                    <div class="display-line" id="input-line"></div>
+                    <div class="display-history" id="display-history"></div>
+                    <div class="display-line mathprint" id="input-line"></div>
                     <div class="display-line result-line" id="result-line">0</div>
                 </div>
             </div>

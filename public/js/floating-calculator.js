@@ -1,4 +1,4 @@
-// Floating TI-30XIIS Calculator with Drag Support and Statistical Functions
+// Floating TI-30XS MultiView Calculator with Drag Support and Statistical Functions
 class FloatingCalculator {
     constructor() {
         this.floatingCalc = document.getElementById('floating-calculator');
@@ -13,6 +13,8 @@ class FloatingCalculator {
         this.angleModeDisplay = document.getElementById('calc-angle-mode');
         this.hypIndicator = document.getElementById('calc-hyp-indicator');
         this.memoryIndicator = document.getElementById('calc-memory-indicator');
+        this.historyDisplay = document.getElementById('calc-display-history');
+        this.secondIndicator = document.getElementById('calc-2nd-indicator');
 
         // Calculator state
         this.currentInput = '';
@@ -490,7 +492,7 @@ class FloatingCalculator {
 
             // Fractions
             case 'nd':
-                this.currentInput += '/';
+                this.currentInput += '▸n/d◂';
                 this.updateDisplay();
                 break;
             case 'abc':
@@ -1031,7 +1033,7 @@ class FloatingCalculator {
         }
         // Get the last number from the expression
         const parts = this.currentInput.split(/[+\−×÷^(]/);
-        const lastPart = parts[parts.length - 1].replace(/[)]/g, '');
+        const lastPart = parts[parts.length - 1].replace(/[)▸◂n/d]/g, '');
         if (lastPart === '' || lastPart === 'π') {
             if (lastPart === 'π') return Math.PI;
             return this.lastResult;
@@ -1190,7 +1192,8 @@ class FloatingCalculator {
                 .replace(/÷/g, '/')
                 .replace(/−/g, '-')
                 .replace(/π/g, `(${Math.PI})`)
-                .replace(/\^/g, '**');
+                .replace(/\^/g, '**')
+                .replace(/▸n\/d◂/g, '/');
 
             // Handle EE (scientific notation)
             expression = expression.replace(/(\d+\.?\d*)E([+\-]?\d+)/g, '($1*Math.pow(10,$2))');
@@ -1225,6 +1228,7 @@ class FloatingCalculator {
             this.historyIndex = -1;
 
             this.waitingForOperand = true;
+            this.renderHistory();
 
         } catch (error) {
             this.showError('SYNTAX ERROR');
@@ -1288,6 +1292,61 @@ class FloatingCalculator {
         }
     }
 
+    // --- MathPrint Rendering ---
+
+    renderMathPrint(text) {
+        if (!text) return '';
+        let html = this.escapeHtml(text);
+
+        // Fractions: n▸n/d◂m → stacked fraction
+        html = html.replace(/(\d+)▸n\/d◂(\d+)/g,
+            '<span class="mp-frac"><span class="mp-num">$1</span><span class="mp-den">$2</span></span>');
+        html = html.replace(/(\d+)▸n\/d◂/g,
+            '<span class="mp-frac"><span class="mp-num">$1</span><span class="mp-den">_</span></span>');
+        html = html.replace(/▸n\/d◂(\d+)/g,
+            '<span class="mp-frac"><span class="mp-num">_</span><span class="mp-den">$1</span></span>');
+        html = html.replace(/▸n\/d◂/g,
+            '<span class="mp-frac"><span class="mp-num">_</span><span class="mp-den">_</span></span>');
+
+        // Exponents: n^m
+        html = html.replace(/(\d+(?:\.\d+)?)\^(\d+(?:\.\d+)?)/g,
+            '$1<span class="mp-sup">$2</span>');
+        html = html.replace(/(\d+(?:\.\d+)?)\^/g,
+            '$1<span class="mp-sup">_</span>');
+
+        // Square roots
+        html = html.replace(/√\(([^)]+)\)/g,
+            '<span class="mp-sqrt"><span class="mp-radical">√</span><span class="mp-radicand">$1</span></span>');
+        html = html.replace(/√(\d+\.?\d*)/g,
+            '<span class="mp-sqrt"><span class="mp-radical">√</span><span class="mp-radicand">$1</span></span>');
+
+        // Nth roots
+        html = html.replace(/(\d+)ⁿ√\(([^)]+)\)/g,
+            '<span class="mp-nthroot"><span class="mp-index">$1</span><span class="mp-sqrt"><span class="mp-radical">√</span><span class="mp-radicand">$2</span></span></span>');
+        html = html.replace(/(\d+)ⁿ√(\d+\.?\d*)/g,
+            '<span class="mp-nthroot"><span class="mp-index">$1</span><span class="mp-sqrt"><span class="mp-radical">√</span><span class="mp-radicand">$2</span></span></span>');
+        html = html.replace(/ⁿ√/g,
+            '<span class="mp-sqrt"><span class="mp-radical">√</span><span class="mp-radicand">_</span></span>');
+
+        return html;
+    }
+
+    escapeHtml(text) {
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
+        return text.replace(/[&<>"]/g, c => map[c]);
+    }
+
+    renderHistory() {
+        if (!this.historyDisplay) return;
+        const recent = this.history.slice(-2);
+        this.historyDisplay.innerHTML = recent.map(entry =>
+            `<div class="history-entry">` +
+            `<div class="history-input">${this.escapeHtml(entry.input)}</div>` +
+            `<div class="history-result">${this.formatNumber(entry.result)}</div>` +
+            `</div>`
+        ).join('');
+    }
+
     // --- Display ---
 
     formatNumber(num) {
@@ -1324,8 +1383,10 @@ class FloatingCalculator {
 
     showMessage(message) {
         this.inputLine.textContent = message;
+        this.inputLine.classList.remove('mathprint');
         setTimeout(() => {
             if (!this.dataEntryMode && !this.statVarMode) {
+                this.inputLine.classList.add('mathprint');
                 this.updateDisplay();
             }
         }, 1500);
@@ -1342,6 +1403,8 @@ class FloatingCalculator {
                 this.currentInput = this.currentInput.slice(0, -2);
             } else if (this.currentInput.endsWith('(-')) {
                 this.currentInput = this.currentInput.slice(0, -2);
+            } else if (this.currentInput.endsWith('▸n/d◂')) {
+                this.currentInput = this.currentInput.slice(0, -5);
             } else {
                 this.currentInput = this.currentInput.slice(0, -1);
             }
@@ -1382,12 +1445,20 @@ class FloatingCalculator {
         this.angleModeDisplay.textContent = 'DEG';
         this.angleMode = 'DEG';
         this.resultLine.textContent = '0';
+        if (this.historyDisplay) this.historyDisplay.innerHTML = '';
+        if (this.secondIndicator) this.secondIndicator.textContent = '';
         this.updateDisplay();
         this.updateSecondFunctionIndicator();
     }
 
     updateDisplay() {
-        this.inputLine.textContent = this.currentInput || '';
+        if (this.currentInput) {
+            this.inputLine.innerHTML = this.renderMathPrint(this.currentInput);
+            this.inputLine.classList.add('mathprint');
+        } else {
+            this.inputLine.innerHTML = '';
+            this.inputLine.classList.add('mathprint');
+        }
         if (!this.waitingForOperand && !this.currentInput) {
             this.resultLine.textContent = '0';
         }
@@ -1395,11 +1466,13 @@ class FloatingCalculator {
 
     updateSecondFunctionIndicator() {
         const btn2nd = this.floatingCalc.querySelector('[data-action="2nd"]');
-        if (!btn2nd) return;
-        if (this.secondFunction) {
-            btn2nd.style.background = 'linear-gradient(145deg, #f39c12, #e67e22)';
-        } else {
-            btn2nd.style.background = 'linear-gradient(145deg, #3d566e, #2c3e50)';
+        if (btn2nd) {
+            btn2nd.style.background = this.secondFunction
+                ? 'linear-gradient(145deg, #f39c12, #e67e22)'
+                : 'linear-gradient(145deg, #3d566e, #2c3e50)';
+        }
+        if (this.secondIndicator) {
+            this.secondIndicator.textContent = this.secondFunction ? '2ND' : '';
         }
     }
 }
