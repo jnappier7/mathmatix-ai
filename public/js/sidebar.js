@@ -643,7 +643,9 @@ class Sidebar {
             }
 
             const data = await response.json();
-            this.renderLeaderboard(data.leaderboard || []);
+            // API returns array directly, or may be wrapped in { leaderboard: [...] }
+            const leaderboard = Array.isArray(data) ? data : (data.leaderboard || []);
+            this.renderLeaderboard(leaderboard);
         } catch (error) {
             console.error('[Sidebar] Error loading leaderboard:', error);
         }
@@ -660,10 +662,10 @@ class Sidebar {
             row.innerHTML = `
                 <td style="font-weight: 600;">#${index + 1}</td>
                 <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    ${student.firstName || 'Student'}
+                    ${student.name || student.firstName || 'Student'}
                 </td>
                 <td>L${student.level || 1}</td>
-                <td>${student.totalXp || 0}</td>
+                <td>${student.xp || student.totalXp || 0}</td>
             `;
             tbody.appendChild(row);
         });
