@@ -27,13 +27,14 @@ class FloatingCalculator {
         this.lastResult = 0;
         this.waitingForOperand = false;
         this.history = [];
+        this.historyIndex = -1;
         this.dataEntryMode = false;
         this.currentDataVar = 'x'; // 'x' or 'y'
         this.menuMode = null; // 'STAT', 'DATA', 'STATVAR', null
         this.menuCursor = 0;
         this.statVarMode = false;
         this.statVarIndex = 0;
-        this.statVars = ['n', 'x̄', 'Σx', 'Σx²', 'σx', 'ȳ', 'Σy', 'Σy²', 'σy', 'Σxy', 'r', 'a', 'b', 'ŷ'];
+        this.statVars = ['n', 'x̄', 'Σx', 'Σx²', 'σx', 'ȳ', 'Σy', 'Σy²', 'σy', 'Σxy', 'r', 'a', 'b'];
 
         // Drag state
         this.isDragging = false;
@@ -64,7 +65,7 @@ class FloatingCalculator {
                 this.calculatorNote = data.calculatorNote || '';
                 this.accessChecked = true;
 
-                console.log(`🧮 Calculator access: ${this.calculatorAccess}`);
+                console.log(`Calculator access: ${this.calculatorAccess}`);
 
                 // Apply access restrictions
                 this.applyAccessRestrictions();
@@ -89,7 +90,7 @@ class FloatingCalculator {
             }
             // Make sure calculator is hidden
             this.hideCalculator();
-            console.log('🚫 Calculator disabled by teacher');
+            console.log('Calculator disabled by teacher');
         } else if (this.calculatorAccess === 'skill-based' || this.calculatorAccess === 'teacher-discretion') {
             // Show calculator but add visual indicator
             if (this.sidebarCalcBtn) {
@@ -111,7 +112,7 @@ class FloatingCalculator {
     toggleCalculator() {
         // Check if calculator is blocked
         if (this.calculatorAccess === 'never') {
-            console.log('🚫 Calculator access denied by teacher');
+            console.log('Calculator access denied by teacher');
             return;
         }
 
@@ -208,7 +209,7 @@ class FloatingCalculator {
                 e.preventDefault();
                 break;
             case '.':
-                this.handleFunction('decimal');
+                this.handleDecimal();
                 e.preventDefault();
                 break;
             case '(':
@@ -217,6 +218,30 @@ class FloatingCalculator {
                 break;
             case ')':
                 this.handleFunction('rparen');
+                e.preventDefault();
+                break;
+            case '^':
+                this.handleFunction('power');
+                e.preventDefault();
+                break;
+            case '!':
+                this.handleFunction('factorial');
+                e.preventDefault();
+                break;
+            case 'ArrowUp':
+                this.handleArrowUp();
+                e.preventDefault();
+                break;
+            case 'ArrowDown':
+                this.handleArrowDown();
+                e.preventDefault();
+                break;
+            case 'ArrowLeft':
+                this.handleArrowLeft();
+                e.preventDefault();
+                break;
+            case 'ArrowRight':
+                this.handleArrowRight();
                 e.preventDefault();
                 break;
         }
@@ -278,7 +303,8 @@ class FloatingCalculator {
         this.floatingCalc.style.transform = `translate(calc(-50% + ${xPos}px), calc(-50% + ${yPos}px))`;
     }
 
-    // Calculator logic methods
+    // --- Calculator Logic ---
+
     handleNumber(num) {
         if (this.dataEntryMode) {
             this.currentInput += num;
@@ -296,93 +322,143 @@ class FloatingCalculator {
     }
 
     handleOperator(op) {
-        const operators = {
+        // Normalize to display characters
+        const displayMap = {
             '+': '+',
-            '−': '-',
-            '×': '*',
-            '÷': '/'
+            '-': '−',
+            '−': '−',
+            '×': '×',
+            '÷': '÷',
+            '*': '×',
+            '/': '÷'
         };
 
-        if (this.currentInput && !this.waitingForOperand) {
-            this.currentInput += operators[op];
-            this.updateDisplay();
+        const displayOp = displayMap[op] || op;
+
+        if (this.waitingForOperand) {
+            // Chain: use previous result to start new expression
+            this.currentInput = this.formatNumber(this.lastResult) + displayOp;
+            this.waitingForOperand = false;
+        } else if (this.currentInput) {
+            // Check if last char is already an operator — replace it
+            const lastChar = this.currentInput.slice(-1);
+            if (['+', '−', '×', '÷'].includes(lastChar)) {
+                this.currentInput = this.currentInput.slice(0, -1) + displayOp;
+            } else {
+                this.currentInput += displayOp;
+            }
         }
+
+        this.updateDisplay();
         this.secondFunction = false;
     }
 
     handleFunction(fn) {
         switch(fn) {
-            case 'asin':
+            // Trig functions
             case 'sin':
-                this.applyTrigFunction(fn);
+                this.applyTrigFunction(this.hypMode ? 'sinh' : 'sin');
+                break;
+            case 'cos':
+                this.applyTrigFunction(this.hypMode ? 'cosh' : 'cos');
+                break;
+            case 'tan':
+                this.applyTrigFunction(this.hypMode ? 'tanh' : 'tan');
+                break;
+            case 'asin':
+                this.applyTrigFunction(this.hypMode ? 'asinh' : 'asin');
                 break;
             case 'acos':
-            case 'cos':
-                this.applyTrigFunction(fn);
+                this.applyTrigFunction(this.hypMode ? 'acosh' : 'acos');
                 break;
             case 'atan':
-            case 'tan':
-                this.applyTrigFunction(fn);
+                this.applyTrigFunction(this.hypMode ? 'atanh' : 'atan');
                 break;
+
+            // Hyperbolic (direct from buttons that have sinh/cosh/tanh as fn2)
             case 'sinh':
-            case 'cosh':
-            case 'tanh':
-                this.applyHyperbolicFunction(fn);
+                this.applyTrigFunction('sinh');
                 break;
+            case 'cosh':
+                this.applyTrigFunction('cosh');
+                break;
+            case 'tanh':
+                this.applyTrigFunction('tanh');
+                break;
+
+            // Logarithms
             case 'log':
                 this.applyFunction('log10');
-                break;
-            case 'ln':
-                this.applyFunction('ln');
                 break;
             case 'pow10':
                 this.applyFunction('pow10');
                 break;
+            case 'ln':
+                this.applyFunction('ln');
+                break;
             case 'exp':
                 this.applyFunction('exp');
                 break;
+
+            // Powers and roots
             case 'square':
                 this.applyFunction('square');
                 break;
             case 'sqrt':
                 this.applyFunction('sqrt');
                 break;
-            case 'nthroot':
-                this.currentInput += 'ⁿ√';
-                this.updateDisplay();
-                break;
-            case 'pi':
-                if (this.secondFunction) {
-                    this.currentInput += 'π';
+            case 'power':
+                if (this.waitingForOperand) {
+                    this.currentInput = this.formatNumber(this.lastResult) + '^';
+                    this.waitingForOperand = false;
                 } else {
                     this.currentInput += '^';
                 }
                 this.updateDisplay();
                 break;
-            case 'abs':
-                this.applyFunction('abs');
-                break;
-            case 'factorial':
-                this.applyFunction('factorial');
-                break;
-            case 'nd':
-                this.currentInput += '/';
+            case 'nthroot':
+                this.currentInput += 'ⁿ√';
                 this.updateDisplay();
                 break;
-            case 'dec':
-            case 'fd':
-            case 'ud':
-                this.toggleFractionDisplay();
+            case 'reciprocal':
+                this.applyFunction('reciprocal');
                 break;
-            case 'prn':
-                if (this.secondFunction) {
-                    this.currentInput += 'nPr';
+
+            // Pi
+            case 'pi':
+                if (this.waitingForOperand) {
+                    this.currentInput = '';
+                    this.waitingForOperand = false;
+                }
+                this.currentInput += 'π';
+                this.updateDisplay();
+                break;
+
+            // HYP mode toggle
+            case 'hyp':
+                this.hypMode = !this.hypMode;
+                this.hypIndicator.textContent = this.hypMode ? 'HYP' : '';
+                break;
+
+            // Scientific notation
+            case 'ee':
+                if (this.waitingForOperand) {
+                    this.currentInput = this.formatNumber(this.lastResult) + 'E';
+                    this.waitingForOperand = false;
+                } else if (this.currentInput) {
+                    this.currentInput += 'E';
                 } else {
-                    this.currentInput += 'nCr';
+                    this.currentInput = '1E';
                 }
                 this.updateDisplay();
                 break;
+
+            // Parentheses
             case 'lparen':
+                if (this.waitingForOperand) {
+                    this.currentInput = '';
+                    this.waitingForOperand = false;
+                }
                 this.currentInput += '(';
                 this.updateDisplay();
                 break;
@@ -390,29 +466,88 @@ class FloatingCalculator {
                 this.currentInput += ')';
                 this.updateDisplay();
                 break;
-            case 'decimal':
-                if (!this.currentInput.includes('.')) {
-                    this.currentInput += this.currentInput ? '.' : '0.';
-                    this.updateDisplay();
+
+            // Probability
+            case 'prb':
+            case 'prn':
+                if (this.waitingForOperand) {
+                    this.currentInput = this.formatNumber(this.lastResult) + 'nCr';
+                    this.waitingForOperand = false;
+                } else {
+                    this.currentInput += 'nCr';
                 }
+                this.updateDisplay();
                 break;
+            case 'nPr':
+                if (this.waitingForOperand) {
+                    this.currentInput = this.formatNumber(this.lastResult) + 'nPr';
+                    this.waitingForOperand = false;
+                } else {
+                    this.currentInput += 'nPr';
+                }
+                this.updateDisplay();
+                break;
+
+            // Fractions
+            case 'nd':
+                this.currentInput += '/';
+                this.updateDisplay();
+                break;
+            case 'abc':
+                this.currentInput += '_';
+                this.updateDisplay();
+                break;
+            case 'fd':
+            case 'ud':
+            case 'dec':
+            case 'toggle':
+                this.toggleFractionDisplay();
+                break;
+
+            // Factorial
+            case 'factorial':
+                this.applyFunction('factorial');
+                break;
+
+            // Decimal point
+            case 'decimal':
+                this.handleDecimal();
+                break;
+
+            // Negative toggle
             case 'negative':
                 this.toggleNegative();
                 break;
+
+            // Memory
             case 'sto':
-                if (this.secondFunction) {
-                    this.recallMemory();
-                } else {
-                    this.storeMemory();
-                }
+                this.storeMemory();
                 break;
+            case 'rcl':
+                this.recallMemory();
+                break;
+
+            // Percent
             case 'percent':
-                if (this.secondFunction) {
-                    this.applyFunction('percent');
-                }
+                this.applyFunction('percent');
+                break;
+
+            // Comma
+            case 'comma':
+                this.currentInput += ',';
+                this.updateDisplay();
+                break;
+
+            // Absolute value
+            case 'abs':
+                this.applyFunction('abs');
                 break;
         }
-        this.secondFunction = false;
+
+        // Reset second function after use (unless it was hyp toggle)
+        if (fn !== 'hyp') {
+            this.secondFunction = false;
+        }
     }
 
     handleAction(action) {
@@ -426,30 +561,24 @@ class FloatingCalculator {
                 break;
             case 'stat':
                 if (this.secondFunction) {
-                    // 2nd + STAT = show stat mode menu
                     this.showStatMenu();
                 } else {
-                    // Just STAT = shortcut to enter stat mode
                     this.cycleStatMode();
                 }
                 this.secondFunction = false;
                 break;
             case 'data':
                 if (this.secondFunction) {
-                    // 2nd + DATA = show data menu with CLRDATA
                     this.showDataMenu();
                 } else {
-                    // Just DATA = enter data entry mode
                     this.enterDataMode();
                 }
                 this.secondFunction = false;
                 break;
             case 'statvar':
                 if (this.secondFunction) {
-                    // 2nd + STATVAR = EXIT STAT
                     this.exitStatMode();
                 } else {
-                    // STATVAR = show stat variables
                     this.enterStatVarMode();
                 }
                 this.secondFunction = false;
@@ -489,17 +618,26 @@ class FloatingCalculator {
         }
     }
 
-    // Arrow key handlers
+    // --- Arrow Key Handlers ---
+
     handleArrowUp() {
-        // Arrow up does nothing in most modes
+        if (this.history.length > 0) {
+            if (this.historyIndex < 0) this.historyIndex = this.history.length;
+            this.historyIndex = Math.max(0, this.historyIndex - 1);
+            this.currentInput = this.history[this.historyIndex].input;
+            this.updateDisplay();
+        }
     }
 
     handleArrowDown() {
         if (this.dataEntryMode) {
-            // Down arrow in data entry mode
             if (this.currentInput) {
                 this.addDataPoint();
             }
+        } else if (this.historyIndex >= 0) {
+            this.historyIndex = Math.min(this.history.length - 1, this.historyIndex + 1);
+            this.currentInput = this.history[this.historyIndex].input;
+            this.updateDisplay();
         }
     }
 
@@ -524,27 +662,28 @@ class FloatingCalculator {
             this.menuCursor = 1;
             this.showDataMenu();
         } else if (this.statVarMode) {
-            const maxIndex = this.statMode === '2-VAR' ? 13 : 4;
+            const maxIndex = this.statMode === '2-VAR' ? 12 : 4;
             this.statVarIndex = Math.min(maxIndex, this.statVarIndex + 1);
             this.displayStatVar();
         }
     }
 
-    // Menu functions
+    // --- Menu Functions ---
+
     showStatMenu() {
         this.menuMode = 'STAT';
         this.menuCursor = this.statMode === '2-VAR' ? 1 : 0;
         const options = ['1-VAR', '2-VAR'];
         this.inputLine.textContent = options.map((opt, i) =>
-            i === this.menuCursor ? `>${opt}<` : opt
-        ).join(' ');
+            i === this.menuCursor ? `▸${opt}` : ` ${opt}`
+        ).join('  ');
         this.resultLine.textContent = 'Select mode';
     }
 
     showDataMenu() {
         this.menuMode = 'DATA';
         this.menuCursor = 0;
-        this.inputLine.textContent = '>CLRDATA<';
+        this.inputLine.textContent = '▸CLRDATA';
         this.resultLine.textContent = 'Clear stat data?';
     }
 
@@ -638,23 +777,20 @@ class FloatingCalculator {
             case 'b':
                 value = this.statMode === '2-VAR' ? stats.slope : undefined;
                 break;
-            case 'ŷ':
-                // For ŷ, user needs to enter x value
-                this.inputLine.textContent = `ŷ (Enter x)`;
-                this.resultLine.textContent = '';
-                return;
         }
 
         if (value === undefined) {
-            this.inputLine.textContent = varName;
+            this.inputLine.textContent = `${varName} =`;
             this.resultLine.textContent = 'N/A (2-VAR only)';
         } else {
-            this.inputLine.textContent = varName;
+            this.inputLine.textContent = `${varName} =`;
             this.resultLine.textContent = this.formatNumber(value);
+            this.lastResult = value;
         }
     }
 
-    // Statistical functions
+    // --- Statistical Functions ---
+
     cycleStatMode() {
         if (this.statMode === null) {
             this.statMode = '1-VAR';
@@ -676,6 +812,7 @@ class FloatingCalculator {
         }
         this.dataEntryMode = true;
         this.currentInput = '';
+        this.currentDataVar = 'x';
         this.showMessage(`DATA ENTRY ${this.statMode}`);
     }
 
@@ -707,8 +844,12 @@ class FloatingCalculator {
         }
 
         setTimeout(() => {
-            this.updateDisplay();
-        }, 1000);
+            if (this.dataEntryMode) {
+                this.inputLine.textContent = this.currentInput || '';
+                this.resultLine.textContent = this.dataEntryMode ?
+                    `${this.statMode} | Enter ${this.currentDataVar.toUpperCase()}` : '0';
+            }
+        }, 1500);
     }
 
     calculateStatistics() {
@@ -741,82 +882,31 @@ class FloatingCalculator {
             const yVariance = yData.reduce((sum, val) => sum + Math.pow(val - stats.yMean, 2), 0) / n;
             stats.yStd = Math.sqrt(yVariance);
 
-            // Calculate sum of squares
             stats.ySumSq = yData.reduce((sum, val) => sum + val * val, 0);
 
             // Linear regression: y = a + bx
             const xySum = xData.reduce((sum, x, i) => sum + x * yData[i], 0);
             stats.xySum = xySum;
-            const xSumSq = stats.xSumSq;
 
-            const slope = (n * xySum - xSum * ySum) / (n * xSumSq - xSum * xSum);
+            const slope = (n * xySum - xSum * ySum) / (n * stats.xSumSq - xSum * xSum);
             const intercept = (ySum - slope * xSum) / n;
 
-            stats.slope = slope; // b
-            stats.intercept = intercept; // a
+            stats.slope = slope;
+            stats.intercept = intercept;
 
             // Correlation coefficient (r)
             const corrNumerator = n * xySum - xSum * ySum;
-            const corrDenominator = Math.sqrt((n * xSumSq - xSum * xSum) * (n * stats.ySumSq - ySum * ySum));
-            stats.r = corrNumerator / corrDenominator;
-
-            // R-squared
-            stats.r2 = stats.r * stats.r;
+            const corrDenominator = Math.sqrt(
+                (n * stats.xSumSq - xSum * xSum) * (n * stats.ySumSq - ySum * ySum)
+            );
+            stats.r = corrDenominator !== 0 ? corrNumerator / corrDenominator : 0;
         }
 
         return stats;
     }
 
-    showStatResult(statType) {
-        const stats = this.calculateStatistics();
-        if (!stats) return;
+    // --- Trigonometric Functions ---
 
-        let result;
-        switch(statType) {
-            case 'xMean':
-                result = stats.xMean;
-                this.showMessage('x̄');
-                break;
-            case 'xStd':
-                result = stats.xStd;
-                this.showMessage('σx');
-                break;
-            case 'yMean':
-                result = stats.yMean || 'N/A';
-                this.showMessage('ȳ');
-                break;
-            case 'yStd':
-                result = stats.yStd || 'N/A';
-                this.showMessage('σy');
-                break;
-            case 'slope':
-                result = stats.slope || 'N/A';
-                this.showMessage('b (slope)');
-                break;
-            case 'intercept':
-                result = stats.intercept || 'N/A';
-                this.showMessage('a (intercept)');
-                break;
-            case 'r':
-                result = stats.r || 'N/A';
-                this.showMessage('r (correlation)');
-                break;
-            case 'r2':
-                result = stats.r2 || 'N/A';
-                this.showMessage('r²');
-                break;
-            case 'n':
-                result = this.statData.x.length;
-                this.showMessage('n');
-                break;
-        }
-
-        if (result !== 'N/A') {
-            this.setResult(result);
-        }
-    }
-
-    // Trigonometric functions
     applyTrigFunction(fn) {
         const value = this.getCurrentValue();
         if (value === null) return;
@@ -846,17 +936,7 @@ class FloatingCalculator {
                 result = Math.atan(value);
                 if (this.angleMode === 'DEG') result = result * 180 / Math.PI;
                 break;
-        }
-
-        this.setResult(result);
-    }
-
-    applyHyperbolicFunction(fn) {
-        const value = this.getCurrentValue();
-        if (value === null) return;
-
-        let result;
-        switch(fn) {
+            // Hyperbolic functions
             case 'sinh':
                 result = Math.sinh(value);
                 break;
@@ -866,10 +946,25 @@ class FloatingCalculator {
             case 'tanh':
                 result = Math.tanh(value);
                 break;
+            case 'asinh':
+                result = Math.asinh(value);
+                break;
+            case 'acosh':
+                result = Math.acosh(value);
+                break;
+            case 'atanh':
+                result = Math.atanh(value);
+                break;
         }
+
+        // Reset HYP mode after use
+        this.hypMode = false;
+        this.hypIndicator.textContent = '';
 
         this.setResult(result);
     }
+
+    // --- Math Functions ---
 
     applyFunction(fn) {
         const value = this.getCurrentValue();
@@ -878,9 +973,11 @@ class FloatingCalculator {
         let result;
         switch(fn) {
             case 'log10':
+                if (value <= 0) { this.showError('DOMAIN ERROR'); return; }
                 result = Math.log10(value);
                 break;
             case 'ln':
+                if (value <= 0) { this.showError('DOMAIN ERROR'); return; }
                 result = Math.log(value);
                 break;
             case 'pow10':
@@ -893,16 +990,25 @@ class FloatingCalculator {
                 result = Math.abs(value);
                 break;
             case 'factorial':
+                if (value < 0 || !Number.isInteger(value) || value > 170) {
+                    this.showError('ERROR');
+                    return;
+                }
                 result = this.factorial(value);
                 break;
             case 'percent':
                 result = value / 100;
                 break;
             case 'sqrt':
+                if (value < 0) { this.showError('DOMAIN ERROR'); return; }
                 result = Math.sqrt(value);
                 break;
             case 'square':
                 result = value * value;
+                break;
+            case 'reciprocal':
+                if (value === 0) { this.showError('DIVIDE BY 0'); return; }
+                result = 1 / value;
                 break;
         }
 
@@ -923,11 +1029,19 @@ class FloatingCalculator {
         if (!this.currentInput) {
             return this.lastResult;
         }
-        const value = parseFloat(this.currentInput);
-        return isNaN(value) ? null : value;
+        // Get the last number from the expression
+        const parts = this.currentInput.split(/[+\−×÷^(]/);
+        const lastPart = parts[parts.length - 1].replace(/[)]/g, '');
+        if (lastPart === '' || lastPart === 'π') {
+            if (lastPart === 'π') return Math.PI;
+            return this.lastResult;
+        }
+        const value = parseFloat(lastPart);
+        return isNaN(value) ? this.lastResult : value;
     }
 
     setResult(value) {
+        if (value === undefined || value === null) return;
         this.currentInput = '';
         this.result = value;
         this.lastResult = value;
@@ -936,21 +1050,65 @@ class FloatingCalculator {
         this.updateDisplay();
     }
 
+    // --- Decimal Handling ---
+
+    handleDecimal() {
+        if (this.waitingForOperand) {
+            this.currentInput = '0.';
+            this.waitingForOperand = false;
+            this.updateDisplay();
+            return;
+        }
+
+        // Check only the current number segment for a decimal
+        const parts = this.currentInput.split(/[+\−×÷^(]/);
+        const lastPart = parts[parts.length - 1];
+        if (!lastPart.includes('.')) {
+            this.currentInput += (lastPart === '' ? '0.' : '.');
+            this.updateDisplay();
+        }
+    }
+
+    // --- Negative Toggle ---
+
     toggleNegative() {
+        if (this.waitingForOperand) {
+            this.lastResult = -this.lastResult;
+            this.result = this.lastResult;
+            this.resultLine.textContent = this.formatNumber(this.lastResult);
+            return;
+        }
+
         if (this.currentInput) {
-            if (this.currentInput.startsWith('(-')) {
-                this.currentInput = this.currentInput.slice(2, -1);
+            const match = this.currentInput.match(/(.*?)(\(?\-?)(\d+\.?\d*E?[+\-]?\d*)$/);
+            if (match) {
+                const prefix = match[1];
+                const sign = match[2];
+                const num = match[3];
+                if (sign === '(-' || sign === '-') {
+                    this.currentInput = prefix + num;
+                } else {
+                    this.currentInput = prefix + '(-' + num + ')';
+                }
             } else {
-                this.currentInput = '(-' + this.currentInput + ')';
+                if (this.currentInput.startsWith('(-')) {
+                    this.currentInput = this.currentInput.slice(2, -1);
+                } else {
+                    this.currentInput = '(-' + this.currentInput + ')';
+                }
             }
             this.updateDisplay();
         }
     }
 
+    // --- Angle Mode ---
+
     toggleAngleMode() {
         this.angleMode = this.angleMode === 'DEG' ? 'RAD' : 'DEG';
         this.angleModeDisplay.textContent = this.angleMode;
     }
+
+    // --- Fraction Display ---
 
     toggleFractionDisplay() {
         this.fractionMode = !this.fractionMode;
@@ -963,9 +1121,15 @@ class FloatingCalculator {
     }
 
     decimalToFraction(decimal) {
-        const tolerance = 1.0e-6;
+        if (Number.isInteger(decimal)) return decimal.toString();
+
+        const sign = decimal < 0 ? '-' : '';
+        decimal = Math.abs(decimal);
+
+        const tolerance = 1.0e-8;
         let h1 = 1, h2 = 0, k1 = 0, k2 = 1;
         let b = decimal;
+        let iterations = 0;
 
         do {
             let a = Math.floor(b);
@@ -975,49 +1139,74 @@ class FloatingCalculator {
             aux = k1;
             k1 = a * k1 + k2;
             k2 = aux;
+            if (Math.abs(b - a) < tolerance) break;
             b = 1 / (b - a);
-        } while (Math.abs(decimal - h1 / k1) > decimal * tolerance);
+            iterations++;
+        } while (Math.abs(decimal - h1 / k1) > decimal * tolerance && iterations < 100);
 
         if (k1 === 1) {
-            return h1.toString();
+            return sign + h1.toString();
         }
-        return `${h1}/${k1}`;
+
+        // Show as mixed number if > 1
+        if (h1 > k1) {
+            const whole = Math.floor(h1 / k1);
+            const remainder = h1 % k1;
+            if (remainder === 0) return sign + whole.toString();
+            return `${sign}${whole} ${remainder}/${k1}`;
+        }
+
+        return `${sign}${h1}/${k1}`;
     }
+
+    // --- Memory ---
 
     storeMemory() {
         const value = this.getCurrentValue();
         if (value !== null) {
             this.memory = value;
             this.memoryIndicator.textContent = 'M';
+            this.showMessage('STO → M');
         }
     }
 
     recallMemory() {
-        this.currentInput = this.memory.toString();
+        if (this.waitingForOperand) {
+            this.currentInput = '';
+            this.waitingForOperand = false;
+        }
+        this.currentInput += this.memory.toString();
         this.updateDisplay();
     }
 
+    // --- Expression Evaluation ---
+
     calculate() {
         if (!this.currentInput) return;
-
-        // Check for stat variable access
-        if (this.currentInput.toLowerCase().includes('stat')) {
-            this.handleStatCommand();
-            return;
-        }
 
         try {
             let expression = this.currentInput
                 .replace(/×/g, '*')
                 .replace(/÷/g, '/')
                 .replace(/−/g, '-')
-                .replace(/π/g, Math.PI.toString())
+                .replace(/π/g, `(${Math.PI})`)
                 .replace(/\^/g, '**');
 
+            // Handle EE (scientific notation)
+            expression = expression.replace(/(\d+\.?\d*)E([+\-]?\d+)/g, '($1*Math.pow(10,$2))');
+
+            // Handle nCr/nPr
             expression = this.handleCombinations(expression);
             expression = this.handlePermutations(expression);
+
+            // Handle square root and nth root
             expression = this.handleSquareRoot(expression);
             expression = this.handleNthRoot(expression);
+
+            // Handle implicit multiplication
+            expression = expression.replace(/(\d)\(/g, '$1*(');
+            expression = expression.replace(/\)(\d)/g, ')*$1');
+            expression = expression.replace(/\)\(/g, ')*(');
 
             const result = this.safeEval(expression);
 
@@ -1033,36 +1222,12 @@ class FloatingCalculator {
                 input: this.currentInput,
                 result: result
             });
+            this.historyIndex = -1;
 
             this.waitingForOperand = true;
 
         } catch (error) {
             this.showError('SYNTAX ERROR');
-        }
-    }
-
-    handleStatCommand() {
-        // Parse stat commands like "stat.xmean", "stat.r", etc.
-        const input = this.currentInput.toLowerCase();
-
-        if (input.includes('xmean') || input.includes('x̄')) {
-            this.showStatResult('xMean');
-        } else if (input.includes('ymean') || input.includes('ȳ')) {
-            this.showStatResult('yMean');
-        } else if (input.includes('xstd') || input.includes('σx')) {
-            this.showStatResult('xStd');
-        } else if (input.includes('ystd') || input.includes('σy')) {
-            this.showStatResult('yStd');
-        } else if (input.includes('slope') || input === 'b') {
-            this.showStatResult('slope');
-        } else if (input.includes('intercept') || input === 'a') {
-            this.showStatResult('intercept');
-        } else if (input === 'r' || input.includes('corr')) {
-            this.showStatResult('r');
-        } else if (input === 'r2' || input === 'r²') {
-            this.showStatResult('r2');
-        } else if (input === 'n') {
-            this.showStatResult('n');
         }
     }
 
@@ -1082,23 +1247,39 @@ class FloatingCalculator {
 
     combination(n, r) {
         if (n < r || n < 0 || r < 0) return NaN;
+        n = Math.round(n);
+        r = Math.round(r);
         return this.factorial(n) / (this.factorial(r) * this.factorial(n - r));
     }
 
     permutation(n, r) {
         if (n < r || n < 0 || r < 0) return NaN;
+        n = Math.round(n);
+        r = Math.round(r);
         return this.factorial(n) / this.factorial(n - r);
     }
 
     handleSquareRoot(expression) {
-        return expression.replace(/√(\d+\.?\d*)/g, 'Math.sqrt($1)');
+        return expression.replace(/√\(([^)]+)\)/g, 'Math.sqrt($1)')
+                         .replace(/√(\d+\.?\d*)/g, 'Math.sqrt($1)');
     }
 
     handleNthRoot(expression) {
-        return expression.replace(/(\d+\.?\d*)ⁿ√(\d+\.?\d*)/g, 'Math.pow($2, 1/$1)');
+        return expression.replace(/(\d+\.?\d*)ⁿ√\(([^)]+)\)/g, 'Math.pow($2, 1/$1)')
+                         .replace(/(\d+\.?\d*)ⁿ√(\d+\.?\d*)/g, 'Math.pow($2, 1/$1)');
     }
 
     safeEval(expression) {
+        // Remove Math function calls for validation
+        const stripped = expression
+            .replace(/Math\.(pow|sqrt|PI)/g, '')
+            .replace(/\s/g, '');
+
+        // Check for dangerous patterns
+        if (/[a-df-oq-zA-DF-OQ-Z_$]/.test(stripped)) {
+            throw new Error('Invalid expression');
+        }
+
         try {
             const func = new Function('return ' + expression);
             return func();
@@ -1107,8 +1288,12 @@ class FloatingCalculator {
         }
     }
 
+    // --- Display ---
+
     formatNumber(num) {
-        if (Math.abs(num) < 0.000001 && num !== 0) {
+        if (typeof num !== 'number' || isNaN(num)) return 'ERROR';
+
+        if (Math.abs(num) < 1e-10 && num !== 0) {
             return num.toExponential(6);
         }
         if (Math.abs(num) > 9999999999) {
@@ -1116,7 +1301,13 @@ class FloatingCalculator {
         }
 
         const rounded = Math.round(num * 1e10) / 1e10;
-        return rounded.toString();
+        const str = rounded.toString();
+
+        if (str.replace(/[.\-]/g, '').length > 10) {
+            return num.toPrecision(10);
+        }
+
+        return str;
     }
 
     showError(message) {
@@ -1124,14 +1315,17 @@ class FloatingCalculator {
         this.resultLine.classList.add('error');
         setTimeout(() => {
             this.resultLine.classList.remove('error');
-            this.clear();
+            this.resultLine.textContent = '0';
+            this.currentInput = '';
+            this.waitingForOperand = false;
+            this.updateDisplay();
         }, 2000);
     }
 
     showMessage(message) {
         this.inputLine.textContent = message;
         setTimeout(() => {
-            if (!this.dataEntryMode) {
+            if (!this.dataEntryMode && !this.statVarMode) {
                 this.updateDisplay();
             }
         }, 1500);
@@ -1139,7 +1333,18 @@ class FloatingCalculator {
 
     deleteLastChar() {
         if (this.currentInput.length > 0) {
-            this.currentInput = this.currentInput.slice(0, -1);
+            // Handle multi-char tokens
+            if (this.currentInput.endsWith('nCr')) {
+                this.currentInput = this.currentInput.slice(0, -3);
+            } else if (this.currentInput.endsWith('nPr')) {
+                this.currentInput = this.currentInput.slice(0, -3);
+            } else if (this.currentInput.endsWith('ⁿ√')) {
+                this.currentInput = this.currentInput.slice(0, -2);
+            } else if (this.currentInput.endsWith('(-')) {
+                this.currentInput = this.currentInput.slice(0, -2);
+            } else {
+                this.currentInput = this.currentInput.slice(0, -1);
+            }
             this.updateDisplay();
         }
     }
@@ -1149,6 +1354,9 @@ class FloatingCalculator {
         this.waitingForOperand = false;
         this.dataEntryMode = false;
         this.currentDataVar = 'x';
+        this.menuMode = null;
+        this.statVarMode = false;
+        this.resultLine.textContent = '0';
         this.updateDisplay();
     }
 
@@ -1160,12 +1368,22 @@ class FloatingCalculator {
         this.waitingForOperand = false;
         this.secondFunction = false;
         this.hypMode = false;
+        this.fractionMode = false;
         this.statMode = null;
         this.statData = { x: [], y: [] };
         this.dataEntryMode = false;
         this.currentDataVar = 'x';
+        this.menuMode = null;
+        this.statVarMode = false;
+        this.history = [];
+        this.historyIndex = -1;
         this.memoryIndicator.textContent = '';
+        this.hypIndicator.textContent = '';
+        this.angleModeDisplay.textContent = 'DEG';
+        this.angleMode = 'DEG';
+        this.resultLine.textContent = '0';
         this.updateDisplay();
+        this.updateSecondFunctionIndicator();
     }
 
     updateDisplay() {
@@ -1177,6 +1395,7 @@ class FloatingCalculator {
 
     updateSecondFunctionIndicator() {
         const btn2nd = this.floatingCalc.querySelector('[data-action="2nd"]');
+        if (!btn2nd) return;
         if (this.secondFunction) {
             btn2nd.style.background = 'linear-gradient(145deg, #f39c12, #e67e22)';
         } else {
