@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Mathmatix AI | An Affordable Math Tutor for Every Child</title>
+  <title>Mathmatix AI | A Math Tutor That Actually Knows Your Child</title>
   <meta name="description" content="Mathmatix AI is an intelligent math tutoring platform that provides personalized, one-on-one learning for students of all levels. Affordable, accessible, and effective." />
 
   <!-- SEO Meta Tags -->
@@ -15,7 +15,7 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.mathmatix.ai/" />
-  <meta property="og:title" content="Mathmatix AI | An Affordable Math Tutor for Every Child" />
+  <meta property="og:title" content="Mathmatix AI | A Math Tutor That Actually Knows Your Child" />
   <meta property="og:description" content="Personalized, AI-powered math tutoring that adapts to your child's learning style. Get one-on-one help anytime, anywhere." />
   <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
   <meta property="og:site_name" content="Mathmatix AI" />
@@ -24,7 +24,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://www.mathmatix.ai/" />
-  <meta name="twitter:title" content="Mathmatix AI | An Affordable Math Tutor for Every Child" />
+  <meta name="twitter:title" content="Mathmatix AI | A Math Tutor That Actually Knows Your Child" />
   <meta name="twitter:description" content="Personalized, AI-powered math tutoring that adapts to your child's learning style. Get one-on-one help anytime, anywhere." />
   <meta name="twitter:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
 
@@ -195,7 +195,7 @@
       border-radius: var(--border-radius-base);
     }
 
-    /* Chat mockup */
+    /* Chat mockup — matches actual app styling */
     .lp-hero-preview {
       max-width: 440px;
       margin: 0 auto;
@@ -204,6 +204,7 @@
       box-shadow: 0 8px 40px rgba(18, 179, 179, 0.12), 0 2px 8px rgba(0,0,0,0.06);
       padding: 1.25rem;
       text-align: left;
+      border: 1px solid #e0e0e0;
     }
 
     .lp-preview-header {
@@ -223,47 +224,80 @@
       background: var(--clr-success-green); flex-shrink: 0;
     }
 
-    .lp-chat-messages { min-height: 160px; }
+    .lp-chat-messages {
+      display: flex; flex-direction: column; gap: 10px;
+      min-height: 160px;
+    }
 
-    #lp-chat .lp-chat-bubble {
+    /* Message row: avatar + bubble */
+    .lp-chat-row {
+      display: flex; align-items: flex-end; gap: 8px;
+    }
+
+    .lp-chat-row--student {
+      flex-direction: row-reverse;
+    }
+
+    /* Avatars */
+    .lp-chat-avatar {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid #e0e0e0;
+      background: #fff;
+      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .lp-chat-avatar img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    /* Animation */
+    #lp-chat .lp-chat-row {
       opacity: 0;
       transform: translateY(8px);
       transition: opacity 0.35s ease, transform 0.35s ease;
     }
 
-    #lp-chat .lp-chat-bubble.lp-chat-visible {
+    #lp-chat .lp-chat-row.lp-chat-visible {
       opacity: 1;
       transform: translateY(0);
     }
 
+    /* Bubble base */
     .lp-chat-bubble {
-      padding: 0.65rem 0.9rem;
-      border-radius: 12px;
-      font-size: 0.88rem;
+      padding: 10px 15px;
+      border-radius: 18px;
+      font-size: 0.85rem;
       line-height: 1.5;
-      margin-bottom: 0.6rem;
-      max-width: 88%;
+      max-width: 82%;
     }
 
-    .lp-chat-bubble:last-child { margin-bottom: 0; }
-
+    /* Student bubble — purple gradient (matches app) */
     .lp-chat-student {
-      background: #f0f2f5; color: var(--clr-text);
-      margin-left: auto; border-bottom-right-radius: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      margin-left: auto;
     }
 
+    /* Tutor bubble — light bg with border (matches app) */
     .lp-chat-tutor {
-      background: rgba(18, 179, 179, 0.08); color: var(--clr-text);
+      background: #f5f5f5;
+      color: var(--clr-text);
+      border: 1px solid #e0e0e0;
       border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
     /* Typing indicator */
     .lp-typing {
       display: none; align-items: center; gap: 5px;
-      padding: 0.7rem 0.95rem;
-      background: rgba(18, 179, 179, 0.08);
-      border-radius: 12px; border-bottom-left-radius: 4px;
-      max-width: 56px; margin-bottom: 0.6rem;
+      padding: 10px 15px;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 18px; border-bottom-left-radius: 4px;
+      max-width: 56px; margin-left: 38px;
     }
 
     .lp-typing-dot {
@@ -660,9 +694,9 @@
       box-shadow: var(--shadow-md);
     }
 
-    .lp-testimonial:nth-child(1) { border-top-color: var(--clr-primary-teal); }
-    .lp-testimonial:nth-child(2) { border-top-color: var(--clr-accent-hotpink); }
-    .lp-testimonial:nth-child(3) { border-top-color: var(--clr-warning-gold); }
+    .lp-testimonial:nth-child(2) { border-top-color: var(--clr-primary-teal); }
+    .lp-testimonial:nth-child(3) { border-top-color: var(--clr-accent-hotpink); }
+    .lp-testimonial:nth-child(4) { border-top-color: var(--clr-warning-gold); }
 
     .lp-testimonial-quote {
       font-size: 0.95rem; color: var(--clr-text);
@@ -686,9 +720,14 @@
 
     .lp-testimonial--featured {
       grid-column: 1 / -1;
-      max-width: 700px; justify-self: center;
+      max-width: 780px; justify-self: center;
       border-left: 3px solid var(--clr-primary-teal);
       border-top: none;
+      padding: 1.75rem 2rem;
+    }
+
+    .lp-testimonial--featured .lp-testimonial-quote {
+      font-size: 1.02rem;
     }
 
     /* ── Mission ────────────────────────────────────────────── */
@@ -715,6 +754,31 @@
     .lp-mission p:last-child { margin-bottom: 0; }
 
     .lp-mission-accent { color: var(--clr-primary-teal); font-weight: 600; }
+
+    .lp-mission-founder {
+      font-size: 0.92rem; font-weight: 500; font-style: italic;
+      color: rgba(255, 255, 255, 0.55); margin-top: 0.5rem;
+    }
+
+    /* ── Mid-page CTA links ───────────────────────────────── */
+    .lp-mid-cta {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .lp-mid-cta-link {
+      display: inline-block;
+      font-size: 0.95rem; font-weight: 600;
+      color: var(--clr-primary-teal);
+      text-decoration: none;
+      padding: 0.5rem 0;
+      transition: color 0.2s ease;
+    }
+
+    .lp-mid-cta-link:hover {
+      color: #0E9494;
+      text-decoration: underline;
+    }
 
     /* ── How It Works ───────────────────────────────────────── */
     .lp-steps {
@@ -867,9 +931,6 @@
       .lp-feature-card:nth-child(-n+2) .lp-feature-icon { margin-bottom: 1rem; }
       .lp-compare-grid { grid-template-columns: repeat(3, 1fr); }
       .lp-testimonials-grid { grid-template-columns: repeat(2, 1fr); }
-      .lp-testimonials-grid .lp-testimonial:last-child {
-        grid-column: 1 / -1; max-width: 50%; justify-self: center;
-      }
     }
 
     /* ── Mobile (≤768px) ───────────────────────────────────── */
@@ -974,7 +1035,9 @@
       .lp-testimonial--featured {
         grid-column: auto; max-width: none;
         border-left: none; border-top: 3px solid var(--clr-primary-teal);
+        padding: 1.5rem;
       }
+      .lp-testimonial--featured .lp-testimonial-quote { font-size: 0.95rem; }
 
       /* -- Steps: horizontal layout -- */
       .lp-steps-grid { grid-template-columns: 1fr; gap: 1.25rem; }
@@ -1033,7 +1096,9 @@
       .lp-compare-grid { grid-template-columns: repeat(3, 90vw); }
       .lp-testimonials-grid { grid-template-columns: repeat(4, 88vw); }
 
-      .lp-chat-bubble { font-size: 0.82rem; padding: 0.55rem 0.75rem; }
+      .lp-chat-bubble { font-size: 0.78rem; padding: 8px 12px; }
+      .lp-chat-avatar { width: 24px; height: 24px; }
+      .lp-typing { margin-left: 32px; }
 
       .lp-feature-card { padding: 1rem; }
       .lp-feature-icon { width: 40px; height: 40px; }
@@ -1059,9 +1124,9 @@
     <section class="lp-hero">
       <div class="lp-hero-layout">
         <div class="lp-hero-content">
-          <h1>An Affordable Math Tutor for Every Child</h1>
+          <h1>A Math Tutor That Actually Knows Your Child</h1>
           <p class="lp-hero-sub">
-            Personalized, AI-powered tutoring that adapts to how your student learns &mdash; available anytime, for a fraction of what a private tutor costs.
+            Personalized, AI-powered tutoring that remembers how your student learns, adapts to their level, and is available anytime &mdash; for a fraction of what a private tutor costs.
           </p>
           <div class="lp-hero-buttons">
             <a href="/signup.html" class="btn btn-primary">Get Started</a>
@@ -1072,13 +1137,25 @@
         <div class="lp-hero-preview">
           <div class="lp-preview-header">
             <div class="lp-preview-dot"></div>
-            Mathmatix AI Tutor
+            Ms. Maria &mdash; Mathmatix AI Tutor
           </div>
           <div class="lp-chat-messages" id="lp-chat">
-            <div class="lp-chat-bubble lp-chat-student">How do I add ⅓ + ¼?</div>
-            <div class="lp-chat-bubble lp-chat-tutor">Great question! Let's figure it out together. First &mdash; can you think of a number that both 3 and 4 divide into evenly?</div>
-            <div class="lp-chat-bubble lp-chat-student">12?</div>
-            <div class="lp-chat-bubble lp-chat-tutor">That's it! Now we can rewrite both fractions with 12 as the denominator. What would ⅓ become?</div>
+            <div class="lp-chat-row lp-chat-row--student">
+              <div class="lp-chat-avatar"><img src="/images/avatars/astronaut.png" alt="Student" /></div>
+              <div class="lp-chat-bubble lp-chat-student">How do I add ⅓ + ¼?</div>
+            </div>
+            <div class="lp-chat-row">
+              <div class="lp-chat-avatar"><img src="/images/tutor_avatars/ms-maria.png" alt="Ms. Maria" /></div>
+              <div class="lp-chat-bubble lp-chat-tutor">Great question! Let's figure it out together. First &mdash; can you think of a number that both 3 and 4 divide into evenly?</div>
+            </div>
+            <div class="lp-chat-row lp-chat-row--student">
+              <div class="lp-chat-avatar"><img src="/images/avatars/astronaut.png" alt="Student" /></div>
+              <div class="lp-chat-bubble lp-chat-student">12?</div>
+            </div>
+            <div class="lp-chat-row">
+              <div class="lp-chat-avatar"><img src="/images/tutor_avatars/ms-maria.png" alt="Ms. Maria" /></div>
+              <div class="lp-chat-bubble lp-chat-tutor">That's it! Now we can rewrite both fractions with 12 as the denominator. What would ⅓ become?</div>
+            </div>
           </div>
           <div class="lp-typing" id="lp-typing">
             <div class="lp-typing-dot"></div>
@@ -1136,6 +1213,9 @@
             <h3>Progress Dashboards</h3>
             <p>Parents and teachers see exactly where students are excelling and where they need support.</p>
           </div>
+        </div>
+        <div class="lp-mid-cta">
+          <a href="/signup.html" class="lp-mid-cta-link">Try it free &rarr;</a>
         </div>
       </div>
     </section>
@@ -1270,6 +1350,24 @@
             </div>
           </div>
         </div>
+
+        <div class="lp-mid-cta">
+          <a href="/signup.html" class="lp-mid-cta-link">Get started free &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Mission ──────────────────────────────────────── -->
+    <section class="lp-mission lp-reveal">
+      <div class="lp-mission-inner">
+        <h2>Why I Built This</h2>
+        <p>
+          As a math teacher, I watched some students thrive because they had support at home and access to private tutoring. Others &mdash; just as bright, just as capable &mdash; fell behind simply because their families couldn't afford the same resources.
+        </p>
+        <p>
+          <span class="lp-mission-accent">Mathmatix AI exists to close that gap.</span> Every child deserves a patient, personal tutor. Now they can have one.
+        </p>
+        <p class="lp-mission-founder">&mdash; Jason Nappier, Math Teacher &amp; Founder</p>
       </div>
     </section>
 
@@ -1292,9 +1390,9 @@
             </ul>
           </div>
           <div class="lp-compare-card lp-compare-card--highlight">
-            <div class="lp-compare-badge">Built Different</div>
+            <div class="lp-compare-badge">Best Value</div>
             <h3>Mathmatix AI</h3>
-            <div class="lp-compare-price">Affordable<span>/mo</span></div>
+            <div class="lp-compare-price">A fraction of the cost</div>
             <ul>
               <li class="lp-compare-yes"><i class="fas fa-check"></i> Deeply personalized over time</li>
               <li class="lp-compare-yes"><i class="fas fa-check"></i> Available 24/7</li>
@@ -1326,8 +1424,13 @@
         <h2 class="lp-section-heading">What People Are Saying</h2>
         <p class="lp-section-sub">Students, parents, and teachers using Mathmatix AI every day.</p>
         <div class="lp-testimonials-grid lp-stagger">
+          <div class="lp-testimonial lp-testimonial--featured">
+            <p class="lp-testimonial-quote">I've never been good at math. For years, that &ldquo;math anxiety&rdquo; made helping with my daughter's homework one of the most stressful parts of my day. I hated feeling like I couldn't support her. But now with Mathmatix, I can hop on for a five-minute refresher and walk to the kitchen table feeling at the top of my game. It's turned a point of stress into a point of connection for us.</p>
+            <div class="lp-testimonial-author">Keenan</div>
+            <div class="lp-testimonial-role">Parent</div>
+          </div>
           <div class="lp-testimonial">
-            <p class="lp-testimonial-quote">It's really helpful.</p>
+            <p class="lp-testimonial-quote">I like it. My favorite part is how fast it replies and how it goes into detail about the different steps for solving the equation.</p>
             <div class="lp-testimonial-author">Ryley</div>
             <div class="lp-testimonial-role">Student</div>
           </div>
@@ -1341,25 +1444,7 @@
             <div class="lp-testimonial-author">Mrs. Hodges</div>
             <div class="lp-testimonial-role">6th Grade Teacher</div>
           </div>
-          <div class="lp-testimonial lp-testimonial--featured">
-            <p class="lp-testimonial-quote">I've never been good at math. For years, that "math anxiety" made helping with my daughter's homework one of the most stressful parts of my day. I hated feeling like I couldn't support her. But now with Mathmatix, I can hop on for a five-minute refresher and walk to the kitchen table feeling at the top of my game. It's turned a point of stress into a point of connection for us.</p>
-            <div class="lp-testimonial-author">Keenan</div>
-            <div class="lp-testimonial-role">Parent</div>
-          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- ── Mission ──────────────────────────────────────── -->
-    <section class="lp-mission lp-reveal">
-      <div class="lp-mission-inner">
-        <h2>Why We Built This</h2>
-        <p>
-          As a math teacher, I watched some students thrive because they had support at home and access to private tutoring. Others &mdash; just as bright, just as capable &mdash; fell behind simply because their families couldn't afford the same resources.
-        </p>
-        <p>
-          <span class="lp-mission-accent">Mathmatix AI exists to close that gap.</span> Every child deserves a patient, personal tutor. Now they can have one.
-        </p>
       </div>
     </section>
 
@@ -1506,24 +1591,24 @@
       var typingEl = document.getElementById('lp-typing');
 
       if (chatContainer && typingEl) {
-        var bubbles = chatContainer.querySelectorAll('.lp-chat-bubble');
+        var rows = chatContainer.querySelectorAll('.lp-chat-row');
         var idx = 0;
 
         function showNextBubble() {
-          if (idx >= bubbles.length) return;
-          var bubble = bubbles[idx];
-          var isTutor = bubble.classList.contains('lp-chat-tutor');
+          if (idx >= rows.length) return;
+          var row = rows[idx];
+          var isTutor = !row.classList.contains('lp-chat-row--student');
 
           if (isTutor) {
             typingEl.style.display = 'flex';
             setTimeout(function () {
               typingEl.style.display = 'none';
-              bubble.classList.add('lp-chat-visible');
+              row.classList.add('lp-chat-visible');
               idx++;
               setTimeout(showNextBubble, 900);
             }, 1100);
           } else {
-            bubble.classList.add('lp-chat-visible');
+            row.classList.add('lp-chat-visible');
             idx++;
             setTimeout(showNextBubble, 800);
           }
