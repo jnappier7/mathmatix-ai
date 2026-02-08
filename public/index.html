@@ -1321,7 +1321,7 @@
         <div class="lp-testimonials-grid lp-stagger">
           <div class="lp-testimonial">
             <p class="lp-testimonial-quote">It's really helpful.</p>
-            <div class="lp-testimonial-author">William</div>
+            <div class="lp-testimonial-author">Ryley</div>
             <div class="lp-testimonial-role">Student</div>
           </div>
           <div class="lp-testimonial">
@@ -1482,6 +1482,9 @@
           entries.forEach(function (entry) {
             if (entry.isIntersecting) {
               entry.target.classList.add('lp-visible');
+              /* Also reveal any stagger grids inside this section */
+              var staggers = entry.target.querySelectorAll('.lp-stagger');
+              staggers.forEach(function (s) { s.classList.add('lp-visible'); });
               revealObs.unobserve(entry.target);
             }
           });
