@@ -60,6 +60,37 @@ setInterval(() => {
 }, 10 * 60 * 1000);
 
 /**
+ * Extract a student's answer from their chat message.
+ * Returns the answer value as a string, or null if the message doesn't look like an answer.
+ * Handles: "7", "-3", "x = 7", "3/4", "the answer is 7", "I got 3.5", etc.
+ */
+function extractStudentAnswer(message) {
+    const text = message.trim();
+
+    // Skip long messages - answers are short
+    if (text.length > 100) return null;
+
+    // Pattern: "x = 7" or "y = -3.5" (variable assignment)
+    const varAssignment = text.match(/^[a-z]\s*=\s*(-?\d+\.?\d*(?:\/\d+)?)/i);
+    if (varAssignment) return varAssignment[1];
+
+    // Pattern: just a number "-7", "3.5", "42"
+    const justNumber = text.match(/^(-?\d+\.?\d*)$/);
+    if (justNumber) return justNumber[1];
+
+    // Pattern: a fraction "3/4" or "-1/2"
+    const fraction = text.match(/^(-?\d+\s*\/\s*\d+)$/);
+    if (fraction) return fraction[1].replace(/\s/g, '');
+
+    // Pattern: number embedded in short answer phrase
+    // "the answer is 7", "I got 3.5", "it's -2", "equals 7", "i think 5", "its 12"
+    const answerPhrase = text.match(/(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i);
+    if (answerPhrase) return answerPhrase[1].replace(/\s/g, '');
+
+    return null;
+}
+
+/**
  * Update daily quests and weekly challenges when a problem is answered
  * This runs in the background and doesn't block the chat response
  * @param {ObjectId} userId - The user's ID
@@ -549,6 +580,39 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             }
 
             console.log(`✅ [Math Verification] Injected verified answer: ${mathResult.solution.answer} (${mathResult.problem.type})`);
+        }
+
+        // ANSWER PRE-CHECK: When student submits a short answer, verify it against the last problem
+        // This prevents the AI from saying "almost there" or "let's check" when the student is actually correct
+        if (!mathVerificationContext) {
+            const studentAnswer = extractStudentAnswer(message);
+            if (studentAnswer !== null) {
+                // Look back through recent AI messages to find the problem that was posed
+                const recentAIMessages = formattedMessagesForLLM
+                    .filter(msg => msg.role === 'assistant')
+                    .slice(-3);
+
+                for (let i = recentAIMessages.length - 1; i >= 0; i--) {
+                    const problemResult = processMathMessage(recentAIMessages[i].content);
+                    if (problemResult.hasMath && problemResult.solution?.success) {
+                        const verification = verifyAnswer(studentAnswer, problemResult.solution.answer);
+                        const isCorrect = verification.isCorrect;
+
+                        // Inject definitive correctness signal into the student's message
+                        const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+                        if (lastMessage.role === 'user') {
+                            if (isCorrect) {
+                                lastMessage.content += `\n\n[ANSWER_PRE_CHECK: VERIFIED CORRECT. The student's answer "${studentAnswer}" matches the correct answer "${problemResult.solution.answer}". Confirm they are correct immediately. Do NOT say "let's check", "almost", "not quite", or imply any doubt.]`;
+                            } else {
+                                lastMessage.content += `\n\n[ANSWER_PRE_CHECK: VERIFIED INCORRECT. The student answered "${studentAnswer}" but the correct answer is "${problemResult.solution.answer}". Guide them toward the correct answer using Socratic method.]`;
+                            }
+                        }
+
+                        console.log(`🔍 [Answer Pre-Check] Student: "${studentAnswer}", Correct: "${problemResult.solution.answer}", Result: ${isCorrect ? 'CORRECT' : 'INCORRECT'}`);
+                        break;
+                    }
+                }
+            }
         }
 
         // Pass mastery mode context if student has an active badge
