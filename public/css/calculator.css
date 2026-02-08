@@ -414,24 +414,88 @@ body.standalone-calculator-page {
 
 /* Display animations */
 @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
 }
 
 .calculator .cursor,
 .floating-calculator .cursor {
     display: inline-block;
-    width: 8px;
+    width: 2px;
     height: 16px;
     background: #000;
     animation: blink 1s infinite;
-    margin-left: 2px;
+    margin: 0 1px;
+    vertical-align: middle;
+}
+
+/* Ans variable styling */
+.mp-ans {
+    font-style: italic;
+    font-weight: bold;
+    color: #1a5f2a;
 }
 
 /* Error state - scope to calculator only */
 .calculator .error,
 .floating-calculator .error {
     color: #e74c3c !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Copy toast */
+.copy-toast {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+.copy-toast.visible {
+    opacity: 1;
+}
+
+/* Result line copy cursor */
+.result-line {
+    transition: background-color 0.15s ease;
+}
+
+.calculator .result-line:hover,
+.floating-calculator .result-line:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+}
+
+/* Enter button validation dimming */
+.calculator .btn-enter,
+.floating-calculator .btn-enter,
+.floating-calculator .calc-btn.btn-enter {
+    transition: opacity 0.2s ease, background 0.15s ease;
+}
+
+/* Mobile touch improvements */
+.calculator,
+.floating-calculator {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.calculator .btn,
+.floating-calculator .btn,
+.floating-calculator .calc-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 /* Responsive design */
@@ -446,7 +510,20 @@ body.standalone-calculator-page {
     .calculator .btn,
     .floating-calculator .btn {
         padding: 10px 2px;
+        min-height: 44px; /* iOS minimum touch target */
+    }
+}
+
+@media (max-width: 360px) {
+    .calculator .btn,
+    .floating-calculator .calc-btn {
+        font-size: 9px;
         min-height: 40px;
+    }
+
+    .calculator .btn .secondary,
+    .floating-calculator .calc-btn .secondary {
+        font-size: 6px;
     }
 }
 

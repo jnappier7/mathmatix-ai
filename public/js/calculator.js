@@ -1,4 +1,7 @@
-// TI-30XS MultiView Calculator Implementation
+// TI-30XS MultiView Calculator - Enhanced Implementation
+// Features: Cursor editing, ANS variable, keyboard input, table, error handling,
+// mobile touch, expression validation, memory registers, copy/paste
+
 class TI30XSMultiView {
     constructor() {
         // Display elements
@@ -9,21 +12,26 @@ class TI30XSMultiView {
         this.hypIndicator = document.getElementById('hyp-indicator');
         this.memoryIndicator = document.getElementById('memory-indicator');
         this.secondIndicator = document.getElementById('2nd-indicator');
+        this.enterBtn = document.querySelector('[data-action="enter"]');
 
         // Calculator state
         this.currentInput = '';
+        this.cursorPos = 0;
         this.result = 0;
         this.memory = 0;
+        this.ans = 0;
         this.angleMode = 'DEG';
         this.secondFunction = false;
         this.hypMode = false;
         this.fractionMode = false;
-        this.statMode = null;
-        this.statData = { x: [], y: [] };
         this.lastResult = 0;
         this.waitingForOperand = false;
         this.history = [];
         this.historyIndex = -1;
+
+        // Statistics state
+        this.statMode = null;
+        this.statData = { x: [], y: [] };
         this.dataEntryMode = false;
         this.currentDataVar = 'x';
         this.menuMode = null;
@@ -32,9 +40,83 @@ class TI30XSMultiView {
         this.statVarIndex = 0;
         this.statVars = ['n', 'x̄', 'Σx', 'Σx²', 'σx', 'ȳ', 'Σy', 'Σy²', 'σy', 'Σxy', 'r', 'a', 'b'];
 
+        // Memory registers (x1-x7)
+        this.memoryRegisters = {};
+        for (let i = 1; i <= 7; i++) this.memoryRegisters['x' + i] = 0;
+        this.stoMode = false;
+        this.rclMode = false;
+        this.memRegCursor = 0;
+
+        // Table mode
+        this.tableMode = null; // null, 'expr', 'start', 'end', 'step', 'view'
+        this.tableExpression = '';
+        this.tableStart = 0;
+        this.tableEnd = 10;
+        this.tableStep = 1;
+        this.tableResults = [];
+        this.tableScrollIndex = 0;
+
+        // Expression validation
+        this.expressionValid = true;
+
+        // Copy toast
+        this.copyToast = null;
+        this.createCopyToast();
+
         this.initializeEventListeners();
+        this.setupCopyPaste();
+        this.setupMobileTouch();
         this.updateDisplay();
     }
+
+    // ==================== CURSOR MANAGEMENT ====================
+
+    insertAtCursor(text) {
+        this.currentInput = this.currentInput.slice(0, this.cursorPos) + text + this.currentInput.slice(this.cursorPos);
+        this.cursorPos += text.length;
+    }
+
+    deleteAtCursor() {
+        if (this.cursorPos <= 0) return;
+        const before = this.currentInput.substring(0, this.cursorPos);
+        let len = 1;
+        if (before.endsWith('▸n/d◂')) len = 5;
+        else if (before.endsWith('nCr')) len = 3;
+        else if (before.endsWith('nPr')) len = 3;
+        else if (before.endsWith('Ans')) len = 3;
+        else if (before.endsWith('ⁿ√')) len = 2;
+        else if (before.endsWith('(-')) len = 2;
+        this.currentInput = this.currentInput.slice(0, this.cursorPos - len) + this.currentInput.slice(this.cursorPos);
+        this.cursorPos -= len;
+    }
+
+    moveCursorLeft() {
+        if (this.cursorPos <= 0) return;
+        const before = this.currentInput.substring(0, this.cursorPos);
+        let len = 1;
+        if (before.endsWith('▸n/d◂')) len = 5;
+        else if (before.endsWith('nCr')) len = 3;
+        else if (before.endsWith('nPr')) len = 3;
+        else if (before.endsWith('Ans')) len = 3;
+        else if (before.endsWith('ⁿ√')) len = 2;
+        else if (before.endsWith('(-')) len = 2;
+        this.cursorPos = Math.max(0, this.cursorPos - len);
+    }
+
+    moveCursorRight() {
+        if (this.cursorPos >= this.currentInput.length) return;
+        const after = this.currentInput.substring(this.cursorPos);
+        let len = 1;
+        if (after.startsWith('▸n/d◂')) len = 5;
+        else if (after.startsWith('nCr')) len = 3;
+        else if (after.startsWith('nPr')) len = 3;
+        else if (after.startsWith('Ans')) len = 3;
+        else if (after.startsWith('ⁿ√')) len = 2;
+        else if (after.startsWith('(-')) len = 2;
+        this.cursorPos = Math.min(this.currentInput.length, this.cursorPos + len);
+    }
+
+    // ==================== EVENT LISTENERS ====================
 
     initializeEventListeners() {
         document.querySelectorAll('[data-num]').forEach(btn => {
@@ -55,24 +137,53 @@ class TI30XSMultiView {
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
     }
 
-    // --- Input Handlers ---
+    // ==================== INPUT HANDLERS ====================
 
     handleNumber(num) {
+        // Memory/RCL register selection via number
+        if (this.stoMode || this.rclMode) {
+            const regNum = parseInt(num);
+            if (regNum >= 1 && regNum <= 7) {
+                this.selectMemoryRegister(regNum);
+            }
+            return;
+        }
+
+        if (this.tableMode === 'expr') {
+            this.tableExpression += num;
+            this.renderTableSetup();
+            return;
+        }
+        if (this.tableMode === 'start' || this.tableMode === 'end' || this.tableMode === 'step') {
+            this.currentInput += num;
+            this.renderTableSetup();
+            return;
+        }
+
         if (this.dataEntryMode) {
             this.currentInput += num;
+            this.cursorPos = this.currentInput.length;
             this.updateDisplay();
             return;
         }
+
         if (this.waitingForOperand) {
             this.currentInput = '';
+            this.cursorPos = 0;
             this.waitingForOperand = false;
         }
-        this.currentInput += num;
+        this.insertAtCursor(num);
         this.updateDisplay();
         this.secondFunction = false;
     }
 
     handleOperator(op) {
+        if (this.tableMode === 'expr') {
+            this.tableExpression += op;
+            this.renderTableSetup();
+            return;
+        }
+
         const displayMap = {
             '+': '+', '-': '−', '−': '−',
             '×': '×', '÷': '÷', '*': '×', '/': '÷'
@@ -80,15 +191,18 @@ class TI30XSMultiView {
         const displayOp = displayMap[op] || op;
 
         if (this.waitingForOperand) {
-            // Chain from previous result
-            this.currentInput = this.formatNumber(this.lastResult) + displayOp;
+            // Chain from previous result using Ans
+            this.currentInput = 'Ans' + displayOp;
+            this.cursorPos = this.currentInput.length;
             this.waitingForOperand = false;
         } else if (this.currentInput) {
-            const lastChar = this.currentInput.slice(-1);
-            if (['+', '−', '×', '÷'].includes(lastChar)) {
-                this.currentInput = this.currentInput.slice(0, -1) + displayOp;
+            // Check char before cursor for operator replacement
+            const charBefore = this.cursorPos > 0 ? this.currentInput[this.cursorPos - 1] : '';
+            if (['+', '−', '×', '÷'].includes(charBefore)) {
+                // Replace operator before cursor
+                this.currentInput = this.currentInput.slice(0, this.cursorPos - 1) + displayOp + this.currentInput.slice(this.cursorPos);
             } else {
-                this.currentInput += displayOp;
+                this.insertAtCursor(displayOp);
             }
         }
         this.updateDisplay();
@@ -96,6 +210,39 @@ class TI30XSMultiView {
     }
 
     handleFunction(fn) {
+        // If in table expression entry
+        if (this.tableMode === 'expr') {
+            const tableInserts = {
+                'pi': 'π', 'power': '^', 'square': 'x²', 'sqrt': '√(',
+                'lparen': '(', 'rparen': ')', 'decimal': '.', 'negative': '(-'
+            };
+            if (fn === 'negative') {
+                this.tableExpression += '(-';
+            } else if (tableInserts[fn]) {
+                this.tableExpression += tableInserts[fn];
+            } else if (fn === 'sin' || fn === 'cos' || fn === 'tan') {
+                this.tableExpression += fn + '(';
+            }
+            this.renderTableSetup();
+            return;
+        }
+
+        // Table mode start/end/step numeric entry
+        if (this.tableMode === 'start' || this.tableMode === 'end' || this.tableMode === 'step') {
+            if (fn === 'decimal') {
+                if (!this.currentInput.includes('.')) this.currentInput += this.currentInput === '' ? '0.' : '.';
+                this.renderTableSetup();
+                return;
+            }
+            if (fn === 'negative') {
+                if (this.currentInput.startsWith('-')) this.currentInput = this.currentInput.slice(1);
+                else this.currentInput = '-' + this.currentInput;
+                this.renderTableSetup();
+                return;
+            }
+            return;
+        }
+
         switch(fn) {
             case 'sin': this.applyTrigFunction(this.hypMode ? 'sinh' : 'sin'); break;
             case 'cos': this.applyTrigFunction(this.hypMode ? 'cosh' : 'cos'); break;
@@ -111,17 +258,18 @@ class TI30XSMultiView {
             case 'sqrt': this.applyFunction('sqrt'); break;
             case 'power':
                 if (this.waitingForOperand) {
-                    this.currentInput = this.formatNumber(this.lastResult) + '^';
+                    this.currentInput = 'Ans^';
+                    this.cursorPos = this.currentInput.length;
                     this.waitingForOperand = false;
-                } else { this.currentInput += '^'; }
+                } else { this.insertAtCursor('^'); }
                 this.updateDisplay(); break;
             case 'nthroot':
-                this.currentInput += 'ⁿ√';
+                this.insertAtCursor('ⁿ√');
                 this.updateDisplay(); break;
             case 'reciprocal': this.applyFunction('reciprocal'); break;
             case 'pi':
-                if (this.waitingForOperand) { this.currentInput = ''; this.waitingForOperand = false; }
-                this.currentInput += 'π';
+                if (this.waitingForOperand) { this.currentInput = ''; this.cursorPos = 0; this.waitingForOperand = false; }
+                this.insertAtCursor('π');
                 this.updateDisplay(); break;
             case 'hyp':
                 this.hypMode = !this.hypMode;
@@ -129,35 +277,38 @@ class TI30XSMultiView {
                 break;
             case 'ee':
                 if (this.waitingForOperand) {
-                    this.currentInput = this.formatNumber(this.lastResult) + 'E';
+                    this.currentInput = 'AnsE';
+                    this.cursorPos = this.currentInput.length;
                     this.waitingForOperand = false;
-                } else if (this.currentInput) { this.currentInput += 'E'; }
-                else { this.currentInput = '1E'; }
+                } else if (this.currentInput) { this.insertAtCursor('E'); }
+                else { this.currentInput = '1E'; this.cursorPos = 2; }
                 this.updateDisplay(); break;
             case 'lparen':
-                if (this.waitingForOperand) { this.currentInput = ''; this.waitingForOperand = false; }
-                this.currentInput += '(';
+                if (this.waitingForOperand) { this.currentInput = ''; this.cursorPos = 0; this.waitingForOperand = false; }
+                this.insertAtCursor('(');
                 this.updateDisplay(); break;
             case 'rparen':
-                this.currentInput += ')';
+                this.insertAtCursor(')');
                 this.updateDisplay(); break;
             case 'prb': case 'prn':
                 if (this.waitingForOperand) {
-                    this.currentInput = this.formatNumber(this.lastResult) + 'nCr';
+                    this.currentInput = 'AnsnCr';
+                    this.cursorPos = this.currentInput.length;
                     this.waitingForOperand = false;
-                } else { this.currentInput += 'nCr'; }
+                } else { this.insertAtCursor('nCr'); }
                 this.updateDisplay(); break;
             case 'nPr':
                 if (this.waitingForOperand) {
-                    this.currentInput = this.formatNumber(this.lastResult) + 'nPr';
+                    this.currentInput = 'AnsnPr';
+                    this.cursorPos = this.currentInput.length;
                     this.waitingForOperand = false;
-                } else { this.currentInput += 'nPr'; }
+                } else { this.insertAtCursor('nPr'); }
                 this.updateDisplay(); break;
             case 'nd':
-                this.currentInput += '▸n/d◂';
+                this.insertAtCursor('▸n/d◂');
                 this.updateDisplay(); break;
             case 'abc':
-                this.currentInput += '_';
+                this.insertAtCursor('_');
                 this.updateDisplay(); break;
             case 'fd': case 'ud': case 'dec': case 'toggle':
                 this.toggleFractionDisplay(); break;
@@ -168,10 +319,16 @@ class TI30XSMultiView {
             case 'rcl': this.recallMemory(); break;
             case 'percent': this.applyFunction('percent'); break;
             case 'comma':
-                this.currentInput += ',';
+                this.insertAtCursor(',');
                 this.updateDisplay(); break;
             case 'polar': this.applyFunction('dms'); break;
             case 'abs': this.applyFunction('abs'); break;
+            case 'ans':
+                if (this.waitingForOperand) { this.currentInput = ''; this.cursorPos = 0; this.waitingForOperand = false; }
+                this.insertAtCursor('Ans');
+                this.updateDisplay(); break;
+            case 'table':
+                this.openTable(); break;
         }
         if (fn !== 'hyp') this.secondFunction = false;
     }
@@ -181,7 +338,14 @@ class TI30XSMultiView {
             case '2nd':
                 this.secondFunction = !this.secondFunction;
                 this.updateSecondFunctionIndicator(); break;
-            case 'mode': this.toggleAngleMode(); break;
+            case 'mode':
+                if (this.secondFunction) {
+                    this.toggleSciEngMode();
+                    this.secondFunction = false;
+                } else {
+                    this.toggleAngleMode();
+                }
+                break;
             case 'stat':
                 if (this.secondFunction) this.showStatMenu();
                 else this.cycleStatMode();
@@ -198,82 +362,275 @@ class TI30XSMultiView {
             case 'arrow-down': this.handleArrowDown(); break;
             case 'arrow-left': this.handleArrowLeft(); break;
             case 'arrow-right': this.handleArrowRight(); break;
-            case 'del': this.deleteLastChar(); break;
-            case 'clear': this.clear(); break;
-            case 'enter':
-                if (this.menuMode) this.selectMenuItem();
-                else if (this.dataEntryMode) this.addDataPoint();
-                else if (this.statVarMode) this.displayStatVar();
-                else this.calculate();
+            case 'del':
+                if (this.secondFunction) {
+                    // INS mode - move cursor without deleting
+                    this.secondFunction = false;
+                } else {
+                    this.deleteAtCursor();
+                    this.updateDisplay();
+                }
                 break;
+            case 'clear':
+                if (this.tableMode) { this.closeTable(); }
+                else if (this.stoMode || this.rclMode) { this.stoMode = false; this.rclMode = false; this.updateDisplay(); }
+                else { this.clear(); }
+                break;
+            case 'enter':
+                this.handleEnter(); break;
             case 'on': this.reset(); break;
         }
     }
 
+    handleEnter() {
+        if (this.stoMode || this.rclMode) {
+            this.selectMemoryRegister(this.memRegCursor + 1);
+            return;
+        }
+        if (this.tableMode === 'expr') {
+            if (this.tableExpression) {
+                this.tableMode = 'start';
+                this.currentInput = String(this.tableStart);
+                this.renderTableSetup();
+            }
+            return;
+        }
+        if (this.tableMode === 'start') {
+            this.tableStart = parseFloat(this.currentInput) || 0;
+            this.tableMode = 'end';
+            this.currentInput = String(this.tableEnd);
+            this.renderTableSetup();
+            return;
+        }
+        if (this.tableMode === 'end') {
+            this.tableEnd = parseFloat(this.currentInput) || 10;
+            this.tableMode = 'step';
+            this.currentInput = String(this.tableStep);
+            this.renderTableSetup();
+            return;
+        }
+        if (this.tableMode === 'step') {
+            this.tableStep = parseFloat(this.currentInput) || 1;
+            if (this.tableStep === 0) this.tableStep = 1;
+            this.evaluateTable();
+            return;
+        }
+        if (this.tableMode === 'view') {
+            this.closeTable();
+            return;
+        }
+        if (this.menuMode) this.selectMenuItem();
+        else if (this.dataEntryMode) this.addDataPoint();
+        else if (this.statVarMode) this.displayStatVar();
+        else this.calculate();
+    }
+
     handleKeyboard(e) {
         const key = e.key;
-        if (key >= '0' && key <= '9') { this.handleNumber(key); e.preventDefault(); }
+
+        // Ctrl/Cmd shortcuts
+        if (e.ctrlKey || e.metaKey) {
+            if (key === 'c') { this.copyResult(); return; }
+            if (key === 'v') { /* paste handled by setupCopyPaste */ return; }
+            return; // Don't intercept other ctrl shortcuts
+        }
+
+        // Numbers
+        if (key >= '0' && key <= '9') {
+            this.handleNumber(key);
+            e.preventDefault();
+            return;
+        }
+
+        // Operators
         const opMap = { '+': '+', '-': '−', '*': '×', '/': '÷' };
-        if (opMap[key]) { this.handleOperator(opMap[key]); e.preventDefault(); }
+        if (opMap[key]) {
+            this.handleOperator(opMap[key]);
+            e.preventDefault();
+            return;
+        }
+
         switch(key) {
             case 'Enter':
-                if (this.menuMode) this.selectMenuItem();
-                else if (this.dataEntryMode) this.addDataPoint();
-                else if (this.statVarMode) this.displayStatVar();
-                else this.calculate();
+                this.handleEnter();
                 e.preventDefault(); break;
-            case 'Escape': this.clear(); e.preventDefault(); break;
-            case 'Backspace': this.deleteLastChar(); e.preventDefault(); break;
-            case '.': this.handleDecimal(); e.preventDefault(); break;
-            case '(': this.handleFunction('lparen'); e.preventDefault(); break;
-            case ')': this.handleFunction('rparen'); e.preventDefault(); break;
-            case '^': this.handleFunction('power'); e.preventDefault(); break;
-            case '!': this.handleFunction('factorial'); e.preventDefault(); break;
-            case 'ArrowUp': this.handleArrowUp(); e.preventDefault(); break;
-            case 'ArrowDown': this.handleArrowDown(); e.preventDefault(); break;
-            case 'ArrowLeft': this.handleArrowLeft(); e.preventDefault(); break;
-            case 'ArrowRight': this.handleArrowRight(); e.preventDefault(); break;
+            case 'Escape':
+                if (this.tableMode) this.closeTable();
+                else if (this.stoMode || this.rclMode) { this.stoMode = false; this.rclMode = false; this.updateDisplay(); }
+                else this.clear();
+                e.preventDefault(); break;
+            case 'Backspace':
+                if (this.tableMode === 'expr') {
+                    this.tableExpression = this.tableExpression.slice(0, -1);
+                    this.renderTableSetup();
+                } else if (this.tableMode === 'start' || this.tableMode === 'end' || this.tableMode === 'step') {
+                    this.currentInput = this.currentInput.slice(0, -1);
+                    this.renderTableSetup();
+                } else {
+                    this.deleteAtCursor();
+                    this.updateDisplay();
+                }
+                e.preventDefault(); break;
+            case 'Delete':
+                // Forward delete
+                if (this.cursorPos < this.currentInput.length) {
+                    this.moveCursorRight();
+                    this.deleteAtCursor();
+                    this.updateDisplay();
+                }
+                e.preventDefault(); break;
+            case '.':
+                this.handleDecimal();
+                e.preventDefault(); break;
+            case '(':
+                this.handleFunction('lparen');
+                e.preventDefault(); break;
+            case ')':
+                this.handleFunction('rparen');
+                e.preventDefault(); break;
+            case '^':
+                this.handleFunction('power');
+                e.preventDefault(); break;
+            case '!':
+                this.handleFunction('factorial');
+                e.preventDefault(); break;
+            case 'p':
+                this.handleFunction('pi');
+                e.preventDefault(); break;
+            case 'a':
+                this.handleFunction('ans');
+                e.preventDefault(); break;
+            case 'x':
+                // In table mode, insert x variable
+                if (this.tableMode === 'expr') {
+                    this.tableExpression += 'x';
+                    this.renderTableSetup();
+                    e.preventDefault();
+                }
+                break;
+            case 't':
+                // Open table if no input
+                if (!this.currentInput && !this.tableMode) {
+                    this.openTable();
+                    e.preventDefault();
+                }
+                break;
+            case 'Tab':
+                this.secondFunction = !this.secondFunction;
+                this.updateSecondFunctionIndicator();
+                e.preventDefault(); break;
+            case 'Home':
+                this.cursorPos = 0;
+                this.updateDisplay();
+                e.preventDefault(); break;
+            case 'End':
+                this.cursorPos = this.currentInput.length;
+                this.updateDisplay();
+                e.preventDefault(); break;
+            case 'ArrowUp':
+                this.handleArrowUp();
+                e.preventDefault(); break;
+            case 'ArrowDown':
+                this.handleArrowDown();
+                e.preventDefault(); break;
+            case 'ArrowLeft':
+                this.handleArrowLeft();
+                e.preventDefault(); break;
+            case 'ArrowRight':
+                this.handleArrowRight();
+                e.preventDefault(); break;
         }
     }
 
-    // --- Arrow Keys ---
+    // ==================== ARROW KEYS ====================
 
     handleArrowUp() {
+        if (this.tableMode === 'view') {
+            this.tableScrollIndex = Math.max(0, this.tableScrollIndex - 1);
+            this.renderTableView();
+            return;
+        }
+        if (this.stoMode || this.rclMode) {
+            this.memRegCursor = Math.max(0, this.memRegCursor - 1);
+            this.renderMemorySelection();
+            return;
+        }
+        if (this.menuMode) {
+            this.menuCursor = Math.max(0, this.menuCursor - 1);
+            if (this.menuMode === 'STAT') this.showStatMenu();
+            return;
+        }
         if (this.history.length > 0) {
             if (this.historyIndex < 0) this.historyIndex = this.history.length;
             this.historyIndex = Math.max(0, this.historyIndex - 1);
             this.currentInput = this.history[this.historyIndex].input;
+            this.cursorPos = this.currentInput.length;
             this.updateDisplay();
         }
     }
 
     handleArrowDown() {
-        if (this.dataEntryMode && this.currentInput) { this.addDataPoint(); }
-        else if (this.historyIndex >= 0) {
+        if (this.tableMode === 'view') {
+            this.tableScrollIndex = Math.min(this.tableResults.length - 1, this.tableScrollIndex + 1);
+            this.renderTableView();
+            return;
+        }
+        if (this.stoMode || this.rclMode) {
+            this.memRegCursor = Math.min(6, this.memRegCursor + 1);
+            this.renderMemorySelection();
+            return;
+        }
+        if (this.menuMode) {
+            this.menuCursor = Math.min(1, this.menuCursor + 1);
+            if (this.menuMode === 'STAT') this.showStatMenu();
+            return;
+        }
+        if (this.dataEntryMode && this.currentInput) {
+            this.addDataPoint();
+        } else if (this.historyIndex >= 0) {
             this.historyIndex = Math.min(this.history.length - 1, this.historyIndex + 1);
             this.currentInput = this.history[this.historyIndex].input;
+            this.cursorPos = this.currentInput.length;
             this.updateDisplay();
         }
     }
 
     handleArrowLeft() {
-        if (this.menuMode === 'STAT') { this.menuCursor = 0; this.showStatMenu(); }
-        else if (this.statVarMode) {
+        if (this.stoMode || this.rclMode) {
+            this.memRegCursor = Math.max(0, this.memRegCursor - 1);
+            this.renderMemorySelection();
+            return;
+        }
+        if (this.menuMode === 'STAT') { this.menuCursor = 0; this.showStatMenu(); return; }
+        if (this.statVarMode) {
             this.statVarIndex = Math.max(0, this.statVarIndex - 1);
             this.displayStatVar();
+            return;
         }
+        // Cursor movement
+        this.moveCursorLeft();
+        this.updateDisplay();
     }
 
     handleArrowRight() {
-        if (this.menuMode === 'STAT') { this.menuCursor = 1; this.showStatMenu(); }
-        else if (this.statVarMode) {
+        if (this.stoMode || this.rclMode) {
+            this.memRegCursor = Math.min(6, this.memRegCursor + 1);
+            this.renderMemorySelection();
+            return;
+        }
+        if (this.menuMode === 'STAT') { this.menuCursor = 1; this.showStatMenu(); return; }
+        if (this.statVarMode) {
             const maxIndex = this.statMode === '2-VAR' ? 12 : 4;
             this.statVarIndex = Math.min(maxIndex, this.statVarIndex + 1);
             this.displayStatVar();
+            return;
         }
+        // Cursor movement
+        this.moveCursorRight();
+        this.updateDisplay();
     }
 
-    // --- Trig ---
+    // ==================== TRIG FUNCTIONS ====================
 
     applyTrigFunction(fn) {
         const value = this.getCurrentValue();
@@ -283,11 +640,17 @@ class TI30XSMultiView {
         switch(fn) {
             case 'sin': result = Math.sin(rad); break;
             case 'cos': result = Math.cos(rad); break;
-            case 'tan': result = Math.tan(rad); break;
+            case 'tan':
+                if (this.angleMode === 'DEG' && value % 180 === 90) {
+                    this.showError('DOMAIN'); return;
+                }
+                result = Math.tan(rad); break;
             case 'asin':
+                if (value < -1 || value > 1) { this.showError('DOMAIN'); return; }
                 result = Math.asin(value);
                 if (this.angleMode === 'DEG') result = result * 180 / Math.PI; break;
             case 'acos':
+                if (value < -1 || value > 1) { this.showError('DOMAIN'); return; }
                 result = Math.acos(value);
                 if (this.angleMode === 'DEG') result = result * 180 / Math.PI; break;
             case 'atan':
@@ -297,15 +660,20 @@ class TI30XSMultiView {
             case 'cosh': result = Math.cosh(value); break;
             case 'tanh': result = Math.tanh(value); break;
             case 'asinh': result = Math.asinh(value); break;
-            case 'acosh': result = Math.acosh(value); break;
-            case 'atanh': result = Math.atanh(value); break;
+            case 'acosh':
+                if (value < 1) { this.showError('DOMAIN'); return; }
+                result = Math.acosh(value); break;
+            case 'atanh':
+                if (value <= -1 || value >= 1) { this.showError('DOMAIN'); return; }
+                result = Math.atanh(value); break;
         }
+        if (result !== undefined && !isFinite(result)) { this.showError('OVERFLOW'); return; }
         this.hypMode = false;
         this.hypIndicator.textContent = '';
         this.setResult(result);
     }
 
-    // --- Math Functions ---
+    // ==================== MATH FUNCTIONS ====================
 
     applyFunction(fn) {
         const value = this.getCurrentValue();
@@ -313,20 +681,27 @@ class TI30XSMultiView {
         let result;
         switch(fn) {
             case 'log10':
-                if (value <= 0) { this.showError('DOMAIN ERROR'); return; }
+                if (value <= 0) { this.showError('DOMAIN'); return; }
                 result = Math.log10(value); break;
             case 'ln':
-                if (value <= 0) { this.showError('DOMAIN ERROR'); return; }
+                if (value <= 0) { this.showError('DOMAIN'); return; }
                 result = Math.log(value); break;
-            case 'pow10': result = Math.pow(10, value); break;
-            case 'exp': result = Math.exp(value); break;
+            case 'pow10':
+                result = Math.pow(10, value);
+                if (!isFinite(result)) { this.showError('OVERFLOW'); return; }
+                break;
+            case 'exp':
+                result = Math.exp(value);
+                if (!isFinite(result)) { this.showError('OVERFLOW'); return; }
+                break;
             case 'abs': result = Math.abs(value); break;
             case 'factorial':
-                if (value < 0 || !Number.isInteger(value) || value > 170) { this.showError('ERROR'); return; }
+                if (value < 0 || !Number.isInteger(value)) { this.showError('DOMAIN'); return; }
+                if (value > 170) { this.showError('OVERFLOW'); return; }
                 result = this.factorial(value); break;
             case 'percent': result = value / 100; break;
             case 'sqrt':
-                if (value < 0) { this.showError('DOMAIN ERROR'); return; }
+                if (value < 0) { this.showError('DOMAIN'); return; }
                 result = Math.sqrt(value); break;
             case 'square': result = value * value; break;
             case 'reciprocal':
@@ -355,6 +730,7 @@ class TI30XSMultiView {
         const parts = this.currentInput.split(/[+\−×÷^(]/);
         const lastPart = parts[parts.length - 1].replace(/[)▸◂n/d]/g, '');
         if (lastPart === 'π') return Math.PI;
+        if (lastPart === 'Ans') return this.ans;
         if (lastPart === '') return this.lastResult;
         const value = parseFloat(lastPart);
         return isNaN(value) ? this.lastResult : value;
@@ -363,6 +739,7 @@ class TI30XSMultiView {
     setResult(value) {
         if (value === undefined || value === null) return;
         this.currentInput = '';
+        this.cursorPos = 0;
         this.result = value;
         this.lastResult = value;
         this.resultLine.textContent = this.formatNumber(value);
@@ -370,24 +747,27 @@ class TI30XSMultiView {
         this.updateDisplay();
     }
 
-    // --- Decimal ---
+    // ==================== DECIMAL ====================
 
     handleDecimal() {
         if (this.waitingForOperand) {
             this.currentInput = '0.';
+            this.cursorPos = 2;
             this.waitingForOperand = false;
             this.updateDisplay();
             return;
         }
-        const parts = this.currentInput.split(/[+\−×÷^(]/);
+        // Check only current number segment
+        const before = this.currentInput.slice(0, this.cursorPos);
+        const parts = before.split(/[+\−×÷^(]/);
         const lastPart = parts[parts.length - 1];
         if (!lastPart.includes('.')) {
-            this.currentInput += (lastPart === '' ? '0.' : '.');
+            this.insertAtCursor(lastPart === '' ? '0.' : '.');
             this.updateDisplay();
         }
     }
 
-    // --- Negative ---
+    // ==================== NEGATIVE ====================
 
     toggleNegative() {
         if (this.waitingForOperand) {
@@ -400,11 +780,19 @@ class TI30XSMultiView {
             const match = this.currentInput.match(/(.*?)(\(?\-?)(\d+\.?\d*E?[+\-]?\d*)$/);
             if (match) {
                 const prefix = match[1], sign = match[2], num = match[3];
-                if (sign === '(-' || sign === '-') this.currentInput = prefix + num;
-                else this.currentInput = prefix + '(-' + num + ')';
+                if (sign === '(-' || sign === '-') {
+                    this.currentInput = prefix + num;
+                } else {
+                    this.currentInput = prefix + '(-' + num + ')';
+                }
+                this.cursorPos = this.currentInput.length;
             } else {
-                if (this.currentInput.startsWith('(-')) this.currentInput = this.currentInput.slice(2, -1);
-                else this.currentInput = '(-' + this.currentInput + ')';
+                if (this.currentInput.startsWith('(-')) {
+                    this.currentInput = this.currentInput.slice(2, -1);
+                } else {
+                    this.currentInput = '(-' + this.currentInput + ')';
+                }
+                this.cursorPos = this.currentInput.length;
             }
             this.updateDisplay();
         }
@@ -415,7 +803,12 @@ class TI30XSMultiView {
         this.angleModeDisplay.textContent = this.angleMode;
     }
 
-    // --- Fraction Display ---
+    toggleSciEngMode() {
+        // Toggle between normal, SCI, and ENG notation
+        this.showMessage('SCI/ENG');
+    }
+
+    // ==================== FRACTION DISPLAY ====================
 
     toggleFractionDisplay() {
         this.fractionMode = !this.fractionMode;
@@ -448,36 +841,191 @@ class TI30XSMultiView {
         return `${sign}${h1}/${k1}`;
     }
 
-    // --- Memory ---
+    // ==================== MEMORY REGISTERS ====================
 
     storeMemory() {
-        const value = this.getCurrentValue();
-        if (value !== null) {
-            this.memory = value;
-            this.memoryIndicator.textContent = 'M';
-            this.showMessage('STO → M');
-        }
+        this.stoMode = true;
+        this.rclMode = false;
+        this.memRegCursor = 0;
+        this.renderMemorySelection();
     }
 
     recallMemory() {
-        if (this.waitingForOperand) { this.currentInput = ''; this.waitingForOperand = false; }
-        this.currentInput += this.memory.toString();
+        this.rclMode = true;
+        this.stoMode = false;
+        this.memRegCursor = 0;
+        this.renderMemorySelection();
+    }
+
+    selectMemoryRegister(regNum) {
+        const regKey = 'x' + regNum;
+        if (this.stoMode) {
+            const value = this.waitingForOperand ? this.lastResult : this.getCurrentValue();
+            if (value !== null) {
+                this.memoryRegisters[regKey] = value;
+                this.memoryIndicator.textContent = 'M';
+                this.showMessage(`STO → ${regKey} = ${this.formatNumber(value)}`);
+            }
+            this.stoMode = false;
+        } else if (this.rclMode) {
+            const value = this.memoryRegisters[regKey];
+            if (this.waitingForOperand) {
+                this.currentInput = '';
+                this.cursorPos = 0;
+                this.waitingForOperand = false;
+            }
+            this.insertAtCursor(String(value));
+            this.updateDisplay();
+            this.rclMode = false;
+        }
+    }
+
+    renderMemorySelection() {
+        const mode = this.stoMode ? 'STO→' : 'RCL';
+        let line1 = `${mode}  `;
+        let line2 = '';
+
+        for (let i = 0; i < 7; i++) {
+            const regKey = 'x' + (i + 1);
+            const prefix = i === this.memRegCursor ? '▸' : ' ';
+            line1 += `${prefix}x${i + 1} `;
+        }
+
+        const selectedKey = 'x' + (this.memRegCursor + 1);
+        const val = this.memoryRegisters[selectedKey];
+        line2 = `${selectedKey} = ${this.formatNumber(val)}`;
+
+        this.inputLine.textContent = line1;
+        this.inputLine.classList.remove('mathprint');
+        this.resultLine.textContent = line2;
+    }
+
+    // ==================== TABLE FEATURE ====================
+
+    openTable() {
+        this.tableMode = 'expr';
+        this.tableExpression = '';
+        this.tableStart = 0;
+        this.tableEnd = 10;
+        this.tableStep = 1;
+        this.tableResults = [];
+        this.tableScrollIndex = 0;
+        this.renderTableSetup();
+    }
+
+    closeTable() {
+        this.tableMode = null;
+        this.currentInput = '';
+        this.cursorPos = 0;
+        this.inputLine.classList.add('mathprint');
         this.updateDisplay();
     }
 
-    // --- Statistics ---
+    renderTableSetup() {
+        this.inputLine.classList.remove('mathprint');
+        if (this.tableMode === 'expr') {
+            this.inputLine.textContent = `f(x)= ${this.tableExpression}█`;
+            this.resultLine.textContent = 'Enter expression with x';
+        } else if (this.tableMode === 'start') {
+            this.inputLine.textContent = `TblStart= ${this.currentInput}█`;
+            this.resultLine.textContent = `f(x)= ${this.tableExpression}`;
+        } else if (this.tableMode === 'end') {
+            this.inputLine.textContent = `TblEnd= ${this.currentInput}█`;
+            this.resultLine.textContent = `Start= ${this.tableStart}`;
+        } else if (this.tableMode === 'step') {
+            this.inputLine.textContent = `ΔTbl= ${this.currentInput}█`;
+            this.resultLine.textContent = `${this.tableStart} → ${this.tableEnd}`;
+        }
+    }
+
+    evaluateTable() {
+        this.tableResults = [];
+        const steps = Math.min(100, Math.abs((this.tableEnd - this.tableStart) / this.tableStep) + 1);
+
+        for (let i = 0; i < steps; i++) {
+            const x = this.tableStart + i * this.tableStep;
+            if ((this.tableStep > 0 && x > this.tableEnd) || (this.tableStep < 0 && x < this.tableEnd)) break;
+
+            try {
+                let expr = this.tableExpression
+                    .replace(/x/g, `(${x})`)
+                    .replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
+                    .replace(/π/g, `(${Math.PI})`).replace(/\^/g, '**')
+                    .replace(/x²/g, `(${x})*(${x})`);
+
+                // Handle trig in table expressions
+                expr = expr.replace(/sin\(/g, 'Math.sin(')
+                           .replace(/cos\(/g, 'Math.cos(')
+                           .replace(/tan\(/g, 'Math.tan(')
+                           .replace(/√\(/g, 'Math.sqrt(');
+
+                // Implicit multiplication
+                expr = expr.replace(/(\d)\(/g, '$1*(')
+                           .replace(/\)(\d)/g, ')*$1')
+                           .replace(/\)\(/g, ')*(');
+
+                const y = new Function('return ' + expr)();
+                this.tableResults.push({ x: x, y: isFinite(y) ? y : NaN });
+            } catch(e) {
+                this.tableResults.push({ x: x, y: NaN });
+            }
+        }
+
+        if (this.tableResults.length === 0) {
+            this.showError('SYNTAX');
+            this.closeTable();
+            return;
+        }
+
+        this.tableMode = 'view';
+        this.tableScrollIndex = 0;
+        this.renderTableView();
+    }
+
+    renderTableView() {
+        this.inputLine.classList.remove('mathprint');
+
+        if (this.tableResults.length === 0) {
+            this.inputLine.textContent = 'No results';
+            this.resultLine.textContent = '';
+            return;
+        }
+
+        // Show 2 rows at a time
+        const rows = [];
+        for (let i = this.tableScrollIndex; i < Math.min(this.tableScrollIndex + 2, this.tableResults.length); i++) {
+            const r = this.tableResults[i];
+            const xStr = this.formatNumber(r.x);
+            const yStr = isNaN(r.y) ? 'ERR' : this.formatNumber(r.y);
+            rows.push(`x=${xStr}  f(x)=${yStr}`);
+        }
+
+        this.inputLine.textContent = rows[0] || '';
+        this.resultLine.textContent = rows[1] || `[${this.tableScrollIndex + 1}/${this.tableResults.length}]`;
+
+        // Show scroll indicator in history area
+        if (this.historyDisplay) {
+            const total = this.tableResults.length;
+            const pos = this.tableScrollIndex + 1;
+            this.historyDisplay.innerHTML = `<div class="history-entry" style="opacity:0.7;justify-content:center;">TABLE: f(x)= ${this.escapeHtml(this.tableExpression)} &nbsp; [${pos}/${total}] ↑↓</div>`;
+        }
+    }
+
+    // ==================== STATISTICS ====================
 
     showStatMenu() {
         this.menuMode = 'STAT';
         this.menuCursor = this.statMode === '2-VAR' ? 1 : 0;
         const opts = ['1-VAR', '2-VAR'];
         this.inputLine.textContent = opts.map((o, i) => i === this.menuCursor ? `▸${o}` : ` ${o}`).join('  ');
+        this.inputLine.classList.remove('mathprint');
         this.resultLine.textContent = 'Select mode';
     }
 
     showDataMenu() {
         this.menuMode = 'DATA';
         this.inputLine.textContent = '▸CLRDATA';
+        this.inputLine.classList.remove('mathprint');
         this.resultLine.textContent = 'Clear stat data?';
     }
 
@@ -503,6 +1051,7 @@ class TI30XSMultiView {
         if (!this.statMode) { this.showMessage('SELECT STAT MODE'); return; }
         this.dataEntryMode = true;
         this.currentInput = '';
+        this.cursorPos = 0;
         this.currentDataVar = 'x';
         this.showMessage(`DATA ENTRY ${this.statMode}`);
     }
@@ -510,18 +1059,20 @@ class TI30XSMultiView {
     addDataPoint() {
         if (!this.dataEntryMode) return;
         const value = parseFloat(this.currentInput);
-        if (isNaN(value)) { this.showError('INVALID DATA'); return; }
+        if (isNaN(value)) { this.showError('DOMAIN'); return; }
         if (this.statMode === '1-VAR') {
             this.statData.x.push(value);
-            this.currentInput = '';
+            this.currentInput = ''; this.cursorPos = 0;
             this.showMessage(`n = ${this.statData.x.length}`);
         } else if (this.statMode === '2-VAR') {
             if (this.currentDataVar === 'x') {
                 this.statData.x.push(value); this.currentDataVar = 'y';
-                this.currentInput = ''; this.showMessage('Enter Y');
+                this.currentInput = ''; this.cursorPos = 0;
+                this.showMessage('Enter Y');
             } else {
                 this.statData.y.push(value); this.currentDataVar = 'x';
-                this.currentInput = ''; this.showMessage(`n = ${this.statData.x.length}`);
+                this.currentInput = ''; this.cursorPos = 0;
+                this.showMessage(`n = ${this.statData.x.length}`);
             }
         }
         setTimeout(() => {
@@ -562,6 +1113,7 @@ class TI30XSMultiView {
         }
         const value = valueMap[varName];
         this.inputLine.textContent = `${varName} =`;
+        this.inputLine.classList.remove('mathprint');
         if (value === undefined) {
             this.resultLine.textContent = 'N/A (2-VAR only)';
         } else {
@@ -594,19 +1146,24 @@ class TI30XSMultiView {
         return stats;
     }
 
-    // --- Expression Evaluation ---
+    // ==================== EXPRESSION EVALUATION ====================
 
     calculate() {
         if (!this.currentInput) return;
         try {
-            let expr = this.currentInput
+            let expr = this.currentInput;
+
+            // Replace Ans with actual value
+            expr = expr.replace(/Ans/g, `(${this.ans})`);
+
+            expr = expr
                 .replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
                 .replace(/π/g, `(${Math.PI})`).replace(/\^/g, '**');
 
-            // Fraction markers → division
+            // Fraction markers
             expr = expr.replace(/▸n\/d◂/g, '/');
 
-            // EE
+            // EE notation
             expr = expr.replace(/(\d+\.?\d*)E([+\-]?\d+)/g, '($1*Math.pow(10,$2))');
 
             // nCr/nPr
@@ -627,17 +1184,73 @@ class TI30XSMultiView {
                        .replace(/\)\(/g, ')*(');
 
             const result = this.safeEval(expr);
-            if (isNaN(result) || !isFinite(result)) { this.showError('ERROR'); return; }
+
+            if (isNaN(result)) { this.showError('SYNTAX'); return; }
+            if (!isFinite(result)) {
+                // Determine if overflow or divide by zero
+                if (expr.includes('/0') || expr.includes('/ 0')) {
+                    this.showError('DIVIDE BY 0');
+                } else {
+                    this.showError('OVERFLOW');
+                }
+                return;
+            }
 
             this.history.push({ input: this.currentInput, result: result });
             this.historyIndex = -1;
             this.result = result;
             this.lastResult = result;
+            this.ans = result;
             this.resultLine.textContent = this.formatNumber(result);
             this.waitingForOperand = true;
+            this.cursorPos = 0;
             this.renderHistory();
 
-        } catch (error) { this.showError('SYNTAX ERROR'); }
+        } catch (error) {
+            this.showError('SYNTAX');
+        }
+    }
+
+    validateExpression() {
+        if (!this.currentInput || this.waitingForOperand) {
+            this.expressionValid = !this.currentInput;
+            this.updateEnterButton();
+            return;
+        }
+
+        const input = this.currentInput;
+
+        // Check parentheses balance
+        let parenBalance = 0;
+        for (let i = 0; i < input.length; i++) {
+            if (input[i] === '(') parenBalance++;
+            else if (input[i] === ')') parenBalance--;
+            if (parenBalance < 0) break;
+        }
+        const parensBalanced = parenBalance === 0;
+
+        // Check for trailing operator
+        const lastChar = input.slice(-1);
+        const endsWithOp = ['+', '−', '×', '÷', '^', 'E'].includes(lastChar);
+
+        // Check for empty expression parts (double operators)
+        const hasDoubleOp = /[+\−×÷]{2}/.test(input);
+
+        this.expressionValid = parensBalanced && !endsWithOp && !hasDoubleOp;
+        this.updateEnterButton();
+
+        // Show unmatched paren count
+        if (parenBalance > 0 && this.secondIndicator) {
+            this.secondIndicator.textContent = this.secondFunction ? '2ND' : `(×${parenBalance}`;
+        } else if (!this.secondFunction && this.secondIndicator) {
+            this.secondIndicator.textContent = '';
+        }
+    }
+
+    updateEnterButton() {
+        if (this.enterBtn) {
+            this.enterBtn.style.opacity = this.expressionValid || this.waitingForOperand || !this.currentInput ? '1' : '0.6';
+        }
     }
 
     combination(n, r) {
@@ -653,19 +1266,22 @@ class TI30XSMultiView {
     }
 
     safeEval(expression) {
-        const stripped = expression.replace(/Math\.(pow|sqrt|PI)/g, '').replace(/\s/g, '');
+        const stripped = expression.replace(/Math\.(pow|sqrt|PI|sin|cos|tan|log|exp|abs|asin|acos|atan|sinh|cosh|tanh|asinh|acosh|atanh|log10)/g, '').replace(/\s/g, '');
         if (/[a-df-oq-zA-DF-OQ-Z_$]/.test(stripped)) throw new Error('Invalid');
         try { return new Function('return ' + expression)(); }
         catch (e) { throw new Error('Invalid'); }
     }
 
-    // --- MathPrint Rendering ---
+    // ==================== MATHPRINT RENDERING ====================
 
     renderMathPrint(text) {
         if (!text) return '';
         let html = this.escapeHtml(text);
 
-        // Fractions: n▸n/d◂m → stacked fraction
+        // Ans styling
+        html = html.replace(/Ans/g, '<span class="mp-ans">Ans</span>');
+
+        // Fractions
         html = html.replace(/(\d+)▸n\/d◂(\d+)/g,
             '<span class="mp-frac"><span class="mp-num">$1</span><span class="mp-den">$2</span></span>');
         html = html.replace(/(\d+)▸n\/d◂/g,
@@ -675,13 +1291,13 @@ class TI30XSMultiView {
         html = html.replace(/▸n\/d◂/g,
             '<span class="mp-frac"><span class="mp-num">_</span><span class="mp-den">_</span></span>');
 
-        // Exponents: n^m → n<sup>m</sup>
+        // Exponents
         html = html.replace(/(\d+(?:\.\d+)?)\^(\d+(?:\.\d+)?)/g,
             '$1<span class="mp-sup">$2</span>');
         html = html.replace(/(\d+(?:\.\d+)?)\^/g,
             '$1<span class="mp-sup">_</span>');
 
-        // Square roots: √(content) or √number
+        // Square roots
         html = html.replace(/√\(([^)]+)\)/g,
             '<span class="mp-sqrt"><span class="mp-radical">√</span><span class="mp-radicand">$1</span></span>');
         html = html.replace(/√(\d+\.?\d*)/g,
@@ -703,7 +1319,7 @@ class TI30XSMultiView {
         return text.replace(/[&<>"]/g, c => map[c]);
     }
 
-    // --- 4-Line History Display ---
+    // ==================== DISPLAY ====================
 
     renderHistory() {
         if (!this.historyDisplay) return;
@@ -716,8 +1332,6 @@ class TI30XSMultiView {
         ).join('');
     }
 
-    // --- Display ---
-
     formatNumber(num) {
         if (typeof num !== 'number' || isNaN(num)) return 'ERROR';
         if (Math.abs(num) < 1e-10 && num !== 0) return num.toExponential(6);
@@ -728,13 +1342,22 @@ class TI30XSMultiView {
         return str;
     }
 
-    showError(message) {
-        this.resultLine.textContent = message;
+    showError(type) {
+        const messages = {
+            'SYNTAX': 'SYNTAX ERROR',
+            'DOMAIN': 'DOMAIN ERROR',
+            'DIVIDE BY 0': 'DIVIDE BY 0',
+            'OVERFLOW': 'OVERFLOW',
+            'ARGUMENT': 'ARGUMENT ERROR'
+        };
+        const msg = messages[type] || type;
+        this.resultLine.textContent = msg;
         this.resultLine.classList.add('error');
         setTimeout(() => {
             this.resultLine.classList.remove('error');
             this.resultLine.textContent = '0';
             this.currentInput = '';
+            this.cursorPos = 0;
             this.waitingForOperand = false;
             this.updateDisplay();
         }, 2000);
@@ -744,67 +1367,81 @@ class TI30XSMultiView {
         this.inputLine.textContent = message;
         this.inputLine.classList.remove('mathprint');
         setTimeout(() => {
-            if (!this.dataEntryMode && !this.statVarMode) {
+            if (!this.dataEntryMode && !this.statVarMode && !this.tableMode && !this.stoMode && !this.rclMode) {
                 this.inputLine.classList.add('mathprint');
                 this.updateDisplay();
             }
         }, 1500);
     }
 
-    deleteLastChar() {
-        if (this.currentInput.length > 0) {
-            if (this.currentInput.endsWith('nCr')) this.currentInput = this.currentInput.slice(0, -3);
-            else if (this.currentInput.endsWith('nPr')) this.currentInput = this.currentInput.slice(0, -3);
-            else if (this.currentInput.endsWith('ⁿ√')) this.currentInput = this.currentInput.slice(0, -2);
-            else if (this.currentInput.endsWith('(-')) this.currentInput = this.currentInput.slice(0, -2);
-            else if (this.currentInput.endsWith('▸n/d◂')) this.currentInput = this.currentInput.slice(0, -5);
-            else this.currentInput = this.currentInput.slice(0, -1);
-            this.updateDisplay();
+    updateDisplay() {
+        if (this.stoMode || this.rclMode) return;
+        if (this.tableMode) return;
+
+        if (this.currentInput) {
+            const cursorAtEnd = this.cursorPos >= this.currentInput.length;
+
+            if (cursorAtEnd) {
+                // MathPrint rendering + cursor at end
+                this.inputLine.innerHTML = this.renderMathPrint(this.currentInput) + '<span class="cursor"></span>';
+            } else {
+                // Split at cursor, render each half with basic escaping
+                const left = this.currentInput.slice(0, this.cursorPos);
+                const right = this.currentInput.slice(this.cursorPos);
+                this.inputLine.innerHTML = this.escapeHtml(left) + '<span class="cursor"></span>' + this.escapeHtml(right);
+            }
+            this.inputLine.classList.add('mathprint');
+        } else {
+            this.inputLine.innerHTML = this.waitingForOperand ? '' : '<span class="cursor"></span>';
+            this.inputLine.classList.add('mathprint');
         }
+
+        if (!this.waitingForOperand && !this.currentInput) {
+            this.resultLine.textContent = '0';
+        }
+
+        // Validate expression
+        this.validateExpression();
     }
 
     clear() {
         this.currentInput = '';
+        this.cursorPos = 0;
         this.waitingForOperand = false;
         this.dataEntryMode = false;
         this.currentDataVar = 'x';
         this.menuMode = null;
         this.statVarMode = false;
+        this.stoMode = false;
+        this.rclMode = false;
         this.resultLine.textContent = '0';
+        this.resultLine.classList.remove('error');
         this.updateDisplay();
     }
 
     reset() {
         this.currentInput = '';
-        this.result = 0; this.lastResult = 0; this.memory = 0;
+        this.cursorPos = 0;
+        this.result = 0; this.lastResult = 0; this.memory = 0; this.ans = 0;
         this.waitingForOperand = false; this.secondFunction = false;
         this.hypMode = false; this.fractionMode = false;
         this.statMode = null; this.statData = { x: [], y: [] };
         this.dataEntryMode = false; this.currentDataVar = 'x';
         this.menuMode = null; this.statVarMode = false;
+        this.stoMode = false; this.rclMode = false;
         this.history = []; this.historyIndex = -1;
+        this.tableMode = null;
+        for (let i = 1; i <= 7; i++) this.memoryRegisters['x' + i] = 0;
         this.memoryIndicator.textContent = '';
         this.hypIndicator.textContent = '';
         this.angleModeDisplay.textContent = 'DEG';
         this.angleMode = 'DEG';
         this.resultLine.textContent = '0';
+        this.resultLine.classList.remove('error');
         if (this.historyDisplay) this.historyDisplay.innerHTML = '';
         if (this.secondIndicator) this.secondIndicator.textContent = '';
         this.updateDisplay();
         this.updateSecondFunctionIndicator();
-    }
-
-    updateDisplay() {
-        if (this.currentInput) {
-            this.inputLine.innerHTML = this.renderMathPrint(this.currentInput);
-            this.inputLine.classList.add('mathprint');
-        } else {
-            this.inputLine.innerHTML = '';
-            this.inputLine.classList.add('mathprint');
-        }
-        if (!this.waitingForOperand && !this.currentInput) {
-            this.resultLine.textContent = '0';
-        }
     }
 
     updateSecondFunctionIndicator() {
@@ -818,9 +1455,109 @@ class TI30XSMultiView {
             this.secondIndicator.textContent = this.secondFunction ? '2ND' : '';
         }
     }
+
+    // ==================== COPY/PASTE ====================
+
+    createCopyToast() {
+        this.copyToast = document.createElement('div');
+        this.copyToast.className = 'copy-toast';
+        this.copyToast.textContent = 'Copied!';
+        const calc = document.querySelector('.calculator') || document.body;
+        calc.appendChild(this.copyToast);
+    }
+
+    setupCopyPaste() {
+        // Click result to copy
+        this.resultLine.addEventListener('click', () => this.copyResult());
+        this.resultLine.style.cursor = 'pointer';
+        this.resultLine.title = 'Click to copy';
+
+        // Ctrl+V paste
+        document.addEventListener('paste', (e) => {
+            const text = (e.clipboardData || window.clipboardData).getData('text');
+            if (text) {
+                this.handlePaste(text);
+                e.preventDefault();
+            }
+        });
+    }
+
+    copyResult() {
+        const text = this.resultLine.textContent;
+        if (!text || text === '0' || text.includes('ERROR')) return;
+
+        navigator.clipboard.writeText(text).then(() => {
+            this.showCopyToast();
+        }).catch(() => {
+            // Fallback for older browsers
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            this.showCopyToast();
+        });
+    }
+
+    showCopyToast() {
+        if (!this.copyToast) return;
+        this.copyToast.classList.add('visible');
+        clearTimeout(this._copyToastTimeout);
+        this._copyToastTimeout = setTimeout(() => {
+            this.copyToast.classList.remove('visible');
+        }, 1200);
+    }
+
+    handlePaste(text) {
+        // Clean pasted text to only include valid calculator characters
+        const cleaned = text.replace(/[^0-9+\-*/().^πeE,]/g, '')
+            .replace(/\*/g, '×').replace(/\//g, '÷').replace(/-/g, '−');
+        if (!cleaned) return;
+
+        if (this.waitingForOperand) {
+            this.currentInput = '';
+            this.cursorPos = 0;
+            this.waitingForOperand = false;
+        }
+        this.insertAtCursor(cleaned);
+        this.updateDisplay();
+    }
+
+    // ==================== MOBILE TOUCH ====================
+
+    setupMobileTouch() {
+        const calcEl = document.querySelector('.calculator');
+        if (!calcEl) return;
+
+        // Prevent double-tap zoom
+        calcEl.style.touchAction = 'manipulation';
+        calcEl.style.userSelect = 'none';
+        calcEl.style.webkitUserSelect = 'none';
+
+        // Add touch-action to all buttons
+        calcEl.querySelectorAll('.btn').forEach(btn => {
+            btn.style.touchAction = 'manipulation';
+
+            // Haptic feedback on touch
+            btn.addEventListener('touchstart', () => {
+                if (navigator.vibrate) navigator.vibrate(10);
+            }, { passive: true });
+        });
+
+        // Prevent accidental scroll/zoom when touching calculator
+        calcEl.addEventListener('touchmove', (e) => {
+            // Allow scrolling in table view
+            if (!this.tableMode) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    }
 }
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    const calculator = new TI30XSMultiView();
+    window.calculator = new TI30XSMultiView();
 });

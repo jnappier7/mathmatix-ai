@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TI-30XS MultiView Calculator</title>
     <link rel="stylesheet" href="/css/calculator.css">
 </head>
@@ -65,8 +65,8 @@
                     <span class="secondary">F⇔D</span>
                     <span class="primary">PRB</span>
                 </button>
-                <button class="btn btn-function" data-fn="polar">
-                    <span class="secondary">R⇔P</span>
+                <button class="btn btn-function" data-fn="polar" data-fn2="table">
+                    <span class="secondary">TABLE</span>
                     <span class="primary">.'ʺ</span>
                 </button>
                 <button class="btn btn-arrow" data-action="arrow-left">⬅</button>
@@ -172,7 +172,10 @@
                 <button class="btn btn-function" data-action="on">ON</button>
                 <button class="btn btn-number" data-num="0">0</button>
                 <button class="btn btn-function" data-fn="decimal">.</button>
-                <button class="btn btn-function" data-fn="negative">(-)</button>
+                <button class="btn btn-function" data-fn="negative" data-fn2="ans">
+                    <span class="secondary">ANS</span>
+                    <span class="primary">(-)</span>
+                </button>
                 <div class="button-spacer"></div>
                 <div class="button-spacer"></div>
             </div>
