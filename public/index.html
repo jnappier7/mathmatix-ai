@@ -97,7 +97,6 @@
       transform: translateY(0);
     }
 
-    /* Staggered children — cards, list items, etc. */
     .lp-stagger > * {
       opacity: 0;
       transform: translateY(20px);
@@ -116,7 +115,7 @@
     .lp-stagger.lp-visible > *:nth-child(5) { transition-delay: 0.25s; }
     .lp-stagger.lp-visible > *:nth-child(6) { transition-delay: 0.3s; }
 
-    /* ── Section Heading Accent ────────────────────────────── */
+    /* ── Section Headings ──────────────────────────────────── */
     .lp-section-heading {
       text-align: center;
       margin-bottom: 0.5rem;
@@ -156,9 +155,7 @@
       margin: 0 auto 2.5rem;
     }
 
-    .lp-hero-content {
-      text-align: center;
-    }
+    .lp-hero-content { text-align: center; }
 
     .lp-hero h1 {
       font-size: 2.75rem;
@@ -191,7 +188,7 @@
       border-radius: var(--border-radius-base);
     }
 
-    /* Product preview (chat mockup) */
+    /* Chat mockup */
     .lp-hero-preview {
       max-width: 440px;
       margin: 0 auto;
@@ -215,16 +212,11 @@
     }
 
     .lp-preview-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--clr-success-green);
-      flex-shrink: 0;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--clr-success-green); flex-shrink: 0;
     }
 
-    .lp-chat-messages {
-      min-height: 160px;
-    }
+    .lp-chat-messages { min-height: 160px; }
 
     #lp-chat .lp-chat-bubble {
       opacity: 0;
@@ -246,40 +238,29 @@
       max-width: 88%;
     }
 
-    .lp-chat-bubble:last-child {
-      margin-bottom: 0;
-    }
+    .lp-chat-bubble:last-child { margin-bottom: 0; }
 
     .lp-chat-student {
-      background: #f0f2f5;
-      color: var(--clr-text);
-      margin-left: auto;
-      border-bottom-right-radius: 4px;
+      background: #f0f2f5; color: var(--clr-text);
+      margin-left: auto; border-bottom-right-radius: 4px;
     }
 
     .lp-chat-tutor {
-      background: rgba(18, 179, 179, 0.08);
-      color: var(--clr-text);
+      background: rgba(18, 179, 179, 0.08); color: var(--clr-text);
       border-bottom-left-radius: 4px;
     }
 
     /* Typing indicator */
     .lp-typing {
-      display: none;
-      align-items: center;
-      gap: 5px;
+      display: none; align-items: center; gap: 5px;
       padding: 0.7rem 0.95rem;
       background: rgba(18, 179, 179, 0.08);
-      border-radius: 12px;
-      border-bottom-left-radius: 4px;
-      max-width: 56px;
-      margin-bottom: 0.6rem;
+      border-radius: 12px; border-bottom-left-radius: 4px;
+      max-width: 56px; margin-bottom: 0.6rem;
     }
 
     .lp-typing-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
+      width: 6px; height: 6px; border-radius: 50%;
       background: var(--clr-primary-teal);
       animation: lp-bounce 1.4s infinite ease-in-out;
     }
@@ -294,59 +275,32 @@
 
     /* Trust bar */
     .lp-trust-bar {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
+      display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
       padding-top: 2rem;
       border-top: 1px solid rgba(18, 179, 179, 0.12);
-      max-width: 1100px;
-      margin: 0 auto;
+      max-width: 1100px; margin: 0 auto;
     }
 
     .lp-trust-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--clr-text-dim);
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.9rem; font-weight: 500; color: var(--clr-text-dim);
     }
 
-    .lp-trust-item i {
-      color: var(--clr-primary-teal);
-      font-size: 1rem;
-    }
+    .lp-trust-item i { color: var(--clr-primary-teal); font-size: 1rem; }
 
-    /* ── Hero Desktop: Side-by-Side ────────────────────────── */
+    /* Hero side-by-side on desktop */
     @media (min-width: 769px) {
       .lp-hero-layout {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        align-items: center;
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 3rem; align-items: center;
       }
-
-      .lp-hero-content {
-        text-align: left;
-      }
-
-      .lp-hero .lp-hero-sub {
-        margin-left: 0;
-        margin-right: 0;
-      }
-
-      .lp-hero-buttons {
-        justify-content: flex-start;
-      }
-
-      .lp-hero-preview {
-        margin: 0;
-        max-width: 100%;
-      }
+      .lp-hero-content { text-align: left; }
+      .lp-hero .lp-hero-sub { margin-left: 0; margin-right: 0; }
+      .lp-hero-buttons { justify-content: flex-start; }
+      .lp-hero-preview { margin: 0; max-width: 100%; }
     }
 
-    /* ── Features ───────────────────────────────────────────── */
+    /* ── Features — Bento Grid ─────────────────────────────── */
     .lp-features {
       padding: 4rem var(--page-horizontal-padding);
       background: var(--clr-bg-light);
@@ -354,10 +308,23 @@
 
     .lp-features-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 1.25rem;
       max-width: 1100px;
       margin: 0 auto;
+    }
+
+    /* Top 2 cards: wide, horizontal layout */
+    .lp-feature-card:nth-child(-n+2) {
+      grid-column: span 2;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+
+    .lp-feature-card:nth-child(-n+2) .lp-feature-icon {
+      flex-shrink: 0;
+      margin-bottom: 0;
     }
 
     .lp-feature-card {
@@ -375,22 +342,15 @@
     }
 
     .lp-feature-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 48px; height: 48px; border-radius: 12px;
       background: rgba(18, 179, 179, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       margin-bottom: 1rem;
     }
 
-    .lp-feature-icon i {
-      font-size: 1.25rem;
-      color: var(--clr-primary-teal);
-    }
+    .lp-feature-icon i { font-size: 1.25rem; color: var(--clr-primary-teal); }
 
-    /* Alternating icon colors for visual variety */
+    /* Alternating icon colors */
     .lp-feature-card:nth-child(2) .lp-feature-icon { background: rgba(255, 59, 127, 0.06); }
     .lp-feature-card:nth-child(2) .lp-feature-icon i { color: var(--clr-accent-hotpink); }
     .lp-feature-card:nth-child(4) .lp-feature-icon { background: rgba(255, 194, 75, 0.1); }
@@ -399,76 +359,134 @@
     .lp-feature-card:nth-child(6) .lp-feature-icon i { color: var(--clr-success-green); }
 
     .lp-feature-card h3 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-      color: var(--clr-text);
+      font-size: 1.05rem; font-weight: 600;
+      margin-bottom: 0.4rem; color: var(--clr-text);
     }
 
     .lp-feature-card p {
-      font-size: 0.92rem;
-      color: var(--clr-text-dim);
-      line-height: 1.55;
-      margin-bottom: 0;
+      font-size: 0.92rem; color: var(--clr-text-dim);
+      line-height: 1.55; margin-bottom: 0;
     }
 
-    /* ── Audience Sections (Students / Parents / Teachers) ─── */
-    .lp-audience {
+    /* ── Role Selector (replaces 3 audience sections) ──────── */
+    .lp-roles {
       padding: 4rem var(--page-horizontal-padding);
-    }
-
-    .lp-audience--alt {
       background: #f7fbfb;
     }
 
+    .lp-role-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .lp-role-tab {
+      background: var(--clr-bg-light);
+      border: 2px solid #e8ecf0;
+      border-radius: 12px;
+      padding: 1.35rem 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: none;
+    }
+
+    .lp-role-tab:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--clr-primary-teal);
+    }
+
+    .lp-role-tab--active {
+      border-color: var(--clr-primary-teal);
+      background: rgba(18, 179, 179, 0.03);
+      box-shadow: 0 4px 16px rgba(18, 179, 179, 0.15);
+    }
+
+    .lp-role-tab--active:hover {
+      transform: none;
+    }
+
+    .lp-role-tab-icon {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(18, 179, 179, 0.08);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 0.65rem;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .lp-role-tab-icon i {
+      font-size: 1.25rem;
+      color: var(--clr-primary-teal);
+      transition: color 0.25s ease;
+    }
+
+    .lp-role-tab--active .lp-role-tab-icon {
+      background: var(--clr-primary-teal);
+    }
+
+    .lp-role-tab--active .lp-role-tab-icon i {
+      color: white;
+    }
+
+    .lp-role-tab-label {
+      font-weight: 600; font-size: 0.92rem; color: var(--clr-text);
+    }
+
+    /* Role panels */
+    .lp-role-panel {
+      display: none;
+      animation: lp-panel-in 0.35s ease;
+    }
+
+    .lp-role-panel--active {
+      display: block;
+    }
+
+    @keyframes lp-panel-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Shared audience grid used inside panels */
     .lp-audience-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 3rem;
-      align-items: center;
+      align-items: start;
       max-width: 1100px;
       margin: 0 auto;
     }
 
     .lp-audience-content h2 {
-      font-size: 1.85rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      margin-bottom: 0.75rem;
+      font-size: 1.65rem; font-weight: 700;
+      letter-spacing: -0.01em; margin-bottom: 0.75rem;
       color: var(--clr-text);
     }
 
     .lp-audience-content > p {
-      font-size: 1rem;
-      color: var(--clr-text-dim);
-      line-height: 1.65;
-      margin-bottom: 1.5rem;
+      font-size: 1rem; color: var(--clr-text-dim);
+      line-height: 1.65; margin-bottom: 1.25rem;
     }
 
     .lp-benefit-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      gap: 0.75rem;
+      list-style: none; padding: 0; margin: 0;
+      display: grid; gap: 0.65rem;
     }
 
     .lp-benefit-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.65rem;
-      font-size: 0.95rem;
-      color: var(--clr-text);
-      line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 0.65rem;
+      font-size: 0.95rem; color: var(--clr-text); line-height: 1.5;
     }
 
     .lp-benefit-list li i {
-      color: var(--clr-primary-teal);
-      font-size: 0.85rem;
-      margin-top: 0.25rem;
-      flex-shrink: 0;
+      color: var(--clr-primary-teal); font-size: 0.85rem;
+      margin-top: 0.25rem; flex-shrink: 0;
     }
 
+    /* Stat cards (student panel) */
     .lp-audience-visual {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -479,8 +497,7 @@
       background: var(--clr-bg-light);
       border: 1px solid #e8ecf0;
       border-radius: var(--border-radius-base);
-      padding: 1.25rem;
-      text-align: center;
+      padding: 1.25rem; text-align: center;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
@@ -490,21 +507,18 @@
     }
 
     .lp-stat-card i {
-      font-size: 1.5rem;
-      color: var(--clr-primary-teal);
-      margin-bottom: 0.5rem;
+      font-size: 1.5rem; color: var(--clr-primary-teal); margin-bottom: 0.5rem;
     }
 
     .lp-stat-card .lp-stat-label {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--clr-text-dim);
-      line-height: 1.4;
+      font-size: 0.82rem; font-weight: 500;
+      color: var(--clr-text-dim); line-height: 1.4;
     }
 
-    /* Horizontal info cards (parents, teachers) */
+    /* Info cards (parent & teacher panels) — 2×2 grid */
     .lp-info-cards {
       display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
     }
 
@@ -513,43 +527,35 @@
       border: 1px solid #e8ecf0;
       border-radius: var(--border-radius-base);
       padding: 1.25rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+      gap: 0.5rem;
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
 
     .lp-info-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-sm);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
       border-color: rgba(18, 179, 179, 0.2);
     }
 
     .lp-info-card i {
-      font-size: 1.25rem;
-      color: var(--clr-primary-teal);
-      flex-shrink: 0;
-      margin-top: 0.15rem;
+      font-size: 1.35rem; color: var(--clr-primary-teal); flex-shrink: 0;
     }
 
     .lp-info-card strong {
-      display: block;
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 0.2rem;
+      display: block; font-size: 0.92rem; font-weight: 600;
       color: var(--clr-text);
     }
 
     .lp-info-card span {
-      font-size: 0.88rem;
-      color: var(--clr-text-dim);
-      line-height: 1.45;
+      font-size: 0.82rem; color: var(--clr-text-dim); line-height: 1.45;
     }
 
     /* ── Comparison ────────────────────────────────────────── */
     .lp-compare {
       padding: 4rem var(--page-horizontal-padding);
-      background: #f7fbfb;
+      background: var(--clr-bg-light);
     }
 
     .lp-compare-grid {
@@ -571,46 +577,31 @@
     }
 
     .lp-compare-card h3 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 0.35rem;
-      color: var(--clr-text);
+      font-size: 1.1rem; font-weight: 700;
+      margin-bottom: 0.35rem; color: var(--clr-text);
     }
 
     .lp-compare-price {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: var(--clr-text);
-      margin-bottom: 1.5rem;
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--clr-text); margin-bottom: 1.5rem;
     }
 
     .lp-compare-price span {
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: var(--clr-text-dim);
+      font-size: 0.85rem; font-weight: 400; color: var(--clr-text-dim);
     }
 
     .lp-compare-card ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      text-align: left;
-      display: grid;
-      gap: 0.7rem;
+      list-style: none; padding: 0; margin: 0;
+      text-align: left; display: grid; gap: 0.7rem;
     }
 
     .lp-compare-card li {
-      font-size: 0.88rem;
-      line-height: 1.45;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
+      font-size: 0.88rem; line-height: 1.45;
+      display: flex; align-items: flex-start; gap: 0.6rem;
     }
 
     .lp-compare-card li i {
-      flex-shrink: 0;
-      margin-top: 0.15rem;
-      font-size: 0.82rem;
+      flex-shrink: 0; margin-top: 0.15rem; font-size: 0.82rem;
     }
 
     .lp-compare-yes i { color: var(--clr-primary-teal); }
@@ -618,7 +609,6 @@
     .lp-compare-no i { color: var(--clr-text-dim); opacity: 0.5; }
     .lp-compare-no { color: var(--clr-text-dim); }
 
-    /* Highlighted Mathmatix card */
     .lp-compare-card--highlight {
       border: 2px solid var(--clr-primary-teal);
       box-shadow: 0 8px 30px rgba(18, 179, 179, 0.12);
@@ -626,61 +616,19 @@
     }
 
     .lp-compare-badge {
-      position: absolute;
-      top: -1px;
-      left: 50%;
+      position: absolute; top: -1px; left: 50%;
       transform: translateX(-50%);
-      background: var(--clr-primary-teal);
-      color: white;
-      font-size: 0.72rem;
-      font-weight: 600;
+      background: var(--clr-primary-teal); color: white;
+      font-size: 0.72rem; font-weight: 600;
       padding: 0.3rem 1rem;
       border-radius: 0 0 8px 8px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    /* ── Mission ────────────────────────────────────────────── */
-    .lp-mission {
-      padding: 4rem var(--page-horizontal-padding);
-      background: var(--clr-bg-dark);
-      color: var(--clr-bg-light);
-    }
-
-    .lp-mission-inner {
-      max-width: 680px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .lp-mission h2 {
-      font-size: 1.85rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: var(--clr-bg-light);
-      margin-bottom: 1.25rem;
-    }
-
-    .lp-mission p {
-      font-size: 1.05rem;
-      line-height: 1.75;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 1rem;
-    }
-
-    .lp-mission p:last-child {
-      margin-bottom: 0;
-    }
-
-    .lp-mission-accent {
-      color: var(--clr-primary-teal);
-      font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
     }
 
     /* ── Testimonials ───────────────────────────────────────── */
     .lp-testimonials {
       padding: 4rem var(--page-horizontal-padding);
-      background: var(--clr-bg-light);
+      background: #f7fbfb;
     }
 
     .lp-testimonials-grid {
@@ -692,11 +640,10 @@
     }
 
     .lp-testimonial {
-      background: #f7fbfb;
+      background: var(--clr-bg-light);
       border-radius: var(--border-radius-base);
       padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
       border-top: 3px solid transparent;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
@@ -711,48 +658,61 @@
     .lp-testimonial:nth-child(3) { border-top-color: var(--clr-warning-gold); }
 
     .lp-testimonial-quote {
-      font-size: 0.95rem;
-      color: var(--clr-text);
-      line-height: 1.6;
-      margin-bottom: 1.25rem;
-      flex-grow: 1;
-      font-style: italic;
+      font-size: 0.95rem; color: var(--clr-text);
+      line-height: 1.6; margin-bottom: 1.25rem;
+      flex-grow: 1; font-style: italic;
     }
 
     .lp-testimonial-quote::before {
-      content: "\201C";
-      font-size: 1.5rem;
-      color: var(--clr-primary-teal);
-      font-style: normal;
-      line-height: 0;
-      vertical-align: -0.25em;
-      margin-right: 0.1em;
+      content: "\201C"; font-size: 1.5rem;
+      color: var(--clr-primary-teal); font-style: normal;
+      line-height: 0; vertical-align: -0.25em; margin-right: 0.1em;
     }
 
     .lp-testimonial-author {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--clr-text);
+      font-size: 0.88rem; font-weight: 600; color: var(--clr-text);
     }
 
     .lp-testimonial-role {
-      font-size: 0.8rem;
-      color: var(--clr-text-dim);
-      margin-top: 0.1rem;
+      font-size: 0.8rem; color: var(--clr-text-dim); margin-top: 0.1rem;
     }
 
     .lp-testimonial--featured {
       grid-column: 1 / -1;
-      max-width: 700px;
-      justify-self: center;
+      max-width: 700px; justify-self: center;
       border-left: 3px solid var(--clr-primary-teal);
       border-top: none;
     }
 
+    /* ── Mission ────────────────────────────────────────────── */
+    .lp-mission {
+      padding: 4rem var(--page-horizontal-padding);
+      background: var(--clr-bg-dark); color: var(--clr-bg-light);
+    }
+
+    .lp-mission-inner {
+      max-width: 680px; margin: 0 auto; text-align: center;
+    }
+
+    .lp-mission h2 {
+      font-size: 1.85rem; font-weight: 700;
+      letter-spacing: -0.01em; color: var(--clr-bg-light);
+      margin-bottom: 1.25rem;
+    }
+
+    .lp-mission p {
+      font-size: 1.05rem; line-height: 1.75;
+      color: rgba(255, 255, 255, 0.8); margin-bottom: 1rem;
+    }
+
+    .lp-mission p:last-child { margin-bottom: 0; }
+
+    .lp-mission-accent { color: var(--clr-primary-teal); font-weight: 600; }
+
     /* ── How It Works ───────────────────────────────────────── */
     .lp-steps {
       padding: 4rem var(--page-horizontal-padding);
-      background: #f7fbfb;
+      background: var(--clr-bg-light);
     }
 
     .lp-steps-grid {
@@ -763,49 +723,33 @@
       margin: 0 auto;
     }
 
-    .lp-step {
-      text-align: center;
-      position: relative;
-    }
+    .lp-step { text-align: center; position: relative; }
 
     .lp-step-number {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
+      width: 48px; height: 48px; border-radius: 50%;
       background: linear-gradient(135deg, var(--clr-primary-teal), #0E9494);
       color: var(--clr-bg-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.1rem;
       margin: 0 auto 0.85rem;
       box-shadow: 0 4px 12px rgba(18, 179, 179, 0.25);
     }
 
     .lp-step h3 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-      color: var(--clr-text);
+      font-size: 1.05rem; font-weight: 600;
+      margin-bottom: 0.35rem; color: var(--clr-text);
     }
 
     .lp-step p {
-      font-size: 0.9rem;
-      color: var(--clr-text-dim);
-      line-height: 1.55;
-      margin-bottom: 0;
+      font-size: 0.9rem; color: var(--clr-text-dim);
+      line-height: 1.55; margin-bottom: 0;
     }
 
-    /* Step connectors on desktop */
     @media (min-width: 769px) {
       .lp-step:not(:last-child)::after {
-        content: '';
-        position: absolute;
-        top: 24px;
-        left: calc(50% + 32px);
-        width: calc(100% - 64px);
-        height: 2px;
+        content: ''; position: absolute;
+        top: 24px; left: calc(50% + 32px);
+        width: calc(100% - 64px); height: 2px;
         background: linear-gradient(90deg, var(--clr-primary-teal), rgba(18, 179, 179, 0.15));
       }
     }
@@ -813,71 +757,41 @@
     /* ── FAQ ────────────────────────────────────────────────── */
     .lp-faq {
       padding: 4rem var(--page-horizontal-padding);
-      background: var(--clr-bg-light);
+      background: #f7fbfb;
     }
 
-    .lp-faq-list {
-      max-width: 700px;
-      margin: 0 auto;
-    }
+    .lp-faq-list { max-width: 700px; margin: 0 auto; }
 
-    .lp-faq-item {
-      border-bottom: 1px solid #e8ecf0;
-    }
+    .lp-faq-item { border-bottom: 1px solid #e8ecf0; }
 
     .lp-faq-question {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 1.25rem 0;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--clr-text);
-      background: none;
-      border: none;
-      cursor: pointer;
-      text-align: left;
-      box-shadow: none;
-      border-radius: 0;
-      line-height: 1.4;
-      transition: color 0.2s ease;
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 1.25rem 0;
+      font-size: 1rem; font-weight: 600; color: var(--clr-text);
+      background: none; border: none; cursor: pointer;
+      text-align: left; box-shadow: none; border-radius: 0;
+      line-height: 1.4; transition: color 0.2s ease;
     }
 
-    .lp-faq-question:hover {
-      transform: none;
-      box-shadow: none;
-      color: var(--clr-primary-teal);
-    }
+    .lp-faq-question:hover { transform: none; box-shadow: none; color: var(--clr-primary-teal); }
 
     .lp-faq-question i {
-      font-size: 0.8rem;
-      color: var(--clr-text-dim);
-      transition: transform 0.3s ease;
-      flex-shrink: 0;
-      margin-left: 1rem;
+      font-size: 0.8rem; color: var(--clr-text-dim);
+      transition: transform 0.3s ease; flex-shrink: 0; margin-left: 1rem;
     }
 
-    .lp-faq-item.lp-faq-open .lp-faq-question i {
-      transform: rotate(180deg);
-    }
+    .lp-faq-item.lp-faq-open .lp-faq-question i { transform: rotate(180deg); }
 
     .lp-faq-answer {
-      max-height: 0;
-      overflow: hidden;
+      max-height: 0; overflow: hidden;
       transition: max-height 0.35s ease;
     }
 
-    .lp-faq-item.lp-faq-open .lp-faq-answer {
-      max-height: 300px;
-    }
+    .lp-faq-item.lp-faq-open .lp-faq-answer { max-height: 300px; }
 
     .lp-faq-answer p {
-      font-size: 0.95rem;
-      color: var(--clr-text-dim);
-      line-height: 1.65;
-      padding-bottom: 1.25rem;
-      margin-bottom: 0;
+      font-size: 0.95rem; color: var(--clr-text-dim);
+      line-height: 1.65; padding-bottom: 1.25rem; margin-bottom: 0;
     }
 
     /* ── Final CTA ──────────────────────────────────────────── */
@@ -888,196 +802,98 @@
     }
 
     .lp-final-cta h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: var(--clr-text);
+      font-size: 2rem; font-weight: 700;
+      letter-spacing: -0.01em; color: var(--clr-text);
       margin-bottom: 0.75rem;
     }
 
     .lp-final-cta p {
-      font-size: 1.05rem;
-      color: var(--clr-text-dim);
-      margin-bottom: 1.75rem;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.6;
+      font-size: 1.05rem; color: var(--clr-text-dim);
+      margin-bottom: 1.75rem; max-width: 500px;
+      margin-left: auto; margin-right: auto; line-height: 1.6;
     }
 
-    .lp-final-cta .btn {
-      padding: 0.85rem 2.25rem;
-      font-size: 1.05rem;
-    }
+    .lp-final-cta .btn { padding: 0.85rem 2.25rem; font-size: 1.05rem; }
 
     .lp-final-cta .lp-cta-note {
-      font-size: 0.82rem;
-      color: var(--clr-text-dim);
-      margin-top: 0.75rem;
-      margin-bottom: 0;
+      font-size: 0.82rem; color: var(--clr-text-dim);
+      margin-top: 0.75rem; margin-bottom: 0;
     }
 
     /* ── Sticky CTA Bar ────────────────────────────────────── */
     .lp-sticky-cta {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      position: fixed; bottom: 0; left: 0; right: 0;
       background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       border-top: 1px solid rgba(18, 179, 179, 0.15);
       padding: 0.7rem var(--page-horizontal-padding);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
+      display: flex; align-items: center; justify-content: center; gap: 1rem;
       z-index: 100;
       transform: translateY(100%);
       transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .lp-sticky-cta.lp-sticky-visible {
-      transform: translateY(0);
-    }
+    .lp-sticky-cta.lp-sticky-visible { transform: translateY(0); }
 
-    .lp-sticky-cta p {
-      font-size: 0.92rem;
-      font-weight: 500;
-      color: var(--clr-text);
-      margin: 0;
-    }
+    .lp-sticky-cta p { font-size: 0.92rem; font-weight: 500; color: var(--clr-text); margin: 0; }
 
-    .lp-sticky-cta .btn {
-      padding: 0.55rem 1.35rem;
-      font-size: 0.88rem;
-    }
+    .lp-sticky-cta .btn { padding: 0.55rem 1.35rem; font-size: 0.88rem; }
 
     /* ── Responsive ─────────────────────────────────────────── */
     @media (max-width: 768px) {
-      .lp-hero {
-        padding: 3rem var(--page-horizontal-padding) 2rem;
-      }
+      .lp-hero { padding: 3rem var(--page-horizontal-padding) 2rem; }
+      .lp-hero h1 { font-size: 2rem; }
+      .lp-hero .lp-hero-sub { font-size: 1rem; }
+      .lp-hero-content { text-align: center; }
+      .lp-hero-buttons { justify-content: center; }
+      .lp-hero-buttons .btn { width: 100%; max-width: 280px; }
+      .lp-hero-preview { max-width: 100%; }
+      .lp-trust-bar { gap: 1rem; }
+      .lp-trust-item { font-size: 0.82rem; }
+      .lp-section-heading { font-size: 1.6rem; }
 
-      .lp-hero h1 {
-        font-size: 2rem;
-      }
-
-      .lp-hero .lp-hero-sub {
-        font-size: 1rem;
-      }
-
-      .lp-hero-content {
-        text-align: center;
-      }
-
-      .lp-hero-buttons {
-        justify-content: center;
-      }
-
-      .lp-hero-buttons .btn {
-        width: 100%;
-        max-width: 280px;
-      }
-
-      .lp-hero-preview {
-        max-width: 100%;
-      }
-
-      .lp-trust-bar {
-        gap: 1rem;
-      }
-
-      .lp-trust-item {
-        font-size: 0.82rem;
-      }
-
-      .lp-section-heading {
-        font-size: 1.6rem;
-      }
-
-      .lp-features,
-      .lp-audience,
-      .lp-compare,
-      .lp-testimonials,
-      .lp-steps,
-      .lp-faq,
-      .lp-final-cta,
-      .lp-mission {
+      .lp-features, .lp-roles, .lp-compare,
+      .lp-testimonials, .lp-steps, .lp-faq,
+      .lp-final-cta, .lp-mission {
         padding: 2.5rem var(--page-horizontal-padding);
       }
 
-      .lp-features-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
+      .lp-features-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .lp-feature-card:nth-child(-n+2) { grid-column: span 1; display: block; }
+      .lp-feature-card:nth-child(-n+2) .lp-feature-icon { margin-bottom: 1rem; }
 
-      .lp-audience-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
+      .lp-role-tabs { max-width: 100%; }
+      .lp-role-tab { padding: 1rem 0.5rem; }
+      .lp-role-tab-icon { width: 44px; height: 44px; }
+      .lp-role-tab-icon i { font-size: 1.1rem; }
+      .lp-role-tab-label { font-size: 0.82rem; }
 
-      .lp-audience-content h2 {
-        font-size: 1.55rem;
-      }
+      .lp-audience-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .lp-audience-content h2 { font-size: 1.55rem; }
+      .lp-audience-visual { grid-template-columns: 1fr 1fr; }
+      .lp-info-cards { grid-template-columns: 1fr; }
+      .lp-info-card { flex-direction: row; text-align: left; align-items: flex-start; }
 
-      .lp-audience-visual {
-        grid-template-columns: 1fr 1fr;
-      }
+      .lp-mission h2 { font-size: 1.55rem; }
+      .lp-mission p { font-size: 0.95rem; }
 
-      .lp-mission h2 {
-        font-size: 1.55rem;
-      }
+      .lp-compare-grid { grid-template-columns: 1fr; max-width: 380px; }
+      .lp-compare-card--highlight { order: -1; }
 
-      .lp-mission p {
-        font-size: 0.95rem;
-      }
-
-      .lp-compare-grid {
-        grid-template-columns: 1fr;
-        max-width: 380px;
-      }
-
-      .lp-compare-card--highlight {
-        order: -1;
-      }
-
-      .lp-testimonials-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-
-      .lp-steps-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-
-      .lp-final-cta h2 {
-        font-size: 1.6rem;
-      }
-
-      .lp-sticky-cta p {
-        display: none;
-      }
+      .lp-testimonials-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .lp-steps-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .lp-final-cta h2 { font-size: 1.6rem; }
+      .lp-sticky-cta p { display: none; }
     }
 
     @media (min-width: 769px) and (max-width: 1024px) {
-      .lp-features-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .lp-compare-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .lp-testimonials-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
+      .lp-features-grid { grid-template-columns: repeat(2, 1fr); }
+      .lp-feature-card:nth-child(-n+2) { grid-column: span 1; display: block; }
+      .lp-feature-card:nth-child(-n+2) .lp-feature-icon { margin-bottom: 1rem; }
+      .lp-compare-grid { grid-template-columns: repeat(3, 1fr); }
+      .lp-testimonials-grid { grid-template-columns: repeat(2, 1fr); }
       .lp-testimonials-grid .lp-testimonial:last-child {
-        grid-column: 1 / -1;
-        max-width: 50%;
-        justify-self: center;
+        grid-column: 1 / -1; max-width: 50%; justify-self: center;
       }
     }
   </style>
@@ -1110,7 +926,6 @@
           </div>
         </div>
 
-        <!-- Product preview — animated chat mockup -->
         <div class="lp-hero-preview">
           <div class="lp-preview-header">
             <div class="lp-preview-dot"></div>
@@ -1138,7 +953,7 @@
       </div>
     </section>
 
-    <!-- ── Features ─────────────────────────────────────── -->
+    <!-- ── Features — Bento Grid ──────────────────────────── -->
     <section class="lp-features lp-reveal">
       <div class="lp-inner">
         <h2 class="lp-section-heading">Everything Your Student Needs to Succeed</h2>
@@ -1146,13 +961,17 @@
         <div class="lp-features-grid lp-stagger">
           <div class="lp-feature-card">
             <div class="lp-feature-icon"><i class="fas fa-user-group"></i></div>
-            <h3>Choose Your Tutor</h3>
-            <p>Every tutor has its own personality. Students pick the one that clicks &mdash; patient, playful, or straight to the point.</p>
+            <div>
+              <h3>Choose Your Tutor</h3>
+              <p>Every tutor has its own personality. Students pick the one that clicks &mdash; patient, playful, or straight to the point.</p>
+            </div>
           </div>
           <div class="lp-feature-card">
             <div class="lp-feature-icon"><i class="fas fa-brain"></i></div>
-            <h3>Knows Your Student</h3>
-            <p>The tutor gets to know your child over time, matches their reading level, and adjusts to how they learn best.</p>
+            <div>
+              <h3>Knows Your Student</h3>
+              <p>The tutor gets to know your child over time, matches their reading level, and adjusts to how they learn best.</p>
+            </div>
           </div>
           <div class="lp-feature-card">
             <div class="lp-feature-icon"><i class="fas fa-camera"></i></div>
@@ -1178,126 +997,133 @@
       </div>
     </section>
 
-    <!-- ── For Students ─────────────────────────────────── -->
-    <section class="lp-audience lp-audience--alt lp-reveal">
-      <div class="lp-audience-grid">
-        <div class="lp-audience-content">
-          <h2>A Tutor That Gets You</h2>
-          <p>Whether you're stuck on fractions or tackling algebra, Mathmatix works at your pace, speaks your language, and never makes you feel rushed.</p>
-          <ul class="lp-benefit-list">
-            <li><i class="fas fa-check"></i> Pick a tutor with the personality that fits you</li>
-            <li><i class="fas fa-check"></i> Upload your homework and check it before you turn it in</li>
-            <li><i class="fas fa-check"></i> Earn XP, level up, and unlock achievement badges</li>
-            <li><i class="fas fa-check"></i> Get help 24/7 &mdash; no appointments, no waiting</li>
-          </ul>
-        </div>
-        <div class="lp-audience-visual lp-stagger">
-          <div class="lp-stat-card">
-            <i class="fas fa-bolt"></i>
-            <div class="lp-stat-label">Instant Help</div>
-          </div>
-          <div class="lp-stat-card">
-            <i class="fas fa-trophy"></i>
-            <div class="lp-stat-label">Earn Badges</div>
-          </div>
-          <div class="lp-stat-card">
-            <i class="fas fa-user-graduate"></i>
-            <div class="lp-stat-label">Your Pace</div>
-          </div>
-          <div class="lp-stat-card">
-            <i class="fas fa-chart-simple"></i>
-            <div class="lp-stat-label">Track Growth</div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- ── Role Selector (interactive tabs) ───────────────── -->
+    <section class="lp-roles lp-reveal">
+      <div class="lp-inner">
+        <h2 class="lp-section-heading">Built for Everyone</h2>
+        <p class="lp-section-sub">Select your role to see what Mathmatix offers you.</p>
 
-    <!-- ── For Parents ──────────────────────────────────── -->
-    <section class="lp-audience lp-reveal">
-      <div class="lp-audience-grid">
-        <div class="lp-audience-content">
-          <h2>Stay Connected to Their Learning</h2>
-          <p>You don't need to be a math expert. Mathmatix gives you the tools to support your child's growth &mdash; or to learn alongside them.</p>
-          <ul class="lp-benefit-list">
-            <li><i class="fas fa-check"></i> See a summary of every tutoring interaction</li>
-            <li><i class="fas fa-check"></i> The tutor gets to know your child and personalizes every session</li>
-            <li><i class="fas fa-check"></i> Brush up on the math to help with homework</li>
-            <li><i class="fas fa-check"></i> Affordable alternative to private tutoring</li>
-          </ul>
+        <div class="lp-role-tabs">
+          <button class="lp-role-tab lp-role-tab--active" data-role="student">
+            <div class="lp-role-tab-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="lp-role-tab-label">Students</div>
+          </button>
+          <button class="lp-role-tab" data-role="parent">
+            <div class="lp-role-tab-icon"><i class="fas fa-heart"></i></div>
+            <div class="lp-role-tab-label">Parents</div>
+          </button>
+          <button class="lp-role-tab" data-role="teacher">
+            <div class="lp-role-tab-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="lp-role-tab-label">Teachers</div>
+          </button>
         </div>
-        <div class="lp-info-cards lp-stagger">
-          <div class="lp-info-card">
-            <i class="fas fa-chart-pie"></i>
-            <div>
-              <strong>Parent Dashboard</strong>
-              <span>A complete summary of every interaction &mdash; see what your child worked on, where they struggled, and how they grew.</span>
-            </div>
-          </div>
-          <div class="lp-info-card">
-            <i class="fas fa-envelope"></i>
-            <div>
-              <strong>Weekly Reports</strong>
-              <span>Get a digest delivered to your inbox with your child's activity, progress, and accomplishments.</span>
-            </div>
-          </div>
-          <div class="lp-info-card">
-            <i class="fas fa-book-open"></i>
-            <div>
-              <strong>Learn It Yourself</strong>
-              <span>Use the tutor to brush up on concepts so you can support homework time with confidence.</span>
-            </div>
-          </div>
-          <div class="lp-info-card">
-            <i class="fas fa-comments"></i>
-            <div>
-              <strong>Parent Tutor Chat</strong>
-              <span>Talk to the tutor yourself &mdash; ask questions, review what your child is learning, or get a quick refresher on any topic.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ── For Teachers ─────────────────────────────────── -->
-    <section class="lp-audience lp-audience--alt lp-reveal">
-      <div class="lp-audience-grid">
-        <div class="lp-audience-content">
-          <h2>Built for Your Classroom</h2>
-          <p>Mathmatix was designed by a teacher, for teachers. Get the visibility you need to differentiate instruction and support every learner.</p>
-          <ul class="lp-benefit-list">
-            <li><i class="fas fa-check"></i> Upload your materials, curriculum schedule, and specific comments</li>
-            <li><i class="fas fa-check"></i> The AI complements what you teach in your own classroom</li>
-            <li><i class="fas fa-check"></i> Set IEP goals and accommodations per student</li>
-            <li><i class="fas fa-check"></i> Give every student a personal tutor &mdash; without the cost</li>
-          </ul>
+        <!-- Student Panel -->
+        <div class="lp-role-panel lp-role-panel--active" data-panel="student">
+          <div class="lp-audience-grid">
+            <div class="lp-audience-content">
+              <h2>A Tutor That Gets You</h2>
+              <p>Whether you're stuck on fractions or tackling algebra, Mathmatix works at your pace, speaks your language, and never makes you feel rushed.</p>
+              <ul class="lp-benefit-list">
+                <li><i class="fas fa-check"></i> Pick a tutor with the personality that fits you</li>
+                <li><i class="fas fa-check"></i> Upload your homework and check it before you turn it in</li>
+                <li><i class="fas fa-check"></i> Earn XP, level up, and unlock achievement badges</li>
+                <li><i class="fas fa-check"></i> Get help 24/7 &mdash; no appointments, no waiting</li>
+              </ul>
+            </div>
+            <div class="lp-audience-visual">
+              <div class="lp-stat-card">
+                <i class="fas fa-bolt"></i>
+                <div class="lp-stat-label">Instant Help</div>
+              </div>
+              <div class="lp-stat-card">
+                <i class="fas fa-trophy"></i>
+                <div class="lp-stat-label">Earn Badges</div>
+              </div>
+              <div class="lp-stat-card">
+                <i class="fas fa-user-graduate"></i>
+                <div class="lp-stat-label">Your Pace</div>
+              </div>
+              <div class="lp-stat-card">
+                <i class="fas fa-chart-simple"></i>
+                <div class="lp-stat-label">Track Growth</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="lp-info-cards lp-stagger">
-          <div class="lp-info-card">
-            <i class="fas fa-users"></i>
-            <div>
-              <strong>Class Overview</strong>
-              <span>One dashboard to see every student's progress, activity, and areas of need at a glance.</span>
+
+        <!-- Parent Panel -->
+        <div class="lp-role-panel" data-panel="parent">
+          <div class="lp-audience-grid">
+            <div class="lp-audience-content">
+              <h2>Stay Connected to Their Learning</h2>
+              <p>You don't need to be a math expert. Mathmatix gives you the tools to support your child's growth &mdash; or to learn alongside them.</p>
+              <ul class="lp-benefit-list">
+                <li><i class="fas fa-check"></i> See a summary of every tutoring interaction</li>
+                <li><i class="fas fa-check"></i> The tutor gets to know your child and personalizes every session</li>
+                <li><i class="fas fa-check"></i> Brush up on the math to help with homework</li>
+                <li><i class="fas fa-check"></i> Affordable alternative to private tutoring</li>
+              </ul>
+            </div>
+            <div class="lp-info-cards">
+              <div class="lp-info-card">
+                <i class="fas fa-chart-pie"></i>
+                <strong>Parent Dashboard</strong>
+                <span>See what your child worked on, where they struggled, and how they grew.</span>
+              </div>
+              <div class="lp-info-card">
+                <i class="fas fa-envelope"></i>
+                <strong>Weekly Reports</strong>
+                <span>Activity, progress, and accomplishments delivered to your inbox.</span>
+              </div>
+              <div class="lp-info-card">
+                <i class="fas fa-book-open"></i>
+                <strong>Learn It Yourself</strong>
+                <span>Brush up on concepts to support homework time with confidence.</span>
+              </div>
+              <div class="lp-info-card">
+                <i class="fas fa-comments"></i>
+                <strong>Parent Tutor Chat</strong>
+                <span>Talk to the tutor yourself for quick refreshers on any topic.</span>
+              </div>
             </div>
           </div>
-          <div class="lp-info-card">
-            <i class="fas fa-upload"></i>
-            <div>
-              <strong>Your Curriculum, Your Way</strong>
-              <span>Upload materials, pacing guides, and specific instructions. The AI tutors what you're teaching, when you're teaching it.</span>
+        </div>
+
+        <!-- Teacher Panel -->
+        <div class="lp-role-panel" data-panel="teacher">
+          <div class="lp-audience-grid">
+            <div class="lp-audience-content">
+              <h2>Built for Your Classroom</h2>
+              <p>Mathmatix was designed by a teacher, for teachers. Get the visibility you need to differentiate instruction and support every learner.</p>
+              <ul class="lp-benefit-list">
+                <li><i class="fas fa-check"></i> Upload your materials, curriculum schedule, and specific comments</li>
+                <li><i class="fas fa-check"></i> The AI complements what you teach in your own classroom</li>
+                <li><i class="fas fa-check"></i> Set IEP goals and accommodations per student</li>
+                <li><i class="fas fa-check"></i> Give every student a personal tutor &mdash; without the cost</li>
+              </ul>
             </div>
-          </div>
-          <div class="lp-info-card">
-            <i class="fas fa-lightbulb"></i>
-            <div>
-              <strong>Actionable Insights</strong>
-              <span>Know which skills to reteach, which students need intervention, and where the class is thriving.</span>
-            </div>
-          </div>
-          <div class="lp-info-card">
-            <i class="fas fa-hand-holding-heart"></i>
-            <div>
-              <strong>IEP &amp; Accommodations</strong>
-              <span>Set IEP goals and accommodations per student. The tutor adjusts reading level, pacing, and support automatically.</span>
+            <div class="lp-info-cards">
+              <div class="lp-info-card">
+                <i class="fas fa-users"></i>
+                <strong>Class Overview</strong>
+                <span>Every student's progress, activity, and areas of need at a glance.</span>
+              </div>
+              <div class="lp-info-card">
+                <i class="fas fa-upload"></i>
+                <strong>Your Curriculum, Your Way</strong>
+                <span>Upload pacing guides and instructions. The AI teaches what you teach.</span>
+              </div>
+              <div class="lp-info-card">
+                <i class="fas fa-lightbulb"></i>
+                <strong>Actionable Insights</strong>
+                <span>Know which skills to reteach and which students need intervention.</span>
+              </div>
+              <div class="lp-info-card">
+                <i class="fas fa-hand-holding-heart"></i>
+                <strong>IEP &amp; Accommodations</strong>
+                <span>Set goals per student. The tutor adjusts reading level and pacing.</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1494,7 +1320,7 @@
     </section>
   </main>
 
-  <!-- Sticky CTA bar — appears after scrolling past hero -->
+  <!-- Sticky CTA bar -->
   <div class="lp-sticky-cta" id="lp-sticky-cta">
     <p>Ready to get started?</p>
     <a href="/signup.html" class="btn btn-primary">Sign Up Free</a>
@@ -1513,7 +1339,7 @@
     (function () {
       'use strict';
 
-      /* ── Scroll Reveal (IntersectionObserver) ──────────── */
+      /* ── Scroll Reveal ─────────────────────────────────── */
       var revealEls = document.querySelectorAll('.lp-reveal');
       if ('IntersectionObserver' in window) {
         var revealObs = new IntersectionObserver(function (entries) {
@@ -1524,10 +1350,8 @@
             }
           });
         }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
         revealEls.forEach(function (el) { revealObs.observe(el); });
       } else {
-        /* Fallback: show everything immediately */
         revealEls.forEach(function (el) { el.classList.add('lp-visible'); });
       }
 
@@ -1541,12 +1365,10 @@
 
         function showNextBubble() {
           if (idx >= bubbles.length) return;
-
           var bubble = bubbles[idx];
           var isTutor = bubble.classList.contains('lp-chat-tutor');
 
           if (isTutor) {
-            /* Show typing indicator, then reveal the message */
             typingEl.style.display = 'flex';
             setTimeout(function () {
               typingEl.style.display = 'none';
@@ -1561,9 +1383,27 @@
           }
         }
 
-        /* Start the animation after a brief delay */
         setTimeout(showNextBubble, 700);
       }
+
+      /* ── Role Selector Tabs ────────────────────────────── */
+      var roleTabs = document.querySelectorAll('.lp-role-tab');
+      var rolePanels = document.querySelectorAll('.lp-role-panel');
+
+      roleTabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          var role = tab.getAttribute('data-role');
+
+          /* Update tabs */
+          roleTabs.forEach(function (t) { t.classList.remove('lp-role-tab--active'); });
+          tab.classList.add('lp-role-tab--active');
+
+          /* Update panels */
+          rolePanels.forEach(function (p) { p.classList.remove('lp-role-panel--active'); });
+          var targetPanel = document.querySelector('[data-panel="' + role + '"]');
+          if (targetPanel) targetPanel.classList.add('lp-role-panel--active');
+        });
+      });
 
       /* ── Sticky CTA Bar ────────────────────────────────── */
       var stickyBar = document.getElementById('lp-sticky-cta');
@@ -1574,7 +1414,6 @@
         var stickyObs = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
             if (entry.target === hero) {
-              /* Show sticky when hero is NOT visible */
               if (!entry.isIntersecting) {
                 stickyBar.classList.add('lp-sticky-visible');
               } else {
@@ -1583,21 +1422,18 @@
             }
           });
         }, { threshold: 0 });
-
         stickyObs.observe(hero);
 
-        /* Hide sticky when user reaches the final CTA */
         if (finalCta) {
           var finalObs = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
               if (entry.isIntersecting) {
                 stickyBar.classList.remove('lp-sticky-visible');
-              } else if (!hero.getBoundingClientRect().bottom > 0) {
+              } else if (hero.getBoundingClientRect().bottom < 0) {
                 stickyBar.classList.add('lp-sticky-visible');
               }
             });
           }, { threshold: 0.3 });
-
           finalObs.observe(finalCta);
         }
       }
@@ -1609,15 +1445,11 @@
         if (btn) {
           btn.addEventListener('click', function () {
             var isOpen = item.classList.contains('lp-faq-open');
-
-            /* Close all others */
             faqItems.forEach(function (other) {
               other.classList.remove('lp-faq-open');
               var otherBtn = other.querySelector('.lp-faq-question');
               if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
             });
-
-            /* Toggle current */
             if (!isOpen) {
               item.classList.add('lp-faq-open');
               btn.setAttribute('aria-expanded', 'true');
