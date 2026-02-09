@@ -230,18 +230,25 @@ router.post('/teachers', isAdmin, async (req, res) => {
  */
 router.post('/create-user', isAdmin, async (req, res) => {
   try {
-    const { firstName, lastName, email, role, username, password, generatePassword } = req.body;
+    const { firstName, lastName, email, role, roles, username, password, generatePassword } = req.body;
+
+    // Accept roles array or single role (backward compatible)
+    const userRoles = roles && roles.length > 0 ? roles : (role ? [role] : []);
 
     // Validate required fields
-    if (!firstName || !lastName || !email || !role) {
-      return res.status(400).json({ message: 'First name, last name, email, and role are required.' });
+    if (!firstName || !lastName || !email || userRoles.length === 0) {
+      return res.status(400).json({ message: 'First name, last name, email, and at least one role are required.' });
     }
 
-    // Validate role
+    // Validate all roles
     const validRoles = ['student', 'teacher', 'parent', 'admin'];
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({ message: `Invalid role. Must be one of: ${validRoles.join(', ')}` });
+    const invalidRoles = userRoles.filter(r => !validRoles.includes(r));
+    if (invalidRoles.length > 0) {
+      return res.status(400).json({ message: `Invalid role(s): ${invalidRoles.join(', ')}. Must be one of: ${validRoles.join(', ')}` });
     }
+
+    // Primary role = first role in the array
+    const primaryRole = userRoles[0];
 
     // Generate username if not provided
     const finalUsername = username || email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -284,24 +291,30 @@ router.post('/create-user', isAdmin, async (req, res) => {
       email: email.toLowerCase(),
       username: finalUsername.toLowerCase(),
       passwordHash: finalPassword, // Will be hashed by pre-save hook
-      role,
-      needsProfileCompletion: role === 'student' // Only students need onboarding
+      role: primaryRole,
+      roles: userRoles,
+      needsProfileCompletion: userRoles.includes('student') && userRoles.length === 1
     });
 
     await newUser.save();
 
-    console.log(`[ADMIN] ${role} account created: ${email} by admin ${req.user.email}`);
+    const roleLabel = userRoles.length > 1
+      ? userRoles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(' + ')
+      : primaryRole.charAt(0).toUpperCase() + primaryRole.slice(1);
+
+    console.log(`[ADMIN] ${roleLabel} account created: ${email} by admin ${req.user.email}`);
 
     res.status(201).json({
       success: true,
-      message: `${role.charAt(0).toUpperCase() + role.slice(1)} account created successfully!`,
+      message: `${roleLabel} account created successfully!`,
       user: {
         _id: newUser._id,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         email: newUser.email,
         username: newUser.username,
-        role: newUser.role
+        role: newUser.role,
+        roles: newUser.roles
       },
       // Only return password if it was auto-generated (so admin can share it)
       ...(generatePassword || !password ? { temporaryPassword: finalPassword } : {})

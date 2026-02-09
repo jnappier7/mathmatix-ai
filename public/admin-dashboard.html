@@ -637,6 +637,9 @@
           </div>
         </div>
         <nav class="main-header-nav">
+          <div id="roleSwitcher" class="role-switcher" style="display: none;">
+            <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role"></select>
+          </div>
           <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </nav>
       </div>
@@ -1145,13 +1148,21 @@
           <input type="email" id="teacherEmail" name="email" required>
         </div>
         <div class="modal-form-group">
-          <label for="teacherRole">Role *</label>
-          <select id="teacherRole" name="role" required>
-            <option value="student">Student</option>
-            <option value="teacher" selected>Teacher</option>
-            <option value="parent">Parent</option>
-            <option value="admin">Admin</option>
-          </select>
+          <label>Role(s) *</label>
+          <div id="teacherRoleCheckboxes" style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px;">
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+              <input type="checkbox" name="roles" value="student"> Student
+            </label>
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+              <input type="checkbox" name="roles" value="teacher" checked> Teacher
+            </label>
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+              <input type="checkbox" name="roles" value="parent"> Parent
+            </label>
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+              <input type="checkbox" name="roles" value="admin"> Admin
+            </label>
+          </div>
         </div>
         <div class="modal-form-group">
           <label for="teacherUsername">Username (optional - will be generated from email if blank)</label>
@@ -1675,6 +1686,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
+  <script src="/js/role-switcher.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/admin-dashboard.js"></script>
