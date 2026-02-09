@@ -16,7 +16,7 @@ const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { anthropic, openai, retryWithExponentialBackoff } = require('../utils/openaiClient');
-const { applyWorksheetGuard } = require('../utils/worksheetGuard');
+const { applyWorksheetGuard, filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -248,6 +248,12 @@ router.post('/',
 
             aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
             console.log('[chatWithFile] Received response from OpenAI');
+        }
+
+        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
+        const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
+        if (answerKeyCheck.wasFiltered) {
+            aiResponseText = answerKeyCheck.text;
         }
 
         // --- Step 3: Handle Post-Processing (XP, Unlocks, etc.) ---

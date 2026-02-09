@@ -33,6 +33,7 @@ const { needsAssessment } = require('../services/chatService');
 const contextCache = require('../utils/contextCache');
 const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
+const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -764,6 +765,19 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             // NON-STREAMING MODE: Original behavior
             const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 1500 });
             aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+        }
+
+        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
+        // Catches cases where the AI solves multiple problems despite prompt instructions
+        const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
+        if (answerKeyCheck.wasFiltered) {
+            aiResponseText = answerKeyCheck.text;
+            // For streaming: send a replacement event so frontend overwrites the streamed chunks
+            if (useStreaming && !clientDisconnected) {
+                try {
+                    res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
+                } catch (e) { /* client may have disconnected */ }
+            }
         }
 
         // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
