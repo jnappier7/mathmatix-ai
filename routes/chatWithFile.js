@@ -135,9 +135,10 @@ router.post('/',
         }
 
         // ANTI-CHEAT: Append worksheet detection guard (centralized in utils/worksheetGuard.js)
-        combinedText = applyWorksheetGuard(combinedText);
+        // IMPORTANT: Apply ONLY to the AI message, NOT to the stored/displayed conversation message.
+        const guardedText = applyWorksheetGuard(combinedText);
 
-        // Store user message in conversation (text only, for history)
+        // Store user message in conversation (text only, for history) — WITHOUT the guard
         activeConversation.messages.push({ role: 'user', content: combinedText });
 
         const tutor = TUTOR_CONFIG[user.selectedTutorId] || TUTOR_CONFIG.default;
@@ -147,10 +148,11 @@ router.post('/',
         const recentMessages = activeConversation.messages.slice(-40).map(m => ({ role: m.role, content: m.content }));
 
         // Create user message with text (including PDF content) and images (Vision API format)
+        // Uses guardedText so the AI sees the worksheet detection instruction
         const visionUserMessage = {
             role: 'user',
             content: [
-                { type: "text", text: combinedText },
+                { type: "text", text: guardedText },
                 ...imageContents
             ]
         };
