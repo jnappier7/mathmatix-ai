@@ -699,16 +699,16 @@ window.studentDashboardTour = [
         position: 'right'
     },
     {
-        element: '#sidebar-resources-btn',
-        title: 'Resources & Tools',
-        content: 'Access helpful resources, a calculator, and other tools to support your learning.',
-        position: 'right'
+        element: '#open-settings-modal-btn',
+        title: 'Choose Your Tutor',
+        content: 'Open Settings to pick a different AI tutor. Each tutor has its own personality and teaching style!',
+        position: 'bottom'
     },
     {
-        element: '#sidebar-upload-btn',
-        title: 'Upload Your Work',
-        content: 'Snap a photo of your handwritten work and get instant feedback and grading from your AI tutor!',
-        position: 'right'
+        element: '#camera-button',
+        title: 'Show Your Work',
+        content: 'Snap a photo or upload a PDF of your handwritten work and get instant feedback and grading. Available for Unlimited users!',
+        position: 'top'
     }
 ];
 
