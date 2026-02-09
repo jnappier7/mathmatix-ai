@@ -354,6 +354,55 @@ router.post('/create-user', isAdmin, async (req, res) => {
 });
 
 /**
+ * @route   POST /api/admin/users/:userId/send-credentials
+ * @desc    Reset a user's password and send them a welcome email with new credentials
+ * @access  Private (Admin)
+ */
+router.post('/users/:userId/send-credentials', isAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Generate a new temporary password
+    const tempPassword = crypto.randomBytes(8).toString('hex') + 'A1!';
+    user.passwordHash = tempPassword; // Will be hashed by pre-save hook
+    await user.save();
+
+    // Send welcome email with new credentials
+    const emailResult = await sendWelcomeEmail({
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      roles: user.roles && user.roles.length > 0 ? user.roles : [user.role],
+      temporaryPassword: tempPassword
+    });
+
+    if (emailResult.success) {
+      console.log(`[ADMIN] Credentials email sent to ${user.email} by admin ${req.user.email}`);
+      res.json({
+        success: true,
+        message: `Credentials email sent to ${user.email}. A new temporary password has been set.`
+      });
+    } else {
+      console.warn(`[ADMIN] Credentials email failed for ${user.email}: ${emailResult.error}`);
+      res.json({
+        success: true,
+        message: `Password was reset but email failed to send. Temporary password: ${tempPassword}`,
+        temporaryPassword: tempPassword
+      });
+    }
+  } catch (err) {
+    console.error('Error sending credentials:', err);
+    res.status(500).json({ message: 'Server error sending credentials.' });
+  }
+});
+
+/**
  * @route   POST /api/admin/link-parent-student
  * @desc    Link a parent account to a student account (bidirectional)
  * @access  Private (Admin)

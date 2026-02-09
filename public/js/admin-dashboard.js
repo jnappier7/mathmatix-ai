@@ -191,6 +191,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}">
                         <i class="fas fa-eye"></i>
                     </button>
+                    <button class="btn-icon send-credentials-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-email="${s.email || ''}" title="Send login credentials email">
+                        <i class="fas fa-envelope"></i>
+                    </button>
                     <button class="btn-icon reset-screener-btn" data-studentid="${s._id}" data-studentname="${s.firstName} ${s.lastName}" title="Reset Screener">
                         <i class="fas fa-redo"></i>
                     </button>
@@ -308,6 +311,49 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const studentId = link.closest('tr')?.dataset.studentid;
                 if (studentId) {
                     populateModal(studentId);
+                }
+                return;
+            }
+
+            // Handle send credentials email button click
+            const sendCredsBtn = e.target.closest('.send-credentials-btn');
+            if (sendCredsBtn) {
+                e.preventDefault();
+                const userId = sendCredsBtn.dataset.userid;
+                const username = sendCredsBtn.dataset.username;
+                const email = sendCredsBtn.dataset.email;
+
+                if (!confirm(`Send login credentials to ${username} (${email})?\n\nThis will:\n• Generate a new temporary password\n• Email them their username and new password\n\nTheir current password will be replaced.`)) {
+                    return;
+                }
+
+                try {
+                    sendCredsBtn.disabled = true;
+                    sendCredsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    const response = await csrfFetch(`/api/admin/users/${userId}/send-credentials`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        if (result.temporaryPassword) {
+                            // Email failed but password was reset - show it
+                            alert(`⚠️ ${result.message}`);
+                        } else {
+                            alert(`✅ ${result.message}`);
+                        }
+                    } else {
+                        throw new Error(result.message || 'Failed to send credentials');
+                    }
+                } catch (error) {
+                    console.error('Send credentials error:', error);
+                    alert(`❌ Error: ${error.message}`);
+                } finally {
+                    sendCredsBtn.disabled = false;
+                    sendCredsBtn.innerHTML = '<i class="fas fa-envelope"></i>';
                 }
                 return;
             }
