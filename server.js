@@ -448,7 +448,16 @@ app.get("/user", isAuthenticated, async (req, res) => {
             }
         }
 
-        res.json({ user: user ? user.toObject() : req.user.toObject() });
+        const userObj = user ? user.toObject() : req.user.toObject();
+
+        // Attach computed XP fields so the frontend can display progress on page load
+        const BRAND_CONFIG = require('./utils/brand');
+        const level = userObj.level || 1;
+        const xpStart = BRAND_CONFIG.cumulativeXpForLevel(level);
+        userObj.xpForCurrentLevel = Math.max(0, (userObj.xp || 0) - xpStart);
+        userObj.xpForNextLevel = BRAND_CONFIG.xpRequiredForLevel(level);
+
+        res.json({ user: userObj });
     } catch (error) {
         console.error('[/user] Error in /user endpoint:', error);
         console.error('[/user] Error stack:', error.stack);

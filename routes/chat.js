@@ -365,7 +365,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 text: "You've already done your placement assessment! I'm using those results to give you the right level of problems. If your teacher or parent thinks you need a new assessment, they can request one for you. What would you like to work on?",
                 userXp: 0,
                 userLevel: user.level || 1,
-                xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel,
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1),
                 specialXpAwarded: "",
                 voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].voiceId,
                 newlyUnlockedTutors: [],
@@ -1289,11 +1289,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         // Check for level up (loop handles multi-level jumps from large XP awards)
         let leveledUp = false;
-        let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
-        while (user.xp >= xpForNextLevel) {
+        while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
             user.level += 1;
             leveledUp = true;
-            xpForNextLevel = user.level * BRAND_CONFIG.xpPerLevel;
         }
 
         const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
@@ -1314,7 +1312,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             });
         }
 
-        const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
+        const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
         const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
 
         // Log XP breakdown for analytics
@@ -1334,7 +1332,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             text: aiResponseText,
             userXp: userXpInCurrentLevel,
             userLevel: user.level,
-            xpNeeded: BRAND_CONFIG.xpPerLevel,
+            xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
             drawingSequence: dynamicDrawingSequence,
@@ -2075,7 +2073,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 isGreeting: true,
                 userXp: user.xp || 0,
                 userLevel: user.level || 1,
-                xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
             });
         }
 
