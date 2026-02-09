@@ -1,9 +1,10 @@
 // middleware/usageGate.js — Usage enforcement for minute packs & unlimited tier
 //
-// Blocks chat/voice/upload requests when a user has no active pack or subscription.
+// Free students: 20 free minutes per week (resets weekly).
+// Students connected to a class (teacherId): unlimited free access.
 // Pack users: must have packSecondsRemaining > 0 and pack not expired.
 // Unlimited users: always pass.
-// Teachers/admins: always pass.
+// Teachers/parents/admins: always pass (free unlimited).
 //
 // MASTER SWITCH: Set BILLING_ENABLED=true in .env to activate.
 // When disabled, all users get unlimited access (pre-launch mode).
@@ -13,13 +14,16 @@
 const User = require('../models/user');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
+const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week for free students
 
 /**
  * Middleware that gates AI-powered endpoints behind pack/subscription limits.
  * - If BILLING_ENABLED is false: everyone passes (pre-launch mode)
- * - Unlimited users: always pass
+ * - Teachers, parents, admins: always pass (free unlimited)
+ * - Students connected to a class (teacherId): always pass (free unlimited)
+ * - Unlimited subscribers: always pass
  * - Pack users with balance: pass, with remaining time in response header
- * - Free users / expired packs: 402 Payment Required with upgrade prompt
+ * - Free students: 20 free minutes per week, then 402
  */
 async function usageGate(req, res, next) {
   // Master switch — when billing is off, everyone gets unlimited access
@@ -32,10 +36,13 @@ async function usageGate(req, res, next) {
     const user = req.user;
     if (!user) return next(); // Let auth middleware handle this
 
-    // Teachers and admins are exempt from usage limits
-    if (user.role === 'teacher' || user.role === 'admin') return next();
+    // Teachers, parents, and admins are always free unlimited
+    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') return next();
 
-    // Unlimited users pass unconditionally
+    // Students connected to a class get free unlimited access
+    if (user.teacherId) return next();
+
+    // Unlimited subscribers pass unconditionally
     if (user.subscriptionTier === 'unlimited') return next();
 
     // Pack users — check balance and expiry
@@ -69,13 +76,30 @@ async function usageGate(req, res, next) {
       return next();
     }
 
-    // Free users — no access
-    return res.status(402).json({
-      message: 'Purchase a tutoring pack to get started.',
-      usageLimitReached: true,
-      tier: 'free',
-      upgradeRequired: true
-    });
+    // Free students — 20 minutes per week
+    const weeklyUsed = user.weeklyActiveSeconds || 0;
+    const freeRemaining = FREE_WEEKLY_SECONDS - weeklyUsed;
+
+    if (freeRemaining <= 0) {
+      return res.status(402).json({
+        message: "You've used your 20 free minutes this week. Upgrade for unlimited tutoring, or come back next week!",
+        usageLimitReached: true,
+        tier: 'free',
+        freeMinutesUsed: Math.floor(weeklyUsed / 60),
+        freeMinutesTotal: 20,
+        upgradeRequired: true
+      });
+    }
+
+    // Set remaining time headers so frontend can show countdown
+    res.setHeader('X-Free-Remaining-Seconds', Math.max(0, freeRemaining).toString());
+
+    // Warn when under 2 minutes remaining
+    if (freeRemaining <= 120) {
+      res.setHeader('X-Usage-Warning', 'low');
+    }
+
+    return next();
   } catch (error) {
     console.error('[UsageGate] Error:', error.message);
     // Don't block the user on gate errors — let them through
@@ -94,7 +118,7 @@ function premiumFeatureGate(featureName) {
     const user = req.user;
     if (!user) return next();
 
-    if (user.subscriptionTier === 'unlimited' || user.role === 'teacher' || user.role === 'admin') {
+    if (user.subscriptionTier === 'unlimited' || user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
       return next();
     }
 
@@ -108,4 +132,4 @@ function premiumFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, premiumFeatureGate };
+module.exports = { usageGate, premiumFeatureGate, FREE_WEEKLY_SECONDS };
