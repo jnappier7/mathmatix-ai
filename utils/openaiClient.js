@@ -55,7 +55,12 @@ async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
             if (isTransientError) {
                 attempts++;
                 // Prioritize 'Retry-After' header if available (for HTTP errors)
-                const retryAfterHeader = error.response?.headers?.get('Retry-After') || error.headers?.get('Retry-After');
+                // Handle both Headers objects (.get()) and plain objects (bracket access)
+                const retryAfterHeader =
+                    error.response?.headers?.get?.('Retry-After') ||
+                    error.response?.headers?.['retry-after'] ||
+                    error.headers?.get?.('Retry-After') ||
+                    error.headers?.['retry-after'];
                 const waitTime = retryAfterHeader ? parseInt(retryAfterHeader) * 1000 : delay * (2 ** (attempts - 1)); // Exponential backoff
 
                 console.warn(`AI Service transient error (Status: ${error.status || 'N/A'}). Retrying in ${waitTime / 1000}s... (Attempt ${attempts}/${retries})`);
