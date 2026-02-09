@@ -1446,7 +1446,10 @@ async function handleParentChat(req, res, parentId, childId, message) {
             });
         }
 
-        parentConversation.messages.push({ role: 'user', content: message });
+        if (!message || typeof message !== 'string' || message.trim() === '') {
+            return res.status(400).json({ error: 'Message content is required.' });
+        }
+        parentConversation.messages.push({ role: 'user', content: message.trim() });
 
         // Get the tutor personality the student uses
         const selectedTutorKey = child.selectedTutorId && TUTOR_CONFIG[child.selectedTutorId]
