@@ -18,6 +18,7 @@ const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const multer = require('multer');
+const { sendWelcomeEmail } = require('../utils/emailService');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 
@@ -230,7 +231,7 @@ router.post('/teachers', isAdmin, async (req, res) => {
  */
 router.post('/create-user', isAdmin, async (req, res) => {
   try {
-    const { firstName, lastName, email, role, roles, username, password, generatePassword } = req.body;
+    const { firstName, lastName, email, role, roles, username, password, generatePassword, sendEmail } = req.body;
 
     // Accept roles array or single role (backward compatible)
     const userRoles = roles && roles.length > 0 ? roles : (role ? [role] : []);
@@ -304,9 +305,32 @@ router.post('/create-user', isAdmin, async (req, res) => {
 
     console.log(`[ADMIN] ${roleLabel} account created: ${email} by admin ${req.user.email}`);
 
+    const tempPw = (generatePassword || !password) ? finalPassword : null;
+
+    // Send welcome email if requested (fire-and-forget, don't block response)
+    let emailSent = false;
+    if (sendEmail) {
+      try {
+        const emailResult = await sendWelcomeEmail({
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          username: newUser.username,
+          roles: newUser.roles,
+          temporaryPassword: tempPw
+        });
+        emailSent = emailResult.success;
+        if (!emailSent) {
+          console.warn(`[ADMIN] Welcome email failed for ${email}: ${emailResult.error}`);
+        }
+      } catch (emailErr) {
+        console.error(`[ADMIN] Welcome email error for ${email}:`, emailErr);
+      }
+    }
+
     res.status(201).json({
       success: true,
-      message: `${roleLabel} account created successfully!`,
+      message: `${roleLabel} account created successfully!` + (sendEmail ? (emailSent ? ' Welcome email sent.' : ' (Welcome email failed to send)') : ''),
       user: {
         _id: newUser._id,
         firstName: newUser.firstName,
@@ -316,8 +340,8 @@ router.post('/create-user', isAdmin, async (req, res) => {
         role: newUser.role,
         roles: newUser.roles
       },
-      // Only return password if it was auto-generated (so admin can share it)
-      ...(generatePassword || !password ? { temporaryPassword: finalPassword } : {})
+      temporaryPassword: tempPw,
+      emailSent
     });
 
   } catch (err) {

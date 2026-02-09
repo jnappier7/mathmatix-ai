@@ -1328,6 +1328,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     return;
                 }
 
+                const sendWelcomeEmailCheck = document.getElementById('sendWelcomeEmailCheck');
                 const formData = {
                     firstName: document.getElementById('teacherFirstName').value.trim(),
                     lastName: document.getElementById('teacherLastName').value.trim(),
@@ -1335,7 +1336,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     roles: selectedRoles,
                     username: document.getElementById('teacherUsername').value.trim() || undefined,
                     generatePassword: generatePasswordCheck.checked,
-                    password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined
+                    password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined,
+                    sendEmail: sendWelcomeEmailCheck ? sendWelcomeEmailCheck.checked : false
                 };
 
                 const response = await csrfFetch('/api/admin/create-user', {
@@ -1362,6 +1364,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                         document.getElementById('resultPasswordRow').style.display = 'block';
                     } else {
                         document.getElementById('resultPasswordRow').style.display = 'none';
+                    }
+
+                    // Show email status
+                    const emailStatusEl = document.getElementById('resultEmailStatus');
+                    const shareWarningEl = document.getElementById('resultShareWarning');
+                    if (result.emailSent) {
+                        emailStatusEl.innerHTML = '<i class="fas fa-envelope" style="color: #155724;"></i> <span style="color: #155724;">Welcome email sent to ' + result.user.email + '</span>';
+                        emailStatusEl.style.display = 'block';
+                        shareWarningEl.style.display = 'none';
+                    } else if (formData.sendEmail && !result.emailSent) {
+                        emailStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color: #856404;"></i> <span style="color: #856404;">Welcome email failed to send. Share credentials manually.</span>';
+                        emailStatusEl.style.display = 'block';
+                        shareWarningEl.style.display = 'block';
+                    } else {
+                        emailStatusEl.style.display = 'none';
+                        shareWarningEl.style.display = 'block';
                     }
 
                     // Show role-specific follow-ups (multiple can show for multi-role users)

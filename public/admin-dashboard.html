@@ -1177,6 +1177,11 @@
           <label for="teacherPassword">Password</label>
           <input type="password" id="teacherPassword" name="password" placeholder="Min 8 chars with uppercase, lowercase, number, special char">
         </div>
+        <div class="modal-form-group">
+          <label>
+            <input type="checkbox" id="sendWelcomeEmailCheck" checked> Send welcome email with login info
+          </label>
+        </div>
 
         <div class="modal-actions">
           <button type="submit" class="btn btn-primary" id="createTeacherSubmit">
@@ -1193,7 +1198,8 @@
         <p><strong>Username:</strong> <span id="resultTeacherUsername"></span></p>
         <p><strong>Role:</strong> <span id="resultTeacherRole"></span></p>
         <p id="resultPasswordRow"><strong>Temporary Password:</strong> <code id="resultTeacherPassword" style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;"></code></p>
-        <p style="color: #856404; font-size: 0.9em; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> Share these credentials securely with the user.</p>
+        <p id="resultEmailStatus" style="font-size: 0.9em; margin-top: 10px;"></p>
+        <p id="resultShareWarning" style="color: #856404; font-size: 0.9em; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> Share these credentials securely with the user.</p>
 
         <!-- Teacher follow-up: Set up a class -->
         <div id="followUpTeacher" style="display: none; margin-top: 15px; padding: 12px; background: #fff; border-radius: 6px; border: 1px solid #c3e6cb;">
