@@ -1,24 +1,17 @@
 /**
  * AUTO-LOGOUT MANAGER
  *
- * Handles automatic logout in two scenarios:
- * 1. Inactivity timeout (30 minutes default)
- * 2. Manual logout button (handled elsewhere)
+ * Handles logout scenarios:
+ * 1. Manual logout button (handled elsewhere)
+ * 2. Cross-tab logout sync
  *
- * Note: Tab-close logout removed to prevent unintended logouts during navigation
+ * Note: Session time limits have been removed - sessions persist until manual logout.
  */
 
 (function() {
   'use strict';
 
-  // Configuration
-  const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
-  const WARNING_BEFORE_LOGOUT = 2 * 60 * 1000; // Warn 2 minutes before logout
   const SESSION_KEY = 'mathmatix_tab_session_active';
-
-  let inactivityTimer = null;
-  let warningTimer = null;
-  let warningShown = false;
 
   /**
    * Perform logout
@@ -47,54 +40,6 @@
         keepalive: true
       }).catch(err => console.error('Logout failed:', err));
     }
-  }
-
-  /**
-   * Show inactivity warning
-   */
-  function showInactivityWarning() {
-    if (warningShown) return;
-    warningShown = true;
-
-    const remainingTime = Math.ceil(WARNING_BEFORE_LOGOUT / 60000);
-    const shouldStay = confirm(
-      `⚠️ Inactivity Detected\n\n` +
-      `You will be logged out in ${remainingTime} minutes due to inactivity.\n\n` +
-      `Click OK to stay logged in, or Cancel to logout now.`
-    );
-
-    if (shouldStay) {
-      // User wants to stay - reset timers
-      resetInactivityTimer();
-      warningShown = false;
-    } else {
-      // User chose to logout
-      performLogout();
-      window.location.href = '/login.html';
-    }
-  }
-
-  /**
-   * Reset inactivity timer
-   */
-  function resetInactivityTimer() {
-    // Clear existing timers
-    if (inactivityTimer) clearTimeout(inactivityTimer);
-    if (warningTimer) clearTimeout(warningTimer);
-    warningShown = false;
-
-    // Set warning timer (fires before logout)
-    warningTimer = setTimeout(() => {
-      showInactivityWarning();
-    }, INACTIVITY_TIMEOUT - WARNING_BEFORE_LOGOUT);
-
-    // Set logout timer (fires after full timeout)
-    inactivityTimer = setTimeout(() => {
-      console.log('[Auto-Logout] Session timed out due to inactivity');
-      performLogout();
-      alert('You have been logged out due to inactivity.');
-      window.location.href = '/login.html';
-    }, INACTIVITY_TIMEOUT);
   }
 
   /**
@@ -130,32 +75,9 @@
     // Activate tab session (set flag in sessionStorage)
     activateTabSession();
 
-    console.log('[Auto-Logout] Initialized with inactivity timeout');
+    console.log('[Auto-Logout] Initialized - no session time limit');
 
-    // 1. INACTIVITY TIMEOUT
-    // Listen for user activity events
-    const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
-    activityEvents.forEach(event => {
-      document.addEventListener(event, resetInactivityTimer, { passive: true });
-    });
-
-    // Start the timer
-    resetInactivityTimer();
-
-    // 2. VISIBILITY CHANGE (pause timers when tab is hidden)
-    // Use visibilitychange for tab switches
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        // Tab hidden - pause timers to avoid logout while tab is in background
-        if (inactivityTimer) clearTimeout(inactivityTimer);
-        if (warningTimer) clearTimeout(warningTimer);
-      } else {
-        // Tab visible again - resume timers
-        resetInactivityTimer();
-      }
-    });
-
-    // 3. STORAGE EVENT (for cross-tab logout sync)
+    // STORAGE EVENT (for cross-tab logout sync)
     // If user logs out in one tab, logout in all tabs
     window.addEventListener('storage', (event) => {
       if (event.key === 'logout-event') {

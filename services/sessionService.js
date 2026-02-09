@@ -1,6 +1,6 @@
 // services/sessionService.js
 // Comprehensive session management and tracking
-// Handles session lifecycle, idle timeout, summaries, and auto-save
+// Handles session lifecycle, summaries, and auto-save
 
 const logger = require('../utils/logger').child({ service: 'session-service' });
 const User = require('../models/user');
@@ -16,8 +16,6 @@ const {
  * Session configuration
  */
 const SESSION_CONFIG = {
-  IDLE_TIMEOUT: 20 * 60 * 1000, // 20 minutes in milliseconds
-  WARNING_BEFORE_TIMEOUT: 2 * 60 * 1000, // Warn 2 minutes before timeout
   HEARTBEAT_INTERVAL: 30 * 1000, // 30 seconds
 };
 
@@ -299,14 +297,8 @@ async function recordHeartbeat(userId, sessionId, metrics = {}) {
     user.lastActivityTime = new Date();
     await user.save();
 
-    // Calculate time until timeout
-    const timeUntilTimeout = SESSION_CONFIG.IDLE_TIMEOUT;
-    const shouldWarn = false; // Frontend will handle warning based on last activity
-
     return {
       success: true,
-      timeUntilTimeout,
-      shouldWarn,
       sessionId
     };
   } catch (error) {
