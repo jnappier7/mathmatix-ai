@@ -502,11 +502,17 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 .catch(err => { console.error('Error fetching grading results:', err.message); return []; })
         );
 
-        // 6. Math verification (runs in parallel with everything else)
+        // 6. Error pattern tracking (aggregated across recent Show Your Work sessions)
+        contextPromises.push(
+            GradingResult.getErrorPatterns(user._id, 14)
+                .catch(err => { console.error('Error fetching error patterns:', err.message); return null; })
+        );
+
+        // 7. Math verification (runs in parallel with everything else)
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        const [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults] = await Promise.all(contextPromises);
+        const [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
@@ -669,7 +675,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         // Build grading context (only include if there are recent results)
         const gradingContext = recentGradingResults && recentGradingResults.length > 0 ? recentGradingResults : null;
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext);
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)

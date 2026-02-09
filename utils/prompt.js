@@ -495,7 +495,7 @@ function buildCourseProgressionContext(mathCourse, firstName) {
   }
 }
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -2347,6 +2347,21 @@ ${r.practiceRecommendations?.length ? `  Practice: ${r.practiceRecommendations.j
 3. **Don't repeat AI analysis verbatim** — You have the context, but rephrase naturally.
 4. **Connect to current conversation** — If they're working on a related topic, tie it back.
 5. **Be natural** — Only mention past work when it genuinely helps. Don't force it.
+` : ''}
+
+${errorPatterns && errorPatterns.totalErrors > 0 ? `--- PERSISTENT ERROR PATTERNS (Last 2 Weeks) ---
+${firstName} has made ${errorPatterns.totalErrors} total errors across ${errorPatterns.sessionsAnalyzed} "Show Your Work" session${errorPatterns.sessionsAnalyzed !== 1 ? 's' : ''}. Most common error types:
+
+${Object.entries(errorPatterns.patterns)
+  .sort(([,a], [,b]) => b - a)
+  .map(([category, count]) => '- **' + category + '**: ' + count + ' occurrence' + (count !== 1 ? 's' : ''))
+  .join('\n')}
+
+**HOW TO USE THIS:**
+- If ${firstName} is working on a topic where their top error type is relevant, proactively address it: "By the way, I've noticed sign errors tend to trip you up — let's watch for those here."
+- Don't lecture — mention it naturally when relevant.
+- If they make the same error again, connect it: "There's that sign error again! Remember — when you distribute a negative, every sign inside flips."
+- Celebrate when they DON'T make their usual error: "You got all the signs right this time — I noticed!"
 ` : ''}
 
 --- XP LADDER SYSTEM (THREE TIERS) ---
