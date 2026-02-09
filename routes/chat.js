@@ -762,10 +762,25 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
         const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
-        const updatedWeeklyAI = (user.weeklyAISeconds || 0) + aiProcessingSeconds;
-        User.findByIdAndUpdate(userId, {
-            $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds }
-        }).catch(err => console.error('[Chat] AI time tracking error:', err));
+        const previousWeeklyAI = user.weeklyAISeconds || 0;
+        const updatedWeeklyAI = previousWeeklyAI + aiProcessingSeconds;
+
+        // Always increment AI time counters
+        const aiTimeUpdate = { $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds } };
+
+        // Deduct from pack balance only for seconds beyond the free weekly allowance (20 min)
+        const FREE_WEEKLY = 20 * 60;
+        if ((user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') && user.packSecondsRemaining > 0) {
+            const prevPaid = Math.max(0, previousWeeklyAI - FREE_WEEKLY);
+            const newPaid = Math.max(0, updatedWeeklyAI - FREE_WEEKLY);
+            const packDeduction = newPaid - prevPaid;
+            if (packDeduction > 0) {
+                aiTimeUpdate.$inc.packSecondsRemaining = -packDeduction;
+            }
+        }
+
+        User.findByIdAndUpdate(userId, aiTimeUpdate)
+            .catch(err => console.error('[Chat] AI time tracking error:', err));
 
         // ENFORCE visual teaching: Auto-inject commands if AI forgot to use them
         aiResponseText = enforceVisualTeaching(message, aiResponseText);
@@ -1632,10 +1647,8 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         user.totalActiveTutoringMinutes = Math.floor(user.totalActiveSeconds / 60);
         user.weeklyActiveTutoringMinutes = Math.floor(user.weeklyActiveSeconds / 60);
 
-        // Deduct from minute pack balance (pack_60 / pack_120 users)
-        if ((user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') && user.packSecondsRemaining > 0) {
-            user.packSecondsRemaining = Math.max(0, user.packSecondsRemaining - activeSeconds);
-        }
+        // Pack deduction now happens server-side in the chat route based on AI processing time
+        // (not client-reported active time) so reading/thinking time isn't counted
 
         // Update active conversation if exists
         if (user.activeConversationId) {

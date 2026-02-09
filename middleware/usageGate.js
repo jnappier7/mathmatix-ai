@@ -1,9 +1,9 @@
 // middleware/usageGate.js — Usage enforcement for minute packs & unlimited tier
 //
-// Free students: 20 free minutes per week (resets weekly).
+// ALL students get 20 free AI-minutes per week (server-measured).
+// Free minutes are used first; pack balance is only deducted after.
 // Students connected to a class (teacherId): unlimited free access.
-// Pack users: must have packSecondsRemaining > 0 and pack not expired.
-// Unlimited users: always pass.
+// Unlimited subscribers: always pass.
 // Teachers/parents/admins: always pass (free unlimited).
 //
 // MASTER SWITCH: Set BILLING_ENABLED=true in .env to activate.
@@ -14,7 +14,7 @@
 const User = require('../models/user');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week for free students
+const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week for ALL students
 
 /**
  * Middleware that gates AI-powered endpoints behind pack/subscription limits.
@@ -22,8 +22,9 @@ const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week for free students
  * - Teachers, parents, admins: always pass (free unlimited)
  * - Students connected to a class (teacherId): always pass (free unlimited)
  * - Unlimited subscribers: always pass
- * - Pack users with balance: pass, with remaining time in response header
- * - Free students: 20 free minutes per week, then 402
+ * - Any student with free weekly minutes remaining: pass (free minutes first)
+ * - Pack users with pack balance remaining: pass (pack used after free minutes)
+ * - Otherwise: 402 Payment Required
  */
 async function usageGate(req, res, next) {
   // Master switch — when billing is off, everyone gets unlimited access
@@ -45,48 +46,12 @@ async function usageGate(req, res, next) {
     // Unlimited subscribers pass unconditionally
     if (user.subscriptionTier === 'unlimited') return next();
 
-    // Pack users — check balance and expiry
-    if (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') {
-      const now = new Date();
-      const expired = user.packExpiresAt && now > user.packExpiresAt;
-      const remaining = expired ? 0 : (user.packSecondsRemaining || 0);
-
-      if (remaining <= 0) {
-        // Auto-downgrade
-        User.findByIdAndUpdate(user._id, { subscriptionTier: 'free' })
-          .catch(err => console.error('[UsageGate] Downgrade error:', err.message));
-
-        return res.status(402).json({
-          message: expired
-            ? 'Your minute pack has expired. Purchase a new pack to continue.'
-            : 'Your minutes are used up. Purchase a new pack to continue.',
-          usageLimitReached: true,
-          tier: 'free',
-          expired,
-          upgradeRequired: true
-        });
-      }
-
-      // Warn when under 2 minutes remaining
-      if (remaining <= 120) {
-        res.setHeader('X-Usage-Warning', 'low');
-        res.setHeader('X-Usage-Remaining-Seconds', remaining.toString());
-      }
-
-      return next();
-    }
-
-    // Free students — 20 minutes of AI time per week
-    // Uses weeklyAISeconds (server-measured AI processing time only)
-    // so reading, thinking, and paper work don't count against the limit
+    // --- Weekly reset check (applies to all students) ---
     let weeklyAIUsed = user.weeklyAISeconds || 0;
-
-    // Weekly reset check: if 7+ days since last reset, clear the counter
     const now = new Date();
     const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
     if ((now - lastReset) / (1000 * 60 * 60 * 24) >= 7) {
       weeklyAIUsed = 0;
-      // Reset in background
       User.findByIdAndUpdate(user._id, {
         weeklyAISeconds: 0,
         weeklyActiveSeconds: 0,
@@ -95,29 +60,58 @@ async function usageGate(req, res, next) {
       }).catch(err => console.error('[UsageGate] Weekly reset error:', err));
     }
 
+    // --- Free weekly minutes (every student gets these first) ---
     const freeRemaining = FREE_WEEKLY_SECONDS - weeklyAIUsed;
 
-    if (freeRemaining <= 0) {
+    if (freeRemaining > 0) {
+      // Still have free minutes — let them through regardless of tier
+      res.setHeader('X-Free-Remaining-Seconds', Math.max(0, freeRemaining).toString());
+      if (freeRemaining <= 120) {
+        res.setHeader('X-Usage-Warning', 'low');
+      }
+      return next();
+    }
+
+    // --- Free minutes exhausted — check pack balance ---
+    if (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') {
+      const expired = user.packExpiresAt && now > user.packExpiresAt;
+      const packRemaining = expired ? 0 : (user.packSecondsRemaining || 0);
+
+      if (packRemaining > 0) {
+        // Pack has balance — let them through
+        if (packRemaining <= 120) {
+          res.setHeader('X-Usage-Warning', 'low');
+          res.setHeader('X-Usage-Remaining-Seconds', packRemaining.toString());
+        }
+        return next();
+      }
+
+      // Pack empty or expired — auto-downgrade
+      User.findByIdAndUpdate(user._id, { subscriptionTier: 'free' })
+        .catch(err => console.error('[UsageGate] Downgrade error:', err.message));
+
       return res.status(402).json({
-        message: "You've used your 20 free minutes this week. Upgrade for unlimited tutoring, or come back next week!",
+        message: expired
+          ? "Your free minutes and minute pack are both used up. Purchase a new pack or come back next week!"
+          : "Your free minutes and minute pack are both used up. Purchase a new pack or come back next week!",
         usageLimitReached: true,
         tier: 'free',
-        freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
-        freeMinutesTotal: 20,
         freeSecondsRemaining: 0,
+        expired,
         upgradeRequired: true
       });
     }
 
-    // Set remaining time headers so frontend can show countdown
-    res.setHeader('X-Free-Remaining-Seconds', Math.max(0, freeRemaining).toString());
-
-    // Warn when under 2 minutes remaining
-    if (freeRemaining <= 120) {
-      res.setHeader('X-Usage-Warning', 'low');
-    }
-
-    return next();
+    // --- Free-tier student, no pack, free minutes exhausted ---
+    return res.status(402).json({
+      message: "You've used your 20 free minutes this week. Upgrade for unlimited tutoring, or come back next week!",
+      usageLimitReached: true,
+      tier: 'free',
+      freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
+      freeMinutesTotal: 20,
+      freeSecondsRemaining: 0,
+      upgradeRequired: true
+    });
   } catch (error) {
     console.error('[UsageGate] Error:', error.message);
     // Don't block the user on gate errors — let them through
