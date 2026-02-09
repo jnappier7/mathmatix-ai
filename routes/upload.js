@@ -10,6 +10,7 @@ const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unifi
 const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
+const { applyWorksheetGuard } = require('../utils/worksheetGuard');
 
 const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for analyzing student work
 
@@ -106,9 +107,14 @@ router.post("/", upload.single("file"), async (req, res) => {
         // Generate the personalized system prompt
         const systemPrompt = generateSystemPrompt(user, tutor, null, 'student');
 
+        // ANTI-CHEAT: Append worksheet detection guard (centralized in utils/worksheetGuard.js)
+        const uploadUserMessage = applyWorksheetGuard(
+            `Here's the math text from an uploaded image/PDF: """${extracted}"""`
+        );
+
         const messages = [
             { role: "system", content: systemPrompt },
-            { role: "user", content: `Here's the math text from an uploaded image/PDF: """${extracted}""". Please help me understand it. Start by re-stating the problem clearly.` }
+            { role: "user", content: uploadUserMessage }
         ];
 
         // Use the centralized LLM call function

@@ -16,6 +16,7 @@ const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { anthropic, openai, retryWithExponentialBackoff } = require('../utils/openaiClient');
+const { applyWorksheetGuard } = require('../utils/worksheetGuard');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -132,6 +133,9 @@ router.post('/',
             ).join('\n\n');
             combinedText = `${combinedText}\n\n${pdfContent}`;
         }
+
+        // ANTI-CHEAT: Append worksheet detection guard (centralized in utils/worksheetGuard.js)
+        combinedText = applyWorksheetGuard(combinedText);
 
         // Store user message in conversation (text only, for history)
         activeConversation.messages.push({ role: 'user', content: combinedText });
