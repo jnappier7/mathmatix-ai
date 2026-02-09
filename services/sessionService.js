@@ -43,7 +43,7 @@ async function generateSessionSummary(userId, sessionId, sessionData = {}) {
       role: user.role,
       startTime: sessionData.startTime || new Date(),
       endTime: new Date(),
-      duration: sessionData.duration || 0,
+      duration: sessionData.duration || sessionData.timeSpent || 0,
       metrics: {
         messagesExchanged: sessionData.messagesExchanged || 0,
         problemsAttempted: sessionData.problemsAttempted || 0,
