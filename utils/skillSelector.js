@@ -286,7 +286,22 @@ function selectSkill(availableSkills, session, targetDifficulty, options = {}) {
   };
 
   // Filter out excluded skills (conceptual/vague questions)
-  const eligibleSkills = availableSkills.filter(skill => !isScreenerExcluded(skill.skillId));
+  let eligibleSkills = availableSkills.filter(skill => !isScreenerExcluded(skill.skillId));
+
+  // HARD DIFFICULTY FLOOR: Never select skills too far below current level
+  // Prevents calculus students from getting skip counting questions
+  const { maxDifficultyGapBelow } = SESSION_DEFAULTS;
+  const difficultyFloor = theta - maxDifficultyGapBelow;
+
+  eligibleSkills = eligibleSkills.filter(skill => {
+    const skillDifficulty = skill.irtDifficulty ||
+                            templateDifficultyMap[skill.skillId] ||
+                            getCategoryDifficulty(skill.category) ||
+                            0;
+    return skillDifficulty >= difficultyFloor;
+  });
+
+  console.log(`[SkillSelector] θ=${theta.toFixed(2)}, floor=${difficultyFloor.toFixed(2)}, ${eligibleSkills.length}/${availableSkills.length} skills eligible`);
 
   // Score all eligible skills
   let candidates = eligibleSkills.map(skill => {

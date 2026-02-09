@@ -41,6 +41,10 @@ const SESSION_DEFAULTS = {
   scoreThreshold: 2.0,         // Skills within this score are "similar enough"
   maxSkillTests: 3,            // Max times to test same skill
   categoryBalanceWeight: 8,    // Stronger weight for category diversity
+
+  // HARD DIFFICULTY FLOOR - Never select skills too far below current level
+  // Prevents calculus students from getting skip counting questions
+  maxDifficultyGapBelow: 2.0,  // Don't select skills more than 2 theta below current level
 };
 
 // ===========================================================================
