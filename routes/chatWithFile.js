@@ -258,18 +258,11 @@ router.post('/',
             aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
         }
 
-        activeConversation.messages.push({ role: 'assistant', content: aiResponseText });
-
-        // CRITICAL FIX: Clean invalid messages before save
-        if (activeConversation.messages && Array.isArray(activeConversation.messages)) {
-            const originalLength = activeConversation.messages.length;
-            activeConversation.messages = activeConversation.messages.filter(msg => {
-                return msg.content && typeof msg.content === 'string' && msg.content.trim() !== '';
-            });
-            if (activeConversation.messages.length !== originalLength) {
-                console.warn(`[ChatWithFile] Removed ${originalLength - activeConversation.messages.length} invalid messages`);
-            }
+        // Validate AI response before saving
+        if (!aiResponseText || typeof aiResponseText !== 'string' || aiResponseText.trim() === '') {
+            aiResponseText = "I'm having trouble generating a response right now. Could you please try again?";
         }
+        activeConversation.messages.push({ role: 'assistant', content: aiResponseText.trim() });
 
         await activeConversation.save();
 

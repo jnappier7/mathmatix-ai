@@ -119,7 +119,10 @@ router.post('/respond', async (req, res) => {
       systemPrompt
     );
 
-    // Add AI response
+    // Add AI response (validate content to prevent empty messages)
+    if (!aiResponse || typeof aiResponse !== 'string' || aiResponse.trim() === '') {
+      aiResponse = "I'm having trouble generating a response right now. Could you please try again?";
+    }
     conversation.messages.push({
       role: 'assistant',
       content: aiResponse
