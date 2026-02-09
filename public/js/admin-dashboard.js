@@ -191,6 +191,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}">
                         <i class="fas fa-eye"></i>
                     </button>
+                    <button class="btn-icon send-credentials-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-email="${s.email || ''}" title="Send login credentials email">
+                        <i class="fas fa-envelope"></i>
+                    </button>
                     <button class="btn-icon reset-screener-btn" data-studentid="${s._id}" data-studentname="${s.firstName} ${s.lastName}" title="Reset Screener">
                         <i class="fas fa-redo"></i>
                     </button>
@@ -308,6 +311,49 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const studentId = link.closest('tr')?.dataset.studentid;
                 if (studentId) {
                     populateModal(studentId);
+                }
+                return;
+            }
+
+            // Handle send credentials email button click
+            const sendCredsBtn = e.target.closest('.send-credentials-btn');
+            if (sendCredsBtn) {
+                e.preventDefault();
+                const userId = sendCredsBtn.dataset.userid;
+                const username = sendCredsBtn.dataset.username;
+                const email = sendCredsBtn.dataset.email;
+
+                if (!confirm(`Send login credentials to ${username} (${email})?\n\nThis will:\n• Generate a new temporary password\n• Email them their username and new password\n\nTheir current password will be replaced.`)) {
+                    return;
+                }
+
+                try {
+                    sendCredsBtn.disabled = true;
+                    sendCredsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    const response = await csrfFetch(`/api/admin/users/${userId}/send-credentials`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        if (result.temporaryPassword) {
+                            // Email failed but password was reset - show it
+                            alert(`⚠️ ${result.message}`);
+                        } else {
+                            alert(`✅ ${result.message}`);
+                        }
+                    } else {
+                        throw new Error(result.message || 'Failed to send credentials');
+                    }
+                } catch (error) {
+                    console.error('Send credentials error:', error);
+                    alert(`❌ Error: ${error.message}`);
+                } finally {
+                    sendCredsBtn.disabled = false;
+                    sendCredsBtn.innerHTML = '<i class="fas fa-envelope"></i>';
                 }
                 return;
             }
@@ -1328,6 +1374,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     return;
                 }
 
+                const sendWelcomeEmailCheck = document.getElementById('sendWelcomeEmailCheck');
                 const formData = {
                     firstName: document.getElementById('teacherFirstName').value.trim(),
                     lastName: document.getElementById('teacherLastName').value.trim(),
@@ -1335,7 +1382,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     roles: selectedRoles,
                     username: document.getElementById('teacherUsername').value.trim() || undefined,
                     generatePassword: generatePasswordCheck.checked,
-                    password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined
+                    password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined,
+                    sendEmail: sendWelcomeEmailCheck ? sendWelcomeEmailCheck.checked : false
                 };
 
                 const response = await csrfFetch('/api/admin/create-user', {
@@ -1362,6 +1410,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                         document.getElementById('resultPasswordRow').style.display = 'block';
                     } else {
                         document.getElementById('resultPasswordRow').style.display = 'none';
+                    }
+
+                    // Show email status
+                    const emailStatusEl = document.getElementById('resultEmailStatus');
+                    const shareWarningEl = document.getElementById('resultShareWarning');
+                    if (result.emailSent) {
+                        emailStatusEl.innerHTML = '<i class="fas fa-envelope" style="color: #155724;"></i> <span style="color: #155724;">Welcome email sent to ' + result.user.email + '</span>';
+                        emailStatusEl.style.display = 'block';
+                        shareWarningEl.style.display = 'none';
+                    } else if (formData.sendEmail && !result.emailSent) {
+                        emailStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color: #856404;"></i> <span style="color: #856404;">Welcome email failed to send. Share credentials manually.</span>';
+                        emailStatusEl.style.display = 'block';
+                        shareWarningEl.style.display = 'block';
+                    } else {
+                        emailStatusEl.style.display = 'none';
+                        shareWarningEl.style.display = 'block';
                     }
 
                     // Show role-specific follow-ups (multiple can show for multi-role users)

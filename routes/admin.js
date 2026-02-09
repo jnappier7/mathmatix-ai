@@ -18,6 +18,7 @@ const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const multer = require('multer');
+const { sendWelcomeEmail } = require('../utils/emailService');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 
@@ -230,7 +231,7 @@ router.post('/teachers', isAdmin, async (req, res) => {
  */
 router.post('/create-user', isAdmin, async (req, res) => {
   try {
-    const { firstName, lastName, email, role, roles, username, password, generatePassword } = req.body;
+    const { firstName, lastName, email, role, roles, username, password, generatePassword, sendEmail } = req.body;
 
     // Accept roles array or single role (backward compatible)
     const userRoles = roles && roles.length > 0 ? roles : (role ? [role] : []);
@@ -304,9 +305,32 @@ router.post('/create-user', isAdmin, async (req, res) => {
 
     console.log(`[ADMIN] ${roleLabel} account created: ${email} by admin ${req.user.email}`);
 
+    const tempPw = (generatePassword || !password) ? finalPassword : null;
+
+    // Send welcome email if requested (fire-and-forget, don't block response)
+    let emailSent = false;
+    if (sendEmail) {
+      try {
+        const emailResult = await sendWelcomeEmail({
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          username: newUser.username,
+          roles: newUser.roles,
+          temporaryPassword: tempPw
+        });
+        emailSent = emailResult.success;
+        if (!emailSent) {
+          console.warn(`[ADMIN] Welcome email failed for ${email}: ${emailResult.error}`);
+        }
+      } catch (emailErr) {
+        console.error(`[ADMIN] Welcome email error for ${email}:`, emailErr);
+      }
+    }
+
     res.status(201).json({
       success: true,
-      message: `${roleLabel} account created successfully!`,
+      message: `${roleLabel} account created successfully!` + (sendEmail ? (emailSent ? ' Welcome email sent.' : ' (Welcome email failed to send)') : ''),
       user: {
         _id: newUser._id,
         firstName: newUser.firstName,
@@ -316,8 +340,8 @@ router.post('/create-user', isAdmin, async (req, res) => {
         role: newUser.role,
         roles: newUser.roles
       },
-      // Only return password if it was auto-generated (so admin can share it)
-      ...(generatePassword || !password ? { temporaryPassword: finalPassword } : {})
+      temporaryPassword: tempPw,
+      emailSent
     });
 
   } catch (err) {
@@ -326,6 +350,55 @@ router.post('/create-user', isAdmin, async (req, res) => {
       return res.status(409).json({ message: 'Username or email already exists.' });
     }
     res.status(500).json({ message: 'Server error creating user account.' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/users/:userId/send-credentials
+ * @desc    Reset a user's password and send them a welcome email with new credentials
+ * @access  Private (Admin)
+ */
+router.post('/users/:userId/send-credentials', isAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Generate a new temporary password
+    const tempPassword = crypto.randomBytes(8).toString('hex') + 'A1!';
+    user.passwordHash = tempPassword; // Will be hashed by pre-save hook
+    await user.save();
+
+    // Send welcome email with new credentials
+    const emailResult = await sendWelcomeEmail({
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      roles: user.roles && user.roles.length > 0 ? user.roles : [user.role],
+      temporaryPassword: tempPassword
+    });
+
+    if (emailResult.success) {
+      console.log(`[ADMIN] Credentials email sent to ${user.email} by admin ${req.user.email}`);
+      res.json({
+        success: true,
+        message: `Credentials email sent to ${user.email}. A new temporary password has been set.`
+      });
+    } else {
+      console.warn(`[ADMIN] Credentials email failed for ${user.email}: ${emailResult.error}`);
+      res.json({
+        success: true,
+        message: `Password was reset but email failed to send. Temporary password: ${tempPassword}`,
+        temporaryPassword: tempPassword
+      });
+    }
+  } catch (err) {
+    console.error('Error sending credentials:', err);
+    res.status(500).json({ message: 'Server error sending credentials.' });
   }
 });
 
