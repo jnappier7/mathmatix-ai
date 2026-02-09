@@ -715,6 +715,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         }
 
+        // Upload Resources quick action
+        const uploadResourcesBtn = document.getElementById('qa-upload-resources');
+        if (uploadResourcesBtn) {
+            uploadResourcesBtn.addEventListener('click', () => {
+                // Switch to the Resources tab
+                const resourcesTabBtn = document.querySelector('[data-tab="resources"]');
+                if (resourcesTabBtn) resourcesTabBtn.click();
+
+                // Open the upload modal
+                const uploadModal = document.getElementById('upload-resource-modal');
+                if (uploadModal) uploadModal.classList.add('is-visible');
+            });
+        }
+
         // Shortcuts toggle
         const helpBtn = document.getElementById('qa-help');
         const shortcutsPanel = document.getElementById('shortcuts-panel');
