@@ -388,6 +388,48 @@ window.AVATAR_CONFIG = {
     unlockLevel: 30
   },
 
+  // ===== UNLOCK AT LEVEL 50+ (Mythic Texture Skins) =====
+  'graffiti': {
+    name: '🎨 Graffiti',
+    image: 'graffiti.png',
+    category: 'skins',
+    rarity: 'mythic',
+    description: 'Street art style — tag your math legacy!',
+    unlockLevel: 50
+  },
+  'leopard': {
+    name: '🐆 Leopard Print',
+    image: 'leopard.png',
+    category: 'skins',
+    rarity: 'mythic',
+    description: 'Wild patterns, untamed skills!',
+    unlockLevel: 60
+  },
+  'nature': {
+    name: '🌿 Nature',
+    image: 'nature.png',
+    category: 'skins',
+    rarity: 'mythic',
+    description: 'Rooted in knowledge, growing every day!',
+    unlockLevel: 70
+  },
+  'wood': {
+    name: '🪵 Wood',
+    image: 'wood.png',
+    category: 'skins',
+    rarity: 'mythic',
+    description: 'Built solid, grain by grain!',
+    unlockLevel: 80
+  },
+  'concrete': {
+    name: '🧱 Concrete',
+    image: 'concrete.png',
+    category: 'skins',
+    rarity: 'mythic',
+    description: 'Unbreakable foundation of math mastery!',
+    unlockLevel: 90
+  },
+
   // Default fallback
   'default': {
     name: '😊 Student',
