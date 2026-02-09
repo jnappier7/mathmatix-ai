@@ -8,6 +8,7 @@ const User = require('../models/user');
 const GradingResult = require('../models/gradingResult');
 const { gradeWithVision } = require('../utils/llmGateway');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
+const { detectBlankWork, stripCorrectAnswers } = require('../utils/worksheetGuard');
 
 // Disk storage to avoid memory bloat on large uploads
 const upload = multer({
@@ -226,12 +227,10 @@ router.post('/',
 
         // ANTI-CHEAT: Server-side validation — if most studentAnswer fields are empty/blank,
         // the AI may have failed to detect a blank worksheet. Catch it here.
-        const blankAnswerCount = parsed.problems.filter(p =>
-            !p.studentAnswer || p.studentAnswer.trim() === '' || p.studentAnswer.trim() === '—'
-        ).length;
+        const blankCheck = detectBlankWork(parsed.problems);
 
-        if (parsed.problems.length > 0 && blankAnswerCount / parsed.problems.length >= 0.8) {
-            console.warn(`[gradeWork] ANTI-CHEAT: ${blankAnswerCount}/${parsed.problems.length} answers blank — likely blank worksheet from user: ${user.firstName}`);
+        if (blankCheck.isBlank) {
+            console.warn(`[gradeWork] ANTI-CHEAT: ${blankCheck.blankCount}/${blankCheck.totalCount} answers blank — likely blank worksheet from user: ${user.firstName}`);
             if (file.path) fs.unlinkSync(file.path);
             return res.json({
                 success: true,
@@ -249,9 +248,7 @@ router.post('/',
 
         // ANTI-CHEAT: Strip any correctAnswer fields that the AI may have included despite instructions.
         // We never want to send correct answers to the student — that's an answer key.
-        parsed.problems.forEach(p => {
-            delete p.correctAnswer;
-        });
+        stripCorrectAnswers(parsed.problems);
 
         const correctCount = parsed.problems.filter(p => p.isCorrect).length;
 

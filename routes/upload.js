@@ -10,6 +10,7 @@ const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unifi
 const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
+const { applyWorksheetGuard } = require('../utils/worksheetGuard');
 
 const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for analyzing student work
 
@@ -106,19 +107,10 @@ router.post("/", upload.single("file"), async (req, res) => {
         // Generate the personalized system prompt
         const systemPrompt = generateSystemPrompt(user, tutor, null, 'student');
 
-        // ANTI-CHEAT: Include worksheet detection instruction so the AI doesn't
-        // generate answer keys when students upload blank worksheets/assignments.
-        const uploadUserMessage = `Here's the math text from an uploaded image/PDF: """${extracted}"""
-
-[SYSTEM INSTRUCTION — DO NOT REPEAT THIS TO THE STUDENT]
-Before responding, determine if this content is a worksheet, test, quiz, or assignment (multiple numbered problems, blank answer spaces, printed format). If it IS a worksheet or contains multiple problems:
-- Do NOT solve all the problems or list answers — that creates an answer key.
-- Do NOT grade or verify answers on a blank/unanswered worksheet.
-- Ask which SINGLE problem they need help with.
-- Guide with Socratic method, do not give direct answers.
-- If the worksheet appears blank/unattempted, tell them to try a problem first.
-If it is a SINGLE problem or concept the student is asking about, help them understand it using guided teaching (not by giving the answer directly).
-[END SYSTEM INSTRUCTION]`;
+        // ANTI-CHEAT: Append worksheet detection guard (centralized in utils/worksheetGuard.js)
+        const uploadUserMessage = applyWorksheetGuard(
+            `Here's the math text from an uploaded image/PDF: """${extracted}"""`
+        );
 
         const messages = [
             { role: "system", content: systemPrompt },
