@@ -675,40 +675,40 @@ window.parentDashboardTour = [
 // Student Dashboard Tour
 window.studentDashboardTour = [
     {
-        element: '.tutor-selection',
+        element: '#user-input',
         title: 'Your AI Tutor',
-        content: 'This is your personal math tutor! Ask questions, get help with homework, or practice new skills.',
-        position: 'bottom'
+        content: 'This is your personal math tutor! Type a question here to get help with homework, practice new skills, or explore math topics.',
+        position: 'top'
     },
     {
-        element: '.daily-quests-container',
+        element: '#daily-quests-container',
         title: 'Daily Quests',
         content: 'Complete quests every day to earn XP and build your streak! Consistency is key to mastering math.',
         position: 'right'
     },
     {
-        element: '.xp-display',
+        element: '.sidebar-progress',
         title: 'Your Progress',
         content: 'Track your XP and level here. The more you practice, the higher you\'ll climb!',
-        position: 'bottom'
+        position: 'right'
     },
     {
-        element: '#announcements-badge',
-        title: 'Teacher Messages',
-        content: 'NEW! Your teacher can send you messages and announcements. Check here for updates!',
-        position: 'left'
+        element: '#sidebar-leaderboard',
+        title: 'Leaderboard',
+        content: 'See how you stack up against your classmates! Earn XP to climb the ranks.',
+        position: 'right'
     },
     {
-        element: '.mastery-mode-btn',
-        title: 'Mastery Mode',
-        content: 'Ready for a challenge? Mastery mode tests your skills and awards special badges.',
-        position: 'bottom'
+        element: '#sidebar-resources-btn',
+        title: 'Resources & Tools',
+        content: 'Access helpful resources, a calculator, and other tools to support your learning.',
+        position: 'right'
     },
     {
-        element: '.fact-fluency-btn',
-        title: 'Math Blaster',
-        content: 'Practice math facts with our fun arcade-style game. Build speed and accuracy!',
-        position: 'bottom'
+        element: '#sidebar-upload-btn',
+        title: 'Upload Your Work',
+        content: 'Snap a photo of your handwritten work and get instant feedback and grading from your AI tutor!',
+        position: 'right'
     }
 ];
 
