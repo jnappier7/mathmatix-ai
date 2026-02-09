@@ -403,6 +403,58 @@ router.post('/users/:userId/send-credentials', isAdmin, async (req, res) => {
 });
 
 /**
+ * @route   PATCH /api/admin/users/:userId/roles
+ * @desc    Update a user's roles
+ * @access  Private (Admin)
+ */
+router.patch('/users/:userId/roles', isAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { roles } = req.body;
+
+    if (!roles || !Array.isArray(roles) || roles.length === 0) {
+      return res.status(400).json({ message: 'At least one role is required.' });
+    }
+
+    const validRoles = ['student', 'teacher', 'parent', 'admin'];
+    const invalidRoles = roles.filter(r => !validRoles.includes(r));
+    if (invalidRoles.length > 0) {
+      return res.status(400).json({ message: `Invalid role(s): ${invalidRoles.join(', ')}` });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const oldRoles = user.roles && user.roles.length > 0 ? [...user.roles] : [user.role];
+    user.roles = roles;
+
+    // If current active role is no longer in the roles list, switch to first role
+    if (!roles.includes(user.role)) {
+      user.role = roles[0];
+    }
+
+    await user.save();
+
+    console.log(`[ADMIN] Roles updated for ${user.email}: [${oldRoles.join(',')}] → [${roles.join(',')}] by admin ${req.user.email}`);
+
+    res.json({
+      success: true,
+      message: `Roles updated for ${user.firstName} ${user.lastName}.`,
+      user: {
+        _id: user._id,
+        role: user.role,
+        roles: user.roles
+      }
+    });
+  } catch (err) {
+    console.error('Error updating user roles:', err);
+    res.status(500).json({ message: 'Server error updating roles.' });
+  }
+});
+
+/**
  * @route   POST /api/admin/link-parent-student
  * @desc    Link a parent account to a student account (bidirectional)
  * @access  Private (Admin)

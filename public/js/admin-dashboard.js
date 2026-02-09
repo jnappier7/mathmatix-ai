@@ -193,6 +193,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${(s.roles && s.roles.length > 1) ? s.roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ') : (s.role || 'N/A')}</td>
                 <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
                 <td>
+                    <button class="btn-icon edit-roles-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-roles="${(s.roles && s.roles.length > 0 ? s.roles : [s.role]).join(',')}" title="Edit Roles">
+                        <i class="fas fa-user-tag"></i>
+                    </button>
                     <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}">
                         <i class="fas fa-eye"></i>
                     </button>
@@ -317,6 +320,90 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (studentId) {
                     populateModal(studentId);
                 }
+                return;
+            }
+
+            // Handle edit roles button click
+            const editRolesBtn = e.target.closest('.edit-roles-btn');
+            if (editRolesBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const userId = editRolesBtn.dataset.userid;
+                const username = editRolesBtn.dataset.username;
+                const currentRoles = editRolesBtn.dataset.roles.split(',');
+
+                // Remove any existing popover
+                document.querySelectorAll('.roles-popover').forEach(el => el.remove());
+
+                // Create popover
+                const popover = document.createElement('div');
+                popover.className = 'roles-popover';
+                popover.style.cssText = 'position:absolute;z-index:1000;background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,0.15);min-width:180px;';
+                popover.innerHTML = `
+                    <div style="font-weight:600;margin-bottom:8px;font-size:0.9em;">${username}</div>
+                    ${['student','teacher','parent','admin'].map(r => `
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:4px;font-size:0.9em;">
+                            <input type="checkbox" class="role-cb" value="${r}" ${currentRoles.includes(r) ? 'checked' : ''}>
+                            ${r.charAt(0).toUpperCase() + r.slice(1)}
+                        </label>
+                    `).join('')}
+                    <div style="display:flex;gap:6px;margin-top:10px;">
+                        <button class="btn btn-primary save-roles-btn" style="padding:4px 12px;font-size:0.85em;">Save</button>
+                        <button class="btn btn-tertiary cancel-roles-btn" style="padding:4px 12px;font-size:0.85em;">Cancel</button>
+                    </div>
+                `;
+
+                // Position near the button
+                editRolesBtn.closest('td').style.position = 'relative';
+                editRolesBtn.closest('td').appendChild(popover);
+
+                // Cancel
+                popover.querySelector('.cancel-roles-btn').addEventListener('click', () => popover.remove());
+
+                // Save
+                popover.querySelector('.save-roles-btn').addEventListener('click', async () => {
+                    const newRoles = Array.from(popover.querySelectorAll('.role-cb:checked')).map(cb => cb.value);
+                    if (newRoles.length === 0) {
+                        alert('Select at least one role.');
+                        return;
+                    }
+
+                    const saveBtn = popover.querySelector('.save-roles-btn');
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = 'Saving...';
+
+                    try {
+                        const response = await csrfFetch(`/api/admin/users/${userId}/roles`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ roles: newRoles })
+                        });
+                        const result = await response.json();
+                        if (response.ok && result.success) {
+                            popover.remove();
+                            await initializeDashboard();
+                        } else {
+                            throw new Error(result.message || 'Failed to update roles');
+                        }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = 'Save';
+                    }
+                });
+
+                // Close on outside click
+                setTimeout(() => {
+                    const closeHandler = (evt) => {
+                        if (!popover.contains(evt.target)) {
+                            popover.remove();
+                            document.removeEventListener('click', closeHandler);
+                        }
+                    };
+                    document.addEventListener('click', closeHandler);
+                }, 0);
+
                 return;
             }
 
