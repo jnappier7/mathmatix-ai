@@ -130,10 +130,10 @@ function handleLogout(req, res, next) {
 }
 
 // --- RATE LIMITING FOR EXPENSIVE AI ENDPOINTS ---
-// SECURITY FIX: Per-user rate limiting for AI-powered endpoints to prevent API abuse
+// Generous limit to prevent API abuse without cutting off active sessions
 const aiEndpointLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour window
-    max: 150, // Limit each user to 150 requests per hour (increased to accommodate 30s heartbeats = 120 req/hr)
+    max: 2000, // High limit - only catches actual abuse, not active students
     keyGenerator: (req) => {
         // Use user ID if authenticated, otherwise fall back to IP
         return req.user ? req.user._id.toString() : req.ip;
@@ -141,7 +141,7 @@ const aiEndpointLimiter = rateLimit({
     handler: (req, res) => {
         console.warn(`WARN: Rate limit exceeded for user ${req.user ? req.user._id : req.ip} on ${req.path}`);
         res.status(429).json({
-            message: "We've been working hard for a while now! Let's take a break and pick up where we left off tomorrow. Great job today! 🌟",
+            message: "Too many requests. Please wait a moment before trying again.",
             retryAfter: Math.ceil(req.rateLimit.resetTime / 1000)
         });
     },

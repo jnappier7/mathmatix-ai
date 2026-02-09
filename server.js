@@ -159,13 +159,13 @@ app.use(session({
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
-    ttl: 3 * 60 * 60, // 3 hours (sliding window with rolling: true)
+    ttl: 7 * 24 * 60 * 60, // 7 days (sliding window with rolling: true, idle timeout handles active logout)
   }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 1000 * 60 * 60 * 3 // 3 hours (extends on each request)
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days (extends on each request, idle timeout handles active logout)
   }
 }));
 

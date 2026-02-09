@@ -1,9 +1,10 @@
 // middleware/usageGate.js — Usage enforcement for minute packs & unlimited tier
 //
-// Blocks chat/voice/upload requests when a user has no active pack or subscription.
-// Pack users: must have packSecondsRemaining > 0 and pack not expired.
-// Unlimited users: always pass.
-// Teachers/admins: always pass.
+// ALL students get 20 free AI-minutes per week (server-measured).
+// Free minutes are used first; pack balance is only deducted after.
+// Students connected to a class (teacherId): unlimited free access.
+// Unlimited subscribers: always pass.
+// Teachers/parents/admins: always pass (free unlimited).
 //
 // MASTER SWITCH: Set BILLING_ENABLED=true in .env to activate.
 // When disabled, all users get unlimited access (pre-launch mode).
@@ -13,13 +14,17 @@
 const User = require('../models/user');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
+const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week for ALL students
 
 /**
  * Middleware that gates AI-powered endpoints behind pack/subscription limits.
  * - If BILLING_ENABLED is false: everyone passes (pre-launch mode)
- * - Unlimited users: always pass
- * - Pack users with balance: pass, with remaining time in response header
- * - Free users / expired packs: 402 Payment Required with upgrade prompt
+ * - Teachers, parents, admins: always pass (free unlimited)
+ * - Students connected to a class (teacherId): always pass (free unlimited)
+ * - Unlimited subscribers: always pass
+ * - Any student with free weekly minutes remaining: pass (free minutes first)
+ * - Pack users with pack balance remaining: pass (pack used after free minutes)
+ * - Otherwise: 402 Payment Required
  */
 async function usageGate(req, res, next) {
   // Master switch — when billing is off, everyone gets unlimited access
@@ -32,48 +37,79 @@ async function usageGate(req, res, next) {
     const user = req.user;
     if (!user) return next(); // Let auth middleware handle this
 
-    // Teachers and admins are exempt from usage limits
-    if (user.role === 'teacher' || user.role === 'admin') return next();
+    // Teachers, parents, and admins are always free unlimited
+    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') return next();
 
-    // Unlimited users pass unconditionally
+    // Students connected to a class get free unlimited access
+    if (user.teacherId) return next();
+
+    // Unlimited subscribers pass unconditionally
     if (user.subscriptionTier === 'unlimited') return next();
 
-    // Pack users — check balance and expiry
-    if (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') {
-      const now = new Date();
-      const expired = user.packExpiresAt && now > user.packExpiresAt;
-      const remaining = expired ? 0 : (user.packSecondsRemaining || 0);
+    // --- Weekly reset check (applies to all students) ---
+    let weeklyAIUsed = user.weeklyAISeconds || 0;
+    const now = new Date();
+    const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+    if ((now - lastReset) / (1000 * 60 * 60 * 24) >= 7) {
+      weeklyAIUsed = 0;
+      User.findByIdAndUpdate(user._id, {
+        weeklyAISeconds: 0,
+        weeklyActiveSeconds: 0,
+        weeklyActiveTutoringMinutes: 0,
+        lastWeeklyReset: now
+      }).catch(err => console.error('[UsageGate] Weekly reset error:', err));
+    }
 
-      if (remaining <= 0) {
-        // Auto-downgrade
-        User.findByIdAndUpdate(user._id, { subscriptionTier: 'free' })
-          .catch(err => console.error('[UsageGate] Downgrade error:', err.message));
+    // --- Free weekly minutes (every student gets these first) ---
+    const freeRemaining = FREE_WEEKLY_SECONDS - weeklyAIUsed;
 
-        return res.status(402).json({
-          message: expired
-            ? 'Your minute pack has expired. Purchase a new pack to continue.'
-            : 'Your minutes are used up. Purchase a new pack to continue.',
-          usageLimitReached: true,
-          tier: 'free',
-          expired,
-          upgradeRequired: true
-        });
-      }
-
-      // Warn when under 2 minutes remaining
-      if (remaining <= 120) {
+    if (freeRemaining > 0) {
+      // Still have free minutes — let them through regardless of tier
+      res.setHeader('X-Free-Remaining-Seconds', Math.max(0, freeRemaining).toString());
+      if (freeRemaining <= 120) {
         res.setHeader('X-Usage-Warning', 'low');
-        res.setHeader('X-Usage-Remaining-Seconds', remaining.toString());
       }
-
       return next();
     }
 
-    // Free users — no access
+    // --- Free minutes exhausted — check pack balance ---
+    if (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') {
+      const expired = user.packExpiresAt && now > user.packExpiresAt;
+      const packRemaining = expired ? 0 : (user.packSecondsRemaining || 0);
+
+      if (packRemaining > 0) {
+        // Pack has balance — let them through
+        if (packRemaining <= 120) {
+          res.setHeader('X-Usage-Warning', 'low');
+          res.setHeader('X-Usage-Remaining-Seconds', packRemaining.toString());
+        }
+        return next();
+      }
+
+      // Pack empty or expired — auto-downgrade
+      User.findByIdAndUpdate(user._id, { subscriptionTier: 'free' })
+        .catch(err => console.error('[UsageGate] Downgrade error:', err.message));
+
+      return res.status(402).json({
+        message: expired
+          ? "Your free minutes and minute pack are both used up. Purchase a new pack or come back next week!"
+          : "Your free minutes and minute pack are both used up. Purchase a new pack or come back next week!",
+        usageLimitReached: true,
+        tier: 'free',
+        freeSecondsRemaining: 0,
+        expired,
+        upgradeRequired: true
+      });
+    }
+
+    // --- Free-tier student, no pack, free minutes exhausted ---
     return res.status(402).json({
-      message: 'Purchase a tutoring pack to get started.',
+      message: "You've used your 20 free minutes this week. Upgrade for unlimited tutoring, or come back next week!",
       usageLimitReached: true,
       tier: 'free',
+      freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
+      freeMinutesTotal: 20,
+      freeSecondsRemaining: 0,
       upgradeRequired: true
     });
   } catch (error) {
@@ -94,7 +130,7 @@ function premiumFeatureGate(featureName) {
     const user = req.user;
     if (!user) return next();
 
-    if (user.subscriptionTier === 'unlimited' || user.role === 'teacher' || user.role === 'admin') {
+    if (user.subscriptionTier === 'unlimited' || user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
       return next();
     }
 
@@ -108,4 +144,4 @@ function premiumFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, premiumFeatureGate };
+module.exports = { usageGate, premiumFeatureGate, FREE_WEEKLY_SECONDS };

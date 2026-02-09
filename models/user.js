@@ -501,6 +501,10 @@ const userSchema = new Schema({
   // Precise time tracking in seconds (minutes are derived from these)
   totalActiveSeconds:  { type: Number, default: 0 },
   weeklyActiveSeconds: { type: Number, default: 0 },
+  // AI processing time tracking (server-measured, used for billing)
+  // Only counts time while AI is generating a response - not reading/thinking/idle time
+  totalAISeconds:  { type: Number, default: 0 },
+  weeklyAISeconds: { type: Number, default: 0 },
   lastWeeklyReset: { type: Date, default: Date.now },
 
   /* Conversations */
