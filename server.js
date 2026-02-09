@@ -450,8 +450,20 @@ app.get("/user", isAuthenticated, async (req, res) => {
 
         const userObj = user ? user.toObject() : req.user.toObject();
 
-        // Attach computed XP fields so the frontend can display progress on page load
+        // Recalculate level from XP if they're out of sync (safety net)
         const BRAND_CONFIG = require('./utils/brand');
+        let correctLevel = 1;
+        while ((userObj.xp || 0) >= BRAND_CONFIG.cumulativeXpForLevel(correctLevel + 1)) {
+            correctLevel++;
+        }
+        if ((userObj.level || 1) !== correctLevel) {
+            console.warn(`⚠️ [XP] Level/XP mismatch on login for ${userObj.firstName}: level=${userObj.level}, xp=${userObj.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
+            user.level = correctLevel;
+            await user.save();
+            userObj.level = correctLevel;
+        }
+
+        // Attach computed XP fields so the frontend can display progress on page load
         const level = userObj.level || 1;
         const xpStart = BRAND_CONFIG.cumulativeXpForLevel(level);
         userObj.xpForCurrentLevel = Math.max(0, (userObj.xp || 0) - xpStart);

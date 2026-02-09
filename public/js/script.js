@@ -2888,7 +2888,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.userXp !== undefined) {
                 currentUser.level = data.userLevel;
-                currentUser.xpForCurrentLevel = data.userXp;
+                currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
                 currentUser.xpForNextLevel = data.xpNeeded;
                 updateGamificationDisplay();
             }
