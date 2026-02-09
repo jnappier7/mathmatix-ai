@@ -681,8 +681,10 @@ class Sidebar {
         if (!window.currentUser) return;
 
         const level = window.currentUser.level || 1;
-        const xp = window.currentUser.totalXp || 0;
-        const xpNeeded = window.currentUser.xpNeeded || 100;
+        // xpForCurrentLevel and xpForNextLevel are computed by the backend
+        // (set on page load via /user endpoint and updated after each chat response)
+        const xp = window.currentUser.xpForCurrentLevel || 0;
+        const xpNeeded = window.currentUser.xpForNextLevel || 100;
         const progress = (xp / xpNeeded) * 100;
 
         // Update sidebar progress

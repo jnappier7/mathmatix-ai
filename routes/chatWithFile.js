@@ -334,10 +334,9 @@ router.post('/',
 
         let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
         user.xp = (user.xp || 0) + xpAward;
-        let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
 
         let specialXpAwardedMessage = bonusXpAwarded > 0 ? `${bonusXpAwarded} XP (${bonusXpReason})` : `${xpAward} XP`;
-        if (user.xp >= xpForNextLevel) {
+        while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
             user.level += 1;
             specialXpAwardedMessage = `LEVEL_UP! New level: ${user.level}`;
         }
@@ -353,7 +352,7 @@ router.post('/',
 		}
         await user.save();
 
-        const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
+        const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
 
         // Clean up all temp files after successful processing
         files.forEach(file => {
@@ -371,7 +370,7 @@ router.post('/',
             text: aiResponseText,
             userXp: user.xp - xpForCurrentLevelStart,
             userLevel: user.level,
-            xpNeeded: xpForNextLevel,
+            xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
             specialXpAwarded: specialXpAwardedMessage,
             voiceId: tutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
