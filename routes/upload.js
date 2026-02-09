@@ -10,7 +10,7 @@ const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unifi
 const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
-const { applyWorksheetGuard } = require('../utils/worksheetGuard');
+const { applyWorksheetGuard, filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 
 const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for analyzing student work
 
@@ -120,7 +120,13 @@ router.post("/", upload.single("file"), async (req, res) => {
         // Use the centralized LLM call function
         const completion = await callLLM(PRIMARY_UPLOAD_AI_MODEL, messages, { max_tokens: 400 });
 
-        const reply = completion.choices[0]?.message?.content?.trim() || "No feedback generated.";
+        let reply = completion.choices[0]?.message?.content?.trim() || "No feedback generated.";
+
+        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
+        const answerKeyCheck = filterAnswerKeyResponse(reply, req.user._id);
+        if (answerKeyCheck.wasFiltered) {
+            reply = answerKeyCheck.text;
+        }
 
         // Clean up temp file after successful processing
         if (file.path) {
