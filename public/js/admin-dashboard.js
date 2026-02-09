@@ -1194,7 +1194,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Teacher & Roster Setup Functionality ---
     // -------------------------------------------------------------------------
 
-    // --- Create Teacher Modal ---
+    // --- Create User Modal (was Create Teacher, now supports all roles) ---
     const createTeacherModal = document.getElementById('createTeacherModal');
     const openTeacherSetupBtn = document.getElementById('openTeacherSetupBtn');
     const closeCreateTeacherBtn = document.getElementById('closeCreateTeacherBtn');
@@ -1205,11 +1205,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     const teacherCreatedResult = document.getElementById('teacherCreatedResult');
     const createAnotherTeacher = document.getElementById('createAnotherTeacher');
 
+    // Track the last created user for follow-up actions
+    let lastCreatedUserId = null;
+
+    function hideAllFollowUps() {
+        document.getElementById('followUpTeacher').style.display = 'none';
+        document.getElementById('followUpParent').style.display = 'none';
+        document.getElementById('followUpStudent').style.display = 'none';
+        document.getElementById('followUpClassResult').style.display = 'none';
+        document.getElementById('followUpParentLinkResult').style.display = 'none';
+        document.getElementById('followUpStudentLinkResult').style.display = 'none';
+    }
+
     function openCreateTeacherModal() {
         createTeacherModal?.classList.add('is-visible');
         createTeacherForm?.reset();
         teacherCreatedResult.style.display = 'none';
         createTeacherForm.style.display = 'block';
+        hideAllFollowUps();
+        lastCreatedUserId = null;
     }
 
     function closeCreateTeacherModal() {
@@ -1239,7 +1253,60 @@ document.addEventListener("DOMContentLoaded", async () => {
             teacherCreatedResult.style.display = 'none';
             createTeacherForm.style.display = 'block';
             createTeacherForm.reset();
+            hideAllFollowUps();
+            lastCreatedUserId = null;
         });
+    }
+
+    // Helper to populate follow-up selects with users by role
+    async function populateFollowUpSelects() {
+        try {
+            const response = await fetch('/api/admin/users', { credentials: 'include' });
+            if (!response.ok) return;
+            const users = await response.json();
+
+            const students = users.filter(u => u.role === 'student');
+            const parents = users.filter(u => u.role === 'parent');
+            const teachers = users.filter(u => u.role === 'teacher');
+
+            const studentOptions = students.map(s =>
+                `<option value="${s._id}">${s.firstName} ${s.lastName} (${s.email})</option>`
+            ).join('');
+            const parentOptions = parents.map(p =>
+                `<option value="${p._id}">${p.firstName} ${p.lastName} (${p.email})</option>`
+            ).join('');
+            const teacherOptions = teachers.map(t =>
+                `<option value="${t._id}">${t.firstName} ${t.lastName} (${t.email})</option>`
+            ).join('');
+
+            // Parent follow-up: pick a student
+            const followUpParentStudentSelect = document.getElementById('followUpParentStudentSelect');
+            if (followUpParentStudentSelect) {
+                followUpParentStudentSelect.innerHTML = '<option value="">Select a student...</option>' + studentOptions;
+            }
+
+            // Student follow-up: pick a parent and/or teacher
+            const followUpStudentParentSelect = document.getElementById('followUpStudentParentSelect');
+            if (followUpStudentParentSelect) {
+                followUpStudentParentSelect.innerHTML = '<option value="">Select a parent...</option>' + parentOptions;
+            }
+            const followUpStudentTeacherSelect = document.getElementById('followUpStudentTeacherSelect');
+            if (followUpStudentTeacherSelect) {
+                followUpStudentTeacherSelect.innerHTML = '<option value="">Select a teacher...</option>' + teacherOptions;
+            }
+
+            // Also populate the standalone link-parent modal selects
+            const linkParentSelect = document.getElementById('linkParentSelect');
+            if (linkParentSelect) {
+                linkParentSelect.innerHTML = '<option value="">Select a parent...</option>' + parentOptions;
+            }
+            const linkStudentSelect = document.getElementById('linkStudentSelect');
+            if (linkStudentSelect) {
+                linkStudentSelect.innerHTML = '<option value="">Select a student...</option>' + studentOptions;
+            }
+        } catch (err) {
+            console.error('Error populating follow-up selects:', err);
+        }
     }
 
     if (createTeacherForm) {
@@ -1251,16 +1318,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
 
             try {
+                const selectedRole = document.getElementById('teacherRole').value;
                 const formData = {
                     firstName: document.getElementById('teacherFirstName').value.trim(),
                     lastName: document.getElementById('teacherLastName').value.trim(),
                     email: document.getElementById('teacherEmail').value.trim(),
+                    role: selectedRole,
                     username: document.getElementById('teacherUsername').value.trim() || undefined,
                     generatePassword: generatePasswordCheck.checked,
                     password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined
                 };
 
-                const response = await csrfFetch('/api/admin/teachers', {
+                const response = await csrfFetch('/api/admin/create-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1270,10 +1339,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const result = await response.json();
 
                 if (response.ok && result.success) {
+                    lastCreatedUserId = result.user._id;
+
                     // Show success result
-                    document.getElementById('resultTeacherName').textContent = `${result.teacher.firstName} ${result.teacher.lastName}`;
-                    document.getElementById('resultTeacherEmail').textContent = result.teacher.email;
-                    document.getElementById('resultTeacherUsername').textContent = result.teacher.username;
+                    document.getElementById('resultTeacherName').textContent = `${result.user.firstName} ${result.user.lastName}`;
+                    document.getElementById('resultTeacherEmail').textContent = result.user.email;
+                    document.getElementById('resultTeacherUsername').textContent = result.user.username;
+                    document.getElementById('resultTeacherRole').textContent = result.user.role.charAt(0).toUpperCase() + result.user.role.slice(1);
 
                     if (result.temporaryPassword) {
                         document.getElementById('resultTeacherPassword').textContent = result.temporaryPassword;
@@ -1282,19 +1354,249 @@ document.addEventListener("DOMContentLoaded", async () => {
                         document.getElementById('resultPasswordRow').style.display = 'none';
                     }
 
+                    // Show role-specific follow-up
+                    hideAllFollowUps();
+                    if (selectedRole === 'teacher') {
+                        document.getElementById('followUpTeacher').style.display = 'block';
+                    } else if (selectedRole === 'parent') {
+                        await populateFollowUpSelects();
+                        document.getElementById('followUpParent').style.display = 'block';
+                    } else if (selectedRole === 'student') {
+                        await populateFollowUpSelects();
+                        document.getElementById('followUpStudent').style.display = 'block';
+                    }
+
                     createTeacherForm.style.display = 'none';
                     teacherCreatedResult.style.display = 'block';
 
-                    // Refresh dashboard to show new teacher
+                    // Refresh dashboard
                     await initializeDashboard();
                 } else {
-                    throw new Error(result.message || 'Failed to create teacher');
+                    throw new Error(result.message || 'Failed to create user');
                 }
             } catch (error) {
                 alert(`Error: ${error.message}`);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Teacher';
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create User';
+            }
+        });
+    }
+
+    // --- Follow-up: Create class for new teacher ---
+    const followUpCreateClassBtn = document.getElementById('followUpCreateClassBtn');
+    if (followUpCreateClassBtn) {
+        followUpCreateClassBtn.addEventListener('click', async () => {
+            if (!lastCreatedUserId) return;
+            const className = document.getElementById('followUpClassName').value.trim();
+            if (!className) {
+                alert('Please enter a class name.');
+                return;
+            }
+
+            followUpCreateClassBtn.disabled = true;
+            followUpCreateClassBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const response = await csrfFetch('/api/admin/enrollment-codes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        teacherId: lastCreatedUserId,
+                        className,
+                        gradeLevel: document.getElementById('followUpGradeLevel').value.trim() || undefined,
+                        mathCourse: document.getElementById('followUpMathCourse').value.trim() || undefined
+                    })
+                });
+                const result = await response.json();
+                const resultEl = document.getElementById('followUpClassResult');
+                if (response.ok && result.success) {
+                    resultEl.innerHTML = `<i class="fas fa-check-circle"></i> Class code created: <strong>${result.enrollmentCode.code}</strong>`;
+                    resultEl.style.display = 'block';
+                } else {
+                    throw new Error(result.message || 'Failed to create class code');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                followUpCreateClassBtn.disabled = false;
+                followUpCreateClassBtn.innerHTML = '<i class="fas fa-key"></i> Create Class Code';
+            }
+        });
+    }
+
+    // --- Follow-up: Link child to new parent ---
+    const followUpLinkChildBtn = document.getElementById('followUpLinkChildBtn');
+    if (followUpLinkChildBtn) {
+        followUpLinkChildBtn.addEventListener('click', async () => {
+            if (!lastCreatedUserId) return;
+            const studentId = document.getElementById('followUpParentStudentSelect').value;
+            if (!studentId) {
+                alert('Please select a student.');
+                return;
+            }
+
+            followUpLinkChildBtn.disabled = true;
+            followUpLinkChildBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Linking...';
+
+            try {
+                const response = await csrfFetch('/api/admin/link-parent-student', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ parentId: lastCreatedUserId, studentId })
+                });
+                const result = await response.json();
+                const resultEl = document.getElementById('followUpParentLinkResult');
+                if (response.ok && result.success) {
+                    resultEl.innerHTML = `<i class="fas fa-check-circle"></i> ${result.message}`;
+                    resultEl.style.display = 'block';
+                } else {
+                    throw new Error(result.message || 'Failed to link parent to student');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                followUpLinkChildBtn.disabled = false;
+                followUpLinkChildBtn.innerHTML = '<i class="fas fa-link"></i> Link Student';
+            }
+        });
+    }
+
+    // --- Follow-up: Link parent and/or teacher to new student ---
+    const followUpLinkStudentBtn = document.getElementById('followUpLinkStudentBtn');
+    if (followUpLinkStudentBtn) {
+        followUpLinkStudentBtn.addEventListener('click', async () => {
+            if (!lastCreatedUserId) return;
+            const parentId = document.getElementById('followUpStudentParentSelect').value;
+            const teacherId = document.getElementById('followUpStudentTeacherSelect').value;
+
+            if (!parentId && !teacherId) {
+                alert('Please select at least a parent or a teacher.');
+                return;
+            }
+
+            followUpLinkStudentBtn.disabled = true;
+            followUpLinkStudentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Linking...';
+
+            const resultEl = document.getElementById('followUpStudentLinkResult');
+            const messages = [];
+
+            try {
+                if (parentId) {
+                    const response = await csrfFetch('/api/admin/link-parent-student', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ parentId, studentId: lastCreatedUserId })
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        messages.push(result.message);
+                    } else {
+                        messages.push(`Parent link: ${result.message}`);
+                    }
+                }
+
+                if (teacherId) {
+                    const response = await csrfFetch('/api/admin/assign-teacher', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ teacherId, studentId: lastCreatedUserId })
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        messages.push(result.message);
+                    } else {
+                        messages.push(`Teacher assign: ${result.message}`);
+                    }
+                }
+
+                resultEl.innerHTML = messages.map(m => `<i class="fas fa-check-circle"></i> ${m}`).join('<br>');
+                resultEl.style.display = 'block';
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                followUpLinkStudentBtn.disabled = false;
+                followUpLinkStudentBtn.innerHTML = '<i class="fas fa-link"></i> Link Selected';
+            }
+        });
+    }
+
+    // --- Link Parent to Student Modal (standalone) ---
+    const linkParentModal = document.getElementById('linkParentModal');
+    const openLinkParentBtn = document.getElementById('openLinkParentBtn');
+    const closeLinkParentBtn = document.getElementById('closeLinkParentBtn');
+    const cancelLinkParent = document.getElementById('cancelLinkParent');
+    const linkParentForm = document.getElementById('linkParentForm');
+    const linkParentResult = document.getElementById('linkParentResult');
+    const linkAnotherParent = document.getElementById('linkAnotherParent');
+
+    async function openLinkParentModal() {
+        linkParentModal?.classList.add('is-visible');
+        linkParentForm?.reset();
+        linkParentResult.style.display = 'none';
+        linkParentForm.style.display = 'block';
+        await populateFollowUpSelects();
+    }
+
+    function closeLinkParentModal() {
+        linkParentModal?.classList.remove('is-visible');
+    }
+
+    if (openLinkParentBtn) {
+        openLinkParentBtn.addEventListener('click', openLinkParentModal);
+    }
+    if (closeLinkParentBtn) {
+        closeLinkParentBtn.addEventListener('click', closeLinkParentModal);
+    }
+    if (cancelLinkParent) {
+        cancelLinkParent.addEventListener('click', closeLinkParentModal);
+    }
+    if (linkAnotherParent) {
+        linkAnotherParent.addEventListener('click', () => {
+            linkParentResult.style.display = 'none';
+            linkParentForm.style.display = 'block';
+            linkParentForm.reset();
+        });
+    }
+
+    if (linkParentForm) {
+        linkParentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('linkParentSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Linking...';
+
+            try {
+                const parentId = document.getElementById('linkParentSelect').value;
+                const studentId = document.getElementById('linkStudentSelect').value;
+
+                const response = await csrfFetch('/api/admin/link-parent-student', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ parentId, studentId })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    document.getElementById('resultLinkMessage').textContent = result.message;
+                    linkParentForm.style.display = 'none';
+                    linkParentResult.style.display = 'block';
+                    await initializeDashboard();
+                } else {
+                    throw new Error(result.message || 'Failed to link parent to student');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-link"></i> Link Parent & Student';
             }
         });
     }
