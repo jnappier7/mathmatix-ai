@@ -270,6 +270,20 @@ class ShowYourWorkManager {
         this.showSection(this.resultsSection);
         if (!this.resultsContainer) return;
 
+        // ANTI-CHEAT: If no student work was detected, show a friendly message instead of grading
+        if (result.noWorkDetected) {
+            this.resultsContainer.innerHTML = `
+                <div class="syw-summary-header">
+                    <div class="syw-no-work-message" style="text-align: center; padding: 20px;">
+                        <i class="fas fa-pencil-alt" style="font-size: 2em; color: #8b5cf6; margin-bottom: 10px;"></i>
+                        <h3>No work detected</h3>
+                        <p>${this.escapeHtml(result.overallFeedback || "It looks like the problems haven't been attempted yet. Give them a try first, then snap another photo!")}</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
         const total = result.problemCount || 0;
         const correct = result.correctCount || 0;
         const allCorrect = total > 0 && correct === total;
@@ -351,8 +365,8 @@ class ShowYourWorkManager {
                     <span class="syw-answer-value">${this.escapeHtml(problem.studentAnswer || '—')}</span>
                 </div>
                 ${!correct ? `<div class="syw-answer-row">
-                    <span class="syw-answer-label">Correct answer:</span>
-                    <span class="syw-answer-value syw-correct-answer">${problem.correctAnswer || '—'}</span>
+                    <span class="syw-answer-label">Hint:</span>
+                    <span class="syw-answer-value">Check the feedback above and try again!</span>
                 </div>` : ''}
             </div>
 

@@ -132,11 +132,12 @@ gradingResultSchema.methods.toStudentView = function () {
         id: this._id,
         problemCount: this.problemCount,
         correctCount: this.correctCount,
+        // ANTI-CHEAT: correctAnswer is intentionally excluded from student view
+        // to prevent students from using the grading feature as an answer key.
         problems: this.problems.map(p => ({
             problemNumber: p.problemNumber,
             problemStatement: p.problemStatement,
             studentAnswer: p.studentAnswer,
-            correctAnswer: p.correctAnswer,
             isCorrect: p.isCorrect,
             strengths: p.strengths,
             errors: p.errors,
