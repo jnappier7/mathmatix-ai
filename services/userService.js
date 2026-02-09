@@ -5,6 +5,7 @@
 const logger = require('../utils/logger').child({ service: 'user-service' });
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const BRAND_CONFIG = require('../utils/brand');
 
 /**
  * Get user by ID with error handling
@@ -195,8 +196,11 @@ async function awardXP(userId, amount, reason) {
       reason
     });
 
-    // Calculate level (basic formula - adjust as needed)
-    const newLevel = Math.floor(user.xp / 1000) + 1;
+    // Calculate level using brand config's cumulative XP formula
+    let newLevel = user.level || 1;
+    while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel(newLevel + 1)) {
+        newLevel++;
+    }
     user.level = newLevel;
 
     await user.save();

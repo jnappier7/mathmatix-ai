@@ -1332,8 +1332,22 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             });
         }
 
+        // Recalculate level from XP if they're out of sync (safety net)
+        const correctLevel = (() => {
+            let lvl = 1;
+            while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel(lvl + 1)) {
+                lvl++;
+            }
+            return lvl;
+        })();
+        if (user.level !== correctLevel) {
+            console.warn(`⚠️ [XP] Level/XP mismatch for ${user.firstName}: level=${user.level}, xp=${user.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
+            user.level = correctLevel;
+            await user.save();
+        }
+
         const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
-        const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
+        const userXpInCurrentLevel = Math.max(0, user.xp - xpForCurrentLevelStart);
 
         // Log XP breakdown for analytics
         console.log(`📊 [XP Ladder] User ${user.firstName}: Tier1=${xpBreakdown.tier1} (silent), Tier2=${xpBreakdown.tier2} (${xpBreakdown.tier2Type || 'none'}), Tier3=${xpBreakdown.tier3} (${xpBreakdown.tier3Behavior || 'none'}) = Total ${xpBreakdown.total}`);

@@ -353,6 +353,20 @@ router.post('/',
 		}
         await user.save();
 
+        // Recalculate level from XP if they're out of sync (safety net)
+        const correctLevel = (() => {
+            let lvl = 1;
+            while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel(lvl + 1)) {
+                lvl++;
+            }
+            return lvl;
+        })();
+        if (user.level !== correctLevel) {
+            console.warn(`⚠️ [XP] Level/XP mismatch for user ${user._id}: level=${user.level}, xp=${user.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
+            user.level = correctLevel;
+            await user.save();
+        }
+
         const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
 
         // Clean up all temp files after successful processing
@@ -369,7 +383,7 @@ router.post('/',
 
         res.json({
             text: aiResponseText,
-            userXp: user.xp - xpForCurrentLevelStart,
+            userXp: Math.max(0, user.xp - xpForCurrentLevelStart),
             userLevel: user.level,
             xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
             specialXpAwarded: specialXpAwardedMessage,
