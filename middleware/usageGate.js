@@ -76,17 +76,35 @@ async function usageGate(req, res, next) {
       return next();
     }
 
-    // Free students — 20 minutes per week
-    const weeklyUsed = user.weeklyActiveSeconds || 0;
-    const freeRemaining = FREE_WEEKLY_SECONDS - weeklyUsed;
+    // Free students — 20 minutes of AI time per week
+    // Uses weeklyAISeconds (server-measured AI processing time only)
+    // so reading, thinking, and paper work don't count against the limit
+    let weeklyAIUsed = user.weeklyAISeconds || 0;
+
+    // Weekly reset check: if 7+ days since last reset, clear the counter
+    const now = new Date();
+    const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+    if ((now - lastReset) / (1000 * 60 * 60 * 24) >= 7) {
+      weeklyAIUsed = 0;
+      // Reset in background
+      User.findByIdAndUpdate(user._id, {
+        weeklyAISeconds: 0,
+        weeklyActiveSeconds: 0,
+        weeklyActiveTutoringMinutes: 0,
+        lastWeeklyReset: now
+      }).catch(err => console.error('[UsageGate] Weekly reset error:', err));
+    }
+
+    const freeRemaining = FREE_WEEKLY_SECONDS - weeklyAIUsed;
 
     if (freeRemaining <= 0) {
       return res.status(402).json({
         message: "You've used your 20 free minutes this week. Upgrade for unlimited tutoring, or come back next week!",
         usageLimitReached: true,
         tier: 'free',
-        freeMinutesUsed: Math.floor(weeklyUsed / 60),
+        freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
         freeMinutesTotal: 20,
+        freeSecondsRemaining: 0,
         upgradeRequired: true
       });
     }

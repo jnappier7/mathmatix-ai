@@ -676,6 +676,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         const useStreaming = req.query.stream === 'true';
 
         let aiResponseText = '';
+        const aiStartTime = Date.now(); // Track AI processing time (server-side, for fair billing)
 
         // Track client disconnect for streaming mode (declared here for scope access)
         let clientDisconnected = false;
@@ -758,6 +759,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 1500 });
             aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
         }
+
+        // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
+        const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
+        const updatedWeeklyAI = (user.weeklyAISeconds || 0) + aiProcessingSeconds;
+        User.findByIdAndUpdate(userId, {
+            $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds }
+        }).catch(err => console.error('[Chat] AI time tracking error:', err));
 
         // ENFORCE visual teaching: Auto-inject commands if AI forgot to use them
         aiResponseText = enforceVisualTeaching(message, aiResponseText);
@@ -1331,7 +1339,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 tier3Behavior: xpBreakdown.tier3Behavior, // Behavior name for display
                 total: xpBreakdown.total,
                 leveledUp: leveledUp
-            }
+            },
+            // Free tier countdown: seconds of AI time remaining this week
+            aiTimeUsed: aiProcessingSeconds,
+            freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
+                ? Math.max(0, (20 * 60) - updatedWeeklyAI)
+                : null
         };
 
         if (useStreaming) {
@@ -1604,9 +1617,10 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         const daysSinceReset = (now - lastReset) / (1000 * 60 * 60 * 24);
 
         if (daysSinceReset >= 7) {
-            console.log(`[Track-Time] Weekly reset for user ${userId}: ${user.weeklyActiveTutoringMinutes || 0} minutes -> 0`);
+            console.log(`[Track-Time] Weekly reset for user ${userId}: ${user.weeklyActiveTutoringMinutes || 0} active min, ${Math.floor((user.weeklyAISeconds || 0) / 60)} AI min -> 0`);
             user.weeklyActiveSeconds = 0;
             user.weeklyActiveTutoringMinutes = 0;
+            user.weeklyAISeconds = 0;
             user.lastWeeklyReset = now;
         }
 
@@ -1950,6 +1964,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
 
         // Check if streaming is requested
         const useStreaming = req.query.stream === 'true';
+        const greetingAiStart = Date.now();
 
         if (useStreaming) {
             // STREAMING MODE
@@ -1972,6 +1987,12 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                         res.write(`data: ${JSON.stringify({ chunk: content })}\n\n`);
                     }
                 }
+
+                // Track AI processing time
+                const greetingAiSeconds = Math.ceil((Date.now() - greetingAiStart) / 1000);
+                User.findByIdAndUpdate(userId, {
+                    $inc: { weeklyAISeconds: greetingAiSeconds, totalAISeconds: greetingAiSeconds }
+                }).catch(err => console.error('[Greeting] AI time tracking error:', err));
 
                 // Save greeting to conversation (AI message only, no user message)
                 activeConversation.messages.push({
@@ -2009,6 +2030,12 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             // NON-STREAMING MODE
             const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 150 });
             const greetingText = completion.choices[0].message.content.trim();
+
+            // Track AI processing time
+            const greetingAiSeconds = Math.ceil((Date.now() - greetingAiStart) / 1000);
+            User.findByIdAndUpdate(userId, {
+                $inc: { weeklyAISeconds: greetingAiSeconds, totalAISeconds: greetingAiSeconds }
+            }).catch(err => console.error('[Greeting] AI time tracking error:', err));
 
             // Save greeting to conversation
             activeConversation.messages.push({
