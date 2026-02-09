@@ -142,7 +142,7 @@ async function chatStream(context, options = {}) {
 
 /**
  * Vision-based grading - for homework images
- * Uses Claude Sonnet 3.5 for superior image analysis
+ * Uses OpenAI vision API for image analysis
  * @param {Object} context - Grading context
  * @param {string} context.imageDataUrl - Base64 image data URL
  * @param {string} context.prompt - Grading instructions
@@ -204,7 +204,12 @@ async function gradeWithVision(context, options = {}) {
             return completion.content[0].text;
 
         } else {
-            // OpenAI vision API (fallback)
+            // OpenAI vision API
+            // Use max_completion_tokens for newer gpt-4o/gpt-5 models
+            const tokenParam = (model.includes('gpt-5') || model.includes('gpt-4o'))
+                ? { max_completion_tokens: maxTokens }
+                : { max_tokens: maxTokens };
+
             const completion = await retryWithExponentialBackoff(() =>
                 openai.chat.completions.create({
                     model: model,
@@ -226,7 +231,7 @@ async function gradeWithVision(context, options = {}) {
                             ]
                         }
                     ],
-                    max_tokens: maxTokens,
+                    ...tokenParam,
                     temperature: temperature
                 })
             );
