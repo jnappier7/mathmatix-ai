@@ -1287,12 +1287,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         }
         user.markModified('xpLadderStats');
 
-        // Check for level up
-        let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
+        // Check for level up (loop handles multi-level jumps from large XP awards)
         let leveledUp = false;
-        if (user.xp >= xpForNextLevel) {
+        let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
+        while (user.xp >= xpForNextLevel) {
             user.level += 1;
             leveledUp = true;
+            xpForNextLevel = user.level * BRAND_CONFIG.xpPerLevel;
         }
 
         const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
@@ -1333,7 +1334,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             text: aiResponseText,
             userXp: userXpInCurrentLevel,
             userLevel: user.level,
-            xpNeeded: xpForNextLevel,
+            xpNeeded: BRAND_CONFIG.xpPerLevel,
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
             drawingSequence: dynamicDrawingSequence,
