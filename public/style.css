@@ -2259,6 +2259,22 @@ form label, .password-label-row label {
     50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
 }
 
+.rarity-mythic {
+    background: linear-gradient(135deg, #ff0080 0%, #7928ca 50%, #00d4ff 100%);
+    color: #ffffff;
+    border: 2px solid #7928ca;
+    box-shadow: 0 0 12px rgba(121, 40, 202, 0.6);
+    animation: mythic-glow 3s infinite;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+@keyframes mythic-glow {
+    0%, 100% { box-shadow: 0 0 12px rgba(255, 0, 128, 0.6); }
+    33% { box-shadow: 0 0 18px rgba(121, 40, 202, 0.8); }
+    66% { box-shadow: 0 0 18px rgba(0, 212, 255, 0.8); }
+}
+
 /* --- Media Queries for Structural Changes --- */
 
 @media (max-width: 1024px) {
