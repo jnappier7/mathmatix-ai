@@ -457,6 +457,43 @@ app.get("/user", isAuthenticated, async (req, res) => {
     }
 });
 
+// Switch active role for multi-role users
+app.post('/api/user/switch-role', isAuthenticated, async (req, res) => {
+    try {
+        const { role } = req.body;
+        if (!role) return res.status(400).json({ message: 'Role is required.' });
+
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        // Verify user actually has this role
+        const userRoles = user.roles && user.roles.length > 0 ? user.roles : [user.role];
+        if (!userRoles.includes(role)) {
+            return res.status(403).json({ message: `You do not have the "${role}" role.` });
+        }
+
+        user.role = role;
+        await user.save();
+
+        // Determine redirect for the new active role
+        const dashboardMap = {
+            student: user.selectedTutorId ? '/chat.html' : '/pick-tutor.html',
+            teacher: '/teacher-dashboard.html',
+            admin: '/admin-dashboard.html',
+            parent: '/parent-dashboard.html'
+        };
+
+        res.json({
+            success: true,
+            message: `Switched to ${role} role.`,
+            redirect: dashboardMap[role] || '/chat.html'
+        });
+    } catch (error) {
+        console.error('[switch-role] Error:', error);
+        res.status(500).json({ message: 'Failed to switch role.' });
+    }
+});
+
 app.patch('/api/user/settings', isAuthenticated, async (req, res) => {
     try {
         const user = await User.findById(req.user._id);

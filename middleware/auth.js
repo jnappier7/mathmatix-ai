@@ -56,9 +56,21 @@ function ensureNotAuthenticated(req, res, next) {
 
 
 // --- ROLE-BASED AUTHORIZATION MIDDLEWARE ---
+// Authorization checks the `roles` array (all roles a user holds),
+// NOT `role` (the user's currently active dashboard role).
+// This lets multi-role users access all their authorized routes.
+
+function hasRole(user, roleName) {
+    if (!user) return false;
+    // Check roles array first (multi-role support), fall back to legacy role field
+    if (user.roles && user.roles.length > 0) {
+        return user.roles.includes(roleName);
+    }
+    return String(user.role) === roleName;
+}
 
 function isAdmin(req, res, next) {
-    if (req.isAuthenticated() && req.user && String(req.user.role) === 'admin') {
+    if (req.isAuthenticated() && hasRole(req.user, 'admin')) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -68,7 +80,7 @@ function isAdmin(req, res, next) {
 }
 
 function isTeacher(req, res, next) {
-    if (req.isAuthenticated() && req.user && req.user.role === 'teacher') {
+    if (req.isAuthenticated() && hasRole(req.user, 'teacher')) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -78,7 +90,7 @@ function isTeacher(req, res, next) {
 }
 
 function isParent(req, res, next) {
-    if (req.isAuthenticated() && req.user && req.user.role === 'parent') {
+    if (req.isAuthenticated() && hasRole(req.user, 'parent')) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -88,7 +100,7 @@ function isParent(req, res, next) {
 }
 
 function isStudent(req, res, next) {
-    if (req.isAuthenticated() && req.user && req.user.role === 'student') {
+    if (req.isAuthenticated() && hasRole(req.user, 'student')) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -101,7 +113,7 @@ function isStudent(req, res, next) {
 // --- CUSTOM AUTHORIZATION MIDDLEWARE ---
 
 function isAuthorizedForLeaderboard(req, res, next) {
-    if (req.isAuthenticated() && req.user && ['student', 'teacher', 'admin', 'parent'].includes(req.user.role)) {
+    if (req.isAuthenticated() && req.user && ['student', 'teacher', 'admin', 'parent'].some(r => hasRole(req.user, r))) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {

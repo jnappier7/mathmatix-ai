@@ -1318,12 +1318,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
 
             try {
-                const selectedRole = document.getElementById('teacherRole').value;
+                // Collect selected roles from checkboxes
+                const selectedRoles = Array.from(
+                    document.querySelectorAll('#teacherRoleCheckboxes input[name="roles"]:checked')
+                ).map(cb => cb.value);
+
+                if (selectedRoles.length === 0) {
+                    alert('Please select at least one role.');
+                    return;
+                }
+
                 const formData = {
                     firstName: document.getElementById('teacherFirstName').value.trim(),
                     lastName: document.getElementById('teacherLastName').value.trim(),
                     email: document.getElementById('teacherEmail').value.trim(),
-                    role: selectedRole,
+                    roles: selectedRoles,
                     username: document.getElementById('teacherUsername').value.trim() || undefined,
                     generatePassword: generatePasswordCheck.checked,
                     password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined
@@ -1345,7 +1354,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.getElementById('resultTeacherName').textContent = `${result.user.firstName} ${result.user.lastName}`;
                     document.getElementById('resultTeacherEmail').textContent = result.user.email;
                     document.getElementById('resultTeacherUsername').textContent = result.user.username;
-                    document.getElementById('resultTeacherRole').textContent = result.user.role.charAt(0).toUpperCase() + result.user.role.slice(1);
+                    const rolesLabel = (result.user.roles || [selectedRoles[0]]).map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');
+                    document.getElementById('resultTeacherRole').textContent = rolesLabel;
 
                     if (result.temporaryPassword) {
                         document.getElementById('resultTeacherPassword').textContent = result.temporaryPassword;
@@ -1354,16 +1364,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                         document.getElementById('resultPasswordRow').style.display = 'none';
                     }
 
-                    // Show role-specific follow-up
+                    // Show role-specific follow-ups (multiple can show for multi-role users)
                     hideAllFollowUps();
-                    if (selectedRole === 'teacher') {
+                    let needsUserSelects = false;
+                    if (selectedRoles.includes('teacher')) {
                         document.getElementById('followUpTeacher').style.display = 'block';
-                    } else if (selectedRole === 'parent') {
-                        await populateFollowUpSelects();
+                    }
+                    if (selectedRoles.includes('parent')) {
+                        needsUserSelects = true;
                         document.getElementById('followUpParent').style.display = 'block';
-                    } else if (selectedRole === 'student') {
-                        await populateFollowUpSelects();
+                    }
+                    if (selectedRoles.includes('student')) {
+                        needsUserSelects = true;
                         document.getElementById('followUpStudent').style.display = 'block';
+                    }
+                    if (needsUserSelects) {
+                        await populateFollowUpSelects();
                     }
 
                     createTeacherForm.style.display = 'none';
