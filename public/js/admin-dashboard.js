@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const allUsers = await usersRes.json();
             const teachers = await teachersRes.json();
             
-            students = allUsers.filter(u => u.role === 'student');
+            students = allUsers; // Show all users (filtered by role dropdown in renderStudents)
 
             // Create a teacher lookup map for efficient name retrieval.
             teacherMap = new Map(teachers.map(t => [t._id, `${t.firstName} ${t.lastName}`]));
@@ -167,16 +167,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     function renderStudents() {
         if (!userTableBody) return;
         const query = studentSearch ? studentSearch.value.toLowerCase().trim() : "";
+        const roleFilter = document.getElementById('userRoleFilter')?.value || "";
         userTableBody.innerHTML = "";
 
-        const filteredStudents = students.filter(s =>
+        let filteredStudents = students.filter(s =>
             `${s.firstName || ''} ${s.lastName || ''}`.toLowerCase().includes(query) ||
             (s.email || '').toLowerCase().includes(query) ||
             (s.username || '').toLowerCase().includes(query)
         );
 
+        if (roleFilter) {
+            filteredStudents = filteredStudents.filter(s => s.role === roleFilter || (s.roles && s.roles.includes(roleFilter)));
+        }
+
         if (filteredStudents.length === 0) {
-            userTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No students found.</td></tr>`;
+            userTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No users found.</td></tr>`;
             return;
         }
 
@@ -185,7 +190,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td><input type="checkbox" class="select-student" value="${s._id}"></td>
                 <td><a href="#" class="student-name-link">${s.firstName} ${s.lastName}</a></td>
                 <td>${s.email || 'N/A'}</td>
-                <td>${s.role}</td>
+                <td>${(s.roles && s.roles.length > 1) ? s.roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ') : (s.role || 'N/A')}</td>
                 <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
                 <td>
                     <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}">
@@ -469,6 +474,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (studentSearch) studentSearch.addEventListener("input", renderStudents);
+    const userRoleFilter = document.getElementById('userRoleFilter');
+    if (userRoleFilter) userRoleFilter.addEventListener("change", renderStudents);
 
     if (assignButton) {
         assignButton.addEventListener("click", async () => {

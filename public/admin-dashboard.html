@@ -694,9 +694,20 @@
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Student List</div>
-          <div class="form-group">
-            <input type="text" id="studentSearch" placeholder="Search students by name or email..." />
+          <div class="dashboard-panel-header">User List</div>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <input type="text" id="studentSearch" placeholder="Search users by name or email..." />
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <select id="userRoleFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;">
+                <option value="">All Roles</option>
+                <option value="student">Students</option>
+                <option value="teacher">Teachers</option>
+                <option value="parent">Parents</option>
+                <option value="admin">Admins</option>
+              </select>
+            </div>
           </div>
           <div class="table-scroll-container">
             <table class="user-table">
