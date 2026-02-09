@@ -60,6 +60,10 @@ const gradingResultSchema = new Schema({
         index: true
     },
 
+    // Re-attempt tracking: links to the previous submission for the same worksheet
+    previousAttemptId: { type: Schema.Types.ObjectId, ref: 'GradingResult', default: null },
+    attemptNumber: { type: Number, default: 1 },
+
     // Summary counts
     problemCount: { type: Number, default: 0 },
     correctCount: { type: Number, default: 0 },
@@ -130,6 +134,8 @@ gradingResultSchema.methods.applyTeacherReview = function (review) {
 gradingResultSchema.methods.toStudentView = function () {
     return {
         id: this._id,
+        previousAttemptId: this.previousAttemptId || null,
+        attemptNumber: this.attemptNumber || 1,
         problemCount: this.problemCount,
         correctCount: this.correctCount,
         // ANTI-CHEAT: correctAnswer is intentionally excluded from student view
@@ -166,6 +172,38 @@ gradingResultSchema.statics.getHistory = function (userId, limit = 20) {
         .limit(limit)
         .select('-__v')
         .lean();
+};
+
+/**
+ * Get error pattern summary for a student across recent sessions.
+ * Returns counts by error category (e.g., { sign: 12, arithmetic: 5, conceptual: 3 })
+ * Used by the tutor to proactively address persistent weaknesses.
+ *
+ * @param {ObjectId} userId
+ * @param {number} [lookback=14] - Days to look back
+ * @returns {Promise<{patterns: Object, totalErrors: number, sessionsAnalyzed: number}>}
+ */
+gradingResultSchema.statics.getErrorPatterns = async function (userId, lookback = 14) {
+    const since = new Date(Date.now() - lookback * 24 * 60 * 60 * 1000);
+    const results = await this.find({ userId, createdAt: { $gte: since } })
+        .select('problems.errors.category')
+        .lean();
+
+    const patterns = {};
+    let totalErrors = 0;
+
+    for (const result of results) {
+        for (const problem of (result.problems || [])) {
+            for (const error of (problem.errors || [])) {
+                if (error.category) {
+                    patterns[error.category] = (patterns[error.category] || 0) + 1;
+                    totalErrors++;
+                }
+            }
+        }
+    }
+
+    return { patterns, totalErrors, sessionsAnalyzed: results.length };
 };
 
 /**

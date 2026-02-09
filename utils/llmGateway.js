@@ -26,7 +26,7 @@ const { generateSystemPrompt } = require('./prompt');
 
 const DEFAULT_MODELS = {
     chat: 'gpt-4o-mini',                     // Fast, cost-effective teaching model
-    grading: 'gpt-4o-mini',                  // Fast analysis
+    grading: 'claude-3-5-sonnet-20241022',   // Claude vision: superior handwriting recognition
     reasoning: 'gpt-4o-mini',                // Fast reasoning
     embedding: 'text-embedding-3-small'      // OpenAI embeddings (specialized task)
 };

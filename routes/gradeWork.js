@@ -120,6 +120,7 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
 RULES:
 - Respond ONLY with the JSON block (inside \`\`\`json fences). No preamble.
 - **NEVER include a "correctAnswer" field.** Showing correct answers turns feedback into an answer key. Guide the student to discover the right answer through your feedback instead.
+- **The "correction" field in errors must TEACH A CONCEPT, never reveal the answer.** Good: "When you distribute a negative, every sign inside flips." Bad: "The answer should be x = 6." If you catch yourself writing the answer, rewrite it as a guiding hint.
 - Do NOT assign numerical scores, grades, or percentages anywhere.
 - Feedback must be CONVERSATIONAL and SOCRATIC — ask guiding questions, don't just state corrections.
 - Always find strengths, even in wrong answers.
@@ -176,6 +177,7 @@ router.post('/',
     try {
         const file = req.file;
         const user = await User.findById(req.user._id);
+        const previousAttemptId = req.body.previousAttemptId || null;
 
         if (!file) {
             return res.status(400).json({ success: false, message: 'No file uploaded' });
@@ -257,9 +259,41 @@ router.post('/',
         user.xp = (user.xp || 0) + xpEarned;
         await user.save();
 
+        // Re-attempt tracking: look up previous attempt to calculate improvement
+        let attemptNumber = 1;
+        let improvement = null;
+
+        if (previousAttemptId) {
+            try {
+                const prevResult = await GradingResult.findOne({
+                    _id: previousAttemptId,
+                    userId: user._id // Security: only allow linking to own results
+                }).select('correctCount problemCount attemptNumber').lean();
+
+                if (prevResult) {
+                    attemptNumber = (prevResult.attemptNumber || 1) + 1;
+                    const prevRate = prevResult.problemCount > 0 ? prevResult.correctCount / prevResult.problemCount : 0;
+                    const newRate = parsed.problems.length > 0 ? correctCount / parsed.problems.length : 0;
+                    improvement = {
+                        previousCorrect: prevResult.correctCount,
+                        previousTotal: prevResult.problemCount,
+                        currentCorrect: correctCount,
+                        currentTotal: parsed.problems.length,
+                        delta: correctCount - prevResult.correctCount,
+                        improved: newRate > prevRate
+                    };
+                    console.log(`[gradeWork] Re-attempt #${attemptNumber}: ${prevResult.correctCount}/${prevResult.problemCount} → ${correctCount}/${parsed.problems.length}`);
+                }
+            } catch (lookupErr) {
+                console.warn(`[gradeWork] Could not look up previous attempt ${previousAttemptId}:`, lookupErr.message);
+            }
+        }
+
         // Persist to database
         const result = await GradingResult.create({
             userId: user._id,
+            previousAttemptId: previousAttemptId || null,
+            attemptNumber,
             problemCount: parsed.problems.length,
             correctCount,
             problems: parsed.problems,
@@ -272,7 +306,7 @@ router.post('/',
             xpEarned
         });
 
-        console.log(`[gradeWork] Saved analysis ${result._id}`);
+        console.log(`[gradeWork] Saved analysis ${result._id} (attempt #${attemptNumber})`);
 
         // Clean up temp file
         if (file.path) fs.unlinkSync(file.path);
@@ -281,6 +315,8 @@ router.post('/',
         res.json({
             success: true,
             id: result._id,
+            attemptNumber,
+            improvement,
             problemCount: parsed.problems.length,
             correctCount,
             problems: parsed.problems,
@@ -288,7 +324,9 @@ router.post('/',
             whatWentWell: parsed.whatWentWell || '',
             practiceRecommendations: parsed.practiceRecommendations || [],
             xpEarned,
-            message: 'Work analyzed successfully'
+            message: improvement && improvement.improved
+                ? `Nice improvement! ${improvement.previousCorrect}/${improvement.previousTotal} → ${correctCount}/${parsed.problems.length}`
+                : 'Work analyzed successfully'
         });
 
     } catch (error) {
