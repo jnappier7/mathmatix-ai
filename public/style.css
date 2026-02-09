@@ -1145,7 +1145,7 @@ a:hover {
     line-height: var(--line-height-normal);
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-size: 0.95rem;
+    font-size: 0.95em;
     box-shadow: var(--shadow-xs);
     animation: messageIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
