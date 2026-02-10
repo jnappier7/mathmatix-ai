@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u4",
+  "course": "Geometry",
+  "unit": 4,
+  "quarter": 2,
+  "title": "Unit 4 Checkpoint: Right Triangles",
+  "weeks": "12",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of the Pythagorean Theorem and its converse, special right triangles (45-45-90 and 30-60-90), and introductory trigonometric ratios (sine, cosine, tangent) with real-world applications.",
+  "skillsCovered": [
+    "pythagorean-theorem",
+    "pythagorean-converse",
+    "special-right-triangles",
+    "trigonometric-ratios-intro"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "pythagorean-theorem", "reteachFocus": "a² + b² = c², identify hypotenuse (longest, opposite right angle), common triples (3-4-5, 5-12-13, 8-15-17, 7-24-25) and multiples", "resources": ["right_triangles_module.json - scaffold phases 1-3"] },
+    { "skillId": "pythagorean-converse", "reteachFocus": "Compare a²+b² to c²: equal→right, greater→acute, less→obtuse; c must be longest side", "resources": ["right_triangles_module.json - scaffold phases 1-3"] },
+    { "skillId": "special-right-triangles", "reteachFocus": "45-45-90 ratio 1:1:√2, 30-60-90 ratio 1:√3:2, working backwards from any given side", "resources": ["right_triangles_module.json - scaffold phases 4-6"] },
+    { "skillId": "trigonometric-ratios-intro", "reteachFocus": "SOH-CAH-TOA, identifying opposite/adjacent relative to reference angle, angle of elevation/depression applications", "resources": ["right_triangles_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu4-1",
+      "question": "A right triangle has legs measuring 9 and 40. Find the hypotenuse.",
+      "answer": "9² + 40² = 81 + 1600 = 1681. c = √1681 = 41. (9-40-41 is a Pythagorean triple.)",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu4-2",
+      "question": "A right triangle has one leg of 7 and a hypotenuse of 25. Find the other leg.",
+      "answer": "7² + b² = 25² → 49 + b² = 625 → b² = 576 → b = 24. (7-24-25 triple.)",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu4-3",
+      "question": "Classify each triangle as acute, right, or obtuse: (a) sides 10, 24, 26  (b) sides 6, 9, 12  (c) sides 5, 7, 8.",
+      "answer": "(a) 10²+24²=100+576=676=26² → right. (b) 6²+9²=36+81=117 vs 12²=144, 117<144 → obtuse. (c) 5²+7²=25+49=74 vs 8²=64, 74>64 → acute.",
+      "skill": "pythagorean-converse",
+      "difficulty": 4,
+      "points": 9
+    },
+    {
+      "id": "gcu4-4",
+      "question": "In a 45-45-90 triangle, each leg is 8√2. Find the hypotenuse.",
+      "answer": "Hypotenuse = leg × √2 = 8√2 × √2 = 8 × 2 = 16. Verify: (8√2)² + (8√2)² = 128 + 128 = 256 = 16² ✓.",
+      "skill": "special-right-triangles",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu4-5",
+      "question": "In a 30-60-90 triangle, the hypotenuse is 14. Find the short leg and the long leg.",
+      "answer": "Short leg = 14/2 = 7. Long leg = 7√3 ≈ 12.12. Verify: 7² + (7√3)² = 49 + 147 = 196 = 14² ✓.",
+      "skill": "special-right-triangles",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu4-6",
+      "question": "In a 30-60-90 triangle, the long leg (opposite 60°) is 15√3. Find the short leg and hypotenuse.",
+      "answer": "Long leg = short × √3, so short = 15√3 / √3 = 15. Hypotenuse = 2 × 15 = 30. Verify: 15² + (15√3)² = 225 + 675 = 900 = 30² ✓.",
+      "skill": "special-right-triangles",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "gcu4-7",
+      "question": "In a right triangle, the side opposite angle A is 9, the side adjacent to angle A is 40, and the hypotenuse is 41. Find sin(A), cos(A), and tan(A).",
+      "answer": "sin(A) = opp/hyp = 9/41. cos(A) = adj/hyp = 40/41. tan(A) = opp/adj = 9/40. Verify: (9/41)² + (40/41)² = 81/1681 + 1600/1681 = 1681/1681 = 1 ✓.",
+      "skill": "trigonometric-ratios-intro",
+      "difficulty": 4,
+      "points": 9
+    },
+    {
+      "id": "gcu4-8",
+      "question": "A flagpole casts a 30-foot shadow when the angle of elevation from the tip of the shadow to the top of the pole is 50°. How tall is the flagpole? Round to the nearest tenth. (tan 50° ≈ 1.1918)",
+      "answer": "tan(50°) = height/30. Height = 30 × tan(50°) ≈ 30 × 1.1918 ≈ 35.8 feet.",
+      "skill": "trigonometric-ratios-intro",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu4-9",
+      "question": "A ramp rises at a 30° angle and has a horizontal run of 12√3 feet. Using special right triangle ratios: (a) Find the height of the ramp. (b) Find the length (hypotenuse) of the ramp.",
+      "answer": "The 30° angle makes this a 30-60-90 triangle. The horizontal run is the long leg (adjacent to 30°). Long leg = short × √3, so short leg (height) = 12√3/√3 = 12 feet. Hypotenuse (ramp length) = 2 × 12 = 24 feet. Verify: 12² + (12√3)² = 144 + 432 = 576 = 24² ✓.",
+      "skill": "special-right-triangles",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "gcu4-10",
+      "question": "ANALYSIS: A right triangle has sin(A) = 3/5 and a perimeter of 60. Find the lengths of all three sides and verify your answer.",
+      "answer": "sin(A) = opp/hyp = 3/5, so opposite = 3k and hypotenuse = 5k for some k. Adjacent = √((5k)²-(3k)²) = √(25k²-9k²) = √(16k²) = 4k. Perimeter: 3k + 4k + 5k = 12k = 60 → k = 5. Sides: 15, 20, 25 (5× the 3-4-5 triple). Verify: 15² + 20² = 225 + 400 = 625 = 25² ✓. sin(A) = 15/25 = 3/5 ✓.",
+      "skill": "trigonometric-ratios-intro",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "gcu4-spiral-1",
+      "question": "SPIRAL (Congruence): Given AB ≅ DE, ∠B ≅ ∠E (included angles), and BC ≅ EF. Name the congruence postulate and write the triangle congruence statement.",
+      "answer": "SAS (two sides and included angle). △ABC ≅ △DEF.",
+      "skill": "triangle-congruence-sss-sas-asa",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 3"
+    },
+    {
+      "id": "gcu4-spiral-2",
+      "question": "SPIRAL (Triangle Inequality): Two sides of a triangle are 8 and 13. What is the range of possible values for the third side?",
+      "answer": "|13-8| < x < 13+8 → 5 < x < 21.",
+      "skill": "triangle-inequalities",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 2"
+    }
+  ],
+  "answerKeys": {
+    "gcu4-1": "41 (9-40-41 triple).",
+    "gcu4-2": "24 (7-24-25 triple).",
+    "gcu4-3": "(a) right (b) obtuse (c) acute.",
+    "gcu4-4": "16.",
+    "gcu4-5": "Short=7, long=7√3.",
+    "gcu4-6": "Short=15, hyp=30.",
+    "gcu4-7": "sin=9/41, cos=40/41, tan=9/40.",
+    "gcu4-8": "≈35.8 ft.",
+    "gcu4-9": "Height=12 ft, ramp=24 ft.",
+    "gcu4-10": "Sides: 15, 20, 25 (k=5).",
+    "gcu4-spiral-1": "SAS. △ABC ≅ △DEF.",
+    "gcu4-spiral-2": "5 < x < 21."
+  }
+}

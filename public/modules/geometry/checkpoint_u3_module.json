@@ -1,0 +1,122 @@
+{
+  "moduleId": "checkpoint_u3",
+  "course": "Geometry",
+  "unit": 3,
+  "quarter": 2,
+  "title": "Unit 3 Checkpoint: Triangle Congruence",
+  "weeks": "9",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of triangle congruence postulates (SSS, SAS, ASA, AAS, HL), CPCTC application, identifying why SSA fails, and writing congruence proofs.",
+  "skillsCovered": [
+    "triangle-congruence-sss-sas-asa",
+    "triangle-congruence-aas-hl",
+    "cpctc",
+    "congruence-proofs"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "triangle-congruence-sss-sas-asa", "reteachFocus": "SSS (3 sides), SAS (2 sides + included angle), ASA (2 angles + included side), why 'included' matters", "resources": ["congruence_module.json - scaffold phases 1-2"] },
+    { "skillId": "triangle-congruence-aas-hl", "reteachFocus": "AAS (2 angles + non-included side), HL (right triangle hypotenuse + leg), SSA fails", "resources": ["congruence_module.json - scaffold phases 3-4"] },
+    { "skillId": "cpctc", "reteachFocus": "Used AFTER proving congruence, not before; correspondence from congruence statement", "resources": ["congruence_module.json - scaffold phases 6-7"] },
+    { "skillId": "congruence-proofs", "reteachFocus": "Two-column format, common reasons (reflexive, midpoint, vertical angles, bisector), proof flow", "resources": ["congruence_module.json - scaffold phases 7-8"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu3-1",
+      "question": "State which congruence postulate/theorem applies (or 'not enough info'): (a) 3 pairs of congruent sides, (b) 2 sides and a non-included angle, (c) 2 angles and the included side.",
+      "answer": "(a) SSS. (b) Not enough info (SSA is not valid). (c) ASA.",
+      "skill": "triangle-congruence-sss-sas-asa",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu3-2",
+      "question": "Given: PQ ≅ RS, QR ≅ ST, ∠Q ≅ ∠S (∠Q is between PQ and QR; ∠S is between RS and ST). Prove △PQR ≅ △RST and name the postulate.",
+      "answer": "PQ ≅ RS, ∠Q ≅ ∠S (included angle), QR ≅ ST. By SAS, △PQR ≅ △RST.",
+      "skill": "triangle-congruence-sss-sas-asa",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu3-3",
+      "question": "Two right triangles have ∠C = ∠F = 90°, AC ≅ DF = 7, and AB ≅ DE = 25. (a) Name the congruence theorem. (b) Find the length of the other leg in each triangle.",
+      "answer": "(a) HL (right triangles, hypotenuse AB=DE=25, leg AC=DF=7). (b) Other leg = √(25²-7²) = √(625-49) = √576 = 24.",
+      "skill": "triangle-congruence-aas-hl",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu3-4",
+      "question": "△ABC ≅ △XYZ. If AB = 13, BC = 17, ∠B = 54°, and ∠A = 38°, find XY, YZ, ∠Y, and ∠X.",
+      "answer": "A↔X, B↔Y, C↔Z. XY = AB = 13, YZ = BC = 17, ∠Y = ∠B = 54°, ∠X = ∠A = 38°.",
+      "skill": "cpctc",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "gcu3-5",
+      "question": "Given: ∠1 ≅ ∠2, ∠3 ≅ ∠4, and side BD is shared by both △ABD and △CBD. Which postulate proves △ABD ≅ △CBD?",
+      "answer": "∠1 ≅ ∠2 (given), BD ≅ BD (reflexive), ∠3 ≅ ∠4 (given). BD is included between the angle pairs → ASA.",
+      "skill": "triangle-congruence-sss-sas-asa",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu3-6",
+      "question": "Explain why SSA is not a valid congruence shortcut. Give a specific example or description.",
+      "answer": "SSA fails because two sides and a non-included angle can produce two different triangles. For example, with sides 5 and 8 and an angle of 30° opposite the side of length 5, the third side could 'swing' to two positions, creating two non-congruent triangles.",
+      "skill": "triangle-congruence-aas-hl",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu3-7",
+      "question": "Write a two-column proof: Given: E is the midpoint of AC and BD. Prove: AB ≅ CD.",
+      "answer": "1. E is midpoint of AC and BD (Given). 2. AE ≅ EC (Def midpoint). 3. BE ≅ ED (Def midpoint). 4. ∠AEB ≅ ∠CED (Vertical angles). 5. △AEB ≅ △CED (SAS: steps 2,4,3). 6. AB ≅ CD (CPCTC).",
+      "skill": "congruence-proofs",
+      "difficulty": 5,
+      "points": 14
+    },
+    {
+      "id": "gcu3-8",
+      "question": "Given: AB ∥ DC and AD ∥ BC (ABCD is a parallelogram). Diagonal AC is drawn. Prove △ABC ≅ △CDA.",
+      "answer": "1. AB ∥ DC (Given). 2. ∠BAC ≅ ∠DCA (Alt int angles, transversal AC). 3. AD ∥ BC (Given). 4. ∠BCA ≅ ∠DAC (Alt int angles, transversal AC). 5. AC ≅ AC (Reflexive). 6. △ABC ≅ △CDA (ASA: steps 2,5,4).",
+      "skill": "congruence-proofs",
+      "difficulty": 6,
+      "points": 18
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "gcu3-spiral-1",
+      "question": "SPIRAL (Angle Sum): The angles of a triangle are (3x + 5)°, (2x + 10)°, and (5x - 15)°. Find x and classify the triangle.",
+      "answer": "(3x+5)+(2x+10)+(5x-15)=180 → 10x=180 → x=18. Angles: 59°, 46°, 75°. All < 90° → acute.",
+      "skill": "triangle-angle-sum",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 2"
+    },
+    {
+      "id": "gcu3-spiral-2",
+      "question": "SPIRAL (Transversals): Two parallel lines cut by a transversal. Corresponding angles are (6x - 8)° and (4x + 12)°. Find x.",
+      "answer": "Corresponding angles are congruent: 6x-8 = 4x+12 → 2x = 20 → x = 10. Angles: 52°.",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 1"
+    }
+  ],
+  "answerKeys": {
+    "gcu3-1": "(a) SSS (b) Not enough (SSA invalid) (c) ASA.",
+    "gcu3-2": "SAS (2 sides + included angle).",
+    "gcu3-3": "HL. Other leg = 24.",
+    "gcu3-4": "XY=13, YZ=17, ∠Y=54°, ∠X=38°.",
+    "gcu3-5": "ASA (reflexive side between angle pairs).",
+    "gcu3-6": "SSA invalid — ambiguous case (two possible triangles).",
+    "gcu3-7": "SAS → CPCTC. AB ≅ CD.",
+    "gcu3-8": "ASA (alt int angles + reflexive diagonal).",
+    "gcu3-spiral-1": "x=18. Angles 59°, 46°, 75°. Acute.",
+    "gcu3-spiral-2": "x=10. Angle=52°."
+  }
+}
