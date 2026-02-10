@@ -1,15 +1,519 @@
 {
+  "courseId": "precalculus",
   "track": "Pre-Calculus",
-  "overview": "Bridge algebra and geometry to calculus through trigonometry, vectors, and advanced functions.",
+  "overview": "A 36-week Pre-Calculus course built on a 10-unit scope and sequence. Bridges algebra, geometry, and trigonometry to calculus through advanced function analysis, trigonometry (foundations and advanced), analytic geometry, vectors, complex numbers, sequences/series, and an introduction to limits. Spiral review threads are woven throughout every checkpoint.",
+  "prerequisites": ["algebra-2"],
+  "naturalProgression": [
+    "Begin with Readiness Boot Camp (Unit 0) to diagnose and fill gaps from Algebra 2 before new content",
+    "Build a comprehensive function toolkit (Unit 1) with transformations, composition, and inverses across all parent families",
+    "Deep dive into polynomial and rational functions (Unit 2) with factoring theorems, asymptotic analysis, and inequalities",
+    "Master exponential and logarithmic functions (Unit 3) as inverse pairs with properties, equations, and real-world modeling",
+    "Establish trigonometry foundations (Unit 4) from radian measure through unit circle, graphs, identities, equations, and sinusoidal modeling",
+    "Extend to advanced trigonometry (Unit 5) with inverse trig, sum/difference/double/half-angle formulas, Law of Sines/Cosines, and triangle applications",
+    "Explore analytic geometry (Unit 6) with conics (parabola, ellipse, hyperbola), parametric equations, and polar coordinates/curves",
+    "Develop vector reasoning (Unit 7) with dot product, projections, applications (work/forces/navigation), and complex numbers in polar form with DeMoivre's Theorem",
+    "Discover sequences, series, and limits (Unit 8) with arithmetic/geometric sequences, sigma notation, convergence, algebraic limits, and continuity as a bridge to calculus",
+    "Synthesize all skills through comprehensive review and a final mastery assessment (Unit 9)"
+  ],
+  "spiralReviewThreads": [
+    "Algebraic fluency — factoring, completing the square, and simplification maintained through checkpoint spiral problems",
+    "Function analysis — domain, range, composition, and inverse reasoning applied across all function families",
+    "Trigonometric reasoning — unit circle values, identities, and equation solving reinforced from Unit 4 onward",
+    "Graphical interpretation — connecting algebraic forms to visual features across polynomials, trig, conics, and polar curves",
+    "Mathematical modeling — real-world problem contexts integrated progressively from Unit 1 through Unit 9"
+  ],
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release",
+    "description": "The AI tutor leads all instruction using the gradual release model (I Do / We Do / You Do) but has full freedom to make instructional decisions. Module files provide scope, key concepts, teaching guidance, and reference problems—NOT rigid scripts. The AI decides pacing, chooses examples, adjusts scaffolding, and personalizes based on the student's skill mastery, learning profile, and real-time responses.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Build conceptual understanding before procedures. The AI introduces the BIG IDEA using real-world connections, student interests, and visual/physical analogies.",
+        "studentRole": "Engage with the concept, ask questions, make predictions"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Model 2-3 worked examples with think-aloud reasoning. The AI selects problem difficulty based on the student's current mastery.",
+        "studentRole": "Observe, ask clarifying questions, identify patterns"
+      },
+      {
+        "phase": "concept-check",
+        "aiRole": "Quick comprehension check before moving to practice. If gaps detected, the AI re-teaches before proceeding.",
+        "studentRole": "Explain understanding in own words, answer concept questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Guided practice with adaptive scaffolding. Scaffolding decreases as the student demonstrates understanding.",
+        "studentRole": "Attempt problems with AI support, explain reasoning"
+      },
+      {
+        "phase": "check-in",
+        "aiRole": "Emotional and confidence assessment. Adjusts pacing and tone based on student engagement.",
+        "studentRole": "Reflect on confidence and comfort level"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Independent practice. Minimal hints—only if the student is stuck.",
+        "studentRole": "Solve problems independently, self-monitor"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Formal assessment for skill mastery using 4-Pillar criteria (accuracy, independence, transfer, retention).",
+        "studentRole": "Demonstrate mastery through independent problem-solving"
+      }
+    ],
+    "aiDecisionRights": [
+      "Choose which examples and problems to present (module provides reference problems, AI may generate its own)",
+      "Adjust difficulty in real-time based on student performance",
+      "Skip or extend phases based on student readiness",
+      "Re-order skills within a module if pedagogically appropriate",
+      "Generate additional practice or enrichment as needed",
+      "Use student interests and learning profile to personalize examples",
+      "Decide when to advance to the next skill or re-teach",
+      "Select teaching strategies (visual, algebraic, numerical, verbal) based on student profile",
+      "Adjust tone and pacing based on emotional signals and anxiety level"
+    ]
+  },
   "modules": [
-    {"moduleId": "trig_functions", "quarter": 1, "title": "Trigonometric Functions", "preview": "Unit circle, trig functions, graphs", "skills": ["trig-unit-circle", "trig-graphs", "trig-inverse-functions"]},
-    {"moduleId": "trig_identities", "quarter": 2, "title": "Trigonometric Identities & Equations", "preview": "Prove identities, solve trig equations", "skills": ["trig-identities", "sum-difference-formulas", "trig-equations"]},
-    {"moduleId": "polar_parametric", "quarter": 2, "title": "Polar & Parametric Equations", "preview": "Polar coordinates, parametric curves", "skills": ["polar-coordinates", "parametric-equations", "polar-graphs"]},
-    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Trigonometry mastery"},
-    {"moduleId": "vectors", "quarter": 3, "title": "Vectors", "preview": "Vector operations, dot product, applications", "skills": ["vectors", "dot-product", "vector-applications"]},
-    {"moduleId": "matrices", "quarter": 3, "title": "Matrices", "preview": "Matrix operations, systems, transformations", "skills": ["matrices-operations", "systems-matrices", "matrix-transformations"]},
-    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Vectors and matrices"},
-    {"moduleId": "intro_calculus", "quarter": 4, "title": "Introduction to Calculus", "preview": "Limits, continuity, intro to derivatives", "skills": ["limits-intuitive", "continuity", "average-rate-of-change"]},
-    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment", "preview": "Comprehensive Pre-Calculus assessment"}
+    {
+      "moduleId": "readiness_bootcamp",
+      "unit": 0,
+      "title": "Readiness Boot Camp",
+      "preview": "Diagnose and fill Algebra 2 gaps before new Pre-Calculus content",
+      "moduleFile": "/modules/precalculus/readiness_bootcamp_module.json",
+      "skills": ["algebraic-fluency-review", "function-analysis-review", "quadratic-mastery-review", "exponential-log-review", "trig-readiness-review"],
+      "essentialQuestions": [
+        "Which Algebra 2 skills are secure and which need reinforcement?",
+        "How does function notation and analysis carry into Pre-Calculus?",
+        "Why is algebraic fluency the foundation for every advanced topic?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "algebraic-fluency",
+          "title": "Algebraic Fluency Review",
+          "order": 1,
+          "concepts": ["Factoring techniques", "Rational expressions", "Radical simplification", "Complex number operations"],
+          "teachingNotes": "Diagnostic-first: assess before reteaching. Skip secure skills."
+        },
+        {
+          "lessonId": "function-analysis",
+          "title": "Function Analysis Review",
+          "order": 2,
+          "concepts": ["Domain and range", "Function notation", "Piecewise functions", "Transformations preview"],
+          "teachingNotes": "Critical foundation for function toolkit unit. Ensure automatic fluency."
+        },
+        {
+          "lessonId": "quadratic-exp-log",
+          "title": "Quadratic, Exponential & Log Review",
+          "order": 3,
+          "concepts": ["Completing the square", "Quadratic formula", "Exponent rules", "Basic log properties"],
+          "teachingNotes": "Completing the square is essential for conics. Log properties are essential for advanced solving."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u0",
+      "unit": 0,
+      "title": "Unit 0 Diagnostic Checkpoint",
+      "preview": "Assess readiness for Pre-Calculus content",
+      "moduleFile": "/modules/precalculus/checkpoint_u0_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "function_toolkit",
+      "unit": 1,
+      "title": "Function Toolkit & Transformations",
+      "preview": "Parent function library, transformations, composition, inverses",
+      "moduleFile": "/modules/precalculus/function_toolkit_module.json",
+      "skills": ["function-families-overview", "transformations-toolkit", "combining-functions", "function-composition", "inverse-functions", "domain-range-analysis"],
+      "essentialQuestions": [
+        "How do transformations connect all parent function families through one template?",
+        "What does it mean for two functions to be inverses, and how is this visible on a graph?",
+        "How does composition build complex functions from simple ones?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "parent-functions",
+          "title": "Parent Function Library",
+          "order": 1,
+          "concepts": ["Linear, quadratic, cubic, square root, cube root, absolute value", "Reciprocal, exponential, logarithmic", "Key features: domain, range, intercepts, symmetry"],
+          "teachingNotes": "Build the visual library first. Students should recognize graphs instantly."
+        },
+        {
+          "lessonId": "transformations",
+          "title": "Transformations Toolkit",
+          "order": 2,
+          "concepts": ["g(x) = af(b(x-c))+d template", "Vertical/horizontal stretch, shrink, shift, reflect", "Order of transformations", "Graphing transformed functions"],
+          "teachingNotes": "Master the general template. Apply to every parent function."
+        },
+        {
+          "lessonId": "composition-inverses",
+          "title": "Composition & Inverse Functions",
+          "order": 3,
+          "concepts": ["(f∘g)(x) = f(g(x))", "Composition domain", "Inverse functions: f⁻¹", "One-to-one and horizontal line test", "Algebraic and graphical inverse finding"],
+          "teachingNotes": "Inverses are critical for logarithms and inverse trig. Build strong foundation."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u1",
+      "unit": 1,
+      "title": "Unit 1 Checkpoint: Function Toolkit",
+      "preview": "Assess function families, transformations, composition, inverses",
+      "moduleFile": "/modules/precalculus/checkpoint_u1_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "polynomial_rational",
+      "unit": 2,
+      "title": "Polynomial & Rational Functions",
+      "preview": "End behavior, zeros, division, asymptotes, inequalities",
+      "moduleFile": "/modules/precalculus/polynomial_rational_module.json",
+      "skills": ["polynomial-end-behavior", "polynomial-zeros-multiplicity", "synthetic-division-remainder", "rational-function-analysis", "asymptote-analysis", "polynomial-rational-inequalities"],
+      "essentialQuestions": [
+        "How do the degree and leading coefficient control a polynomial's end behavior?",
+        "What information do zeros, multiplicity, and the Rational Root Theorem reveal?",
+        "How do asymptotes describe the behavior of rational functions near restricted values and at infinity?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "polynomial-analysis",
+          "title": "Polynomial Functions: End Behavior & Zeros",
+          "order": 1,
+          "concepts": ["Leading coefficient test", "Zeros and multiplicity", "Rational Root Theorem", "Descartes' Rule of Signs"],
+          "teachingNotes": "Build from quadratics to higher degree. Emphasize the connection between zeros and factors."
+        },
+        {
+          "lessonId": "division-theorems",
+          "title": "Polynomial Division & Factor Theorem",
+          "order": 2,
+          "concepts": ["Long division", "Synthetic division", "Remainder Theorem", "Factor Theorem", "Complete factorization"],
+          "teachingNotes": "Synthetic division is a tool for finding zeros efficiently. Connect to Rational Root Theorem."
+        },
+        {
+          "lessonId": "rational-functions",
+          "title": "Rational Functions & Inequalities",
+          "order": 3,
+          "concepts": ["Vertical asymptotes and holes", "Horizontal and oblique asymptotes", "Graphing rational functions", "Polynomial and rational inequalities via sign analysis"],
+          "teachingNotes": "Emphasize domain awareness. Holes vs. vertical asymptotes is a common confusion point."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u2",
+      "unit": 2,
+      "title": "Unit 2 Checkpoint: Polynomial & Rational Functions",
+      "preview": "Assess polynomial/rational analysis and inequalities",
+      "moduleFile": "/modules/precalculus/checkpoint_u2_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "exponential_logarithmic",
+      "unit": 3,
+      "title": "Exponential & Logarithmic Functions",
+      "preview": "Properties, equations, modeling, growth/decay",
+      "moduleFile": "/modules/precalculus/exponential_logarithmic_module.json",
+      "skills": ["exponential-functions-properties", "logarithmic-functions-properties", "logarithm-rules-expansion", "solving-exponential-equations", "solving-logarithmic-equations", "exponential-logarithmic-modeling"],
+      "essentialQuestions": [
+        "How are exponential and logarithmic functions inverses of each other?",
+        "When and why do we use logarithms to solve equations?",
+        "How do exponential models describe real-world growth and decay?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "exponential-functions",
+          "title": "Exponential Functions & Properties",
+          "order": 1,
+          "concepts": ["f(x)=abˣ", "Growth vs. decay", "Natural base e", "Transformations of exponentials"],
+          "teachingNotes": "Connect to compound interest and population growth for real-world context."
+        },
+        {
+          "lessonId": "logarithmic-functions",
+          "title": "Logarithmic Functions & Properties",
+          "order": 2,
+          "concepts": ["Definition: log_b(x)=y ↔ bʸ=x", "Common and natural logs", "Log laws: product, quotient, power", "Change of base formula"],
+          "teachingNotes": "Inverses of exponentials. Students must see logs as 'asking: what exponent?'"
+        },
+        {
+          "lessonId": "solving-modeling",
+          "title": "Solving Equations & Modeling",
+          "order": 3,
+          "concepts": ["Solving exponential equations with logs", "Solving logarithmic equations", "Extraneous solutions", "Compound interest, half-life, logistic models"],
+          "teachingNotes": "Always check for extraneous solutions in log equations. Domain restrictions matter."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u3",
+      "unit": 3,
+      "title": "Unit 3 Checkpoint: Exponential & Logarithmic Functions",
+      "preview": "Assess exponential/log properties, solving, and modeling",
+      "moduleFile": "/modules/precalculus/checkpoint_u3_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "trigonometry_foundations",
+      "unit": 4,
+      "title": "Trigonometry Foundations",
+      "preview": "Radians, unit circle, graphs, identities, equations, modeling",
+      "moduleFile": "/modules/precalculus/trigonometry_foundations_module.json",
+      "skills": ["radian-measure-arc-length", "unit-circle-trig-values", "trig-function-graphs", "fundamental-trig-identities", "solving-trig-equations", "sinusoidal-modeling"],
+      "essentialQuestions": [
+        "How does the unit circle unify all six trig functions?",
+        "What do the parameters A, B, C, D in y=Asin(B(x-C))+D each control?",
+        "How do trig identities transform one expression into another equivalent form?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "radians-unit-circle",
+          "title": "Radian Measure & the Unit Circle",
+          "order": 1,
+          "concepts": ["Degree-radian conversion", "Arc length s=rθ", "Sector area", "Unit circle coordinates", "Reference angles and ASTC"],
+          "teachingNotes": "Unit circle mastery is non-negotiable. Students must know exact values for standard angles."
+        },
+        {
+          "lessonId": "trig-graphs",
+          "title": "Trigonometric Function Graphs",
+          "order": 2,
+          "concepts": ["Sine and cosine graphs", "Amplitude, period, phase shift, vertical shift", "Tangent, cotangent, secant, cosecant graphs", "Sinusoidal modeling"],
+          "teachingNotes": "y=Asin(B(x-C))+D is the master equation. Connect to real-world periodic phenomena."
+        },
+        {
+          "lessonId": "identities-equations",
+          "title": "Identities & Trig Equations",
+          "order": 3,
+          "concepts": ["Pythagorean, reciprocal, quotient identities", "Cofunction identities", "Verifying identities", "Solving trig equations on [0,2π)", "General solutions"],
+          "teachingNotes": "Identity proofs develop algebraic reasoning. Equation solving requires quadrant analysis."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u4",
+      "unit": 4,
+      "title": "Unit 4 Checkpoint: Trigonometry Foundations",
+      "preview": "Assess radian measure, unit circle, graphs, identities, equations",
+      "moduleFile": "/modules/precalculus/checkpoint_u4_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "advanced_trig",
+      "unit": 5,
+      "title": "Advanced Trig & Applications",
+      "preview": "Inverse trig, sum/difference/double/half-angle, Law of Sines/Cosines",
+      "moduleFile": "/modules/precalculus/advanced_trig_module.json",
+      "skills": ["inverse-trig-functions", "sum-difference-identities", "double-half-angle-formulas", "law-of-sines", "law-of-cosines", "triangle-area-applications"],
+      "essentialQuestions": [
+        "Why do inverse trig functions require restricted domains?",
+        "How do sum/difference and double/half-angle formulas extend the identity toolbox?",
+        "When do you use Law of Sines vs. Law of Cosines, and what is the ambiguous case?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "inverse-trig",
+          "title": "Inverse Trigonometric Functions",
+          "order": 1,
+          "concepts": ["Restricted domains for arcsin, arccos, arctan", "Evaluating inverse trig exactly", "Compositions of trig and inverse trig"],
+          "teachingNotes": "Restricted domains are the key concept. Students must understand WHY restriction is needed."
+        },
+        {
+          "lessonId": "advanced-identities",
+          "title": "Sum/Difference & Double/Half-Angle Formulas",
+          "order": 2,
+          "concepts": ["sin(A±B), cos(A±B), tan(A±B)", "sin2θ, cos2θ (three forms)", "Half-angle formulas", "Power-reducing formulas"],
+          "teachingNotes": "Exact value computation is the key application. Connect to unit circle values."
+        },
+        {
+          "lessonId": "triangle-applications",
+          "title": "Law of Sines, Law of Cosines & Triangle Area",
+          "order": 3,
+          "concepts": ["Law of Sines", "SSA ambiguous case", "Law of Cosines", "Area = ½ab sinC", "Heron's formula", "Applied problems"],
+          "teachingNotes": "Decision tree: which law for which given information? SSA ambiguous case is the tricky scenario."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u5",
+      "unit": 5,
+      "title": "Unit 5 Checkpoint: Advanced Trig & Applications",
+      "preview": "Assess inverse trig, advanced identities, triangle solving",
+      "moduleFile": "/modules/precalculus/checkpoint_u5_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "analytic_geometry_parametric_polar",
+      "unit": 6,
+      "title": "Analytic Geometry, Parametric & Polar",
+      "preview": "Conics, parametric equations, polar coordinates and curves",
+      "moduleFile": "/modules/precalculus/analytic_geometry_module.json",
+      "skills": ["parabola-analysis", "ellipse-analysis", "hyperbola-analysis", "parametric-equations", "polar-coordinates", "polar-curves"],
+      "essentialQuestions": [
+        "How does completing the square reveal the geometric properties of conic sections?",
+        "How do parametric equations describe motion and curves that aren't functions?",
+        "How do polar coordinates provide an alternative way to describe position and curves?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "conic-sections",
+          "title": "Conic Sections: Parabolas, Ellipses, Hyperbolas",
+          "order": 1,
+          "concepts": ["Parabola: vertex, focus, directrix", "Ellipse: center, vertices, foci, eccentricity", "Hyperbola: vertices, foci, asymptotes", "General form to standard form via completing the square"],
+          "teachingNotes": "Each conic has a geometric definition (locus). Connect algebra to geometry visually."
+        },
+        {
+          "lessonId": "parametric-equations",
+          "title": "Parametric Equations",
+          "order": 2,
+          "concepts": ["Parametric form x=f(t), y=g(t)", "Eliminating the parameter", "Trig parametrics with Pythagorean identity", "Parametric lines and curves"],
+          "teachingNotes": "Parametric adds direction/time to curves. Connect to conics (ellipse as x=acost, y=bsint)."
+        },
+        {
+          "lessonId": "polar-coordinates-curves",
+          "title": "Polar Coordinates & Curves",
+          "order": 3,
+          "concepts": ["Polar↔rectangular conversion", "Plotting polar coordinates", "Polar curves: roses, limaçons, cardioids, lemniscates", "Symmetry tests", "Converting equations between forms"],
+          "teachingNotes": "Multiple representations of the same point. Polar curves reveal beautiful mathematical patterns."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u6",
+      "unit": 6,
+      "title": "Unit 6 Checkpoint: Analytic Geometry, Parametric & Polar",
+      "preview": "Assess conics, parametric elimination, polar conversions/curves",
+      "moduleFile": "/modules/precalculus/checkpoint_u6_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "vectors",
+      "unit": 7,
+      "title": "Vectors & Complex Numbers in Polar Form",
+      "preview": "Vector operations, dot product, projections, DeMoivre's Theorem",
+      "moduleFile": "/modules/precalculus/vectors_module.json",
+      "skills": ["vector-representation", "vector-operations", "dot-product", "vector-projections", "vector-applications", "complex-polar-form"],
+      "essentialQuestions": [
+        "How do vectors encode both magnitude and direction in one mathematical object?",
+        "What does the dot product reveal about the relationship between two vectors?",
+        "How does polar form simplify multiplication, powers, and roots of complex numbers?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "vector-fundamentals",
+          "title": "Vector Representation & Operations",
+          "order": 1,
+          "concepts": ["Component form, magnitude, direction angle", "Unit vectors, i/j notation", "Vector addition, subtraction, scalar multiplication", "Linear combinations"],
+          "teachingNotes": "Geometric and algebraic approaches side by side. Tip-to-tail and parallelogram rules."
+        },
+        {
+          "lessonId": "dot-product-projections",
+          "title": "Dot Product & Projections",
+          "order": 2,
+          "concepts": ["Dot product: algebraic and geometric", "Angle between vectors", "Orthogonality test", "Scalar and vector projections", "Decomposition"],
+          "teachingNotes": "The dot product is the key tool for angle and projection. u·v=0 means perpendicular."
+        },
+        {
+          "lessonId": "applications-complex",
+          "title": "Applications & Complex Numbers in Polar Form",
+          "order": 3,
+          "concepts": ["Work W=F·d", "Force resolution, ramp problems", "Navigation and bearing", "Complex polar form z=r·cis(θ)", "DeMoivre's Theorem", "nth roots of complex numbers"],
+          "teachingNotes": "Connect vectors to physics. Complex polar form extends polar coordinates to algebraic operations."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u7",
+      "unit": 7,
+      "title": "Unit 7 Checkpoint: Vectors & Complex Numbers",
+      "preview": "Assess vectors, dot product, applications, DeMoivre's Theorem",
+      "moduleFile": "/modules/precalculus/checkpoint_u7_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "limits_sequences_series",
+      "unit": 8,
+      "title": "Sequences, Series & Introduction to Limits",
+      "preview": "Arithmetic/geometric sequences, sigma notation, limits, continuity",
+      "moduleFile": "/modules/precalculus/limits_sequences_module.json",
+      "skills": ["sequences-arithmetic", "sequences-geometric", "series-sigma-notation", "limits-intuitive", "limits-algebraic", "limits-continuity-infinity"],
+      "essentialQuestions": [
+        "How do arithmetic and geometric sequences model different types of growth?",
+        "When does an infinite series converge, and what does the sum represent?",
+        "What is a limit, and why is it the foundational concept of calculus?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "sequences",
+          "title": "Arithmetic & Geometric Sequences",
+          "order": 1,
+          "concepts": ["nth term formulas", "Common difference and ratio", "Partial sums", "Infinite geometric series", "Convergence condition |r|<1"],
+          "teachingNotes": "Connect geometric series to real-world: repeating decimals, bouncing balls, compound interest."
+        },
+        {
+          "lessonId": "series-sigma",
+          "title": "Series & Sigma Notation",
+          "order": 2,
+          "concepts": ["Sigma notation", "Sum formulas for k, k², k³", "Properties of summation", "Telescoping series"],
+          "teachingNotes": "Sigma notation is the compact language of series. Practice expanding and writing."
+        },
+        {
+          "lessonId": "limits-preview",
+          "title": "Introduction to Limits & Continuity",
+          "order": 3,
+          "concepts": ["Intuitive limits from tables and graphs", "One-sided limits", "Algebraic techniques: factoring, rationalizing", "Continuity at a point", "Limits at infinity and horizontal asymptotes"],
+          "teachingNotes": "This is the bridge to calculus. Limits unify everything: sequences, series, asymptotes, instantaneous rate of change."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_u8",
+      "unit": 8,
+      "title": "Unit 8 Checkpoint: Sequences, Series & Limits",
+      "preview": "Assess sequences, series, limits, and continuity",
+      "moduleFile": "/modules/precalculus/checkpoint_u8_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "final_review",
+      "unit": 9,
+      "title": "Final Review & Exam Preparation",
+      "preview": "Comprehensive spiral review across all content areas",
+      "moduleFile": "/modules/precalculus/final_review_module.json",
+      "skills": ["comprehensive-function-review", "comprehensive-trig-review", "comprehensive-analytic-review", "comprehensive-limits-series-review"],
+      "essentialQuestions": [
+        "How do the major function families connect and differ?",
+        "What are the most important problem-solving strategies across all topics?",
+        "How does each Pre-Calculus topic prepare you for Calculus?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "review-functions",
+          "title": "Review: Functions, Polynomials, Exp/Log",
+          "order": 1,
+          "concepts": ["Function families and transformations", "Polynomial and rational analysis", "Exponential and logarithmic solving"],
+          "teachingNotes": "Diagnostic-driven review. Focus on student-specific weak areas."
+        },
+        {
+          "lessonId": "review-trig",
+          "title": "Review: Trigonometry Comprehensive",
+          "order": 2,
+          "concepts": ["Unit circle and identities", "Equations and advanced formulas", "Triangle solving"],
+          "teachingNotes": "Mixed problem sets to build fluency across trig topics."
+        },
+        {
+          "lessonId": "review-analytic-vectors-limits",
+          "title": "Review: Conics, Vectors, Series & Limits",
+          "order": 3,
+          "concepts": ["Conic sections and parametric/polar", "Vectors, dot product, complex numbers", "Sequences, series, and limits"],
+          "teachingNotes": "Multi-step problems requiring integration of multiple skills."
+        }
+      ]
+    },
+    {
+      "moduleId": "final_exam",
+      "unit": 9,
+      "title": "Pre-Calculus Comprehensive Final Exam",
+      "preview": "Comprehensive assessment covering all Pre-Calculus content",
+      "moduleFile": "/modules/precalculus/final_exam_module.json",
+      "isFinal": true
+    }
   ]
 }
