@@ -1,0 +1,121 @@
+{
+  "moduleId": "checkpoint_q3",
+  "course": "Geometry",
+  "quarter": 3,
+  "title": "Q3 Checkpoint: Polygons & Circles",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "description": "Cumulative assessment covering polygon angle sums, properties of parallelograms, rectangles, rhombi, squares, trapezoids, circle fundamentals, arc length, sector area, inscribed angles, and circle theorems.",
+  "skillsCovered": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties", "circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "polygon-angle-sum", "moduleId": "polygons_quadrilaterals"},
+    {"skillId": "quadrilateral-properties", "moduleId": "polygons_quadrilaterals"},
+    {"skillId": "circle-basics", "moduleId": "circles"},
+    {"skillId": "arc-length", "moduleId": "circles"},
+    {"skillId": "inscribed-angles", "moduleId": "circles"}
+  ],
+  "assessmentProblems": [
+    {
+      "id": "q3-1",
+      "question": "Find the sum of interior angles of a nonagon (9 sides).",
+      "answer": "1260°",
+      "skill": "polygon-angle-sum",
+      "difficulty": 2,
+      "points": 5
+    },
+    {
+      "id": "q3-2",
+      "question": "Each interior angle of a regular polygon is 135°. How many sides does it have?",
+      "answer": "8",
+      "skill": "polygon-angle-sum",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "q3-3",
+      "question": "In parallelogram JKLM, JK = 4x + 3 and LM = 6x - 11. Find JK.",
+      "answer": "31",
+      "skill": "quadrilateral-properties",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "q3-4",
+      "question": "The diagonals of a rhombus are 16 and 30. Find the perimeter of the rhombus.",
+      "answer": "68",
+      "skill": "quadrilateral-properties",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "q3-5",
+      "question": "A trapezoid has parallel sides of 9 cm and 15 cm. Find the length of the midsegment.",
+      "answer": "12 cm",
+      "skill": "trapezoid-properties",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "q3-6",
+      "question": "A circle has radius 11 m. Find the circumference in terms of π.",
+      "answer": "22π m",
+      "skill": "circle-basics",
+      "difficulty": 2,
+      "points": 5
+    },
+    {
+      "id": "q3-7",
+      "question": "Find the area of a circle with diameter 18 inches. Leave your answer in terms of π.",
+      "answer": "81π in²",
+      "skill": "circle-area",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "q3-8",
+      "question": "A circle has radius 12 cm. Find the arc length for a central angle of 150°.",
+      "answer": "10π cm",
+      "skill": "arc-length",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "q3-9",
+      "question": "An inscribed angle measures 48°. Find the measure of its intercepted arc.",
+      "answer": "96°",
+      "skill": "inscribed-angles",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "q3-10",
+      "question": "A sector has a central angle of 60° and the circle has radius 9. Find the sector area in terms of π.",
+      "answer": "13.5π (or 27π/2)",
+      "skill": "sector-area",
+      "difficulty": 4,
+      "points": 15
+    },
+    {
+      "id": "q3-11",
+      "question": "Quadrilateral ABCD is inscribed in a circle. If ∠B = 110°, find ∠D.",
+      "answer": "70°",
+      "skill": "inscribed-angles",
+      "difficulty": 4,
+      "points": 10
+    }
+  ],
+  "answerKeys": {
+    "q3-1": "1260°",
+    "q3-2": "8",
+    "q3-3": "31",
+    "q3-4": "68",
+    "q3-5": "12 cm",
+    "q3-6": "22π m",
+    "q3-7": "81π in²",
+    "q3-8": "10π cm",
+    "q3-9": "96°",
+    "q3-10": "13.5π",
+    "q3-11": "70°"
+  }
+}

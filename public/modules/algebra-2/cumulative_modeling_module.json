@@ -1,0 +1,146 @@
+{
+  "moduleId": "cumulative_modeling",
+  "course": "Algebra 2",
+  "unit": 10,
+  "title": "Cumulative Modeling & Review",
+  "weeks": "33-36",
+  "estimatedDuration": 60,
+  "skills": ["multi-domain-modeling", "function-analysis-comparison", "real-world-problem-solving", "course-synthesis"],
+  "standardsAlignment": ["A-CED.1", "A-CED.2", "A-CED.3", "F-IF.4", "F-IF.7", "F-BF.1", "F-LE.1", "F-LE.2", "S-ID.6"],
+  "goals": [
+    "Analyze real-world scenarios and select the appropriate function model (linear, quadratic, exponential, logarithmic, trigonometric)",
+    "Solve multi-step problems that integrate skills across multiple units (systems, polynomials, rational, exponential, trig)",
+    "Compare and contrast function families by their key features: domain, range, end behavior, rate of change",
+    "Construct mathematical models from verbal descriptions and data, then interpret results in context",
+    "Demonstrate mastery of all Algebra 2 skills through a cumulative final assessment"
+  ],
+  "instructionalStrategy": [
+    "This unit is about SYNTHESIS, not new content. Students should be drawing connections between the function families they've studied all year. The driving question: 'Given a real scenario, which function model fits and WHY?'",
+    "Use the 'Which Function?' framework: Linear = constant rate of change. Quadratic = rate of change changes at a constant rate. Exponential = constant percent/ratio change. Logarithmic = inverse of exponential. Trigonometric = periodic/cyclical behavior.",
+    "Present rich, multi-step problems that don't announce which tools to use. The student must decide: Do I need a system of equations? A polynomial? An exponential model? This decision-making IS the skill being assessed.",
+    "Review should be strategic, not comprehensive. Use diagnostic data from prior checkpoints to identify individual gaps. AI should target weak areas while maintaining strong areas with light practice.",
+    "The final assessment should reflect cumulative mastery across all units. Weight recent material slightly more, but include foundational skills from the beginning of the year to verify retention."
+  ],
+  "aiFlexLevel": "very-high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Choosing the Right Function Model**\n\nThroughout Algebra 2, you've studied multiple function families. The key to modeling real situations is recognizing WHICH function fits the pattern.\n\n| Function Type | Key Feature | Example Scenario |\n|--------------|-------------|------------------|\n| **Linear** f(x) = mx + b | Constant rate of change | Hourly wages, constant speed |\n| **Quadratic** f(x) = ax² + bx + c | Symmetric curve, one turn | Projectile motion, area optimization |\n| **Exponential** f(x) = a·bˣ | Constant percent change | Population growth, compound interest, decay |\n| **Logarithmic** f(x) = a·log_b(x) + d | Rapid initial growth, then leveling | Earthquake magnitude, sound decibels, learning curves |\n| **Trigonometric** f(x) = A·sin(Bx+C)+D | Periodic/cyclical | Tides, temperature, Ferris wheels |\n\n**How to decide:**\n1. Does the quantity change by a constant AMOUNT? → Linear\n2. Does it change by a constant RATIO/PERCENT? → Exponential\n3. Does it have a maximum or minimum and symmetric shape? → Quadratic\n4. Does it repeat in cycles? → Trigonometric\n5. Does it grow quickly at first then flatten? → Logarithmic\n\n**Data clues:**\n- Constant first differences → Linear\n- Constant second differences → Quadratic\n- Constant ratios between consecutive terms → Exponential",
+      "initialPrompt": "A cup of coffee at 180°F cools toward room temperature (72°F). After 5 minutes it's 150°F, after 10 minutes it's 130°F, after 15 minutes it's 117°F. Which function type models this? Why not linear?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Classify each scenario and write an appropriate model:\n(a) A car depreciates 18% per year from $32,000.\n(b) A ball is thrown upward from 5 feet at 48 ft/s.\n(c) A town's population grows by 250 people each year from 8,000.\n(d) Ocean tides reach a high of 12 ft and low of 2 ft every 12.4 hours.",
+      "explanation": "**(a) Car depreciation — EXPONENTIAL DECAY:**\nConstant percent decrease: 18% per year → multiply by 0.82 each year.\nV(t) = 32000(0.82)^t\nCheck: V(0) = $32,000. V(1) = $26,240. V(2) = $21,517. Each is 82% of the previous.\n\n**(b) Ball trajectory — QUADRATIC:**\nGravity creates a parabolic path. h(t) = -16t² + 48t + 5\n(-16 is half of gravity in ft/s², 48 is initial velocity, 5 is initial height.)\nMax height: t = -48/(2(-16)) = 1.5s, h(1.5) = -16(2.25) + 72 + 5 = 41 ft.\n\n**(c) Town population — LINEAR:**\nConstant amount added each year: 250 people.\nP(t) = 8000 + 250t\nRate of change is constant, so linear. (If it grew by a constant %, it would be exponential.)\n\n**(d) Ocean tides — TRIGONOMETRIC (SINUSOIDAL):**\nPeriodic behavior with consistent highs and lows.\nAmplitude = (12-2)/2 = 5 ft. Midline = (12+2)/2 = 7 ft. Period = 12.4 hrs.\nB = 2π/12.4. If high tide is at t = 0:\nh(t) = 5cos(2πt/12.4) + 7",
+      "initialPrompt": "For part (a), how long until the car is worth half its original value? Set 32000(0.82)^t = 16000 and solve using logarithms."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "The Richter scale: an earthquake of magnitude M releases energy E where log(E) = 11.8 + 1.5M. (a) Find the energy released by a magnitude 6.0 earthquake. (b) How many times more energy does a magnitude 7 release than a magnitude 6?",
+          "answer": "(a) log(E) = 11.8 + 1.5(6) = 20.8. E = 10^20.8 ≈ 6.31 × 10²⁰ ergs. (b) E₇/E₆ = 10^(1.5(7) - 1.5(6)) = 10^1.5 ≈ 31.6 times more energy.",
+          "hints": ["(a) Plug M = 6: log(E) = 20.8. Undo the log: E = 10^20.8.", "(b) For M=7: log(E) = 22.3. Ratio: 10^22.3 / 10^20.8 = 10^1.5 ≈ 31.6."]
+        },
+        {
+          "question": "A company's revenue R (thousands) depends on price p: R(p) = -2p² + 80p - 200. (a) Find the price that maximizes revenue. (b) What is the maximum revenue? (c) For what prices is revenue at least $400,000?",
+          "answer": "(a) p = -80/(2(-2)) = 20. Price = $20. (b) R(20) = -2(400) + 80(20) - 200 = -800 + 1600 - 200 = 600. Max revenue = $600,000. (c) -2p²+80p-200 ≥ 400 → -2p²+80p-600 ≥ 0 → p²-40p+300 ≤ 0 → (p-10)(p-30) ≤ 0 → 10 ≤ p ≤ 30.",
+          "hints": ["(a) Vertex formula: p = -b/(2a) = -80/(2(-2)) = 20.", "(b) R(20) = -2(400) + 1600 - 200 = 600 (thousands).", "(c) Set R(p) ≥ 400, solve the quadratic inequality."]
+        },
+        {
+          "question": "Data shows these populations: Year 0: 500, Year 2: 620, Year 4: 769, Year 6: 954. (a) Show this is exponential by checking ratios. (b) Find the annual growth rate. (c) Write the model and predict Year 10.",
+          "answer": "(a) 620/500 = 1.24, 769/620 = 1.24, 954/769 = 1.24. Constant ratio over 2-year intervals. (b) 2-year ratio = 1.24, so annual ratio = √1.24 ≈ 1.1136. Growth rate ≈ 11.36% per year. (c) P(t) = 500(1.1136)^t. P(10) = 500(1.1136)^10 ≈ 500(2.932) ≈ 1466.",
+          "hints": ["(a) Divide consecutive terms: 620/500, 769/620, 954/769. All ≈ 1.24.", "(b) That's the 2-year multiplier. Annual = √1.24 ≈ 1.1136.", "(c) P(t) = 500 × 1.1136^t. Plug in t = 10."]
+        }
+      ],
+      "initialPrompt": "For the Richter scale problem, start by plugging M = 6 into the formula log(E) = 11.8 + 1.5M. What value do you get for log(E)? Then use the definition: if log(E) = 20.8, what is E?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Multi-Step Integration Problems**\n\nThe most challenging Algebra 2 problems combine skills from multiple units. Here are common integration patterns:\n\n**Pattern 1: Build a model, then optimize it**\n- Write a function for a scenario (linear, quadratic, exponential)\n- Find the maximum, minimum, break-even, or target value\n- Interpret the result in context\n\n**Pattern 2: Systems with different function types**\n- When do two different models give the same value?\n- Set the functions equal and solve the resulting equation\n- Example: When does exponential growth overtake linear growth?\n\n**Pattern 3: Data analysis → Model → Prediction**\n- Analyze given data to determine the function type\n- Build the model with specific parameters\n- Use the model to predict or extrapolate\n\n**Pattern 4: Multi-domain real-world scenarios**\n- A business problem might need systems (cost/revenue) + quadratics (optimization) + exponentials (loan payments)\n- A science problem might need trig (periodic behavior) + exponentials (decay) + statistics (data analysis)\n\n**The meta-skill:** Breaking a complex problem into smaller pieces, solving each piece with the right tool, then combining the results.",
+      "initialPrompt": "A startup has costs C(x) = 50x + 2000 and revenue R(x) = -0.5x² + 120x for selling x units. How many units to break even? How many to maximize profit? What is the maximum profit?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "A lake is stocked with 400 fish. The population grows at 15% per year, but each year 50 fish are harvested. (a) Write a recursive formula. (b) Find the population after 1, 2, and 3 years. (c) If the lake can support at most 2000 fish, will the population exceed capacity in 10 years (without the harvest limit changing)?",
+      "explanation": "**(a) Recursive formula:**\nP(0) = 400\nP(n) = 1.15 · P(n-1) - 50\n\nEach year: grow 15%, then remove 50.\n\n**(b) Yearly populations:**\nP(1) = 1.15(400) - 50 = 460 - 50 = **410**\nP(2) = 1.15(410) - 50 = 471.5 - 50 = **421.5**\nP(3) = 1.15(421.5) - 50 = 484.725 - 50 = **434.725**\n\n**(c) Computing through year 10:**\nP(4) ≈ 449.9, P(5) ≈ 467.4, P(6) ≈ 487.5, P(7) ≈ 510.6\nP(8) ≈ 537.2, P(9) ≈ 567.8, P(10) ≈ 603.0\n\n**No**, the population reaches only about 603 after 10 years. The harvest of 50 per year significantly slows the growth. Eventually the population approaches a stable equilibrium where 15% growth exactly equals the 50 harvest: 0.15P = 50, so P = 333.3. Since the starting population (400) is above this equilibrium... wait, let me reconsider.\n\nActually, at equilibrium: 1.15P - 50 = P → 0.15P = 50 → P = 333.3. Since 400 > 333.3 and growth rate exceeds harvest at this population, the population actually keeps growing. It will NOT converge to 333 — it diverges upward because 15% of a larger number keeps increasing. It would eventually exceed 2000, but not within 10 years.",
+      "initialPrompt": "This problem combines sequences (recursive formulas) with exponential growth and harvest constraints. At what population level would the 15% growth exactly replace the 50 fish harvested? Is the population above or below that level?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "A farmer has 200 meters of fencing to enclose a rectangular pen against a barn (only 3 sides need fencing). (a) Express the area as a function of the width x. (b) Find the dimensions that maximize the area. (c) What is the maximum area?",
+          "answer": "(a) Length = 200 - 2x, so A(x) = x(200 - 2x) = -2x² + 200x. (b) x = -200/(2(-2)) = 50 meters. Length = 200 - 100 = 100 meters. (c) A = 50 × 100 = 5,000 m².",
+          "hints": ["Two widths of x plus one length = 200. Length = 200 - 2x.", "Area = width × length = x(200 - 2x) = -2x² + 200x.", "Vertex: x = -b/(2a) = -200/(2(-2)) = 50."]
+        },
+        {
+          "question": "An investment of $10,000 grows at 6% compounded annually. A second account starts at $15,000 growing at 3% compounded annually. When will the first account overtake the second?",
+          "answer": "10000(1.06)^t = 15000(1.03)^t → (1.06/1.03)^t = 1.5 → t·ln(1.06/1.03) = ln(1.5) → t = ln(1.5)/ln(1.06/1.03) ≈ 0.4055/0.02871 ≈ 14.12. After about 14 years.",
+          "hints": ["Set the two accounts equal: 10000(1.06)^t = 15000(1.03)^t.", "Divide both sides by 15000(1.03)^t: (10000/15000)(1.06/1.03)^t = 1.", "(2/3)(1.02913)^t = 1 → (1.02913)^t = 3/2 → t = ln(1.5)/ln(1.02913)."]
+        },
+        {
+          "question": "A town's average monthly temperature follows T(m) = 22sin(π(m-4)/6) + 58 where m is the month (1 = Jan). (a) What are the hottest and coldest average temperatures? (b) During which months is the average temperature above 70°F?",
+          "answer": "(a) Amplitude = 22, midline = 58. Max = 80°F, Min = 36°F. (b) 22sin(π(m-4)/6) + 58 > 70 → sin(π(m-4)/6) > 12/22 = 6/11 ≈ 0.5455. sin⁻¹(0.5455) ≈ 0.577 rad. Solutions: π(m-4)/6 is between 0.577 and π-0.577 = 2.565. So m-4 is between 1.10 and 4.90, meaning m is between 5.1 and 8.9. Temperature is above 70°F during months 6, 7, 8 (June through August).",
+          "hints": ["(a) Max = midline + amplitude = 58 + 22 = 80°F.", "(b) Solve 22sin(π(m-4)/6) > 12. Divide: sin(...) > 6/11.", "Find when sin crosses 6/11 to determine the month range."]
+        }
+      ],
+      "initialPrompt": "For the fencing problem, remember that the barn provides one side. So you only need fencing for 2 widths and 1 length. Express the length in terms of x, then write the area function."
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "MODELING: Classify each situation and write an appropriate function. (a) A radioactive substance has a half-life of 30 days, starting with 200g. (b) A pendulum completes a full swing every 2 seconds, with max displacement of 15 cm. (c) A taxi charges $3.50 plus $2.75 per mile.",
+          "answer": "(a) Exponential decay: A(t) = 200(1/2)^(t/30). (b) Trigonometric: d(t) = 15cos(πt) [period = 2, so B = 2π/2 = π]. (c) Linear: C(m) = 2.75m + 3.50.",
+          "hints": ["(a) Half-life = exponential decay with base 1/2.", "(b) Periodic = sinusoidal. Period = 2, amplitude = 15.", "(c) Constant rate per mile = linear."]
+        },
+        {
+          "question": "MULTI-STEP: A ball is launched upward from a 96-foot building at 80 ft/s. h(t) = -16t² + 80t + 96. (a) When does it hit the ground? (b) During what time interval is it above 200 feet?",
+          "answer": "(a) -16t² + 80t + 96 = 0 → t² - 5t - 6 = 0 → (t-6)(t+1) = 0 → t = 6 seconds (t = -1 rejected). (b) -16t² + 80t + 96 > 200 → -16t² + 80t - 104 > 0 → 2t² - 10t + 13 < 0. Discriminant: 100-104 = -4 < 0. Since a > 0 and discriminant < 0, 2t² - 10t + 13 > 0 always. The ball NEVER reaches 200 feet. Max height = h(2.5) = -16(6.25) + 200 + 96 = 196 ft.",
+          "hints": ["(a) Set h(t) = 0 and solve the quadratic.", "(b) Set h(t) > 200. If the discriminant is negative, check whether the parabola is always above or always below.", "Compute max height at t = -b/(2a) = 80/32 = 2.5 seconds."]
+        },
+        {
+          "question": "INTEGRATION: A bacteria population doubles every 3 hours starting from 1000. Simultaneously, an antibiotic kills bacteria at a constant rate of 100 per hour after being administered at t = 6 hours. (a) Write the population model for 0 ≤ t < 6. (b) Find the population at t = 6. (c) Write a recursive model for t ≥ 6 (per hour).",
+          "answer": "(a) P(t) = 1000 · 2^(t/3) for 0 ≤ t < 6. (b) P(6) = 1000 · 2² = 4000. (c) For each hour after t = 6: hourly growth factor = 2^(1/3) ≈ 1.26. P(n+1) = 1.26 · P(n) - 100 where P(6) = 4000.",
+          "hints": ["(a) Doubles every 3 hours → base 2, exponent t/3.", "(b) P(6) = 1000 × 2^(6/3) = 1000 × 4 = 4000.", "(c) Hourly growth factor: 2^(1/3) ≈ 1.26. Then subtract 100 per hour."]
+        },
+        {
+          "question": "DATA ANALYSIS: Test scores: 72, 85, 90, 68, 92, 78, 88, 95, 82, 76. (a) Find the mean and standard deviation. (b) If scores are approximately normal, what range contains about 68% of students? (c) What z-score corresponds to the student who scored 95?",
+          "answer": "(a) Mean = 826/10 = 82.6. Deviations²: 112.36, 5.76, 54.76, 212.96, 88.36, 21.16, 29.16, 153.76, 0.36, 43.56. Variance = 722.2/10 = 72.22. σ ≈ 8.50. (b) 68% range: 82.6 ± 8.50 → 74.1 to 91.1. (c) z = (95 - 82.6)/8.50 ≈ 1.46.",
+          "hints": ["(a) Sum all 10 scores for the mean. Then find each deviation from mean, square them, average, and take the square root.", "(b) μ ± σ = 82.6 ± 8.50.", "(c) z = (x - μ)/σ = (95 - 82.6)/8.50."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "coffee cooling model": "Exponential decay toward asymptote (Newton's Law of Cooling)",
+    "car depreciation 18%": "V(t) = 32000(0.82)^t",
+    "ball 48ft/s from 5ft": "h(t) = -16t² + 48t + 5, max 41 ft at 1.5s",
+    "town linear 250/year": "P(t) = 8000 + 250t",
+    "ocean tides": "h(t) = 5cos(2πt/12.4) + 7",
+    "Richter M=6 energy": "10^20.8 ≈ 6.31 × 10²⁰ ergs",
+    "Richter M7 vs M6 ratio": "10^1.5 ≈ 31.6 times",
+    "revenue optimize R(p)": "p = $20, max R = $600K, R ≥ 400K for $10 ≤ p ≤ $30",
+    "population exponential growth": "P(t) = 500(1.1136)^t, P(10) ≈ 1466",
+    "startup profit": "Break-even, max profit using C(x) and R(x)",
+    "fish population recursive": "P(n) = 1.15P(n-1) - 50, P(10) ≈ 603",
+    "fencing against barn": "50m × 100m = 5000 m²",
+    "investment overtake": "≈ 14.1 years",
+    "monthly temperature model": "Max 80°F, Min 36°F, above 70° June-August",
+    "radioactive 200g half-life 30": "A(t) = 200(1/2)^(t/30)",
+    "pendulum 15cm period 2s": "d(t) = 15cos(πt)",
+    "taxi 3.50 + 2.75/mi": "C(m) = 2.75m + 3.50",
+    "ball from 96ft at 80ft/s": "Hits ground at t=6s, never reaches 200ft (max 196ft)",
+    "bacteria with antibiotic": "P(t) = 1000·2^(t/3), P(6) = 4000, then recursive",
+    "test scores stats": "μ = 82.6, σ ≈ 8.50, 68% range 74.1-91.1, z(95) ≈ 1.46"
+  }
+}

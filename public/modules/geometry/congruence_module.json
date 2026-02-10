@@ -1,0 +1,153 @@
+{
+  "moduleId": "congruence",
+  "course": "Geometry",
+  "quarter": 2,
+  "title": "Triangle Congruence",
+  "estimatedDuration": 50,
+  "skills": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs"],
+  "standardsAlignment": ["G-CO.7", "G-CO.8"],
+  "goals": [
+    "Prove triangles congruent using SSS, SAS, and ASA postulates",
+    "Prove triangles congruent using AAS theorem and HL theorem",
+    "Apply CPCTC to find missing parts after proving congruence",
+    "Write two-column and paragraph proofs involving triangle congruence"
+  ],
+  "instructionalStrategy": [
+    "Use color-coded corresponding parts on diagrams—same color for congruent sides/angles.",
+    "Emphasize that SSA (or ASS) does NOT prove congruence—demonstrate with a flexible model.",
+    "HL only works for RIGHT triangles—always check for the right angle first.",
+    "Teach proof writing as 'telling a story with reasons'—each statement needs justification."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "Two triangles are **congruent** if they have exactly the same size and shape—all corresponding sides and angles are equal. But we don't need to check all six parts! We can prove congruence with just three pieces of information, if they're the right combination:\n\n**The Big 5 Congruence Shortcuts:**\n• **SSS** — three pairs of congruent sides\n• **SAS** — two sides and the INCLUDED angle\n• **ASA** — two angles and the INCLUDED side\n• **AAS** — two angles and a NON-included side\n• **HL** — hypotenuse and leg (RIGHT triangles only)\n\nThe key word for SAS and ASA is **included**—the angle/side must be between the two sides/angles.",
+      "initialPrompt": "Why do you think we need the angle to be 'included' (between the two sides) for SAS? What could go wrong if the angle wasn't between the two sides?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Given: AB ≅ DE, BC ≅ EF, AC ≅ DF. Prove △ABC ≅ △DEF.",
+      "explanation": "We have three pairs of congruent sides:\n1. AB ≅ DE (given)\n2. BC ≅ EF (given)\n3. AC ≅ DF (given)\n\nSince all three pairs of corresponding sides are congruent, by the **SSS (Side-Side-Side) Postulate**, △ABC ≅ △DEF.\n\nNotice the correspondence: A↔D, B↔E, C↔F. The order of vertices in the congruence statement matters—it tells us which parts match.",
+      "initialPrompt": "If I wrote △ABC ≅ △FED instead, would that be correct? Why does the order of letters matter?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Given: AB ≅ DE, angle B ≅ angle E, BC ≅ EF. Prove the triangles congruent and name the postulate.",
+      "explanation": "Let's identify what we have:\n1. AB ≅ DE (a side)\n2. ∠B ≅ ∠E (the angle between the sides)\n3. BC ≅ EF (another side)\n\nThe angle (∠B and ∠E) is **included** between the two pairs of sides. This is the **SAS (Side-Angle-Side) Postulate**.\n\nTherefore, △ABC ≅ △DEF by SAS.\n\n⚠️ Warning: If the angle were NOT between the two sides (like if we had AB, BC, and ∠A), that would be SSA, which does NOT prove congruence!",
+      "initialPrompt": "Can you think of why SSA doesn't work? Imagine you have two sticks and an angle at one end—could you create two different triangles?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Two triangles share a common side. In both triangles, the angles on either end of the shared side are congruent to each other. What postulate proves them congruent?",
+          "answer": "ASA",
+          "hints": [
+            "Think about what information you have: the shared side is congruent to itself (Reflexive Property).",
+            "You have two angles and the side between them—that's Angle-Side-Angle."
+          ]
+        },
+        {
+          "question": "In right triangles △ABC and △DEF (right angles at C and F), hypotenuse AB ≅ hypotenuse DE, and leg BC ≅ leg EF. What theorem proves congruence?",
+          "answer": "HL",
+          "hints": [
+            "Both triangles are right triangles—that's the first requirement.",
+            "You have the hypotenuse and one leg congruent. This is the HL (Hypotenuse-Leg) Theorem."
+          ]
+        },
+        {
+          "question": "Given: ∠A ≅ ∠D, ∠B ≅ ∠E, and BC ≅ EF (BC and EF are NOT between the congruent angles). What theorem applies?",
+          "answer": "AAS",
+          "hints": [
+            "You have two pairs of congruent angles and one pair of congruent sides.",
+            "The side is NOT included between the two angles. Two Angles and a non-included Side = AAS."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice identifying congruence postulates. For the first problem, what's special about a side shared by two triangles?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**CPCTC** stands for \"Corresponding Parts of Congruent Triangles are Congruent.\" This is the payoff of proving triangles congruent—once you know two triangles are congruent, ALL their corresponding parts are congruent.\n\nThe typical proof flow is:\n1. Prove the triangles congruent (using SSS, SAS, ASA, AAS, or HL)\n2. THEN conclude that specific corresponding parts are congruent (using CPCTC)\n\nCPCTC is never used to PROVE triangles congruent—it's used AFTER you've already proven congruence.",
+      "initialPrompt": "Why can't we use CPCTC as the very first step? What has to happen before we can use it?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Given: M is the midpoint of AB and CD. Prove: AC ≅ BD.",
+      "explanation": "**Two-column proof:**\n\n| Statement | Reason |\n|-----------|--------|\n| 1. M is the midpoint of AB and CD | Given |\n| 2. AM ≅ MB | Definition of midpoint |\n| 3. CM ≅ MD | Definition of midpoint |\n| 4. ∠AMC ≅ ∠BMD | Vertical angles are congruent |\n| 5. △AMC ≅ △BMD | SAS (steps 2, 4, 3) |\n| 6. AC ≅ BD | CPCTC |\n\nNotice the flow: we gathered three pieces of evidence (steps 2-4), proved the triangles congruent (step 5), then used CPCTC for the final conclusion (step 6).",
+      "initialPrompt": "In step 4, why are ∠AMC and ∠BMD congruent? What kind of angles are they?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Given: AB ≅ CB and DB bisects angle ABC. Prove △ABD ≅ △CBD. Name the postulate/theorem used.",
+          "answer": "SAS",
+          "hints": [
+            "DB bisects ∠ABC, so ∠ABD ≅ ∠CBD (definition of angle bisector).",
+            "AB ≅ CB (given). BD ≅ BD (reflexive property).",
+            "You have: Side AB ≅ CB, Angle ABD ≅ CBD, Side BD ≅ BD. The angle is included → SAS."
+          ]
+        },
+        {
+          "question": "△PQR ≅ △STU. If PQ = 8, QR = 12, and ∠Q = 65°, find ST, TU, and ∠T.",
+          "answer": "ST = 12, TU corresponds to nothing directly given, but ∠T = 65° — Wait: PQ↔ST so ST = 8, QR↔TU so TU = 12, ∠Q↔∠T so ∠T = 65°",
+          "hints": [
+            "In the congruence statement △PQR ≅ △STU, the order tells you: P↔S, Q↔T, R↔U.",
+            "So PQ↔ST means ST = PQ = 8. QR↔TU means TU = QR = 12. ∠Q↔∠T means ∠T = 65°."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, let's start by listing what we know. What does it mean for DB to bisect angle ABC?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "You are given ∠A ≅ ∠D, ∠C ≅ ∠F, and AC ≅ DF. Which congruence theorem proves △ABC ≅ △DEF?",
+          "answer": "AAS",
+          "hints": ["Two angles and a non-included side → AAS."]
+        },
+        {
+          "question": "Two right triangles have congruent hypotenuses (10 cm each) and one pair of congruent legs (6 cm each). Are the triangles congruent? By what theorem?",
+          "answer": "yes, by HL",
+          "hints": ["Right triangles + hypotenuse + one leg = HL Theorem."]
+        },
+        {
+          "question": "Given: AB ∥ CD and AB ≅ CD. E is the intersection of diagonals AC and BD. Prove △ABE ≅ △CDE. What postulate applies?",
+          "answer": "ASA",
+          "hints": ["Parallel lines create alternate interior angles. AB ≅ CD is given. ∠AEB ≅ ∠CED (vertical angles). You need to identify the alternate interior angles from the parallel lines."]
+        },
+        {
+          "question": "△XYZ ≅ △MNO. If XY = 15, ∠Y = 43°, and YZ = 22, find MN, ∠N, and NO.",
+          "answer": "MN = 15, ∠N = 43°, NO = 22",
+          "hints": ["Use the correspondence: X↔M, Y↔N, Z↔O. CPCTC applies."]
+        },
+        {
+          "question": "Can you use SSA to prove triangles congruent? Explain why or why not.",
+          "answer": "No. SSA (or ASS) is not a valid congruence shortcut because two different triangles can be formed with the same two sides and a non-included angle (the ambiguous case).",
+          "hints": ["Think about the 'swinging door' effect—the third side can swing to two different positions."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "Two triangles share a common side. In both triangles, the angles on either end of the shared side are congruent to each other. What postulate proves them congruent?": "ASA",
+    "In right triangles with congruent hypotenuse and leg, what theorem proves congruence?": "HL",
+    "Given ∠A ≅ ∠D, ∠B ≅ ∠E, and BC ≅ EF (non-included). What theorem applies?": "AAS",
+    "Given AB ≅ CB and DB bisects angle ABC. Prove △ABD ≅ △CBD. Name the postulate.": "SAS",
+    "Which congruence theorem proves △ABC ≅ △DEF given ∠A ≅ ∠D, ∠C ≅ ∠F, AC ≅ DF?": "AAS",
+    "Two right triangles with congruent hypotenuses (10 cm) and legs (6 cm)—congruent?": "yes, by HL",
+    "Can you use SSA to prove triangles congruent?": "No"
+  }
+}

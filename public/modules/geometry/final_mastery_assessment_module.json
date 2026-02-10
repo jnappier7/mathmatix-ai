@@ -1,0 +1,225 @@
+{
+  "moduleId": "final_mastery_assessment",
+  "course": "Geometry",
+  "quarter": 4,
+  "title": "Final Mastery Assessment: HS Geometry",
+  "estimatedDuration": 45,
+  "type": "assessment",
+  "description": "Comprehensive end-of-course assessment covering all four quarters of HS Geometry: Foundations & Angles, Triangles, Congruence, Right Triangles, Polygons, Circles, Similarity, 3D Geometry, and Coordinate Geometry.",
+  "skillsCovered": [
+    "points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals",
+    "triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities",
+    "triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs",
+    "pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro",
+    "polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties",
+    "circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems",
+    "similarity-ratios", "similar-triangle-theorems", "geometric-mean",
+    "volume-prisms-cylinders", "volume-pyramids-cones-spheres", "surface-area-prisms-cylinders", "surface-area-pyramids-cones-spheres",
+    "coordinate-geometry-distance-midpoint", "coordinate-proofs", "equation-of-circle", "parallel-perpendicular-slopes"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "parallel-lines-transversals", "moduleId": "foundations_angles"},
+    {"skillId": "triangle-angle-sum", "moduleId": "triangles_basics"},
+    {"skillId": "triangle-congruence-sss-sas-asa", "moduleId": "congruence"},
+    {"skillId": "pythagorean-theorem", "moduleId": "right_triangles"},
+    {"skillId": "special-right-triangles", "moduleId": "right_triangles"},
+    {"skillId": "quadrilateral-properties", "moduleId": "polygons_quadrilaterals"},
+    {"skillId": "arc-length", "moduleId": "circles"},
+    {"skillId": "inscribed-angles", "moduleId": "circles"},
+    {"skillId": "similarity-ratios", "moduleId": "similarity"},
+    {"skillId": "volume-prisms-cylinders", "moduleId": "3d_geometry"},
+    {"skillId": "coordinate-geometry-distance-midpoint", "moduleId": "coordinate_geometry"},
+    {"skillId": "equation-of-circle", "moduleId": "coordinate_geometry"}
+  ],
+  "assessmentSections": [
+    {
+      "section": "Q1 — Foundations, Angles & Triangles",
+      "weight": 20,
+      "problems": [
+        {
+          "id": "final-1",
+          "question": "Two parallel lines are cut by a transversal. Alternate interior angles measure (3x + 12)° and (5x - 8)°. Find x and both angle measures.",
+          "answer": "x = 10; both angles = 42°",
+          "skill": "parallel-lines-transversals",
+          "difficulty": 4,
+          "points": 8
+        },
+        {
+          "id": "final-2",
+          "question": "A triangle has angles (2x + 5)°, (3x - 10)°, and (x + 35)°. Find all three angles and classify the triangle.",
+          "answer": "x = 25; angles 55°, 65°, 60°; acute triangle",
+          "skill": "triangle-angle-sum",
+          "difficulty": 4,
+          "points": 8
+        },
+        {
+          "id": "final-3",
+          "question": "Can sides of length 7, 11, and 19 form a triangle?",
+          "answer": "no (7 + 11 = 18 < 19)",
+          "skill": "triangle-inequalities",
+          "difficulty": 3,
+          "points": 4
+        }
+      ]
+    },
+    {
+      "section": "Q2 — Congruence & Right Triangles",
+      "weight": 25,
+      "problems": [
+        {
+          "id": "final-4",
+          "question": "Given: AB ≅ DE, ∠A ≅ ∠D, AC ≅ DF. Name the congruence postulate and write the congruence statement.",
+          "answer": "SAS; △ABC ≅ △DEF",
+          "skill": "triangle-congruence-sss-sas-asa",
+          "difficulty": 4,
+          "points": 6
+        },
+        {
+          "id": "final-5",
+          "question": "A right triangle has legs of 9 and 40. Find the hypotenuse.",
+          "answer": "41",
+          "skill": "pythagorean-theorem",
+          "difficulty": 3,
+          "points": 6
+        },
+        {
+          "id": "final-6",
+          "question": "In a 30-60-90 triangle, the hypotenuse is 16. Find the short leg and the long leg.",
+          "answer": "short leg = 8, long leg = 8√3",
+          "skill": "special-right-triangles",
+          "difficulty": 4,
+          "points": 6
+        },
+        {
+          "id": "final-7",
+          "question": "In a right triangle, sin(θ) = 12/13. Find cos(θ) and tan(θ).",
+          "answer": "cos(θ) = 5/13, tan(θ) = 12/5",
+          "skill": "trigonometric-ratios-intro",
+          "difficulty": 5,
+          "points": 7
+        }
+      ]
+    },
+    {
+      "section": "Q3 — Polygons & Circles",
+      "weight": 25,
+      "problems": [
+        {
+          "id": "final-8",
+          "question": "Find each interior angle of a regular 15-sided polygon.",
+          "answer": "156°",
+          "skill": "polygon-angle-sum",
+          "difficulty": 3,
+          "points": 5
+        },
+        {
+          "id": "final-9",
+          "question": "In parallelogram ABCD, the diagonals intersect at E. AE = 3x + 2 and CE = 5x - 6. Find AE.",
+          "answer": "14",
+          "skill": "quadrilateral-properties",
+          "difficulty": 4,
+          "points": 6
+        },
+        {
+          "id": "final-10",
+          "question": "A circle has radius 10. Find the arc length for a central angle of 108°.",
+          "answer": "6π (≈ 18.85)",
+          "skill": "arc-length",
+          "difficulty": 4,
+          "points": 6
+        },
+        {
+          "id": "final-11",
+          "question": "An inscribed angle intercepts an arc of 124°. Find the inscribed angle measure.",
+          "answer": "62°",
+          "skill": "inscribed-angles",
+          "difficulty": 3,
+          "points": 4
+        },
+        {
+          "id": "final-12",
+          "question": "Find the area of a sector with central angle 90° and radius 6.",
+          "answer": "9π (≈ 28.27)",
+          "skill": "sector-area",
+          "difficulty": 4,
+          "points": 4
+        }
+      ]
+    },
+    {
+      "section": "Q4 — Similarity, 3D Geometry & Coordinate Geometry",
+      "weight": 30,
+      "problems": [
+        {
+          "id": "final-13",
+          "question": "△ABC ~ △DEF with scale factor 2:5. If AB = 8, find DE.",
+          "answer": "20",
+          "skill": "similarity-ratios",
+          "difficulty": 3,
+          "points": 5
+        },
+        {
+          "id": "final-14",
+          "question": "Find the geometric mean of 6 and 24.",
+          "answer": "12",
+          "skill": "geometric-mean",
+          "difficulty": 3,
+          "points": 5
+        },
+        {
+          "id": "final-15",
+          "question": "A cone has radius 5 and height 12. Find the volume in terms of π.",
+          "answer": "100π",
+          "skill": "volume-pyramids-cones-spheres",
+          "difficulty": 4,
+          "points": 5
+        },
+        {
+          "id": "final-16",
+          "question": "A sphere has radius 9. Find the surface area in terms of π.",
+          "answer": "324π",
+          "skill": "surface-area-pyramids-cones-spheres",
+          "difficulty": 3,
+          "points": 5
+        },
+        {
+          "id": "final-17",
+          "question": "Find the distance between (-2, 5) and (4, -3).",
+          "answer": "10",
+          "skill": "coordinate-geometry-distance-midpoint",
+          "difficulty": 3,
+          "points": 5
+        },
+        {
+          "id": "final-18",
+          "question": "Write the equation of a circle with center (2, -3) and passing through the point (6, 0).",
+          "answer": "(x - 2)² + (y + 3)² = 25",
+          "skill": "equation-of-circle",
+          "difficulty": 5,
+          "points": 5
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "final-1": "x = 10; both angles = 42°",
+    "final-2": "x = 25; angles 55°, 65°, 60°; acute",
+    "final-3": "no",
+    "final-4": "SAS; △ABC ≅ △DEF",
+    "final-5": "41",
+    "final-6": "short leg = 8, long leg = 8√3",
+    "final-7": "cos(θ) = 5/13, tan(θ) = 12/5",
+    "final-8": "156°",
+    "final-9": "14",
+    "final-10": "6π",
+    "final-11": "62°",
+    "final-12": "9π",
+    "final-13": "20",
+    "final-14": "12",
+    "final-15": "100π",
+    "final-16": "324π",
+    "final-17": "10",
+    "final-18": "(x - 2)² + (y + 3)² = 25"
+  }
+}

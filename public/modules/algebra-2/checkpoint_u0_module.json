@@ -1,0 +1,44 @@
+{
+  "moduleId": "checkpoint_u0",
+  "course": "Algebra 2",
+  "unit": 0,
+  "title": "Boot Camp Diagnostic & Targeted Reteach",
+  "weeks": "2",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Short diagnostic covering all Algebra 1 essentials: solving equations/inequalities, function notation, exponent rules, factoring, and linear graphing. Results drive targeted mini-reteach groups before Unit 1 begins.",
+  "skillsCovered": ["solving-linear-equations", "compound-inequalities", "function-basics", "exponent-rules-radicals", "factoring-review", "graphing-lines"],
+  "passThreshold": 70,
+  "diagnosticMode": true,
+  "remediationStrategy": "Based on diagnostic results, the AI forms targeted mini-reteach groups by skill area. Students who pass all areas proceed to Unit 1. Students with gaps receive focused remediation on ONLY the skills they missed—no full reteach.",
+  "remediationResources": [
+    {"skillId": "solving-linear-equations", "moduleId": "bootcamp_review", "focusArea": "Multi-step equations, special cases (no solution, infinite solutions)"},
+    {"skillId": "compound-inequalities", "moduleId": "bootcamp_review", "focusArea": "AND vs OR, graphing on number line"},
+    {"skillId": "function-basics", "moduleId": "bootcamp_review", "focusArea": "f(x) notation, evaluating, domain/range"},
+    {"skillId": "exponent-rules-radicals", "moduleId": "bootcamp_review", "focusArea": "Negative exponents, product/quotient/power rules"},
+    {"skillId": "factoring-review", "moduleId": "bootcamp_review", "focusArea": "GCF first, trinomials, difference of squares, grouping"},
+    {"skillId": "graphing-lines", "moduleId": "bootcamp_review", "focusArea": "Slope, intercepts, parallel/perpendicular, writing equations"}
+  ],
+  "assessmentProblems": [
+    {"id": "a2u0-1", "question": "Solve: 5(x - 3) = 2(x + 6) - 3.", "answer": "x = 6", "skill": "solving-linear-equations", "difficulty": 3, "points": 5},
+    {"id": "a2u0-2", "question": "Solve: 3(2x + 1) = 6x + 3. Classify the result.", "answer": "Infinitely many solutions (identity: 6x + 3 = 6x + 3)", "skill": "solving-linear-equations", "difficulty": 4, "points": 5},
+    {"id": "a2u0-3", "question": "Solve and graph: -5 < 2x - 1 ≤ 7.", "answer": "-2 < x ≤ 4", "skill": "compound-inequalities", "difficulty": 4, "points": 8},
+    {"id": "a2u0-4", "question": "Solve: |x + 4| ≤ 3.", "answer": "-7 ≤ x ≤ -1", "skill": "compound-inequalities", "difficulty": 5, "points": 8},
+    {"id": "a2u0-5", "question": "Given f(x) = 2x² - 3x + 1, find f(4) and f(-1).", "answer": "f(4) = 21, f(-1) = 6", "skill": "function-basics", "difficulty": 3, "points": 5},
+    {"id": "a2u0-6", "question": "What is the domain of g(x) = √(x - 3)?", "answer": "x ≥ 3 (or [3, ∞))", "skill": "function-basics", "difficulty": 4, "points": 5},
+    {"id": "a2u0-7", "question": "Simplify: (2x⁻³y²)³ · (x⁴y⁻¹).", "answer": "8y⁵/x⁵", "skill": "exponent-rules-radicals", "difficulty": 5, "points": 8},
+    {"id": "a2u0-8", "question": "Simplify: √75 - 2√27.", "answer": "-√3", "skill": "exponent-rules-radicals", "difficulty": 4, "points": 5},
+    {"id": "a2u0-9", "question": "Factor completely: 3x² - 27.", "answer": "3(x + 3)(x - 3)", "skill": "factoring-review", "difficulty": 3, "points": 5},
+    {"id": "a2u0-10", "question": "Factor completely: 6x² + x - 12.", "answer": "(2x + 3)(3x - 4)", "skill": "factoring-review", "difficulty": 5, "points": 8},
+    {"id": "a2u0-11", "question": "Factor: x³ - 8.", "answer": "(x - 2)(x² + 2x + 4)", "skill": "factoring-review", "difficulty": 5, "points": 8},
+    {"id": "a2u0-12", "question": "Write the equation of the line through (-2, 5) with slope 3/4 in slope-intercept form.", "answer": "y = (3/4)x + 13/2", "skill": "graphing-lines", "difficulty": 4, "points": 8},
+    {"id": "a2u0-13", "question": "Are the lines y = 2x - 1 and 4x - 2y = 8 parallel, perpendicular, or neither?", "answer": "Parallel (both have slope 2)", "skill": "graphing-lines", "difficulty": 4, "points": 5},
+    {"id": "a2u0-14", "question": "Find the x- and y-intercepts of 3x - 5y = 15.", "answer": "x-intercept: (5, 0); y-intercept: (0, -3)", "skill": "graphing-lines", "difficulty": 3, "points": 5}
+  ],
+  "answerKeys": {
+    "a2u0-1": "x=6", "a2u0-2": "Infinitely many", "a2u0-3": "-2<x≤4", "a2u0-4": "-7≤x≤-1",
+    "a2u0-5": "f(4)=21, f(-1)=6", "a2u0-6": "x≥3", "a2u0-7": "8y⁵/x⁵", "a2u0-8": "-√3",
+    "a2u0-9": "3(x+3)(x-3)", "a2u0-10": "(2x+3)(3x-4)", "a2u0-11": "(x-2)(x²+2x+4)",
+    "a2u0-12": "y=(3/4)x+13/2", "a2u0-13": "Parallel", "a2u0-14": "x-int (5,0), y-int (0,-3)"
+  }
+}

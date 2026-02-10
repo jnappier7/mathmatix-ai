@@ -1,0 +1,157 @@
+{
+  "moduleId": "similarity",
+  "course": "Geometry",
+  "quarter": 4,
+  "title": "Similarity",
+  "estimatedDuration": 45,
+  "skills": ["similarity-ratios", "similar-triangle-theorems", "similarity-proofs", "geometric-mean"],
+  "standardsAlignment": ["G-SRT.2", "G-SRT.3", "G-SRT.4", "G-SRT.5"],
+  "goals": [
+    "Understand similarity and find scale factors between similar figures",
+    "Prove triangles similar using AA, SSS~, and SAS~ theorems",
+    "Apply similarity to solve real-world proportion problems",
+    "Use the geometric mean in right triangles"
+  ],
+  "instructionalStrategy": [
+    "Distinguish similarity from congruence: same shape but possibly different size (congruence is a special case of similarity with scale factor 1).",
+    "AA Similarity is the most commonly used—if two angles match, the triangles MUST be similar (the third angle is forced by the angle sum theorem).",
+    "Use proportions systematically: corresponding sides are in the same ratio. Write ratios consistently (small/large or large/small, but stay consistent).",
+    "Geometric mean connects to altitude-on-hypotenuse: the altitude creates two triangles similar to each other AND to the original."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "Two figures are **similar** (symbol: ~) if:\n1. All corresponding angles are congruent\n2. All corresponding sides are proportional\n\nThe **scale factor** is the ratio of corresponding sides. If △ABC ~ △DEF with sides 3, 4, 5 and 6, 8, 10, the scale factor is 1:2 (or 2:1 depending on direction).\n\n**Three ways to prove triangles similar:**\n• **AA (Angle-Angle)** — two pairs of congruent angles (the third is automatic)\n• **SSS~ (Side-Side-Side)** — all three pairs of sides proportional\n• **SAS~ (Side-Angle-Side)** — two pairs of sides proportional AND the included angle congruent",
+      "initialPrompt": "Congruent figures are similar with a scale factor of 1. What does a scale factor of 3 mean in practical terms—like a 3:1 model of a building?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "△ABC has angles 50°, 60°, 70°. △DEF has angles 60°, 70°, 50°. Are they similar? By which theorem?",
+      "explanation": "Compare corresponding angles:\n• ∠A = 50° = ∠F = 50° ✓\n• ∠B = 60° = ∠D = 60° ✓\n• ∠C = 70° = ∠E = 70° ✓\n\nTwo (actually all three) pairs of angles are congruent, so by **AA Similarity**, △ABC ~ △FDE.\n\nNote the correspondence! A↔F, B↔D, C↔E (matching equal angles). The order in the similarity statement matters.\n\nWith AA, we only NEED two pairs of congruent angles. The third is guaranteed since angles sum to 180°.",
+      "initialPrompt": "Why is AA sufficient? Why don't we need to check sides too? Think about what happens when you fix two angles of a triangle."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "△PQR ~ △STU with scale factor 3:5. If PQ = 9 and QR = 12, find ST and TU.",
+      "explanation": "Since the scale factor from △PQR to △STU is 3:5, each side of △STU is 5/3 times the corresponding side of △PQR.\n\n**Finding ST (corresponds to PQ):**\nPQ/ST = 3/5\n9/ST = 3/5\nST = 9 × 5/3 = **15**\n\n**Finding TU (corresponds to QR):**\nQR/TU = 3/5\n12/TU = 3/5\nTU = 12 × 5/3 = **20**\n\nYou can verify: 9/15 = 3/5 ✓ and 12/20 = 3/5 ✓",
+      "initialPrompt": "If we know PR = 15 in the smaller triangle, what would SU be in the larger triangle?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Triangle sides are 4, 6, 8. Another triangle has sides 6, 9, 12. Are they similar? If so, by what theorem and what is the scale factor?",
+          "answer": "Yes, by SSS~. Scale factor is 2:3.",
+          "hints": [
+            "Check if all three ratios of corresponding sides are equal.",
+            "4/6 = 2/3, 6/9 = 2/3, 8/12 = 2/3. All equal! So SSS~ applies with scale factor 2:3."
+          ]
+        },
+        {
+          "question": "In △ABC and △DEF, ∠B = ∠E = 45°, AB/DE = 3/4, and BC/EF = 3/4. Are the triangles similar? By what theorem?",
+          "answer": "Yes, by SAS~.",
+          "hints": [
+            "You have two pairs of proportional sides with the INCLUDED angle congruent between them.",
+            "This matches the SAS~ theorem: two proportional sides and included congruent angle."
+          ]
+        },
+        {
+          "question": "A 6-foot person casts a 4-foot shadow. A tree casts a 20-foot shadow at the same time. How tall is the tree?",
+          "answer": "30 feet",
+          "hints": [
+            "The sun creates similar triangles (same angle of elevation).",
+            "Set up the proportion: person height / person shadow = tree height / tree shadow.",
+            "6/4 = x/20. Cross multiply: 4x = 120. x = 30 feet."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, what does SSS~ require? Compare each pair of corresponding sides."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Geometric Mean and Right Triangle Altitude Theorem:**\n\nWhen an altitude is drawn from the right angle to the hypotenuse of a right triangle, it creates two smaller triangles that are each similar to the original and to each other.\n\nThis gives us three important relationships:\n\n1. **Altitude Rule:** altitude² = (segment 1)(segment 2)\n   The altitude is the geometric mean of the two segments of the hypotenuse.\n\n2. **Leg Rule:** leg² = (adjacent segment)(hypotenuse)\n   Each leg is the geometric mean of the adjacent hypotenuse segment and the whole hypotenuse.\n\nThe **geometric mean** of two numbers a and b is √(ab).",
+      "initialPrompt": "The geometric mean of 4 and 9 is √(4×9) = √36 = 6. Notice that 6 is between 4 and 9—the geometric mean is always between the two numbers. Can you find the geometric mean of 3 and 12?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Find the geometric mean of 5 and 20.",
+          "answer": "10",
+          "hints": [
+            "Geometric mean = √(a × b) = √(5 × 20).",
+            "√100 = 10."
+          ]
+        },
+        {
+          "question": "In a right triangle, an altitude from the right angle to the hypotenuse divides it into segments of 4 and 9. Find the length of the altitude.",
+          "answer": "6",
+          "hints": [
+            "The altitude is the geometric mean of the two hypotenuse segments.",
+            "altitude = √(4 × 9) = √36 = 6."
+          ]
+        },
+        {
+          "question": "Using the same triangle (hypotenuse segments 4 and 9), find the length of the shorter leg.",
+          "answer": "2√13 (≈ 7.21)",
+          "hints": [
+            "The shorter leg is adjacent to the segment of length 4. Hypotenuse = 4 + 9 = 13.",
+            "leg² = (adjacent segment)(hypotenuse) = 4 × 13 = 52. Leg = √52 = 2√13."
+          ]
+        }
+      ],
+      "initialPrompt": "The geometric mean is found with the formula √(a × b). For the first problem, what is 5 × 20?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "△MNO ~ △PQR. MN = 10, NO = 14, MO = 8. PQ = 15. Find QR and PR.",
+          "answer": "QR = 21, PR = 12",
+          "hints": ["Scale factor: 10/15 = 2/3. Multiply each side by 3/2."]
+        },
+        {
+          "question": "Two triangles have two pairs of congruent angles (32° and 58°). Are they similar? By what theorem?",
+          "answer": "Yes, by AA Similarity",
+          "hints": ["Two pairs of congruent angles is sufficient for AA."]
+        },
+        {
+          "question": "A flagpole casts a 12-foot shadow. At the same time, a 5-foot person casts a 3-foot shadow. How tall is the flagpole?",
+          "answer": "20 feet",
+          "hints": ["5/3 = x/12. Cross multiply: 3x = 60, x = 20."]
+        },
+        {
+          "question": "Find the geometric mean of 8 and 32.",
+          "answer": "16",
+          "hints": ["√(8 × 32) = √256 = 16."]
+        },
+        {
+          "question": "In a right triangle, the altitude from the right angle to the hypotenuse creates segments of 3 and 12. Find the altitude.",
+          "answer": "6",
+          "hints": ["altitude = √(3 × 12) = √36 = 6."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "Triangle sides 4,6,8 and 6,9,12—similar?": "Yes, SSS~, scale factor 2:3",
+    "SAS~ with included angle 45° and proportional sides 3/4": "Yes, by SAS~",
+    "Shadow problem: 6-foot person, 4-foot shadow, tree 20-foot shadow": "30 feet",
+    "Geometric mean of 5 and 20": "10",
+    "Altitude from hypotenuse segments 4 and 9": "6",
+    "Similar triangles MNO~PQR, MN=10, PQ=15—find QR, PR": "QR = 21, PR = 12",
+    "Two congruent angle pairs 32° and 58°—similar?": "Yes, by AA",
+    "Flagpole shadow problem": "20 feet",
+    "Geometric mean of 8 and 32": "16",
+    "Altitude from segments 3 and 12": "6"
+  }
+}

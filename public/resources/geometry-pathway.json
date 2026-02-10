@@ -1,93 +1,746 @@
 {
+  "courseId": "geometry",
   "track": "Geometry",
   "overview": "Develop spatial reasoning through proof, construction, and measurement. Master plane and solid figures.",
+  "prerequisites": ["algebra-1", "grade-8"],
+  "naturalProgression": [
+    "Start with geometric vocabulary and angle relationships - the language of geometry",
+    "Move to triangles and prove congruence using postulates and theorems",
+    "Apply the Pythagorean Theorem and introduce trigonometry",
+    "Extend to polygons, quadrilateral properties, and circle theorems",
+    "Explore similarity, 3D geometry, and coordinate proofs"
+  ],
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release",
+    "description": "The AI tutor leads all instruction using the gradual release model (I Do / We Do / You Do) but has full freedom to make instructional decisions. Module files provide scope, key concepts, teaching guidance, and reference problems—NOT rigid scripts. The AI decides pacing, chooses examples, adjusts scaffolding, and personalizes based on the student's skill mastery, learning profile, and real-time responses.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Build conceptual understanding before procedures. The AI introduces the BIG IDEA using real-world connections, student interests, and visual/physical analogies. The AI chooses HOW to introduce based on the student's learning style.",
+        "studentRole": "Engage with the concept, ask questions, make predictions"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Model 2-3 worked examples with think-aloud reasoning. The AI selects problem difficulty based on the student's current mastery and explains using the student's preferred style (visual, verbal, step-by-step, etc.).",
+        "studentRole": "Observe, ask clarifying questions, identify patterns"
+      },
+      {
+        "phase": "concept-check",
+        "aiRole": "Quick comprehension check before moving to practice. The AI asks 1-2 targeted questions to verify the student grasps the concept, not just the procedure. If gaps detected, the AI re-teaches before proceeding.",
+        "studentRole": "Explain understanding in own words, answer concept questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Guided practice with adaptive scaffolding. The AI provides problems and supports the student through them, offering hints ONLY when needed. Scaffolding decreases as the student demonstrates understanding. The AI decides when to move on.",
+        "studentRole": "Attempt problems with AI support, explain reasoning"
+      },
+      {
+        "phase": "check-in",
+        "aiRole": "Emotional and confidence assessment. The AI checks how the student FEELS about the material—not just accuracy. Adjusts pacing and tone based on anxiety, confidence, and engagement signals.",
+        "studentRole": "Reflect on confidence and comfort level"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Independent practice. The AI presents problems and steps back, allowing the student to work independently. Minimal hints—only if the student is stuck. The AI evaluates accuracy, independence, and transfer.",
+        "studentRole": "Solve problems independently, self-monitor"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Formal assessment for skill mastery. The AI determines if the student has met the 4-Pillar mastery criteria (accuracy, independence, transfer, retention). Awards mastery or identifies areas for re-teaching.",
+        "studentRole": "Demonstrate mastery through independent problem-solving"
+      }
+    ],
+    "aiDecisionRights": [
+      "Choose which examples and problems to present (module provides reference problems, AI may generate its own)",
+      "Adjust difficulty in real-time based on student performance",
+      "Skip or extend phases based on student readiness",
+      "Re-order skills within a module if pedagogically appropriate",
+      "Generate additional practice or enrichment as needed",
+      "Use student interests and learning profile to personalize examples",
+      "Decide when to advance to the next skill or re-teach",
+      "Select teaching strategies (visual, algebraic, physical, verbal) based on student profile",
+      "Adjust tone and pacing based on emotional signals and anxiety level"
+    ]
+  },
   "modules": [
     {
       "moduleId": "foundations_angles",
       "quarter": 1,
       "title": "Geometric Foundations & Angles",
       "preview": "Build vocabulary and understand angle relationships.",
-      "skills": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals"]
+      "moduleFile": "/modules/geometry/foundations_angles_module.json",
+      "skills": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals"],
+      "essentialQuestions": [
+        "How do undefined terms form the foundation of geometric reasoning?",
+        "How do angle relationships help us solve real-world problems?",
+        "What patterns emerge when parallel lines are cut by a transversal?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "points-lines-planes",
+          "title": "Points, Lines, and Planes",
+          "order": 1,
+          "concepts": [
+            "Undefined terms: point, line, plane",
+            "Collinear and coplanar points",
+            "Line segments, rays, and proper notation",
+            "Intersecting, parallel, and skew lines"
+          ],
+          "teachingNotes": "Use physical models—laser pointer (line), GPS pin (point), tabletop (plane). Emphasize proper notation from day one."
+        },
+        {
+          "lessonId": "angle-measurement",
+          "title": "Measuring and Classifying Angles",
+          "order": 2,
+          "concepts": [
+            "Acute, right, obtuse, straight angle classification",
+            "Protractor use and precision",
+            "Benchmark angles (30, 45, 60, 90)",
+            "Estimating before measuring"
+          ],
+          "teachingNotes": "Have students estimate angle measures before using a protractor to build number sense for angles."
+        },
+        {
+          "lessonId": "angle-pairs",
+          "title": "Angle Pair Relationships",
+          "order": 3,
+          "concepts": [
+            "Complementary angles (sum to 90)",
+            "Supplementary angles (sum to 180)",
+            "Vertical angles (congruent)",
+            "Linear pairs (supplementary)"
+          ],
+          "commonMistakes": ["Confusing complementary and supplementary", "Forgetting that vertical angles are always congruent"]
+        },
+        {
+          "lessonId": "parallel-lines-transversals",
+          "title": "Parallel Lines and Transversals",
+          "order": 4,
+          "concepts": [
+            "Corresponding angles (F-pattern) — congruent",
+            "Alternate interior angles (Z-pattern) — congruent",
+            "Alternate exterior angles — congruent",
+            "Same-side interior angles (C-pattern) — supplementary"
+          ],
+          "keyFormulas": ["If lines are parallel: corresponding angles are congruent, alternate interior are congruent, same-side interior are supplementary"],
+          "teachingNotes": "Use F, Z, and C letter patterns as visual mnemonics."
+        },
+        {
+          "lessonId": "transversal-algebra",
+          "title": "Solving with Transversal Angle Relationships",
+          "order": 5,
+          "concepts": [
+            "Setting up equations from angle relationships",
+            "Using congruent angles: set expressions equal",
+            "Using supplementary angles: set expressions summing to 180",
+            "Finding all 8 angles from one given angle"
+          ],
+          "commonMistakes": ["Setting supplementary angles equal instead of summing to 180"]
+        }
+      ]
     },
     {
       "moduleId": "triangles_basics",
       "quarter": 1,
       "title": "Triangle Foundations",
       "preview": "Classify triangles and apply angle sum theorem.",
-      "skills": ["triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"]
+      "moduleFile": "/modules/geometry/triangles_basics_module.json",
+      "skills": ["triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"],
+      "essentialQuestions": [
+        "How do we use classification to understand the properties of triangles?",
+        "Why do the angles of a triangle always sum to 180?",
+        "What constraints determine whether three lengths can form a triangle?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "triangle-classification",
+          "title": "Classifying Triangles",
+          "order": 1,
+          "concepts": [
+            "By sides: scalene, isosceles, equilateral",
+            "By angles: acute, right, obtuse, equiangular",
+            "Dual classification (e.g., acute isosceles)",
+            "Properties of each type"
+          ],
+          "teachingNotes": "Use Venn diagrams to show relationships between triangle types."
+        },
+        {
+          "lessonId": "triangle-angle-sum",
+          "title": "Triangle Angle Sum Theorem",
+          "order": 2,
+          "concepts": [
+            "Sum of interior angles = 180",
+            "Finding missing angles algebraically",
+            "Connection to parallel lines (proof)",
+            "Isosceles triangle base angle theorem"
+          ],
+          "keyFormulas": ["angle A + angle B + angle C = 180"],
+          "teachingNotes": "Physical demonstration: tear triangle corners and arrange on a straight line."
+        },
+        {
+          "lessonId": "exterior-angle-theorem",
+          "title": "Exterior Angle Theorem",
+          "order": 3,
+          "concepts": [
+            "Exterior angle = sum of two remote interior angles",
+            "Connection to angle sum theorem",
+            "Setting up equations with exterior angles",
+            "Exterior angle is always greater than either remote interior angle"
+          ]
+        },
+        {
+          "lessonId": "triangle-inequality",
+          "title": "Triangle Inequality Theorem",
+          "order": 4,
+          "concepts": [
+            "Sum of any two sides must be greater than the third side",
+            "Shortcut: add two shortest sides, compare to longest",
+            "Finding range of possible third side lengths",
+            "Physical demonstration with sticks"
+          ],
+          "commonMistakes": ["Using greater-than-or-equal instead of strictly greater-than"]
+        }
+      ]
     },
     {
       "moduleId": "checkpoint_q1",
       "quarter": 1,
       "title": "Q1 Checkpoint",
-      "preview": "Cumulative assessment: Foundations and triangles"
+      "preview": "Cumulative assessment: Foundations and triangles",
+      "moduleFile": "/modules/geometry/checkpoint_q1_module.json",
+      "isCheckpoint": true
     },
     {
       "moduleId": "congruence",
       "quarter": 2,
       "title": "Triangle Congruence",
       "preview": "Prove triangles congruent using SSS, SAS, ASA, AAS, HL.",
-      "skills": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs"]
+      "moduleFile": "/modules/geometry/congruence_module.json",
+      "skills": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs"],
+      "essentialQuestions": [
+        "What minimum information do we need to guarantee two triangles are congruent?",
+        "How does proving congruence unlock information about corresponding parts (CPCTC)?",
+        "How do we construct a logical argument (proof) in geometry?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "congruence-intro",
+          "title": "What is Congruence?",
+          "order": 1,
+          "concepts": [
+            "Congruent = same size and shape",
+            "Corresponding parts (sides and angles)",
+            "Congruence statement and vertex correspondence",
+            "Why checking all 6 parts is unnecessary"
+          ]
+        },
+        {
+          "lessonId": "sss-sas",
+          "title": "SSS and SAS Postulates",
+          "order": 2,
+          "concepts": [
+            "SSS: three pairs of congruent sides",
+            "SAS: two sides and the INCLUDED angle",
+            "Why SSA does NOT work (ambiguous case)",
+            "Identifying included angles"
+          ],
+          "teachingNotes": "Use color-coded corresponding parts on diagrams. Demonstrate SSA failure with flexible model.",
+          "commonMistakes": ["Confusing SSA with SAS", "Not identifying the included angle"]
+        },
+        {
+          "lessonId": "asa-aas-hl",
+          "title": "ASA, AAS, and HL Theorems",
+          "order": 3,
+          "concepts": [
+            "ASA: two angles and the included side",
+            "AAS: two angles and a non-included side",
+            "HL: hypotenuse-leg for right triangles only",
+            "Reflexive property for shared sides"
+          ],
+          "teachingNotes": "HL only works for RIGHT triangles—always check for the right angle first."
+        },
+        {
+          "lessonId": "cpctc",
+          "title": "CPCTC",
+          "order": 4,
+          "concepts": [
+            "Corresponding Parts of Congruent Triangles are Congruent",
+            "CPCTC used AFTER proving congruence, never before",
+            "Using CPCTC to find missing side/angle measures",
+            "The proof flow: Given -> Prove congruent -> CPCTC"
+          ]
+        },
+        {
+          "lessonId": "congruence-proofs",
+          "title": "Writing Congruence Proofs",
+          "order": 5,
+          "concepts": [
+            "Two-column proof format",
+            "Paragraph proof format",
+            "Common reasons: Given, Definition of midpoint, Vertical angles, Reflexive property",
+            "Planning a proof strategy before writing"
+          ],
+          "teachingNotes": "Teach proof writing as 'telling a story with reasons'. Each statement needs justification."
+        }
+      ]
     },
     {
       "moduleId": "right_triangles",
       "quarter": 2,
       "title": "Right Triangles",
       "preview": "Master Pythagorean theorem and special right triangles.",
-      "skills": ["pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"]
+      "moduleFile": "/modules/geometry/right_triangles_module.json",
+      "skills": ["pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"],
+      "essentialQuestions": [
+        "Why is the Pythagorean Theorem one of the most useful theorems in mathematics?",
+        "How do special right triangle ratios eliminate the need for calculation?",
+        "How do trigonometric ratios connect angles to side lengths?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "pythagorean-theorem",
+          "title": "The Pythagorean Theorem",
+          "order": 1,
+          "concepts": [
+            "a^2 + b^2 = c^2 for right triangles only",
+            "c is always the hypotenuse (longest side, opposite right angle)",
+            "Solving for a missing leg vs. solving for hypotenuse",
+            "Common Pythagorean triples: 3-4-5, 5-12-13, 8-15-17"
+          ],
+          "keyFormulas": ["a^2 + b^2 = c^2"],
+          "teachingNotes": "Use the visual proof with squares on each side to make it concrete."
+        },
+        {
+          "lessonId": "pythagorean-converse",
+          "title": "Converse of the Pythagorean Theorem",
+          "order": 2,
+          "concepts": [
+            "If a^2 + b^2 = c^2, the triangle is right",
+            "If a^2 + b^2 > c^2, the triangle is acute",
+            "If a^2 + b^2 < c^2, the triangle is obtuse",
+            "Always compare to the LONGEST side squared"
+          ]
+        },
+        {
+          "lessonId": "special-right-triangles",
+          "title": "Special Right Triangles",
+          "order": 3,
+          "concepts": [
+            "45-45-90 ratio: 1 : 1 : sqrt(2)",
+            "30-60-90 ratio: 1 : sqrt(3) : 2",
+            "Finding missing sides using ratios, not Pythagorean Theorem",
+            "Recognizing when to use special triangle shortcuts"
+          ],
+          "keyFormulas": ["45-45-90: leg, leg, leg*sqrt(2)", "30-60-90: short leg, short leg*sqrt(3), 2*short leg"],
+          "teachingNotes": "Teach the ratio patterns rather than memorizing specific numbers."
+        },
+        {
+          "lessonId": "trig-ratios-intro",
+          "title": "Introduction to Trigonometric Ratios",
+          "order": 4,
+          "concepts": [
+            "SOH-CAH-TOA",
+            "sin = opposite/hypotenuse",
+            "cos = adjacent/hypotenuse",
+            "tan = opposite/adjacent",
+            "Using trig to find missing sides"
+          ],
+          "keyFormulas": ["sin(A) = opp/hyp", "cos(A) = adj/hyp", "tan(A) = opp/adj"],
+          "teachingNotes": "Opposite and adjacent change depending on the reference angle."
+        },
+        {
+          "lessonId": "trig-applications",
+          "title": "Trig Applications: Angles of Elevation and Depression",
+          "order": 5,
+          "concepts": [
+            "Angle of elevation (looking up)",
+            "Angle of depression (looking down)",
+            "Setting up and solving real-world trig problems",
+            "Choosing the right trig ratio"
+          ],
+          "commonMistakes": ["Confusing angle of elevation with angle of depression", "Using the wrong trig ratio"]
+        }
+      ]
     },
     {
       "moduleId": "checkpoint_q2",
       "quarter": 2,
       "title": "Q2 Checkpoint",
-      "preview": "Cumulative assessment: Congruence and right triangles"
+      "preview": "Cumulative assessment: Congruence and right triangles",
+      "moduleFile": "/modules/geometry/checkpoint_q2_module.json",
+      "isCheckpoint": true
     },
     {
       "moduleId": "polygons_quadrilaterals",
       "quarter": 3,
       "title": "Polygons & Quadrilaterals",
       "preview": "Explore angle sums and properties of special quadrilaterals.",
-      "skills": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties"]
+      "moduleFile": "/modules/geometry/polygons_quadrilaterals_module.json",
+      "skills": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties"],
+      "essentialQuestions": [
+        "How does the triangle angle sum extend to all polygons?",
+        "How is the quadrilateral family organized by properties?",
+        "How do we prove properties of quadrilaterals using both synthetic and coordinate methods?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "polygon-angle-sums",
+          "title": "Polygon Interior Angle Sum",
+          "order": 1,
+          "concepts": [
+            "Formula: (n-2) * 180 where n = number of sides",
+            "Deriving formula by triangulating from one vertex",
+            "Each angle of a regular polygon: (n-2)*180/n",
+            "Working backwards: finding n from angle sum"
+          ],
+          "keyFormulas": ["Interior angle sum = (n-2) * 180"]
+        },
+        {
+          "lessonId": "exterior-angle-sums",
+          "title": "Polygon Exterior Angle Sum",
+          "order": 2,
+          "concepts": [
+            "Exterior angles of any convex polygon sum to 360",
+            "Each exterior angle of a regular polygon = 360/n",
+            "Finding number of sides from exterior angle",
+            "Relationship: interior + exterior = 180"
+          ],
+          "keyFormulas": ["Exterior angle sum = 360 (always)", "Each exterior angle of regular polygon = 360/n"]
+        },
+        {
+          "lessonId": "parallelogram-properties",
+          "title": "Properties of Parallelograms",
+          "order": 3,
+          "concepts": [
+            "Opposite sides parallel and congruent",
+            "Opposite angles congruent",
+            "Consecutive angles supplementary",
+            "Diagonals bisect each other"
+          ],
+          "teachingNotes": "Build the quadrilateral hierarchy as a family tree."
+        },
+        {
+          "lessonId": "rectangles-rhombi-squares",
+          "title": "Rectangles, Rhombi, and Squares",
+          "order": 4,
+          "concepts": [
+            "Rectangle: parallelogram with 4 right angles, congruent diagonals",
+            "Rhombus: parallelogram with 4 congruent sides, perpendicular diagonals",
+            "Square: both rectangle AND rhombus (inherits all properties)",
+            "The quadrilateral family hierarchy"
+          ],
+          "teachingNotes": "Every property of a parent is inherited by children in the hierarchy."
+        },
+        {
+          "lessonId": "trapezoids-kites",
+          "title": "Trapezoids and Kites",
+          "order": 5,
+          "concepts": [
+            "Trapezoid: exactly one pair of parallel sides (bases)",
+            "Isosceles trapezoid: congruent legs, congruent base angles, congruent diagonals",
+            "Midsegment = average of the two bases",
+            "Kite: two pairs of consecutive congruent sides, perpendicular diagonals"
+          ],
+          "keyFormulas": ["Midsegment = (base1 + base2) / 2"]
+        }
+      ]
     },
     {
       "moduleId": "circles",
       "quarter": 3,
       "title": "Circles",
       "preview": "Study circle theorems, arcs, sectors, and inscribed angles.",
-      "skills": ["circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"]
+      "moduleFile": "/modules/geometry/circles_module.json",
+      "skills": ["circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"],
+      "essentialQuestions": [
+        "How does the central angle act as a 'fraction controller' for arc length and sector area?",
+        "What is the relationship between inscribed angles and central angles?",
+        "How do tangent and secant relationships extend circle theorems?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "circle-fundamentals",
+          "title": "Circle Vocabulary, Circumference, and Area",
+          "order": 1,
+          "concepts": [
+            "Radius, diameter, chord, secant, tangent definitions",
+            "Circumference = 2*pi*r = pi*d",
+            "Area = pi*r^2",
+            "Central angle and arc terminology"
+          ],
+          "keyFormulas": ["C = 2*pi*r", "A = pi*r^2"]
+        },
+        {
+          "lessonId": "arc-length-sector-area",
+          "title": "Arc Length and Sector Area",
+          "order": 2,
+          "concepts": [
+            "Arc length = (theta/360) * 2*pi*r (fraction of circumference)",
+            "Sector area = (theta/360) * pi*r^2 (fraction of area)",
+            "The central angle controls the fraction",
+            "Working backwards to find the central angle"
+          ],
+          "keyFormulas": ["Arc length = (theta/360) * 2*pi*r", "Sector area = (theta/360) * pi*r^2"],
+          "teachingNotes": "Pizza analogy: the central angle determines what fraction of the pizza you're taking."
+        },
+        {
+          "lessonId": "inscribed-angles",
+          "title": "Inscribed Angle Theorem",
+          "order": 3,
+          "concepts": [
+            "Inscribed angle = half the central angle (same arc)",
+            "Inscribed angles intercepting same arc are congruent",
+            "Angle inscribed in a semicircle = 90",
+            "Opposite angles of inscribed quadrilateral are supplementary"
+          ],
+          "teachingNotes": "The inscribed angle theorem is the 'master theorem' that unlocks most circle angle problems."
+        },
+        {
+          "lessonId": "tangent-chord-angles",
+          "title": "Tangent and Chord Angle Relationships",
+          "order": 4,
+          "concepts": [
+            "Tangent is perpendicular to radius at point of tangency",
+            "Tangent-chord angle = half intercepted arc",
+            "Two tangent segments from external point are congruent",
+            "Secant-secant and secant-tangent angle relationships"
+          ]
+        },
+        {
+          "lessonId": "chord-segment-relationships",
+          "title": "Chord and Segment Relationships",
+          "order": 5,
+          "concepts": [
+            "Intersecting chords: product of segments are equal",
+            "Secant-secant from external point",
+            "Secant-tangent from external point",
+            "Setting up and solving segment equations"
+          ],
+          "keyFormulas": ["Intersecting chords: a*b = c*d", "External secant: whole*external = whole*external"]
+        }
+      ]
     },
     {
       "moduleId": "checkpoint_q3",
       "quarter": 3,
       "title": "Q3 Checkpoint",
-      "preview": "Cumulative assessment: Polygons and circles"
+      "preview": "Cumulative assessment: Polygons and circles",
+      "moduleFile": "/modules/geometry/checkpoint_q3_module.json",
+      "isCheckpoint": true
     },
     {
       "moduleId": "similarity",
       "quarter": 4,
       "title": "Similarity",
       "preview": "Apply similarity theorems and solve proportions.",
-      "skills": ["similarity-ratios", "similar-triangle-theorems", "similarity-proofs", "geometric-mean"]
+      "moduleFile": "/modules/geometry/similarity_module.json",
+      "skills": ["similarity-ratios", "similar-triangle-theorems", "similarity-proofs", "geometric-mean"],
+      "essentialQuestions": [
+        "How is similarity different from congruence, and how are they related?",
+        "How do proportional reasoning and similarity solve real-world measurement problems?",
+        "What role does the geometric mean play in right triangles?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "similarity-intro",
+          "title": "Similar Figures and Scale Factors",
+          "order": 1,
+          "concepts": [
+            "Same shape, different size",
+            "Corresponding angles congruent, corresponding sides proportional",
+            "Scale factor as ratio of corresponding sides",
+            "Solving proportions to find missing sides"
+          ],
+          "teachingNotes": "Distinguish from congruence: congruence is similarity with scale factor 1."
+        },
+        {
+          "lessonId": "triangle-similarity-theorems",
+          "title": "Triangle Similarity Theorems",
+          "order": 2,
+          "concepts": [
+            "AA: two pairs of congruent angles",
+            "SSS~: all three pairs of sides proportional",
+            "SAS~: two proportional sides and included congruent angle",
+            "Writing similarity statements with correct correspondence"
+          ],
+          "teachingNotes": "AA is most commonly used—if two angles match, the third is forced."
+        },
+        {
+          "lessonId": "similarity-applications",
+          "title": "Similarity in the Real World",
+          "order": 3,
+          "concepts": [
+            "Shadow problems (indirect measurement)",
+            "Scale models and maps",
+            "Proportional reasoning with similar figures",
+            "Setting up and solving proportions"
+          ]
+        },
+        {
+          "lessonId": "geometric-mean",
+          "title": "Geometric Mean and Right Triangle Altitude",
+          "order": 4,
+          "concepts": [
+            "Geometric mean of a and b = sqrt(a*b)",
+            "Altitude on hypotenuse creates two similar triangles",
+            "Altitude rule: altitude^2 = segment1 * segment2",
+            "Leg rule: leg^2 = adjacent segment * hypotenuse"
+          ],
+          "keyFormulas": ["Geometric mean = sqrt(a*b)", "altitude^2 = (seg1)(seg2)", "leg^2 = (adj seg)(hypotenuse)"]
+        }
+      ]
     },
     {
       "moduleId": "3d_geometry",
       "quarter": 4,
       "title": "Three-Dimensional Geometry",
       "preview": "Calculate surface area and volume of prisms, cylinders, pyramids, cones, and spheres.",
-      "skills": ["volume-prisms-cylinders", "volume-pyramids-cones-spheres", "surface-area-prisms-cylinders", "surface-area-pyramids-cones-spheres"]
+      "moduleFile": "/modules/geometry/3d_geometry_module.json",
+      "skills": ["volume-prisms-cylinders", "volume-pyramids-cones-spheres", "surface-area-prisms-cylinders", "surface-area-pyramids-cones-spheres"],
+      "essentialQuestions": [
+        "Why is the volume of a pyramid exactly one-third the volume of the corresponding prism?",
+        "How do 2D shapes connect to 3D surface area and volume calculations?",
+        "How do we choose the right formula for a given real-world 3D problem?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "volume-prisms-cylinders",
+          "title": "Volume of Prisms and Cylinders",
+          "order": 1,
+          "concepts": [
+            "V = Bh (base area times height)",
+            "Rectangular prism: V = lwh",
+            "Triangular prism: V = (1/2)bh * H",
+            "Cylinder: V = pi*r^2*h"
+          ],
+          "keyFormulas": ["V = Bh", "Cylinder: V = pi*r^2*h"],
+          "teachingNotes": "Always identify the BASE SHAPE first—that determines which area formula to use for B."
+        },
+        {
+          "lessonId": "volume-pyramids-cones-spheres",
+          "title": "Volume of Pyramids, Cones, and Spheres",
+          "order": 2,
+          "concepts": [
+            "Pyramid/Cone: V = (1/3)Bh — exactly 1/3 of corresponding prism/cylinder",
+            "Cone: V = (1/3)*pi*r^2*h",
+            "Sphere: V = (4/3)*pi*r^3",
+            "Composite volume problems"
+          ],
+          "keyFormulas": ["V = (1/3)Bh", "Sphere: V = (4/3)*pi*r^3"]
+        },
+        {
+          "lessonId": "surface-area-prisms-cylinders",
+          "title": "Surface Area of Prisms and Cylinders",
+          "order": 3,
+          "concepts": [
+            "SA = 2B + Ph (2 bases + lateral area)",
+            "Rectangular: SA = 2(lw + lh + wh)",
+            "Cylinder: SA = 2*pi*r^2 + 2*pi*r*h",
+            "Nets as visualization tool"
+          ],
+          "keyFormulas": ["SA = 2B + Ph", "Cylinder SA = 2*pi*r^2 + 2*pi*r*h"],
+          "teachingNotes": "Surface area = wrapping paper. Unfold the shape (net) to see all flat surfaces."
+        },
+        {
+          "lessonId": "surface-area-pyramids-cones-spheres",
+          "title": "Surface Area of Pyramids, Cones, and Spheres",
+          "order": 4,
+          "concepts": [
+            "Pyramid: SA = B + (1/2)Pl (slant height, not vertical height!)",
+            "Cone: SA = pi*r^2 + pi*r*l",
+            "Sphere: SA = 4*pi*r^2",
+            "Finding slant height with Pythagorean Theorem"
+          ],
+          "keyFormulas": ["Cone SA = pi*r^2 + pi*r*l", "Sphere SA = 4*pi*r^2"],
+          "commonMistakes": ["Using vertical height instead of slant height for lateral area"]
+        },
+        {
+          "lessonId": "3d-applications",
+          "title": "3D Geometry Applications",
+          "order": 5,
+          "concepts": [
+            "Real-world volume problems (containers, tanks, pools)",
+            "Real-world surface area problems (painting, wrapping)",
+            "Cross-sections of 3D solids",
+            "Cavalieri's Principle"
+          ]
+        }
+      ]
     },
     {
       "moduleId": "coordinate_geometry",
       "quarter": 4,
       "title": "Coordinate Geometry",
       "preview": "Apply algebra to geometric concepts on the coordinate plane.",
-      "skills": ["coordinate-geometry-distance-midpoint", "coordinate-proofs", "equation-of-circle", "parallel-perpendicular-slopes"]
+      "moduleFile": "/modules/geometry/coordinate_geometry_module.json",
+      "skills": ["coordinate-geometry-distance-midpoint", "coordinate-proofs", "equation-of-circle", "parallel-perpendicular-slopes"],
+      "essentialQuestions": [
+        "How does the distance formula connect to the Pythagorean Theorem?",
+        "How can we use algebra to prove geometric properties on the coordinate plane?",
+        "What does the equation of a circle tell us about its graph?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "distance-midpoint",
+          "title": "Distance and Midpoint Formulas",
+          "order": 1,
+          "concepts": [
+            "Distance formula derived from Pythagorean Theorem",
+            "d = sqrt((x2-x1)^2 + (y2-y1)^2)",
+            "Midpoint = average of coordinates",
+            "M = ((x1+x2)/2, (y1+y2)/2)"
+          ],
+          "keyFormulas": ["d = sqrt((x2-x1)^2 + (y2-y1)^2)", "M = ((x1+x2)/2, (y1+y2)/2)"],
+          "teachingNotes": "Draw the right triangle formed by two points to show the Pythagorean connection."
+        },
+        {
+          "lessonId": "parallel-perpendicular-slopes",
+          "title": "Parallel and Perpendicular Slopes",
+          "order": 2,
+          "concepts": [
+            "Parallel lines: equal slopes (m1 = m2)",
+            "Perpendicular lines: negative reciprocal slopes (m1 * m2 = -1)",
+            "Determining relationships from equations",
+            "Writing equations of parallel/perpendicular lines through a point"
+          ],
+          "keyFormulas": ["Parallel: m1 = m2", "Perpendicular: m1 * m2 = -1"]
+        },
+        {
+          "lessonId": "equation-of-circle",
+          "title": "Equation of a Circle",
+          "order": 3,
+          "concepts": [
+            "Standard form: (x-h)^2 + (y-k)^2 = r^2",
+            "Center (h, k) and radius r",
+            "Signs in equation are opposite the center coordinates",
+            "Finding equation from endpoints of a diameter"
+          ],
+          "keyFormulas": ["(x-h)^2 + (y-k)^2 = r^2"],
+          "commonMistakes": ["Forgetting the right side is r-squared not r", "Sign errors with center coordinates"]
+        },
+        {
+          "lessonId": "coordinate-proofs",
+          "title": "Coordinate Proofs",
+          "order": 4,
+          "concepts": [
+            "Using distance to prove sides congruent",
+            "Using slope to prove lines parallel or perpendicular",
+            "Using midpoint to prove bisection",
+            "Proving triangle/quadrilateral classifications on the coordinate plane"
+          ],
+          "teachingNotes": "Coordinate proofs combine algebra and geometry—use distance, slope, and midpoint as proof tools."
+        }
+      ]
     },
     {
       "moduleId": "final_mastery_assessment",
       "quarter": 4,
       "title": "Final Mastery Assessment",
-      "preview": "Comprehensive assessment covering all Geometry content"
+      "preview": "Comprehensive assessment covering all Geometry content",
+      "moduleFile": "/modules/geometry/final_mastery_assessment_module.json",
+      "isCheckpoint": true,
+      "isFinal": true
     }
-  ]
+  ],
+  "aiGuidanceNotes": "Geometry builds spatial reasoning and logical proof skills. Start with vocabulary and angle relationships as the language of geometry. Congruence and similarity require understanding correspondence—use color coding. The Pythagorean Theorem is the bridge between geometry and algebra. Proof writing should feel like 'telling a story with reasons', not filling in a template. Connect every topic to real-world applications: architecture, engineering, navigation, art."
 }

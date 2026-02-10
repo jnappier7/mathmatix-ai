@@ -1,0 +1,113 @@
+{
+  "moduleId": "checkpoint_u4",
+  "course": "Algebra 2",
+  "unit": 4,
+  "title": "Unit 4 Checkpoint: Rational Expressions & Functions",
+  "weeks": "15",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Assessment covering simplifying rational expressions, operations (addition, subtraction, multiplication, division) with LCD, complex fractions, solving rational equations with extraneous-solution checks, and graphing rational functions including vertical/horizontal asymptotes and holes. Includes an applied modeling problem and a multi-skill performance task.",
+  "skillsCovered": ["simplifying-rational-expressions", "rational-expression-operations", "complex-fractions", "rational-equations", "graphing-rational-functions"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "simplifying-rational-expressions", "moduleId": "rational_functions_unit", "focusArea": "Factoring numerator and denominator, canceling common factors, stating restrictions"},
+    {"skillId": "rational-expression-operations", "moduleId": "rational_functions_unit", "focusArea": "Finding LCD, adding and subtracting rational expressions"},
+    {"skillId": "complex-fractions", "moduleId": "rational_functions_unit", "focusArea": "Simplifying compound fractions by multiplying by the common denominator"},
+    {"skillId": "rational-equations", "moduleId": "rational_functions_unit", "focusArea": "Solving equations with rational terms, identifying extraneous solutions"},
+    {"skillId": "graphing-rational-functions", "moduleId": "rational_functions_unit", "focusArea": "Vertical and horizontal asymptotes, holes, intercepts, end behavior"}
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a2u4-1",
+      "question": "Simplify: (x² - 9)/(x² + 5x + 6). State all excluded values of x.",
+      "answer": "(x - 3)/(x + 2). Factor: (x + 3)(x - 3)/((x + 2)(x + 3)). Cancel (x + 3). Excluded values: x ≠ -3, x ≠ -2.",
+      "skill": "simplifying-rational-expressions",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "a2u4-2",
+      "question": "Simplify: (2x² - x - 6)/(x² - 4). State all excluded values of x.",
+      "answer": "(2x + 3)/(x + 2). Factor: (2x + 3)(x - 2)/((x + 2)(x - 2)). Cancel (x - 2). Excluded values: x ≠ 2, x ≠ -2.",
+      "skill": "simplifying-rational-expressions",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "a2u4-3",
+      "question": "Add and simplify: 3/(x - 2) + 5/(x + 1).",
+      "answer": "(8x - 7)/((x - 2)(x + 1)). LCD = (x - 2)(x + 1). Numerator: 3(x + 1) + 5(x - 2) = 3x + 3 + 5x - 10 = 8x - 7.",
+      "skill": "rational-expression-operations",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u4-4",
+      "question": "Simplify the complex fraction: (1/x - 1/y) / (1/x + 1/y).",
+      "answer": "(y - x)/(y + x). Numerator = (y - x)/(xy). Denominator = (y + x)/(xy). Dividing cancels xy, leaving (y - x)/(y + x).",
+      "skill": "complex-fractions",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u4-5",
+      "question": "Solve: 2/(x + 1) + 1/(x - 1) = 4/(x² - 1).",
+      "answer": "x = 5/3. Note x² - 1 = (x + 1)(x - 1). Multiply through by (x + 1)(x - 1): 2(x - 1) + 1(x + 1) = 4 → 3x - 1 = 4 → x = 5/3. Check: x = 5/3 does not make any denominator zero, so it is valid.",
+      "skill": "rational-equations",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u4-6",
+      "question": "Solve: x/(x - 2) - 2/(x + 1) = 6/(x² - x - 2). Identify any extraneous solutions.",
+      "answer": "No solution. Note x² - x - 2 = (x - 2)(x + 1). Multiply through: x(x + 1) - 2(x - 2) = 6 → x² + x - 2x + 4 = 6 → x² - x - 2 = 0 → (x - 2)(x + 1) = 0 → x = 2 or x = -1. Both are extraneous: x = 2 makes (x - 2) = 0 and x = -1 makes (x + 1) = 0.",
+      "skill": "rational-equations",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "a2u4-7",
+      "question": "Find all vertical and horizontal asymptotes of f(x) = (2x - 1)/(x + 3).",
+      "answer": "Vertical asymptote: x = -3 (denominator = 0, numerator ≠ 0). Horizontal asymptote: y = 2 (degrees equal; ratio of leading coefficients 2/1 = 2).",
+      "skill": "graphing-rational-functions",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "a2u4-8",
+      "question": "Find all asymptotes and holes of f(x) = (x² - 1)/(x² + 2x - 3).",
+      "answer": "Hole at (1, 1/2). VA: x = -3. HA: y = 1. Factor: (x + 1)(x - 1)/((x + 3)(x - 1)). Cancel (x - 1) giving (x + 1)/(x + 3), x ≠ 1. Hole y-value: (1 + 1)/(1 + 3) = 1/2.",
+      "skill": "graphing-rational-functions",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "a2u4-9",
+      "question": "A kayaker paddles 6 miles upstream and 6 miles back downstream. The river current flows at 1 mph. The entire trip takes 2 hours and 30 minutes. Find the kayaker's paddling speed in still water.",
+      "answer": "5 mph. Let s = speed in still water. 6/(s - 1) + 6/(s + 1) = 5/2. Multiply by 2(s - 1)(s + 1): 12(s + 1) + 12(s - 1) = 5(s² - 1) → 24s = 5s² - 5 → 5s² - 24s - 5 = 0 → (5s + 1)(s - 5) = 0. Since s > 0, s = 5. Check: 6/4 + 6/6 = 3/2 + 1 = 5/2 hours = 2 h 30 min.",
+      "skill": "rational-equations",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "a2u4-10",
+      "question": "ANALYSIS TASK: For f(x) = (2x² - 8)/(x² - x - 6), find: (a) any holes, (b) all vertical and horizontal asymptotes, (c) x-intercept(s), (d) y-intercept, and (e) describe the behavior near each vertical asymptote.",
+      "answer": "Factor: 2(x + 2)(x - 2)/((x - 3)(x + 2)). Simplifies to 2(x - 2)/(x - 3), x ≠ -2. (a) Hole at (-2, 8/5) since y = 2(-2 - 2)/(-2 - 3) = 8/5. (b) VA: x = 3. HA: y = 2 (leading coefficients 2/1). (c) x-intercept: x = 2, point (2, 0). (d) y-intercept: f(0) = 2(0 - 2)/(0 - 3) = 4/3, point (0, 4/3). (e) Near x = 3: from left f → -∞, from right f → +∞.",
+      "skill": "graphing-rational-functions",
+      "difficulty": 7,
+      "points": 14
+    }
+  ],
+  "answerKeys": {
+    "a2u4-1": "(x-3)/(x+2), x≠-3,-2",
+    "a2u4-2": "(2x+3)/(x+2), x≠2,-2",
+    "a2u4-3": "(8x-7)/((x-2)(x+1))",
+    "a2u4-4": "(y-x)/(y+x)",
+    "a2u4-5": "x=5/3",
+    "a2u4-6": "No solution (both x=2 and x=-1 are extraneous)",
+    "a2u4-7": "VA: x=-3, HA: y=2",
+    "a2u4-8": "Hole (1,1/2), VA: x=-3, HA: y=1",
+    "a2u4-9": "5 mph",
+    "a2u4-10": "Hole (-2,8/5), VA x=3, HA y=2, x-int (2,0), y-int (0,4/3)"
+  }
+}
