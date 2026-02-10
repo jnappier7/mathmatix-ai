@@ -36,11 +36,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+  <!-- Core libs (needed before first render) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
-  <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Non-core libs (lazy-loaded after first interaction) -->
+  <!-- function-plot: loaded on demand when AI returns a graph -->
+  <!-- confetti: loaded on demand when celebration triggers -->
+  <!-- MathJax: loaded on demand when math content is detected -->
   <!-- WHITEBOARD SHELVED FOR BETA -->
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script> -->
   <script>
@@ -52,10 +56,44 @@
       },
       svg: {
         fontCache: 'global'
+      },
+      startup: {
+        ready: function() { MathJax.startup.defaultReady(); }
       }
     };
+
+    // Lazy-load helpers: load scripts on demand, only once
+    window._lazyScripts = {};
+    window.loadScript = function(url) {
+      if (window._lazyScripts[url]) return window._lazyScripts[url];
+      window._lazyScripts[url] = new Promise(function(resolve, reject) {
+        var s = document.createElement('script');
+        s.src = url;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      return window._lazyScripts[url];
+    };
+
+    // Load MathJax when math content is first detected (called from script.js)
+    window.ensureMathJax = function() {
+      if (window.MathJax && window.MathJax.typesetPromise) return Promise.resolve();
+      return window.loadScript('https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js');
+    };
+
+    // Load function-plot when a graph is needed
+    window.ensureFunctionPlot = function() {
+      if (window.functionPlot) return Promise.resolve();
+      return window.loadScript('https://unpkg.com/function-plot/dist/function-plot.js');
+    };
+
+    // Load confetti when a celebration triggers
+    window.ensureConfetti = function() {
+      if (window.confetti) return Promise.resolve();
+      return window.loadScript('https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js');
+    };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
   <script>
     // Disable MathLive keyboard sounds to prevent 404 errors
     document.addEventListener('DOMContentLoaded', function() {
@@ -70,58 +108,66 @@
   <canvas id="confetti-canvas"></canvas>
   <header class="landing-header">
     <!-- Mobile Drawer Toggle Buttons -->
-    <button id="left-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Leaderboard">
+    <button id="left-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Leaderboard" aria-label="Open leaderboard">
       <i class="fas fa-bars"></i>
     </button>
 
-    <a href="/chat.html" class="header-logo-container" style="text-decoration: none; cursor: pointer;" title="Home">
+    <a href="/chat.html" class="header-logo-container" style="text-decoration: none; cursor: pointer;" title="Home" aria-label="Home">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </a>
-    <nav class="landing-nav">
+    <nav class="landing-nav" aria-label="Chat controls">
       <!-- TTS Playback Controls -->
-      <button id="restart-audio-btn" class="btn btn-tertiary icon-only" title="Restart Audio" style="display: none;">
+      <button id="restart-audio-btn" class="btn btn-tertiary icon-only" title="Restart Audio" aria-label="Restart audio" style="display: none;">
         <i class="fas fa-redo"></i>
       </button>
-      <button id="pause-audio-btn" class="btn btn-tertiary icon-only" title="Pause Audio" style="display: none;">
+      <button id="pause-audio-btn" class="btn btn-tertiary icon-only" title="Pause Audio" aria-label="Pause audio" style="display: none;">
         <i class="fas fa-pause"></i>
       </button>
-      <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" style="display: none;">
+      <button id="stop-audio-btn" class="btn btn-tertiary" title="Stop Audio" aria-label="Stop audio" style="display: none;">
         <i class="fas fa-stop-circle"></i> <span class="mobile-hide">Stop</span>
       </button>
       <div class="speed-control" style="display: none;" id="speed-control-container">
-        <button id="speed-btn" class="btn btn-tertiary icon-only" title="Playback Speed">
+        <button id="speed-btn" class="btn btn-tertiary icon-only" title="Playback Speed" aria-label="Playback speed">
           <span id="speed-display">1x</span>
         </button>
-        <div class="speed-dropdown" id="speed-dropdown">
-          <button data-speed="0.5">0.5x</button>
-          <button data-speed="0.75">0.75x</button>
-          <button data-speed="1">1x</button>
-          <button data-speed="1.25">1.25x</button>
-          <button data-speed="1.5">1.5x</button>
-          <button data-speed="2">2x</button>
+        <div class="speed-dropdown" id="speed-dropdown" role="menu" aria-label="Speed options">
+          <button data-speed="0.5" role="menuitem">0.5x</button>
+          <button data-speed="0.75" role="menuitem">0.75x</button>
+          <button data-speed="1" role="menuitem">1x</button>
+          <button data-speed="1.25" role="menuitem">1.25x</button>
+          <button data-speed="1.5" role="menuitem">1.5x</button>
+          <button data-speed="2" role="menuitem">2x</button>
         </div>
       </div>
-      <button id="open-resources-modal-btn" class="btn btn-tertiary" title="Resources" style="display: none;">
+      <button id="open-resources-modal-btn" class="btn btn-tertiary" title="Resources" aria-label="Learning resources" style="display: none;">
         <i class="fas fa-book-open"></i> <span class="mobile-hide">Resources</span>
       </button>
-      <button id="share-progress-header-btn" class="btn btn-tertiary icon-only" title="Share Progress Code">
-        <i class="fas fa-link"></i>
-      </button>
-      <button id="open-settings-modal-btn" class="btn btn-tertiary icon-only" title="Settings">
+      <!-- Primary actions (always visible) -->
+      <button id="open-settings-modal-btn" class="btn btn-tertiary icon-only" title="Settings" aria-label="Settings">
         <i class="fas fa-cog"></i>
       </button>
-      <button id="open-feedback-modal-btn" class="btn btn-tertiary icon-only" title="Send Feedback">
-        <i class="fas fa-comment-dots"></i>
-      </button>
       <div id="roleSwitcher" class="role-switcher" style="display: none;">
-        <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role"></select>
+        <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role" aria-label="Switch Role"></select>
       </div>
-      <button id="logoutBtn" class="btn btn-tertiary logout-button icon-only" title="Logout">
+      <button id="logoutBtn" class="btn btn-tertiary logout-button icon-only" title="Logout" aria-label="Logout">
         <i class="fas fa-sign-out-alt"></i>
       </button>
 
+      <!-- Secondary actions (hidden on mobile, available via More menu) -->
+      <button id="share-progress-header-btn" class="btn btn-tertiary icon-only toolbar-secondary" title="Share Progress Code" aria-label="Share Progress Code">
+        <i class="fas fa-link"></i>
+      </button>
+      <button id="open-feedback-modal-btn" class="btn btn-tertiary icon-only toolbar-secondary" title="Send Feedback" aria-label="Send Feedback">
+        <i class="fas fa-comment-dots"></i>
+      </button>
+
+      <!-- More menu trigger (mobile only) -->
+      <button id="more-tools-btn" class="btn btn-tertiary icon-only toolbar-more" title="More" aria-label="More options">
+        <i class="fas fa-ellipsis-v"></i>
+      </button>
+
       <!-- Mobile Progress Toggle Button -->
-      <button id="right-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Your Progress">
+      <button id="right-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Your Progress" aria-label="Open progress panel">
         <i class="fas fa-user-circle"></i>
       </button>
     </nav>
@@ -376,16 +422,16 @@
 
       <!-- Compact Toolbar (inline with chips) -->
       <div class="input-toolbar-compact" style="display: flex; gap: 6px; flex-shrink: 0;">
-        <button id="insert-equation-btn" title="Insert Equation" class="btn btn-tertiary btn-sm">
+        <button id="insert-equation-btn" title="Insert Equation" aria-label="Insert equation" class="btn btn-tertiary btn-sm">
           <i class="fas fa-square-root-variable"></i>
         </button>
-        <button id="attach-button" title="Upload Files" class="btn btn-tertiary btn-sm">
+        <button id="attach-button" title="Upload Files" aria-label="Upload files" class="btn btn-tertiary btn-sm">
           <i class="fas fa-paperclip"></i>
         </button>
-        <button id="camera-button" title="Show Your Work - Get Graded" class="btn btn-tertiary btn-sm">
+        <button id="camera-button" title="Show Your Work - Get Graded" aria-label="Show your work" class="btn btn-tertiary btn-sm">
           <i class="fas fa-camera-retro"></i>
         </button>
-        <button id="mic-button" title="Voice Input" class="btn btn-tertiary btn-sm">
+        <button id="mic-button" title="Voice Input" aria-label="Voice input" class="btn btn-tertiary btn-sm">
           <i class="fas fa-microphone"></i>
         </button>
       </div>
@@ -424,7 +470,7 @@
   <div id="left-drawer" class="mobile-drawer left-drawer">
     <div class="drawer-header">
       <h3>Leaderboard & Quests</h3>
-      <button id="close-left-drawer" class="drawer-close-btn" title="Close">
+      <button id="close-left-drawer" class="drawer-close-btn" title="Close" aria-label="Close leaderboard">
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -465,7 +511,7 @@
   <div id="right-drawer" class="mobile-drawer right-drawer">
     <div class="drawer-header">
       <h3>Your Progress</h3>
-      <button id="close-right-drawer" class="drawer-close-btn" title="Close">
+      <button id="close-right-drawer" class="drawer-close-btn" title="Close" aria-label="Close progress panel">
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -1500,6 +1546,35 @@
           </label>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- More Tools Bottom Sheet (mobile) -->
+  <div id="more-tools-overlay" class="more-tools-overlay"></div>
+  <div id="more-tools-menu" class="more-tools-menu" role="dialog" aria-label="More tools" style="display: none;">
+    <div class="more-tools-header">
+      <span>More Tools</span>
+      <button id="close-more-tools" class="close-more-tools" aria-label="Close menu">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="more-tools-grid">
+      <button class="more-tool-item" data-trigger="share-progress-header-btn">
+        <i class="fas fa-link"></i>
+        <span>Share Progress</span>
+      </button>
+      <button class="more-tool-item" data-trigger="open-feedback-modal-btn">
+        <i class="fas fa-comment-dots"></i>
+        <span>Send Feedback</span>
+      </button>
+      <button class="more-tool-item" data-trigger="open-resources-modal-btn">
+        <i class="fas fa-book-open"></i>
+        <span>Resources</span>
+      </button>
+      <button class="more-tool-item" data-trigger="open-settings-modal-btn">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </button>
     </div>
   </div>
 

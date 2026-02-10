@@ -134,6 +134,9 @@ const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
 // Impersonation middleware
 const { handleImpersonation, enforceReadOnly } = require('./middleware/impersonation');
 
+// Upload security middleware
+const { uploadRateLimiter, validateUpload, scheduleCleanup } = require('./middleware/uploadSecurity');
+
 // --- 5. EXPRESS APP SETUP ---
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -377,7 +380,7 @@ app.use('/api/conversations', isAuthenticated, conversationsRoutes); // Topic-ba
 app.use('/api/speak', isAuthenticated, speakRoutes);
 app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes); // Premium: voice chat
 app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (no rate limit on test endpoint)
-app.use('/api/upload', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
+app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, chatWithFileRoutes); // SECURITY FIX: Added per-user rate limiting 
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
@@ -698,7 +701,7 @@ app.get("*", (req, res) => {
 
 
 // --- 11. SAFETY & SECURITY INITIALIZATION ---
-const { scheduleCleanup } = require('./middleware/uploadSecurity');
+// uploadSecurity already imported near other middleware imports above
 
 // Start auto-deletion scheduler for old uploads (30-day retention)
 scheduleCleanup();
