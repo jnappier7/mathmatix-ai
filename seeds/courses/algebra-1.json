@@ -3171,6 +3171,385 @@
           ]
         }
       }
+    },
+    {
+      "unitId": "alg1-unit-7",
+      "title": "Data Analysis and Probability",
+      "subtitle": "Making Sense of Data",
+      "description": "Students collect, organize, and interpret data using statistical measures and visual displays. They learn measures of central tendency, spread, and basic probability concepts, connecting data analysis to algebraic thinking.",
+      "order": 7,
+      "quarter": 3,
+      "essentialQuestions": [
+        "How can we summarize a data set with a single number?",
+        "What do different data displays reveal about a data set?",
+        "How does probability help us make predictions?"
+      ],
+      "bigIdeas": [
+        "Statistics summarize data to reveal patterns and support decisions",
+        "Different measures (mean, median, mode) describe different aspects of data",
+        "Probability quantifies uncertainty and helps us make informed predictions"
+      ],
+      "estimatedDays": 15,
+      "skillIds": ["measures-of-central-tendency", "data-displays", "scatter-plots-correlation", "basic-probability"],
+      "standardsAlignment": ["S-ID.1", "S-ID.2", "S-ID.3", "S-ID.6", "S-ID.7", "S-CP.1"],
+      "lessons": [
+        {
+          "lessonId": "alg1-7-1",
+          "title": "Measures of Central Tendency",
+          "subtitle": "Mean, Median, Mode, and Range",
+          "description": "Students calculate and interpret mean, median, mode, and range, understanding when each measure is most appropriate.",
+          "order": 1,
+          "estimatedMinutes": 45,
+          "skillIds": ["measures-of-central-tendency"],
+          "standardsAlignment": ["S-ID.2", "S-ID.3"],
+          "prerequisites": [],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Summarizing Data with Numbers",
+              "order": 1,
+              "content": {
+                "explanation": "Mean (average) = sum of values / number of values — affected by outliers. Median = middle value when data is ordered — not affected by outliers. Mode = most frequent value — can have none, one, or multiple. Range = max - min — measures spread. Use median when data has outliers or is skewed. Use mean when data is roughly symmetric.",
+                "workedExamples": [
+                  {
+                    "problem": "Find the mean, median, mode, and range: 12, 15, 18, 15, 20, 15, 100",
+                    "steps": [
+                      "Order data: 12, 15, 15, 15, 18, 20, 100",
+                      "Mean: (12+15+15+15+18+20+100)/7 = 195/7 ≈ 27.9",
+                      "Median: middle value (4th of 7) = 15",
+                      "Mode: 15 (appears 3 times)",
+                      "Range: 100 - 12 = 88"
+                    ],
+                    "solution": "Mean ≈ 27.9, Median = 15, Mode = 15, Range = 88",
+                    "tip": "Notice how the outlier (100) pulls the mean up to 27.9, but the median (15) better represents the 'typical' value"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Mean", "definition": "The arithmetic average — sum divided by count"},
+                  {"term": "Median", "definition": "The middle value when data is arranged in order"},
+                  {"term": "Mode", "definition": "The value that appears most frequently"},
+                  {"term": "Range", "definition": "The difference between the maximum and minimum values"},
+                  {"term": "Outlier", "definition": "A data point that is unusually far from the other values"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use real student-relatable data: test scores, game scores, prices. Show how outliers affect mean but not median — this builds intuition for which measure to use.",
+                  "commonMisconceptions": [
+                    "Thinking the mean is always the best measure of center",
+                    "Forgetting to order data before finding the median",
+                    "Confusing median with mean"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["measures-of-central-tendency"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["measures-of-central-tendency"],
+                  "problemCount": 7,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 5, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Central Tendency Mastery Check",
+            "skillIds": ["measures-of-central-tendency"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-7-2",
+          "title": "Data Displays",
+          "subtitle": "Histograms, Box Plots, and Dot Plots",
+          "description": "Students create and interpret various data displays including histograms, box plots, and dot plots.",
+          "order": 2,
+          "estimatedMinutes": 50,
+          "skillIds": ["data-displays"],
+          "standardsAlignment": ["S-ID.1"],
+          "prerequisites": ["alg1-7-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Visualizing Data",
+              "order": 1,
+              "content": {
+                "explanation": "Data displays help us SEE patterns. Dot plots show individual values — great for small data sets. Histograms group data into intervals (bins) — great for seeing the shape of larger data sets. Box plots (box-and-whisker) show the five-number summary: min, Q1, median, Q3, max — great for comparing distributions and spotting outliers.",
+                "workedExamples": [
+                  {
+                    "problem": "Create a box plot for: 5, 8, 10, 12, 15, 18, 20, 22, 25, 30",
+                    "steps": [
+                      "Min = 5, Max = 30",
+                      "Median = (15 + 18)/2 = 16.5",
+                      "Q1 = median of lower half (5,8,10,12,15) = 10",
+                      "Q3 = median of upper half (18,20,22,25,30) = 22",
+                      "Five-number summary: 5, 10, 16.5, 22, 30",
+                      "Draw: number line, box from Q1 to Q3, line at median, whiskers to min and max"
+                    ],
+                    "solution": "Five-number summary: {5, 10, 16.5, 22, 30}"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Show the SAME data set in multiple display types so students see how each reveals different information. Have students describe the shape: symmetric, skewed left, skewed right.",
+                  "commonMisconceptions": [
+                    "Confusing histograms with bar graphs (histograms have continuous intervals)",
+                    "Incorrectly finding quartiles",
+                    "Not ordering data before creating displays"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["data-displays"],
+                  "problemCount": 4,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["data-displays"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Data Displays Mastery Check",
+            "skillIds": ["data-displays"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-7-3",
+          "title": "Scatter Plots and Correlation",
+          "subtitle": "Relationships Between Two Variables",
+          "description": "Students create scatter plots, identify correlation patterns, and draw lines of best fit to make predictions.",
+          "order": 3,
+          "estimatedMinutes": 55,
+          "skillIds": ["scatter-plots-correlation"],
+          "standardsAlignment": ["S-ID.6", "S-ID.7"],
+          "prerequisites": ["alg1-3-4", "alg1-7-2"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Scatter Plots and Lines of Best Fit",
+              "order": 1,
+              "content": {
+                "explanation": "A scatter plot shows the relationship between two quantitative variables. Positive correlation: as x increases, y increases. Negative correlation: as x increases, y decreases. No correlation: no clear pattern. A line of best fit approximates the trend and can be used to make predictions. The connection to algebra: the line of best fit IS a linear equation!",
+                "workedExamples": [
+                  {
+                    "problem": "Study hours vs test scores: (1,65), (2,70), (3,72), (4,80), (5,85), (6,90). Describe the correlation and estimate a line of best fit.",
+                    "steps": [
+                      "Plot points on coordinate plane",
+                      "Pattern: as study hours increase, test scores increase",
+                      "Correlation: positive, strong, linear",
+                      "Estimate line through data: roughly y = 5x + 60",
+                      "Predict: 8 hours → y = 5(8) + 60 = 100 (but max is 100, so ≈ 95-100)"
+                    ],
+                    "solution": "Strong positive correlation, approximately y = 5x + 60",
+                    "tip": "Correlation is NOT causation — studying more is associated with higher scores, but other factors matter too"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Connect scatter plots back to linear functions. The line of best fit is y = mx + b! This bridges statistics and algebra beautifully.",
+                  "commonMisconceptions": [
+                    "Assuming correlation means causation",
+                    "Connecting scatter plot dots with lines (they should be individual points)",
+                    "Making predictions far outside the data range (extrapolation danger)"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["scatter-plots-correlation"],
+                  "problemCount": 4,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["scatter-plots-correlation"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Scatter Plots Mastery Check",
+            "skillIds": ["scatter-plots-correlation"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-7-4",
+          "title": "Introduction to Probability",
+          "subtitle": "Quantifying Chance",
+          "description": "Students learn basic probability concepts including theoretical and experimental probability, sample spaces, and compound events.",
+          "order": 4,
+          "estimatedMinutes": 45,
+          "skillIds": ["basic-probability"],
+          "standardsAlignment": ["S-CP.1"],
+          "prerequisites": [],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "What Is Probability?",
+              "order": 1,
+              "content": {
+                "explanation": "Probability measures how likely an event is to occur, on a scale from 0 (impossible) to 1 (certain). P(event) = favorable outcomes / total outcomes. This is theoretical probability. Experimental probability comes from actually running trials. Compound events combine simple events using AND (multiply) or OR (add) rules.",
+                "workedExamples": [
+                  {
+                    "problem": "A bag has 3 red, 5 blue, and 2 green marbles. What's the probability of drawing a blue marble?",
+                    "steps": ["Total marbles: 3 + 5 + 2 = 10", "Favorable (blue): 5", "P(blue) = 5/10 = 1/2 = 0.5 = 50%"],
+                    "solution": "P(blue) = 1/2 or 50%"
+                  },
+                  {
+                    "problem": "What's the probability of rolling a sum of 7 with two dice?",
+                    "steps": ["Total outcomes: 6 × 6 = 36", "Favorable: (1,6)(2,5)(3,4)(4,3)(5,2)(6,1) = 6", "P(sum=7) = 6/36 = 1/6 ≈ 16.7%"],
+                    "solution": "P(sum=7) = 1/6 ≈ 16.7%"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use hands-on simulations when possible. Connect to fractions (probability IS a fraction of outcomes). Use games and real-life contexts to build intuition.",
+                  "commonMisconceptions": [
+                    "Thinking probability can be greater than 1",
+                    "Confusing 'and' with 'or' in compound events",
+                    "Believing past outcomes affect future independent events (gambler's fallacy)"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["basic-probability"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["basic-probability"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 65}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Probability Mastery Check",
+            "skillIds": ["basic-probability"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        }
+      ],
+      "unitAssessment": {
+        "assessmentType": "unit-test",
+        "title": "Unit 7: Data Analysis and Probability Test",
+        "description": "Comprehensive assessment on central tendency, data displays, scatter plots, correlation, and basic probability.",
+        "skillIds": ["measures-of-central-tendency", "data-displays", "scatter-plots-correlation", "basic-probability"],
+        "questionCount": 20,
+        "passingScore": 75,
+        "timeLimit": 45,
+        "allowRetakes": true,
+        "maxRetakes": 2
+      }
     }
   ]
 }
