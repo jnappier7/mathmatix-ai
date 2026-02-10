@@ -1,93 +1,207 @@
 {
   "track": "Geometry",
   "overview": "Develop spatial reasoning through proof, construction, and measurement. Master plane and solid figures.",
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release",
+    "description": "The AI tutor leads all instruction using the gradual release model (I Do → We Do → You Do) but has full freedom to make instructional decisions. Module files provide scope, key concepts, teaching guidance, and reference problems—NOT rigid scripts. The AI decides pacing, chooses examples, adjusts scaffolding, and personalizes based on the student's skill mastery, learning profile, and real-time responses.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Build conceptual understanding before procedures. The AI introduces the BIG IDEA using real-world connections, student interests, and visual/physical analogies. The AI chooses HOW to introduce based on the student's learning style.",
+        "studentRole": "Engage with the concept, ask questions, make predictions"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Model 2-3 worked examples with think-aloud reasoning. The AI selects problem difficulty based on the student's current mastery and explains using the student's preferred style (visual, verbal, step-by-step, etc.).",
+        "studentRole": "Observe, ask clarifying questions, identify patterns"
+      },
+      {
+        "phase": "concept-check",
+        "aiRole": "Quick comprehension check before moving to practice. The AI asks 1-2 targeted questions to verify the student grasps the concept, not just the procedure. If gaps detected, the AI re-teaches before proceeding.",
+        "studentRole": "Explain understanding in own words, answer concept questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Guided practice with adaptive scaffolding. The AI provides problems and supports the student through them, offering hints ONLY when needed. Scaffolding decreases as the student demonstrates understanding. The AI decides when to move on.",
+        "studentRole": "Attempt problems with AI support, explain reasoning"
+      },
+      {
+        "phase": "check-in",
+        "aiRole": "Emotional and confidence assessment. The AI checks how the student FEELS about the material—not just accuracy. Adjusts pacing and tone based on anxiety, confidence, and engagement signals.",
+        "studentRole": "Reflect on confidence and comfort level"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Independent practice. The AI presents problems and steps back, allowing the student to work independently. Minimal hints—only if the student is stuck. The AI evaluates accuracy, independence, and transfer.",
+        "studentRole": "Solve problems independently, self-monitor"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Formal assessment for skill mastery. The AI determines if the student has met the 4-Pillar mastery criteria (accuracy, independence, transfer, retention). Awards mastery or identifies areas for re-teaching.",
+        "studentRole": "Demonstrate mastery through independent problem-solving"
+      }
+    ],
+    "aiDecisionRights": [
+      "Choose which examples and problems to present (module provides reference problems, AI may generate its own)",
+      "Adjust difficulty in real-time based on student performance",
+      "Skip or extend phases based on student readiness",
+      "Re-order skills within a module if pedagogically appropriate",
+      "Generate additional practice or enrichment as needed",
+      "Use student interests and learning profile to personalize examples",
+      "Decide when to advance to the next skill or re-teach",
+      "Select teaching strategies (visual, algebraic, physical, verbal) based on student profile",
+      "Adjust tone and pacing based on emotional signals and anxiety level"
+    ]
+  },
   "modules": [
     {
       "moduleId": "foundations_angles",
       "quarter": 1,
       "title": "Geometric Foundations & Angles",
       "preview": "Build vocabulary and understand angle relationships.",
-      "skills": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals"]
+      "moduleFile": "/modules/geometry/foundations_angles_module.json",
+      "skills": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals"],
+      "essentialQuestions": [
+        "How do undefined terms form the foundation of geometric reasoning?",
+        "How do angle relationships help us solve real-world problems?",
+        "What patterns emerge when parallel lines are cut by a transversal?"
+      ]
     },
     {
       "moduleId": "triangles_basics",
       "quarter": 1,
       "title": "Triangle Foundations",
       "preview": "Classify triangles and apply angle sum theorem.",
-      "skills": ["triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"]
+      "moduleFile": "/modules/geometry/triangles_basics_module.json",
+      "skills": ["triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"],
+      "essentialQuestions": [
+        "How do we use classification to understand the properties of triangles?",
+        "Why do the angles of a triangle always sum to 180°?",
+        "What constraints determine whether three lengths can form a triangle?"
+      ]
     },
     {
       "moduleId": "checkpoint_q1",
       "quarter": 1,
       "title": "Q1 Checkpoint",
-      "preview": "Cumulative assessment: Foundations and triangles"
+      "preview": "Cumulative assessment: Foundations and triangles",
+      "moduleFile": "/modules/geometry/checkpoint_q1_module.json",
+      "type": "assessment"
     },
     {
       "moduleId": "congruence",
       "quarter": 2,
       "title": "Triangle Congruence",
       "preview": "Prove triangles congruent using SSS, SAS, ASA, AAS, HL.",
-      "skills": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs"]
+      "moduleFile": "/modules/geometry/congruence_module.json",
+      "skills": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs"],
+      "essentialQuestions": [
+        "What minimum information do we need to guarantee two triangles are congruent?",
+        "How does proving congruence unlock information about corresponding parts (CPCTC)?",
+        "How do we construct a logical argument (proof) in geometry?"
+      ]
     },
     {
       "moduleId": "right_triangles",
       "quarter": 2,
       "title": "Right Triangles",
       "preview": "Master Pythagorean theorem and special right triangles.",
-      "skills": ["pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"]
+      "moduleFile": "/modules/geometry/right_triangles_module.json",
+      "skills": ["pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"],
+      "essentialQuestions": [
+        "Why is the Pythagorean Theorem one of the most useful theorems in mathematics?",
+        "How do special right triangle ratios eliminate the need for calculation?",
+        "How do trigonometric ratios connect angles to side lengths?"
+      ]
     },
     {
       "moduleId": "checkpoint_q2",
       "quarter": 2,
       "title": "Q2 Checkpoint",
-      "preview": "Cumulative assessment: Congruence and right triangles"
+      "preview": "Cumulative assessment: Congruence and right triangles",
+      "moduleFile": "/modules/geometry/checkpoint_q2_module.json",
+      "type": "assessment"
     },
     {
       "moduleId": "polygons_quadrilaterals",
       "quarter": 3,
       "title": "Polygons & Quadrilaterals",
       "preview": "Explore angle sums and properties of special quadrilaterals.",
-      "skills": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties"]
+      "moduleFile": "/modules/geometry/polygons_quadrilaterals_module.json",
+      "skills": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties"],
+      "essentialQuestions": [
+        "How does the triangle angle sum extend to all polygons?",
+        "How is the quadrilateral family organized by properties?",
+        "How do we prove properties of quadrilaterals using both synthetic and coordinate methods?"
+      ]
     },
     {
       "moduleId": "circles",
       "quarter": 3,
       "title": "Circles",
       "preview": "Study circle theorems, arcs, sectors, and inscribed angles.",
-      "skills": ["circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"]
+      "moduleFile": "/modules/geometry/circles_module.json",
+      "skills": ["circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"],
+      "essentialQuestions": [
+        "How does the central angle act as a 'fraction controller' for arc length and sector area?",
+        "What is the relationship between inscribed angles and central angles?",
+        "How do tangent and secant relationships extend circle theorems?"
+      ]
     },
     {
       "moduleId": "checkpoint_q3",
       "quarter": 3,
       "title": "Q3 Checkpoint",
-      "preview": "Cumulative assessment: Polygons and circles"
+      "preview": "Cumulative assessment: Polygons and circles",
+      "moduleFile": "/modules/geometry/checkpoint_q3_module.json",
+      "type": "assessment"
     },
     {
       "moduleId": "similarity",
       "quarter": 4,
       "title": "Similarity",
       "preview": "Apply similarity theorems and solve proportions.",
-      "skills": ["similarity-ratios", "similar-triangle-theorems", "similarity-proofs", "geometric-mean"]
+      "moduleFile": "/modules/geometry/similarity_module.json",
+      "skills": ["similarity-ratios", "similar-triangle-theorems", "similarity-proofs", "geometric-mean"],
+      "essentialQuestions": [
+        "How is similarity different from congruence, and how are they related?",
+        "How do proportional reasoning and similarity solve real-world measurement problems?",
+        "What role does the geometric mean play in right triangles?"
+      ]
     },
     {
       "moduleId": "3d_geometry",
       "quarter": 4,
       "title": "Three-Dimensional Geometry",
       "preview": "Calculate surface area and volume of prisms, cylinders, pyramids, cones, and spheres.",
-      "skills": ["volume-prisms-cylinders", "volume-pyramids-cones-spheres", "surface-area-prisms-cylinders", "surface-area-pyramids-cones-spheres"]
+      "moduleFile": "/modules/geometry/3d_geometry_module.json",
+      "skills": ["volume-prisms-cylinders", "volume-pyramids-cones-spheres", "surface-area-prisms-cylinders", "surface-area-pyramids-cones-spheres"],
+      "essentialQuestions": [
+        "Why is the volume of a pyramid exactly one-third the volume of the corresponding prism?",
+        "How do 2D shapes connect to 3D surface area and volume calculations?",
+        "How do we choose the right formula for a given real-world 3D problem?"
+      ]
     },
     {
       "moduleId": "coordinate_geometry",
       "quarter": 4,
       "title": "Coordinate Geometry",
       "preview": "Apply algebra to geometric concepts on the coordinate plane.",
-      "skills": ["coordinate-geometry-distance-midpoint", "coordinate-proofs", "equation-of-circle", "parallel-perpendicular-slopes"]
+      "moduleFile": "/modules/geometry/coordinate_geometry_module.json",
+      "skills": ["coordinate-geometry-distance-midpoint", "coordinate-proofs", "equation-of-circle", "parallel-perpendicular-slopes"],
+      "essentialQuestions": [
+        "How does the distance formula connect to the Pythagorean Theorem?",
+        "How can we use algebra to prove geometric properties on the coordinate plane?",
+        "What does the equation of a circle tell us about its graph?"
+      ]
     },
     {
       "moduleId": "final_mastery_assessment",
       "quarter": 4,
       "title": "Final Mastery Assessment",
-      "preview": "Comprehensive assessment covering all Geometry content"
+      "preview": "Comprehensive assessment covering all Geometry content",
+      "moduleFile": "/modules/geometry/final_mastery_assessment_module.json",
+      "type": "assessment"
     }
   ]
 }

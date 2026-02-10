@@ -1,0 +1,112 @@
+{
+  "moduleId": "checkpoint_q1",
+  "course": "Geometry",
+  "quarter": 1,
+  "title": "Q1 Checkpoint: Foundations, Angles & Triangles",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "description": "Cumulative assessment covering geometric foundations, angle relationships, parallel lines with transversals, triangle classification, angle sum theorem, exterior angle theorem, and triangle inequality.",
+  "skillsCovered": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals", "triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "points-lines-planes", "moduleId": "foundations_angles"},
+    {"skillId": "angle-measurement", "moduleId": "foundations_angles"},
+    {"skillId": "parallel-lines-transversals", "moduleId": "foundations_angles"},
+    {"skillId": "triangle-classification", "moduleId": "triangles_basics"},
+    {"skillId": "triangle-angle-sum", "moduleId": "triangles_basics"}
+  ],
+  "assessmentProblems": [
+    {
+      "id": "q1-1",
+      "question": "Name three collinear points from the figure: Points A, B, and C lie on line m. Point D is not on line m.",
+      "answer": "A, B, C",
+      "skill": "points-lines-planes",
+      "difficulty": 2,
+      "points": 5
+    },
+    {
+      "id": "q1-2",
+      "question": "Classify an angle that measures 167°.",
+      "answer": "obtuse",
+      "skill": "angle-measurement",
+      "difficulty": 2,
+      "points": 5
+    },
+    {
+      "id": "q1-3",
+      "question": "Two angles are supplementary. One measures (3x + 15)° and the other measures (2x + 40)°. Find x.",
+      "answer": "25",
+      "skill": "angle-pair-relationships",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "q1-4",
+      "question": "Two parallel lines are cut by a transversal. An alternate interior angle pair measures (5x - 10)° and (3x + 14)°. Find x.",
+      "answer": "12",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "q1-5",
+      "question": "A triangle has two congruent sides and one angle measuring 90°. Classify it using dual classification.",
+      "answer": "right isosceles",
+      "skill": "triangle-classification",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "q1-6",
+      "question": "In triangle PQR, angle P = 58° and angle Q = 47°. Find angle R.",
+      "answer": "75",
+      "skill": "triangle-angle-sum",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "q1-7",
+      "question": "An exterior angle of a triangle measures 125°. One remote interior angle is 65°. Find the other remote interior angle.",
+      "answer": "60",
+      "skill": "exterior-angle-theorem",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "q1-8",
+      "question": "Can sides of length 4, 6, and 11 form a triangle? Explain.",
+      "answer": "no",
+      "skill": "triangle-inequalities",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "q1-9",
+      "question": "Two parallel lines are cut by a transversal. Same-side interior angles measure (4x + 5)° and (6x - 15)°. Find x and both angle measures.",
+      "answer": "x = 19; angles are 81° and 99°",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 5,
+      "points": 15
+    },
+    {
+      "id": "q1-10",
+      "question": "The angles of a triangle are (3x)°, (5x - 20)°, and (2x + 10)°. Find all three angle measures and classify the triangle.",
+      "answer": "57°, 75°, 48°; acute triangle",
+      "skill": "triangle-angle-sum",
+      "difficulty": 5,
+      "points": 20
+    }
+  ],
+  "answerKeys": {
+    "q1-1": "A, B, C",
+    "q1-2": "obtuse",
+    "q1-3": "25",
+    "q1-4": "12",
+    "q1-5": "right isosceles",
+    "q1-6": "75",
+    "q1-7": "60",
+    "q1-8": "no",
+    "q1-9": "x = 19; angles are 81° and 99°",
+    "q1-10": "57°, 75°, 48°; acute triangle"
+  }
+}

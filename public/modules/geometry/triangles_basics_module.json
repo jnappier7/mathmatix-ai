@@ -1,0 +1,157 @@
+{
+  "moduleId": "triangles_basics",
+  "course": "Geometry",
+  "quarter": 1,
+  "title": "Triangle Foundations",
+  "estimatedDuration": 45,
+  "skills": ["triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"],
+  "standardsAlignment": ["G-CO.10"],
+  "goals": [
+    "Classify triangles by sides (scalene, isosceles, equilateral) and by angles (acute, right, obtuse)",
+    "Apply the Triangle Angle Sum Theorem to find missing angle measures",
+    "Use the Exterior Angle Theorem to find angle measures",
+    "Apply the Triangle Inequality Theorem to determine valid triangle side lengths"
+  ],
+  "instructionalStrategy": [
+    "Use dual classification—a triangle can be described by BOTH its sides and angles (e.g., 'acute isosceles').",
+    "For Triangle Angle Sum, tearing the corners of a paper triangle and arranging them on a straight line is a powerful visual proof.",
+    "The Exterior Angle Theorem is a direct consequence of the Angle Sum Theorem—connect them explicitly.",
+    "For Triangle Inequality, have students try building triangles with different stick lengths to discover the rule physically."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "A triangle is a polygon with three sides and three angles. We classify triangles in two ways:\n\n**By sides:**\n• **Scalene** — no sides congruent\n• **Isosceles** — at least two sides congruent\n• **Equilateral** — all three sides congruent\n\n**By angles:**\n• **Acute** — all angles less than 90°\n• **Right** — one angle exactly 90°\n• **Obtuse** — one angle greater than 90°\n• **Equiangular** — all angles equal (60° each)\n\nEvery triangle gets a DUAL classification—one from each category.",
+      "initialPrompt": "A triangle has sides measuring 5 cm, 5 cm, and 8 cm. How would you classify it by its sides? Can you guess what type it might be by its angles?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "A triangle has angles measuring 40°, 60°, and 80°. Classify it by its angles and explain why.",
+      "explanation": "Let's check each angle:\n• 40° < 90° ✓\n• 60° < 90° ✓\n• 80° < 90° ✓\n\nSince ALL three angles are less than 90°, this is an **acute triangle**.\n\nAlso notice: 40° + 60° + 80° = 180°. That's not a coincidence—it's the **Triangle Angle Sum Theorem**: the interior angles of ANY triangle always add up to exactly 180°.",
+      "initialPrompt": "What if I changed the 80° angle to a 90° angle? What would the third angle have to be, and how would the classification change?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "The **Triangle Angle Sum Theorem** states that the sum of the three interior angles of any triangle is always 180°. This means if you know two angles, you can always find the third.\n\nThe **Exterior Angle Theorem** is related: an exterior angle of a triangle equals the sum of the two non-adjacent interior angles (called remote interior angles). If an exterior angle is at vertex C, then the exterior angle = angle A + angle B.",
+      "initialPrompt": "Why do you think the exterior angle equals the sum of the two remote interior angles? Can you connect this to the Angle Sum Theorem and the idea that a straight angle is 180°?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "In triangle ABC, angle A = 45° and angle B = 72°. Find angle C and the exterior angle at vertex C.",
+      "explanation": "**Finding angle C:**\nAngle A + Angle B + Angle C = 180°\n45° + 72° + Angle C = 180°\n117° + Angle C = 180°\nAngle C = 63°\n\n**Finding the exterior angle at C:**\nMethod 1 (Exterior Angle Theorem): Exterior angle = Angle A + Angle B = 45° + 72° = 117°\nMethod 2 (Linear pair): Exterior angle + Angle C = 180°, so Exterior angle = 180° - 63° = 117° ✓\n\nBoth methods give 117°, confirming the Exterior Angle Theorem works!",
+      "initialPrompt": "Notice that the exterior angle (117°) is larger than either remote interior angle alone. Will this always be true? Why?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "A triangle has angles measuring (2x + 10)°, (3x)°, and (x + 20)°. Find x and all three angle measures.",
+          "answer": "x = 25; angles are 60°, 75°, 45°",
+          "hints": [
+            "Use the Triangle Angle Sum Theorem: all three angles sum to 180°.",
+            "Set up: (2x + 10) + (3x) + (x + 20) = 180. Combine like terms: 6x + 30 = 180.",
+            "Solve: 6x = 150, so x = 25. Then substitute back to find each angle."
+          ]
+        },
+        {
+          "question": "An exterior angle of a triangle measures 130°. One of the remote interior angles is 55°. Find the other remote interior angle and the interior angle adjacent to the exterior angle.",
+          "answer": "other remote interior = 75°; adjacent interior = 50°",
+          "hints": [
+            "The Exterior Angle Theorem says: exterior angle = sum of the two remote interior angles.",
+            "So 130° = 55° + other remote interior. That gives 75°.",
+            "The interior angle adjacent to the exterior angle forms a linear pair: 180° - 130° = 50°."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice finding missing angles. For the first problem, what theorem tells us about the three interior angles?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "The **Triangle Inequality Theorem** states that the sum of ANY two sides of a triangle must be greater than the third side. In other words, for sides a, b, and c:\n• a + b > c\n• a + c > b\n• b + c > a\n\nAll three inequalities must be true. If even ONE fails, the three lengths cannot form a triangle. A quick shortcut: add the two shortest sides—if that sum is greater than the longest side, the triangle is valid.",
+      "initialPrompt": "Can you form a triangle with sides 3, 4, and 8? What about 3, 4, and 5? Try the shortcut with the two shortest sides."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Can the lengths 7, 10, and 15 form a triangle?",
+          "answer": "yes",
+          "hints": [
+            "Use the Triangle Inequality: check if the sum of the two shortest sides is greater than the longest side.",
+            "7 + 10 = 17. Is 17 > 15? Yes! So these can form a triangle."
+          ]
+        },
+        {
+          "question": "Can the lengths 2, 3, and 6 form a triangle?",
+          "answer": "no",
+          "hints": [
+            "Add the two shortest sides: 2 + 3 = 5.",
+            "Is 5 > 6? No. So these lengths cannot form a triangle."
+          ]
+        },
+        {
+          "question": "Two sides of a triangle are 8 and 13. What is the range of possible values for the third side?",
+          "answer": "5 < x < 21",
+          "hints": [
+            "The third side must be less than the sum of the other two: x < 8 + 13 = 21.",
+            "The third side must also be greater than the difference: x > 13 - 8 = 5.",
+            "So the range is 5 < x < 21."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's apply the Triangle Inequality. For the first problem, which are the two shortest sides?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "A triangle has angles of 35° and 90°. Find the third angle and classify the triangle by its angles.",
+          "answer": "55°; right triangle",
+          "hints": ["35 + 90 + x = 180."]
+        },
+        {
+          "question": "An isosceles triangle has a vertex angle of 40°. Find the base angles.",
+          "answer": "70° each",
+          "hints": ["The base angles of an isosceles triangle are congruent. 40 + 2x = 180."]
+        },
+        {
+          "question": "An exterior angle of a triangle measures 140°. The two remote interior angles are equal. Find their measure.",
+          "answer": "70° each",
+          "hints": ["Exterior angle = sum of remote interior angles. If they're equal: 2x = 140."]
+        },
+        {
+          "question": "Can the lengths 5, 5, and 10 form a triangle?",
+          "answer": "no",
+          "hints": ["Check: 5 + 5 = 10. Is 10 > 10? No—it must be strictly greater."]
+        },
+        {
+          "question": "A triangle has angles (4x - 5)°, (2x + 15)°, and (3x - 1)°. Find x and classify the triangle by its angles.",
+          "answer": "x = 19; angles are 71°, 53°, 56°; acute triangle",
+          "hints": ["Sum = 180: (4x-5) + (2x+15) + (3x-1) = 180. Simplify: 9x + 9 = 180, so 9x = 171, x = 19."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "A triangle has angles measuring (2x + 10)°, (3x)°, and (x + 20)°. Find x and all three angle measures.": "x = 25; angles are 60°, 75°, 45°",
+    "An exterior angle of a triangle measures 130°. One of the remote interior angles is 55°. Find the other remote interior angle and the interior angle adjacent to the exterior angle.": "other remote interior = 75°; adjacent interior = 50°",
+    "Can the lengths 7, 10, and 15 form a triangle?": "yes",
+    "Can the lengths 2, 3, and 6 form a triangle?": "no",
+    "Two sides of a triangle are 8 and 13. What is the range of possible values for the third side?": "5 < x < 21",
+    "A triangle has angles of 35° and 90°. Find the third angle and classify the triangle by its angles.": "55°; right triangle",
+    "An isosceles triangle has a vertex angle of 40°. Find the base angles.": "70° each",
+    "An exterior angle of a triangle measures 140°. The two remote interior angles are equal. Find their measure.": "70° each",
+    "Can the lengths 5, 5, and 10 form a triangle?": "no",
+    "A triangle has angles (4x - 5)°, (2x + 15)°, and (3x - 1)°. Find x and classify the triangle by its angles.": "x = 19; angles are 71°, 53°, 56°; acute triangle"
+  }
+}
