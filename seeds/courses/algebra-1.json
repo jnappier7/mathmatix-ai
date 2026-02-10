@@ -3550,6 +3550,324 @@
         "allowRetakes": true,
         "maxRetakes": 2
       }
+    },
+    {
+      "unitId": "alg1-unit-8",
+      "title": "Exponential Functions",
+      "subtitle": "Growth, Decay, and the Power of Compounding",
+      "description": "Students explore exponential functions and their real-world applications in population growth, compound interest, and radioactive decay. They contrast exponential and linear growth and learn to model exponential situations.",
+      "order": 8,
+      "quarter": 4,
+      "essentialQuestions": [
+        "How is exponential growth fundamentally different from linear growth?",
+        "Why do exponential models appear so often in science and finance?",
+        "How can we tell if a real-world situation is exponential?"
+      ],
+      "bigIdeas": [
+        "Exponential functions grow by a constant RATIO (multiplier), not a constant AMOUNT",
+        "Small changes in the growth rate lead to dramatically different outcomes over time",
+        "Exponential models describe phenomena where change depends on the current amount"
+      ],
+      "estimatedDays": 15,
+      "skillIds": ["exponential-functions-basics", "exponential-growth-decay", "exponential-equations"],
+      "standardsAlignment": ["F-IF.7e", "F-LE.1", "F-LE.2", "F-LE.5", "A-SSE.3c"],
+      "lessons": [
+        {
+          "lessonId": "alg1-8-1",
+          "title": "Understanding Exponential Functions",
+          "subtitle": "f(x) = a · b^x",
+          "description": "Students identify exponential functions, evaluate them, and distinguish them from linear functions using tables and graphs.",
+          "order": 1,
+          "estimatedMinutes": 50,
+          "skillIds": ["exponential-functions-basics"],
+          "standardsAlignment": ["F-IF.7e", "F-LE.1"],
+          "prerequisites": ["alg1-5-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Exponential vs Linear: What's the Difference?",
+              "order": 1,
+              "content": {
+                "explanation": "In a linear function, the y-values increase by a constant AMOUNT (add the same number each time). In an exponential function f(x) = a · bˣ, the y-values increase by a constant RATIO (multiply by the same number each time). 'a' is the initial value (when x = 0), and 'b' is the growth/decay factor. If b > 1, exponential growth. If 0 < b < 1, exponential decay.",
+                "workedExamples": [
+                  {
+                    "problem": "Is this data linear or exponential? x: 0,1,2,3,4 → y: 3,6,12,24,48",
+                    "steps": [
+                      "Check differences: 6-3=3, 12-6=6, 24-12=12 → NOT constant (not linear)",
+                      "Check ratios: 6/3=2, 12/6=2, 24/12=2, 48/24=2 → CONSTANT ratio of 2",
+                      "Exponential! Initial value a=3, growth factor b=2",
+                      "Equation: f(x) = 3 · 2ˣ"
+                    ],
+                    "solution": "Exponential: f(x) = 3 · 2ˣ",
+                    "tip": "Constant differences = linear. Constant ratios = exponential."
+                  },
+                  {
+                    "problem": "If f(x) = 100 · (0.8)ˣ, is this growth or decay? What does it mean?",
+                    "steps": [
+                      "b = 0.8, which is between 0 and 1 → exponential DECAY",
+                      "Each step, the value is multiplied by 0.8 (loses 20%)",
+                      "f(0) = 100, f(1) = 80, f(2) = 64, f(3) = 51.2",
+                      "Could model: a car losing 20% of its value each year"
+                    ],
+                    "solution": "Exponential decay — value decreases by 20% each period"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Exponential Function", "definition": "f(x) = a · bˣ where a ≠ 0 and b > 0, b ≠ 1"},
+                  {"term": "Growth Factor", "definition": "The base b when b > 1 (e.g., b = 1.05 means 5% growth)"},
+                  {"term": "Decay Factor", "definition": "The base b when 0 < b < 1 (e.g., b = 0.9 means 10% decay)"},
+                  {"term": "Initial Value", "definition": "The value 'a' when x = 0; the starting amount"},
+                  {"term": "Asymptote", "definition": "A line the graph approaches but never touches (y = 0 for basic exponentials)"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the 'folding paper' analogy — fold a paper in half repeatedly. After 7 folds: 128 layers! After 42 folds: reaches the moon! Show how exponential growth starts slow then explodes.",
+                  "commonMisconceptions": [
+                    "Thinking exponential functions are just 'fast linear functions'",
+                    "Confusing growth factor with growth rate (b = 1.05 means 5% growth, not 105%)",
+                    "Not recognizing decay when 0 < b < 1"
+                  ],
+                  "realWorldConnections": [
+                    "Bacteria doubling every 20 minutes",
+                    "Compound interest on savings",
+                    "Viral social media posts",
+                    "Radioactive decay (half-life)"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["exponential-functions-basics"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["exponential-functions-basics"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 4, "max": 7},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 65}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Exponential Functions Mastery Check",
+            "skillIds": ["exponential-functions-basics"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-8-2",
+          "title": "Exponential Growth and Decay Applications",
+          "subtitle": "Modeling the Real World",
+          "description": "Students apply exponential functions to model population growth, compound interest, depreciation, and half-life problems.",
+          "order": 2,
+          "estimatedMinutes": 55,
+          "skillIds": ["exponential-growth-decay"],
+          "standardsAlignment": ["F-LE.2", "F-LE.5"],
+          "prerequisites": ["alg1-8-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Growth and Decay Models",
+              "order": 1,
+              "content": {
+                "explanation": "Growth model: A = P(1 + r)ᵗ where P = initial, r = rate, t = time. Decay model: A = P(1 - r)ᵗ. Compound interest: A = P(1 + r/n)ⁿᵗ where n = compounds per year. Half-life: A = P(1/2)^(t/h) where h = half-life period. The key insight: growth rate r becomes growth FACTOR (1 + r).",
+                "workedExamples": [
+                  {
+                    "problem": "A town of 5,000 grows at 3% per year. What's the population after 10 years?",
+                    "steps": [
+                      "Identify: P = 5000, r = 0.03, t = 10",
+                      "Formula: A = 5000(1 + 0.03)¹⁰ = 5000(1.03)¹⁰",
+                      "Calculate: (1.03)¹⁰ ≈ 1.3439",
+                      "A ≈ 5000 × 1.3439 ≈ 6,720 people"
+                    ],
+                    "solution": "≈ 6,720 people"
+                  },
+                  {
+                    "problem": "A car worth $25,000 depreciates 15% per year. What's it worth after 5 years?",
+                    "steps": [
+                      "Decay: A = 25000(1 - 0.15)⁵ = 25000(0.85)⁵",
+                      "(0.85)⁵ ≈ 0.4437",
+                      "A ≈ 25000 × 0.4437 ≈ $11,093"
+                    ],
+                    "solution": "≈ $11,093",
+                    "tip": "Depreciation is decay: subtract the rate from 1 to get the decay factor"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the formula template: A = P(1 ± r)ᵗ. Plus for growth, minus for decay. Have students identify each component from the word problem BEFORE plugging in.",
+                  "commonMisconceptions": [
+                    "Using the rate directly instead of (1 + r) for growth factor",
+                    "Confusing growth rate (3%) with growth factor (1.03)",
+                    "Not converting percentage to decimal before using"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Application Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["exponential-growth-decay"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["exponential-growth-decay"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 5, "max": 7},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 65}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Growth & Decay Applications Mastery Check",
+            "skillIds": ["exponential-growth-decay"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-8-3",
+          "title": "Comparing Linear and Exponential Models",
+          "subtitle": "Which Model Fits?",
+          "description": "Students compare linear and exponential models to determine which best fits a given data set or real-world scenario.",
+          "order": 3,
+          "estimatedMinutes": 50,
+          "skillIds": ["exponential-functions-basics", "exponential-growth-decay"],
+          "standardsAlignment": ["F-LE.1", "F-LE.5"],
+          "prerequisites": ["alg1-8-2", "alg1-3-5"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Linear vs Exponential: Choosing the Right Model",
+              "order": 1,
+              "content": {
+                "explanation": "Key comparison: Linear = constant rate of CHANGE (addition). Exponential = constant rate of CHANGE as a PERCENTAGE (multiplication). In tables: check first differences (constant = linear) vs ratios (constant = exponential). In graphs: straight line = linear, curve = exponential. In context: 'increases by $50 each year' = linear. 'Increases by 5% each year' = exponential.",
+                "workedExamples": [
+                  {
+                    "problem": "Two investments: A starts at $1000 and earns $100/year. B starts at $1000 and earns 8%/year. Compare after 20 years.",
+                    "steps": [
+                      "A (linear): A = 1000 + 100(20) = $3,000",
+                      "B (exponential): B = 1000(1.08)²⁰ ≈ 1000(4.661) ≈ $4,661",
+                      "After 20 years, exponential wins by $1,661",
+                      "After 50 years: A = $6,000 vs B ≈ $46,902 — exponential dominates!"
+                    ],
+                    "solution": "Exponential ($4,661) surpasses linear ($3,000) after 20 years, and the gap widens dramatically",
+                    "tip": "Exponential always eventually overtakes linear, no matter how slow the rate or how fast the linear increase"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Side-by-side comparisons are powerful. Show the same starting point with linear vs exponential growth. Graph them together so students SEE the crossover point.",
+                  "commonMisconceptions": [
+                    "Thinking linear is always slower — it can be faster at first",
+                    "Not recognizing when a situation calls for exponential vs linear",
+                    "Confusing 'increases by 5' (linear) with 'increases by 5%' (exponential)"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Comparison Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["exponential-functions-basics"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["exponential-functions-basics", "exponential-growth-decay"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 5, "max": 7},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Linear vs Exponential Models Mastery Check",
+            "skillIds": ["exponential-functions-basics", "exponential-growth-decay"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        }
+      ],
+      "unitAssessment": {
+        "assessmentType": "unit-test",
+        "title": "Unit 8: Exponential Functions Test",
+        "description": "Comprehensive assessment on exponential functions, growth/decay models, and comparing linear vs exponential patterns.",
+        "skillIds": ["exponential-functions-basics", "exponential-growth-decay"],
+        "questionCount": 18,
+        "passingScore": 75,
+        "timeLimit": 45,
+        "allowRetakes": true,
+        "maxRetakes": 2
+      }
     }
   ]
 }
