@@ -1,0 +1,290 @@
+{
+  "moduleId": "limits_sequences_series",
+  "course": "Pre-Calculus",
+  "unit": 8,
+  "title": "Sequences, Series & Introduction to Limits",
+  "weeks": "31-34",
+  "estimatedDuration": 20,
+  "description": "Arithmetic and geometric sequences and series, sigma notation, convergence of infinite geometric series, intuitive and algebraic limits, continuity, and limits at infinity — bridging Pre-Calculus to Calculus.",
+  "skills": [
+    "sequences-arithmetic",
+    "sequences-geometric",
+    "series-sigma-notation",
+    "limits-intuitive",
+    "limits-algebraic",
+    "limits-continuity-infinity"
+  ],
+  "standardsAlignment": ["F-BF.2", "F-IF.3", "A-SSE.4", "F-LE.2"],
+  "goals": [
+    "Find the nth term and partial sums of arithmetic sequences; model linear growth.",
+    "Find the nth term, partial sums, and infinite sums of geometric sequences; model exponential growth/decay.",
+    "Use sigma notation to express and evaluate finite and infinite series.",
+    "Evaluate limits intuitively from tables, graphs, and numerical patterns.",
+    "Evaluate limits algebraically using direct substitution, factoring, rationalizing, and simplification.",
+    "Determine continuity at a point; evaluate one-sided limits and limits at infinity."
+  ],
+  "instructionalStrategy": [
+    "Gradual release model; AI-led instruction using scaffold as scope",
+    "Connect sequences/series to function behavior and limits conceptually",
+    "Spiral prior skills: polynomial/rational simplification, radical expressions"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Sequences: Arithmetic & Geometric",
+      "skills": ["sequences-arithmetic", "sequences-geometric"],
+      "content": "A sequence is an ordered list of numbers. Arithmetic sequences have a constant difference; geometric sequences have a constant ratio.",
+      "keyPoints": [
+        "Arithmetic: aₙ = a₁ + (n-1)d. Common difference d = aₙ₊₁ - aₙ.",
+        "Arithmetic partial sum: Sₙ = n/2·(a₁ + aₙ) = n/2·(2a₁ + (n-1)d).",
+        "Geometric: aₙ = a₁·rⁿ⁻¹. Common ratio r = aₙ₊₁/aₙ.",
+        "Geometric partial sum: Sₙ = a₁(1-rⁿ)/(1-r) for r ≠ 1.",
+        "Infinite geometric series: S = a₁/(1-r) converges only if |r| < 1.",
+        "Recursive vs. explicit formulas: recursive defines each term from previous; explicit gives nth term directly."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Sequences — Worked Examples",
+      "skills": ["sequences-arithmetic", "sequences-geometric"],
+      "examples": [
+        {
+          "problem": "An arithmetic sequence has a₃ = 11 and a₈ = 31. Find: (a) d and a₁, (b) a₂₀, (c) S₂₀.",
+          "solution": "(a) a₈ = a₃ + 5d → 31 = 11 + 5d → d = 4. a₁ = a₃ - 2d = 11 - 8 = 3. (b) a₂₀ = 3 + 19(4) = 3 + 76 = 79. (c) S₂₀ = 20/2·(3 + 79) = 10·82 = 820."
+        },
+        {
+          "problem": "A geometric sequence has a₁ = 6 and r = 1/3. Find: (a) a₅, (b) S₆, (c) S (infinite sum).",
+          "solution": "(a) a₅ = 6·(1/3)⁴ = 6/81 = 2/27. (b) S₆ = 6·(1-(1/3)⁶)/(1-1/3) = 6·(1-1/729)/(2/3) = 9·(728/729) = 728/81 ≈ 8.988. (c) |r| = 1/3 < 1, so S = 6/(1-1/3) = 6/(2/3) = 9."
+        },
+        {
+          "problem": "Write the repeating decimal 0.454545... as a fraction using an infinite geometric series.",
+          "solution": "0.454545... = 0.45 + 0.0045 + 0.000045 + ··· = 45/100 + 45/10000 + ···. Geometric with a₁ = 45/100, r = 1/100. S = (45/100)/(1-1/100) = (45/100)/(99/100) = 45/99 = 5/11."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Series & Sigma Notation",
+      "skill": "series-sigma-notation",
+      "content": "A series is the sum of terms of a sequence. Sigma notation Σ provides a compact way to express sums.",
+      "keyPoints": [
+        "Sigma notation: Σₖ₌₁ⁿ aₖ = a₁ + a₂ + ··· + aₙ.",
+        "Index of summation (k), lower limit, upper limit.",
+        "Properties: Σ(aₖ + bₖ) = Σaₖ + Σbₖ; Σ(caₖ) = cΣaₖ.",
+        "Useful formulas: Σk = n(n+1)/2, Σk² = n(n+1)(2n+1)/6, Σk³ = [n(n+1)/2]².",
+        "Telescoping series: most terms cancel, leaving first and last.",
+        "Partial sums Sₙ reveal convergence behavior."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Series & Sigma Notation — Worked Examples",
+      "skill": "series-sigma-notation",
+      "examples": [
+        {
+          "problem": "Evaluate Σₖ₌₁⁵ (3k - 1).",
+          "solution": "k=1: 2, k=2: 5, k=3: 8, k=4: 11, k=5: 14. Sum = 2+5+8+11+14 = 40. Or: Σ(3k-1) = 3·Σk - Σ1 = 3·(5·6/2) - 5 = 45-5 = 40."
+        },
+        {
+          "problem": "Write in sigma notation: 1/2 + 1/4 + 1/8 + 1/16 + ··· + 1/1024.",
+          "solution": "Pattern: (1/2)ᵏ for k=1,2,.... 1/1024 = 1/2¹⁰, so the last term is k=10. Σₖ₌₁¹⁰ (1/2)ᵏ. Sum: S = (1/2)(1-(1/2)¹⁰)/(1-1/2) = (1/2)(1023/1024)/(1/2) = 1023/1024."
+        },
+        {
+          "problem": "Evaluate Σₖ₌₁⁴⁰ (2k + 5).",
+          "solution": "Σ(2k+5) = 2·Σk + Σ5 = 2·(40·41/2) + 5·40 = 1640 + 200 = 1840."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Sequences & Series Practice",
+      "skills": ["sequences-arithmetic", "sequences-geometric", "series-sigma-notation"],
+      "problems": [
+        {
+          "problem": "Find the sum of the first 30 terms of the arithmetic sequence 7, 12, 17, 22, ...",
+          "hints": ["a₁=7, d=5", "a₃₀ = 7+29(5) = 152", "S₃₀ = 30/2·(7+152)"],
+          "answer": "a₃₀ = 7+29(5) = 152. S₃₀ = 15·159 = 2385."
+        },
+        {
+          "problem": "Determine whether the infinite geometric series 12 - 8 + 16/3 - 32/9 + ··· converges. If so, find the sum.",
+          "hints": ["r = -8/12 = -2/3", "|r| = 2/3 < 1 → converges", "S = 12/(1-(-2/3)) = 12/(5/3)"],
+          "answer": "r = -2/3, |r| < 1 → converges. S = 12/(5/3) = 36/5 = 7.2."
+        },
+        {
+          "problem": "Evaluate Σₖ₌₁²⁰ k².",
+          "hints": ["Use formula: Σk² = n(n+1)(2n+1)/6", "= 20·21·41/6"],
+          "answer": "Σₖ₌₁²⁰ k² = 20·21·41/6 = 17220/6 = 2870."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Introduction to Limits",
+      "skill": "limits-intuitive",
+      "content": "The limit of f(x) as x approaches c is the value that f(x) gets arbitrarily close to, regardless of whether f(c) exists or equals the limit.",
+      "keyPoints": [
+        "Notation: lim(x→c) f(x) = L means f(x) → L as x → c.",
+        "A limit exists if and only if both one-sided limits exist and are equal.",
+        "Left-hand limit: lim(x→c⁻) f(x). Right-hand limit: lim(x→c⁺) f(x).",
+        "The limit can exist even if f(c) is undefined (e.g., removable discontinuity).",
+        "Estimate limits from tables by evaluating f(x) for x-values approaching c from both sides.",
+        "Estimate limits from graphs by tracing the curve toward x = c from both directions."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Intuitive Limits — Worked Examples",
+      "skill": "limits-intuitive",
+      "examples": [
+        {
+          "problem": "Use a table to estimate lim(x→2) (x²-4)/(x-2).",
+          "solution": "f(x) = (x²-4)/(x-2) is undefined at x=2. Table: x=1.9→3.9, x=1.99→3.99, x=1.999→3.999, x=2.001→4.001, x=2.01→4.01, x=2.1→4.1. Both sides approach 4. lim(x→2) (x²-4)/(x-2) = 4."
+        },
+        {
+          "problem": "Evaluate lim(x→0) |x|/x.",
+          "solution": "For x→0⁺: |x|/x = x/x = 1. For x→0⁻: |x|/x = -x/x = -1. Left ≠ Right: 1 ≠ -1. The limit does not exist."
+        },
+        {
+          "problem": "Given the piecewise function f(x) = {x+1 if x<3; 5 if x=3; 2x-2 if x>3}, find lim(x→3) f(x).",
+          "solution": "lim(x→3⁻) f(x) = lim(x→3⁻)(x+1) = 4. lim(x→3⁺) f(x) = lim(x→3⁺)(2x-2) = 4. Both sides equal 4, so lim(x→3) f(x) = 4. (Note: f(3)=5≠4, so there's a removable discontinuity.)"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Algebraic Limit Techniques",
+      "skill": "limits-algebraic",
+      "content": "When direct substitution yields an indeterminate form (0/0), algebraic manipulation can resolve the limit.",
+      "keyPoints": [
+        "Direct substitution: if f(c) is defined and f is continuous, lim(x→c) f(x) = f(c).",
+        "Indeterminate form 0/0: factor, cancel, then re-evaluate.",
+        "Rationalizing: multiply by conjugate to eliminate radicals.",
+        "Complex fractions: simplify by finding common denominator.",
+        "Limit laws: sum, product, quotient, constant multiple, power rules.",
+        "Special limit: lim(x→0) sin(x)/x = 1."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Algebraic Limits — Worked Examples",
+      "skill": "limits-algebraic",
+      "examples": [
+        {
+          "problem": "Evaluate lim(x→3) (x²-9)/(x-3).",
+          "solution": "Direct sub: 0/0 (indeterminate). Factor: (x²-9)/(x-3) = (x-3)(x+3)/(x-3) = x+3 for x≠3. lim(x→3)(x+3) = 6."
+        },
+        {
+          "problem": "Evaluate lim(x→4) (√x - 2)/(x - 4).",
+          "solution": "Direct sub: 0/0. Rationalize: multiply by (√x+2)/(√x+2): (√x-2)(√x+2)/((x-4)(√x+2)) = (x-4)/((x-4)(√x+2)) = 1/(√x+2). lim(x→4) 1/(√x+2) = 1/(2+2) = 1/4."
+        },
+        {
+          "problem": "Evaluate lim(x→0) (1/(x+3) - 1/3)/x.",
+          "solution": "Direct sub: 0/0. Simplify the complex fraction: (1/(x+3)-1/3)/x = ((3-(x+3))/(3(x+3)))/x = (-x/(3(x+3)))/x = -1/(3(x+3)). lim(x→0) -1/(3(x+3)) = -1/(3·3) = -1/9."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Continuity & Limits at Infinity",
+      "skill": "limits-continuity-infinity",
+      "content": "A function is continuous at c if lim(x→c) f(x) = f(c). Limits at infinity describe end behavior.",
+      "keyPoints": [
+        "Continuous at c requires: (1) f(c) exists, (2) lim(x→c) f(x) exists, (3) lim(x→c) f(x) = f(c).",
+        "Types of discontinuity: removable (hole), jump, infinite (vertical asymptote).",
+        "Polynomials are continuous everywhere. Rational functions are continuous on their domain.",
+        "Limits at infinity: lim(x→∞) 1/xⁿ = 0 for n > 0.",
+        "Rational functions: divide by highest power of x. Compare degrees of numerator and denominator.",
+        "Horizontal asymptotes: deg(num) < deg(den) → HA y=0; equal degrees → HA y = leading coeff ratio; deg(num) > deg(den) → no HA."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Continuity & Limits at Infinity — Worked Examples",
+      "skill": "limits-continuity-infinity",
+      "examples": [
+        {
+          "problem": "Determine if f(x) = (x²-1)/(x-1) is continuous at x=1. If not, classify the discontinuity.",
+          "solution": "f(1) is undefined (0/0). lim(x→1) (x²-1)/(x-1) = lim(x→1)(x+1) = 2. The limit exists but f(1) doesn't. Removable discontinuity (hole) at (1, 2)."
+        },
+        {
+          "problem": "Evaluate lim(x→∞) (3x² - 5x + 1)/(2x² + x - 4).",
+          "solution": "Divide every term by x²: (3 - 5/x + 1/x²)/(2 + 1/x - 4/x²). As x→∞, all terms with x in denominator → 0. Limit = 3/2."
+        },
+        {
+          "problem": "Find lim(x→∞) (5x³ + 2x)/(x² - 1) and lim(x→∞) (x + 3)/(x³ + 1).",
+          "solution": "First: deg(num)=3 > deg(den)=2. Divide by x²: (5x+2/x)/(1-1/x²) → ∞. The limit is ∞ (no horizontal asymptote). Second: deg(num)=1 < deg(den)=3. Divide by x³: (1/x²+3/x³)/(1+1/x³) → 0. The limit is 0 (HA y=0)."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Sequences, Series & Limits Mastery Practice",
+      "skills": ["sequences-arithmetic", "sequences-geometric", "series-sigma-notation", "limits-intuitive", "limits-algebraic", "limits-continuity-infinity"],
+      "problems": [
+        {
+          "problem": "An arithmetic sequence has a₁ = -5 and d = 3. Find a₁₅ and S₁₅.",
+          "answer": "a₁₅ = -5+14(3) = 37. S₁₅ = 15/2·(-5+37) = 15/2·32 = 240."
+        },
+        {
+          "problem": "Find the sum of the infinite geometric series: 18 - 6 + 2 - 2/3 + ···",
+          "answer": "r = -6/18 = -1/3. |r|<1 → converges. S = 18/(1-(-1/3)) = 18/(4/3) = 27/2 = 13.5."
+        },
+        {
+          "problem": "Evaluate Σₖ₌₁⁶ (k³ - k).",
+          "answer": "Σ(k³-k) = Σk³-Σk = [6·7/2]²-6·7/2 = 441-21 = 420."
+        },
+        {
+          "problem": "Evaluate lim(x→-1) (x²+3x+2)/(x+1).",
+          "answer": "Direct sub: 0/0. Factor: (x+1)(x+2)/(x+1) = x+2. lim(x→-1)(x+2) = 1."
+        },
+        {
+          "problem": "Evaluate lim(x→9) (3-√x)/(9-x).",
+          "answer": "Direct sub: 0/0. Factor denominator: 9-x = (3-√x)(3+√x). So (3-√x)/((3-√x)(3+√x)) = 1/(3+√x). lim(x→9) = 1/(3+3) = 1/6."
+        },
+        {
+          "problem": "Find lim(x→∞) (4x² - 7)/(6x² + 5x).",
+          "answer": "Equal degrees (both 2). Limit = 4/6 = 2/3. (Divide by x²: (4-7/x²)/(6+5/x) → 4/6.)"
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "seq-arith-ex": "d=4, a₁=3, a₂₀=79, S₂₀=820.",
+    "seq-geom-ex": "a₅=2/27, S₆=728/81≈8.988, S=9.",
+    "seq-decimal": "0.454545...=5/11.",
+    "sigma-ex1": "Σ(3k-1)=40.",
+    "sigma-ex2": "Σ(1/2)ᵏ=1023/1024.",
+    "sigma-ex3": "Σ(2k+5)=1840.",
+    "gp-arith-sum": "S₃₀=2385.",
+    "gp-geom-inf": "S=36/5=7.2.",
+    "gp-sum-sq": "Σk²=2870.",
+    "lim-table": "lim=4.",
+    "lim-abs": "DNE (left=−1,right=1).",
+    "lim-piecewise": "lim=4 (but f(3)=5).",
+    "lim-factor": "lim=6.",
+    "lim-rational": "lim=1/4.",
+    "lim-complex-frac": "lim=-1/9.",
+    "cont-hole": "Removable discontinuity at (1,2).",
+    "lim-inf-equal": "lim=3/2.",
+    "lim-inf-compare": "First: ∞. Second: 0.",
+    "ip-arith": "a₁₅=37, S₁₅=240.",
+    "ip-geom-inf": "S=27/2=13.5.",
+    "ip-sigma": "Σ(k³-k)=420.",
+    "ip-lim-factor": "lim=1.",
+    "ip-lim-radical": "lim=1/6.",
+    "ip-lim-inf": "lim=2/3."
+  }
+}

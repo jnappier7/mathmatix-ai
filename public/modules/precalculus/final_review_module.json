@@ -1,0 +1,184 @@
+{
+  "moduleId": "final_review",
+  "course": "Pre-Calculus",
+  "unit": 9,
+  "title": "Final Review & Exam Preparation",
+  "weeks": "35-36",
+  "estimatedDuration": 10,
+  "description": "Comprehensive spiral review across all Pre-Calculus content areas: functions and transformations, polynomial/rational functions, exponential/logarithmic functions, trigonometry, analytic geometry, vectors, sequences/series, and limits. Focus on synthesis, connections between topics, and exam readiness.",
+  "skills": [
+    "comprehensive-function-review",
+    "comprehensive-trig-review",
+    "comprehensive-analytic-review",
+    "comprehensive-limits-series-review"
+  ],
+  "standardsAlignment": [],
+  "goals": [
+    "Synthesize function analysis across all families: polynomial, rational, exponential, logarithmic, trigonometric.",
+    "Integrate trigonometric concepts: identities, equations, applications, inverse functions, Law of Sines/Cosines.",
+    "Connect analytic geometry, parametric, polar, vectors, and complex numbers.",
+    "Apply sequences/series and limits as a bridge to calculus thinking."
+  ],
+  "instructionalStrategy": [
+    "AI-led comprehensive review using diagnostic-driven focus areas",
+    "Mixed-topic problem sets to build fluency switching between concepts",
+    "Emphasis on multi-step problems requiring multiple skill integration"
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Review Block A: Functions & Transformations",
+      "skill": "comprehensive-function-review",
+      "content": "Review of all function families and their properties, transformations, composition, and inverses.",
+      "keyPoints": [
+        "Parent functions: linear, quadratic, cubic, absolute value, square root, rational (1/x), exponential, logarithmic.",
+        "Transformations: g(x) = af(b(x-c))+d. Vertical stretch/shrink (a), horizontal stretch/shrink (1/b), shifts (c, d), reflections.",
+        "Composition: (f∘g)(x) = f(g(x)). Domain: all x in domain of g where g(x) is in domain of f.",
+        "Inverse: f⁻¹ exists if f is one-to-one. Reflect over y=x. f(f⁻¹(x))=x.",
+        "Polynomial: end behavior, zeros, multiplicity, turning points. Rational: asymptotes, holes.",
+        "Exponential: y=abˣ growth/decay. Logarithmic: inverse of exponential, properties/laws."
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Review Block A: Mixed Function Problems",
+      "skill": "comprehensive-function-review",
+      "problems": [
+        {
+          "problem": "Given f(x)=2x-3 and g(x)=x²+1, find: (a) (f∘g)(x), (b) (g∘f)(x), (c) (f∘g)⁻¹(x).",
+          "answer": "(a) f(g(x))=2(x²+1)-3=2x²-1. (b) g(f(x))=(2x-3)²+1=4x²-12x+10. (c) y=2x²-1, swap: x=2y²-1 → y²=(x+1)/2 → y=√((x+1)/2) for x≥-1. Or: g⁻¹(x)=√(x-1), f⁻¹(x)=(x+3)/2. (f∘g)⁻¹=g⁻¹∘f⁻¹=√((x+3)/2-1)=√((x+1)/2)."
+        },
+        {
+          "problem": "Sketch the key features of f(x) = (2x²-8)/(x²-x-6). Find all asymptotes, intercepts, and holes.",
+          "answer": "Factor: 2(x²-4)/((x-3)(x+2)) = 2(x-2)(x+2)/((x-3)(x+2)). Hole at x=-2: y=2(-4)/(-5)=8/5. Simplified: 2(x-2)/(x-3). VA: x=3. HA: y=2 (equal degrees, 2/1). x-int: x=2. y-int: f(0)=2(-2)/(-3)=4/3."
+        },
+        {
+          "problem": "Solve: 3ˣ⁺² = 5·2ˣ. Give an exact answer.",
+          "answer": "3ˣ·9 = 5·2ˣ → (3/2)ˣ = 5/9. x·ln(3/2)=ln(5/9). x = ln(5/9)/ln(3/2)."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Review Block B: Trigonometry Comprehensive",
+      "skill": "comprehensive-trig-review",
+      "content": "Review of all trig concepts: unit circle, graphs, identities, equations, inverse trig, law of sines/cosines.",
+      "keyPoints": [
+        "Unit circle: exact values for π/6, π/4, π/3 and all quadrants. ASTC rule.",
+        "Graphs: y=Asin(B(x-C))+D. Amplitude |A|, period 2π/B, phase C, midline D.",
+        "Identities: Pythagorean, reciprocal, quotient, sum/difference, double/half-angle.",
+        "Solving: isolate trig function, find reference angle, apply quadrant, check interval.",
+        "Inverse trig: restricted domains. arcsin[-π/2,π/2], arccos[0,π], arctan(-π/2,π/2).",
+        "Law of Sines: a/sinA=b/sinB. SSA ambiguous case. Law of Cosines: a²=b²+c²-2bc·cosA."
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Review Block B: Mixed Trig Problems",
+      "skill": "comprehensive-trig-review",
+      "problems": [
+        {
+          "problem": "Verify: (1+sinθ)/cosθ = cosθ/(1-sinθ).",
+          "answer": "LHS·(1-sinθ)/(1-sinθ) = (1+sinθ)(1-sinθ)/(cosθ(1-sinθ)) = (1-sin²θ)/(cosθ(1-sinθ)) = cos²θ/(cosθ(1-sinθ)) = cosθ/(1-sinθ) = RHS ✓."
+        },
+        {
+          "problem": "Solve on [0, 2π): 2cos²x - cosx - 1 = 0.",
+          "answer": "(2cosx+1)(cosx-1)=0. cosx=-1/2: x=2π/3, 4π/3. cosx=1: x=0. Solutions: {0, 2π/3, 4π/3}."
+        },
+        {
+          "problem": "Triangle has a=7, b=10, C=40°. Find c and the area.",
+          "answer": "Law of Cosines: c²=49+100-2(7)(10)cos40°=149-140(0.766)=149-107.24=41.76. c≈6.46. Area=(1/2)(7)(10)sin40°=35(0.6428)≈22.50."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Review Block C: Analytic Geometry, Vectors & Complex Numbers",
+      "skill": "comprehensive-analytic-review",
+      "content": "Review of conics, parametric/polar, vectors, and complex numbers in polar form.",
+      "keyPoints": [
+        "Conics: identify from general second-degree equation. Complete the square to find standard form.",
+        "Parabola: (x-h)²=4p(y-k). Ellipse: c²=a²-b². Hyperbola: c²=a²+b².",
+        "Parametric: eliminate parameter via substitution or trig identity.",
+        "Polar: x=rcosθ, y=rsinθ, r²=x²+y². Curves: roses, limaçons, cardioids, lemniscates.",
+        "Vectors: dot product for angle/orthogonality/projection. Work=F·d.",
+        "Complex: z=r·cis(θ). DeMoivre's: zⁿ=rⁿcis(nθ). nth roots: n equally spaced."
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Review Block C: Mixed Analytic/Vector Problems",
+      "skill": "comprehensive-analytic-review",
+      "problems": [
+        {
+          "problem": "Classify and find key features: 4x²+y²-8x+6y+9=0.",
+          "answer": "4(x²-2x)+(y²+6y)=-9. 4(x-1)²+(y+3)²=-9+4+9=4. (x-1)²/1+(y+3)²/4=1. Ellipse, center (1,-3), a=2 (vertical), b=1. c²=4-1=3, c=√3. Foci: (1,-3±√3). e=√3/2."
+        },
+        {
+          "problem": "Find the angle between u=⟨2, -5⟩ and v=⟨4, 1⟩. Then find proj_v(u).",
+          "answer": "u·v=8-5=3. ||u||=√29, ||v||=√17. cosθ=3/√493. θ=arccos(3/√493)≈82.23°. proj_v(u)=(3/17)⟨4,1⟩=⟨12/17, 3/17⟩."
+        },
+        {
+          "problem": "Find all square roots of z = -2+2√3i in rectangular form.",
+          "answer": "r=√(4+12)=4. θ=arctan(2√3/(-2))=2π/3 (Q2). z=4cis(2π/3). Square roots: √4·cis((2π/3+2kπ)/2) = 2cis(π/3) and 2cis(4π/3). Root1: 2(1/2+i√3/2)=1+√3i. Root2: 2(-1/2-i√3/2)=-1-√3i."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Review Block D: Sequences, Series & Limits",
+      "skill": "comprehensive-limits-series-review",
+      "content": "Review of sequences, series, and limits as preparation for calculus.",
+      "keyPoints": [
+        "Arithmetic: aₙ=a₁+(n-1)d, Sₙ=n/2(a₁+aₙ). Geometric: aₙ=a₁rⁿ⁻¹, Sₙ=a₁(1-rⁿ)/(1-r).",
+        "Infinite geometric: S=a₁/(1-r) for |r|<1.",
+        "Limits: direct substitution first. If 0/0: factor, rationalize, simplify.",
+        "Continuity: f(c) defined, limit exists, limit=f(c).",
+        "Limits at infinity: compare degrees for rational functions.",
+        "Connection: infinite series = limit of partial sums."
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Review Block D: Mixed Sequences/Limits Problems",
+      "skill": "comprehensive-limits-series-review",
+      "problems": [
+        {
+          "problem": "Find the sum: Σₖ₌₁^∞ 3·(2/5)ᵏ.",
+          "answer": "Geometric: a₁=3(2/5)=6/5, r=2/5. S=a₁/(1-r)=(6/5)/(3/5)=2."
+        },
+        {
+          "problem": "Evaluate lim(x→2) (x³-8)/(x²-4).",
+          "answer": "0/0. Factor: (x-2)(x²+2x+4)/((x-2)(x+2))=(x²+2x+4)/(x+2). At x=2: (4+4+4)/4=12/4=3."
+        },
+        {
+          "problem": "Evaluate lim(x→∞) (√(4x²+1) - 2x).",
+          "answer": "Multiply by conjugate: (√(4x²+1)-2x)(√(4x²+1)+2x)/(√(4x²+1)+2x) = (4x²+1-4x²)/(√(4x²+1)+2x) = 1/(√(4x²+1)+2x). As x→∞: √(4x²+1)≈2x, so denominator→4x→∞. Limit=0."
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "rev-comp-inv": "(f∘g)(x)=2x²-1. (g∘f)(x)=4x²-12x+10. (f∘g)⁻¹=√((x+1)/2).",
+    "rev-rational": "Hole(-2,8/5). VA x=3. HA y=2. x-int x=2. y-int 4/3.",
+    "rev-exp-eq": "x=ln(5/9)/ln(3/2).",
+    "rev-identity": "LHS=cos²θ/(cosθ(1-sinθ))=RHS ✓.",
+    "rev-trig-eq": "{0, 2π/3, 4π/3}.",
+    "rev-triangle": "c≈6.46. Area≈22.50.",
+    "rev-conic": "Ellipse (x-1)²/1+(y+3)²/4=1. C(1,-3), c=√3.",
+    "rev-vectors": "θ≈82.23°. proj=⟨12/17,3/17⟩.",
+    "rev-complex-roots": "√(-2+2√3i) = {1+√3i, -1-√3i}.",
+    "rev-inf-series": "S=2.",
+    "rev-lim-factor": "lim=3.",
+    "rev-lim-conjugate": "lim=0."
+  }
+}

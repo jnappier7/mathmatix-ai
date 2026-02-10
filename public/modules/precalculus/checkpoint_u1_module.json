@@ -1,0 +1,167 @@
+{
+  "moduleId": "checkpoint_u1",
+  "course": "Pre-Calculus",
+  "unit": 1,
+  "title": "Unit 1 Checkpoint: Function Toolkit & Transformations",
+  "weeks": "5",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of function families, transformations, combining and composing functions, inverses, and domain/range analysis. Covers all Unit 1 skills with multi-step problems requiring algebraic reasoning and graphical interpretation.",
+  "skillsCovered": [
+    "function-families-overview",
+    "transformations-toolkit",
+    "combining-functions",
+    "function-composition",
+    "inverse-functions",
+    "domain-range-analysis"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    {
+      "skillId": "function-families-overview",
+      "reteachFocus": "Parent function library (linear, quadratic, cubic, absolute value, square root, exponential, logarithmic, rational), identifying key features: domain, range, asymptotes, end behavior, intercepts",
+      "resources": ["unit1_functions_toolkit_module.json - scaffold: explanation, model"]
+    },
+    {
+      "skillId": "transformations-toolkit",
+      "reteachFocus": "Transformation template g(x) = af(b(x - c)) + d, order of transformations, identifying vertex/key point shifts, describing transformations from equations and writing equations from descriptions",
+      "resources": ["unit1_transformations_module.json - scaffold: explanation, model, guided_practice"]
+    },
+    {
+      "skillId": "combining-functions",
+      "reteachFocus": "Sum, difference, product, and quotient of functions, simplifying combined expressions, domain restrictions from denominators and radicals",
+      "resources": ["unit1_operations_composition_module.json - scaffold: explanation, model"]
+    },
+    {
+      "skillId": "function-composition",
+      "reteachFocus": "Evaluating f(g(x)) and g(f(x)), finding composition domains, decomposing composite functions into component parts, solving equations involving compositions",
+      "resources": ["unit1_operations_composition_module.json - scaffold: guided_practice, independent_practice"]
+    },
+    {
+      "skillId": "inverse-functions",
+      "reteachFocus": "Algebraic process for finding inverses (swap and solve), restricted domains for non-one-to-one functions, verifying f(f^{-1}(x)) = x, domain/range swap between f and f^{-1}",
+      "resources": ["unit1_inverses_module.json - scaffold: explanation, model, guided_practice"]
+    },
+    {
+      "skillId": "domain-range-analysis",
+      "reteachFocus": "Domain restrictions from fractions (denominator != 0), radicals (radicand >= 0), logarithms (argument > 0), composite domain analysis, interval notation",
+      "resources": ["unit1_functions_toolkit_module.json - scaffold: guided_practice", "unit1_operations_composition_module.json - scaffold: model"]
+    }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "pcu1-1",
+      "question": "Identify the parent function for h(x) = -2^(x+3) + 4 and list all key features: domain, range, asymptotes, end behavior, y-intercept, and x-intercept.",
+      "answer": "Parent function: f(x) = 2^x (exponential). Transformations: shift left 3, reflect over x-axis, shift up 4. Domain: (-inf, inf). Range: (-inf, 4). Horizontal asymptote: y = 4 (no vertical asymptote). End behavior: as x -> -inf, h(x) -> 4 (from below); as x -> inf, h(x) -> -inf. y-intercept: h(0) = -2^(0+3) + 4 = -8 + 4 = -4, so (0, -4). x-intercept: -2^(x+3) + 4 = 0 -> 2^(x+3) = 4 = 2^2 -> x + 3 = 2 -> x = -1, so (-1, 0).",
+      "skill": "function-families-overview",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu1-2",
+      "question": "Starting from the parent function f(x) = |x|, describe all transformations applied to obtain g(x) = (1/2)|x + 3| - 4. Then find: the vertex, domain, range, y-intercept, and x-intercepts.",
+      "answer": "Transformations (in order): shift left 3, vertical compression by factor 1/2, shift down 4. Vertex: (-3, -4). Domain: (-inf, inf). Range: [-4, inf). y-intercept: g(0) = (1/2)|0 + 3| - 4 = 3/2 - 4 = -5/2, so (0, -5/2). x-intercepts: (1/2)|x + 3| - 4 = 0 -> |x + 3| = 8 -> x + 3 = 8 or x + 3 = -8 -> x = 5 or x = -11, so (5, 0) and (-11, 0).",
+      "skill": "transformations-toolkit",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu1-3",
+      "question": "Given the parent function f(x) = sqrt(x), write the equation of the function that results from applying these transformations in order: (1) reflect over the x-axis, (2) horizontal compression by a factor of 2, (3) shift right 1, (4) shift up 5. State the domain of the resulting function.",
+      "answer": "Step-by-step: Start with sqrt(x). (1) Reflect over x-axis: -sqrt(x). (2) Horizontal compression by factor 2 (replace x with 2x): -sqrt(2x). (3) Shift right 1 (replace x with x - 1): -sqrt(2(x - 1)). (4) Shift up 5 (add 5): g(x) = -sqrt(2(x - 1)) + 5. Domain: 2(x - 1) >= 0 -> x >= 1, so [1, inf).",
+      "skill": "transformations-toolkit",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu1-4",
+      "question": "For f(x) = x^2 - 4 and g(x) = x + 2, find (f/g)(x). Simplify completely and state the domain.",
+      "answer": "(f/g)(x) = (x^2 - 4)/(x + 2) = (x - 2)(x + 2)/(x + 2) = x - 2, with restriction x != -2 (since g(-2) = 0). Domain: (-inf, -2) union (-2, inf). Note: the simplified form is y = x - 2 with a hole at x = -2.",
+      "skill": "combining-functions",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu1-5",
+      "question": "For f(x) = 3x - 1 and g(x) = x^2 + 2: (a) Find f(g(x)). (b) Find g(f(x)). (c) Find all values of x such that f(g(x)) = 14.",
+      "answer": "(a) f(g(x)) = f(x^2 + 2) = 3(x^2 + 2) - 1 = 3x^2 + 6 - 1 = 3x^2 + 5. (b) g(f(x)) = g(3x - 1) = (3x - 1)^2 + 2 = 9x^2 - 6x + 1 + 2 = 9x^2 - 6x + 3. (c) 3x^2 + 5 = 14 -> 3x^2 = 9 -> x^2 = 3 -> x = sqrt(3) or x = -sqrt(3).",
+      "skill": "function-composition",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu1-6",
+      "question": "For f(x) = 1/(x - 3) and g(x) = sqrt(x), find f(g(x)) and determine its domain.",
+      "answer": "f(g(x)) = f(sqrt(x)) = 1/(sqrt(x) - 3). Domain requires two conditions: (1) g(x) is defined: x >= 0, (2) denominator != 0: sqrt(x) - 3 != 0 -> sqrt(x) != 3 -> x != 9. Domain: [0, 9) union (9, inf).",
+      "skill": "function-composition",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "pcu1-7",
+      "question": "Find the inverse of f(x) = (2x + 5)/(x - 3). State the domain and range of both f and f^(-1).",
+      "answer": "Let y = (2x + 5)/(x - 3). Swap x and y: x = (2y + 5)/(y - 3). Solve for y: x(y - 3) = 2y + 5 -> xy - 3x = 2y + 5 -> xy - 2y = 3x + 5 -> y(x - 2) = 3x + 5 -> y = (3x + 5)/(x - 2). So f^(-1)(x) = (3x + 5)/(x - 2). Domain of f: (-inf, 3) union (3, inf) [x != 3]. Range of f: (-inf, 2) union (2, inf) [y != 2, since HA is y = 2]. Domain of f^(-1): (-inf, 2) union (2, inf) [x != 2]. Range of f^(-1): (-inf, 3) union (3, inf) [y != 3, since HA is y = 3].",
+      "skill": "inverse-functions",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu1-8",
+      "question": "Find the inverse of f(x) = (x - 2)^2 + 1, where the domain of f is restricted to x >= 2. State the domain of f^(-1). Verify that f(f^(-1)(x)) = x.",
+      "answer": "Let y = (x - 2)^2 + 1. Swap: x = (y - 2)^2 + 1 -> x - 1 = (y - 2)^2 -> y - 2 = sqrt(x - 1) (positive root since y >= 2) -> y = sqrt(x - 1) + 2. So f^(-1)(x) = sqrt(x - 1) + 2. Domain of f^(-1): x >= 1, i.e., [1, inf). Verification: f(f^(-1)(x)) = f(sqrt(x - 1) + 2) = (sqrt(x - 1) + 2 - 2)^2 + 1 = (sqrt(x - 1))^2 + 1 = (x - 1) + 1 = x.",
+      "skill": "inverse-functions",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "pcu1-9",
+      "question": "Express h(x) = 1/(x^2 - 4)^3 as a composition h(x) = f(g(x)), where neither f nor g is the identity function. Then find the domain of h.",
+      "answer": "Decomposition: Let g(x) = x^2 - 4 and f(x) = 1/x^3 (equivalently, f(x) = x^(-3)). Then f(g(x)) = 1/(x^2 - 4)^3 = h(x). (Other valid decompositions exist, e.g., g(x) = (x^2 - 4)^3 and f(x) = 1/x.) Domain of h: x^2 - 4 != 0 -> x^2 != 4 -> x != 2 and x != -2. Domain: (-inf, -2) union (-2, 2) union (2, inf).",
+      "skill": "function-composition",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "pcu1-10",
+      "question": "ANALYSIS: A company's revenue function is R(x) = 200x - x^2 and its cost function is C(x) = 50x + 2000, where x is the number of units produced and sold. (a) Find the profit function P(x) = R(x) - C(x). (b) Find the break-even points (where P(x) = 0). Express answers in exact form. (c) For what values of x is the company profitable? Express in interval notation.",
+      "answer": "(a) P(x) = R(x) - C(x) = (200x - x^2) - (50x + 2000) = -x^2 + 150x - 2000. (b) Set P(x) = 0: -x^2 + 150x - 2000 = 0 -> x^2 - 150x + 2000 = 0. Quadratic formula: x = (150 +/- sqrt(150^2 - 4(1)(2000)))/2 = (150 +/- sqrt(22500 - 8000))/2 = (150 +/- sqrt(14500))/2 = (150 +/- 10*sqrt(145))/2 = 75 +/- 5*sqrt(145). Approximate values: 5*sqrt(145) ~ 60.21, so x ~ 14.79 or x ~ 135.21. (c) Since the parabola opens downward (a = -1 < 0), P(x) > 0 between the roots: (75 - 5*sqrt(145), 75 + 5*sqrt(145)), approximately (14.79, 135.21). In context, x must be a positive integer, so the company is profitable for integer values of x from 15 to 135.",
+      "skill": "domain-range-analysis",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "pcu1-spiral-1",
+      "question": "SPIRAL (Factoring): Factor completely: 2x^3 - 10x^2 - 12x.",
+      "answer": "Factor out GCF: 2x(x^2 - 5x - 6) = 2x(x - 6)(x + 1).",
+      "skill": "factoring-fluency",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review - not counted toward checkpoint score"
+    },
+    {
+      "id": "pcu1-spiral-2",
+      "question": "SPIRAL (Equation Solving): Solve for x: (x + 2)/(x - 1) = 3/(x + 4). Check for extraneous solutions.",
+      "answer": "Cross-multiply: (x + 2)(x + 4) = 3(x - 1). Expand: x^2 + 6x + 8 = 3x - 3. Rearrange: x^2 + 3x + 11 = 0. Discriminant: 9 - 44 = -35 < 0. No real solutions.",
+      "skill": "equation-solving-review",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review - not counted toward checkpoint score"
+    }
+  ],
+  "answerKeys": {
+    "pcu1-1": "Parent: f(x)=2^x. Domain: (-inf,inf). Range: (-inf,4). HA: y=4. End behavior: x->-inf, h(x)->4; x->inf, h(x)->-inf. y-int: (0,-4). x-int: (-1,0).",
+    "pcu1-2": "Transformations: left 3, vert compress 1/2, down 4. Vertex: (-3,-4). Domain: (-inf,inf). Range: [-4,inf). y-int: (0,-5/2). x-int: (5,0) and (-11,0).",
+    "pcu1-3": "g(x) = -sqrt(2(x-1)) + 5. Domain: [1, inf).",
+    "pcu1-4": "(f/g)(x) = x - 2, x != -2. Domain: (-inf,-2) union (-2,inf).",
+    "pcu1-5": "(a) f(g(x)) = 3x^2 + 5. (b) g(f(x)) = 9x^2 - 6x + 3. (c) x = sqrt(3) or x = -sqrt(3).",
+    "pcu1-6": "f(g(x)) = 1/(sqrt(x) - 3). Domain: [0,9) union (9,inf).",
+    "pcu1-7": "f^(-1)(x) = (3x+5)/(x-2). Dom f: x!=3, Range f: y!=2. Dom f^(-1): x!=2, Range f^(-1): y!=3.",
+    "pcu1-8": "f^(-1)(x) = sqrt(x-1) + 2. Domain of f^(-1): [1,inf). Verified f(f^(-1)(x)) = x.",
+    "pcu1-9": "g(x) = x^2 - 4, f(x) = 1/x^3. Domain of h: (-inf,-2) union (-2,2) union (2,inf).",
+    "pcu1-10": "(a) P(x) = -x^2 + 150x - 2000. (b) x = 75 +/- 5*sqrt(145) (approx 14.79 and 135.21). (c) Profitable for x in (75-5sqrt(145), 75+5sqrt(145)).",
+    "pcu1-spiral-1": "2x(x-6)(x+1)",
+    "pcu1-spiral-2": "No real solutions (discriminant = -35 < 0)"
+  }
+}

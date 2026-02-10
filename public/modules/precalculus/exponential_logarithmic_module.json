@@ -1,0 +1,382 @@
+{
+  "moduleId": "exponential_logarithmic_functions",
+  "course": "Pre-Calculus",
+  "unit": 3,
+  "title": "Exponential & Logarithmic Functions",
+  "weeks": "10-12",
+  "estimatedDuration": 15,
+  "description": "Extends Algebra 2 treatment of exponential and logarithmic functions to Pre-Calculus depth: rigorous definitions, properties of exponential growth and decay, logarithmic properties and change of base, solving complex exponential and logarithmic equations, and real-world modeling applications (compound interest, population, half-life, pH, decibels).",
+  "skills": [
+    "exponential-functions-properties",
+    "logarithmic-functions-properties",
+    "logarithm-rules-expansion",
+    "solving-exponential-equations",
+    "solving-logarithmic-equations",
+    "exponential-logarithmic-modeling"
+  ],
+  "standardsAlignment": ["F-LE.4", "F-BF.5", "F-IF.7e", "F-IF.8b", "A-SSE.3c"],
+  "goals": [
+    "Analyze exponential functions f(x) = a·bˣ and f(x) = a·eʳˣ including domain, range, asymptotes, intercepts, transformations, and end behavior for growth and decay.",
+    "Evaluate and analyze logarithmic functions including common log, natural log, and arbitrary base; convert between exponential and logarithmic forms.",
+    "Apply logarithm properties (product, quotient, power rules) to expand, condense, and simplify logarithmic expressions; use change of base formula.",
+    "Solve exponential equations using logarithms, including those requiring substitution or the one-to-one property.",
+    "Solve logarithmic equations, checking for extraneous solutions that violate domain restrictions.",
+    "Build and interpret exponential and logarithmic models for real-world contexts including compound interest, continuous growth, half-life, and logistic growth."
+  ],
+  "instructionalStrategy": [
+    "Gradual release: concept-intro → I Do → concept-check → We Do → check-in → You Do → mastery-check",
+    "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
+    "Emphasis on inverse relationship: exp and log 'undo' each other",
+    "Spiral prior skills: polynomial factoring, rational equations, function composition/inverses"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Exponential Functions & Their Properties",
+      "skill": "exponential-functions-properties",
+      "content": "Exponential functions f(x) = a·bˣ (b > 0, b ≠ 1) model growth (b > 1) and decay (0 < b < 1). The natural exponential f(x) = eˣ where e ≈ 2.71828 is fundamental to continuous processes.",
+      "keyPoints": [
+        "f(x) = a·bˣ: a = initial value (y-intercept when no shifts), b = growth/decay factor",
+        "Growth: b > 1 (increasing). Decay: 0 < b < 1 (decreasing)",
+        "Domain: (-∞, ∞). Range: (0, ∞) for a > 0. Horizontal asymptote: y = 0 (or y = d with vertical shift)",
+        "Continuous growth/decay: A(t) = A₀·eʳᵗ, where r > 0 for growth, r < 0 for decay",
+        "Compound interest: A = P(1 + r/n)ⁿᵗ; continuous compounding: A = Peʳᵗ",
+        "Half-life: A(t) = A₀·(1/2)^(t/h) where h = half-life period",
+        "Transformations: g(x) = a·bˣ⁻ᶜ + d shifts HA to y = d, shifts graph right c units"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Exponential Functions — Worked Examples",
+      "skill": "exponential-functions-properties",
+      "examples": [
+        {
+          "problem": "For f(x) = 3·2ˣ⁻¹ − 4, identify the parent function, all transformations, domain, range, asymptote, y-intercept, and end behavior.",
+          "solution": "Parent: g(x) = 2ˣ. Transformations: shift right 1, vertical stretch by 3, shift down 4. Domain: (-∞, ∞). Range: (-4, ∞). HA: y = -4. y-intercept: f(0) = 3·2⁻¹ - 4 = 3/2 - 4 = -5/2, so (0, -5/2). x-intercept: 3·2ˣ⁻¹ - 4 = 0 → 2ˣ⁻¹ = 4/3 → x - 1 = log₂(4/3) → x = 1 + log₂(4/3) ≈ 1.415. End behavior: as x → -∞, f(x) → -4⁺; as x → ∞, f(x) → ∞."
+        },
+        {
+          "problem": "Write an exponential function passing through (0, 5) and (3, 40).",
+          "solution": "f(x) = a·bˣ. At x = 0: a·b⁰ = a = 5. So f(x) = 5·bˣ. At x = 3: 5·b³ = 40 → b³ = 8 → b = 2. Therefore f(x) = 5·2ˣ."
+        },
+        {
+          "problem": "An investment of $10,000 earns 6% annual interest compounded monthly. (a) Write the function A(t). (b) Find the value after 10 years. (c) How long until the investment doubles?",
+          "solution": "(a) A(t) = 10000(1 + 0.06/12)^(12t) = 10000(1.005)^(12t). (b) A(10) = 10000(1.005)^120 = 10000(1.8194) ≈ $18,193.97. (c) 20000 = 10000(1.005)^(12t) → 2 = 1.005^(12t) → ln(2) = 12t·ln(1.005) → t = ln(2)/(12·ln(1.005)) = 0.6931/(12·0.004988) ≈ 0.6931/0.05986 ≈ 11.58 years."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Logarithmic Functions & Properties",
+      "skill": "logarithmic-functions-properties",
+      "content": "The logarithm y = log_b(x) is the inverse of the exponential y = bˣ. It answers: 'To what power must b be raised to get x?' Common log: log(x) = log₁₀(x). Natural log: ln(x) = logₑ(x).",
+      "keyPoints": [
+        "Definition: log_b(x) = y ↔ bʸ = x (b > 0, b ≠ 1, x > 0)",
+        "Domain: (0, ∞). Range: (-∞, ∞). Vertical asymptote: x = 0",
+        "Key values: log_b(1) = 0, log_b(b) = 1, log_b(bⁿ) = n",
+        "Inverse relationship: b^(log_b(x)) = x and log_b(bˣ) = x",
+        "Logarithmic graphs: increasing for b > 1, decreasing for 0 < b < 1",
+        "Transformations: g(x) = a·log_b(x − c) + d shifts VA to x = c",
+        "Change of base: log_b(x) = ln(x)/ln(b) = log(x)/log(b)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Logarithmic Functions — Worked Examples",
+      "skill": "logarithmic-functions-properties",
+      "examples": [
+        {
+          "problem": "For g(x) = -2·log₃(x + 4) + 1, find: domain, range, VA, x-intercept, y-intercept, and end behavior.",
+          "solution": "Domain: x + 4 > 0 → x > -4, so (-4, ∞). Range: (-∞, ∞). VA: x = -4. y-intercept: g(0) = -2·log₃(4) + 1 ≈ -2(1.2619) + 1 ≈ -1.524. x-intercept: -2·log₃(x+4) + 1 = 0 → log₃(x+4) = 1/2 → x + 4 = 3^(1/2) = √3 → x = √3 - 4 ≈ -2.268. End behavior: as x → -4⁺, g(x) → ∞; as x → ∞, g(x) → -∞."
+        },
+        {
+          "problem": "Convert between forms: (a) 5³ = 125 to logarithmic form. (b) log₄(1/16) = -2 to exponential form. (c) Evaluate log₈(32) without a calculator.",
+          "solution": "(a) log₅(125) = 3. (b) 4⁻² = 1/16. (c) log₈(32): let log₈(32) = x, so 8ˣ = 32. Rewrite: (2³)ˣ = 2⁵ → 2³ˣ = 2⁵ → 3x = 5 → x = 5/3."
+        },
+        {
+          "problem": "Given log₂(5) ≈ 2.322, evaluate: (a) log₂(20), (b) log₂(5/8), (c) log₂(√5).",
+          "solution": "(a) log₂(20) = log₂(4·5) = log₂(4) + log₂(5) = 2 + 2.322 = 4.322. (b) log₂(5/8) = log₂(5) - log₂(8) = 2.322 - 3 = -0.678. (c) log₂(√5) = log₂(5^(1/2)) = (1/2)·log₂(5) = 1.161."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Logarithm Rules & Expansion/Condensation",
+      "skill": "logarithm-rules-expansion",
+      "content": "Three fundamental properties of logarithms allow algebraic manipulation: the Product Rule, Quotient Rule, and Power Rule. These are used to expand (break apart) or condense (combine) logarithmic expressions.",
+      "keyPoints": [
+        "Product Rule: log_b(MN) = log_b(M) + log_b(N)",
+        "Quotient Rule: log_b(M/N) = log_b(M) - log_b(N)",
+        "Power Rule: log_b(Mᵖ) = p·log_b(M)",
+        "Change of Base: log_b(x) = log_a(x)/log_a(b) for any valid base a",
+        "Expansion: write a single log as a sum/difference of simpler logs",
+        "Condensation: combine multiple log terms into a single logarithm",
+        "Common traps: log(M + N) ≠ log(M) + log(N); log(M/N) ≠ log(M)/log(N)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Log Rules — Worked Examples",
+      "skill": "logarithm-rules-expansion",
+      "examples": [
+        {
+          "problem": "Expand completely: log₂(8x³y/√z).",
+          "solution": "log₂(8x³y/√z) = log₂(8x³y) - log₂(√z) = log₂(8) + log₂(x³) + log₂(y) - log₂(z^(1/2)) = 3 + 3·log₂(x) + log₂(y) - (1/2)·log₂(z)."
+        },
+        {
+          "problem": "Condense into a single logarithm: 3·ln(x) - (1/2)·ln(y) + 4·ln(z).",
+          "solution": "= ln(x³) - ln(y^(1/2)) + ln(z⁴) = ln(x³·z⁴/√y)."
+        },
+        {
+          "problem": "Use change of base to evaluate log₅(17) using natural logarithm. Then verify: 5^(answer) ≈ 17.",
+          "solution": "log₅(17) = ln(17)/ln(5) ≈ 2.8332/1.6094 ≈ 1.7604. Verify: 5^1.7604 ≈ 17.0 ✓."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Exponential & Logarithmic Foundations Practice",
+      "skills": ["exponential-functions-properties", "logarithmic-functions-properties", "logarithm-rules-expansion"],
+      "problems": [
+        {
+          "problem": "For f(x) = -e^(x-2) + 3, find: domain, range, HA, intercepts, and end behavior.",
+          "hints": ["Parent: eˣ. Shift right 2, reflect over x-axis, shift up 3", "HA: y = 3. Range: (-∞, 3)", "y-int: f(0) = -e⁻² + 3 ≈ 2.865", "x-int: -e^(x-2)+3=0 → e^(x-2)=3 → x=2+ln(3)"],
+          "answer": "Domain: (-∞,∞). Range: (-∞,3). HA: y=3. y-int: (0, -e⁻²+3) ≈ (0, 2.865). x-int: x = 2 + ln(3) ≈ 3.099. End behavior: as x→-∞, f(x)→3; as x→∞, f(x)→-∞."
+        },
+        {
+          "problem": "Expand: ln(x²(x+1)³/(x-1)⁴).",
+          "hints": ["Product/quotient rules first, then power rule", "ln(numerator) - ln(denominator)", "ln(x²) + ln((x+1)³) - ln((x-1)⁴)"],
+          "answer": "2·ln(x) + 3·ln(x+1) - 4·ln(x-1)."
+        },
+        {
+          "problem": "Condense: 2·log(x) + log(y) - 3·log(z) - log(4).",
+          "hints": ["Power rule: 2·log(x) = log(x²)", "Combine additions and subtractions", "Result is a single log"],
+          "answer": "log(x²y/(4z³))."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Solving Exponential Equations",
+      "skill": "solving-exponential-equations",
+      "content": "Exponential equations are solved by: (1) one-to-one property if bases can be matched, (2) taking logarithms of both sides, or (3) substitution for quadratic-in-form equations.",
+      "keyPoints": [
+        "One-to-one: if bˣ = bʸ then x = y (same base method)",
+        "Taking logs: if equation can't use same base, take ln (or log) of both sides",
+        "Isolate exponential term first, then take log: a·bᶠ⁽ˣ⁾ = c → bᶠ⁽ˣ⁾ = c/a → f(x) = log_b(c/a)",
+        "Quadratic form: equations like e²ˣ - 5eˣ + 6 = 0 → let u = eˣ → u² - 5u + 6 = 0",
+        "Always check: exponential expressions are always positive, so bˣ = negative has no solution"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Solving Exponential Equations — Worked Examples",
+      "skill": "solving-exponential-equations",
+      "examples": [
+        {
+          "problem": "Solve: 4^(2x-1) = 8^(x+2).",
+          "solution": "Rewrite with base 2: (2²)^(2x-1) = (2³)^(x+2) → 2^(4x-2) = 2^(3x+6). One-to-one: 4x - 2 = 3x + 6 → x = 8."
+        },
+        {
+          "problem": "Solve: 5·3^(2x) - 7·3^x - 6 = 0.",
+          "solution": "Let u = 3ˣ (u > 0). Then 5u² - 7u - 6 = 0. Quadratic formula: u = (7 ± √(49 + 120))/10 = (7 ± √169)/10 = (7 ± 13)/10. u = 20/10 = 2 or u = -6/10 = -0.6. Since u = 3ˣ > 0, reject u = -0.6. So 3ˣ = 2 → x = log₃(2) = ln(2)/ln(3) ≈ 0.6309."
+        },
+        {
+          "problem": "Solve: e²ˣ - 4eˣ - 5 = 0.",
+          "solution": "Let u = eˣ (u > 0). u² - 4u - 5 = 0 → (u - 5)(u + 1) = 0. u = 5 or u = -1. Reject u = -1 (since eˣ > 0). eˣ = 5 → x = ln(5) ≈ 1.6094."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Solving Logarithmic Equations",
+      "skill": "solving-logarithmic-equations",
+      "content": "Logarithmic equations are solved by: (1) converting to exponential form, (2) condensing to a single log then converting, or (3) using the one-to-one property. CRITICAL: always check solutions against domain restrictions (arguments of all logs must be positive).",
+      "keyPoints": [
+        "Convert to exponential: log_b(expression) = c → expression = bᶜ",
+        "Condense first: if multiple log terms, use rules to combine into one log",
+        "One-to-one: if log_b(M) = log_b(N) then M = N",
+        "ALWAYS CHECK: substitute back to verify all log arguments are positive",
+        "Extraneous solutions arise when solving produces values that make original log arguments ≤ 0"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Solving Logarithmic Equations — Worked Examples",
+      "skill": "solving-logarithmic-equations",
+      "examples": [
+        {
+          "problem": "Solve: log₂(x + 3) + log₂(x − 1) = 5.",
+          "solution": "Condense: log₂((x+3)(x-1)) = 5 → (x+3)(x-1) = 2⁵ = 32 → x² + 2x - 3 = 32 → x² + 2x - 35 = 0 → (x+7)(x-5) = 0. x = -7 or x = 5. Check x = -7: log₂(-7+3) = log₂(-4) — undefined. Reject. Check x = 5: log₂(8) + log₂(4) = 3 + 2 = 5 ✓. Solution: x = 5."
+        },
+        {
+          "problem": "Solve: ln(x) + ln(x + 2) = ln(3).",
+          "solution": "Condense: ln(x(x+2)) = ln(3) → x(x+2) = 3 → x² + 2x - 3 = 0 → (x+3)(x-1) = 0. x = -3 or x = 1. Check x = -3: ln(-3) — undefined. Reject. Check x = 1: ln(1) + ln(3) = 0 + ln(3) = ln(3) ✓. Solution: x = 1."
+        },
+        {
+          "problem": "Solve: log(x² + 4x) = log(x + 10) + log(2).",
+          "solution": "Condense right side: log(x² + 4x) = log(2(x + 10)) = log(2x + 20). One-to-one: x² + 4x = 2x + 20 → x² + 2x - 20 = 0. Quadratic formula: x = (-2 ± √(4 + 80))/2 = (-2 ± √84)/2 = -1 ± √21. x = -1 + √21 ≈ 3.583 or x = -1 - √21 ≈ -5.583. Check x = -1 + √21: x² + 4x = (-1+√21)² + 4(-1+√21) = 1 - 2√21 + 21 - 4 + 4√21 = 18 + 2√21 > 0 ✓. Also x + 10 = 9 + √21 > 0 ✓. Check x = -1 - √21 ≈ -5.583: x + 10 = 9 - √21 ≈ 4.42 > 0, but x² + 4x = (−1−√21)² + 4(−1−√21) = 22 + 2√21 − 4 − 4√21 = 18 − 2√21 ≈ 8.83 > 0 ✓. Both solutions are valid! x = -1 ± √21."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Solving Exponential & Logarithmic Equations Practice",
+      "skills": ["solving-exponential-equations", "solving-logarithmic-equations"],
+      "problems": [
+        {
+          "problem": "Solve: 2^(3x+1) = 5^(x-2).",
+          "hints": ["Take ln of both sides", "(3x+1)ln(2) = (x-2)ln(5)", "Distribute and collect x terms", "x(3ln2 - ln5) = -2ln5 - ln2"],
+          "answer": "ln both sides: (3x+1)ln2 = (x-2)ln5. Distribute: 3x·ln2 + ln2 = x·ln5 - 2ln5. Collect: x(3ln2 - ln5) = -2ln5 - ln2. x = (-2ln5 - ln2)/(3ln2 - ln5) = (-2(1.6094) - 0.6931)/(3(0.6931) - 1.6094) = (-3.9119)/(0.4699) ≈ -8.324."
+        },
+        {
+          "problem": "Solve: log₃(2x - 1) - log₃(x - 3) = 2.",
+          "hints": ["Condense: log₃((2x-1)/(x-3)) = 2", "Convert: (2x-1)/(x-3) = 9", "Solve: 2x-1 = 9(x-3)", "Check domain: x > 3"],
+          "answer": "log₃((2x-1)/(x-3)) = 2 → (2x-1)/(x-3) = 9 → 2x-1 = 9x-27 → -7x = -26 → x = 26/7 ≈ 3.714. Check: x > 3 ✓, 2x-1 = 45/7 > 0 ✓. Solution: x = 26/7."
+        },
+        {
+          "problem": "Solve: 3e^(2x) + 4e^x - 4 = 0.",
+          "hints": ["Let u = eˣ, u > 0", "3u² + 4u - 4 = 0", "Factor or use quadratic formula", "Only keep positive u values"],
+          "answer": "Let u = eˣ. 3u² + 4u - 4 = 0 → (3u - 2)(u + 2) = 0. u = 2/3 or u = -2. Reject u = -2. eˣ = 2/3 → x = ln(2/3) = ln2 - ln3 ≈ -0.4055."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Exponential & Logarithmic Modeling",
+      "skill": "exponential-logarithmic-modeling",
+      "content": "Real-world applications of exponential and logarithmic functions span finance, biology, chemistry, physics, and more. Key models include compound interest, population growth, radioactive decay, Newton's law of cooling, and logarithmic scales (pH, decibels, Richter).",
+      "keyPoints": [
+        "Compound interest: A = P(1 + r/n)ⁿᵗ; continuous: A = Peʳᵗ",
+        "Population growth: P(t) = P₀·eʳᵗ (uninhibited) or P(t) = K/(1 + Ae⁻ᵏᵗ) (logistic)",
+        "Radioactive decay: A(t) = A₀·e⁻ᵏᵗ; half-life: k = ln(2)/t₁/₂",
+        "pH = -log[H⁺]; decibels: dB = 10·log(I/I₀); Richter: M = log(A/A₀)",
+        "Newton's Cooling: T(t) = Tₛ + (T₀ - Tₛ)·e⁻ᵏᵗ",
+        "Doubling time: t = ln(2)/r for continuous growth"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Modeling Applications — Worked Examples",
+      "skill": "exponential-logarithmic-modeling",
+      "examples": [
+        {
+          "problem": "A radioactive substance has a half-life of 5 days. If there are initially 200 grams, (a) write the decay function, (b) find the amount after 12 days, (c) find when only 10 grams remain.",
+          "solution": "(a) k = ln(2)/5. A(t) = 200·e^(-ln(2)·t/5) = 200·(1/2)^(t/5). (b) A(12) = 200·(1/2)^(12/5) = 200·(1/2)^2.4 = 200·0.18946 ≈ 37.89 grams. (c) 10 = 200·(1/2)^(t/5) → (1/2)^(t/5) = 0.05 → (t/5)·ln(1/2) = ln(0.05) → t = 5·ln(0.05)/ln(0.5) = 5·(-2.9957)/(-0.6931) ≈ 21.61 days."
+        },
+        {
+          "problem": "If a coffee at 200°F is placed in a room at 70°F and cools to 150°F in 10 minutes, find: (a) the cooling constant k, (b) the temperature after 20 minutes, (c) when the coffee reaches 100°F.",
+          "solution": "(a) T(t) = 70 + (200-70)e⁻ᵏᵗ = 70 + 130e⁻ᵏᵗ. T(10) = 150: 150 = 70 + 130e⁻¹⁰ᵏ → 80 = 130e⁻¹⁰ᵏ → e⁻¹⁰ᵏ = 8/13 → -10k = ln(8/13) → k = -ln(8/13)/10 = ln(13/8)/10 ≈ 0.04855. (b) T(20) = 70 + 130e⁻²⁰ᵏ = 70 + 130·(8/13)² = 70 + 130·64/169 = 70 + 8320/169 ≈ 70 + 49.23 ≈ 119.23°F. (c) 100 = 70 + 130e⁻ᵏᵗ → 30 = 130e⁻ᵏᵗ → e⁻ᵏᵗ = 3/13 → -kt = ln(3/13) → t = -ln(3/13)/k = ln(13/3)/(ln(13/8)/10) = 10·ln(13/3)/ln(13/8) ≈ 10·1.4663/0.4855 ≈ 30.20 minutes."
+        },
+        {
+          "problem": "Compare: $5,000 invested at 4.5% compounded quarterly vs. 4.4% compounded continuously. Which yields more after 15 years?",
+          "solution": "Quarterly: A = 5000(1 + 0.045/4)^(4·15) = 5000(1.01125)⁶⁰ = 5000(1.9616) ≈ $9,808.02. Continuous: A = 5000·e^(0.044·15) = 5000·e^0.66 = 5000(1.9348) ≈ $9,673.95. The 4.5% compounded quarterly yields ≈ $134 more."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Modeling Practice",
+      "skill": "exponential-logarithmic-modeling",
+      "problems": [
+        {
+          "problem": "A culture of bacteria doubles every 4 hours. Starting with 500 bacteria, (a) write the growth function, (b) find the population after 14 hours, (c) when will the population reach 50,000?",
+          "hints": ["A(t) = 500·2^(t/4)", "A(14) = 500·2^(3.5)", "50000 = 500·2^(t/4) → 100 = 2^(t/4)"],
+          "answer": "(a) A(t) = 500·2^(t/4). (b) A(14) = 500·2^(3.5) = 500·11.314 ≈ 5,657 bacteria. (c) 100 = 2^(t/4) → t/4 = log₂(100) = ln(100)/ln(2) ≈ 6.644 → t ≈ 26.58 hours."
+        },
+        {
+          "problem": "A sound measures 75 decibels. If the threshold of hearing is I₀ = 10⁻¹² W/m², find the intensity of the sound. Then find the intensity of a sound that is 10 dB louder.",
+          "hints": ["dB = 10·log(I/I₀)", "75 = 10·log(I/10⁻¹²) → log(I/10⁻¹²) = 7.5", "I/10⁻¹² = 10^7.5", "10 dB louder = factor of 10 in intensity"],
+          "answer": "75 = 10·log(I/10⁻¹²) → I = 10⁻¹²·10^7.5 = 10⁻⁴·⁵ ≈ 3.162 × 10⁻⁵ W/m². For 85 dB: I = 10⁻¹²·10^8.5 = 10⁻³·⁵ ≈ 3.162 × 10⁻⁴ W/m² (10× louder)."
+        },
+        {
+          "problem": "How long will it take $8,000 to grow to $15,000 at 5.2% compounded continuously?",
+          "hints": ["A = Pe^(rt)", "15000 = 8000·e^(0.052t)", "Solve for t using ln"],
+          "answer": "15000 = 8000·e^(0.052t) → e^(0.052t) = 15/8 → 0.052t = ln(15/8) → t = ln(15/8)/0.052 = 0.6286/0.052 ≈ 12.09 years."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Exponential & Logarithmic Mastery Practice",
+      "skills": ["exponential-functions-properties", "logarithmic-functions-properties", "logarithm-rules-expansion", "solving-exponential-equations", "solving-logarithmic-equations", "exponential-logarithmic-modeling"],
+      "problems": [
+        {
+          "problem": "For f(x) = 2·(1/3)^(x+1) - 5, identify all key features: domain, range, HA, intercepts, and classify as growth or decay.",
+          "answer": "Parent: (1/3)ˣ. Base 1/3 < 1 → decay. Shift left 1, vertical stretch 2, shift down 5. Domain: (-∞,∞). Range: (-5,∞). HA: y = -5. y-int: f(0) = 2·(1/3)¹ - 5 = 2/3 - 5 = -13/3 ≈ -4.33. x-int: 2·(1/3)^(x+1) = 5 → (1/3)^(x+1) = 5/2 → x+1 = log_(1/3)(5/2) = -ln(5/2)/ln(3) ≈ -0.8340 → x ≈ -1.834."
+        },
+        {
+          "problem": "Expand completely: log₃(27x⁴/(y²√(x+1))).",
+          "answer": "log₃(27) + log₃(x⁴) - log₃(y²) - log₃((x+1)^(1/2)) = 3 + 4·log₃(x) - 2·log₃(y) - (1/2)·log₃(x+1)."
+        },
+        {
+          "problem": "Solve: 2^(x+3) · 4^(x-1) = 8^(2x).",
+          "answer": "Rewrite: 2^(x+3) · 2^(2(x-1)) = 2^(3·2x). Combine left: 2^(x+3+2x-2) = 2^(6x) → 2^(3x+1) = 2^(6x). One-to-one: 3x+1 = 6x → 1 = 3x → x = 1/3."
+        },
+        {
+          "problem": "Solve: log(x+3) + log(x-2) = log(4x).",
+          "answer": "Condense left: log((x+3)(x-2)) = log(4x) → (x+3)(x-2) = 4x → x² + x - 6 = 4x → x² - 3x - 6 = 0. x = (3 ± √(9+24))/2 = (3 ± √33)/2. x ≈ 4.372 or x ≈ -1.372. Check x ≈ 4.372: x+3 > 0, x-2 > 0, 4x > 0 ✓. Check x ≈ -1.372: x-2 < 0 → log(x-2) undefined. Reject. Solution: x = (3 + √33)/2."
+        },
+        {
+          "problem": "A population of 2,000 grows to 3,500 in 6 years with continuous growth. Find the growth rate r and predict the population after 15 years.",
+          "answer": "3500 = 2000·e^(6r) → e^(6r) = 7/4 → 6r = ln(7/4) → r = ln(7/4)/6 ≈ 0.5596/6 ≈ 0.09327 (9.33% per year). After 15 years: P(15) = 2000·e^(15·0.09327) = 2000·e^1.3991 ≈ 2000·4.0508 ≈ 8,102."
+        },
+        {
+          "problem": "An earthquake measured 6.8 on the Richter scale. (a) How many times more intense is it than a 4.2 quake? (b) What Richter magnitude is an earthquake that is 500 times more intense than a 3.0 quake?",
+          "answer": "(a) Difference: 6.8 - 4.2 = 2.6. Intensity ratio: 10^2.6 ≈ 398.1 times more intense. (b) 500 = 10^d → d = log(500) ≈ 2.699. Magnitude = 3.0 + 2.699 ≈ 5.7."
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "exp-transform": "Parent 2ˣ. HA: y=-4. y-int: (0,-5/2). x-int: x=1+log₂(4/3)≈1.415.",
+    "exp-two-points": "f(x)=5·2ˣ. a=5, b=2.",
+    "exp-compound": "A(t)=10000(1.005)^(12t). A(10)≈$18,194. Doubles in ≈11.58 yrs.",
+    "log-transform": "g(x)=-2·log₃(x+4)+1. VA: x=-4. x-int: x=√3-4. y-int≈-1.524.",
+    "log-conversions": "(a) log₅(125)=3. (b) 4⁻²=1/16. (c) log₈(32)=5/3.",
+    "log-evaluate": "(a) 4.322 (b) -0.678 (c) 1.161.",
+    "log-expand": "3+3log₂(x)+log₂(y)-(1/2)log₂(z).",
+    "log-condense": "ln(x³z⁴/√y).",
+    "log-change-base": "log₅(17)≈1.7604. 5^1.7604≈17.",
+    "wp-exp-features": "HA: y=3. y-int≈2.865. x-int: 2+ln3≈3.099.",
+    "wp-log-expand": "2ln(x)+3ln(x+1)-4ln(x-1).",
+    "wp-log-condense": "log(x²y/(4z³)).",
+    "solve-exp-same-base": "4x-2=3x+6 → x=8.",
+    "solve-exp-quadratic": "u=3ˣ=2. x=log₃(2)=ln2/ln3≈0.6309.",
+    "solve-exp-eu": "eˣ=5. x=ln5≈1.6094.",
+    "solve-log-sum": "x=5 (x=-7 extraneous).",
+    "solve-log-product": "x=1 (x=-3 extraneous).",
+    "solve-log-both-valid": "x=-1±√21 (both valid).",
+    "wp-solve-exp-log": "x=(-2ln5-ln2)/(3ln2-ln5)≈-8.324.",
+    "wp-solve-log-quot": "x=26/7≈3.714.",
+    "wp-solve-exp-sub": "x=ln(2/3)≈-0.4055.",
+    "model-halflife": "A(t)=200(1/2)^(t/5). A(12)≈37.89g. 10g at t≈21.61 days.",
+    "model-cooling": "k≈0.04855. T(20)≈119.23°F. 100°F at t≈30.20 min.",
+    "model-compare": "4.5% quarterly: $9,808. 4.4% continuous: $9,674. Quarterly wins.",
+    "wp-model-bacteria": "A(t)=500·2^(t/4). A(14)≈5,657. 50000 at t≈26.58 hrs.",
+    "wp-model-decibels": "75dB: I≈3.162×10⁻⁵ W/m². 85dB: 10× more.",
+    "wp-model-continuous": "t=ln(15/8)/0.052≈12.09 years.",
+    "ip-decay": "Decay. HA: y=-5. y-int: -13/3. x-int: x≈-1.834.",
+    "ip-expand": "3+4log₃(x)-2log₃(y)-(1/2)log₃(x+1).",
+    "ip-same-base": "3x+1=6x → x=1/3.",
+    "ip-log-equation": "x=(3+√33)/2. (x=(3-√33)/2 extraneous.)",
+    "ip-population": "r≈0.0933. P(15)≈8,102.",
+    "ip-richter": "(a) 10^2.6≈398× more. (b) M≈5.7."
+  }
+}

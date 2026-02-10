@@ -1,0 +1,167 @@
+{
+  "moduleId": "checkpoint_u3",
+  "course": "Pre-Calculus",
+  "unit": 3,
+  "title": "Unit 3 Checkpoint: Exponential & Logarithmic Functions",
+  "weeks": "12",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of exponential and logarithmic functions: properties, transformations, log rules, solving equations, and real-world modeling applications.",
+  "skillsCovered": [
+    "exponential-functions-properties",
+    "logarithmic-functions-properties",
+    "logarithm-rules-expansion",
+    "solving-exponential-equations",
+    "solving-logarithmic-equations",
+    "exponential-logarithmic-modeling"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    {
+      "skillId": "exponential-functions-properties",
+      "reteachFocus": "Exponential growth/decay identification, transformations of exponential functions, domain/range/asymptotes",
+      "resources": ["exponential_logarithmic_module.json - scaffold phases 1-2"]
+    },
+    {
+      "skillId": "logarithmic-functions-properties",
+      "reteachFocus": "Definition of logarithm, converting between forms, evaluating without calculator, log function features",
+      "resources": ["exponential_logarithmic_module.json - scaffold phases 3-4"]
+    },
+    {
+      "skillId": "logarithm-rules-expansion",
+      "reteachFocus": "Product/quotient/power rules, expanding and condensing, change of base formula",
+      "resources": ["exponential_logarithmic_module.json - scaffold phases 5-6"]
+    },
+    {
+      "skillId": "solving-exponential-equations",
+      "reteachFocus": "Same-base method, taking logarithms, quadratic substitution for exponentials",
+      "resources": ["exponential_logarithmic_module.json - scaffold phases 8-9"]
+    },
+    {
+      "skillId": "solving-logarithmic-equations",
+      "reteachFocus": "Condensing and converting to exponential form, checking for extraneous solutions",
+      "resources": ["exponential_logarithmic_module.json - scaffold phases 10-11"]
+    },
+    {
+      "skillId": "exponential-logarithmic-modeling",
+      "reteachFocus": "Compound interest, continuous growth/decay, half-life, Newton's cooling, logarithmic scales",
+      "resources": ["exponential_logarithmic_module.json - scaffold phases 12-13"]
+    }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "pcu3-1",
+      "question": "For f(x) = -3·e^(x-2) + 6, identify: parent function, all transformations, domain, range, HA, y-intercept, and x-intercept.",
+      "answer": "Parent: eˣ. Transformations: shift right 2, vertical stretch by 3, reflect over x-axis, shift up 6. Domain: (-∞, ∞). Range: (-∞, 6). HA: y = 6. y-intercept: f(0) = -3e⁻² + 6 = -3/e² + 6 ≈ 5.594. x-intercept: -3e^(x-2) + 6 = 0 → e^(x-2) = 2 → x - 2 = ln(2) → x = 2 + ln(2) ≈ 2.693.",
+      "skill": "exponential-functions-properties",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu3-2",
+      "question": "For g(x) = log₅(3 - x) + 2, find: domain, range, VA, x-intercept, and y-intercept.",
+      "answer": "Domain: 3 - x > 0 → x < 3, so (-∞, 3). Range: (-∞, ∞). VA: x = 3 (argument = 0). y-intercept: g(0) = log₅(3) + 2 ≈ 0.6826 + 2 ≈ 2.683. x-intercept: log₅(3-x) + 2 = 0 → log₅(3-x) = -2 → 3-x = 5⁻² = 1/25 → x = 3 - 1/25 = 74/25 = 2.96.",
+      "skill": "logarithmic-functions-properties",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu3-3",
+      "question": "Evaluate without a calculator: (a) log₄(64), (b) log₉(1/27), (c) ln(e⁵), (d) 10^(log(7)).",
+      "answer": "(a) 4ˣ = 64 → (2²)ˣ = 2⁶ → 2x = 6 → x = 3. (b) 9ˣ = 1/27 → (3²)ˣ = 3⁻³ → 2x = -3 → x = -3/2. (c) ln(e⁵) = 5 (inverse property). (d) 10^(log(7)) = 7 (inverse property).",
+      "skill": "logarithmic-functions-properties",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu3-4",
+      "question": "Expand completely: ln(e²x⁵/∛(y³z²)).",
+      "answer": "ln(e²x⁵) - ln((y³z²)^(1/3)) = ln(e²) + ln(x⁵) - (1/3)ln(y³z²) = 2 + 5ln(x) - (1/3)(3ln(y) + 2ln(z)) = 2 + 5ln(x) - ln(y) - (2/3)ln(z).",
+      "skill": "logarithm-rules-expansion",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu3-5",
+      "question": "Condense into a single logarithm: (1/2)·log(x+1) + 3·log(y) - 2·log(z) - log(5).",
+      "answer": "log((x+1)^(1/2)) + log(y³) - log(z²) - log(5) = log(y³√(x+1)/(5z²)).",
+      "skill": "logarithm-rules-expansion",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu3-6",
+      "question": "Solve: 9^(x+1) = 27^(2x-3).",
+      "answer": "Rewrite: (3²)^(x+1) = (3³)^(2x-3) → 3^(2x+2) = 3^(6x-9). One-to-one: 2x + 2 = 6x - 9 → 11 = 4x → x = 11/4.",
+      "skill": "solving-exponential-equations",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu3-7",
+      "question": "Solve: 4·e^(2x) - 17·e^x + 4 = 0. Give exact answers.",
+      "answer": "Let u = eˣ (u > 0). 4u² - 17u + 4 = 0. Quadratic formula: u = (17 ± √(289 - 64))/8 = (17 ± √225)/8 = (17 ± 15)/8. u = 32/8 = 4 or u = 2/8 = 1/4. Both positive ✓. eˣ = 4 → x = ln(4) = 2ln(2). eˣ = 1/4 → x = ln(1/4) = -2ln(2). Solutions: x = ±2ln(2).",
+      "skill": "solving-exponential-equations",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "pcu3-8",
+      "question": "Solve: log₃(x + 5) + log₃(x - 1) = 3. Check for extraneous solutions.",
+      "answer": "Condense: log₃((x+5)(x-1)) = 3 → (x+5)(x-1) = 27 → x² + 4x - 5 = 27 → x² + 4x - 32 = 0 → (x+8)(x-4) = 0. x = -8 or x = 4. Check x = -8: log₃(-8+5) = log₃(-3) — undefined. Reject. Check x = 4: log₃(9) + log₃(3) = 2 + 1 = 3 ✓. Solution: x = 4.",
+      "skill": "solving-logarithmic-equations",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu3-9",
+      "question": "A population of 12,000 bacteria decays by 15% each hour. (a) Write the decay function. (b) Find the population after 8 hours. (c) When will the population drop below 1,000?",
+      "answer": "(a) P(t) = 12000·(0.85)ᵗ. (b) P(8) = 12000·(0.85)⁸ = 12000·0.2725 ≈ 3,270 bacteria. (c) 1000 = 12000·(0.85)ᵗ → (0.85)ᵗ = 1/12 → t·ln(0.85) = ln(1/12) → t = ln(1/12)/ln(0.85) = -2.4849/(-0.16252) ≈ 15.29 hours.",
+      "skill": "exponential-logarithmic-modeling",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu3-10",
+      "question": "ANALYSIS: You have $20,000 to invest. Option A: 5% compounded monthly. Option B: 4.9% compounded continuously. (a) Write both functions. (b) Find the value of each after 20 years. (c) At what time (to the nearest year) does Option A first exceed Option B by more than $500?",
+      "answer": "(a) A(t) = 20000(1 + 0.05/12)^(12t) = 20000(1.004167)^(12t). B(t) = 20000·e^(0.049t). (b) A(20) = 20000(1.004167)^240 ≈ 20000(2.7126) ≈ $54,253. B(20) = 20000·e^0.98 ≈ 20000(2.6645) ≈ $53,290. (c) A(t) - B(t) > 500. Testing: At t=10: A(10) ≈ 20000(1.6470) ≈ 32940, B(10) ≈ 20000(1.6323) ≈ 32646. Diff ≈ 294. At t=15: A(15) ≈ 20000(2.1137) ≈ 42274, B(15) ≈ 20000(2.0855) ≈ 41710. Diff ≈ 564 > 500. At t=13: A ≈ $38,259, B ≈ $37,816, diff ≈ $443 (not yet). At t=14: A ≈ $40,217, B ≈ $39,715, diff ≈ $501 > $500. So at t = 14 years, Option A first exceeds B by more than $500.",
+      "skill": "exponential-logarithmic-modeling",
+      "difficulty": 6,
+      "points": 12
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "pcu3-spiral-1",
+      "question": "SPIRAL (Polynomial): Find all zeros of f(x) = x³ - 4x² - x + 4 using the Rational Root Theorem and synthetic division.",
+      "answer": "Test x=1: 1-4-1+4=0 ✓. SD: [1,-4,-1,4] ÷ (x-1) → [1,-3,-4,0]. x²-3x-4=(x-4)(x+1). Zeros: 1, 4, -1.",
+      "skill": "polynomial-zeros-multiplicity",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review - not counted toward checkpoint score"
+    },
+    {
+      "id": "pcu3-spiral-2",
+      "question": "SPIRAL (Rational): Fully analyze f(x) = (x+2)/(x²-4). Find domain, VA, HA, holes, intercepts.",
+      "answer": "f(x) = (x+2)/((x-2)(x+2)) = 1/(x-2), x≠-2. Hole at x=-2, y=1/(-2-2)=-1/4, so (-2,-1/4). VA: x=2. HA: y=0. No x-int (numerator=1≠0). y-int: f(0)=1/-2=-1/2, so (0,-1/2).",
+      "skill": "rational-function-analysis",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review - not counted toward checkpoint score"
+    }
+  ],
+  "answerKeys": {
+    "pcu3-1": "HA: y=6. Range: (-∞,6). y-int≈5.594. x-int: 2+ln2≈2.693.",
+    "pcu3-2": "Domain: (-∞,3). VA: x=3. y-int≈2.683. x-int: 74/25=2.96.",
+    "pcu3-3": "(a)3 (b)-3/2 (c)5 (d)7.",
+    "pcu3-4": "2+5ln(x)-ln(y)-(2/3)ln(z).",
+    "pcu3-5": "log(y³√(x+1)/(5z²)).",
+    "pcu3-6": "2x+2=6x-9 → x=11/4.",
+    "pcu3-7": "x=2ln2 or x=-2ln2 (i.e., x=±ln4).",
+    "pcu3-8": "x=4. (x=-8 extraneous.)",
+    "pcu3-9": "P(t)=12000(0.85)ᵗ. P(8)≈3270. Below 1000 at t≈15.29 hrs.",
+    "pcu3-10": "A: $54,253. B: $53,290. A exceeds B by $500+ at t=14 years.",
+    "pcu3-spiral-1": "Zeros: -1, 1, 4.",
+    "pcu3-spiral-2": "Hole (-2,-1/4). VA: x=2. HA: y=0. y-int: (0,-1/2)."
+  }
+}

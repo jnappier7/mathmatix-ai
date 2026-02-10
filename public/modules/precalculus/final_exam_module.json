@@ -1,0 +1,188 @@
+{
+  "moduleId": "final_exam",
+  "course": "Pre-Calculus",
+  "unit": 9,
+  "title": "Pre-Calculus Comprehensive Final Exam",
+  "weeks": "36",
+  "estimatedDuration": 60,
+  "type": "assessment",
+  "isFinal": true,
+  "description": "Comprehensive final exam covering all Pre-Calculus content: function analysis, polynomial/rational functions, exponential/logarithmic functions, trigonometry (foundations and advanced), analytic geometry, parametric/polar, vectors, complex numbers, sequences/series, and limits.",
+  "skillsCovered": [
+    "function-families-overview",
+    "transformations-toolkit",
+    "function-composition",
+    "inverse-functions",
+    "polynomial-zeros-multiplicity",
+    "rational-function-analysis",
+    "solving-exponential-equations",
+    "solving-logarithmic-equations",
+    "unit-circle-trig-values",
+    "trig-function-graphs",
+    "fundamental-trig-identities",
+    "solving-trig-equations",
+    "sum-difference-identities",
+    "double-half-angle-formulas",
+    "law-of-cosines",
+    "ellipse-analysis",
+    "hyperbola-analysis",
+    "parametric-equations",
+    "polar-coordinates",
+    "dot-product",
+    "vector-applications",
+    "complex-polar-form",
+    "sequences-geometric",
+    "series-sigma-notation",
+    "limits-algebraic",
+    "limits-continuity-infinity"
+  ],
+  "passThreshold": 70,
+  "assessmentProblems": [
+    {
+      "id": "pcf-1",
+      "question": "Given f(x) = 3x - 1 and g(x) = √(x + 4): (a) Find (f∘g)(x) and state its domain. (b) Find g⁻¹(x) and verify with g(g⁻¹(x)).",
+      "answer": "(a) (f∘g)(x) = f(√(x+4)) = 3√(x+4) - 1. Domain: x+4≥0 → x≥-4. (b) g(x)=√(x+4), y=√(x+4), x=√(y+4), x²=y+4, y=x²-4. g⁻¹(x)=x²-4 for x≥0. Verify: g(g⁻¹(x))=√((x²-4)+4)=√(x²)=x (for x≥0) ✓.",
+      "skill": "function-composition",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "pcf-2",
+      "question": "Find all zeros of f(x) = 2x⁴ - 3x³ - 9x² + 12x + 4, given that (x-2) is a factor.",
+      "answer": "Synthetic division by (x-2): 2x⁴-3x³-9x²+12x+4 = (x-2)(2x³+x²-7x-2). Test rational roots of cubic. x=-2: 2(-8)+(-2)²-7(-2)-2 = -16+4+14-2=0 ✓. So (x+2) is a factor. 2x³+x²-7x-2 = (x+2)(2x²-3x-1). Quadratic formula: x=(3±√(9+8))/4=(3±√17)/4. Zeros: x=2, x=-2, x=(3+√17)/4≈1.781, x=(3-√17)/4≈-0.281.",
+      "skill": "polynomial-zeros-multiplicity",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcf-3",
+      "question": "Solve exactly: (a) 4ˣ⁻¹ = 8²ˣ⁺³, (b) log₃(2x + 1) - log₃(x - 2) = 2.",
+      "answer": "(a) (2²)ˣ⁻¹ = (2³)²ˣ⁺³ → 2²ˣ⁻² = 2⁶ˣ⁺⁹. 2x-2=6x+9 → -4x=11 → x=-11/4. (b) log₃((2x+1)/(x-2))=2 → (2x+1)/(x-2)=9. 2x+1=9x-18 → 19=7x → x=19/7. Check domain: x-2=19/7-2=5/7>0 ✓, 2x+1=45/7>0 ✓.",
+      "skill": "solving-exponential-equations",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcf-4",
+      "question": "Evaluate without a calculator: (a) sin(11π/6), (b) cos(3π/4), (c) tan(5π/3), (d) csc(2π/3).",
+      "answer": "(a) sin(11π/6): Q4, ref π/6 → -sin(π/6) = -1/2. (b) cos(3π/4): Q2, ref π/4 → -cos(π/4) = -√2/2. (c) tan(5π/3): Q4, ref π/3 → -tan(π/3) = -√3. (d) csc(2π/3): Q2, ref π/3 → csc = 1/sin = 1/(√3/2) = 2/√3 = 2√3/3.",
+      "skill": "unit-circle-trig-values",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "pcf-5",
+      "question": "For y = -3sin(2x - π/2) + 1, find: amplitude, period, phase shift, midline, and the x-coordinate of the first maximum for x ≥ 0.",
+      "answer": "Rewrite: y = -3sin(2(x-π/4))+1. Amplitude: 3. Period: 2π/2=π. Phase shift: π/4 right. Midline: y=1. For -3sin: maximum occurs when sin=-1, i.e., 2(x-π/4)=-π/2, x-π/4=-π/4, x=0. First maximum at x=0, y=-3(-1)+1=4.",
+      "skill": "trig-function-graphs",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcf-6",
+      "question": "Verify the identity: (cos2θ)/(1+sin2θ) = (cosθ-sinθ)/(cosθ+sinθ).",
+      "answer": "LHS: cos2θ = cos²θ-sin²θ = (cosθ-sinθ)(cosθ+sinθ). 1+sin2θ = 1+2sinθcosθ = sin²θ+cos²θ+2sinθcosθ = (cosθ+sinθ)². So LHS = (cosθ-sinθ)(cosθ+sinθ)/(cosθ+sinθ)² = (cosθ-sinθ)/(cosθ+sinθ) = RHS ✓.",
+      "skill": "fundamental-trig-identities",
+      "difficulty": 6,
+      "points": 8
+    },
+    {
+      "id": "pcf-7",
+      "question": "Solve on [0, 2π): sin(2x) + sinx = 0.",
+      "answer": "sin(2x)+sinx = 2sinxcosx+sinx = sinx(2cosx+1)=0. sinx=0: x=0, π. 2cosx+1=0 → cosx=-1/2: x=2π/3, 4π/3. Solutions: {0, 2π/3, π, 4π/3}.",
+      "skill": "solving-trig-equations",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcf-8",
+      "question": "If cos A = -5/13 (A in Q3) and tan B = 3/4 (B in Q3), find the exact value of sin(A - B).",
+      "answer": "A in Q3: sin A = -12/13 (from 5-12-13, both neg in Q3). B in Q3: tan B = 3/4, so opp=3, adj=4 (both neg in Q3 but ratio positive). sin B = -3/5, cos B = -4/5 (from 3-4-5, both neg). sin(A-B) = sinAcosB - cosAsinB = (-12/13)(-4/5) - (-5/13)(-3/5) = 48/65 - 15/65 = 33/65.",
+      "skill": "sum-difference-identities",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcf-9",
+      "question": "In triangle ABC, a = 14, b = 9, c = 11. Find angle B.",
+      "answer": "Law of Cosines: b²=a²+c²-2ac·cosB. 81=196+121-2(14)(11)cosB. 81=317-308cosB. 308cosB=236. cosB=236/308=59/77. B=arccos(59/77)≈40.0°.",
+      "skill": "law-of-cosines",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcf-10",
+      "question": "Convert to standard form and identify: 9x² + 4y² + 36x - 24y + 36 = 0. Find center, vertices, foci, and eccentricity.",
+      "answer": "9(x²+4x)+4(y²-6y)=-36. 9(x+2)²+4(y-3)²=-36+36+36=36. (x+2)²/4+(y-3)²/9=1. Ellipse, vertical major axis. Center (-2,3). a²=9→a=3, b²=4→b=2. Vertices: (-2,3±3)=(-2,0) and (-2,6). c²=9-4=5→c=√5. Foci: (-2,3±√5). e=√5/3≈0.745.",
+      "skill": "ellipse-analysis",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcf-11",
+      "question": "Eliminate the parameter and identify the curve: x = 3sec(t), y = 2tan(t).",
+      "answer": "sec(t)=x/3, tan(t)=y/2. Use sec²t-tan²t=1: (x/3)²-(y/2)²=1 → x²/9-y²/4=1. Hyperbola, horizontal transverse, center (0,0), a=3, b=2.",
+      "skill": "parametric-equations",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "pcf-12",
+      "question": "(a) Convert the polar equation r = 4/(2 - cos θ) to rectangular form and identify the conic. (b) Convert (−4, 4) from rectangular to polar coordinates.",
+      "answer": "(a) r(2-cosθ)=4 → 2r-rcosθ=4 → 2r=4+x → 2√(x²+y²)=4+x. Square: 4(x²+y²)=(4+x)² → 4x²+4y²=16+8x+x² → 3x²+4y²-8x-16=0. 3(x²-8x/3)+4y²=16 → 3(x-4/3)²+4y²=16+16/3=64/3. (x-4/3)²/(64/9)+y²/(16/3)=1. Ellipse. (b) r=√(16+16)=4√2. tanθ=4/(-4)=-1, Q2: θ=3π/4. Polar: (4√2, 3π/4).",
+      "skill": "polar-coordinates",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "pcf-13",
+      "question": "Find the vector projection of u = ⟨5, -2⟩ onto v = ⟨3, 6⟩. Then find the work done by force F = ⟨-2, 7⟩ over displacement d = ⟨8, 3⟩.",
+      "answer": "proj_v(u) = ((u·v)/||v||²)v = ((15-12)/45)⟨3,6⟩ = (3/45)⟨3,6⟩ = (1/15)⟨3,6⟩ = ⟨1/5, 2/5⟩. Work: W = F·d = -16+21 = 5.",
+      "skill": "dot-product",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcf-14",
+      "question": "Find all fourth roots of z = -8 + 8√3 i. Express in rectangular form.",
+      "answer": "r=√(64+192)=√256=16. tanθ=8√3/(-8)=-√3, Q2: θ=2π/3. z=16cis(2π/3). Fourth roots: ⁴√16·cis((2π/3+2kπ)/4) = 2cis((2π/3+2kπ)/4). k=0: 2cis(π/6)=2(√3/2+i/2)=√3+i. k=1: 2cis(π/6+π/2)=2cis(2π/3)=2(-1/2+i√3/2)=-1+√3i. k=2: 2cis(π/6+π)=2cis(7π/6)=2(-√3/2-i/2)=-√3-i. k=3: 2cis(π/6+3π/2)=2cis(5π/3)=2(1/2-i√3/2)=1-√3i.",
+      "skill": "complex-polar-form",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "pcf-15",
+      "question": "A deposit of $1000 is made at the beginning of each year in an account earning 5% compounded annually. (a) Write a formula for the total amount after n years. (b) Find the amount after 20 years.",
+      "answer": "(a) Each $1000 grows: 1st deposit for n years = 1000(1.05)ⁿ, 2nd for n-1 years = 1000(1.05)ⁿ⁻¹, etc. Total = 1000(1.05)ⁿ + 1000(1.05)ⁿ⁻¹ + ··· + 1000(1.05) = 1000·1.05·(1.05ⁿ-1)/(1.05-1) = 1050(1.05ⁿ-1)/0.05 = 21000(1.05ⁿ-1). (b) A₂₀ = 21000(1.05²⁰-1) = 21000(2.6533-1) = 21000(1.6533) ≈ $34,719.25.",
+      "skill": "sequences-geometric",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "pcf-16",
+      "question": "Evaluate: (a) lim(x→-3) (x²+x-6)/(x²+5x+6), (b) lim(x→∞) (2x-1)/(√(4x²+3)), (c) lim(x→0) (1/(2+x) - 1/2)/x.",
+      "answer": "(a) Factor: (x+3)(x-2)/((x+3)(x+2))=(x-2)/(x+2). At x=-3: (-5)/(-1)=5. (b) Divide by x (x>0): (2-1/x)/(√(4+3/x²))→2/√4=2/2=1. (c) (1/(2+x)-1/2)/x = ((2-2-x)/(2(2+x)))/x = (-x/(2(2+x)))/x = -1/(2(2+x)). At x=0: -1/4.",
+      "skill": "limits-algebraic",
+      "difficulty": 5,
+      "points": 8
+    }
+  ],
+  "answerKeys": {
+    "pcf-1": "(f∘g)=3√(x+4)-1, domain x≥-4. g⁻¹=x²-4 (x≥0).",
+    "pcf-2": "x=2, x=-2, x=(3±√17)/4.",
+    "pcf-3": "(a) x=-11/4. (b) x=19/7.",
+    "pcf-4": "(a)-1/2 (b)-√2/2 (c)-√3 (d)2√3/3.",
+    "pcf-5": "Amp 3, period π, phase π/4 right, midline y=1. First max at x=0.",
+    "pcf-6": "cos2θ/(1+sin2θ)=(cosθ-sinθ)/(cosθ+sinθ) ✓.",
+    "pcf-7": "{0, 2π/3, π, 4π/3}.",
+    "pcf-8": "sin(A-B)=33/65.",
+    "pcf-9": "cosB=59/77, B≈40.0°.",
+    "pcf-10": "(x+2)²/4+(y-3)²/9=1. C(-2,3), V(-2,0)&(-2,6), F(-2,3±√5), e=√5/3.",
+    "pcf-11": "x²/9-y²/4=1. Hyperbola.",
+    "pcf-12": "(a) Ellipse. (b) (4√2, 3π/4).",
+    "pcf-13": "proj=⟨1/5,2/5⟩. W=5.",
+    "pcf-14": "Fourth roots: √3+i, -1+√3i, -√3-i, 1-√3i.",
+    "pcf-15": "A=21000(1.05ⁿ-1). A₂₀≈$34,719.",
+    "pcf-16": "(a)5. (b)1. (c)-1/4."
+  }
+}

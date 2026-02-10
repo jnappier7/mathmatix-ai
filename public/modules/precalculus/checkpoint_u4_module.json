@@ -1,0 +1,167 @@
+{
+  "moduleId": "checkpoint_u4",
+  "course": "Pre-Calculus",
+  "unit": 4,
+  "title": "Unit 4 Checkpoint: Trigonometry Foundations",
+  "weeks": "18",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of radian measure, unit circle values, trig function graphs, fundamental identities, solving trig equations, and sinusoidal modeling.",
+  "skillsCovered": [
+    "radian-measure-arc-length",
+    "unit-circle-trig-values",
+    "trig-function-graphs",
+    "fundamental-trig-identities",
+    "solving-trig-equations",
+    "sinusoidal-modeling"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    {
+      "skillId": "radian-measure-arc-length",
+      "reteachFocus": "Degree-radian conversion, arc length s=rθ, sector area A=½r²θ, angular/linear speed",
+      "resources": ["trigonometry_foundations_module.json - scaffold phases 1-2"]
+    },
+    {
+      "skillId": "unit-circle-trig-values",
+      "reteachFocus": "Unit circle coordinates, reference angles, ASTC quadrant signs, evaluating all six trig functions",
+      "resources": ["trigonometry_foundations_module.json - scaffold phases 3-4"]
+    },
+    {
+      "skillId": "trig-function-graphs",
+      "reteachFocus": "y = A sin(B(x-C)) + D parameters, amplitude, period, phase shift, tan/sec/csc graphs",
+      "resources": ["trigonometry_foundations_module.json - scaffold phases 6-7"]
+    },
+    {
+      "skillId": "fundamental-trig-identities",
+      "reteachFocus": "Pythagorean, reciprocal, quotient, cofunction identities; simplifying and verifying",
+      "resources": ["trigonometry_foundations_module.json - scaffold phases 9-10"]
+    },
+    {
+      "skillId": "solving-trig-equations",
+      "reteachFocus": "Isolating trig functions, reference angles, quadrant analysis, double-angle argument, general solutions",
+      "resources": ["trigonometry_foundations_module.json - scaffold phases 12-13"]
+    },
+    {
+      "skillId": "sinusoidal-modeling",
+      "reteachFocus": "Writing sinusoidal models from context, interpreting amplitude/period/shift, solving for specific values",
+      "resources": ["trigonometry_foundations_module.json - scaffold phases 7, 14"]
+    }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "pcu4-1",
+      "question": "A gear with radius 6 inches rotates at 200 rpm. Find: (a) the angular speed in radians per second, (b) the linear speed of a point on the edge in inches per second, (c) the distance traveled by a point on the edge in 30 seconds.",
+      "answer": "(a) ω = 200 rev/min × 2π rad/rev × 1 min/60 s = 400π/60 = 20π/3 rad/s ≈ 20.94 rad/s. (b) v = rω = 6(20π/3) = 40π ≈ 125.66 in/s. (c) d = v·t = 40π(30) = 1200π ≈ 3769.91 inches.",
+      "skill": "radian-measure-arc-length",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu4-2",
+      "question": "Evaluate without a calculator: (a) sin(5π/4), (b) cos(7π/6), (c) tan(5π/3), (d) csc(3π/4), (e) sec(4π/3).",
+      "answer": "(a) sin(5π/4): Q3, ref π/4 → -√2/2. (b) cos(7π/6): Q3, ref π/6 → -√3/2. (c) tan(5π/3): Q4, ref π/3 → -√3. (d) csc(3π/4): Q2, ref π/4 → csc = 1/sin = 1/(√2/2) = √2. (e) sec(4π/3): Q3, ref π/3 → sec = 1/cos = 1/(-1/2) = -2.",
+      "skill": "unit-circle-trig-values",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "pcu4-3",
+      "question": "For y = 5·sin(π/4·(x - 2)) - 3, find: amplitude, period, phase shift, vertical shift, midline, maximum value, minimum value.",
+      "answer": "Amplitude: 5. Period: 2π/(π/4) = 8. Phase shift: 2 units right. Vertical shift: down 3, midline y = -3. Maximum: -3 + 5 = 2. Minimum: -3 - 5 = -8.",
+      "skill": "trig-function-graphs",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu4-4",
+      "question": "Write the equation of a sinusoidal function with: amplitude 6, period 4π, phase shift 3π/2 to the right, midline y = 1. Use cosine form.",
+      "answer": "A = 6. Period 4π = 2π/B → B = 1/2. Phase shift C = 3π/2. D = 1. Equation: y = 6·cos((1/2)(x - 3π/2)) + 1.",
+      "skill": "trig-function-graphs",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu4-5",
+      "question": "Simplify to a single trig function: (tan²θ + 1)·cos²θ.",
+      "answer": "(tan²θ + 1)·cos²θ = sec²θ · cos²θ = (1/cos²θ) · cos²θ = 1.",
+      "skill": "fundamental-trig-identities",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu4-6",
+      "question": "Verify the identity: (1 - cos θ)/sin θ = sin θ/(1 + cos θ).",
+      "answer": "Multiply LHS by (1+cosθ)/(1+cosθ): (1-cosθ)(1+cosθ)/(sinθ(1+cosθ)) = (1-cos²θ)/(sinθ(1+cosθ)) = sin²θ/(sinθ(1+cosθ)) = sinθ/(1+cosθ) = RHS. ✓",
+      "skill": "fundamental-trig-identities",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu4-7",
+      "question": "Solve on [0, 2π): 2·sin²(x) - 3·sin(x) + 1 = 0.",
+      "answer": "Let u = sin(x): 2u² - 3u + 1 = 0 → (2u - 1)(u - 1) = 0. u = 1/2 or u = 1. sin(x) = 1/2: x = π/6, 5π/6. sin(x) = 1: x = π/2. Solutions: {π/6, π/2, 5π/6}.",
+      "skill": "solving-trig-equations",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu4-8",
+      "question": "Solve on [0, 2π): cos(2x) = -1/2.",
+      "answer": "Let u = 2x. cos(u) = -1/2. Reference angle: π/3. Cos negative in Q2 and Q3. u = 2π/3 or u = 4π/3. Since 0 ≤ x < 2π, we need 0 ≤ u < 4π. u = 2π/3, 4π/3, 2π/3 + 2π = 8π/3, 4π/3 + 2π = 10π/3. x = u/2: x = π/3, 2π/3, 4π/3, 5π/3. Solutions: {π/3, 2π/3, 4π/3, 5π/3}.",
+      "skill": "solving-trig-equations",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu4-9",
+      "question": "The depth of water in a harbor is modeled by d(t) = 4·cos(πt/6) + 12, where t is hours after midnight and d is in feet. (a) Find the maximum and minimum depths and when they occur. (b) Find the depth at 3:00 AM. (c) A ship requires 10 feet of depth. During what hours can it safely enter?",
+      "answer": "(a) Max: 12 + 4 = 16 ft when cos = 1 → t = 0 (midnight), t = 12 (noon). Min: 12 - 4 = 8 ft when cos = -1 → t = 6 (6 AM), t = 18 (6 PM). (b) d(3) = 4·cos(3π/6) + 12 = 4·cos(π/2) + 12 = 4(0) + 12 = 12 feet. (c) d(t) ≥ 10: 4cos(πt/6) + 12 ≥ 10 → cos(πt/6) ≥ -1/2. cos(u) ≥ -1/2 when u ∈ [-2π/3 + 2nπ, 2π/3 + 2nπ]. πt/6 ∈ [0, 2π/3] ∪ [4π/3, 2π] for first period (0-12h). t ∈ [0, 4] ∪ [8, 12]. The ship can safely enter from midnight to 4 AM and from 8 AM to noon (repeating every 12 hours).",
+      "skill": "sinusoidal-modeling",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "pcu4-10",
+      "question": "ANALYSIS: A Ferris wheel has a diameter of 50 meters, its center is 28 meters above the ground, and it makes one revolution every 8 minutes. A rider boards at the lowest point. (a) Write a sinusoidal function for the rider's height h(t). (b) Find h(3). (c) During the first revolution, at what times is the rider above 40 meters?",
+      "answer": "(a) Amplitude: 25 (radius). Midline: 28 (center height). Period: 8 min → B = 2π/8 = π/4. Lowest point at t = 0 → use negative cosine: h(t) = -25·cos(πt/4) + 28. Check: h(0) = -25(1) + 28 = 3 (lowest point = 28 - 25). (b) h(3) = -25·cos(3π/4) + 28 = -25(-√2/2) + 28 = 25√2/2 + 28 ≈ 17.68 + 28 = 45.68 meters. (c) h(t) > 40: -25cos(πt/4) + 28 > 40 → -25cos(πt/4) > 12 → cos(πt/4) < -12/25. Let α = arccos(-12/25) ≈ 2.0688. πt/4 ∈ (α, 2π - α). t ∈ (4α/π, 4(2π-α)/π) = (4(2.0688)/π, 4(2π-2.0688)/π) ≈ (2.634, 5.366). The rider is above 40 m from approximately t ≈ 2.63 to t ≈ 5.37 minutes.",
+      "skill": "sinusoidal-modeling",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "pcu4-spiral-1",
+      "question": "SPIRAL (Exponential): Solve 5^(2x-1) = 3^(x+4). Give an exact answer.",
+      "answer": "(2x-1)ln5 = (x+4)ln3. 2x·ln5 - ln5 = x·ln3 + 4ln3. x(2ln5 - ln3) = 4ln3 + ln5. x = (4ln3 + ln5)/(2ln5 - ln3).",
+      "skill": "solving-exponential-equations",
+      "difficulty": 5,
+      "points": 0,
+      "note": "Spiral review - not counted toward checkpoint score"
+    },
+    {
+      "id": "pcu4-spiral-2",
+      "question": "SPIRAL (Rational): Find the oblique asymptote of f(x) = (3x² + 2x - 5)/(x + 1).",
+      "answer": "Long division: 3x² ÷ x = 3x. 3x(x+1) = 3x²+3x. Subtract: -x-5. -x÷x = -1. -1(x+1) = -x-1. Subtract: -4. f(x) = 3x - 1 - 4/(x+1). Oblique asymptote: y = 3x - 1.",
+      "skill": "asymptote-analysis",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review - not counted toward checkpoint score"
+    }
+  ],
+  "answerKeys": {
+    "pcu4-1": "ω=20π/3 rad/s. v=40π≈125.66 in/s. d=1200π≈3770 in.",
+    "pcu4-2": "(a)-√2/2 (b)-√3/2 (c)-√3 (d)√2 (e)-2.",
+    "pcu4-3": "Amp 5, period 8, phase 2 right, midline -3, max 2, min -8.",
+    "pcu4-4": "y=6cos((1/2)(x-3π/2))+1.",
+    "pcu4-5": "sec²θ·cos²θ = 1.",
+    "pcu4-6": "sin²θ/(sinθ(1+cosθ))=sinθ/(1+cosθ). ✓",
+    "pcu4-7": "{π/6, π/2, 5π/6}.",
+    "pcu4-8": "{π/3, 2π/3, 4π/3, 5π/3}.",
+    "pcu4-9": "Max 16ft at 12AM/PM. Min 8ft at 6AM/PM. d(3)=12ft. Safe: [0,4]∪[8,12] repeating.",
+    "pcu4-10": "h(t)=-25cos(πt/4)+28. h(3)≈45.68m. Above 40m: t≈2.63 to 5.37 min.",
+    "pcu4-spiral-1": "x=(4ln3+ln5)/(2ln5-ln3).",
+    "pcu4-spiral-2": "y=3x-1."
+  }
+}

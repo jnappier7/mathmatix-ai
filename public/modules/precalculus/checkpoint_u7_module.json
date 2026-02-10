@@ -1,0 +1,143 @@
+{
+  "moduleId": "checkpoint_u7",
+  "course": "Pre-Calculus",
+  "unit": 7,
+  "title": "Unit 7 Checkpoint: Vectors & Complex Numbers in Polar Form",
+  "weeks": "30",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of vector representation, operations, dot product, projections, applications (work/forces/navigation), and complex numbers in polar form including DeMoivre's Theorem and nth roots.",
+  "skillsCovered": [
+    "vector-representation",
+    "vector-operations",
+    "dot-product",
+    "vector-projections",
+    "vector-applications",
+    "complex-polar-form"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "vector-representation", "reteachFocus": "Component form, magnitude, direction angle, unit vectors, i/j notation", "resources": ["vectors_module.json - scaffold phases 1-2"] },
+    { "skillId": "vector-operations", "reteachFocus": "Addition, subtraction, scalar multiplication, linear combinations", "resources": ["vectors_module.json - scaffold phases 3-4"] },
+    { "skillId": "dot-product", "reteachFocus": "Algebraic and geometric dot product, angle formula, orthogonality test", "resources": ["vectors_module.json - scaffold phases 5-6"] },
+    { "skillId": "vector-projections", "reteachFocus": "Scalar projection comp_u(v), vector projection proj_u(v), decomposition", "resources": ["vectors_module.json - scaffold phases 5-6"] },
+    { "skillId": "vector-applications", "reteachFocus": "Work W=F·d, force components on inclined plane, navigation/bearing", "resources": ["vectors_module.json - scaffold phases 8-9"] },
+    { "skillId": "complex-polar-form", "reteachFocus": "Polar form z=r·cis(θ), multiplication/division, DeMoivre's, nth roots", "resources": ["vectors_module.json - scaffold phases 10-11"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "pcu7-1",
+      "question": "Find the component form, magnitude, and direction angle of the vector from A(-2, 5) to B(4, -3).",
+      "answer": "v = ⟨4-(-2), -3-5⟩ = ⟨6, -8⟩. ||v|| = √(36+64) = √100 = 10. tanθ = -8/6 = -4/3. Q4 (positive x, negative y): θ = 360° - arctan(4/3) ≈ 360° - 53.13° = 306.87°.",
+      "skill": "vector-representation",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu7-2",
+      "question": "Let u = ⟨-3, 7⟩ and v = ⟨5, 2⟩. Find: (a) 2u - 3v, (b) ||2u - 3v||, (c) a unit vector in the direction of 2u - 3v.",
+      "answer": "(a) 2u = ⟨-6, 14⟩, 3v = ⟨15, 6⟩. 2u-3v = ⟨-6-15, 14-6⟩ = ⟨-21, 8⟩. (b) ||2u-3v|| = √(441+64) = √505. (c) Unit vector: ⟨-21/√505, 8/√505⟩ = ⟨-21√505/505, 8√505/505⟩.",
+      "skill": "vector-operations",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu7-3",
+      "question": "Find the angle between u = ⟨4, 3⟩ and v = ⟨-3, 4⟩. Are they orthogonal?",
+      "answer": "u·v = 4(-3)+3(4) = -12+12 = 0. Since u·v = 0, the vectors are orthogonal. θ = 90°.",
+      "skill": "dot-product",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu7-4",
+      "question": "Find the angle between a = ⟨1, 2, -1⟩ and b = ⟨3, -1, 2⟩. (Note: 3D vectors use the same dot product formula.)",
+      "answer": "a·b = 1(3)+2(-1)+(-1)(2) = 3-2-2 = -1. ||a|| = √(1+4+1) = √6. ||b|| = √(9+1+4) = √14. cosθ = -1/(√6·√14) = -1/√84 = -1/(2√21). θ = arccos(-1/(2√21)) ≈ arccos(-0.1091) ≈ 96.26°.",
+      "skill": "dot-product",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu7-5",
+      "question": "Find the scalar projection and vector projection of v = ⟨8, 6⟩ onto u = ⟨3, -4⟩. Then find the perpendicular component.",
+      "answer": "v·u = 8(3)+6(-4) = 24-24 = 0. comp_u(v) = (v·u)/||u|| = 0/5 = 0. proj_u(v) = (0/25)⟨3,-4⟩ = ⟨0,0⟩. Perpendicular component: v - proj = ⟨8,6⟩ - ⟨0,0⟩ = ⟨8,6⟩. (v is entirely perpendicular to u, which confirms u·v=0.)",
+      "skill": "vector-projections",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu7-6",
+      "question": "A force of F = ⟨-3, 5⟩ moves an object from point P(1, 2) to Q(7, 4). Find the work done.",
+      "answer": "Displacement d = ⟨7-1, 4-2⟩ = ⟨6, 2⟩. W = F·d = (-3)(6)+5(2) = -18+10 = -8. (Negative work means the force partially opposes the motion.)",
+      "skill": "vector-applications",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu7-7",
+      "question": "A 150-lb crate sits on a ramp inclined at 20° to the horizontal. Find: (a) the component of force parallel to the ramp, (b) the component perpendicular to the ramp, (c) the force needed to prevent the crate from sliding.",
+      "answer": "(a) F_∥ = 150 sin20° ≈ 150(0.3420) ≈ 51.30 lb. (b) F_⊥ = 150 cos20° ≈ 150(0.9397) ≈ 140.95 lb. (c) To prevent sliding, apply a force equal and opposite to F_∥ up the ramp: 51.30 lb.",
+      "skill": "vector-applications",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu7-8",
+      "question": "Write z = 1 - √3 i in polar form. Then find z⁵ using DeMoivre's Theorem.",
+      "answer": "r = √(1+3) = 2. tanθ = -√3/1. Q4: θ = -π/3 (or 5π/3). Polar: z = 2 cis(-π/3). z⁵ = 2⁵ cis(-5π/3) = 32 cis(-5π/3) = 32 cis(π/3). In rectangular: 32(cos(π/3)+isin(π/3)) = 32(1/2 + i√3/2) = 16 + 16√3 i.",
+      "skill": "complex-polar-form",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu7-9",
+      "question": "Find all cube roots of z = -27. Express answers in rectangular form.",
+      "answer": "-27 = 27 cis(π). Cube roots: ³√27 cis((π+2kπ)/3) = 3 cis((π+2kπ)/3). k=0: 3cis(π/3) = 3(1/2+i√3/2) = 3/2 + (3√3/2)i. k=1: 3cis(π) = -3. k=2: 3cis(5π/3) = 3(1/2-i√3/2) = 3/2 - (3√3/2)i. Roots: {3/2+(3√3/2)i, -3, 3/2-(3√3/2)i}.",
+      "skill": "complex-polar-form",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "pcu7-10",
+      "question": "ANALYSIS: A boat aims due east at 18 mph in still water. The river current flows at 5 mph in the direction N 30° E (i.e., 30° east of due north). (a) Write each velocity as a component vector. (b) Find the resultant velocity vector. (c) Find the actual speed and direction of the boat.",
+      "answer": "(a) Boat: b = ⟨18, 0⟩ (due east). Current N30°E: standard angle = 90°-30° = 60°. c = 5⟨cos60°, sin60°⟩ = 5⟨1/2, √3/2⟩ = ⟨5/2, 5√3/2⟩. (b) Resultant: r = ⟨18+5/2, 0+5√3/2⟩ = ⟨41/2, 5√3/2⟩. (c) Speed: ||r|| = √((41/2)²+(5√3/2)²) = √(1681/4+75/4) = √(1756/4) = √439 ≈ 20.95 mph. Direction: tanθ = (5√3/2)/(41/2) = 5√3/41. θ = arctan(5√3/41) ≈ arctan(0.2109) ≈ 11.91° north of east. Bearing: N(90°-11.91°)E ≈ N78.1°E.",
+      "skill": "vector-applications",
+      "difficulty": 6,
+      "points": 20
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "pcu7-spiral-1",
+      "question": "SPIRAL (Conics): Convert 9x² + 16y² - 18x + 64y - 71 = 0 to standard form and identify the conic.",
+      "answer": "9(x²-2x)+16(y²+4y)=71. 9(x²-2x+1)+16(y²+4y+4)=71+9+64=144. 9(x-1)²+16(y+2)²=144. (x-1)²/16+(y+2)²/9=1. Ellipse, center (1,-2), a=4, b=3 (horizontal major). c²=16-9=7, c=√7.",
+      "skill": "ellipse-analysis",
+      "difficulty": 5,
+      "points": 0,
+      "note": "Spiral review"
+    },
+    {
+      "id": "pcu7-spiral-2",
+      "question": "SPIRAL (Trig Equation): Solve on [0, 2π): 2sin(2x) = √3.",
+      "answer": "sin(2x) = √3/2. Let u=2x: sinu = √3/2. u = π/3 or u = 2π/3. Since 0≤x<2π → 0≤u<4π. u = π/3, 2π/3, π/3+2π = 7π/3, 2π/3+2π = 8π/3. x = u/2: x = π/6, π/3, 7π/6, 4π/3.",
+      "skill": "solving-trig-equations",
+      "difficulty": 5,
+      "points": 0,
+      "note": "Spiral review"
+    }
+  ],
+  "answerKeys": {
+    "pcu7-1": "v=⟨6,-8⟩, ||v||=10, θ≈306.87°.",
+    "pcu7-2": "2u-3v=⟨-21,8⟩. ||2u-3v||=√505. Unit: ⟨-21/√505, 8/√505⟩.",
+    "pcu7-3": "u·v=0, orthogonal, θ=90°.",
+    "pcu7-4": "cosθ=-1/(2√21), θ≈96.26°.",
+    "pcu7-5": "proj_u(v)=⟨0,0⟩ (v⊥u). Perp=⟨8,6⟩.",
+    "pcu7-6": "W=-8 (negative work).",
+    "pcu7-7": "F_∥≈51.30lb, F_⊥≈140.95lb, 51.30lb to prevent sliding.",
+    "pcu7-8": "z=2cis(-π/3). z⁵=16+16√3i.",
+    "pcu7-9": "Cube roots of -27: 3/2+(3√3/2)i, -3, 3/2-(3√3/2)i.",
+    "pcu7-10": "Resultant ⟨41/2,5√3/2⟩. Speed≈20.95mph. Bearing≈N78.1°E.",
+    "pcu7-spiral-1": "(x-1)²/16+(y+2)²/9=1. Ellipse, C(1,-2), c=√7.",
+    "pcu7-spiral-2": "x=π/6, π/3, 7π/6, 4π/3."
+  }
+}
