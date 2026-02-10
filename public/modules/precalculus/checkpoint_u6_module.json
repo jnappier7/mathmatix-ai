@@ -1,0 +1,143 @@
+{
+  "moduleId": "checkpoint_u6",
+  "course": "Pre-Calculus",
+  "unit": 6,
+  "title": "Unit 6 Checkpoint: Analytic Geometry, Parametric & Polar",
+  "weeks": "27",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of parabolas, ellipses, hyperbolas (including general-form conversion), parametric equations, polar coordinates and conversions, and polar curve identification.",
+  "skillsCovered": [
+    "parabola-analysis",
+    "ellipse-analysis",
+    "hyperbola-analysis",
+    "parametric-equations",
+    "polar-coordinates",
+    "polar-curves"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "parabola-analysis", "reteachFocus": "Standard forms (x-h)²=4p(y-k) and (y-k)²=4p(x-h), completing the square from general form, vertex-focus-directrix relationship", "resources": ["analytic_geometry_module.json - scaffold phases 1-2"] },
+    { "skillId": "ellipse-analysis", "reteachFocus": "Standard form, a>b identification, c²=a²-b², completing the square, eccentricity", "resources": ["analytic_geometry_module.json - scaffold phases 3-4"] },
+    { "skillId": "hyperbola-analysis", "reteachFocus": "Standard form, c²=a²+b², asymptote slopes, completing the square, eccentricity", "resources": ["analytic_geometry_module.json - scaffold phases 5-6"] },
+    { "skillId": "parametric-equations", "reteachFocus": "Eliminating the parameter (substitution & trig identity), identifying resulting curves", "resources": ["analytic_geometry_module.json - scaffold phases 8-9"] },
+    { "skillId": "polar-coordinates", "reteachFocus": "Polar↔rectangular conversion for points and equations, x=rcosθ, y=rsinθ, r²=x²+y²", "resources": ["analytic_geometry_module.json - scaffold phases 10"] },
+    { "skillId": "polar-curves", "reteachFocus": "Rose, limaçon, cardioid, lemniscate identification and properties", "resources": ["analytic_geometry_module.json - scaffold phases 11-12"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "pcu6-1",
+      "question": "Convert to standard form and find all features: y² + 8x - 6y + 25 = 0.",
+      "answer": "Group: y²-6y = -8x-25. Complete square: (y²-6y+9) = -8x-25+9 → (y-3)² = -8x-16 = -8(x+2). Standard form: (y-3)²=-8(x+2). 4p=-8 → p=-2. Vertex: (-2,3). Focus: (-2+(-2),3)=(-4,3). Directrix: x=-2-(-2)=0. Axis: y=3. Opens left.",
+      "skill": "parabola-analysis",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu6-2",
+      "question": "Write the equation of a parabola with vertex (3, -2), vertical axis, that passes through (7, 6).",
+      "answer": "Vertical axis: (x-3)²=4p(y+2). Substitute (7,6): (7-3)²=4p(6+2) → 16=32p → p=1/2. Equation: (x-3)²=2(y+2). Focus: (3,-2+1/2)=(3,-3/2). Directrix: y=-2-1/2=-5/2.",
+      "skill": "parabola-analysis",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu6-3",
+      "question": "Convert to standard form and find all features: 25x² + 4y² + 150x - 32y + 189 = 0.",
+      "answer": "Group: 25(x²+6x) + 4(y²-8y) = -189. Complete squares: 25(x²+6x+9) + 4(y²-8y+16) = -189+225+64 = 100. 25(x+3)²+4(y-4)²=100. Divide by 100: (x+3)²/4+(y-4)²/25=1. Center (-3,4). a²=25, b²=4 (vertical major axis). a=5, b=2. Vertices: (-3,4±5)=(-3,-1) and (-3,9). Co-vertices: (-3±2,4)=(-5,4) and (-1,4). c²=25-4=21, c=√21. Foci: (-3,4±√21). e=√21/5≈0.917.",
+      "skill": "ellipse-analysis",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu6-4",
+      "question": "Write the equation of an ellipse with endpoints of major axis at (-1, -3) and (-1, 7) and endpoints of minor axis at (-4, 2) and (2, 2).",
+      "answer": "Center: midpoint of major axis = (-1, (-3+7)/2) = (-1, 2). Check: midpoint of minor axis = ((-4+2)/2, 2) = (-1, 2) ✓. a = (7-(-3))/2 = 5 (vertical). b = (2-(-4))/2 = 3 (horizontal). Equation: (x+1)²/9 + (y-2)²/25 = 1. c² = 25-9 = 16 → c = 4. Foci: (-1, 2±4) = (-1, -2) and (-1, 6).",
+      "skill": "ellipse-analysis",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu6-5",
+      "question": "Convert to standard form and find all features: 4x² - 9y² + 32x + 36y - 8 = 0.",
+      "answer": "Group: 4(x²+8x) - 9(y²-4y) = 8. Complete squares: 4(x²+8x+16) - 9(y²-4y+4) = 8+64-36 = 36. 4(x+4)²-9(y-2)²=36. Divide by 36: (x+4)²/9-(y-2)²/4=1. Hyperbola, horizontal transverse. Center (-4,2). a²=9, b²=4. a=3, b=2. Vertices: (-4±3,2)=(-7,2) and (-1,2). c²=9+4=13, c=√13. Foci: (-4±√13,2). Asymptotes: y-2=±(2/3)(x+4). e=√13/3≈1.20.",
+      "skill": "hyperbola-analysis",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu6-6",
+      "question": "Classify the conic and find all key features: 16x² - 9y² - 64x + 54y - 161 = 0.",
+      "answer": "Group: 16(x²-4x) - 9(y²-6y) = 161. Complete squares: 16(x²-4x+4) - 9(y²-6y+9) = 161+64-81 = 144. 16(x-2)²-9(y-3)²=144. Divide by 144: (x-2)²/9-(y-3)²/16=1. Hyperbola, horizontal transverse. Center (2,3). a=3, b=4. Vertices: (2±3,3)=(-1,3) and (5,3). c²=9+16=25, c=5. Foci: (2±5,3)=(-3,3) and (7,3). Asymptotes: y-3=±(4/3)(x-2). e=5/3.",
+      "skill": "hyperbola-analysis",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu6-7",
+      "question": "(a) Eliminate the parameter and identify the curve: x = 2t² + 1, y = 4t. (b) Eliminate the parameter: x = 5cos(t) - 2, y = 5sin(t) + 3.",
+      "answer": "(a) y=4t → t=y/4. x=2(y/4)²+1=y²/8+1. So y²=8(x-1). Parabola with vertex (1,0), opens right. (b) cos(t)=(x+2)/5, sin(t)=(y-3)/5. sin²t+cos²t=1: ((x+2)/5)²+((y-3)/5)²=1 → (x+2)²+(y-3)²=25. Circle centered at (-2,3) with radius 5.",
+      "skill": "parametric-equations",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu6-8",
+      "question": "(a) Convert (4, 7π/4) from polar to rectangular. (b) Convert (-3, 4) from rectangular to polar. (c) Convert x² + y² + 8y = 0 to polar form.",
+      "answer": "(a) x=4cos(7π/4)=4(√2/2)=2√2. y=4sin(7π/4)=4(-√2/2)=-2√2. Rectangular: (2√2,-2√2). (b) r=√(9+16)=5. tanθ=4/(-3), point in Q2, θ=π-arctan(4/3). Polar: (5, π-arctan(4/3)). (c) Substitute r²=x²+y², y=rsinθ: r²+8rsinθ=0 → r(r+8sinθ)=0 → r=-8sinθ. Circle centered at (0,-4), radius 4.",
+      "skill": "polar-coordinates",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu6-9",
+      "question": "Identify each polar curve and describe its key features: (a) r = 3 + 3cos θ, (b) r² = 16cos(2θ), (c) r = 5sin(2θ).",
+      "answer": "(a) r=3+3cosθ: form r=a+bcosθ with a=b=3. Cardioid. Max r=6 at θ=0, r=0 at θ=π. Symmetric about polar axis (x-axis). (b) r²=16cos(2θ): lemniscate. Figure-8 shape. Exists when cos(2θ)≥0, so θ∈[0,π/4]∪[3π/4,5π/4]∪[7π/4,2π]. Max r=4. Symmetric about both axes and origin. (c) r=5sin(2θ): rose with n=2 (even), so 2n=4 petals. Each petal length 5. Symmetric about the origin.",
+      "skill": "polar-curves",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu6-10",
+      "question": "ANALYSIS: A whispering gallery is in the shape of an ellipse 100 feet long and 60 feet wide. (a) Write the equation of the ellipse centered at the origin with major axis along the x-axis. (b) Where should two people stand to experience the whispering effect (i.e., at the foci)? (c) How far apart will they be? (d) A person stands at one focus. How far is it from that person to the nearest wall along the major axis?",
+      "answer": "(a) Length 100 → a=50, width 60 → b=30. Equation: x²/2500+y²/900=1. (b) c²=2500-900=1600, c=40. Foci: (±40,0). They should stand at (40,0) and (-40,0). (c) Distance apart: 2c=80 feet. (d) From focus (40,0) to nearest vertex (50,0): 50-40=10 feet.",
+      "skill": "ellipse-analysis",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "pcu6-spiral-1",
+      "question": "SPIRAL (Advanced Trig): Find the exact value of sin(A + B) if tan A = 3/4 (A in Q1) and sin B = 5/13 (B in Q2).",
+      "answer": "A in Q1: 3-4-5 triangle → sinA=3/5, cosA=4/5. B in Q2: 5-12-13 triangle → cosB=-12/13 (neg in Q2). sin(A+B)=sinAcosB+cosAsinB=(3/5)(-12/13)+(4/5)(5/13)=-36/65+20/65=-16/65.",
+      "skill": "sum-difference-identities",
+      "difficulty": 5,
+      "points": 0,
+      "note": "Spiral review"
+    },
+    {
+      "id": "pcu6-spiral-2",
+      "question": "SPIRAL (Logarithms): Solve log₂(x + 3) + log₂(x - 1) = 5.",
+      "answer": "log₂((x+3)(x-1))=5 → (x+3)(x-1)=32 → x²+2x-3=32 → x²+2x-35=0 → (x+7)(x-5)=0. x=-7 or x=5. Check: x=-7→log₂(-4) undefined ✗. x=5: log₂(8)+log₂(4)=3+2=5 ✓. Solution: x=5.",
+      "skill": "solving-logarithmic-equations",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review"
+    }
+  ],
+  "answerKeys": {
+    "pcu6-1": "(y-3)²=-8(x+2). V(-2,3), F(-4,3), dir x=0, opens left.",
+    "pcu6-2": "(x-3)²=2(y+2). F(3,-3/2), dir y=-5/2.",
+    "pcu6-3": "(x+3)²/4+(y-4)²/25=1. C(-3,4), V(-3,-1)&(-3,9), F(-3,4±√21), e=√21/5.",
+    "pcu6-4": "(x+1)²/9+(y-2)²/25=1. F(-1,-2)&(-1,6).",
+    "pcu6-5": "(x+4)²/9-(y-2)²/4=1. C(-4,2), V(-7,2)&(-1,2), F(-4±√13,2), e=√13/3.",
+    "pcu6-6": "Hyperbola. (x-2)²/9-(y-3)²/16=1. C(2,3), V(-1,3)&(5,3), F(-3,3)&(7,3), e=5/3.",
+    "pcu6-7": "(a) y²=8(x-1), parabola. (b) (x+2)²+(y-3)²=25, circle r=5.",
+    "pcu6-8": "(a)(2√2,-2√2). (b)(5,π-arctan(4/3)). (c) r=-8sinθ.",
+    "pcu6-9": "(a) Cardioid, max r=6. (b) Lemniscate, max r=4. (c) 4-petal rose, petal length 5.",
+    "pcu6-10": "x²/2500+y²/900=1. Foci (±40,0). 80ft apart. 10ft to nearest wall.",
+    "pcu6-spiral-1": "sin(A+B)=-16/65.",
+    "pcu6-spiral-2": "x=5."
+  }
+}
