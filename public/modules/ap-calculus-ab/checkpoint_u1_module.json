@@ -1,0 +1,118 @@
+{
+  "moduleId": "checkpoint_u1",
+  "course": "AP Calculus AB",
+  "unit": 1,
+  "title": "Unit 1 Checkpoint: Limits & Continuity",
+  "weeks": "6",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Unit test covering all limit and continuity topics: limits from graphs/tables, algebraic limit techniques, one-sided and infinite limits, limits at infinity, continuity, IVT, and Squeeze Theorem. Includes FRQ-style questions requiring written justification.",
+  "skillsCovered": ["limits-graphical-numerical", "limits-algebraic-techniques", "one-sided-infinite-limits", "limits-at-infinity-asymptotes", "continuity-types", "ivt-squeeze-theorem"],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on weak skill clusters before advancing to Unit 2 (Derivatives).",
+    "clusters": [
+      {"skillId": "limits-algebraic-techniques", "reteachFocus": "Factoring 0/0 forms, rationalizing conjugates, special trig limits"},
+      {"skillId": "one-sided-infinite-limits", "reteachFocus": "Sign analysis near vertical asymptotes, piecewise one-sided limits"},
+      {"skillId": "limits-at-infinity-asymptotes", "reteachFocus": "Degree comparison, leading coefficient ratio, radical expressions at infinity"},
+      {"skillId": "continuity-types", "reteachFocus": "Three conditions for continuity, classifying discontinuities, piecewise parameter problems"},
+      {"skillId": "ivt-squeeze-theorem", "reteachFocus": "Writing complete IVT justifications with hypotheses and conclusion"}
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cu1-1",
+      "question": "Evaluate: lim(x→-3) (x² + 7x + 12)/(x² + x - 6).",
+      "answer": "0/0. Factor: (x+3)(x+4)/((x+3)(x-2)) = (x+4)/(x-2). At x=-3: 1/(-5) = -1/5.",
+      "skill": "limits-algebraic-techniques",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cu1-2",
+      "question": "Evaluate: lim(x→0) sin(3x)/(x·cos(x)).",
+      "answer": "Rewrite: [sin(3x)/(3x)]·[3x/(x·cos x)] = [sin(3x)/(3x)]·[3/cos x]. As x→0: 1·3/1 = 3.",
+      "skill": "limits-algebraic-techniques",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu1-3",
+      "question": "Evaluate: lim(x→1) (√(x+3) - 2)/(x - 1).",
+      "answer": "0/0. Rationalize: (√(x+3)-2)(√(x+3)+2)/((x-1)(√(x+3)+2)) = (x+3-4)/((x-1)(√(x+3)+2)) = (x-1)/((x-1)(√(x+3)+2)) = 1/(√(x+3)+2). At x=1: 1/(2+2) = 1/4.",
+      "skill": "limits-algebraic-techniques",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu1-4",
+      "question": "For f(x) = (2x+1)/(x²-9), find: (a) lim(x→3⁺) f(x), (b) lim(x→3⁻) f(x), (c) lim(x→-3) f(x), (d) all vertical asymptotes.",
+      "answer": "Factor: (2x+1)/((x-3)(x+3)). (a) At x=3: num=7>0, (x-3)→0⁺, (x+3)→6>0. 7/(0⁺·6) = +∞. (b) 7/(0⁻·6) = -∞. (c) At x=-3: num=-5, (x-3)→-6, (x+3)→0. 0/0? No: -5/(-6·0). Check: -5/(0·(-6)). Need sign: from left x+3→0⁻: -5/((-6)(0⁻)) = -5/(0⁺) = -∞. From right: -5/((-6)(0⁺)) = -5/(0⁻) = +∞. Two-sided DNE. (d) VA: x=3 and x=-3.",
+      "skill": "one-sided-infinite-limits",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "cu1-5",
+      "question": "Evaluate: (a) lim(x→∞) (4x² - 3)/(2x² + 5x), (b) lim(x→∞) (x + 2)/(x³ - 1), (c) lim(x→-∞) (3x)/(√(x² + 4)).",
+      "answer": "(a) Same degree: 4/2 = 2. (b) Degree 1 < 3: 0. (c) x→-∞: √(x²) = |x| = -x. So 3x/(−x·√(1+4/x²)) = -3/√(1+4/x²) → -3.",
+      "skill": "limits-at-infinity-asymptotes",
+      "difficulty": 5,
+      "points": 9
+    },
+    {
+      "id": "cu1-6",
+      "question": "For f(x) = {x² + 2, x < 1; ax + b, 1 ≤ x < 4; 2x - 3, x ≥ 4}, find a and b so that f is continuous on (-∞, ∞).",
+      "answer": "At x=1: lim left = 1+2=3. f(1) = a+b. Set a+b=3. At x=4: lim left = 4a+b. f(4)=8-3=5. Set 4a+b=5. Subtract: 3a=2 → a=2/3. b=3-2/3=7/3.",
+      "skill": "continuity-types",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "cu1-7",
+      "question": "(FRQ-style) A function f is continuous on [-2, 5] with the following values: f(-2) = 4, f(0) = -1, f(3) = 2, f(5) = 6. (a) Must there exist a value c in (-2, 5) where f(c) = 0? Justify using a theorem. (b) Must there exist a value c in (0, 5) where f(c) = 3? Justify. (c) Can you guarantee a value where f(c) = 7?",
+      "answer": "(a) Yes. f is continuous on [-2, 0]. f(-2)=4 > 0 and f(0)=-1 < 0. By IVT, there exists c in (-2, 0) where f(c) = 0. (b) Yes. f is continuous on [0, 5]. f(0)=-1 < 3 and f(5)=6 > 3. By IVT, there exists c in (0, 5) where f(c) = 3. (c) No. f(5) = 6 < 7, and we have no value where f > 7. IVT cannot guarantee this.",
+      "skill": "ivt-squeeze-theorem",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "cu1-8",
+      "question": "Given that -x⁴ ≤ x⁴·cos(5/x²) ≤ x⁴ for x ≠ 0, evaluate lim(x→0) x⁴·cos(5/x²).",
+      "answer": "lim(x→0) (-x⁴) = 0 and lim(x→0) x⁴ = 0. By Squeeze Theorem: lim(x→0) x⁴·cos(5/x²) = 0.",
+      "skill": "ivt-squeeze-theorem",
+      "difficulty": 4,
+      "points": 7
+    },
+    {
+      "id": "cu1-frq",
+      "question": "(FRQ) The function g is defined on [-3, 5] and its graph consists of a semicircle of radius 2 centered at (0, 0) for -2 ≤ x ≤ 2, with g(-3) = 0 and g(5) = -1, connected by line segments. Use the graph to find: (a) lim(x→2⁻) g(x), (b) lim(x→2⁺) g(x), (c) Is g continuous at x = 2? Explain.",
+      "answer": "(a) From the semicircle (upper half): at x=2, y = √(4-4) = 0. lim(x→2⁻) g(x) = 0. (b) From the line segment from (2, 0) to (5, -1): slope = (-1-0)/(5-2) = -1/3. At x=2: g = 0. lim(x→2⁺) g(x) = 0. (c) lim(x→2⁻)=0, lim(x→2⁺)=0, so lim(x→2) g(x) = 0. If g(2)=0, then g is continuous at x=2. All three conditions met: g(2) defined, limit exists, limit = g(2).",
+      "skill": "continuity-types",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cu1-spiral",
+      "question": "SPIRAL: Evaluate lim(x→0) (eˣ - 1)/x. [Hint: This is the derivative definition of eˣ at x=0.]",
+      "answer": "Direct substitution: 0/0. This equals lim(h→0) (e^(0+h) - e⁰)/h = d/dx[eˣ] at x=0 = e⁰ = 1. (Alternatively, use L'Hôpital preview: d/dx[eˣ]/d/dx[x] = eˣ/1 → e⁰ = 1.)",
+      "skill": "limits-algebraic-techniques",
+      "difficulty": 6,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cu1-1": "-1/5",
+    "cu1-2": "3",
+    "cu1-3": "1/4",
+    "cu1-4": "(a) +∞ (b) -∞ (c) DNE (d) x=3, x=-3",
+    "cu1-5": "(a) 2 (b) 0 (c) -3",
+    "cu1-6": "a=2/3, b=7/3",
+    "cu1-7": "(a) Yes, IVT on [-2,0] (b) Yes, IVT on [0,5] (c) No",
+    "cu1-8": "0 by Squeeze",
+    "cu1-frq": "(a) 0 (b) 0 (c) Yes, continuous",
+    "cu1-spiral": "1"
+  }
+}
