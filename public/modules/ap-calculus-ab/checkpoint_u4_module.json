@@ -1,0 +1,99 @@
+{
+  "moduleId": "checkpoint_u4",
+  "course": "AP Calculus AB",
+  "unit": 4,
+  "title": "Unit 4 Checkpoint: Contextual Applications",
+  "weeks": "17",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Mini-test focused on modeling and explanation. Covers related rates, motion, linearization, and L'Hôpital's Rule.",
+  "skillsCovered": ["related-rates-setup-solve", "motion-position-velocity-acceleration", "local-linearization-differentials", "lhopitals-rule"],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching before Unit 5 (Analytical Applications).",
+    "clusters": [
+      {"skillId": "related-rates-setup-solve", "reteachFocus": "Setup process: draw, label, write equation, differentiate w.r.t. t, THEN substitute"},
+      {"skillId": "motion-position-velocity-acceleration", "reteachFocus": "v=s', a=v', speed=|v|, direction and speeding up/slowing down analysis"},
+      {"skillId": "local-linearization-differentials", "reteachFocus": "L(x) = f(a)+f'(a)(x-a), over/underestimate from concavity"},
+      {"skillId": "lhopitals-rule", "reteachFocus": "Verify indeterminate form first, differentiate numerator and denominator separately"}
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cu4-1",
+      "question": "A 10-foot ladder leans against a wall. The base slides away at 2 ft/s. How fast is the top sliding down when the base is 6 feet from the wall?",
+      "answer": "x²+y²=100. 2x(dx/dt)+2y(dy/dt)=0. x=6, y=√(100-36)=8, dx/dt=2. 2(6)(2)+2(8)(dy/dt)=0 → dy/dt=-24/16=-3/2 ft/s.",
+      "skill": "related-rates-setup-solve",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cu4-2",
+      "question": "Water pours into a cone (radius 3, height 6) at 2 ft³/min. How fast is the water level rising when h = 4? (Note: r/h = 3/6 = 1/2, so r = h/2.)",
+      "answer": "V = (π/3)r²h = (π/3)(h/2)²h = πh³/12. dV/dt = (πh²/4)(dh/dt). 2 = (π·16/4)(dh/dt) → dh/dt = 2/(4π) = 1/(2π) ft/min.",
+      "skill": "related-rates-setup-solve",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "cu4-3",
+      "question": "A particle moves along the x-axis with position s(t) = t³ - 9t² + 24t for t ≥ 0. (a) When is the particle moving left? (b) When is it speeding up?",
+      "answer": "v(t) = 3t²-18t+24 = 3(t-2)(t-4). a(t) = 6t-18 = 6(t-3). (a) v<0 on (2,4): moving left. (b) Speeding up when v and a have same sign: v>0,a>0 on (4,∞) ∪ v<0,a<0 on (2,3). So speeding up on (2,3)∪(4,∞).",
+      "skill": "motion-position-velocity-acceleration",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "cu4-4",
+      "question": "Use linearization to approximate √(50). Use f(x) = √x at a = 49.",
+      "answer": "f(49) = 7. f'(x) = 1/(2√x), f'(49) = 1/14. L(x) = 7 + (1/14)(x-49). L(50) = 7 + 1/14 = 7 + 0.0714 ≈ 7.071. (Actual: 7.0711...)",
+      "skill": "local-linearization-differentials",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cu4-5",
+      "question": "Is the linearization in the previous problem an overestimate or underestimate? Explain.",
+      "answer": "f''(x) = -1/(4x^(3/2)) < 0 for all x > 0. Since f is concave down, the tangent line lies ABOVE the curve. Therefore the linearization is an overestimate.",
+      "skill": "local-linearization-differentials",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "cu4-6",
+      "question": "Evaluate: (a) lim(x→0) (eˣ - 1 - x)/x², (b) lim(x→∞) x²·e⁻ˣ.",
+      "answer": "(a) 0/0. L'Hôpital: (eˣ-1)/(2x) → 0/0 again. L'Hôpital again: eˣ/2 → 1/2. (b) Rewrite: x²/eˣ → ∞/∞. L'Hôpital: 2x/eˣ → ∞/∞. Again: 2/eˣ → 0.",
+      "skill": "lhopitals-rule",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cu4-frq",
+      "question": "(FRQ) The radius of a spherical balloon is increasing at 0.5 cm/s. (a) Find the rate of change of volume when r = 10 cm. (b) Find the rate of change of surface area when r = 10 cm. (V = 4πr³/3, SA = 4πr²)",
+      "answer": "(a) dV/dt = 4πr²·dr/dt = 4π(100)(0.5) = 200π cm³/s. (b) dSA/dt = 8πr·dr/dt = 8π(10)(0.5) = 40π cm²/s.",
+      "skill": "related-rates-setup-solve",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cu4-spiral",
+      "question": "SPIRAL: Find the equation of the tangent line to y = ln(x) at x = e. Then use it to approximate ln(3).",
+      "answer": "f(e) = 1. f'(x) = 1/x, f'(e) = 1/e. Tangent: y = 1 + (1/e)(x-e) = x/e. Approximate ln(3) ≈ 3/e ≈ 3/2.718 ≈ 1.104. (Actual: 1.099.)",
+      "skill": "local-linearization-differentials",
+      "difficulty": 5,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cu4-1": "dy/dt = -3/2 ft/s",
+    "cu4-2": "dh/dt = 1/(2π) ft/min",
+    "cu4-3": "(a) (2,4) (b) (2,3)∪(4,∞)",
+    "cu4-4": "≈ 7.071 (overestimate)",
+    "cu4-5": "Overestimate (concave down → tangent above curve)",
+    "cu4-6": "(a) 1/2 (b) 0",
+    "cu4-frq": "(a) 200π cm³/s (b) 40π cm²/s",
+    "cu4-spiral": "y = x/e. ln(3) ≈ 1.104"
+  }
+}
