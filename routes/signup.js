@@ -9,6 +9,11 @@ const EnrollmentCode = require('../models/enrollmentCode'); // For class enrollm
 const { ensureNotAuthenticated } = require('../middleware/auth'); // Middleware to ensure user is not already logged in
 const passport = require('passport'); // For req.logIn after successful signup
 const { sendEmailVerification } = require('../utils/emailService'); // For email verification
+const { signupValidation, handleValidationErrors } = require('../middleware/validation');
+
+// Roles that can be self-assigned during public signup.
+// 'admin' is intentionally excluded — admin accounts must be created by existing admins.
+const SELF_REGISTERABLE_ROLES = ['student', 'teacher', 'parent'];
 
 /**
  * @route   GET /signup/validate-code
@@ -55,13 +60,19 @@ router.get('/validate-code', async (req, res) => {
     }
 });
 
-router.post('/', ensureNotAuthenticated, async (req, res, next) => {
+router.post('/', ensureNotAuthenticated, signupValidation, handleValidationErrors, async (req, res, next) => {
     const { firstName, lastName, email, username, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth } = req.body;
 
     // --- 1. Basic Validation ---
     if (!firstName || !lastName || !email || !username || !password || !role) {
         console.warn("WARN: Signup failed - missing basic fields.");
         return res.status(400).json({ message: 'All basic fields are required.' });
+    }
+
+    // SECURITY: Prevent privilege escalation — only allow self-registerable roles
+    if (!SELF_REGISTERABLE_ROLES.includes(role)) {
+        console.warn(`WARN: Signup blocked - attempted self-registration with disallowed role: '${role}'`);
+        return res.status(403).json({ message: 'Invalid role for self-registration.' });
     }
 
     // Note: DOB is collected at complete-profile page, not signup.

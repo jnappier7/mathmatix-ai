@@ -112,6 +112,10 @@ const signupValidation = [
     .withMessage('Passwords do not match'),
   validateName('firstName'),
   validateName('lastName'),
+  body('role')
+    .trim()
+    .isIn(['student', 'teacher', 'parent'])
+    .withMessage('Invalid role. Must be student, teacher, or parent.'),
   validateGradeLevel(),
   validateLearningStyle(),
   validateTonePreference(),
