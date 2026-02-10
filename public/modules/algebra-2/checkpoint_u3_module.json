@@ -1,0 +1,43 @@
+{
+  "moduleId": "checkpoint_u3",
+  "course": "Algebra 2",
+  "unit": 3,
+  "title": "Unit 3 Checkpoint: Polynomial Functions",
+  "weeks": "12",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "description": "Assessment covering polynomial operations, advanced factoring (grouping, cubes, substitution), long and synthetic division, Remainder/Factor Theorems, finding zeros, and graphing polynomials with end behavior and multiplicity. Includes a graphing performance task.",
+  "skillsCovered": ["polynomial-operations", "factoring-advanced", "polynomial-division", "remainder-factor-theorems", "graphing-polynomials"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "polynomial-operations", "moduleId": "polynomial_functions", "focusArea": "Multiplication and special products"},
+    {"skillId": "factoring-advanced", "moduleId": "polynomial_functions", "focusArea": "Grouping, sum/diff of cubes, substitution"},
+    {"skillId": "polynomial-division", "moduleId": "polynomial_functions", "focusArea": "Long division, synthetic division"},
+    {"skillId": "remainder-factor-theorems", "moduleId": "polynomial_functions", "focusArea": "Evaluating via remainder, testing factors"},
+    {"skillId": "graphing-polynomials", "moduleId": "polynomial_functions", "focusArea": "End behavior, zeros, multiplicity, turning points"}
+  ],
+  "assessmentProblems": [
+    {"id": "a2u3-1", "question": "Multiply: (2x - 3)(x² + 4x - 5). Write in standard form.", "answer": "2x³ + 5x² - 22x + 15", "skill": "polynomial-operations", "difficulty": 4, "points": 5},
+    {"id": "a2u3-2", "question": "Factor completely: 64x³ - 1.", "answer": "(4x - 1)(16x² + 4x + 1)", "skill": "factoring-advanced", "difficulty": 5, "points": 8},
+    {"id": "a2u3-3", "question": "Factor completely: x⁴ - 13x² + 36.", "answer": "(x + 2)(x - 2)(x + 3)(x - 3)", "skill": "factoring-advanced", "difficulty": 6, "points": 10},
+    {"id": "a2u3-4", "question": "Factor by grouping: 3x³ + x² - 12x - 4.", "answer": "(3x + 1)(x + 2)(x - 2)", "skill": "factoring-advanced", "difficulty": 5, "points": 8},
+    {"id": "a2u3-5", "question": "Use synthetic division to divide (x³ + 5x² - 2x - 24) by (x + 3). Is (x + 3) a factor?", "answer": "Quotient: x² + 2x - 8. Remainder 0. Yes, (x+3) is a factor.", "skill": "polynomial-division", "difficulty": 5, "points": 8},
+    {"id": "a2u3-6", "question": "Use the Remainder Theorem to find f(4) for f(x) = 2x³ - 5x² + x - 3.", "answer": "f(4) = 49", "skill": "remainder-factor-theorems", "difficulty": 4, "points": 8},
+    {"id": "a2u3-7", "question": "Find ALL zeros of f(x) = x³ - 6x² + 11x - 6.", "answer": "x = 1, 2, 3", "skill": "remainder-factor-theorems", "difficulty": 5, "points": 10},
+    {"id": "a2u3-8", "question": "Describe the end behavior of f(x) = -5x⁶ + 3x⁴ - x + 2.", "answer": "Both ends down (even degree 6, negative leading coefficient -5).", "skill": "graphing-polynomials", "difficulty": 3, "points": 5},
+    {"id": "a2u3-9", "question": "For f(x) = x²(x - 3)³(x + 1), state each zero and whether the graph crosses or bounces there.", "answer": "x = 0 bounces (mult 2), x = 3 crosses (mult 3), x = -1 crosses (mult 1).", "skill": "graphing-polynomials", "difficulty": 5, "points": 10},
+    {"id": "a2u3-10", "question": "GRAPHING TASK: Sketch f(x) = -(x + 2)(x - 1)²(x - 3). Include: end behavior, all zeros with cross/bounce, y-intercept, and approximate shape.", "answer": "Degree 4, negative leading coeff → both ends down. Zeros: -2 (cross), 1 (bounce), 3 (cross). y-intercept: -(2)(1)(-3) = 6.", "skill": "graphing-polynomials", "difficulty": 7, "points": 18}
+  ],
+  "answerKeys": {
+    "a2u3-1": "2x³+5x²-22x+15",
+    "a2u3-2": "(4x-1)(16x²+4x+1)",
+    "a2u3-3": "(x+2)(x-2)(x+3)(x-3)",
+    "a2u3-4": "(3x+1)(x+2)(x-2)",
+    "a2u3-5": "x²+2x-8, R=0, yes factor",
+    "a2u3-6": "49",
+    "a2u3-7": "1, 2, 3",
+    "a2u3-8": "Both ends down",
+    "a2u3-9": "0 bounce, 3 cross, -1 cross",
+    "a2u3-10": "Both ends down, cross at -2 and 3, bounce at 1, y-int 6"
+  }
+}
