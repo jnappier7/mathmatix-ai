@@ -291,6 +291,56 @@
     }
 
     /* ============================================
+       RESOURCE UPLOAD ACTION BAR
+       ============================================ */
+
+    .resource-action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+      border: 2px solid #c8e6c9;
+      border-radius: 10px;
+      padding: 14px 20px;
+      margin-bottom: 16px;
+      gap: 16px;
+    }
+
+    .resource-action-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #2e7d32;
+      font-weight: 500;
+      font-size: 0.95em;
+    }
+
+    .resource-action-info i {
+      font-size: 1.3em;
+    }
+
+    .resource-action-upload-btn {
+      white-space: nowrap;
+      padding: 10px 22px;
+      font-size: 0.95em;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .resource-action-bar {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .resource-action-upload-btn {
+        width: 100%;
+      }
+    }
+
+    /* ============================================
        TABS
        ============================================ */
 
@@ -1862,6 +1912,17 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Resource Upload Action Bar -->
+        <div class="resource-action-bar">
+          <div class="resource-action-info">
+            <i class="fas fa-file-upload"></i>
+            <span>Share worksheets, practice sheets, and other files with your class</span>
+          </div>
+          <button class="btn btn-primary resource-action-upload-btn" id="center-upload-resources-btn">
+            <i class="fas fa-upload"></i> Upload Resources
+          </button>
         </div>
 
         <!-- Tab Navigation -->
