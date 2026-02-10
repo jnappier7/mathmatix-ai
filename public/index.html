@@ -71,72 +71,6 @@
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <style>
-    /* ── Countdown Banner ────────────────────────────────────── */
-    .lp-countdown-banner {
-      position: sticky;
-      top: 0;
-      z-index: 101;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      color: #fff;
-      text-align: center;
-      padding: 0.75rem 1rem;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .lp-countdown-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      margin-bottom: 0.4rem;
-    }
-
-    .lp-countdown-title i { margin-right: 0.3rem; }
-
-    .lp-countdown-timer {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      align-items: baseline;
-    }
-
-    .lp-countdown-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .lp-countdown-number {
-      font-size: 1.5rem;
-      font-weight: 700;
-      line-height: 1;
-      min-width: 2.2rem;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 6px;
-      padding: 0.3rem 0.5rem;
-    }
-
-    .lp-countdown-label {
-      font-size: 0.6rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      opacity: 0.7;
-      margin-top: 0.2rem;
-    }
-
-    .lp-countdown-sep {
-      font-size: 1.3rem;
-      font-weight: 700;
-      opacity: 0.5;
-      align-self: center;
-      margin-bottom: 0.8rem;
-    }
-
-    @media (max-width: 768px) {
-      .lp-countdown-number { font-size: 1.25rem; padding: 0.25rem 0.4rem; }
-      .lp-countdown-banner { padding: 0.6rem 0.75rem; }
-    }
-
     /* ── Landing Page Overrides ─────────────────────────────── */
     .landing-header .main-logo-hero {
       max-height: 65px;
@@ -1186,32 +1120,6 @@
     </nav>
   </header>
 
-  <!-- Countdown Banner -->
-  <div class="lp-countdown-banner" id="lp-countdown-banner">
-    <div class="lp-countdown-title"><i class="fas fa-rocket"></i> Launching March 14</div>
-    <div class="lp-countdown-timer">
-      <div class="lp-countdown-block">
-        <span class="lp-countdown-number" id="lp-cd-days">--</span>
-        <span class="lp-countdown-label">Days</span>
-      </div>
-      <span class="lp-countdown-sep">:</span>
-      <div class="lp-countdown-block">
-        <span class="lp-countdown-number" id="lp-cd-hours">--</span>
-        <span class="lp-countdown-label">Hours</span>
-      </div>
-      <span class="lp-countdown-sep">:</span>
-      <div class="lp-countdown-block">
-        <span class="lp-countdown-number" id="lp-cd-min">--</span>
-        <span class="lp-countdown-label">Min</span>
-      </div>
-      <span class="lp-countdown-sep">:</span>
-      <div class="lp-countdown-block">
-        <span class="lp-countdown-number" id="lp-cd-sec">--</span>
-        <span class="lp-countdown-label">Sec</span>
-      </div>
-    </div>
-  </div>
-
   <main class="landing-main">
     <!-- ── Hero ──────────────────────────────────────────── -->
     <section class="lp-hero">
@@ -1673,30 +1581,6 @@
   <script>
     (function () {
       'use strict';
-
-      /* ── Launch Countdown ───────────────────────────────── */
-      (function () {
-        var launchDate = new Date('2026-03-14T00:00:00').getTime();
-        var daysEl = document.getElementById('lp-cd-days');
-        var hoursEl = document.getElementById('lp-cd-hours');
-        var minEl = document.getElementById('lp-cd-min');
-        var secEl = document.getElementById('lp-cd-sec');
-        var banner = document.getElementById('lp-countdown-banner');
-
-        function pad(n) { return n < 10 ? '0' + n : String(n); }
-
-        function tick() {
-          var diff = launchDate - Date.now();
-          if (diff <= 0) { if (banner) banner.style.display = 'none'; return; }
-          daysEl.textContent = pad(Math.floor(diff / 864e5));
-          hoursEl.textContent = pad(Math.floor((diff % 864e5) / 36e5));
-          minEl.textContent = pad(Math.floor((diff % 36e5) / 6e4));
-          secEl.textContent = pad(Math.floor((diff % 6e4) / 1e3));
-        }
-
-        tick();
-        setInterval(tick, 1000);
-      })();
 
       /* ── Scroll Reveal ─────────────────────────────────── */
       var revealEls = document.querySelectorAll('.lp-reveal');
