@@ -1,0 +1,122 @@
+{
+  "moduleId": "probability_statistics",
+  "course": "Algebra 2",
+  "quarter": 4,
+  "title": "Probability & Statistics",
+  "estimatedDuration": 50,
+  "skills": ["probability-counting", "binomial-theorem", "normal-distribution"],
+  "standardsAlignment": ["S-CP.9", "S-MD.3", "S-ID.4", "A-APR.5"],
+  "goals": [
+    "Apply the fundamental counting principle, permutations, and combinations",
+    "Use the Binomial Theorem to expand expressions and find specific terms",
+    "Understand and apply the normal distribution and z-scores",
+    "Calculate probabilities using counting techniques and distributions"
+  ],
+  "instructionalStrategy": [
+    "The counting principle is THE foundation: if event A has m outcomes and event B has n outcomes, together they have m × n outcomes. Everything builds from this.",
+    "Permutations vs Combinations: the ONLY difference is whether ORDER MATTERS. Arranging 3 books on a shelf (order matters → permutation) vs choosing 3 books to read (order doesn't matter → combination).",
+    "The Binomial Theorem connects algebra and probability: (a + b)^n expansion coefficients ARE the combination numbers C(n, k). Pascal's Triangle is a visual bridge.",
+    "Normal distribution: about 68% within 1 standard deviation, 95% within 2, 99.7% within 3. Z-scores standardize any normal distribution to the standard one."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Fundamental Counting Principle:**\nIf there are m ways to do the first thing and n ways to do the second thing, there are m × n total ways.\n\n**Permutations** (ORDER MATTERS):\n• n things taken r at a time: **P(n, r) = n!/(n - r)!**\n• Arranging, ordering, ranking, sequences\n\n**Combinations** (ORDER DOESN'T MATTER):\n• n things taken r at a time: **C(n, r) = n!/(r!(n - r)!)**\n• Choosing, selecting, groups, committees\n\n**Factorial reminder:** n! = n × (n-1) × (n-2) × ... × 2 × 1\n5! = 120, 0! = 1\n\n**Ask yourself:** Does rearranging the selection create a DIFFERENT outcome?\n• Yes → permutation (ABC ≠ CBA)\n• No → combination ({A,B,C} = {C,B,A})",
+      "initialPrompt": "A pizza place has 8 toppings. If you choose 3 toppings, is this a permutation or combination? What if you're arranging 3 toppings in layers—top, middle, bottom?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "How many ways can a committee of 3 be chosen from 10 people? How many ways can a president, VP, and secretary be chosen from 10 people?",
+      "explanation": "**Committee (order doesn't matter → Combination):**\nC(10, 3) = 10!/(3! · 7!)\n= (10 × 9 × 8)/(3 × 2 × 1)\n= 720/6 = **120 ways**\n\nWhy combination? The committee {Alice, Bob, Carol} is the SAME as {Carol, Alice, Bob}.\n\n**Officers (order matters → Permutation):**\nP(10, 3) = 10!/(10-3)! = 10!/7!\n= 10 × 9 × 8 = **720 ways**\n\nWhy permutation? Alice as president, Bob as VP is DIFFERENT from Bob as president, Alice as VP.\n\n**Notice:** P(10,3) = 6 × C(10,3). The factor of 6 = 3! represents the number of ways to arrange 3 people in 3 positions. Permutations always give a larger number than combinations.",
+      "initialPrompt": "Why is the permutation count exactly 3! times the combination count? What does that 3! represent?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "A password uses 4 digits (0-9) with no repetition. How many possible passwords?",
+          "answer": "5040",
+          "hints": ["Order matters (1234 ≠ 4321). P(10, 4) = 10 × 9 × 8 × 7 = 5040."]
+        },
+        {
+          "question": "A hand of 5 cards from a standard deck of 52. How many possible hands?",
+          "answer": "2,598,960",
+          "hints": ["Order doesn't matter in a hand. C(52, 5) = 52!/(5! · 47!).", "= (52 × 51 × 50 × 49 × 48)/(5 × 4 × 3 × 2 × 1) = 2,598,960."]
+        },
+        {
+          "question": "What is the probability of being dealt 5 hearts from a standard deck?",
+          "answer": "33/66640 ≈ 0.000495",
+          "hints": ["Favorable: C(13, 5) = 1287 ways to choose 5 hearts from 13.", "P = 1287/2598960 = 33/66640 ≈ 0.000495."]
+        }
+      ],
+      "initialPrompt": "For the password problem, does order matter? Is 1234 a different password from 4321?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**The Binomial Theorem:**\n\n**(a + b)ⁿ = Σ from k=0 to n of C(n,k) · a^(n-k) · b^k**\n\nThe expansion has (n + 1) terms. The coefficients are C(n, 0), C(n, 1), ..., C(n, n).\n\n**Pascal's Triangle** gives the coefficients:\nRow 0:           1\nRow 1:          1  1\nRow 2:        1  2  1\nRow 3:       1  3  3  1\nRow 4:      1  4  6  4  1\n\n**Example:** (x + y)⁴ = x⁴ + 4x³y + 6x²y² + 4xy³ + y⁴\n\n**Finding a specific term:** The (k+1)th term of (a + b)ⁿ is:\nT_{k+1} = C(n, k) · a^(n-k) · b^k\n\nNote: exponents of a decrease, exponents of b increase, and they always sum to n.",
+      "initialPrompt": "Expand (x + 2)³ using the Binomial Theorem. The coefficients from Row 3 of Pascal's Triangle are 1, 3, 3, 1."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Expand (2x - 3)⁴ using the Binomial Theorem.",
+      "explanation": "Here a = 2x, b = -3, n = 4.\nCoefficients from Pascal's Row 4: 1, 4, 6, 4, 1\n\nT₁ = C(4,0)(2x)⁴(-3)⁰ = 1 · 16x⁴ · 1 = **16x⁴**\nT₂ = C(4,1)(2x)³(-3)¹ = 4 · 8x³ · (-3) = **-96x³**\nT₃ = C(4,2)(2x)²(-3)² = 6 · 4x² · 9 = **216x²**\nT₄ = C(4,3)(2x)¹(-3)³ = 4 · 2x · (-27) = **-216x**\nT₅ = C(4,4)(2x)⁰(-3)⁴ = 1 · 1 · 81 = **81**\n\n**Result:** (2x - 3)⁴ = 16x⁴ - 96x³ + 216x² - 216x + 81\n\nNotice the alternating signs (because b = -3 is negative). The exponents of x decrease: 4, 3, 2, 1, 0.",
+      "initialPrompt": "Check: should the signs alternate? Why? What would happen if b were positive instead of negative?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Normal Distribution:**\n\nThe normal (bell) curve is defined by its **mean (μ)** and **standard deviation (σ)**.\n\n**The 68-95-99.7 Rule (Empirical Rule):**\n• About 68% of data falls within μ ± 1σ\n• About 95% within μ ± 2σ\n• About 99.7% within μ ± 3σ\n\n**Z-scores** standardize any value:\n**z = (x - μ)/σ**\n\nA z-score tells you how many standard deviations a value is from the mean.\n• z = 0 → at the mean\n• z = 1 → one SD above the mean\n• z = -2 → two SDs below the mean\n\nUse z-scores with the standard normal table to find exact probabilities.",
+      "initialPrompt": "Test scores have mean 75 and standard deviation 10. What z-score corresponds to a score of 95? Is that score unusual?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "How many ways can 8 runners finish in 1st, 2nd, and 3rd place?",
+          "answer": "336",
+          "hints": ["Order matters. P(8, 3) = 8 × 7 × 6 = 336."]
+        },
+        {
+          "question": "A class of 20 students needs to form a study group of 4. How many groups are possible?",
+          "answer": "4845",
+          "hints": ["Order doesn't matter. C(20, 4) = 20!/(4!·16!) = 4845."]
+        },
+        {
+          "question": "Find the 4th term in the expansion of (x + 3)⁶.",
+          "answer": "540x³",
+          "hints": ["T₄ = C(6,3) · x³ · 3³ = 20 · x³ · 27 = 540x³."]
+        },
+        {
+          "question": "Heights of adult women are normally distributed with μ = 64 inches, σ = 2.5 inches. What percentage of women are between 59 and 69 inches tall?",
+          "answer": "About 95%",
+          "hints": ["59 = 64 - 2(2.5) and 69 = 64 + 2(2.5). That's μ ± 2σ → about 95%."]
+        },
+        {
+          "question": "A student scores 82 on a test where μ = 70 and σ = 8. Find their z-score and interpret it.",
+          "answer": "z = 1.5; the score is 1.5 standard deviations above the mean",
+          "hints": ["z = (82 - 70)/8 = 12/8 = 1.5."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "Committee of 3 from 10": "120",
+    "Officers from 10": "720",
+    "4-digit password no repeat": "5040",
+    "5-card hands": "2598960",
+    "8 runners top 3": "336",
+    "Study group 4 from 20": "4845",
+    "4th term (x+3)⁶": "540x³",
+    "(2x-3)⁴": "16x⁴-96x³+216x²-216x+81",
+    "Heights 59-69, μ=64 σ=2.5": "About 95%",
+    "Z-score 82, μ=70 σ=8": "z=1.5"
+  }
+}

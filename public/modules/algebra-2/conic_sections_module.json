@@ -1,0 +1,138 @@
+{
+  "moduleId": "conic_sections",
+  "course": "Algebra 2",
+  "quarter": 4,
+  "title": "Conic Sections",
+  "estimatedDuration": 55,
+  "skills": ["conic-sections-circles", "parabolas", "ellipses", "hyperbolas"],
+  "standardsAlignment": ["G-GPE.1", "G-GPE.2", "G-GPE.3"],
+  "goals": [
+    "Write and graph equations of circles in standard and general form",
+    "Write and graph equations of parabolas using focus and directrix",
+    "Write and graph equations of ellipses identifying foci, vertices, and axes",
+    "Write and graph equations of hyperbolas identifying asymptotes and foci",
+    "Identify conic sections from general second-degree equations"
+  ],
+  "instructionalStrategy": [
+    "All conic sections come from slicing a double cone at different angles. A circle is a horizontal slice, an ellipse is a tilted slice, a parabola is a slice parallel to the side, and a hyperbola cuts through both cones.",
+    "Every conic is defined by a DISTANCE relationship: circles (equal distance from center), parabolas (equal distance from focus and directrix), ellipses (sum of distances to foci is constant), hyperbolas (difference of distances to foci is constant).",
+    "Completing the square is the KEY algebraic skill for conics. If students can't complete the square fluently, they'll struggle with every conic section. Review this before diving in.",
+    "To identify a conic from Ax² + Bxy + Cy² + Dx + Ey + F = 0: look at A and C. Same sign, equal → circle. Same sign, unequal → ellipse. Opposite signs → hyperbola. One is zero → parabola."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Circles:**\n\n**Standard form:** (x - h)² + (y - k)² = r²\n• Center: (h, k)\n• Radius: r\n\nTo convert from general form (x² + y² + Dx + Ey + F = 0) to standard form, **complete the square** for both x and y.\n\n**Parabolas (vertical axis):**\n• Standard form: (x - h)² = 4p(y - k)\n• Vertex: (h, k)\n• Focus: (h, k + p)\n• Directrix: y = k - p\n• If p > 0, opens up; if p < 0, opens down\n\n**Parabolas (horizontal axis):**\n• Standard form: (y - k)² = 4p(x - h)\n• Opens right if p > 0, left if p < 0\n\nA parabola is the set of all points equidistant from the focus and directrix.",
+      "initialPrompt": "You already know parabolas from quadratic functions! The new piece is the focus and directrix. For y = x², rewrite as x² = 4p·y. What is p? Where is the focus?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Write the equation of a circle with center (-3, 2) and radius 5. Then convert x² + y² + 6x - 4y - 12 = 0 to standard form.",
+      "explanation": "**Part 1: Writing the equation:**\nCenter (-3, 2), radius 5:\n(x - (-3))² + (y - 2)² = 5²\n**(x + 3)² + (y - 2)² = 25**\n\n**Part 2: Converting to standard form:**\nx² + y² + 6x - 4y - 12 = 0\n\nGroup x and y terms:\n(x² + 6x) + (y² - 4y) = 12\n\nComplete the square for each:\n(x² + 6x + 9) + (y² - 4y + 4) = 12 + 9 + 4\n\n**(x + 3)² + (y - 2)² = 25**\n\nCenter: (-3, 2), Radius: √25 = 5\n\nBoth equations describe the SAME circle!",
+      "initialPrompt": "Notice how completing the square in Part 2 gave us the same circle as Part 1. Can you identify the center and radius just by looking at the general form? Why is standard form so much more useful?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Find the center and radius: x² + y² - 8x + 2y + 8 = 0.",
+          "answer": "Center (4, -1), radius 3",
+          "hints": ["Group: (x²-8x) + (y²+2y) = -8.", "Complete square: (x²-8x+16) + (y²+2y+1) = -8+16+1 = 9.", "(x-4)² + (y+1)² = 9. Center (4,-1), r = 3."]
+        },
+        {
+          "question": "A parabola has vertex (0, 0) and focus (0, 3). Write its equation.",
+          "answer": "x² = 12y",
+          "hints": ["Vertical axis parabola: (x-h)² = 4p(y-k).", "p = 3 (distance from vertex to focus). x² = 4(3)y = 12y."]
+        },
+        {
+          "question": "Find the vertex, focus, and directrix: (x - 1)² = -8(y + 2).",
+          "answer": "Vertex (1, -2), focus (1, -4), directrix y = 0",
+          "hints": ["4p = -8, so p = -2 (opens down).", "Focus: (1, -2 + (-2)) = (1, -4). Directrix: y = -2 - (-2) = 0."]
+        }
+      ],
+      "initialPrompt": "For the circle problem, what numbers do you need to complete the square for x² - 8x? Take half of -8, then square it."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Ellipses:**\n\nStandard form (center at (h, k)):\n• Horizontal major axis: **(x-h)²/a² + (y-k)²/b² = 1** where a > b\n• Vertical major axis: **(x-h)²/b² + (y-k)²/a² = 1** where a > b\n\n• **a** = semi-major axis (longer), **b** = semi-minor axis (shorter)\n• **c** = distance from center to each focus, where **c² = a² - b²**\n• Vertices are at distance a from center along major axis\n• Co-vertices at distance b along minor axis\n\n**Hyperbolas:**\n\nStandard form:\n• Horizontal: **(x-h)²/a² - (y-k)²/b² = 1** (opens left-right)\n• Vertical: **(y-k)²/a² - (x-h)²/b² = 1** (opens up-down)\n\n• **c² = a² + b²** (note: PLUS, not minus!)\n• Asymptotes through center with slopes ±b/a (horizontal) or ±a/b (vertical)\n\nKey difference: ellipses ADD fractions = 1, hyperbolas SUBTRACT fractions = 1.",
+      "initialPrompt": "For the ellipse x²/25 + y²/9 = 1, what are a and b? Which axis is the major axis? Where are the foci?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "For the ellipse x²/16 + y²/9 = 1, find the vertices, co-vertices, and foci. Then for the hyperbola x²/9 - y²/4 = 1, find the vertices, foci, and asymptotes.",
+      "explanation": "**Ellipse: x²/16 + y²/9 = 1**\na² = 16 → a = 4 (horizontal, since a² is under x²)\nb² = 9 → b = 3\nc² = a² - b² = 16 - 9 = 7 → c = √7\n\n• Vertices: (±4, 0)\n• Co-vertices: (0, ±3)\n• Foci: (±√7, 0) ≈ (±2.65, 0)\n\n**Hyperbola: x²/9 - y²/4 = 1**\na² = 9 → a = 3 (horizontal, x² is positive)\nb² = 4 → b = 2\nc² = a² + b² = 9 + 4 = 13 → c = √13\n\n• Vertices: (±3, 0)\n• Foci: (±√13, 0) ≈ (±3.61, 0)\n• Asymptotes: y = ±(b/a)x = ±(2/3)x\n\nNotice: ellipse foci are INSIDE the curve (c < a), hyperbola foci are OUTSIDE (c > a).",
+      "initialPrompt": "For the ellipse, why must c < a? Think about what the foci represent—they must be inside the ellipse. What happens to the ellipse shape as c gets closer to a?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Write the equation of an ellipse with center (0,0), vertices (0, ±5), and co-vertices (±3, 0).",
+          "answer": "x²/9 + y²/25 = 1",
+          "hints": ["Vertical major axis: a = 5 (under y²), b = 3 (under x²).", "x²/9 + y²/25 = 1."]
+        },
+        {
+          "question": "For the hyperbola y²/16 - x²/9 = 1, find the vertices, foci, and asymptotes.",
+          "answer": "Vertices: (0, ±4). Foci: (0, ±5). Asymptotes: y = ±(4/3)x.",
+          "hints": ["Vertical (y² is positive). a² = 16, b² = 9.", "c² = 16 + 9 = 25, c = 5. Slopes: ±a/b = ±4/3."]
+        },
+        {
+          "question": "Identify the conic: 4x² + 9y² - 16x + 18y - 11 = 0.",
+          "answer": "Ellipse: (x-2)²/9 + (y+1)²/4 = 1",
+          "hints": ["Both x² and y² have same sign but different coefficients → ellipse.", "Group and complete square: 4(x²-4x) + 9(y²+2y) = 11. → 4(x-2)² + 9(y+1)² = 36. Divide by 36."]
+        }
+      ],
+      "initialPrompt": "For the first problem, since the vertices are on the y-axis, which variable gets the larger denominator?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "Convert to standard form and identify: x² + y² - 10x + 6y + 18 = 0.",
+          "answer": "Circle: (x - 5)² + (y + 3)² = 16. Center (5, -3), radius 4.",
+          "hints": ["Complete the square: (x²-10x+25)+(y²+6y+9)=−18+25+9=16."]
+        },
+        {
+          "question": "Find the equation of a parabola with focus (2, 0) and directrix x = -2.",
+          "answer": "y² = 8x",
+          "hints": ["Vertex at midpoint of focus and directrix: (0,0). p = 2. y² = 4(2)x = 8x."]
+        },
+        {
+          "question": "For the ellipse (x+1)²/49 + (y-3)²/25 = 1, find center, vertices, and foci.",
+          "answer": "Center (-1, 3). Vertices (-8, 3) and (6, 3). Foci (-1±2√6, 3).",
+          "hints": ["a² = 49, b² = 25. c² = 49-25 = 24, c = 2√6. Horizontal major axis."]
+        },
+        {
+          "question": "Find the asymptotes of x²/25 - y²/16 = 1.",
+          "answer": "y = ±(4/5)x",
+          "hints": ["Horizontal hyperbola. Slopes: ±b/a = ±4/5."]
+        },
+        {
+          "question": "Classify: 9x² - 4y² + 36x + 8y - 4 = 0.",
+          "answer": "Hyperbola: (x + 2)²/4 - (y - 1)²/9 = 1",
+          "hints": ["x² and y² have opposite signs → hyperbola.", "9(x²+4x) - 4(y²-2y) = 4. → 9(x+2)² - 4(y-1)² = 36. Divide by 36."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "Circle center (-3,2) radius 5": "(x+3)²+(y-2)²=25",
+    "x²+y²-8x+2y+8=0": "Center (4,-1), r=3",
+    "Parabola vertex (0,0) focus (0,3)": "x²=12y",
+    "Ellipse x²/16+y²/9=1": "Vertices (±4,0), foci (±√7,0)",
+    "Hyperbola x²/9-y²/4=1": "Vertices (±3,0), asymptotes y=±(2/3)x",
+    "x²+y²-10x+6y+18=0": "Circle, center (5,-3), r=4",
+    "Parabola focus (2,0) directrix x=-2": "y²=8x",
+    "Ellipse (x+1)²/49+(y-3)²/25=1": "Center (-1,3), vertices (-8,3) and (6,3)",
+    "9x²-4y²+36x+8y-4=0": "Hyperbola (x+2)²/4-(y-1)²/9=1"
+  }
+}
