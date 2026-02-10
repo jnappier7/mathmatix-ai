@@ -1,0 +1,167 @@
+{
+  "moduleId": "checkpoint_u2",
+  "course": "Pre-Calculus",
+  "unit": 2,
+  "title": "Unit 2 Checkpoint: Polynomial & Rational Functions",
+  "weeks": "9",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of polynomial behavior, zeros and multiplicity, synthetic division, rational function analysis, asymptotes, and polynomial/rational inequalities. Multi-step problems requiring algebraic reasoning, sign analysis, and graphical interpretation.",
+  "skillsCovered": [
+    "polynomial-end-behavior",
+    "polynomial-zeros-multiplicity",
+    "synthetic-division-remainder",
+    "rational-function-analysis",
+    "asymptote-analysis",
+    "polynomial-rational-inequalities"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    {
+      "skillId": "polynomial-end-behavior",
+      "reteachFocus": "Leading Coefficient Test (sign of leading coefficient + degree parity), maximum turning points, end behavior descriptions",
+      "resources": ["polynomial_rational_module.json - scaffold phases 1-2"]
+    },
+    {
+      "skillId": "polynomial-zeros-multiplicity",
+      "reteachFocus": "Rational Root Theorem, Factor Theorem, multiplicity effects (cross vs bounce vs flatten), writing polynomials from zeros",
+      "resources": ["polynomial_rational_module.json - scaffold phases 3-4"]
+    },
+    {
+      "skillId": "synthetic-division-remainder",
+      "reteachFocus": "Synthetic division process, Remainder Theorem f(c) = remainder, Factor Theorem as special case, repeated synthetic division",
+      "resources": ["polynomial_rational_module.json - scaffold phases 5-6"]
+    },
+    {
+      "skillId": "rational-function-analysis",
+      "reteachFocus": "Domain restrictions, distinguishing VA from holes (common factor cancellation), intercepts, HA rules by degree comparison",
+      "resources": ["polynomial_rational_module.json - scaffold phases 8-9"]
+    },
+    {
+      "skillId": "asymptote-analysis",
+      "reteachFocus": "HA rules (deg comparison), oblique asymptotes via long division, complete rational function graphing with asymptotes as guide",
+      "resources": ["polynomial_rational_module.json - scaffold phases 8-10"]
+    },
+    {
+      "skillId": "polynomial-rational-inequalities",
+      "reteachFocus": "Sign analysis method: find critical values, test intervals, boundary behavior (open vs closed), interval notation",
+      "resources": ["polynomial_rational_module.json - scaffold phases 11-13"]
+    }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "pcu2-1",
+      "question": "For f(x) = -4x⁵ + x⁴ - 3x² + 7, determine: (a) the end behavior, (b) the maximum number of turning points, (c) the maximum number of real zeros, (d) the y-intercept.",
+      "answer": "(a) Degree 5 (odd), leading coefficient -4 (negative). End behavior: as x → -∞, f(x) → +∞; as x → +∞, f(x) → -∞. (b) Maximum turning points: 5 - 1 = 4. (c) Maximum real zeros: 5. (d) y-intercept: f(0) = 7, so (0, 7).",
+      "skill": "polynomial-end-behavior",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu2-2",
+      "question": "Find all zeros of f(x) = 2x³ + x² - 13x + 6 using the Rational Root Theorem and synthetic division. State the multiplicity of each zero.",
+      "answer": "Possible rational roots: ±{1, 2, 3, 6, 1/2, 3/2}. Test x = 2: f(2) = 2(8) + 4 - 26 + 6 = 0. ✓ Synthetic division by (x - 2): [2, 1, -13, 6], c = 2. Bring down 2. 2(2) = 4, 1 + 4 = 5. 5(2) = 10, -13 + 10 = -3. -3(2) = -6, 6 + (-6) = 0. Quotient: 2x² + 5x - 3. Factor: (2x - 1)(x + 3). All zeros: x = 2 (multiplicity 1), x = 1/2 (multiplicity 1), x = -3 (multiplicity 1).",
+      "skill": "polynomial-zeros-multiplicity",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu2-3",
+      "question": "Write a polynomial function of degree 4 with leading coefficient 2 that has zeros: x = -3 (multiplicity 1), x = 1/2 (multiplicity 2), and x = 4 (multiplicity 1). Write in standard form.",
+      "answer": "f(x) = 2(x + 3)(x - 1/2)²(x - 4). Expand (x - 1/2)² = x² - x + 1/4. Then 2(x + 3)(x² - x + 1/4)(x - 4). First: (x + 3)(x - 4) = x² - x - 12. Then: (x² - x - 12)(x² - x + 1/4). Let u = x² - x: (u - 12)(u + 1/4) = u² + u/4 - 12u - 3 = u² - 47u/4 - 3. Substituting back: (x²-x)² - (47/4)(x²-x) - 3 = x⁴ - 2x³ + x² - 47x²/4 + 47x/4 - 3 = x⁴ - 2x³ + (4x² - 47x²)/4 + 47x/4 - 3 = x⁴ - 2x³ - 43x²/4 + 47x/4 - 3. Multiply by 2: f(x) = 2x⁴ - 4x³ - 43x²/2 + 47x/2 - 6.",
+      "skill": "polynomial-zeros-multiplicity",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu2-4",
+      "question": "Use synthetic division to divide f(x) = 2x⁴ + 3x³ - x² - 7x + 3 by (x + 3). State the quotient, remainder, and find f(-3).",
+      "answer": "Coefficients: [2, 3, -1, -7, 3], c = -3. Bring down 2. 2(-3)=-6, 3+(-6)=-3. -3(-3)=9, -1+9=8. 8(-3)=-24, -7+(-24)=-31. -31(-3)=93, 3+93=96. Quotient: 2x³ - 3x² + 8x - 31, Remainder: 96. By the Remainder Theorem, f(-3) = 96.",
+      "skill": "synthetic-division-remainder",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu2-5",
+      "question": "Completely factor f(x) = x⁴ - x³ - 7x² + x + 6 using synthetic division. (Hint: try small integer values.)",
+      "answer": "Test x = 1: f(1) = 1 - 1 - 7 + 1 + 6 = 0. ✓ Synthetic division by (x-1): [1,-1,-7,1,6] → bring 1, 1(1)=1, -1+1=0, 0(1)=0, -7+0=-7, -7(1)=-7, 1+(-7)=-6, -6(1)=-6, 6+(-6)=0. Quotient: x³ - 7x - 6. Test x = -1: (-1)³ - 7(-1) - 6 = -1 + 7 - 6 = 0. ✓ Synthetic division by (x+1): [1, 0, -7, -6], c=-1. Bring 1. 1(-1)=-1, 0+(-1)=-1. -1(-1)=1, -7+1=-6. -6(-1)=6, -6+6=0. Quotient: x² - x - 6 = (x-3)(x+2). Complete factorization: f(x) = (x-1)(x+1)(x-3)(x+2). Zeros: -2, -1, 1, 3.",
+      "skill": "synthetic-division-remainder",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu2-6",
+      "question": "Fully analyze f(x) = (x² - x - 2)/(x² + x - 6): find domain, factor numerator and denominator, identify any holes, VA, HA, x-intercept(s), and y-intercept.",
+      "answer": "Factor: num = (x-2)(x+1), den = (x+3)(x-2). Common factor (x-2) → hole at x = 2. Simplified: f(x) = (x+1)/(x+3), x ≠ 2. Hole at x = 2: y = (2+1)/(2+3) = 3/5. Hole: (2, 3/5). VA: x = -3 (denominator zero after cancellation). HA: degrees equal → y = 1/1 = 1. x-intercept: x + 1 = 0 → x = -1, so (-1, 0). y-intercept: f(0) = 1/3, so (0, 1/3). Domain: x ≠ -3 and x ≠ 2.",
+      "skill": "rational-function-analysis",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu2-7",
+      "question": "For g(x) = (2x² + x - 6)/(x - 1), find the oblique asymptote, VA, intercepts, and domain.",
+      "answer": "Degree of numerator (2) = degree of denominator (1) + 1 → oblique asymptote. Long division: (2x² + x - 6) ÷ (x - 1). 2x² ÷ x = 2x. 2x(x-1) = 2x² - 2x. Subtract: 3x - 6. 3x ÷ x = 3. 3(x-1) = 3x - 3. Subtract: -3. So g(x) = 2x + 3 - 3/(x-1). Oblique asymptote: y = 2x + 3. VA: x = 1. No HA. x-intercepts: 2x² + x - 6 = 0 → (2x - 3)(x + 2) = 0 → x = 3/2 or x = -2. So (3/2, 0) and (-2, 0). y-intercept: g(0) = -6/(-1) = 6, so (0, 6). Domain: x ≠ 1.",
+      "skill": "asymptote-analysis",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu2-8",
+      "question": "Solve the polynomial inequality: x³ + 2x² - 9x - 18 ≤ 0.",
+      "answer": "Factor by grouping: x²(x + 2) - 9(x + 2) = (x² - 9)(x + 2) = (x - 3)(x + 3)(x + 2). Critical values: x = -3, -2, 3. Sign analysis: (−∞, -3): test x=-4: (-7)(-1)(-2) = -14 < 0. (-3, -2): test x=-2.5: (-5.5)(0.5)(-0.5) = 1.375 > 0. (-2, 3): test x=0: (-3)(3)(2) = -18 < 0. (3, ∞): test x=4: (1)(7)(6) = 42 > 0. Need ≤ 0. Include endpoints (zeros). Solution: (-∞, -3] ∪ [-2, 3].",
+      "skill": "polynomial-rational-inequalities",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu2-9",
+      "question": "Solve the rational inequality: (x + 4)/(x - 2) ≥ 3. Express your answer in interval notation.",
+      "answer": "Subtract 3: (x+4)/(x-2) - 3 ≥ 0 → (x+4 - 3(x-2))/(x-2) ≥ 0 → (x+4-3x+6)/(x-2) ≥ 0 → (-2x+10)/(x-2) ≥ 0 → -2(x-5)/(x-2) ≥ 0. Multiply both sides by -1 (flip inequality): 2(x-5)/(x-2) ≤ 0, equivalently (x-5)/(x-2) ≤ 0. Critical values: x = 2 (undefined), x = 5 (zero). Sign analysis: (-∞, 2): test x=0: (-5)/(-2) = 5/2 > 0. (2, 5): test x=3: (-2)/(1) = -2 < 0. (5, ∞): test x=6: (1)/(4) > 0. Need ≤ 0. Include x = 5 (zero), exclude x = 2 (undefined). Solution: (2, 5].",
+      "skill": "polynomial-rational-inequalities",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "pcu2-10",
+      "question": "ANALYSIS: A manufacturer's average cost per unit is given by C̄(x) = (500 + 8x + 0.01x²)/x, where x is the number of units produced. (a) Simplify C̄(x). (b) Find the horizontal asymptote and explain its real-world meaning. (c) Find the number of units that minimizes average cost. (d) Find the minimum average cost.",
+      "answer": "(a) C̄(x) = 500/x + 8 + 0.01x. (b) As x → ∞, 500/x → 0, so C̄(x) → 8 + 0.01x → ∞. There is no horizontal asymptote. However, the term 500/x → 0 means the fixed cost per unit vanishes for large production; the marginal cost approaches 8 + 0.01x (which increases). Actually, for a proper HA analysis: C̄(x) = (0.01x² + 8x + 500)/x. Degree of numerator (2) > degree of denominator (1), so there's an oblique asymptote y = 0.01x + 8, not a HA. This means as production grows, average cost roughly follows y = 0.01x + 8. (c) Minimize: C̄'(x) = -500/x² + 0.01 = 0 → x² = 500/0.01 = 50000 → x = √50000 = 100√5 ≈ 223.6 units. (d) C̄(100√5) = 500/(100√5) + 8 + 0.01(100√5) = 5/√5 + 8 + √5 = √5 + 8 + √5 = 2√5 + 8 ≈ 4.47 + 8 = $12.47 per unit.",
+      "skill": "rational-function-analysis",
+      "difficulty": 6,
+      "points": 12
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "pcu2-spiral-1",
+      "question": "SPIRAL (Composition): For f(x) = 2x - 1 and g(x) = x² + 3, find f(g(x)) and solve f(g(x)) = 9.",
+      "answer": "f(g(x)) = 2(x² + 3) - 1 = 2x² + 5. Solve: 2x² + 5 = 9 → 2x² = 4 → x² = 2 → x = ±√2.",
+      "skill": "function-composition",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review - not counted toward checkpoint score"
+    },
+    {
+      "id": "pcu2-spiral-2",
+      "question": "SPIRAL (Inverse): Find the inverse of f(x) = (x + 5)/(3x - 1) and state its domain.",
+      "answer": "Swap: x = (y+5)/(3y-1). Solve: x(3y-1) = y+5 → 3xy - x = y + 5 → 3xy - y = x + 5 → y(3x - 1) = x + 5 → y = (x + 5)/(3x - 1). So f⁻¹(x) = (x + 5)/(3x - 1). Domain of f⁻¹: x ≠ 1/3.",
+      "skill": "inverse-functions",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review - not counted toward checkpoint score"
+    }
+  ],
+  "answerKeys": {
+    "pcu2-1": "Degree 5, LC=-4. Rises left, falls right. Max turning pts: 4. Max zeros: 5. y-int: (0,7).",
+    "pcu2-2": "Zeros: 2, 1/2, -3 (all multiplicity 1). f(x) = 2(x-2)(x-1/2)(x+3) = (x-2)(2x-1)(x+3).",
+    "pcu2-3": "f(x) = 2(x+3)(x-1/2)²(x-4) = 2x⁴ - 4x³ - 43x²/2 + 47x/2 - 6.",
+    "pcu2-4": "Q = 2x³-3x²+8x-31, R = 96. f(-3) = 96.",
+    "pcu2-5": "f(x) = (x-1)(x+1)(x-3)(x+2). Zeros: -2, -1, 1, 3.",
+    "pcu2-6": "Hole at (2, 3/5). VA: x=-3. HA: y=1. x-int: (-1,0). y-int: (0,1/3).",
+    "pcu2-7": "Oblique: y=2x+3. VA: x=1. x-int: (3/2,0) and (-2,0). y-int: (0,6).",
+    "pcu2-8": "(x-3)(x+3)(x+2) ≤ 0. Solution: (-∞,-3] ∪ [-2,3].",
+    "pcu2-9": "(x-5)/(x-2) ≤ 0. Solution: (2, 5].",
+    "pcu2-10": "C̄(x) = 500/x+8+0.01x. Oblique asymptote y=0.01x+8. Min at x=100√5 ≈ 223.6 units. Min cost: 2√5+8 ≈ $12.47.",
+    "pcu2-spiral-1": "f(g(x))=2x²+5. x=±√2.",
+    "pcu2-spiral-2": "f⁻¹(x)=(x+5)/(3x-1). Domain: x≠1/3."
+  }
+}
