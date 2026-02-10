@@ -1,0 +1,667 @@
+[
+  {
+    "skillId": "limits-graphical-numerical",
+    "displayName": "Limits from Graphs & Tables",
+    "description": "Estimate and evaluate limits using graphical and numerical approaches",
+    "category": "limits",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Limits & Continuity",
+    "prerequisites": ["limits-intuitive", "function-notation-composition"],
+    "enables": ["limits-algebraic-techniques", "one-sided-infinite-limits"],
+    "standardsAlignment": ["AP Calc AB 1.2", "AP Calc AB 1.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["lim(x→a) f(x) from tables of values", "Reading limits from graphs", "One-sided limits from graphs", "When limits don't exist (oscillation, unbounded, disagree)"],
+      "commonMistakes": ["Confusing f(a) with lim(x→a) f(x)", "Missing one-sided limit disagreement", "Not recognizing DNE from oscillation"],
+      "teachingTips": ["Tables first, then graphs, then algebra", "Use open circles on graphs to build intuition", "AP exam tests this on nearly every MCQ section"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "limits-algebraic-techniques",
+    "displayName": "Algebraic Limit Techniques",
+    "description": "Evaluate limits using factoring, rationalizing, and simplification",
+    "category": "limits",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Limits & Continuity",
+    "prerequisites": ["limits-graphical-numerical"],
+    "enables": ["continuity-types", "derivative-definition"],
+    "standardsAlignment": ["AP Calc AB 1.5", "AP Calc AB 1.6"],
+    "teachingGuidance": {
+      "coreConcepts": ["Direct substitution", "0/0 indeterminate → factor/cancel", "Rationalizing conjugates", "Trig limits: lim sin(x)/x = 1"],
+      "commonMistakes": ["Dividing by zero without recognizing indeterminate form", "Not simplifying before substituting", "Forgetting special trig limits"],
+      "teachingTips": ["0/0 is a signal to do algebra, not an answer", "Build a decision tree: try substitution first", "lim sin(x)/x = 1 must be memorized"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "one-sided-infinite-limits",
+    "displayName": "One-Sided & Infinite Limits",
+    "description": "Evaluate one-sided limits and identify vertical asymptotes through infinite limits",
+    "category": "limits",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Limits & Continuity",
+    "prerequisites": ["limits-graphical-numerical"],
+    "enables": ["continuity-types"],
+    "standardsAlignment": ["AP Calc AB 1.4", "AP Calc AB 1.5"],
+    "teachingGuidance": {
+      "coreConcepts": ["Left-hand and right-hand limits", "Limit exists iff both sides agree", "Infinite limits from sign analysis", "Vertical asymptotes"],
+      "commonMistakes": ["Writing lim = ∞ instead of DNE for two-sided", "Sign errors in infinite limit analysis", "Confusing infinite limits with limits at infinity"],
+      "teachingTips": ["Piecewise functions for one-sided practice", "Sign charts near vertical asymptotes", "Clear notation: lim = +∞ or -∞"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "limits-at-infinity",
+    "displayName": "Limits at Infinity & Horizontal Asymptotes",
+    "description": "Evaluate limits as x → ±∞ and identify horizontal asymptotes",
+    "category": "limits",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Limits & Continuity",
+    "prerequisites": ["limits-algebraic-techniques"],
+    "enables": ["continuity-types", "curve-sketching"],
+    "standardsAlignment": ["AP Calc AB 1.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Leading term dominance", "Same degree: ratio of leading coefficients", "Numerator higher: ±∞. Denominator higher: 0", "Growth hierarchy: log < polynomial < exponential"],
+      "commonMistakes": ["Degree comparison errors", "Not handling radicals in denominators", "Confusing with infinite limits (vertical asymptotes)"],
+      "teachingTips": ["Divide by highest power of x", "Leading term shortcut for polynomials", "Most commonly tested limit type on AP exam"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "continuity-types",
+    "displayName": "Continuity & Discontinuity Types",
+    "description": "Determine continuity at a point and classify discontinuities",
+    "category": "limits",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Limits & Continuity",
+    "prerequisites": ["limits-algebraic-techniques", "one-sided-infinite-limits"],
+    "enables": ["ivt-squeeze", "differentiability"],
+    "standardsAlignment": ["AP Calc AB 1.10", "AP Calc AB 1.11"],
+    "teachingGuidance": {
+      "coreConcepts": ["Three conditions: f(a) defined, limit exists, limit = f(a)", "Removable, jump, infinite discontinuities", "Continuity on an interval", "Continuous functions: polynomials, trig, exp, log on domains"],
+      "commonMistakes": ["Not checking all three conditions", "Confusing removable with jump", "Assuming piecewise = discontinuous"],
+      "teachingTips": ["Test all three conditions systematically", "Piecewise functions with parameters are classic AP problems", "Connect to IVT hypotheses"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "ivt-squeeze",
+    "displayName": "IVT & Squeeze Theorem",
+    "description": "Apply Intermediate Value Theorem and Squeeze Theorem",
+    "category": "limits",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Limits & Continuity",
+    "prerequisites": ["continuity-types"],
+    "enables": ["mvt-evt"],
+    "standardsAlignment": ["AP Calc AB 1.12", "AP Calc AB 1.8"],
+    "teachingGuidance": {
+      "coreConcepts": ["IVT: continuous on [a,b], k between f(a) and f(b) → f(c)=k exists", "Using IVT to prove existence of zeros", "Squeeze theorem: if g(x) ≤ f(x) ≤ h(x) and lim g = lim h = L, then lim f = L", "lim(x→0) sin(x)/x = 1 via squeeze"],
+      "commonMistakes": ["Not verifying continuity before applying IVT", "Forgetting to state the conclusion", "Misapplying squeeze with wrong bounds"],
+      "teachingTips": ["IVT is tested on FRQ — practice writing complete justifications", "Squeeze theorem mainly used for special limits", "State hypotheses AND conclusion"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "derivative-definition",
+    "displayName": "Derivative from Definition",
+    "description": "Compute derivatives using the limit definition (difference quotient)",
+    "category": "derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Derivatives: Definition & Rules",
+    "prerequisites": ["limits-algebraic-techniques"],
+    "enables": ["basic-differentiation-rules", "differentiability"],
+    "standardsAlignment": ["AP Calc AB 2.1", "AP Calc AB 2.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["f'(x) = lim(h→0) [f(x+h)-f(x)]/h", "Alternative: f'(a) = lim(x→a) [f(x)-f(a)]/(x-a)", "Derivative as instantaneous rate of change", "Derivative as slope of tangent line"],
+      "commonMistakes": ["Algebraic errors expanding (x+h)ⁿ", "Not canceling h before taking limit", "Confusing average and instantaneous rate"],
+      "teachingTips": ["Work through x², x³, √x, 1/x by hand", "Both forms appear on AP exam — recognize both", "Connect to secant line → tangent line visually"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 65, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "differentiability",
+    "displayName": "Differentiability vs. Continuity",
+    "description": "Determine where functions are differentiable and understand the relationship with continuity",
+    "category": "derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Derivatives: Definition & Rules",
+    "prerequisites": ["derivative-definition", "continuity-types"],
+    "enables": ["mvt-evt"],
+    "standardsAlignment": ["AP Calc AB 2.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Differentiable → continuous (not converse)", "Corners, cusps, vertical tangents, discontinuities → not differentiable", "Left and right derivatives must agree"],
+      "commonMistakes": ["Assuming continuous means differentiable", "Missing vertical tangent cases", "Not checking piecewise junctions"],
+      "teachingTips": ["|x| at 0 is the canonical example", "x^(2/3) for cusp, x^(1/3) for vertical tangent", "Piecewise with matching derivatives at junction"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "basic-differentiation-rules",
+    "displayName": "Basic Differentiation Rules",
+    "description": "Apply power, product, quotient, and sum/difference rules",
+    "category": "derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Derivatives: Definition & Rules",
+    "prerequisites": ["derivative-definition"],
+    "enables": ["chain-rule", "common-derivatives"],
+    "standardsAlignment": ["AP Calc AB 2.4", "AP Calc AB 2.6"],
+    "teachingGuidance": {
+      "coreConcepts": ["Power rule: d/dx[xⁿ] = nxⁿ⁻¹", "Product rule: (fg)' = f'g + fg'", "Quotient rule: (f/g)' = (f'g-fg')/g²", "Constant, constant multiple, sum/difference"],
+      "commonMistakes": ["d/dx[fg] ≠ f'g'", "Quotient rule sign errors", "Not rewriting before differentiating (e.g., 1/x² = x⁻²)"],
+      "teachingTips": ["Power rule must become automatic", "Product/quotient need consistent practice", "Rewrite radicals and fractions as powers first"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "procedural", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "common-derivatives",
+    "displayName": "Common Derivatives (Trig, Exp, Log)",
+    "description": "Differentiate trigonometric, exponential, and logarithmic functions",
+    "category": "derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Derivatives: Definition & Rules",
+    "prerequisites": ["basic-differentiation-rules"],
+    "enables": ["chain-rule"],
+    "standardsAlignment": ["AP Calc AB 2.5", "AP Calc AB 2.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["d/dx[sin x]=cos x, d/dx[cos x]=-sin x", "d/dx[tan x]=sec²x, d/dx[sec x]=sec x tan x", "d/dx[eˣ]=eˣ, d/dx[aˣ]=aˣ ln a", "d/dx[ln x]=1/x, d/dx[log_a x]=1/(x ln a)"],
+      "commonMistakes": ["Sign errors with cos and csc derivatives", "Forgetting ln(a) in d/dx[aˣ]", "d/dx[ln x] = 1/x not ln(x)/x"],
+      "teachingTips": ["Memorize the table cold", "Derive trig derivatives from sin/cos via quotient rule", "e^x being its own derivative is the defining property of e"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "derivatives-graphs-tables",
+    "displayName": "Derivatives from Graphs & Tables",
+    "description": "Estimate and interpret derivatives from graphical and tabular data",
+    "category": "derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 1,
+    "unit": "Derivatives: Definition & Rules",
+    "prerequisites": ["derivative-definition", "basic-differentiation-rules"],
+    "enables": ["curve-sketching"],
+    "standardsAlignment": ["AP Calc AB 2.2", "AP Calc AB 2.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Derivative ≈ slope of tangent ≈ [f(b)-f(a)]/(b-a) for nearby points", "Reading slope signs from graph of f", "Sketching f' from f and f from f'", "Interpreting derivative in context (rate of change)"],
+      "commonMistakes": ["Using too-wide intervals for table estimates", "Confusing f and f' graphs", "Not interpreting units in context problems"],
+      "teachingTips": ["This is the most tested non-algebraic derivative skill", "Practice sketching f' from various f graphs", "Always include units when interpreting"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "chain-rule",
+    "displayName": "Chain Rule",
+    "description": "Differentiate composite functions using the chain rule",
+    "category": "derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Derivatives: Composite, Implicit, Inverse",
+    "prerequisites": ["basic-differentiation-rules", "common-derivatives"],
+    "enables": ["implicit-differentiation", "inverse-function-derivatives", "u-substitution"],
+    "standardsAlignment": ["AP Calc AB 3.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["d/dx[f(g(x))] = f'(g(x))·g'(x)", "Outer derivative × inner derivative", "Chain rule with trig: d/dx[sin(3x²)] = cos(3x²)·6x", "Multiple nested compositions"],
+      "commonMistakes": ["Forgetting the inner derivative", "Not identifying composite functions", "Order of operations errors"],
+      "teachingTips": ["'Derivative of outside, leave inside alone, times derivative of inside'", "Most important rule — used in every subsequent unit", "Verbalize the steps until automatic"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "implicit-differentiation",
+    "displayName": "Implicit Differentiation",
+    "description": "Find dy/dx for implicitly defined functions",
+    "category": "derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Derivatives: Composite, Implicit, Inverse",
+    "prerequisites": ["chain-rule"],
+    "enables": ["related-rates", "inverse-function-derivatives"],
+    "standardsAlignment": ["AP Calc AB 3.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Differentiate both sides with respect to x", "Every y-term gets multiplied by dy/dx (chain rule)", "Solve algebraically for dy/dx", "Second derivative via implicit differentiation"],
+      "commonMistakes": ["Forgetting dy/dx on y-terms", "Product rule errors with mixed x·y terms", "Substituting values before solving for dy/dx"],
+      "teachingTips": ["Circle y-terms to remember dy/dx", "Practice with circles, ellipses, and mixed-variable equations", "Essential prerequisite for related rates"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "inverse-function-derivatives",
+    "displayName": "Inverse Function Derivatives",
+    "description": "Differentiate inverse functions including inverse trig",
+    "category": "derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Derivatives: Composite, Implicit, Inverse",
+    "prerequisites": ["implicit-differentiation"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 3.3", "AP Calc AB 3.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["(f⁻¹)'(a) = 1/f'(f⁻¹(a))", "d/dx[arcsin x] = 1/√(1-x²)", "d/dx[arccos x] = -1/√(1-x²)", "d/dx[arctan x] = 1/(1+x²)"],
+      "commonMistakes": ["Confusing f⁻¹ with 1/f", "Not applying chain rule with arcsin(2x) etc.", "Sign errors with arccos"],
+      "teachingTips": ["Derive using implicit differentiation", "arctan is the most commonly tested inverse trig derivative", "Table-based problems: given f and f' tables, find (f⁻¹)' at a point"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "related-rates",
+    "displayName": "Related Rates",
+    "description": "Solve problems involving rates of change of related quantities",
+    "category": "applications-derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Contextual Applications of Differentiation",
+    "prerequisites": ["implicit-differentiation", "chain-rule"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 4.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["Identify all variables and known rates", "Write an equation relating the quantities", "Differentiate implicitly with respect to t", "Substitute known values and solve"],
+      "commonMistakes": ["Substituting before differentiating", "Forgetting the chain rule (dy/dt, not just dy)", "Units errors", "Using wrong geometric formula"],
+      "teachingTips": ["Always draw a diagram and label", "Write 'Given:' and 'Find:' before anything else", "Classic problems: ladder, balloon, cone, shadow, Pythagorean"]
+    },
+    "difficultyLevel": 9,
+    "fluencyMetadata": {"baseFluencyTime": 90, "fluencyType": "conceptual", "toleranceFactor": 4.5}
+  },
+  {
+    "skillId": "motion",
+    "displayName": "Motion (Position, Velocity, Acceleration)",
+    "description": "Analyze motion using derivatives and interpret velocity/acceleration",
+    "category": "applications-derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Contextual Applications of Differentiation",
+    "prerequisites": ["basic-differentiation-rules", "chain-rule"],
+    "enables": ["motion-integrals"],
+    "standardsAlignment": ["AP Calc AB 4.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["v(t) = s'(t), a(t) = v'(t) = s''(t)", "Speed = |v(t)|", "Direction: v > 0 right, v < 0 left", "Speeding up: v and a same sign. Slowing down: opposite sign"],
+      "commonMistakes": ["Confusing velocity and speed", "Wrong sign interpretation for direction", "Not using absolute value for speed"],
+      "teachingTips": ["Use number line diagrams for sign analysis", "Connect to physical experience", "This returns in integration (Unit 8)"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "linearization",
+    "displayName": "Local Linearization & Differentials",
+    "description": "Approximate function values using tangent line linearization",
+    "category": "applications-derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Contextual Applications of Differentiation",
+    "prerequisites": ["basic-differentiation-rules"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 4.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["L(x) = f(a) + f'(a)(x-a)", "Tangent line as best linear approximation near a", "Differentials: dy = f'(x)dx", "Over/underestimate based on concavity"],
+      "commonMistakes": ["Using wrong point a", "Forgetting to evaluate f'(a)", "Not addressing over/underestimate"],
+      "teachingTips": ["Classic: approximate √(26) using linearization at x=25", "Concave up → underestimate, concave down → overestimate", "Tested on MCQ and FRQ"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "lhopitals-rule",
+    "displayName": "L'Hôpital's Rule",
+    "description": "Evaluate indeterminate limits using L'Hôpital's Rule",
+    "category": "limits",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Contextual Applications of Differentiation",
+    "prerequisites": ["limits-algebraic-techniques", "basic-differentiation-rules"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 4.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Applies only to 0/0 or ∞/∞ indeterminate forms", "lim f/g = lim f'/g' (differentiate separately, not quotient rule)", "May need to apply multiple times", "Convert other forms: 0·∞, ∞-∞, 1^∞"],
+      "commonMistakes": ["Using when not indeterminate", "Applying quotient rule instead of differentiating separately", "Not verifying form before each application"],
+      "teachingTips": ["Always write 'form: 0/0' before applying", "Can sometimes use algebra instead (factoring may be faster)", "AP includes this in AB — students must know it"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "mvt-evt",
+    "displayName": "Mean Value Theorem & Extreme Value Theorem",
+    "description": "Apply MVT and EVT with proper justification",
+    "category": "applications-derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Analytical Applications of Differentiation",
+    "prerequisites": ["continuity-types", "differentiability"],
+    "enables": ["increasing-decreasing-extrema"],
+    "standardsAlignment": ["AP Calc AB 5.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["EVT: continuous on [a,b] → absolute max and min exist", "MVT: continuous on [a,b], differentiable on (a,b) → f'(c) = [f(b)-f(a)]/(b-a)", "MVT geometric meaning: tangent parallel to secant", "Rolle's Theorem as special case (f(a)=f(b))"],
+      "commonMistakes": ["Not verifying hypotheses", "Forgetting to state conclusion", "Confusing MVT with IVT"],
+      "teachingTips": ["MVT shows up on FRQ nearly every year", "Always state: 'Since f is continuous/differentiable...'", "Practice writing complete MVT justifications"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "increasing-decreasing-extrema",
+    "displayName": "Increasing/Decreasing & Extrema",
+    "description": "Use first derivative to find intervals of increase/decrease and local extrema",
+    "category": "applications-derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Analytical Applications of Differentiation",
+    "prerequisites": ["mvt-evt"],
+    "enables": ["concavity-inflection", "optimization"],
+    "standardsAlignment": ["AP Calc AB 5.2", "AP Calc AB 5.3", "AP Calc AB 5.4"],
+    "teachingGuidance": {
+      "coreConcepts": ["f' > 0 → increasing, f' < 0 → decreasing", "Critical points: f' = 0 or f' undefined", "First Derivative Test: sign change at critical point", "Candidates Test for absolute extrema on [a,b]"],
+      "commonMistakes": ["Forgetting to check endpoints", "Confusing local and absolute extrema", "Not finding all critical points"],
+      "teachingTips": ["Sign chart of f' is the primary tool", "Candidates Test: critical points AND endpoints", "Justify with calculus language on FRQ"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "concavity-inflection",
+    "displayName": "Concavity & Inflection Points",
+    "description": "Use second derivative for concavity, inflection points, and Second Derivative Test",
+    "category": "applications-derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Analytical Applications of Differentiation",
+    "prerequisites": ["increasing-decreasing-extrema"],
+    "enables": ["curve-sketching"],
+    "standardsAlignment": ["AP Calc AB 5.5", "AP Calc AB 5.6"],
+    "teachingGuidance": {
+      "coreConcepts": ["f'' > 0 → concave up, f'' < 0 → concave down", "Inflection point: concavity changes (f'' changes sign)", "Second Derivative Test: f'(c)=0 and f''(c)>0 → local min", "Connecting f, f', f'' graphs"],
+      "commonMistakes": ["f''=0 does NOT guarantee inflection (must change sign)", "Confusing concave up/down with increasing/decreasing", "Not connecting f'' sign to f behavior"],
+      "teachingTips": ["Concave up = 'holds water' = 'smile'", "Moving fluently between f, f', f'' graphs is critical for AP", "Second Derivative Test is faster but less reliable (inconclusive when f''=0)"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "curve-sketching",
+    "displayName": "Curve Sketching from Derivatives",
+    "description": "Sketch and analyze function behavior from derivative information",
+    "category": "applications-derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Analytical Applications of Differentiation",
+    "prerequisites": ["concavity-inflection", "limits-at-infinity"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 5.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Full analysis: domain, intercepts, asymptotes, critical/inflection points", "Sketching f from f' graph", "Sketching f' from f graph", "Justifying features with calculus"],
+      "commonMistakes": ["Missing asymptotes", "Confusing f and f' behavior", "Not using all available information"],
+      "teachingTips": ["Practice both directions: f→f' and f'→f", "This is the synthesis skill for Unit 5", "AP MCQ frequently gives graph of f' and asks about f"]
+    },
+    "difficultyLevel": 9,
+    "fluencyMetadata": {"baseFluencyTime": 70, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "optimization",
+    "displayName": "Optimization Problems",
+    "description": "Find maximum/minimum values in applied contexts",
+    "category": "applications-derivatives",
+    "course": "AP Calculus AB",
+    "quarter": 2,
+    "unit": "Analytical Applications of Differentiation",
+    "prerequisites": ["increasing-decreasing-extrema"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 5.8"],
+    "teachingGuidance": {
+      "coreConcepts": ["Identify objective function and constraint", "Reduce to single variable using constraint", "Find critical points, test for max/min", "Check endpoints of feasible domain"],
+      "commonMistakes": ["Not checking endpoints of domain", "Wrong variable eliminated", "Not verifying max vs min"],
+      "teachingTips": ["Draw a picture, label everything", "Write 'Maximize:' or 'Minimize:' explicitly", "Classic: fencing, box, distance, can problems"]
+    },
+    "difficultyLevel": 9,
+    "fluencyMetadata": {"baseFluencyTime": 90, "fluencyType": "conceptual", "toleranceFactor": 4.5}
+  },
+  {
+    "skillId": "riemann-sums",
+    "displayName": "Riemann Sums & Approximation",
+    "description": "Approximate definite integrals using Riemann sums",
+    "category": "integrals",
+    "course": "AP Calculus AB",
+    "quarter": 3,
+    "unit": "Integration & Accumulation",
+    "prerequisites": ["limits-graphical-numerical"],
+    "enables": ["ftc"],
+    "standardsAlignment": ["AP Calc AB 6.1", "AP Calc AB 6.2"],
+    "teachingGuidance": {
+      "coreConcepts": ["Left, right, midpoint sums", "Sigma notation representation", "Over/underestimates based on increasing/decreasing", "Trapezoidal approximation"],
+      "commonMistakes": ["Using wrong endpoints", "Unequal subintervals with tables", "Over/underestimate logic reversed"],
+      "teachingTips": ["Build from tables first (AP loves table-based Riemann sums)", "Connect to area under curve visually", "Increasing → left under, right over"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "ftc",
+    "displayName": "Fundamental Theorem of Calculus",
+    "description": "Apply both parts of FTC to evaluate and differentiate integrals",
+    "category": "integrals",
+    "course": "AP Calculus AB",
+    "quarter": 3,
+    "unit": "Integration & Accumulation",
+    "prerequisites": ["riemann-sums", "basic-differentiation-rules"],
+    "enables": ["antiderivatives"],
+    "standardsAlignment": ["AP Calc AB 6.4", "AP Calc AB 6.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["FTC1: d/dx[∫ₐˣ f(t)dt] = f(x)", "FTC1 with chain rule: d/dx[∫ₐᵍ⁽ˣ⁾ f(t)dt] = f(g(x))·g'(x)", "FTC2: ∫ₐᵇ f(x)dx = F(b) - F(a)", "Connecting differentiation and integration as inverses"],
+      "commonMistakes": ["FTC1: forgetting chain rule with variable upper limit", "FTC2: F(a)-F(b) instead of F(b)-F(a)", "Not recognizing FTC1 in disguised forms"],
+      "teachingTips": ["Both parts tested extensively on AP exam", "FTC1 with g(x) upper limit is an FRQ favorite", "FTC2 is how you actually evaluate definite integrals"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 55, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "antiderivatives",
+    "displayName": "Antiderivatives & Indefinite Integrals",
+    "description": "Find antiderivatives using basic rules and recognize common forms",
+    "category": "integrals",
+    "course": "AP Calculus AB",
+    "quarter": 3,
+    "unit": "Integration & Accumulation",
+    "prerequisites": ["ftc"],
+    "enables": ["u-substitution"],
+    "standardsAlignment": ["AP Calc AB 6.8"],
+    "teachingGuidance": {
+      "coreConcepts": ["∫xⁿdx = xⁿ⁺¹/(n+1) + C", "∫eˣdx = eˣ+C, ∫(1/x)dx = ln|x|+C", "∫sin x dx = -cos x+C, ∫cos x dx = sin x+C", "∫sec²x dx = tan x+C"],
+      "commonMistakes": ["Forgetting +C", "Power rule: add 1 and divide (reverse of derivative)", "∫1/x = ln|x| not ln(x)"],
+      "teachingTips": ["Reverse the derivative table", "Always check by differentiating", "+C represents the whole family of antiderivatives"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "u-substitution",
+    "displayName": "u-Substitution",
+    "description": "Integrate using u-substitution (reverse chain rule)",
+    "category": "integrals",
+    "course": "AP Calculus AB",
+    "quarter": 3,
+    "unit": "Integration & Accumulation",
+    "prerequisites": ["antiderivatives", "chain-rule"],
+    "enables": ["separable-des"],
+    "standardsAlignment": ["AP Calc AB 6.9"],
+    "teachingGuidance": {
+      "coreConcepts": ["Let u = inside function, find du", "Substitute, integrate in terms of u, back-substitute", "Definite integrals: change bounds to u-values", "Recognizing f(g(x))·g'(x) pattern"],
+      "commonMistakes": ["Wrong u choice", "Forgetting to adjust for constants in du", "Not changing bounds for definite integrals"],
+      "teachingTips": ["Most important integration technique for AB", "Look for function and its derivative together", "Check by differentiating the result"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "slope-fields",
+    "displayName": "Slope Fields & Solution Curves",
+    "description": "Sketch and interpret slope fields for differential equations",
+    "category": "differential-equations",
+    "course": "AP Calculus AB",
+    "quarter": 3,
+    "unit": "Differential Equations",
+    "prerequisites": ["derivatives-graphs-tables"],
+    "enables": ["separable-des"],
+    "standardsAlignment": ["AP Calc AB 7.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Slope field shows dy/dx at each (x,y) point", "Sketching slope fields from dy/dx formula", "Drawing solution curves through given points", "Matching slope fields to DEs"],
+      "commonMistakes": ["Inconsistent slopes at same y or x", "Solution curves that cross slope segments", "Not recognizing patterns (horizontal at dy/dx=0)"],
+      "teachingTips": ["Nearly guaranteed MCQ topic", "Look for where slopes are 0, positive, negative", "Solution curves follow the flow"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "separable-des",
+    "displayName": "Separable Differential Equations",
+    "description": "Solve separable DEs for general and particular solutions",
+    "category": "differential-equations",
+    "course": "AP Calculus AB",
+    "quarter": 3,
+    "unit": "Differential Equations",
+    "prerequisites": ["antiderivatives", "u-substitution"],
+    "enables": ["exponential-growth-decay"],
+    "standardsAlignment": ["AP Calc AB 7.6", "AP Calc AB 7.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["Separate: g(y)dy = f(x)dx", "Integrate both sides", "General solution (+C) vs. particular solution (use IC)", "Solve for y explicitly when possible"],
+      "commonMistakes": ["Not separating correctly", "+C on wrong side or both sides", "Forgetting absolute values with ln"],
+      "teachingTips": ["Step 1: separate. Step 2: integrate. Step 3: +C. Step 4: apply IC", "Practice with y' = ky first (exponential model)", "FRQ often asks for particular solution with initial condition"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "exponential-growth-decay",
+    "displayName": "Exponential Growth & Decay Models",
+    "description": "Model growth/decay scenarios using differential equations",
+    "category": "differential-equations",
+    "course": "AP Calculus AB",
+    "quarter": 3,
+    "unit": "Differential Equations",
+    "prerequisites": ["separable-des"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 7.8"],
+    "teachingGuidance": {
+      "coreConcepts": ["dy/dt = ky → y = y₀eᵏᵗ", "k > 0: growth. k < 0: decay", "Finding k from given data", "Half-life: t = ln(2)/|k|, doubling time: t = ln(2)/k"],
+      "commonMistakes": ["Sign of k", "Confusing initial value with rate", "Not solving for k first"],
+      "teachingTips": ["Connect to precalculus exponential models", "Real-world: population, radioactive decay, cooling", "AP FRQ gives verbal setup → student writes and solves DE"]
+    },
+    "difficultyLevel": 7,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "average-value",
+    "displayName": "Average Value of a Function",
+    "description": "Compute and interpret the average value of a function on an interval",
+    "category": "applications-integrals",
+    "course": "AP Calculus AB",
+    "quarter": 4,
+    "unit": "Applications of Integration",
+    "prerequisites": ["ftc"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 8.1"],
+    "teachingGuidance": {
+      "coreConcepts": ["f_avg = (1/(b-a))∫ₐᵇ f(x)dx", "Geometric: height of rectangle with same area", "MVT for Integrals: f(c) = f_avg for some c"],
+      "commonMistakes": ["Forgetting 1/(b-a) factor", "Not interpreting in context", "Confusing with mean of discrete values"],
+      "teachingTips": ["Simple formula, tested in context", "Must interpret what the average means", "Often paired with FTC in context problems"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "motion-integrals",
+    "displayName": "Motion via Integrals & Net Change",
+    "description": "Use integrals to find displacement, distance, and net change",
+    "category": "applications-integrals",
+    "course": "AP Calculus AB",
+    "quarter": 4,
+    "unit": "Applications of Integration",
+    "prerequisites": ["ftc", "motion"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 8.2", "AP Calc AB 8.3"],
+    "teachingGuidance": {
+      "coreConcepts": ["Displacement = ∫v(t)dt (net, can be negative)", "Total distance = ∫|v(t)|dt (always positive)", "Net change: ∫ₐᵇ f'(t)dt = f(b)-f(a)", "Accumulation in context"],
+      "commonMistakes": ["Confusing displacement and total distance", "Not using absolute value for distance", "Interpreting negative displacement"],
+      "teachingTips": ["Split at zeros of v(t) for total distance", "Net change theorem = FTC2 in word form", "Most common FRQ application of integration"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 60, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "area-between-curves",
+    "displayName": "Area Between Curves",
+    "description": "Find area enclosed between two curves using integration",
+    "category": "applications-integrals",
+    "course": "AP Calculus AB",
+    "quarter": 4,
+    "unit": "Applications of Integration",
+    "prerequisites": ["ftc"],
+    "enables": ["volume-disk-washer"],
+    "standardsAlignment": ["AP Calc AB 8.4", "AP Calc AB 8.5"],
+    "teachingGuidance": {
+      "coreConcepts": ["∫ₐᵇ [f(x)-g(x)]dx where f ≥ g", "Finding intersection points", "Integrating with respect to y: ∫[right-left]dy", "Breaking into sub-regions when top/bottom switch"],
+      "commonMistakes": ["Top minus bottom reversed", "Not finding all intersections", "Integrating with wrong variable"],
+      "teachingTips": ["Always sketch first", "Identify which function is on top in each region", "With respect to y can simplify certain problems"]
+    },
+    "difficultyLevel": 8,
+    "fluencyMetadata": {"baseFluencyTime": 65, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "volume-cross-sections",
+    "displayName": "Volume by Cross-Sections",
+    "description": "Find volumes using known cross-sectional areas",
+    "category": "applications-integrals",
+    "course": "AP Calculus AB",
+    "quarter": 4,
+    "unit": "Applications of Integration",
+    "prerequisites": ["area-between-curves"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 8.7"],
+    "teachingGuidance": {
+      "coreConcepts": ["V = ∫ₐᵇ A(x)dx", "Square cross-sections: A = s²", "Semicircular: A = π(d/2)²/2", "Equilateral triangle: A = (s²√3)/4"],
+      "commonMistakes": ["Wrong cross-section formula", "Not identifying the side length from the base region", "Integrating with wrong variable"],
+      "teachingTips": ["Draw the base region, then draw the cross-section", "Side of cross-section = top function minus bottom function", "AP loves this problem type"]
+    },
+    "difficultyLevel": 9,
+    "fluencyMetadata": {"baseFluencyTime": 75, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  },
+  {
+    "skillId": "volume-disk-washer",
+    "displayName": "Volume: Disk & Washer Methods",
+    "description": "Find volumes of revolution using disk and washer methods",
+    "category": "applications-integrals",
+    "course": "AP Calculus AB",
+    "quarter": 4,
+    "unit": "Applications of Integration",
+    "prerequisites": ["area-between-curves"],
+    "enables": [],
+    "standardsAlignment": ["AP Calc AB 8.8", "AP Calc AB 8.9", "AP Calc AB 8.10"],
+    "teachingGuidance": {
+      "coreConcepts": ["Disk: V = π∫[R(x)]²dx", "Washer: V = π∫([R(x)]²-[r(x)]²)dx", "Revolving around lines other than axes", "Choosing between disk/washer and dx vs dy"],
+      "commonMistakes": ["Forgetting π", "Not squaring the radius", "Wrong R and r when revolving around non-axis line"],
+      "teachingTips": ["Draw the cross-section (disk or washer) at a sample x", "R = distance from axis to outer curve, r = distance to inner", "Revolving around y=k or x=k: adjust R and r by subtracting k"]
+    },
+    "difficultyLevel": 9,
+    "fluencyMetadata": {"baseFluencyTime": 80, "fluencyType": "conceptual", "toleranceFactor": 4.0}
+  }
+]
