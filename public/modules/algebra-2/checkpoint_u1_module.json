@@ -1,0 +1,37 @@
+{
+  "moduleId": "checkpoint_u1",
+  "course": "Algebra 2",
+  "unit": 1,
+  "title": "Unit 1 Checkpoint: Linear Systems & Matrices",
+  "weeks": "5",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Cumulative assessment covering systems of equations (substitution, elimination, special cases), systems of inequalities, mathematical modeling with systems, matrix operations, and solving systems with inverse matrices.",
+  "skillsCovered": ["systems-substitution-elimination", "systems-linear-inequalities", "mathematical-modeling-systems", "matrices-operations", "matrices-solving-systems"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "systems-substitution-elimination", "moduleId": "linear_systems", "focusArea": "Choosing methods, messy coefficients, special cases"},
+    {"skillId": "systems-linear-inequalities", "moduleId": "linear_systems", "focusArea": "Graphing regions, boundary lines, test points"},
+    {"skillId": "mathematical-modeling-systems", "moduleId": "linear_systems", "focusArea": "Defining variables, writing equations from context, interpreting solutions"},
+    {"skillId": "matrices-operations", "moduleId": "linear_systems", "focusArea": "Multiplication, determinants, inverse matrices"},
+    {"skillId": "matrices-solving-systems", "moduleId": "linear_systems", "focusArea": "Setting up Ax=b, computing A⁻¹b"}
+  ],
+  "assessmentProblems": [
+    {"id": "a2u1-1", "question": "Solve by elimination: 3x - 2y = 7 and 5x + 4y = 1.", "answer": "x = 15/11, y = -16/11", "skill": "systems-substitution-elimination", "difficulty": 5, "points": 8},
+    {"id": "a2u1-2", "question": "Solve by substitution: y = 3x + 2 and 6x - 2y = 8. Classify the system.", "answer": "No solution (inconsistent). After substitution: 6x - 2(3x+2) = 8 → -4 = 8, contradiction.", "skill": "systems-substitution-elimination", "difficulty": 5, "points": 8},
+    {"id": "a2u1-3", "question": "A concert sold 300 tickets. Adult tickets cost $12 and student tickets cost $8. Total revenue was $2960. How many of each were sold?", "answer": "140 adult, 160 student", "skill": "mathematical-modeling-systems", "difficulty": 5, "points": 10},
+    {"id": "a2u1-4", "question": "Graph the solution region: y ≤ 2x + 1, y > -x + 4, x ≥ 0. Identify the vertices of the solution region.", "answer": "The vertices are at (0, 1), (0, 4), and (1, 3).", "skill": "systems-linear-inequalities", "difficulty": 6, "points": 10},
+    {"id": "a2u1-5", "question": "Multiply: [1 -2; 3 4] · [5 0; -1 2].", "answer": "[7 -4; 11 8]", "skill": "matrices-operations", "difficulty": 5, "points": 8},
+    {"id": "a2u1-6", "question": "Find the determinant and inverse of A = [3 1; 5 2].", "answer": "det = 1. A⁻¹ = [2 -1; -5 3].", "skill": "matrices-operations", "difficulty": 5, "points": 10},
+    {"id": "a2u1-7", "question": "Use an inverse matrix to solve: 3x + y = 10 and 5x + 2y = 17.", "answer": "x = 3, y = 1", "skill": "matrices-solving-systems", "difficulty": 6, "points": 10},
+    {"id": "a2u1-8", "question": "A chemist needs 10 liters of a 30% acid solution. She has a 20% solution and a 50% solution. How many liters of each should she mix?", "answer": "6⅔ liters of 20% and 3⅓ liters of 50%", "skill": "mathematical-modeling-systems", "difficulty": 7, "points": 12},
+    {"id": "a2u1-9", "question": "The determinant of a 2×2 matrix is 0. What does this mean about the system of equations it represents?", "answer": "The system has no unique solution. It is either inconsistent (no solution) or dependent (infinitely many solutions). The matrix is singular and has no inverse.", "skill": "matrices-solving-systems", "difficulty": 5, "points": 8},
+    {"id": "a2u1-10", "question": "Solve the system: x + y + z = 6, 2x - y + z = 3, x + 2y - z = 2.", "answer": "x = 1, y = 2, z = 3", "skill": "systems-substitution-elimination", "difficulty": 7, "points": 16}
+  ],
+  "answerKeys": {
+    "a2u1-1": "(15/11, -16/11)", "a2u1-2": "No solution", "a2u1-3": "140 adult, 160 student",
+    "a2u1-4": "Vertices (0,1),(0,4),(1,3)", "a2u1-5": "[7 -4; 11 8]", "a2u1-6": "det=1, inv=[2 -1;-5 3]",
+    "a2u1-7": "x=3, y=1", "a2u1-8": "6⅔L of 20%, 3⅓L of 50%",
+    "a2u1-9": "No unique solution, singular matrix", "a2u1-10": "x=1, y=2, z=3"
+  }
+}
