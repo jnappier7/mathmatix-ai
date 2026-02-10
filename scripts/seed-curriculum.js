@@ -36,6 +36,7 @@ const CURRICULUM_FILES = [
   'skills-geometry.json',
   'skills-algebra-2.json',
   'skills-precalculus.json',
+  'skills-ap-calculus-ab.json',
   'skills-calculus-1.json',
   'skills-calculus-2.json',
   'skills-calculus-3.json'

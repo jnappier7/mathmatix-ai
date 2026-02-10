@@ -128,6 +128,13 @@ const PATHWAYS = [
     description: 'Limits, derivatives, integrals'
   },
   {
+    pathwayId: 'ap-calculus-ab-pathway',
+    name: 'AP Calculus AB',
+    thetaRange: [2.0, 2.5],
+    gradeBand: 'Calculus',
+    description: 'AP-aligned: limits, derivatives, integrals, differential equations'
+  },
+  {
     pathwayId: 'calculus-2-pathway',
     name: 'Calculus 2',
     thetaRange: [2.3, 2.7],
