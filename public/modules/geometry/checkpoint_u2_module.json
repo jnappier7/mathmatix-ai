@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u2",
+  "course": "Geometry",
+  "unit": 2,
+  "quarter": 1,
+  "title": "Unit 2 Checkpoint: Triangle Foundations",
+  "weeks": "5",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of triangle classification (by sides and angles), Triangle Angle Sum Theorem, Exterior Angle Theorem, isosceles/equilateral triangle properties, and the Triangle Inequality Theorem including range problems.",
+  "skillsCovered": [
+    "triangle-classification",
+    "triangle-angle-sum",
+    "exterior-angle-theorem",
+    "triangle-inequalities"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "triangle-classification", "reteachFocus": "By sides (scalene/isosceles/equilateral), by angles (acute/right/obtuse), dual classification", "resources": ["triangles_basics_module.json - scaffold phases 1-2"] },
+    { "skillId": "triangle-angle-sum", "reteachFocus": "Sum of interior angles = 180°, finding missing angles algebraically, isosceles base angle theorem", "resources": ["triangles_basics_module.json - scaffold phases 3-5"] },
+    { "skillId": "exterior-angle-theorem", "reteachFocus": "Exterior angle = sum of two remote interior angles, connection to angle sum theorem, algebraic setup", "resources": ["triangles_basics_module.json - scaffold phases 3-5"] },
+    { "skillId": "triangle-inequalities", "reteachFocus": "Sum of two shortest > longest, finding range |a-b| < x < a+b, strict inequality", "resources": ["triangles_basics_module.json - scaffold phases 6-8"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu2-1",
+      "question": "Classify each triangle by sides and angles (dual classification): (a) sides 5, 5, 5 with all 60° angles, (b) sides 3, 4, 5 with a 90° angle, (c) sides 6, 6, 10 with an obtuse angle.",
+      "answer": "(a) Equilateral equiangular (all sides equal, all angles 60°). (b) Right scalene (one 90° angle, no equal sides). (c) Obtuse isosceles (one angle > 90°, two equal sides).",
+      "skill": "triangle-classification",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu2-2",
+      "question": "In triangle DEF, angle D = 63° and angle E = 48°. Find angle F.",
+      "answer": "D + E + F = 180 → 63 + 48 + F = 180 → F = 180 - 111 = 69°.",
+      "skill": "triangle-angle-sum",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu2-3",
+      "question": "The angles of a triangle are (5x - 2)°, (3x + 8)°, and (2x + 14)°. Find x and all three angle measures. Classify the triangle.",
+      "answer": "(5x-2)+(3x+8)+(2x+14)=180 → 10x+20=180 → 10x=160 → x=16. Angles: 5(16)-2=78°, 3(16)+8=56°, 2(16)+14=46°. Check: 78+56+46=180 ✓. All angles < 90°, so acute triangle.",
+      "skill": "triangle-angle-sum",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "gcu2-4",
+      "question": "An isosceles triangle has base angles of (3x + 10)° each and a vertex angle of (4x - 20)°. Find x and all angle measures.",
+      "answer": "2(3x+10)+(4x-20)=180 → 6x+20+4x-20=180 → 10x=180 → x=18. Base angles: 3(18)+10=64° each. Vertex: 4(18)-20=52°. Check: 64+64+52=180 ✓.",
+      "skill": "triangle-angle-sum",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu2-5",
+      "question": "An exterior angle of a triangle measures 135°. One remote interior angle is 70°. Find the other remote interior angle and the interior angle adjacent to the exterior angle.",
+      "answer": "Exterior = sum of remotes: 135 = 70 + x → x = 65°. Adjacent interior: 180 - 135 = 45°. Check angle sum: 70 + 65 + 45 = 180 ✓.",
+      "skill": "exterior-angle-theorem",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu2-6",
+      "question": "An exterior angle of a triangle is (7x + 5)°. The two remote interior angles are (3x + 15)° and (2x + 20)°. Find x and all angle measures.",
+      "answer": "7x+5 = (3x+15)+(2x+20) → 7x+5 = 5x+35 → 2x=30 → x=15. Remotes: 3(15)+15=60° and 2(15)+20=50°. Exterior: 7(15)+5=110°. Check: 60+50=110 ✓. Interior adjacent: 180-110=70°. Angle sum: 60+50+70=180 ✓.",
+      "skill": "exterior-angle-theorem",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu2-7",
+      "question": "Which sets of lengths can form a triangle? (a) 4, 7, 12  (b) 5, 8, 11  (c) 3, 3, 6  (d) 9, 9, 1",
+      "answer": "(a) 4+7=11, 11 < 12 → No. (b) 5+8=13, 13 > 11 → Yes. (c) 3+3=6, 6 = 6, not > 6 → No. (d) 1+9=10, 10 > 9 → Yes.",
+      "skill": "triangle-inequalities",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "gcu2-8",
+      "question": "Two sides of a triangle are 7 and 18. What is the range of possible values for the third side?",
+      "answer": "|18-7| < x < 18+7 → 11 < x < 25.",
+      "skill": "triangle-inequalities",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu2-9",
+      "question": "An equilateral triangle has a perimeter of 36. One of its exterior angles is measured. Find: (a) the side length, (b) each interior angle, (c) each exterior angle.",
+      "answer": "(a) Side = 36/3 = 12. (b) Each interior angle = 60° (equilateral → equiangular). (c) Each exterior angle = 180 - 60 = 120°.",
+      "skill": "triangle-classification",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu2-10",
+      "question": "ANALYSIS: In triangle PQR, angle P = (x + 10)° and angle Q = (2x - 5)°. The exterior angle at R is (4x - 15)°. Find x, all interior angles, and verify using both the Exterior Angle Theorem and the Triangle Angle Sum Theorem.",
+      "answer": "Exterior Angle Theorem: ext at R = P + Q → 4x-15 = (x+10)+(2x-5) = 3x+5 → x=20. P=30°, Q=35°. Ext at R=65°. Interior R=180-65=115°. Verify angle sum: 30+35+115=180 ✓. Verify ext: 30+35=65 ✓. Classification: obtuse triangle (R=115°>90°).",
+      "skill": "exterior-angle-theorem",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "gcu2-spiral-1",
+      "question": "SPIRAL (Angle Pairs): Two parallel lines are cut by a transversal. Same-side interior angles measure (3x + 20)° and (7x)°. Find x and both angle measures.",
+      "answer": "Same-side interior are supplementary: (3x+20)+(7x)=180 → 10x+20=180 → 10x=160 → x=16. Angles: 3(16)+20=68° and 7(16)=112°. Check: 68+112=180 ✓.",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 1"
+    },
+    {
+      "id": "gcu2-spiral-2",
+      "question": "SPIRAL (Angle Pairs): Two angles are complementary. One is 5 times the other. Find both.",
+      "answer": "x + 5x = 90 → 6x = 90 → x = 15°. Other: 5(15) = 75°. Check: 15+75=90 ✓.",
+      "skill": "angle-pair-relationships",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 1"
+    }
+  ],
+  "answerKeys": {
+    "gcu2-1": "(a) equilateral equiangular (b) right scalene (c) obtuse isosceles.",
+    "gcu2-2": "F=69°.",
+    "gcu2-3": "x=16. Angles: 78°, 56°, 46°. Acute.",
+    "gcu2-4": "x=18. Base=64°, vertex=52°.",
+    "gcu2-5": "Other remote=65°, adjacent=45°.",
+    "gcu2-6": "x=15. Remotes: 60°,50°. Ext=110°. Adjacent=70°.",
+    "gcu2-7": "(a) No (b) Yes (c) No (d) Yes.",
+    "gcu2-8": "11 < x < 25.",
+    "gcu2-9": "Side=12, interior=60°, exterior=120°.",
+    "gcu2-10": "x=20. P=30°, Q=35°, R=115°. Obtuse triangle.",
+    "gcu2-spiral-1": "x=16. Angles: 68° and 112°.",
+    "gcu2-spiral-2": "15° and 75°."
+  }
+}

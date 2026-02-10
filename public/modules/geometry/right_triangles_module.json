@@ -1,195 +1,248 @@
 {
   "moduleId": "right_triangles",
   "course": "Geometry",
+  "unit": 4,
   "quarter": 2,
   "title": "Right Triangles",
+  "weeks": "10-12",
   "estimatedDuration": 50,
+  "description": "Apply the Pythagorean Theorem and its converse, master 45-45-90 and 30-60-90 special right triangle ratios, and introduce trigonometric ratios (sine, cosine, tangent) with real-world applications.",
   "skills": ["pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"],
   "standardsAlignment": ["G-SRT.6", "G-SRT.7", "G-SRT.8"],
   "goals": [
     "Apply the Pythagorean Theorem to find missing side lengths in right triangles",
     "Use the Converse of the Pythagorean Theorem to classify triangles",
     "Apply properties of 45-45-90 and 30-60-90 special right triangles",
-    "Define and apply sine, cosine, and tangent ratios"
+    "Define and apply sine, cosine, and tangent ratios",
+    "Solve real-world problems using trig ratios and angles of elevation/depression"
   ],
   "instructionalStrategy": [
     "Always label the hypotenuse first—it's always the longest side, always opposite the right angle, always c.",
     "Use the visual proof with squares on each side to make a² + b² = c² concrete, not just a formula.",
     "For special right triangles, teach the ratio patterns (1:1:√2 and 1:√3:2) rather than memorizing specific numbers.",
-    "SOH-CAH-TOA is a mnemonic, but understanding the ratios as relationships between sides and angles is the real goal."
+    "SOH-CAH-TOA is a mnemonic, but understanding the ratios as relationships between sides and angles is the real goal.",
+    "Build from Pythagorean Theorem → converse → special triangles → trig ratios as a natural progression."
   ],
   "aiFlexLevel": "high",
   "scaffold": [
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "The **Pythagorean Theorem** is one of the most important theorems in all of mathematics:\n\n**a² + b² = c²**\n\nwhere **c is always the hypotenuse** (the side opposite the right angle, and the longest side) and **a** and **b** are the two legs.\n\nThis works ONLY for right triangles. You can use it to find any missing side when you know the other two. If solving for a leg: a = √(c² - b²). If solving for the hypotenuse: c = √(a² + b²).",
-      "initialPrompt": "A right triangle has legs of 3 and 4. Before we calculate, take a guess—what do you think the hypotenuse is? Is it 7 (the sum), 5, or something else?"
+      "skill": "pythagorean-theorem",
+      "title": "The Pythagorean Theorem",
+      "text": "The **Pythagorean Theorem** is one of the most important theorems in all of mathematics:\n\n**a² + b² = c²**\n\nwhere **c is always the hypotenuse** (the side opposite the right angle, and the longest side) and **a** and **b** are the two legs.\n\nThis works ONLY for right triangles. You can use it to find any missing side when you know the other two. If solving for a leg: a = √(c² - b²). If solving for the hypotenuse: c = √(a² + b²).\n\nCommon Pythagorean triples to recognize: **3-4-5**, **5-12-13**, **8-15-17**, **7-24-25**. Multiples also work (e.g., 6-8-10 is 2× the 3-4-5).",
+      "initialPrompt": "A right triangle has legs of 3 and 4. Before we calculate, take a guess—what do you think the hypotenuse is?"
     },
     {
       "type": "model",
       "lessonPhase": "i-do",
-      "problem": "A right triangle has legs measuring 6 and 8. Find the hypotenuse.",
-      "explanation": "Identify the parts:\n• Legs: a = 6, b = 8\n• Hypotenuse: c = ?\n\nApply the Pythagorean Theorem:\na² + b² = c²\n6² + 8² = c²\n36 + 64 = c²\n100 = c²\nc = √100\nc = **10**\n\nThis is actually a multiple of the famous 3-4-5 Pythagorean triple (×2 gives 6-8-10). Recognizing these triples can save calculation time!",
-      "initialPrompt": "Can you think of other multiples of 3-4-5? What about 5-12-13—can you verify that's a Pythagorean triple?"
-    },
-    {
-      "type": "model",
-      "lessonPhase": "i-do",
-      "problem": "A ladder is 13 feet long and leans against a wall. The base of the ladder is 5 feet from the wall. How high up the wall does the ladder reach?",
-      "explanation": "Visualize the right triangle:\n• Hypotenuse = ladder = 13 ft (c)\n• One leg = distance from wall = 5 ft (a)\n• Other leg = height on wall = ? (b)\n\nSolving for a leg:\na² + b² = c²\n5² + b² = 13²\n25 + b² = 169\nb² = 144\nb = √144\nb = **12 feet**\n\n(This is the 5-12-13 triple!)",
-      "initialPrompt": "What would change if I told you the base was 12 feet from the wall instead? How high would the ladder reach then?"
+      "skill": "pythagorean-theorem",
+      "title": "I-Do: Pythagorean Theorem Applications",
+      "examples": [
+        {
+          "problem": "A right triangle has legs measuring 6 and 8. Find the hypotenuse.",
+          "solution": "Identify: a = 6, b = 8, c = ?\n\na² + b² = c²\n36 + 64 = c²\n100 = c²\nc = √100 = **10**\n\nThis is 2× the 3-4-5 triple (6-8-10)."
+        },
+        {
+          "problem": "A ladder is 13 feet long and leans against a wall. The base is 5 feet from the wall. How high up the wall does the ladder reach?",
+          "solution": "Hypotenuse = ladder = 13, one leg = ground = 5, other leg = height = ?\n\n5² + b² = 13²\n25 + b² = 169\nb² = 144\nb = √144 = **12 feet** (5-12-13 triple!)"
+        },
+        {
+          "problem": "A triangle has sides 9, 12, and 16. Is it acute, right, or obtuse?",
+          "solution": "Compare a² + b² to c² (c = longest side = 16):\n9² + 12² vs 16²\n81 + 144 vs 256\n225 vs 256\n\n225 < 256 → a² + b² < c² → **obtuse**\n\nRule: = right; > acute; < obtuse."
+        }
+      ],
+      "initialPrompt": "Can you think of other multiples of 3-4-5? Verify 5-12-13 is a triple."
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "pythagorean-theorem",
+      "title": "We-Do: Pythagorean Theorem and Converse",
       "problems": [
         {
+          "id": "rt-wp1",
           "question": "A right triangle has a leg of 9 and a hypotenuse of 15. Find the other leg.",
           "answer": "12",
-          "hints": [
-            "You're solving for a leg, not the hypotenuse. Set up: 9² + b² = 15².",
-            "81 + b² = 225. So b² = 144. Take the square root."
-          ]
+          "hints": ["9² + b² = 15² → 81 + b² = 225 → b² = 144 → b = 12."]
         },
         {
+          "id": "rt-wp2",
           "question": "A right triangle has legs of 7 and 24. Find the hypotenuse.",
           "answer": "25",
-          "hints": [
-            "Set up: 7² + 24² = c².",
-            "49 + 576 = c². So c² = 625. Take the square root."
-          ]
+          "hints": ["7² + 24² = c² → 49 + 576 = 625 → c = 25."]
         },
         {
+          "id": "rt-wp3",
           "question": "A triangle has sides 8, 15, and 17. Is it a right triangle?",
           "answer": "yes",
-          "hints": [
-            "Use the Converse of the Pythagorean Theorem: if a² + b² = c², it's a right triangle.",
-            "Check: 8² + 15² = 64 + 225 = 289. And 17² = 289. Since they're equal, yes!"
-          ]
+          "hints": ["8² + 15² = 64 + 225 = 289 = 17². Equal → right triangle."]
         }
       ],
-      "initialPrompt": "Let's practice. In the first problem, which side is the hypotenuse—the 9 or the 15? How do you know?"
+      "initialPrompt": "Which side is the hypotenuse—the 9 or the 15? How do you know?"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Special Right Triangles** have exact ratio patterns you should memorize:\n\n**45-45-90 Triangle** (isosceles right triangle):\n• Legs are equal\n• Hypotenuse = leg × √2\n• Ratio: **1 : 1 : √2**\n• Example: legs of 5, hypotenuse of 5√2\n\n**30-60-90 Triangle** (half of an equilateral triangle):\n• Short leg (opposite 30°) is the smallest\n• Long leg = short leg × √3\n• Hypotenuse = short leg × 2\n• Ratio: **1 : √3 : 2**\n• Example: short leg 4, long leg 4√3, hypotenuse 8",
-      "initialPrompt": "In a 30-60-90 triangle, the hypotenuse is always exactly twice the short leg. Can you see why, if you think about this triangle as half of an equilateral triangle?"
+      "skill": "special-right-triangles",
+      "title": "Special Right Triangles: 45-45-90 and 30-60-90",
+      "text": "**Special Right Triangles** have exact ratio patterns:\n\n**45-45-90 Triangle** (isosceles right triangle):\n• Legs are equal\n• Hypotenuse = leg × √2\n• Ratio: **1 : 1 : √2**\n\n**30-60-90 Triangle** (half of an equilateral triangle):\n• Short leg (opposite 30°) is the smallest\n• Long leg = short leg × √3\n• Hypotenuse = short leg × 2\n• Ratio: **1 : √3 : 2**",
+      "initialPrompt": "In a 30-60-90, the hypotenuse is always twice the short leg. Why, if you think of it as half an equilateral triangle?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "special-right-triangles",
+      "title": "I-Do: Special Right Triangle Calculations",
+      "examples": [
+        {
+          "problem": "In a 45-45-90 triangle, each leg is 10. Find the hypotenuse.",
+          "solution": "Hypotenuse = leg × √2 = 10√2 ≈ 14.14\nVerify: 10² + 10² = 200 = (10√2)² ✓"
+        },
+        {
+          "problem": "In a 30-60-90 triangle, the short leg is 6. Find the long leg and hypotenuse.",
+          "solution": "Long leg = 6√3 ≈ 10.39\nHypotenuse = 6 × 2 = 12\nVerify: 6² + (6√3)² = 36 + 108 = 144 = 12² ✓"
+        },
+        {
+          "problem": "In a 30-60-90 triangle, the hypotenuse is 20. Find the short and long legs.",
+          "solution": "Short leg = 20 ÷ 2 = **10**\nLong leg = 10√3 ≈ 17.32\nVerify: 10² + (10√3)² = 100 + 300 = 400 = 20² ✓"
+        }
+      ],
+      "initialPrompt": "What if you're given the long leg instead? How do you work backwards?"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "special-right-triangles",
+      "title": "We-Do: Special Right Triangle Practice",
       "problems": [
         {
-          "question": "In a 45-45-90 triangle, each leg is 10. Find the hypotenuse.",
-          "answer": "10√2",
-          "hints": [
-            "In a 45-45-90, the hypotenuse = leg × √2.",
-            "Hypotenuse = 10 × √2 = 10√2 (approximately 14.14)."
-          ]
+          "id": "rt-wp4",
+          "question": "In a 45-45-90 triangle, the hypotenuse is 14. Find each leg.",
+          "answer": "7√2",
+          "hints": ["Leg = hypotenuse / √2 = 14/√2 = 14√2/2 = 7√2 ≈ 9.90."]
         },
         {
-          "question": "In a 30-60-90 triangle, the short leg (opposite 30°) is 6. Find the long leg and the hypotenuse.",
-          "answer": "long leg = 6√3, hypotenuse = 12",
-          "hints": [
-            "The long leg = short leg × √3. The hypotenuse = short leg × 2.",
-            "Long leg = 6√3 (approximately 10.39). Hypotenuse = 6 × 2 = 12."
-          ]
-        },
-        {
-          "question": "In a 30-60-90 triangle, the hypotenuse is 20. Find the short leg and the long leg.",
-          "answer": "short leg = 10, long leg = 10√3",
-          "hints": [
-            "Work backwards from the hypotenuse. Short leg = hypotenuse ÷ 2.",
-            "Short leg = 20 ÷ 2 = 10. Long leg = 10√3 (approximately 17.32)."
-          ]
+          "id": "rt-wp5",
+          "question": "In a 30-60-90, the long leg is 9√3. Find the short leg and hypotenuse.",
+          "answer": "short leg = 9, hypotenuse = 18",
+          "hints": ["Long leg = short × √3, so short = 9. Hyp = 2 × 9 = 18."]
         }
       ],
-      "initialPrompt": "Let's work with special right triangles. For the first problem, what's the ratio pattern for a 45-45-90 triangle?"
+      "initialPrompt": "For the first problem, how do you find the leg from the hypotenuse in a 45-45-90?"
     },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
-      "text": "**Trigonometric Ratios** relate the angles and sides of right triangles. For an acute angle θ in a right triangle:\n\n• **sin(θ)** = Opposite / Hypotenuse\n• **cos(θ)** = Adjacent / Hypotenuse\n• **tan(θ)** = Opposite / Adjacent\n\nRemember: **SOH-CAH-TOA**\n• **S**ine = **O**pposite / **H**ypotenuse\n• **C**osine = **A**djacent / **H**ypotenuse\n• **T**angent = **O**pposite / **A**djacent\n\n'Opposite' and 'adjacent' depend on which angle you're looking at—they change when you switch reference angles!",
-      "initialPrompt": "In a right triangle with legs 3 and 4 and hypotenuse 5, if we focus on the angle opposite the side of length 3, what is the sine of that angle?"
+      "skill": "trigonometric-ratios-intro",
+      "title": "Trigonometric Ratios: SOH-CAH-TOA",
+      "text": "**Trigonometric Ratios** relate angles and sides of right triangles:\n\n• **sin(θ)** = Opposite / Hypotenuse\n• **cos(θ)** = Adjacent / Hypotenuse\n• **tan(θ)** = Opposite / Adjacent\n\nRemember: **SOH-CAH-TOA**\n\n'Opposite' and 'adjacent' change depending on which angle you reference. The hypotenuse is always the same. To find a missing side, choose the ratio that connects what you know to what you need.",
+      "initialPrompt": "In a 3-4-5 right triangle, if the angle is opposite the side of 3, what is sin(θ)?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "trigonometric-ratios-intro",
+      "title": "I-Do: Trig Ratios and Applications",
+      "examples": [
+        {
+          "problem": "In a right triangle, the side opposite angle A is 5 and the hypotenuse is 13. Find all three trig ratios for angle A.",
+          "solution": "sin(A) = opp/hyp = 5/13\n\nFind adjacent: 5² + adj² = 13² → adj = 12\n\ncos(A) = adj/hyp = 12/13\ntan(A) = opp/adj = 5/12\n\nVerify: sin²+cos² = 25/169 + 144/169 = 1 ✓"
+        },
+        {
+          "problem": "A right triangle has a 35° angle and hypotenuse of 20. Find the side opposite 35°.",
+          "solution": "sin(35°) = opposite / 20\nopposite = 20 × sin(35°) = 20 × 0.5736 ≈ **11.5**"
+        },
+        {
+          "problem": "From a point 50 feet from a building, the angle of elevation to the top is 40°. How tall is the building?",
+          "solution": "tan(40°) = height / 50\nheight = 50 × tan(40°) = 50 × 0.8391 ≈ **42.0 feet**\n\nWe used tangent because we had the adjacent side (50 ft) and needed the opposite side (height)."
+        }
+      ],
+      "initialPrompt": "Which trig ratio uses opposite and hypotenuse?"
     },
     {
       "type": "guided_practice",
       "lessonPhase": "we-do",
+      "skill": "trigonometric-ratios-intro",
+      "title": "We-Do: Trig Ratio Applications",
       "problems": [
         {
-          "question": "In a right triangle, the side opposite angle A is 5 and the hypotenuse is 13. Find sin(A).",
-          "answer": "5/13",
+          "id": "rt-wp6",
+          "question": "In a right triangle, the side adjacent to angle B is 8 and the hypotenuse is 17. Find cos(B) and the opposite side.",
+          "answer": "cos(B) = 8/17; opposite = 15",
           "hints": [
-            "sin(A) = Opposite / Hypotenuse.",
-            "sin(A) = 5/13 ≈ 0.385."
+            "cos(B) = adj/hyp = 8/17.",
+            "8² + opp² = 17² → opp² = 225 → opp = 15."
           ]
         },
         {
-          "question": "Using the same triangle (opposite = 5, hypotenuse = 13), find the adjacent side and then cos(A) and tan(A).",
-          "answer": "adjacent = 12, cos(A) = 12/13, tan(A) = 5/12",
+          "id": "rt-wp7",
+          "question": "A tree casts a 24-foot shadow. The angle of elevation from the tip of the shadow to the top is 55°. How tall is the tree?",
+          "answer": "≈ 34.3 feet",
           "hints": [
-            "Use Pythagorean Theorem to find the adjacent side: 5² + b² = 13².",
-            "25 + b² = 169, b² = 144, b = 12. So cos(A) = 12/13 and tan(A) = 5/12."
-          ]
-        },
-        {
-          "question": "A right triangle has an angle of 35° and a hypotenuse of 20. Find the length of the side opposite the 35° angle (round to the nearest tenth).",
-          "answer": "11.5",
-          "hints": [
-            "sin(35°) = opposite / 20.",
-            "opposite = 20 × sin(35°) = 20 × 0.5736 ≈ 11.5."
+            "tan(55°) = height / 24.",
+            "height = 24 × tan(55°) ≈ 24 × 1.4281 ≈ 34.3 feet."
           ]
         }
       ],
-      "initialPrompt": "For the first problem, identify which trig ratio uses the opposite side and the hypotenuse."
+      "initialPrompt": "Which trig ratio relates adjacent and hypotenuse?"
     },
     {
       "type": "independent_practice",
       "lessonPhase": "you-do",
+      "title": "You-Do: Independent Practice",
       "problems": [
         {
+          "id": "rt-yp1",
           "question": "A right triangle has legs of 5 and 12. Find the hypotenuse.",
           "answer": "13",
-          "hints": ["5² + 12² = c². This is a common Pythagorean triple."]
+          "skill": "pythagorean-theorem",
+          "hints": ["5² + 12² = c². 5-12-13 triple."]
         },
         {
-          "question": "A triangle has sides 9, 12, and 16. Is it acute, right, or obtuse?",
+          "id": "rt-yp2",
+          "question": "A triangle has sides 11, 13, and 18. Is it acute, right, or obtuse?",
           "answer": "obtuse",
-          "hints": ["Compare 9² + 12² to 16². If a² + b² < c², it's obtuse. 81 + 144 = 225 < 256."]
+          "skill": "pythagorean-converse",
+          "hints": ["11² + 13² = 121 + 169 = 290 vs 18² = 324. 290 < 324 → obtuse."]
         },
         {
-          "question": "In a 45-45-90 triangle, the hypotenuse is 14. Find each leg.",
-          "answer": "7√2",
-          "hints": ["Leg = hypotenuse / √2 = 14/√2 = 14√2/2 = 7√2."]
+          "id": "rt-yp3",
+          "question": "In a 45-45-90 triangle, the hypotenuse is 20. Find each leg.",
+          "answer": "10√2",
+          "skill": "special-right-triangles",
+          "hints": ["Leg = 20/√2 = 20√2/2 = 10√2."]
         },
         {
-          "question": "In a 30-60-90 triangle, the long leg is 9√3. Find the short leg and hypotenuse.",
-          "answer": "short leg = 9, hypotenuse = 18",
-          "hints": ["Long leg = short leg × √3. So short leg = 9. Hypotenuse = 2 × 9 = 18."]
+          "id": "rt-yp4",
+          "question": "In a 30-60-90, the long leg is 12√3. Find the short leg and hypotenuse.",
+          "answer": "short leg = 12, hypotenuse = 24",
+          "skill": "special-right-triangles",
+          "hints": ["Short leg = long leg / √3 = 12. Hyp = 2 × 12 = 24."]
         },
         {
-          "question": "A 20-foot ramp makes a 15° angle with the ground. How high does the ramp rise (opposite side)? Round to the nearest tenth.",
-          "answer": "5.2",
-          "hints": ["sin(15°) = opposite / 20. Opposite = 20 × sin(15°) ≈ 20 × 0.2588 ≈ 5.2."]
+          "id": "rt-yp5",
+          "question": "A 20-foot ramp makes a 15° angle with the ground. How high does the ramp rise? Round to nearest tenth.",
+          "answer": "≈ 5.2 feet",
+          "skill": "trigonometric-ratios-intro",
+          "hints": ["sin(15°) = height/20. Height = 20 × sin(15°) ≈ 5.2."]
         }
       ],
       "attemptsRequired": 3
     }
   ],
   "answerKeys": {
-    "A right triangle has a leg of 9 and a hypotenuse of 15. Find the other leg.": "12",
-    "A right triangle has legs of 7 and 24. Find the hypotenuse.": "25",
-    "A triangle has sides 8, 15, and 17. Is it a right triangle?": "yes",
-    "In a 45-45-90 triangle, each leg is 10. Find the hypotenuse.": "10√2",
-    "In a 30-60-90 triangle, the short leg is 6. Find the long leg and hypotenuse.": "long leg = 6√3, hypotenuse = 12",
-    "In a 30-60-90 triangle, the hypotenuse is 20. Find the short and long legs.": "short leg = 10, long leg = 10√3",
-    "sin(A) when opposite = 5 and hypotenuse = 13": "5/13",
-    "A right triangle has legs of 5 and 12. Find the hypotenuse.": "13",
-    "Triangle sides 9, 12, 16—acute, right, or obtuse?": "obtuse",
-    "In a 45-45-90 triangle, hypotenuse is 14. Find each leg.": "7√2",
-    "In a 30-60-90, long leg is 9√3. Find short leg and hypotenuse.": "short leg = 9, hypotenuse = 18",
-    "20-foot ramp at 15° angle—how high?": "5.2"
+    "rt-wp1": "12 (9-12-15 triple).",
+    "rt-wp2": "25 (7-24-25 triple).",
+    "rt-wp3": "Yes, right (8²+15²=17²).",
+    "rt-wp4": "7√2 each.",
+    "rt-wp5": "Short=9, hyp=18.",
+    "rt-wp6": "cos(B)=8/17. Opposite=15.",
+    "rt-wp7": "≈34.3 ft.",
+    "rt-yp1": "13 (5-12-13 triple).",
+    "rt-yp2": "Obtuse (290<324).",
+    "rt-yp3": "10√2 each.",
+    "rt-yp4": "Short=12, hyp=24.",
+    "rt-yp5": "≈5.2 ft."
   }
 }

@@ -1,0 +1,118 @@
+{
+  "moduleId": "checkpoint_u1",
+  "course": "Geometry",
+  "unit": 1,
+  "quarter": 1,
+  "title": "Unit 1 Checkpoint: Geometric Foundations & Angles",
+  "weeks": "3",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of undefined terms, geometric notation, angle classification, complementary/supplementary/vertical angle pairs, and parallel-line transversal relationships including algebraic applications.",
+  "skillsCovered": [
+    "points-lines-planes",
+    "angle-measurement",
+    "angle-pair-relationships",
+    "parallel-lines-transversals"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "points-lines-planes", "reteachFocus": "Undefined terms (point, line, plane), collinear/coplanar, segment vs ray vs line notation", "resources": ["foundations_angles_module.json - scaffold phases 1-3"] },
+    { "skillId": "angle-measurement", "reteachFocus": "Acute/right/obtuse/straight classification, benchmark angles, estimation strategies", "resources": ["foundations_angles_module.json - scaffold phase 4"] },
+    { "skillId": "angle-pair-relationships", "reteachFocus": "Complementary (sum 90°), supplementary (sum 180°), vertical (congruent), linear pair (supplementary)", "resources": ["foundations_angles_module.json - scaffold phases 4-6"] },
+    { "skillId": "parallel-lines-transversals", "reteachFocus": "Corresponding (F-pattern), alternate interior (Z-pattern), alternate exterior, same-side interior (C-pattern, supplementary), algebraic setup", "resources": ["foundations_angles_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu1-1",
+      "question": "Points P, Q, and R lie on line k. Point S does not lie on line k. (a) Are P, Q, R collinear? (b) Are P, Q, S collinear? (c) Are P, Q, R, S coplanar?",
+      "answer": "(a) Yes — P, Q, R all lie on line k, so they are collinear. (b) No — S does not lie on line k. (c) Yes — any three points determine a plane, and we can always find a plane containing P, Q, R, and S (since the first three are collinear, adding any fourth point still keeps them coplanar).",
+      "skill": "points-lines-planes",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu1-2",
+      "question": "Classify each angle: (a) 17°, (b) 90°, (c) 145°, (d) 180°.",
+      "answer": "(a) Acute (0° < 17° < 90°). (b) Right (exactly 90°). (c) Obtuse (90° < 145° < 180°). (d) Straight (exactly 180°).",
+      "skill": "angle-measurement",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "gcu1-3",
+      "question": "Angles A and B are complementary. Angle A is 14° more than Angle B. Find both angle measures.",
+      "answer": "A + B = 90 and A = B + 14. Substitute: (B + 14) + B = 90 → 2B + 14 = 90 → 2B = 76 → B = 38°. A = 38 + 14 = 52°. Check: 52 + 38 = 90 ✓.",
+      "skill": "angle-pair-relationships",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu1-4",
+      "question": "Two lines intersect. One angle measures (5x + 10)° and the vertical angle measures (8x - 20)°. Find x and all four angle measures.",
+      "answer": "Vertical angles are congruent: 5x + 10 = 8x - 20 → 30 = 3x → x = 10. Angle = 5(10) + 10 = 60°. Four angles: 60°, 120°, 60°, 120° (linear pairs sum to 180°).",
+      "skill": "angle-pair-relationships",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "gcu1-5",
+      "question": "Two parallel lines are cut by a transversal. Identify the angle pair type and find the missing angle measure: (a) Corresponding angles: one measures 73°, find the other. (b) Same-side interior angles: one measures 118°, find the other.",
+      "answer": "(a) Corresponding angles are congruent → the other is 73°. (b) Same-side interior angles are supplementary → 180 - 118 = 62°.",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "gcu1-6",
+      "question": "Two parallel lines are cut by a transversal. A pair of alternate interior angles measure (4x + 7)° and (6x - 13)°. Find x and both angle measures.",
+      "answer": "Alternate interior angles are congruent: 4x + 7 = 6x - 13 → 20 = 2x → x = 10. Angles: 4(10) + 7 = 47° and 6(10) - 13 = 47° ✓.",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu1-7",
+      "question": "Two parallel lines are cut by a transversal. A pair of same-side interior angles measure (3x + 25)° and (5x + 11)°. Find x and both angle measures.",
+      "answer": "Same-side interior angles are supplementary: (3x + 25) + (5x + 11) = 180 → 8x + 36 = 180 → 8x = 144 → x = 18. Angles: 3(18) + 25 = 79° and 5(18) + 11 = 101°. Check: 79 + 101 = 180 ✓.",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu1-8",
+      "question": "One angle at an intersection of a transversal with a parallel line measures 52°. Find all 8 angles formed at both intersections.",
+      "answer": "At intersection 1: 52°, 128°, 52°, 128° (vertical pairs + linear pairs). At intersection 2 (by corresponding angles): 52°, 128°, 52°, 128°. All eight angles: four of 52° and four of 128°.",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "gcu1-9",
+      "question": "Angles P and Q are supplementary. Angle P is 5 times Angle Q. Find both angle measures.",
+      "answer": "P + Q = 180 and P = 5Q. Substitute: 5Q + Q = 180 → 6Q = 180 → Q = 30°. P = 5(30) = 150°. Check: 150 + 30 = 180 ✓.",
+      "skill": "angle-pair-relationships",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu1-10",
+      "question": "ANALYSIS: Two parallel lines are cut by a transversal. One angle is (2x + 3y)° and its corresponding angle is 85°. The supplement of that corresponding angle is (4x - y)°. Find x, y, and verify that the supplement is correct.",
+      "answer": "Corresponding angles congruent: 2x + 3y = 85 ... (1). Supplement of 85° is 95°: 4x - y = 95 ... (2). From (2): y = 4x - 95. Sub into (1): 2x + 3(4x - 95) = 85 → 2x + 12x - 285 = 85 → 14x = 370 → x = 370/14 = 185/7. y = 4(185/7) - 95 = 740/7 - 665/7 = 75/7. Check: 2(185/7) + 3(75/7) = 370/7 + 225/7 = 595/7 = 85 ✓. Supplement: 4(185/7) - 75/7 = 740/7 - 75/7 = 665/7 = 95 ✓. And 85 + 95 = 180 ✓.",
+      "skill": "parallel-lines-transversals",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "answerKeys": {
+    "gcu1-1": "P,Q,R collinear (yes). P,Q,S not collinear. All four coplanar (yes).",
+    "gcu1-2": "(a) acute (b) right (c) obtuse (d) straight.",
+    "gcu1-3": "A=52°, B=38°.",
+    "gcu1-4": "x=10. Angles: 60°, 120°, 60°, 120°.",
+    "gcu1-5": "(a) 73°. (b) 62°.",
+    "gcu1-6": "x=10. Both angles=47°.",
+    "gcu1-7": "x=18. Angles: 79° and 101°.",
+    "gcu1-8": "Four 52° angles and four 128° angles.",
+    "gcu1-9": "Q=30°, P=150°.",
+    "gcu1-10": "x=185/7, y=75/7. Angle=85°, supplement=95°."
+  }
+}
