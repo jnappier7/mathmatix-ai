@@ -1,0 +1,143 @@
+{
+  "moduleId": "checkpoint_u5",
+  "course": "Pre-Calculus",
+  "unit": 5,
+  "title": "Unit 5 Checkpoint: Advanced Trig & Applications",
+  "weeks": "22",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of inverse trig functions, sum/difference identities, double/half-angle formulas, Law of Sines, Law of Cosines, and triangle area applications.",
+  "skillsCovered": [
+    "inverse-trig-functions",
+    "sum-difference-identities",
+    "double-half-angle-formulas",
+    "law-of-sines",
+    "law-of-cosines",
+    "triangle-area-applications"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "inverse-trig-functions", "reteachFocus": "Restricted domains, compositions, right triangle method", "resources": ["advanced_trig_module.json - scaffold phases 1-2"] },
+    { "skillId": "sum-difference-identities", "reteachFocus": "sin(A±B), cos(A±B), tan(A±B), exact value computation", "resources": ["advanced_trig_module.json - scaffold phases 3-4"] },
+    { "skillId": "double-half-angle-formulas", "reteachFocus": "sin2θ, cos2θ (3 forms), half-angle formulas, power-reducing", "resources": ["advanced_trig_module.json - scaffold phases 5-6"] },
+    { "skillId": "law-of-sines", "reteachFocus": "ASA, AAS, and SSA ambiguous case", "resources": ["advanced_trig_module.json - scaffold phases 8-9"] },
+    { "skillId": "law-of-cosines", "reteachFocus": "SAS and SSS cases, finding sides and angles", "resources": ["advanced_trig_module.json - scaffold phases 10-11"] },
+    { "skillId": "triangle-area-applications", "reteachFocus": "½ab sinC, Heron's formula, applied problems", "resources": ["advanced_trig_module.json - scaffold phases 12-13"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "pcu5-1",
+      "question": "Evaluate exactly: (a) arctan(√3), (b) arccos(-√3/2), (c) sin⁻¹(sin(7π/6)), (d) cos(arctan(-5/12)).",
+      "answer": "(a) π/3 (tan(π/3) = √3). (b) 5π/6 (cos(5π/6) = -√3/2, and 5π/6 ∈ [0,π]). (c) sin(7π/6) = -1/2. arcsin(-1/2) = -π/6. (d) Let θ = arctan(-5/12). θ ∈ (-π/2, 0), so cos θ > 0. Triangle: opp = -5, adj = 12, hyp = 13. cos θ = 12/13.",
+      "skill": "inverse-trig-functions",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu5-2",
+      "question": "Find the exact value of cos(7π/12).",
+      "answer": "7π/12 = π/3 + π/4. cos(π/3 + π/4) = cos(π/3)cos(π/4) - sin(π/3)sin(π/4) = (1/2)(√2/2) - (√3/2)(√2/2) = √2/4 - √6/4 = (√2 - √6)/4.",
+      "skill": "sum-difference-identities",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu5-3",
+      "question": "If sin A = 4/5 (A in Q2) and cos B = 12/13 (B in Q1), find: (a) cos(A - B), (b) sin(A + B).",
+      "answer": "A in Q2: cos A = -3/5. B in Q1: sin B = 5/13 (from 5-12-13). (a) cos(A-B) = cosAcosB + sinAsinB = (-3/5)(12/13) + (4/5)(5/13) = -36/65 + 20/65 = -16/65. (b) sin(A+B) = sinAcosB + cosAsinB = (4/5)(12/13) + (-3/5)(5/13) = 48/65 - 15/65 = 33/65.",
+      "skill": "sum-difference-identities",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu5-4",
+      "question": "If cos θ = 7/25 and θ is in Q4, find: (a) sin(2θ), (b) cos(2θ).",
+      "answer": "Q4: sin θ = -24/25 (from 7-24-25 triangle, negative in Q4). (a) sin(2θ) = 2sinθcosθ = 2(-24/25)(7/25) = -336/625. (b) cos(2θ) = 2cos²θ - 1 = 2(49/625) - 1 = 98/625 - 625/625 = -527/625.",
+      "skill": "double-half-angle-formulas",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu5-5",
+      "question": "Find the exact value of sin(π/8) using the half-angle formula.",
+      "answer": "π/8 = (π/4)/2. sin(π/8) = √((1 - cos(π/4))/2) = √((1 - √2/2)/2) = √((2 - √2)/4) = √(2 - √2)/2. (Positive since π/8 ∈ Q1.)",
+      "skill": "double-half-angle-formulas",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu5-6",
+      "question": "In triangle ABC, A = 32°, C = 68°, a = 8. Find b and c.",
+      "answer": "B = 180° - 32° - 68° = 80°. By Law of Sines: a/sinA = b/sinB = c/sinC. b = 8sin80°/sin32° = 8(0.9848)/0.5299 ≈ 14.87. c = 8sin68°/sin32° = 8(0.9272)/0.5299 ≈ 14.00.",
+      "skill": "law-of-sines",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu5-7",
+      "question": "SSA Ambiguous Case: Given triangle ABC with b = 10, c = 7, C = 30°. Determine how many triangles are possible and solve each.",
+      "answer": "sinB/b = sinC/c → sinB = bsinC/c = 10sin30°/7 = 10(0.5)/7 = 5/7 ≈ 0.7143. B = arcsin(5/7) ≈ 45.58° or B = 180° - 45.58° = 134.42°. Case 1: B ≈ 45.58°, A = 180° - 30° - 45.58° = 104.42°. a = 7sin104.42°/sin30° ≈ 7(0.9686)/0.5 ≈ 13.56. Case 2: B ≈ 134.42°, A = 180° - 30° - 134.42° = 15.58°. a = 7sin15.58°/sin30° ≈ 7(0.2685)/0.5 ≈ 3.76. Two triangles.",
+      "skill": "law-of-sines",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "pcu5-8",
+      "question": "In triangle ABC, a = 8, b = 5, c = 9. Find all three angles.",
+      "answer": "Largest angle opposite longest side (c=9). cosC = (64+25-81)/(2·8·5) = 8/80 = 1/10. C = arccos(0.1) ≈ 84.26°. Now use Law of Sines: sinA/a = sinC/c → sinA = 8sin(84.26°)/9 = 8(0.9950)/9 ≈ 0.8844. A = arcsin(0.8844) ≈ 62.18°. B = 180° - 84.26° - 62.18° = 33.56°.",
+      "skill": "law-of-cosines",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu5-9",
+      "question": "Find the area of a triangle with sides 9, 12, and 15.",
+      "answer": "s = (9+12+15)/2 = 18. A = √(18·9·6·3) = √2916 = √(4·729) = 2·27 = 54 square units. (Note: 9-12-15 is a 3-4-5 multiple → right triangle, so area = ½(9)(12) = 54 ✓.)",
+      "skill": "triangle-area-applications",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "pcu5-10",
+      "question": "ANALYSIS: A surveyor stands at point A and observes two landmarks B and C on opposite sides of a river. She measures AB = 120 m, AC = 150 m, and angle BAC = 65°. (a) Find the distance BC across the river. (b) Find the area of triangle ABC.",
+      "answer": "(a) Law of Cosines: BC² = 120² + 150² - 2(120)(150)cos65° = 14400 + 22500 - 36000(0.4226) = 36900 - 15213.6 = 21686.4. BC = √21686.4 ≈ 147.26 m. (b) Area = (1/2)(120)(150)sin65° = 9000(0.9063) ≈ 8156.7 m².",
+      "skill": "triangle-area-applications",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "pcu5-spiral-1",
+      "question": "SPIRAL (Solving): Solve on [0, 2π): 2cos²x + cosx - 1 = 0.",
+      "answer": "(2cosx - 1)(cosx + 1) = 0. cosx = 1/2: x = π/3, 5π/3. cosx = -1: x = π. Solutions: {π/3, π, 5π/3}.",
+      "skill": "solving-trig-equations",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review"
+    },
+    {
+      "id": "pcu5-spiral-2",
+      "question": "SPIRAL (Log): Solve ln(x+1) + ln(x-3) = ln(5).",
+      "answer": "ln((x+1)(x-3)) = ln5 → (x+1)(x-3) = 5 → x²-2x-3 = 5 → x²-2x-8 = 0 → (x-4)(x+2) = 0. x=4 or x=-2. Check: x=-2 → ln(-1) undefined. x=4: ln5+ln1=ln5 ✓. Solution: x=4.",
+      "skill": "solving-logarithmic-equations",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review"
+    }
+  ],
+  "answerKeys": {
+    "pcu5-1": "(a)π/3 (b)5π/6 (c)-π/6 (d)12/13.",
+    "pcu5-2": "(√2-√6)/4.",
+    "pcu5-3": "(a) cos(A-B)=-16/65. (b) sin(A+B)=33/65.",
+    "pcu5-4": "(a) sin(2θ)=-336/625. (b) cos(2θ)=-527/625.",
+    "pcu5-5": "sin(π/8)=√(2-√2)/2.",
+    "pcu5-6": "b≈14.87, c≈14.00.",
+    "pcu5-7": "Two triangles. Case1: B≈45.58°,a≈13.56. Case2: B≈134.42°,a≈3.76.",
+    "pcu5-8": "C≈84.26°, A≈62.18°, B≈33.56°.",
+    "pcu5-9": "Area=54 (Heron's: √2916=54).",
+    "pcu5-10": "(a) BC≈147.26m. (b) Area≈8156.7 m².",
+    "pcu5-spiral-1": "{π/3, π, 5π/3}.",
+    "pcu5-spiral-2": "x=4."
+  }
+}
