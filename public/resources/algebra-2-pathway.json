@@ -1,19 +1,504 @@
 {
+  "courseId": "algebra-2",
   "track": "Algebra 2",
-  "overview": "Extend algebraic concepts to advanced functions, complex numbers, and conic sections.",
+  "overview": "Extend algebraic concepts to advanced functions, complex numbers, conic sections, and statistical reasoning. Master polynomial, rational, exponential, and logarithmic relationships.",
+  "prerequisites": ["algebra-1"],
+  "naturalProgression": [
+    "Start with advanced function concepts—composition, inverses, and transformations build on Algebra 1 function basics",
+    "Deepen quadratic mastery with completing the square, vertex form, and complex number solutions",
+    "Explore polynomial functions through division, factoring theorems, and end behavior analysis",
+    "Master rational expressions and equations, connecting algebraic manipulation to graphical analysis with asymptotes",
+    "Extend exponent concepts to radicals and rational exponents as inverse operations",
+    "Build exponential and logarithmic reasoning as inverse function pairs with real-world modeling",
+    "Discover patterns in sequences and series, connecting arithmetic to linear and geometric to exponential",
+    "Investigate conic sections as geometric loci defined by distance relationships",
+    "Culminate with probability, counting, and the normal distribution—bridging algebra to statistics"
+  ],
+  "aiInstructionModel": {
+    "approach": "AI-led gradual release",
+    "description": "The AI tutor leads all instruction using the gradual release model (I Do / We Do / You Do) but has full freedom to make instructional decisions. Module files provide scope, key concepts, teaching guidance, and reference problems—NOT rigid scripts. The AI decides pacing, chooses examples, adjusts scaffolding, and personalizes based on the student's skill mastery, learning profile, and real-time responses.",
+    "phases": [
+      {
+        "phase": "concept-intro",
+        "aiRole": "Build conceptual understanding before procedures. The AI introduces the BIG IDEA using real-world connections, student interests, and visual/physical analogies. The AI chooses HOW to introduce based on the student's learning style.",
+        "studentRole": "Engage with the concept, ask questions, make predictions"
+      },
+      {
+        "phase": "i-do",
+        "aiRole": "Model 2-3 worked examples with think-aloud reasoning. The AI selects problem difficulty based on the student's current mastery and explains using the student's preferred style (visual, verbal, step-by-step, etc.).",
+        "studentRole": "Observe, ask clarifying questions, identify patterns"
+      },
+      {
+        "phase": "concept-check",
+        "aiRole": "Quick comprehension check before moving to practice. The AI asks 1-2 targeted questions to verify the student grasps the concept, not just the procedure. If gaps detected, the AI re-teaches before proceeding.",
+        "studentRole": "Explain understanding in own words, answer concept questions"
+      },
+      {
+        "phase": "we-do",
+        "aiRole": "Guided practice with adaptive scaffolding. The AI provides problems and supports the student through them, offering hints ONLY when needed. Scaffolding decreases as the student demonstrates understanding. The AI decides when to move on.",
+        "studentRole": "Attempt problems with AI support, explain reasoning"
+      },
+      {
+        "phase": "check-in",
+        "aiRole": "Emotional and confidence assessment. The AI checks how the student FEELS about the material—not just accuracy. Adjusts pacing and tone based on anxiety, confidence, and engagement signals.",
+        "studentRole": "Reflect on confidence and comfort level"
+      },
+      {
+        "phase": "you-do",
+        "aiRole": "Independent practice. The AI presents problems and steps back, allowing the student to work independently. Minimal hints—only if the student is stuck. The AI evaluates accuracy, independence, and transfer.",
+        "studentRole": "Solve problems independently, self-monitor"
+      },
+      {
+        "phase": "mastery-check",
+        "aiRole": "Formal assessment for skill mastery. The AI determines if the student has met the 4-Pillar mastery criteria (accuracy, independence, transfer, retention). Awards mastery or identifies areas for re-teaching.",
+        "studentRole": "Demonstrate mastery through independent problem-solving"
+      }
+    ],
+    "aiDecisionRights": [
+      "Choose which examples and problems to present (module provides reference problems, AI may generate its own)",
+      "Adjust difficulty in real-time based on student performance",
+      "Skip or extend phases based on student readiness",
+      "Re-order skills within a module if pedagogically appropriate",
+      "Generate additional practice or enrichment as needed",
+      "Use student interests and learning profile to personalize examples",
+      "Decide when to advance to the next skill or re-teach",
+      "Select teaching strategies (visual, algebraic, numerical, verbal) based on student profile",
+      "Adjust tone and pacing based on emotional signals and anxiety level"
+    ]
+  },
   "modules": [
-    {"moduleId": "functions_advanced", "quarter": 1, "title": "Functions & Inverses", "preview": "Master function operations, composition, and inverses", "skills": ["function-notation-composition", "inverse-functions", "transformations-functions"]},
-    {"moduleId": "quadratics_advanced", "quarter": 1, "title": "Advanced Quadratics", "preview": "Completing the square, vertex form, complex solutions", "skills": ["quadratic-completing-square", "quadratic-vertex-form", "complex-numbers"]},
-    {"moduleId": "checkpoint_q1", "quarter": 1, "title": "Q1 Checkpoint", "preview": "Functions and quadratics"},
-    {"moduleId": "polynomials", "quarter": 2, "title": "Polynomial Functions", "preview": "Division, remainder theorem, graphing polynomials", "skills": ["polynomial-division", "remainder-factor-theorems", "graphing-polynomials"]},
-    {"moduleId": "rational_expressions", "quarter": 2, "title": "Rational Functions", "preview": "Simplify expressions, solve equations, graph rational functions", "skills": ["rational-expressions", "rational-equations", "rational-functions-graphing"]},
-    {"moduleId": "radicals", "quarter": 2, "title": "Radicals & Rational Exponents", "preview": "Simplify radicals, rational exponents, radical equations", "skills": ["radical-expressions", "rational-exponents", "radical-equations"]},
-    {"moduleId": "checkpoint_q2", "quarter": 2, "title": "Q2 Checkpoint", "preview": "Polynomials and rational functions"},
-    {"moduleId": "exponential_logarithmic", "quarter": 3, "title": "Exponential & Logarithmic Functions", "preview": "Logarithm properties, exponential models, solving equations", "skills": ["exponential-equations-logarithms", "logarithmic-properties", "exponential-growth-decay-models"]},
-    {"moduleId": "sequences_series", "quarter": 3, "title": "Sequences & Series", "preview": "Arithmetic and geometric sequences, summation notation", "skills": ["sequences-series-arithmetic", "sequences-series-geometric", "sigma-notation"]},
-    {"moduleId": "checkpoint_q3", "quarter": 3, "title": "Q3 Checkpoint", "preview": "Exponential, logarithmic, sequences"},
-    {"moduleId": "conic_sections", "quarter": 4, "title": "Conic Sections", "preview": "Circles, parabolas, ellipses, hyperbolas", "skills": ["conic-sections-circles", "parabolas", "ellipses", "hyperbolas"]},
-    {"moduleId": "probability_statistics", "quarter": 4, "title": "Probability & Statistics", "preview": "Counting, permutations, combinations, probability", "skills": ["probability-counting", "binomial-theorem", "normal-distribution"]},
-    {"moduleId": "final_mastery_assessment", "quarter": 4, "title": "Final Mastery Assessment", "preview": "Comprehensive Algebra 2 assessment"}
-  ]
+    {
+      "moduleId": "functions_advanced",
+      "quarter": 1,
+      "title": "Functions & Inverses",
+      "preview": "Master function operations, composition, and inverses",
+      "moduleFile": "/modules/algebra-2/functions_advanced_module.json",
+      "skills": ["function-notation-composition", "inverse-functions", "transformations-functions"],
+      "essentialQuestions": [
+        "How do function operations and composition create new relationships from existing ones?",
+        "What does it mean for functions to be inverses, and why is this concept so powerful?",
+        "How do transformations let us build complex graphs from simple parent functions?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "function-notation-review",
+          "title": "Function Notation & Operations",
+          "order": 1,
+          "concepts": ["f(x) notation", "Evaluating functions", "Function operations: (f+g)(x), (f-g)(x), (fg)(x), (f/g)(x)", "Domain of combined functions"],
+          "teachingNotes": "Review from Algebra 1 but extend to operations between functions. Emphasize domain restrictions for quotients."
+        },
+        {
+          "lessonId": "composition",
+          "title": "Function Composition",
+          "order": 2,
+          "concepts": ["(f ∘ g)(x) = f(g(x))", "Order matters: f(g(x)) ≠ g(f(x)) generally", "Domain of compositions", "Decomposing composite functions"],
+          "keyFormulas": ["(f ∘ g)(x) = f(g(x))"],
+          "commonMistakes": ["Confusing f(g(x)) with f(x)·g(x)", "Not substituting the ENTIRE g(x) expression"]
+        },
+        {
+          "lessonId": "inverse-functions",
+          "title": "Inverse Functions",
+          "order": 3,
+          "concepts": ["One-to-one functions and horizontal line test", "Finding inverses: swap x and y, solve for y", "Verifying: f(f⁻¹(x)) = x and f⁻¹(f(x)) = x", "Graphing inverses as reflections over y = x"],
+          "keyFormulas": ["f(f⁻¹(x)) = x", "f⁻¹(f(x)) = x"],
+          "commonMistakes": ["Confusing f⁻¹(x) with 1/f(x)", "Not restricting domain when needed"]
+        },
+        {
+          "lessonId": "transformations",
+          "title": "Function Transformations",
+          "order": 4,
+          "concepts": ["Vertical/horizontal shifts", "Reflections over axes", "Vertical/horizontal stretches and compressions", "Combining multiple transformations", "Parent functions library"],
+          "teachingNotes": "Build a transformation toolkit that applies to ALL function families throughout the course."
+        }
+      ]
+    },
+    {
+      "moduleId": "quadratics_advanced",
+      "quarter": 1,
+      "title": "Advanced Quadratics",
+      "preview": "Completing the square, vertex form, complex solutions",
+      "moduleFile": "/modules/algebra-2/quadratics_advanced_module.json",
+      "skills": ["quadratic-completing-square", "quadratic-vertex-form", "complex-numbers"],
+      "essentialQuestions": [
+        "How does completing the square reveal the vertex and provide a method to solve ANY quadratic?",
+        "What are complex numbers and why do we need them?",
+        "How does the discriminant determine the nature of solutions?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "completing-the-square",
+          "title": "Completing the Square",
+          "order": 1,
+          "concepts": ["Perfect square trinomials", "(b/2)² technique", "Converting standard form to vertex form", "Solving equations by completing the square"],
+          "keyFormulas": ["x² + bx + (b/2)² = (x + b/2)²"],
+          "commonMistakes": ["Forgetting to balance when adding (b/2)² to both sides", "Sign errors with negative b"]
+        },
+        {
+          "lessonId": "vertex-form",
+          "title": "Vertex Form & Graphing",
+          "order": 2,
+          "concepts": ["y = a(x - h)² + k", "Vertex at (h, k)", "Axis of symmetry x = h", "Effect of a on width and direction"],
+          "keyFormulas": ["y = a(x - h)² + k"]
+        },
+        {
+          "lessonId": "complex-numbers",
+          "title": "Complex Numbers",
+          "order": 3,
+          "concepts": ["Imaginary unit i = √(-1), i² = -1", "Standard form a + bi", "Operations: add, subtract, multiply, divide", "Complex conjugates", "Powers of i cycle"],
+          "teachingNotes": "Show the need for complex numbers through quadratics with negative discriminant."
+        },
+        {
+          "lessonId": "quadratic-discriminant",
+          "title": "The Discriminant & Complex Solutions",
+          "order": 4,
+          "concepts": ["Discriminant = b² - 4ac", "Two real solutions (D > 0), one repeated (D = 0), two complex (D < 0)", "Writing complex solutions in a ± bi form"],
+          "keyFormulas": ["Discriminant: D = b² - 4ac"],
+          "commonMistakes": ["Forgetting that complex solutions come in conjugate pairs"]
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q1",
+      "quarter": 1,
+      "title": "Q1 Checkpoint",
+      "preview": "Functions, inverses, quadratics, and complex numbers",
+      "moduleFile": "/modules/algebra-2/checkpoint_q1_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "polynomials",
+      "quarter": 2,
+      "title": "Polynomial Functions",
+      "preview": "Division, remainder theorem, graphing polynomials",
+      "moduleFile": "/modules/algebra-2/polynomials_module.json",
+      "skills": ["polynomial-division", "remainder-factor-theorems", "graphing-polynomials"],
+      "essentialQuestions": [
+        "How is polynomial division analogous to numeric long division?",
+        "How do the Remainder and Factor Theorems connect evaluation, division, and factoring?",
+        "How does the degree and leading coefficient determine a polynomial's end behavior?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "polynomial-long-division",
+          "title": "Polynomial Long Division",
+          "order": 1,
+          "concepts": ["Long division algorithm for polynomials", "Placeholder terms for missing degrees", "Checking: dividend = divisor × quotient + remainder"],
+          "teachingNotes": "Draw explicit parallel to numeric long division. Show side-by-side comparison."
+        },
+        {
+          "lessonId": "synthetic-division",
+          "title": "Synthetic Division",
+          "order": 2,
+          "concepts": ["Synthetic division as shortcut for (x - k) divisors", "Setting up the synthetic division array", "Reading quotient and remainder from the result"],
+          "commonMistakes": ["Using wrong sign for k", "Missing placeholder 0 for absent terms"]
+        },
+        {
+          "lessonId": "remainder-factor-theorems",
+          "title": "Remainder & Factor Theorems",
+          "order": 3,
+          "concepts": ["Remainder Theorem: f(k) = remainder when dividing by (x - k)", "Factor Theorem: (x - k) is a factor iff f(k) = 0", "Using theorems to test possible rational zeros"],
+          "keyFormulas": ["f(k) = remainder of f(x) ÷ (x - k)"]
+        },
+        {
+          "lessonId": "graphing-polynomials",
+          "title": "Graphing Polynomial Functions",
+          "order": 4,
+          "concepts": ["End behavior from leading term", "Zeros from factored form", "Multiplicity: cross (odd) vs bounce (even)", "Maximum number of turning points = degree - 1"],
+          "commonMistakes": ["Confusing end behavior rules for odd vs even degree"]
+        }
+      ]
+    },
+    {
+      "moduleId": "rational_expressions",
+      "quarter": 2,
+      "title": "Rational Functions",
+      "preview": "Simplify expressions, solve equations, graph rational functions",
+      "moduleFile": "/modules/algebra-2/rational_expressions_module.json",
+      "skills": ["rational-expressions", "rational-equations", "rational-functions-graphing"],
+      "essentialQuestions": [
+        "Why must we factor before canceling, and what's the difference between canceling factors vs terms?",
+        "How do asymptotes and holes arise from the algebraic structure of a rational function?",
+        "Why do rational equations sometimes produce extraneous solutions?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "simplifying-rational",
+          "title": "Simplifying Rational Expressions",
+          "order": 1,
+          "concepts": ["Factor numerator and denominator", "Cancel common FACTORS (not terms)", "State domain restrictions BEFORE simplifying"],
+          "commonMistakes": ["Canceling terms instead of factors", "Forgetting to state restrictions"]
+        },
+        {
+          "lessonId": "rational-operations",
+          "title": "Operations with Rational Expressions",
+          "order": 2,
+          "concepts": ["Multiply: factor all, cancel, multiply across", "Divide: flip second fraction, then multiply", "Add/Subtract: find LCD, build equivalent fractions, combine"],
+          "teachingNotes": "Parallel to numeric fraction operations. Factor denominators first to find LCD."
+        },
+        {
+          "lessonId": "rational-equations",
+          "title": "Solving Rational Equations",
+          "order": 3,
+          "concepts": ["Multiply both sides by LCD", "Solve resulting polynomial equation", "Check for extraneous solutions (values that make original denominators zero)"],
+          "commonMistakes": ["Not checking for extraneous solutions", "LCD errors"]
+        },
+        {
+          "lessonId": "graphing-rational",
+          "title": "Graphing Rational Functions",
+          "order": 4,
+          "concepts": ["Vertical asymptotes from denominator zeros", "Holes from canceled factors", "Horizontal asymptote from degree comparison", "x-intercepts from numerator zeros"],
+          "keyFormulas": ["deg(top) < deg(bottom): HA at y=0", "deg(top) = deg(bottom): HA at y = leading coeff ratio", "deg(top) > deg(bottom): no HA"]
+        }
+      ]
+    },
+    {
+      "moduleId": "radicals",
+      "quarter": 2,
+      "title": "Radicals & Rational Exponents",
+      "preview": "Simplify radicals, rational exponents, radical equations",
+      "moduleFile": "/modules/algebra-2/radicals_module.json",
+      "skills": ["radical-expressions", "rational-exponents", "radical-equations"],
+      "essentialQuestions": [
+        "How are radicals and rational exponents two notations for the same concept?",
+        "Why does √(a+b) ≠ √a + √b, and what operations DO distribute over radicals?",
+        "Why must we always check for extraneous solutions when solving radical equations?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "rational-exponents",
+          "title": "Rational Exponents",
+          "order": 1,
+          "concepts": ["a^(1/n) = ⁿ√a", "a^(m/n) = ⁿ√(aᵐ) = (ⁿ√a)ᵐ", "All exponent rules apply to rational exponents"],
+          "keyFormulas": ["a^(m/n) = ⁿ√(aᵐ)"]
+        },
+        {
+          "lessonId": "simplifying-radicals",
+          "title": "Simplifying Radical Expressions",
+          "order": 2,
+          "concepts": ["Product and quotient properties of radicals", "Extracting perfect nth-power factors", "Combining like radicals", "Rationalizing denominators (monomial and binomial)"],
+          "commonMistakes": ["√(a+b) ≠ √a + √b", "Forgetting conjugate for binomial denominators"]
+        },
+        {
+          "lessonId": "radical-equations",
+          "title": "Solving Radical Equations",
+          "order": 3,
+          "concepts": ["Isolate the radical", "Raise both sides to appropriate power", "Solve resulting equation", "CHECK all solutions for extraneous results"],
+          "teachingNotes": "Always show WHY squaring introduces extraneous solutions: if -3 ≠ 3 is false, (-3)² = 3² is true."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q2",
+      "quarter": 2,
+      "title": "Q2 Checkpoint",
+      "preview": "Polynomials, rational functions, and radicals",
+      "moduleFile": "/modules/algebra-2/checkpoint_q2_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "exponential_logarithmic",
+      "quarter": 3,
+      "title": "Exponential & Logarithmic Functions",
+      "preview": "Logarithm properties, exponential models, solving equations",
+      "moduleFile": "/modules/algebra-2/exponential_logarithmic_module.json",
+      "skills": ["exponential-equations-logarithms", "logarithmic-properties", "exponential-growth-decay-models"],
+      "essentialQuestions": [
+        "How are exponential and logarithmic functions inverses of each other?",
+        "How do properties of logarithms simplify complex expressions and equations?",
+        "How do exponential models describe growth and decay in the real world?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "exponential-functions",
+          "title": "Exponential Functions Review & Extension",
+          "order": 1,
+          "concepts": ["f(x) = a · bˣ form", "Growth (b > 1) vs decay (0 < b < 1)", "Graphing exponential functions", "The number e ≈ 2.718"],
+          "teachingNotes": "Review from Algebra 1 but extend to base e and more complex transformations."
+        },
+        {
+          "lessonId": "intro-logarithms",
+          "title": "Introduction to Logarithms",
+          "order": 2,
+          "concepts": ["log_b(x) = y means b^y = x", "Converting between exponential and log form", "Common log (base 10) and natural log (base e)", "Evaluating basic logarithms"],
+          "keyFormulas": ["log_b(x) = y ↔ b^y = x"]
+        },
+        {
+          "lessonId": "log-properties",
+          "title": "Properties of Logarithms",
+          "order": 3,
+          "concepts": ["Product rule: log(MN) = log(M) + log(N)", "Quotient rule: log(M/N) = log(M) - log(N)", "Power rule: log(M^p) = p·log(M)", "Change of base formula"],
+          "keyFormulas": ["log_b(x) = log(x)/log(b)"],
+          "commonMistakes": ["log(a+b) ≠ log(a) + log(b)", "Forgetting that properties apply to multiplication/division only"]
+        },
+        {
+          "lessonId": "solving-exp-log-equations",
+          "title": "Solving Exponential & Logarithmic Equations",
+          "order": 4,
+          "concepts": ["Same-base technique for exponential equations", "Taking logs of both sides", "Solving log equations by converting to exponential form", "Checking for extraneous solutions in log equations"],
+          "commonMistakes": ["Domain violations: log of negative or zero", "Not checking extraneous solutions"]
+        },
+        {
+          "lessonId": "exponential-models",
+          "title": "Exponential Growth & Decay Models",
+          "order": 5,
+          "concepts": ["Compound interest: A = P(1 + r/n)^(nt)", "Continuous compounding: A = Pe^(rt)", "Half-life and doubling time models", "Using logarithms to solve for time"],
+          "keyFormulas": ["A = P(1 + r/n)^(nt)", "A = Pe^(rt)", "A = A₀(1/2)^(t/h)"]
+        }
+      ]
+    },
+    {
+      "moduleId": "sequences_series",
+      "quarter": 3,
+      "title": "Sequences & Series",
+      "preview": "Arithmetic and geometric sequences, summation notation",
+      "moduleFile": "/modules/algebra-2/sequences_series_module.json",
+      "skills": ["sequences-series-arithmetic", "sequences-series-geometric", "sigma-notation"],
+      "essentialQuestions": [
+        "How are arithmetic sequences connected to linear functions and geometric sequences to exponential functions?",
+        "What conditions determine whether an infinite series converges to a finite sum?",
+        "How does sigma notation provide a compact way to express sums?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "arithmetic-sequences",
+          "title": "Arithmetic Sequences & Series",
+          "order": 1,
+          "concepts": ["Common difference d", "Explicit formula: aₙ = a₁ + (n-1)d", "Recursive formula: aₙ = aₙ₋₁ + d", "Arithmetic series sum: Sₙ = n(a₁ + aₙ)/2"],
+          "keyFormulas": ["aₙ = a₁ + (n-1)d", "Sₙ = n(a₁ + aₙ)/2"],
+          "teachingNotes": "Connect to linear functions: arithmetic sequence → linear graph. d is the slope."
+        },
+        {
+          "lessonId": "geometric-sequences",
+          "title": "Geometric Sequences & Series",
+          "order": 2,
+          "concepts": ["Common ratio r", "Explicit formula: aₙ = a₁ · r^(n-1)", "Geometric series sum: Sₙ = a₁(1-rⁿ)/(1-r)", "Infinite geometric series: S∞ = a₁/(1-r) when |r| < 1"],
+          "keyFormulas": ["aₙ = a₁ · r^(n-1)", "Sₙ = a₁(1-rⁿ)/(1-r)", "S∞ = a₁/(1-r)"],
+          "commonMistakes": ["Confusing arithmetic and geometric", "Not checking |r| < 1 for infinite series"]
+        },
+        {
+          "lessonId": "sigma-notation",
+          "title": "Sigma (Summation) Notation",
+          "order": 3,
+          "concepts": ["Σ notation: index, lower bound, upper bound", "Expanding sigma notation to write out terms", "Writing series in sigma notation", "Using sum formulas to evaluate"],
+          "teachingNotes": "Sigma is just shorthand. Practice going both directions: expand and condense."
+        }
+      ]
+    },
+    {
+      "moduleId": "checkpoint_q3",
+      "quarter": 3,
+      "title": "Q3 Checkpoint",
+      "preview": "Exponential, logarithmic, and sequences",
+      "moduleFile": "/modules/algebra-2/checkpoint_q3_module.json",
+      "isCheckpoint": true
+    },
+    {
+      "moduleId": "conic_sections",
+      "quarter": 4,
+      "title": "Conic Sections",
+      "preview": "Circles, parabolas, ellipses, hyperbolas",
+      "moduleFile": "/modules/algebra-2/conic_sections_module.json",
+      "skills": ["conic-sections-circles", "parabolas", "ellipses", "hyperbolas"],
+      "essentialQuestions": [
+        "How are all conic sections defined by distance relationships?",
+        "Why is completing the square the essential algebraic skill for working with conics?",
+        "How do the coefficients of a general second-degree equation determine which conic section it represents?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "circles",
+          "title": "Circles",
+          "order": 1,
+          "concepts": ["Standard form: (x-h)² + (y-k)² = r²", "Center and radius from equation", "Converting general form to standard form via completing the square", "Writing equations from given information"],
+          "keyFormulas": ["(x-h)² + (y-k)² = r²"]
+        },
+        {
+          "lessonId": "parabolas-conic",
+          "title": "Parabolas as Conic Sections",
+          "order": 2,
+          "concepts": ["Parabola as locus of points equidistant from focus and directrix", "Vertical: (x-h)² = 4p(y-k)", "Horizontal: (y-k)² = 4p(x-h)", "Finding focus, directrix, vertex"],
+          "keyFormulas": ["(x-h)² = 4p(y-k)", "(y-k)² = 4p(x-h)"],
+          "teachingNotes": "Connect to quadratic functions from Q1. The new concept is focus/directrix geometry."
+        },
+        {
+          "lessonId": "ellipses",
+          "title": "Ellipses",
+          "order": 3,
+          "concepts": ["Standard form with a > b", "Center, vertices, co-vertices, foci", "c² = a² - b²", "Major and minor axes"],
+          "keyFormulas": ["(x-h)²/a² + (y-k)²/b² = 1", "c² = a² - b²"],
+          "commonMistakes": ["Confusing a and b (a is always larger)", "Using wrong formula for c"]
+        },
+        {
+          "lessonId": "hyperbolas",
+          "title": "Hyperbolas",
+          "order": 4,
+          "concepts": ["Standard forms: horizontal and vertical", "Vertices, foci, and asymptotes", "c² = a² + b² (note: PLUS not minus)", "Drawing the fundamental rectangle to find asymptotes"],
+          "keyFormulas": ["(x-h)²/a² - (y-k)²/b² = 1", "c² = a² + b²"],
+          "commonMistakes": ["Using c² = a² - b² instead of c² = a² + b²", "Mixing up asymptote slopes for horizontal vs vertical"]
+        },
+        {
+          "lessonId": "identifying-conics",
+          "title": "Identifying Conic Sections",
+          "order": 5,
+          "concepts": ["General form: Ax² + Bxy + Cy² + Dx + Ey + F = 0", "Identification: A=C → circle, same sign A≠C → ellipse, opposite signs → hyperbola, one is 0 → parabola", "Converting general form to standard form"],
+          "teachingNotes": "This lesson ties everything together. Practice identifying and converting all four types."
+        }
+      ]
+    },
+    {
+      "moduleId": "probability_statistics",
+      "quarter": 4,
+      "title": "Probability & Statistics",
+      "preview": "Counting, permutations, combinations, probability, normal distribution",
+      "moduleFile": "/modules/algebra-2/probability_statistics_module.json",
+      "skills": ["probability-counting", "binomial-theorem", "normal-distribution"],
+      "essentialQuestions": [
+        "How does the fundamental counting principle form the basis for permutations and combinations?",
+        "How does the Binomial Theorem connect algebraic expansion to counting and probability?",
+        "How does the normal distribution model real-world variability?"
+      ],
+      "lessons": [
+        {
+          "lessonId": "counting-principles",
+          "title": "Fundamental Counting Principle",
+          "order": 1,
+          "concepts": ["Multiplication principle for independent events", "Tree diagrams and organized counting", "Factorial notation"],
+          "teachingNotes": "Build from concrete examples: outfits, menus, license plates."
+        },
+        {
+          "lessonId": "permutations-combinations",
+          "title": "Permutations & Combinations",
+          "order": 2,
+          "concepts": ["Permutations: order matters, P(n,r) = n!/(n-r)!", "Combinations: order doesn't matter, C(n,r) = n!/(r!(n-r)!)", "Choosing which to use based on context"],
+          "keyFormulas": ["P(n,r) = n!/(n-r)!", "C(n,r) = n!/(r!(n-r)!)"],
+          "commonMistakes": ["Confusing when order matters vs doesn't"]
+        },
+        {
+          "lessonId": "binomial-theorem",
+          "title": "The Binomial Theorem",
+          "order": 3,
+          "concepts": ["Pascal's Triangle and its connection to combinations", "(a+b)^n expansion using C(n,k)", "Finding specific terms in an expansion"],
+          "keyFormulas": ["(a+b)ⁿ = Σ C(n,k)·a^(n-k)·b^k"]
+        },
+        {
+          "lessonId": "normal-distribution",
+          "title": "Normal Distribution & Z-Scores",
+          "order": 4,
+          "concepts": ["Bell curve: mean, standard deviation", "68-95-99.7 Rule (Empirical Rule)", "Z-scores: z = (x - μ)/σ", "Using z-scores to find probabilities"],
+          "keyFormulas": ["z = (x - μ)/σ"],
+          "teachingNotes": "Connect to real-world: test scores, heights, manufacturing tolerances. This bridges to AP Statistics."
+        }
+      ]
+    },
+    {
+      "moduleId": "final_mastery_assessment",
+      "quarter": 4,
+      "title": "Final Mastery Assessment",
+      "preview": "Comprehensive Algebra 2 assessment",
+      "moduleFile": "/modules/algebra-2/final_mastery_assessment_module.json",
+      "isCheckpoint": true,
+      "isFinal": true
+    }
+  ],
+  "aiGuidanceNotes": "Algebra 2 extends and deepens all Algebra 1 concepts while introducing entirely new function families. The thread connecting everything is FUNCTIONS—every topic is a new function type with its own behavior, graph, and applications. Inverse relationships recur throughout: exponentials/logarithms, squaring/square roots, functions/inverses. Always connect new concepts to prior knowledge. Completing the square is a critical skill that appears in quadratics, conics, and beyond—ensure fluency early. For sequences and series, make the connection to linear (arithmetic) and exponential (geometric) functions explicit. End the course with probability and statistics to bridge toward AP Statistics and real-world data reasoning."
 }
