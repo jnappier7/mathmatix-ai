@@ -1556,6 +1556,574 @@
           ]
         }
       }
+    },
+    {
+      "unitId": "alg1-unit-4",
+      "title": "Systems of Equations and Inequalities",
+      "subtitle": "When Two Relationships Meet",
+      "description": "Students learn to solve systems of linear equations using graphing, substitution, and elimination methods. They interpret solutions as intersection points and apply systems to real-world comparison problems.",
+      "order": 4,
+      "quarter": 2,
+      "essentialQuestions": [
+        "What does the solution to a system of equations represent?",
+        "When should you use graphing vs substitution vs elimination?",
+        "How do systems help us compare real-world options?"
+      ],
+      "bigIdeas": [
+        "The solution to a system is the point that satisfies ALL equations simultaneously",
+        "Different methods are more efficient for different types of systems",
+        "Systems model comparison and optimization problems in the real world"
+      ],
+      "estimatedDays": 18,
+      "skillIds": ["systems-of-equations-graphing", "systems-of-equations-substitution", "systems-of-equations-elimination", "systems-word-problems", "systems-of-inequalities"],
+      "standardsAlignment": ["A-REI.6", "A-REI.11", "A-REI.12", "A-CED.3"],
+      "lessons": [
+        {
+          "lessonId": "alg1-4-1",
+          "title": "Solving Systems by Graphing",
+          "subtitle": "Where Two Lines Meet",
+          "description": "Students solve systems of linear equations by graphing both lines and identifying the intersection point.",
+          "order": 1,
+          "estimatedMinutes": 55,
+          "skillIds": ["systems-of-equations-graphing"],
+          "standardsAlignment": ["A-REI.6", "A-REI.11"],
+          "prerequisites": ["alg1-3-4"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Systems of Equations: The Big Idea",
+              "order": 1,
+              "content": {
+                "explanation": "A system of equations is two or more equations with the same variables. The SOLUTION is the point (x, y) that makes BOTH equations true at the same time. Graphically, this is where the two lines intersect. There are three possibilities: one solution (lines cross), no solution (parallel lines — same slope, different y-intercept), or infinitely many solutions (same line — identical equations).",
+                "workedExamples": [
+                  {
+                    "problem": "Solve the system by graphing: y = 2x + 1 and y = -x + 7",
+                    "steps": [
+                      "Graph y = 2x + 1: start at (0,1), slope 2/1 → points (0,1), (1,3), (2,5)",
+                      "Graph y = -x + 7: start at (0,7), slope -1/1 → points (0,7), (1,6), (2,5)",
+                      "Both lines pass through (2, 5) — that's the intersection!",
+                      "Check: y = 2(2) + 1 = 5 ✓ and y = -(2) + 7 = 5 ✓"
+                    ],
+                    "solution": "(2, 5)",
+                    "tip": "Always check your solution in BOTH equations"
+                  },
+                  {
+                    "problem": "Solve: y = 3x + 2 and y = 3x - 1",
+                    "steps": [
+                      "Both lines have slope 3 but different y-intercepts",
+                      "Parallel lines — they never intersect",
+                      "No solution"
+                    ],
+                    "solution": "No solution — parallel lines",
+                    "tip": "Same slope + different y-intercept = parallel = no solution"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "System of Equations", "definition": "Two or more equations with the same variables, solved simultaneously"},
+                  {"term": "Solution of a System", "definition": "The ordered pair(s) that make ALL equations true"},
+                  {"term": "Consistent System", "definition": "A system with at least one solution"},
+                  {"term": "Inconsistent System", "definition": "A system with no solution (parallel lines)"},
+                  {"term": "Dependent System", "definition": "A system with infinitely many solutions (same line)"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Frame systems as 'comparison problems.' When do two plans cost the same? When do two athletes have the same stats? The intersection IS the answer.",
+                  "commonMisconceptions": [
+                    "Reading the wrong intersection point from the graph",
+                    "Thinking no intersection means the answer is (0, 0)",
+                    "Only checking the solution in one equation"
+                  ],
+                  "scaffoldingPrompts": [
+                    "Can you graph each line separately first?",
+                    "What are the slopes? Are the lines parallel?",
+                    "Where do the lines cross? Read those coordinates carefully."
+                  ],
+                  "realWorldConnections": [
+                    "Comparing phone plans: when does Plan A become cheaper than Plan B?",
+                    "Two runners at different speeds — when does the faster one catch up?"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 15}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Graphing Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-of-equations-graphing"],
+                  "problemCount": 4,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                },
+                "aiGuidance": {
+                  "teachingApproach": "Walk through each graph step by step. Have the student graph one line, then the other, then identify the intersection."
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-of-equations-graphing"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 65}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Systems by Graphing Mastery Check",
+            "skillIds": ["systems-of-equations-graphing"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-4-2",
+          "title": "Solving Systems by Substitution",
+          "subtitle": "Replace and Solve",
+          "description": "Students solve systems algebraically by isolating one variable and substituting into the other equation.",
+          "order": 2,
+          "estimatedMinutes": 55,
+          "skillIds": ["systems-of-equations-substitution"],
+          "standardsAlignment": ["A-REI.6"],
+          "prerequisites": ["alg1-4-1", "alg1-2-4"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "The Substitution Method",
+              "order": 1,
+              "content": {
+                "explanation": "Substitution works by solving one equation for one variable, then plugging that expression into the other equation. This reduces a two-variable problem to a one-variable equation you already know how to solve. Steps: (1) Solve one equation for one variable, (2) Substitute that expression into the other equation, (3) Solve for the remaining variable, (4) Back-substitute to find the first variable, (5) Check in both original equations.",
+                "workedExamples": [
+                  {
+                    "problem": "Solve: y = 3x - 2 and 2x + y = 8",
+                    "steps": [
+                      "First equation already solved for y: y = 3x - 2",
+                      "Substitute into second equation: 2x + (3x - 2) = 8",
+                      "Combine like terms: 5x - 2 = 8",
+                      "Add 2: 5x = 10",
+                      "Divide by 5: x = 2",
+                      "Back-substitute: y = 3(2) - 2 = 4",
+                      "Solution: (2, 4)",
+                      "Check: 2(2) + 4 = 8 ✓ and 4 = 3(2) - 2 ✓"
+                    ],
+                    "solution": "(2, 4)",
+                    "tip": "Look for an equation already solved for a variable — that's the easiest one to substitute"
+                  },
+                  {
+                    "problem": "Solve: x + 2y = 7 and 3x - y = 7",
+                    "steps": [
+                      "Solve first equation for x: x = 7 - 2y",
+                      "Substitute: 3(7 - 2y) - y = 7",
+                      "Distribute: 21 - 6y - y = 7",
+                      "Combine: 21 - 7y = 7",
+                      "Subtract 21: -7y = -14",
+                      "Divide by -7: y = 2",
+                      "Back-substitute: x = 7 - 2(2) = 3",
+                      "Solution: (3, 2)"
+                    ],
+                    "solution": "(3, 2)",
+                    "tip": "Use parentheses when substituting to avoid sign errors"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Emphasize choosing the 'easier' equation to solve first — one with a coefficient of 1 is ideal. Show that substitution gives the exact answer (unlike graphing which can be imprecise).",
+                  "commonMisconceptions": [
+                    "Substituting into the SAME equation instead of the OTHER equation",
+                    "Forgetting parentheses when substituting",
+                    "Not back-substituting to find the second variable",
+                    "Sign errors during distribution"
+                  ],
+                  "scaffoldingPrompts": [
+                    "Which equation is easiest to solve for a variable?",
+                    "Now plug that expression into the OTHER equation.",
+                    "You found x — now go back and find y."
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-of-equations-substitution"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-of-equations-substitution"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 5, "max": 7},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 65}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Substitution Method Mastery Check",
+            "skillIds": ["systems-of-equations-substitution"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-4-3",
+          "title": "Solving Systems by Elimination",
+          "subtitle": "Add or Subtract to Eliminate",
+          "description": "Students solve systems by adding or subtracting equations to eliminate one variable.",
+          "order": 3,
+          "estimatedMinutes": 55,
+          "skillIds": ["systems-of-equations-elimination"],
+          "standardsAlignment": ["A-REI.6"],
+          "prerequisites": ["alg1-4-2"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "The Elimination (Addition) Method",
+              "order": 1,
+              "content": {
+                "explanation": "Elimination works by adding or subtracting the equations so one variable cancels out. If the coefficients of one variable are opposites (like 3y and -3y), just add. If not, multiply one or both equations to CREATE opposite coefficients, then add. Steps: (1) Align equations vertically, (2) Make coefficients of one variable opposites, (3) Add equations to eliminate that variable, (4) Solve for remaining variable, (5) Substitute back.",
+                "workedExamples": [
+                  {
+                    "problem": "Solve: 2x + 3y = 12 and 2x - 3y = 0",
+                    "steps": [
+                      "Notice: 3y and -3y are already opposites!",
+                      "Add equations: (2x + 3y) + (2x - 3y) = 12 + 0",
+                      "Simplify: 4x = 12",
+                      "Solve: x = 3",
+                      "Substitute: 2(3) + 3y = 12 → 6 + 3y = 12 → y = 2",
+                      "Solution: (3, 2)"
+                    ],
+                    "solution": "(3, 2)",
+                    "tip": "Look for opposite coefficients first — those are the easiest to eliminate"
+                  },
+                  {
+                    "problem": "Solve: 3x + 2y = 16 and x + y = 6",
+                    "steps": [
+                      "No opposite coefficients yet. Multiply second equation by -2: -2x - 2y = -12",
+                      "Add to first: (3x + 2y) + (-2x - 2y) = 16 + (-12)",
+                      "Simplify: x = 4",
+                      "Substitute: 4 + y = 6 → y = 2",
+                      "Solution: (4, 2)"
+                    ],
+                    "solution": "(4, 2)",
+                    "tip": "When multiplying, multiply EVERY term in the equation"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Show elimination as a strategic choice. Compare efficiency: substitution is better when one variable has coefficient 1; elimination is better when coefficients are already close to opposites.",
+                  "commonMisconceptions": [
+                    "Not multiplying every term when scaling an equation",
+                    "Sign errors when adding equations",
+                    "Forgetting to solve for the second variable"
+                  ],
+                  "scaffoldingPrompts": [
+                    "Which variable would be easiest to eliminate?",
+                    "What would you need to multiply by to get opposite coefficients?",
+                    "Did you multiply ALL terms in the equation?"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-of-equations-elimination"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 5, "max": 7},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-of-equations-elimination"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 5, "max": 8},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 65}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Elimination Method Mastery Check",
+            "skillIds": ["systems-of-equations-elimination"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-4-4",
+          "title": "Systems Word Problems",
+          "subtitle": "Real-World Applications",
+          "description": "Students translate real-world scenarios into systems of equations and solve using the most efficient method.",
+          "order": 4,
+          "estimatedMinutes": 55,
+          "skillIds": ["systems-word-problems"],
+          "standardsAlignment": ["A-CED.3", "A-REI.6"],
+          "prerequisites": ["alg1-4-2", "alg1-4-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Setting Up Systems from Word Problems",
+              "order": 1,
+              "content": {
+                "explanation": "Many real-world problems involve two unknowns and two relationships — perfect for systems! The key is translating: (1) Define your variables clearly, (2) Write TWO equations from the given information, (3) Choose the best method to solve, (4) Answer the original question (not just 'x = ...').",
+                "workedExamples": [
+                  {
+                    "problem": "Movie tickets cost $8 for adults and $5 for children. A group of 12 people paid $81 total. How many adults and children?",
+                    "steps": [
+                      "Define variables: a = adults, c = children",
+                      "Equation 1 (total people): a + c = 12",
+                      "Equation 2 (total cost): 8a + 5c = 81",
+                      "Solve by substitution: a = 12 - c → 8(12 - c) + 5c = 81",
+                      "96 - 8c + 5c = 81 → -3c = -15 → c = 5",
+                      "a = 12 - 5 = 7",
+                      "Answer: 7 adults and 5 children",
+                      "Check: 7 + 5 = 12 ✓ and 8(7) + 5(5) = 56 + 25 = 81 ✓"
+                    ],
+                    "solution": "7 adults, 5 children"
+                  },
+                  {
+                    "problem": "A boat travels 30 miles upstream in 3 hours and 30 miles downstream in 2 hours. Find the boat's speed and the current's speed.",
+                    "steps": [
+                      "Variables: b = boat speed, c = current speed",
+                      "Upstream: boat works against current → (b - c) × 3 = 30 → b - c = 10",
+                      "Downstream: boat works with current → (b + c) × 2 = 30 → b + c = 15",
+                      "Add equations: 2b = 25 → b = 12.5 mph",
+                      "Substitute: 12.5 + c = 15 → c = 2.5 mph"
+                    ],
+                    "solution": "Boat speed: 12.5 mph, Current: 2.5 mph"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Focus on the SETUP, not just the solving. The hardest part is translating English to math. Use a structured approach: (1) What are the unknowns? (2) What are the relationships?",
+                  "commonMisconceptions": [
+                    "Writing only one equation instead of two",
+                    "Mixing up which equation represents which constraint",
+                    "Giving the mathematical answer without answering the actual question"
+                  ],
+                  "realWorldConnections": [
+                    "Price comparison (which plan is better?)",
+                    "Mixture problems (blending solutions)",
+                    "Distance-rate-time problems"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 15}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Word Problem Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-word-problems"],
+                  "problemCount": 4,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                },
+                "aiGuidance": {
+                  "scaffoldingPrompts": [
+                    "What are the TWO unknowns in this problem?",
+                    "Can you write the first relationship as an equation?",
+                    "Now what's the SECOND relationship?"
+                  ]
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-word-problems"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 5, "max": 7},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Systems Word Problems Mastery Check",
+            "skillIds": ["systems-word-problems"],
+            "questionCount": 4,
+            "passingScore": 75,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-4-5",
+          "title": "Systems of Inequalities",
+          "subtitle": "Shading Solution Regions",
+          "description": "Students graph systems of linear inequalities and identify the solution region as the overlap of shaded areas.",
+          "order": 5,
+          "estimatedMinutes": 50,
+          "skillIds": ["systems-of-inequalities"],
+          "standardsAlignment": ["A-REI.12"],
+          "prerequisites": ["alg1-2-5", "alg1-4-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Graphing Systems of Inequalities",
+              "order": 1,
+              "content": {
+                "explanation": "A system of inequalities has a solution REGION, not a single point. To find it: (1) Graph each inequality as a line (dashed for < or >, solid for ≤ or ≥), (2) Shade the correct side of each line, (3) The solution is the OVERLAP — where all shading meets. Any point in the overlap region satisfies ALL inequalities.",
+                "workedExamples": [
+                  {
+                    "problem": "Graph the system: y > 2x - 1 and y ≤ -x + 4",
+                    "steps": [
+                      "Graph y = 2x - 1 as a DASHED line (strict >), shade ABOVE",
+                      "Graph y = -x + 4 as a SOLID line (≤), shade BELOW",
+                      "The solution region is where both shadings overlap",
+                      "Test point (0, 0): 0 > 2(0) - 1 → 0 > -1 ✓ and 0 ≤ -(0) + 4 → 0 ≤ 4 ✓"
+                    ],
+                    "solution": "The overlapping shaded region",
+                    "tip": "Use a test point (often (0,0) if it's not on either line) to check which side to shade"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Build from single inequality graphing (Unit 2). Use color coding — shade each inequality in a different color so the overlap is clear.",
+                  "commonMisconceptions": [
+                    "Using a solid line when it should be dashed",
+                    "Shading the wrong side",
+                    "Thinking the solution is the intersection point instead of the region"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-of-inequalities"],
+                  "problemCount": 4,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["systems-of-inequalities"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Systems of Inequalities Mastery Check",
+            "skillIds": ["systems-of-inequalities"],
+            "questionCount": 4,
+            "passingScore": 75,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        }
+      ],
+      "unitAssessment": {
+        "assessmentType": "unit-test",
+        "title": "Unit 4: Systems of Equations and Inequalities Test",
+        "description": "Comprehensive assessment on solving systems by graphing, substitution, and elimination, word problems, and systems of inequalities.",
+        "skillIds": ["systems-of-equations-graphing", "systems-of-equations-substitution", "systems-of-equations-elimination", "systems-word-problems", "systems-of-inequalities"],
+        "questionCount": 22,
+        "passingScore": 75,
+        "timeLimit": 55,
+        "allowRetakes": true,
+        "maxRetakes": 2,
+        "performanceTask": {
+          "scenario": "You and a friend are planning a road trip. You need to rent a car. Company A charges $40/day plus $0.15/mile. Company B charges $60/day plus $0.05/mile. Set up a system, solve it, and recommend which company to choose based on your expected daily mileage.",
+          "requirements": [
+            "Define variables and write a system of equations",
+            "Solve using at least two different methods",
+            "Graph both equations and identify the break-even point",
+            "Write a recommendation with mathematical justification"
+          ],
+          "rubric": [
+            {"criterion": "System setup", "points": 5, "description": "Variables defined and equations correctly written"},
+            {"criterion": "Solution methods", "points": 5, "description": "Solved correctly using at least two methods"},
+            {"criterion": "Graphical representation", "points": 5, "description": "Both lines graphed accurately with break-even identified"},
+            {"criterion": "Recommendation", "points": 5, "description": "Clear, well-justified recommendation based on math"}
+          ]
+        }
+      }
     }
   ]
 }
