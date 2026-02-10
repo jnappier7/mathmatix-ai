@@ -1,0 +1,376 @@
+{
+  "moduleId": "integration_accumulation",
+  "course": "AP Calculus AB",
+  "unit": 6,
+  "title": "Integration & Accumulation of Change",
+  "weeks": "24-29",
+  "estimatedDuration": 30,
+  "description": "The highest-weighted unit on the AP Calculus AB exam (17-20%). Students learn to interpret the definite integral as accumulated change, approximate integrals using Riemann sums and trapezoidal sums, connect differentiation and integration through the Fundamental Theorem of Calculus (Parts 1 and 2), compute antiderivatives using power rule reversal, standard formulas, and u-substitution, and apply properties of definite integrals. Weekly rhythm includes both MCQ drills and FRQ sets emphasizing interpretation of integrals in applied contexts.",
+  "skills": [
+    "definite-integral-as-accumulation",
+    "riemann-sums-approximation",
+    "ftc-part-1",
+    "ftc-part-2",
+    "antiderivatives-indefinite-integrals",
+    "integral-properties-techniques"
+  ],
+  "standardsAlignment": [
+    "AP Calc AB 6.1",
+    "AP Calc AB 6.2",
+    "AP Calc AB 6.3",
+    "AP Calc AB 6.4",
+    "AP Calc AB 6.5",
+    "AP Calc AB 6.6",
+    "AP Calc AB 6.7",
+    "AP Calc AB 6.8",
+    "AP Calc AB 6.9"
+  ],
+  "goals": [
+    "Interpret the definite integral as the limit of Riemann sums and as net accumulated change over an interval.",
+    "Approximate definite integrals using left, right, midpoint, and trapezoidal sums and determine whether approximations are overestimates or underestimates.",
+    "Apply the Fundamental Theorem of Calculus Part 1 to differentiate integral-defined functions, including chain rule compositions.",
+    "Apply the Fundamental Theorem of Calculus Part 2 to evaluate definite integrals using antiderivatives.",
+    "Compute antiderivatives using power rule reversal, standard trigonometric/exponential/logarithmic formulas, and the constant of integration.",
+    "Perform u-substitution for both indefinite and definite integrals, including changing bounds of integration.",
+    "Apply properties of definite integrals (order of limits, zero-width interval, linearity, additivity) to evaluate and reason about integrals."
+  ],
+  "instructionalStrategy": [
+    "Gradual release: concept-intro -> I Do -> concept-check -> We Do -> check-in -> You Do -> mastery-check",
+    "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
+    "Begin with the accumulation interpretation before computation techniques -- build conceptual understanding of WHAT an integral represents before HOW to evaluate it",
+    "Riemann sums and FTC taught before antiderivative techniques so students see the need for efficient evaluation methods",
+    "Weekly FRQ-style integral interpretation sets for AP exam preparation",
+    "Spiral prior: derivative rules from Units 2-3, area/rate concepts from earlier coursework"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Definite Integral as Accumulation & Riemann Sums",
+      "skill": "definite-integral-as-accumulation",
+      "content": "The definite integral represents the accumulated change of a quantity over an interval. Geometrically, it gives the net signed area between a curve and the x-axis. Before we can evaluate integrals exactly, we approximate them by slicing the region into rectangles (Riemann sums) or trapezoids and adding up the pieces.",
+      "keyPoints": [
+        "The definite integral of a rate of change gives the net change: integral from a to b of f'(x)dx = f(b) - f(a). If f'(x) is a rate (e.g., velocity), the integral gives the net accumulation (e.g., displacement).",
+        "Riemann sums: partition [a, b] into n subintervals of width Delta_x = (b - a)/n. Choose a sample point in each subinterval and sum f(x_i) * Delta_x.",
+        "Left Riemann sum (LRS): use the left endpoint of each subinterval. In sigma notation: sum from i=0 to n-1 of f(x_i) * Delta_x.",
+        "Right Riemann sum (RRS): use the right endpoint of each subinterval. In sigma notation: sum from i=1 to n of f(x_i) * Delta_x.",
+        "Midpoint Riemann sum (MRS): use the midpoint of each subinterval. Often the most accurate of the three rectangle methods.",
+        "Trapezoidal sum: average of LRS and RRS. Formula: (Delta_x / 2) * [f(x_0) + 2f(x_1) + 2f(x_2) + ... + 2f(x_{n-1}) + f(x_n)].",
+        "Over/underestimates: if f is increasing on [a, b], LRS is an underestimate and RRS is an overestimate. If f is decreasing, it's reversed. If f is concave up, the trapezoidal sum is an overestimate.",
+        "As n approaches infinity, all Riemann sums converge to the definite integral: integral from a to b of f(x)dx = lim(n->infinity) sum of f(x_i)*Delta_x."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Riemann Sums & Accumulation -- Worked Examples",
+      "skill": "riemann-sums-approximation",
+      "examples": [
+        {
+          "problem": "Approximate the integral from 0 to 8 of f(x)dx using a left Riemann sum with 4 equal subintervals, where f(x) = x^2 + 1.",
+          "solution": "Delta_x = (8 - 0)/4 = 2. Left endpoints: x = 0, 2, 4, 6. LRS = f(0)*2 + f(2)*2 + f(4)*2 + f(6)*2 = (1)(2) + (5)(2) + (17)(2) + (37)(2) = 2 + 10 + 34 + 74 = 120. Since f(x) = x^2 + 1 is increasing on [0, 8], the left Riemann sum is an UNDERESTIMATE. (Exact value: 512/3 + 8 approximately 178.67.)"
+        },
+        {
+          "problem": "A car's velocity v(t) in ft/s is recorded in the table below. Use a trapezoidal sum with the four subintervals indicated to approximate the total distance traveled from t = 0 to t = 10.\n\n| t (sec) | 0 | 2 | 5 | 7 | 10 |\n| v(t)    | 0 | 8 | 14| 18| 20 |",
+          "solution": "The subintervals are [0,2], [2,5], [5,7], [7,10] with widths 2, 3, 2, 3. Trapezoidal sum = (2/2)(0+8) + (3/2)(8+14) + (2/2)(14+18) + (3/2)(18+20) = (1)(8) + (1.5)(22) + (1)(32) + (1.5)(38) = 8 + 33 + 32 + 57 = 130 ft. Note: since velocity is non-negative, this approximates total distance. Because v(t) appears to be concave down (rate of increase is slowing), the trapezoidal sum is likely an underestimate."
+        },
+        {
+          "problem": "Using sigma notation, write the right Riemann sum for the integral from 1 to 5 of sqrt(x) dx with n subintervals, then compute the approximation for n = 4.",
+          "solution": "Delta_x = (5 - 1)/n = 4/n. Right endpoints: x_i = 1 + i*(4/n). Sigma notation: sum from i=1 to n of sqrt(1 + 4i/n) * (4/n). For n = 4: Delta_x = 1. Right endpoints: x = 2, 3, 4, 5. RRS = sqrt(2)*1 + sqrt(3)*1 + sqrt(4)*1 + sqrt(5)*1 = 1.414 + 1.732 + 2 + 2.236 = 7.382. Since sqrt(x) is increasing, the right Riemann sum is an OVERESTIMATE. (Exact value: (2/3)(5^(3/2) - 1) approximately 6.787.)"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "The Fundamental Theorem of Calculus",
+      "skill": "ftc-part-1",
+      "content": "The Fundamental Theorem of Calculus is the bridge between differentiation and integration. Part 1 tells us how to differentiate an integral with a variable upper limit. Part 2 tells us how to evaluate a definite integral using antiderivatives. Together, they establish that differentiation and integration are inverse processes.",
+      "keyPoints": [
+        "FTC Part 1: If f is continuous on [a, b], then g(x) = integral from a to x of f(t)dt is differentiable and g'(x) = f(x). In Leibniz notation: d/dx[integral from a to x of f(t)dt] = f(x).",
+        "FTC Part 1 with chain rule: d/dx[integral from a to u(x) of f(t)dt] = f(u(x)) * u'(x). The chain rule applies when the upper limit is a function of x, not just x itself.",
+        "Key insight for Part 1: the derivative of the integral 'undoes' the integration -- you get back the integrand, evaluated at the upper limit.",
+        "FTC Part 2 (Evaluation Theorem): If F is any antiderivative of f on [a, b], then integral from a to b of f(x)dx = F(b) - F(a). We write F(x) | from a to b = F(b) - F(a).",
+        "Part 2 transforms the difficult limit-of-Riemann-sums computation into a simple subtraction, once you know an antiderivative.",
+        "Connection: Part 1 guarantees that continuous functions HAVE antiderivatives (the integral itself is one). Part 2 shows how to USE antiderivatives to evaluate definite integrals."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Fundamental Theorem of Calculus -- Worked Examples",
+      "skill": "ftc-part-1",
+      "examples": [
+        {
+          "problem": "Let g(x) = integral from 2 to x of (t^3 - 4t) dt. Find g'(x) and g'(3).",
+          "solution": "By FTC Part 1: g'(x) = x^3 - 4x. (Just replace t with x in the integrand.) g'(3) = 27 - 12 = 15. Note: we never need to evaluate the integral itself to find the derivative."
+        },
+        {
+          "problem": "Find d/dx[integral from 1 to x^2 of sin(t) dt].",
+          "solution": "The upper limit is u(x) = x^2, not just x. Apply FTC Part 1 with chain rule: d/dx[integral from 1 to x^2 of sin(t)dt] = sin(x^2) * d/dx(x^2) = sin(x^2) * 2x = 2x*sin(x^2). Key step: evaluate the integrand at the upper limit, then multiply by the derivative of the upper limit."
+        },
+        {
+          "problem": "Evaluate: integral from 1 to 4 of (3x^2 - 2x + 5) dx using FTC Part 2.",
+          "solution": "Find an antiderivative: F(x) = x^3 - x^2 + 5x. (No +C needed for definite integrals.) Apply FTC Part 2: F(4) - F(1) = (64 - 16 + 20) - (1 - 1 + 5) = 68 - 5 = 63."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Riemann Sums & FTC Practice",
+      "skills": ["riemann-sums-approximation", "ftc-part-1", "ftc-part-2"],
+      "problems": [
+        {
+          "problem": "Approximate the integral from 0 to 6 of f(x)dx using a midpoint Riemann sum with 3 equal subintervals, given f(x) = 2x + 3.",
+          "hints": [
+            "Delta_x = (6-0)/3 = 2",
+            "Midpoints: x = 1, 3, 5",
+            "MRS = f(1)*2 + f(3)*2 + f(5)*2"
+          ],
+          "answer": "Delta_x = 2. Midpoints: 1, 3, 5. MRS = f(1)*2 + f(3)*2 + f(5)*2 = 5*2 + 9*2 + 13*2 = 10 + 18 + 26 = 54. Since f(x) = 2x + 3 is linear, the midpoint sum gives the EXACT value. (Check: integral of (2x+3) from 0 to 6 = [x^2 + 3x] from 0 to 6 = 36 + 18 = 54.)"
+        },
+        {
+          "problem": "The table gives selected values of a continuous function f.\n\n| x    | 0  | 3  | 7  | 10 |\n| f(x) | 2  | 5  | 3  | 6  |\n\nUse a left Riemann sum with the three subintervals indicated to approximate the integral from 0 to 10 of f(x)dx. Is this an overestimate or underestimate?",
+          "hints": [
+            "Subintervals: [0,3], [3,7], [7,10] with widths 3, 4, 3",
+            "Left endpoints: x = 0, 3, 7",
+            "LRS = f(0)*3 + f(3)*4 + f(7)*3",
+            "Cannot determine over/under without knowing if f is increasing or decreasing everywhere"
+          ],
+          "answer": "LRS = 2*3 + 5*4 + 3*3 = 6 + 20 + 9 = 35. Since f is neither purely increasing nor purely decreasing over [0, 10], we cannot determine from the given information alone whether this is an overestimate or underestimate."
+        },
+        {
+          "problem": "Find d/dx[integral from 0 to x^3 of cos(t^2) dt].",
+          "hints": [
+            "Upper limit is u(x) = x^3 -- use FTC Part 1 with chain rule",
+            "Evaluate the integrand at u(x), then multiply by u'(x)",
+            "u'(x) = 3x^2"
+          ],
+          "answer": "By FTC Part 1 with chain rule: cos((x^3)^2) * 3x^2 = 3x^2 * cos(x^6)."
+        },
+        {
+          "problem": "Evaluate: integral from 0 to pi of (2cos(x) + 3) dx.",
+          "hints": [
+            "Antiderivative of cos(x) is sin(x)",
+            "Antiderivative of 3 is 3x",
+            "F(x) = 2sin(x) + 3x. Evaluate F(pi) - F(0)"
+          ],
+          "answer": "F(x) = 2sin(x) + 3x. F(pi) - F(0) = (2sin(pi) + 3pi) - (2sin(0) + 0) = (0 + 3pi) - 0 = 3pi."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Antiderivatives & Indefinite Integrals",
+      "skill": "antiderivatives-indefinite-integrals",
+      "content": "An antiderivative of f(x) is a function F(x) whose derivative is f(x). The indefinite integral collects ALL antiderivatives by including the constant of integration +C. Mastering antiderivative formulas is essential for evaluating definite integrals efficiently via FTC Part 2.",
+      "keyPoints": [
+        "Power rule reversed: integral of x^n dx = x^(n+1)/(n+1) + C, for n != -1. Think: 'raise the exponent by 1 and divide by the new exponent.'",
+        "Special case n = -1: integral of x^(-1) dx = integral of (1/x) dx = ln|x| + C.",
+        "Trigonometric antiderivatives: integral of cos(x)dx = sin(x) + C. integral of sin(x)dx = -cos(x) + C. integral of sec^2(x)dx = tan(x) + C. integral of csc^2(x)dx = -cot(x) + C. integral of sec(x)tan(x)dx = sec(x) + C. integral of csc(x)cot(x)dx = -csc(x) + C.",
+        "Exponential/logarithmic: integral of e^x dx = e^x + C. integral of a^x dx = a^x/ln(a) + C.",
+        "The +C is CRITICAL for indefinite integrals. It accounts for the family of ALL antiderivatives (vertical shifts of the same curve).",
+        "Constant multiple and sum rules: integral of k*f(x)dx = k*integral of f(x)dx. integral of [f(x) +/- g(x)]dx = integral of f(x)dx +/- integral of g(x)dx."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Antiderivatives & Indefinite Integrals -- Worked Examples",
+      "skill": "antiderivatives-indefinite-integrals",
+      "examples": [
+        {
+          "problem": "Evaluate: integral of (4x^3 - 6x + 7) dx.",
+          "solution": "Apply power rule term by term: integral of 4x^3 dx = 4 * x^4/4 = x^4. integral of -6x dx = -6 * x^2/2 = -3x^2. integral of 7 dx = 7x. Result: x^4 - 3x^2 + 7x + C. Check: d/dx(x^4 - 3x^2 + 7x + C) = 4x^3 - 6x + 7. Confirmed."
+        },
+        {
+          "problem": "Evaluate: integral of (3/x + 5e^x - 2sin(x)) dx.",
+          "solution": "Term by term: integral of 3/x dx = 3ln|x|. integral of 5e^x dx = 5e^x. integral of -2sin(x) dx = -2(-cos(x)) = 2cos(x). Result: 3ln|x| + 5e^x + 2cos(x) + C."
+        },
+        {
+          "problem": "Evaluate: integral of (sqrt(x) + 1/x^2) dx. Rewrite using exponents first.",
+          "solution": "Rewrite: integral of (x^(1/2) + x^(-2)) dx. Power rule: x^(1/2) -> x^(3/2)/(3/2) = (2/3)x^(3/2). x^(-2) -> x^(-1)/(-1) = -1/x. Result: (2/3)x^(3/2) - 1/x + C. Always rewrite radicals and fractions as powers of x before integrating."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Integration by u-Substitution",
+      "skill": "integral-properties-techniques",
+      "content": "u-substitution is the integration counterpart of the chain rule. When an integrand contains a composite function and its inner function's derivative appears as a factor, we substitute u for the inner function to simplify. For definite integrals, you must also convert the bounds from x-values to u-values.",
+      "keyPoints": [
+        "Strategy: identify an inner function u = g(x) such that du = g'(x)dx appears (or a constant multiple of it) in the integrand.",
+        "Steps for indefinite integrals: (1) Let u = [inner function]. (2) Compute du = g'(x)dx. (3) Rewrite the integral entirely in terms of u and du. (4) Integrate in u. (5) Substitute back: replace u with g(x).",
+        "Steps for definite integrals: same as above, BUT also convert bounds: when x = a, u = g(a); when x = b, u = g(b). Then evaluate from u = g(a) to u = g(b). No need to substitute back.",
+        "Common patterns: integral of f(ax + b)dx -> u = ax + b, du = a*dx. integral of f(x^n)*x^(n-1)dx -> u = x^n. integral of [f(x)]^n * f'(x)dx -> u = f(x).",
+        "If du is off by a constant factor, adjust: e.g., if you need 3x^2 dx but only have x^2 dx, write x^2 dx = (1/3)du.",
+        "Always check your answer by differentiating the result -- you should recover the original integrand."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "u-Substitution -- Worked Examples",
+      "skill": "integral-properties-techniques",
+      "examples": [
+        {
+          "problem": "Evaluate: integral of cos(3x + 1) dx.",
+          "solution": "Let u = 3x + 1. Then du = 3 dx, so dx = du/3. Integral becomes: integral of cos(u) * (du/3) = (1/3)sin(u) + C = (1/3)sin(3x + 1) + C. Check: d/dx[(1/3)sin(3x+1)] = (1/3)cos(3x+1)*3 = cos(3x+1). Confirmed."
+        },
+        {
+          "problem": "Evaluate: integral of x^2 * e^(x^3) dx.",
+          "solution": "Let u = x^3. Then du = 3x^2 dx, so x^2 dx = du/3. Integral becomes: integral of e^u * (du/3) = (1/3)e^u + C = (1/3)e^(x^3) + C. Check: d/dx[(1/3)e^(x^3)] = (1/3)e^(x^3)*3x^2 = x^2*e^(x^3). Confirmed."
+        },
+        {
+          "problem": "Evaluate the definite integral: integral from 0 to 2 of x * sqrt(x^2 + 1) dx.",
+          "solution": "Let u = x^2 + 1. Then du = 2x dx, so x dx = du/2. Change bounds: when x = 0, u = 1; when x = 2, u = 5. Integral becomes: integral from 1 to 5 of sqrt(u) * (du/2) = (1/2) * integral from 1 to 5 of u^(1/2) du = (1/2) * [u^(3/2)/(3/2)] from 1 to 5 = (1/2)(2/3)[u^(3/2)] from 1 to 5 = (1/3)[5^(3/2) - 1^(3/2)] = (1/3)(5*sqrt(5) - 1) = (5*sqrt(5) - 1)/3."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Properties of Definite Integrals",
+      "skill": "integral-properties-techniques",
+      "content": "The properties of definite integrals let you manipulate, combine, split, and reason about integrals without evaluating them directly. These properties are heavily tested on both MCQ and FRQ sections of the AP exam, often in problems where you are given several integral values and asked to find another.",
+      "keyPoints": [
+        "Zero-width interval: integral from a to a of f(x)dx = 0. If the interval has no width, there is no area.",
+        "Reversing limits: integral from a to b of f(x)dx = -integral from b to a of f(x)dx. Swapping the limits negates the value.",
+        "Constant multiple: integral from a to b of k*f(x)dx = k * integral from a to b of f(x)dx. Constants factor out.",
+        "Sum/difference (linearity): integral from a to b of [f(x) +/- g(x)]dx = integral from a to b of f(x)dx +/- integral from a to b of g(x)dx.",
+        "Additivity over intervals: integral from a to b of f(x)dx + integral from b to c of f(x)dx = integral from a to c of f(x)dx. You can split or combine adjacent intervals.",
+        "These properties are tools for reasoning -- on the AP exam, you may need to combine 2-3 properties in a single problem."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Properties of Definite Integrals -- Worked Examples",
+      "skill": "integral-properties-techniques",
+      "examples": [
+        {
+          "problem": "Given: integral from 1 to 5 of f(x)dx = 8 and integral from 1 to 5 of g(x)dx = -3. Find: integral from 1 to 5 of [2f(x) - 4g(x)] dx.",
+          "solution": "Apply linearity: integral of [2f(x) - 4g(x)]dx = 2*integral of f(x)dx - 4*integral of g(x)dx = 2(8) - 4(-3) = 16 + 12 = 28."
+        },
+        {
+          "problem": "Given: integral from 0 to 7 of f(x)dx = 10 and integral from 0 to 3 of f(x)dx = 4. Find: integral from 3 to 7 of f(x)dx and integral from 7 to 3 of f(x)dx.",
+          "solution": "Additivity: integral from 0 to 3 + integral from 3 to 7 = integral from 0 to 7. So integral from 3 to 7 = 10 - 4 = 6. Reversing limits: integral from 7 to 3 of f(x)dx = -integral from 3 to 7 of f(x)dx = -6."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Antiderivatives, u-Substitution & Properties Practice",
+      "skills": ["antiderivatives-indefinite-integrals", "integral-properties-techniques"],
+      "problems": [
+        {
+          "problem": "Evaluate: integral of (6x^2 - 4/x + sec^2(x)) dx.",
+          "hints": [
+            "Apply power rule to x^2, recall integral of 1/x = ln|x|, and integral of sec^2(x) = tan(x)",
+            "Combine term by term and add +C"
+          ],
+          "answer": "integral of 6x^2 dx = 2x^3. integral of -4/x dx = -4ln|x|. integral of sec^2(x)dx = tan(x). Result: 2x^3 - 4ln|x| + tan(x) + C."
+        },
+        {
+          "problem": "Evaluate: integral of sin(x) * cos^3(x) dx using u-substitution.",
+          "hints": [
+            "Let u = cos(x), then du = -sin(x)dx",
+            "sin(x)dx = -du, and cos^3(x) = u^3",
+            "Integrate u^3 and substitute back"
+          ],
+          "answer": "Let u = cos(x), du = -sin(x)dx. Integral becomes: integral of u^3 * (-du) = -u^4/4 + C = -cos^4(x)/4 + C."
+        },
+        {
+          "problem": "Evaluate the definite integral: integral from 1 to e of (3/x) dx.",
+          "hints": [
+            "integral of 3/x dx = 3ln|x|",
+            "Evaluate from 1 to e: 3ln(e) - 3ln(1)"
+          ],
+          "answer": "3ln|x| from 1 to e = 3ln(e) - 3ln(1) = 3(1) - 3(0) = 3."
+        },
+        {
+          "problem": "Given: integral from 2 to 6 of f(x)dx = 12, integral from 6 to 9 of f(x)dx = 7, and integral from 2 to 9 of g(x)dx = -5. Find: integral from 2 to 9 of [f(x) + 3g(x)] dx.",
+          "hints": [
+            "First find integral from 2 to 9 of f(x)dx using additivity",
+            "Then apply linearity: integral of [f + 3g] = integral of f + 3*integral of g"
+          ],
+          "answer": "By additivity: integral from 2 to 9 of f(x)dx = 12 + 7 = 19. By linearity: integral from 2 to 9 of [f(x) + 3g(x)]dx = 19 + 3(-5) = 19 - 15 = 4."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Integration & Accumulation Mastery Practice",
+      "skills": [
+        "definite-integral-as-accumulation",
+        "riemann-sums-approximation",
+        "ftc-part-1",
+        "ftc-part-2",
+        "antiderivatives-indefinite-integrals",
+        "integral-properties-techniques"
+      ],
+      "problems": [
+        {
+          "problem": "A particle moves along the x-axis with velocity v(t) = t^2 - 4t + 3 for 0 <= t <= 5. (a) Find the net displacement from t = 0 to t = 5. (b) Is the particle moving left or right at t = 1?",
+          "answer": "(a) Net displacement = integral from 0 to 5 of (t^2 - 4t + 3)dt = [t^3/3 - 2t^2 + 3t] from 0 to 5 = (125/3 - 50 + 15) - 0 = 125/3 - 35 = 125/3 - 105/3 = 20/3. (b) v(1) = 1 - 4 + 3 = 0. At t = 1 the particle is momentarily at rest (neither left nor right)."
+        },
+        {
+          "problem": "The table gives the rate of water flow R(t) in gallons per minute into a tank.\n\n| t (min) | 0  | 3  | 6  | 9  | 12 |\n| R(t)    | 10 | 18 | 24 | 20 | 14 |\n\nUse a right Riemann sum with the four subintervals to approximate the total gallons of water that entered the tank from t = 0 to t = 12. Is R(t) increasing on the entire interval?",
+          "answer": "Delta_t = 3 for all subintervals. RRS = R(3)*3 + R(6)*3 + R(9)*3 + R(12)*3 = 18*3 + 24*3 + 20*3 + 14*3 = 54 + 72 + 60 + 42 = 228 gallons. R(t) is NOT increasing on the entire interval -- it increases from t = 0 to t = 6 then decreases from t = 6 to t = 12, so we cannot make a blanket over/underestimate conclusion for the full interval."
+        },
+        {
+          "problem": "Let F(x) = integral from 1 to x^2 of (1/(1 + t^2)) dt. Find F'(x) and evaluate F'(1).",
+          "answer": "By FTC Part 1 with chain rule: F'(x) = 1/(1 + (x^2)^2) * d/dx(x^2) = 2x/(1 + x^4). F'(1) = 2(1)/(1 + 1) = 2/2 = 1."
+        },
+        {
+          "problem": "Evaluate: integral from 0 to 3 of (4x - e^x) dx.",
+          "answer": "Antiderivative: F(x) = 2x^2 - e^x. F(3) - F(0) = (18 - e^3) - (0 - 1) = 18 - e^3 + 1 = 19 - e^3. (Approximately 19 - 20.086 = -1.086.)"
+        },
+        {
+          "problem": "Evaluate: integral from 0 to pi/6 of sec^2(2x) dx using u-substitution.",
+          "answer": "Let u = 2x, du = 2dx, dx = du/2. Bounds: x = 0 -> u = 0; x = pi/6 -> u = pi/3. Integral becomes: (1/2) integral from 0 to pi/3 of sec^2(u) du = (1/2)[tan(u)] from 0 to pi/3 = (1/2)(tan(pi/3) - tan(0)) = (1/2)(sqrt(3) - 0) = sqrt(3)/2."
+        },
+        {
+          "problem": "Given that integral from 0 to 4 of f(x)dx = 10, integral from 4 to 7 of f(x)dx = -2, and integral from 0 to 7 of g(x)dx = 6, find: (a) integral from 0 to 7 of f(x)dx, (b) integral from 7 to 0 of f(x)dx, (c) integral from 0 to 7 of [3f(x) - 2g(x)]dx.",
+          "answer": "(a) Additivity: integral from 0 to 7 of f(x)dx = 10 + (-2) = 8. (b) Reversing limits: integral from 7 to 0 of f(x)dx = -8. (c) Linearity: 3*integral of f - 2*integral of g = 3(8) - 2(6) = 24 - 12 = 12."
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "riemann-lrs-x2": "LRS = 120. Underestimate (f increasing).",
+    "riemann-trap-table": "Trapezoidal sum = 130 ft. Likely underestimate (concave down).",
+    "riemann-rrs-sigma": "RRS with sigma notation using x_i = 1 + 4i/n. For n=4: RRS = 7.382. Overestimate (f increasing).",
+    "ftc1-basic": "g'(x) = x^3 - 4x. g'(3) = 15.",
+    "ftc1-chain": "sin(x^2) * 2x = 2x*sin(x^2).",
+    "ftc2-polynomial": "F(4) - F(1) = 68 - 5 = 63.",
+    "wp-midpoint-linear": "MRS = 54. Exact for linear functions.",
+    "wp-lrs-table": "LRS = 35. Cannot determine over/underestimate.",
+    "wp-ftc1-chain-cos": "3x^2 * cos(x^6).",
+    "wp-ftc2-trig": "3pi.",
+    "antideriv-polynomial": "x^4 - 3x^2 + 7x + C.",
+    "antideriv-mixed": "3ln|x| + 5e^x + 2cos(x) + C.",
+    "antideriv-rewrite": "(2/3)x^(3/2) - 1/x + C.",
+    "usub-linear-arg": "(1/3)sin(3x + 1) + C.",
+    "usub-exponential": "(1/3)e^(x^3) + C.",
+    "usub-definite-sqrt": "(5*sqrt(5) - 1)/3.",
+    "prop-linearity": "28.",
+    "prop-additivity-reverse": "integral from 3 to 7 = 6. integral from 7 to 3 = -6.",
+    "wp-antideriv-mixed": "2x^3 - 4ln|x| + tan(x) + C.",
+    "wp-usub-trig": "-cos^4(x)/4 + C.",
+    "wp-definite-ln": "3.",
+    "wp-properties-combined": "4.",
+    "ip-displacement": "Net displacement = 20/3. At t=1 particle is at rest (v(1)=0).",
+    "ip-riemann-table-rate": "RRS = 228 gallons. R(t) not increasing on entire interval.",
+    "ip-ftc1-chain-arctan": "F'(x) = 2x/(1+x^4). F'(1) = 1.",
+    "ip-ftc2-exponential": "19 - e^3.",
+    "ip-usub-definite-sec2": "sqrt(3)/2.",
+    "ip-properties-all": "(a) 8. (b) -8. (c) 12."
+  }
+}
