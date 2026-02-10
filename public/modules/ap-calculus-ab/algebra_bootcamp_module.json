@@ -1,0 +1,251 @@
+{
+  "moduleId": "algebra_bootcamp",
+  "course": "AP Calculus AB",
+  "unit": 0,
+  "title": "Don't Let Algebra Murder Calculus",
+  "weeks": "1-2",
+  "estimatedDuration": 10,
+  "description": "Targeted bootcamp to patch the specific precalculus skills that will immediately break limits and derivatives. NOT a full precalc review — only function behavior, rational functions, exponent/log rules, trig fluency, and graph reading. Diagnostic-first: assess before reteaching, skip what's solid, focus on what will stall calculus.",
+  "skills": [
+    "function-behavior-review",
+    "rational-functions-review",
+    "exponent-log-rules-review",
+    "trig-fluency-review",
+    "graph-reading-modeling"
+  ],
+  "standardsAlignment": [],
+  "goals": [
+    "Diagnose and repair algebraic skills that directly impact success in limits and derivatives.",
+    "Achieve automatic recall of exponent/log rules, trig values, and factoring techniques.",
+    "Build fluency reading function behavior, asymptotes, and rates of change from graphs.",
+    "Establish graph-reading and modeling vocabulary that calculus instruction will build on."
+  ],
+  "instructionalStrategy": [
+    "Diagnostic-first: assess each skill cluster before reteaching. Skip what's solid.",
+    "Gradual release: concept-intro → I Do → We Do → You Do, but move fast on review material",
+    "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
+    "Timed drills for trig values and exponent rules — these must be automatic, not slow-recalled",
+    "No new content — only repair what will break calculus"
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Function Behavior & Rational Functions",
+      "skill": "function-behavior-review",
+      "content": "Calculus is built on understanding how functions behave — especially near special points and as x → ±∞. If students can't read end behavior, identify asymptotes, or evaluate piecewise functions, limits will be incomprehensible.",
+      "keyPoints": [
+        "End behavior from leading term: f(x) = 3x⁴ - 2x + 1 → ∞ as x → ±∞ (even positive leading)",
+        "Rational functions: p(x)/q(x). Vertical asymptotes where q(x) = 0 (after cancellation). Horizontal asymptotes from degree comparison.",
+        "Holes vs. vertical asymptotes: common factor cancels → hole. Factor remains → VA.",
+        "Piecewise function evaluation: check which piece applies, then substitute. Boundary behavior matters for limits.",
+        "Domain restrictions: division by zero, even roots of negatives, log of non-positives.",
+        "Growth hierarchy: logarithmic < polynomial < exponential (critical for limits at infinity)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Function Behavior — Worked Examples",
+      "skill": "function-behavior-review",
+      "examples": [
+        {
+          "problem": "For f(x) = (x² - 4)/(x² - x - 2), find all asymptotes and holes. State end behavior.",
+          "solution": "Factor: (x-2)(x+2)/((x-2)(x+1)). Common factor (x-2) → hole at x=2. After cancellation: (x+2)/(x+1). VA: x=-1. HA: y=1 (same degree, ratio 1/1). Hole value: f(2) = (2+2)/(2+1) = 4/3. End behavior: f(x) → 1 as x → ±∞."
+        },
+        {
+          "problem": "For the piecewise function f(x) = {x² + 1, x < 2; 3x - 1, x ≥ 2}, evaluate f(2), and describe behavior as x approaches 2 from each side.",
+          "solution": "f(2): use x ≥ 2 piece → f(2) = 3(2) - 1 = 5. From left (x < 2): x² + 1 → 2² + 1 = 5. From right (x ≥ 2): 3x - 1 → 3(2) - 1 = 5. Both sides → 5, and f(2) = 5. Function is continuous at x = 2."
+        },
+        {
+          "problem": "Rank the growth rates and predict limits at infinity: (a) lim(x→∞) ln(x)/x, (b) lim(x→∞) x²/eˣ, (c) lim(x→∞) (3x² + 1)/(5x² - 2).",
+          "solution": "(a) ln grows slower than x → 0. (b) x² grows slower than eˣ → 0. (c) Same degree: 3/5. Growth hierarchy: log < polynomial < exponential."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Exponent & Logarithm Rules",
+      "skill": "exponent-log-rules-review",
+      "content": "Every differentiation and integration rule for exponential and logarithmic functions depends on instant recall of exponent and log properties. If these aren't automatic, chain rule and u-substitution will stall.",
+      "keyPoints": [
+        "Exponent rules: aᵐ·aⁿ = aᵐ⁺ⁿ, aᵐ/aⁿ = aᵐ⁻ⁿ, (aᵐ)ⁿ = aᵐⁿ, a⁰ = 1, a⁻ⁿ = 1/aⁿ",
+        "Fractional exponents: a^(m/n) = ⁿ√(aᵐ). Critical for power rule: d/dx[√x] = d/dx[x^(1/2)]",
+        "Log rules: log(AB) = log A + log B, log(A/B) = log A - log B, log(Aⁿ) = n·log A",
+        "Change of base: log_b(x) = ln(x)/ln(b)",
+        "Key identities: e^(ln x) = x, ln(eˣ) = x, b^(log_b x) = x",
+        "Rewriting for calculus: √x = x^(1/2), 1/x² = x⁻², ³√x = x^(1/3). Power rule requires this form."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Exponent & Log Rules — Worked Examples",
+      "skill": "exponent-log-rules-review",
+      "examples": [
+        {
+          "problem": "Rewrite each in a form ready for the power rule: (a) 1/x³, (b) √(x⁵), (c) 1/√x, (d) x²·√x.",
+          "solution": "(a) x⁻³. (b) x^(5/2). (c) x^(-1/2). (d) x²·x^(1/2) = x^(5/2). Every radical and fraction must become xⁿ before differentiating."
+        },
+        {
+          "problem": "Simplify completely: (a) e^(2ln 3), (b) ln(e⁵ˣ) - ln(eˣ), (c) log₄(64).",
+          "solution": "(a) e^(ln 3²) = e^(ln 9) = 9. (b) 5x - x = 4x. (c) 4³ = 64, so log₄(64) = 3."
+        },
+        {
+          "problem": "Condense into a single logarithm: 2·ln(x) + ln(x+1) - 3·ln(x-2).",
+          "solution": "ln(x²) + ln(x+1) - ln((x-2)³) = ln(x²(x+1)/(x-2)³)."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Trig Fluency: Unit Circle & Identities",
+      "skill": "trig-fluency-review",
+      "content": "Derivatives of trig functions, trig substitution, and trig limits all require instant recall of unit circle values and core identities. If sin(π/3) takes 10 seconds, calculus will be painful.",
+      "keyPoints": [
+        "Unit circle must-know angles: 0, π/6, π/4, π/3, π/2, and their multiples in all quadrants",
+        "ASTC rule: All Students Take Calculus (signs by quadrant)",
+        "Key values: sin(π/6)=1/2, sin(π/4)=√2/2, sin(π/3)=√3/2. Cosine is the reverse order.",
+        "Pythagorean identities: sin²θ + cos²θ = 1, 1 + tan²θ = sec²θ, 1 + cot²θ = csc²θ",
+        "Double-angle: sin(2θ) = 2sinθcosθ, cos(2θ) = cos²θ - sin²θ = 2cos²θ - 1 = 1 - 2sin²θ",
+        "Critical for calculus: lim(x→0) sin(x)/x = 1 (needs trig fluency to understand)",
+        "Reciprocal functions: csc = 1/sin, sec = 1/cos, cot = 1/tan (derivatives of these are on the exam)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Trig Fluency — Worked Examples",
+      "skill": "trig-fluency-review",
+      "examples": [
+        {
+          "problem": "Evaluate without a calculator: (a) sin(5π/6), (b) cos(7π/4), (c) tan(4π/3), (d) sec(π/3).",
+          "solution": "(a) Q2, ref π/6: sin = +1/2. (b) Q4, ref π/4: cos = +√2/2. (c) Q3, ref π/3: tan = +√3. (d) sec(π/3) = 1/cos(π/3) = 1/(1/2) = 2."
+        },
+        {
+          "problem": "Simplify using identities: (a) (1 - cos²x)/sin x, (b) sec²x - 1, (c) sin(2x)/sin(x).",
+          "solution": "(a) sin²x/sin x = sin x. (b) tan²x (Pythagorean identity). (c) 2sin(x)cos(x)/sin(x) = 2cos(x)."
+        },
+        {
+          "problem": "Solve on [0, 2π): 2sin²x - sin x - 1 = 0.",
+          "solution": "Factor: (2sin x + 1)(sin x - 1) = 0. sin x = -1/2: x = 7π/6, 11π/6. sin x = 1: x = π/2. Solutions: {π/2, 7π/6, 11π/6}."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Function Behavior & Algebra Repair Practice",
+      "skills": ["function-behavior-review", "exponent-log-rules-review", "trig-fluency-review"],
+      "problems": [
+        {
+          "problem": "For f(x) = (2x² + 3x - 5)/(x² - 1), find: (a) vertical asymptotes and holes, (b) horizontal asymptote, (c) behavior near each VA.",
+          "hints": ["Factor numerator and denominator", "Check for common factors", "Sign analysis near VAs"],
+          "answer": "Factor: (2x+5)(x-1)/((x-1)(x+1)). Hole at x=1: f(1) = 7/2. VA at x=-1. HA: y=2 (same degree). Near x=-1: from left, f→+∞; from right, f→-∞."
+        },
+        {
+          "problem": "Rewrite for power rule and state the derivative (preview): f(x) = 3/x² + 5√x - 1/∛x.",
+          "hints": ["3/x² = 3x⁻²", "5√x = 5x^(1/2)", "1/∛x = x^(-1/3)"],
+          "answer": "f(x) = 3x⁻² + 5x^(1/2) - x^(-1/3). [Derivative preview: f'(x) = -6x⁻³ + (5/2)x^(-1/2) + (1/3)x^(-4/3)]."
+        },
+        {
+          "problem": "Evaluate all six trig functions at θ = 5π/4.",
+          "hints": ["Q3: sin and cos both negative, tan positive", "Reference angle is π/4", "sin(π/4) = cos(π/4) = √2/2"],
+          "answer": "sin(5π/4) = -√2/2. cos(5π/4) = -√2/2. tan(5π/4) = 1. csc = -√2. sec = -√2. cot = 1."
+        },
+        {
+          "problem": "Solve: ln(x²) - ln(x + 3) = ln(4). Check your answer.",
+          "hints": ["Condense left side", "Convert to exponential form", "Check domain: x + 3 > 0 and x ≠ 0"],
+          "answer": "ln(x²/(x+3)) = ln(4) → x²/(x+3) = 4 → x² = 4x + 12 → x² - 4x - 12 = 0 → (x-6)(x+2) = 0. x = 6 or x = -2. Check: x=6: ln(36)-ln(9)=ln(4) ✓. x=-2: ln(4)-ln(1)=ln(4) ✓. Both valid."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Graph Reading & Modeling Vocabulary",
+      "skill": "graph-reading-modeling",
+      "content": "AP Calculus AB is graph-heavy. Before students encounter derivative graphs, they must be fluent at reading function graphs for behavior, rates of change, and contextual meaning.",
+      "keyPoints": [
+        "Reading values: f(a) = ? from a graph. Open circles mean the point is NOT included.",
+        "Increasing/decreasing intervals: where the graph rises/falls. State as intervals of x.",
+        "Rate of change vocabulary: 'the rate of change is increasing' means the SLOPE is getting steeper (concave up).",
+        "Average rate of change = slope of secant line = [f(b)-f(a)]/(b-a). THIS becomes the derivative definition.",
+        "Contextual interpretation: 'f(t) represents gallons of water' → f'(t) = rate in gallons per minute. Units matter.",
+        "Key features to identify: intercepts, max/min, inflection points (where concavity changes), symmetry."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Graph Reading — Worked Examples",
+      "skill": "graph-reading-modeling",
+      "examples": [
+        {
+          "problem": "A graph of f(x) is shown (parabola opening down with vertex at (3, 8), x-intercepts at x=1 and x=5). Describe: (a) domain and range, (b) intervals of increase/decrease, (c) average rate of change on [1, 4].",
+          "solution": "(a) Domain: (-∞, ∞). Range: (-∞, 8]. (b) Increasing on (-∞, 3), decreasing on (3, ∞). (c) f(1) = 0, f(4) = ? Symmetric to x=2 about vertex, so f(4) = f(2). Using vertex form: f(x) = -2(x-3)²+8: f(4) = -2(1)+8 = 6. Average rate: (6-0)/(4-1) = 2."
+        },
+        {
+          "problem": "The temperature T(t) of coffee (in °F) is given by a graph that starts at 200, decreases rapidly, then levels off near 70. At t = 5 minutes, the tangent line appears to have slope -15. Interpret this value.",
+          "solution": "At t = 5 minutes, the coffee is cooling at a rate of 15°F per minute. The negative sign indicates temperature is decreasing. The leveling off near 70 means the rate of cooling is slowing down (the slope is becoming less negative), which suggests concave up behavior."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Bootcamp Mastery Practice",
+      "skills": ["function-behavior-review", "exponent-log-rules-review", "trig-fluency-review", "graph-reading-modeling"],
+      "problems": [
+        {
+          "problem": "For g(x) = (x³ - 8)/(x² - 4), simplify, find all asymptotes and holes, and state end behavior.",
+          "answer": "Factor: (x-2)(x²+2x+4)/((x-2)(x+2)). Hole at x=2: g(2) = (4+4+4)/(4) = 3. Simplified: (x²+2x+4)/(x+2). VA: x = -2. No HA (degree numerator > denominator). Oblique asymptote: long division gives y = x. End behavior: g(x) → ±∞ as x → ±∞."
+        },
+        {
+          "problem": "Simplify to a single value or expression: (a) e^(3ln2 - ln4), (b) ln(e²·e⁵)/ln(e³), (c) 8^(2/3)·27^(-1/3).",
+          "answer": "(a) e^(ln(8/4)) = e^(ln2) = 2. (b) ln(e⁷)/ln(e³) = 7/3. (c) (∛8)²·(1/∛27) = 4·(1/3) = 4/3."
+        },
+        {
+          "problem": "Without a calculator, evaluate: (a) cos(11π/6), (b) sin(3π/4), (c) tan(-π/6), (d) csc(2π/3), (e) sin²(5π/4) + cos²(5π/4).",
+          "answer": "(a) √3/2. (b) √2/2. (c) -√3/3 (or -1/√3). (d) 2√3/3 (or 2/√3). (e) 1 (Pythagorean identity, always)."
+        },
+        {
+          "problem": "The amount of a medication in the bloodstream (mg) is modeled by A(t) = 200·(0.85)ᵗ where t is hours. (a) What is the initial dose? (b) What percentage is eliminated per hour? (c) Estimate the average rate of change from t=0 to t=3. (d) Will A(t) ever reach 0?",
+          "answer": "(a) A(0) = 200 mg. (b) 15% eliminated per hour (decay factor 0.85). (c) A(3) = 200·(0.85)³ = 200·0.614125 = 122.825. Average rate = (122.825-200)/3 ≈ -25.7 mg/hr. (d) No — exponential decay approaches 0 but never reaches it (horizontal asymptote y=0)."
+        },
+        {
+          "problem": "Verify the identity: (sin x + cos x)² = 1 + sin(2x).",
+          "answer": "LHS: sin²x + 2sin x cos x + cos²x = (sin²x + cos²x) + 2sin x cos x = 1 + 2sin x cos x. Since sin(2x) = 2sin x cos x, LHS = 1 + sin(2x) = RHS ✓."
+        },
+        {
+          "problem": "The graph of f shows f(0)=2, f(2)=6, f(4)=6, f(6)=2. The graph increases on [0,2], is flat on [2,4], and decreases on [4,6]. (a) Find the average rate of change on [0,6]. (b) On which interval is the average rate of change greatest? (c) Describe what the graph of f' would look like.",
+          "answer": "(a) (f(6)-f(0))/(6-0) = (2-2)/6 = 0. (b) [0,2]: (6-2)/2 = 2. [2,4]: 0. [4,6]: (2-6)/2 = -2. Greatest: [0,2] with rate 2. (c) f' > 0 on (0,2) (positive), f' = 0 on (2,4) (zero), f' < 0 on (4,6) (negative). f' starts positive, reaches zero, stays zero, then goes negative."
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "fn-rational": "Hole at x=2 (y=4/3). VA: x=-1. HA: y=2.",
+    "fn-piecewise": "f(2)=5. Both sides → 5. Continuous.",
+    "fn-growth": "(a) 0 (b) 0 (c) 3/5.",
+    "exp-rewrite": "(a) x⁻³ (b) x^(5/2) (c) x^(-1/2) (d) x^(5/2).",
+    "exp-simplify": "(a) 9 (b) 4x (c) 3.",
+    "log-condense": "ln(x²(x+1)/(x-2)³).",
+    "trig-evaluate": "(a) 1/2 (b) √2/2 (c) √3 (d) 2.",
+    "trig-simplify": "(a) sin x (b) tan²x (c) 2cos x.",
+    "trig-solve": "{π/2, 7π/6, 11π/6}.",
+    "wp-rational": "Hole x=2 (y=7/2). VA x=-1. HA y=2.",
+    "wp-power-form": "3x⁻²+5x^(1/2)-x^(-1/3).",
+    "wp-trig-all-six": "sin=-√2/2, cos=-√2/2, tan=1, csc=-√2, sec=-√2, cot=1.",
+    "wp-log-equation": "x=6 and x=-2 (both valid).",
+    "ip-rational-cubic": "Hole x=2 (y=3). VA x=-2. Oblique y=x.",
+    "ip-exp-simplify": "(a) 2 (b) 7/3 (c) 4/3.",
+    "ip-trig-values": "(a) √3/2 (b) √2/2 (c) -√3/3 (d) 2√3/3 (e) 1.",
+    "ip-medication": "(a) 200mg (b) 15%/hr (c) ≈-25.7 mg/hr (d) No.",
+    "ip-identity": "1+sin(2x) ✓.",
+    "ip-graph-reading": "(a) 0 (b) [0,2] rate=2 (c) positive→zero→negative."
+  }
+}
