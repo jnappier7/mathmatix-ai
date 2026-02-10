@@ -114,8 +114,8 @@ const signupValidation = [
   validateName('lastName'),
   body('role')
     .trim()
-    .isIn(['student', 'teacher', 'parent'])
-    .withMessage('Invalid role. Must be student, teacher, or parent.'),
+    .isIn(['student', 'parent'])
+    .withMessage('Invalid role. Must be student or parent.'),
   validateGradeLevel(),
   validateLearningStyle(),
   validateTonePreference(),

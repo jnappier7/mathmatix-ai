@@ -12,8 +12,8 @@ const { sendEmailVerification } = require('../utils/emailService'); // For email
 const { signupValidation, handleValidationErrors } = require('../middleware/validation');
 
 // Roles that can be self-assigned during public signup.
-// 'admin' is intentionally excluded — admin accounts must be created by existing admins.
-const SELF_REGISTERABLE_ROLES = ['student', 'teacher', 'parent'];
+// 'admin' and 'teacher' are intentionally excluded — these accounts must be created by existing admins.
+const SELF_REGISTERABLE_ROLES = ['student', 'parent'];
 
 /**
  * @route   GET /signup/validate-code
