@@ -69,6 +69,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/mobile-fixes.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <style>
     /* ── Countdown Banner ──────────────────────────────────── */
@@ -156,13 +158,18 @@
     /* ── Scroll Reveal ─────────────────────────────────────── */
     .lp-reveal {
       opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
     }
 
     .lp-reveal.lp-visible {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .lp-reveal { opacity: 1; transform: none; transition: none; }
     }
 
     .lp-stagger > * {
@@ -211,6 +218,125 @@
       max-width: 540px;
       margin: 0 auto 2.5rem;
       line-height: 1.6;
+    }
+
+    /* ── Launch Countdown Banner ────────────────────────────── */
+    .lp-countdown-banner {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 1.25rem var(--page-horizontal-padding);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lp-countdown-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(18, 179, 179, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(255, 59, 127, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .lp-countdown-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .lp-countdown-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .lp-countdown-label i {
+      color: var(--clr-accent-hotpink);
+      margin-right: 0.4rem;
+      animation: lp-rocket-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes lp-rocket-pulse {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+
+    .lp-countdown-timer {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .lp-countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 52px;
+    }
+
+    .lp-countdown-number {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      padding: 0.4rem 0.55rem;
+      min-width: 52px;
+      text-align: center;
+    }
+
+    .lp-countdown-text {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.3rem;
+    }
+
+    .lp-countdown-sep {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--clr-primary-teal);
+      line-height: 1;
+      padding-bottom: 1.1rem;
+      animation: lp-blink 1s step-end infinite;
+    }
+
+    @keyframes lp-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Hide banner after launch */
+    .lp-countdown-banner.lp-countdown-launched {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .lp-countdown-banner { padding: 1rem var(--page-horizontal-padding); }
+      .lp-countdown-inner { flex-direction: column; gap: 0.6rem; }
+      .lp-countdown-label { font-size: 0.9rem; }
+      .lp-countdown-number { font-size: 1.35rem; min-width: 44px; padding: 0.3rem 0.45rem; }
+      .lp-countdown-unit { min-width: 44px; }
+      .lp-countdown-sep { font-size: 1.2rem; padding-bottom: 0.9rem; }
+      .lp-countdown-text { font-size: 0.6rem; }
+    }
+
+    @media (max-width: 375px) {
+      .lp-countdown-number { font-size: 1.15rem; min-width: 38px; }
+      .lp-countdown-unit { min-width: 38px; }
     }
 
     /* ── Hero ───────────────────────────────────────────────── */
@@ -1208,6 +1334,34 @@
   </div>
 
   <main class="landing-main">
+    <!-- ── Launch Countdown ──────────────────────────────── -->
+    <div class="lp-countdown-banner" id="lp-countdown">
+      <div class="lp-countdown-inner">
+        <div class="lp-countdown-label"><i class="fas fa-rocket"></i> Launching March 14</div>
+        <div class="lp-countdown-timer" id="lp-countdown-timer">
+          <div class="lp-countdown-unit">
+            <span class="lp-countdown-number" id="lp-cd-days">--</span>
+            <span class="lp-countdown-text">Days</span>
+          </div>
+          <div class="lp-countdown-sep">:</div>
+          <div class="lp-countdown-unit">
+            <span class="lp-countdown-number" id="lp-cd-hours">--</span>
+            <span class="lp-countdown-text">Hours</span>
+          </div>
+          <div class="lp-countdown-sep">:</div>
+          <div class="lp-countdown-unit">
+            <span class="lp-countdown-number" id="lp-cd-mins">--</span>
+            <span class="lp-countdown-text">Min</span>
+          </div>
+          <div class="lp-countdown-sep">:</div>
+          <div class="lp-countdown-unit">
+            <span class="lp-countdown-number" id="lp-cd-secs">--</span>
+            <span class="lp-countdown-text">Sec</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── Hero ──────────────────────────────────────────── -->
     <section class="lp-hero">
       <div class="lp-hero-layout">

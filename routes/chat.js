@@ -33,6 +33,7 @@ const { needsAssessment } = require('../services/chatService');
 const contextCache = require('../utils/contextCache');
 const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
+const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
@@ -58,6 +59,37 @@ setInterval(() => {
     // Map only holds resolved promises for inactive users — safe to clear
     if (userChatLocks.size > 1000) userChatLocks.clear();
 }, 10 * 60 * 1000);
+
+/**
+ * Extract a student's answer from their chat message.
+ * Returns the answer value as a string, or null if the message doesn't look like an answer.
+ * Handles: "7", "-3", "x = 7", "3/4", "the answer is 7", "I got 3.5", etc.
+ */
+function extractStudentAnswer(message) {
+    const text = message.trim();
+
+    // Skip long messages - answers are short
+    if (text.length > 100) return null;
+
+    // Pattern: "x = 7" or "y = -3.5" (variable assignment)
+    const varAssignment = text.match(/^[a-z]\s*=\s*(-?\d+\.?\d*(?:\/\d+)?)/i);
+    if (varAssignment) return varAssignment[1];
+
+    // Pattern: just a number "-7", "3.5", "42"
+    const justNumber = text.match(/^(-?\d+\.?\d*)$/);
+    if (justNumber) return justNumber[1];
+
+    // Pattern: a fraction "3/4" or "-1/2"
+    const fraction = text.match(/^(-?\d+\s*\/\s*\d+)$/);
+    if (fraction) return fraction[1].replace(/\s/g, '');
+
+    // Pattern: number embedded in short answer phrase
+    // "the answer is 7", "I got 3.5", "it's -2", "equals 7", "i think 5", "its 12"
+    const answerPhrase = text.match(/(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i);
+    if (answerPhrase) return answerPhrase[1].replace(/\s/g, '');
+
+    return null;
+}
 
 /**
  * Update daily quests and weekly challenges when a problem is answered
@@ -334,7 +366,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 text: "You've already done your placement assessment! I'm using those results to give you the right level of problems. If your teacher or parent thinks you need a new assessment, they can request one for you. What would you like to work on?",
                 userXp: 0,
                 userLevel: user.level || 1,
-                xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel,
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1),
                 specialXpAwarded: "",
                 voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].voiceId,
                 newlyUnlockedTutors: [],
@@ -471,11 +503,17 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 .catch(err => { console.error('Error fetching grading results:', err.message); return []; })
         );
 
-        // 6. Math verification (runs in parallel with everything else)
+        // 6. Error pattern tracking (aggregated across recent Show Your Work sessions)
+        contextPromises.push(
+            GradingResult.getErrorPatterns(user._id, 14)
+                .catch(err => { console.error('Error fetching error patterns:', err.message); return null; })
+        );
+
+        // 7. Math verification (runs in parallel with everything else)
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        const [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults] = await Promise.all(contextPromises);
+        const [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
@@ -551,6 +589,39 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             console.log(`✅ [Math Verification] Injected verified answer: ${mathResult.solution.answer} (${mathResult.problem.type})`);
         }
 
+        // ANSWER PRE-CHECK: When student submits a short answer, verify it against the last problem
+        // This prevents the AI from saying "almost there" or "let's check" when the student is actually correct
+        if (!mathVerificationContext) {
+            const studentAnswer = extractStudentAnswer(message);
+            if (studentAnswer !== null) {
+                // Look back through recent AI messages to find the problem that was posed
+                const recentAIMessages = formattedMessagesForLLM
+                    .filter(msg => msg.role === 'assistant')
+                    .slice(-3);
+
+                for (let i = recentAIMessages.length - 1; i >= 0; i--) {
+                    const problemResult = processMathMessage(recentAIMessages[i].content);
+                    if (problemResult.hasMath && problemResult.solution?.success) {
+                        const verification = verifyAnswer(studentAnswer, problemResult.solution.answer);
+                        const isCorrect = verification.isCorrect;
+
+                        // Inject definitive correctness signal into the student's message
+                        const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+                        if (lastMessage.role === 'user') {
+                            if (isCorrect) {
+                                lastMessage.content += `\n\n[ANSWER_PRE_CHECK: VERIFIED CORRECT. The student's answer "${studentAnswer}" matches the correct answer "${problemResult.solution.answer}". Confirm they are correct immediately. Do NOT say "let's check", "almost", "not quite", or imply any doubt.]`;
+                            } else {
+                                lastMessage.content += `\n\n[ANSWER_PRE_CHECK: VERIFIED INCORRECT. The student answered "${studentAnswer}" but the correct answer is "${problemResult.solution.answer}". Guide them toward the correct answer using Socratic method.]`;
+                            }
+                        }
+
+                        console.log(`🔍 [Answer Pre-Check] Student: "${studentAnswer}", Correct: "${problemResult.solution.answer}", Result: ${isCorrect ? 'CORRECT' : 'INCORRECT'}`);
+                        break;
+                    }
+                }
+            }
+        }
+
         // Pass mastery mode context if student has an active badge
         const masteryContext = user.masteryProgress?.activeBadge ? {
             mode: 'badge-earning',
@@ -605,13 +676,14 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         // Build grading context (only include if there are recent results)
         const gradingContext = recentGradingResults && recentGradingResults.length > 0 ? recentGradingResults : null;
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext);
+        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)
         const useStreaming = req.query.stream === 'true';
 
         let aiResponseText = '';
+        const aiStartTime = Date.now(); // Track AI processing time (server-side, for fair billing)
 
         // Track client disconnect for streaming mode (declared here for scope access)
         let clientDisconnected = false;
@@ -694,6 +766,41 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { system: systemPrompt, temperature: 0.7, max_tokens: 1500 });
             aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
         }
+
+        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
+        // Catches cases where the AI solves multiple problems despite prompt instructions
+        const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
+        if (answerKeyCheck.wasFiltered) {
+            aiResponseText = answerKeyCheck.text;
+            // For streaming: send a replacement event so frontend overwrites the streamed chunks
+            if (useStreaming && !clientDisconnected) {
+                try {
+                    res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
+                } catch (e) { /* client may have disconnected */ }
+            }
+        }
+
+        // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
+        const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
+        const previousWeeklyAI = user.weeklyAISeconds || 0;
+        const updatedWeeklyAI = previousWeeklyAI + aiProcessingSeconds;
+
+        // Always increment AI time counters
+        const aiTimeUpdate = { $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds } };
+
+        // Deduct from pack balance only for seconds beyond the free weekly allowance (20 min)
+        const FREE_WEEKLY = 20 * 60;
+        if ((user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') && user.packSecondsRemaining > 0) {
+            const prevPaid = Math.max(0, previousWeeklyAI - FREE_WEEKLY);
+            const newPaid = Math.max(0, updatedWeeklyAI - FREE_WEEKLY);
+            const packDeduction = newPaid - prevPaid;
+            if (packDeduction > 0) {
+                aiTimeUpdate.$inc.packSecondsRemaining = -packDeduction;
+            }
+        }
+
+        User.findByIdAndUpdate(userId, aiTimeUpdate)
+            .catch(err => console.error('[Chat] AI time tracking error:', err));
 
         // ENFORCE visual teaching: Auto-inject commands if AI forgot to use them
         aiResponseText = enforceVisualTeaching(message, aiResponseText);
@@ -1200,10 +1307,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         }
         user.markModified('xpLadderStats');
 
-        // Check for level up
-        let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
+        // Check for level up (loop handles multi-level jumps from large XP awards)
         let leveledUp = false;
-        if (user.xp >= xpForNextLevel) {
+        while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
             user.level += 1;
             leveledUp = true;
         }
@@ -1226,8 +1332,22 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             });
         }
 
-        const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
-        const userXpInCurrentLevel = user.xp - xpForCurrentLevelStart;
+        // Recalculate level from XP if they're out of sync (safety net)
+        const correctLevel = (() => {
+            let lvl = 1;
+            while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel(lvl + 1)) {
+                lvl++;
+            }
+            return lvl;
+        })();
+        if (user.level !== correctLevel) {
+            console.warn(`⚠️ [XP] Level/XP mismatch for ${user.firstName}: level=${user.level}, xp=${user.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
+            user.level = correctLevel;
+            await user.save();
+        }
+
+        const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+        const userXpInCurrentLevel = Math.max(0, user.xp - xpForCurrentLevelStart);
 
         // Log XP breakdown for analytics
         console.log(`📊 [XP Ladder] User ${user.firstName}: Tier1=${xpBreakdown.tier1} (silent), Tier2=${xpBreakdown.tier2} (${xpBreakdown.tier2Type || 'none'}), Tier3=${xpBreakdown.tier3} (${xpBreakdown.tier3Behavior || 'none'}) = Total ${xpBreakdown.total}`);
@@ -1246,7 +1366,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             text: aiResponseText,
             userXp: userXpInCurrentLevel,
             userLevel: user.level,
-            xpNeeded: xpForNextLevel,
+            xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
             voiceId: currentTutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,
             drawingSequence: dynamicDrawingSequence,
@@ -1267,7 +1387,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 tier3Behavior: xpBreakdown.tier3Behavior, // Behavior name for display
                 total: xpBreakdown.total,
                 leveledUp: leveledUp
-            }
+            },
+            // Free tier countdown: seconds of AI time remaining this week
+            aiTimeUsed: aiProcessingSeconds,
+            freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
+                ? Math.max(0, (20 * 60) - updatedWeeklyAI)
+                : null
         };
 
         if (useStreaming) {
@@ -1355,7 +1480,10 @@ async function handleParentChat(req, res, parentId, childId, message) {
             });
         }
 
-        parentConversation.messages.push({ role: 'user', content: message });
+        if (!message || typeof message !== 'string' || message.trim() === '') {
+            return res.status(400).json({ error: 'Message content is required.' });
+        }
+        parentConversation.messages.push({ role: 'user', content: message.trim() });
 
         // Get the tutor personality the student uses
         const selectedTutorKey = child.selectedTutorId && TUTOR_CONFIG[child.selectedTutorId]
@@ -1540,9 +1668,10 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         const daysSinceReset = (now - lastReset) / (1000 * 60 * 60 * 24);
 
         if (daysSinceReset >= 7) {
-            console.log(`[Track-Time] Weekly reset for user ${userId}: ${user.weeklyActiveTutoringMinutes || 0} minutes -> 0`);
+            console.log(`[Track-Time] Weekly reset for user ${userId}: ${user.weeklyActiveTutoringMinutes || 0} active min, ${Math.floor((user.weeklyAISeconds || 0) / 60)} AI min -> 0`);
             user.weeklyActiveSeconds = 0;
             user.weeklyActiveTutoringMinutes = 0;
+            user.weeklyAISeconds = 0;
             user.lastWeeklyReset = now;
         }
 
@@ -1554,10 +1683,8 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         user.totalActiveTutoringMinutes = Math.floor(user.totalActiveSeconds / 60);
         user.weeklyActiveTutoringMinutes = Math.floor(user.weeklyActiveSeconds / 60);
 
-        // Deduct from minute pack balance (pack_60 / pack_120 users)
-        if ((user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') && user.packSecondsRemaining > 0) {
-            user.packSecondsRemaining = Math.max(0, user.packSecondsRemaining - activeSeconds);
-        }
+        // Pack deduction now happens server-side in the chat route based on AI processing time
+        // (not client-reported active time) so reading/thinking time isn't counted
 
         // Update active conversation if exists
         if (user.activeConversationId) {
@@ -1886,6 +2013,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
 
         // Check if streaming is requested
         const useStreaming = req.query.stream === 'true';
+        const greetingAiStart = Date.now();
 
         if (useStreaming) {
             // STREAMING MODE
@@ -1908,6 +2036,12 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                         res.write(`data: ${JSON.stringify({ chunk: content })}\n\n`);
                     }
                 }
+
+                // Track AI processing time
+                const greetingAiSeconds = Math.ceil((Date.now() - greetingAiStart) / 1000);
+                User.findByIdAndUpdate(userId, {
+                    $inc: { weeklyAISeconds: greetingAiSeconds, totalAISeconds: greetingAiSeconds }
+                }).catch(err => console.error('[Greeting] AI time tracking error:', err));
 
                 // Save greeting to conversation (AI message only, no user message)
                 activeConversation.messages.push({
@@ -1946,6 +2080,12 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 150 });
             const greetingText = completion.choices[0].message.content.trim();
 
+            // Track AI processing time
+            const greetingAiSeconds = Math.ceil((Date.now() - greetingAiStart) / 1000);
+            User.findByIdAndUpdate(userId, {
+                $inc: { weeklyAISeconds: greetingAiSeconds, totalAISeconds: greetingAiSeconds }
+            }).catch(err => console.error('[Greeting] AI time tracking error:', err));
+
             // Save greeting to conversation
             activeConversation.messages.push({
                 role: 'assistant',
@@ -1970,7 +2110,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 isGreeting: true,
                 userXp: user.xp || 0,
                 userLevel: user.level || 1,
-                xpNeeded: (user.level || 1) * BRAND_CONFIG.xpPerLevel
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
             });
         }
 

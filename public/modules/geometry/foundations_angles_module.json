@@ -1,0 +1,163 @@
+{
+  "moduleId": "foundations_angles",
+  "course": "Geometry",
+  "quarter": 1,
+  "title": "Geometric Foundations & Angles",
+  "estimatedDuration": 45,
+  "skills": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals"],
+  "standardsAlignment": ["G-CO.1", "G-CO.9"],
+  "goals": [
+    "Identify and use the undefined terms: point, line, and plane",
+    "Measure and classify angles as acute, right, obtuse, or straight",
+    "Identify angle pair relationships: complementary, supplementary, vertical, and linear pair",
+    "Describe angle relationships formed when parallel lines are cut by a transversal"
+  ],
+  "instructionalStrategy": [
+    "Start with physical models—a laser pointer is a real-world line, a GPS pin is a point, a tabletop is a plane.",
+    "Emphasize proper notation from day one: AB with a line over it vs segment AB vs ray AB.",
+    "Use the F-pattern (corresponding), Z-pattern (alternate interior), and C-pattern (same-side interior) as visual mnemonics for transversal angle pairs.",
+    "Have students estimate angle measures before using a protractor to build number sense for angles."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "Welcome to Geometry! Everything in geometry starts with three undefined terms: **points**, **lines**, and **planes**. A point is a location with no size—just a dot we label with a capital letter (A). A line extends infinitely in both directions through two points. A plane is a flat surface that extends infinitely in all directions. These three ideas are the building blocks for everything we'll study this year.",
+      "initialPrompt": "Think about the room you're in right now. Can you point out something that represents a point, something that represents a line, and something that represents a plane?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "Points that lie on the same line are called **collinear**. Points that lie on the same plane are called **coplanar**. Lines can intersect (cross at one point), be parallel (never cross, same plane), or be skew (never cross, different planes). Understanding these relationships is fundamental to geometric reasoning.",
+      "initialPrompt": "If two lines are in the same plane and never touch, what do we call them? What about two lines that aren't in the same plane and never touch?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Name the geometric figure: Two points A and B with an arrow extending from A through B and continuing beyond B.",
+      "explanation": "This is **ray AB** (written as AB with an arrow pointing right above it). A ray has one endpoint (A) and extends infinitely in one direction through the second point (B). The order of the letters matters—the first letter is the endpoint. If we reversed it, ray BA would start at B and go through A in the opposite direction.",
+      "initialPrompt": "How is a ray different from a line segment? What about a line?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "An angle measures 143°. Classify this angle.",
+      "explanation": "Since 143° is greater than 90° but less than 180°, this is an **obtuse angle**. Here's the classification system:\n• **Acute**: between 0° and 90°\n• **Right**: exactly 90°\n• **Obtuse**: between 90° and 180°\n• **Straight**: exactly 180°\nA quick way to check: if it's wider than a corner of a piece of paper (90°), it's obtuse.",
+      "initialPrompt": "If I cut this obtuse angle exactly in half, would the two new angles be acute, right, or obtuse?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Two angles are complementary. One angle measures 37°. What is the measure of the other angle?",
+          "answer": "53",
+          "hints": [
+            "Complementary angles add up to a specific number. Do you remember what it is?",
+            "Complementary angles sum to 90°. Set up the equation: 37 + x = 90."
+          ]
+        },
+        {
+          "question": "Two angles are supplementary. One angle measures 112°. What is the measure of the other angle?",
+          "answer": "68",
+          "hints": [
+            "Supplementary angles add up to a specific number. Think about a straight line.",
+            "Supplementary angles sum to 180°. So 112 + x = 180."
+          ]
+        },
+        {
+          "question": "Two lines intersect forming vertical angles. One angle measures 65°. What is the measure of the angle directly across from it?",
+          "answer": "65",
+          "hints": [
+            "Vertical angles are formed by two intersecting lines, across from each other.",
+            "Vertical angles are always congruent—they have equal measures."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's work through angle pair relationships together. For the first problem, what do you know about complementary angles?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "When a line (called a **transversal**) crosses two parallel lines, it creates 8 angles with special relationships:\n• **Corresponding angles** (same position at each intersection) are congruent — look for the F-pattern\n• **Alternate interior angles** (inside, opposite sides) are congruent — look for the Z-pattern\n• **Alternate exterior angles** (outside, opposite sides) are congruent\n• **Same-side interior angles** (inside, same side) are supplementary (sum to 180°) — look for the C-pattern",
+      "initialPrompt": "Look at the letters F, Z, and C. Can you see how the angles in those letter shapes match the angle pair types I just described?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Two parallel lines are cut by a transversal. One angle at the top intersection measures 125°. Find all 8 angles.",
+      "explanation": "Starting with the 125° angle:\n• Its vertical angle (across) = 125°\n• Its supplementary angle (linear pair) = 180° - 125° = 55°\n• The other angle at that intersection = 55° (vertical to the supplement)\n\nAt the second intersection (corresponding positions):\n• Corresponding to 125° = 125°\n• Corresponding to 55° = 55°\n• And their vertical angles complete the picture.\n\n**Result:** Four angles of 125° and four angles of 55°.",
+      "initialPrompt": "Why do you think all 8 angles ended up being just two different measures? What's special about parallel lines that causes this?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Two parallel lines are cut by a transversal. A pair of alternate interior angles are (3x + 10)° and (5x - 20)°. Find x.",
+          "answer": "15",
+          "hints": [
+            "What do you know about alternate interior angles when lines are parallel?",
+            "Alternate interior angles are congruent, so set them equal: 3x + 10 = 5x - 20.",
+            "Solve: 10 + 20 = 5x - 3x, so 30 = 2x, meaning x = 15."
+          ]
+        },
+        {
+          "question": "Two parallel lines are cut by a transversal. A pair of same-side interior angles are (2x + 15)° and (4x + 15)°. Find x.",
+          "answer": "25",
+          "hints": [
+            "Same-side interior angles have a different relationship than alternate interior angles. What is it?",
+            "Same-side interior angles are supplementary—they add to 180°.",
+            "Set up: (2x + 15) + (4x + 15) = 180. Simplify: 6x + 30 = 180, so 6x = 150, x = 25."
+          ]
+        }
+      ],
+      "initialPrompt": "Now let's apply transversal angle relationships with algebra. For the first problem, what kind of angles are alternate interior angles?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "An angle measures 52°. What is the measure of its complement?",
+          "answer": "38",
+          "hints": ["Complementary angles sum to 90°."]
+        },
+        {
+          "question": "Two parallel lines are cut by a transversal. A corresponding angle pair includes one angle measuring 78°. What does the other corresponding angle measure?",
+          "answer": "78",
+          "hints": ["Corresponding angles formed by parallel lines and a transversal are congruent."]
+        },
+        {
+          "question": "Lines m and n are parallel, cut by transversal t. An alternate exterior angle pair measures (4x + 5)° and (6x - 25)°. Find x.",
+          "answer": "15",
+          "hints": ["Alternate exterior angles are congruent when lines are parallel.", "4x + 5 = 6x - 25. Solve for x."]
+        },
+        {
+          "question": "Two lines intersect. One of the four angles formed measures 135°. Find the measures of the other three angles.",
+          "answer": "45, 135, 45",
+          "hints": ["Vertical angles are congruent. Adjacent angles are supplementary (linear pair)."]
+        },
+        {
+          "question": "Two parallel lines are cut by a transversal. One same-side interior angle is 3 times the other. Find both angle measures.",
+          "answer": "45 and 135",
+          "hints": ["Same-side interior angles are supplementary: x + 3x = 180.", "4x = 180, so x = 45. The other is 3(45) = 135."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "Two angles are complementary. One angle measures 37°. What is the measure of the other angle?": "53",
+    "Two angles are supplementary. One angle measures 112°. What is the measure of the other angle?": "68",
+    "Two lines intersect forming vertical angles. One angle measures 65°. What is the measure of the angle directly across from it?": "65",
+    "Two parallel lines are cut by a transversal. A pair of alternate interior angles are (3x + 10)° and (5x - 20)°. Find x.": "15",
+    "Two parallel lines are cut by a transversal. A pair of same-side interior angles are (2x + 15)° and (4x + 15)°. Find x.": "25",
+    "An angle measures 52°. What is the measure of its complement?": "38",
+    "Two parallel lines are cut by a transversal. A corresponding angle pair includes one angle measuring 78°. What does the other corresponding angle measure?": "78",
+    "Lines m and n are parallel, cut by transversal t. An alternate exterior angle pair measures (4x + 5)° and (6x - 25)°. Find x.": "15",
+    "Two lines intersect. One of the four angles formed measures 135°. Find the measures of the other three angles.": "45, 135, 45",
+    "Two parallel lines are cut by a transversal. One same-side interior angle is 3 times the other. Find both angle measures.": "45 and 135"
+  }
+}

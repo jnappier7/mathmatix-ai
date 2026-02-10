@@ -6,6 +6,7 @@
   <title>Complete Sign Up - M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <script src="/js/csrf.js"></script>
 </head>
 <body class="landing-page-body">
   <header class="landing-header">
@@ -131,7 +132,7 @@
     document.getElementById('cancel-btn').addEventListener('click', async function(e) {
       e.preventDefault();
       try {
-        await fetch('/api/auth/cancel-oauth-enrollment', { method: 'POST' });
+        await csrfFetch('/api/auth/cancel-oauth-enrollment', { method: 'POST' });
       } catch (err) {
         // Ignore errors
       }
@@ -155,7 +156,7 @@
       messageDiv.style.display = 'none';
 
       try {
-        const response = await fetch('/api/auth/complete-oauth-enrollment', {
+        const response = await csrfFetch('/api/auth/complete-oauth-enrollment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ enrollmentCode })

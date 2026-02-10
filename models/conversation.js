@@ -148,8 +148,10 @@ conversationSchema.index({ userId: 1, conversationType: 1, isActive: 1 }); // Fo
 conversationSchema.index({ userId: 1, lastActivity: -1 }); // For user activity history (dashboard queries)
 conversationSchema.index({ userId: 1, isActive: 1 }); // For finding active sessions
 
-// Pre-save hook to validate and clean messages
-conversationSchema.pre('save', function(next) {
+// Pre-validate hook to clean invalid messages BEFORE Mongoose schema validation runs.
+// Using 'validate' instead of 'save' because Mongoose runs validation before save hooks,
+// so a pre('save') hook would be too late — the required `content` check would already fail.
+conversationSchema.pre('validate', function(next) {
     if (this.messages && Array.isArray(this.messages)) {
         const originalLength = this.messages.length;
 

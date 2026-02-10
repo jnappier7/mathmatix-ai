@@ -16,6 +16,7 @@ const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { anthropic, openai, retryWithExponentialBackoff } = require('../utils/openaiClient');
+const { applyWorksheetGuard, filterAnswerKeyResponse } = require('../utils/worksheetGuard');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -133,7 +134,11 @@ router.post('/',
             combinedText = `${combinedText}\n\n${pdfContent}`;
         }
 
-        // Store user message in conversation (text only, for history)
+        // ANTI-CHEAT: Append worksheet detection guard (centralized in utils/worksheetGuard.js)
+        // IMPORTANT: Apply ONLY to the AI message, NOT to the stored/displayed conversation message.
+        const guardedText = applyWorksheetGuard(combinedText);
+
+        // Store user message in conversation (text only, for history) — WITHOUT the guard
         activeConversation.messages.push({ role: 'user', content: combinedText });
 
         const tutor = TUTOR_CONFIG[user.selectedTutorId] || TUTOR_CONFIG.default;
@@ -143,10 +148,11 @@ router.post('/',
         const recentMessages = activeConversation.messages.slice(-40).map(m => ({ role: m.role, content: m.content }));
 
         // Create user message with text (including PDF content) and images (Vision API format)
+        // Uses guardedText so the AI sees the worksheet detection instruction
         const visionUserMessage = {
             role: 'user',
             content: [
-                { type: "text", text: combinedText },
+                { type: "text", text: guardedText },
                 ...imageContents
             ]
         };
@@ -244,6 +250,12 @@ router.post('/',
             console.log('[chatWithFile] Received response from OpenAI');
         }
 
+        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
+        const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
+        if (answerKeyCheck.wasFiltered) {
+            aiResponseText = answerKeyCheck.text;
+        }
+
         // --- Step 3: Handle Post-Processing (XP, Unlocks, etc.) ---
         // (This logic is copied and adapted from your chat.js)
         const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
@@ -254,18 +266,11 @@ router.post('/',
             aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
         }
 
-        activeConversation.messages.push({ role: 'assistant', content: aiResponseText });
-
-        // CRITICAL FIX: Clean invalid messages before save
-        if (activeConversation.messages && Array.isArray(activeConversation.messages)) {
-            const originalLength = activeConversation.messages.length;
-            activeConversation.messages = activeConversation.messages.filter(msg => {
-                return msg.content && typeof msg.content === 'string' && msg.content.trim() !== '';
-            });
-            if (activeConversation.messages.length !== originalLength) {
-                console.warn(`[ChatWithFile] Removed ${originalLength - activeConversation.messages.length} invalid messages`);
-            }
+        // Validate AI response before saving
+        if (!aiResponseText || typeof aiResponseText !== 'string' || aiResponseText.trim() === '') {
+            aiResponseText = "I'm having trouble generating a response right now. Could you please try again?";
         }
+        activeConversation.messages.push({ role: 'assistant', content: aiResponseText.trim() });
 
         await activeConversation.save();
 
@@ -330,10 +335,9 @@ router.post('/',
 
         let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
         user.xp = (user.xp || 0) + xpAward;
-        let xpForNextLevel = (user.level || 1) * BRAND_CONFIG.xpPerLevel;
 
         let specialXpAwardedMessage = bonusXpAwarded > 0 ? `${bonusXpAwarded} XP (${bonusXpReason})` : `${xpAward} XP`;
-        if (user.xp >= xpForNextLevel) {
+        while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
             user.level += 1;
             specialXpAwardedMessage = `LEVEL_UP! New level: ${user.level}`;
         }
@@ -349,7 +353,21 @@ router.post('/',
 		}
         await user.save();
 
-        const xpForCurrentLevelStart = (user.level - 1) * BRAND_CONFIG.xpPerLevel;
+        // Recalculate level from XP if they're out of sync (safety net)
+        const correctLevel = (() => {
+            let lvl = 1;
+            while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel(lvl + 1)) {
+                lvl++;
+            }
+            return lvl;
+        })();
+        if (user.level !== correctLevel) {
+            console.warn(`⚠️ [XP] Level/XP mismatch for user ${user._id}: level=${user.level}, xp=${user.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
+            user.level = correctLevel;
+            await user.save();
+        }
+
+        const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
 
         // Clean up all temp files after successful processing
         files.forEach(file => {
@@ -365,9 +383,9 @@ router.post('/',
 
         res.json({
             text: aiResponseText,
-            userXp: user.xp - xpForCurrentLevelStart,
+            userXp: Math.max(0, user.xp - xpForCurrentLevelStart),
             userLevel: user.level,
-            xpNeeded: xpForNextLevel,
+            xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
             specialXpAwarded: specialXpAwardedMessage,
             voiceId: tutor.voiceId,
             newlyUnlockedTutors: tutorsJustUnlocked,

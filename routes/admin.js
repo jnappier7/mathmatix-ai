@@ -18,6 +18,7 @@ const adminImportRoutes = require('./adminImport'); // CSV import for item bank
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const multer = require('multer');
+const { sendWelcomeEmail } = require('../utils/emailService');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 
@@ -220,6 +221,331 @@ router.post('/teachers', isAdmin, async (req, res) => {
       return res.status(409).json({ message: 'Username or email already exists.' });
     }
     res.status(500).json({ message: 'Server error creating teacher account.' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/create-user
+ * @desc    Create a new user account with any role (student, teacher, parent, admin)
+ * @access  Private (Admin)
+ */
+router.post('/create-user', isAdmin, async (req, res) => {
+  try {
+    const { firstName, lastName, email, role, roles, username, password, generatePassword, sendEmail } = req.body;
+
+    // Accept roles array or single role (backward compatible)
+    const userRoles = roles && roles.length > 0 ? roles : (role ? [role] : []);
+
+    // Validate required fields
+    if (!firstName || !lastName || !email || userRoles.length === 0) {
+      return res.status(400).json({ message: 'First name, last name, email, and at least one role are required.' });
+    }
+
+    // Validate all roles
+    const validRoles = ['student', 'teacher', 'parent', 'admin'];
+    const invalidRoles = userRoles.filter(r => !validRoles.includes(r));
+    if (invalidRoles.length > 0) {
+      return res.status(400).json({ message: `Invalid role(s): ${invalidRoles.join(', ')}. Must be one of: ${validRoles.join(', ')}` });
+    }
+
+    // Primary role = first role in the array
+    const primaryRole = userRoles[0];
+
+    // Generate username if not provided
+    const finalUsername = username || email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Check for existing username or email
+    const existingUser = await User.findOne({
+      $or: [
+        { username: finalUsername.toLowerCase() },
+        { email: email.toLowerCase() }
+      ]
+    });
+
+    if (existingUser) {
+      if (existingUser.email.toLowerCase() === email.toLowerCase()) {
+        return res.status(409).json({ message: 'Email already registered.' });
+      }
+      if (existingUser.username === finalUsername.toLowerCase()) {
+        return res.status(409).json({ message: 'Username already taken.' });
+      }
+    }
+
+    // Generate or use provided password
+    let finalPassword = password;
+    if (generatePassword || !password) {
+      finalPassword = crypto.randomBytes(8).toString('hex') + 'A1!';
+    }
+
+    // Validate password strength
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/]).{8,}$/;
+    if (!passwordRegex.test(finalPassword)) {
+      return res.status(400).json({
+        message: 'Password must be at least 8 characters with uppercase, lowercase, number, and special character.'
+      });
+    }
+
+    // Create user account
+    const newUser = new User({
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      username: finalUsername.toLowerCase(),
+      passwordHash: finalPassword, // Will be hashed by pre-save hook
+      role: primaryRole,
+      roles: userRoles,
+      needsProfileCompletion: userRoles.includes('student') && userRoles.length === 1
+    });
+
+    await newUser.save();
+
+    const roleLabel = userRoles.length > 1
+      ? userRoles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(' + ')
+      : primaryRole.charAt(0).toUpperCase() + primaryRole.slice(1);
+
+    console.log(`[ADMIN] ${roleLabel} account created: ${email} by admin ${req.user.email}`);
+
+    const tempPw = (generatePassword || !password) ? finalPassword : null;
+
+    // Send welcome email if requested (fire-and-forget, don't block response)
+    let emailSent = false;
+    if (sendEmail) {
+      try {
+        const emailResult = await sendWelcomeEmail({
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          username: newUser.username,
+          roles: newUser.roles,
+          temporaryPassword: tempPw
+        });
+        emailSent = emailResult.success;
+        if (!emailSent) {
+          console.warn(`[ADMIN] Welcome email failed for ${email}: ${emailResult.error}`);
+        }
+      } catch (emailErr) {
+        console.error(`[ADMIN] Welcome email error for ${email}:`, emailErr);
+      }
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `${roleLabel} account created successfully!` + (sendEmail ? (emailSent ? ' Welcome email sent.' : ' (Welcome email failed to send)') : ''),
+      user: {
+        _id: newUser._id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        username: newUser.username,
+        role: newUser.role,
+        roles: newUser.roles
+      },
+      temporaryPassword: tempPw,
+      emailSent
+    });
+
+  } catch (err) {
+    console.error('Error creating user account:', err);
+    if (err.code === 11000) {
+      return res.status(409).json({ message: 'Username or email already exists.' });
+    }
+    res.status(500).json({ message: 'Server error creating user account.' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/users/:userId/send-credentials
+ * @desc    Reset a user's password and send them a welcome email with new credentials
+ * @access  Private (Admin)
+ */
+router.post('/users/:userId/send-credentials', isAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Generate a new temporary password
+    const tempPassword = crypto.randomBytes(8).toString('hex') + 'A1!';
+    user.passwordHash = tempPassword; // Will be hashed by pre-save hook
+    await user.save();
+
+    // Send welcome email with new credentials
+    const emailResult = await sendWelcomeEmail({
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      roles: user.roles && user.roles.length > 0 ? user.roles : [user.role],
+      temporaryPassword: tempPassword
+    });
+
+    if (emailResult.success) {
+      console.log(`[ADMIN] Credentials email sent to ${user.email} by admin ${req.user.email}`);
+      res.json({
+        success: true,
+        message: `Credentials email sent to ${user.email}. A new temporary password has been set.`
+      });
+    } else {
+      console.warn(`[ADMIN] Credentials email failed for ${user.email}: ${emailResult.error}`);
+      res.json({
+        success: true,
+        message: `Password was reset but email failed to send. Temporary password: ${tempPassword}`,
+        temporaryPassword: tempPassword
+      });
+    }
+  } catch (err) {
+    console.error('Error sending credentials:', err);
+    res.status(500).json({ message: 'Server error sending credentials.' });
+  }
+});
+
+/**
+ * @route   PATCH /api/admin/users/:userId/roles
+ * @desc    Update a user's roles
+ * @access  Private (Admin)
+ */
+router.patch('/users/:userId/roles', isAdmin, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { roles } = req.body;
+
+    if (!roles || !Array.isArray(roles) || roles.length === 0) {
+      return res.status(400).json({ message: 'At least one role is required.' });
+    }
+
+    const validRoles = ['student', 'teacher', 'parent', 'admin'];
+    const invalidRoles = roles.filter(r => !validRoles.includes(r));
+    if (invalidRoles.length > 0) {
+      return res.status(400).json({ message: `Invalid role(s): ${invalidRoles.join(', ')}` });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const oldRoles = user.roles && user.roles.length > 0 ? [...user.roles] : [user.role];
+    user.roles = roles;
+
+    // If current active role is no longer in the roles list, switch to first role
+    if (!roles.includes(user.role)) {
+      user.role = roles[0];
+    }
+
+    await user.save();
+
+    console.log(`[ADMIN] Roles updated for ${user.email}: [${oldRoles.join(',')}] → [${roles.join(',')}] by admin ${req.user.email}`);
+
+    res.json({
+      success: true,
+      message: `Roles updated for ${user.firstName} ${user.lastName}.`,
+      user: {
+        _id: user._id,
+        role: user.role,
+        roles: user.roles
+      }
+    });
+  } catch (err) {
+    console.error('Error updating user roles:', err);
+    res.status(500).json({ message: 'Server error updating roles.' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/link-parent-student
+ * @desc    Link a parent account to a student account (bidirectional)
+ * @access  Private (Admin)
+ */
+router.post('/link-parent-student', isAdmin, async (req, res) => {
+  try {
+    const { parentId, studentId } = req.body;
+
+    if (!parentId || !studentId) {
+      return res.status(400).json({ message: 'Both parent ID and student ID are required.' });
+    }
+
+    const [parent, student] = await Promise.all([
+      User.findOne({ _id: parentId, role: 'parent' }),
+      User.findOne({ _id: studentId, role: 'student' })
+    ]);
+
+    if (!parent) {
+      return res.status(404).json({ message: 'Parent not found.' });
+    }
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found.' });
+    }
+
+    // Check if already linked
+    const alreadyLinked = parent.children?.some(id => id.toString() === studentId) ||
+                          student.parentIds?.some(id => id.toString() === parentId);
+    if (alreadyLinked) {
+      return res.status(409).json({ message: 'This parent and student are already linked.' });
+    }
+
+    // Link bidirectionally
+    await Promise.all([
+      User.findByIdAndUpdate(parentId, { $addToSet: { children: studentId } }),
+      User.findByIdAndUpdate(studentId, { $addToSet: { parentIds: parentId } })
+    ]);
+
+    console.log(`[ADMIN] Linked parent ${parent.email} to student ${student.email} by admin ${req.user.email}`);
+
+    res.json({
+      success: true,
+      message: `${parent.firstName} ${parent.lastName} is now linked to ${student.firstName} ${student.lastName}.`
+    });
+
+  } catch (err) {
+    console.error('Error linking parent to student:', err);
+    res.status(500).json({ message: 'Server error linking parent to student.' });
+  }
+});
+
+/**
+ * @route   POST /api/admin/assign-teacher
+ * @desc    Assign a teacher to a student
+ * @access  Private (Admin)
+ */
+router.post('/assign-teacher', isAdmin, async (req, res) => {
+  try {
+    const { teacherId, studentId } = req.body;
+
+    if (!teacherId || !studentId) {
+      return res.status(400).json({ message: 'Both teacher ID and student ID are required.' });
+    }
+
+    const [teacher, student] = await Promise.all([
+      User.findOne({ _id: teacherId, role: 'teacher' }),
+      User.findOne({ _id: studentId, role: 'student' })
+    ]);
+
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found.' });
+    }
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found.' });
+    }
+
+    if (student.teacherId?.toString() === teacherId) {
+      return res.status(409).json({ message: 'This student is already assigned to this teacher.' });
+    }
+
+    await User.findByIdAndUpdate(studentId, { teacherId });
+
+    console.log(`[ADMIN] Assigned teacher ${teacher.email} to student ${student.email} by admin ${req.user.email}`);
+
+    res.json({
+      success: true,
+      message: `${student.firstName} ${student.lastName} is now assigned to ${teacher.firstName} ${teacher.lastName}.`
+    });
+
+  } catch (err) {
+    console.error('Error assigning teacher to student:', err);
+    res.status(500).json({ message: 'Server error assigning teacher.' });
   }
 });
 

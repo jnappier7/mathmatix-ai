@@ -8,6 +8,7 @@ const User = require('../models/user');
 const GradingResult = require('../models/gradingResult');
 const { gradeWithVision } = require('../utils/llmGateway');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
+const { detectBlankWork, stripCorrectAnswers } = require('../utils/worksheetGuard');
 
 // Disk storage to avoid memory bloat on large uploads
 const upload = multer({
@@ -29,11 +30,40 @@ const ANALYSIS_PROMPT = `You are a warm, Socratic math tutor looking at a studen
 Your job is to GUIDE them toward understanding — not grade them or hand them answers.
 Be MATHEMATICALLY RIGOROUS but talk like a supportive teacher, not a rubric.
 
-# YOUR APPROACH
+# CRITICAL FIRST STEP: DETECT BLANK OR UNATTEMPTED WORK
 
-## 1. SOLVE EVERY PROBLEM YOURSELF (privately)
-Before looking at the student's work, solve each problem from scratch.
-You need a verified answer key, but the student never sees your scratch work.
+🚨 **BEFORE ANALYZING ANYTHING, check if the student has actually written work on the page.**
+
+Look for these signs of a BLANK or UNATTEMPTED worksheet:
+- Only PRINTED/TYPED text (questions, directions, headers) — no handwriting
+- Blank answer spaces, empty lines, or unfilled boxes
+- A worksheet header with "Name:", "Date:", "Period:" that may be blank
+- Multiple numbered problems with no student work between or beside them
+- Clean, untouched paper with only the printed assignment
+
+**IF THE WORKSHEET IS BLANK OR HAS NO STUDENT WORK, you MUST respond with ONLY this JSON:**
+
+\`\`\`json
+{
+  "noWorkDetected": true,
+  "problems": [],
+  "overallFeedback": "I can see the worksheet, but it looks like you haven't written your answers yet! Give the problems a try first, then snap another photo and I'll check your work. You got this!",
+  "whatWentWell": "",
+  "practiceRecommendations": [],
+  "skillsAssessed": []
+}
+\`\`\`
+
+**Do NOT solve the problems. Do NOT provide answers. Do NOT create an answer key.**
+A blank worksheet with solved answers is CHEATING — you would be doing their homework for them.
+
+**IF ONLY SOME PROBLEMS HAVE STUDENT WORK:** Only analyze the problems where you can see actual student handwriting or work. Skip blank problems entirely — do not solve them or include them in the response.
+
+# YOUR APPROACH (ONLY if student work IS present)
+
+## 1. VERIFY ANSWERS YOURSELF (privately)
+Before reviewing the student's work, solve each attempted problem from scratch.
+You need verified answers to check their work, but NEVER include your solutions for problems the student left blank.
 
 ## 2. COMPARE — then GUIDE
 For correct problems: celebrate SPECIFICALLY what they did well ("nice use of distribution here").
@@ -52,12 +82,12 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
 
 \`\`\`json
 {
+  "noWorkDetected": false,
   "problems": [
     {
       "problemNumber": 1,
       "problemStatement": "Brief restatement of the problem",
-      "studentAnswer": "What the student wrote",
-      "correctAnswer": "Your verified correct answer",
+      "studentAnswer": "What the student wrote (MUST be actual handwriting you can see — not the printed problem text)",
       "isCorrect": true,
       "strengths": "Specific praise: what concept or technique they nailed",
       "errors": [],
@@ -67,7 +97,6 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
       "problemNumber": 2,
       "problemStatement": "...",
       "studentAnswer": "...",
-      "correctAnswer": "...",
       "isCorrect": false,
       "strengths": "You set up the equation correctly and showed every step — that's great.",
       "errors": [
@@ -90,13 +119,16 @@ Tag each error: arithmetic | sign | algebraic | order-of-operations | graphing |
 
 RULES:
 - Respond ONLY with the JSON block (inside \`\`\`json fences). No preamble.
+- **NEVER include a "correctAnswer" field.** Showing correct answers turns feedback into an answer key. Guide the student to discover the right answer through your feedback instead.
+- **The "correction" field in errors must TEACH A CONCEPT, never reveal the answer.** Good: "When you distribute a negative, every sign inside flips." Bad: "The answer should be x = 6." If you catch yourself writing the answer, rewrite it as a guiding hint.
 - Do NOT assign numerical scores, grades, or percentages anywhere.
 - Feedback must be CONVERSATIONAL and SOCRATIC — ask guiding questions, don't just state corrections.
 - Always find strengths, even in wrong answers.
 - For incorrect problems: guide the student toward discovering the error, don't just hand them the fix.
 - Write like you're talking to the student, not writing a report about them.
-- Use LaTeX notation for ALL math expressions in feedback, answers, and corrections. Wrap inline math with \\( and \\), and display math with \\[ and \\]. Example: "You wrote \\(x = -3\\) but check what happens when you distribute the negative — you should get \\(-(2x - 6) = -2x + 6\\)."
-- The studentAnswer and correctAnswer fields MUST also use LaTeX for any math.`;
+- **studentAnswer MUST reflect actual handwritten work visible in the image — NOT the printed problem text.** If you cannot distinguish student handwriting from printed text for a problem, mark it as having no work detected.
+- Use LaTeX notation for ALL math expressions in feedback, answers, and corrections. Wrap inline math with \\( and \\), and display math with \\[ and \\]. Example: "You wrote \\(x = -3\\) but check what happens when you distribute the negative."
+- The studentAnswer field MUST use LaTeX for any math.`;
 
 // ============================================================================
 // PARSE AI RESPONSE
@@ -145,6 +177,7 @@ router.post('/',
     try {
         const file = req.file;
         const user = await User.findById(req.user._id);
+        const previousAttemptId = req.body.previousAttemptId || null;
 
         if (!file) {
             return res.status(400).json({ success: false, message: 'No file uploaded' });
@@ -175,6 +208,50 @@ router.post('/',
 
         // Parse structured JSON
         const parsed = parseAnalysisResponse(aiResponse);
+
+        // ANTI-CHEAT: If AI detected no student work, return early without grading
+        if (parsed.noWorkDetected === true) {
+            console.log(`[gradeWork] No student work detected for user: ${user.firstName} — rejecting grading`);
+            if (file.path) fs.unlinkSync(file.path);
+            return res.json({
+                success: true,
+                noWorkDetected: true,
+                problemCount: 0,
+                correctCount: 0,
+                problems: [],
+                overallFeedback: parsed.overallFeedback || "I can see the worksheet, but it looks like you haven't written your answers yet! Give the problems a try first, then snap another photo and I'll check your work.",
+                whatWentWell: '',
+                practiceRecommendations: [],
+                xpEarned: 0,
+                message: 'No student work detected'
+            });
+        }
+
+        // ANTI-CHEAT: Server-side validation — if most studentAnswer fields are empty/blank,
+        // the AI may have failed to detect a blank worksheet. Catch it here.
+        const blankCheck = detectBlankWork(parsed.problems);
+
+        if (blankCheck.isBlank) {
+            console.warn(`[gradeWork] ANTI-CHEAT: ${blankCheck.blankCount}/${blankCheck.totalCount} answers blank — likely blank worksheet from user: ${user.firstName}`);
+            if (file.path) fs.unlinkSync(file.path);
+            return res.json({
+                success: true,
+                noWorkDetected: true,
+                problemCount: 0,
+                correctCount: 0,
+                problems: [],
+                overallFeedback: "It looks like most of the problems don't have answers written in yet. Try working through them first, then take another photo and I'll give you feedback!",
+                whatWentWell: '',
+                practiceRecommendations: [],
+                xpEarned: 0,
+                message: 'Insufficient student work detected'
+            });
+        }
+
+        // ANTI-CHEAT: Strip any correctAnswer fields that the AI may have included despite instructions.
+        // We never want to send correct answers to the student — that's an answer key.
+        stripCorrectAnswers(parsed.problems);
+
         const correctCount = parsed.problems.filter(p => p.isCorrect).length;
 
         // Calculate XP
@@ -182,9 +259,41 @@ router.post('/',
         user.xp = (user.xp || 0) + xpEarned;
         await user.save();
 
+        // Re-attempt tracking: look up previous attempt to calculate improvement
+        let attemptNumber = 1;
+        let improvement = null;
+
+        if (previousAttemptId) {
+            try {
+                const prevResult = await GradingResult.findOne({
+                    _id: previousAttemptId,
+                    userId: user._id // Security: only allow linking to own results
+                }).select('correctCount problemCount attemptNumber').lean();
+
+                if (prevResult) {
+                    attemptNumber = (prevResult.attemptNumber || 1) + 1;
+                    const prevRate = prevResult.problemCount > 0 ? prevResult.correctCount / prevResult.problemCount : 0;
+                    const newRate = parsed.problems.length > 0 ? correctCount / parsed.problems.length : 0;
+                    improvement = {
+                        previousCorrect: prevResult.correctCount,
+                        previousTotal: prevResult.problemCount,
+                        currentCorrect: correctCount,
+                        currentTotal: parsed.problems.length,
+                        delta: correctCount - prevResult.correctCount,
+                        improved: newRate > prevRate
+                    };
+                    console.log(`[gradeWork] Re-attempt #${attemptNumber}: ${prevResult.correctCount}/${prevResult.problemCount} → ${correctCount}/${parsed.problems.length}`);
+                }
+            } catch (lookupErr) {
+                console.warn(`[gradeWork] Could not look up previous attempt ${previousAttemptId}:`, lookupErr.message);
+            }
+        }
+
         // Persist to database
         const result = await GradingResult.create({
             userId: user._id,
+            previousAttemptId: previousAttemptId || null,
+            attemptNumber,
             problemCount: parsed.problems.length,
             correctCount,
             problems: parsed.problems,
@@ -197,7 +306,7 @@ router.post('/',
             xpEarned
         });
 
-        console.log(`[gradeWork] Saved analysis ${result._id}`);
+        console.log(`[gradeWork] Saved analysis ${result._id} (attempt #${attemptNumber})`);
 
         // Clean up temp file
         if (file.path) fs.unlinkSync(file.path);
@@ -206,6 +315,8 @@ router.post('/',
         res.json({
             success: true,
             id: result._id,
+            attemptNumber,
+            improvement,
             problemCount: parsed.problems.length,
             correctCount,
             problems: parsed.problems,
@@ -213,7 +324,9 @@ router.post('/',
             whatWentWell: parsed.whatWentWell || '',
             practiceRecommendations: parsed.practiceRecommendations || [],
             xpEarned,
-            message: 'Work analyzed successfully'
+            message: improvement && improvement.improved
+                ? `Nice improvement! ${improvement.previousCorrect}/${improvement.previousTotal} → ${correctCount}/${parsed.problems.length}`
+                : 'Work analyzed successfully'
         });
 
     } catch (error) {

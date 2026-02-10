@@ -126,6 +126,7 @@ const impersonationRoutes = require('./routes/impersonation');  // User imperson
 const announcementsRoutes = require('./routes/announcements');  // Teacher-to-student announcements
 const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
 const billingRoutes = require('./routes/billing');  // Stripe subscription billing
+const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // Usage gate middleware for free tier enforcement
@@ -133,6 +134,9 @@ const { usageGate, premiumFeatureGate } = require('./middleware/usageGate');
 
 // Impersonation middleware
 const { handleImpersonation, enforceReadOnly } = require('./middleware/impersonation');
+
+// Upload security middleware
+const { uploadRateLimiter, validateUpload, scheduleCleanup } = require('./middleware/uploadSecurity');
 
 // --- 5. EXPRESS APP SETUP ---
 const app = express();
@@ -159,13 +163,13 @@ app.use(session({
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: 'sessions',
-    ttl: 3 * 60 * 60, // 3 hours (sliding window with rolling: true)
+    ttl: 7 * 24 * 60 * 60, // 7 days (sliding window with rolling: true, idle timeout handles active logout)
   }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 1000 * 60 * 60 * 3 // 3 hours (extends on each request)
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days (extends on each request, idle timeout handles active logout)
   }
 }));
 
@@ -377,7 +381,7 @@ app.use('/api/conversations', isAuthenticated, conversationsRoutes); // Topic-ba
 app.use('/api/speak', isAuthenticated, speakRoutes);
 app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes); // Premium: voice chat
 app.use('/api/voice', isAuthenticated, voiceTestRoutes); // Voice diagnostics (no rate limit on test endpoint)
-app.use('/api/upload', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
+app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes); // Premium: file uploads
 app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, chatWithFileRoutes); // SECURITY FIX: Added per-user rate limiting 
 app.use('/api/welcome-message', isAuthenticated, welcomeRoutes);
 app.use('/api/rapport', isAuthenticated, rapportBuildingRoutes);
@@ -387,6 +391,7 @@ app.use('/api/avatars', isAuthenticated, avatarRoutes);
 app.use('/api/avatar', isAuthenticated, avatarRoutes); // DiceBear avatar customization endpoints
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
+app.use('/api/courses', isAuthenticated, courseRoutes); // Course catalog, session-based enrollment, and progression
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning
@@ -448,12 +453,70 @@ app.get("/user", isAuthenticated, async (req, res) => {
             }
         }
 
-        res.json({ user: user ? user.toObject() : req.user.toObject() });
+        const userObj = user ? user.toObject() : req.user.toObject();
+
+        // Recalculate level from XP if they're out of sync (safety net)
+        const BRAND_CONFIG = require('./utils/brand');
+        let correctLevel = 1;
+        while ((userObj.xp || 0) >= BRAND_CONFIG.cumulativeXpForLevel(correctLevel + 1)) {
+            correctLevel++;
+        }
+        if ((userObj.level || 1) !== correctLevel) {
+            console.warn(`⚠️ [XP] Level/XP mismatch on login for ${userObj.firstName}: level=${userObj.level}, xp=${userObj.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
+            user.level = correctLevel;
+            await user.save();
+            userObj.level = correctLevel;
+        }
+
+        // Attach computed XP fields so the frontend can display progress on page load
+        const level = userObj.level || 1;
+        const xpStart = BRAND_CONFIG.cumulativeXpForLevel(level);
+        userObj.xpForCurrentLevel = Math.max(0, (userObj.xp || 0) - xpStart);
+        userObj.xpForNextLevel = BRAND_CONFIG.xpRequiredForLevel(level);
+
+        res.json({ user: userObj });
     } catch (error) {
         console.error('[/user] Error in /user endpoint:', error);
         console.error('[/user] Error stack:', error.stack);
         // Return 500 error instead of trying to send user data
         res.status(500).json({ error: 'Failed to load user data', message: error.message });
+    }
+});
+
+// Switch active role for multi-role users
+app.post('/api/user/switch-role', isAuthenticated, async (req, res) => {
+    try {
+        const { role } = req.body;
+        if (!role) return res.status(400).json({ message: 'Role is required.' });
+
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        // Verify user actually has this role
+        const userRoles = user.roles && user.roles.length > 0 ? user.roles : [user.role];
+        if (!userRoles.includes(role)) {
+            return res.status(403).json({ message: `You do not have the "${role}" role.` });
+        }
+
+        user.role = role;
+        await user.save();
+
+        // Determine redirect for the new active role
+        const dashboardMap = {
+            student: user.selectedTutorId ? '/chat.html' : '/pick-tutor.html',
+            teacher: '/teacher-dashboard.html',
+            admin: '/admin-dashboard.html',
+            parent: '/parent-dashboard.html'
+        };
+
+        res.json({
+            success: true,
+            message: `Switched to ${role} role.`,
+            redirect: dashboardMap[role] || '/chat.html'
+        });
+    } catch (error) {
+        console.error('[switch-role] Error:', error);
+        res.status(500).json({ message: 'Failed to switch role.' });
     }
 });
 
@@ -640,7 +703,7 @@ app.get("*", (req, res) => {
 
 
 // --- 11. SAFETY & SECURITY INITIALIZATION ---
-const { scheduleCleanup } = require('./middleware/uploadSecurity');
+// uploadSecurity already imported near other middleware imports above
 
 // Start auto-deletion scheduler for old uploads (30-day retention)
 scheduleCleanup();

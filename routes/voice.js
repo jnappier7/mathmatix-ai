@@ -309,39 +309,34 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // STEP 5: SAVE TO CONVERSATION HISTORY
         // ============================================
 
-        // Save user message
-        await Conversation.findOneAndUpdate(
-            { userId },
-            {
-                $push: {
-                    messages: {
-                        role: 'user',
-                        content: userMessage,
-                        timestamp: new Date(),
-                        isVoiceInput: true
-                    }
-                },
-                $set: { updatedAt: new Date() }
-            },
-            { upsert: true }
-        );
+        // Save messages to conversation history
+        // Note: findOneAndUpdate bypasses Mongoose middleware, so validate content here
+        const messagesToPush = [];
+        if (userMessage && typeof userMessage === 'string' && userMessage.trim() !== '') {
+            messagesToPush.push({
+                role: 'user',
+                content: userMessage.trim(),
+                timestamp: new Date()
+            });
+        }
+        if (aiResponseText && typeof aiResponseText === 'string' && aiResponseText.trim() !== '') {
+            messagesToPush.push({
+                role: 'assistant',
+                content: aiResponseText.trim(),
+                timestamp: new Date()
+            });
+        }
 
-        // Save AI response
-        await Conversation.findOneAndUpdate(
-            { userId },
-            {
-                $push: {
-                    messages: {
-                        role: 'assistant',
-                        content: aiResponseText,
-                        timestamp: new Date(),
-                        isVoiceOutput: true,
-                        audioUrl: audioUrl
-                    }
+        if (messagesToPush.length > 0) {
+            await Conversation.findOneAndUpdate(
+                { userId },
+                {
+                    $push: { messages: { $each: messagesToPush } },
+                    $set: { updatedAt: new Date() }
                 },
-                $set: { updatedAt: new Date() }
-            }
-        );
+                { upsert: true }
+            );
+        }
 
         // ============================================
         // STEP 6: RETURN RESPONSE

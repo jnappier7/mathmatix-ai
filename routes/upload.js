@@ -1,7 +1,7 @@
 // routes/upload.js - CORRECTED
 const express = require("express");
 const multer = require("multer");
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 const router = express.Router();
 const { generateSystemPrompt } = require("../utils/prompt");
@@ -10,8 +10,13 @@ const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unifi
 const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
+const { applyWorksheetGuard, filterAnswerKeyResponse } = require('../utils/worksheetGuard');
+const { validateUpload } = require('../middleware/uploadSecurity');
 
 const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for analyzing student work
+
+// Allowed MIME types for upload file filter (defense-in-depth alongside validateUpload middleware)
+const ALLOWED_MIMETYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
 const upload = multer({
@@ -22,10 +27,17 @@ const upload = multer({
             cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
         }
     }),
-    limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    fileFilter: (req, file, cb) => {
+        if (ALLOWED_MIMETYPES.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only images (JPG, PNG, WEBP) and PDFs are allowed.'), false);
+        }
+    }
 });
 
-router.post("/", upload.single("file"), async (req, res) => {
+router.post("/", upload.single("file"), validateUpload, async (req, res) => {
     try {
         const file = req.file;
 
@@ -48,7 +60,7 @@ router.post("/", upload.single("file"), async (req, res) => {
         // Get userId from authenticated session (req.user is set by isAuthenticated middleware)
         if (!req.user || !req.user._id) {
             // Clean up temp file
-            if (file.path) fs.unlinkSync(file.path);
+            if (file.path) await fs.unlink(file.path).catch(() => {});
             return res.status(401).json({ error: 'Authentication required.' });
         }
 
@@ -56,7 +68,7 @@ router.post("/", upload.single("file"), async (req, res) => {
         const user = await User.findById(req.user._id).lean();
         if (!user) {
             // Clean up temp file
-            if (file.path) fs.unlinkSync(file.path);
+            if (file.path) await fs.unlink(file.path).catch(() => {});
             return res.status(404).json({ error: "User profile not found for prompt generation." });
         }
 
@@ -66,7 +78,7 @@ router.post("/", upload.single("file"), async (req, res) => {
         let extracted;
         try {
             // Read file from disk into buffer for OCR processing
-            const fileBuffer = fs.readFileSync(file.path);
+            const fileBuffer = await fs.readFile(file.path);
 
             if (file.mimetype === 'application/pdf') {
                 // Use Mathpix /v3/pdf endpoint for PDFs
@@ -81,7 +93,7 @@ router.post("/", upload.single("file"), async (req, res) => {
         } catch (ocrError) {
             console.error('[Upload API] OCR processing error:', ocrError.message);
             // Clean up temp file
-            if (file.path) fs.unlinkSync(file.path);
+            if (file.path) await fs.unlink(file.path).catch(() => {});
             return res.status(500).json({
                 error: `Failed to process file: ${ocrError.message}`,
                 extractedText: ""
@@ -91,7 +103,7 @@ router.post("/", upload.single("file"), async (req, res) => {
         if (!extracted || extracted.trim() === '') {
             console.warn('[Upload API] No text extracted from file');
             // Clean up temp file
-            if (file.path) fs.unlinkSync(file.path);
+            if (file.path) await fs.unlink(file.path).catch(() => {});
             return res.status(200).json({
                 text: "I couldn't read any text from that file. Could you try a clearer picture or type out the problem?",
                 extractedText: ""
@@ -106,19 +118,30 @@ router.post("/", upload.single("file"), async (req, res) => {
         // Generate the personalized system prompt
         const systemPrompt = generateSystemPrompt(user, tutor, null, 'student');
 
+        // ANTI-CHEAT: Append worksheet detection guard (centralized in utils/worksheetGuard.js)
+        const uploadUserMessage = applyWorksheetGuard(
+            `Here's the math text from an uploaded image/PDF: """${extracted}"""`
+        );
+
         const messages = [
             { role: "system", content: systemPrompt },
-            { role: "user", content: `Here's the math text from an uploaded image/PDF: """${extracted}""". Please help me understand it. Start by re-stating the problem clearly.` }
+            { role: "user", content: uploadUserMessage }
         ];
 
         // Use the centralized LLM call function
         const completion = await callLLM(PRIMARY_UPLOAD_AI_MODEL, messages, { max_tokens: 400 });
 
-        const reply = completion.choices[0]?.message?.content?.trim() || "No feedback generated.";
+        let reply = completion.choices[0]?.message?.content?.trim() || "No feedback generated.";
+
+        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
+        const answerKeyCheck = filterAnswerKeyResponse(reply, req.user._id);
+        if (answerKeyCheck.wasFiltered) {
+            reply = answerKeyCheck.text;
+        }
 
         // Clean up temp file after successful processing
         if (file.path) {
-            fs.unlinkSync(file.path);
+            await fs.unlink(file.path).catch(() => {});
             console.log('[Upload API] Cleaned up temp file:', file.path);
         }
 
@@ -128,11 +151,9 @@ router.post("/", upload.single("file"), async (req, res) => {
         console.error("ERROR in /api/upload:", err);
         // Clean up temp file on error
         if (req.file && req.file.path) {
-            try {
-                fs.unlinkSync(req.file.path);
-            } catch (cleanupErr) {
+            await fs.unlink(req.file.path).catch(cleanupErr => {
                 console.error('Failed to cleanup temp file:', cleanupErr);
-            }
+            });
         }
         // Provide a more generic error to the client for security
         res.status(500).json({ error: "An unexpected error occurred on the server." });

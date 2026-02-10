@@ -25,7 +25,48 @@
   <meta name="twitter:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
 
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/dark-mode.css" />
+  <link rel="stylesheet" href="css/mobile-fixes.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <style>
+    .login-page-wrapper {
+      background: linear-gradient(135deg, rgba(var(--clr-primary-teal-rgb, 18,179,179), 0.03) 0%, transparent 50%);
+    }
+
+    /* Message styling */
+    #signup-message {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm, 8px);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      text-align: center;
+      margin-top: 16px;
+    }
+    #signup-message.error {
+      background: rgba(255, 107, 107, 0.08);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      color: var(--clr-error-red, #e74c3c);
+    }
+    #signup-message.success {
+      background: rgba(26, 217, 122, 0.08);
+      border: 1px solid rgba(26, 217, 122, 0.2);
+      color: var(--clr-success-green, #1AD97A);
+    }
+
+    /* Two-column name fields on wider screens */
+    .name-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 480px) {
+      .name-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  </style>
 </head>
 <body class="landing-page-body">
   <header class="landing-header">
@@ -36,46 +77,48 @@
       </nav>
   </header>
 
-  <main class="login-page-wrapper" style="min-height: calc(100vh - 140px); overflow-y: auto;">
+  <main class="login-page-wrapper" style="min-height: calc(100dvh - 140px); overflow-y: auto;">
     <div class="signup-container" style="max-height: none; overflow: visible; margin: 2rem auto;">
       <h2>Create Your Account</h2>
+      <p class="subtitle">Join the future of math learning.</p>
       <form id="signupForm" method="POST" action="/signup">
-        <div class="form-group">
-          <label for="firstName">First Name:</label>
-          <input type="text" name="firstName" id="firstName" required autocomplete="given-name" />
+        <div class="name-row">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" name="firstName" id="firstName" required autocomplete="given-name" placeholder="John" />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" name="lastName" id="lastName" required autocomplete="family-name" placeholder="Doe" />
+          </div>
         </div>
 
         <div class="form-group">
-          <label for="lastName">Last Name:</label>
-          <input type="text" name="lastName" id="lastName" required autocomplete="family-name" />
+          <label for="email">Email Address</label>
+          <input type="email" name="email" id="email" required autocomplete="email" placeholder="you@example.com" />
         </div>
 
         <div class="form-group">
-          <label for="email">Email Address:</label>
-          <input type="email" name="email" id="email" required autocomplete="email" />
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username" required autocomplete="username" placeholder="Choose a username" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" required autocomplete="new-password" placeholder="Min 8 chars, 1 uppercase, 1 number" />
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" name="confirmPassword" id="confirm-password" required autocomplete="new-password" placeholder="Re-enter your password" />
         </div>
 
         <div class="form-group">
-          <label for="username">Username:</label>
-          <input type="text" name="username" id="username" required autocomplete="username" />
-        </div>
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" name="password" id="password" required autocomplete="new-password" />
-        </div>
-        <div class="form-group">
-          <label for="confirmPassword">Confirm Password:</label>
-          <input type="password" name="confirmPassword" id="confirm-password" required autocomplete="new-password" />
-        </div>
-
-        <div class="form-group">
-          <label for="enrollmentCode">Enrollment Code:</label>
-          <input type="text" name="enrollmentCode" id="enrollmentCode" required placeholder="Enter your secret code to sign up" autocomplete="off" />
+          <label for="enrollmentCode">Enrollment Code</label>
+          <input type="text" name="enrollmentCode" id="enrollmentCode" required placeholder="Enter your secret code" autocomplete="off" />
           <p class="note">A valid enrollment code is required to create an account.</p>
         </div>
 
         <div class="form-group">
-          <label for="role">I am a:</label>
+          <label for="role">I am a</label>
           <select name="role" id="role" required>
             <option value="student" selected>Student</option>
             <option value="parent">Parent</option>
@@ -83,18 +126,20 @@
         </div>
 
         <div id="inviteCodeGroup" class="form-group" style="display: none;">
-          <label for="inviteCode">Child's Invite Code (Optional):</label>
+          <label for="inviteCode">Child's Invite Code (Optional)</label>
           <input type="text" name="inviteCode" id="inviteCode" placeholder="e.g. MATH-728Q" autocomplete="off" />
-          <p class="note">If your child already has an account, enter their invite code to link accounts. Otherwise, you can generate an invite code for them after signing up.</p>
+          <p class="note">Enter your child's invite code to link accounts.</p>
         </div>
 
         <div id="parentInviteCodeGroup" class="form-group" style="display: none;">
-          <label for="parentInviteCode">Parent's Invite Code (Optional):</label>
+          <label for="parentInviteCode">Parent's Invite Code (Optional)</label>
           <input type="text" name="parentInviteCode" id="parentInviteCode" placeholder="e.g. ABC123" autocomplete="off" />
           <p class="note">Have a parent's invite code? Enter it to link your accounts.</p>
         </div>
 
-        <button type="submit" class="submit-btn btn-primary">Create Account</button>
+        <button type="submit" class="submit-btn btn-primary">
+          <i class="fas fa-user-plus"></i> Create Account
+        </button>
       </form>
 
       <div id="signup-message" style="display: none;"></div>

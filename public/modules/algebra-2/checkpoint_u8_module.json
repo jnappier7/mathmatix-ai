@@ -1,0 +1,119 @@
+{
+  "moduleId": "checkpoint_u8",
+  "course": "Algebra 2",
+  "unit": 8,
+  "title": "Unit 8 Checkpoint: Trigonometry Foundations",
+  "weeks": "29",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "description": "Assessment covering angle measurement in degrees and radians, unit circle evaluation of sin/cos/tan at special angles, right triangle trigonometry with applications, inverse trig functions, graphing sinusoidal functions with transformations, and solving basic trig equations on specified intervals.",
+  "skillsCovered": ["angle-measure-radians", "unit-circle-values", "right-triangle-trig", "inverse-trig-functions", "graphing-sinusoidal", "trig-equations-basic"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "angle-measure-radians", "moduleId": "trigonometry_foundations", "focusArea": "Converting degrees to radians, coterminal angles, and arc length formula"},
+    {"skillId": "unit-circle-values", "moduleId": "trigonometry_foundations", "focusArea": "Special angle values, reference angles, and quadrant sign rules"},
+    {"skillId": "right-triangle-trig", "moduleId": "trigonometry_foundations", "focusArea": "SOH-CAH-TOA, solving right triangles, angle of elevation/depression"},
+    {"skillId": "inverse-trig-functions", "moduleId": "trigonometry_foundations", "focusArea": "Evaluating inverse trig, restricted ranges, finding angles from ratios"},
+    {"skillId": "graphing-sinusoidal", "moduleId": "trigonometry_foundations", "focusArea": "Amplitude, period, phase shift, vertical shift, key points of sine and cosine"},
+    {"skillId": "trig-equations-basic", "moduleId": "trigonometry_foundations", "focusArea": "Isolating trig functions, reference angles, finding all solutions in an interval"}
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a2u8-1",
+      "question": "Convert: (a) 210° to radians, (b) 7π/4 to degrees. (c) Find a positive and a negative angle coterminal with 5π/3.",
+      "answer": "(a) 210° × π/180° = 7π/6. (b) 7π/4 × 180°/π = 315°. (c) Positive: 5π/3 + 2π = 11π/3. Negative: 5π/3 - 2π = -π/3.",
+      "skill": "angle-measure-radians",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a2u8-2",
+      "question": "Evaluate without a calculator: (a) sin(3π/4), (b) cos(5π/3), (c) tan(π/6), (d) sin(7π/6).",
+      "answer": "(a) sin(3π/4): Q2, ref π/4, sin positive → √2/2. (b) cos(5π/3): Q4, ref π/3, cos positive → 1/2. (c) tan(π/6) = (1/2)/(√3/2) = 1/√3 = √3/3. (d) sin(7π/6): Q3, ref π/6, sin negative → -1/2.",
+      "skill": "unit-circle-values",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a2u8-3",
+      "question": "A wire runs from the top of a 60-foot pole to an anchor in the ground, making a 72° angle with the ground. How long is the wire?",
+      "answer": "sin(72°) = 60/w. w = 60/sin(72°) ≈ 60/0.9511 ≈ 63.08 feet.",
+      "skill": "right-triangle-trig",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "a2u8-4",
+      "question": "Evaluate: (a) cos⁻¹(-1/2), (b) sin⁻¹(-√3/2), (c) tan⁻¹(√3).",
+      "answer": "(a) cos⁻¹(-1/2): need θ in [0, π] with cos θ = -1/2. θ = 2π/3 (120°). (b) sin⁻¹(-√3/2): need θ in [-π/2, π/2] with sin θ = -√3/2. θ = -π/3 (-60°). (c) tan⁻¹(√3): need θ in (-π/2, π/2) with tan θ = √3. θ = π/3 (60°).",
+      "skill": "inverse-trig-functions",
+      "difficulty": 5,
+      "points": 9
+    },
+    {
+      "id": "a2u8-5",
+      "question": "For f(x) = -2sin(3x - π) + 4, identify the amplitude, period, phase shift, and midline. Find the maximum and minimum values.",
+      "answer": "Rewrite argument: 3(x - π/3). Amplitude = |-2| = 2. Period = 2π/3. Phase shift = π/3 to the right. Midline = y = 4. Max = 4 + 2 = 6. Min = 4 - 2 = 2. The negative A means the graph is reflected (starts going down from midline).",
+      "skill": "graphing-sinusoidal",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u8-6",
+      "question": "Solve for θ in [0, 2π): √3 tan θ + 1 = 0.",
+      "answer": "tan θ = -1/√3 = -√3/3. Reference angle: tan⁻¹(√3/3) = π/6. Tangent is negative in Q2 and Q4. θ = π - π/6 = 5π/6 and θ = 2π - π/6 = 11π/6.",
+      "skill": "trig-equations-basic",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u8-7",
+      "question": "An arc on a circle of radius 15 cm subtends a central angle of 2π/5 radians. (a) Find the arc length. (b) Convert the angle to degrees.",
+      "answer": "(a) s = rθ = 15 × 2π/5 = 6π ≈ 18.85 cm. (b) 2π/5 × 180°/π = 360°/5 = 72°.",
+      "skill": "angle-measure-radians",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "a2u8-8",
+      "question": "Solve for θ in [0, 2π): 2cos²θ - cos θ - 1 = 0.",
+      "answer": "Let u = cos θ: 2u² - u - 1 = 0. Factor: (2u + 1)(u - 1) = 0. u = -1/2 or u = 1. cos θ = -1/2: θ = 2π/3 and θ = 4π/3. cos θ = 1: θ = 0. Solutions: θ = 0, 2π/3, 4π/3.",
+      "skill": "trig-equations-basic",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "a2u8-9",
+      "question": "Write the equation of a cosine function with amplitude 6, period 4π, phase shift π/2 to the left, and midline y = -3.",
+      "answer": "Amplitude = 6: A = 6. Period = 4π: 2π/B = 4π, so B = 1/2. Phase shift π/2 left: C/B = π/2, so C = (1/2)(π/2) = π/4. Left shift means positive C. Midline -3: D = -3. Equation: y = 6cos((1/2)x + π/4) - 3. Or equivalently: y = 6cos((x + π/2)/2) - 3.",
+      "skill": "graphing-sinusoidal",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "a2u8-10",
+      "question": "ANALYSIS TASK: A lighthouse beacon rotates at a constant speed, completing one full revolution every 8 seconds. The beam sweeps along a straight coastline. At its closest, the coastline is 200 meters from the lighthouse. (a) Write a function d(t) for the distance along the coastline from the nearest point to where the beam hits, as a function of time (use tangent). (b) At what time(s) during one revolution is the beam hitting the coastline at a point 200 meters from the nearest point? (c) Explain why this model breaks down when the beam is nearly parallel to the coastline.",
+      "answer": "(a) The angle swept in t seconds: θ(t) = 2πt/8 = πt/4. The geometry forms a right triangle where the adjacent side is 200 m and the opposite side is the distance d along the coast. d(t) = 200tan(πt/4). (b) d(t) = 200: 200 = 200tan(πt/4) → tan(πt/4) = 1 → πt/4 = π/4 → t = 1 second. By symmetry also at t = 8 - 1 = 7 seconds (beam returns from the other side). (c) When the beam approaches perpendicular to the nearest point line (θ near π/2), tan θ → ∞. Physically, the beam becomes nearly parallel to the coastline and the 'hit point' races to infinity. The model is undefined at t = 2 seconds (θ = π/2) and t = 6 seconds (θ = 3π/2).",
+      "skill": "right-triangle-trig",
+      "difficulty": 7,
+      "points": 15
+    }
+  ],
+  "spiralReview": {
+    "enabled": true,
+    "skills": ["factoring-polynomials", "exponential-equations"],
+    "note": "Include 1-2 warm-up problems factoring a polynomial or solving an exponential equation to maintain fluency from Units 3 and 5."
+  },
+  "answerKeys": {
+    "a2u8-1": "7π/6, 315°, coterminals 11π/3 and -π/3",
+    "a2u8-2": "√2/2, 1/2, √3/3, -1/2",
+    "a2u8-3": "≈ 63.08 feet",
+    "a2u8-4": "2π/3, -π/3, π/3",
+    "a2u8-5": "Amp=2, Per=2π/3, Phase=π/3 right, Mid=4, Max=6, Min=2",
+    "a2u8-6": "5π/6, 11π/6",
+    "a2u8-7": "6π ≈ 18.85 cm, 72°",
+    "a2u8-8": "0, 2π/3, 4π/3",
+    "a2u8-9": "y = 6cos((1/2)x + π/4) - 3",
+    "a2u8-10": "d(t) = 200tan(πt/4), t = 1s and 7s, undefined at t = 2s and 6s"
+  }
+}

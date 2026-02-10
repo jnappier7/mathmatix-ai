@@ -1,0 +1,148 @@
+{
+  "moduleId": "linear_systems",
+  "course": "Algebra 2",
+  "unit": 1,
+  "title": "Linear Systems & Matrices",
+  "weeks": "3-5",
+  "estimatedDuration": 55,
+  "skills": ["systems-substitution-elimination", "systems-linear-inequalities", "mathematical-modeling-systems", "matrices-operations", "matrices-solving-systems"],
+  "standardsAlignment": ["A-REI.5", "A-REI.6", "A-REI.12", "N-VM.8", "A-REI.9"],
+  "goals": [
+    "Solve systems of linear equations using substitution and elimination (including messy coefficients)",
+    "Graph systems of linear inequalities and identify solution regions",
+    "Model real-world situations with systems of equations",
+    "Perform matrix operations: addition, scalar multiplication, matrix multiplication",
+    "Use inverse matrices to solve systems of equations"
+  ],
+  "instructionalStrategy": [
+    "Students saw basic substitution and elimination in Algebra 1. Now we extend to messier coefficients, three-variable systems, and special cases (no solution, infinitely many). Emphasize CHOOSING the most efficient method.",
+    "Substitution is best when a variable is already isolated or has coefficient 1. Elimination is best when coefficients line up or are easy to scale. There's no single 'right method'—strategic thinking matters.",
+    "Systems of inequalities: the solution is a REGION (shading), not a point. Test points confirm which side to shade. Emphasize the graphical interpretation—every point in the shaded region satisfies ALL inequalities simultaneously.",
+    "Matrices are introduced as a tool, not an abstraction. Show the direct connection: matrix equation Ax = b mirrors the system. Inverse matrices 'undo' multiplication just like dividing undoes multiplying in a regular equation.",
+    "Mathematical modeling is the payoff: real-world problems naturally produce systems. Students must write the system FROM the context, solve it, then interpret the answer IN context."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "A **system of linear equations** is two or more equations with the same variables. The solution is the point(s) where ALL equations are true simultaneously.\n\n**Three methods for solving:**\n\n1. **Graphing** — plot both lines, find intersection (great for visualization, imprecise for ugly numbers)\n2. **Substitution** — solve one equation for a variable, plug into the other\n3. **Elimination** — add/subtract equations to eliminate a variable\n\n**Three possible outcomes:**\n• **One solution** — lines intersect at one point (consistent, independent)\n• **No solution** — lines are parallel (inconsistent)\n• **Infinitely many** — lines are the same (consistent, dependent)\n\nAlgebra 2 twist: the coefficients get messier, and we add modeling applications.",
+      "initialPrompt": "You solved systems in Algebra 1. Which method did you prefer—substitution or elimination? Let's try a system with fractions and see if your preference holds up."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Solve the system: 3x + 5y = 7 and 2x - 3y = 1. Use elimination.",
+      "explanation": "**Goal:** eliminate one variable by making coefficients match.\n\nTo eliminate x, multiply equation 1 by 2 and equation 2 by 3:\n6x + 10y = 14\n6x - 9y = 3\n\n**Subtract** (or multiply second by -1 and add):\n(6x + 10y) - (6x - 9y) = 14 - 3\n19y = 11\ny = 11/19\n\n**Back-substitute** into equation 2:\n2x - 3(11/19) = 1\n2x - 33/19 = 1\n2x = 1 + 33/19 = 19/19 + 33/19 = 52/19\nx = 26/19\n\n**Solution:** (26/19, 11/19)\n\n**Check in equation 1:** 3(26/19) + 5(11/19) = 78/19 + 55/19 = 133/19 = 7 ✓\n\nYes, systems in Algebra 2 often have fraction answers. That's normal.",
+      "initialPrompt": "Could we have eliminated y instead? Which approach would have been less work? (Hint: look at the y-coefficients: 5 and -3.)"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "A coffee shop sells regular coffee for $3 and lattes for $5. In one hour they sold 40 drinks totaling $152. How many of each?",
+      "explanation": "**Step 1: Define variables.**\nLet r = regular coffees, L = lattes.\n\n**Step 2: Write the system.**\nr + L = 40 (total drinks)\n3r + 5L = 152 (total revenue)\n\n**Step 3: Solve.** (Substitution is clean here—r = 40 - L)\n3(40 - L) + 5L = 152\n120 - 3L + 5L = 152\n2L = 32\nL = 16\nr = 40 - 16 = 24\n\n**Step 4: Interpret and check.**\n24 regular coffees and 16 lattes.\nCheck: 24 + 16 = 40 ✓ and 3(24) + 5(16) = 72 + 80 = 152 ✓\n\n**The modeling cycle:** Define → Write → Solve → Interpret → Check. Always end by answering the QUESTION in CONTEXT, not just giving numbers.",
+      "initialPrompt": "What if the problem said the shop made 'at least $152'? How would the setup change? (Hint: it becomes an inequality system.)"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Solve using substitution: y = 2x - 1 and 3x + 4y = 21.",
+          "answer": "x = 25/11, y = 39/11",
+          "hints": ["Substitute y = 2x-1 into second equation: 3x + 4(2x-1) = 21.", "11x - 4 = 21. 11x = 25. x = 25/11. y = 2(25/11) - 1 = 39/11. Check: 3(25/11) + 4(39/11) = 231/11 = 21 ✓"]
+        },
+        {
+          "question": "Solve: 4x - 6y = 10 and -2x + 3y = -5. Classify the system.",
+          "answer": "Infinitely many solutions (dependent system). The second equation is the first divided by -2.",
+          "hints": ["Multiply equation 2 by -2: 4x - 6y = 10. Same as equation 1!", "The equations are the same line. Every point on that line is a solution."]
+        },
+        {
+          "question": "Graph the system of inequalities: y > 2x - 3 and y ≤ -x + 4. Where is the solution region?",
+          "answer": "The solution region is above the line y = 2x - 3 (dashed) AND below/on the line y = -x + 4 (solid). The region is the overlap.",
+          "hints": ["Graph y = 2x - 3 as a dashed line (strict >), shade above.", "Graph y = -x + 4 as a solid line (≤), shade below.", "The solution region is where both shadings overlap. The lines intersect at (7/3, 5/3)."]
+        }
+      ],
+      "initialPrompt": "For the first problem, which variable is already isolated? That tells you substitution is the right call."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Matrices: A New Tool for Solving Systems**\n\nA **matrix** is a rectangular array of numbers. We use them to represent and solve systems efficiently.\n\n**Matrix Operations:**\n• **Addition:** Add corresponding entries (matrices must be same size)\n• **Scalar multiplication:** Multiply every entry by the scalar\n• **Matrix multiplication:** Row × column, dot product pattern\n  - (m×n) · (n×p) = (m×p). Inner dimensions must match!\n\n**Solving Ax = b:**\nA system like 3x + 5y = 7, 2x - 3y = 1 becomes:\n[3  5] [x]   [7]\n[2 -3] [y] = [1]\n\nIf A has an inverse A⁻¹, then x = A⁻¹b.\n\n**2×2 Inverse:**\nFor A = [a b; c d], A⁻¹ = (1/det) · [d -b; -c a]\nwhere det = ad - bc. If det = 0, no inverse exists (singular matrix).",
+      "initialPrompt": "For the matrix [3 5; 2 -3], what is the determinant? Is it invertible?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Use an inverse matrix to solve: 3x + 5y = 7 and 2x - 3y = 1.",
+      "explanation": "**Set up Ax = b:**\nA = [3  5]   x = [x]   b = [7]\n    [2 -3]       [y]       [1]\n\n**Find A⁻¹:**\ndet(A) = (3)(-3) - (5)(2) = -9 - 10 = -19\n\nA⁻¹ = (1/-19) · [-3 -5] = [3/19   5/19]\n                 [-2  3]   [2/19  -3/19]\n\n**Solve x = A⁻¹b:**\n[x] = [3/19   5/19] [7] = [(21 + 5)/19 ] = [26/19]\n[y]   [2/19  -3/19] [1]   [(14 + -3)/19]   [11/19]\n\n**Solution:** x = 26/19, y = 11/19\n\nSame answer as elimination! The matrix method is mechanical—no strategic decisions needed. It shines for larger systems.",
+      "initialPrompt": "We got the same answer using elimination earlier. What's the advantage of matrices? Think about what happens with 3 or 4 variables."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Multiply: [2 -1; 3 4] · [5; 2].",
+          "answer": "[8; 23]",
+          "hints": ["Row 1: 2(5) + (-1)(2) = 10 - 2 = 8.", "Row 2: 3(5) + 4(2) = 15 + 8 = 23."]
+        },
+        {
+          "question": "Find the inverse of [4 1; 7 2].",
+          "answer": "[2 -1; -7 4]",
+          "hints": ["det = 4(2) - 1(7) = 8 - 7 = 1.", "A⁻¹ = (1/1)[2 -1; -7 4] = [2 -1; -7 4]."]
+        },
+        {
+          "question": "Use the inverse matrix to solve: 4x + y = 10 and 7x + 2y = 19.",
+          "answer": "x = 1, y = 6",
+          "hints": ["A⁻¹ = [2 -1; -7 4] from above.", "[x; y] = [2 -1; -7 4][10; 19] = [20-19; -70+76] = [1; 6]."]
+        }
+      ],
+      "initialPrompt": "For matrix multiplication, remember: rows of the first times columns of the second. What is the dot product of [2, -1] and [5, 2]?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "Solve by elimination: 5x + 3y = 11 and 2x + y = 4.",
+          "answer": "x = 1, y = 2",
+          "hints": ["Multiply eq2 by -3: -6x - 3y = -12. Add to eq1: -x = -1, x = 1.", "Substitute: 2(1) + y = 4, y = 2. Check: 5(1)+3(2)=11 ✓."]
+        },
+        {
+          "question": "A store sells pens for $2 and notebooks for $5. A customer buys 8 items for $25. How many pens and notebooks?",
+          "answer": "5 pens and 3 notebooks",
+          "hints": ["p + n = 8 and 2p + 5n = 25. From first: p = 8 - n. Substitute: 2(8-n) + 5n = 25 → 16 + 3n = 25 → n = 3, p = 5."]
+        },
+        {
+          "question": "Graph the solution region: x + y ≤ 6, x ≥ 0, y ≥ 0. What shape is the solution region?",
+          "answer": "A triangle with vertices at (0,0), (6,0), and (0,6).",
+          "hints": ["The three inequalities form the first-quadrant triangle bounded by the line x + y = 6."]
+        },
+        {
+          "question": "Find the determinant of [6 -2; 9 -3]. What does this tell you?",
+          "answer": "det = 6(-3) - (-2)(9) = -18 + 18 = 0. The matrix is singular (no inverse). The corresponding system would have no unique solution.",
+          "hints": ["det = ad - bc = 6(-3) - (-2)(9) = -18 + 18 = 0."]
+        },
+        {
+          "question": "Use inverse matrices to solve: x + 3y = 7 and 2x + 5y = 12.",
+          "answer": "x = 1, y = 2",
+          "hints": ["A = [1 3; 2 5]. det = 5 - 6 = -1.", "A⁻¹ = (1/-1)[5 -3; -2 1] = [-5 3; 2 -1].", "[x;y] = [-5 3; 2 -1][7;12] = [-35+36; 14-12] = [1; 2]."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "3x+5y=7, 2x-3y=1": "(26/19, 11/19)",
+    "Coffee shop: 40 drinks, $152": "24 regular, 16 lattes",
+    "y=2x-1, 3x+4y=21": "(25/11, 39/11)",
+    "4x-6y=10, -2x+3y=-5": "Infinitely many solutions",
+    "Matrix multiply [2 -1;3 4]·[5;2]": "[8; 23]",
+    "Inverse [4 1;7 2]": "[2 -1; -7 4]",
+    "4x+y=10, 7x+2y=19 via matrix": "x=1, y=6",
+    "Pens and notebooks: 8 items, $25": "5 pens, 3 notebooks",
+    "det [6 -2;9 -3]": "0 (singular)",
+    "x+3y=7, 2x+5y=12 via matrix": "x=1, y=2"
+  }
+}

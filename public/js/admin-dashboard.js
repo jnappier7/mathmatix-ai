@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const allUsers = await usersRes.json();
             const teachers = await teachersRes.json();
             
-            students = allUsers.filter(u => u.role === 'student');
+            students = allUsers; // Show all users (filtered by role dropdown in renderStudents)
 
             // Create a teacher lookup map for efficient name retrieval.
             teacherMap = new Map(teachers.map(t => [t._id, `${t.firstName} ${t.lastName}`]));
@@ -167,16 +167,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     function renderStudents() {
         if (!userTableBody) return;
         const query = studentSearch ? studentSearch.value.toLowerCase().trim() : "";
+        const roleFilter = document.getElementById('userRoleFilter')?.value || "";
         userTableBody.innerHTML = "";
 
-        const filteredStudents = students.filter(s =>
+        let filteredStudents = students.filter(s =>
             `${s.firstName || ''} ${s.lastName || ''}`.toLowerCase().includes(query) ||
             (s.email || '').toLowerCase().includes(query) ||
             (s.username || '').toLowerCase().includes(query)
         );
 
+        if (roleFilter) {
+            filteredStudents = filteredStudents.filter(s => s.role === roleFilter || (s.roles && s.roles.includes(roleFilter)));
+        }
+
         if (filteredStudents.length === 0) {
-            userTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No students found.</td></tr>`;
+            userTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No users found.</td></tr>`;
             return;
         }
 
@@ -185,11 +190,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td><input type="checkbox" class="select-student" value="${s._id}"></td>
                 <td><a href="#" class="student-name-link">${s.firstName} ${s.lastName}</a></td>
                 <td>${s.email || 'N/A'}</td>
-                <td>${s.role}</td>
+                <td>${(s.roles && s.roles.length > 1) ? s.roles.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ') : (s.role || 'N/A')}</td>
                 <td>${teacherMap.get(s.teacherId) || 'N/A'}</td>
                 <td>
+                    <button class="btn-icon edit-roles-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-roles="${(s.roles && s.roles.length > 0 ? s.roles : [s.role]).join(',')}" title="Edit Roles">
+                        <i class="fas fa-user-tag"></i>
+                    </button>
                     <button class="btn-icon view-as-user-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-role="${s.role}" title="View as ${s.firstName}">
                         <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn-icon send-credentials-btn" data-userid="${s._id}" data-username="${s.firstName} ${s.lastName}" data-email="${s.email || ''}" title="Send login credentials email">
+                        <i class="fas fa-envelope"></i>
                     </button>
                     <button class="btn-icon reset-screener-btn" data-studentid="${s._id}" data-studentname="${s.firstName} ${s.lastName}" title="Reset Screener">
                         <i class="fas fa-redo"></i>
@@ -312,6 +323,133 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
+            // Handle edit roles button click
+            const editRolesBtn = e.target.closest('.edit-roles-btn');
+            if (editRolesBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const userId = editRolesBtn.dataset.userid;
+                const username = editRolesBtn.dataset.username;
+                const currentRoles = editRolesBtn.dataset.roles.split(',');
+
+                // Remove any existing popover
+                document.querySelectorAll('.roles-popover').forEach(el => el.remove());
+
+                // Create popover
+                const popover = document.createElement('div');
+                popover.className = 'roles-popover';
+                popover.style.cssText = 'position:absolute;z-index:1000;background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,0.15);min-width:180px;';
+                popover.innerHTML = `
+                    <div style="font-weight:600;margin-bottom:8px;font-size:0.9em;">${username}</div>
+                    ${['student','teacher','parent','admin'].map(r => `
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:4px;font-size:0.9em;">
+                            <input type="checkbox" class="role-cb" value="${r}" ${currentRoles.includes(r) ? 'checked' : ''}>
+                            ${r.charAt(0).toUpperCase() + r.slice(1)}
+                        </label>
+                    `).join('')}
+                    <div style="display:flex;gap:6px;margin-top:10px;">
+                        <button class="btn btn-primary save-roles-btn" style="padding:4px 12px;font-size:0.85em;">Save</button>
+                        <button class="btn btn-tertiary cancel-roles-btn" style="padding:4px 12px;font-size:0.85em;">Cancel</button>
+                    </div>
+                `;
+
+                // Position near the button
+                editRolesBtn.closest('td').style.position = 'relative';
+                editRolesBtn.closest('td').appendChild(popover);
+
+                // Cancel
+                popover.querySelector('.cancel-roles-btn').addEventListener('click', () => popover.remove());
+
+                // Save
+                popover.querySelector('.save-roles-btn').addEventListener('click', async () => {
+                    const newRoles = Array.from(popover.querySelectorAll('.role-cb:checked')).map(cb => cb.value);
+                    if (newRoles.length === 0) {
+                        alert('Select at least one role.');
+                        return;
+                    }
+
+                    const saveBtn = popover.querySelector('.save-roles-btn');
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = 'Saving...';
+
+                    try {
+                        const response = await csrfFetch(`/api/admin/users/${userId}/roles`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include',
+                            body: JSON.stringify({ roles: newRoles })
+                        });
+                        const result = await response.json();
+                        if (response.ok && result.success) {
+                            popover.remove();
+                            await initializeDashboard();
+                        } else {
+                            throw new Error(result.message || 'Failed to update roles');
+                        }
+                    } catch (error) {
+                        alert(`Error: ${error.message}`);
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = 'Save';
+                    }
+                });
+
+                // Close on outside click
+                setTimeout(() => {
+                    const closeHandler = (evt) => {
+                        if (!popover.contains(evt.target)) {
+                            popover.remove();
+                            document.removeEventListener('click', closeHandler);
+                        }
+                    };
+                    document.addEventListener('click', closeHandler);
+                }, 0);
+
+                return;
+            }
+
+            // Handle send credentials email button click
+            const sendCredsBtn = e.target.closest('.send-credentials-btn');
+            if (sendCredsBtn) {
+                e.preventDefault();
+                const userId = sendCredsBtn.dataset.userid;
+                const username = sendCredsBtn.dataset.username;
+                const email = sendCredsBtn.dataset.email;
+
+                if (!confirm(`Send login credentials to ${username} (${email})?\n\nThis will:\n• Generate a new temporary password\n• Email them their username and new password\n\nTheir current password will be replaced.`)) {
+                    return;
+                }
+
+                try {
+                    sendCredsBtn.disabled = true;
+                    sendCredsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    const response = await csrfFetch(`/api/admin/users/${userId}/send-credentials`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        if (result.temporaryPassword) {
+                            // Email failed but password was reset - show it
+                            alert(`⚠️ ${result.message}`);
+                        } else {
+                            alert(`✅ ${result.message}`);
+                        }
+                    } else {
+                        throw new Error(result.message || 'Failed to send credentials');
+                    }
+                } catch (error) {
+                    console.error('Send credentials error:', error);
+                    alert(`❌ Error: ${error.message}`);
+                } finally {
+                    sendCredsBtn.disabled = false;
+                    sendCredsBtn.innerHTML = '<i class="fas fa-envelope"></i>';
+                }
+                return;
+            }
+
             // Handle reset screener button click
             const resetBtn = e.target.closest('.reset-screener-btn');
             if (resetBtn) {
@@ -423,6 +561,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (studentSearch) studentSearch.addEventListener("input", renderStudents);
+    const userRoleFilter = document.getElementById('userRoleFilter');
+    if (userRoleFilter) userRoleFilter.addEventListener("change", renderStudents);
 
     if (assignButton) {
         assignButton.addEventListener("click", async () => {
@@ -1194,7 +1334,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Teacher & Roster Setup Functionality ---
     // -------------------------------------------------------------------------
 
-    // --- Create Teacher Modal ---
+    // --- Create User Modal (was Create Teacher, now supports all roles) ---
     const createTeacherModal = document.getElementById('createTeacherModal');
     const openTeacherSetupBtn = document.getElementById('openTeacherSetupBtn');
     const closeCreateTeacherBtn = document.getElementById('closeCreateTeacherBtn');
@@ -1205,11 +1345,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     const teacherCreatedResult = document.getElementById('teacherCreatedResult');
     const createAnotherTeacher = document.getElementById('createAnotherTeacher');
 
+    // Track the last created user for follow-up actions
+    let lastCreatedUserId = null;
+
+    function hideAllFollowUps() {
+        document.getElementById('followUpTeacher').style.display = 'none';
+        document.getElementById('followUpParent').style.display = 'none';
+        document.getElementById('followUpStudent').style.display = 'none';
+        document.getElementById('followUpClassResult').style.display = 'none';
+        document.getElementById('followUpParentLinkResult').style.display = 'none';
+        document.getElementById('followUpStudentLinkResult').style.display = 'none';
+    }
+
     function openCreateTeacherModal() {
         createTeacherModal?.classList.add('is-visible');
         createTeacherForm?.reset();
         teacherCreatedResult.style.display = 'none';
         createTeacherForm.style.display = 'block';
+        hideAllFollowUps();
+        lastCreatedUserId = null;
     }
 
     function closeCreateTeacherModal() {
@@ -1239,7 +1393,60 @@ document.addEventListener("DOMContentLoaded", async () => {
             teacherCreatedResult.style.display = 'none';
             createTeacherForm.style.display = 'block';
             createTeacherForm.reset();
+            hideAllFollowUps();
+            lastCreatedUserId = null;
         });
+    }
+
+    // Helper to populate follow-up selects with users by role
+    async function populateFollowUpSelects() {
+        try {
+            const response = await fetch('/api/admin/users', { credentials: 'include' });
+            if (!response.ok) return;
+            const users = await response.json();
+
+            const students = users.filter(u => u.role === 'student');
+            const parents = users.filter(u => u.role === 'parent');
+            const teachers = users.filter(u => u.role === 'teacher');
+
+            const studentOptions = students.map(s =>
+                `<option value="${s._id}">${s.firstName} ${s.lastName} (${s.email})</option>`
+            ).join('');
+            const parentOptions = parents.map(p =>
+                `<option value="${p._id}">${p.firstName} ${p.lastName} (${p.email})</option>`
+            ).join('');
+            const teacherOptions = teachers.map(t =>
+                `<option value="${t._id}">${t.firstName} ${t.lastName} (${t.email})</option>`
+            ).join('');
+
+            // Parent follow-up: pick a student
+            const followUpParentStudentSelect = document.getElementById('followUpParentStudentSelect');
+            if (followUpParentStudentSelect) {
+                followUpParentStudentSelect.innerHTML = '<option value="">Select a student...</option>' + studentOptions;
+            }
+
+            // Student follow-up: pick a parent and/or teacher
+            const followUpStudentParentSelect = document.getElementById('followUpStudentParentSelect');
+            if (followUpStudentParentSelect) {
+                followUpStudentParentSelect.innerHTML = '<option value="">Select a parent...</option>' + parentOptions;
+            }
+            const followUpStudentTeacherSelect = document.getElementById('followUpStudentTeacherSelect');
+            if (followUpStudentTeacherSelect) {
+                followUpStudentTeacherSelect.innerHTML = '<option value="">Select a teacher...</option>' + teacherOptions;
+            }
+
+            // Also populate the standalone link-parent modal selects
+            const linkParentSelect = document.getElementById('linkParentSelect');
+            if (linkParentSelect) {
+                linkParentSelect.innerHTML = '<option value="">Select a parent...</option>' + parentOptions;
+            }
+            const linkStudentSelect = document.getElementById('linkStudentSelect');
+            if (linkStudentSelect) {
+                linkStudentSelect.innerHTML = '<option value="">Select a student...</option>' + studentOptions;
+            }
+        } catch (err) {
+            console.error('Error populating follow-up selects:', err);
+        }
     }
 
     if (createTeacherForm) {
@@ -1251,16 +1458,29 @@ document.addEventListener("DOMContentLoaded", async () => {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
 
             try {
+                // Collect selected roles from checkboxes
+                const selectedRoles = Array.from(
+                    document.querySelectorAll('#teacherRoleCheckboxes input[name="roles"]:checked')
+                ).map(cb => cb.value);
+
+                if (selectedRoles.length === 0) {
+                    alert('Please select at least one role.');
+                    return;
+                }
+
+                const sendWelcomeEmailCheck = document.getElementById('sendWelcomeEmailCheck');
                 const formData = {
                     firstName: document.getElementById('teacherFirstName').value.trim(),
                     lastName: document.getElementById('teacherLastName').value.trim(),
                     email: document.getElementById('teacherEmail').value.trim(),
+                    roles: selectedRoles,
                     username: document.getElementById('teacherUsername').value.trim() || undefined,
                     generatePassword: generatePasswordCheck.checked,
-                    password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined
+                    password: !generatePasswordCheck.checked ? document.getElementById('teacherPassword').value : undefined,
+                    sendEmail: sendWelcomeEmailCheck ? sendWelcomeEmailCheck.checked : false
                 };
 
-                const response = await csrfFetch('/api/admin/teachers', {
+                const response = await csrfFetch('/api/admin/create-user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -1270,10 +1490,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const result = await response.json();
 
                 if (response.ok && result.success) {
+                    lastCreatedUserId = result.user._id;
+
                     // Show success result
-                    document.getElementById('resultTeacherName').textContent = `${result.teacher.firstName} ${result.teacher.lastName}`;
-                    document.getElementById('resultTeacherEmail').textContent = result.teacher.email;
-                    document.getElementById('resultTeacherUsername').textContent = result.teacher.username;
+                    document.getElementById('resultTeacherName').textContent = `${result.user.firstName} ${result.user.lastName}`;
+                    document.getElementById('resultTeacherEmail').textContent = result.user.email;
+                    document.getElementById('resultTeacherUsername').textContent = result.user.username;
+                    const rolesLabel = (result.user.roles || [selectedRoles[0]]).map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');
+                    document.getElementById('resultTeacherRole').textContent = rolesLabel;
 
                     if (result.temporaryPassword) {
                         document.getElementById('resultTeacherPassword').textContent = result.temporaryPassword;
@@ -1282,19 +1506,271 @@ document.addEventListener("DOMContentLoaded", async () => {
                         document.getElementById('resultPasswordRow').style.display = 'none';
                     }
 
+                    // Show email status
+                    const emailStatusEl = document.getElementById('resultEmailStatus');
+                    const shareWarningEl = document.getElementById('resultShareWarning');
+                    if (result.emailSent) {
+                        emailStatusEl.innerHTML = '<i class="fas fa-envelope" style="color: #155724;"></i> <span style="color: #155724;">Welcome email sent to ' + result.user.email + '</span>';
+                        emailStatusEl.style.display = 'block';
+                        shareWarningEl.style.display = 'none';
+                    } else if (formData.sendEmail && !result.emailSent) {
+                        emailStatusEl.innerHTML = '<i class="fas fa-exclamation-circle" style="color: #856404;"></i> <span style="color: #856404;">Welcome email failed to send. Share credentials manually.</span>';
+                        emailStatusEl.style.display = 'block';
+                        shareWarningEl.style.display = 'block';
+                    } else {
+                        emailStatusEl.style.display = 'none';
+                        shareWarningEl.style.display = 'block';
+                    }
+
+                    // Show role-specific follow-ups (multiple can show for multi-role users)
+                    hideAllFollowUps();
+                    let needsUserSelects = false;
+                    if (selectedRoles.includes('teacher')) {
+                        document.getElementById('followUpTeacher').style.display = 'block';
+                    }
+                    if (selectedRoles.includes('parent')) {
+                        needsUserSelects = true;
+                        document.getElementById('followUpParent').style.display = 'block';
+                    }
+                    if (selectedRoles.includes('student')) {
+                        needsUserSelects = true;
+                        document.getElementById('followUpStudent').style.display = 'block';
+                    }
+                    if (needsUserSelects) {
+                        await populateFollowUpSelects();
+                    }
+
                     createTeacherForm.style.display = 'none';
                     teacherCreatedResult.style.display = 'block';
 
-                    // Refresh dashboard to show new teacher
+                    // Refresh dashboard
                     await initializeDashboard();
                 } else {
-                    throw new Error(result.message || 'Failed to create teacher');
+                    throw new Error(result.message || 'Failed to create user');
                 }
             } catch (error) {
                 alert(`Error: ${error.message}`);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Teacher';
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create User';
+            }
+        });
+    }
+
+    // --- Follow-up: Create class for new teacher ---
+    const followUpCreateClassBtn = document.getElementById('followUpCreateClassBtn');
+    if (followUpCreateClassBtn) {
+        followUpCreateClassBtn.addEventListener('click', async () => {
+            if (!lastCreatedUserId) return;
+            const className = document.getElementById('followUpClassName').value.trim();
+            if (!className) {
+                alert('Please enter a class name.');
+                return;
+            }
+
+            followUpCreateClassBtn.disabled = true;
+            followUpCreateClassBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const response = await csrfFetch('/api/admin/enrollment-codes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        teacherId: lastCreatedUserId,
+                        className,
+                        gradeLevel: document.getElementById('followUpGradeLevel').value.trim() || undefined,
+                        mathCourse: document.getElementById('followUpMathCourse').value.trim() || undefined
+                    })
+                });
+                const result = await response.json();
+                const resultEl = document.getElementById('followUpClassResult');
+                if (response.ok && result.success) {
+                    resultEl.innerHTML = `<i class="fas fa-check-circle"></i> Class code created: <strong>${result.enrollmentCode.code}</strong>`;
+                    resultEl.style.display = 'block';
+                } else {
+                    throw new Error(result.message || 'Failed to create class code');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                followUpCreateClassBtn.disabled = false;
+                followUpCreateClassBtn.innerHTML = '<i class="fas fa-key"></i> Create Class Code';
+            }
+        });
+    }
+
+    // --- Follow-up: Link child to new parent ---
+    const followUpLinkChildBtn = document.getElementById('followUpLinkChildBtn');
+    if (followUpLinkChildBtn) {
+        followUpLinkChildBtn.addEventListener('click', async () => {
+            if (!lastCreatedUserId) return;
+            const studentId = document.getElementById('followUpParentStudentSelect').value;
+            if (!studentId) {
+                alert('Please select a student.');
+                return;
+            }
+
+            followUpLinkChildBtn.disabled = true;
+            followUpLinkChildBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Linking...';
+
+            try {
+                const response = await csrfFetch('/api/admin/link-parent-student', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ parentId: lastCreatedUserId, studentId })
+                });
+                const result = await response.json();
+                const resultEl = document.getElementById('followUpParentLinkResult');
+                if (response.ok && result.success) {
+                    resultEl.innerHTML = `<i class="fas fa-check-circle"></i> ${result.message}`;
+                    resultEl.style.display = 'block';
+                } else {
+                    throw new Error(result.message || 'Failed to link parent to student');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                followUpLinkChildBtn.disabled = false;
+                followUpLinkChildBtn.innerHTML = '<i class="fas fa-link"></i> Link Student';
+            }
+        });
+    }
+
+    // --- Follow-up: Link parent and/or teacher to new student ---
+    const followUpLinkStudentBtn = document.getElementById('followUpLinkStudentBtn');
+    if (followUpLinkStudentBtn) {
+        followUpLinkStudentBtn.addEventListener('click', async () => {
+            if (!lastCreatedUserId) return;
+            const parentId = document.getElementById('followUpStudentParentSelect').value;
+            const teacherId = document.getElementById('followUpStudentTeacherSelect').value;
+
+            if (!parentId && !teacherId) {
+                alert('Please select at least a parent or a teacher.');
+                return;
+            }
+
+            followUpLinkStudentBtn.disabled = true;
+            followUpLinkStudentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Linking...';
+
+            const resultEl = document.getElementById('followUpStudentLinkResult');
+            const messages = [];
+
+            try {
+                if (parentId) {
+                    const response = await csrfFetch('/api/admin/link-parent-student', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ parentId, studentId: lastCreatedUserId })
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        messages.push(result.message);
+                    } else {
+                        messages.push(`Parent link: ${result.message}`);
+                    }
+                }
+
+                if (teacherId) {
+                    const response = await csrfFetch('/api/admin/assign-teacher', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ teacherId, studentId: lastCreatedUserId })
+                    });
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        messages.push(result.message);
+                    } else {
+                        messages.push(`Teacher assign: ${result.message}`);
+                    }
+                }
+
+                resultEl.innerHTML = messages.map(m => `<i class="fas fa-check-circle"></i> ${m}`).join('<br>');
+                resultEl.style.display = 'block';
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                followUpLinkStudentBtn.disabled = false;
+                followUpLinkStudentBtn.innerHTML = '<i class="fas fa-link"></i> Link Selected';
+            }
+        });
+    }
+
+    // --- Link Parent to Student Modal (standalone) ---
+    const linkParentModal = document.getElementById('linkParentModal');
+    const openLinkParentBtn = document.getElementById('openLinkParentBtn');
+    const closeLinkParentBtn = document.getElementById('closeLinkParentBtn');
+    const cancelLinkParent = document.getElementById('cancelLinkParent');
+    const linkParentForm = document.getElementById('linkParentForm');
+    const linkParentResult = document.getElementById('linkParentResult');
+    const linkAnotherParent = document.getElementById('linkAnotherParent');
+
+    async function openLinkParentModal() {
+        linkParentModal?.classList.add('is-visible');
+        linkParentForm?.reset();
+        linkParentResult.style.display = 'none';
+        linkParentForm.style.display = 'block';
+        await populateFollowUpSelects();
+    }
+
+    function closeLinkParentModal() {
+        linkParentModal?.classList.remove('is-visible');
+    }
+
+    if (openLinkParentBtn) {
+        openLinkParentBtn.addEventListener('click', openLinkParentModal);
+    }
+    if (closeLinkParentBtn) {
+        closeLinkParentBtn.addEventListener('click', closeLinkParentModal);
+    }
+    if (cancelLinkParent) {
+        cancelLinkParent.addEventListener('click', closeLinkParentModal);
+    }
+    if (linkAnotherParent) {
+        linkAnotherParent.addEventListener('click', () => {
+            linkParentResult.style.display = 'none';
+            linkParentForm.style.display = 'block';
+            linkParentForm.reset();
+        });
+    }
+
+    if (linkParentForm) {
+        linkParentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('linkParentSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Linking...';
+
+            try {
+                const parentId = document.getElementById('linkParentSelect').value;
+                const studentId = document.getElementById('linkStudentSelect').value;
+
+                const response = await csrfFetch('/api/admin/link-parent-student', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ parentId, studentId })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    document.getElementById('resultLinkMessage').textContent = result.message;
+                    linkParentForm.style.display = 'none';
+                    linkParentResult.style.display = 'block';
+                    await initializeDashboard();
+                } else {
+                    throw new Error(result.message || 'Failed to link parent to student');
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-link"></i> Link Parent & Student';
             }
         });
     }

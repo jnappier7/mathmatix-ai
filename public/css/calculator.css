@@ -140,6 +140,46 @@ body.standalone-calculator-page {
     font-family: 'Courier New', monospace;
 }
 
+/* MultiView 4-line display */
+.multiview-display .display {
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.display-history {
+    overflow: hidden;
+    max-height: 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.history-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1px 0;
+    opacity: 0.55;
+    font-size: 12px;
+    color: #2d3436;
+    gap: 8px;
+}
+
+.history-entry .history-input {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-entry .history-result {
+    font-weight: bold;
+    text-align: right;
+    white-space: nowrap;
+}
+
 .display-line {
     min-height: 20px;
     color: #000;
@@ -152,6 +192,86 @@ body.standalone-calculator-page {
     font-weight: bold;
     text-align: right;
     margin-top: 5px;
+}
+
+/* MathPrint styles */
+.mp-frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 2px;
+    line-height: 1;
+}
+
+.mp-frac .mp-num {
+    border-bottom: 1.5px solid #000;
+    padding: 0 3px 1px;
+    font-size: 0.8em;
+    text-align: center;
+    min-width: 10px;
+}
+
+.mp-frac .mp-den {
+    padding: 1px 3px 0;
+    font-size: 0.8em;
+    text-align: center;
+    min-width: 10px;
+}
+
+.mp-mixed {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.mp-mixed .mp-whole {
+    margin-right: 2px;
+}
+
+.mp-sup {
+    font-size: 0.7em;
+    vertical-align: super;
+    line-height: 0;
+}
+
+.mp-sqrt {
+    display: inline-flex;
+    align-items: stretch;
+    vertical-align: middle;
+}
+
+.mp-sqrt .mp-radical {
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.mp-sqrt .mp-radicand {
+    border-top: 1.5px solid #000;
+    padding: 0 2px;
+    margin-top: 1px;
+}
+
+.mp-nthroot {
+    display: inline-flex;
+    align-items: flex-start;
+    vertical-align: middle;
+}
+
+.mp-nthroot .mp-index {
+    font-size: 0.6em;
+    vertical-align: super;
+    line-height: 0;
+    margin-right: -2px;
+    position: relative;
+    top: -4px;
+}
+
+.mathprint {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 24px;
 }
 
 .buttons {
@@ -294,24 +414,88 @@ body.standalone-calculator-page {
 
 /* Display animations */
 @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
 }
 
 .calculator .cursor,
 .floating-calculator .cursor {
     display: inline-block;
-    width: 8px;
+    width: 2px;
     height: 16px;
     background: #000;
     animation: blink 1s infinite;
-    margin-left: 2px;
+    margin: 0 1px;
+    vertical-align: middle;
+}
+
+/* Ans variable styling */
+.mp-ans {
+    font-style: italic;
+    font-weight: bold;
+    color: #1a5f2a;
 }
 
 /* Error state - scope to calculator only */
 .calculator .error,
 .floating-calculator .error {
     color: #e74c3c !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Copy toast */
+.copy-toast {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+.copy-toast.visible {
+    opacity: 1;
+}
+
+/* Result line copy cursor */
+.result-line {
+    transition: background-color 0.15s ease;
+}
+
+.calculator .result-line:hover,
+.floating-calculator .result-line:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+}
+
+/* Enter button validation dimming */
+.calculator .btn-enter,
+.floating-calculator .btn-enter,
+.floating-calculator .calc-btn.btn-enter {
+    transition: opacity 0.2s ease, background 0.15s ease;
+}
+
+/* Mobile touch improvements */
+.calculator,
+.floating-calculator {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.calculator .btn,
+.floating-calculator .btn,
+.floating-calculator .calc-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 /* Responsive design */
@@ -326,7 +510,20 @@ body.standalone-calculator-page {
     .calculator .btn,
     .floating-calculator .btn {
         padding: 10px 2px;
+        min-height: 44px; /* iOS minimum touch target */
+    }
+}
+
+@media (max-width: 360px) {
+    .calculator .btn,
+    .floating-calculator .calc-btn {
+        font-size: 9px;
         min-height: 40px;
+    }
+
+    .calculator .btn .secondary,
+    .floating-calculator .calc-btn .secondary {
+        font-size: 6px;
     }
 }
 
@@ -416,9 +613,12 @@ body.standalone-calculator-page {
     background: #b4c9b8;
     border-radius: 4px;
     padding: 10px;
-    min-height: 60px;
+    min-height: 90px;
     font-family: 'Courier New', monospace;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 /* Override button class names for floating calculator */

@@ -56,9 +56,21 @@ function ensureNotAuthenticated(req, res, next) {
 
 
 // --- ROLE-BASED AUTHORIZATION MIDDLEWARE ---
+// Authorization checks the `roles` array (all roles a user holds),
+// NOT `role` (the user's currently active dashboard role).
+// This lets multi-role users access all their authorized routes.
+
+function hasRole(user, roleName) {
+    if (!user) return false;
+    // Check roles array first (multi-role support), fall back to legacy role field
+    if (user.roles && user.roles.length > 0) {
+        return user.roles.includes(roleName);
+    }
+    return String(user.role) === roleName;
+}
 
 function isAdmin(req, res, next) {
-    if (req.isAuthenticated() && req.user && String(req.user.role) === 'admin') {
+    if (req.isAuthenticated() && hasRole(req.user, 'admin')) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -68,7 +80,7 @@ function isAdmin(req, res, next) {
 }
 
 function isTeacher(req, res, next) {
-    if (req.isAuthenticated() && req.user && req.user.role === 'teacher') {
+    if (req.isAuthenticated() && hasRole(req.user, 'teacher')) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -78,7 +90,7 @@ function isTeacher(req, res, next) {
 }
 
 function isParent(req, res, next) {
-    if (req.isAuthenticated() && req.user && req.user.role === 'parent') {
+    if (req.isAuthenticated() && hasRole(req.user, 'parent')) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -88,7 +100,7 @@ function isParent(req, res, next) {
 }
 
 function isStudent(req, res, next) {
-    if (req.isAuthenticated() && req.user && req.user.role === 'student') {
+    if (req.isAuthenticated() && hasRole(req.user, 'student')) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -101,7 +113,7 @@ function isStudent(req, res, next) {
 // --- CUSTOM AUTHORIZATION MIDDLEWARE ---
 
 function isAuthorizedForLeaderboard(req, res, next) {
-    if (req.isAuthenticated() && req.user && ['student', 'teacher', 'admin', 'parent'].includes(req.user.role)) {
+    if (req.isAuthenticated() && req.user && ['student', 'teacher', 'admin', 'parent'].some(r => hasRole(req.user, r))) {
         return next();
     }
     if (req.originalUrl.startsWith('/api/') || req.method === 'POST') {
@@ -130,10 +142,10 @@ function handleLogout(req, res, next) {
 }
 
 // --- RATE LIMITING FOR EXPENSIVE AI ENDPOINTS ---
-// SECURITY FIX: Per-user rate limiting for AI-powered endpoints to prevent API abuse
+// Generous limit to prevent API abuse without cutting off active sessions
 const aiEndpointLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour window
-    max: 150, // Limit each user to 150 requests per hour (increased to accommodate 30s heartbeats = 120 req/hr)
+    max: 2000, // High limit - only catches actual abuse, not active students
     keyGenerator: (req) => {
         // Use user ID if authenticated, otherwise fall back to IP
         return req.user ? req.user._id.toString() : req.ip;
@@ -141,7 +153,7 @@ const aiEndpointLimiter = rateLimit({
     handler: (req, res) => {
         console.warn(`WARN: Rate limit exceeded for user ${req.user ? req.user._id : req.ip} on ${req.path}`);
         res.status(429).json({
-            message: "We've been working hard for a while now! Let's take a break and pick up where we left off tomorrow. Great job today! 🌟",
+            message: "Too many requests. Please wait a moment before trying again.",
             retryAfter: Math.ceil(req.rateLimit.resetTime / 1000)
         });
     },

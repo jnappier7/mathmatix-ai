@@ -23,8 +23,9 @@
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       overflow: hidden;
-      height: 100vh;
+      height: 100dvh;
       background: #f8f9fa;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ============================================
@@ -34,7 +35,7 @@
     .page-layout {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
@@ -535,11 +536,83 @@
     @media (max-width: 968px) {
       .main-content {
         grid-template-columns: 1fr;
+        overflow: visible;
+        height: auto;
       }
 
       .left-sidebar,
       .right-sidebar {
         display: none;
+      }
+
+      body {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .page-layout {
+        height: auto;
+        min-height: 100dvh;
+        overflow: visible;
+      }
+
+      .center-panel {
+        overflow: visible;
+        height: auto;
+      }
+
+      .main-header-content {
+        padding: 12px 16px;
+      }
+
+      .brand-name {
+        font-size: 1.2em;
+      }
+
+      .brand-tagline {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-header-content {
+        padding: 10px 12px;
+        gap: 10px;
+      }
+
+      .main-logo {
+        height: 36px;
+      }
+
+      .logo-container {
+        width: 36px;
+        height: 36px;
+      }
+
+      .center-panel {
+        padding: 12px;
+      }
+
+      .dashboard-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-wrap: nowrap;
+      }
+
+      .dashboard-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 0.85em;
+        padding: 10px 14px;
+      }
+
+      .mode-indicator {
+        font-size: 0.75em;
       }
     }
   </style>
@@ -564,6 +637,9 @@
           </div>
         </div>
         <nav class="main-header-nav">
+          <div id="roleSwitcher" class="role-switcher" style="display: none;">
+            <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role"></select>
+          </div>
           <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </nav>
       </div>
@@ -618,9 +694,20 @@
         </div>
 
         <div class="dashboard-panel">
-          <div class="dashboard-panel-header">Student List</div>
-          <div class="form-group">
-            <input type="text" id="studentSearch" placeholder="Search students by name or email..." />
+          <div class="dashboard-panel-header">User List</div>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+              <input type="text" id="studentSearch" placeholder="Search users by name or email..." />
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <select id="userRoleFilter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;">
+                <option value="">All Roles</option>
+                <option value="student">Students</option>
+                <option value="teacher">Teachers</option>
+                <option value="parent">Parents</option>
+                <option value="admin">Admins</option>
+              </select>
+            </div>
           </div>
           <div class="table-scroll-container">
             <table class="user-table">
@@ -646,11 +733,14 @@
       <aside class="right-sidebar">
         <div class="dashboard-panel">
           <div class="dashboard-panel-header">
-            <i class="fas fa-chalkboard-teacher"></i> Teacher & Roster Setup
+            <i class="fas fa-chalkboard-teacher"></i> User & Roster Setup
           </div>
-          <p>Create teacher accounts, class codes, and import student rosters.</p>
+          <p>Create user accounts, class codes, and import student rosters.</p>
           <button id="openTeacherSetupBtn" class="btn btn-primary main-action-btn">
-            <i class="fas fa-user-plus"></i> Create Teacher
+            <i class="fas fa-user-plus"></i> Create User
+          </button>
+          <button id="openLinkParentBtn" class="btn btn-primary main-action-btn">
+            <i class="fas fa-link"></i> Link Parent to Student
           </button>
           <button id="openEnrollmentCodeBtn" class="btn btn-secondary main-action-btn">
             <i class="fas fa-key"></i> Create Class Code
@@ -1048,12 +1138,12 @@
     </div>
   </div>
 
-  <!-- Create Teacher Modal -->
+  <!-- Create User Modal -->
   <div id="createTeacherModal" class="modal-overlay">
     <div class="modal-content" style="max-width: 500px;">
       <button class="modal-close-button" id="closeCreateTeacherBtn">&times;</button>
-      <h2><i class="fas fa-chalkboard-teacher"></i> Create Teacher Account</h2>
-      <p style="color: #666; margin-bottom: 20px;">Create a new teacher account. The teacher will be able to manage their assigned students.</p>
+      <h2><i class="fas fa-user-plus"></i> Create User Account</h2>
+      <p style="color: #666; margin-bottom: 20px;">Create a new user account with any role.</p>
 
       <form id="createTeacherForm">
         <div class="modal-form-group">
@@ -1069,6 +1159,23 @@
           <input type="email" id="teacherEmail" name="email" required>
         </div>
         <div class="modal-form-group">
+          <label>Role(s) *</label>
+          <div id="teacherRoleCheckboxes" style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px;">
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+              <input type="checkbox" name="roles" value="student"> Student
+            </label>
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+              <input type="checkbox" name="roles" value="teacher" checked> Teacher
+            </label>
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+              <input type="checkbox" name="roles" value="parent"> Parent
+            </label>
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+              <input type="checkbox" name="roles" value="admin"> Admin
+            </label>
+          </div>
+        </div>
+        <div class="modal-form-group">
           <label for="teacherUsername">Username (optional - will be generated from email if blank)</label>
           <input type="text" id="teacherUsername" name="username" placeholder="Leave blank to auto-generate">
         </div>
@@ -1081,24 +1188,128 @@
           <label for="teacherPassword">Password</label>
           <input type="password" id="teacherPassword" name="password" placeholder="Min 8 chars with uppercase, lowercase, number, special char">
         </div>
+        <div class="modal-form-group">
+          <label>
+            <input type="checkbox" id="sendWelcomeEmailCheck" checked> Send welcome email with login info
+          </label>
+        </div>
 
         <div class="modal-actions">
           <button type="submit" class="btn btn-primary" id="createTeacherSubmit">
-            <i class="fas fa-user-plus"></i> Create Teacher
+            <i class="fas fa-user-plus"></i> Create User
           </button>
           <button type="button" class="btn btn-tertiary" id="cancelCreateTeacher">Cancel</button>
         </div>
       </form>
 
       <div id="teacherCreatedResult" style="display: none; margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 8px; border: 1px solid #c3e6cb;">
-        <h4 style="color: #155724; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Teacher Created Successfully!</h4>
+        <h4 style="color: #155724; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> User Created Successfully!</h4>
         <p><strong>Name:</strong> <span id="resultTeacherName"></span></p>
         <p><strong>Email:</strong> <span id="resultTeacherEmail"></span></p>
         <p><strong>Username:</strong> <span id="resultTeacherUsername"></span></p>
+        <p><strong>Role:</strong> <span id="resultTeacherRole"></span></p>
         <p id="resultPasswordRow"><strong>Temporary Password:</strong> <code id="resultTeacherPassword" style="background: #f8f9fa; padding: 2px 6px; border-radius: 4px;"></code></p>
-        <p style="color: #856404; font-size: 0.9em; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> Share these credentials securely with the teacher.</p>
+        <p id="resultEmailStatus" style="font-size: 0.9em; margin-top: 10px;"></p>
+        <p id="resultShareWarning" style="color: #856404; font-size: 0.9em; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> Share these credentials securely with the user.</p>
+
+        <!-- Teacher follow-up: Set up a class -->
+        <div id="followUpTeacher" style="display: none; margin-top: 15px; padding: 12px; background: #fff; border-radius: 6px; border: 1px solid #c3e6cb;">
+          <h5 style="margin-bottom: 8px;"><i class="fas fa-chalkboard"></i> Set Up a Class</h5>
+          <div class="modal-form-group" style="margin-bottom: 8px;">
+            <label for="followUpClassName">Class Name</label>
+            <input type="text" id="followUpClassName" placeholder="e.g., Period 3 Pre-Algebra">
+          </div>
+          <div class="modal-form-group" style="margin-bottom: 8px;">
+            <label for="followUpGradeLevel">Grade Level (optional)</label>
+            <input type="text" id="followUpGradeLevel" placeholder="e.g., 7th Grade">
+          </div>
+          <div class="modal-form-group" style="margin-bottom: 8px;">
+            <label for="followUpMathCourse">Math Course (optional)</label>
+            <input type="text" id="followUpMathCourse" placeholder="e.g., Pre-Algebra">
+          </div>
+          <button class="btn btn-primary" id="followUpCreateClassBtn" style="margin-top: 5px;">
+            <i class="fas fa-key"></i> Create Class Code
+          </button>
+          <div id="followUpClassResult" style="display: none; margin-top: 10px; color: #155724;"></div>
+        </div>
+
+        <!-- Parent follow-up: Link to a student -->
+        <div id="followUpParent" style="display: none; margin-top: 15px; padding: 12px; background: #fff; border-radius: 6px; border: 1px solid #c3e6cb;">
+          <h5 style="margin-bottom: 8px;"><i class="fas fa-child"></i> Link to a Student</h5>
+          <div class="modal-form-group" style="margin-bottom: 8px;">
+            <label for="followUpParentStudentSelect">Select Student</label>
+            <select id="followUpParentStudentSelect">
+              <option value="">Select a student...</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="followUpLinkChildBtn">
+            <i class="fas fa-link"></i> Link Student
+          </button>
+          <div id="followUpParentLinkResult" style="display: none; margin-top: 10px; color: #155724;"></div>
+        </div>
+
+        <!-- Student follow-up: Link parent and/or teacher -->
+        <div id="followUpStudent" style="display: none; margin-top: 15px; padding: 12px; background: #fff; border-radius: 6px; border: 1px solid #c3e6cb;">
+          <h5 style="margin-bottom: 8px;"><i class="fas fa-users"></i> Link Parent &amp; Teacher</h5>
+          <div class="modal-form-group" style="margin-bottom: 8px;">
+            <label for="followUpStudentParentSelect">Parent (optional)</label>
+            <select id="followUpStudentParentSelect">
+              <option value="">Select a parent...</option>
+            </select>
+          </div>
+          <div class="modal-form-group" style="margin-bottom: 8px;">
+            <label for="followUpStudentTeacherSelect">Teacher (optional)</label>
+            <select id="followUpStudentTeacherSelect">
+              <option value="">Select a teacher...</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="followUpLinkStudentBtn">
+            <i class="fas fa-link"></i> Link Selected
+          </button>
+          <div id="followUpStudentLinkResult" style="display: none; margin-top: 10px; color: #155724;"></div>
+        </div>
+
         <button class="btn btn-secondary" id="createAnotherTeacher" style="margin-top: 10px;">
-          <i class="fas fa-plus"></i> Create Another Teacher
+          <i class="fas fa-plus"></i> Create Another User
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Link Parent to Student Modal -->
+  <div id="linkParentModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="modal-close-button" id="closeLinkParentBtn">&times;</button>
+      <h2><i class="fas fa-link"></i> Link Parent to Student</h2>
+      <p style="color: #666; margin-bottom: 20px;">Connect a parent account to their child's student account.</p>
+
+      <form id="linkParentForm">
+        <div class="modal-form-group">
+          <label for="linkParentSelect">Parent *</label>
+          <select id="linkParentSelect" name="parentId" required>
+            <option value="">Select a parent...</option>
+          </select>
+        </div>
+        <div class="modal-form-group">
+          <label for="linkStudentSelect">Student *</label>
+          <select id="linkStudentSelect" name="studentId" required>
+            <option value="">Select a student...</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary" id="linkParentSubmit">
+            <i class="fas fa-link"></i> Link Parent &amp; Student
+          </button>
+          <button type="button" class="btn btn-tertiary" id="cancelLinkParent">Cancel</button>
+        </div>
+      </form>
+
+      <div id="linkParentResult" style="display: none; margin-top: 20px; padding: 15px; background: #d4edda; border-radius: 8px; border: 1px solid #c3e6cb;">
+        <h4 style="color: #155724; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> Linked Successfully!</h4>
+        <p><span id="resultLinkMessage"></span></p>
+        <button class="btn btn-secondary" id="linkAnotherParent" style="margin-top: 10px;">
+          <i class="fas fa-plus"></i> Link Another
         </button>
       </div>
     </div>
@@ -1462,14 +1673,16 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
 
             <!-- Add Students Section -->
             <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-              <h4 style="margin: 0 0 10px 0; font-size: 0.9em;">Add Existing Students</h4>
-              <div style="display: flex; gap: 10px;">
-                <input type="text" id="addStudentSearch" placeholder="Search students by name..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                <button id="searchStudentsToAddBtn" class="btn btn-secondary" style="padding: 8px 15px;">
-                  <i class="fas fa-search"></i>
+              <h4 style="margin: 0 0 10px 0; font-size: 0.9em;">Add Students</h4>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="addStudentSearch" placeholder="Filter students by name or email..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <button id="addSelectedStudentsBtn" class="btn btn-secondary" style="padding: 8px 15px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap; display: none;">
+                  <i class="fas fa-plus"></i> Add Selected (<span id="selectedStudentCount">0</span>)
                 </button>
               </div>
-              <div id="studentSearchResultsForClass" style="max-height: 120px; overflow-y: auto; margin-top: 10px; display: none; border: 1px solid #e0e0e0; border-radius: 4px; background: white;"></div>
+              <div id="availableStudentsList" style="max-height: 180px; overflow-y: auto; margin-top: 10px; border: 1px solid #e0e0e0; border-radius: 4px; background: white;">
+                <p style="padding: 10px; color: #666; text-align: center; margin: 0;">Select a class to see available students</p>
+              </div>
             </div>
 
             <!-- Current Students List -->
@@ -1490,6 +1703,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
+  <script src="/js/role-switcher.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/admin-dashboard.js"></script>

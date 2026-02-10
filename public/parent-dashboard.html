@@ -23,8 +23,9 @@
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       overflow: hidden;
-      height: 100vh;
+      height: 100dvh;
       background: #f8f9fa;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ============================================
@@ -34,7 +35,7 @@
     .page-layout {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
@@ -468,11 +469,99 @@
     @media (max-width: 968px) {
       .main-content {
         grid-template-columns: 1fr;
+        overflow: visible;
+        height: auto;
       }
 
       .left-sidebar,
       .right-sidebar {
         display: none;
+      }
+
+      body {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .page-layout {
+        height: auto;
+        min-height: 100dvh;
+        overflow: visible;
+      }
+
+      .center-panel {
+        overflow: visible;
+        height: auto;
+      }
+
+      .main-header-content {
+        padding: 12px 16px;
+      }
+
+      .brand-name {
+        font-size: 1.2em;
+      }
+
+      .brand-tagline {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-header-content {
+        padding: 10px 12px;
+        gap: 10px;
+      }
+
+      .main-logo {
+        height: 36px;
+      }
+
+      .logo-container {
+        width: 36px;
+        height: 36px;
+      }
+
+      .header-actions {
+        gap: 6px;
+      }
+
+      .header-actions .btn {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+
+      .center-panel {
+        padding: 12px;
+      }
+
+      .dashboard-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-wrap: nowrap;
+      }
+
+      .dashboard-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 0.85em;
+        padding: 10px 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .center-panel {
+        padding: 8px;
+      }
+
+      .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.8em;
       }
     }
 
@@ -525,6 +614,9 @@
           </div>
         </div>
         <nav class="main-header-nav">
+          <div id="roleSwitcher" class="role-switcher" style="display: none;">
+            <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role"></select>
+          </div>
           <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </nav>
       </div>
@@ -768,6 +860,7 @@
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
+  <script src="/js/role-switcher.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/parent-dashboard.js"></script>

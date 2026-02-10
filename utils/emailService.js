@@ -817,6 +817,128 @@ function getSafetyConcernTemplate(studentData, concernDescription, originalMessa
   `;
 }
 
+/**
+ * Send welcome email with login credentials to a newly created user
+ * @param {Object} options
+ * @param {String} options.email - User's email address
+ * @param {String} options.firstName - User's first name
+ * @param {String} options.lastName - User's last name
+ * @param {String} options.username - User's username
+ * @param {String[]} options.roles - User's roles
+ * @param {String} [options.temporaryPassword] - Auto-generated password (only if applicable)
+ */
+async function sendWelcomeEmail({ email, firstName, lastName, username, roles, temporaryPassword }) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping welcome email');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const emailConfig = getEmailConfig();
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: email,
+      subject: `Welcome to MATHMATIX AI, ${firstName}!`,
+      html: getWelcomeEmailTemplate({ firstName, lastName, username, email, roles, temporaryPassword })
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Welcome email sent to ${email}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending welcome email:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+function getWelcomeEmailTemplate({ firstName, lastName, username, email, roles, temporaryPassword }) {
+  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  const loginUrl = `${baseUrl}/login.html`;
+  const roleLabels = (roles || []).map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');
+
+  const credentialsBlock = temporaryPassword ? `
+      <div style="background: #fff3cd; border-left: 4px solid #f0ad4e; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0 0 8px 0; color: #856404; font-weight: 600; font-size: 14px;">Your Login Credentials</p>
+        <table style="font-size: 14px; color: #555;">
+          <tr><td style="padding: 4px 12px 4px 0; font-weight: 600;">Username:</td><td>${username}</td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; font-weight: 600;">Email:</td><td>${email}</td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; font-weight: 600;">Temporary Password:</td><td style="font-family: monospace; background: #f8f9fa; padding: 2px 6px; border-radius: 4px;">${temporaryPassword}</td></tr>
+        </table>
+        <p style="margin: 10px 0 0 0; color: #856404; font-size: 12px;">We recommend changing your password after your first login.</p>
+      </div>
+  ` : `
+      <div style="background: #d4edda; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <p style="margin: 0; color: #155724; font-size: 14px;">
+          Your administrator will share your login credentials with you separately.
+        </p>
+      </div>
+  `;
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">MATHMATIX AI</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">Welcome to Your New Account</p>
+    </div>
+
+    <!-- Content -->
+    <div style="padding: 30px 20px;">
+      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">Hi ${firstName}!</h2>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        An account has been created for you on <strong>MATHMATIX AI</strong>. Here are your details:
+      </p>
+
+      <table style="font-size: 15px; color: #555; margin-bottom: 15px;">
+        <tr><td style="padding: 4px 12px 4px 0; font-weight: 600;">Name:</td><td>${firstName} ${lastName}</td></tr>
+        <tr><td style="padding: 4px 12px 4px 0; font-weight: 600;">Role:</td><td>${roleLabels}</td></tr>
+      </table>
+
+      ${credentialsBlock}
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${loginUrl}"
+           style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+          Log In Now
+        </a>
+      </div>
+
+      <p style="margin: 20px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">
+        If the button doesn't work, copy and paste this link into your browser:
+      </p>
+      <p style="margin: 10px 0 0 0; color: #667eea; font-size: 12px; word-break: break-all;">
+        ${loginUrl}
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">
+        This account was created by your MATHMATIX AI administrator.
+      </p>
+      <p style="margin: 0; font-size: 12px; color: #999;">
+        &copy; ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
 module.exports = {
   sendParentWeeklyReport,
   sendParentalConsentRequest,
@@ -825,6 +947,7 @@ module.exports = {
   sendTestEmail,
   sendMessageNotification,
   sendSafetyConcernAlert,
+  sendWelcomeEmail,
   initializeTransporter,
   getEmailConfig
 };

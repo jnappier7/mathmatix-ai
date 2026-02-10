@@ -457,6 +457,7 @@ const userSchema = new Schema({
   lastName:  { type: String, trim: true, required: true },
   name:      { type: String, trim: true },              // derived in pre-save hook
   role:      { type: String, enum: ['student','teacher','parent','admin'], default: 'student' },
+  roles:     [{ type: String, enum: ['student','teacher','parent','admin'] }],
 
   /* Student-specific profile */
   gradeLevel: { type: String, trim: true },              // e.g., '7th Grade', '9th Grade', 'College'
@@ -501,6 +502,10 @@ const userSchema = new Schema({
   // Precise time tracking in seconds (minutes are derived from these)
   totalActiveSeconds:  { type: Number, default: 0 },
   weeklyActiveSeconds: { type: Number, default: 0 },
+  // AI processing time tracking (server-measured, used for billing)
+  // Only counts time while AI is generating a response - not reading/thinking/idle time
+  totalAISeconds:  { type: Number, default: 0 },
+  weeklyAISeconds: { type: Number, default: 0 },
   lastWeeklyReset: { type: Date, default: Date.now },
 
   /* Conversations */
@@ -1023,6 +1028,17 @@ userSchema.pre('save', async function (next) {
   if (this.isModified('firstName') || this.isModified('lastName')) {
     this.name = `${this.firstName || ''} ${this.lastName || ''}`.trim();
   }
+  // Sync roles array with role field
+  // If roles was explicitly set (e.g., admin create-user), ensure role is in roles
+  if (this.isModified('roles') && this.roles && this.roles.length > 0) {
+    if (!this.roles.includes(this.role)) {
+      this.role = this.roles[0]; // active role defaults to first role
+    }
+  }
+  // If only role was set (e.g., legacy code paths, signup), backfill roles
+  if (!this.roles || this.roles.length === 0) {
+    this.roles = [this.role];
+  }
   next();
 });
 
@@ -1030,7 +1046,8 @@ userSchema.pre('save', async function (next) {
 // Critical indexes for dashboard performance
 userSchema.index({ role: 1, teacherId: 1 });  // Teacher dashboard: find students by teacher
 userSchema.index({ teacherId: 1 });            // Student lookups by teacher
-userSchema.index({ role: 1 });                 // Role-based queries
+userSchema.index({ role: 1 });                 // Role-based queries (active role)
+userSchema.index({ roles: 1 });                // Multi-role queries (all user roles)
 userSchema.index({ parentIds: 1 });            // Parent dashboard: find children
 userSchema.index({ lastLogin: -1 });           // Activity reports sorted by login
 userSchema.index({ role: 1, lastLogin: -1 });  // Admin usage reports

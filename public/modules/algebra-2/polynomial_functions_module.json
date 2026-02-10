@@ -1,0 +1,149 @@
+{
+  "moduleId": "polynomial_functions",
+  "course": "Algebra 2",
+  "unit": 3,
+  "title": "Polynomial Functions",
+  "weeks": "9-12",
+  "estimatedDuration": 60,
+  "skills": ["polynomial-operations", "factoring-advanced", "polynomial-division", "remainder-factor-theorems", "graphing-polynomials"],
+  "standardsAlignment": ["A-APR.1", "A-APR.2", "A-APR.3", "A-APR.4", "A-APR.6", "A-SSE.2"],
+  "goals": [
+    "Add, subtract, and multiply polynomials fluently",
+    "Factor higher-degree polynomials using grouping, sum/difference of cubes, and substitution patterns",
+    "Divide polynomials using long division and synthetic division",
+    "Apply the Remainder Theorem and Factor Theorem to find and verify zeros",
+    "Graph polynomials using end behavior, zeros, multiplicity, and turning points"
+  ],
+  "instructionalStrategy": [
+    "Polynomial operations are arithmetic with variables. Addition/subtraction = combine like terms. Multiplication = distribute each term (extended FOIL). Nothing conceptually new here, but fluency matters.",
+    "Advanced factoring is the heart of this unit. Students already know GCF, trinomials, and difference of squares from the boot camp. Now add: grouping (4 terms), sum/difference of cubes (a³ ± b³), and substitution patterns (like x⁴ - 5x² + 4 treated as u² - 5u + 4).",
+    "Division parallels numeric long division—make the analogy explicit. Synthetic division is the speed shortcut for (x - k) divisors only. The Remainder Theorem connects division to evaluation: f(k) = remainder.",
+    "Graphing polynomials: the leading term controls end behavior, factored form gives zeros, and multiplicity determines whether the graph crosses (odd mult) or bounces (even mult). At most n-1 turning points for degree n.",
+    "Sum of cubes: a³ + b³ = (a + b)(a² - ab + b²). Difference of cubes: a³ - b³ = (a - b)(a² + ab + b²). SOAP mnemonic: Same, Opposite, Always Positive."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Polynomial Operations:**\n\n**Adding/Subtracting:** Combine like terms (same variable, same exponent).\n(3x³ + 2x - 5) + (x³ - 4x² + 7) = 4x³ - 4x² + 2x + 2\n\n**Multiplying:** Distribute every term in the first polynomial to every term in the second.\n(2x + 3)(x² - x + 4) = 2x³ - 2x² + 8x + 3x² - 3x + 12 = 2x³ + x² + 5x + 12\n\n**Special Products (still apply!):**\n• (a + b)² = a² + 2ab + b²\n• (a - b)² = a² - 2ab + b²\n• (a + b)(a - b) = a² - b²\n\n**Degree rules:**\n• Adding: degree ≤ max(degree of inputs)\n• Multiplying: degree = sum of degrees\n• Degree n polynomial has at most n zeros and n-1 turning points",
+      "initialPrompt": "Multiply: (x² + 2)(x² - 2). What special product pattern is this? What is the degree of the result?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Factor completely: (a) x³ + 27, (b) 8x³ - 125, (c) x⁴ - 5x² + 4.",
+      "explanation": "**(a) Sum of cubes: x³ + 27 = x³ + 3³**\nFormula: a³ + b³ = (a + b)(a² - ab + b²)\n= **(x + 3)(x² - 3x + 9)**\n\n**(b) Difference of cubes: 8x³ - 125 = (2x)³ - 5³**\nFormula: a³ - b³ = (a - b)(a² + ab + b²)\n= **(2x - 5)(4x² + 10x + 25)**\n\n**(c) Substitution pattern: x⁴ - 5x² + 4**\nLet u = x². Then: u² - 5u + 4 = (u - 1)(u - 4)\nSubstitute back: (x² - 1)(x² - 4)\nFactor further (difference of squares!):\n= **(x + 1)(x - 1)(x + 2)(x - 2)**\n\n**SOAP for cubes:** Same sign, Opposite sign, Always Positive.\nSo a³ + b³ = (a **+** b)(a² **-** ab **+** b²)\nand a³ - b³ = (a **-** b)(a² **+** ab **+** b²)",
+      "initialPrompt": "Can x² - 3x + 9 (from part a) be factored further? Check its discriminant. This 'unfactorable' trinomial is typical in cube factoring."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Factor by grouping: x³ + 2x² - 9x - 18.",
+          "answer": "(x + 2)(x + 3)(x - 3)",
+          "hints": ["Group: (x³ + 2x²) + (-9x - 18) = x²(x + 2) - 9(x + 2).", "Factor out (x+2): (x+2)(x²-9) = (x+2)(x+3)(x-3)."]
+        },
+        {
+          "question": "Factor completely: 2x⁴ - 32.",
+          "answer": "2(x² + 4)(x + 2)(x - 2)",
+          "hints": ["GCF first: 2(x⁴ - 16).", "Difference of squares: 2(x² + 4)(x² - 4).", "Factor x² - 4 again: 2(x² + 4)(x + 2)(x - 2). Note x² + 4 doesn't factor over reals."]
+        },
+        {
+          "question": "Multiply: (x - 2)(x + 1)(x + 3). Give the result in standard form.",
+          "answer": "x³ + 2x² - 5x - 6",
+          "hints": ["First: (x-2)(x+1) = x² - x - 2.", "Then: (x² - x - 2)(x + 3) = x³ + 3x² - x² - 3x - 2x - 6 = x³ + 2x² - 5x - 6."]
+        }
+      ],
+      "initialPrompt": "For the grouping problem, split the 4 terms into pairs. What can you factor from the first pair? The second pair?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Polynomial Division & Theorems:**\n\n**Long Division** works like numeric long division:\n1. Divide leading terms\n2. Multiply divisor by result\n3. Subtract\n4. Bring down, repeat\nUse 0 as placeholder for missing degrees!\n\n**Synthetic Division** is the speed shortcut for dividing by (x - k):\n1. Write k and coefficients\n2. Bring down first, multiply by k, add to next, repeat\n3. Last number = remainder\n\n**Remainder Theorem:** f(k) = remainder when f(x) ÷ (x - k).\nThis means you can evaluate f(k) by doing synthetic division instead of plugging in!\n\n**Factor Theorem:** (x - k) is a factor of f(x) if and only if f(k) = 0.\nThis connects zeros, factors, and x-intercepts:\n• If f(k) = 0, then k is a zero, (x - k) is a factor, and (k, 0) is an x-intercept.",
+      "initialPrompt": "Use the Factor Theorem: Is (x - 2) a factor of x³ - 3x² + 4? Just evaluate f(2) — you don't need to divide."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Find all zeros of f(x) = 2x³ + 3x² - 11x - 6. (Hint: try x = 2.)",
+      "explanation": "**Step 1: Test x = 2 using synthetic division.**\n\n2 | 2   3  -11  -6\n  |     4   14   6\n  | 2   7    3   0  ← remainder 0!\n\nSince f(2) = 0, (x - 2) is a factor. Quotient: 2x² + 7x + 3.\n\n**Step 2: Factor the quotient.**\n2x² + 7x + 3 = (2x + 1)(x + 3)\n\n**Step 3: Set each factor = 0.**\nx - 2 = 0 → x = 2\n2x + 1 = 0 → x = -1/2\nx + 3 = 0 → x = -3\n\n**All zeros: x = 2, -1/2, -3**\n\nFull factorization: f(x) = 2(x - 2)(x + 1/2)(x + 3) = (x - 2)(2x + 1)(x + 3)",
+      "initialPrompt": "How did we know to try x = 2? The Rational Root Theorem says possible rational zeros are ±(factors of constant)/(factors of leading coefficient). What are all the candidates here?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Divide (2x³ - 5x² + 3x + 7) by (x - 2) using synthetic division. State the quotient and remainder.",
+          "answer": "Quotient: 2x² - x + 1, Remainder: 9. So f(2) = 9.",
+          "hints": ["k = 2. Coefficients: 2, -5, 3, 7.", "2|2 -5 3 7 → bring down 2, 2×2=4, -5+4=-1, 2×(-1)=-2, 3+(-2)=1, 2×1=2, 7+2=9.", "Result: 2x² - x + 1 R 9."]
+        },
+        {
+          "question": "Use the Remainder Theorem to evaluate f(-1) for f(x) = x⁴ + 3x³ - x² + 5.",
+          "answer": "f(-1) = 2",
+          "hints": ["Synthetic with k = -1. Coefficients: 1, 3, -1, 0, 5 (note the 0 for missing x term).", "-1|1 3 -1 0 5 → 1, -1+3=2, -2+(-1)=-3, 3+0=3, -3+5=2.", "Remainder = 2, so f(-1) = 2."]
+        }
+      ],
+      "initialPrompt": "For synthetic division by (x - 2), what value of k do we use?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Graphing Polynomial Functions:**\n\n**End Behavior** (determined by leading term axⁿ):\n• Even degree, a > 0: ↑ both ends (like U)\n• Even degree, a < 0: ↓ both ends (like ∩)\n• Odd degree, a > 0: ↓ left, ↑ right\n• Odd degree, a < 0: ↑ left, ↓ right\n\n**Zeros and Multiplicity:**\nIf f(x) = a(x - r)^m · ..., then at x = r:\n• **Odd multiplicity** (1, 3, 5): graph **crosses** the x-axis\n• **Even multiplicity** (2, 4, 6): graph **touches and bounces** off\n\n**Key Facts:**\n• Degree n → at most n real zeros\n• At most n - 1 turning points (local maxima/minima)\n• y-intercept = f(0) = constant term\n\n**Sketching strategy:** Find end behavior → find zeros → determine cross/bounce → plot y-intercept → connect smoothly.",
+      "initialPrompt": "Sketch f(x) = -(x + 1)²(x - 2)(x - 4). What's the degree? End behavior? Where does it cross vs bounce?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "Factor completely: 27x³ + 64.",
+          "answer": "(3x + 4)(9x² - 12x + 16)",
+          "hints": ["Sum of cubes: (3x)³ + 4³. Use (a+b)(a²-ab+b²)."]
+        },
+        {
+          "question": "Factor by grouping: 2x³ - x² - 18x + 9.",
+          "answer": "(2x - 1)(x + 3)(x - 3)",
+          "hints": ["Group: x²(2x-1) - 9(2x-1) = (2x-1)(x²-9) = (2x-1)(x+3)(x-3)."]
+        },
+        {
+          "question": "Find all zeros of f(x) = x³ - 4x² - 7x + 10. (Try x = 1 first.)",
+          "answer": "x = 1, 5, -2",
+          "hints": ["f(1) = 1-4-7+10 = 0 ✓. Synthetic gives x² - 3x - 10 = (x-5)(x+2)."]
+        },
+        {
+          "question": "Describe the end behavior and sketch: f(x) = 2x⁴ - 3x³ - x² + 1.",
+          "answer": "Even degree (4), positive leading coefficient (2): both ends up (↑↑). At most 3 turning points.",
+          "hints": ["Leading term 2x⁴. Even degree + positive → both ends rise."]
+        },
+        {
+          "question": "At which zeros does f(x) = (x - 1)³(x + 2)² cross vs bounce?",
+          "answer": "x = 1: crosses (odd mult 3). x = -2: bounces (even mult 2).",
+          "hints": ["Odd multiplicity → crosses. Even multiplicity → bounces."]
+        },
+        {
+          "question": "Divide (x⁴ + 2x³ - x - 2) by (x + 2) using synthetic division. Factor the quotient completely.",
+          "answer": "Quotient: x³ - 1 = (x - 1)(x² + x + 1). Zeros: x = -2, 1.",
+          "hints": ["-2|1 2 0 -1 -2 → 1, 0, 0, -1, 0. Quotient: x³ - 1.", "x³ - 1 is difference of cubes: (x-1)(x²+x+1)."]
+        }
+      ],
+      "attemptsRequired": 4
+    }
+  ],
+  "answerKeys": {
+    "x³+27": "(x+3)(x²-3x+9)",
+    "8x³-125": "(2x-5)(4x²+10x+25)",
+    "x⁴-5x²+4": "(x+1)(x-1)(x+2)(x-2)",
+    "x³+2x²-9x-18 by grouping": "(x+2)(x+3)(x-3)",
+    "2x⁴-32": "2(x²+4)(x+2)(x-2)",
+    "Zeros 2x³+3x²-11x-6": "2, -1/2, -3",
+    "(2x³-5x²+3x+7)÷(x-2)": "2x²-x+1 R9",
+    "f(-1) for x⁴+3x³-x²+5": "2",
+    "27x³+64": "(3x+4)(9x²-12x+16)",
+    "2x³-x²-18x+9": "(2x-1)(x+3)(x-3)",
+    "Zeros x³-4x²-7x+10": "1, 5, -2",
+    "(x⁴+2x³-x-2)÷(x+2)": "x³-1=(x-1)(x²+x+1)"
+  }
+}

@@ -24,8 +24,9 @@
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       overflow: hidden;
-      height: 100vh;
+      height: 100dvh;
       background: #f8f9fa;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ============================================
@@ -35,7 +36,7 @@
     .page-layout {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
@@ -807,23 +808,137 @@
         flex-direction: row;
         justify-content: space-between;
       }
+
+      .main-header-content {
+        padding: 12px 16px;
+      }
+
+      .brand-name {
+        font-size: 1.2em;
+      }
+
+      .brand-tagline {
+        display: none;
+      }
+
+      body {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .page-layout {
+        height: auto;
+        min-height: 100dvh;
+        overflow: visible;
+      }
+
+      .main-content {
+        overflow: visible;
+        height: auto;
+      }
+
+      .center-panel {
+        overflow: visible;
+        height: auto;
+      }
     }
 
     @media (max-width: 768px) {
       .dashboard-tabs {
         flex-wrap: nowrap;
         justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+      }
+
+      .dashboard-tabs::-webkit-scrollbar {
+        display: none;
       }
 
       .tab-btn {
-        font-size: 0.9em;
-        padding: 10px 15px;
+        font-size: 0.85em;
+        padding: 10px 14px;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
       .modal-content {
         width: 95%;
         max-width: 95%;
         margin: 10px auto;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .main-header-content {
+        padding: 10px 12px;
+        gap: 10px;
+      }
+
+      .main-logo {
+        height: 36px;
+      }
+
+      .logo-container {
+        width: 36px;
+        height: 36px;
+      }
+
+      .header-actions {
+        gap: 6px;
+      }
+
+      .header-actions .btn {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+
+      .center-panel {
+        padding: 12px;
+      }
+
+      .class-overview-section {
+        padding: 14px;
+      }
+
+      .overview-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .stat-card {
+        padding: 12px;
+      }
+
+      .stat-number {
+        font-size: 1.2em;
+      }
+
+      .insights-row {
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .overview-stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .overview-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.8em;
+      }
+
+      .center-panel {
+        padding: 8px;
       }
     }
 
@@ -1653,6 +1768,9 @@
           </div>
         </div>
         <nav class="main-header-nav">
+          <div id="roleSwitcher" class="role-switcher" style="display: none;">
+            <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role"></select>
+          </div>
           <button id="logoutBtn" class="nav-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </nav>
       </div>
@@ -2011,6 +2129,9 @@
               <span>Refresh</span>
             </button>
           </div>
+          <button class="btn btn-primary main-action-btn" id="qa-upload-resources" title="Upload worksheets, practice sheets, and other files for your students">
+            <i class="fas fa-upload"></i> Upload Class Resources
+          </button>
         </div>
 
         <!-- Today's Summary Panel -->
@@ -2301,6 +2422,7 @@
   <script src="/js/csrf.js"></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/logout.js"></script>
+  <script src="/js/role-switcher.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/teacher-live-feed.js"></script>

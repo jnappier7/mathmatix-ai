@@ -18,15 +18,22 @@ RUN pip3 install --no-cache-dir --break-system-packages \
 # 4. Set up the working directory
 WORKDIR /usr/src/app
 
-# 5. Copy package files and install npm dependencies
+# 5. Copy package files and install npm dependencies deterministically
 COPY package*.json ./
-RUN npm install
+RUN npm ci --omit=dev
 
 # 6. Copy the rest of your application code
 COPY . .
 
-# 7. Tell Docker what port the app will run on
+# 7. Create non-root user and set ownership
+RUN groupadd --system appgroup && useradd --system --gid appgroup appuser \
+    && chown -R appuser:appgroup /usr/src/app
+
+# 8. Run as non-root user
+USER appuser
+
+# 9. Tell Docker what port the app will run on
 EXPOSE 3000
 
-# 8. Define the command to start your server
+# 10. Define the command to start your server
 CMD ["node", "server.js"]

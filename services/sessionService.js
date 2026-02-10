@@ -43,7 +43,7 @@ async function generateSessionSummary(userId, sessionId, sessionData = {}) {
       role: user.role,
       startTime: sessionData.startTime || new Date(),
       endTime: new Date(),
-      duration: sessionData.duration || 0,
+      duration: sessionData.duration || sessionData.timeSpent || 0,
       metrics: {
         messagesExchanged: sessionData.messagesExchanged || 0,
         problemsAttempted: sessionData.problemsAttempted || 0,
@@ -200,9 +200,14 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
       throw new Error('User not found');
     }
 
-    // Find and update the active conversation with AI-generated summary
+    // Find and update the active conversation with a summary on session end.
+    // NOTE: We do NOT set isActive = false here. isActive represents whether the
+    // conversation is archived or not. Setting it to false on logout was causing
+    // sessions to disappear after re-login. Conversations remain active (visible
+    // in sidebar) until the user explicitly archives them.
     const activeConversation = await Conversation.findOne({
       userId: userId,
+      _id: user.activeConversationId,
       isActive: true
     });
 
@@ -232,8 +237,7 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
         const aiSummary = await generateAISummary(activeConversation, studentName);
         activeConversation.summary = aiSummary;
 
-        // Mark conversation as inactive
-        activeConversation.isActive = false;
+        // Update last activity timestamp (conversation stays active/visible)
         activeConversation.lastActivity = new Date();
 
         await activeConversation.save();
@@ -248,9 +252,9 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
         });
       } catch (error) {
         logger.error('Failed to generate conversation summary', { userId, error });
-        // Still mark as inactive even if summary fails, with a basic summary
-        activeConversation.isActive = false;
+        // Update summary with fallback, but keep conversation active
         activeConversation.summary = `Session completed - ${activeConversation.activeMinutes || 0} minutes`;
+        activeConversation.lastActivity = new Date();
         await activeConversation.save();
       }
     }
@@ -317,7 +321,10 @@ async function recordHeartbeat(userId, sessionId, metrics = {}) {
 
 /**
  * Clean up stale sessions that were never properly ended
- * Sessions older than the threshold with isActive: true get summaries generated
+ * Generates summaries for sessions with messages but no summary yet.
+ * NOTE: We no longer set isActive = false here. isActive controls sidebar
+ * visibility (archiving). Only the user explicitly archiving a conversation
+ * should set isActive = false. Empty sessions with no messages are removed.
  * @param {number} staleThresholdMinutes - Minutes of inactivity before considered stale (default: 60)
  * @returns {Promise<number>} Number of sessions cleaned up
  */
@@ -325,12 +332,27 @@ async function cleanupStaleSessions(staleThresholdMinutes = 60) {
   try {
     const staleThreshold = new Date(Date.now() - staleThresholdMinutes * 60 * 1000);
 
-    // Find all stale active sessions
+    // Remove empty sessions (no messages) that are stale - these are abandoned blank sessions
+    const emptyResult = await Conversation.deleteMany({
+      isActive: true,
+      lastActivity: { $lt: staleThreshold },
+      $or: [
+        { messages: { $exists: false } },
+        { messages: { $size: 0 } }
+      ]
+    });
+
+    if (emptyResult.deletedCount > 0) {
+      logger.info(`Removed ${emptyResult.deletedCount} empty stale sessions`);
+    }
+
+    // For sessions WITH messages, generate summaries if missing (don't deactivate)
     const staleSessions = await Conversation.find({
       isActive: true,
       lastActivity: { $lt: staleThreshold },
-      messages: { $exists: true, $ne: [] }
-    }).limit(50); // Process in batches
+      messages: { $exists: true, $ne: [] },
+      summary: null // Only process sessions that don't have a summary yet
+    }).limit(50);
 
     let cleanedCount = 0;
 
@@ -339,7 +361,7 @@ async function cleanupStaleSessions(staleThresholdMinutes = 60) {
         // Get the user for this session
         const user = await User.findById(session.userId);
         if (!user) {
-          // No user, just mark as inactive
+          // No user found - archive this orphaned conversation
           session.isActive = false;
           session.summary = 'Session ended (user not found)';
           await session.save();
@@ -370,12 +392,11 @@ async function cleanupStaleSessions(staleThresholdMinutes = 60) {
             `${session.problemsAttempted > 0 ? `Attempted ${session.problemsAttempted} problems with ${session.problemsCorrect || 0} correct.` : 'Session ended due to inactivity.'}`;
         }
 
-        // Mark as inactive
-        session.isActive = false;
+        // Save summary but keep conversation active (visible in sidebar)
         await session.save();
 
         cleanedCount++;
-        logger.info('Stale session cleaned up', {
+        logger.info('Stale session summary generated', {
           conversationId: session._id,
           userId: session.userId,
           lastActivity: session.lastActivity
@@ -389,10 +410,10 @@ async function cleanupStaleSessions(staleThresholdMinutes = 60) {
     }
 
     if (cleanedCount > 0) {
-      logger.info(`Cleaned up ${cleanedCount} stale sessions`);
+      logger.info(`Generated summaries for ${cleanedCount} stale sessions`);
     }
 
-    return cleanedCount;
+    return cleanedCount + (emptyResult.deletedCount || 0);
   } catch (error) {
     logger.error('Failed to cleanup stale sessions', { error });
     return 0;

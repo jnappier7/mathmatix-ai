@@ -1,0 +1,235 @@
+{
+  "moduleId": "exponential_log_unit",
+  "course": "Algebra 2",
+  "unit": 5,
+  "title": "Exponential & Logarithmic Functions",
+  "weeks": "16-19",
+  "estimatedDuration": 60,
+  "skills": [
+    "exponential-growth-decay",
+    "compound-interest-modeling",
+    "logarithm-evaluation-conversion",
+    "logarithm-properties",
+    "exponential-logarithmic-equations",
+    "domain-analysis-logarithms"
+  ],
+  "standardsAlignment": [
+    "F-LE.1",
+    "F-LE.4",
+    "F-BF.5",
+    "F-IF.7e",
+    "F-IF.8b",
+    "A-SSE.3c",
+    "A-CED.1"
+  ],
+  "goals": [
+    "Model real-world scenarios using exponential growth and decay functions, including compound interest and half-life",
+    "Understand logarithms as inverses of exponential functions and convert fluently between exponential and logarithmic forms",
+    "Apply properties of logarithms (product, quotient, power, change of base) to expand and condense expressions",
+    "Solve exponential equations using common bases and logarithmic methods",
+    "Solve logarithmic equations and verify solutions by checking that all arguments remain in the domain (strictly positive)"
+  ],
+  "instructionalStrategy": [
+    "Ground exponentials in concrete contexts first: money doubling, populations exploding, radioactive material disappearing. Students should see WHY the model is f(x) = a * b^x before they manipulate it algebraically.",
+    "The central bridge of this unit: log_b(x) = y means b^y = x. Every single log problem can be rewritten as an exponential, and vice versa. Drill this conversion relentlessly until it becomes automatic reflex.",
+    "Log properties mirror exponent rules -- make the parallel explicit every time. Product rule (log(ab) = log(a) + log(b)) mirrors b^m * b^n = b^(m+n). Quotient and power rules follow the same logic.",
+    "CRITICAL student error: log(a + b) != log(a) + log(b). Logarithms distribute over multiplication and division, NEVER over addition or subtraction. Build a 'common errors' awareness habit and test for it deliberately.",
+    "When solving logarithmic equations, ALWAYS check domain as the final step. The argument of every logarithm must be strictly positive. Extraneous solutions appear frequently and catching them is a non-negotiable skill."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Exponential Functions** have the form f(x) = a * b^x where:\n- a = initial value (the y-intercept when x = 0)\n- b = base (growth factor if b > 1, decay factor if 0 < b < 1)\n- The graph always passes through (0, a) and has a horizontal asymptote at y = 0\n\n**Growth vs. Decay:**\n- **Growth (b > 1):** population increase, investment appreciation, inflation\n- **Decay (0 < b < 1):** radioactive decay, depreciation, cooling\n\n**Percent Change:**\n- Growth of r% per period: f(x) = a(1 + r)^x (e.g., 5% growth uses b = 1.05)\n- Decay of r% per period: f(x) = a(1 - r)^x (e.g., 12% depreciation uses b = 0.88)\n\n**Compound Interest:** A = P(1 + r/n)^(nt)\n- P = principal (initial investment)\n- r = annual interest rate (as a decimal)\n- n = number of compounding periods per year\n- t = time in years\n\n**Half-Life:** A = A_0(1/2)^(t/h)\n- A_0 = initial amount\n- h = half-life (time for half the substance to decay)\n- t = elapsed time",
+      "initialPrompt": "A car worth $20,000 depreciates 15% per year. Write the value function V(t). What is the car worth after 3 years? What is the decay factor, and why is it 0.85 and not 0.15?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "A bacterial colony starts with 500 bacteria and triples every 4 hours. (a) Write a function P(t) for the population after t hours. (b) Find the population after 12 hours. (c) When will the colony reach 40,500 bacteria?\n\nThen: $1,000 is invested at 8% annual interest compounded semi-annually. Find the value after 10 years.",
+      "explanation": "**Bacteria Growth:**\n\n(a) The colony triples (factor of 3) every 4 hours, starting at 500:\nP(t) = 500 * 3^(t/4)\n\nWhy t/4? After 4 hours: P(4) = 500 * 3^(4/4) = 500 * 3 = 1500 (tripled once).\nAfter 8 hours: P(8) = 500 * 3^(8/4) = 500 * 9 = 4500 (tripled twice). Correct!\n\n(b) After 12 hours:\nP(12) = 500 * 3^(12/4) = 500 * 3^3 = 500 * 27 = **13,500 bacteria**\n\n(c) Set P(t) = 40,500 and solve:\n40,500 = 500 * 3^(t/4)\n81 = 3^(t/4)\n3^4 = 3^(t/4)\nt/4 = 4\n**t = 16 hours**\n\n**Compound Interest:**\n\nA = P(1 + r/n)^(nt) = 1000(1 + 0.08/2)^(2*10) = 1000(1.04)^20\n\n(1.04)^20 ~= 2.19112\n\nA ~= 1000 * 2.19112 = **$2,191.12**\n\nThe investment more than doubled in 10 years. Notice: n = 2 (semi-annual means twice per year), so the rate per period is 0.08/2 = 0.04.",
+      "initialPrompt": "For the bacteria problem, what would change if the colony doubled every 4 hours instead of tripling? Write that model and compare: which grows faster, and by how much after 12 hours?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Logarithms are the INVERSE of exponential functions.**\n\nThe fundamental definition:\n  log_b(x) = y  means  b^y = x\n\nIn words: 'log base b of x equals y' means 'b raised to the y power equals x.'\n\nThe logarithm ASKS A QUESTION: 'What exponent do I put on b to get x?'\n- log_2(8) = ? asks '2 to what power gives 8?' Answer: 3, because 2^3 = 8.\n- log_5(25) = ? asks '5 to what power gives 25?' Answer: 2, because 5^2 = 25.\n- log_3(1/9) = ? asks '3 to what power gives 1/9?' Answer: -2, because 3^(-2) = 1/9.\n\n**Special logarithms:**\n- log(x) = log_10(x) -- the common logarithm (base 10)\n- ln(x) = log_e(x) -- the natural logarithm (base e, where e ~= 2.718)\n\n**Inverse properties (these undo each other):**\n- log_b(b^x) = x  (log undoes the exponential)\n- b^(log_b(x)) = x  (exponential undoes the log)\n\n**Domain restriction:** log_b(x) is ONLY defined when x > 0. You cannot take the logarithm of zero or a negative number.",
+      "initialPrompt": "Evaluate log_4(64) by asking: '4 to what power gives 64?' Now try log_7(1) -- what exponent on 7 gives 1? Why does this work for ANY base?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "(a) Convert 4^3 = 64 to logarithmic form.\n(b) Convert log_5(1/125) = -3 to exponential form.\n(c) Evaluate log_2(64).\n(d) Evaluate log_9(1/3).",
+      "explanation": "**Conversion uses the bridge: log_b(x) = y <-> b^y = x**\n\n(a) 4^3 = 64\nIdentify: base = 4, exponent = 3, result = 64\nLogarithmic form: **log_4(64) = 3**\n\n(b) log_5(1/125) = -3\nIdentify: base = 5, exponent = -3, result = 1/125\nExponential form: **5^(-3) = 1/125**\nCheck: 5^(-3) = 1/5^3 = 1/125. Correct!\n\n(c) log_2(64) = ?\nAsk: 2 to what power gives 64?\n2^1 = 2, 2^2 = 4, 2^3 = 8, 2^4 = 16, 2^5 = 32, 2^6 = 64\n**log_2(64) = 6**\n\n(d) log_9(1/3) = ?\nAsk: 9 to what power gives 1/3?\nRewrite 9 as 3^2: (3^2)^x = 3^(-1)\n3^(2x) = 3^(-1)\n2x = -1\nx = -1/2\n**log_9(1/3) = -1/2**\n\nCheck: 9^(-1/2) = 1/sqrt(9) = 1/3. Correct!",
+      "initialPrompt": "Try evaluating log_8(4). Hint: rewrite both 8 and 4 as powers of 2, then set up the equation (2^3)^x = 2^2 and solve for x."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Evaluate: log_6(216)",
+          "answer": "3",
+          "hints": [
+            "Ask: 6 to what power gives 216?",
+            "6^1 = 6, 6^2 = 36, 6^3 = 216. So log_6(216) = 3."
+          ]
+        },
+        {
+          "question": "Solve: 2^(3x - 1) = 16",
+          "answer": "x = 5/3",
+          "hints": [
+            "Rewrite 16 as a power of 2: 16 = 2^4.",
+            "Set exponents equal: 3x - 1 = 4. So 3x = 5, and x = 5/3.",
+            "Check: 2^(3(5/3) - 1) = 2^(5 - 1) = 2^4 = 16. Correct!"
+          ]
+        },
+        {
+          "question": "Convert between forms: (a) Write log_7(343) = 3 in exponential form. (b) Write 2^5 = 32 in logarithmic form.",
+          "answer": "(a) 7^3 = 343. (b) log_2(32) = 5.",
+          "hints": [
+            "Use the bridge: log_b(x) = y <-> b^y = x.",
+            "(a) log_7(343) = 3 means the base is 7, the exponent is 3, and the result is 343: 7^3 = 343.",
+            "(b) 2^5 = 32 means the base is 2, the exponent is 5, and the result is 32: log_2(32) = 5."
+          ]
+        }
+      ],
+      "initialPrompt": "For log_6(216), ask yourself: 6 raised to what power equals 216? Try building up: 6^1, 6^2, 6^3..."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Properties of Logarithms** (these mirror the exponent rules):\n\n1. **Product Rule:** log_b(MN) = log_b(M) + log_b(N)\n   Mirrors: b^m * b^n = b^(m+n)\n\n2. **Quotient Rule:** log_b(M/N) = log_b(M) - log_b(N)\n   Mirrors: b^m / b^n = b^(m-n)\n\n3. **Power Rule:** log_b(M^p) = p * log_b(M)\n   Mirrors: (b^m)^p = b^(mp)\n\n4. **Change of Base Formula:** log_b(x) = log(x) / log(b) = ln(x) / ln(b)\n   This lets you evaluate ANY logarithm on a calculator using log or ln.\n\n**CRITICAL WARNING:** These properties ONLY work with multiplication, division, and powers inside the log.\n\n   log(a + b) != log(a) + log(b)   <-- THIS IS WRONG\n   log(a - b) != log(a) - log(b)   <-- THIS IS WRONG\n\nLogs do NOT distribute over addition or subtraction. There is NO simplification rule for log(a + b). This is the single most common error students make with logarithms.",
+      "initialPrompt": "Using the product rule, expand log_2(8 * 16). Verify by computing each side: the left side is log_2(128) and the right side is log_2(8) + log_2(16). Do they match?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Expand: log_5(25x^3 / sqrt(z)).\nCondense: 4*log_2(a) - (1/3)*log_2(b) + log_2(c).",
+      "explanation": "**Expanding log_5(25x^3 / sqrt(z)):**\n\nStep 1 -- Quotient Rule:\n  log_5(25x^3) - log_5(sqrt(z))\n\nStep 2 -- Product Rule on the first term:\n  log_5(25) + log_5(x^3) - log_5(z^(1/2))\n\nStep 3 -- Evaluate log_5(25) and apply Power Rule:\n  2 + 3*log_5(x) - (1/2)*log_5(z)\n\nFinal answer: **2 + 3*log_5(x) - (1/2)*log_5(z)**\n\n---\n\n**Condensing 4*log_2(a) - (1/3)*log_2(b) + log_2(c):**\n\nStep 1 -- Power Rule (move coefficients inside as exponents):\n  log_2(a^4) - log_2(b^(1/3)) + log_2(c)\n\nStep 2 -- Product Rule (add the positive terms):\n  log_2(a^4 * c) - log_2(b^(1/3))\n\nStep 3 -- Quotient Rule:\n  log_2(a^4 * c / b^(1/3))\n\nFinal answer: **log_2(a^4 * c / cbrt(b))**\n\nNote: Expanding and condensing are inverse operations. Expanding breaks one log into many; condensing combines many logs into one.",
+      "initialPrompt": "Try expanding log_3(x^2 * y / 81) step by step. Remember that 81 = 3^4, so log_3(81) simplifies to a number."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Expand: log_3(27x^2 / y^4)",
+          "answer": "3 + 2*log_3(x) - 4*log_3(y)",
+          "hints": [
+            "Quotient Rule first: log_3(27x^2) - log_3(y^4).",
+            "Product Rule: log_3(27) + log_3(x^2) - log_3(y^4).",
+            "Evaluate and Power Rule: 3 + 2*log_3(x) - 4*log_3(y), since log_3(27) = 3."
+          ]
+        },
+        {
+          "question": "Condense into a single logarithm: 2*ln(x) + (1/2)*ln(y) - 3*ln(z)",
+          "answer": "ln(x^2 * sqrt(y) / z^3)",
+          "hints": [
+            "Power Rule first: ln(x^2) + ln(y^(1/2)) - ln(z^3).",
+            "Product Rule for the positive terms: ln(x^2 * sqrt(y)) - ln(z^3).",
+            "Quotient Rule: ln(x^2 * sqrt(y) / z^3)."
+          ]
+        },
+        {
+          "question": "Solve: log_2(x + 3) + log_2(x - 1) = 5. Check your solution against the domain.",
+          "answer": "x = 5 (x = -7 is extraneous)",
+          "hints": [
+            "First, determine the domain: x + 3 > 0 gives x > -3, and x - 1 > 0 gives x > 1. The domain is x > 1.",
+            "Combine using the Product Rule: log_2((x + 3)(x - 1)) = 5.",
+            "Convert to exponential form: (x + 3)(x - 1) = 2^5 = 32. Expand: x^2 + 2x - 3 = 32, so x^2 + 2x - 35 = 0.",
+            "Factor: (x + 7)(x - 5) = 0, giving x = -7 or x = 5.",
+            "Check domain (x > 1): x = -7 is extraneous. x = 5: log_2(8) + log_2(4) = 3 + 2 = 5. Correct!"
+          ]
+        }
+      ],
+      "initialPrompt": "For the expansion problem, start with the Quotient Rule to split the fraction, then use the Product Rule on the numerator. What is log_3(27)?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "Evaluate: log_4(1/64)",
+          "answer": "-3",
+          "hints": [
+            "Rewrite: 1/64 = 4^(-3) because 4^3 = 64.",
+            "So log_4(1/64) = log_4(4^(-3)) = -3."
+          ]
+        },
+        {
+          "question": "Solve using common bases: 9^(x + 1) = 27^x",
+          "answer": "x = 2",
+          "hints": [
+            "Rewrite both sides as powers of 3: (3^2)^(x+1) = (3^3)^x.",
+            "Simplify exponents: 3^(2x + 2) = 3^(3x). Set exponents equal: 2x + 2 = 3x, so x = 2.",
+            "Check: 9^3 = 729 and 27^2 = 729. Correct!"
+          ]
+        },
+        {
+          "question": "Expand: log_2(32x^5 / y^3)",
+          "answer": "5 + 5*log_2(x) - 3*log_2(y)",
+          "hints": [
+            "Quotient Rule: log_2(32x^5) - log_2(y^3).",
+            "Product Rule: log_2(32) + log_2(x^5) - log_2(y^3).",
+            "Evaluate log_2(32) = 5 and apply Power Rule: 5 + 5*log_2(x) - 3*log_2(y)."
+          ]
+        },
+        {
+          "question": "Solve and check domain: log_5(x - 2) + log_5(x + 2) = 1",
+          "answer": "x = 3 (x = -3 is extraneous)",
+          "hints": [
+            "Domain: x - 2 > 0 requires x > 2, and x + 2 > 0 requires x > -2. The binding constraint is x > 2.",
+            "Combine: log_5((x - 2)(x + 2)) = 1. Convert: (x - 2)(x + 2) = 5. So x^2 - 4 = 5, x^2 = 9, x = +/-3.",
+            "Domain check (x > 2): x = -3 is extraneous. x = 3: log_5(1) + log_5(5) = 0 + 1 = 1. Correct!"
+          ]
+        },
+        {
+          "question": "An account starts with $5,000 and earns 6% annual interest compounded monthly. Find the balance after 5 years. Use A = P(1 + r/n)^(nt).",
+          "answer": "$6,744.25",
+          "hints": [
+            "Identify: P = 5000, r = 0.06, n = 12, t = 5.",
+            "Substitute: A = 5000(1 + 0.06/12)^(12 * 5) = 5000(1.005)^60.",
+            "(1.005)^60 ~= 1.34885. So A ~= 5000 * 1.34885 = $6,744.25."
+          ]
+        },
+        {
+          "question": "Carbon-14 has a half-life of 5,730 years. A fossil contains 12.5% of its original Carbon-14. How old is the fossil? Use A = A_0(1/2)^(t/h).",
+          "answer": "17,190 years",
+          "hints": [
+            "Set up: 0.125 * A_0 = A_0 * (1/2)^(t/5730). Cancel A_0: 0.125 = (1/2)^(t/5730).",
+            "Recognize: 0.125 = 1/8 = (1/2)^3.",
+            "So (1/2)^3 = (1/2)^(t/5730), meaning t/5730 = 3, and t = 3 * 5730 = 17,190 years."
+          ]
+        }
+      ],
+      "attemptsRequired": 4
+    }
+  ],
+  "answerKeys": {
+    "log_6(216)": "3",
+    "2^(3x-1) = 16": "x = 5/3",
+    "log_7(343)=3 to exponential": "7^3 = 343",
+    "2^5=32 to logarithmic": "log_2(32) = 5",
+    "expand log_3(27x^2/y^4)": "3 + 2*log_3(x) - 4*log_3(y)",
+    "condense 2ln(x)+(1/2)ln(y)-3ln(z)": "ln(x^2*sqrt(y)/z^3)",
+    "log_2(x+3)+log_2(x-1)=5": "x = 5 (x = -7 is extraneous)",
+    "log_4(1/64)": "-3",
+    "9^(x+1)=27^x": "x = 2",
+    "expand log_2(32x^5/y^3)": "5 + 5*log_2(x) - 3*log_2(y)",
+    "log_5(x-2)+log_5(x+2)=1": "x = 3 (x = -3 is extraneous)",
+    "$5000 at 6% monthly for 5 years": "$6,744.25",
+    "C-14 half-life fossil at 12.5%": "17,190 years",
+    "bacteria 500 triples every 4hr model": "P(t) = 500 * 3^(t/4)",
+    "bacteria population at 12 hours": "13,500",
+    "bacteria reach 40500": "t = 16 hours",
+    "$1000 at 8% semi-annually for 10yr": "$2,191.12",
+    "4^3=64 to log form": "log_4(64) = 3",
+    "log_5(1/125)=-3 to exp form": "5^(-3) = 1/125",
+    "log_2(64)": "6",
+    "log_9(1/3)": "-1/2",
+    "expand log_5(25x^3/sqrt(z))": "2 + 3*log_5(x) - (1/2)*log_5(z)",
+    "condense 4log_2(a)-(1/3)log_2(b)+log_2(c)": "log_2(a^4*c/cbrt(b))"
+  }
+}

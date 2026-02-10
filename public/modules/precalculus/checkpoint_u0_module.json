@@ -1,0 +1,126 @@
+{
+  "moduleId": "checkpoint_u0",
+  "course": "Pre-Calculus",
+  "unit": 0,
+  "title": "Unit 0 Diagnostic Checkpoint: Readiness Boot Camp",
+  "weeks": "2",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "diagnosticMode": true,
+  "description": "Diagnostic assessment to identify readiness for Pre-Calculus content. Covers function notation and domain/range, solving all equation types from Algebra 2, factoring fluency, and graphing with transformations. Results drive targeted mini-reteach before Unit 1.",
+  "skillsCovered": ["function-notation-domain-range", "solving-equations-review", "factoring-simplification-fluency", "graphing-transformations-review"],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold on specific skill clusters receive focused mini-lessons on those skills only. Students at or above threshold advance directly to Unit 1.",
+    "clusters": [
+      {"skillId": "function-notation-domain-range", "reteachFocus": "Evaluating f(x), composition f(g(x)), domain restrictions from fractions/radicals/logs, interval notation"},
+      {"skillId": "solving-equations-review", "reteachFocus": "Quadratic formula, rational equations with LCD, radical equations with extraneous check, exponential/log equations"},
+      {"skillId": "factoring-simplification-fluency", "reteachFocus": "Trinomials a≠1, grouping, sum/difference of cubes, simplifying rational expressions"},
+      {"skillId": "graphing-transformations-review", "reteachFocus": "Parent function library, transformation template g(x) = af(b(x-c))+d, identifying key features"}
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "pcu0-1",
+      "question": "For f(x) = (2x - 1)/(x² + x - 6), find: (a) f(4), (b) the domain in interval notation.",
+      "answer": "(a) f(4) = (8-1)/(16+4-6) = 7/14 = 1/2. (b) x² + x - 6 = (x+3)(x-2) ≠ 0 → x ≠ -3, 2. Domain: (-∞, -3) ∪ (-3, 2) ∪ (2, ∞).",
+      "skill": "function-notation-domain-range",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "pcu0-2",
+      "question": "Find the domain of g(x) = √(6 - 2x) + ln(x + 1). Express in interval notation.",
+      "answer": "√ needs 6 - 2x ≥ 0 → x ≤ 3. ln needs x + 1 > 0 → x > -1. Both: -1 < x ≤ 3 → (-1, 3].",
+      "skill": "function-notation-domain-range",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu0-3",
+      "question": "Given f(x) = x² - 3 and g(x) = 2x + 1, find: (a) f(g(x)), (b) g(f(x)), (c) f(g(-2)).",
+      "answer": "(a) f(g(x)) = (2x+1)² - 3 = 4x² + 4x + 1 - 3 = 4x² + 4x - 2. (b) g(f(x)) = 2(x²-3) + 1 = 2x² - 5. (c) g(-2) = -3, f(-3) = 9 - 3 = 6.",
+      "skill": "function-notation-domain-range",
+      "difficulty": 4,
+      "points": 9
+    },
+    {
+      "id": "pcu0-4",
+      "question": "Solve: 4^(x - 3) = 8^(x + 1).",
+      "answer": "Rewrite as powers of 2: (2²)^(x-3) = (2³)^(x+1). 2^(2x-6) = 2^(3x+3). Set exponents equal: 2x - 6 = 3x + 3 → -x = 9 → x = -9.",
+      "skill": "solving-equations-review",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "pcu0-5",
+      "question": "Solve: √(5x + 1) = x + 1. Check for extraneous solutions.",
+      "answer": "Square: 5x + 1 = x² + 2x + 1. Rearrange: x² - 3x = 0 → x(x - 3) = 0. x = 0 or x = 3. Check x=0: √1 = 1 = 0+1 ✓. Check x=3: √16 = 4 = 3+1 ✓. Both valid: x = 0 and x = 3.",
+      "skill": "solving-equations-review",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu0-6",
+      "question": "Solve and express in interval notation: (x - 3)/(x + 2) > 0.",
+      "answer": "Critical values: x = 3 (zero), x = -2 (undefined). Test intervals: x < -2: neg/neg = pos ✓. -2 < x < 3: neg/pos = neg ✗. x > 3: pos/pos = pos ✓. Solution: (-∞, -2) ∪ (3, ∞).",
+      "skill": "solving-equations-review",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu0-7",
+      "question": "Factor completely: (a) x⁴ - 16, (b) 2x³ + 5x² - 8x - 20.",
+      "answer": "(a) (x²-4)(x²+4) = (x-2)(x+2)(x²+4). (b) Group: x²(2x+5) - 4(2x+5) = (2x+5)(x²-4) = (2x+5)(x-2)(x+2).",
+      "skill": "factoring-simplification-fluency",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu0-8",
+      "question": "Simplify: (x² - 4x + 3)/(x² - 1) · (x² + 2x + 1)/(x² - 6x + 9).",
+      "answer": "Factor: ((x-3)(x-1))/((x-1)(x+1)) · ((x+1)²)/((x-3)²). Cancel (x-1), (x+1), (x-3): = (x+1)/(x-3). Restrictions: x ≠ 1, -1, 3.",
+      "skill": "factoring-simplification-fluency",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "pcu0-9",
+      "question": "Starting from the parent function f(x) = √x, the function g(x) = -3√(x - 4) + 2 is formed. (a) List all transformations in order. (b) Find the domain and range of g. (c) Find the x-intercept.",
+      "answer": "(a) Shift right 4, vertical stretch by 3, reflect over x-axis, shift up 2. (b) Domain: [4, ∞). Range: (-∞, 2]. (c) 0 = -3√(x-4) + 2 → √(x-4) = 2/3 → x - 4 = 4/9 → x = 40/9 ≈ 4.44.",
+      "skill": "graphing-transformations-review",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "pcu0-10",
+      "question": "Identify the parent function and describe ALL key features (domain, range, intercepts, asymptotes, end behavior) for h(x) = 2/(x - 1) + 3.",
+      "answer": "Parent: f(x) = 1/x. Transformations: right 1, vertical stretch by 2, up 3. VA: x = 1. HA: y = 3. Domain: (-∞, 1) ∪ (1, ∞). Range: (-∞, 3) ∪ (3, ∞). y-intercept: h(0) = 2/(-1) + 3 = 1. x-intercept: 0 = 2/(x-1) + 3 → 2/(x-1) = -3 → x - 1 = -2/3 → x = 1/3. End behavior: as x → ±∞, h(x) → 3.",
+      "skill": "graphing-transformations-review",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "pcu0-spiral",
+      "question": "SPIRAL: Solve the system: y = x² - 2x and y = x + 4.",
+      "answer": "x² - 2x = x + 4 → x² - 3x - 4 = 0 → (x-4)(x+1) = 0. x = 4: y = 8. x = -1: y = 3. Solutions: (4, 8) and (-1, 3).",
+      "skill": "solving-equations-review",
+      "difficulty": 4,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "pcu0-1": "(a) 1/2, (b) (-∞,-3)∪(-3,2)∪(2,∞)",
+    "pcu0-2": "(-1, 3]",
+    "pcu0-3": "(a) 4x²+4x-2, (b) 2x²-5, (c) 6",
+    "pcu0-4": "x = -9",
+    "pcu0-5": "x = 0 and x = 3",
+    "pcu0-6": "(-∞,-2) ∪ (3,∞)",
+    "pcu0-7": "(a) (x-2)(x+2)(x²+4), (b) (2x+5)(x-2)(x+2)",
+    "pcu0-8": "(x+1)/(x-3), x≠1,-1,3",
+    "pcu0-9": "Domain [4,∞), Range (-∞,2], x-int 40/9",
+    "pcu0-10": "VA x=1, HA y=3, y-int 1, x-int 1/3",
+    "pcu0-spiral": "(4,8) and (-1,3)"
+  }
+}

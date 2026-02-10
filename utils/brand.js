@@ -72,7 +72,8 @@ const BRAND_CONFIG = {
     },
 
     // 8. Specific Feature Settings
-    xpPerLevel: 100, // XP needed to level up
+    xpPerLevel: 100, // Base XP needed to level up (level 1→2)
+    xpScalingFactor: 0.1, // Each level requires 10% more XP than the previous
     baseXpPerTurn: 2, // LEGACY: For backward compatibility with chatWithFile.js
     xpAwardRange: { min: 1, max: 50 }, // LEGACY: For backward compatibility
     iepGoalCap: 10, // Max active goals per student
@@ -156,4 +157,30 @@ const BRAND_CONFIG = {
     classroomHeroImage: "/images/classroom-hero.png" //
 };
 
-module.exports = BRAND_CONFIG;// JavaScript Document
+/**
+ * XP required to advance FROM a given level TO the next level.
+ * Scales linearly: base * (1 + scalingFactor * (level - 1))
+ *   Level 1→2: 100, Level 5→6: 140, Level 10→11: 190, Level 20→21: 290
+ */
+function xpRequiredForLevel(level) {
+    const lvl = level || 1;
+    return Math.round(BRAND_CONFIG.xpPerLevel * (1 + BRAND_CONFIG.xpScalingFactor * (lvl - 1)));
+}
+
+/**
+ * Total cumulative XP needed to REACH a given level.
+ * Sum of xpRequiredForLevel(1) + ... + xpRequiredForLevel(level - 1)
+ * Uses a loop to stay perfectly consistent with xpRequiredForLevel.
+ */
+function cumulativeXpForLevel(level) {
+    const lvl = level || 1;
+    let total = 0;
+    for (let i = 1; i < lvl; i++) {
+        total += xpRequiredForLevel(i);
+    }
+    return total;
+}
+
+module.exports = BRAND_CONFIG;
+module.exports.xpRequiredForLevel = xpRequiredForLevel;
+module.exports.cumulativeXpForLevel = cumulativeXpForLevel;

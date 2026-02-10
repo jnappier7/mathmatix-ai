@@ -269,7 +269,8 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
             window.MathMatixSurvey.trackMilestone('level_up');
         }
 
-        if (typeof confetti === 'function') {
+        const fireConfetti = () => {
+            if (typeof confetti !== 'function') return;
             const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
             const brandColors = ['#12B3B3', '#FF3B7F', '#FFFFFF'];
@@ -282,6 +283,11 @@ function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = false) {
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: brandColors }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: brandColors }));
             }, 250);
+        };
+        if (typeof confetti === 'function') {
+            fireConfetti();
+        } else if (window.ensureConfetti) {
+            window.ensureConfetti().then(fireConfetti);
         }
     } else {
         animationText.classList.add('animate-xp');
@@ -1730,6 +1736,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderMathInElement(element) {
         if (window.MathJax && window.MathJax.typesetPromise) {
             window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
+        } else if (window.ensureMathJax) {
+            window.ensureMathJax().then(() => {
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([element]).catch((err) => console.log('MathJax error:', err));
+                }
+            });
         }
     }
 
@@ -2196,13 +2208,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 '<span style="background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-weight: 600; border: 2px solid #3b82f6;">$1</span>');
         }
 
-        if (graphData && window.functionPlot) {
+        if (graphData) {
              const graphContainer = document.createElement('div');
             const graphId = 'graph-container-' + Date.now();
             graphContainer.id = graphId;
             graphContainer.className = 'graph-render-area';
             bubble.appendChild(graphContainer);
-            setTimeout(() => {
+            const renderGraph = () => {
                 try {
                     const plotWidth = chatBox.clientWidth > 150 ? chatBox.clientWidth - 80 : 250;
                     functionPlot({
@@ -2213,7 +2225,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         data: [{ fn: graphData.function, graphType: 'polyline' }]
                     });
                 } catch (e) { console.error("Graphing error:", e); graphContainer.innerHTML = "Could not render graph."; }
-            }, 0);
+            };
+            if (window.functionPlot) {
+                setTimeout(renderGraph, 0);
+            } else if (window.ensureFunctionPlot) {
+                window.ensureFunctionPlot().then(renderGraph);
+            }
         }
         
         if (sender === 'ai') {
@@ -2848,9 +2865,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (latestMessage) {
                     setTimeout(() => {
                         window.inlineChatVisuals.initializeVisuals(latestMessage);
-                        if (window.MathJax && window.MathJax.typesetPromise) {
-                            window.MathJax.typesetPromise([latestMessage]).catch(err => console.log('MathJax error:', err));
-                        }
+                        renderMathInElement(latestMessage);
                     }, 100);
                 }
             }
@@ -2888,7 +2903,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.userXp !== undefined) {
                 currentUser.level = data.userLevel;
-                currentUser.xpForCurrentLevel = data.userXp;
+                currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
                 currentUser.xpForNextLevel = data.xpNeeded;
                 updateGamificationDisplay();
             }
@@ -3854,9 +3869,7 @@ What would you like to work on first?`;
                 }
 
                 // Render the math using MathJax
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([mathContainer]).catch((err) => console.log('MathJax error:', err));
-                }
+                renderMathInElement(mathContainer);
 
                 inlineMathEditor.value = ''; // Clear the editor
                 inlineEquationPalette.style.display = 'none';
@@ -3986,9 +3999,7 @@ What would you like to work on first?`;
                     userInput.appendChild(document.createTextNode(' '));
 
                     // Render the math using MathJax
-                    if (window.MathJax && window.MathJax.typesetPromise) {
-                        window.MathJax.typesetPromise([mathContainer]).catch((err) => console.log('MathJax error:', err));
-                    }
+                    renderMathInElement(mathContainer);
 
                     equationModal.classList.remove('is-visible');
                 }

@@ -14,7 +14,7 @@ services:
         value: 20.14.0
       - key: NODE_ENV
         value: production
-      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+      - key: PUPPETEER_SKIP_DOWNLOAD
         value: true
       - key: PUPPETEER_EXECUTABLE_PATH
         value: /usr/bin/google-chrome-stable

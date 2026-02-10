@@ -16,17 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const classStudentsList = document.getElementById('classStudentsList');
 
     const addStudentSearch = document.getElementById('addStudentSearch');
-    const searchStudentsToAddBtn = document.getElementById('searchStudentsToAddBtn');
-    const studentSearchResultsForClass = document.getElementById('studentSearchResultsForClass');
+    const availableStudentsList = document.getElementById('availableStudentsList');
+    const addSelectedStudentsBtn = document.getElementById('addSelectedStudentsBtn');
+    const selectedStudentCountEl = document.getElementById('selectedStudentCount');
 
     let currentClassId = null;
     let currentClassStudents = new Set();
+    let allStudents = []; // All students loaded from API
+    let selectedStudentIds = new Set(); // Students checked for adding
 
     // Open modal
     if (openManageClassesBtn) {
         openManageClassesBtn.addEventListener('click', () => {
             manageClassesModal.style.display = 'flex';
             loadClasses();
+            loadAllStudents();
             resetClassSelection();
         });
     }
@@ -46,17 +50,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Search students to add
-    if (searchStudentsToAddBtn) {
-        searchStudentsToAddBtn.addEventListener('click', searchStudentsToAdd);
-    }
+    // Filter students as user types (client-side)
     if (addStudentSearch) {
-        addStudentSearch.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                searchStudentsToAdd();
-            }
-        });
+        addStudentSearch.addEventListener('input', renderAvailableStudents);
+    }
+
+    // Add selected students button
+    if (addSelectedStudentsBtn) {
+        addSelectedStudentsBtn.addEventListener('click', addSelectedStudentsToClass);
+    }
+
+    // Load all students from API (once on modal open)
+    async function loadAllStudents() {
+        try {
+            const response = await fetch('/api/admin/users', { credentials: 'include' });
+            if (!response.ok) throw new Error('Failed to load users');
+
+            const users = await response.json();
+            allStudents = users.filter(u => u.role === 'student');
+        } catch (error) {
+            console.error('[ManageClasses] Load all students error:', error);
+            allStudents = [];
+        }
     }
 
     // Load all classes
@@ -130,12 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
         noClassSelected.style.display = 'none';
         classStudentManagement.style.display = 'block';
 
-        // Reset search
+        // Reset search and selections
         addStudentSearch.value = '';
-        studentSearchResultsForClass.style.display = 'none';
-        studentSearchResultsForClass.innerHTML = '';
+        selectedStudentIds.clear();
+        updateAddSelectedButton();
 
         await loadClassStudents(classId);
+        renderAvailableStudents();
     }
 
     // Load students in selected class
@@ -152,14 +168,14 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedClassCode.textContent = data.code;
             classStudentCount.textContent = data.totalEnrolled;
 
-            // Track current students for search filtering
+            // Track current students for filtering available list
             currentClassStudents = new Set(data.students.map(s => s._id));
 
             if (data.students.length === 0) {
                 classStudentsList.innerHTML = `
                     <div style="padding: 30px; text-align: center; color: #666;">
                         <p>No students in this class</p>
-                        <p style="font-size: 0.85em;">Search above to add students</p>
+                        <p style="font-size: 0.85em;">Select students above to add them</p>
                     </div>
                 `;
                 return;
@@ -197,91 +213,121 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Search students to add
-    async function searchStudentsToAdd() {
-        const search = addStudentSearch.value.trim();
-        if (!search) {
-            studentSearchResultsForClass.style.display = 'none';
+    // Render available students list (filtered, with checkboxes)
+    function renderAvailableStudents() {
+        if (!currentClassId) {
+            availableStudentsList.innerHTML = '<p style="padding: 10px; color: #666; text-align: center; margin: 0;">Select a class to see available students</p>';
             return;
         }
 
-        studentSearchResultsForClass.style.display = 'block';
-        studentSearchResultsForClass.innerHTML = '<p style="padding: 10px; text-align: center; margin: 0;"><i class="fas fa-spinner fa-spin"></i></p>';
+        const query = (addStudentSearch.value || '').toLowerCase().trim();
 
-        try {
-            // Use the existing admin email users search endpoint
-            const response = await fetch(`/api/admin/email/users?search=${encodeURIComponent(search)}&role=student&limit=20`);
-            if (!response.ok) throw new Error('Search failed');
+        // Filter: exclude students already in class, then apply search
+        let available = allStudents.filter(s => !currentClassStudents.has(s._id));
 
-            const data = await response.json();
-            let students = data.users || [];
+        if (query) {
+            available = available.filter(s =>
+                `${s.firstName || ''} ${s.lastName || ''}`.toLowerCase().includes(query) ||
+                (s.email || '').toLowerCase().includes(query) ||
+                (s.username || '').toLowerCase().includes(query)
+            );
+        }
 
-            // Filter out students already in the class
-            students = students.filter(s => !currentClassStudents.has(s._id));
+        if (available.length === 0) {
+            availableStudentsList.innerHTML = query
+                ? '<p style="padding: 10px; color: #666; text-align: center; margin: 0;">No matching students found</p>'
+                : '<p style="padding: 10px; color: #666; text-align: center; margin: 0;">All students are already in this class</p>';
+            return;
+        }
 
-            if (students.length === 0) {
-                studentSearchResultsForClass.innerHTML = '<p style="padding: 10px; color: #666; text-align: center; margin: 0;">No students found (or all matches already in class)</p>';
-                return;
-            }
-
-            studentSearchResultsForClass.innerHTML = students.map(student => `
-                <div class="add-student-item" data-student-id="${student._id}"
-                     style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0;"
-                     data-student='${JSON.stringify(student).replace(/'/g, "&#39;")}'>
-                    <div>
-                        <span style="font-weight: 500;">${escapeHtml(student.firstName)} ${escapeHtml(student.lastName)}</span>
-                        <span style="color: #999; font-size: 0.85em; margin-left: 8px;">${escapeHtml(student.email)}</span>
-                    </div>
-                    <i class="fas fa-plus-circle" style="color: #27ae60;"></i>
+        availableStudentsList.innerHTML = available.map(student => `
+            <label class="available-student-item" data-student-id="${student._id}"
+                 style="display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; gap: 10px; margin: 0;">
+                <input type="checkbox" class="add-student-checkbox" value="${student._id}"
+                       ${selectedStudentIds.has(student._id) ? 'checked' : ''}
+                       style="cursor: pointer; width: 16px; height: 16px; flex-shrink: 0;">
+                <div style="flex: 1; min-width: 0;">
+                    <span style="font-weight: 500;">${escapeHtml(student.firstName)} ${escapeHtml(student.lastName)}</span>
+                    <span style="color: #999; font-size: 0.85em; margin-left: 8px;">${escapeHtml(student.email || student.username || '')}</span>
                 </div>
-            `).join('');
+            </label>
+        `).join('');
 
-            // Add click handlers
-            studentSearchResultsForClass.querySelectorAll('.add-student-item').forEach(item => {
-                item.addEventListener('click', async () => {
-                    await addStudentToClass(item.dataset.studentId);
-                    item.remove();
-                    if (studentSearchResultsForClass.children.length === 0) {
-                        studentSearchResultsForClass.innerHTML = '<p style="padding: 10px; color: #27ae60; text-align: center; margin: 0;"><i class="fas fa-check"></i> All found students added</p>';
-                    }
-                });
-
-                item.addEventListener('mouseenter', () => {
-                    item.style.background = '#e8f5e9';
-                });
-                item.addEventListener('mouseleave', () => {
-                    item.style.background = '';
-                });
+        // Add checkbox change handlers
+        availableStudentsList.querySelectorAll('.add-student-checkbox').forEach(cb => {
+            cb.addEventListener('change', () => {
+                if (cb.checked) {
+                    selectedStudentIds.add(cb.value);
+                } else {
+                    selectedStudentIds.delete(cb.value);
+                }
+                updateAddSelectedButton();
             });
+        });
 
-        } catch (error) {
-            console.error('[ManageClasses] Search error:', error);
-            studentSearchResultsForClass.innerHTML = '<p style="color: #e74c3c; padding: 10px; text-align: center; margin: 0;">Error searching students</p>';
+        // Hover effect
+        availableStudentsList.querySelectorAll('.available-student-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.background = '#e8f5e9';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.background = '';
+            });
+        });
+    }
+
+    // Update the "Add Selected" button visibility and count
+    function updateAddSelectedButton() {
+        const count = selectedStudentIds.size;
+        if (addSelectedStudentsBtn) {
+            addSelectedStudentsBtn.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+        if (selectedStudentCountEl) {
+            selectedStudentCountEl.textContent = count;
         }
     }
 
-    // Add student to class
-    async function addStudentToClass(studentId) {
+    // Add all selected students to the class
+    async function addSelectedStudentsToClass() {
+        if (selectedStudentIds.size === 0) return;
+
+        const ids = Array.from(selectedStudentIds);
+        addSelectedStudentsBtn.disabled = true;
+        addSelectedStudentsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+
         try {
             const response = await csrfFetch(`/api/admin/enrollment-codes/${currentClassId}/students`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ studentIds: [studentId] })
+                body: JSON.stringify({ studentIds: ids })
             });
 
             const data = await response.json();
 
+            if (!response.ok) {
+                alert('Failed to add students: ' + (data.message || 'Unknown error'));
+                return;
+            }
+
             if (data.success) {
-                // Reload students list
+                // Clear selections and reload
+                selectedStudentIds.clear();
+                updateAddSelectedButton();
                 await loadClassStudents(currentClassId);
-                // Update class list count
+                renderAvailableStudents();
                 loadClasses();
             } else {
-                alert('Failed to add student: ' + data.message);
+                alert('Failed to add students: ' + (data.message || 'Unknown error'));
             }
         } catch (error) {
             console.error('[ManageClasses] Add error:', error);
-            alert('Error adding student to class');
+            alert('Error adding students to class');
+        } finally {
+            addSelectedStudentsBtn.disabled = false;
+            addSelectedStudentsBtn.innerHTML = '<i class="fas fa-plus"></i> Add Selected (<span id="selectedStudentCount">' + selectedStudentIds.size + '</span>)';
+            // Re-bind the count element reference
+            const newCountEl = document.getElementById('selectedStudentCount');
+            if (newCountEl) newCountEl.textContent = selectedStudentIds.size;
         }
     }
 
@@ -296,6 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.success) {
                 await loadClassStudents(currentClassId);
+                renderAvailableStudents();
                 loadClasses();
             } else {
                 alert('Failed to remove student: ' + data.message);
@@ -310,6 +357,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetClassSelection() {
         currentClassId = null;
         currentClassStudents.clear();
+        selectedStudentIds.clear();
+        updateAddSelectedButton();
         noClassSelected.style.display = 'block';
         classStudentManagement.style.display = 'none';
     }

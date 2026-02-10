@@ -1,0 +1,43 @@
+{
+  "moduleId": "checkpoint_u2",
+  "course": "Algebra 2",
+  "unit": 2,
+  "title": "Unit 2 Checkpoint: Quadratics Deep Dive",
+  "weeks": "8",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Assessment covering all quadratic forms and conversions, all solving methods, discriminant analysis, parabola transformations, and complex number operations. Includes 'which method?' problems requiring strategic decision-making.",
+  "skillsCovered": ["quadratic-forms-converting", "quadratic-solving-all-methods", "discriminant-analysis", "parabola-transformations", "complex-numbers"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "quadratic-forms-converting", "moduleId": "quadratics_deep_dive", "focusArea": "Standard ↔ Vertex ↔ Factored conversions"},
+    {"skillId": "quadratic-solving-all-methods", "moduleId": "quadratics_deep_dive", "focusArea": "Factoring, square root, completing square, quadratic formula"},
+    {"skillId": "discriminant-analysis", "moduleId": "quadratics_deep_dive", "focusArea": "D = b²-4ac interpretation"},
+    {"skillId": "parabola-transformations", "moduleId": "quadratics_deep_dive", "focusArea": "Shifts, reflections, stretches from vertex form"},
+    {"skillId": "complex-numbers", "moduleId": "quadratics_deep_dive", "focusArea": "i operations, conjugates, complex solutions"}
+  ],
+  "assessmentProblems": [
+    {"id": "a2u2-1", "question": "Convert y = x² + 10x + 21 to factored form and vertex form.", "answer": "Factored: (x+3)(x+7). Vertex: (x+5)² - 4.", "skill": "quadratic-forms-converting", "difficulty": 4, "points": 8},
+    {"id": "a2u2-2", "question": "Solve by factoring: 6x² + x - 15 = 0.", "answer": "x = 3/2, x = -5/3", "skill": "quadratic-solving-all-methods", "difficulty": 5, "points": 8},
+    {"id": "a2u2-3", "question": "Solve by completing the square: x² - 8x + 3 = 0.", "answer": "x = 4 ± √13", "skill": "quadratic-solving-all-methods", "difficulty": 5, "points": 10},
+    {"id": "a2u2-4", "question": "WHICH METHOD IS BEST? Explain your choice, then solve: (2x + 5)² = 49.", "answer": "Square root method (already in perfect square form). 2x+5=±7. x=1 or x=-6.", "skill": "quadratic-solving-all-methods", "difficulty": 5, "points": 10},
+    {"id": "a2u2-5", "question": "Without solving, determine the number and type of solutions for: (a) 4x²-12x+9=0, (b) x²+3x+5=0.", "answer": "(a) D=0 → 1 repeated real. (b) D=-11 → 2 complex conjugates.", "skill": "discriminant-analysis", "difficulty": 4, "points": 8},
+    {"id": "a2u2-6", "question": "Describe ALL transformations of y = -½(x - 3)² + 7 compared to y = x². State the vertex, direction, and domain/range.", "answer": "Reflect, compress by ½, right 3, up 7. Vertex (3,7), opens down. Domain: all reals. Range: y ≤ 7.", "skill": "parabola-transformations", "difficulty": 5, "points": 8},
+    {"id": "a2u2-7", "question": "Simplify: (3 - 4i)² + (2 + i)(2 - i).", "answer": "-2 - 24i", "skill": "complex-numbers", "difficulty": 6, "points": 10},
+    {"id": "a2u2-8", "question": "Solve: x² - 6x + 25 = 0. Express answers in a + bi form.", "answer": "x = 3 ± 4i", "skill": "complex-numbers", "difficulty": 5, "points": 8},
+    {"id": "a2u2-9", "question": "A ball is thrown upward with height h(t) = -16t² + 64t + 5. Find the maximum height and when it's reached.", "answer": "Max height = 69 feet at t = 2 seconds. Vertex form: -16(t-2)² + 69.", "skill": "quadratic-forms-converting", "difficulty": 6, "points": 12},
+    {"id": "a2u2-10", "question": "Write a quadratic function in standard form with zeros at 2 + i and 2 - i.", "answer": "y = x² - 4x + 5 (since (x-(2+i))(x-(2-i)) = (x-2)² - i² = x²-4x+4+1 = x²-4x+5)", "skill": "complex-numbers", "difficulty": 7, "points": 18}
+  ],
+  "answerKeys": {
+    "a2u2-1": "Factored: (x+3)(x+7), Vertex: (x+5)²-4",
+    "a2u2-2": "x=3/2, x=-5/3",
+    "a2u2-3": "x=4±√13",
+    "a2u2-4": "Square root method; x=1 or x=-6",
+    "a2u2-5": "(a) 1 repeated real, (b) 2 complex",
+    "a2u2-6": "Vertex (3,7), opens down, range y≤7",
+    "a2u2-7": "-2-24i",
+    "a2u2-8": "x=3±4i",
+    "a2u2-9": "69 feet at t=2",
+    "a2u2-10": "x²-4x+5"
+  }
+}

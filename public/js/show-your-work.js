@@ -37,6 +37,7 @@ class ShowYourWorkManager {
         this.currentFile = null;
         this.currentImageData = null;
         this.analysisResult = null;
+        this.lastResultId = null; // Tracks the last grading result for re-attempt flow
         this.cameraStream = null;
         this.currentFacingMode = 'environment';
 
@@ -96,6 +97,7 @@ class ShowYourWorkManager {
         this.currentFile = null;
         this.currentImageData = null;
         this.analysisResult = null;
+        this.lastResultId = null; // Clear re-attempt chain on full reset
         if (this.previewImage) {
             this.previewImage.src = '';
             this.previewImage.style.display = 'none';
@@ -205,6 +207,11 @@ class ShowYourWorkManager {
                 formData.append('file', this.currentFile);
             }
 
+            // Re-attempt: link to previous result so server can track improvement
+            if (this.lastResultId) {
+                formData.append('previousAttemptId', this.lastResultId);
+            }
+
             const response = await csrfFetch('/api/grade-work', {
                 method: 'POST',
                 credentials: 'include',
@@ -218,6 +225,7 @@ class ShowYourWorkManager {
 
             const result = await response.json();
             this.analysisResult = result;
+            this.lastResultId = result.id || null; // Track for next re-attempt
             this.displayResults(result);
 
         } catch (error) {
@@ -270,11 +278,34 @@ class ShowYourWorkManager {
         this.showSection(this.resultsSection);
         if (!this.resultsContainer) return;
 
+        // ANTI-CHEAT: If no student work was detected, show a friendly message instead of grading
+        if (result.noWorkDetected) {
+            this.resultsContainer.innerHTML = `
+                <div class="syw-summary-header">
+                    <div class="syw-no-work-message" style="text-align: center; padding: 20px;">
+                        <i class="fas fa-pencil-alt" style="font-size: 2em; color: #8b5cf6; margin-bottom: 10px;"></i>
+                        <h3>No work detected</h3>
+                        <p>${this.escapeHtml(result.overallFeedback || "It looks like the problems haven't been attempted yet. Give them a try first, then snap another photo!")}</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
         const total = result.problemCount || 0;
         const correct = result.correctCount || 0;
         const allCorrect = total > 0 && correct === total;
+        const imp = result.improvement;
+        const attempt = result.attemptNumber || 1;
 
         this.resultsContainer.innerHTML = `
+            <!-- Improvement banner (shown on re-attempts) -->
+            ${imp ? `<div class="syw-improvement-banner ${imp.improved ? 'syw-improved' : 'syw-no-change'}" style="padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; text-align: center; font-weight: 600; ${imp.improved ? 'background: linear-gradient(135deg, #d4edda, #c3e6cb); color: #155724;' : 'background: #fff3cd; color: #856404;'}">
+                ${imp.improved
+                    ? `Attempt #${attempt}: ${imp.previousCorrect}/${imp.previousTotal} → ${correct}/${total} — Nice improvement!`
+                    : `Attempt #${attempt}: Keep at it! Review the feedback and try again.`}
+            </div>` : ''}
+
             <!-- Summary header -->
             <div class="syw-summary-header ${allCorrect ? 'syw-all-correct' : ''}">
                 <div class="syw-summary-counts">
@@ -307,7 +338,20 @@ class ShowYourWorkManager {
                     ${result.practiceRecommendations.map(r => `<li>${this.escapeHtml(r)}</li>`).join('')}
                 </ul>
             </div>` : ''}
+
+            ${!allCorrect ? `<div class="syw-resubmit-cta" style="text-align: center; padding: 16px; margin-top: 8px;">
+                <p style="color: #6b7280; margin-bottom: 10px;">Fix your mistakes, then snap another photo!</p>
+                <button id="syw-fix-resubmit-btn" class="syw-btn syw-btn-primary" style="font-size: 1em; padding: 10px 24px;">
+                    <i class="fas fa-redo"></i> Fix & Resubmit
+                </button>
+            </div>` : ''}
         `;
+
+        // Bind re-submit button (keeps lastResultId so server tracks improvement)
+        document.getElementById('syw-fix-resubmit-btn')?.addEventListener('click', () => {
+            // lastResultId is already set — resetToCapture preserves it
+            this.showSection(this.captureSection);
+        });
 
         // Render any LaTeX in the feedback
         this.typesetMath(this.resultsContainer);
@@ -351,8 +395,8 @@ class ShowYourWorkManager {
                     <span class="syw-answer-value">${this.escapeHtml(problem.studentAnswer || '—')}</span>
                 </div>
                 ${!correct ? `<div class="syw-answer-row">
-                    <span class="syw-answer-label">Correct answer:</span>
-                    <span class="syw-answer-value syw-correct-answer">${problem.correctAnswer || '—'}</span>
+                    <span class="syw-answer-label">Hint:</span>
+                    <span class="syw-answer-value">Check the feedback above and try again!</span>
                 </div>` : ''}
             </div>
 
@@ -604,18 +648,27 @@ class ShowYourWorkManager {
         if (!this.analysisResult) return;
 
         const r = this.analysisResult;
-        const problemSummary = (r.problems || []).map(p => {
-            const status = p.isCorrect ? 'Correct' : 'Incorrect';
-            const errorSummary = (p.errors || []).map(e => e.description).join('; ');
-            return `Problem ${p.problemNumber}: ${status}. ${p.feedback || ''} ${errorSummary ? `Errors: ${errorSummary}` : ''}`;
-        }).join('\n');
 
-        const msg = `I just had my work analyzed (${r.correctCount}/${r.problemCount} correct). Can you help me understand my mistakes and how to fix them?\n\n${problemSummary}\n\nOverall: ${r.overallFeedback || ''}`;
+        // Build a clean, natural message instead of dumping raw data.
+        // The tutor already has gradingContext in its system prompt, so
+        // it knows the details — the student just needs to reference the work.
+        const incorrectProblems = (r.problems || [])
+            .filter(p => !p.isCorrect)
+            .map(p => `#${p.problemNumber}`)
+            .join(', ');
+
+        let msg;
+        if (incorrectProblems) {
+            msg = `I just checked my work and got ${r.correctCount} out of ${r.problemCount} right. Can you help me with the ones I got wrong? (${incorrectProblems})`;
+        } else {
+            msg = `I just checked my work and got them all right! What should I work on next?`;
+        }
 
         const userInput = document.getElementById('user-input');
         if (userInput) {
             userInput.value = msg;
             userInput.dispatchEvent(new Event('input', { bubbles: true }));
+            userInput.focus();
         }
     }
 

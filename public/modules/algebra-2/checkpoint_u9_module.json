@@ -1,0 +1,119 @@
+{
+  "moduleId": "checkpoint_u9",
+  "course": "Algebra 2",
+  "unit": 9,
+  "title": "Unit 9 Checkpoint: Probability & Statistics",
+  "weeks": "32",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Assessment covering counting principles, permutations and combinations, probability rules (addition, multiplication, complement), conditional probability, binomial probability, and normal distribution with the Empirical Rule.",
+  "skillsCovered": ["counting-principles", "permutations-combinations", "probability-rules", "conditional-probability", "binomial-probability", "data-analysis-normal-distribution"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "counting-principles", "moduleId": "probability_statistics_unit", "focusArea": "Fundamental Counting Principle and factorial computations"},
+    {"skillId": "permutations-combinations", "moduleId": "probability_statistics_unit", "focusArea": "Distinguishing order matters vs. order doesn't matter, P(n,r) and C(n,r) formulas"},
+    {"skillId": "probability-rules", "moduleId": "probability_statistics_unit", "focusArea": "Addition rule, multiplication rule, complement rule"},
+    {"skillId": "conditional-probability", "moduleId": "probability_statistics_unit", "focusArea": "P(A|B) formula, independence vs. mutual exclusivity"},
+    {"skillId": "binomial-probability", "moduleId": "probability_statistics_unit", "focusArea": "Identifying binomial settings, applying C(n,k)p^k(1-p)^(n-k)"},
+    {"skillId": "data-analysis-normal-distribution", "moduleId": "probability_statistics_unit", "focusArea": "Empirical Rule, z-scores, interpreting bell curves"}
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a2u9-1",
+      "question": "A restaurant menu offers 4 appetizers, 7 entrees, and 3 desserts. A customer orders one of each. How many different meals are possible?",
+      "answer": "4 × 7 × 3 = 84 meals.",
+      "skill": "counting-principles",
+      "difficulty": 2,
+      "points": 7
+    },
+    {
+      "id": "a2u9-2",
+      "question": "(a) How many ways can 5 books be arranged on a shelf? (b) From those same 5 books, how many ways can you choose 3 to put in your bag?",
+      "answer": "(a) 5! = 120 arrangements. (b) C(5,3) = 5!/(3!·2!) = 10 ways.",
+      "skill": "permutations-combinations",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a2u9-3",
+      "question": "A bag contains 5 red, 7 blue, and 3 yellow marbles. One marble is drawn. Find: (a) P(red or yellow), (b) P(not blue).",
+      "answer": "(a) P(red or yellow) = (5+3)/15 = 8/15 (mutually exclusive, so just add). (b) P(not blue) = 1 - 7/15 = 8/15. Note: same answer because 'not blue' = 'red or yellow'.",
+      "skill": "probability-rules",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a2u9-4",
+      "question": "In a class of 40 students, 22 are in band, 15 are in chorus, and 8 are in both. Find the probability a student is in band OR chorus.",
+      "answer": "P(B or C) = P(B) + P(C) - P(B and C) = 22/40 + 15/40 - 8/40 = 29/40 = 0.725.",
+      "skill": "probability-rules",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "a2u9-5",
+      "question": "Two cards are drawn from a standard deck without replacement. Find the probability that both are aces.",
+      "answer": "P(1st ace) = 4/52. P(2nd ace | 1st ace) = 3/51. P(both aces) = (4/52)(3/51) = 12/2652 = 1/221 ≈ 0.00452.",
+      "skill": "conditional-probability",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u9-6",
+      "question": "P(A) = 0.6 and P(B) = 0.5. (a) If A and B are independent, find P(A and B). (b) If P(A and B) = 0.4, find P(B|A). Are A and B independent in this case?",
+      "answer": "(a) Independent: P(A and B) = 0.6 × 0.5 = 0.30. (b) P(B|A) = P(A and B)/P(A) = 0.4/0.6 = 2/3 ≈ 0.667. Since P(B|A) = 2/3 ≠ P(B) = 0.5, they are NOT independent.",
+      "skill": "conditional-probability",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a2u9-7",
+      "question": "A fair die is rolled 5 times. Find the probability of getting exactly 2 sixes.",
+      "answer": "n=5, k=2, p=1/6. P(X=2) = C(5,2)(1/6)²(5/6)³ = 10 × (1/36) × (125/216) = 1250/7776 ≈ 0.1608.",
+      "skill": "binomial-probability",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u9-8",
+      "question": "A vaccine is 90% effective. Out of 8 vaccinated people exposed to the illness, find: (a) P(all 8 are protected), (b) P(at least 1 is not protected).",
+      "answer": "(a) P(all 8) = (0.9)^8 ≈ 0.4305. (b) P(at least 1 not protected) = 1 - P(all 8) = 1 - 0.4305 ≈ 0.5695.",
+      "skill": "binomial-probability",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u9-9",
+      "question": "IQ scores are normally distributed with μ = 100 and σ = 15. (a) What percent of people have IQs between 70 and 130? (b) What percent have IQs above 130? (c) Find the z-score for an IQ of 124.",
+      "answer": "(a) 70 = 100-2(15) = μ-2σ, 130 = 100+2(15) = μ+2σ → 95%. (b) Above μ+2σ: (100%-95%)/2 = 2.5%. (c) z = (124-100)/15 = 24/15 = 1.6.",
+      "skill": "data-analysis-normal-distribution",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a2u9-10",
+      "question": "ANALYSIS TASK: A company ships boxes of 20 phone screens. Each screen has a 2% chance of being defective (independent of others). The company guarantees a refund if a box contains 2 or more defective screens. (a) Find P(exactly 0 defective). (b) Find P(exactly 1 defective). (c) Find P(2 or more defective) and interpret what this means for the company's refund rate.",
+      "answer": "(a) P(0) = C(20,0)(0.02)^0(0.98)^20 = (0.98)^20 ≈ 0.6676. (b) P(1) = C(20,1)(0.02)^1(0.98)^19 = 20 × 0.02 × (0.98)^19 ≈ 20 × 0.02 × 0.6812 ≈ 0.2725. (c) P(≥2) = 1 - P(0) - P(1) ≈ 1 - 0.6676 - 0.2725 ≈ 0.0599. About 6% of boxes qualify for refunds.",
+      "skill": "binomial-probability",
+      "difficulty": 7,
+      "points": 15
+    }
+  ],
+  "spiralReview": {
+    "enabled": true,
+    "skills": ["trig-equations-basic", "logarithmic-equations"],
+    "note": "Include 1-2 warm-up problems solving a trig equation on [0, 2π) or a logarithmic equation with domain check to maintain fluency from Units 5 and 8."
+  },
+  "answerKeys": {
+    "a2u9-1": "84 meals",
+    "a2u9-2": "(a) 120, (b) 10",
+    "a2u9-3": "8/15 for both parts",
+    "a2u9-4": "29/40",
+    "a2u9-5": "1/221",
+    "a2u9-6": "(a) 0.30, (b) P(B|A)=2/3, not independent",
+    "a2u9-7": "1250/7776 ≈ 0.1608",
+    "a2u9-8": "(a) ≈ 0.4305, (b) ≈ 0.5695",
+    "a2u9-9": "(a) 95%, (b) 2.5%, (c) z = 1.6",
+    "a2u9-10": "P(0)≈0.6676, P(1)≈0.2725, P(≥2)≈0.0599"
+  }
+}

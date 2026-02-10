@@ -170,18 +170,20 @@ class FloatingScreener {
 
     if (!this.assessmentCompleted || this.assessmentExpired) {
       // Needs initial assessment (or assessment expired - annual renewal)
+      this.sidebarBtn.style.display = '';
       this.sidebarBtn.classList.add('needs-attention');
       this.sidebarBtn.title = this.assessmentExpired
         ? 'Starting Point - Annual renewal due'
         : 'Starting Point - Find your level';
 
-      // Update button text for expired assessments
+      // Update button text
       const spanEl = this.sidebarBtn.querySelector('span');
-      if (spanEl && this.assessmentExpired) {
+      if (spanEl) {
         spanEl.textContent = 'Starting Point';
       }
     } else if (this.growthCheckDue) {
       // Growth check is available (every 3 months)
+      this.sidebarBtn.style.display = '';
       this.sidebarBtn.classList.add('growth-due');
       this.sidebarBtn.title = `Growth Check available - See how you've grown! (Current: ${this.currentGradeLevel || 'Unknown'})`;
 
@@ -191,9 +193,8 @@ class FloatingScreener {
         spanEl.textContent = 'Growth Check';
       }
     } else {
-      // Assessment completed, not expired, growth check not due
-      this.sidebarBtn.classList.add('completed');
-      this.sidebarBtn.title = `Starting Point - Completed (${this.currentGradeLevel || 'Unknown'})`;
+      // Assessment completed, not expired, growth check not due - hide the button
+      this.sidebarBtn.style.display = 'none';
     }
   }
 
