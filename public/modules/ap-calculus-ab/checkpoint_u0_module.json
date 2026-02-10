@@ -1,0 +1,126 @@
+{
+  "moduleId": "checkpoint_u0",
+  "course": "AP Calculus AB",
+  "unit": 0,
+  "title": "Unit 0 Diagnostic Checkpoint: Calculus Readiness",
+  "weeks": "2",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "diagnosticMode": true,
+  "description": "Diagnostic assessment to identify readiness for calculus content. Covers function behavior and rational functions, exponent/log fluency, trig values and identities, and graph reading skills. Results drive targeted repair days — students at or above threshold advance directly to Unit 1.",
+  "skillsCovered": ["function-behavior-review", "exponent-log-rules-review", "trig-fluency-review", "graph-reading-modeling"],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold on specific skill clusters receive focused mini-lessons on those skills only. Students at or above threshold advance directly to Unit 1 (Limits & Continuity).",
+    "clusters": [
+      {"skillId": "function-behavior-review", "reteachFocus": "End behavior, asymptotes (VA/HA), holes vs. asymptotes, piecewise evaluation, domain restrictions"},
+      {"skillId": "exponent-log-rules-review", "reteachFocus": "Exponent laws, fractional/negative exponents, rewriting for power rule, log properties, change of base"},
+      {"skillId": "trig-fluency-review", "reteachFocus": "Unit circle values at all standard angles, ASTC quadrant signs, Pythagorean/double-angle identities, solving basic trig equations"},
+      {"skillId": "graph-reading-modeling", "reteachFocus": "Reading function values from graphs, identifying max/min/increasing/decreasing, average rate of change from graphs, interpreting context"}
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "abu0-1",
+      "question": "For f(x) = (2x² - x - 6)/(x² + x - 6), find all vertical asymptotes, holes, and the horizontal asymptote.",
+      "answer": "Factor: (2x+3)(x-2)/((x+3)(x-2)). Common factor (x-2) → hole at x=2. f(2) = (4+3)/(2+3) = 7/5. VA: x=-3. HA: y=2 (same degree, ratio 2/1).",
+      "skill": "function-behavior-review",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "abu0-2",
+      "question": "For the piecewise function f(x) = {x² - 1, x < 3; 2x + k, x ≥ 3}, find the value of k that makes f continuous at x = 3.",
+      "answer": "For continuity: lim(x→3⁻) f(x) = f(3). From left: 3² - 1 = 8. From right: 2(3) + k = 6 + k. Set equal: 6 + k = 8 → k = 2.",
+      "skill": "function-behavior-review",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "abu0-3",
+      "question": "Rewrite in the form axⁿ (ready for the power rule): (a) 5/x⁴, (b) 7∛(x²), (c) -3/(2√x).",
+      "answer": "(a) 5x⁻⁴. (b) 7x^(2/3). (c) (-3/2)x^(-1/2).",
+      "skill": "exponent-log-rules-review",
+      "difficulty": 3,
+      "points": 9
+    },
+    {
+      "id": "abu0-4",
+      "question": "Simplify completely: (a) ln(e³ˣ⁺¹), (b) e^(2ln5 - ln25), (c) log₂(32) - log₂(8).",
+      "answer": "(a) 3x + 1. (b) e^(ln(25/25)) = e^(ln1) = e⁰ = 1. (c) log₂(32/8) = log₂(4) = 2.",
+      "skill": "exponent-log-rules-review",
+      "difficulty": 4,
+      "points": 9
+    },
+    {
+      "id": "abu0-5",
+      "question": "Solve for x: 3·2ˣ⁺¹ = 48.",
+      "answer": "2ˣ⁺¹ = 16 = 2⁴. So x + 1 = 4 → x = 3.",
+      "skill": "exponent-log-rules-review",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "abu0-6",
+      "question": "Without a calculator, evaluate: (a) sin(2π/3), (b) cos(5π/4), (c) tan(7π/6), (d) sec(π/6).",
+      "answer": "(a) Q2, ref π/3: √3/2. (b) Q3, ref π/4: -√2/2. (c) Q3, ref π/6: tan = √3/3 (or 1/√3). (d) 1/cos(π/6) = 1/(√3/2) = 2/√3 = 2√3/3.",
+      "skill": "trig-fluency-review",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "abu0-7",
+      "question": "Simplify using identities: (a) (1 - sin²θ)/cos θ, (b) tan²x·cos²x + cos²x.",
+      "answer": "(a) cos²θ/cos θ = cos θ. (b) sin²x + cos²x = 1.",
+      "skill": "trig-fluency-review",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "abu0-8",
+      "question": "Solve on [0, 2π): 2cos(x) + √3 = 0.",
+      "answer": "cos(x) = -√3/2. Reference angle: π/6. cos is negative in Q2 and Q3. x = 5π/6 and x = 7π/6.",
+      "skill": "trig-fluency-review",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "abu0-9",
+      "question": "A function f has the following table of values: f(1)=3, f(2)=7, f(3)=9, f(4)=9, f(5)=6. (a) Estimate the average rate of change on [1, 3]. (b) On which interval is the average rate of change negative? (c) Where does f appear to have a maximum?",
+      "answer": "(a) (f(3)-f(1))/(3-1) = (9-3)/2 = 3. (b) [4,5]: (6-9)/1 = -3. (c) f appears to have a maximum at x=3 or x=4 (both equal 9).",
+      "skill": "graph-reading-modeling",
+      "difficulty": 3,
+      "points": 9
+    },
+    {
+      "id": "abu0-10",
+      "question": "The graph of g(x) shows: g is increasing and concave up on (0, 2), increasing and concave down on (2, 4), and decreasing on (4, 6). (a) Where is the inflection point? (b) Where is the absolute maximum on [0, 6]? (c) Describe what the graph of g'(x) looks like.",
+      "answer": "(a) Inflection at x=2 (concavity changes from up to down). (b) Maximum at x=4 (g switches from increasing to decreasing). (c) g' is positive and increasing on (0,2), positive and decreasing on (2,4), passes through zero at x=4, then negative on (4,6). g' has a max at x=2.",
+      "skill": "graph-reading-modeling",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "abu0-spiral",
+      "question": "SPIRAL: Factor completely, then state the domain: f(x) = (x³ + 27)/(x² - 9).",
+      "answer": "Numerator: sum of cubes (x+3)(x²-3x+9). Denominator: (x-3)(x+3). Simplify: (x²-3x+9)/(x-3), x≠-3. Domain: all reals except x=3 and x=-3.",
+      "skill": "function-behavior-review",
+      "difficulty": 5,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "abu0-1": "Hole at x=2 (y=7/5). VA: x=-3. HA: y=2.",
+    "abu0-2": "k=2.",
+    "abu0-3": "(a) 5x⁻⁴ (b) 7x^(2/3) (c) (-3/2)x^(-1/2).",
+    "abu0-4": "(a) 3x+1 (b) 1 (c) 2.",
+    "abu0-5": "x=3.",
+    "abu0-6": "(a) √3/2 (b) -√2/2 (c) √3/3 (d) 2√3/3.",
+    "abu0-7": "(a) cosθ (b) 1.",
+    "abu0-8": "x=5π/6 and x=7π/6.",
+    "abu0-9": "(a) 3 (b) [4,5] (c) x=3 or x=4.",
+    "abu0-10": "(a) x=2 (b) x=4 (c) g' positive→max at x=2→zero at x=4→negative.",
+    "abu0-spiral": "(x²-3x+9)/(x-3), domain x≠±3."
+  }
+}
