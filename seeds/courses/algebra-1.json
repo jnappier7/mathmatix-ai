@@ -1,0 +1,1561 @@
+{
+  "courseId": "algebra-1",
+  "title": "Algebra 1",
+  "subtitle": "Building the Foundation of Abstract Mathematical Thinking",
+  "description": "A comprehensive Algebra 1 course using AI-driven gradual release instruction. Each lesson follows the I Do → We Do → You Do model, with adaptive AI tutoring that responds to individual student needs in real-time. Students progress through 10 units covering foundations through exponential functions, with mastery-gated advancement ensuring deep understanding before moving forward.",
+  "subject": "algebra",
+  "gradeLevel": "8-10",
+  "gradeBand": "8-12",
+  "enrollment": {
+    "isOpen": true,
+    "selfEnrollEnabled": true,
+    "requiresApproval": false
+  },
+  "settings": {
+    "autoAdvance": true,
+    "practiceRequirement": 3,
+    "masteryThreshold": 80,
+    "allowSkipAhead": false,
+    "showProgressToStudent": true,
+    "enableGamification": true,
+    "adaptiveDifficulty": true
+  },
+  "prerequisites": [],
+  "version": "1.0",
+  "createdBy": "system",
+  "isActive": true,
+  "isPublished": true,
+  "units": [
+    {
+      "unitId": "alg1-unit-1",
+      "title": "Foundations of Algebra",
+      "subtitle": "The Language of Mathematics",
+      "description": "Students build fluency with variables, expressions, order of operations, and properties of real numbers. This unit establishes the algebraic vocabulary and reasoning patterns that underpin the entire course.",
+      "order": 1,
+      "quarter": 1,
+      "essentialQuestions": [
+        "How do we use symbols to represent unknown quantities?",
+        "Why does the order in which we perform operations matter?",
+        "How do the properties of real numbers help us simplify expressions?"
+      ],
+      "bigIdeas": [
+        "Variables represent unknown or changing quantities",
+        "Mathematical expressions follow predictable rules of evaluation",
+        "Properties of real numbers are tools for simplification"
+      ],
+      "estimatedDays": 15,
+      "skillIds": ["variable-expressions", "order-of-operations", "properties-of-real-numbers", "combining-like-terms", "distributive-property"],
+      "standardsAlignment": ["A-SSE.1", "A-SSE.1a", "A-SSE.1b", "A-SSE.2"],
+      "lessons": [
+        {
+          "lessonId": "alg1-1-1",
+          "title": "Variables and Expressions",
+          "subtitle": "Translating Words into Math",
+          "description": "Students learn to identify variables, write algebraic expressions from verbal descriptions, and evaluate expressions by substituting values.",
+          "order": 1,
+          "estimatedMinutes": 45,
+          "skillIds": ["variable-expressions"],
+          "standardsAlignment": ["A-SSE.1", "A-SSE.1a"],
+          "prerequisites": [],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "What Are Variables and Expressions?",
+              "description": "Direct instruction on algebraic vocabulary and translating verbal phrases to expressions.",
+              "order": 1,
+              "content": {
+                "explanation": "A variable is a letter that represents an unknown number. An algebraic expression combines variables, numbers, and operations. For example, if a movie ticket costs $12 and you buy 'n' tickets, the total cost is 12n. We can evaluate this expression by substituting a value for n.",
+                "workedExamples": [
+                  {
+                    "problem": "Write an expression for 'five more than a number x'",
+                    "steps": ["Identify the operation: 'more than' means addition", "Identify the quantities: 5 and x", "Write the expression: x + 5"],
+                    "solution": "x + 5",
+                    "tip": "'More than' and 'increased by' both signal addition"
+                  },
+                  {
+                    "problem": "Evaluate 3x + 7 when x = 4",
+                    "steps": ["Replace x with 4: 3(4) + 7", "Multiply: 12 + 7", "Add: 19"],
+                    "solution": "19",
+                    "tip": "Always substitute with parentheses to avoid errors"
+                  },
+                  {
+                    "problem": "Write an expression for 'twice a number decreased by 8'",
+                    "steps": ["'Twice a number' means 2x", "'Decreased by 8' means subtract 8", "Combine: 2x - 8"],
+                    "solution": "2x - 8",
+                    "tip": "Watch the order — 'decreased by' means subtract FROM the first quantity"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Variable", "definition": "A letter that represents an unknown or changing value"},
+                  {"term": "Algebraic Expression", "definition": "A mathematical phrase containing numbers, variables, and operations"},
+                  {"term": "Evaluate", "definition": "To find the value of an expression by substituting numbers for variables"},
+                  {"term": "Coefficient", "definition": "The number multiplied by a variable (e.g., 3 in 3x)"},
+                  {"term": "Constant", "definition": "A fixed number in an expression (e.g., 7 in 3x + 7)"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Start with real-world contexts students relate to (money, sports stats, gaming scores). Build from concrete examples to abstract notation. Use the phrase 'math is a language' to frame variable use.",
+                  "commonMisconceptions": [
+                    "Students may think x always equals one specific number",
+                    "Confusing '5 less than x' (x - 5) with '5 less x' or writing 5 - x",
+                    "Thinking 2x means '2 and x' rather than '2 times x'"
+                  ],
+                  "scaffoldingPrompts": [
+                    "What operation does the word '___' tell us to use?",
+                    "If I said this same thing but with specific numbers, what would it look like?",
+                    "Can you point to the variable? What about the coefficient?"
+                  ],
+                  "realWorldConnections": [
+                    "Cost calculations: price × quantity",
+                    "Sports: points per game × number of games",
+                    "Recipes: doubling or tripling ingredients"
+                  ]
+                }
+              },
+              "completionCriteria": {
+                "requiredTime": 10
+              }
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Let's Practice Together",
+              "description": "Guided practice writing and evaluating expressions with AI scaffolding.",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["variable-expressions"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                },
+                "aiGuidance": {
+                  "teachingApproach": "Walk through each problem WITH the student. Ask guiding questions before revealing steps. Celebrate correct reasoning even if arithmetic is off.",
+                  "scaffoldingPrompts": [
+                    "What key word in this problem tells you what operation to use?",
+                    "Try replacing the variable with the number — what do you get?",
+                    "Let's break this into smaller pieces. What's the first operation?"
+                  ]
+                }
+              },
+              "completionCriteria": {
+                "minProblemsCorrect": 4,
+                "minAccuracy": 60
+              }
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "description": "Students work independently on expression writing and evaluation.",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["variable-expressions"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                },
+                "aiGuidance": {
+                  "teachingApproach": "Let the student work independently. Only intervene after 2 consecutive wrong answers. When helping, ask questions rather than showing the answer.",
+                  "extensionPrompts": [
+                    "Can you write your own expression that uses two different operations?",
+                    "What if the variable represented a negative number?"
+                  ]
+                }
+              },
+              "completionCriteria": {
+                "minProblemsCorrect": 6,
+                "minAccuracy": 70
+              }
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Variables & Expressions Mastery Check",
+            "description": "Quick check to verify understanding of variables, expressions, and evaluation.",
+            "skillIds": ["variable-expressions"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          },
+          "enrichment": {
+            "description": "Explore expressions with multiple variables and real-world modeling",
+            "challengeProblems": ["Write an expression for the perimeter of a rectangle with length l and width w", "A phone plan charges $30/month plus $0.05 per text. Write and evaluate for 200 texts."]
+          },
+          "intervention": {
+            "description": "Review integer operations and basic arithmetic",
+            "prerequisiteReview": ["integer-operations", "basic-arithmetic"]
+          }
+        },
+        {
+          "lessonId": "alg1-1-2",
+          "title": "Order of Operations",
+          "subtitle": "PEMDAS and Beyond",
+          "description": "Students master the conventional order for evaluating expressions, including nested grouping symbols and expressions with exponents.",
+          "order": 2,
+          "estimatedMinutes": 45,
+          "skillIds": ["order-of-operations"],
+          "standardsAlignment": ["A-SSE.1"],
+          "prerequisites": ["alg1-1-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Why Order Matters",
+              "description": "Direct instruction on PEMDAS with emphasis on why conventions exist.",
+              "order": 1,
+              "content": {
+                "explanation": "Without agreed-upon rules, the expression 2 + 3 × 4 could equal 20 or 14 — we need a convention so everyone gets the same answer. PEMDAS gives us that convention: Parentheses, Exponents, Multiplication/Division (left to right), Addition/Subtraction (left to right). Note: Multiplication and Division have EQUAL priority — work left to right.",
+                "workedExamples": [
+                  {
+                    "problem": "Evaluate: 3 + 4 × 2",
+                    "steps": ["No parentheses or exponents", "Multiplication first: 4 × 2 = 8", "Then addition: 3 + 8 = 11"],
+                    "solution": "11",
+                    "tip": "Common mistake: adding 3 + 4 first to get 14. Multiplication comes before addition!"
+                  },
+                  {
+                    "problem": "Evaluate: (5 + 3)² - 4 × 2",
+                    "steps": ["Parentheses first: (5 + 3) = 8", "Exponents: 8² = 64", "Multiplication: 4 × 2 = 8", "Subtraction: 64 - 8 = 56"],
+                    "solution": "56",
+                    "tip": "Work from the inside out when you see nested grouping"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "PEMDAS", "definition": "Parentheses, Exponents, Multiplication/Division, Addition/Subtraction — the order of operations"},
+                  {"term": "Grouping Symbols", "definition": "Parentheses (), brackets [], and braces {} that indicate which operations to do first"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Emphasize that M/D and A/S are left-to-right pairs, not strict ordering. Use the 'math traffic rules' analogy — without rules, there would be chaos.",
+                  "commonMisconceptions": [
+                    "Thinking multiplication ALWAYS comes before division",
+                    "Thinking addition ALWAYS comes before subtraction",
+                    "Forgetting to evaluate inside parentheses first when nested"
+                  ],
+                  "scaffoldingPrompts": [
+                    "Look at the whole expression — what should you do FIRST?",
+                    "Are there any grouping symbols?",
+                    "Which operation has the highest priority here?"
+                  ],
+                  "realWorldConnections": [
+                    "Calculator input: why pressing buttons in different orders gives different answers",
+                    "Coding: programming languages follow the same rules"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice with PEMDAS",
+              "description": "Work through increasingly complex expressions together.",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["order-of-operations"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                },
+                "aiGuidance": {
+                  "teachingApproach": "Have the student identify the FIRST step before computing. Ask 'What operation comes first?' at each stage.",
+                  "scaffoldingPrompts": ["Circle all the operations you see. Which has highest priority?", "Is there anything inside grouping symbols?"]
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "description": "Students evaluate complex expressions independently.",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["order-of-operations"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Order of Operations Mastery Check",
+            "skillIds": ["order-of-operations"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-1-3",
+          "title": "Properties of Real Numbers",
+          "subtitle": "Commutative, Associative, Distributive, and Identity",
+          "description": "Students explore and apply the fundamental properties of real numbers to simplify expressions and justify algebraic steps.",
+          "order": 3,
+          "estimatedMinutes": 50,
+          "skillIds": ["properties-of-real-numbers"],
+          "standardsAlignment": ["A-SSE.2"],
+          "prerequisites": ["alg1-1-2"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "The Rules Numbers Follow",
+              "description": "Direct instruction on commutative, associative, distributive, identity, and inverse properties.",
+              "order": 1,
+              "content": {
+                "explanation": "Real numbers follow predictable rules that let us rearrange and simplify expressions. The Commutative Property says order doesn't matter for addition and multiplication (a + b = b + a). The Associative Property says grouping doesn't matter ((a + b) + c = a + (b + c)). The Distributive Property connects multiplication and addition: a(b + c) = ab + ac. These aren't just rules to memorize — they're tools that make algebra work.",
+                "workedExamples": [
+                  {
+                    "problem": "Use the distributive property to simplify: 3(x + 7)",
+                    "steps": ["Distribute 3 to each term inside parentheses", "3 · x = 3x", "3 · 7 = 21", "Result: 3x + 21"],
+                    "solution": "3x + 21",
+                    "tip": "Think of it as '3 groups of (x + 7)'"
+                  },
+                  {
+                    "problem": "Name the property: 5 + (3 + x) = (5 + 3) + x",
+                    "steps": ["The numbers/variables are the same", "Only the grouping (parentheses) changed", "This is the Associative Property of Addition"],
+                    "solution": "Associative Property of Addition",
+                    "tip": "Associative = Associates (groups) change. Commutative = Commuters (positions) change."
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Commutative Property", "definition": "Order doesn't matter: a + b = b + a, and a × b = b × a"},
+                  {"term": "Associative Property", "definition": "Grouping doesn't matter: (a + b) + c = a + (b + c)"},
+                  {"term": "Distributive Property", "definition": "Multiply across addition: a(b + c) = ab + ac"},
+                  {"term": "Identity Property", "definition": "Adding 0 or multiplying by 1 doesn't change the value"},
+                  {"term": "Inverse Property", "definition": "A number plus its opposite = 0; a number times its reciprocal = 1"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use memory tricks: Commutative = commute (move positions), Associative = associate (change groups). Focus on the distributive property since it's the most used in algebra.",
+                  "commonMisconceptions": [
+                    "Thinking subtraction and division are commutative",
+                    "Confusing commutative and associative properties",
+                    "Only distributing to the first term inside parentheses"
+                  ],
+                  "realWorldConnections": ["Mental math shortcuts: 4 × 27 = 4 × 25 + 4 × 2 = 108 (distributive property)", "Rearranging items when packing (commutative)"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Identifying and Applying Properties",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["properties-of-real-numbers", "distributive-property"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["properties-of-real-numbers", "distributive-property"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Properties of Real Numbers Mastery Check",
+            "skillIds": ["properties-of-real-numbers", "distributive-property"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-1-4",
+          "title": "Combining Like Terms",
+          "subtitle": "Simplifying Expressions",
+          "description": "Students learn to identify like terms and combine them to simplify algebraic expressions.",
+          "order": 4,
+          "estimatedMinutes": 45,
+          "skillIds": ["combining-like-terms"],
+          "standardsAlignment": ["A-SSE.1b", "A-SSE.2"],
+          "prerequisites": ["alg1-1-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "What Are Like Terms?",
+              "order": 1,
+              "content": {
+                "explanation": "Like terms have the SAME variable raised to the SAME exponent. The coefficients can be different. For example, 3x and 7x are like terms (both have x¹), but 3x and 3x² are NOT like terms. To combine like terms, add or subtract their coefficients and keep the variable part the same.",
+                "workedExamples": [
+                  {
+                    "problem": "Simplify: 5x + 3 + 2x - 7",
+                    "steps": ["Identify like terms: 5x and 2x are like terms; 3 and -7 are like terms", "Combine variable terms: 5x + 2x = 7x", "Combine constants: 3 + (-7) = -4", "Result: 7x - 4"],
+                    "solution": "7x - 4",
+                    "tip": "Rearrange terms so like terms are next to each other"
+                  },
+                  {
+                    "problem": "Simplify: 4x² + 3x - 2x² + 5 - x + 1",
+                    "steps": ["Group like terms: (4x² - 2x²) + (3x - x) + (5 + 1)", "Combine x² terms: 2x²", "Combine x terms: 2x", "Combine constants: 6", "Result: 2x² + 2x + 6"],
+                    "solution": "2x² + 2x + 6",
+                    "tip": "Write in standard form: highest exponent first"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Like Terms", "definition": "Terms with the same variable(s) raised to the same power(s)"},
+                  {"term": "Simplify", "definition": "Combine like terms to write an expression in its simplest form"},
+                  {"term": "Standard Form", "definition": "Writing terms from highest to lowest degree"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the 'apples and oranges' analogy — you can add 3 apples + 2 apples = 5 apples, but you can't combine 3 apples + 2 oranges into one term. Same with 3x + 2y.",
+                  "commonMisconceptions": [
+                    "Combining terms with different exponents (3x + 2x² = 5x³ is WRONG)",
+                    "Forgetting negative signs when rearranging",
+                    "Thinking 3x + 2y = 5xy"
+                  ],
+                  "scaffoldingPrompts": ["Can you underline all the terms with the same variable?", "What's the coefficient of each like term?"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Simplification Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["combining-like-terms"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["combining-like-terms"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 2, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Combining Like Terms Mastery Check",
+            "skillIds": ["combining-like-terms"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-1-5",
+          "title": "The Distributive Property in Action",
+          "subtitle": "Expanding and Simplifying",
+          "description": "Deep dive into using the distributive property to expand expressions and combining with like terms for full simplification.",
+          "order": 5,
+          "estimatedMinutes": 50,
+          "skillIds": ["distributive-property", "combining-like-terms"],
+          "standardsAlignment": ["A-SSE.2"],
+          "prerequisites": ["alg1-1-3", "alg1-1-4"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Distributing and Simplifying",
+              "order": 1,
+              "content": {
+                "explanation": "The distributive property lets us remove parentheses by multiplying each term inside by the factor outside. After distributing, we combine like terms. This two-step process — distribute then combine — is the foundation for solving equations.",
+                "workedExamples": [
+                  {
+                    "problem": "Simplify: 2(3x + 4) + 5x",
+                    "steps": ["Distribute 2: 6x + 8 + 5x", "Combine like terms: 6x + 5x = 11x", "Result: 11x + 8"],
+                    "solution": "11x + 8"
+                  },
+                  {
+                    "problem": "Simplify: 3(2x - 1) - 4(x + 5)",
+                    "steps": ["Distribute 3: 6x - 3", "Distribute -4: -4x - 20", "Combine: 6x - 3 - 4x - 20", "Like terms: (6x - 4x) + (-3 - 20) = 2x - 23"],
+                    "solution": "2x - 23",
+                    "tip": "Watch the negative sign — distributing -4 means BOTH terms inside change sign"
+                  }
+                ],
+                "aiGuidance": {
+                  "commonMisconceptions": ["Only distributing to the first term", "Not distributing the negative sign", "Sign errors with negative distribution"],
+                  "scaffoldingPrompts": ["What's outside the parentheses? Multiply it by EACH term inside.", "Did you distribute to ALL terms?"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice: Distribute and Combine",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["distributive-property", "combining-like-terms"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["distributive-property", "combining-like-terms"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Distributive Property Mastery Check",
+            "skillIds": ["distributive-property", "combining-like-terms"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        }
+      ],
+      "unitAssessment": {
+        "assessmentType": "unit-test",
+        "title": "Unit 1: Foundations of Algebra Test",
+        "description": "Comprehensive assessment covering variables, expressions, order of operations, properties of real numbers, combining like terms, and the distributive property.",
+        "skillIds": ["variable-expressions", "order-of-operations", "properties-of-real-numbers", "combining-like-terms", "distributive-property"],
+        "questionCount": 20,
+        "passingScore": 75,
+        "timeLimit": 45,
+        "allowRetakes": true,
+        "maxRetakes": 2
+      }
+    },
+    {
+      "unitId": "alg1-unit-2",
+      "title": "Solving Equations and Inequalities",
+      "subtitle": "Finding the Unknown",
+      "description": "Students develop systematic techniques for solving one-variable linear equations and inequalities, progressing from one-step to multi-step, to variables on both sides, and finally to absolute value.",
+      "order": 2,
+      "quarter": 1,
+      "essentialQuestions": [
+        "What does it mean to 'solve' an equation?",
+        "How do inverse operations help us isolate variables?",
+        "How are inequalities different from equations, and how are they similar?"
+      ],
+      "bigIdeas": [
+        "Solving equations means finding values that make the equation true",
+        "Inverse operations undo each other to isolate the variable",
+        "Inequalities describe ranges of solutions, not single values"
+      ],
+      "estimatedDays": 20,
+      "skillIds": ["solving-one-step-equations", "solving-two-step-equations", "solving-multi-step-equations", "solving-equations-with-variables-both-sides", "literal-equations", "linear-inequalities", "absolute-value-equations"],
+      "standardsAlignment": ["A-REI.1", "A-REI.3", "A-CED.1"],
+      "lessons": [
+        {
+          "lessonId": "alg1-2-1",
+          "title": "Solving One-Step Equations",
+          "subtitle": "The Balance Principle",
+          "description": "Students learn to solve equations using inverse operations, understanding the equation as a balanced scale.",
+          "order": 1,
+          "estimatedMinutes": 45,
+          "skillIds": ["solving-one-step-equations"],
+          "standardsAlignment": ["A-REI.1", "A-REI.3"],
+          "prerequisites": ["alg1-1-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Equations as Balanced Scales",
+              "order": 1,
+              "content": {
+                "explanation": "An equation is like a balanced scale — both sides are equal. To solve for the variable, we need to get the variable alone on one side by using inverse operations (the opposite operation). Whatever we do to one side, we MUST do to the other side to keep the scale balanced.",
+                "workedExamples": [
+                  {
+                    "problem": "Solve: x + 5 = 12",
+                    "steps": ["x has 5 added to it. The inverse of adding 5 is subtracting 5.", "Subtract 5 from BOTH sides: x + 5 - 5 = 12 - 5", "Simplify: x = 7", "Check: 7 + 5 = 12 ✓"],
+                    "solution": "x = 7",
+                    "tip": "Always check your answer by substituting back into the original equation"
+                  },
+                  {
+                    "problem": "Solve: 3x = -18",
+                    "steps": ["x is multiplied by 3. The inverse of multiplying by 3 is dividing by 3.", "Divide both sides by 3: 3x/3 = -18/3", "Simplify: x = -6", "Check: 3(-6) = -18 ✓"],
+                    "solution": "x = -6"
+                  },
+                  {
+                    "problem": "Solve: x/4 = 9",
+                    "steps": ["x is divided by 4. The inverse of dividing by 4 is multiplying by 4.", "Multiply both sides by 4: (x/4) × 4 = 9 × 4", "Simplify: x = 36", "Check: 36/4 = 9 ✓"],
+                    "solution": "x = 36"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Equation", "definition": "A statement that two expressions are equal, connected by an = sign"},
+                  {"term": "Inverse Operations", "definition": "Operations that undo each other: addition/subtraction, multiplication/division"},
+                  {"term": "Solution", "definition": "The value of the variable that makes the equation true"},
+                  {"term": "Isolate", "definition": "Get the variable by itself on one side of the equation"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the balance scale metaphor consistently. Draw or describe the scale. Ask: 'What's being done TO the variable?' then 'What's the OPPOSITE of that?'",
+                  "commonMisconceptions": [
+                    "Doing the operation to only one side",
+                    "Using the same operation instead of the inverse",
+                    "Sign errors when subtracting negatives"
+                  ],
+                  "scaffoldingPrompts": [
+                    "What operation is being done to x?",
+                    "What's the opposite of that operation?",
+                    "If you do that to both sides, what do you get?"
+                  ],
+                  "realWorldConnections": ["If you know the total and one part, find the missing part", "Unit pricing: total ÷ quantity = price per item"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice: One-Step Equations",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-one-step-equations"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-one-step-equations"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 75}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "One-Step Equations Mastery Check",
+            "skillIds": ["solving-one-step-equations"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-2-2",
+          "title": "Solving Two-Step Equations",
+          "subtitle": "Undoing Two Operations",
+          "description": "Students extend one-step skills to equations requiring two inverse operations, learning to undo in reverse order.",
+          "order": 2,
+          "estimatedMinutes": 50,
+          "skillIds": ["solving-two-step-equations"],
+          "standardsAlignment": ["A-REI.3"],
+          "prerequisites": ["alg1-2-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Reverse PEMDAS: Undo in Reverse Order",
+              "order": 1,
+              "content": {
+                "explanation": "In a two-step equation like 2x + 5 = 13, two operations have been applied to x: first multiply by 2, then add 5. To solve, we UNDO in reverse order: first subtract 5 (undo the addition), then divide by 2 (undo the multiplication). Think of it like getting dressed: socks then shoes. To undo: shoes off first, then socks. SADMEP!",
+                "workedExamples": [
+                  {
+                    "problem": "Solve: 2x + 5 = 13",
+                    "steps": ["Undo addition first: subtract 5 from both sides → 2x = 8", "Undo multiplication: divide both sides by 2 → x = 4", "Check: 2(4) + 5 = 8 + 5 = 13 ✓"],
+                    "solution": "x = 4",
+                    "tip": "SADMEP: Subtraction/Addition first, then Division/Multiplication — reverse of PEMDAS"
+                  },
+                  {
+                    "problem": "Solve: (x/3) - 7 = 2",
+                    "steps": ["Undo subtraction: add 7 to both sides → x/3 = 9", "Undo division: multiply both sides by 3 → x = 27", "Check: 27/3 - 7 = 9 - 7 = 2 ✓"],
+                    "solution": "x = 27"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the 'dress/undress' analogy for reverse order. Emphasize identifying BOTH operations before starting. Color-code: circle what you're undoing at each step.",
+                  "commonMisconceptions": [
+                    "Doing operations in the wrong order (dividing before subtracting)",
+                    "Forgetting to apply the operation to BOTH sides",
+                    "Arithmetic errors with negative numbers"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-two-step-equations"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-two-step-equations"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Two-Step Equations Mastery Check",
+            "skillIds": ["solving-two-step-equations"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-2-3",
+          "title": "Solving Multi-Step Equations",
+          "subtitle": "Simplify, Then Solve",
+          "description": "Students tackle equations requiring distribution, combining like terms, and multiple inverse operations.",
+          "order": 3,
+          "estimatedMinutes": 55,
+          "skillIds": ["solving-multi-step-equations"],
+          "standardsAlignment": ["A-REI.3"],
+          "prerequisites": ["alg1-2-2", "alg1-1-4", "alg1-1-5"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "The Four-Step Process: Simplify → Collect → Isolate → Check",
+              "order": 1,
+              "content": {
+                "explanation": "Multi-step equations may have parentheses, like terms on the same side, or both. Follow this process: (1) SIMPLIFY each side — distribute and combine like terms, (2) COLLECT — move variable terms to one side and constants to the other using inverse operations, (3) ISOLATE — get the variable alone, (4) CHECK — substitute your answer back into the original equation.",
+                "workedExamples": [
+                  {
+                    "problem": "Solve: 3(x + 4) - 2 = 16",
+                    "steps": ["Distribute: 3x + 12 - 2 = 16", "Combine like terms: 3x + 10 = 16", "Subtract 10: 3x = 6", "Divide by 3: x = 2", "Check: 3(2 + 4) - 2 = 3(6) - 2 = 18 - 2 = 16 ✓"],
+                    "solution": "x = 2"
+                  },
+                  {
+                    "problem": "Solve: 4x + 5 - x = 17",
+                    "steps": ["Combine like terms on left: 3x + 5 = 17", "Subtract 5: 3x = 12", "Divide by 3: x = 4", "Check: 4(4) + 5 - 4 = 16 + 5 - 4 = 17 ✓"],
+                    "solution": "x = 4"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Teach the systematic 4-step approach. Have students write 'S-C-I-C' at the top of their work. Emphasize that simplification ALWAYS comes first.",
+                  "commonMisconceptions": ["Trying to move terms before simplifying", "Distribution errors with negatives", "Combining terms from different sides of the equation"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Multi-Step Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-multi-step-equations"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-multi-step-equations"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Multi-Step Equations Mastery Check",
+            "skillIds": ["solving-multi-step-equations"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-2-4",
+          "title": "Variables on Both Sides",
+          "subtitle": "Collecting Variable Terms",
+          "description": "Students solve equations where the variable appears on both sides, including special cases (no solution, infinite solutions).",
+          "order": 4,
+          "estimatedMinutes": 55,
+          "skillIds": ["solving-equations-with-variables-both-sides"],
+          "standardsAlignment": ["A-REI.3"],
+          "prerequisites": ["alg1-2-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "When Variables Are on Both Sides",
+              "order": 1,
+              "content": {
+                "explanation": "When variables appear on BOTH sides of the equation, add an extra step: move all variable terms to one side (usually the side where the coefficient will be positive). Then solve as normal. Watch for special cases: if variables cancel and you get a TRUE statement (like 5 = 5), the equation has infinitely many solutions. If you get a FALSE statement (like 3 = 7), there is NO solution.",
+                "workedExamples": [
+                  {
+                    "problem": "Solve: 5x - 3 = 2x + 12",
+                    "steps": ["Subtract 2x from both sides: 3x - 3 = 12", "Add 3 to both sides: 3x = 15", "Divide by 3: x = 5", "Check: 5(5) - 3 = 22 and 2(5) + 12 = 22 ✓"],
+                    "solution": "x = 5"
+                  },
+                  {
+                    "problem": "Solve: 2(x + 1) = 2x + 5",
+                    "steps": ["Distribute: 2x + 2 = 2x + 5", "Subtract 2x from both sides: 2 = 5", "This is FALSE — no solution!"],
+                    "solution": "No solution",
+                    "tip": "When all variables cancel and you get a false statement, the equation is a contradiction"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Teach strategic thinking: 'Which side should I move variables to?' — choose the side that avoids negatives. Introduce special cases as discoveries, not exceptions.",
+                  "commonMisconceptions": ["Moving variables the wrong direction", "Not recognizing special cases", "Sign errors when subtracting variable terms"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-equations-with-variables-both-sides"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-equations-with-variables-both-sides"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Variables on Both Sides Mastery Check",
+            "skillIds": ["solving-equations-with-variables-both-sides"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-2-5",
+          "title": "Solving Inequalities",
+          "subtitle": "Ranges of Solutions",
+          "description": "Students solve linear inequalities and graph solutions on number lines, learning when to flip the inequality sign.",
+          "order": 5,
+          "estimatedMinutes": 55,
+          "skillIds": ["linear-inequalities"],
+          "standardsAlignment": ["A-REI.3"],
+          "prerequisites": ["alg1-2-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Inequalities: More Than One Answer",
+              "order": 1,
+              "content": {
+                "explanation": "Inequalities are solved just like equations, with ONE critical difference: when you multiply or divide both sides by a NEGATIVE number, you must FLIP the inequality sign. The solution is a range of values, shown on a number line. Use an open circle for < or > (not included) and a closed circle for ≤ or ≥ (included).",
+                "workedExamples": [
+                  {
+                    "problem": "Solve and graph: 3x + 7 > 16",
+                    "steps": ["Subtract 7: 3x > 9", "Divide by 3: x > 3", "Graph: open circle at 3, arrow pointing right"],
+                    "solution": "x > 3",
+                    "tip": "Open circle means 3 is NOT included in the solution"
+                  },
+                  {
+                    "problem": "Solve: -2x + 5 ≤ 11",
+                    "steps": ["Subtract 5: -2x ≤ 6", "Divide by -2 AND FLIP THE SIGN: x ≥ -3", "Graph: closed circle at -3, arrow pointing right"],
+                    "solution": "x ≥ -3",
+                    "tip": "Dividing by a negative FLIPS the inequality. Think: if -2x ≤ 6, then x must be 'big enough' to make -2x small."
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Inequality", "definition": "A mathematical statement using <, >, ≤, or ≥ instead of ="},
+                  {"term": "Solution Set", "definition": "All values that make the inequality true"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Emphasize the flip rule with a concrete example: if 2 < 5, then -2 > -5. Multiplying by -1 reverses the order! Have students test solutions to verify.",
+                  "commonMisconceptions": ["Forgetting to flip when dividing by a negative", "Using wrong circle type (open vs closed)", "Graphing in the wrong direction"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["linear-inequalities"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["linear-inequalities"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Inequalities Mastery Check",
+            "skillIds": ["linear-inequalities"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-2-6",
+          "title": "Absolute Value Equations",
+          "subtitle": "Distance from Zero",
+          "description": "Students understand absolute value as distance and solve absolute value equations, recognizing that most produce two solutions.",
+          "order": 6,
+          "estimatedMinutes": 50,
+          "skillIds": ["absolute-value-equations"],
+          "standardsAlignment": ["A-REI.3"],
+          "prerequisites": ["alg1-2-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Absolute Value = Distance",
+              "order": 1,
+              "content": {
+                "explanation": "Absolute value measures DISTANCE from zero on the number line. Since distance is always positive, |x| = 5 means x is 5 units from zero — which could be x = 5 or x = -5. To solve |expression| = k: (1) Set expression = k AND expression = -k, (2) Solve both equations. If k is negative, there's no solution (distance can't be negative).",
+                "workedExamples": [
+                  {
+                    "problem": "Solve: |x - 3| = 7",
+                    "steps": ["Set up two equations: x - 3 = 7 OR x - 3 = -7", "Solve first: x = 10", "Solve second: x = -4", "Check both: |10 - 3| = |7| = 7 ✓ and |-4 - 3| = |-7| = 7 ✓"],
+                    "solution": "x = 10 or x = -4"
+                  },
+                  {
+                    "problem": "Solve: |2x + 1| = -3",
+                    "steps": ["Absolute value equals a negative number", "Distance can never be negative", "No solution!"],
+                    "solution": "No solution",
+                    "tip": "If the absolute value equals a negative number, stop — there's no solution"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the number line to show distance. 'If you're 5 steps from zero, you could be at +5 or -5.' Build from simple |x| = k to |expression| = k.",
+                  "commonMisconceptions": ["Only finding one solution", "Forgetting to check for no solution when equals negative", "Distributing the absolute value bars"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["absolute-value-equations"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["absolute-value-equations"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Absolute Value Equations Mastery Check",
+            "skillIds": ["absolute-value-equations"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        }
+      ],
+      "unitAssessment": {
+        "assessmentType": "unit-test",
+        "title": "Unit 2: Solving Equations and Inequalities Test",
+        "description": "Comprehensive assessment covering one-step through multi-step equations, variables on both sides, inequalities, and absolute value equations.",
+        "skillIds": ["solving-one-step-equations", "solving-two-step-equations", "solving-multi-step-equations", "solving-equations-with-variables-both-sides", "linear-inequalities", "absolute-value-equations"],
+        "questionCount": 25,
+        "passingScore": 75,
+        "timeLimit": 50,
+        "allowRetakes": true,
+        "maxRetakes": 2
+      }
+    },
+    {
+      "unitId": "alg1-unit-3",
+      "title": "Functions and Graphs",
+      "subtitle": "Visualizing Relationships",
+      "description": "Students develop a deep understanding of functions, learn function notation, explore domain and range, and master graphing linear functions in slope-intercept form.",
+      "order": 3,
+      "quarter": 2,
+      "essentialQuestions": [
+        "What makes a relationship a function?",
+        "How do we represent functions in multiple ways?",
+        "What do slope and y-intercept tell us about a real-world situation?"
+      ],
+      "bigIdeas": [
+        "A function assigns exactly one output to each input",
+        "Functions can be represented as equations, tables, graphs, and verbal descriptions",
+        "Slope is rate of change; y-intercept is starting value"
+      ],
+      "estimatedDays": 20,
+      "skillIds": ["function-concept", "function-notation", "domain-range", "slope-concept", "graphing-linear-equations-slope-intercept", "writing-linear-equations-slope-intercept"],
+      "standardsAlignment": ["F-IF.1", "F-IF.2", "F-IF.5", "F-IF.7a", "A-CED.2", "F-LE.2"],
+      "lessons": [
+        {
+          "lessonId": "alg1-3-1",
+          "title": "Introduction to Functions",
+          "subtitle": "Input, Output, and the Vertical Line Test",
+          "description": "Students understand what makes a relation a function, use function notation, and apply the vertical line test.",
+          "order": 1,
+          "estimatedMinutes": 50,
+          "skillIds": ["function-concept", "function-notation"],
+          "standardsAlignment": ["F-IF.1", "F-IF.2"],
+          "prerequisites": ["alg1-1-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "What Is a Function?",
+              "order": 1,
+              "content": {
+                "explanation": "A function is a rule that assigns EXACTLY ONE output to each input. Think of it like a vending machine: you press one button (input), you get one item (output). If pressing B3 sometimes gives you chips and sometimes gives you soda, it's not functioning correctly — it's not a function! We write f(x) = 2x + 3 to mean 'the function f takes input x and gives output 2x + 3.' f(4) means 'plug in 4': f(4) = 2(4) + 3 = 11.",
+                "workedExamples": [
+                  {
+                    "problem": "Is {(1,3), (2,5), (3,7), (1,9)} a function?",
+                    "steps": ["Check: does any input repeat with a different output?", "Input 1 maps to BOTH 3 and 9", "One input gives two different outputs", "NOT a function"],
+                    "solution": "Not a function — input 1 has two different outputs"
+                  },
+                  {
+                    "problem": "If f(x) = 3x - 5, find f(4)",
+                    "steps": ["Replace x with 4: f(4) = 3(4) - 5", "Multiply: 12 - 5", "Subtract: 7"],
+                    "solution": "f(4) = 7",
+                    "tip": "f(4) does NOT mean f times 4. It means 'f OF 4' — plug 4 into the rule."
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Function", "definition": "A rule that assigns exactly one output to each input"},
+                  {"term": "Domain", "definition": "The set of all possible inputs (x-values)"},
+                  {"term": "Range", "definition": "The set of all possible outputs (y-values)"},
+                  {"term": "Function Notation", "definition": "f(x) means 'the output of function f when the input is x'"},
+                  {"term": "Vertical Line Test", "definition": "If any vertical line crosses a graph more than once, it's NOT a function"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the vending machine analogy. Then introduce function notation carefully — students often think f(x) means multiplication. Use mapping diagrams before jumping to equations.",
+                  "commonMisconceptions": ["Thinking f(x) means f × x", "Confusing domain and range", "Thinking functions must be linear"],
+                  "realWorldConnections": ["Temperature conversion: C(F) = 5/9(F - 32)", "Vending machines, ATMs, calculators"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice: Functions",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["function-concept", "function-notation"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["function-concept", "function-notation"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Functions Mastery Check",
+            "skillIds": ["function-concept", "function-notation"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-3-2",
+          "title": "Domain and Range",
+          "subtitle": "What Goes In, What Comes Out",
+          "description": "Students identify domain and range from graphs, tables, sets of ordered pairs, and real-world contexts.",
+          "order": 2,
+          "estimatedMinutes": 45,
+          "skillIds": ["domain-range"],
+          "standardsAlignment": ["F-IF.1", "F-IF.5"],
+          "prerequisites": ["alg1-3-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Finding Domain and Range",
+              "order": 1,
+              "content": {
+                "explanation": "Domain = all possible inputs (x-values). Range = all possible outputs (y-values). From a graph, domain is how far left and right the graph extends; range is how far up and down. For real-world situations, think about what values make sense — you can't have negative time or a negative number of people.",
+                "workedExamples": [
+                  {
+                    "problem": "Find the domain and range of {(1,4), (2,7), (3,10), (4,13)}",
+                    "steps": ["List all x-values (inputs): {1, 2, 3, 4}", "List all y-values (outputs): {4, 7, 10, 13}"],
+                    "solution": "Domain: {1, 2, 3, 4}, Range: {4, 7, 10, 13}"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the 'input/output' framing consistently. For graphs, teach the 'shadow' method: imagine shining a light from above onto the x-axis (domain) and from the side onto the y-axis (range).",
+                  "commonMisconceptions": ["Confusing domain and range", "Not using inequality notation for continuous graphs", "Forgetting to consider real-world constraints"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["domain-range"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 1, "max": 3},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["domain-range"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Domain & Range Mastery Check",
+            "skillIds": ["domain-range"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-3-3",
+          "title": "Understanding Slope",
+          "subtitle": "Rate of Change",
+          "description": "Students understand slope as rate of change, calculate slope from two points, and interpret slope in context.",
+          "order": 3,
+          "estimatedMinutes": 50,
+          "skillIds": ["slope-concept"],
+          "standardsAlignment": ["F-IF.6", "F-LE.1b"],
+          "prerequisites": ["alg1-3-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Slope = Rise Over Run",
+              "order": 1,
+              "content": {
+                "explanation": "Slope measures how steep a line is — it's the rate of change. Slope = rise/run = (change in y)/(change in x) = (y₂ - y₁)/(x₂ - x₁). Positive slope goes uphill (left to right), negative slope goes downhill, zero slope is horizontal, undefined slope is vertical.",
+                "workedExamples": [
+                  {
+                    "problem": "Find the slope between (2, 3) and (5, 9)",
+                    "steps": ["Use the formula: m = (y₂ - y₁)/(x₂ - x₁)", "m = (9 - 3)/(5 - 2)", "m = 6/3", "m = 2"],
+                    "solution": "m = 2",
+                    "tip": "A slope of 2 means: for every 1 unit right, go 2 units up"
+                  },
+                  {
+                    "problem": "A car travels 150 miles in 3 hours. What's the rate of change?",
+                    "steps": ["Rate of change = change in distance / change in time", "= 150 miles / 3 hours", "= 50 miles per hour"],
+                    "solution": "50 mph — slope IS rate of change!"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Connect slope to real rates students understand: speed, cost per item, growth rate. Use the staircase visual — how many steps up for each step over.",
+                  "commonMisconceptions": ["Subtracting coordinates in wrong order (but only one, not both)", "Rise/run vs run/rise confusion", "Thinking vertical lines have slope of 0"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["slope-concept"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["slope-concept"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Slope Mastery Check",
+            "skillIds": ["slope-concept"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-3-4",
+          "title": "Graphing Linear Equations",
+          "subtitle": "y = mx + b in Action",
+          "description": "Students graph linear equations in slope-intercept form by plotting the y-intercept and using slope.",
+          "order": 4,
+          "estimatedMinutes": 55,
+          "skillIds": ["graphing-linear-equations-slope-intercept"],
+          "standardsAlignment": ["F-IF.7a", "A-CED.2"],
+          "prerequisites": ["alg1-3-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Graphing y = mx + b",
+              "order": 1,
+              "content": {
+                "explanation": "Every linear equation y = mx + b gives you two pieces of graphing information: b is where the line crosses the y-axis (y-intercept), and m tells you the slope (rise/run). To graph: (1) Plot the y-intercept (0, b), (2) From there, use slope as rise/run to find the next point, (3) Draw a straight line through the points.",
+                "workedExamples": [
+                  {
+                    "problem": "Graph: y = 2x - 3",
+                    "steps": ["Identify: slope m = 2, y-intercept b = -3", "Plot y-intercept: (0, -3)", "Use slope 2 = 2/1: from (0,-3), go up 2, right 1 → (1, -1)", "Plot another point: from (1,-1), go up 2, right 1 → (2, 1)", "Draw the line through all points"],
+                    "solution": "Line through (0,-3), (1,-1), (2,1)",
+                    "tip": "Write slope as a fraction (rise/run) even if it's a whole number: 2 = 2/1"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Teach the 'start-and-step' method: start at b, step by m. Use graph paper visuals. Show that every point on the line satisfies the equation.",
+                  "commonMisconceptions": ["Plotting y-intercept on x-axis", "Going run/rise instead of rise/run", "Connecting with a curve instead of a straight line"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Graphing Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["graphing-linear-equations-slope-intercept"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["graphing-linear-equations-slope-intercept"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 65}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Graphing Linear Equations Mastery Check",
+            "skillIds": ["graphing-linear-equations-slope-intercept"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-3-5",
+          "title": "Writing Linear Equations",
+          "subtitle": "From Information to Equation",
+          "description": "Students write equations in slope-intercept form from graphs, tables, two points, and word problems.",
+          "order": 5,
+          "estimatedMinutes": 55,
+          "skillIds": ["writing-linear-equations-slope-intercept"],
+          "standardsAlignment": ["A-CED.2", "F-LE.2"],
+          "prerequisites": ["alg1-3-4"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Writing y = mx + b from Different Sources",
+              "order": 1,
+              "content": {
+                "explanation": "To write y = mx + b, you need two things: slope (m) and y-intercept (b). From a graph: read slope and y-intercept directly. From two points: calculate slope, then substitute one point to find b. From a word problem: rate of change is m, starting value is b.",
+                "workedExamples": [
+                  {
+                    "problem": "Write the equation of a line passing through (1, 5) and (3, 11)",
+                    "steps": ["Find slope: m = (11-5)/(3-1) = 6/2 = 3", "Use y = mx + b with one point: 5 = 3(1) + b", "Solve for b: 5 = 3 + b → b = 2", "Write equation: y = 3x + 2"],
+                    "solution": "y = 3x + 2"
+                  },
+                  {
+                    "problem": "A gym charges $25/month plus a $50 signup fee. Write the equation for total cost after m months.",
+                    "steps": ["Rate of change (slope): $25/month", "Starting value (y-intercept): $50 signup fee", "y = 25m + 50"],
+                    "solution": "y = 25m + 50",
+                    "tip": "In word problems: 'per' signals slope, 'initial/starting/fixed' signals y-intercept"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Practice all four representations: equation ↔ graph ↔ table ↔ verbal description. Students should be fluent moving between all four.",
+                  "commonMisconceptions": ["Swapping m and b", "Not finding b after calculating slope", "Confusing which value is slope vs y-intercept in word problems"]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["writing-linear-equations-slope-intercept"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["writing-linear-equations-slope-intercept"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Writing Linear Equations Mastery Check",
+            "skillIds": ["writing-linear-equations-slope-intercept"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        }
+      ],
+      "unitAssessment": {
+        "assessmentType": "unit-test",
+        "title": "Unit 3: Functions and Graphs Test",
+        "description": "Comprehensive assessment on functions, domain/range, slope, graphing, and writing linear equations.",
+        "skillIds": ["function-concept", "function-notation", "domain-range", "slope-concept", "graphing-linear-equations-slope-intercept", "writing-linear-equations-slope-intercept"],
+        "questionCount": 22,
+        "passingScore": 75,
+        "timeLimit": 50,
+        "allowRetakes": true,
+        "maxRetakes": 2,
+        "performanceTask": {
+          "scenario": "A local food truck sells tacos for $3 each plus a $2 plate fee. A competing food truck charges $4 per taco with no plate fee. Model both pricing structures with equations, graph them, and determine when each truck is a better deal.",
+          "requirements": ["Write equations for both trucks", "Graph both lines on the same coordinate plane", "Find the break-even point", "Explain which truck is better for different quantities"],
+          "rubric": [
+            {"criterion": "Correct equations", "points": 5, "description": "Both equations correctly written in slope-intercept form"},
+            {"criterion": "Accurate graph", "points": 5, "description": "Both lines graphed with correct slope and intercept"},
+            {"criterion": "Break-even analysis", "points": 5, "description": "Correct intersection point identified and verified"},
+            {"criterion": "Explanation", "points": 5, "description": "Clear explanation of when each option is better"}
+          ]
+        }
+      }
+    }
+  ]
+}
