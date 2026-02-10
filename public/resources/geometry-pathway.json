@@ -1,14 +1,25 @@
 {
   "courseId": "geometry",
   "track": "Geometry",
-  "overview": "Develop spatial reasoning through proof, construction, and measurement. Master plane and solid figures.",
+  "overview": "A four-quarter Geometry course developing spatial reasoning through proof, construction, and measurement. Students master plane and solid figures from foundations and angle relationships through triangle congruence and similarity, circle theorems, three-dimensional geometry, and coordinate proofs. Spiral review threads reinforce algebraic reasoning, proof skills, and measurement concepts across every checkpoint.",
   "prerequisites": ["algebra-1", "grade-8"],
   "naturalProgression": [
-    "Start with geometric vocabulary and angle relationships - the language of geometry",
-    "Move to triangles and prove congruence using postulates and theorems",
-    "Apply the Pythagorean Theorem and introduce trigonometry",
-    "Extend to polygons, quadrilateral properties, and circle theorems",
-    "Explore similarity, 3D geometry, and coordinate proofs"
+    "Begin with geometric vocabulary, notation, and angle relationships — the language of geometry (Unit 1)",
+    "Explore triangle foundations: classification, angle sum theorem, exterior angles, and triangle inequality (Unit 2)",
+    "Develop formal reasoning through triangle congruence postulates (SSS, SAS, ASA, AAS, HL) and CPCTC proofs (Unit 3)",
+    "Apply the Pythagorean Theorem, special right triangles, and introduce trigonometric ratios (Unit 4)",
+    "Extend to polygons with interior/exterior angle sums and special quadrilateral properties and proofs (Unit 5)",
+    "Master circle theorems: arcs, sectors, inscribed angles, tangent-chord relationships, and segment relationships (Unit 6)",
+    "Apply similarity ratios, triangle similarity theorems (AA, SSS~, SAS~), and geometric mean in right triangles (Unit 7)",
+    "Calculate surface area and volume of prisms, cylinders, pyramids, cones, and spheres with real-world applications (Unit 8)",
+    "Synthesize algebra and geometry through distance, midpoint, slope relationships, equations of circles, and coordinate proofs (Unit 9)"
+  ],
+  "spiralReviewThreads": [
+    "Angle relationships — complementary, supplementary, vertical, and transversal angle pairs revisited in progressively complex contexts across all checkpoints",
+    "Algebraic reasoning in geometry — setting up and solving equations from geometric relationships, maintained from Unit 1 through coordinate proofs in Unit 9",
+    "Triangle properties — angle sum, classification, congruence, and similarity concepts reinforced as building blocks for later units",
+    "Proof and logical reasoning — building from informal justification to two-column proofs to coordinate proofs, spiraled through every quarter",
+    "Measurement and formulas — perimeter, area, circumference, surface area, and volume concepts building in complexity and application"
   ],
   "aiInstructionModel": {
     "approach": "AI-led gradual release",
@@ -16,37 +27,37 @@
     "phases": [
       {
         "phase": "concept-intro",
-        "aiRole": "Build conceptual understanding before procedures. The AI introduces the BIG IDEA using real-world connections, student interests, and visual/physical analogies. The AI chooses HOW to introduce based on the student's learning style.",
+        "aiRole": "Build conceptual understanding before procedures. The AI introduces the BIG IDEA using real-world connections, student interests, and visual/physical analogies.",
         "studentRole": "Engage with the concept, ask questions, make predictions"
       },
       {
         "phase": "i-do",
-        "aiRole": "Model 2-3 worked examples with think-aloud reasoning. The AI selects problem difficulty based on the student's current mastery and explains using the student's preferred style (visual, verbal, step-by-step, etc.).",
+        "aiRole": "Model 2-4 worked examples with think-aloud reasoning. The AI selects problem difficulty based on the student's current mastery.",
         "studentRole": "Observe, ask clarifying questions, identify patterns"
       },
       {
         "phase": "concept-check",
-        "aiRole": "Quick comprehension check before moving to practice. The AI asks 1-2 targeted questions to verify the student grasps the concept, not just the procedure. If gaps detected, the AI re-teaches before proceeding.",
+        "aiRole": "Quick comprehension check before moving to practice. If gaps detected, the AI re-teaches before proceeding.",
         "studentRole": "Explain understanding in own words, answer concept questions"
       },
       {
         "phase": "we-do",
-        "aiRole": "Guided practice with adaptive scaffolding. The AI provides problems and supports the student through them, offering hints ONLY when needed. Scaffolding decreases as the student demonstrates understanding. The AI decides when to move on.",
+        "aiRole": "Guided practice with adaptive scaffolding. Scaffolding decreases as the student demonstrates understanding.",
         "studentRole": "Attempt problems with AI support, explain reasoning"
       },
       {
         "phase": "check-in",
-        "aiRole": "Emotional and confidence assessment. The AI checks how the student FEELS about the material—not just accuracy. Adjusts pacing and tone based on anxiety, confidence, and engagement signals.",
+        "aiRole": "Emotional and confidence assessment. Adjusts pacing and tone based on student engagement.",
         "studentRole": "Reflect on confidence and comfort level"
       },
       {
         "phase": "you-do",
-        "aiRole": "Independent practice. The AI presents problems and steps back, allowing the student to work independently. Minimal hints—only if the student is stuck. The AI evaluates accuracy, independence, and transfer.",
+        "aiRole": "Independent practice. Minimal hints—only if the student is stuck.",
         "studentRole": "Solve problems independently, self-monitor"
       },
       {
         "phase": "mastery-check",
-        "aiRole": "Formal assessment for skill mastery. The AI determines if the student has met the 4-Pillar mastery criteria (accuracy, independence, transfer, retention). Awards mastery or identifies areas for re-teaching.",
+        "aiRole": "Formal assessment for skill mastery using 4-Pillar criteria (accuracy, independence, transfer, retention).",
         "studentRole": "Demonstrate mastery through independent problem-solving"
       }
     ],
@@ -65,9 +76,10 @@
   "modules": [
     {
       "moduleId": "foundations_angles",
+      "unit": 1,
       "quarter": 1,
       "title": "Geometric Foundations & Angles",
-      "preview": "Build vocabulary and understand angle relationships.",
+      "preview": "Build vocabulary, understand notation, and master angle relationships including parallel-line transversals",
       "moduleFile": "/modules/geometry/foundations_angles_module.json",
       "skills": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals"],
       "essentialQuestions": [
@@ -140,10 +152,20 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u1",
+      "unit": 1,
+      "quarter": 1,
+      "title": "Unit 1 Checkpoint: Geometric Foundations & Angles",
+      "preview": "Assess mastery of geometric vocabulary, angle classification, angle pairs, and transversal relationships",
+      "moduleFile": "/modules/geometry/checkpoint_u1_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "triangles_basics",
+      "unit": 2,
       "quarter": 1,
       "title": "Triangle Foundations",
-      "preview": "Classify triangles and apply angle sum theorem.",
+      "preview": "Classify triangles, apply the angle sum theorem, and explore exterior angles and triangle inequality",
       "moduleFile": "/modules/geometry/triangles_basics_module.json",
       "skills": ["triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"],
       "essentialQuestions": [
@@ -203,18 +225,28 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u2",
+      "unit": 2,
+      "quarter": 1,
+      "title": "Unit 2 Checkpoint: Triangle Foundations",
+      "preview": "Assess mastery of triangle classification, angle sum theorem, exterior angles, and triangle inequality",
+      "moduleFile": "/modules/geometry/checkpoint_u2_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "checkpoint_q1",
       "quarter": 1,
-      "title": "Q1 Checkpoint",
-      "preview": "Cumulative assessment: Foundations and triangles",
+      "title": "Q1 Checkpoint: Foundations, Angles & Triangles",
+      "preview": "Cumulative quarterly assessment covering Units 1-2: geometric foundations, angle relationships, and triangle properties",
       "moduleFile": "/modules/geometry/checkpoint_q1_module.json",
       "isCheckpoint": true
     },
     {
       "moduleId": "congruence",
+      "unit": 3,
       "quarter": 2,
       "title": "Triangle Congruence",
-      "preview": "Prove triangles congruent using SSS, SAS, ASA, AAS, HL.",
+      "preview": "Prove triangles congruent using SSS, SAS, ASA, AAS, HL and apply CPCTC in formal proofs",
       "moduleFile": "/modules/geometry/congruence_module.json",
       "skills": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs"],
       "essentialQuestions": [
@@ -285,10 +317,20 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u3",
+      "unit": 3,
+      "quarter": 2,
+      "title": "Unit 3 Checkpoint: Triangle Congruence",
+      "preview": "Assess mastery of congruence postulates (SSS, SAS, ASA, AAS, HL), CPCTC, and proof writing",
+      "moduleFile": "/modules/geometry/checkpoint_u3_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "right_triangles",
+      "unit": 4,
       "quarter": 2,
       "title": "Right Triangles",
-      "preview": "Master Pythagorean theorem and special right triangles.",
+      "preview": "Master the Pythagorean Theorem, special right triangles, and introductory trigonometric ratios",
       "moduleFile": "/modules/geometry/right_triangles_module.json",
       "skills": ["pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"],
       "essentialQuestions": [
@@ -363,18 +405,28 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u4",
+      "unit": 4,
+      "quarter": 2,
+      "title": "Unit 4 Checkpoint: Right Triangles",
+      "preview": "Assess mastery of Pythagorean Theorem, its converse, special right triangles, and trig ratios",
+      "moduleFile": "/modules/geometry/checkpoint_u4_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "checkpoint_q2",
       "quarter": 2,
-      "title": "Q2 Checkpoint",
-      "preview": "Cumulative assessment: Congruence and right triangles",
+      "title": "Q2 Checkpoint: Congruence & Right Triangles",
+      "preview": "Cumulative quarterly assessment covering Units 3-4 plus spiral review of Units 1-2",
       "moduleFile": "/modules/geometry/checkpoint_q2_module.json",
       "isCheckpoint": true
     },
     {
       "moduleId": "polygons_quadrilaterals",
+      "unit": 5,
       "quarter": 3,
       "title": "Polygons & Quadrilaterals",
-      "preview": "Explore angle sums and properties of special quadrilaterals.",
+      "preview": "Explore polygon angle sums, special quadrilateral properties, and quadrilateral proofs",
       "moduleFile": "/modules/geometry/polygons_quadrilaterals_module.json",
       "skills": ["polygon-angle-sum", "quadrilateral-properties", "parallelogram-proofs", "trapezoid-properties"],
       "essentialQuestions": [
@@ -446,10 +498,20 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u5",
+      "unit": 5,
+      "quarter": 3,
+      "title": "Unit 5 Checkpoint: Polygons & Quadrilaterals",
+      "preview": "Assess mastery of polygon angle sums, quadrilateral properties, parallelogram proofs, and trapezoid/kite concepts",
+      "moduleFile": "/modules/geometry/checkpoint_u5_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "circles",
+      "unit": 6,
       "quarter": 3,
       "title": "Circles",
-      "preview": "Study circle theorems, arcs, sectors, and inscribed angles.",
+      "preview": "Study circle theorems, arcs, sectors, inscribed angles, and tangent/chord/secant relationships",
       "moduleFile": "/modules/geometry/circles_module.json",
       "skills": ["circle-basics", "circle-area", "arc-length", "sector-area", "inscribed-angles", "circle-theorems"],
       "essentialQuestions": [
@@ -521,18 +583,28 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u6",
+      "unit": 6,
+      "quarter": 3,
+      "title": "Unit 6 Checkpoint: Circles",
+      "preview": "Assess mastery of circle vocabulary, arc length, sector area, inscribed angles, and chord/tangent/secant theorems",
+      "moduleFile": "/modules/geometry/checkpoint_u6_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "checkpoint_q3",
       "quarter": 3,
-      "title": "Q3 Checkpoint",
-      "preview": "Cumulative assessment: Polygons and circles",
+      "title": "Q3 Checkpoint: Polygons & Circles",
+      "preview": "Cumulative quarterly assessment covering Units 5-6 plus spiral review of Units 1-4",
       "moduleFile": "/modules/geometry/checkpoint_q3_module.json",
       "isCheckpoint": true
     },
     {
       "moduleId": "similarity",
+      "unit": 7,
       "quarter": 4,
       "title": "Similarity",
-      "preview": "Apply similarity theorems and solve proportions.",
+      "preview": "Apply similarity ratios, triangle similarity theorems, and geometric mean in right triangles",
       "moduleFile": "/modules/geometry/similarity_module.json",
       "skills": ["similarity-ratios", "similar-triangle-theorems", "similarity-proofs", "geometric-mean"],
       "essentialQuestions": [
@@ -591,10 +663,20 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u7",
+      "unit": 7,
+      "quarter": 4,
+      "title": "Unit 7 Checkpoint: Similarity",
+      "preview": "Assess mastery of similarity ratios, AA/SSS~/SAS~ theorems, real-world applications, and geometric mean",
+      "moduleFile": "/modules/geometry/checkpoint_u7_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "3d_geometry",
+      "unit": 8,
       "quarter": 4,
       "title": "Three-Dimensional Geometry",
-      "preview": "Calculate surface area and volume of prisms, cylinders, pyramids, cones, and spheres.",
+      "preview": "Calculate surface area and volume of prisms, cylinders, pyramids, cones, and spheres",
       "moduleFile": "/modules/geometry/3d_geometry_module.json",
       "skills": ["volume-prisms-cylinders", "volume-pyramids-cones-spheres", "surface-area-prisms-cylinders", "surface-area-pyramids-cones-spheres"],
       "essentialQuestions": [
@@ -668,10 +750,20 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u8",
+      "unit": 8,
+      "quarter": 4,
+      "title": "Unit 8 Checkpoint: Three-Dimensional Geometry",
+      "preview": "Assess mastery of surface area and volume for prisms, cylinders, pyramids, cones, and spheres",
+      "moduleFile": "/modules/geometry/checkpoint_u8_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "coordinate_geometry",
+      "unit": 9,
       "quarter": 4,
       "title": "Coordinate Geometry",
-      "preview": "Apply algebra to geometric concepts on the coordinate plane.",
+      "preview": "Apply algebra to geometric concepts on the coordinate plane with distance, midpoint, slopes, and proofs",
       "moduleFile": "/modules/geometry/coordinate_geometry_module.json",
       "skills": ["coordinate-geometry-distance-midpoint", "coordinate-proofs", "equation-of-circle", "parallel-perpendicular-slopes"],
       "essentialQuestions": [
@@ -733,14 +825,22 @@
       ]
     },
     {
+      "moduleId": "checkpoint_u9",
+      "unit": 9,
+      "quarter": 4,
+      "title": "Unit 9 Checkpoint: Coordinate Geometry",
+      "preview": "Assess mastery of distance/midpoint formulas, slope relationships, equation of a circle, and coordinate proofs",
+      "moduleFile": "/modules/geometry/checkpoint_u9_module.json",
+      "isCheckpoint": true
+    },
+    {
       "moduleId": "final_mastery_assessment",
       "quarter": 4,
       "title": "Final Mastery Assessment",
-      "preview": "Comprehensive assessment covering all Geometry content",
+      "preview": "Comprehensive assessment covering all Geometry content from Units 1-9",
       "moduleFile": "/modules/geometry/final_mastery_assessment_module.json",
       "isCheckpoint": true,
       "isFinal": true
     }
-  ],
-  "aiGuidanceNotes": "Geometry builds spatial reasoning and logical proof skills. Start with vocabulary and angle relationships as the language of geometry. Congruence and similarity require understanding correspondence—use color coding. The Pythagorean Theorem is the bridge between geometry and algebra. Proof writing should feel like 'telling a story with reasons', not filling in a template. Connect every topic to real-world applications: architecture, engineering, navigation, art."
+  ]
 }
