@@ -1,0 +1,34 @@
+{
+  "moduleId": "checkpoint_q1",
+  "course": "Algebra 2",
+  "quarter": 1,
+  "title": "Q1 Checkpoint: Functions & Advanced Quadratics",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "description": "Cumulative assessment covering function composition, inverse functions, transformations, completing the square, vertex form, complex numbers, and quadratics with complex solutions.",
+  "skillsCovered": ["function-notation-composition", "inverse-functions", "transformations-functions", "quadratic-completing-square", "quadratic-vertex-form", "complex-numbers"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "function-notation-composition", "moduleId": "functions_advanced"},
+    {"skillId": "inverse-functions", "moduleId": "functions_advanced"},
+    {"skillId": "quadratic-completing-square", "moduleId": "quadratics_advanced"},
+    {"skillId": "complex-numbers", "moduleId": "quadratics_advanced"}
+  ],
+  "assessmentProblems": [
+    {"id": "a2q1-1", "question": "Given f(x) = 3x - 2 and g(x) = x² + 1, find (f ∘ g)(3).", "answer": "28", "skill": "function-notation-composition", "difficulty": 4, "points": 8},
+    {"id": "a2q1-2", "question": "Find the inverse of f(x) = (2x + 8)/5.", "answer": "f⁻¹(x) = (5x - 8)/2", "skill": "inverse-functions", "difficulty": 5, "points": 10},
+    {"id": "a2q1-3", "question": "Describe the transformations of g(x) = -3(x + 2)² + 5 compared to f(x) = x².", "answer": "Left 2, vertical stretch by 3, reflect over x-axis, up 5", "skill": "transformations-functions", "difficulty": 4, "points": 8},
+    {"id": "a2q1-4", "question": "Convert x² - 12x + 32 to vertex form.", "answer": "(x - 6)² - 4", "skill": "quadratic-completing-square", "difficulty": 5, "points": 10},
+    {"id": "a2q1-5", "question": "Convert 2x² + 16x + 25 to vertex form.", "answer": "2(x + 4)² - 7", "skill": "quadratic-completing-square", "difficulty": 6, "points": 12},
+    {"id": "a2q1-6", "question": "Simplify: (4 - 3i)(2 + 5i).", "answer": "23 + 14i", "skill": "complex-numbers", "difficulty": 5, "points": 10},
+    {"id": "a2q1-7", "question": "Simplify i⁹⁹.", "answer": "-i", "skill": "complex-numbers", "difficulty": 4, "points": 8},
+    {"id": "a2q1-8", "question": "Solve x² + 2x + 5 = 0.", "answer": "x = -1 ± 2i", "skill": "complex-numbers", "difficulty": 6, "points": 12},
+    {"id": "a2q1-9", "question": "If f(x) = x³ + 2, find f⁻¹(x).", "answer": "f⁻¹(x) = ∛(x - 2)", "skill": "inverse-functions", "difficulty": 6, "points": 12},
+    {"id": "a2q1-10", "question": "Given f(x) = √(x - 1) and g(x) = x² + 1, find (f ∘ g)(x) and its domain.", "answer": "(f ∘ g)(x) = |x|; domain: all real numbers", "skill": "function-notation-composition", "difficulty": 7, "points": 10}
+  ],
+  "answerKeys": {
+    "a2q1-1": "28", "a2q1-2": "f⁻¹(x) = (5x-8)/2", "a2q1-3": "Left 2, stretch 3, reflect x-axis, up 5",
+    "a2q1-4": "(x-6)²-4", "a2q1-5": "2(x+4)²-7", "a2q1-6": "23+14i", "a2q1-7": "-i",
+    "a2q1-8": "x = -1 ± 2i", "a2q1-9": "∛(x-2)", "a2q1-10": "|x|, all reals"
+  }
+}
