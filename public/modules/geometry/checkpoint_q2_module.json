@@ -1,0 +1,113 @@
+{
+  "moduleId": "checkpoint_q2",
+  "course": "Geometry",
+  "quarter": 2,
+  "title": "Q2 Checkpoint: Congruence & Right Triangles",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "description": "Cumulative assessment covering triangle congruence postulates (SSS, SAS, ASA, AAS, HL), CPCTC, congruence proofs, Pythagorean Theorem and its converse, special right triangles, and introductory trig ratios.",
+  "skillsCovered": ["triangle-congruence-sss-sas-asa", "triangle-congruence-aas-hl", "cpctc", "congruence-proofs", "pythagorean-theorem", "pythagorean-converse", "special-right-triangles", "trigonometric-ratios-intro"],
+  "passThreshold": 70,
+  "remediationResources": [
+    {"skillId": "triangle-congruence-sss-sas-asa", "moduleId": "congruence"},
+    {"skillId": "triangle-congruence-aas-hl", "moduleId": "congruence"},
+    {"skillId": "cpctc", "moduleId": "congruence"},
+    {"skillId": "pythagorean-theorem", "moduleId": "right_triangles"},
+    {"skillId": "special-right-triangles", "moduleId": "right_triangles"},
+    {"skillId": "trigonometric-ratios-intro", "moduleId": "right_triangles"}
+  ],
+  "assessmentProblems": [
+    {
+      "id": "q2-1",
+      "question": "Two triangles have three pairs of congruent sides. Name the congruence postulate.",
+      "answer": "SSS",
+      "skill": "triangle-congruence-sss-sas-asa",
+      "difficulty": 2,
+      "points": 5
+    },
+    {
+      "id": "q2-2",
+      "question": "In two right triangles, the hypotenuses are congruent and one pair of legs is congruent. Name the congruence theorem.",
+      "answer": "HL",
+      "skill": "triangle-congruence-aas-hl",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "q2-3",
+      "question": "Explain why SSA is NOT a valid method for proving triangle congruence.",
+      "answer": "SSA (two sides and a non-included angle) can produce two different triangles—the ambiguous case. The third side can 'swing' to two positions, creating different triangles with the same given information.",
+      "skill": "triangle-congruence-sss-sas-asa",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "q2-4",
+      "question": "△ABC ≅ △XYZ by SAS. If AB = 14 and ∠A = 50°, find XY and ∠X.",
+      "answer": "XY = 14, ∠X = 50°",
+      "skill": "cpctc",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "q2-5",
+      "question": "A right triangle has legs of 8 and 15. Find the hypotenuse.",
+      "answer": "17",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "q2-6",
+      "question": "A triangle has sides 7, 24, and 25. Determine if it is a right triangle.",
+      "answer": "yes (7² + 24² = 49 + 576 = 625 = 25²)",
+      "skill": "pythagorean-converse",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "q2-7",
+      "question": "In a 45-45-90 triangle, the hypotenuse measures 18. Find the length of each leg.",
+      "answer": "9√2",
+      "skill": "special-right-triangles",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "q2-8",
+      "question": "In a 30-60-90 triangle, the side opposite the 60° angle is 5√3. Find the hypotenuse.",
+      "answer": "10",
+      "skill": "special-right-triangles",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "q2-9",
+      "question": "In a right triangle, the side opposite angle θ is 7 and the hypotenuse is 25. Find sin(θ) and cos(θ).",
+      "answer": "sin(θ) = 7/25, cos(θ) = 24/25",
+      "skill": "trigonometric-ratios-intro",
+      "difficulty": 5,
+      "points": 15
+    },
+    {
+      "id": "q2-10",
+      "question": "A surveyor stands 100 feet from the base of a building and measures the angle of elevation to the top as 40°. How tall is the building? (Round to the nearest foot. tan 40° ≈ 0.839)",
+      "answer": "84 feet",
+      "skill": "trigonometric-ratios-intro",
+      "difficulty": 6,
+      "points": 15
+    }
+  ],
+  "answerKeys": {
+    "q2-1": "SSS",
+    "q2-2": "HL",
+    "q2-3": "SSA can produce two different triangles (ambiguous case)",
+    "q2-4": "XY = 14, ∠X = 50°",
+    "q2-5": "17",
+    "q2-6": "yes",
+    "q2-7": "9√2",
+    "q2-8": "10",
+    "q2-9": "sin(θ) = 7/25, cos(θ) = 24/25",
+    "q2-10": "84 feet"
+  }
+}
