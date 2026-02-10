@@ -3,23 +3,27 @@
   "course": "Geometry",
   "quarter": 1,
   "title": "Q1 Checkpoint: Foundations, Angles & Triangles",
-  "estimatedDuration": 25,
+  "weeks": "6",
+  "estimatedDuration": 35,
   "type": "assessment",
-  "description": "Cumulative assessment covering geometric foundations, angle relationships, parallel lines with transversals, triangle classification, angle sum theorem, exterior angle theorem, and triangle inequality.",
+  "description": "Cumulative quarterly assessment covering Units 1-2: geometric foundations, angle relationships, parallel lines with transversals, triangle classification, angle sum theorem, exterior angle theorem, and triangle inequality.",
   "skillsCovered": ["points-lines-planes", "angle-measurement", "angle-pair-relationships", "parallel-lines-transversals", "triangle-classification", "triangle-angle-sum", "exterior-angle-theorem", "triangle-inequalities"],
   "passThreshold": 70,
   "remediationResources": [
-    {"skillId": "points-lines-planes", "moduleId": "foundations_angles"},
-    {"skillId": "angle-measurement", "moduleId": "foundations_angles"},
-    {"skillId": "parallel-lines-transversals", "moduleId": "foundations_angles"},
-    {"skillId": "triangle-classification", "moduleId": "triangles_basics"},
-    {"skillId": "triangle-angle-sum", "moduleId": "triangles_basics"}
+    { "skillId": "points-lines-planes", "reteachFocus": "Undefined terms, collinear/coplanar, segment vs ray vs line notation", "resources": ["foundations_angles_module.json - scaffold phases 1-3"] },
+    { "skillId": "angle-measurement", "reteachFocus": "Acute/right/obtuse/straight classification, benchmark angles", "resources": ["foundations_angles_module.json - scaffold phase 4"] },
+    { "skillId": "angle-pair-relationships", "reteachFocus": "Complementary (90°), supplementary (180°), vertical (congruent), linear pair", "resources": ["foundations_angles_module.json - scaffold phases 4-6"] },
+    { "skillId": "parallel-lines-transversals", "reteachFocus": "F/Z/C patterns, corresponding/alt-interior/alt-exterior/same-side-interior, algebraic setup", "resources": ["foundations_angles_module.json - scaffold phases 7-9"] },
+    { "skillId": "triangle-classification", "reteachFocus": "By sides (scalene/isosceles/equilateral), by angles (acute/right/obtuse), dual classification", "resources": ["triangles_basics_module.json - scaffold phases 1-2"] },
+    { "skillId": "triangle-angle-sum", "reteachFocus": "Sum=180°, algebraic missing angles, isosceles base angle theorem", "resources": ["triangles_basics_module.json - scaffold phases 3-5"] },
+    { "skillId": "exterior-angle-theorem", "reteachFocus": "Exterior = sum of remote interiors, connection to angle sum theorem", "resources": ["triangles_basics_module.json - scaffold phases 3-5"] },
+    { "skillId": "triangle-inequalities", "reteachFocus": "Sum of two shortest > longest, range |a-b| < x < a+b", "resources": ["triangles_basics_module.json - scaffold phases 6-8"] }
   ],
   "assessmentProblems": [
     {
       "id": "q1-1",
       "question": "Name three collinear points from the figure: Points A, B, and C lie on line m. Point D is not on line m.",
-      "answer": "A, B, C",
+      "answer": "A, B, C are collinear (they all lie on line m). D is not collinear with A, B, C.",
       "skill": "points-lines-planes",
       "difficulty": 2,
       "points": 5
@@ -27,23 +31,23 @@
     {
       "id": "q1-2",
       "question": "Classify an angle that measures 167°.",
-      "answer": "obtuse",
+      "answer": "Obtuse (90° < 167° < 180°).",
       "skill": "angle-measurement",
       "difficulty": 2,
       "points": 5
     },
     {
       "id": "q1-3",
-      "question": "Two angles are supplementary. One measures (3x + 15)° and the other measures (2x + 40)°. Find x.",
-      "answer": "25",
+      "question": "Two angles are supplementary. One measures (3x + 15)° and the other measures (2x + 40)°. Find x and both angle measures.",
+      "answer": "(3x+15)+(2x+40)=180 → 5x+55=180 → 5x=125 → x=25. Angles: 3(25)+15=90° and 2(25)+40=90°. Check: 90+90=180 ✓.",
       "skill": "angle-pair-relationships",
       "difficulty": 4,
       "points": 10
     },
     {
       "id": "q1-4",
-      "question": "Two parallel lines are cut by a transversal. An alternate interior angle pair measures (5x - 10)° and (3x + 14)°. Find x.",
-      "answer": "12",
+      "question": "Two parallel lines are cut by a transversal. An alternate interior angle pair measures (5x - 10)° and (3x + 14)°. Find x and the angle measures.",
+      "answer": "Alt int are congruent: 5x-10=3x+14 → 2x=24 → x=12. Angles: 5(12)-10=50° and 3(12)+14=50° ✓.",
       "skill": "parallel-lines-transversals",
       "difficulty": 5,
       "points": 10
@@ -51,7 +55,7 @@
     {
       "id": "q1-5",
       "question": "A triangle has two congruent sides and one angle measuring 90°. Classify it using dual classification.",
-      "answer": "right isosceles",
+      "answer": "Right isosceles triangle (one 90° angle, two equal sides).",
       "skill": "triangle-classification",
       "difficulty": 3,
       "points": 5
@@ -59,7 +63,7 @@
     {
       "id": "q1-6",
       "question": "In triangle PQR, angle P = 58° and angle Q = 47°. Find angle R.",
-      "answer": "75",
+      "answer": "P + Q + R = 180 → 58 + 47 + R = 180 → R = 180 - 105 = 75°.",
       "skill": "triangle-angle-sum",
       "difficulty": 3,
       "points": 10
@@ -67,7 +71,7 @@
     {
       "id": "q1-7",
       "question": "An exterior angle of a triangle measures 125°. One remote interior angle is 65°. Find the other remote interior angle.",
-      "answer": "60",
+      "answer": "Ext = sum of remotes: 125 = 65 + x → x = 60°.",
       "skill": "exterior-angle-theorem",
       "difficulty": 4,
       "points": 10
@@ -75,7 +79,7 @@
     {
       "id": "q1-8",
       "question": "Can sides of length 4, 6, and 11 form a triangle? Explain.",
-      "answer": "no",
+      "answer": "No. 4 + 6 = 10, and 10 < 11. The sum of the two shortest sides does not exceed the longest, so these cannot form a triangle.",
       "skill": "triangle-inequalities",
       "difficulty": 3,
       "points": 10
@@ -83,7 +87,7 @@
     {
       "id": "q1-9",
       "question": "Two parallel lines are cut by a transversal. Same-side interior angles measure (4x + 5)° and (6x - 15)°. Find x and both angle measures.",
-      "answer": "x = 19; angles are 81° and 99°",
+      "answer": "Same-side interior are supplementary: (4x+5)+(6x-15)=180 → 10x-10=180 → 10x=190 → x=19. Angles: 4(19)+5=81° and 6(19)-15=99°. Check: 81+99=180 ✓.",
       "skill": "parallel-lines-transversals",
       "difficulty": 5,
       "points": 15
@@ -91,22 +95,22 @@
     {
       "id": "q1-10",
       "question": "The angles of a triangle are (3x)°, (5x - 20)°, and (2x + 10)°. Find all three angle measures and classify the triangle.",
-      "answer": "57°, 75°, 48°; acute triangle",
+      "answer": "(3x)+(5x-20)+(2x+10)=180 → 10x-10=180 → 10x=190 → x=19. Angles: 3(19)=57°, 5(19)-20=75°, 2(19)+10=48°. Check: 57+75+48=180 ✓. All angles < 90°, so acute triangle.",
       "skill": "triangle-angle-sum",
       "difficulty": 5,
       "points": 20
     }
   ],
   "answerKeys": {
-    "q1-1": "A, B, C",
-    "q1-2": "obtuse",
-    "q1-3": "25",
-    "q1-4": "12",
-    "q1-5": "right isosceles",
-    "q1-6": "75",
-    "q1-7": "60",
-    "q1-8": "no",
-    "q1-9": "x = 19; angles are 81° and 99°",
-    "q1-10": "57°, 75°, 48°; acute triangle"
+    "q1-1": "A, B, C (collinear on line m).",
+    "q1-2": "Obtuse.",
+    "q1-3": "x=25. Both angles=90°.",
+    "q1-4": "x=12. Both angles=50°.",
+    "q1-5": "Right isosceles.",
+    "q1-6": "R=75°.",
+    "q1-7": "60°.",
+    "q1-8": "No (4+6=10<11).",
+    "q1-9": "x=19. Angles: 81° and 99°.",
+    "q1-10": "x=19. Angles: 57°, 75°, 48°. Acute."
   }
 }
