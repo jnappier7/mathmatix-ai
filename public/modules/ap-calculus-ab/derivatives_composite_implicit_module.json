@@ -1,0 +1,284 @@
+{
+  "moduleId": "derivatives_composite_implicit",
+  "course": "AP Calculus AB",
+  "unit": 3,
+  "title": "Derivatives: Composite, Implicit, & Inverse",
+  "weeks": "11-14",
+  "estimatedDuration": 20,
+  "description": "Students extend differentiation to composite functions via the chain rule, learn implicit differentiation for curves not expressible as y = f(x), and derive formulas for inverse functions and inverse trigonometric functions. The unit culminates with higher-order derivatives and their kinematic interpretation. Weekly rhythm includes AP-style mixed no-calculator problem sets that integrate chain rule, implicit, and inverse techniques.",
+  "skills": [
+    "chain-rule-composite",
+    "implicit-differentiation",
+    "inverse-function-derivatives",
+    "inverse-trig-derivatives",
+    "higher-order-derivatives"
+  ],
+  "standardsAlignment": [
+    "AP Calc AB 3.1",
+    "AP Calc AB 3.2",
+    "AP Calc AB 3.3",
+    "AP Calc AB 3.4",
+    "AP Calc AB 3.5",
+    "AP Calc AB 3.6"
+  ],
+  "goals": [
+    "Apply the chain rule to differentiate composite functions, including nested compositions of trigonometric, exponential, and logarithmic functions.",
+    "Use implicit differentiation to find dy/dx for equations that define y implicitly, including circles, ellipses, and mixed xy-term relations.",
+    "Compute derivatives of inverse functions using the inverse function derivative theorem: (f^{-1})'(a) = 1/f'(f^{-1}(a)).",
+    "Differentiate inverse trigonometric functions (arcsin, arccos, arctan) and apply them in composite contexts.",
+    "Compute higher-order derivatives, use proper notation, and interpret second derivatives in position-velocity-acceleration contexts."
+  ],
+  "instructionalStrategy": [
+    "Gradual release: concept-intro -> I Do -> concept-check -> We Do -> check-in -> You Do -> mastery-check",
+    "AI uses scaffold array as scope and worked-example bank; AI makes all instructional decisions",
+    "Emphasize the 'outer/inner' decomposition before writing any chain rule derivative — build conceptual understanding of composition",
+    "Weekly AP-style mixed no-calculator problem sets integrating chain rule, implicit, and inverse techniques",
+    "Spiral prior: basic differentiation rules and limit definition from Units 1-2"
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "The Chain Rule for Composite Functions",
+      "skill": "chain-rule-composite",
+      "content": "Most functions you'll differentiate on the AP exam are compositions — a function inside another function. The chain rule says: differentiate the OUTER function (keeping the inner function unchanged), then multiply by the derivative of the INNER function. Think 'outside-in.'",
+      "keyPoints": [
+        "Chain rule: d/dx[f(g(x))] = f'(g(x)) * g'(x). In words: (derivative of outer, evaluated at inner) times (derivative of inner).",
+        "Step 1: Identify the outer function f and the inner function g(x). Ask: 'What is the LAST operation performed?'",
+        "Step 2: Differentiate the outer function, leaving the inner function untouched inside.",
+        "Step 3: Multiply by the derivative of the inner function g'(x).",
+        "Trig compositions: d/dx[sin(3x^2)] = cos(3x^2) * 6x. Outer = sin, inner = 3x^2.",
+        "Exponential compositions: d/dx[e^(5x)] = e^(5x) * 5. Outer = e^u, inner = 5x.",
+        "Logarithmic compositions: d/dx[ln(x^2 + 1)] = 1/(x^2 + 1) * 2x = 2x/(x^2 + 1). Outer = ln(u), inner = x^2 + 1.",
+        "Nested chains: for three-layer compositions like sin(e^(2x)), apply the chain rule repeatedly — peel off one layer at a time."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Chain Rule — Worked Examples",
+      "skill": "chain-rule-composite",
+      "examples": [
+        {
+          "problem": "Find d/dx[(3x^2 - 5)^4].",
+          "solution": "Identify: outer = u^4, inner = 3x^2 - 5. Apply chain rule: 4(3x^2 - 5)^3 * d/dx(3x^2 - 5) = 4(3x^2 - 5)^3 * 6x = 24x(3x^2 - 5)^3."
+        },
+        {
+          "problem": "Find d/dx[sin(e^(3x))].",
+          "solution": "This is a nested composition with three layers. Outermost = sin(u), middle = e^v, innermost = 3x. Peel layer by layer: cos(e^(3x)) * d/dx[e^(3x)] = cos(e^(3x)) * e^(3x) * d/dx(3x) = cos(e^(3x)) * e^(3x) * 3 = 3e^(3x) cos(e^(3x))."
+        },
+        {
+          "problem": "Find d/dx[ln(cos(x))].",
+          "solution": "Outer = ln(u), inner = cos(x). Chain rule: (1/cos(x)) * d/dx[cos(x)] = (1/cos(x)) * (-sin(x)) = -sin(x)/cos(x) = -tan(x)."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Implicit Differentiation",
+      "skill": "implicit-differentiation",
+      "content": "Not every curve can be written as y = f(x). Circles, ellipses, and other relations mix x and y together. Implicit differentiation lets you find dy/dx directly from the equation without solving for y. The key idea: differentiate BOTH sides with respect to x, treating y as a function of x — so every time you differentiate a y-term, attach a dy/dx via the chain rule.",
+      "keyPoints": [
+        "When to use: the equation has y mixed with x (e.g., x^2 + y^2 = 25) and you can't easily isolate y.",
+        "Rule: differentiate every term with respect to x. For any term involving y, apply the chain rule: d/dx[y^n] = n*y^(n-1) * dy/dx.",
+        "Product rule with xy terms: d/dx[xy] = x * dy/dx + y * 1 (product rule, then chain rule on y).",
+        "After differentiating: collect all dy/dx terms on one side, factor out dy/dx, and solve.",
+        "Circle example: x^2 + y^2 = r^2 gives 2x + 2y(dy/dx) = 0, so dy/dx = -x/y.",
+        "The result dy/dx will typically involve BOTH x and y — this is normal and expected for implicit derivatives."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Implicit Differentiation — Worked Examples",
+      "skill": "implicit-differentiation",
+      "examples": [
+        {
+          "problem": "Find dy/dx for x^2 + y^2 = 25.",
+          "solution": "Differentiate both sides: 2x + 2y(dy/dx) = 0. Solve for dy/dx: 2y(dy/dx) = -2x, so dy/dx = -x/y. At the point (3, 4): dy/dx = -3/4. This is the slope of the circle at that point."
+        },
+        {
+          "problem": "Find dy/dx for x^2/9 + y^2/4 = 1 (ellipse).",
+          "solution": "Differentiate: 2x/9 + (2y/4)(dy/dx) = 0, which simplifies to 2x/9 + (y/2)(dy/dx) = 0. Solve: (y/2)(dy/dx) = -2x/9, so dy/dx = -4x/(9y)."
+        },
+        {
+          "problem": "Find dy/dx for x^3 + x^2*y - xy^2 = 8.",
+          "solution": "Differentiate term by term. d/dx[x^3] = 3x^2. d/dx[x^2*y] = 2xy + x^2(dy/dx) (product rule). d/dx[xy^2] = y^2 + x*2y(dy/dx) (product rule + chain rule). So: 3x^2 + 2xy + x^2(dy/dx) - y^2 - 2xy(dy/dx) = 0. Collect dy/dx terms: (x^2 - 2xy)(dy/dx) = -3x^2 - 2xy + y^2. Therefore dy/dx = (y^2 - 3x^2 - 2xy)/(x^2 - 2xy)."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Inverse Function Derivatives & Inverse Trig Derivatives",
+      "skills": ["inverse-function-derivatives", "inverse-trig-derivatives"],
+      "content": "If f and f^{-1} are inverse functions, there is a clean relationship between their derivatives. This theorem lets you find the derivative of an inverse even when you cannot write a formula for f^{-1}. The inverse trig functions (arcsin, arccos, arctan) are special cases with formulas you should memorize.",
+      "keyPoints": [
+        "Inverse function derivative theorem: (f^{-1})'(a) = 1 / f'(f^{-1}(a)). In words: evaluate f' at the point whose output is a, then take the reciprocal.",
+        "Intuition: if f doubles the rate of change, then f^{-1} halves it. The slopes are reciprocals at corresponding points.",
+        "To use the formula: (1) find f^{-1}(a) — the x-value where f(x) = a, (2) compute f'(x) at that x-value, (3) take the reciprocal.",
+        "d/dx[arcsin(x)] = 1/sqrt(1 - x^2), for |x| < 1.",
+        "d/dx[arccos(x)] = -1/sqrt(1 - x^2), for |x| < 1.",
+        "d/dx[arctan(x)] = 1/(1 + x^2).",
+        "Chain rule extensions: d/dx[arctan(g(x))] = g'(x)/(1 + [g(x)]^2). Always apply the chain rule when the argument is not simply x."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Inverse Function & Inverse Trig Derivatives — Worked Examples",
+      "skills": ["inverse-function-derivatives", "inverse-trig-derivatives"],
+      "examples": [
+        {
+          "problem": "Let f(x) = x^3 + x. Given that f(2) = 10, find (f^{-1})'(10).",
+          "solution": "Use the formula: (f^{-1})'(a) = 1/f'(f^{-1}(a)). Here a = 10, so f^{-1}(10) = 2 (since f(2) = 10). Compute f'(x) = 3x^2 + 1, so f'(2) = 3(4) + 1 = 13. Therefore (f^{-1})'(10) = 1/13."
+        },
+        {
+          "problem": "Find d/dx[arctan(5x)].",
+          "solution": "Use the arctan derivative with chain rule: d/dx[arctan(u)] = u'/(1 + u^2). Here u = 5x, u' = 5. So d/dx[arctan(5x)] = 5/(1 + 25x^2)."
+        },
+        {
+          "problem": "Find d/dx[arcsin(x^2)].",
+          "solution": "Use the arcsin derivative with chain rule: d/dx[arcsin(u)] = u'/sqrt(1 - u^2). Here u = x^2, u' = 2x. So d/dx[arcsin(x^2)] = 2x/sqrt(1 - x^4)."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Chain Rule, Implicit & Inverse Derivatives Practice",
+      "skills": ["chain-rule-composite", "implicit-differentiation", "inverse-function-derivatives", "inverse-trig-derivatives"],
+      "problems": [
+        {
+          "problem": "Find d/dx[e^(sin(x^2))].",
+          "hints": [
+            "Three layers: outer = e^u, middle = sin(v), inner = x^2",
+            "Peel outside-in: e^(sin(x^2)) * d/dx[sin(x^2)]",
+            "For d/dx[sin(x^2)]: cos(x^2) * 2x"
+          ],
+          "answer": "e^(sin(x^2)) * cos(x^2) * 2x = 2x cos(x^2) e^(sin(x^2))."
+        },
+        {
+          "problem": "Find dy/dx for x*sin(y) + y*cos(x) = 1.",
+          "hints": [
+            "Differentiate each term: d/dx[x sin(y)] needs the product rule, and differentiating sin(y) requires dy/dx",
+            "d/dx[x sin(y)] = sin(y) + x cos(y)(dy/dx). d/dx[y cos(x)] = cos(x)(dy/dx) + y(-sin(x))",
+            "Collect dy/dx terms on one side and factor"
+          ],
+          "answer": "sin(y) + x cos(y)(dy/dx) + cos(x)(dy/dx) - y sin(x) = 0. Factor: (x cos(y) + cos(x))(dy/dx) = y sin(x) - sin(y). So dy/dx = (y sin(x) - sin(y))/(x cos(y) + cos(x))."
+        },
+        {
+          "problem": "Let g(x) = 2x^3 + 3x - 5. Given that g(1) = 0, find (g^{-1})'(0).",
+          "hints": [
+            "Use (g^{-1})'(a) = 1/g'(g^{-1}(a)) with a = 0",
+            "g^{-1}(0) = 1 because g(1) = 0",
+            "Compute g'(x) = 6x^2 + 3, then evaluate at x = 1"
+          ],
+          "answer": "g'(x) = 6x^2 + 3. g'(1) = 9. So (g^{-1})'(0) = 1/9."
+        },
+        {
+          "problem": "Find d/dx[x * arctan(x)].",
+          "hints": [
+            "This is a product: u = x, v = arctan(x)",
+            "Product rule: u'v + uv'",
+            "d/dx[arctan(x)] = 1/(1 + x^2)"
+          ],
+          "answer": "Product rule: 1 * arctan(x) + x * 1/(1 + x^2) = arctan(x) + x/(1 + x^2)."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Higher-Order Derivatives",
+      "skill": "higher-order-derivatives",
+      "content": "The second derivative is the derivative of the derivative. It measures the rate of change of the rate of change — in other words, how the slope itself is changing. Higher-order derivatives are essential for concavity analysis and have a direct physical interpretation: if position is s(t), then s'(t) is velocity and s''(t) is acceleration.",
+      "keyPoints": [
+        "Notation: f''(x) or d^2y/dx^2 for the second derivative. f'''(x) or d^3y/dx^3 for the third. f^(n)(x) for the nth.",
+        "To find the second derivative: differentiate f'(x) again using all the same rules (power, product, chain, etc.).",
+        "Kinematics: position s(t), velocity v(t) = s'(t), acceleration a(t) = v'(t) = s''(t). Speed = |v(t)|.",
+        "Speeding up: velocity and acceleration have the SAME sign. Slowing down: opposite signs.",
+        "Second derivative in implicit differentiation: differentiate dy/dx again implicitly. Substitute the expression for dy/dx to eliminate it from the result.",
+        "Higher-order for common functions: d^n/dx^n[e^x] = e^x (always). d^n/dx^n[sin x] cycles through: cos x, -sin x, -cos x, sin x (period 4)."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Higher-Order Derivatives — Worked Examples",
+      "skill": "higher-order-derivatives",
+      "examples": [
+        {
+          "problem": "Find f''(x) for f(x) = x^4 - 3x^2 + 5x - 1.",
+          "solution": "f'(x) = 4x^3 - 6x + 5. f''(x) = 12x^2 - 6. The second derivative is a simple polynomial — straightforward power rule applied twice."
+        },
+        {
+          "problem": "A particle moves along a line with position s(t) = t^3 - 6t^2 + 9t + 2 (meters, seconds). Find the velocity and acceleration at t = 2. Is the particle speeding up or slowing down at t = 2?",
+          "solution": "v(t) = s'(t) = 3t^2 - 12t + 9. a(t) = v'(t) = s''(t) = 6t - 12. At t = 2: v(2) = 12 - 24 + 9 = -3 m/s (moving left). a(2) = 12 - 12 = 0 m/s^2 (zero acceleration — instantaneous transition). Since a(2) = 0, the particle is neither speeding up nor slowing down at that instant."
+        },
+        {
+          "problem": "Find d^2y/dx^2 for x^2 + y^2 = 25 using implicit differentiation.",
+          "solution": "First derivative: 2x + 2y(dy/dx) = 0, so dy/dx = -x/y. Second derivative: differentiate dy/dx = -x/y implicitly. d^2y/dx^2 = d/dx[-x/y] = -(y(1) - x(dy/dx))/y^2 (quotient rule) = -(y - x(-x/y))/y^2 = -(y + x^2/y)/y^2 = -(y^2 + x^2)/y^3. Since x^2 + y^2 = 25: d^2y/dx^2 = -25/y^3."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Composite, Implicit & Inverse Derivatives Mastery Practice",
+      "skills": ["chain-rule-composite", "implicit-differentiation", "inverse-function-derivatives", "inverse-trig-derivatives", "higher-order-derivatives"],
+      "problems": [
+        {
+          "problem": "No calculator. Find d/dx[cos^3(2x)] (i.e., d/dx[(cos(2x))^3]).",
+          "answer": "Outer = u^3, inner = cos(2x). Chain rule: 3[cos(2x)]^2 * d/dx[cos(2x)] = 3cos^2(2x) * (-sin(2x)) * 2 = -6 sin(2x) cos^2(2x)."
+        },
+        {
+          "problem": "No calculator. Find dy/dx for y^3 + xy - x^3 = 7.",
+          "answer": "Differentiate: 3y^2(dy/dx) + y + x(dy/dx) - 3x^2 = 0. Collect: (3y^2 + x)(dy/dx) = 3x^2 - y. So dy/dx = (3x^2 - y)/(3y^2 + x)."
+        },
+        {
+          "problem": "No calculator. Let f(x) = x^5 + 3x^3 + 2x. Given that f(1) = 6, find (f^{-1})'(6).",
+          "answer": "f^{-1}(6) = 1. f'(x) = 5x^4 + 9x^2 + 2. f'(1) = 5 + 9 + 2 = 16. (f^{-1})'(6) = 1/16."
+        },
+        {
+          "problem": "No calculator. Find d/dx[arcsin(3x) + arctan(x/2)].",
+          "answer": "d/dx[arcsin(3x)] = 3/sqrt(1 - 9x^2). d/dx[arctan(x/2)] = (1/2)/(1 + x^2/4) = 2/(4 + x^2). Sum: 3/sqrt(1 - 9x^2) + 2/(4 + x^2)."
+        },
+        {
+          "problem": "No calculator. A particle's position is s(t) = e^(-t) sin(t). Find s'(t) and s''(t). What is the acceleration at t = 0?",
+          "answer": "s'(t) = -e^(-t) sin(t) + e^(-t) cos(t) = e^(-t)(cos(t) - sin(t)). s''(t) = -e^(-t)(cos(t) - sin(t)) + e^(-t)(-sin(t) - cos(t)) = e^(-t)(-cos(t) + sin(t) - sin(t) - cos(t)) = -2e^(-t) cos(t). At t = 0: s''(0) = -2e^0 cos(0) = -2."
+        },
+        {
+          "problem": "No calculator. Find dy/dx for e^(xy) = x + y. Then evaluate dy/dx at the point (0, 1).",
+          "answer": "Differentiate: e^(xy)(y + x(dy/dx)) = 1 + dy/dx. Expand: ye^(xy) + xe^(xy)(dy/dx) = 1 + dy/dx. Collect: (xe^(xy) - 1)(dy/dx) = 1 - ye^(xy). So dy/dx = (1 - ye^(xy))/(xe^(xy) - 1). At (0, 1): e^(0) = 1. dy/dx = (1 - 1*1)/(0*1 - 1) = 0/(-1) = 0."
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "cr-power-chain": "24x(3x^2 - 5)^3.",
+    "cr-nested-trig-exp": "3e^(3x) cos(e^(3x)).",
+    "cr-ln-cos": "-tan(x).",
+    "id-circle": "dy/dx = -x/y.",
+    "id-ellipse": "dy/dx = -4x/(9y).",
+    "id-mixed-xy": "dy/dx = (y^2 - 3x^2 - 2xy)/(x^2 - 2xy).",
+    "inv-cubic": "(f^{-1})'(10) = 1/13.",
+    "inv-arctan-chain": "5/(1 + 25x^2).",
+    "inv-arcsin-chain": "2x/sqrt(1 - x^4).",
+    "gp-nested-exp-sin": "2x cos(x^2) e^(sin(x^2)).",
+    "gp-implicit-trig": "dy/dx = (y sin(x) - sin(y))/(x cos(y) + cos(x)).",
+    "gp-inverse-theorem": "(g^{-1})'(0) = 1/9.",
+    "gp-product-arctan": "arctan(x) + x/(1 + x^2).",
+    "ho-polynomial": "f''(x) = 12x^2 - 6.",
+    "ho-kinematics": "v(2) = -3 m/s, a(2) = 0 m/s^2. Neither speeding up nor slowing down.",
+    "ho-implicit-second": "d^2y/dx^2 = -25/y^3.",
+    "ip-cos-cubed": "-6 sin(2x) cos^2(2x).",
+    "ip-implicit-cubic": "dy/dx = (3x^2 - y)/(3y^2 + x).",
+    "ip-inverse-quintic": "(f^{-1})'(6) = 1/16.",
+    "ip-arcsin-arctan-sum": "3/sqrt(1 - 9x^2) + 2/(4 + x^2).",
+    "ip-kinematics-exp": "s''(0) = -2.",
+    "ip-implicit-exp": "dy/dx = (1 - ye^(xy))/(xe^(xy) - 1). At (0,1): dy/dx = 0."
+  }
+}

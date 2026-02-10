@@ -1,0 +1,116 @@
+{
+  "moduleId": "checkpoint_u3",
+  "course": "AP Calculus AB",
+  "unit": 3,
+  "title": "Unit 3 Checkpoint: Composite, Implicit, Inverse Derivatives",
+  "weeks": "14",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Test + mixed no-calculator drills. Covers chain rule, implicit differentiation, inverse function derivatives, inverse trig derivatives, and higher-order derivatives.",
+  "skillsCovered": ["chain-rule-composite", "implicit-differentiation", "inverse-function-derivatives", "inverse-trig-derivatives", "higher-order-derivatives"],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching before Unit 4 (Applications of Differentiation).",
+    "clusters": [
+      {"skillId": "chain-rule-composite", "reteachFocus": "Identifying outer/inner, chain rule with trig/exp/log, nested compositions"},
+      {"skillId": "implicit-differentiation", "reteachFocus": "dy/dx on all y-terms, product rule with xy terms, solving for dy/dx"},
+      {"skillId": "inverse-function-derivatives", "reteachFocus": "(f⁻¹)'(a) = 1/f'(f⁻¹(a)), inverse trig derivatives with chain rule"}
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cu3-1",
+      "question": "Differentiate: f(x) = sin(3x² + 1).",
+      "answer": "f'(x) = cos(3x²+1)·6x = 6x·cos(3x²+1).",
+      "skill": "chain-rule-composite",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cu3-2",
+      "question": "Differentiate: g(x) = e^(√x) · ln(x²+1).",
+      "answer": "Product rule + chain rule: g'(x) = e^(√x)·(1/(2√x))·ln(x²+1) + e^(√x)·(2x/(x²+1)).",
+      "skill": "chain-rule-composite",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "cu3-3",
+      "question": "Differentiate: h(x) = (cos(2x))⁴.",
+      "answer": "h'(x) = 4(cos(2x))³·(-sin(2x))·2 = -8cos³(2x)·sin(2x).",
+      "skill": "chain-rule-composite",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu3-4",
+      "question": "Find dy/dx for x² + y³ = xy + 7.",
+      "answer": "Differentiate: 2x + 3y²·(dy/dx) = y + x·(dy/dx). Collect: 3y²·(dy/dx) - x·(dy/dx) = y - 2x. dy/dx = (y-2x)/(3y²-x).",
+      "skill": "implicit-differentiation",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu3-5",
+      "question": "Find the slope of the tangent to x²+y²=25 at the point (3, 4).",
+      "answer": "2x + 2y·(dy/dx) = 0. dy/dx = -x/y. At (3,4): dy/dx = -3/4.",
+      "skill": "implicit-differentiation",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cu3-6",
+      "question": "Given f(2) = 5 and f'(2) = 3, find (f⁻¹)'(5).",
+      "answer": "(f⁻¹)'(5) = 1/f'(f⁻¹(5)) = 1/f'(2) = 1/3.",
+      "skill": "inverse-function-derivatives",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cu3-7",
+      "question": "Differentiate: y = arctan(3x) + arcsin(x/2).",
+      "answer": "dy/dx = 3/(1+(3x)²) + (1/2)/√(1-(x/2)²) = 3/(1+9x²) + 1/(2√(1-x²/4)) = 3/(1+9x²) + 1/√(4-x²).",
+      "skill": "inverse-trig-derivatives",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu3-8",
+      "question": "Find f''(x) for f(x) = x·eˣ.",
+      "answer": "f'(x) = eˣ + x·eˣ = eˣ(1+x). f''(x) = eˣ(1+x) + eˣ = eˣ(2+x).",
+      "skill": "higher-order-derivatives",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cu3-9",
+      "question": "If s(t) = t³ - 6t² + 9t + 2 represents position, find: (a) velocity, (b) acceleration, (c) when the particle is at rest.",
+      "answer": "(a) v(t) = 3t²-12t+9 = 3(t²-4t+3) = 3(t-1)(t-3). (b) a(t) = 6t-12. (c) At rest when v=0: t=1 and t=3.",
+      "skill": "higher-order-derivatives",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cu3-spiral",
+      "question": "SPIRAL: Find lim(x→0) (e²ˣ - 1)/(sin x) using L'Hôpital's Rule.",
+      "answer": "0/0 form. L'Hôpital: lim(x→0) 2e²ˣ/cos(x) = 2·1/1 = 2.",
+      "skill": "chain-rule-composite",
+      "difficulty": 5,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cu3-1": "6x·cos(3x²+1)",
+    "cu3-2": "e^(√x)[ln(x²+1)/(2√x) + 2x/(x²+1)]",
+    "cu3-3": "-8cos³(2x)sin(2x)",
+    "cu3-4": "(y-2x)/(3y²-x)",
+    "cu3-5": "-3/4",
+    "cu3-6": "1/3",
+    "cu3-7": "3/(1+9x²) + 1/√(4-x²)",
+    "cu3-8": "eˣ(2+x)",
+    "cu3-9": "(a) 3(t-1)(t-3) (b) 6t-12 (c) t=1,3",
+    "cu3-spiral": "2"
+  }
+}

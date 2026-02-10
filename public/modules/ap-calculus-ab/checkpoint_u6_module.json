@@ -1,0 +1,108 @@
+{
+  "moduleId": "checkpoint_u6",
+  "course": "AP Calculus AB",
+  "unit": 6,
+  "title": "Unit 6 Checkpoint: Integration & Accumulation",
+  "weeks": "29",
+  "estimatedDuration": 50,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "One skills-heavy test + one interpretation-heavy test. Covers Riemann sums, FTC Parts 1 & 2, antiderivatives, u-substitution, and integral properties.",
+  "skillsCovered": ["definite-integral-as-accumulation", "riemann-sums-approximation", "ftc-part-1", "ftc-part-2", "antiderivatives-indefinite-integrals", "integral-properties-techniques"],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold on skills or interpretation receive focused reteaching.",
+    "clusters": [
+      {"skillId": "riemann-sums-approximation", "reteachFocus": "Left/right/midpoint from tables, over/underestimate reasoning"},
+      {"skillId": "ftc-part-1", "reteachFocus": "d/dx[∫ₐˣ f(t)dt]=f(x), chain rule version with variable upper limit"},
+      {"skillId": "antiderivatives-indefinite-integrals", "reteachFocus": "Power rule reverse, trig/exp/log antiderivatives, +C"},
+      {"skillId": "integral-properties-techniques", "reteachFocus": "u-substitution setup, changing bounds for definite integrals"}
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cu6-1",
+      "question": "Using the table: x = 0, 2, 4, 6, 8 with f(x) = 3, 7, 11, 9, 5, approximate ∫₀⁸ f(x)dx using: (a) left Riemann sum with 4 subintervals, (b) right Riemann sum, (c) trapezoidal approximation.",
+      "answer": "Δx = 2. (a) Left: 2(3+7+11+9) = 2(30) = 60. (b) Right: 2(7+11+9+5) = 2(32) = 64. (c) Trap: (2/2)(3+2·7+2·11+2·9+5) = 1(3+14+22+18+5) = 62.",
+      "skill": "riemann-sums-approximation",
+      "difficulty": 4,
+      "points": 9
+    },
+    {
+      "id": "cu6-2",
+      "question": "Find d/dx[∫₁ˣ² cos(t³)dt].",
+      "answer": "FTC1 with chain rule: cos((x²)³)·d/dx[x²] = cos(x⁶)·2x = 2x·cos(x⁶).",
+      "skill": "ftc-part-1",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu6-3",
+      "question": "Evaluate: ∫₁⁴ (3√x + 2/x)dx.",
+      "answer": "∫(3x^(1/2)+2x⁻¹)dx = [2x^(3/2)+2ln|x|]₁⁴ = (2·8+2ln4)-(2·1+2ln1) = (16+2ln4)-(2+0) = 14+2ln4.",
+      "skill": "ftc-part-2",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu6-4",
+      "question": "Evaluate: ∫(5eˣ - 3cos(x) + 1/x)dx.",
+      "answer": "5eˣ - 3sin(x) + ln|x| + C.",
+      "skill": "antiderivatives-indefinite-integrals",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cu6-5",
+      "question": "Evaluate using u-substitution: ∫x²·cos(x³)dx.",
+      "answer": "Let u = x³, du = 3x²dx → x²dx = du/3. ∫cos(u)·(du/3) = (1/3)sin(u)+C = (1/3)sin(x³)+C.",
+      "skill": "integral-properties-techniques",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cu6-6",
+      "question": "Evaluate: ∫₀² x·e^(x²)dx.",
+      "answer": "Let u=x², du=2xdx → xdx=du/2. Bounds: x=0→u=0, x=2→u=4. ∫₀⁴ (1/2)eᵘdu = (1/2)[eᵘ]₀⁴ = (1/2)(e⁴-1).",
+      "skill": "integral-properties-techniques",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu6-7",
+      "question": "Given ∫₁⁵ f(x)dx = 8 and ∫₁³ f(x)dx = 3, find: (a) ∫₃⁵ f(x)dx, (b) ∫₅¹ f(x)dx, (c) ∫₁⁵ [2f(x)-3]dx.",
+      "answer": "(a) ∫₁⁵ = ∫₁³+∫₃⁵ → 8=3+∫₃⁵ → ∫₃⁵=5. (b) -∫₁⁵ = -8. (c) 2·∫₁⁵f(x)dx - 3·(5-1) = 2(8)-12 = 4.",
+      "skill": "integral-properties-techniques",
+      "difficulty": 5,
+      "points": 9
+    },
+    {
+      "id": "cu6-frq",
+      "question": "(FRQ) Let g(x) = ∫₀ˣ f(t)dt, where f is the function graphed (piecewise linear: f(0)=2, f(2)=2, f(4)=-2, f(6)=0). (a) Find g(2), g(4), g(6). (b) Where does g have a maximum on [0,6]? (c) Where is g concave down?",
+      "answer": "(a) g(2) = area of rectangle 2×2 = 4. g(4) = 4 + area of triangle (base 2, heights 2 to -2) = 4+0=4. Actually: ∫₂⁴ f(t)dt = triangle from (2,2) to (4,-2): area = (1/2)(2)(2)-(1/2)(2)(2) — more precisely, the region has area = 0 (positive and negative cancel if linear). g(4) = 4+0 = 4. g(6) = 4+∫₄⁶ f(t)dt = 4+(-2)(2)/2 = 4+(-2) = 2. Wait — f goes from -2 to 0 linearly: area = (1/2)(2)(-2+0) = -2. g(6) = 4-2 = 2. (b) g'(x)=f(x). f(x)>0 on [0, ~3], f=0 at x≈3. g' changes +→- at x≈3. Max at x≈3. (c) g''=f'. f'<0 where f is decreasing: (2, 4). Concave down on (2, 4).",
+      "skill": "ftc-part-1",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "cu6-spiral",
+      "question": "SPIRAL: Find the tangent line to f(x) = x² at x = 3, then use it to estimate ∫₂⁴ x²dx (compare with exact answer).",
+      "answer": "f(3)=9, f'(3)=6. Tangent: y=9+6(x-3)=6x-9. ∫₂⁴(6x-9)dx = [3x²-9x]₂⁴ = (48-36)-(12-18) = 12+6 = 18. Exact: [x³/3]₂⁴ = 64/3-8/3 = 56/3 ≈ 18.67. Close!",
+      "skill": "antiderivatives-indefinite-integrals",
+      "difficulty": 5,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cu6-1": "(a) 60 (b) 64 (c) 62",
+    "cu6-2": "2x·cos(x⁶)",
+    "cu6-3": "14 + 2ln4",
+    "cu6-4": "5eˣ - 3sin(x) + ln|x| + C",
+    "cu6-5": "(1/3)sin(x³) + C",
+    "cu6-6": "(1/2)(e⁴-1)",
+    "cu6-7": "(a) 5 (b) -8 (c) 4",
+    "cu6-frq": "(a) g(2)=4, g(4)=4, g(6)=2 (b) max at x≈3 (c) concave down (2,4)",
+    "cu6-spiral": "Tangent estimate: 18. Exact: 56/3≈18.67."
+  }
+}

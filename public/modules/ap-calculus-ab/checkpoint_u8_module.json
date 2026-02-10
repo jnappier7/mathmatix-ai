@@ -1,0 +1,99 @@
+{
+  "moduleId": "checkpoint_u8",
+  "course": "AP Calculus AB",
+  "unit": 8,
+  "title": "Unit 8 Checkpoint: Applications of Integration",
+  "weeks": "35",
+  "estimatedDuration": 45,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Unit test + cumulative integration FRQ set. Covers average value, motion via integrals, net change, area between curves, and volume by cross-sections and disk/washer.",
+  "skillsCovered": ["average-value-function", "motion-via-integrals-net-change", "area-between-curves", "volume-cross-sections", "volume-disk-washer"],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching before final review.",
+    "clusters": [
+      {"skillId": "average-value-function", "reteachFocus": "f_avg = (1/(b-a))∫f(x)dx, interpreting in context"},
+      {"skillId": "motion-via-integrals-net-change", "reteachFocus": "Displacement vs total distance, net change theorem"},
+      {"skillId": "area-between-curves", "reteachFocus": "Top minus bottom, finding intersections, choosing dx vs dy"},
+      {"skillId": "volume-disk-washer", "reteachFocus": "Disk: π∫R²dx, washer: π∫(R²-r²)dx, revolving around non-axis lines"}
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cu8-1",
+      "question": "Find the average value of f(x) = x² + 1 on [0, 3].",
+      "answer": "f_avg = (1/3)∫₀³(x²+1)dx = (1/3)[x³/3+x]₀³ = (1/3)(9+3) = 4.",
+      "skill": "average-value-function",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cu8-2",
+      "question": "A particle moves with velocity v(t) = t² - 4t + 3 = (t-1)(t-3) for 0 ≤ t ≤ 5. Find: (a) displacement, (b) total distance traveled.",
+      "answer": "(a) ∫₀⁵(t²-4t+3)dt = [t³/3-2t²+3t]₀⁵ = (125/3-50+15) = 125/3-35 = 20/3. (b) v=0 at t=1,3. ∫₀¹(t²-4t+3)dt + |∫₁³(t²-4t+3)dt| + ∫₃⁵(t²-4t+3)dt = [1/3-2+3] + |[9-18+9-(1/3-2+3)]| + [125/3-50+15-(9-18+9)] = 4/3 + |-4/3| + 32/3 = 4/3+4/3+32/3 = 40/3.",
+      "skill": "motion-via-integrals-net-change",
+      "difficulty": 6,
+      "points": 12
+    },
+    {
+      "id": "cu8-3",
+      "question": "Find the area enclosed by y = x² and y = 2x + 3.",
+      "answer": "Intersections: x² = 2x+3 → x²-2x-3=0 → (x-3)(x+1)=0. x=-1, x=3. Line on top: ∫₋₁³[(2x+3)-x²]dx = [x²+3x-x³/3]₋₁³ = (9+9-9)-(1-3+1/3) = 9-(-5/3) = 9+5/3 = 32/3.",
+      "skill": "area-between-curves",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cu8-4",
+      "question": "The base of a solid is the region bounded by y = √x and y = 0 from x=0 to x=4. Cross-sections perpendicular to the x-axis are squares. Find the volume.",
+      "answer": "Side of square = √x. A(x) = (√x)² = x. V = ∫₀⁴ x dx = [x²/2]₀⁴ = 8.",
+      "skill": "volume-cross-sections",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu8-5",
+      "question": "Find the volume when the region between y = √x and y = 0, from x=0 to x=4, is revolved about the x-axis.",
+      "answer": "Disk method: V = π∫₀⁴(√x)²dx = π∫₀⁴ x dx = π[x²/2]₀⁴ = 8π.",
+      "skill": "volume-disk-washer",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cu8-6",
+      "question": "Find the volume when the region between y = x² and y = x is revolved about the x-axis.",
+      "answer": "Intersections: x² = x → x(x-1)=0 → x=0,1. y=x is outer (on top). Washer: V = π∫₀¹[(x)²-(x²)²]dx = π∫₀¹(x²-x⁴)dx = π[x³/3-x⁵/5]₀¹ = π(1/3-1/5) = 2π/15.",
+      "skill": "volume-disk-washer",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cu8-frq",
+      "question": "(FRQ) The rate of water flowing into a tank is r(t) = 200 - 4t² gallons/minute for 0 ≤ t ≤ 7. (a) Find the total amount of water that flows in from t=0 to t=5. (b) Find the average rate of flow on [0, 5]. (c) At what time is the rate of flow 100 gal/min?",
+      "answer": "(a) ∫₀⁵(200-4t²)dt = [200t-4t³/3]₀⁵ = 1000-500/3 = 2500/3 ≈ 833.3 gallons. (b) (1/5)·2500/3 = 500/3 ≈ 166.7 gal/min. (c) 200-4t²=100 → 4t²=100 → t²=25 → t=5 minutes.",
+      "skill": "motion-via-integrals-net-change",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "cu8-spiral",
+      "question": "SPIRAL: Find dy/dx if y = ∫₂ˣ sin(t²)dt, then evaluate dy/dx at x = √π.",
+      "answer": "By FTC1: dy/dx = sin(x²). At x=√π: sin(π) = 0.",
+      "skill": "motion-via-integrals-net-change",
+      "difficulty": 4,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cu8-1": "4",
+    "cu8-2": "(a) 20/3 (b) 40/3",
+    "cu8-3": "32/3",
+    "cu8-4": "8",
+    "cu8-5": "8π",
+    "cu8-6": "2π/15",
+    "cu8-frq": "(a) 2500/3≈833 gal (b) 500/3≈167 gal/min (c) t=5",
+    "cu8-spiral": "sin(x²). At x=√π: 0."
+  }
+}

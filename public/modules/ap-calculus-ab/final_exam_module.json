@@ -1,0 +1,243 @@
+{
+  "moduleId": "final_exam",
+  "course": "AP Calculus AB",
+  "unit": 9,
+  "title": "AP Calculus AB Comprehensive Final Exam",
+  "weeks": "36+",
+  "estimatedDuration": 60,
+  "type": "assessment",
+  "isFinal": true,
+  "description": "Comprehensive final exam modeled on the AP Calculus AB exam format: limits & continuity, differentiation (definition, rules, composite/implicit), contextual and analytical applications of derivatives, integration & accumulation, differential equations, and applications of integration. Mix of MCQ-style and FRQ-style problems covering all 8 content units.",
+  "skillsCovered": [
+    "limits-graphical-numerical",
+    "limits-algebraic-techniques",
+    "continuity-types",
+    "ivt-squeeze-theorem",
+    "derivative-definition-difference-quotient",
+    "basic-differentiation-rules",
+    "common-derivatives",
+    "chain-rule-composite",
+    "implicit-differentiation",
+    "related-rates-setup-solve",
+    "motion-position-velocity-acceleration",
+    "lhopitals-rule",
+    "mvt-evt-theorems",
+    "increasing-decreasing-extrema",
+    "concavity-inflection-points",
+    "optimization-problems",
+    "riemann-sums-approximation",
+    "ftc-part-1",
+    "ftc-part-2",
+    "antiderivatives-indefinite-integrals",
+    "u-substitution",
+    "slope-fields-solution-curves",
+    "separable-differential-equations",
+    "exponential-growth-decay-models",
+    "average-value-function",
+    "area-between-curves",
+    "volume-disk-washer"
+  ],
+  "passThreshold": 70,
+  "assessmentProblems": [
+    {
+      "id": "abf-1",
+      "question": "Evaluate lim(x→2) (x³ - 8)/(x² - 5x + 6).",
+      "answer": "Factor: (x-2)(x²+2x+4)/((x-2)(x-3)) = (x²+2x+4)/(x-3). At x=2: (4+4+4)/(2-3) = 12/(-1) = -12.",
+      "skill": "limits-algebraic-techniques",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-2",
+      "question": "The function f is continuous on [0, 5]. Given f(0) = -3 and f(5) = 7, which theorem guarantees that f(c) = 4 for some c in (0, 5)? Justify.",
+      "answer": "The Intermediate Value Theorem. f is continuous on [0,5], and 4 is between f(0)=-3 and f(5)=7 (i.e., -3 < 4 < 7). Therefore, by the IVT, there exists at least one c in (0,5) such that f(c) = 4.",
+      "skill": "ivt-squeeze-theorem",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "abf-3",
+      "question": "Use the limit definition of the derivative to find f'(x) for f(x) = √(3x + 1).",
+      "answer": "f'(x) = lim(h→0) [√(3(x+h)+1) - √(3x+1)]/h. Multiply by conjugate: lim(h→0) [(3x+3h+1)-(3x+1)] / [h(√(3x+3h+1)+√(3x+1))] = lim(h→0) 3h/[h(√(3x+3h+1)+√(3x+1))] = 3/[2√(3x+1)].",
+      "skill": "derivative-definition-difference-quotient",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "abf-4",
+      "question": "Find dy/dx for y = x²·sin(3x).",
+      "answer": "Product rule + chain rule: dy/dx = 2x·sin(3x) + x²·cos(3x)·3 = 2x sin(3x) + 3x² cos(3x).",
+      "skill": "basic-differentiation-rules",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-5",
+      "question": "Find dy/dx for eˣʸ + y² = x.",
+      "answer": "Differentiate: eˣʸ(y + x·dy/dx) + 2y·dy/dx = 1. eˣʸ·y + eˣʸ·x·dy/dx + 2y·dy/dx = 1. dy/dx(x·eˣʸ + 2y) = 1 - y·eˣʸ. dy/dx = (1 - y·eˣʸ)/(x·eˣʸ + 2y).",
+      "skill": "implicit-differentiation",
+      "difficulty": 6,
+      "points": 8
+    },
+    {
+      "id": "abf-6",
+      "question": "Find d/dx[ln(cos²(x))].",
+      "answer": "d/dx[ln(cos²x)] = d/dx[2ln(cosx)] = 2·(-sinx/cosx) = -2tanx. Or: chain rule directly: (1/cos²x)·2cosx·(-sinx) = -2sinx/cosx = -2tanx.",
+      "skill": "chain-rule-composite",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-7",
+      "question": "[FRQ] A spherical balloon is being inflated at a rate of 100 cm³/s. Find the rate at which the radius is increasing when the radius is 5 cm.",
+      "answer": "V = (4/3)πr³. dV/dt = 4πr²·dr/dt. 100 = 4π(25)·dr/dt. dr/dt = 100/(100π) = 1/π ≈ 0.318 cm/s.",
+      "skill": "related-rates-setup-solve",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "abf-8",
+      "question": "[FRQ] A particle moves along the x-axis with position s(t) = t³ - 6t² + 9t + 2 for t ≥ 0. (a) Find v(t) and a(t). (b) When is the particle at rest? (c) When is the particle moving to the right? (d) Find the total distance traveled on [0, 5].",
+      "answer": "(a) v(t) = 3t² - 12t + 9 = 3(t-1)(t-3). a(t) = 6t - 12. (b) At rest: t=1, t=3. (c) v(t)>0: t<1 or t>3. (d) s(0)=2, s(1)=1-6+9+2=6, s(3)=27-54+27+2=2, s(5)=125-150+45+2=22. Distance = |6-2|+|2-6|+|22-2| = 4+4+20 = 28.",
+      "skill": "motion-position-velocity-acceleration",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "abf-9",
+      "question": "Evaluate lim(x→0) (eˣ - 1 - x)/x².",
+      "answer": "Direct substitution gives 0/0. L'Hôpital's: lim(x→0) (eˣ - 1)/(2x) = 0/0 again. L'Hôpital's again: lim(x→0) eˣ/2 = 1/2.",
+      "skill": "lhopitals-rule",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "abf-10",
+      "question": "Let f be continuous on [1, 4] and differentiable on (1, 4) with f(1) = 2 and f(4) = 11. By the MVT, there exists c in (1, 4) such that f'(c) = ?",
+      "answer": "By MVT: f'(c) = [f(4)-f(1)]/(4-1) = (11-2)/3 = 3.",
+      "skill": "mvt-evt-theorems",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "abf-11",
+      "question": "[FRQ] Given f(x) = x⁴ - 4x³ + 4x². (a) Find all critical points. (b) Determine intervals of increase/decrease. (c) Classify each critical point. (d) Find inflection points.",
+      "answer": "(a) f'(x) = 4x³ - 12x² + 8x = 4x(x² - 3x + 2) = 4x(x-1)(x-2). Critical: x=0,1,2. (b) f'>0: (-∞,0)∪(1,2); f'<0: (0,1)∪(2,∞). Wait: test signs. f'(-1)=4(-1)(4)=-16<0. f'(0.5)=4(.5)(-.5)(-1.5)=1.5>0. f'(1.5)=4(1.5)(.5)(-.5)=-1.5<0. f'(3)=4(3)(2)(1)=24>0. So f'>0: (0,1)∪(2,∞); f'<0: (-∞,0)∪(1,2). (c) x=0: local min; x=1: local max; x=2: local min. (d) f''(x)=12x²-24x+8=4(3x²-6x+2)=0 → x=(6±√12)/6=1±√3/3. Inflection at x≈0.423 and x≈1.577.",
+      "skill": "increasing-decreasing-extrema",
+      "difficulty": 6,
+      "points": 10
+    },
+    {
+      "id": "abf-12",
+      "question": "An open-top rectangular box with a square base has volume 32 cm³. Find the dimensions that minimize the surface area.",
+      "answer": "Let base side = x, height = h. V = x²h = 32 → h = 32/x². SA = x² + 4xh = x² + 128/x. SA'= 2x - 128/x² = 0 → 2x³ = 128 → x³ = 64 → x = 4. h = 32/16 = 2. SA''= 2 + 256/x³ > 0, confirming minimum. Dimensions: 4×4×2 cm.",
+      "skill": "optimization-problems",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "abf-13",
+      "question": "Using a right Riemann sum with n=4 subintervals, approximate ∫₀⁸ √(x+1) dx.",
+      "answer": "Δx = 8/4 = 2. Right endpoints: x=2,4,6,8. R₄ = 2[√3 + √5 + √7 + √9] = 2[1.732 + 2.236 + 2.646 + 3] = 2(9.614) ≈ 19.228.",
+      "skill": "riemann-sums-approximation",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-14",
+      "question": "Let F(x) = ∫₁ˣ² (t³ + 1)^(1/2) dt. Find F'(x).",
+      "answer": "By FTC Part 1 with chain rule: F'(x) = √((x²)³ + 1)·d/dx(x²) = √(x⁶ + 1)·2x = 2x√(x⁶ + 1).",
+      "skill": "ftc-part-1",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "abf-15",
+      "question": "Evaluate ∫₁⁴ (3√x + 2/x) dx.",
+      "answer": "∫₁⁴ (3x^(1/2) + 2x⁻¹)dx = [3·(2/3)x^(3/2) + 2ln|x|]₁⁴ = [2x^(3/2) + 2ln x]₁⁴ = (2·8 + 2ln4) - (2·1 + 0) = 16 + 2ln4 - 2 = 14 + 2ln4 = 14 + 4ln2.",
+      "skill": "ftc-part-2",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-16",
+      "question": "Evaluate ∫ x·e^(x²) dx.",
+      "answer": "u = x², du = 2x dx → x dx = du/2. ∫ e^u · du/2 = (1/2)e^u + C = (1/2)e^(x²) + C.",
+      "skill": "u-substitution",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-17",
+      "question": "Sketch a slope field for dy/dx = x - y at the points (0,0), (1,0), (0,1), (1,1), (2,1), (-1,0). At which points is the slope zero?",
+      "answer": "Slopes: (0,0): 0-0=0, (1,0): 1-0=1, (0,1): 0-1=-1, (1,1): 1-1=0, (2,1): 2-1=1, (-1,0): -1-0=-1. Slope is zero at (0,0) and (1,1). The curve dy/dx=0 occurs along the line y=x.",
+      "skill": "slope-fields-solution-curves",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-18",
+      "question": "Solve the IVP: dy/dx = 3y, y(0) = 5.",
+      "answer": "Separable: dy/y = 3 dx. ln|y| = 3x + C. y = Ae^(3x). IC: 5 = Ae⁰ → A = 5. Solution: y = 5e^(3x).",
+      "skill": "separable-differential-equations",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-19",
+      "question": "A radioactive substance decays according to A(t) = A₀e^(kt). If the half-life is 8 years, find k and how long it takes for the substance to decay to 10% of its original amount.",
+      "answer": "Half-life: A₀/2 = A₀e^(8k) → 1/2 = e^(8k) → k = ln(1/2)/8 = -ln2/8 ≈ -0.0866. For 10%: 0.1A₀ = A₀e^(kt) → 0.1 = e^(kt) → t = ln(0.1)/k = ln(0.1)/(-ln2/8) = 8ln10/ln2 ≈ 26.58 years.",
+      "skill": "exponential-growth-decay-models",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "abf-20",
+      "question": "Find the average value of f(x) = sin(x) on [0, π].",
+      "answer": "f_avg = (1/(π-0))∫₀π sin(x) dx = (1/π)[-cos(x)]₀π = (1/π)(-cos π + cos 0) = (1/π)(1+1) = 2/π.",
+      "skill": "average-value-function",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "abf-21",
+      "question": "[FRQ] Find the area of the region bounded by y = x² and y = x + 2.",
+      "answer": "Intersections: x² = x+2 → x²-x-2 = (x-2)(x+1) = 0 → x=-1, x=2. Top: y=x+2, bottom: y=x². Area = ∫₋₁² (x+2-x²)dx = [x²/2+2x-x³/3]₋₁² = (2+4-8/3)-(1/2-2+1/3) = (10/3)-(1/2-5/3) = (10/3)-(-7/6) = 20/6+7/6 = 27/6 = 9/2.",
+      "skill": "area-between-curves",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "abf-22",
+      "question": "[FRQ] The region bounded by y = x, y = 0, and x = 3 is revolved about the x-axis. (a) Find the volume using the disk method. (b) Set up (do not evaluate) the integral for the volume if the region is revolved about y = 4.",
+      "answer": "(a) Disk: V = π∫₀³ x² dx = π[x³/3]₀³ = π(9) = 9π. (b) Washer about y=4: outer R=4-0=4, inner r=4-x. V = π∫₀³ [(4)²-(4-x)²] dx = π∫₀³ [16-(16-8x+x²)] dx = π∫₀³ (8x-x²) dx.",
+      "skill": "volume-disk-washer",
+      "difficulty": 6,
+      "points": 10
+    }
+  ],
+  "answerKeys": {
+    "abf-1": "lim = -12.",
+    "abf-2": "IVT guarantees f(c)=4 for some c in (0,5).",
+    "abf-3": "f'(x) = 3/[2√(3x+1)].",
+    "abf-4": "dy/dx = 2x sin(3x) + 3x² cos(3x).",
+    "abf-5": "dy/dx = (1-yeˣʸ)/(xeˣʸ+2y).",
+    "abf-6": "-2tan x.",
+    "abf-7": "dr/dt = 1/π cm/s.",
+    "abf-8": "(a) v=3(t-1)(t-3), a=6t-12. (b) t=1,3. (c) t<1 or t>3. (d) 28.",
+    "abf-9": "lim = 1/2.",
+    "abf-10": "f'(c) = 3.",
+    "abf-11": "CP: x=0(min),1(max),2(min). IP: x=1±√3/3.",
+    "abf-12": "4×4×2 cm.",
+    "abf-13": "R₄ ≈ 19.228.",
+    "abf-14": "F'(x) = 2x√(x⁶+1).",
+    "abf-15": "14 + 4ln2.",
+    "abf-16": "(1/2)e^(x²) + C.",
+    "abf-17": "Slope=0 at (0,0) and (1,1).",
+    "abf-18": "y = 5e^(3x).",
+    "abf-19": "k=-ln2/8. t=8ln10/ln2≈26.58 years.",
+    "abf-20": "f_avg = 2/π.",
+    "abf-21": "Area = 9/2.",
+    "abf-22": "(a) V=9π. (b) V=π∫₀³(8x-x²)dx."
+  }
+}

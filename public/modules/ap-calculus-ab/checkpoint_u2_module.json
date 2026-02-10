@@ -1,0 +1,117 @@
+{
+  "moduleId": "checkpoint_u2",
+  "course": "AP Calculus AB",
+  "unit": 2,
+  "title": "Unit 2 Checkpoint: Derivatives Definition & Rules",
+  "weeks": "10",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Skills quiz (differentiation rules) + conceptual quiz (interpretation). Covers derivative definition, differentiability, power/product/quotient rules, trig/exp/log derivatives, and derivatives from graphs/tables.",
+  "skillsCovered": ["derivative-definition-difference-quotient", "derivative-as-rate-of-change", "differentiability-vs-continuity", "basic-differentiation-rules", "common-derivatives", "derivatives-from-graphs-tables"],
+  "passThreshold": 70,
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching before advancing to Unit 3 (Chain Rule, Implicit Differentiation).",
+    "clusters": [
+      {"skillId": "derivative-definition-difference-quotient", "reteachFocus": "Both forms of limit definition, computing derivatives from definition"},
+      {"skillId": "basic-differentiation-rules", "reteachFocus": "Power rule fluency, product/quotient rule application, rewriting before differentiating"},
+      {"skillId": "common-derivatives", "reteachFocus": "Trig derivative table, exponential/log derivatives"},
+      {"skillId": "derivatives-from-graphs-tables", "reteachFocus": "Estimating derivatives from tables, reading slope from graphs, interpreting in context"}
+    ]
+  },
+  "assessmentProblems": [
+    {
+      "id": "cu2-1",
+      "question": "Use the limit definition to find f'(x) for f(x) = 3x² - 2x + 1.",
+      "answer": "f'(x) = lim(h→0) [3(x+h)²-2(x+h)+1-(3x²-2x+1)]/h = lim(h→0) [6xh+3h²-2h]/h = lim(h→0) (6x+3h-2) = 6x-2.",
+      "skill": "derivative-definition-difference-quotient",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cu2-2",
+      "question": "The function f satisfies lim(h→0) [f(3+h) - f(3)]/h = 7. What does this tell you?",
+      "answer": "f'(3) = 7. The derivative of f at x=3 is 7. This means the slope of the tangent line to f at x=3 is 7, and the instantaneous rate of change of f at x=3 is 7.",
+      "skill": "derivative-as-rate-of-change",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cu2-3",
+      "question": "At which x-values is f(x) = |x² - 4| not differentiable? Explain why.",
+      "answer": "Not differentiable at x = -2 and x = 2. At these points, x²-4 = 0, and the absolute value creates corners (the graph has sharp turns where x²-4 changes sign).",
+      "skill": "differentiability-vs-continuity",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu2-4",
+      "question": "Differentiate: f(x) = 4x⁵ - 3x⁻² + 7√x - 2/x.",
+      "answer": "Rewrite: 4x⁵ - 3x⁻² + 7x^(1/2) - 2x⁻¹. f'(x) = 20x⁴ + 6x⁻³ + (7/2)x^(-1/2) + 2x⁻² = 20x⁴ + 6/x³ + 7/(2√x) + 2/x².",
+      "skill": "basic-differentiation-rules",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cu2-5",
+      "question": "Find dy/dx: y = x²·sin(x).",
+      "answer": "Product rule: dy/dx = 2x·sin(x) + x²·cos(x).",
+      "skill": "basic-differentiation-rules",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cu2-6",
+      "question": "Find dy/dx: y = (3x + 1)/(x² - 4).",
+      "answer": "Quotient rule: [(3)(x²-4) - (3x+1)(2x)]/(x²-4)² = [3x²-12-6x²-2x]/(x²-4)² = (-3x²-2x-12)/(x²-4)².",
+      "skill": "basic-differentiation-rules",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cu2-7",
+      "question": "Differentiate: (a) f(x) = 5eˣ - 3ln(x), (b) g(x) = tan(x) + 2sec(x), (c) h(x) = 4ˣ.",
+      "answer": "(a) f'(x) = 5eˣ - 3/x. (b) g'(x) = sec²(x) + 2sec(x)tan(x). (c) h'(x) = 4ˣ·ln(4).",
+      "skill": "common-derivatives",
+      "difficulty": 4,
+      "points": 9
+    },
+    {
+      "id": "cu2-8",
+      "question": "The table shows: t = 0, 2, 5, 8, 12 with f(t) = 10, 18, 30, 26, 14. Estimate f'(5) using the values in the table.",
+      "answer": "Use average of slopes on either side: f'(5) ≈ [f(8)-f(2)]/(8-2) = (26-18)/6 = 8/6 = 4/3 ≈ 1.33. (Or symmetric difference quotient.)",
+      "skill": "derivatives-from-graphs-tables",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cu2-9",
+      "question": "The graph of f is shown with f increasing and concave down on (0, 3), reaching a maximum at x=3, then decreasing on (3, 6). Sketch the graph of f' on [0, 6].",
+      "answer": "f' is positive on (0, 3) and negative on (3, 6). f' crosses zero at x=3. Since f is concave down throughout, f' is decreasing. So f' starts positive, decreases through zero at x=3, and continues decreasing (becomes more negative).",
+      "skill": "derivatives-from-graphs-tables",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cu2-spiral",
+      "question": "SPIRAL: Find the equation of the tangent line to f(x) = x³ - 2x at x = 1.",
+      "answer": "f(1) = 1-2 = -1. f'(x) = 3x²-2, f'(1) = 3-2 = 1. Tangent: y-(-1) = 1(x-1) → y = x-2.",
+      "skill": "derivative-as-rate-of-change",
+      "difficulty": 4,
+      "points": 5
+    }
+  ],
+  "answerKeys": {
+    "cu2-1": "f'(x) = 6x - 2",
+    "cu2-2": "f'(3) = 7, slope of tangent at x=3",
+    "cu2-3": "x = -2 and x = 2 (corners from absolute value)",
+    "cu2-4": "20x⁴ + 6/x³ + 7/(2√x) + 2/x²",
+    "cu2-5": "2x·sin(x) + x²·cos(x)",
+    "cu2-6": "(-3x²-2x-12)/(x²-4)²",
+    "cu2-7": "(a) 5eˣ-3/x (b) sec²x+2secx·tanx (c) 4ˣln4",
+    "cu2-8": "f'(5) ≈ 4/3",
+    "cu2-9": "f' positive decreasing, zero at x=3, negative after",
+    "cu2-spiral": "y = x - 2"
+  }
+}
