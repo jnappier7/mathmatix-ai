@@ -71,9 +71,10 @@
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
   <style>
-    /* ── Ensure external countdown banner layers above sticky header ── */
-    .landing-header {
-      z-index: 90 !important;
+    /* ── Countdown banner above header; header above everything else ── */
+    .lp-countdown-banner {
+      position: relative;
+      z-index: 101;
     }
 
     /* ── Landing Page Overrides ─────────────────────────────── */
