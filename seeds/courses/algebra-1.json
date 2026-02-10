@@ -4193,6 +4193,462 @@
         "allowRetakes": true,
         "maxRetakes": 2
       }
+    },
+    {
+      "unitId": "alg1-unit-10",
+      "title": "Radicals and Geometry",
+      "subtitle": "Roots, Radical Expressions, and the Pythagorean Theorem",
+      "description": "Students simplify radical expressions, perform operations with radicals, solve radical equations, and apply radical concepts in geometric contexts including the Pythagorean theorem and distance formula.",
+      "order": 10,
+      "quarter": 4,
+      "essentialQuestions": [
+        "What is the relationship between radicals and exponents?",
+        "How do radicals connect algebra to geometry?",
+        "When and why do extraneous solutions appear when solving radical equations?"
+      ],
+      "bigIdeas": [
+        "Radicals (roots) are the inverse of exponentiation",
+        "Simplifying radicals relies on finding perfect square factors",
+        "The Pythagorean theorem is one of the most powerful connections between algebra and geometry"
+      ],
+      "estimatedDays": 18,
+      "skillIds": ["simplifying-radicals", "operations-with-radicals", "solving-radical-equations", "pythagorean-theorem", "distance-formula"],
+      "standardsAlignment": ["N-RN.1", "N-RN.2", "A-REI.2", "G-GPE.7", "8.G.7"],
+      "lessons": [
+        {
+          "lessonId": "alg1-10-1",
+          "title": "Simplifying Radical Expressions",
+          "subtitle": "Finding Perfect Square Factors",
+          "description": "Students simplify square roots by identifying and extracting perfect square factors.",
+          "order": 1,
+          "estimatedMinutes": 50,
+          "skillIds": ["simplifying-radicals"],
+          "standardsAlignment": ["N-RN.1", "N-RN.2"],
+          "prerequisites": ["alg1-5-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Simplifying Square Roots",
+              "order": 1,
+              "content": {
+                "explanation": "A radical is simplified when there are no perfect square factors left under the radical. To simplify √n: find the largest perfect square factor of n, then apply √(a·b) = √a · √b. Perfect squares to know: 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144. For variables: √(x²) = |x|, and √(x⁴) = x² (even exponent → half the exponent).",
+                "workedExamples": [
+                  {
+                    "problem": "Simplify: √72",
+                    "steps": [
+                      "Find largest perfect square factor of 72: 36 × 2 = 72",
+                      "√72 = √(36 × 2) = √36 · √2 = 6√2"
+                    ],
+                    "solution": "6√2",
+                    "tip": "Factor trees help: 72 = 2³ × 3² → pairs: one pair of 3, one pair of 2 = 6, leftover 2 stays inside"
+                  },
+                  {
+                    "problem": "Simplify: √(50x⁴y³)",
+                    "steps": [
+                      "Split: √50 · √(x⁴) · √(y³)",
+                      "√50 = √(25·2) = 5√2",
+                      "√(x⁴) = x²",
+                      "√(y³) = √(y²·y) = y√y",
+                      "Result: 5x²y√(2y)"
+                    ],
+                    "solution": "5x²y√(2y)"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Radical", "definition": "The √ symbol indicating a root (square root by default)"},
+                  {"term": "Radicand", "definition": "The expression under the radical sign"},
+                  {"term": "Perfect Square", "definition": "A number that is the square of an integer (1, 4, 9, 16, 25, ...)"},
+                  {"term": "Simplified Radical", "definition": "A radical with no perfect square factors remaining in the radicand"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Teach the 'pair method' with prime factorization: every pair of identical factors comes out from under the radical. Use factor trees for larger numbers.",
+                  "commonMisconceptions": [
+                    "Thinking √(a+b) = √a + √b (WRONG — radicals don't distribute over addition)",
+                    "Not finding the LARGEST perfect square factor",
+                    "Forgetting that √(x²) = |x| (absolute value) in general"
+                  ],
+                  "scaffoldingPrompts": [
+                    "Can you list the perfect squares up to 144?",
+                    "What is the largest perfect square that divides evenly into this number?",
+                    "For variables: how many pairs of the same factor do you have?"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["simplifying-radicals"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["simplifying-radicals"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 3, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Simplifying Radicals Mastery Check",
+            "skillIds": ["simplifying-radicals"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-10-2",
+          "title": "Operations with Radicals",
+          "subtitle": "Adding, Subtracting, and Multiplying",
+          "description": "Students add, subtract, and multiply radical expressions by combining like radicals and using the distributive property.",
+          "order": 2,
+          "estimatedMinutes": 50,
+          "skillIds": ["operations-with-radicals"],
+          "standardsAlignment": ["N-RN.2"],
+          "prerequisites": ["alg1-10-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Combining and Multiplying Radicals",
+              "order": 1,
+              "content": {
+                "explanation": "Like radicals (same radicand) can be added/subtracted like like terms: 3√5 + 7√5 = 10√5. Unlike radicals cannot be combined: 3√2 + 4√3 stays as is. Multiplying: √a · √b = √(ab). When multiplying binomials with radicals, use FOIL. Sometimes you need to simplify FIRST to reveal like radicals.",
+                "workedExamples": [
+                  {
+                    "problem": "Simplify: 3√12 + 5√3",
+                    "steps": [
+                      "Simplify √12 first: √12 = √(4·3) = 2√3",
+                      "Substitute: 3(2√3) + 5√3 = 6√3 + 5√3",
+                      "Combine like radicals: 11√3"
+                    ],
+                    "solution": "11√3",
+                    "tip": "Always simplify each radical BEFORE trying to combine"
+                  },
+                  {
+                    "problem": "Multiply: (2 + √3)(4 - √3)",
+                    "steps": [
+                      "FOIL: 2·4 + 2·(-√3) + √3·4 + √3·(-√3)",
+                      "= 8 - 2√3 + 4√3 - 3",
+                      "Combine: (8-3) + (-2√3+4√3) = 5 + 2√3"
+                    ],
+                    "solution": "5 + 2√3"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Draw the parallel to like terms: 3x + 5x = 8x, so 3√5 + 5√5 = 8√5. The radical is like the 'variable part' — must match to combine.",
+                  "commonMisconceptions": [
+                    "Adding unlike radicals: 3√2 + 4√3 ≠ 7√5",
+                    "Not simplifying before combining (missing that √12 and √3 are 'like')",
+                    "Thinking √a · √b = √(a+b) instead of √(ab)"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["operations-with-radicals"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["operations-with-radicals"],
+                  "problemCount": 7,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 5, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Operations with Radicals Mastery Check",
+            "skillIds": ["operations-with-radicals"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-10-3",
+          "title": "Solving Radical Equations",
+          "subtitle": "Isolate, Square, and Check",
+          "description": "Students solve equations containing radical expressions, checking for extraneous solutions introduced by squaring.",
+          "order": 3,
+          "estimatedMinutes": 55,
+          "skillIds": ["solving-radical-equations"],
+          "standardsAlignment": ["A-REI.2"],
+          "prerequisites": ["alg1-10-1", "alg1-2-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Solving Radical Equations",
+              "order": 1,
+              "content": {
+                "explanation": "To solve a radical equation: (1) Isolate the radical on one side, (2) Square both sides to eliminate the radical, (3) Solve the resulting equation, (4) CHECK every solution in the original equation. Squaring can introduce extraneous solutions (solutions that don't work in the original), so checking is essential, not optional!",
+                "workedExamples": [
+                  {
+                    "problem": "Solve: √(x + 3) = 5",
+                    "steps": [
+                      "Radical is already isolated",
+                      "Square both sides: (√(x+3))² = 5² → x + 3 = 25",
+                      "Solve: x = 22",
+                      "Check: √(22 + 3) = √25 = 5 ✓"
+                    ],
+                    "solution": "x = 22"
+                  },
+                  {
+                    "problem": "Solve: √(2x + 1) = x - 1",
+                    "steps": [
+                      "Square both sides: 2x + 1 = (x-1)² = x² - 2x + 1",
+                      "Rearrange: 0 = x² - 4x → 0 = x(x - 4)",
+                      "Solutions: x = 0 or x = 4",
+                      "Check x = 0: √(0+1) = 1, but 0-1 = -1. 1 ≠ -1 ✗ EXTRANEOUS!",
+                      "Check x = 4: √(8+1) = 3, and 4-1 = 3. 3 = 3 ✓"
+                    ],
+                    "solution": "x = 4 only (x = 0 is extraneous)",
+                    "tip": "Squaring both sides can create false solutions. ALWAYS check."
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Emphasize that checking is NOT optional — it's a critical step. Show a problem where an extraneous solution appears so students see WHY checking matters.",
+                  "commonMisconceptions": [
+                    "Forgetting to isolate the radical BEFORE squaring",
+                    "Squaring incorrectly: (x-1)² ≠ x² - 1",
+                    "Accepting extraneous solutions without checking"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-radical-equations"],
+                  "problemCount": 5,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 3, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["solving-radical-equations"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 5, "max": 7},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 65}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Solving Radical Equations Mastery Check",
+            "skillIds": ["solving-radical-equations"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-10-4",
+          "title": "Pythagorean Theorem and Distance Formula",
+          "subtitle": "Algebra Meets Geometry",
+          "description": "Students apply the Pythagorean theorem to find missing sides of right triangles and use the distance formula to find distances between points on the coordinate plane.",
+          "order": 4,
+          "estimatedMinutes": 55,
+          "skillIds": ["pythagorean-theorem", "distance-formula"],
+          "standardsAlignment": ["8.G.7", "G-GPE.7"],
+          "prerequisites": ["alg1-10-1", "alg1-6-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "The Pythagorean Theorem and Distance",
+              "order": 1,
+              "content": {
+                "explanation": "The Pythagorean Theorem states: in a RIGHT triangle, a² + b² = c², where c is the hypotenuse (longest side, opposite the right angle). This connects to the distance formula: the distance between (x₁,y₁) and (x₂,y₂) is d = √((x₂-x₁)² + (y₂-y₁)²). The distance formula IS the Pythagorean theorem applied to the coordinate plane!",
+                "workedExamples": [
+                  {
+                    "problem": "Find the hypotenuse of a right triangle with legs 5 and 12.",
+                    "steps": [
+                      "a² + b² = c²",
+                      "5² + 12² = c²",
+                      "25 + 144 = c²",
+                      "169 = c²",
+                      "c = √169 = 13"
+                    ],
+                    "solution": "c = 13",
+                    "tip": "5-12-13 is a Pythagorean triple — memorize common ones like 3-4-5, 5-12-13, 8-15-17"
+                  },
+                  {
+                    "problem": "Find the distance between (1, 2) and (4, 6).",
+                    "steps": [
+                      "d = √((4-1)² + (6-2)²)",
+                      "d = √(3² + 4²)",
+                      "d = √(9 + 16) = √25 = 5"
+                    ],
+                    "solution": "d = 5",
+                    "tip": "This is a 3-4-5 right triangle on the coordinate plane!"
+                  },
+                  {
+                    "problem": "A 10-foot ladder leans against a wall. The base is 6 feet from the wall. How high up the wall does it reach?",
+                    "steps": [
+                      "The ladder is the hypotenuse: c = 10",
+                      "The base distance: a = 6",
+                      "Find b: 6² + b² = 10² → 36 + b² = 100",
+                      "b² = 64 → b = 8 feet"
+                    ],
+                    "solution": "8 feet up the wall"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Hypotenuse", "definition": "The longest side of a right triangle, opposite the right angle"},
+                  {"term": "Legs", "definition": "The two shorter sides of a right triangle that form the right angle"},
+                  {"term": "Pythagorean Theorem", "definition": "a² + b² = c² for any right triangle"},
+                  {"term": "Distance Formula", "definition": "d = √((x₂-x₁)² + (y₂-y₁)²) — derived from the Pythagorean theorem"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Show HOW the distance formula comes from the Pythagorean theorem: draw a right triangle between two coordinate points. The horizontal distance is the run, vertical is the rise, and the hypotenuse is the distance.",
+                  "commonMisconceptions": [
+                    "Using the Pythagorean theorem on non-right triangles",
+                    "Putting a leg length for c (the hypotenuse is ALWAYS the longest side)",
+                    "Forgetting to take the square root at the end"
+                  ],
+                  "realWorldConnections": [
+                    "Construction: Is this corner square? Check with 3-4-5.",
+                    "Navigation: straight-line distance between two locations",
+                    "Ladder safety: how far should the base be from the wall?"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 15}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["pythagorean-theorem", "distance-formula"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["pythagorean-theorem", "distance-formula"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Pythagorean Theorem & Distance Mastery Check",
+            "skillIds": ["pythagorean-theorem", "distance-formula"],
+            "questionCount": 6,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        }
+      ],
+      "unitAssessment": {
+        "assessmentType": "unit-test",
+        "title": "Unit 10: Radicals and Geometry Test",
+        "description": "Comprehensive assessment on simplifying radicals, radical operations, solving radical equations, Pythagorean theorem, and the distance formula.",
+        "skillIds": ["simplifying-radicals", "operations-with-radicals", "solving-radical-equations", "pythagorean-theorem", "distance-formula"],
+        "questionCount": 22,
+        "passingScore": 75,
+        "timeLimit": 55,
+        "allowRetakes": true,
+        "maxRetakes": 2,
+        "performanceTask": {
+          "scenario": "You are designing a zip line for a summer camp. The launch platform is at coordinates (0, 40) (40 feet high) and the landing platform is at (120, 5) (5 feet high, 120 feet away horizontally). Calculate the cable length, the angle of descent, and determine if a safety pole at (60, 25) (60 feet out, 25 feet high) would interfere with the zip line path.",
+          "requirements": [
+            "Calculate the cable length using the distance formula",
+            "Simplify the radical result",
+            "Determine if the midpoint height of the cable passes above or below the safety pole",
+            "Write a safety recommendation with mathematical justification"
+          ],
+          "rubric": [
+            {"criterion": "Distance calculation", "points": 5, "description": "Correct application of distance formula with simplified radical"},
+            {"criterion": "Radical simplification", "points": 5, "description": "Final answer in simplified radical form"},
+            {"criterion": "Safety analysis", "points": 5, "description": "Correct determination of cable height at the pole location"},
+            {"criterion": "Recommendation", "points": 5, "description": "Clear written recommendation with supporting calculations"}
+          ]
+        }
+      }
     }
   ]
 }
