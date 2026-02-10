@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u8",
+  "course": "Geometry",
+  "unit": 8,
+  "quarter": 4,
+  "title": "Unit 8 Checkpoint: Three-Dimensional Geometry",
+  "weeks": "24",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of volume and surface area formulas for prisms, cylinders, pyramids, cones, and spheres, including the 1/3 relationship and real-world applications.",
+  "skillsCovered": [
+    "volume-prisms-cylinders",
+    "volume-pyramids-cones-spheres",
+    "surface-area-prisms-cylinders",
+    "surface-area-pyramids-cones-spheres"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "volume-prisms-cylinders", "reteachFocus": "V=Bh, identify base shape first, rectangular V=lwh, cylinder V=πr²h", "resources": ["3d_geometry_module.json - scaffold phases 1-3"] },
+    { "skillId": "volume-pyramids-cones-spheres", "reteachFocus": "V=(1/3)Bh for pyramids/cones (1/3 of corresponding prism), sphere V=(4/3)πr³", "resources": ["3d_geometry_module.json - scaffold phases 4-6"] },
+    { "skillId": "surface-area-prisms-cylinders", "reteachFocus": "SA=2B+Ph for prisms, SA=2πr²+2πrh for cylinders, unfold to see net", "resources": ["3d_geometry_module.json - scaffold phases 7-9"] },
+    { "skillId": "surface-area-pyramids-cones-spheres", "reteachFocus": "Slant height vs vertical height, l²=r²+h² for cones, SA=πr²+πrl, sphere SA=4πr²", "resources": ["3d_geometry_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu8-1",
+      "question": "A cylinder has radius 6 and height 11. Find the volume in terms of π.",
+      "answer": "V = πr²h = π(36)(11) = 396π.",
+      "skill": "volume-prisms-cylinders",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu8-2",
+      "question": "A rectangular prism has dimensions 7 × 9 × 12. Find the volume and surface area.",
+      "answer": "V = 7 × 9 × 12 = 756. SA = 2(7·9 + 7·12 + 9·12) = 2(63+84+108) = 2(255) = 510.",
+      "skill": "volume-prisms-cylinders",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu8-3",
+      "question": "A cone has radius 9 and height 12. Find the volume in terms of π.",
+      "answer": "V = (1/3)πr²h = (1/3)π(81)(12) = (1/3)(972π) = 324π.",
+      "skill": "volume-pyramids-cones-spheres",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu8-4",
+      "question": "A square pyramid has a base edge of 8 and a height of 9. Find the volume.",
+      "answer": "Base area = 8² = 64. V = (1/3)(64)(9) = (1/3)(576) = 192.",
+      "skill": "volume-pyramids-cones-spheres",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu8-5",
+      "question": "A sphere has radius 6. Find the volume and surface area in terms of π.",
+      "answer": "V = (4/3)π(6³) = (4/3)π(216) = 288π. SA = 4π(6²) = 4π(36) = 144π.",
+      "skill": "volume-pyramids-cones-spheres",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "gcu8-6",
+      "question": "A cylinder has radius 5 and height 14. Find the surface area in terms of π.",
+      "answer": "SA = 2πr² + 2πrh = 2π(25) + 2π(5)(14) = 50π + 140π = 190π.",
+      "skill": "surface-area-prisms-cylinders",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu8-7",
+      "question": "A cone has radius 8 and height 15. Find the slant height and the total surface area in terms of π.",
+      "answer": "l = √(8²+15²) = √(64+225) = √289 = 17. SA = πr² + πrl = 64π + 136π = 200π.",
+      "skill": "surface-area-pyramids-cones-spheres",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu8-8",
+      "question": "A sphere has a volume of 500π/3 cm³. Find the radius.",
+      "answer": "500π/3 = (4/3)πr³ → 500 = 4r³ → r³ = 125 → r = 5.",
+      "skill": "volume-pyramids-cones-spheres",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu8-9",
+      "question": "A cone and a cylinder have the same radius (4) and height (9). Find both volumes and verify the 1:3 relationship.",
+      "answer": "Cylinder: V = π(16)(9) = 144π. Cone: V = (1/3)(144π) = 48π. Ratio: 48π/144π = 1/3 ✓.",
+      "skill": "volume-pyramids-cones-spheres",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu8-10",
+      "question": "ANALYSIS: A cylindrical water tank has diameter 10 feet and height 8 feet. (a) Find the volume in cubic feet. (b) One cubic foot holds 7.48 gallons. How many gallons does the tank hold? Round to nearest gallon.",
+      "answer": "(a) r=5. V=π(25)(8)=200π≈628.32 ft³. (b) 628.32×7.48≈4699.8≈4700 gallons.",
+      "skill": "volume-prisms-cylinders",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "gcu8-spiral-1",
+      "question": "SPIRAL (Similarity): △ABC ~ △DEF with scale factor 2:3. If AB = 14, find DE.",
+      "answer": "14/DE = 2/3 → DE = 14 × 3/2 = 21.",
+      "skill": "similarity-ratios",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 7"
+    },
+    {
+      "id": "gcu8-spiral-2",
+      "question": "SPIRAL (Inscribed Angles): An inscribed angle intercepts an arc of 134°. Find the inscribed angle.",
+      "answer": "Inscribed angle = 134°/2 = 67°.",
+      "skill": "inscribed-angles",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 6"
+    }
+  ],
+  "answerKeys": {
+    "gcu8-1": "396π.",
+    "gcu8-2": "V=756, SA=510.",
+    "gcu8-3": "324π.",
+    "gcu8-4": "192.",
+    "gcu8-5": "V=288π, SA=144π.",
+    "gcu8-6": "190π.",
+    "gcu8-7": "l=17, SA=200π.",
+    "gcu8-8": "r=5.",
+    "gcu8-9": "Cylinder=144π, cone=48π, ratio 1:3.",
+    "gcu8-10": "V=200π ft³ ≈ 4700 gallons.",
+    "gcu8-spiral-1": "DE=21.",
+    "gcu8-spiral-2": "67°."
+  }
+}
