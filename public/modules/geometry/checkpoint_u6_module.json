@@ -1,0 +1,144 @@
+{
+  "moduleId": "checkpoint_u6",
+  "course": "Geometry",
+  "unit": 6,
+  "quarter": 3,
+  "title": "Unit 6 Checkpoint: Circles",
+  "weeks": "18",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of circle fundamentals (circumference, area), arc length, sector area, the Inscribed Angle Theorem and its corollaries, and tangent-radius relationships.",
+  "skillsCovered": [
+    "circle-basics",
+    "circle-area",
+    "arc-length",
+    "sector-area",
+    "inscribed-angles",
+    "circle-theorems"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "circle-basics", "reteachFocus": "C=2πr=πd, A=πr², working backwards from C or A to find r", "resources": ["circles_module.json - scaffold phases 1-3"] },
+    { "skillId": "circle-area", "reteachFocus": "A=πr² (uses r², not d), distinguish area (squared units) from circumference (linear units)", "resources": ["circles_module.json - scaffold phases 1-3"] },
+    { "skillId": "arc-length", "reteachFocus": "Arc length = (θ/360)×2πr, fraction of circumference, working backwards to find θ", "resources": ["circles_module.json - scaffold phases 4-6"] },
+    { "skillId": "sector-area", "reteachFocus": "Sector area = (θ/360)×πr², fraction of total area, same fraction control as arc length", "resources": ["circles_module.json - scaffold phases 4-6"] },
+    { "skillId": "inscribed-angles", "reteachFocus": "Inscribed = half central, semicircle→90°, inscribed quad opposite angles supplementary", "resources": ["circles_module.json - scaffold phases 7-9"] },
+    { "skillId": "circle-theorems", "reteachFocus": "Tangent⊥radius, tangent-chord angle = half intercepted arc", "resources": ["circles_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu6-1",
+      "question": "A circle has radius 9. Find the circumference and area in terms of π.",
+      "answer": "C = 2π(9) = 18π. A = π(9²) = 81π.",
+      "skill": "circle-basics",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu6-2",
+      "question": "A circle has area 196π. Find the radius, diameter, and circumference.",
+      "answer": "A = πr² = 196π → r² = 196 → r = 14. Diameter = 28. C = 2π(14) = 28π.",
+      "skill": "circle-area",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu6-3",
+      "question": "A circle has radius 15 and a central angle of 60°. Find the arc length.",
+      "answer": "Arc = (60/360) × 2π(15) = (1/6)(30π) = 5π ≈ 15.71.",
+      "skill": "arc-length",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu6-4",
+      "question": "A circle has radius 8 and a central angle of 135°. Find the sector area in terms of π.",
+      "answer": "Sector = (135/360) × π(8²) = (3/8)(64π) = 24π.",
+      "skill": "sector-area",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu6-5",
+      "question": "An arc has length 10π on a circle with radius 20. Find the central angle.",
+      "answer": "10π = (θ/360) × 2π(20) = (θ/360)(40π). So θ/360 = 10/40 = 1/4. θ = 90°.",
+      "skill": "arc-length",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu6-6",
+      "question": "A central angle measures 130°. Find the inscribed angle that intercepts the same arc.",
+      "answer": "Inscribed angle = 130°/2 = 65°.",
+      "skill": "inscribed-angles",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu6-7",
+      "question": "Quadrilateral ABCD is inscribed in a circle. ∠A = (4x - 5)° and ∠C = (2x + 35)°. Find x, ∠A, and ∠C.",
+      "answer": "Opposite supplementary: (4x-5)+(2x+35)=180 → 6x+30=180 → 6x=150 → x=25. ∠A=4(25)-5=95°, ∠C=2(25)+35=85°. Check: 95+85=180° ✓.",
+      "skill": "inscribed-angles",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu6-8",
+      "question": "Tangent PA touches circle O at point A. OA = 8 and OP = 17. Find the length of tangent PA.",
+      "answer": "Tangent⊥radius: PA² + OA² = OP² → PA² + 64 = 289 → PA² = 225 → PA = 15. (8-15-17 Pythagorean triple.)",
+      "skill": "circle-theorems",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu6-9",
+      "question": "A circle has radius 12. A sector has a central angle of 120°. Find (a) the arc length and (b) the perimeter of the sector (arc + two radii).",
+      "answer": "(a) Arc = (120/360)×2π(12) = (1/3)(24π) = 8π ≈ 25.13. (b) Perimeter = 8π + 12 + 12 = 8π + 24 ≈ 49.13.",
+      "skill": "arc-length",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu6-10",
+      "question": "ANALYSIS: A circular garden has circumference 40π feet. A sprinkler at the center waters a sector with a central angle of 108°. Find (a) the radius, (b) the total area of the garden, (c) the area watered, and (d) the area NOT watered.",
+      "answer": "(a) C=2πr=40π → r=20 ft. (b) A=π(20²)=400π ft². (c) Fraction=108/360=3/10. Watered=3/10×400π=120π ft². (d) Not watered=400π-120π=280π ft².",
+      "skill": "sector-area",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "gcu6-spiral-1",
+      "question": "SPIRAL (Quadrilaterals): A rhombus has diagonals of 24 and 10. Find the length of each side.",
+      "answer": "Half-diagonals: 12 and 5. Side = √(12²+5²) = √(144+25) = √169 = 13.",
+      "skill": "quadrilateral-properties",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 5"
+    },
+    {
+      "id": "gcu6-spiral-2",
+      "question": "SPIRAL (Pythagorean Converse): A triangle has sides 9, 12, and 16. Classify it as acute, right, or obtuse.",
+      "answer": "9²+12²=81+144=225 vs 16²=256. 225 < 256 → obtuse.",
+      "skill": "pythagorean-converse",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 4"
+    }
+  ],
+  "answerKeys": {
+    "gcu6-1": "C=18π, A=81π.",
+    "gcu6-2": "r=14, d=28, C=28π.",
+    "gcu6-3": "5π.",
+    "gcu6-4": "24π.",
+    "gcu6-5": "90°.",
+    "gcu6-6": "65°.",
+    "gcu6-7": "x=25, ∠A=95°, ∠C=85°.",
+    "gcu6-8": "PA=15 (8-15-17 triple).",
+    "gcu6-9": "(a) 8π (b) 8π+24.",
+    "gcu6-10": "r=20, total=400π, watered=120π, not=280π.",
+    "gcu6-spiral-1": "13.",
+    "gcu6-spiral-2": "Obtuse (225<256)."
+  }
+}

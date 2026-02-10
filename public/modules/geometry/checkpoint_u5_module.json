@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u5",
+  "course": "Geometry",
+  "unit": 5,
+  "quarter": 3,
+  "title": "Unit 5 Checkpoint: Polygons & Quadrilaterals",
+  "weeks": "15",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of polygon angle sums, the quadrilateral hierarchy (parallelogram, rectangle, rhombus, square), quadrilateral proofs, and trapezoid/kite properties.",
+  "skillsCovered": [
+    "polygon-angle-sum",
+    "quadrilateral-properties",
+    "parallelogram-proofs",
+    "trapezoid-properties"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "polygon-angle-sum", "reteachFocus": "(n-2)×180° for interior sum, 360°/n for each exterior angle, working backwards from given angle", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 1-3"] },
+    { "skillId": "quadrilateral-properties", "reteachFocus": "Parallelogram: opp sides/angles congruent, consec angles supplementary, diags bisect. Rectangle: diags congruent. Rhombus: diags perpendicular, bisect angles", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 4-6"] },
+    { "skillId": "parallelogram-proofs", "reteachFocus": "Using SAS/ASA + CPCTC with shared diagonals, inherited properties in hierarchy", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 4-6"] },
+    { "skillId": "trapezoid-properties", "reteachFocus": "Midsegment = (b₁+b₂)/2, isosceles base angles congruent, kite diags perpendicular, area=(d₁×d₂)/2", "resources": ["polygons_quadrilaterals_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "gcu5-1",
+      "question": "The interior angles of a polygon sum to 1260°. How many sides does it have?",
+      "answer": "(n-2) × 180 = 1260 → n - 2 = 7 → n = 9 sides (a nonagon).",
+      "skill": "polygon-angle-sum",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu5-2",
+      "question": "Each interior angle of a regular polygon measures 160°. Find the number of sides and the sum of all interior angles.",
+      "answer": "Each exterior = 180° - 160° = 20°. n = 360° / 20° = 18 sides. Sum = (18-2) × 180° = 16 × 180° = 2880°.",
+      "skill": "polygon-angle-sum",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu5-3",
+      "question": "In parallelogram JKLM, ∠J = (4x + 5)° and ∠K = (6x - 25)°. Find x and all four angles.",
+      "answer": "Consecutive supplementary: (4x+5)+(6x-25)=180 → 10x-20=180 → 10x=200 → x=20. ∠J=∠L=85°, ∠K=∠M=95°. Check: 85+95+85+95=360° ✓.",
+      "skill": "quadrilateral-properties",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu5-4",
+      "question": "In rectangle ABCD, diagonals intersect at E. If AE = 2x + 3 and CE = 4x - 7, find x, AE, and the full diagonal AC.",
+      "answer": "Diagonals bisect each other: AE = CE → 2x+3=4x-7 → 10=2x → x=5. AE=CE=13. AC=26.",
+      "skill": "quadrilateral-properties",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu5-5",
+      "question": "Rhombus WXYZ has diagonals WY = 40 and XZ = 30. Find the length of each side.",
+      "answer": "Half-diagonals: 20 and 15. Side = √(20²+15²) = √(400+225) = √625 = 25. (This is 5× the 3-4-5 triple.)",
+      "skill": "quadrilateral-properties",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu5-6",
+      "question": "True or false with justification: (a) Every square is a parallelogram. (b) Every rhombus is a rectangle. (c) If a parallelogram has one right angle, it must be a rectangle.",
+      "answer": "(a) True — a square has both pairs of opposite sides parallel. (b) False — a rhombus doesn't need right angles (only a rhombus with right angles is a rectangle, i.e. a square). (c) True — if one angle is 90°, consecutive supplementary makes the next 90°, and opposite angles are also 90°.",
+      "skill": "quadrilateral-properties",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "gcu5-7",
+      "question": "A trapezoid has bases (3x + 2) and (5x - 6). The midsegment is 22. Find x and both base lengths.",
+      "answer": "Midsegment = ((3x+2)+(5x-6))/2 = (8x-4)/2 = 4x-2 = 22 → 4x=24 → x=6. Bases: 3(6)+2=20 and 5(6)-6=24. Check: (20+24)/2=22 ✓.",
+      "skill": "trapezoid-properties",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "gcu5-8",
+      "question": "In isosceles trapezoid ABCD with AB ∥ DC, ∠A = (5x + 5)° and ∠D = (3x + 15)°. Find x and all four angles.",
+      "answer": "Same-side supplementary: (5x+5)+(3x+15)=180 → 8x+20=180 → 8x=160 → x=20. ∠A=∠B=105°, ∠C=∠D=75°. Check: 105+105+75+75=360° ✓.",
+      "skill": "trapezoid-properties",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "gcu5-9",
+      "question": "Write a proof: Given ABCD is a rectangle with diagonals AC and BD. Prove AC ≅ BD.",
+      "answer": "1. ABCD is a rectangle (Given). 2. ∠DAB = ∠CBA = 90° (Def of rectangle). 3. AB ≅ AB (Reflexive). 4. AD ≅ BC (Opp sides of parallelogram congruent). 5. △DAB ≅ △CBA (SAS: steps 4, 2, 3). 6. AC ≅ BD (CPCTC).",
+      "skill": "parallelogram-proofs",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "gcu5-10",
+      "question": "ANALYSIS: In parallelogram ABCD, AB = 3x - 1, BC = 2y + 3, CD = x + 7, DA = y + 8. Also, ∠A = (5z + 10)° and ∠B = (7z - 10)°. Find x, y, z, all side lengths, all angles, and the perimeter.",
+      "answer": "Opposite sides congruent: AB=CD → 3x-1=x+7 → 2x=8 → x=4. AB=CD=11. BC=DA → 2y+3=y+8 → y=5. BC=DA=13. Perimeter=2(11+13)=48. Consecutive supplementary: (5z+10)+(7z-10)=180 → 12z=180 → z=15. ∠A=∠C=85°, ∠B=∠D=95°. Check: 85+95+85+95=360° ✓.",
+      "skill": "quadrilateral-properties",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "gcu5-spiral-1",
+      "question": "SPIRAL (Special Right Triangles): In a 30-60-90 triangle, the hypotenuse is 16. Find the short leg and the long leg.",
+      "answer": "Short leg = 16/2 = 8. Long leg = 8√3 ≈ 13.86. Verify: 8² + (8√3)² = 64 + 192 = 256 = 16² ✓.",
+      "skill": "special-right-triangles",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 4"
+    },
+    {
+      "id": "gcu5-spiral-2",
+      "question": "SPIRAL (CPCTC): △PQR ≅ △STU. If PQ = 11, QR = 15, and ∠Q = 72°, find ST, TU, and ∠T.",
+      "answer": "P↔S, Q↔T, R↔U. ST = PQ = 11, TU = QR = 15, ∠T = ∠Q = 72°.",
+      "skill": "cpctc",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 3"
+    }
+  ],
+  "answerKeys": {
+    "gcu5-1": "9 sides (nonagon).",
+    "gcu5-2": "18 sides, sum=2880°.",
+    "gcu5-3": "x=20. ∠J=∠L=85°, ∠K=∠M=95°.",
+    "gcu5-4": "x=5, AE=CE=13, AC=26.",
+    "gcu5-5": "25 (5×3-4-5 triple).",
+    "gcu5-6": "(a) True (b) False (c) True.",
+    "gcu5-7": "x=6. Bases: 20 and 24.",
+    "gcu5-8": "x=20. ∠A=∠B=105°, ∠C=∠D=75°.",
+    "gcu5-9": "SAS → CPCTC. AC ≅ BD.",
+    "gcu5-10": "x=4, y=5, z=15. Sides: 11,13,11,13. Angles: 85°,95°,85°,95°. Perimeter=48.",
+    "gcu5-spiral-1": "Short=8, long=8√3.",
+    "gcu5-spiral-2": "ST=11, TU=15, ∠T=72°."
+  }
+}
