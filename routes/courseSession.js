@@ -100,6 +100,19 @@ router.post('/enroll', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Already enrolled in this course' });
     }
 
+    // Cap concurrent enrollments at 2
+    const MAX_CONCURRENT_COURSES = 2;
+    const activeCount = await CourseSession.countDocuments({
+      userId: req.user._id,
+      status: 'active'
+    });
+    if (activeCount >= MAX_CONCURRENT_COURSES) {
+      return res.status(400).json({
+        success: false,
+        message: `You can take up to ${MAX_CONCURRENT_COURSES} courses at a time. Drop a course to enroll in a new one.`
+      });
+    }
+
     // Load pathway to build module progress
     const pathwayFile = path.join(__dirname, '../public/resources', `${courseId}-pathway.json`);
     if (!fs.existsSync(pathwayFile)) {
