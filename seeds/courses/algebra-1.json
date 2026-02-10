@@ -2124,6 +2124,512 @@
           ]
         }
       }
+    },
+    {
+      "unitId": "alg1-unit-5",
+      "title": "Polynomials",
+      "subtitle": "Building with Algebraic Blocks",
+      "description": "Students learn to classify, add, subtract, multiply, and factor polynomials. This unit bridges linear algebra to quadratics, building the manipulation skills needed for advanced equation solving.",
+      "order": 5,
+      "quarter": 3,
+      "essentialQuestions": [
+        "How are polynomial operations extensions of arithmetic?",
+        "What does factoring 'undo' and why is it useful?",
+        "How do exponent rules make polynomial multiplication efficient?"
+      ],
+      "bigIdeas": [
+        "Polynomials are built from simpler terms combined with addition and subtraction",
+        "Factoring is the reverse of multiplication — it breaks expressions into products",
+        "Exponent rules govern how variable terms combine"
+      ],
+      "estimatedDays": 22,
+      "skillIds": ["exponent-rules-multiplication", "exponent-rules-division", "polynomial-addition-subtraction", "polynomial-multiplication-monomial", "polynomial-multiplication-binomials", "factoring-gcf", "factoring-trinomials", "factoring-difference-of-squares"],
+      "standardsAlignment": ["A-SSE.2", "A-SSE.3a", "A-APR.1", "N-RN.1", "N-RN.2"],
+      "lessons": [
+        {
+          "lessonId": "alg1-5-1",
+          "title": "Exponent Rules",
+          "subtitle": "Product, Quotient, and Power Rules",
+          "description": "Students master the laws of exponents for multiplication, division, and powers of powers.",
+          "order": 1,
+          "estimatedMinutes": 50,
+          "skillIds": ["exponent-rules-multiplication", "exponent-rules-division"],
+          "standardsAlignment": ["N-RN.1", "N-RN.2"],
+          "prerequisites": ["alg1-1-2"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "The Laws of Exponents",
+              "order": 1,
+              "content": {
+                "explanation": "Exponents follow three key rules. Product Rule: x^a · x^b = x^(a+b) — when multiplying same bases, ADD exponents. Quotient Rule: x^a / x^b = x^(a-b) — when dividing same bases, SUBTRACT exponents. Power Rule: (x^a)^b = x^(ab) — when raising a power to a power, MULTIPLY exponents. These rules only work when the BASES are the same!",
+                "workedExamples": [
+                  {
+                    "problem": "Simplify: x³ · x⁵",
+                    "steps": ["Same base (x), so ADD exponents", "x^(3+5) = x⁸"],
+                    "solution": "x⁸",
+                    "tip": "Think expanded: (x·x·x)(x·x·x·x·x) = 8 x's multiplied = x⁸"
+                  },
+                  {
+                    "problem": "Simplify: (2x³)⁴",
+                    "steps": ["Apply power to BOTH coefficient and variable", "2⁴ = 16 and (x³)⁴ = x¹²", "Result: 16x¹²"],
+                    "solution": "16x¹²",
+                    "tip": "Don't forget to raise the coefficient to the power too!"
+                  },
+                  {
+                    "problem": "Simplify: 12x⁶ / (3x²)",
+                    "steps": ["Divide coefficients: 12/3 = 4", "Subtract exponents: x^(6-2) = x⁴", "Result: 4x⁴"],
+                    "solution": "4x⁴"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "Base", "definition": "The number or variable being raised to a power"},
+                  {"term": "Exponent", "definition": "The power indicating how many times the base is multiplied by itself"},
+                  {"term": "Product Rule", "definition": "x^a · x^b = x^(a+b) — add exponents when multiplying same bases"},
+                  {"term": "Quotient Rule", "definition": "x^a / x^b = x^(a-b) — subtract exponents when dividing same bases"},
+                  {"term": "Power Rule", "definition": "(x^a)^b = x^(ab) — multiply exponents for a power of a power"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use expanded form to PROVE each rule. Show x³ · x² = (x·x·x)(x·x) = x⁵ before introducing the shortcut. Create a reference card students can use.",
+                  "commonMisconceptions": [
+                    "Multiplying exponents instead of adding (product rule)",
+                    "Applying rules when bases are different (x³ · y² ≠ xy⁵)",
+                    "Forgetting to apply power to coefficients",
+                    "Confusing product rule with power rule"
+                  ],
+                  "scaffoldingPrompts": [
+                    "Are the bases the same? Which rule applies?",
+                    "Try writing it in expanded form — how many x's total?",
+                    "Did you apply the exponent to the coefficient too?"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Exponent Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["exponent-rules-multiplication", "exponent-rules-division"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 2, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 5, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["exponent-rules-multiplication", "exponent-rules-division"],
+                  "problemCount": 10,
+                  "difficultyRange": {"min": 3, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 7, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Exponent Rules Mastery Check",
+            "skillIds": ["exponent-rules-multiplication", "exponent-rules-division"],
+            "questionCount": 6,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-5-2",
+          "title": "Adding and Subtracting Polynomials",
+          "subtitle": "Combining Like Terms with Polynomials",
+          "description": "Students add and subtract polynomials by identifying and combining like terms, writing results in standard form.",
+          "order": 2,
+          "estimatedMinutes": 45,
+          "skillIds": ["polynomial-addition-subtraction"],
+          "standardsAlignment": ["A-APR.1"],
+          "prerequisites": ["alg1-1-4", "alg1-5-1"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Polynomial Addition and Subtraction",
+              "order": 1,
+              "content": {
+                "explanation": "Adding polynomials is straightforward: combine like terms. Subtracting is trickier: you must distribute the negative sign to EVERY term in the polynomial being subtracted, then combine like terms. Write your final answer in standard form (highest degree to lowest).",
+                "workedExamples": [
+                  {
+                    "problem": "(3x² + 5x - 2) + (x² - 3x + 7)",
+                    "steps": ["Remove parentheses: 3x² + 5x - 2 + x² - 3x + 7", "Group like terms: (3x² + x²) + (5x - 3x) + (-2 + 7)", "Combine: 4x² + 2x + 5"],
+                    "solution": "4x² + 2x + 5"
+                  },
+                  {
+                    "problem": "(5x² + 3x - 1) - (2x² - 4x + 6)",
+                    "steps": ["Distribute the negative: 5x² + 3x - 1 - 2x² + 4x - 6", "Group like terms: (5x² - 2x²) + (3x + 4x) + (-1 - 6)", "Combine: 3x² + 7x - 7"],
+                    "solution": "3x² + 7x - 7",
+                    "tip": "The most common error is forgetting to change ALL signs when subtracting. -(2x² - 4x + 6) = -2x² + 4x - 6"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the vertical alignment method for visual learners. Show horizontal and vertical methods side by side. Emphasize the subtraction trap.",
+                  "commonMisconceptions": [
+                    "Only distributing negative to the first term",
+                    "Combining terms with different exponents",
+                    "Forgetting to write in standard form"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 10}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["polynomial-addition-subtraction"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 2, "max": 4},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["polynomial-addition-subtraction"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Polynomial Add/Subtract Mastery Check",
+            "skillIds": ["polynomial-addition-subtraction"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-5-3",
+          "title": "Multiplying Polynomials",
+          "subtitle": "From Monomials to FOIL",
+          "description": "Students multiply monomials by polynomials (distribution) and binomials by binomials (FOIL method).",
+          "order": 3,
+          "estimatedMinutes": 55,
+          "skillIds": ["polynomial-multiplication-monomial", "polynomial-multiplication-binomials"],
+          "standardsAlignment": ["A-APR.1"],
+          "prerequisites": ["alg1-5-1", "alg1-5-2"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Multiplying Polynomials: Distribution and FOIL",
+              "order": 1,
+              "content": {
+                "explanation": "Monomial × Polynomial: distribute the monomial to every term. Binomial × Binomial: use FOIL (First, Outer, Inner, Last) — it's just double distribution. Every term in the first binomial must multiply every term in the second. Then combine like terms.",
+                "workedExamples": [
+                  {
+                    "problem": "Multiply: 3x(2x² - 5x + 4)",
+                    "steps": ["Distribute 3x to each term:", "3x · 2x² = 6x³", "3x · (-5x) = -15x²", "3x · 4 = 12x", "Result: 6x³ - 15x² + 12x"],
+                    "solution": "6x³ - 15x² + 12x"
+                  },
+                  {
+                    "problem": "Multiply: (x + 3)(x + 5)",
+                    "steps": ["First: x · x = x²", "Outer: x · 5 = 5x", "Inner: 3 · x = 3x", "Last: 3 · 5 = 15", "Combine: x² + 5x + 3x + 15 = x² + 8x + 15"],
+                    "solution": "x² + 8x + 15",
+                    "tip": "Notice the pattern: (x + a)(x + b) = x² + (a+b)x + ab. The middle term is the SUM, the last term is the PRODUCT."
+                  },
+                  {
+                    "problem": "Multiply: (2x - 3)(x + 4)",
+                    "steps": ["F: 2x · x = 2x²", "O: 2x · 4 = 8x", "I: -3 · x = -3x", "L: -3 · 4 = -12", "Combine: 2x² + 8x - 3x - 12 = 2x² + 5x - 12"],
+                    "solution": "2x² + 5x - 12"
+                  }
+                ],
+                "keyVocabulary": [
+                  {"term": "FOIL", "definition": "First, Outer, Inner, Last — a method for multiplying two binomials"},
+                  {"term": "Monomial", "definition": "A polynomial with one term (e.g., 3x²)"},
+                  {"term": "Binomial", "definition": "A polynomial with two terms (e.g., x + 3)"},
+                  {"term": "Trinomial", "definition": "A polynomial with three terms (e.g., x² + 5x + 6)"}
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Use the area model (box method) as a visual alternative to FOIL. It generalizes to any polynomial multiplication and makes the connection to factoring clearer.",
+                  "commonMisconceptions": [
+                    "Only multiplying first terms: (x+3)(x+5) = x² + 15 (missing middle terms)",
+                    "Sign errors with negative terms in FOIL",
+                    "Forgetting to combine like terms after multiplying"
+                  ],
+                  "scaffoldingPrompts": [
+                    "Did you multiply EVERY term in the first by EVERY term in the second?",
+                    "Can you draw the box method? It shows all four multiplications.",
+                    "After FOILing, are there like terms to combine?"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 15}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Multiplication Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["polynomial-multiplication-monomial", "polynomial-multiplication-binomials"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["polynomial-multiplication-monomial", "polynomial-multiplication-binomials"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Polynomial Multiplication Mastery Check",
+            "skillIds": ["polynomial-multiplication-monomial", "polynomial-multiplication-binomials"],
+            "questionCount": 6,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-5-4",
+          "title": "Factoring GCF and Trinomials",
+          "subtitle": "Unraveling Products",
+          "description": "Students factor out the greatest common factor and factor trinomials of the form x² + bx + c by finding two numbers that multiply to c and add to b.",
+          "order": 4,
+          "estimatedMinutes": 60,
+          "skillIds": ["factoring-gcf", "factoring-trinomials"],
+          "standardsAlignment": ["A-SSE.2", "A-SSE.3a"],
+          "prerequisites": ["alg1-5-3"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Factoring: The Reverse of Multiplication",
+              "order": 1,
+              "content": {
+                "explanation": "Factoring 'undoes' multiplication. Step 1: Always check for a GCF first. Pull out the largest factor common to ALL terms. Step 2: For trinomials x² + bx + c, find two numbers that MULTIPLY to c and ADD to b. Those numbers go in the binomials: (x + ?)(x + ?). Verify by FOILing back!",
+                "workedExamples": [
+                  {
+                    "problem": "Factor: 6x² + 9x",
+                    "steps": ["Find GCF: GCF of 6x² and 9x is 3x", "Factor out 3x: 3x(2x + 3)", "Check: 3x · 2x = 6x² and 3x · 3 = 9x ✓"],
+                    "solution": "3x(2x + 3)",
+                    "tip": "Always factor out the GCF as your FIRST step, even before trying other methods"
+                  },
+                  {
+                    "problem": "Factor: x² + 7x + 12",
+                    "steps": ["Find two numbers that multiply to 12 and add to 7", "Factors of 12: 1×12, 2×6, 3×4", "3 + 4 = 7 ✓", "Write: (x + 3)(x + 4)", "Check by FOIL: x² + 4x + 3x + 12 = x² + 7x + 12 ✓"],
+                    "solution": "(x + 3)(x + 4)"
+                  },
+                  {
+                    "problem": "Factor: x² - 5x - 14",
+                    "steps": ["Find two numbers that multiply to -14 and add to -5", "Factors of -14: (-7)(2) or (7)(-2) or (-14)(1) or (14)(-1)", "-7 + 2 = -5 ✓", "Write: (x - 7)(x + 2)"],
+                    "solution": "(x - 7)(x + 2)",
+                    "tip": "When c is negative, one factor is positive and one is negative"
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Frame factoring as 'reverse FOIL.' Use the diamond/X method: product goes on top, sum on bottom, find the two side numbers. Always emphasize checking by multiplying back.",
+                  "commonMisconceptions": [
+                    "Not pulling out the full GCF",
+                    "Confusing 'multiply to c' with 'add to c'",
+                    "Sign errors when c is negative",
+                    "Forgetting to check by multiplying back"
+                  ],
+                  "scaffoldingPrompts": [
+                    "Is there a common factor in ALL terms?",
+                    "What two numbers multiply to ___ and add to ___?",
+                    "Let's check: FOIL your answer and see if you get the original."
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 15}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Factoring Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["factoring-gcf", "factoring-trinomials"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["factoring-gcf", "factoring-trinomials"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Factoring Mastery Check",
+            "skillIds": ["factoring-gcf", "factoring-trinomials"],
+            "questionCount": 6,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        },
+        {
+          "lessonId": "alg1-5-5",
+          "title": "Special Factoring Patterns",
+          "subtitle": "Difference of Squares and Perfect Square Trinomials",
+          "description": "Students recognize and factor special polynomial patterns: difference of squares and perfect square trinomials.",
+          "order": 5,
+          "estimatedMinutes": 50,
+          "skillIds": ["factoring-difference-of-squares"],
+          "standardsAlignment": ["A-SSE.2", "A-SSE.3a"],
+          "prerequisites": ["alg1-5-4"],
+          "phases": [
+            {
+              "phaseType": "i-do",
+              "title": "Special Patterns in Factoring",
+              "order": 1,
+              "content": {
+                "explanation": "Two special patterns save time. Difference of Squares: a² - b² = (a + b)(a - b). Only works for SUBTRACTION of two perfect squares. Perfect Square Trinomials: a² + 2ab + b² = (a + b)² and a² - 2ab + b² = (a - b)². The middle term is always twice the product of a and b.",
+                "workedExamples": [
+                  {
+                    "problem": "Factor: x² - 25",
+                    "steps": ["Recognize: x² is a perfect square, 25 = 5², and we have subtraction", "Apply difference of squares: a² - b² = (a+b)(a-b)", "x² - 25 = (x + 5)(x - 5)", "Check: (x+5)(x-5) = x² - 5x + 5x - 25 = x² - 25 ✓"],
+                    "solution": "(x + 5)(x - 5)"
+                  },
+                  {
+                    "problem": "Factor: 4x² - 9",
+                    "steps": ["4x² = (2x)² and 9 = 3²", "Difference of squares: (2x)² - 3² = (2x + 3)(2x - 3)"],
+                    "solution": "(2x + 3)(2x - 3)"
+                  },
+                  {
+                    "problem": "Factor: x² + 10x + 25",
+                    "steps": ["x² = (x)², 25 = (5)², and 10x = 2(x)(5)", "Perfect square trinomial!", "x² + 10x + 25 = (x + 5)²"],
+                    "solution": "(x + 5)²",
+                    "tip": "Check: is the middle term = 2 × √(first) × √(last)? If yes, it's a perfect square trinomial."
+                  }
+                ],
+                "aiGuidance": {
+                  "teachingApproach": "Teach pattern recognition. Have students check: (1) Is it a difference? (2) Are both terms perfect squares? Then it's DOS. For PST: Is the middle term = 2ab?",
+                  "commonMisconceptions": [
+                    "Trying to factor a SUM of squares (x² + 25 does NOT factor over real numbers)",
+                    "Not recognizing coefficients as perfect squares (4x² = (2x)²)",
+                    "Confusing difference of squares with perfect square trinomials"
+                  ]
+                }
+              },
+              "completionCriteria": {"requiredTime": 12}
+            },
+            {
+              "phaseType": "we-do",
+              "title": "Guided Practice",
+              "order": 2,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["factoring-difference-of-squares"],
+                  "problemCount": 6,
+                  "difficultyRange": {"min": 3, "max": 5},
+                  "scaffoldingLevel": "high",
+                  "allowHints": true,
+                  "maxHints": 3
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 4, "minAccuracy": 60}
+            },
+            {
+              "phaseType": "you-do",
+              "title": "Independent Practice",
+              "order": 3,
+              "content": {
+                "practiceConfig": {
+                  "skillIds": ["factoring-difference-of-squares"],
+                  "problemCount": 8,
+                  "difficultyRange": {"min": 4, "max": 6},
+                  "scaffoldingLevel": "low",
+                  "allowHints": true,
+                  "maxHints": 2
+                }
+              },
+              "completionCriteria": {"minProblemsCorrect": 6, "minAccuracy": 70}
+            }
+          ],
+          "assessment": {
+            "assessmentType": "mastery-check",
+            "title": "Special Factoring Patterns Mastery Check",
+            "skillIds": ["factoring-difference-of-squares"],
+            "questionCount": 5,
+            "passingScore": 80,
+            "allowRetakes": true,
+            "maxRetakes": 3
+          }
+        }
+      ],
+      "unitAssessment": {
+        "assessmentType": "unit-test",
+        "title": "Unit 5: Polynomials Test",
+        "description": "Comprehensive assessment covering exponent rules, polynomial operations, and all factoring methods.",
+        "skillIds": ["exponent-rules-multiplication", "exponent-rules-division", "polynomial-addition-subtraction", "polynomial-multiplication-monomial", "polynomial-multiplication-binomials", "factoring-gcf", "factoring-trinomials", "factoring-difference-of-squares"],
+        "questionCount": 24,
+        "passingScore": 75,
+        "timeLimit": 55,
+        "allowRetakes": true,
+        "maxRetakes": 2
+      }
     }
   ]
 }
