@@ -1,0 +1,187 @@
+{
+  "moduleId": "final_review",
+  "course": "AP Calculus AB",
+  "unit": 9,
+  "title": "AP Exam Review & Comprehensive Practice",
+  "weeks": "36",
+  "estimatedDuration": 10,
+  "description": "Comprehensive spiral review across all AP Calculus AB content areas: limits & continuity, differentiation (definition, rules, composite/implicit), contextual and analytical applications of derivatives, integration & accumulation, differential equations, and applications of integration. Focus on synthesis, AP exam strategies, and timed practice under exam conditions.",
+  "skills": [
+    "cumulative-mcq-practice",
+    "cumulative-frq-practice",
+    "error-analysis-correction",
+    "calculator-active-fluency"
+  ],
+  "standardsAlignment": [],
+  "goals": [
+    "Synthesize derivative and integral concepts across all AP Calc AB units.",
+    "Develop fluency switching between MCQ and FRQ formats under timed conditions.",
+    "Identify and correct common errors: sign errors, missing chain rule, misapplied theorems.",
+    "Build confidence with calculator-active problems: numerical integration, graphical analysis."
+  ],
+  "instructionalStrategy": [
+    "AI-led comprehensive review using diagnostic-driven focus areas",
+    "Mixed-topic problem sets to build fluency switching between concepts",
+    "Emphasis on multi-step FRQ problems requiring multiple skill integration",
+    "Timed mini-sections simulating AP exam pacing"
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Review Block A: Limits, Continuity & Derivatives Foundations",
+      "skill": "cumulative-mcq-practice",
+      "content": "Review of limits (graphical, algebraic, at infinity), continuity, IVT/Squeeze, derivative definition, and basic differentiation rules. These form the foundation for all later topics.",
+      "keyPoints": [
+        "Limits: direct substitution first. If 0/0: factor, rationalize, multiply conjugate, or use L'Hopital's Rule.",
+        "One-sided limits, infinite limits (VA), limits at infinity (HA). Compare degrees for rational functions.",
+        "Continuity at c: f(c) defined, lim exists, lim = f(c). Removable vs non-removable discontinuities.",
+        "IVT: if f continuous on [a,b] and k between f(a) and f(b), then f(c)=k for some c in (a,b).",
+        "Derivative definition: f'(x) = lim(h->0) [f(x+h)-f(x)]/h. Differentiability implies continuity (not converse).",
+        "Power/sum/product/quotient rules. Common derivatives: sin, cos, tan, sec, eˣ, ln x."
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Review Block A: Mixed Limits & Derivatives Problems",
+      "skill": "cumulative-mcq-practice",
+      "problems": [
+        {
+          "problem": "Evaluate lim(x->4) (√x - 2)/(x - 4).",
+          "answer": "Multiply by conjugate: (√x-2)(√x+2)/((x-4)(√x+2)) = (x-4)/((x-4)(√x+2)) = 1/(√x+2). At x=4: 1/(2+2) = 1/4."
+        },
+        {
+          "problem": "A function f is defined piecewise: f(x) = (x²-9)/(x-3) for x≠3, f(3) = k. Find k so f is continuous at x=3.",
+          "answer": "lim(x->3) (x²-9)/(x-3) = lim(x->3) (x+3)(x-3)/(x-3) = lim(x->3) (x+3) = 6. For continuity: f(3) = k = 6."
+        },
+        {
+          "problem": "Using the limit definition, find f'(x) for f(x) = 1/(2x+1).",
+          "answer": "f'(x) = lim(h->0) [1/(2(x+h)+1) - 1/(2x+1)]/h = lim(h->0) [(2x+1-(2x+2h+1))/(h(2x+2h+1)(2x+1))] = lim(h->0) [-2h/(h(2x+2h+1)(2x+1))] = -2/(2x+1)²."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Review Block B: Advanced Differentiation & Applications",
+      "skill": "cumulative-frq-practice",
+      "content": "Review of chain rule, implicit differentiation, related rates, motion, linearization, MVT/EVT, extrema, concavity, curve sketching, and optimization.",
+      "keyPoints": [
+        "Chain rule: d/dx[f(g(x))] = f'(g(x))·g'(x). Always look for composition!",
+        "Implicit: differentiate both sides with respect to x, collect dy/dx terms, solve.",
+        "Related rates: identify variables, relate with equation, differentiate with respect to t.",
+        "MVT: f'(c) = [f(b)-f(a)]/(b-a). f must be continuous on [a,b], differentiable on (a,b).",
+        "EVT: continuous on closed interval guarantees absolute max and min exist.",
+        "First derivative test: sign changes of f'. Second derivative test: f'(c)=0 and sign of f''(c).",
+        "Optimization: define objective, set up constraint, substitute, find critical points, verify extremum."
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Review Block B: Mixed Differentiation Applications",
+      "skill": "cumulative-frq-practice",
+      "problems": [
+        {
+          "problem": "[FRQ-style] A particle moves along the x-axis with velocity v(t) = t² - 5t + 4 for t ≥ 0. (a) Find all times when the particle is at rest. (b) Determine when the particle moves left. (c) Find the acceleration at t = 3. (d) Is the particle speeding up or slowing down at t = 3?",
+          "answer": "(a) v(t)=0: t²-5t+4=(t-1)(t-4)=0 → t=1, t=4. (b) v(t)<0: (t-1)(t-4)<0 → 1<t<4, particle moves left. (c) a(t)=v'(t)=2t-5. a(3)=6-5=1. (d) At t=3: v(3)=9-15+4=-2<0 (left), a(3)=1>0. Velocity and acceleration have opposite signs → slowing down."
+        },
+        {
+          "problem": "A 10-ft ladder leans against a vertical wall. The bottom slides away at 2 ft/s. How fast is the top sliding down when the bottom is 6 ft from the wall?",
+          "answer": "x² + y² = 100. 2x(dx/dt) + 2y(dy/dt) = 0. When x=6: y=√(100-36)=8. 2(6)(2) + 2(8)(dy/dt) = 0 → 24 + 16(dy/dt) = 0 → dy/dt = -3/2 ft/s. Top slides down at 3/2 ft/s."
+        },
+        {
+          "problem": "Find the absolute maximum and minimum of f(x) = x³ - 3x² + 1 on [-1, 4].",
+          "answer": "f'(x) = 3x² - 6x = 3x(x-2) = 0 → x=0, x=2. Evaluate: f(-1)=-1-3+1=-3, f(0)=1, f(2)=8-12+1=-3, f(4)=64-48+1=17. Absolute max: f(4)=17. Absolute min: f(-1)=f(2)=-3."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Review Block C: Integration, FTC & Differential Equations",
+      "skill": "cumulative-frq-practice",
+      "content": "Review of Riemann sums, FTC Parts 1 and 2, antiderivatives, u-substitution, slope fields, separable DEs, and growth/decay.",
+      "keyPoints": [
+        "Riemann sums: left, right, midpoint, trapezoidal. Over/underestimates depend on monotonicity/concavity.",
+        "FTC Part 1: d/dx[∫ₐˣ f(t)dt] = f(x). With chain rule: d/dx[∫ₐ^{g(x)} f(t)dt] = f(g(x))·g'(x).",
+        "FTC Part 2: ∫ₐᵇ f(x)dx = F(b) - F(a), where F' = f.",
+        "u-substitution: choose u = inner function, du = derivative, substitute, integrate, back-substitute.",
+        "Slope fields: at each point (x,y), draw short segment with slope = dy/dx.",
+        "Separable DEs: get all y terms with dy, all x terms with dx. Integrate both sides.",
+        "Exponential growth/decay: dy/dt = ky → y = y₀eᵏᵗ. k>0 growth, k<0 decay."
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Review Block C: Mixed Integration & DE Problems",
+      "skill": "cumulative-frq-practice",
+      "problems": [
+        {
+          "problem": "Let g(x) = ∫₀ˣ f(t)dt where f is given by a graph: f(t) = 2 for 0≤t<2, f(t) = -(t-2) for 2≤t≤4. (a) Find g(2) and g(4). (b) Find g'(3). (c) Where does g have a maximum on [0,4]?",
+          "answer": "(a) g(2) = ∫₀² 2dt = 4. g(4) = g(2) + ∫₂⁴ -(t-2)dt = 4 + [-(t-2)²/2]₂⁴ = 4 + (-2-0) = 2. (b) g'(3) = f(3) = -(3-2) = -1. (c) g'(x) = f(x). f changes from positive to negative at x=2. g has maximum at x=2, g(2)=4."
+        },
+        {
+          "problem": "Evaluate: ∫ x²·cos(x³) dx.",
+          "answer": "Let u = x³, du = 3x²dx → x²dx = du/3. ∫ cos(u)·(du/3) = (1/3)sin(u) + C = (1/3)sin(x³) + C."
+        },
+        {
+          "problem": "Solve the DE: dy/dx = 2xy², y(0) = 1.",
+          "answer": "Separate: dy/y² = 2x dx. ∫ y⁻² dy = ∫ 2x dx → -1/y = x² + C. IC: -1/1 = 0 + C → C = -1. -1/y = x² - 1 → y = 1/(1-x²). Domain: |x| < 1."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Review Block D: Applications of Integration",
+      "skill": "error-analysis-correction",
+      "content": "Review of average value, motion via integrals, area between curves, and volumes of revolution. Common errors and AP exam pitfalls.",
+      "keyPoints": [
+        "Average value: f_avg = (1/(b-a))∫ₐᵇ f(x)dx.",
+        "Displacement = ∫ₐᵇ v(t)dt. Total distance = ∫ₐᵇ |v(t)|dt.",
+        "Area between curves: ∫ₐᵇ |f(x)-g(x)|dx. Determine top/bottom (or right/left) function.",
+        "Disk method: V = π∫ₐᵇ [R(x)]² dx. Washer: V = π∫ₐᵇ ([R(x)]² - [r(x)]²) dx.",
+        "Common AP errors: forgetting absolute value in distance, wrong axis of revolution, forgetting π in volume.",
+        "Cross-section volumes: V = ∫ₐᵇ A(x)dx where A(x) is the cross-sectional area at x."
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Review Block D: Mixed Integration Applications",
+      "skills": ["error-analysis-correction", "calculator-active-fluency"],
+      "problems": [
+        {
+          "problem": "Find the area enclosed by y = x² and y = 2x + 3.",
+          "answer": "Intersections: x² = 2x+3 → x²-2x-3=0 → (x-3)(x+1)=0 → x=-1, x=3. Top: 2x+3, bottom: x². Area = ∫₋₁³ (2x+3-x²)dx = [x²+3x-x³/3]₋₁³ = (9+9-9)-(1-3+1/3) = 9-(-2+1/3) = 9+5/3 = 32/3."
+        },
+        {
+          "problem": "The region bounded by y = √x, y = 0, and x = 4 is revolved about the x-axis. Find the volume.",
+          "answer": "Disk method: V = π∫₀⁴ (√x)² dx = π∫₀⁴ x dx = π[x²/2]₀⁴ = π(8-0) = 8π."
+        },
+        {
+          "problem": "A particle has velocity v(t) = sin(t) - cos(t) for 0 ≤ t ≤ 2π. Find (a) displacement and (b) total distance traveled.",
+          "answer": "(a) Displacement = ∫₀²π (sin t - cos t)dt = [-cos t - sin t]₀²π = (-1-0)-(-1-0) = 0. (b) v(t)=0: sin t = cos t → tan t = 1 → t = π/4, 5π/4. |∫₀^{π/4} (sint-cost)dt| + |∫_{π/4}^{5π/4} (sint-cost)dt| + |∫_{5π/4}^{2π} (sint-cost)dt| = |(-√2/2-√2/2)-(-1-0)| + ... = (1-√2) + (2√2) + (√2-1) = ... Total distance = 4√2."
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "rev-lim-conj": "lim = 1/4.",
+    "rev-continuity-k": "k = 6.",
+    "rev-deriv-def": "f'(x) = -2/(2x+1)².",
+    "rev-motion-frq": "(a) t=1,4. (b) 1<t<4. (c) a(3)=1. (d) Slowing down.",
+    "rev-related-rates": "dy/dt = -3/2 ft/s.",
+    "rev-abs-extrema": "Max f(4)=17. Min f(-1)=f(2)=-3.",
+    "rev-ftc-graph": "g(2)=4, g(4)=2. g'(3)=-1. Max at x=2.",
+    "rev-usub": "(1/3)sin(x³) + C.",
+    "rev-separable-de": "y = 1/(1-x²).",
+    "rev-area-curves": "Area = 32/3.",
+    "rev-volume-disk": "V = 8π.",
+    "rev-total-distance": "Displacement=0. Total distance=4√2."
+  }
+}
