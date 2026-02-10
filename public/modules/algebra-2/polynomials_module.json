@@ -1,0 +1,104 @@
+{
+  "moduleId": "polynomials",
+  "course": "Algebra 2",
+  "quarter": 2,
+  "title": "Polynomial Functions",
+  "estimatedDuration": 50,
+  "skills": ["polynomial-division", "remainder-factor-theorems", "graphing-polynomials"],
+  "standardsAlignment": ["A-APR.2", "A-APR.3", "A-APR.6"],
+  "goals": [
+    "Divide polynomials using long division and synthetic division",
+    "Apply the Remainder Theorem and Factor Theorem",
+    "Find zeros of polynomial functions",
+    "Graph polynomial functions using end behavior, zeros, and multiplicity"
+  ],
+  "instructionalStrategy": [
+    "Polynomial long division parallels numeric long division—draw the connection explicitly.",
+    "Synthetic division is a shortcut for dividing by (x - k) only. Always use it when applicable.",
+    "The Remainder Theorem is the bridge: f(k) equals the remainder when dividing by (x - k). Factor Theorem: if f(k) = 0, then (x - k) is a factor.",
+    "For graphing: end behavior comes from the leading term, zeros from factoring, and the shape between zeros from multiplicity."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Polynomial Long Division** works just like number long division:\n1. Divide the leading terms\n2. Multiply the divisor by the result\n3. Subtract\n4. Bring down the next term\n5. Repeat until the remainder has lower degree than the divisor\n\n**Synthetic Division** is a shortcut when dividing by (x - k):\n1. Write k and the coefficients of the dividend\n2. Bring down the first coefficient\n3. Multiply by k, add to next coefficient, repeat\n4. Last number is the remainder\n\n**Important:** Use 0 as a placeholder for any missing terms!",
+      "initialPrompt": "When dividing 2x³ + 5x² - x + 3 by (x + 2), would you prefer long division or synthetic division? What value of k would you use for synthetic?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Divide (2x³ - 3x² + 4x - 5) by (x - 2) using synthetic division.",
+      "explanation": "**k = 2** (from x - 2)\n\nSet up: 2 | 2  -3   4  -5\n\n2 |  2   -3    4   -5\n  |       4    2   12\n  |  2    1    6    7\n\nProcess:\n• Bring down 2\n• 2 × 2 = 4, add to -3 = 1\n• 2 × 1 = 2, add to 4 = 6\n• 2 × 6 = 12, add to -5 = 7\n\n**Result:** 2x² + x + 6 with remainder 7\n**Written as:** 2x² + x + 6 + 7/(x-2)\n\nBy the **Remainder Theorem:** f(2) = 7 ✓",
+      "initialPrompt": "The Remainder Theorem says f(2) should equal the remainder. Can you verify by plugging 2 into the original polynomial?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Use synthetic division: (x³ + 4x² - 7x + 2) ÷ (x - 1). What is the quotient and remainder?",
+          "answer": "x² + 5x - 2; remainder 0",
+          "hints": ["k = 1. Coefficients: 1, 4, -7, 2.", "1|1 4 -7 2 → 1 5 -2 0. Quotient: x²+5x-2, remainder 0."]
+        },
+        {
+          "question": "Since the remainder is 0, what does the Factor Theorem tell us?",
+          "answer": "(x - 1) is a factor of x³ + 4x² - 7x + 2",
+          "hints": ["If f(k) = 0 (remainder = 0), then (x - k) is a factor of f(x)."]
+        },
+        {
+          "question": "Use the Remainder Theorem to find f(3) for f(x) = x⁴ - 2x³ + x - 10 WITHOUT plugging in.",
+          "answer": "20",
+          "hints": ["Divide by (x-3) using synthetic division. k=3, coefficients: 1, -2, 0, 1, -10.", "The remainder is f(3)."]
+        }
+      ],
+      "initialPrompt": "For the first problem, what value of k do we use for (x - 1)?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Graphing Polynomial Functions:**\n\n**End Behavior** (determined by leading term axⁿ):\n• Even degree, positive a: both ends up (↑↑)\n• Even degree, negative a: both ends down (↓↓)\n• Odd degree, positive a: left down, right up (↓↑)\n• Odd degree, negative a: left up, right down (↑↓)\n\n**Zeros and Multiplicity:**\n• Factor to find zeros (x-intercepts)\n• **Odd multiplicity** (1, 3, 5...): graph CROSSES the x-axis\n• **Even multiplicity** (2, 4, 6...): graph TOUCHES and bounces off\n\n**Turning Points:** A degree-n polynomial has at most (n-1) turning points.",
+      "initialPrompt": "For f(x) = -x³ + 4x, what is the degree and leading coefficient? What does that tell you about the end behavior?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "Divide (3x³ + 7x² - 4x + 6) by (x + 3) using synthetic division.",
+          "answer": "3x² - 2x + 2; remainder 0",
+          "hints": ["k = -3. Set up: -3 | 3  7  -4  6."]
+        },
+        {
+          "question": "Is (x + 3) a factor of 3x³ + 7x² - 4x + 6?",
+          "answer": "Yes, because the remainder is 0",
+          "hints": ["Factor Theorem: remainder = 0 means (x - k) is a factor."]
+        },
+        {
+          "question": "Describe the end behavior of f(x) = -2x⁴ + 3x² - 1.",
+          "answer": "Both ends point down (even degree, negative leading coefficient)",
+          "hints": ["Degree 4 (even), leading coefficient -2 (negative). Even + negative = ↓↓."]
+        },
+        {
+          "question": "Find all zeros of f(x) = x³ - 6x² + 11x - 6. (Hint: try x = 1.)",
+          "answer": "x = 1, 2, 3",
+          "hints": ["f(1) = 0, so (x-1) is a factor. Divide: x²-5x+6 = (x-2)(x-3)."]
+        },
+        {
+          "question": "At x = 2, does f(x) = (x-2)²(x+1) cross or bounce off the x-axis?",
+          "answer": "Bounce (even multiplicity 2)",
+          "hints": ["The factor (x-2) has exponent 2 (even multiplicity) → touches and bounces."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "Synthetic division (2x³-3x²+4x-5)÷(x-2)": "2x²+x+6, remainder 7",
+    "(x³+4x²-7x+2)÷(x-1)": "x²+5x-2, remainder 0",
+    "End behavior -2x⁴+3x²-1": "Both ends down",
+    "Zeros of x³-6x²+11x-6": "1, 2, 3",
+    "f(x)=(x-2)²(x+1) at x=2": "Bounce"
+  }
+}

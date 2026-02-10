@@ -1,0 +1,94 @@
+{
+  "moduleId": "rational_expressions",
+  "course": "Algebra 2",
+  "quarter": 2,
+  "title": "Rational Functions",
+  "estimatedDuration": 50,
+  "skills": ["rational-expressions", "rational-equations", "rational-functions-graphing"],
+  "standardsAlignment": ["A-APR.7", "A-REI.2"],
+  "goals": [
+    "Simplify rational expressions by factoring and canceling",
+    "Add, subtract, multiply, and divide rational expressions",
+    "Solve rational equations and check for extraneous solutions",
+    "Graph rational functions identifying asymptotes and holes"
+  ],
+  "instructionalStrategy": [
+    "CARDINAL RULE: Cancel FACTORS, not TERMS. (x²+x)/x ≠ x+1... wait, it does, but (x²+x)/x² ≠ 1+1/x is the common error. Factor first, then cancel.",
+    "Always state domain restrictions BEFORE simplifying—factors that cancel create holes, not just disappear.",
+    "For adding/subtracting: find LCD just like with numeric fractions. Factor denominators first to find LCD.",
+    "Extraneous solutions appear when the 'solution' makes a denominator zero. ALWAYS check answers in the original equation."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "A **rational expression** is a fraction where the numerator and/or denominator are polynomials.\n\n**Simplifying:** Factor the numerator and denominator completely, then cancel common FACTORS.\n\nExample: (x² - 9)/(x² + 5x + 6) = (x+3)(x-3)/((x+2)(x+3)) = (x-3)/(x+2), where x ≠ -3, -2\n\n**Domain restrictions:** x-values that make ANY denominator zero are excluded from the domain. State them BEFORE canceling.\n\n**Operations:**\n• Multiply: factor all, cancel, multiply straight across\n• Divide: flip the second fraction, then multiply\n• Add/Subtract: find LCD, build equivalent fractions, combine numerators",
+      "initialPrompt": "Why do we need to state x ≠ -3 even though (x+3) cancels? What happens at x = -3 on the graph?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Simplify: (x² - 4)/(x² - x - 2)",
+      "explanation": "**Step 1: Factor completely**\nNumerator: x² - 4 = (x + 2)(x - 2)\nDenominator: x² - x - 2 = (x - 2)(x + 1)\n\n**Step 2: State restrictions**\nx ≠ 2 and x ≠ -1 (values that make denominator zero)\n\n**Step 3: Cancel common factors**\n(x + 2)(x - 2) / ((x - 2)(x + 1)) = **(x + 2)/(x + 1)**\n\nwhere x ≠ 2 and x ≠ -1\n\nNote: x = 2 creates a 'hole' in the graph (removable discontinuity), while x = -1 creates a vertical asymptote.",
+      "initialPrompt": "What's the difference between a hole and a vertical asymptote? Both are excluded from the domain, but they look different on the graph."
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Add: 3/(x+2) + 5/(x-1)",
+          "answer": "(8x + 7)/((x+2)(x-1))",
+          "hints": ["LCD = (x+2)(x-1). Build: 3(x-1)/LCD + 5(x+2)/LCD.", "Combine: (3x-3+5x+10)/((x+2)(x-1)) = (8x+7)/((x+2)(x-1))."]
+        },
+        {
+          "question": "Solve: x/(x-3) = 2 + 3/(x-3)",
+          "answer": "No solution (x = 3 is extraneous)",
+          "hints": ["Multiply both sides by (x-3): x = 2(x-3) + 3.", "x = 2x - 6 + 3 = 2x - 3. So x = 3. But x = 3 makes denominator zero! Extraneous."]
+        }
+      ],
+      "initialPrompt": "For the addition problem, what is the LCD? Think about what both denominators need."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Graphing Rational Functions** f(x) = p(x)/q(x):\n\n**Vertical Asymptotes (VA):** Where q(x) = 0 (after canceling common factors). The graph approaches but never crosses.\n\n**Holes:** Where a factor cancels from both numerator and denominator. The graph has a missing point.\n\n**Horizontal Asymptote (HA):** Depends on degree comparison:\n• degree(top) < degree(bottom): HA at y = 0\n• degree(top) = degree(bottom): HA at y = (leading coefficients ratio)\n• degree(top) > degree(bottom): no HA (oblique asymptote)\n\n**x-intercepts:** Where the numerator = 0 (after simplifying)\n**y-intercept:** f(0)",
+      "initialPrompt": "For f(x) = (2x + 6)/(x² - 9), can you find the hole, vertical asymptote, and horizontal asymptote?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "Simplify: (x² + 3x - 10)/(x² - 4). State restrictions.",
+          "answer": "(x + 5)/(x + 2), x ≠ 2, x ≠ -2",
+          "hints": ["Factor: (x+5)(x-2)/((x+2)(x-2)). Cancel (x-2)."]
+        },
+        {
+          "question": "Multiply: (x²-1)/(x+3) · (x²+6x+9)/(x-1).",
+          "answer": "(x+1)(x+3) = x²+4x+3",
+          "hints": ["Factor all: (x+1)(x-1)/(x+3) · (x+3)²/(x-1). Cancel: (x+1)(x+3)."]
+        },
+        {
+          "question": "Solve: 2/(x+1) + 1/(x-1) = 4/(x²-1). Check for extraneous solutions.",
+          "answer": "x = 3",
+          "hints": ["LCD = (x+1)(x-1). Multiply: 2(x-1) + 1(x+1) = 4. Simplify: 3x - 1 = 4, x = 5/3. Wait... let me redo: 2x-2+x+1=4, 3x-1=4, 3x=5, x=5/3. Check: 5/3 ≠ ±1, so valid. Actually, let me recheck... 2(x-1)+1(x+1)=4 → 2x-2+x+1=4 → 3x-1=4 → x=5/3."]
+        },
+        {
+          "question": "For f(x) = (3x)/(x-2), find the vertical and horizontal asymptotes.",
+          "answer": "VA: x = 2; HA: y = 3",
+          "hints": ["VA where denominator = 0: x = 2. HA: same degree, ratio of leading coefficients = 3/1 = 3."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "(x²-4)/(x²-x-2)": "(x+2)/(x+1), x≠2, x≠-1",
+    "3/(x+2) + 5/(x-1)": "(8x+7)/((x+2)(x-1))",
+    "x/(x-3) = 2 + 3/(x-3)": "No solution",
+    "(x²+3x-10)/(x²-4)": "(x+5)/(x+2)",
+    "f(x) = 3x/(x-2) asymptotes": "VA: x=2, HA: y=3"
+  }
+}

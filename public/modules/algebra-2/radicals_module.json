@@ -1,0 +1,114 @@
+{
+  "moduleId": "radicals",
+  "course": "Algebra 2",
+  "quarter": 2,
+  "title": "Radicals & Rational Exponents",
+  "estimatedDuration": 45,
+  "skills": ["radical-expressions", "rational-exponents", "radical-equations"],
+  "standardsAlignment": ["N-RN.1", "N-RN.2", "A-REI.2"],
+  "goals": [
+    "Simplify radical expressions using product and quotient properties",
+    "Convert between radical form and rational exponent form",
+    "Rationalize denominators",
+    "Solve radical equations and check for extraneous solutions"
+  ],
+  "instructionalStrategy": [
+    "The fundamental connection: ⁿ√(aᵐ) = a^(m/n). The denominator of the exponent is the root index, the numerator is the power.",
+    "√(a·b) = √a · √b is true, but √(a+b) ≠ √a + √b is the #1 mistake. Drill this distinction.",
+    "When solving radical equations, isolate the radical first, then raise both sides to the appropriate power. ALWAYS check for extraneous solutions.",
+    "Rationalizing: multiply by the conjugate for binomial denominators, by the radical itself for monomial denominators."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Rational Exponents** connect exponents and radicals:\n\n**a^(1/n) = ⁿ√a** (the nth root of a)\n**a^(m/n) = ⁿ√(aᵐ) = (ⁿ√a)ᵐ** (root first, then power—or power first, then root)\n\nAll exponent rules still apply:\n• a^(1/2) · a^(1/3) = a^(5/6)\n• (a^(2/3))^3 = a²\n• a^(-1/2) = 1/√a\n\n**Simplifying Radicals:**\n• √(ab) = √a · √b (product property)\n• √(a/b) = √a/√b (quotient property)\n• Simplest form: no perfect square factors under the radical, no radicals in denominators",
+      "initialPrompt": "Rewrite 8^(2/3) in radical form, then evaluate. Which is easier: cube root first, then square? Or square first, then cube root?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Simplify: √(72) + 3√(50) - √(18)",
+      "explanation": "Simplify each radical by extracting perfect square factors:\n\n√72 = √(36·2) = 6√2\n3√50 = 3√(25·2) = 3·5√2 = 15√2\n√18 = √(9·2) = 3√2\n\nNow combine like radicals (all have √2):\n6√2 + 15√2 - 3√2 = **18√2**\n\nKey: you can only combine radicals with the same radicand (the number under the radical).",
+      "initialPrompt": "What if one of the terms had √3 instead of √2? Could we still combine it with the others?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "problems": [
+        {
+          "question": "Simplify: 27^(2/3)",
+          "answer": "9",
+          "hints": ["27^(1/3) = ∛27 = 3. Then 3² = 9."]
+        },
+        {
+          "question": "Rationalize the denominator: 5/√3",
+          "answer": "5√3/3",
+          "hints": ["Multiply by √3/√3: 5√3/(√3·√3) = 5√3/3."]
+        },
+        {
+          "question": "Rationalize: 2/(3 + √5)",
+          "answer": "(3 - √5)/2",
+          "hints": ["Multiply by conjugate (3-√5)/(3-√5).", "Top: 2(3-√5) = 6-2√5. Bottom: 9-5 = 4. Result: (6-2√5)/4 = (3-√5)/2."]
+        }
+      ],
+      "initialPrompt": "For 27^(2/3), which would you do first—the cube root or the square?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "text": "**Solving Radical Equations:**\n\n1. **Isolate the radical** on one side\n2. **Raise both sides** to the power that eliminates the radical (square both sides for √, cube both sides for ∛)\n3. **Solve** the resulting equation\n4. **CHECK all solutions** in the original equation (squaring can introduce extraneous solutions)\n\nFor equations with TWO radicals:\n• Isolate one radical, square, then isolate the remaining radical, and square again\n\nExtraneous solutions come from squaring: x = -3 might 'work' after squaring but not in the original equation.",
+      "initialPrompt": "Why does squaring both sides of an equation sometimes create false solutions? Think about this: if -3 = 3 is false, is (-3)² = 3² true?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "problem": "Solve: √(2x + 3) = x - 1",
+      "explanation": "**Step 1: Square both sides:**\n2x + 3 = (x - 1)² = x² - 2x + 1\n\n**Step 2: Rearrange:**\n0 = x² - 4x - 2\n\nUsing quadratic formula: x = (4 ± √(16+8))/2 = (4 ± √24)/2 = 2 ± √6\n\n**Step 3: CHECK both solutions:**\nx = 2 + √6 ≈ 4.45: √(2(4.45)+3) = √11.9 ≈ 3.45. x-1 = 3.45 ✓\nx = 2 - √6 ≈ -0.45: √(2(-0.45)+3) = √2.1 ≈ 1.45. x-1 = -1.45 ✗\n\n**Solution: x = 2 + √6 only** (the other is extraneous)",
+      "initialPrompt": "Why was x = 2 - √6 extraneous? Look at the original equation: the right side (x-1) must be ≥ 0. Is it?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "problems": [
+        {
+          "question": "Simplify: ∛(54) · ∛(4)",
+          "answer": "6",
+          "hints": ["∛(54·4) = ∛216 = 6."]
+        },
+        {
+          "question": "Rewrite x^(3/4) in radical form.",
+          "answer": "⁴√(x³)",
+          "hints": ["The denominator 4 is the root index. The numerator 3 is the power."]
+        },
+        {
+          "question": "Solve: √(3x + 1) = 4. Check your answer.",
+          "answer": "x = 5",
+          "hints": ["Square: 3x + 1 = 16. 3x = 15. x = 5. Check: √16 = 4 ✓"]
+        },
+        {
+          "question": "Solve: √(x + 7) = x + 1. Check for extraneous solutions.",
+          "answer": "x = 2 (x = -3 is extraneous)",
+          "hints": ["Square: x+7 = x²+2x+1. Rearrange: x²+x-6 = 0. (x+3)(x-2)=0. Check both."]
+        },
+        {
+          "question": "Simplify: (8x⁶)^(2/3)",
+          "answer": "4x⁴",
+          "hints": ["8^(2/3) = (∛8)² = 4. (x⁶)^(2/3) = x⁴. Together: 4x⁴."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "27^(2/3)": "9",
+    "5/√3 rationalized": "5√3/3",
+    "2/(3+√5) rationalized": "(3-√5)/2",
+    "√(2x+3) = x-1": "x = 2+√6",
+    "∛54·∛4": "6",
+    "√(3x+1)=4": "x = 5",
+    "√(x+7)=x+1": "x = 2",
+    "(8x⁶)^(2/3)": "4x⁴"
+  }
+}
