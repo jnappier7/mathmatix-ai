@@ -127,6 +127,7 @@ const announcementsRoutes = require('./routes/announcements');  // Teacher-to-st
 const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
 const billingRoutes = require('./routes/billing');  // Stripe subscription billing
 const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
+const courseSessionRoutes = require('./routes/courseSession');  // Pathway-based course sessions (self-paced)
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // Usage gate middleware for free tier enforcement
@@ -392,6 +393,7 @@ app.use('/api/avatar', isAuthenticated, avatarRoutes); // DiceBear avatar custom
 app.use('/api', isAuthenticated, diagramRoutes); // Controlled diagram generation for visual learners
 app.use('/api/curriculum', isAuthenticated, curriculumRoutes); // Curriculum schedule management
 app.use('/api/courses', isAuthenticated, courseRoutes); // Course catalog, session-based enrollment, and progression
+app.use('/api/course-sessions', isAuthenticated, courseSessionRoutes); // Pathway-based course sessions (self-paced)
 app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes); // Teacher file uploads and resource management
 app.use('/api/guidedLesson', isAuthenticated, guidedLessonRoutes);
 app.use('/api/assessment', isAuthenticated, assessmentRoutes); // Skills assessment for adaptive learning

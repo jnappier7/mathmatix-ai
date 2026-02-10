@@ -511,6 +511,7 @@ const userSchema = new Schema({
   /* Conversations */
   activeConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
   activeMasteryConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
+  activeCourseSessionId: { type: Schema.Types.ObjectId, ref: 'CourseSession', default: null },
 
   /* Subscription & Billing */
   subscriptionTier: { type: String, enum: ['free', 'pack_60', 'pack_120', 'unlimited'], default: 'free' },

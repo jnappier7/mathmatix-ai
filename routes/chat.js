@@ -670,6 +670,44 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             };
         }
 
+        // Enrich with active course session data (if user is in a course)
+        if (user.activeCourseSessionId) {
+            try {
+                const CourseSession = require('../models/courseSession');
+                const courseSession = await CourseSession.findById(user.activeCourseSessionId);
+                if (courseSession && courseSession.conversationId?.toString() === activeConversation?._id?.toString()) {
+                    const fs = require('fs');
+                    const pathwayFile = path.join(__dirname, '../public/resources', `${courseSession.courseId}-pathway.json`);
+                    if (fs.existsSync(pathwayFile)) {
+                        const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+                        const currentModule = (pathway.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
+                        const moduleFile = currentModule?.moduleFile
+                            ? path.join(__dirname, '../public/modules', courseSession.courseId, currentModule.moduleFile)
+                            : null;
+                        let scaffoldData = null;
+                        if (moduleFile && fs.existsSync(moduleFile)) {
+                            scaffoldData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
+                        }
+                        conversationContextForPrompt = conversationContextForPrompt || {};
+                        conversationContextForPrompt.courseSession = {
+                            courseId: courseSession.courseId,
+                            courseName: courseSession.courseName,
+                            currentModuleId: courseSession.currentModuleId,
+                            currentModuleTitle: currentModule?.title || courseSession.currentModuleId,
+                            overallProgress: courseSession.overallProgress,
+                            modules: courseSession.modules,
+                            scaffold: scaffoldData?.scaffold || null,
+                            skills: scaffoldData?.skills || currentModule?.skills || [],
+                            essentialQuestions: currentModule?.essentialQuestions || [],
+                            aiInstructionModel: pathway.aiInstructionModel || null
+                        };
+                    }
+                }
+            } catch (courseErr) {
+                console.warn('[Chat] Could not load course session context:', courseErr.message);
+            }
+        }
+
         // Inject few-shot examples for new conversations to teach visual command usage
         formattedMessagesForLLM = injectFewShotExamples(formattedMessagesForLLM);
 

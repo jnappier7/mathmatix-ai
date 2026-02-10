@@ -1,0 +1,251 @@
+/* ============================================
+   COURSE CATALOG & ENROLLMENT STYLES
+   Styles for sidebar courses section, catalog
+   modal, and course progress components.
+   ============================================ */
+
+/* ----- Sidebar Courses Section ----- */
+
+.courses-toggle {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--clr-bg-subtle, #f8fafb);
+    border: none;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--clr-text, #333);
+    margin-bottom: 6px;
+    box-shadow: none;
+    transition: background 150ms ease;
+}
+
+.courses-toggle:hover {
+    background: var(--clr-border-light, #f1f5f9);
+}
+
+.courses-toggle i {
+    transition: transform 0.3s ease;
+}
+
+.courses-toggle.expanded i {
+    transform: rotate(180deg);
+}
+
+.sidebar-courses-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease;
+}
+
+.sidebar-courses-list.expanded {
+    max-height: 500px;
+}
+
+/* Browse Courses button */
+#browse-courses-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+#browse-courses-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+#browse-courses-btn:active {
+    transform: translateY(0);
+}
+
+/* Course sidebar item */
+.course-sidebar-item {
+    border-radius: 8px;
+    transition: background 0.15s ease;
+}
+
+/* ----- Catalog Modal ----- */
+
+#course-catalog-modal {
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#course-catalog-modal .modal-content {
+    border-radius: 16px;
+    animation: catalogSlideIn 0.25s ease;
+}
+
+@keyframes catalogSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Catalog cards hover */
+#catalog-grid > div {
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+#catalog-grid > div:hover {
+    transform: translateY(-1px);
+}
+
+.catalog-enroll-btn {
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.catalog-enroll-btn:not(:disabled):hover {
+    opacity: 0.9;
+    transform: scale(1.03);
+}
+
+.catalog-enroll-btn:not(:disabled):active {
+    transform: scale(0.98);
+}
+
+/* ----- Course Progress Bar ----- */
+
+#course-progress-bar {
+    transition: background 0.15s ease;
+}
+
+#course-progress-bar:hover {
+    background: linear-gradient(135deg, #667eea1a, #764ba21a) !important;
+}
+
+/* ----- Course Progress Dropdown ----- */
+
+#course-progress-dropdown {
+    animation: dropdownSlide 0.2s ease;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#course-next-btn {
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+#course-next-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+#course-exit-btn {
+    transition: background 0.15s, color 0.15s;
+}
+
+#course-exit-btn:hover {
+    background: #e2e8f0 !important;
+    color: #333 !important;
+}
+
+/* ----- Toast animation ----- */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 10px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* ----- Dark Mode Overrides ----- */
+
+[data-theme="dark"] .courses-toggle {
+    background: var(--dark-bg-subtle, #1e293b);
+    color: var(--dark-text, #e2e8f0);
+}
+
+[data-theme="dark"] .courses-toggle:hover {
+    background: var(--dark-border, #334155);
+}
+
+[data-theme="dark"] #course-progress-bar {
+    background: linear-gradient(135deg, #667eea15, #764ba215) !important;
+    border-bottom-color: #334155 !important;
+}
+
+[data-theme="dark"] #course-progress-bar:hover {
+    background: linear-gradient(135deg, #667eea22, #764ba222) !important;
+}
+
+[data-theme="dark"] #course-progress-dropdown {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] #course-progress-dropdown div {
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] #course-exit-btn {
+    background: #334155 !important;
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] #course-exit-btn:hover {
+    background: #475569 !important;
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] #course-catalog-modal .modal-content {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] #catalog-grid > div {
+    border-color: #334155 !important;
+}
+
+/* ----- Mobile Responsive ----- */
+
+@media (max-width: 768px) {
+    #course-progress-bar {
+        padding: 6px 12px !important;
+    }
+
+    #course-progress-bar span {
+        font-size: 12px !important;
+    }
+
+    #course-progress-dropdown {
+        padding: 12px !important;
+    }
+
+    #course-catalog-modal .modal-content {
+        max-width: 95vw !important;
+        max-height: 85vh !important;
+        margin: 8px;
+    }
+}

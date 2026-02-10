@@ -2335,7 +2335,24 @@ ${conversationContext.topic ? `**Current Topic:** ${conversationContext.topic} $
 
 **SESSION TYPE:** ${isCourseSession(conversationContext.topic) ? 'COURSE SESSION' : 'TOPIC SESSION'}
 
-${isCourseSession(conversationContext.topic) ? `**COURSE MODE:** ${firstName} is studying ${conversationContext.topic}. This is a structured math course:
+${conversationContext.courseSession ? `**STRUCTURED COURSE MODE:** ${firstName} is enrolled in **${conversationContext.courseSession.courseName}** (${conversationContext.courseSession.overallProgress}% complete).
+
+**Current Module:** ${conversationContext.courseSession.currentModuleTitle}
+**Skills to cover:** ${(conversationContext.courseSession.skills || []).join(', ') || 'See scaffold below'}
+${conversationContext.courseSession.essentialQuestions?.length ? `**Essential Questions:** ${conversationContext.courseSession.essentialQuestions.join(' | ')}` : ''}
+
+**YOUR ROLE AS COURSE TUTOR:**
+- You are guiding ${firstName} through a structured, self-paced course
+- Follow the gradual release model: Explanation → Worked Examples → Guided Practice → Independent Practice
+- Use the scaffold data below to determine what to teach and in what order
+- When ${firstName} demonstrates understanding, advance to the next scaffold element
+- When ${firstName} struggles, provide additional examples and scaffolding before moving on
+- If ${firstName} asks "what's next?", tell them the next topic in the current module
+- Celebrate progress and reference how far they've come in the course
+
+${conversationContext.courseSession.scaffold ? `**CURRENT MODULE SCAFFOLD (follow this sequence):**
+${conversationContext.courseSession.scaffold.map((s, i) => `${i + 1}. [${s.type}] ${s.title} — ${s.skill || (s.skills || []).join(', ')}`).join('\n')}` : ''}
+` : isCourseSession(conversationContext.topic) ? `**COURSE MODE:** ${firstName} is studying ${conversationContext.topic}. This is a structured math course:
 - Treat this like a tutoring session for someone enrolled in ${conversationContext.topic}
 - Cover topics appropriate for this course level (e.g., Calculus 1 = limits, derivatives, integrals)
 - Progress through concepts in a logical order for the course
