@@ -1,0 +1,366 @@
+{
+  "moduleId": "practice_test_final",
+  "course": "ACT Math Prep",
+  "unit": 8,
+  "title": "Full Practice Test & Final Exam",
+  "weeks": "9-10",
+  "estimatedDuration": 75,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "isFinal": true,
+  "description": "The capstone of ACT Math Prep. A timed 30-question practice test that mirrors real ACT conditions (question distribution, difficulty progression, 5-choice format), followed by a detailed score analysis and targeted remediation recommendations.",
+
+  "skillsCovered": [
+    "act-real-complex-numbers",
+    "act-exponents-roots",
+    "act-ratios-proportions-percents",
+    "act-linear-equations",
+    "act-systems-of-equations",
+    "act-quadratic-equations",
+    "act-function-notation-evaluation",
+    "act-linear-functions",
+    "act-quadratic-functions",
+    "act-polynomial-exponential-log",
+    "act-trig-functions",
+    "act-angles-lines-triangles",
+    "act-polygons-circles",
+    "act-area-volume-surface-area",
+    "act-coordinate-geometry",
+    "act-right-triangle-trig",
+    "act-center-spread",
+    "act-data-representations",
+    "act-probability",
+    "act-multi-step-rate-proportion",
+    "act-algebraic-reasoning-context",
+    "act-backsolving",
+    "act-estimation-elimination",
+    "act-model-interpretation"
+  ],
+
+  "passThreshold": 65,
+
+  "testConditions": {
+    "totalQuestions": 30,
+    "recommendedTime": "30 minutes",
+    "format": "Simulates half-length ACT Math (full ACT is 60 questions / 60 minutes)",
+    "instructions": "Answer all questions. There is NO penalty for guessing. Use a calculator where helpful. Time yourself — aim for 1 minute per question on average."
+  },
+
+  "remediationStrategy": {
+    "approach": "category-analysis",
+    "description": "After the practice test, analyze performance by ACT reporting category. Students receive a breakdown showing their estimated score range and specific topic areas to review before test day.",
+    "categories": [
+      {
+        "category": "Preparing for Higher Math: Number & Quantity",
+        "questionIds": ["pt-1", "pt-6", "pt-18"],
+        "reteachFocus": "Real/complex number operations, exponent rules, ratio problems"
+      },
+      {
+        "category": "Preparing for Higher Math: Algebra",
+        "questionIds": ["pt-3", "pt-8", "pt-14", "pt-24"],
+        "reteachFocus": "Linear/quadratic equations, systems, polynomial operations"
+      },
+      {
+        "category": "Preparing for Higher Math: Functions",
+        "questionIds": ["pt-5", "pt-11", "pt-20", "pt-27"],
+        "reteachFocus": "Function notation, composition, transformations, trig"
+      },
+      {
+        "category": "Preparing for Higher Math: Geometry",
+        "questionIds": ["pt-4", "pt-9", "pt-16", "pt-22", "pt-28"],
+        "reteachFocus": "Angles, triangles, circles, coordinate geometry, trig"
+      },
+      {
+        "category": "Preparing for Higher Math: Statistics & Probability",
+        "questionIds": ["pt-2", "pt-12", "pt-21"],
+        "reteachFocus": "Mean/median, data interpretation, probability"
+      },
+      {
+        "category": "Integrating Essential Skills",
+        "questionIds": ["pt-7", "pt-10", "pt-13", "pt-17", "pt-23", "pt-26"],
+        "reteachFocus": "Multi-step real-world problems, unit conversions, percent applications"
+      },
+      {
+        "category": "Modeling",
+        "questionIds": ["pt-15", "pt-19", "pt-25", "pt-29", "pt-30"],
+        "reteachFocus": "Model selection, parameter interpretation, prediction"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "pt-1",
+      "question": "What is 3/4 + 2/3?\n(A) 5/7  (B) 5/12  (C) 17/12  (D) 6/7  (E) 11/12",
+      "answer": "(C) 17/12. LCD = 12: 9/12 + 8/12 = 17/12.",
+      "skill": "act-real-complex-numbers",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "pt-2",
+      "question": "What is the mean of 12, 18, 24, 30, and 36?\n(A) 22  (B) 24  (C) 26  (D) 28  (E) 30",
+      "answer": "(B) 24. Sum = 120. Mean = 120/5 = 24.",
+      "skill": "act-center-spread",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "pt-3",
+      "question": "Solve: 5x + 8 = 3x + 20\n(A) 2  (B) 4  (C) 6  (D) 8  (E) 14",
+      "answer": "(C) 6. 2x = 12 → x = 6.",
+      "skill": "act-linear-equations",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "pt-4",
+      "question": "What is the area of a triangle with base 10 and height 7?\n(A) 17  (B) 35  (C) 40  (D) 70  (E) 140",
+      "answer": "(B) 35. A = (1/2)(10)(7) = 35.",
+      "skill": "act-area-volume-surface-area",
+      "difficulty": 1,
+      "points": 3
+    },
+    {
+      "id": "pt-5",
+      "question": "If f(x) = 4x − 9, what is f(3)?\n(A) 3  (B) 7  (C) 12  (D) 21  (E) 27",
+      "answer": "(A) 3. f(3) = 12 − 9 = 3.",
+      "skill": "act-function-notation-evaluation",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "pt-6",
+      "question": "Simplify: (2x³)⁴\n(A) 2x¹²  (B) 8x¹²  (C) 16x¹²  (D) 2x⁷  (E) 16x⁷",
+      "answer": "(C) 16x¹². 2⁴ · (x³)⁴ = 16x¹².",
+      "skill": "act-exponents-roots",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "pt-7",
+      "question": "A shirt costs $35. With 7% sales tax, what is the total?\n(A) $2.45  (B) $37.45  (C) $37.80  (D) $42.00  (E) $59.50",
+      "answer": "(B) $37.45. Tax = 35 × 0.07 = $2.45. Total = $37.45.",
+      "skill": "act-multi-step-rate-proportion",
+      "difficulty": 2,
+      "points": 3
+    },
+    {
+      "id": "pt-8",
+      "question": "What are the solutions to x² − 7x + 10 = 0?\n(A) 2 and 5  (B) −2 and −5  (C) −2 and 5  (D) 2 and −5  (E) 1 and 10",
+      "answer": "(A) 2 and 5. Factor: (x−2)(x−5) = 0.",
+      "skill": "act-quadratic-equations",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "pt-9",
+      "question": "What is the circumference of a circle with radius 9?\n(A) 9π  (B) 18π  (C) 27π  (D) 81π  (E) 162π",
+      "answer": "(B) 18π. C = 2πr = 18π.",
+      "skill": "act-polygons-circles",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "pt-10",
+      "question": "A recipe for 4 servings calls for 6 cups of flour. How many cups are needed for 10 servings?\n(A) 10  (B) 12  (C) 15  (D) 24  (E) 60",
+      "answer": "(C) 15. 6/4 = x/10 → x = 15.",
+      "skill": "act-multi-step-rate-proportion",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "pt-11",
+      "question": "What is the slope of the line 2y − 6x = 10?\n(A) −3  (B) −6  (C) 3  (D) 5  (E) 6",
+      "answer": "(C) 3. 2y = 6x + 10 → y = 3x + 5. Slope = 3.",
+      "skill": "act-linear-functions",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "pt-12",
+      "question": "A jar has 8 red, 5 blue, and 7 green marbles. What is the probability of drawing a blue marble?\n(A) 1/4  (B) 5/20  (C) 1/5  (D) 5/15  (E) 5/13",
+      "answer": "(A) 1/4. Total = 20. P(blue) = 5/20 = 1/4. Also (B) = 1/4.",
+      "skill": "act-probability",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "pt-13",
+      "question": "A car travels at 55 mph for 2.5 hours. How far does it go?\n(A) 22  (B) 57.5  (C) 110  (D) 137.5  (E) 275",
+      "answer": "(D) 137.5. d = rt = 55 × 2.5 = 137.5 miles.",
+      "skill": "act-algebraic-reasoning-context",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "pt-14",
+      "question": "If 3x + 2y = 14 and x − 2y = 2, what is x?\n(A) 2  (B) 3  (C) 4  (D) 5  (E) 6",
+      "answer": "(C) 4. Add: 4x = 16 → x = 4.",
+      "skill": "act-systems-of-equations",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "pt-15",
+      "question": "The equation C = 25 + 0.10m models a taxi fare where m is miles. What does the 25 represent?\n(A) Cost per mile  (B) Base fare  (C) Number of miles  (D) Tip  (E) Total cost",
+      "answer": "(B) Base fare. It's the y-intercept: the cost when m = 0.",
+      "skill": "act-model-interpretation",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "pt-16",
+      "question": "In a right triangle, one acute angle is 35°. What is the other acute angle?\n(A) 35°  (B) 45°  (C) 55°  (D) 65°  (E) 145°",
+      "answer": "(C) 55°. 90° + 35° + x = 180° → x = 55°.",
+      "skill": "act-angles-lines-triangles",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "pt-17",
+      "question": "An item originally costs $80. After a 25% discount and then 8% tax on the discounted price, what is the final cost?\n(A) $54.00  (B) $57.60  (C) $60.00  (D) $64.80  (E) $86.40",
+      "answer": "(D) $64.80. Discount: $80 × 0.75 = $60. Tax: $60 × 1.08 = $64.80.",
+      "skill": "act-multi-step-rate-proportion",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "pt-18",
+      "question": "What is i⁴⁰ + i⁴¹?\n(A) 0  (B) 1  (C) 1 + i  (D) i  (E) −1 + i",
+      "answer": "(C) 1 + i. i⁴⁰ = (i⁴)¹⁰ = 1. i⁴¹ = i⁴⁰ · i = i. Sum = 1 + i.",
+      "skill": "act-real-complex-numbers",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "pt-19",
+      "question": "A population is modeled by P = 5000(1.06)^t. What is the annual growth rate?\n(A) 0.06%  (B) 1.06%  (C) 6%  (D) 60%  (E) 106%",
+      "answer": "(C) 6%. The multiplier is 1.06 = 1 + 0.06, so the growth rate is 6%.",
+      "skill": "act-model-interpretation",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "pt-20",
+      "question": "If g(x) = 3x² + 2 and h(x) = x − 1, what is g(h(3))?\n(A) 8  (B) 14  (C) 26  (D) 29  (E) 77",
+      "answer": "(B) 14. h(3) = 2. g(2) = 3(4) + 2 = 14.",
+      "skill": "act-function-notation-evaluation",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "pt-21",
+      "question": "A two-way table shows 150 students: 50 freshmen who play sports, 20 freshmen who don't, 40 upperclassmen who play sports, 40 upperclassmen who don't. What fraction of all athletes are freshmen?\n(A) 50/150  (B) 50/70  (C) 50/90  (D) 5/9  (E) Both C and D",
+      "answer": "(E) Both C and D. Athletes: 50 + 40 = 90. Freshman athletes: 50. Fraction: 50/90 = 5/9.",
+      "skill": "act-data-representations",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "pt-22",
+      "question": "What is the distance between (3, −1) and (−5, 5)?\n(A) 6  (B) 8  (C) 10  (D) 12  (E) 14",
+      "answer": "(C) 10. d = √[(−8)² + 6²] = √(64 + 36) = √100 = 10.",
+      "skill": "act-coordinate-geometry",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "pt-23",
+      "question": "A pool fills at 400 gallons per hour but leaks at 25 gallons per hour. How long to add a net 3,000 gallons?\n(A) 7.5 hrs  (B) 8 hrs  (C) 10 hrs  (D) 12 hrs  (E) 120 hrs",
+      "answer": "(B) 8 hrs. Net rate = 375 gal/hr. Time = 3000/375 = 8 hours.",
+      "skill": "act-algebraic-reasoning-context",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "pt-24",
+      "question": "The quadratic formula gives x = (7 ± √(49 − 40)) / 4. What are the solutions?\n(A) 1 and 5/2  (B) 2 and 5/4  (C) 1 and 2  (D) (7 + 3)/4 and (7 − 3)/4  (E) Both A and D",
+      "answer": "(E) Both A and D. √9 = 3. x = (7+3)/4 = 10/4 = 5/2 or x = (7−3)/4 = 4/4 = 1.",
+      "skill": "act-quadratic-equations",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "pt-25",
+      "question": "Which function type best models a situation where a value decreases by the same DOLLAR amount each year?\n(A) Linear  (B) Quadratic  (C) Exponential decay  (D) Logarithmic  (E) Inverse",
+      "answer": "(A) Linear. Constant dollar decrease = constant rate of change = linear.",
+      "skill": "act-model-interpretation",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "pt-26",
+      "question": "A shaded region is formed by a square with side 10 with a circle of diameter 10 inscribed inside. What is the area of the shaded region (the corners)?\n(A) 100 − 25π  (B) 100 − 10π  (C) 100 − 100π  (D) 25π  (E) 75",
+      "answer": "(A) 100 − 25π. Square = 100. Circle: r = 5, A = 25π. Shaded = 100 − 25π.",
+      "skill": "act-multi-step-rate-proportion",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "pt-27",
+      "question": "In a right triangle, sin θ = 8/17. What is cos θ?\n(A) 8/15  (B) 15/17  (C) 17/15  (D) 9/17  (E) 15/8",
+      "answer": "(B) 15/17. If sin θ = 8/17 (opp=8, hyp=17), then adj = √(289−64) = √225 = 15. cos θ = 15/17.",
+      "skill": "act-right-triangle-trig",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "pt-28",
+      "question": "A circle has equation (x − 3)² + (y + 5)² = 49. What is the center and radius?\n(A) (3, −5), r = 7  (B) (−3, 5), r = 7  (C) (3, −5), r = 49  (D) (3, 5), r = 7  (E) (−3, −5), r = 49",
+      "answer": "(A) (3, −5), r = 7. Center (h, k) = (3, −5). r = √49 = 7.",
+      "skill": "act-coordinate-geometry",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "pt-29",
+      "question": "A scatter plot shows a strong negative linear trend. The line of best fit has equation y = −2.5x + 80. If x represents hours of TV watched per week and y represents test score, what does the slope mean?\n(A) Each hour of TV raises the score by 2.5 points  (B) Each hour of TV lowers the score by 2.5 points  (C) The maximum score is 80  (D) Students who watch no TV score 2.5  (E) There are 80 students in the study",
+      "answer": "(B) Each hour of TV lowers the score by 2.5 points. Slope of −2.5 means y decreases by 2.5 for each unit increase in x.",
+      "skill": "act-model-interpretation",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "pt-30",
+      "question": "A ball is thrown upward from a height of 6 feet with initial velocity 64 ft/s. Its height is modeled by h = −16t² + 64t + 6. What is the maximum height reached?\n(A) 64 ft  (B) 70 ft  (C) 80 ft  (D) 86 ft  (E) 134 ft",
+      "answer": "(B) 70 ft. Vertex at t = −64/(2(−16)) = 2 sec. h(2) = −16(4) + 64(2) + 6 = −64 + 128 + 6 = 70.",
+      "skill": "act-model-interpretation",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+
+  "answerKeys": {
+    "pt-1": "17/12",
+    "pt-2": "24",
+    "pt-3": "6",
+    "pt-4": "35",
+    "pt-5": "3",
+    "pt-6": "16x¹²",
+    "pt-7": "$37.45",
+    "pt-8": "2 and 5",
+    "pt-9": "18π",
+    "pt-10": "15",
+    "pt-11": "3",
+    "pt-12": "1/4",
+    "pt-13": "137.5",
+    "pt-14": "4",
+    "pt-15": "Base fare",
+    "pt-16": "55°",
+    "pt-17": "$64.80",
+    "pt-18": "1 + i",
+    "pt-19": "6%",
+    "pt-20": "14",
+    "pt-21": "5/9",
+    "pt-22": "10",
+    "pt-23": "8",
+    "pt-24": "1 and 5/2",
+    "pt-25": "Linear",
+    "pt-26": "100 − 25π",
+    "pt-27": "15/17",
+    "pt-28": "(3, −5), r = 7",
+    "pt-29": "Each hour of TV lowers score by 2.5",
+    "pt-30": "70"
+  }
+}
