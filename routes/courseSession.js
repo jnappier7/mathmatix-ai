@@ -113,14 +113,53 @@ router.post('/enroll', async (req, res) => {
       return res.status(400).json({ success: false, message: 'courseId is required' });
     }
 
-    // Check for existing active session in this course
+    // Check for existing session in this course (active OR paused)
     const existing = await CourseSession.findOne({
       userId: req.user._id,
       courseId,
-      status: 'active'
+      status: { $in: ['active', 'paused'] }
     });
-    if (existing) {
+
+    if (existing && existing.status === 'active') {
       return res.status(400).json({ success: false, message: 'Already enrolled in this course' });
+    }
+
+    // Resume a paused (dropped) session — restore progress instead of starting over
+    if (existing && existing.status === 'paused') {
+      existing.status = 'active';
+      await existing.save();
+
+      await User.findByIdAndUpdate(req.user._id, {
+        activeCourseSessionId: existing._id,
+        activeConversationId: existing.conversationId
+      });
+
+      // Load pathway for welcome data
+      const pathwayFile = path.join(__dirname, '../public/resources', `${courseId}-pathway.json`);
+      const pathway = fs.existsSync(pathwayFile)
+        ? JSON.parse(fs.readFileSync(pathwayFile, 'utf8'))
+        : { modules: [], overview: '' };
+      const pathwayModules = pathway.modules || [];
+
+      const welcomeData = {
+        courseName: existing.courseName,
+        overview: pathway.overview || '',
+        moduleCount: pathwayModules.length,
+        units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
+        prerequisites: pathway.prerequisites || [],
+        firstModuleTitle: pathwayModules[0]?.title || 'Getting Started'
+      };
+
+      console.log(`📚 [CourseSession] ${req.user.firstName} resumed ${existing.courseName} (${existing.overallProgress}% progress preserved)`);
+
+      return res.json({
+        success: true,
+        message: `Welcome back to ${existing.courseName}! Your progress (${existing.overallProgress}%) has been restored.`,
+        session: existing,
+        conversationId: existing.conversationId,
+        welcomeData,
+        resumed: true
+      });
     }
 
     // Cap concurrent enrollments at 2

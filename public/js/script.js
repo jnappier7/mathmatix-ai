@@ -2953,6 +2953,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
             }
 
+            // Course progress updates (scaffold advance, module complete)
+            if (data.courseProgress && window.courseManager) {
+                const cp = data.courseProgress;
+                if (cp.event === 'scaffold_advance') {
+                    // Update the progress bar fill for the current module
+                    const fill = document.getElementById('course-progress-fill');
+                    const pct = document.getElementById('course-progress-pct');
+                    const mod = document.getElementById('course-progress-module');
+                    if (fill && cp.scaffoldProgress != null) {
+                        // Blend scaffold progress with overall: show scaffold within the current segment
+                        fill.style.width = `${cp.scaffoldProgress}%`;
+                    }
+                    if (pct && cp.scaffoldProgress != null) pct.textContent = `${cp.scaffoldProgress}%`;
+                    if (mod && cp.stepTitle) mod.textContent = cp.stepTitle;
+                    console.log(`[Course] Scaffold advanced → step ${cp.scaffoldIndex + 1}/${cp.scaffoldTotal}`);
+                } else if (cp.event === 'module_complete') {
+                    // Refresh the full progress display and trigger celebration
+                    window.courseManager.loadMySessions();
+                    window.courseManager.checkActiveProgressBar();
+                    // Show XP notification for module completion
+                    if (cp.xpAwarded && typeof window.showXpNotification === 'function') {
+                        window.showXpNotification(cp.xpAwarded, 'Module Complete!');
+                    }
+                    // Trigger module celebration (confetti + card)
+                    if (cp.moduleId) {
+                        window.courseManager.celebrateModuleCompletion({
+                            moduleId: cp.moduleId,
+                            title: cp.moduleId,
+                            xpAwarded: cp.xpAwarded || 0,
+                            courseComplete: cp.courseComplete || false
+                        });
+                    }
+                    console.log(`[Course] Module complete: ${cp.moduleId}, overall: ${cp.overallProgress}%`);
+                }
+            }
+
         } catch (error) {
             console.error("Chat error:", error);
 

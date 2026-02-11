@@ -27,9 +27,8 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
   const unit = currentModule?.unit || '';
   const progress = courseSession.overallProgress || 0;
 
-  // Determine scaffold position from session progress
-  const moduleProgress = courseSession.modules?.find(m => m.moduleId === courseSession.currentModuleId);
-  const scaffoldIndex = moduleProgress?.scaffoldProgress || 0;
+  // Determine scaffold position from session's currentScaffoldIndex (the step counter)
+  const scaffoldIndex = courseSession.currentScaffoldIndex || 0;
   const scaffold = scaffoldData?.scaffold || [];
   const currentPhase = scaffold[scaffoldIndex] || scaffold[0] || null;
 
@@ -168,6 +167,53 @@ ${decisionRights || `  - Choose which examples to present
     and preview what's coming next. Make it feel like an achievement.
 
 ====================================================================
+PROGRESS SIGNALS (CRITICAL — you MUST emit these tags)
+====================================================================
+
+You have two signal tags that control the student's course progress.
+Include them at the END of your response when the conditions are met.
+The student will NOT see these tags — they are parsed by the server.
+
+**1. <SCAFFOLD_ADVANCE>**
+Emit this tag when the current scaffold step is COMPLETE and you are
+transitioning to the next step. Conditions:
+- After an explanation: you've taught the concept AND the student
+  has engaged (answered your initial prompt or asked a question)
+- After I-Do modeling: you've shown the worked examples AND the
+  student has acknowledged understanding
+- After We-Do guided practice: the student has correctly solved
+  at least 2 problems with decreasing scaffolding
+- After You-Do independent practice: the student has independently
+  solved at least 2 problems correctly
+- After a mastery check: the student has demonstrated proficiency
+
+Do NOT emit this tag if:
+- You just started teaching the current step
+- The student is still struggling and needs more practice
+- You are in the middle of a problem or explanation
+
+**2. <MODULE_COMPLETE>**
+Emit this tag when ALL scaffold steps in the current module are done.
+This will unlock the next module and award XP. Only emit this AFTER
+the final scaffold step (usually a mastery-check) is complete.
+
+**3. <PROBLEM_RESULT:correct|incorrect|skipped>**
+Emit when evaluating a student's answer to a practice problem.
+
+EXAMPLE of a response that advances the scaffold:
+
+"Great work! You nailed all three problems on combining like terms.
+You clearly understand how to identify and combine terms with the
+same variable and exponent.
+
+Now let's level up — I'm going to walk you through some problems
+that combine BOTH the distributive property AND combining like terms...
+
+**Example 1:** Simplify \\( 3(2x + 4) + 5x - 2 \\)
+..."
+<SCAFFOLD_ADVANCE>
+
+====================================================================
 RESPONSE FORMAT
 ====================================================================
 
@@ -175,8 +221,6 @@ RESPONSE FORMAT
 - Use markdown for structure (bold key terms, numbered steps)
 - For worked examples: show every step with the reasoning
 - For practice problems: present one at a time, wait for student response
-- Include <PROBLEM_RESULT:correct>, <PROBLEM_RESULT:incorrect>, or
-  <PROBLEM_RESULT:skipped> tags when evaluating student answers
 - Accept all mathematically equivalent forms as correct
 
 ====================================================================
@@ -264,13 +308,11 @@ function buildCourseGreetingInstruction({ userProfile, courseSession, pathway, s
   const moduleTitle = currentModule?.title || courseSession.currentModuleId;
   const progress = courseSession.overallProgress || 0;
 
-  const moduleProgress = courseSession.modules?.find(m => m.moduleId === courseSession.currentModuleId);
-  const scaffoldIndex = moduleProgress?.scaffoldProgress || 0;
+  const scaffoldIndex = courseSession.currentScaffoldIndex || 0;
   const scaffold = scaffoldData?.scaffold || [];
   const currentPhase = scaffold[scaffoldIndex] || scaffold[0] || null;
 
   // Determine if this is first time in course or returning
-  const messageCount = courseSession.conversationMessageCount || 0;
   const isFirstLesson = scaffoldIndex === 0 && progress === 0;
 
   let instruction = `The student just opened their **${courseName}** course. `;
