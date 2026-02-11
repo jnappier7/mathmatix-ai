@@ -1317,6 +1317,15 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         // Calculate total XP
         xpBreakdown.total = xpBreakdown.tier1 + xpBreakdown.tier2 + xpBreakdown.tier3;
+
+        // Course session XP boost: 1.5x when working inside a structured course
+        if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
+            const courseBoost = 1.5;
+            xpBreakdown.total = Math.round(xpBreakdown.total * courseBoost);
+            xpBreakdown.courseBoost = courseBoost;
+            console.log(`📚 [XP] Course session boost: ${courseBoost}x applied (total: ${xpBreakdown.total})`);
+        }
+
         user.xp = (user.xp || 0) + xpBreakdown.total;
 
         // Update XP Ladder analytics for "grinding vs growing" analysis

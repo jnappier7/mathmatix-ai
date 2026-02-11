@@ -10,6 +10,7 @@ class CourseManager {
         this.courseSessions = [];
         this.activeCourseSessionId = null;
         this.dropdownOpen = false;
+        this._lastKnownModuleStatuses = {}; // moduleId → status, for detecting completions
         this.init();
     }
 
@@ -69,6 +70,20 @@ class CourseManager {
             }
         });
 
+        // Nudge banner buttons
+        const nudgeContinue = document.getElementById('nudge-continue-btn');
+        if (nudgeContinue) {
+            nudgeContinue.addEventListener('click', () => {
+                const sessionId = nudgeContinue.dataset.sessionId;
+                if (sessionId) this.activateCourse(sessionId);
+                this.hideNudge();
+            });
+        }
+        const nudgeDismiss = document.getElementById('nudge-dismiss-btn');
+        if (nudgeDismiss) {
+            nudgeDismiss.addEventListener('click', () => this.hideNudge());
+        }
+
         // Load enrolled courses on startup
         this.loadMySessions();
 
@@ -94,8 +109,9 @@ class CourseManager {
             this.renderSidebarCourses();
 
             // If there is an active course session tied to the current conversation,
-            // show the progress bar
+            // show the progress bar — otherwise show the resume nudge
             this.checkActiveProgressBar();
+            this.checkResumeNudge();
         } catch (err) {
             console.warn('[CourseManager] Failed to load sessions:', err);
         }
@@ -181,6 +197,163 @@ class CourseManager {
     }
 
     // --------------------------------------------------
+    // Resume nudge (shown when user has course but is in general chat)
+    // --------------------------------------------------
+    checkResumeNudge() {
+        const nudge = document.getElementById('course-resume-nudge');
+        if (!nudge) return;
+
+        // Don't show if already dismissed this page load
+        if (this._nudgeDismissed) {
+            nudge.style.display = 'none';
+            return;
+        }
+
+        // Don't show if progress bar is already visible (user IS in their course)
+        if (this.activeCourseSessionId) {
+            nudge.style.display = 'none';
+            return;
+        }
+
+        // Find an active course to nudge about
+        const activeCourse = this.courseSessions.find(s => s.status === 'active');
+        if (!activeCourse) {
+            nudge.style.display = 'none';
+            return;
+        }
+
+        // Show the nudge
+        const nameEl = document.getElementById('nudge-course-name');
+        const progressEl = document.getElementById('nudge-course-progress');
+        const continueBtn = document.getElementById('nudge-continue-btn');
+
+        if (nameEl) nameEl.textContent = activeCourse.courseName;
+        if (progressEl) progressEl.textContent = `${activeCourse.overallProgress || 0}% complete`;
+        if (continueBtn) continueBtn.dataset.sessionId = activeCourse._id;
+
+        nudge.style.display = 'block';
+    }
+
+    hideNudge() {
+        const nudge = document.getElementById('course-resume-nudge');
+        if (nudge) nudge.style.display = 'none';
+        this._nudgeDismissed = true;
+    }
+
+    // --------------------------------------------------
+    // Module completion detection & celebration
+    // --------------------------------------------------
+    detectCompletions(modules) {
+        const newlyCompleted = [];
+
+        modules.forEach(m => {
+            const prev = this._lastKnownModuleStatuses[m.moduleId];
+            if (m.status === 'completed' && prev && prev !== 'completed') {
+                newlyCompleted.push(m);
+            }
+            this._lastKnownModuleStatuses[m.moduleId] = m.status;
+        });
+
+        // If this is the first load, just cache statuses — don't celebrate
+        if (!this._progressLoadedOnce) {
+            this._progressLoadedOnce = true;
+            return;
+        }
+
+        // Celebrate each newly completed module
+        newlyCompleted.forEach(m => this.celebrateModuleCompletion(m));
+    }
+
+    async celebrateModuleCompletion(mod) {
+        // Call the complete-module endpoint to award XP and unlock next
+        let xpAwarded = 0;
+        let courseComplete = false;
+        if (this.activeCourseSessionId) {
+            try {
+                const res = await csrfFetch(`/api/course-sessions/${this.activeCourseSessionId}/complete-module`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        moduleId: mod.moduleId,
+                        checkpointPassed: mod.checkpointPassed || false
+                    }),
+                    credentials: 'include'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    xpAwarded = data.xpAwarded || 0;
+                    courseComplete = data.courseComplete || false;
+                }
+            } catch (err) {
+                console.warn('[CourseManager] Failed to record module completion:', err);
+            }
+        }
+
+        // Fire confetti
+        if (window.ensureConfetti) {
+            await window.ensureConfetti();
+        }
+        if (typeof confetti === 'function') {
+            const colors = ['#667eea', '#764ba2', '#22c55e', '#f59e0b', '#ffffff'];
+            confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors });
+            setTimeout(() => {
+                confetti({ particleCount: 40, spread: 50, origin: { x: 0.2, y: 0.5 }, colors });
+                confetti({ particleCount: 40, spread: 50, origin: { x: 0.8, y: 0.5 }, colors });
+            }, 300);
+        }
+
+        // Show celebration card in chat
+        const chatBox = document.getElementById('chat-messages-container');
+        if (!chatBox) return;
+
+        const card = document.createElement('div');
+        card.style.cssText = `
+            margin: 16px auto; max-width: 440px; border-radius: 14px; overflow: hidden;
+            box-shadow: 0 4px 16px rgba(34,197,94,0.2); animation: catalogSlideIn 0.4s ease;
+            border: 2px solid ${courseComplete ? '#f59e0b' : '#22c55e'};
+        `;
+
+        const skills = (mod.skills || []).slice(0, 4);
+        const skillsHtml = skills.length > 0
+            ? skills.map(s => `<span style="display:inline-block; background:#f0fdf4; color:#16a34a; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; margin:2px;">${this.escapeHtml(s)}</span>`).join('')
+            : '';
+
+        const headerBg = courseComplete
+            ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+            : 'linear-gradient(135deg, #22c55e, #16a34a)';
+        const headerEmoji = courseComplete ? '🎓' : '🏆';
+        const headerTitle = courseComplete ? 'Course Complete!' : 'Module Complete!';
+
+        card.innerHTML = `
+            <div style="background: ${headerBg}; padding: 20px; color: white; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 6px;">${headerEmoji}</div>
+                <h3 style="margin: 0 0 2px; font-size: 17px; font-weight: 700;">${headerTitle}</h3>
+                <p style="margin: 0; font-size: 14px; opacity: 0.95;">${this.escapeHtml(mod.title || mod.moduleId)}</p>
+            </div>
+            <div style="padding: 16px; background: white; text-align: center;">
+                ${xpAwarded > 0 ? `<div style="font-size: 20px; font-weight: 800; color: #667eea; margin-bottom: 8px;">+${xpAwarded} XP</div>` : ''}
+                ${skillsHtml ? `<div style="margin-bottom: 10px;">${skillsHtml}</div>` : ''}
+                ${mod.checkpointPassed ? '<div style="font-size: 13px; color: #f59e0b; font-weight: 600; margin-bottom: 6px;"><i class="fas fa-medal"></i> Checkpoint Passed!</div>' : ''}
+                <div style="font-size: 12px; color: #888; margin-top: 8px;">${courseComplete ? 'You did it! Time to celebrate.' : 'Keep going — you\'re building real momentum!'}</div>
+            </div>
+        `;
+
+        chatBox.appendChild(card);
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Extra confetti burst for course completion
+        if (courseComplete && typeof confetti === 'function') {
+            setTimeout(() => {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        confetti({ particleCount: 60, spread: 100, origin: { x: Math.random(), y: 0.3 }, colors: ['#f59e0b', '#667eea', '#22c55e'] });
+                    }, i * 200);
+                }
+            }, 500);
+        }
+    }
+
+    // --------------------------------------------------
     // Progress dropdown
     // --------------------------------------------------
     toggleProgressDropdown() {
@@ -206,6 +379,9 @@ class CourseManager {
             });
             const data = await res.json();
             if (data.success) {
+                // Detect newly completed modules
+                this.detectCompletions(data.modules || []);
+
                 this.renderModuleList(data);
 
                 // Also update the bar title with the current module
@@ -213,6 +389,12 @@ class CourseManager {
                 if (mod && data.next) {
                     mod.textContent = data.next.title || '';
                 }
+
+                // Update progress bar with latest data
+                const fill = document.getElementById('course-progress-fill');
+                const pct = document.getElementById('course-progress-pct');
+                if (fill) fill.style.width = `${data.overallProgress || 0}%`;
+                if (pct) pct.textContent = `${data.overallProgress || 0}%`;
             }
         } catch (err) {
             console.warn('[CourseManager] Failed to load progress:', err);
@@ -300,7 +482,7 @@ class CourseManager {
             });
             const data = await res.json();
             if (data.success) {
-                this.renderCatalog(data.catalog);
+                this.renderCatalog(data.catalog, data.recommended);
             }
         } catch (err) {
             console.error('[CourseManager] Failed to load catalog:', err);
@@ -313,7 +495,7 @@ class CourseManager {
         if (modal) modal.style.display = 'none';
     }
 
-    renderCatalog(catalog) {
+    renderCatalog(catalog, recommended) {
         const grid = document.getElementById('catalog-grid');
         if (!grid) return;
 
@@ -327,34 +509,51 @@ class CourseManager {
             return;
         }
 
+        // Difficulty badge colors
+        const diffColors = {
+            'Beginner': { bg: '#ecfdf5', text: '#16a34a' },
+            'Intermediate': { bg: '#eff6ff', text: '#2563eb' },
+            'Advanced': { bg: '#faf5ff', text: '#7c3aed' },
+            'Test Prep': { bg: '#fefce8', text: '#ca8a04' }
+        };
+
         catalog.forEach(course => {
             const card = document.createElement('div');
-            card.style.cssText = 'border:1px solid #e2e8f0; border-radius:12px; padding:16px; display:flex; align-items:center; gap:14px; transition:box-shadow 0.15s;';
+            const isRecommended = course.courseId === recommended;
+            card.style.cssText = `border:1px solid ${isRecommended ? '#667eea' : '#e2e8f0'}; border-radius:12px; padding:16px; display:flex; gap:14px; transition:box-shadow 0.15s; position:relative;${isRecommended ? ' background: #f8f7ff;' : ''}`;
             card.onmouseover = () => { card.style.boxShadow = '0 4px 12px rgba(102,126,234,0.15)'; };
             card.onmouseout = () => { card.style.boxShadow = 'none'; };
 
             const isEnrolled = enrolled.has(course.courseId);
+            const diff = diffColors[course.difficulty] || { bg: '#f1f5f9', text: '#64748b' };
 
             card.innerHTML = `
-                <div style="min-width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg, #667eea, #764ba2); display:flex; align-items:center; justify-content:center; color:white; font-size:18px;">
-                    <i class="fas fa-graduation-cap"></i>
+                ${isRecommended ? '<div style="position:absolute; top:-8px; right:12px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; padding:2px 10px; border-radius:10px; font-size:10px; font-weight:700;">RECOMMENDED</div>' : ''}
+                <div style="min-width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg, #667eea, #764ba2); display:flex; align-items:center; justify-content:center; font-size:22px;">
+                    ${course.icon || '📚'}
                 </div>
                 <div style="flex:1; min-width:0;">
-                    <div style="font-weight:700; font-size:15px; color:#333;">${this.escapeHtml(course.title)}</div>
-                    <div style="font-size:12px; color:#888; margin-top:2px;">
-                        ${course.moduleCount} modules${course.gradeBand ? ' · ' + course.gradeBand : ''}${course.apWeight ? ' · AP' : ''}
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span style="font-weight:700; font-size:15px; color:#333;">${this.escapeHtml(course.title)}</span>
+                        ${course.difficulty ? `<span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:${diff.bg}; color:${diff.text};">${course.difficulty}</span>` : ''}
+                        ${course.apWeight ? '<span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; background:#faf5ff; color:#7c3aed;">AP</span>' : ''}
                     </div>
-                    ${course.description ? `<div style="font-size:12px; color:#666; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${this.escapeHtml(course.description)}</div>` : ''}
+                    ${course.tagline ? `<div style="font-size:13px; color:#555; margin-top:4px; line-height:1.4;">${this.escapeHtml(course.tagline)}</div>` : ''}
+                    <div style="font-size:11px; color:#aaa; margin-top:4px;">
+                        ${course.moduleCount} modules${course.prerequisites.length > 0 ? ' · Prereq: ' + course.prerequisites.join(', ') : ''}
+                    </div>
                 </div>
-                <button class="catalog-enroll-btn" data-course-id="${course.courseId}"
-                    style="padding:8px 16px; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
-                    ${isEnrolled
-                        ? 'background:#f0f0f0; color:#888; cursor:default;'
-                        : 'background:linear-gradient(135deg, #667eea, #764ba2); color:white;'
-                    }"
-                    ${isEnrolled ? 'disabled' : ''}>
-                    ${isEnrolled ? 'Enrolled' : 'Enroll'}
-                </button>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:4px;">
+                    <button class="catalog-enroll-btn" data-course-id="${course.courseId}"
+                        style="padding:8px 18px; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap;
+                        ${isEnrolled
+                            ? 'background:#f0f0f0; color:#888; cursor:default;'
+                            : 'background:linear-gradient(135deg, #667eea, #764ba2); color:white;'
+                        }"
+                        ${isEnrolled ? 'disabled' : ''}>
+                        ${isEnrolled ? '<i class="fas fa-check" style="margin-right:4px;"></i>Enrolled' : 'Enroll'}
+                    </button>
+                </div>
             `;
 
             // Wire up enroll button
@@ -415,8 +614,15 @@ class CourseManager {
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'block';
 
-            // Show a brief welcome toast
-            this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
+            // Hide nudge if showing
+            this.hideNudge();
+
+            // Show welcome splash in the chat
+            if (data.welcomeData) {
+                this.showWelcomeSplash(data.welcomeData);
+            } else {
+                this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
+            }
 
         } catch (err) {
             console.error('[CourseManager] Enrollment error:', err);
@@ -497,6 +703,52 @@ class CourseManager {
             if (sendBtn) sendBtn.click();
         }
         this.closeProgressDropdown();
+    }
+
+    // --------------------------------------------------
+    // Welcome splash (shown in chat after enrollment)
+    // --------------------------------------------------
+    showWelcomeSplash(welcome) {
+        const chatBox = document.getElementById('chat-messages-container');
+        if (!chatBox) return;
+
+        const splash = document.createElement('div');
+        splash.className = 'course-welcome-splash';
+        splash.style.cssText = `
+            margin: 20px auto; max-width: 520px; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(102,126,234,0.15); animation: catalogSlideIn 0.4s ease;
+        `;
+
+        // Build unit list (first 6)
+        const units = (welcome.units || []);
+        const unitListHtml = units.map((u, i) =>
+            `<div style="display:flex; align-items:center; gap:8px; padding:6px 0;">
+                <div style="width:24px; height:24px; border-radius:50%; background:${i === 0 ? 'linear-gradient(135deg, #667eea, #764ba2)' : '#e2e8f0'}; color:${i === 0 ? 'white' : '#888'}; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">${i + 1}</div>
+                <span style="font-size:13px; color:${i === 0 ? '#333' : '#666'}; font-weight:${i === 0 ? '600' : '400'};">${this.escapeHtml(u)}</span>
+            </div>`
+        ).join('');
+
+        splash.innerHTML = `
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 24px; color: white; text-align: center;">
+                <div style="font-size: 36px; margin-bottom: 8px;">🎓</div>
+                <h2 style="margin: 0 0 4px; font-size: 20px; font-weight: 700;">Welcome to ${this.escapeHtml(welcome.courseName)}</h2>
+                <p style="margin: 0; opacity: 0.9; font-size: 13px;">${welcome.moduleCount} modules · Self-paced · AI-guided</p>
+            </div>
+            <div style="padding: 20px; background: white;">
+                ${welcome.overview ? `<p style="font-size: 13px; color: #555; margin: 0 0 16px; line-height: 1.5;">${this.escapeHtml(welcome.overview)}</p>` : ''}
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; letter-spacing: 0.05em; margin-bottom: 8px;">Your Learning Path</div>
+                ${unitListHtml}
+                ${units.length < welcome.moduleCount ? `<div style="font-size: 12px; color: #aaa; padding: 4px 0 0 32px;">+${welcome.moduleCount - units.length} more modules</div>` : ''}
+                <button onclick="this.closest('.course-welcome-splash').remove()" style="
+                    margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 10px;
+                    background: linear-gradient(135deg, #667eea, #764ba2); color: white;
+                    font-weight: 700; font-size: 14px; cursor: pointer;
+                "><i class="fas fa-play" style="margin-right: 6px;"></i>Start ${this.escapeHtml(welcome.firstModuleTitle)}</button>
+            </div>
+        `;
+
+        chatBox.appendChild(splash);
+        splash.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     // --------------------------------------------------
