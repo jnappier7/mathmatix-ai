@@ -144,6 +144,9 @@
         <i class="fas fa-book-open"></i> <span class="mobile-hide">Resources</span>
       </button>
       <!-- Primary actions (always visible) -->
+      <button id="theme-toggle-btn" class="btn btn-tertiary icon-only" title="Toggle dark mode" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+      </button>
       <button id="open-settings-modal-btn" class="btn btn-tertiary icon-only" title="Settings" aria-label="Settings">
         <i class="fas fa-cog"></i>
       </button>
@@ -1707,6 +1710,22 @@
   <script src="/js/auto-expand-textarea.js"></script>
   <script src="/js/chat-pinch-zoom.js"></script>
   <script src="/js/file-upload.js"></script>
+  <script src="/js/theme-toggle.js"></script>
+  <script>
+    // Wire up the dark mode toggle button in the header
+    (function() {
+      const btn = document.getElementById('theme-toggle-btn');
+      if (!btn || !window.ThemeToggle) return;
+      function updateIcon() {
+        const dark = ThemeToggle.getTheme() === 'dark';
+        btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      }
+      btn.addEventListener('click', () => { ThemeToggle.toggle(); updateIcon(); });
+      document.addEventListener('themechange', updateIcon);
+      updateIcon();
+    })();
+  </script>
   <script src="/js/student-resources.js"></script>
   <script src="/js/settings.js"></script>
   <script src="/js/show-your-work.js"></script>
