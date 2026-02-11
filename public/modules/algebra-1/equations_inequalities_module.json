@@ -1,0 +1,298 @@
+{
+  "moduleId": "equations_inequalities",
+  "course": "Algebra 1",
+  "unit": 2,
+  "quarter": 1,
+  "title": "Solving Equations & Inequalities",
+  "weeks": "3-5",
+  "estimatedDuration": 45,
+  "description": "Master the art of solving equations from one-step through multi-step, including equations with variables on both sides, special cases (no solution and identity), and literal equations. Extend equation-solving strategies to one-variable inequalities, with emphasis on the sign-flip rule when multiplying or dividing by a negative number. Students build algebraic fluency through the balance-scale model, inverse operations, and systematic checking of solutions.",
+  "skills": [
+    "solving-one-step-equations",
+    "solving-two-step-equations",
+    "solving-multi-step-equations",
+    "solving-equations-with-variables-both-sides",
+    "solving-inequalities"
+  ],
+  "standardsAlignment": ["A-REI.1", "A-REI.3"],
+  "goals": [
+    "Solve one-step and two-step equations using inverse operations and verify solutions by substitution",
+    "Solve multi-step equations involving the distributive property and combining like terms",
+    "Solve equations with variables on both sides, including identifying special cases (no solution and identities)",
+    "Translate real-world situations into equations and inequalities and interpret solutions in context",
+    "Solve and graph one-variable inequalities, applying the sign-flip rule when multiplying or dividing by a negative"
+  ],
+  "instructionalStrategy": [
+    "Use the balance scale analogy: whatever you do to one side of the equation, you must do to the other side to keep it balanced.",
+    "Teach 'reverse PEMDAS' (undo addition/subtraction first, then multiplication/division) as the systematic approach to isolating the variable.",
+    "Color-code each step of the solution process: highlight the operation performed in one color and the simplified result in another to make the logic visible.",
+    "Introduce special cases (no solution and identity) through discovery—let students encounter 0 = 5 or 0 = 0 and discuss what these results mean before defining the terms.",
+    "Connect inequalities to equations by solving the related equation first, then using a test point to determine the direction of the inequality and reinforce the sign-flip rule with concrete numerical examples."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "solving-one-step-equations",
+      "title": "What Is an Equation?",
+      "text": "An **equation** is a mathematical statement that two expressions are equal, connected by the equals sign (=). Think of it like a balanced scale: the left side weighs the same as the right side. Our goal when solving an equation is to find the value of the variable that makes the statement true.\n\nWe solve equations using **inverse operations**—operations that undo each other:\n- Addition and subtraction are inverses\n- Multiplication and division are inverses\n\nThe golden rule: **whatever you do to one side, you must do to the other side** to keep the equation balanced.\n\nFor a one-step equation like x + 7 = 15, you only need one inverse operation to isolate x. Since 7 is being added to x, subtract 7 from both sides: x = 15 - 7 = 8. Always **check** your answer by plugging it back in: 8 + 7 = 15 ✓.",
+      "initialPrompt": "Imagine a balanced scale with x + 7 on the left and 15 on the right. What would you do to both sides to get x by itself?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "solving-one-step-equations",
+      "title": "I-Do: One-Step and Two-Step Equations",
+      "examples": [
+        {
+          "problem": "Solve: x + 7 = 15",
+          "solution": "We need to isolate x. Since 7 is added to x, subtract 7 from both sides:\nx + 7 - 7 = 15 - 7\nx = 8\n\n**Check:** Substitute x = 8 into the original equation:\n8 + 7 = 15 ✓\n\nThe solution is **x = 8**."
+        },
+        {
+          "problem": "Solve: 3x = -24",
+          "solution": "The variable x is multiplied by 3. To undo multiplication, divide both sides by 3:\n3x / 3 = -24 / 3\nx = -8\n\n**Check:** Substitute x = -8 into the original equation:\n3(-8) = -24 ✓\n\nThe solution is **x = -8**."
+        },
+        {
+          "problem": "Solve: x/5 = 8",
+          "solution": "The variable x is divided by 5. To undo division, multiply both sides by 5:\n(x/5) * 5 = 8 * 5\nx = 40\n\n**Check:** Substitute x = 40 into the original equation:\n40/5 = 8 ✓\n\nThe solution is **x = 40**."
+        }
+      ],
+      "initialPrompt": "Notice how each problem required only one inverse operation. What inverse operation did we use in each case, and why?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "solving-multi-step-equations",
+      "title": "Multi-Step Equations: Distribute First, Then Combine Like Terms",
+      "text": "Not all equations can be solved in one or two steps. **Multi-step equations** require you to simplify each side before isolating the variable. Here is the strategy:\n\n1. **Distribute** — If there are parentheses with a coefficient, apply the distributive property: a(b + c) = ab + ac.\n2. **Combine like terms** — Simplify each side by combining terms that have the same variable (or are both constants).\n3. **Use inverse operations** — Move variable terms to one side and constants to the other using reverse PEMDAS: undo addition/subtraction first, then undo multiplication/division.\n4. **Check** — Substitute your answer back into the original equation.\n\nFor example, in the equation 3(x + 4) - 2 = 19, you would first distribute the 3 to get 3x + 12 - 2 = 19, then combine like terms to get 3x + 10 = 19, then solve the resulting two-step equation.\n\nSometimes you will encounter **special cases**:\n- If the variables cancel and you get a **false statement** like 0 = 5, the equation has **no solution**.\n- If the variables cancel and you get a **true statement** like 0 = 0, the equation is an **identity** (every real number is a solution).",
+      "initialPrompt": "What does the distributive property do? Why do we need to use it before we can combine like terms?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "solving-multi-step-equations",
+      "title": "I-Do: Multi-Step Equations and Variables on Both Sides",
+      "examples": [
+        {
+          "problem": "Solve: 3(x + 4) - 2 = 19",
+          "solution": "**Step 1: Distribute.**\n3 * x + 3 * 4 - 2 = 19\n3x + 12 - 2 = 19\n\n**Step 2: Combine like terms on the left.**\n3x + 10 = 19\n\n**Step 3: Subtract 10 from both sides.**\n3x = 9\n\n**Step 4: Divide both sides by 3.**\nx = 3\n\n**Check:** 3(3 + 4) - 2 = 3(7) - 2 = 21 - 2 = 19 ✓\n\nThe solution is **x = 3**."
+        },
+        {
+          "problem": "Solve: 4x + 3 = 2x + 11",
+          "solution": "This equation has variables on **both sides**. We need to collect variable terms on one side.\n\n**Step 1: Subtract 2x from both sides** to move variables to the left.\n4x - 2x + 3 = 11\n2x + 3 = 11\n\n**Step 2: Subtract 3 from both sides.**\n2x = 8\n\n**Step 3: Divide both sides by 2.**\nx = 4\n\n**Check:** Left: 4(4) + 3 = 16 + 3 = 19. Right: 2(4) + 11 = 8 + 11 = 19. 19 = 19 ✓\n\nThe solution is **x = 4**."
+        },
+        {
+          "problem": "Solve: 2(x + 3) = 2x + 6",
+          "solution": "**Step 1: Distribute on the left.**\n2x + 6 = 2x + 6\n\n**Step 2: Subtract 2x from both sides.**\n6 = 6\n\nThis is a **true statement** that is always true, no matter what x is. The original equation is an **identity**.\n\n**Solution: All real numbers** (every value of x satisfies this equation).\n\nWhy? Because 2(x + 3) and 2x + 6 are the same expression written in different forms — the distributive property converts one into the other."
+        }
+      ],
+      "initialPrompt": "In the second example, why did we choose to subtract 2x instead of 4x from both sides? Does it matter which variable term we move?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "solving-multi-step-equations",
+      "title": "We-Do: Solving All Types of Equations",
+      "problems": [
+        {
+          "id": "ei-wp1",
+          "question": "Solve: 2x + 5 = 13",
+          "answer": "x = 4",
+          "hints": [
+            "This is a two-step equation. What should you undo first — the addition of 5 or the multiplication by 2?",
+            "Use reverse PEMDAS: undo addition first. Subtract 5 from both sides to get 2x = 8.",
+            "Now divide both sides by 2: x = 4. Check: 2(4) + 5 = 8 + 5 = 13 ✓."
+          ]
+        },
+        {
+          "id": "ei-wp2",
+          "question": "Solve: (x - 3)/4 = 7",
+          "answer": "x = 31",
+          "hints": [
+            "The expression (x - 3) is being divided by 4. What is the inverse of dividing by 4?",
+            "Multiply both sides by 4: x - 3 = 28.",
+            "Now add 3 to both sides: x = 31. Check: (31 - 3)/4 = 28/4 = 7 ✓."
+          ]
+        },
+        {
+          "id": "ei-wp3",
+          "question": "Solve: 3(x + 4) - 2 = 19",
+          "answer": "x = 3",
+          "hints": [
+            "Start by distributing the 3: 3x + 12 - 2 = 19.",
+            "Combine like terms: 3x + 10 = 19. Now subtract 10 from both sides: 3x = 9.",
+            "Divide both sides by 3: x = 3. Check: 3(3 + 4) - 2 = 21 - 2 = 19 ✓."
+          ]
+        },
+        {
+          "id": "ei-wp4",
+          "question": "Solve: 5x - 7 = 3x + 9",
+          "answer": "x = 8",
+          "hints": [
+            "There are variables on both sides. Start by getting all x-terms on one side. What can you subtract from both sides?",
+            "Subtract 3x from both sides: 2x - 7 = 9. Then add 7 to both sides: 2x = 16.",
+            "Divide both sides by 2: x = 8. Check: 5(8) - 7 = 33 and 3(8) + 9 = 33 ✓."
+          ]
+        },
+        {
+          "id": "ei-wp5",
+          "question": "Solve: 6x + 2 = 6x - 5",
+          "answer": "No solution",
+          "hints": [
+            "Try to get all x-terms on one side. What happens when you subtract 6x from both sides?",
+            "Subtracting 6x from both sides gives: 2 = -5. Is that a true or false statement?",
+            "2 = -5 is false — it can never be true. This equation has **no solution**."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice solving equations together. We'll start with a two-step equation. What is the first thing you notice about 2x + 5 = 13?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "solving-inequalities",
+      "title": "Solving Inequalities",
+      "text": "An **inequality** is like an equation, but instead of saying two expressions are equal, it says one is greater than or less than the other. The symbols are:\n- **>** greater than\n- **<** less than\n- **>=** greater than or equal to\n- **<=** less than or equal to\n\nSolving inequalities works **almost exactly like solving equations** — you use the same inverse operations to isolate the variable. But there is one critical difference:\n\n**When you multiply or divide both sides by a NEGATIVE number, you must FLIP the inequality sign.**\n\nWhy? Consider: 2 < 5 is true. But if we multiply both sides by -1, we get -2 and -5. Since -2 is to the RIGHT of -5 on the number line, -2 > -5. The order reversed!\n\nThe solution to an inequality is usually a range of values, not just one number. For example, x > 4 means every number greater than 4 is a solution. On a number line, we show this with an open circle at 4 (not included) and an arrow going right.\n\nFor <= or >=, we use a **closed (filled) circle** to show the endpoint IS included.",
+      "initialPrompt": "Why does multiplying by a negative number flip the inequality? Try it with a simple example: if 3 < 7, what happens when you multiply both sides by -1?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "solving-inequalities",
+      "title": "I-Do: Solving Inequalities",
+      "examples": [
+        {
+          "problem": "Solve: 3x - 5 > 7",
+          "solution": "Solve just like an equation, keeping the inequality sign:\n\n**Step 1: Add 5 to both sides.**\n3x - 5 + 5 > 7 + 5\n3x > 12\n\n**Step 2: Divide both sides by 3.** (3 is positive, so the inequality sign stays the same.)\n3x / 3 > 12 / 3\nx > 4\n\n**Solution: x > 4** — any number greater than 4 makes this inequality true.\n\n**Check with a test point:** Try x = 5 (which is greater than 4).\n3(5) - 5 = 15 - 5 = 10. Is 10 > 7? Yes ✓\n\nTry x = 3 (which is NOT greater than 4).\n3(3) - 5 = 9 - 5 = 4. Is 4 > 7? No ✗ — confirms x = 3 is not in the solution set.\n\nOn a number line: open circle at 4, arrow pointing right."
+        },
+        {
+          "problem": "Solve: -2x + 4 <= 10",
+          "solution": "**Step 1: Subtract 4 from both sides.**\n-2x + 4 - 4 <= 10 - 4\n-2x <= 6\n\n**Step 2: Divide both sides by -2.** Since we are dividing by a **negative number**, we must **FLIP the inequality sign.**\n-2x / (-2) >= 6 / (-2)\nx >= -3\n\n**Solution: x >= -3** — any number greater than or equal to -3 is a solution.\n\n**Check with a test point:** Try x = 0 (which is >= -3).\n-2(0) + 4 = 0 + 4 = 4. Is 4 <= 10? Yes ✓\n\nTry x = -5 (which is NOT >= -3).\n-2(-5) + 4 = 10 + 4 = 14. Is 14 <= 10? No ✗ — confirms x = -5 is not in the solution set.\n\nOn a number line: closed circle at -3 (included because of >=), arrow pointing right."
+        }
+      ],
+      "initialPrompt": "In the second example, we divided by -2 and the sign flipped from <= to >=. What would have happened if we had divided by positive 2 instead? Would we still need to flip?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "solving-inequalities",
+      "title": "We-Do: Solving Inequalities",
+      "problems": [
+        {
+          "id": "ei-wp6",
+          "question": "Solve: 4x + 3 > 19",
+          "answer": "x > 4",
+          "hints": [
+            "Treat this like a two-step equation first. What should you subtract from both sides?",
+            "Subtract 3 from both sides: 4x > 16. Now divide both sides by 4 (positive, so no flip).",
+            "x > 4. Check: try x = 5: 4(5) + 3 = 23 > 19 ✓."
+          ]
+        },
+        {
+          "id": "ei-wp7",
+          "question": "Solve: -5x + 2 >= -13",
+          "answer": "x <= 3",
+          "hints": [
+            "First, subtract 2 from both sides: -5x >= -15.",
+            "Now divide both sides by -5. Since -5 is negative, what must you do to the inequality sign?",
+            "Flip the sign! x <= 3. Check: try x = 0: -5(0) + 2 = 2 >= -13 ✓. Try x = 5: -5(5) + 2 = -23, and -23 >= -13 is false ✗."
+          ]
+        },
+        {
+          "id": "ei-wp8",
+          "question": "Solve: 2(x - 1) < 3x + 4",
+          "answer": "x > -6",
+          "hints": [
+            "Start by distributing on the left: 2x - 2 < 3x + 4.",
+            "Subtract 2x from both sides: -2 < x + 4. Then subtract 4 from both sides: -6 < x.",
+            "Rewrite with x on the left: x > -6. Check: try x = 0: 2(0 - 1) = -2 and 3(0) + 4 = 4. Is -2 < 4? Yes ✓."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice solving inequalities. For the first problem, 4x + 3 > 19, what steps would you take? Is this similar to solving an equation?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Independent Practice",
+      "problems": [
+        {
+          "id": "ei-yp1",
+          "question": "Solve: x - 9 = 14",
+          "answer": "x = 23",
+          "skill": "solving-one-step-equations",
+          "hints": ["Add 9 to both sides to isolate x."]
+        },
+        {
+          "id": "ei-yp2",
+          "question": "Solve: -7x = 42",
+          "answer": "x = -6",
+          "skill": "solving-one-step-equations",
+          "hints": ["Divide both sides by -7."]
+        },
+        {
+          "id": "ei-yp3",
+          "question": "Solve: 4x - 9 = 23",
+          "answer": "x = 8",
+          "skill": "solving-two-step-equations",
+          "hints": ["Add 9 to both sides first, then divide by 4."]
+        },
+        {
+          "id": "ei-yp4",
+          "question": "Solve: 2(3x - 1) + 4 = 20",
+          "answer": "x = 3",
+          "skill": "solving-multi-step-equations",
+          "hints": ["Distribute first: 6x - 2 + 4 = 20. Combine like terms: 6x + 2 = 20. Then solve the two-step equation."]
+        },
+        {
+          "id": "ei-yp5",
+          "question": "Solve: 7x - 10 = 4x + 5",
+          "answer": "x = 5",
+          "skill": "solving-equations-with-variables-both-sides",
+          "hints": ["Subtract 4x from both sides to get 3x - 10 = 5. Then add 10 and divide by 3."]
+        },
+        {
+          "id": "ei-yp6",
+          "question": "Solve: 3(x + 2) = 3x + 6. Identify the type of solution.",
+          "answer": "All real numbers (identity)",
+          "skill": "solving-equations-with-variables-both-sides",
+          "hints": ["Distribute on the left: 3x + 6 = 3x + 6. Subtract 3x from both sides. What do you get?"]
+        },
+        {
+          "id": "ei-yp7",
+          "question": "Solve: -3x + 8 > 2",
+          "answer": "x < 2",
+          "skill": "solving-inequalities",
+          "hints": ["Subtract 8 from both sides: -3x > -6. Divide by -3 and remember to flip the inequality sign."]
+        },
+        {
+          "id": "ei-yp8",
+          "question": "Solve: 5 - 2(x + 1) >= 7",
+          "answer": "x <= -2",
+          "skill": "solving-inequalities",
+          "hints": ["Distribute: 5 - 2x - 2 >= 7. Combine like terms: 3 - 2x >= 7. Subtract 3: -2x >= 4. Divide by -2 and flip the sign."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "ei-wp1": "x = 4",
+    "ei-wp2": "x = 31",
+    "ei-wp3": "x = 3",
+    "ei-wp4": "x = 8",
+    "ei-wp5": "No solution",
+    "ei-wp6": "x > 4",
+    "ei-wp7": "x <= 3",
+    "ei-wp8": "x > -6",
+    "ei-yp1": "x = 23",
+    "ei-yp2": "x = -6",
+    "ei-yp3": "x = 8",
+    "ei-yp4": "x = 3",
+    "ei-yp5": "x = 5",
+    "ei-yp6": "All real numbers (identity)",
+    "ei-yp7": "x < 2",
+    "ei-yp8": "x <= -2"
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u2",
+  "course": "Algebra 1",
+  "unit": 2,
+  "quarter": 1,
+  "title": "Unit 2 Checkpoint: Equations & Inequalities",
+  "weeks": "5",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of solving one-step, two-step, and multi-step equations, equations with variables on both sides (including special cases: no solution and identity), and one-variable inequalities with the sign-flip rule.",
+  "skillsCovered": [
+    "solving-one-step-equations",
+    "solving-two-step-equations",
+    "solving-multi-step-equations",
+    "solving-equations-with-variables-both-sides",
+    "solving-inequalities"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    {
+      "skillId": "solving-one-step-equations",
+      "reteachFocus": "Identifying the operation on the variable and applying the correct inverse operation (add/subtract, multiply/divide) to isolate it",
+      "resources": ["equations_inequalities_module.json - scaffold phases 1-2"]
+    },
+    {
+      "skillId": "solving-two-step-equations",
+      "reteachFocus": "Using reverse PEMDAS to undo addition/subtraction first, then multiplication/division; handling fractions as division",
+      "resources": ["equations_inequalities_module.json - scaffold phases 1-2"]
+    },
+    {
+      "skillId": "solving-multi-step-equations",
+      "reteachFocus": "Distributing before combining like terms, simplifying each side fully before using inverse operations",
+      "resources": ["equations_inequalities_module.json - scaffold phases 3-4"]
+    },
+    {
+      "skillId": "solving-equations-with-variables-both-sides",
+      "reteachFocus": "Moving variable terms to one side and constants to the other; recognizing no-solution (false statement) and identity (true statement) special cases",
+      "resources": ["equations_inequalities_module.json - scaffold phases 3-5"]
+    },
+    {
+      "skillId": "solving-inequalities",
+      "reteachFocus": "Solving inequalities using the same steps as equations, with emphasis on flipping the inequality sign when multiplying or dividing by a negative number",
+      "resources": ["equations_inequalities_module.json - scaffold phases 6-8"]
+    }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a1u2-1",
+      "question": "Solve: x + 12 = -5",
+      "answer": "Subtract 12 from both sides: x + 12 - 12 = -5 - 12 → x = -17. Check: -17 + 12 = -5 ✓.",
+      "skill": "solving-one-step-equations",
+      "difficulty": 2,
+      "points": 6
+    },
+    {
+      "id": "a1u2-2",
+      "question": "Solve: x/4 = -9",
+      "answer": "Multiply both sides by 4: x = -9 * 4 → x = -36. Check: -36/4 = -9 ✓.",
+      "skill": "solving-one-step-equations",
+      "difficulty": 2,
+      "points": 6
+    },
+    {
+      "id": "a1u2-3",
+      "question": "Solve: 3x - 7 = 20",
+      "answer": "Add 7 to both sides: 3x = 27. Divide both sides by 3: x = 9. Check: 3(9) - 7 = 27 - 7 = 20 ✓.",
+      "skill": "solving-two-step-equations",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u2-4",
+      "question": "Solve: (x + 5)/3 = -2",
+      "answer": "Multiply both sides by 3: x + 5 = -6. Subtract 5 from both sides: x = -11. Check: (-11 + 5)/3 = -6/3 = -2 ✓.",
+      "skill": "solving-two-step-equations",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u2-5",
+      "question": "Solve: 4(2x - 3) + 6 = 22",
+      "answer": "Distribute: 8x - 12 + 6 = 22. Combine like terms: 8x - 6 = 22. Add 6: 8x = 28. Divide by 8: x = 3.5. Check: 4(2(3.5) - 3) + 6 = 4(7 - 3) + 6 = 4(4) + 6 = 16 + 6 = 22 ✓.",
+      "skill": "solving-multi-step-equations",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u2-6",
+      "question": "Solve: 5x - 7 = 3x + 9",
+      "answer": "Subtract 3x from both sides: 2x - 7 = 9. Add 7 to both sides: 2x = 16. Divide by 2: x = 8. Check: 5(8) - 7 = 33 and 3(8) + 9 = 33. 33 = 33 ✓.",
+      "skill": "solving-equations-with-variables-both-sides",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u2-7",
+      "question": "Solve: 3(x + 4) = 2(x - 1) + x + 14. Identify the type of solution.",
+      "answer": "Distribute: 3x + 12 = 2x - 2 + x + 14. Combine like terms on the right: 3x + 12 = 3x + 12. Subtract 3x from both sides: 12 = 12. This is always true, so the equation is an **identity** — the solution is all real numbers.",
+      "skill": "solving-equations-with-variables-both-sides",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a1u2-8",
+      "question": "Solve: 2(x + 5) = 2x - 3. Identify the type of solution.",
+      "answer": "Distribute: 2x + 10 = 2x - 3. Subtract 2x from both sides: 10 = -3. This is a false statement — the equation has **no solution**.",
+      "skill": "solving-equations-with-variables-both-sides",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "a1u2-9",
+      "question": "Solve: 7x - 4 > 2x + 16",
+      "answer": "Subtract 2x from both sides: 5x - 4 > 16. Add 4 to both sides: 5x > 20. Divide by 5: x > 4. Check: try x = 5: 7(5) - 4 = 31 and 2(5) + 16 = 26. Is 31 > 26? Yes ✓. Try x = 3: 7(3) - 4 = 17 and 2(3) + 16 = 22. Is 17 > 22? No ✗.",
+      "skill": "solving-inequalities",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u2-10",
+      "question": "Solve: -4(x - 2) + 3 >= 19",
+      "answer": "Distribute: -4x + 8 + 3 >= 19. Combine like terms: -4x + 11 >= 19. Subtract 11 from both sides: -4x >= 8. Divide by -4 and **flip the inequality sign**: x <= -2. Check: try x = -3: -4(-3 - 2) + 3 = -4(-5) + 3 = 20 + 3 = 23. Is 23 >= 19? Yes ✓. Try x = 0: -4(0 - 2) + 3 = 8 + 3 = 11. Is 11 >= 19? No ✗.",
+      "skill": "solving-inequalities",
+      "difficulty": 6,
+      "points": 20
+    }
+  ],
+  "answerKeys": {
+    "a1u2-1": "x = -17",
+    "a1u2-2": "x = -36",
+    "a1u2-3": "x = 9",
+    "a1u2-4": "x = -11",
+    "a1u2-5": "x = 3.5",
+    "a1u2-6": "x = 8",
+    "a1u2-7": "All real numbers (identity)",
+    "a1u2-8": "No solution",
+    "a1u2-9": "x > 4",
+    "a1u2-10": "x <= -2"
+  }
+}
