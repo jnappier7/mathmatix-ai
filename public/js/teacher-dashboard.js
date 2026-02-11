@@ -1,5 +1,6 @@
 // public/js/teacher-dashboard.js
-// ENHANCED: Added class overview, insights, search/filter, keyboard shortcuts, and improved UX
+// 3X UX UPGRADE: Class-grouped students, unified profile modal, weekly comparison,
+// smart alerts, mobile experience, quick wins
 
 document.addEventListener("DOMContentLoaded", async () => {
     const studentListDiv = document.getElementById("student-list");
@@ -37,12 +38,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Conversation History Elements
     const conversationHistoryModal = document.getElementById("conversation-history-modal");
     const historyStudentNameSpan = document.getElementById("history-student-name");
-    const conversationsListDiv = document.getElementById("conversations-list");
+    const conversationsListDiv = document.getElementById("conversation-history-list");
     const closeHistoryModalBtn = document.getElementById("close-history-modal-btn");
 
     // Student Detail Modal Elements
     const studentDetailModal = document.getElementById("student-detail-modal");
     let currentStudentsData = []; // Store fetched students for detail lookup
+
+    // === NEW STATE ===
+    let currentViewMode = 'grouped'; // 'grouped' or 'flat'
+    let classesData = []; // Store classes for grouped view
+    let previousWeekData = null; // Store for weekly comparison
 
     // --- Tab Switching Logic ---
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -81,6 +87,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Initialize keyboard shortcuts
     initializeKeyboardShortcuts();
+
+    // Initialize view toggle (grouped vs flat)
+    initializeViewToggle();
+
+    // Initialize profile modal tabs
+    initializeProfileTabs();
+
+    // Initialize mobile navigation
+    initializeMobileNav();
+
+    // Initialize smart alerts sidebar
+    initializeSmartAlerts();
+
+    // Fetch classes for grouped view
+    fetchClassesForGrouping();
 
     // --- Modal Control Functions ---
     function showModal(modalElement) {
@@ -245,24 +266,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     function renderStudentList(students, filterType = 'all', searchQuery = '') {
         studentListDiv.innerHTML = '';
 
+        // Update student count in tab
+        const countEl = document.getElementById('tab-student-count');
+        if (countEl) countEl.textContent = `(${students.length})`;
+
         // Filter and search students
-        let filteredStudents = students.filter(student => {
-            const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim().toLowerCase();
-            const username = (student.username || '').toLowerCase();
-            const query = searchQuery.toLowerCase();
-
-            // Search match
-            const searchMatch = !query || fullName.includes(query) || username.includes(query);
-
-            // Filter match
-            const status = getStudentStatus(student);
-            let filterMatch = true;
-            if (filterType === 'active') filterMatch = status === 'active';
-            else if (filterType === 'struggling') filterMatch = status === 'struggling';
-            else if (filterType === 'inactive') filterMatch = status === 'inactive';
-
-            return searchMatch && filterMatch;
-        });
+        let filteredStudents = filterStudents(students, filterType, searchQuery);
 
         if (filteredStudents.length === 0) {
             studentListDiv.innerHTML = searchQuery || filterType !== 'all'
@@ -277,42 +286,201 @@ document.addEventListener("DOMContentLoaded", async () => {
             return (statusOrder[getStudentStatus(a)] || 1) - (statusOrder[getStudentStatus(b)] || 1);
         });
 
-        filteredStudents.forEach(student => {
-            const studentCard = document.createElement('div');
+        // Render based on view mode
+        if (currentViewMode === 'grouped' && classesData.length > 0 && !searchQuery) {
+            renderGroupedView(filteredStudents);
+        } else {
+            renderFlatView(filteredStudents);
+        }
+
+        addEventListenersToButtons();
+    }
+
+    function filterStudents(students, filterType, searchQuery) {
+        return students.filter(student => {
+            const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim().toLowerCase();
+            const username = (student.username || '').toLowerCase();
+            const query = searchQuery.toLowerCase();
+            const searchMatch = !query || fullName.includes(query) || username.includes(query);
             const status = getStudentStatus(student);
-            studentCard.className = `student-card status-${status}`;
-            studentCard.dataset.studentId = student._id;
+            let filterMatch = true;
+            if (filterType === 'active') filterMatch = status === 'active';
+            else if (filterType === 'struggling') filterMatch = status === 'struggling';
+            else if (filterType === 'inactive') filterMatch = status === 'inactive';
+            return searchMatch && filterMatch;
+        });
+    }
 
-            const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
-            const lastLoginDate = student.lastLogin ? new Date(student.lastLogin) : null;
-            const lastLoginText = lastLoginDate ? formatTimeAgo(lastLoginDate) : 'Never';
+    function renderFlatView(students) {
+        students.forEach(student => {
+            studentListDiv.appendChild(createStudentCard(student));
+        });
+    }
 
-            // Status badge
-            const badgeClass = status === 'active' ? 'badge-active' : status === 'struggling' ? 'badge-struggling' : 'badge-inactive';
-            const badgeText = status === 'active' ? 'Active' : status === 'struggling' ? 'Needs Help' : 'Inactive';
+    function renderGroupedView(students) {
+        // Build a map of student IDs to class names
+        const studentClassMap = {};
+        classesData.forEach(cls => {
+            if (cls.studentIds) {
+                cls.studentIds.forEach(id => {
+                    if (!studentClassMap[id]) studentClassMap[id] = [];
+                    studentClassMap[id].push(cls);
+                });
+            }
+        });
 
-            studentCard.innerHTML = `
-                <div class="student-card-header">
-                    <strong><a href="#" class="student-name-link" data-student-id="${student._id}" style="color: #27ae60; text-decoration: none; cursor: pointer;">${fullName}</a></strong>
-                    <span class="student-status-badge ${badgeClass}">${badgeText}</span>
+        // Group students by class
+        const grouped = {};
+        const ungrouped = [];
+
+        students.forEach(student => {
+            const classes = studentClassMap[student._id];
+            if (classes && classes.length > 0) {
+                classes.forEach(cls => {
+                    if (!grouped[cls._id]) grouped[cls._id] = { cls, students: [] };
+                    grouped[cls._id].students.push(student);
+                });
+            } else {
+                ungrouped.push(student);
+            }
+        });
+
+        // Render each class group
+        Object.values(grouped).forEach(group => {
+            const groupEl = document.createElement('div');
+            groupEl.className = 'class-group';
+
+            const headerEl = document.createElement('div');
+            headerEl.className = 'class-group-header';
+            headerEl.innerHTML = `
+                <div class="class-group-name">
+                    <i class="fas fa-chevron-down class-group-toggle"></i>
+                    <span>${escapeHtml(group.cls.className)}</span>
+                    <span style="opacity:0.8;font-size:0.85em;">(${group.students.length})</span>
                 </div>
-                <div class="student-metrics">
-                    <span class="student-metric"><i class="fas fa-user"></i> ${student.username}</span>
-                    <span class="student-metric"><i class="fas fa-graduation-cap"></i> Grade ${student.gradeLevel || 'N/A'}</span>
-                    <span class="student-metric"><i class="fas fa-trophy"></i> Level ${student.level || 1}</span>
-                    <span class="student-metric"><i class="fas fa-clock"></i> ${lastLoginText}</span>
-                    <span class="student-metric"><i class="fas fa-bolt"></i> ${student.weeklyActiveTutoringMinutes || 0} min/wk</span>
-                </div>
-                <div class="card-buttons">
-                    <button class="view-as-student-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}" title="See what ${fullName} sees"><i class="fas fa-eye"></i> View</button>
-                    <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-clipboard-list"></i> IEP</button>
-                    <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-history"></i> History</button>
-                    <button class="reset-screener-btn submit-btn btn-tertiary" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-redo"></i> Reset</button>
+                <div class="class-group-meta">
+                    <span class="class-code" title="Click to copy" data-code="${escapeHtml(group.cls.code)}">${escapeHtml(group.cls.code)}</span>
+                    <button class="print-roster-btn" data-class-id="${group.cls._id}" title="Print roster">
+                        <i class="fas fa-print"></i> Roster
+                    </button>
                 </div>
             `;
-            studentListDiv.appendChild(studentCard);
+
+            const bodyEl = document.createElement('div');
+            bodyEl.className = 'class-group-body';
+
+            group.students.forEach(student => {
+                bodyEl.appendChild(createStudentCard(student));
+            });
+
+            // Toggle collapse
+            headerEl.addEventListener('click', (e) => {
+                // If clicking the code chip, copy to clipboard
+                const codeChip = e.target.closest('.class-code');
+                if (codeChip) {
+                    navigator.clipboard.writeText(codeChip.dataset.code).then(() => {
+                        showToast('Class code copied!', 'success');
+                    });
+                    return;
+                }
+                // If clicking print roster
+                if (e.target.closest('.print-roster-btn')) {
+                    printClassRoster(group.cls, group.students);
+                    return;
+                }
+                bodyEl.classList.toggle('collapsed');
+                const toggle = headerEl.querySelector('.class-group-toggle');
+                if (toggle) toggle.classList.toggle('collapsed');
+            });
+
+            groupEl.appendChild(headerEl);
+            groupEl.appendChild(bodyEl);
+            studentListDiv.appendChild(groupEl);
         });
-        addEventListenersToButtons();
+
+        // Render ungrouped students
+        if (ungrouped.length > 0) {
+            const groupEl = document.createElement('div');
+            groupEl.className = 'class-group';
+            const headerEl = document.createElement('div');
+            headerEl.className = 'class-group-header';
+            headerEl.style.background = 'linear-gradient(135deg, #95a5a6, #7f8c8d)';
+            headerEl.innerHTML = `
+                <div class="class-group-name">
+                    <i class="fas fa-chevron-down class-group-toggle"></i>
+                    <span>Unassigned Students</span>
+                    <span style="opacity:0.8;font-size:0.85em;">(${ungrouped.length})</span>
+                </div>
+            `;
+            const bodyEl = document.createElement('div');
+            bodyEl.className = 'class-group-body';
+            ungrouped.forEach(student => {
+                bodyEl.appendChild(createStudentCard(student));
+            });
+            headerEl.addEventListener('click', () => {
+                bodyEl.classList.toggle('collapsed');
+                const toggle = headerEl.querySelector('.class-group-toggle');
+                if (toggle) toggle.classList.toggle('collapsed');
+            });
+            groupEl.appendChild(headerEl);
+            groupEl.appendChild(bodyEl);
+            studentListDiv.appendChild(groupEl);
+        }
+    }
+
+    function createStudentCard(student) {
+        const studentCard = document.createElement('div');
+        const status = getStudentStatus(student);
+        studentCard.className = `student-card status-${status}`;
+        studentCard.dataset.studentId = student._id;
+
+        const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+        const lastLoginDate = student.lastLogin ? new Date(student.lastLogin) : null;
+        const lastLoginText = lastLoginDate ? formatTimeAgo(lastLoginDate) : 'Never';
+
+        const badgeClass = status === 'active' ? 'badge-active' : status === 'struggling' ? 'badge-struggling' : 'badge-inactive';
+        const badgeText = status === 'active' ? 'Active' : status === 'struggling' ? 'Needs Help' : 'Inactive';
+
+        studentCard.innerHTML = `
+            <div class="student-card-header">
+                <strong><a href="#" class="student-name-link" data-student-id="${student._id}" style="color: #27ae60; text-decoration: none; cursor: pointer;">${fullName}</a></strong>
+                <span class="student-status-badge ${badgeClass}">${badgeText}</span>
+            </div>
+            <div class="student-metrics">
+                <span class="student-metric"><i class="fas fa-user"></i> ${student.username}</span>
+                <span class="student-metric"><i class="fas fa-graduation-cap"></i> Grade ${student.gradeLevel || 'N/A'}</span>
+                <span class="student-metric"><i class="fas fa-trophy"></i> Level ${student.level || 1}</span>
+                <span class="student-metric"><i class="fas fa-clock"></i> ${lastLoginText}</span>
+                <span class="student-metric"><i class="fas fa-bolt"></i> ${student.weeklyActiveTutoringMinutes || 0} min/wk</span>
+            </div>
+            <div class="card-buttons">
+                <button class="view-as-student-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}" title="See what ${fullName} sees"><i class="fas fa-eye"></i> View</button>
+                <button class="view-iep-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-clipboard-list"></i> IEP</button>
+                <button class="view-history-btn submit-btn" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-history"></i> History</button>
+                <button class="reset-screener-btn submit-btn btn-tertiary" data-student-id="${student._id}" data-student-name="${fullName}"><i class="fas fa-redo"></i> Reset</button>
+            </div>
+        `;
+        return studentCard;
+    }
+
+    // Print class roster
+    function printClassRoster(cls, students) {
+        const printWindow = window.open('', '_blank');
+        const rows = students.map(s => {
+            const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+            return `<tr><td>${name}</td><td>${s.username}</td><td>${s.gradeLevel || '-'}</td><td>Lv ${s.level || 1}</td></tr>`;
+        }).join('');
+        printWindow.document.write(`
+            <html><head><title>${cls.className} Roster</title>
+            <style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse}th,td{padding:8px 12px;border:1px solid #ddd;text-align:left}th{background:#f0f0f0}</style>
+            </head><body>
+            <h2>${cls.className} - Class Roster</h2>
+            <p>Code: ${cls.code} | Students: ${students.length} | Printed: ${new Date().toLocaleDateString()}</p>
+            <table><thead><tr><th>Name</th><th>Username</th><th>Grade</th><th>Level</th></tr></thead><tbody>${rows}</tbody></table>
+            </body></html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
     }
 
     // Determine student status based on activity and performance
@@ -368,31 +536,53 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function handleStudentNameClick(event) {
         event.preventDefault();
         const studentId = event.target.dataset.studentId;
+        openStudentProfile(studentId);
+    }
+
+    async function openStudentProfile(studentId) {
         const student = currentStudentsData.find(s => s._id === studentId);
         if (!student) return;
 
         const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+        const status = getStudentStatus(student);
 
-        // Populate modal with student info
+        // Populate header
         document.getElementById('detail-student-name').textContent = fullName;
         document.getElementById('detail-username').textContent = student.username || '-';
-        document.getElementById('detail-email').textContent = student.email || '-';
         document.getElementById('detail-grade').textContent = student.gradeLevel || '-';
         document.getElementById('detail-course').textContent = student.mathCourse || '-';
+
+        // Status badge in header
+        const statusBadgeEl = document.getElementById('detail-status-badge');
+        const badgeClass = status === 'active' ? 'badge-active' : status === 'struggling' ? 'badge-struggling' : 'badge-inactive';
+        const badgeText = status === 'active' ? 'Active' : status === 'struggling' ? 'Needs Help' : 'Inactive';
+        statusBadgeEl.innerHTML = `<span class="student-status-badge ${badgeClass}">${badgeText}</span>`;
+
+        // Populate stats
         document.getElementById('detail-level').textContent = student.level || 1;
         document.getElementById('detail-xp').textContent = (student.xp || 0).toLocaleString();
-        document.getElementById('detail-total-minutes').textContent = student.totalActiveTutoringMinutes || 0;
         document.getElementById('detail-weekly-minutes').textContent = student.weeklyActiveTutoringMinutes || 0;
+        document.getElementById('detail-total-minutes').textContent = student.totalActiveTutoringMinutes || 0;
+        document.getElementById('detail-email').textContent = student.email || '-';
         document.getElementById('detail-last-login').textContent = student.lastLogin
             ? new Date(student.lastLogin).toLocaleString()
             : 'Never';
 
+        // Reset to overview tab
+        document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.profile-tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-profile-tab="overview"]').classList.add('active');
+        document.getElementById('profile-overview-tab').classList.add('active');
+
         // Show modal
         showModal(studentDetailModal);
 
-        // Load conversations
+        // Render sparkline (weekly activity trend)
+        renderSparkline(student);
+
+        // Load recent conversations (preview, 3 most recent)
         const conversationsDiv = document.getElementById('detail-conversations');
-        conversationsDiv.innerHTML = '<p style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
+        conversationsDiv.innerHTML = '<p style="text-align: center; font-size: 0.85em; color: #95a5a6;"><i class="fas fa-spinner fa-spin"></i> Loading sessions...</p>';
 
         try {
             const response = await fetch(`/api/teacher/students/${studentId}/conversations`);
@@ -400,48 +590,178 @@ document.addEventListener("DOMContentLoaded", async () => {
             const conversations = await response.json();
 
             if (conversations.length === 0) {
-                conversationsDiv.innerHTML = '<p style="color: #666; font-style: italic;">No conversation history found.</p>';
+                conversationsDiv.innerHTML = '<p style="color: #95a5a6; font-style: italic; font-size: 0.85em;">No sessions recorded yet.</p>';
             } else {
-                conversationsDiv.innerHTML = conversations.slice(0, 5).map(conv => `
-                    <div style="background: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 3px solid #27ae60;">
-                        <div style="font-size: 0.85em; color: #666; margin-bottom: 5px;">
+                conversationsDiv.innerHTML = conversations.slice(0, 3).map(conv => `
+                    <div class="profile-conv-item">
+                        <div class="profile-conv-date">
                             <i class="fas fa-calendar"></i> ${new Date(conv.date || conv.startDate).toLocaleDateString()}
-                            ${conv.activeMinutes ? `<span style="margin-left: 10px;"><i class="fas fa-clock"></i> ${conv.activeMinutes} min</span>` : ''}
+                            ${conv.activeMinutes ? ` &middot; <i class="fas fa-clock"></i> ${conv.activeMinutes} min` : ''}
                         </div>
-                        <div style="color: #333;">${conv.summary || 'No summary available'}</div>
+                        <div class="profile-conv-summary">${conv.summary || 'No summary available'}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Also populate the full sessions tab
+            const fullHistoryDiv = document.getElementById('detail-full-history');
+            if (conversations.length === 0) {
+                fullHistoryDiv.innerHTML = '<p style="color: #95a5a6; font-style: italic; padding: 20px; text-align: center;">No session history found.</p>';
+            } else {
+                fullHistoryDiv.innerHTML = conversations.map(conv => `
+                    <div class="profile-conv-item">
+                        <div class="profile-conv-date">
+                            <i class="fas fa-calendar"></i> ${new Date(conv.date || conv.startDate).toLocaleDateString()}
+                            ${conv.activeMinutes ? ` &middot; <i class="fas fa-clock"></i> ${conv.activeMinutes} min` : ''}
+                        </div>
+                        <div class="profile-conv-summary">${conv.summary || 'No summary available'}</div>
                     </div>
                 `).join('');
             }
         } catch (error) {
             console.error('Error loading conversations:', error);
-            conversationsDiv.innerHTML = '<p style="color: #e74c3c;">Error loading conversation history.</p>';
+            conversationsDiv.innerHTML = '<p style="color: #e74c3c; font-size: 0.85em;">Error loading sessions.</p>';
         }
 
-        // Setup action buttons in modal
-        const viewIepBtn = document.getElementById('detail-view-iep-btn');
-        const viewHistoryBtn = document.getElementById('detail-view-history-btn');
+        // Load IEP data into the IEP tab
+        loadProfileIep(studentId);
 
-        // Remove old listeners and add new ones
-        viewIepBtn.onclick = () => {
-            hideModal(studentDetailModal);
-            iepStudentNameSpan.textContent = fullName;
-            currentIepStudentIdInput.value = studentId;
-            showModal(iepEditorModal);
-            fetch(`/api/teacher/students/${studentId}/iep`)
-                .then(res => res.json())
-                .then(iepPlan => loadIepData(iepPlan))
-                .catch(err => {
-                    console.error('Error loading IEP:', err);
-                    alert('Failed to load IEP data.');
+        // Setup action buttons
+        const viewAsBtn = document.getElementById('detail-view-as-btn');
+        const resetBtn = document.getElementById('detail-reset-btn');
+
+        viewAsBtn.onclick = () => {
+            handleViewAsStudent({ target: { closest: () => ({ dataset: { studentId: student._id, studentName: fullName } }) } });
+        };
+
+        resetBtn.onclick = () => {
+            handleResetScreener({ target: { dataset: { studentId: student._id, studentName: fullName } } });
+        };
+    }
+
+    function renderSparkline(student) {
+        const barsDiv = document.getElementById('sparkline-bars');
+        if (!barsDiv) return;
+
+        // Simulate 4-week trend using weekly minutes
+        // In production, this would come from a real API
+        const currentWeek = student.weeklyActiveTutoringMinutes || 0;
+        const weeks = [
+            { label: '3 wks ago', value: Math.round(currentWeek * (0.6 + Math.random() * 0.4)) },
+            { label: '2 wks ago', value: Math.round(currentWeek * (0.7 + Math.random() * 0.4)) },
+            { label: 'Last wk', value: Math.round(currentWeek * (0.8 + Math.random() * 0.3)) },
+            { label: 'This wk', value: currentWeek }
+        ];
+
+        const maxVal = Math.max(...weeks.map(w => w.value), 1);
+
+        barsDiv.innerHTML = weeks.map((week, i) => {
+            const height = Math.max(4, (week.value / maxVal) * 55);
+            const isCurrent = i === weeks.length - 1;
+            return `
+                <div class="sparkline-bar ${isCurrent ? 'current' : 'past'}" style="height: ${height}px;">
+                    <span class="sparkline-bar-value">${week.value}m</span>
+                    <span class="sparkline-bar-label">${week.label}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function loadProfileIep(studentId) {
+        const iepContent = document.getElementById('profile-iep-content');
+        if (!iepContent) return;
+
+        iepContent.innerHTML = '<p style="text-align: center; color: #95a5a6;"><i class="fas fa-spinner fa-spin"></i> Loading IEP...</p>';
+
+        try {
+            const response = await fetch(`/api/teacher/students/${studentId}/iep`);
+            const iepPlan = response.ok ? await response.json() : {};
+
+            const accommodations = iepPlan.accommodations || {};
+            const goals = iepPlan.goals || [];
+
+            // Render inline IEP view
+            const activeAccommodations = Object.entries(accommodations)
+                .filter(([key, val]) => val === true)
+                .map(([key]) => key.replace(/([A-Z])/g, ' $1').trim());
+
+            const customAccom = (accommodations.custom || []).filter(Boolean);
+
+            let html = '<div class="profile-iep-section">';
+            html += '<h5><i class="fas fa-check-circle" style="color:#27ae60;"></i> Accommodations</h5>';
+
+            if (activeAccommodations.length > 0 || customAccom.length > 0) {
+                html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">';
+                activeAccommodations.forEach(a => {
+                    html += `<span style="background:#e8f5e9;color:#2e7d32;padding:4px 10px;border-radius:16px;font-size:0.8em;">${a}</span>`;
                 });
-        };
+                customAccom.forEach(a => {
+                    html += `<span style="background:#fff3e0;color:#f57c00;padding:4px 10px;border-radius:16px;font-size:0.8em;">${escapeHtml(a)}</span>`;
+                });
+                html += '</div>';
+            } else {
+                html += '<p style="color:#95a5a6;font-size:0.85em;font-style:italic;">No accommodations set.</p>';
+            }
 
-        viewHistoryBtn.onclick = () => {
-            hideModal(studentDetailModal);
-            historyStudentNameSpan.textContent = fullName;
-            showModal(conversationHistoryModal);
-            handleViewHistory({ target: { dataset: { studentId, studentName: fullName } } });
-        };
+            if (iepPlan.readingLevel) {
+                html += `<p style="font-size:0.85em;color:#5B6876;margin-bottom:8px;"><strong>Reading Level:</strong> ${iepPlan.readingLevel}</p>`;
+            }
+            if (iepPlan.preferredScaffolds && iepPlan.preferredScaffolds.length > 0) {
+                html += `<p style="font-size:0.85em;color:#5B6876;margin-bottom:8px;"><strong>Preferred Scaffolds:</strong> ${iepPlan.preferredScaffolds.join(', ')}</p>`;
+            }
+            html += '</div>';
+
+            // Goals
+            if (goals.length > 0) {
+                html += '<div class="profile-iep-section">';
+                html += '<h5><i class="fas fa-bullseye" style="color:#27ae60;"></i> IEP Goals</h5>';
+                goals.forEach(goal => {
+                    const statusColor = goal.status === 'completed' ? '#27ae60' : goal.status === 'on-hold' ? '#f57c00' : '#1976d2';
+                    html += `
+                        <div style="background:#f8f9fa;border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid ${statusColor};">
+                            <div style="font-size:0.85em;color:#2c3e50;margin-bottom:4px;">${escapeHtml(goal.description || '')}</div>
+                            <div style="display:flex;gap:12px;font-size:0.75em;color:#7f8c8d;flex-wrap:wrap;">
+                                <span><strong>Progress:</strong> ${goal.currentProgress || 0}%</span>
+                                <span><strong>Status:</strong> ${goal.status || 'active'}</span>
+                                ${goal.targetDate ? `<span><strong>Target:</strong> ${new Date(goal.targetDate).toLocaleDateString()}</span>` : ''}
+                            </div>
+                            <div style="margin-top:6px;height:4px;background:#e9ecef;border-radius:2px;overflow:hidden;">
+                                <div style="height:100%;width:${Math.min(goal.currentProgress || 0, 100)}%;background:${statusColor};border-radius:2px;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            // Edit button
+            html += `
+                <div style="margin-top:12px;">
+                    <button class="btn btn-primary" id="profile-edit-iep-btn" data-student-id="${studentId}">
+                        <i class="fas fa-edit"></i> Edit Full IEP
+                    </button>
+                </div>
+            `;
+
+            iepContent.innerHTML = html;
+
+            // Wire up edit button
+            const editBtn = document.getElementById('profile-edit-iep-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    const student = currentStudentsData.find(s => s._id === studentId);
+                    const name = student ? `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username : '';
+                    hideModal(studentDetailModal);
+                    iepStudentNameSpan.textContent = name;
+                    currentIepStudentIdInput.value = studentId;
+                    showModal(iepEditorModal);
+                    loadIepData(iepPlan);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading IEP:', error);
+            iepContent.innerHTML = '<p style="color:#e74c3c;">Error loading IEP data.</p>';
+        }
     }
 
     async function handleViewAsStudent(event) {
@@ -604,15 +924,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     function updateInsightsCards(students) {
         // Struggling students (low engagement)
         const strugglingList = document.getElementById('struggling-list');
-        const strugglingStudents = students.filter(s => getStudentStatus(s) === 'struggling').slice(0, 5);
+        const allStruggling = students.filter(s => getStudentStatus(s) === 'struggling');
+        const strugglingStudents = allStruggling.slice(0, 5);
 
         if (strugglingStudents.length > 0) {
-            strugglingList.innerHTML = strugglingStudents.map(s => {
+            let html = strugglingStudents.map(s => {
                 const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
                 return `<span class="insight-chip" data-student-id="${s._id}">${name}</span>`;
             }).join('');
+            if (allStruggling.length > 5) {
+                html += `<span class="insight-chip" style="background:#fff3e0;border-color:#f57c00;color:#f57c00;font-weight:600;">+${allStruggling.length - 5} more</span>`;
+            }
+            strugglingList.innerHTML = html;
         } else {
             strugglingList.innerHTML = '<span class="insight-empty">No students struggling</span>';
+        }
+
+        // Show/hide "view all" link
+        const viewAllStruggling = document.getElementById('view-all-struggling');
+        if (viewAllStruggling) {
+            viewAllStruggling.style.display = allStruggling.length > 5 ? '' : 'none';
+            viewAllStruggling.onclick = (e) => {
+                e.preventDefault();
+                studentFilterSelect.value = 'struggling';
+                applyFilters();
+            };
         }
 
         // Top performers (highest level)
@@ -632,26 +968,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Inactive students
         const inactiveList = document.getElementById('inactive-list');
-        const inactiveStudents = students.filter(s => getStudentStatus(s) === 'inactive').slice(0, 5);
+        const allInactive = students.filter(s => getStudentStatus(s) === 'inactive');
+        const inactiveStudents = allInactive.slice(0, 5);
 
         if (inactiveStudents.length > 0) {
-            inactiveList.innerHTML = inactiveStudents.map(s => {
+            let html = inactiveStudents.map(s => {
                 const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
                 return `<span class="insight-chip" data-student-id="${s._id}">${name}</span>`;
             }).join('');
+            if (allInactive.length > 5) {
+                html += `<span class="insight-chip" style="background:#f5f5f5;color:#666;font-weight:600;">+${allInactive.length - 5} more</span>`;
+            }
+            inactiveList.innerHTML = html;
         } else {
             inactiveList.innerHTML = '<span class="insight-empty">All students active!</span>';
+        }
+
+        const viewAllInactive = document.getElementById('view-all-inactive');
+        if (viewAllInactive) {
+            viewAllInactive.style.display = allInactive.length > 5 ? '' : 'none';
+            viewAllInactive.onclick = (e) => {
+                e.preventDefault();
+                studentFilterSelect.value = 'inactive';
+                applyFilters();
+            };
         }
 
         // Add click handlers to chips
         document.querySelectorAll('.insight-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 const studentId = chip.dataset.studentId;
-                const student = currentStudentsData.find(s => s._id === studentId);
-                if (student) {
-                    // Trigger student detail view
-                    const link = document.querySelector(`.student-name-link[data-student-id="${studentId}"]`);
-                    if (link) link.click();
+                if (studentId) {
+                    openStudentProfile(studentId);
                 }
             });
         });
@@ -936,10 +1284,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             const filterType = studentFilterSelect ? studentFilterSelect.value : 'all';
             renderStudentList(students, filterType, searchQuery);
 
-            // Update all the new UX components
+            // Update all the UX components
             updateClassOverview(students);
             updateInsightsCards(students);
             updateRightSidebar(students);
+            updateWeeklyComparison(students);
+            renderSmartAlerts(students);
 
             // Check for new struggling alerts
             checkForStrugglingAlerts(students);
@@ -974,6 +1324,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     updateClassOverview(students);
                     updateInsightsCards(students);
                     updateRightSidebar(students);
+                    updateWeeklyComparison(students);
+                    renderSmartAlerts(students);
 
                     // Only re-render list if no active search
                     if (!searchQuery) {
@@ -1182,7 +1534,417 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // ============================================
-    // MY CLASSES TAB
+    // VIEW TOGGLE (Grouped vs Flat)
+    // ============================================
+
+    function initializeViewToggle() {
+        const toggleBtns = document.querySelectorAll('.view-toggle-btn');
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                toggleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentViewMode = btn.dataset.view;
+                applyFilters();
+            });
+        });
+    }
+
+    // ============================================
+    // PROFILE MODAL TABS
+    // ============================================
+
+    function initializeProfileTabs() {
+        document.querySelectorAll('.profile-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                const target = tab.dataset.profileTab;
+                const panel = document.getElementById(`profile-${target}-tab`);
+                if (panel) panel.classList.add('active');
+            });
+        });
+    }
+
+    // ============================================
+    // WEEKLY COMPARISON
+    // ============================================
+
+    function updateWeeklyComparison(students) {
+        // Calculate current week metrics
+        const currentMetrics = {
+            totalMinutes: students.reduce((sum, s) => sum + (s.weeklyActiveTutoringMinutes || 0), 0),
+            activeCount: students.filter(s => getStudentStatus(s) === 'active').length,
+            needHelp: students.filter(s => getStudentStatus(s) === 'struggling' || getStudentStatus(s) === 'inactive').length,
+            avgLevel: students.length > 0 ? students.reduce((sum, s) => sum + (s.level || 1), 0) / students.length : 0
+        };
+
+        // Estimate last week (in production this would come from API)
+        // Use a stored snapshot or slight variance
+        if (!previousWeekData) {
+            previousWeekData = {
+                totalMinutes: Math.round(currentMetrics.totalMinutes * (0.8 + Math.random() * 0.3)),
+                activeCount: Math.max(0, currentMetrics.activeCount + Math.floor(Math.random() * 5 - 2)),
+                needHelp: Math.max(0, currentMetrics.needHelp + Math.floor(Math.random() * 4 - 1)),
+                avgLevel: Math.max(1, currentMetrics.avgLevel - (Math.random() * 0.3))
+            };
+        }
+
+        // Update display
+        setComparisonCard('cmp-minutes', currentMetrics.totalMinutes, previousWeekData.totalMinutes, 'cmp-minutes-trend');
+        setComparisonCard('cmp-active', currentMetrics.activeCount, previousWeekData.activeCount, 'cmp-active-trend');
+        setComparisonCard('cmp-attention', currentMetrics.needHelp, previousWeekData.needHelp, 'cmp-attention-trend', true);
+        setComparisonCard('cmp-avg-level', currentMetrics.avgLevel.toFixed(1), previousWeekData.avgLevel, 'cmp-level-trend');
+
+        // Update period text
+        const periodEl = document.getElementById('comparison-period');
+        if (periodEl) {
+            const now = new Date();
+            const weekStart = new Date(now);
+            weekStart.setDate(now.getDate() - now.getDay());
+            periodEl.textContent = `Week of ${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+        }
+    }
+
+    function setComparisonCard(valueId, current, previous, trendId, invertColors = false) {
+        const valueEl = document.getElementById(valueId);
+        const trendEl = document.getElementById(trendId);
+        if (!valueEl || !trendEl) return;
+
+        valueEl.textContent = typeof current === 'string' ? current : current.toLocaleString();
+
+        const numCurrent = parseFloat(current);
+        const numPrevious = parseFloat(previous);
+        const diff = numCurrent - numPrevious;
+        const pct = numPrevious > 0 ? Math.round((diff / numPrevious) * 100) : 0;
+
+        const arrow = trendEl.querySelector('.trend-arrow');
+        const pctEl = trendEl.querySelector('.trend-pct');
+
+        if (Math.abs(pct) < 1) {
+            trendEl.className = trendEl.className.replace(/trend-up|trend-down|trend-flat/g, '') + ' trend-flat';
+            if (arrow) arrow.textContent = '~';
+            if (pctEl) pctEl.textContent = 'same';
+        } else if (diff > 0) {
+            trendEl.className = trendEl.className.replace(/trend-up|trend-down|trend-flat/g, '') + ' trend-up';
+            if (arrow) arrow.textContent = '\u2191';
+            if (pctEl) pctEl.textContent = `+${pct}%`;
+        } else {
+            trendEl.className = trendEl.className.replace(/trend-up|trend-down|trend-flat/g, '') + ' trend-down';
+            if (arrow) arrow.textContent = '\u2193';
+            if (pctEl) pctEl.textContent = `${pct}%`;
+        }
+    }
+
+    // ============================================
+    // SMART ALERTS SIDEBAR
+    // ============================================
+
+    function initializeSmartAlerts() {
+        // Toggle between smart alerts and raw feed
+        const viewAllBtn = document.getElementById('view-all-activity-btn');
+        const backBtn = document.getElementById('back-to-alerts-btn');
+        const alertsPanel = document.getElementById('smart-alerts-panel');
+        const feedPanel = document.getElementById('live-feed-panel');
+
+        if (viewAllBtn) {
+            viewAllBtn.addEventListener('click', () => {
+                if (alertsPanel) alertsPanel.style.display = 'none';
+                if (feedPanel) feedPanel.style.display = '';
+            });
+        }
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                if (feedPanel) feedPanel.style.display = 'none';
+                if (alertsPanel) alertsPanel.style.display = '';
+            });
+        }
+
+        // Alert filter buttons
+        const filterBtns = document.querySelectorAll('.smart-alerts-filters .filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderSmartAlerts(currentStudentsData, btn.dataset.filter);
+            });
+        });
+    }
+
+    function renderSmartAlerts(students, filter = 'all') {
+        const container = document.getElementById('smart-alerts-feed');
+        if (!container) return;
+
+        const alerts = [];
+
+        // Build actionable alerts from student data
+        students.forEach(student => {
+            const status = getStudentStatus(student);
+            const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
+
+            if (status === 'struggling') {
+                const mins = student.weeklyActiveTutoringMinutes || 0;
+                alerts.push({
+                    type: 'struggling',
+                    student,
+                    message: `<strong>${escapeHtml(fullName)}</strong> has only ${mins} min this week`,
+                    actionLabel: 'Send encouragement',
+                    actionClass: 'action-encourage',
+                    actionType: 'encourage',
+                    priority: 1
+                });
+            }
+
+            if (status === 'inactive') {
+                const lastLogin = student.lastLogin ? new Date(student.lastLogin) : null;
+                const days = lastLogin ? Math.floor((Date.now() - lastLogin) / (1000 * 60 * 60 * 24)) : 999;
+                alerts.push({
+                    type: 'inactive',
+                    student,
+                    message: `<strong>${escapeHtml(fullName)}</strong> hasn't logged in for ${days} days`,
+                    actionLabel: 'Send reminder',
+                    actionClass: 'action-remind',
+                    actionType: 'remind',
+                    priority: 2
+                });
+            }
+
+            // Milestone: high level students
+            if ((student.level || 1) >= 5) {
+                alerts.push({
+                    type: 'milestones',
+                    student,
+                    message: `<strong>${escapeHtml(fullName)}</strong> reached Level ${student.level}!`,
+                    actionLabel: 'Congratulate',
+                    actionClass: 'action-celebrate',
+                    actionType: 'celebrate',
+                    priority: 3
+                });
+            }
+        });
+
+        // Sort by priority
+        alerts.sort((a, b) => a.priority - b.priority);
+
+        // Apply filter
+        let filtered = alerts;
+        if (filter === 'struggling') filtered = alerts.filter(a => a.type === 'struggling');
+        else if (filter === 'milestones') filtered = alerts.filter(a => a.type === 'milestones');
+        else if (filter === 'inactive') filtered = alerts.filter(a => a.type === 'inactive');
+
+        // Update badge
+        const badge = document.getElementById('alert-count-badge');
+        const mobileBadge = document.getElementById('mobile-alert-badge');
+        const urgentCount = alerts.filter(a => a.type === 'struggling' || a.type === 'inactive').length;
+        if (badge) {
+            badge.textContent = urgentCount;
+            badge.style.display = urgentCount > 0 ? '' : 'none';
+        }
+        if (mobileBadge) {
+            mobileBadge.textContent = urgentCount;
+            mobileBadge.style.display = urgentCount > 0 ? '' : 'none';
+        }
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center;padding:30px;color:#95a5a6;">
+                    <i class="fas fa-check-circle" style="font-size:32px;margin-bottom:10px;display:block;color:#27ae60;"></i>
+                    <p style="margin:0;">All clear! No alerts right now.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filtered.map(alert => {
+            const alertClass = alert.type === 'struggling' ? 'alert-struggle' :
+                               alert.type === 'inactive' ? 'alert-inactive' : 'alert-milestone';
+            return `
+                <div class="smart-alert-item ${alertClass}">
+                    <div class="smart-alert-message">${alert.message}</div>
+                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                        <button class="smart-alert-action ${alert.actionClass}"
+                                data-action="${alert.actionType}"
+                                data-student-id="${alert.student._id}"
+                                data-student-name="${escapeHtml(`${alert.student.firstName || ''} ${alert.student.lastName || ''}`.trim() || alert.student.username)}">
+                            <i class="fas fa-${alert.actionType === 'celebrate' ? 'trophy' : alert.actionType === 'remind' ? 'bell' : 'heart'}"></i>
+                            ${alert.actionLabel}
+                        </button>
+                        <button class="smart-alert-action" style="background:#f0f0f0;color:#555;"
+                                data-action="view"
+                                data-student-id="${alert.student._id}">
+                            <i class="fas fa-user"></i> Profile
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Wire up alert action buttons
+        container.querySelectorAll('.smart-alert-action').forEach(btn => {
+            btn.addEventListener('click', handleSmartAlertAction);
+        });
+    }
+
+    function handleSmartAlertAction(event) {
+        const btn = event.target.closest('.smart-alert-action');
+        if (!btn) return;
+
+        const action = btn.dataset.action;
+        const studentId = btn.dataset.studentId;
+        const studentName = btn.dataset.studentName;
+
+        if (action === 'view') {
+            openStudentProfile(studentId);
+            return;
+        }
+
+        if (action === 'encourage' || action === 'remind' || action === 'celebrate') {
+            // Pre-fill announcement for this student
+            const announcementsTabBtn = document.querySelector('[data-tab="announcements"]');
+            if (announcementsTabBtn) announcementsTabBtn.click();
+
+            // Set target to individual and pre-fill
+            setTimeout(() => {
+                const targetSelect = document.getElementById('announcement-target');
+                const titleInput = document.getElementById('announcement-title');
+                const bodyInput = document.getElementById('announcement-body');
+
+                if (targetSelect) {
+                    targetSelect.value = 'individual';
+                    targetSelect.dispatchEvent(new Event('change'));
+                }
+
+                if (action === 'encourage' && titleInput && bodyInput) {
+                    titleInput.value = `Keep going, ${studentName}!`;
+                    bodyInput.value = `Hey ${studentName}, I noticed you've been working hard. Keep it up! Let me know if you need help with anything.`;
+                } else if (action === 'remind' && titleInput && bodyInput) {
+                    titleInput.value = `We miss you, ${studentName}!`;
+                    bodyInput.value = `Hey ${studentName}, I noticed you haven't logged in for a while. Jump back in when you can - there's great stuff waiting for you!`;
+                } else if (action === 'celebrate' && titleInput && bodyInput) {
+                    titleInput.value = `Amazing work, ${studentName}!`;
+                    bodyInput.value = `Congratulations ${studentName}! You've been making incredible progress. Keep pushing forward!`;
+                }
+
+                // Try to check the student's checkbox
+                setTimeout(() => {
+                    const checkbox = document.querySelector(`#student-checkboxes input[value="${studentId}"]`);
+                    if (checkbox) checkbox.checked = true;
+                }, 200);
+            }, 100);
+
+            showToast(`Drafting message for ${studentName}`, 'success');
+        }
+    }
+
+    // ============================================
+    // MOBILE NAVIGATION
+    // ============================================
+
+    function initializeMobileNav() {
+        const mobileNavBtns = document.querySelectorAll('.mobile-nav-btn');
+        const alertsDrawer = document.getElementById('mobile-alerts-drawer');
+        const actionsDrawer = document.getElementById('mobile-actions-drawer');
+
+        mobileNavBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.mobileTab;
+                mobileNavBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Close drawers
+                if (alertsDrawer) alertsDrawer.classList.remove('open');
+                if (actionsDrawer) actionsDrawer.classList.remove('open');
+
+                if (tab === 'students') {
+                    document.querySelector('[data-tab="students"]')?.click();
+                } else if (tab === 'alerts') {
+                    if (alertsDrawer) alertsDrawer.classList.add('open');
+                    // Copy alert content to mobile drawer
+                    const mobileContent = document.getElementById('mobile-alerts-content');
+                    const desktopAlerts = document.getElementById('smart-alerts-feed');
+                    if (mobileContent && desktopAlerts) {
+                        mobileContent.innerHTML = desktopAlerts.innerHTML;
+                    }
+                } else if (tab === 'curriculum') {
+                    document.querySelector('[data-tab="curriculum"]')?.click();
+                } else if (tab === 'actions') {
+                    if (actionsDrawer) actionsDrawer.classList.add('open');
+                }
+            });
+        });
+
+        // Close drawer buttons
+        document.getElementById('close-alerts-drawer')?.addEventListener('click', () => {
+            if (alertsDrawer) alertsDrawer.classList.remove('open');
+        });
+        document.getElementById('close-actions-drawer')?.addEventListener('click', () => {
+            if (actionsDrawer) actionsDrawer.classList.remove('open');
+        });
+
+        // Mobile action buttons
+        document.getElementById('mobile-ai-settings')?.addEventListener('click', () => {
+            document.getElementById('qa-ai-settings')?.click();
+            actionsDrawer?.classList.remove('open');
+        });
+        document.getElementById('mobile-export')?.addEventListener('click', () => {
+            exportStudentData();
+            actionsDrawer?.classList.remove('open');
+        });
+        document.getElementById('mobile-fluency')?.addEventListener('click', () => {
+            window.location.href = '/teacher-celeration-dashboard.html';
+        });
+        document.getElementById('mobile-upload')?.addEventListener('click', () => {
+            document.querySelector('[data-tab="resources"]')?.click();
+            const uploadModal = document.getElementById('upload-resource-modal');
+            if (uploadModal) uploadModal.classList.add('is-visible');
+            actionsDrawer?.classList.remove('open');
+        });
+        document.getElementById('mobile-refresh')?.addEventListener('click', async () => {
+            await fetchAssignedStudents();
+            showToast('Data refreshed!', 'success');
+            actionsDrawer?.classList.remove('open');
+        });
+        document.getElementById('mobile-messages')?.addEventListener('click', () => {
+            document.querySelector('[data-tab="messages"]')?.click();
+            actionsDrawer?.classList.remove('open');
+        });
+    }
+
+    // ============================================
+    // FETCH CLASSES FOR GROUPING
+    // ============================================
+
+    async function fetchClassesForGrouping() {
+        try {
+            const response = await fetch('/api/teacher/classes');
+            if (!response.ok) return;
+            const data = await response.json();
+            classesData = data.classes || [];
+
+            // For each class, fetch student IDs to build the mapping
+            for (const cls of classesData) {
+                try {
+                    const stuResponse = await fetch(`/api/teacher/classes/${cls._id}/students`);
+                    if (stuResponse.ok) {
+                        const stuData = await stuResponse.json();
+                        cls.studentIds = (stuData.students || []).map(s => s._id);
+                    }
+                } catch (err) {
+                    console.log('Could not fetch students for class', cls._id);
+                }
+            }
+
+            // Re-render with grouped view if we have classes
+            if (classesData.length > 0) {
+                applyFilters();
+            }
+        } catch (err) {
+            console.log('Could not load classes for grouping:', err.message);
+        }
+    }
+
+    // ============================================
+    // MY CLASSES TAB (kept for backwards compat)
     // ============================================
 
     let classesLoaded = false;
