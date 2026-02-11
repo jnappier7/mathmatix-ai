@@ -130,34 +130,46 @@ class CourseManager {
             return;
         }
 
+        // Check which conversation is currently active
+        const currentConvId = window.currentConversationId || window.sidebar?.activeConversationId;
+
         this.courseSessions.forEach(s => {
             const item = document.createElement('div');
-            item.className = 'course-sidebar-item';
+            const isActive = s.conversationId === currentConvId && s.status === 'active';
+            item.className = 'course-sidebar-item' + (isActive ? ' active' : '') + (s.status === 'paused' ? ' paused' : '');
             item.dataset.sessionId = s._id;
 
-            const statusIcon = s.status === 'paused' ? 'fa-pause-circle' : 'fa-book-open';
-            const statusColor = s.status === 'paused' ? '#aaa' : '#667eea';
+            const pct = s.overallProgress || 0;
+            const moduleDone = (s.modules || []).filter(m => m.status === 'completed').length;
+            const moduleTotal = (s.modules || []).length;
+
+            // Format current module name from slug: "mod-linear-equations" → "Linear Equations"
+            const currentMod = s.currentModuleId || '';
+            const modLabel = currentMod
+                .replace(/^mod-/, '')
+                .replace(/-/g, ' ')
+                .replace(/\b\w/g, c => c.toUpperCase());
 
             item.innerHTML = `
-                <div class="course-sidebar-row" style="display:flex; align-items:center; gap:8px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s;"
-                     onmouseover="this.style.background='#f0f0ff';this.querySelector('.course-drop-x').style.opacity='1';"
-                     onmouseout="this.style.background='transparent';this.querySelector('.course-drop-x').style.opacity='0';">
-                    <i class="fas ${statusIcon}" style="color:${statusColor}; font-size:14px;"></i>
-                    <div style="flex:1; min-width:0;">
-                        <div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                            ${this.escapeHtml(s.courseName)}
+                <div class="course-sidebar-row">
+                    <div class="course-sidebar-icon">${s.status === 'paused' ? '⏸' : '📘'}</div>
+                    <div class="course-sidebar-body">
+                        <div class="course-sidebar-name">${this.escapeHtml(s.courseName)}</div>
+                        <div class="course-sidebar-module">${s.status === 'paused' ? 'Paused' : modLabel}</div>
+                        <div class="course-sidebar-progress-track">
+                            <div class="course-sidebar-progress-fill" style="width: ${pct}%"></div>
                         </div>
-                        <div style="font-size:11px; color:#888;">${s.overallProgress || 0}% complete</div>
+                        <div class="course-sidebar-stats">${moduleDone}/${moduleTotal} modules &middot; ${pct}%</div>
                     </div>
-                    <i class="fas fa-times course-drop-x" title="Drop course"
-                       style="color:#ccc; font-size:12px; opacity:0; transition:opacity 0.15s, color 0.15s; padding:4px;"
-                       onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#ccc'"></i>
+                    <button class="course-drop-x" title="Drop course" aria-label="Drop course">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             `;
 
             // Click row → activate course
             item.querySelector('.course-sidebar-row').addEventListener('click', (e) => {
-                if (e.target.closest('.course-drop-x')) return; // Don't activate if clicking X
+                if (e.target.closest('.course-drop-x')) return;
                 this.activateCourse(s._id);
             });
 

@@ -194,7 +194,7 @@ router.post('/enroll', async (req, res) => {
       conversationName: pathway.track || pathway.courseName || courseId,
       topic: pathway.track || pathway.courseName || courseId,
       topicEmoji: '📚',
-      conversationType: 'topic'
+      conversationType: 'course'
     });
     await conversation.save();
 
