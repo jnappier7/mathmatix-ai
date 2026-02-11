@@ -3326,6 +3326,38 @@ What would you like to work on first?`;
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text, voiceId })
             });
+
+            // COMPLIANCE: Under-13 users are blocked from ElevenLabs.
+            // Fall back to browser-native WebSpeech API.
+            if (response.status === 403) {
+                let errorData;
+                try { errorData = await response.json(); } catch (e) { errorData = {}; }
+                if (errorData.useWebSpeech && window.speechSynthesis) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 0.95;
+                    utterance.onend = () => {
+                        resetAudioState();
+                        if (playButton) {
+                            playButton.classList.remove('is-loading');
+                            playButton.classList.remove('is-playing');
+                        }
+                        processAudioQueue();
+                    };
+                    utterance.onerror = () => {
+                        resetAudioState();
+                        if (playButton) {
+                            playButton.classList.remove('is-loading');
+                            playButton.classList.remove('is-playing');
+                            playButton.disabled = false;
+                        }
+                        processAudioQueue();
+                    };
+                    if (playButton) playButton.classList.add('is-playing');
+                    window.speechSynthesis.speak(utterance);
+                    return;
+                }
+            }
+
             if (!response.ok) throw new Error('Failed to fetch audio stream.');
 
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
