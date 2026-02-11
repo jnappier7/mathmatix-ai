@@ -1746,8 +1746,8 @@
 
         if (!banner || !daysEl || !hoursEl || !minsEl || !secsEl) return;
 
-        // Target: March 14, 2026 at midnight local time
-        var target = new Date(2026, 2, 14, 0, 0, 0);
+        // Target: March 14, 2026 at midnight EST (UTC-5)
+        var target = new Date('2026-03-14T05:00:00Z');
 
         function pad(n) { return n < 10 ? '0' + n : String(n); }
 
