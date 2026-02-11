@@ -386,8 +386,23 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
 
 
 // --- Clever SSO Routes (conditional - only if Clever credentials are configured) ---
+// NOTE: Library SSO requires session invalidation on shared devices.
+// When a new Clever login arrives, any previous session is destroyed first.
 if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
-    app.get('/auth/clever', authLimiter, passport.authenticate('clever'));
+    app.get('/auth/clever', authLimiter, (req, res, next) => {
+        // Shared device support: destroy any existing session before starting Clever auth
+        if (req.isAuthenticated()) {
+            req.logout((err) => {
+                if (err) console.error('WARN: Error clearing previous session for Clever SSO:', err);
+                req.session.regenerate((err) => {
+                    if (err) console.error('WARN: Error regenerating session for Clever SSO:', err);
+                    passport.authenticate('clever')(req, res, next);
+                });
+            });
+        } else {
+            passport.authenticate('clever')(req, res, next);
+        }
+    });
 
     app.get('/auth/clever/callback', authLimiter, (req, res, next) => {
         passport.authenticate('clever', (err, user, info) => {
@@ -399,23 +414,32 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
 
             // Check if this is a new user requiring enrollment code
             if (user.isPendingEnrollment) {
-                req.session.pendingOAuthProfile = user.pendingProfile;
-                console.log('LOG: New Clever SSO user requires enrollment code');
-                return res.redirect('/oauth-enrollment.html');
+                // Shared device: regenerate session before storing pending profile
+                req.session.regenerate((err) => {
+                    if (err) { return next(err); }
+                    req.session.pendingOAuthProfile = user.pendingProfile;
+                    console.log('LOG: New Clever SSO user requires enrollment code');
+                    return res.redirect('/oauth-enrollment.html');
+                });
+                return;
             }
 
-            req.logIn(user, async (err) => {
+            // Shared device: regenerate session before logging in the new user
+            req.session.regenerate((err) => {
                 if (err) { return next(err); }
-                try {
-                    await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
-                } catch (updateErr) {
-                    console.error("ERROR: Failed to update lastLogin:", updateErr);
-                }
-                if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
-                if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
-                if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
-                const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
-                res.redirect(dashboardMap[user.role] || '/login.html');
+                req.logIn(user, async (err) => {
+                    if (err) { return next(err); }
+                    try {
+                        await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+                    } catch (updateErr) {
+                        console.error("ERROR: Failed to update lastLogin:", updateErr);
+                    }
+                    if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+                    if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+                    if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                    const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
+                    res.redirect(dashboardMap[user.role] || '/login.html');
+                });
             });
         })(req, res, next);
     });
