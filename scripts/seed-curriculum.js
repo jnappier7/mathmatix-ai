@@ -39,7 +39,10 @@ const CURRICULUM_FILES = [
   'skills-ap-calculus-ab.json',
   'skills-calculus-1.json',
   'skills-calculus-2.json',
-  'skills-calculus-3.json'
+  'skills-calculus-3.json',
+
+  // Test Prep
+  'skills-act-math-prep.json'
 ];
 
 async function seedCurriculum() {
