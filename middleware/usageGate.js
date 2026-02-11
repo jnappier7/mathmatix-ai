@@ -1,10 +1,11 @@
 // middleware/usageGate.js — Usage enforcement for minute packs & unlimited tier
 //
-// ALL students get 20 free AI-minutes per week (server-measured).
-// Free minutes are used first; pack balance is only deducted after.
-// Students connected to a class (teacherId): unlimited free access.
-// Unlimited subscribers: always pass.
-// Teachers/parents/admins: always pass (free unlimited).
+// OPTION D — School License Model:
+//   Teachers: always free unlimited (drives adoption)
+//   Students: 20 free AI-minutes per week
+//   Students with school license: unlimited (school purchased access)
+//   Unlimited individual subscribers: always pass
+//   Parents/admins: always pass (free unlimited)
 //
 // MASTER SWITCH: Set BILLING_ENABLED=true in .env to activate.
 // When disabled, all users get unlimited access (pre-launch mode).
@@ -12,16 +13,49 @@
 // Usage: app.use('/api/chat', isAuthenticated, usageGate, chatRoutes);
 
 const User = require('../models/user');
+const SchoolLicense = require('../models/schoolLicense');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 const FREE_WEEKLY_SECONDS = 20 * 60; // 20 minutes per week for ALL students
+
+// In-memory cache for school license validity (avoids DB hit on every request)
+// Key: licenseId.toString(), Value: { valid: boolean, checkedAt: Date }
+const licenseCache = new Map();
+const LICENSE_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Check if a school license is currently valid (with caching).
+ */
+async function isLicenseValid(licenseId) {
+  if (!licenseId) return false;
+
+  const key = licenseId.toString();
+  const cached = licenseCache.get(key);
+  if (cached && (Date.now() - cached.checkedAt) < LICENSE_CACHE_TTL_MS) {
+    return cached.valid;
+  }
+
+  try {
+    const license = await SchoolLicense.findById(licenseId).lean();
+    const valid = license ? license.isValid ? license.isValid() : (
+      (license.status === 'active' || license.status === 'trial') &&
+      (!license.expiresAt || new Date() <= license.expiresAt)
+    ) : false;
+    licenseCache.set(key, { valid, checkedAt: Date.now() });
+    return valid;
+  } catch (err) {
+    console.error('[UsageGate] License check error:', err.message);
+    // On error, allow access (don't block students due to lookup failure)
+    return true;
+  }
+}
 
 /**
  * Middleware that gates AI-powered endpoints behind pack/subscription limits.
  * - If BILLING_ENABLED is false: everyone passes (pre-launch mode)
  * - Teachers, parents, admins: always pass (free unlimited)
- * - Students connected to a class (teacherId): always pass (free unlimited)
- * - Unlimited subscribers: always pass
+ * - Students with active school license: always pass (school purchased access)
+ * - Unlimited individual subscribers: always pass
  * - Any student with free weekly minutes remaining: pass (free minutes first)
  * - Pack users with pack balance remaining: pass (pack used after free minutes)
  * - Otherwise: 402 Payment Required
@@ -40,10 +74,14 @@ async function usageGate(req, res, next) {
     // Teachers, parents, and admins are always free unlimited
     if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') return next();
 
-    // Students connected to a class get free unlimited access
-    if (user.teacherId) return next();
+    // Students covered by a school license get unlimited access
+    if (user.schoolLicenseId) {
+      const valid = await isLicenseValid(user.schoolLicenseId);
+      if (valid) return next();
+      // License expired/invalid — fall through to free tier
+    }
 
-    // Unlimited subscribers pass unconditionally
+    // Unlimited individual subscribers pass unconditionally
     if (user.subscriptionTier === 'unlimited') return next();
 
     // --- Weekly reset check (applies to all students) ---
@@ -91,9 +129,7 @@ async function usageGate(req, res, next) {
         .catch(err => console.error('[UsageGate] Downgrade error:', err.message));
 
       return res.status(402).json({
-        message: expired
-          ? "Your free minutes and minute pack are both used up. Purchase a new pack or come back next week!"
-          : "Your free minutes and minute pack are both used up. Purchase a new pack or come back next week!",
+        message: "Your free minutes and minute pack are both used up. Purchase a new pack, ask your school about a Mathmatix license, or come back next week!",
         usageLimitReached: true,
         tier: 'free',
         freeSecondsRemaining: 0,
@@ -104,7 +140,7 @@ async function usageGate(req, res, next) {
 
     // --- Free-tier student, no pack, free minutes exhausted ---
     return res.status(402).json({
-      message: "You've used your 20 free minutes this week. Upgrade for unlimited tutoring, or come back next week!",
+      message: "You've used your 20 free minutes this week. Ask your teacher about a school license for unlimited access, or come back next week!",
       usageLimitReached: true,
       tier: 'free',
       freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
@@ -121,21 +157,33 @@ async function usageGate(req, res, next) {
 
 /**
  * Feature gate for premium-only features (voice, OCR, uploads).
- * Only unlimited subscribers get access.
+ * School-licensed students and unlimited subscribers get access.
  */
 function premiumFeatureGate(featureName) {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     if (!BILLING_ENABLED) return next(); // Master switch off — all features open
 
     const user = req.user;
     if (!user) return next();
 
-    if (user.subscriptionTier === 'unlimited' || user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+    // Teachers, parents, admins always get premium features
+    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
       return next();
     }
 
+    // Unlimited individual subscribers
+    if (user.subscriptionTier === 'unlimited') {
+      return next();
+    }
+
+    // Students covered by a school license get premium features
+    if (user.schoolLicenseId) {
+      const valid = await isLicenseValid(user.schoolLicenseId);
+      if (valid) return next();
+    }
+
     return res.status(402).json({
-      message: `${featureName} requires the Unlimited plan ($19.95/month).`,
+      message: `${featureName} requires the Unlimited plan ($19.95/month) or a school license.`,
       premiumFeatureBlocked: true,
       feature: featureName,
       tier: user.subscriptionTier || 'free',
@@ -144,4 +192,4 @@ function premiumFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, premiumFeatureGate, FREE_WEEKLY_SECONDS };
+module.exports = { usageGate, premiumFeatureGate, FREE_WEEKLY_SECONDS, isLicenseValid };

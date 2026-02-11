@@ -126,6 +126,7 @@ const impersonationRoutes = require('./routes/impersonation');  // User imperson
 const announcementsRoutes = require('./routes/announcements');  // Teacher-to-student announcements
 const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email campaigns
 const billingRoutes = require('./routes/billing');  // Stripe subscription billing
+const schoolLicenseRoutes = require('./routes/schoolLicense');  // School/district license management
 const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
 const courseSessionRoutes = require('./routes/courseSession');  // Pathway-based course sessions (self-paced)
 const waitlistRoutes = require('./routes/waitlist');  // Pre-launch email waitlist
@@ -496,6 +497,7 @@ app.use('/api/user', isAuthenticated, tourSurveyRoutes); // Tour and survey for 
 app.use('/api/messages', isAuthenticated, messagingRoutes); // Teacher-parent messaging system
 app.use('/api/announcements', isAuthenticated, announcementsRoutes); // Teacher-to-student announcements (IM style)
 app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes); // Admin bulk email campaigns
+app.use('/api/school-licenses', isAuthenticated, isAdmin, schoolLicenseRoutes); // School/district license management
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
 app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
 
