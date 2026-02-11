@@ -44,8 +44,8 @@ const PII_PATTERNS = {
     // Email addresses (most specific, match first)
     email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
 
-    // Phone numbers (various formats)
-    phone: /\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g,
+    // Phone numbers (various formats including +1, parenthesized area codes)
+    phone: /(?:\+?1[-.\s]?)?(?:\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}/g,
 
     // MongoDB ObjectIds (24 hex chars)
     objectId: /\b[0-9a-fA-F]{24}\b/g,
