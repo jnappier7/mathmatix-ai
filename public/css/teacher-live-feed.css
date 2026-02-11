@@ -3,6 +3,17 @@
    Matches Mathmatix brand: Teal #12B3B3
    ============================================ */
 
+/* Smart Alerts Panel */
+#smart-alerts-panel {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    max-height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+}
+
 /* Live Feed Container */
 #live-feed-panel {
     background: #ffffff;
