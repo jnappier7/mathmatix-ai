@@ -5,7 +5,7 @@
   "title": "Test Strategies & Modeling",
   "weeks": "8-9",
   "estimatedDuration": 30,
-  "description": "Covers ACT-specific test-taking strategies (backsolving, picking numbers, estimation, pacing) and the cross-cutting Modeling category (~25% of the ACT). Learn WHEN to use each strategy and how to interpret, produce, and evaluate mathematical models.",
+  "description": "Covers the meta-skill of diagnosing multiple choice problems — how to read, classify, and attack ANY ACT question before choosing a strategy. Then teaches ACT-specific strategies (backsolving, picking numbers, estimation, pacing) and the cross-cutting Modeling category (~25% of the ACT).",
 
   "skills": [
     "act-backsolving",
@@ -18,6 +18,9 @@
   "standardsAlignment": ["ACT Strategy", "ACT Modeling (cross-cutting)"],
 
   "goals": [
+    "Diagnose any ACT math problem in under 10 seconds: read the question, classify the type, spot the traps, choose the approach",
+    "Use the SCAN method to systematically break down multiple choice problems before solving",
+    "Read answer choices FIRST to gather intel about the problem before doing any math",
     "Recognize when backsolving is faster than algebra and execute it efficiently",
     "Use picking numbers to turn abstract problems into concrete arithmetic",
     "Apply estimation and elimination to narrow down answer choices quickly",
@@ -29,7 +32,10 @@
   "instructionalStrategy": [
     "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
     "AI uses scaffold array as scope and worked-example bank",
+    "LEAD with problem diagnosis: teach students to READ the problem before SOLVING the problem",
+    "The SCAN framework (Skim, Classify, Attack, Nail it) is taught first as the overarching method",
     "Each strategy taught with side-by-side comparison: strategy vs. algebra approach",
+    "Trap analysis: teach students to read answer choices as diagnostic intel",
     "Timed practice sets to build pacing instincts",
     "Modeling taught as a lens that applies to ALL content areas, not a separate topic"
   ],
@@ -37,6 +43,98 @@
   "aiFlexLevel": "high",
 
   "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "The SCAN Method: How to Diagnose Any MCQ Problem",
+      "skill": "act-estimation-elimination",
+      "content": "Before you pick up your pencil, DIAGNOSE the problem. Most students lose points not because they can't do the math — they lose points because they misread the question, fall for a trap, or waste time on a bad approach. The SCAN method gives you a 10-second diagnosis before you solve anything.",
+      "keyPoints": [
+        "S — SKIM THE QUESTION: Read the LAST sentence first (that's what they're actually asking). Then read the full problem. Many students solve the wrong thing because they didn't read carefully.",
+        "C — CLASSIFY THE PROBLEM: What math topic is this? (algebra, geometry, functions, stats, word problem). What sub-type? (solve for x, find the area, interpret a graph). Classification tells you which toolkit to reach for.",
+        "A — ANALYZE THE ANSWER CHOICES: The choices are a goldmine of information BEFORE you solve. Are they numbers? Try backsolving. Are they expressions with variables? Try picking numbers. Are they spread far apart? Estimate. Are they close together? Be precise.",
+        "N — NAME YOUR APPROACH: Decide in advance: direct algebra, backsolving, picking numbers, estimation, or draw a picture. Commit to one and go. If it stalls after 30 seconds, switch.",
+        "READING THE CHOICES — 5 patterns to spot immediately:",
+        "Pattern 1 — 'Off by one' traps: choices like x and x+1 mean the ACT expects you to solve for the wrong thing (they ask for x+1 but you stopped at x).",
+        "Pattern 2 — Sign traps: both 5 and −5 are choices? They're testing whether you handle negatives correctly.",
+        "Pattern 3 — Common-mistake answers: one choice is what you get if you forget to distribute, or if you add instead of multiply. The wrong answer is there ON PURPOSE.",
+        "Pattern 4 — Unit/conversion traps: answers in different units or mixing diameter/radius, area/perimeter.",
+        "Pattern 5 — Partial-work answers: the answer you get if you solve half the problem but stop too soon."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Problem Diagnosis — Worked Examples",
+      "skill": "act-estimation-elimination",
+      "examples": [
+        {
+          "problem": "A store reduces the price of a $120 jacket by 30%, then reduces the new price by an additional 20%. What is the final price?\n(A) $60.00  (B) $67.20  (C) $72.00  (D) $84.00  (E) $96.00",
+          "solution": "SCAN DIAGNOSIS (before solving):\n\nS — SKIM: 'What is the FINAL price?' after TWO successive discounts.\n\nC — CLASSIFY: Percent application, successive discounts. I know this type.\n\nA — ANALYZE CHOICES:\n• (A) $60 = exactly 50% off → trap for students who ADD 30%+20%=50%\n• (D) $84 = 30% off only ($120×0.70) → trap for students who stop after first discount\n• (E) $96 = 20% off only → trap for students who skip the first discount\n• (B) $67.20 and (C) $72.00 are the real contenders.\n\nN — NAME APPROACH: Direct calculation, multiply the discount multipliers.\n\nSOLVE: $120 × 0.70 × 0.80 = $120 × 0.56 = $67.20\nAnswer: (B) $67.20\n\nNotice: THREE of the five choices are traps for specific common mistakes."
+        },
+        {
+          "problem": "If x² − 5x − 6 = 0, what is the sum of the solutions?\n(A) −6  (B) −5  (C) −1  (D) 5  (E) 6",
+          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'the SUM of the solutions' — not the solutions themselves, the SUM.\n\nC — CLASSIFY: Quadratic equation → I could factor and add, or use Vieta's (sum = −b/a).\n\nA — ANALYZE CHOICES:\n• Both 5 and −5 are there → sign trap. They're testing if you know it's −b/a (positive 5) vs −b (negative 5) vs b (5).\n• −6 and 6 are the product (c/a) → trap for students who find the wrong quantity.\n• −1 = difference of roots → trap for solving and subtracting instead of adding.\n\nN — NAME APPROACH: Vieta's shortcut — sum = −b/a = −(−5)/1 = 5. No factoring needed.\n\nAnswer: (D) 5\n\nIf you factored: (x−6)(x+1) = 0 → x = 6, x = −1. Sum = 6+(−1) = 5. Same answer, more work."
+        },
+        {
+          "problem": "In the figure below, line m is parallel to line n. If angle 1 = 3x + 10 and angle 2 = 5x − 30, what is the value of x?\n(A) 10  (B) 20  (C) 25  (D) 40  (E) 70",
+          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'value of x' — not the angle measure, just x. (But watch out: one of the choices is probably the angle measure.)\n\nC — CLASSIFY: Parallel lines + transversal → angle relationships. Need to know if angles 1 and 2 are equal (corresponding/alternate interior) or supplementary (co-interior).\n\nA — ANALYZE CHOICES:\n• Wide range (10 to 70) → estimation could help but direct solve is fast.\n• (E) 70 is suspiciously large — could be the ANGLE value not x.\n\nN — NAME APPROACH: Need the figure to know the relationship, but let's try both:\n\nIf EQUAL (alternate interior): 3x+10 = 5x−30 → 40 = 2x → x = 20.\nIf SUPPLEMENTARY: 3x+10 + 5x−30 = 180 → 8x−20 = 180 → 8x = 200 → x = 25.\n\nBoth 20 and 25 are answer choices — the figure determines which. But the DIAGNOSIS told us to expect two plausible approaches.\n\nCheck traps: if x=25, angles are 85° and 95° (supplementary ✓). If x=20, angles are 70° and 70° (equal ✓). The figure dictates the answer, but you're prepared for both."
+        },
+        {
+          "problem": "For all positive integers n, which expression is equal to (n+1)² − n²?\n(A) 1  (B) 2n  (C) 2n + 1  (D) n² + 1  (E) 2n² + 1",
+          "solution": "SCAN DIAGNOSIS:\n\nS — SKIM: 'For all positive integers' + 'which expression is equal to' → this is an equivalence question with variables.\n\nC — CLASSIFY: Algebraic simplification OR picking numbers. The 'for all' tells me picking numbers is perfect.\n\nA — ANALYZE CHOICES:\n• (A) 1 = constant → would mean the expression doesn't depend on n. Unlikely but possible.\n• Mix of expressions → picking numbers will nail it.\n\nN — NAME APPROACH: PICK NUMBERS. Try n = 1.\n\nPick n = 1: (1+1)² − 1² = 4 − 1 = 3.\nCheck: (A) 1 ✗  (B) 2 ✗  (C) 2(1)+1 = 3 ✓  (D) 2 ✗  (E) 3 ✓\n\nTie between (C) and (E). Try n = 2: (3)² − (2)² = 9−4 = 5.\n(C) 2(2)+1 = 5 ✓  (E) 2(4)+1 = 9 ✗\n\nAnswer: (C) 2n + 1\n\nAlgebra verify: (n+1)² − n² = n² + 2n + 1 − n² = 2n + 1."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Problem Diagnosis Practice — Classify Before You Solve",
+      "skills": ["act-estimation-elimination", "act-backsolving", "act-picking-numbers"],
+      "problems": [
+        {
+          "problem": "DIAGNOSIS EXERCISE: Before solving, classify this problem and name your approach.\n\nA rectangular garden is 3 feet longer than it is wide. If the perimeter is 42 feet, what is the width?\n(A) 7  (B) 9  (C) 10.5  (D) 12  (E) 18",
+          "hints": [
+            "SKIM: asks for 'the width' — not length, not area, not perimeter.",
+            "CLASSIFY: geometry word problem → translate to algebra.",
+            "ANALYZE CHOICES: all numbers → backsolving works. (E) 18 would make perimeter way too big. Eliminate it.",
+            "APPROACH: Backsolve starting at (B) 9: width=9, length=12, perimeter=2(9+12)=42. ✓ Done!"
+          ],
+          "answer": "(B) 9. Backsolve: width=9, length=9+3=12. Perimeter = 2(9+12) = 42. ✓\nOr algebra: 2(w + w+3) = 42 → 4w+6 = 42 → w = 9."
+        },
+        {
+          "problem": "DIAGNOSIS EXERCISE: Before solving, analyze the answer choices for traps.\n\nA circle has a diameter of 10 cm. What is its area?\n(A) 10π  (B) 25π  (C) 50π  (D) 100π  (E) 31.4",
+          "hints": [
+            "SKIM: 'area' of a circle given 'diameter'.",
+            "CLASSIFY: geometry formula (A = πr²). The key question: did they give radius or diameter?",
+            "TRAP ANALYSIS: (D) 100π = π(10²) → using DIAMETER instead of radius. (A) 10π = πd → circumference formula. (E) 31.4 = 10π as a decimal → confusing area with circumference.",
+            "Three of five choices are traps for specific mistakes!"
+          ],
+          "answer": "(B) 25π. Diameter = 10, so radius = 5. A = π(5²) = 25π. Three traps avoided: diameter-as-radius, circumference formula, decimal conversion."
+        },
+        {
+          "problem": "DIAGNOSIS EXERCISE: Without solving, which approach is FASTEST for this problem?\n\nIf f(x) = 2x − 3, for what value of x does f(x) = f⁻¹(x)?\n(A) 1  (B) 2  (C) 3  (D) 4  (E) 5",
+          "hints": [
+            "SKIM: 'for what value of x does f(x) = f⁻¹(x)' — find where a function equals its inverse.",
+            "CLASSIFY: Functions/inverses. Could find f⁻¹, set equal, solve. OR...",
+            "KEY INSIGHT: f(x) = f⁻¹(x) happens on the line y = x. So f(x) = x → 2x−3 = x → x = 3.",
+            "But if you don't see that insight: BACKSOLVE. Try (C) x=3: f(3) = 3. f⁻¹(3) = (3+3)/2 = 3. Equal! ✓"
+          ],
+          "answer": "(C) 3. f(x) = f⁻¹(x) occurs where both equal x. So 2x−3 = x → x = 3. Backsolving also works instantly."
+        },
+        {
+          "problem": "DIAGNOSIS EXERCISE: Read the choices, then decide — estimate or calculate?\n\nThe area of a square with diagonal 8 is:\n(A) 16  (B) 32  (C) 64  (D) 32√2  (E) 128",
+          "hints": [
+            "SKIM: area of a square, given the diagonal (not the side!).",
+            "CLASSIFY: geometry — need to convert diagonal to side first, or use the shortcut A = d²/2.",
+            "ANALYZE CHOICES: (C) 64 = 8² → trap for using diagonal AS the side. (E) 128 = 2×64 → another common error.",
+            "ESTIMATE: Side < 8 (diagonal is always longer than side), so area < 64. Eliminate (C), (D), (E).",
+            "Only (A) 16 and (B) 32 remain. Side = 8/√2 ≈ 5.66. Area ≈ 32. Answer: (B)."
+          ],
+          "answer": "(B) 32. Diagonal = s√2, so s = 8/√2 = 4√2. Area = s² = 32. Or shortcut: A = d²/2 = 64/2 = 32."
+        }
+      ]
+    },
     {
       "type": "explanation",
       "lessonPhase": "concept-intro",
