@@ -1,0 +1,257 @@
+{
+  "moduleId": "statistics_probability",
+  "course": "ACT Math Prep",
+  "unit": 5,
+  "title": "Statistics & Probability",
+  "weeks": "6-7",
+  "estimatedDuration": 25,
+  "description": "Covers 8-12% of the ACT. Master measures of center and spread, data representations (bar/line/scatter/histogram/box plots), two-way tables, probability, and counting techniques. Focus on fast and accurate graph reading.",
+
+  "skills": [
+    "act-center-spread",
+    "act-data-representations",
+    "act-two-way-tables",
+    "act-probability",
+    "act-counting-techniques"
+  ],
+
+  "standardsAlignment": ["ACT S 301-305", "ACT S 401-405", "ACT S 501-505", "ACT S 601-605"],
+
+  "goals": [
+    "Calculate mean, median, mode, range, and weighted averages efficiently",
+    "Read and interpret graphs, scatter plots, histograms, and box plots",
+    "Extract information from two-way frequency tables and calculate conditional probabilities",
+    "Calculate basic, compound, and conditional probabilities",
+    "Apply the fundamental counting principle, permutations, and combinations"
+  ],
+
+  "instructionalStrategy": [
+    "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
+    "AI uses scaffold array as scope and worked-example bank",
+    "Emphasis on graph-reading speed — ACT stat questions are often straightforward if you read carefully",
+    "Two-way tables taught as a dedicated topic since they appear frequently",
+    "Probability taught with emphasis on complementary probability (P(at least 1) = 1 - P(none))"
+  ],
+
+  "aiFlexLevel": "moderate",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Measures of Center & Spread",
+      "skill": "act-center-spread",
+      "content": "Statistics questions on the ACT are often easier than students expect — they just require careful reading. Mean, median, and weighted averages are the most common question types.",
+      "keyPoints": [
+        "Mean (average) = sum of all values / number of values",
+        "Median = middle value when sorted. If even count, average the two middle values.",
+        "Mode = most frequently occurring value (can have multiple modes or no mode).",
+        "Range = maximum − minimum.",
+        "Weighted average: total = Σ(value × weight) / Σ(weights). Used for GPA, test averages with different point values, etc.",
+        "Standard deviation: measures spread from the mean. ACT only tests conceptual understanding (more spread = larger SD).",
+        "If you add a constant to every value: mean shifts by that constant, SD stays the same."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Center & Spread — Worked Examples",
+      "skill": "act-center-spread",
+      "examples": [
+        {
+          "problem": "A student scored 85, 92, 78, 95, and 90 on five tests. What is the mean score?\n(A) 85  (B) 88  (C) 90  (D) 92  (E) 95",
+          "solution": "Sum = 85 + 92 + 78 + 95 + 90 = 440\nMean = 440 / 5 = 88\nAnswer: (B) 88"
+        },
+        {
+          "problem": "A class has 10 students who scored 80, and 20 students who scored 95. What is the class average?\n(A) 85.0  (B) 87.5  (C) 88.0  (D) 90.0  (E) 92.5",
+          "solution": "Weighted average: (10 × 80 + 20 × 95) / (10 + 20)\n= (800 + 1900) / 30 = 2700 / 30 = 90\nAnswer: (D) 90.0\n\nTrap: (B) 87.5 is the simple average of 80 and 95, ignoring the different group sizes."
+        },
+        {
+          "problem": "Which data set has a greater standard deviation?\nSet A: {48, 49, 50, 51, 52}\nSet B: {10, 30, 50, 70, 90}\n(A) Set A  (B) Set B  (C) They are equal  (D) Cannot determine  (E) Neither has SD",
+          "solution": "Both sets have the same mean (50), but Set B's values are far more spread out.\nSet A: values range from 48-52 (range = 4).\nSet B: values range from 10-90 (range = 80).\nSet B has much greater standard deviation.\nAnswer: (B) Set B"
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Data Representations & Two-Way Tables",
+      "skill": "act-data-representations",
+      "content": "The ACT loves graph-reading questions. The key is reading carefully — most errors come from misreading axes, labels, or scales. Two-way tables appear on nearly every ACT and are a dedicated question type.",
+      "keyPoints": [
+        "Bar graphs: compare categories. Read values from the y-axis carefully.",
+        "Line graphs: show trends over time. Look for slope (rate of change).",
+        "Scatter plots: look for overall trend (positive, negative, none), outliers, and line of best fit.",
+        "Histograms: show frequency distribution. Each bar represents a range of values.",
+        "Box plots: minimum, Q1, median, Q3, maximum. IQR = Q3 − Q1.",
+        "Two-way tables: rows and columns represent two different categories. Totals in margins.",
+        "Conditional probability from table: P(A|B) = count in both A and B / total in B's row or column.",
+        "Always read axis labels and units FIRST before answering."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Data & Two-Way Tables — Worked Examples",
+      "skill": "act-two-way-tables",
+      "examples": [
+        {
+          "problem": "A two-way table shows:\n\n              | Cat | Dog | Total\n    Male      |  12 |  18 |   30\n    Female    |  20 |  15 |   35\n    Total     |  32 |  33 |   65\n\nWhat fraction of dog owners are male?\n(A) 18/65  (B) 18/33  (C) 18/30  (D) 33/65  (E) 15/33",
+          "solution": "Key phrase: 'of dog owners' → the denominator is the Dog column total (33).\nMale dog owners = 18.\nFraction = 18/33.\nAnswer: (B) 18/33\n\nTrap: (A) 18/65 uses the grand total. (C) 18/30 uses the Male row total."
+        },
+        {
+          "problem": "A box plot shows: min = 20, Q1 = 35, median = 50, Q3 = 65, max = 90. What is the IQR?\n(A) 15  (B) 30  (C) 50  (D) 55  (E) 70",
+          "solution": "IQR = Q3 − Q1 = 65 − 35 = 30\nAnswer: (B) 30\n\nNote: IQR measures the spread of the middle 50% of the data."
+        },
+        {
+          "problem": "A scatter plot of study hours (x) vs. test scores (y) shows a strong positive trend. The line of best fit has equation y = 5x + 60. If a student studies 6 hours, what score does the model predict?\n(A) 66  (B) 78  (C) 85  (D) 90  (E) 96",
+          "solution": "Plug in x = 6: y = 5(6) + 60 = 30 + 60 = 90\nAnswer: (D) 90\n\nNote: This is interpolation (within the data range), which is more reliable than extrapolation."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Statistics & Data Practice",
+      "skills": ["act-center-spread", "act-data-representations", "act-two-way-tables"],
+      "problems": [
+        {
+          "problem": "The median of {3, 7, 12, 15, x, 25, 30} (already sorted) is 15. What are the possible values of x?\n(A) x = 15  (B) x ≥ 15  (C) x ≤ 15  (D) 15 ≤ x ≤ 25  (E) Any value",
+          "hints": ["With 7 values, the median is the 4th value", "For the 4th value to be 15, x must be ≥ 15 (to keep 15 in the 4th position)"],
+          "answer": "(B) x ≥ 15. The 4th value in sorted order must be 15. If x < 15, x goes before 15 and shifts 15 to 5th position, making median = x or 15 depending on x. Actually: {3, 7, 12, 15, x, 25, 30} sorted — if x ≥ 15, median is 15. Answer: (D) 15 ≤ x ≤ 25."
+        },
+        {
+          "problem": "A class of 30 students has a mean test score of 82. If the teacher removes the lowest score of 40, what is the new mean?\n(A) 82  (B) 83.0  (C) 83.4  (D) 84.0  (E) 84.6",
+          "hints": ["Total = 30 × 82 = 2460", "New total = 2460 − 40 = 2420. New count = 29.", "New mean = 2420/29 ≈ 83.4"],
+          "answer": "(C) 83.4. Total = 2460. Remove 40: 2420/29 ≈ 83.45."
+        },
+        {
+          "problem": "Using the two-way table:\n\n              | Yes | No | Total\n    Seniors   |  25 | 15 |   40\n    Juniors   |  30 | 30 |   60\n    Total     |  55 | 45 |  100\n\nWhat percent of Juniors said Yes?\n(A) 30%  (B) 50%  (C) 55%  (D) 60%  (E) 75%",
+          "hints": ["Focus on the Juniors row", "Juniors who said Yes = 30, total Juniors = 60"],
+          "answer": "(B) 50%. 30/60 = 50%."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Probability & Counting",
+      "skill": "act-probability",
+      "content": "Probability questions on the ACT range from basic to moderate difficulty. Counting questions appear less frequently but are easy points if you know the fundamental counting principle.",
+      "keyPoints": [
+        "Basic probability: P(event) = favorable outcomes / total outcomes. Always between 0 and 1.",
+        "Complementary: P(not A) = 1 − P(A). Very useful for 'at least one' problems.",
+        "P(A or B) = P(A) + P(B) − P(A and B). If mutually exclusive: just P(A) + P(B).",
+        "P(A and B) = P(A) × P(B) if independent. If dependent: P(A) × P(B|A).",
+        "Fundamental counting principle: if step 1 has m choices and step 2 has n choices → m × n total.",
+        "Permutations (order matters): nPr = n! / (n−r)!",
+        "Combinations (order doesn't matter): nCr = n! / [r!(n−r)!]",
+        "Decision rule: 'arrange/order' → permutation. 'Choose/select' → combination."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Probability & Counting — Worked Examples",
+      "skill": "act-counting-techniques",
+      "examples": [
+        {
+          "problem": "A bag contains 3 red, 4 blue, and 5 green marbles. If one marble is drawn at random, what is the probability it is NOT green?\n(A) 5/12  (B) 7/12  (C) 5/7  (D) 1/3  (E) 2/3",
+          "solution": "Total marbles = 3 + 4 + 5 = 12.\nP(green) = 5/12.\nP(not green) = 1 − 5/12 = 7/12.\nAnswer: (B) 7/12"
+        },
+        {
+          "problem": "Two dice are rolled. What is the probability that the sum is 7?\n(A) 1/6  (B) 1/7  (C) 7/36  (D) 5/36  (E) 1/36",
+          "solution": "Total outcomes = 6 × 6 = 36.\nPairs that sum to 7: (1,6), (2,5), (3,4), (4,3), (5,2), (6,1) = 6 pairs.\nP = 6/36 = 1/6.\nAnswer: (A) 1/6"
+        },
+        {
+          "problem": "A password must be 3 characters: first a letter (26 choices), then a digit (10 choices), then a letter (26 choices). How many passwords are possible?\n(A) 62  (B) 676  (C) 2,600  (D) 6,760  (E) 17,576",
+          "solution": "Fundamental counting principle: 26 × 10 × 26 = 6,760.\nAnswer: (D) 6,760"
+        },
+        {
+          "problem": "How many ways can a committee of 3 be chosen from 8 people?\n(A) 24  (B) 56  (C) 120  (D) 336  (E) 512",
+          "solution": "Order doesn't matter → combination.\n8C3 = 8! / (3! × 5!) = (8 × 7 × 6) / (3 × 2 × 1) = 336/6 = 56\nAnswer: (B) 56"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Probability & Counting Practice",
+      "skills": ["act-probability", "act-counting-techniques"],
+      "problems": [
+        {
+          "problem": "A coin is flipped 3 times. What is the probability of getting at least one head?\n(A) 1/8  (B) 3/8  (C) 1/2  (D) 7/8  (E) 1",
+          "hints": ["Use complementary probability: P(at least 1 head) = 1 − P(no heads)", "P(no heads) = P(TTT) = (1/2)³ = 1/8"],
+          "answer": "(D) 7/8. P(at least 1 head) = 1 − P(TTT) = 1 − 1/8 = 7/8."
+        },
+        {
+          "problem": "A jar has 5 red and 3 blue marbles. Two marbles are drawn without replacement. What is the probability both are red?\n(A) 5/14  (B) 25/64  (C) 5/8  (D) 10/28  (E) 15/56",
+          "hints": ["First draw: P(red) = 5/8", "Second draw (without replacement): P(red) = 4/7", "Multiply: 5/8 × 4/7"],
+          "answer": "(A) 5/14. (5/8)(4/7) = 20/56 = 5/14."
+        },
+        {
+          "problem": "In how many ways can 5 runners finish in first, second, and third place?\n(A) 10  (B) 15  (C) 60  (D) 120  (E) 125",
+          "hints": ["Order matters → permutation", "5P3 = 5 × 4 × 3"],
+          "answer": "(C) 60. 5P3 = 5 × 4 × 3 = 60."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Statistics & Probability — ACT-Style Practice Set",
+      "skills": ["act-center-spread", "act-data-representations", "act-two-way-tables", "act-probability", "act-counting-techniques"],
+      "problems": [
+        {
+          "problem": "The mean of 5 numbers is 24. If one number (30) is removed, what is the mean of the remaining 4 numbers?\n(A) 20  (B) 22.5  (C) 23.5  (D) 24  (E) 25.5",
+          "answer": "(B) 22.5. Total = 5 × 24 = 120. Remove 30: 90/4 = 22.5."
+        },
+        {
+          "problem": "A histogram shows the following frequencies for test score ranges:\n60-69: 3 students, 70-79: 7 students, 80-89: 12 students, 90-99: 8 students.\nWhat percent of students scored 80 or above?\n(A) 40%  (B) 60%  (C) 66.7%  (D) 73.3%  (E) 80%",
+          "answer": "(C) 66.7%. 80+: 12 + 8 = 20. Total: 3+7+12+8 = 30. 20/30 = 66.7%."
+        },
+        {
+          "problem": "From a standard deck of 52 cards, what is the probability of drawing a heart or a face card?\n(A) 11/26  (B) 25/52  (C) 22/52  (D) 16/52  (E) 13/52",
+          "answer": "(C) 22/52. Hearts = 13. Face cards = 12. Heart face cards = 3. P = (13 + 12 − 3)/52 = 22/52 = 11/26."
+        },
+        {
+          "problem": "A 4-digit PIN uses digits 0-9. If no digit can be repeated, how many PINs are possible?\n(A) 5,040  (B) 10,000  (C) 6,561  (D) 3,024  (E) 720",
+          "answer": "(A) 5,040. 10 × 9 × 8 × 7 = 5,040."
+        },
+        {
+          "problem": "A box plot shows Q1 = 30, median = 45, Q3 = 60. Which statement MUST be true?\n(A) The mean is 45  (B) 50% of data is between 30 and 60  (C) The range is 30  (D) No outliers exist  (E) The mode is 45",
+          "answer": "(B) 50% of data is between 30 and 60. By definition, Q1 to Q3 contains the middle 50% (IQR)."
+        },
+        {
+          "problem": "In a survey, 60% of respondents like pizza, 40% like sushi, and 25% like both. What percent like pizza or sushi?\n(A) 65%  (B) 75%  (C) 85%  (D) 100%  (E) 125%",
+          "answer": "(B) 75%. P(pizza or sushi) = 60% + 40% − 25% = 75%."
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "mean-5tests": "88",
+    "weighted-average": "90",
+    "standard-deviation": "Set B",
+    "two-way-fraction": "18/33",
+    "iqr-boxplot": "30",
+    "line-of-best-fit": "90",
+    "median-sorted": "15 ≤ x ≤ 25",
+    "remove-lowest": "83.4",
+    "junior-yes-pct": "50%",
+    "not-green": "7/12",
+    "sum-7-dice": "1/6",
+    "password-count": "6760",
+    "committee-3from8": "56",
+    "at-least-1-head": "7/8",
+    "without-replacement": "5/14",
+    "runners-places": "60",
+    "remove-one-mean": "22.5",
+    "histogram-percent": "66.7%",
+    "heart-or-face": "22/52",
+    "4digit-pin": "5040",
+    "boxplot-true": "50% between Q1 and Q3",
+    "pizza-or-sushi": "75%"
+  }
+}
