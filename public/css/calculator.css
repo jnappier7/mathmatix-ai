@@ -430,6 +430,11 @@ body.standalone-calculator-page {
 }
 
 /* Ans variable styling */
+.mp-fn {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
 .mp-ans {
     font-style: italic;
     font-weight: bold;
