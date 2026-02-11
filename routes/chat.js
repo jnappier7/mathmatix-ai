@@ -1251,6 +1251,123 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         await activeConversation.save();
 
+        // ========== COURSE SCAFFOLD PROGRESSION ENGINE ==========
+        // Parse AI signal tags and advance course progress server-side.
+        // Tags: <SCAFFOLD_ADVANCE>, <MODULE_COMPLETE>
+        let courseProgressUpdate = null;
+        if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
+            try {
+                const CourseSessionModel = require('../models/courseSession');
+                const hasScaffoldAdvance = /<SCAFFOLD_ADVANCE>/i.test(aiResponseText);
+                const hasModuleComplete = /<MODULE_COMPLETE>/i.test(aiResponseText);
+
+                // Strip signal tags from the response text (student should not see them)
+                if (hasScaffoldAdvance || hasModuleComplete) {
+                    aiResponseText = aiResponseText
+                        .replace(/<SCAFFOLD_ADVANCE>/gi, '')
+                        .replace(/<MODULE_COMPLETE>/gi, '')
+                        .trim();
+                    // In streaming mode, tags were already sent — send replacement to overwrite
+                    if (useStreaming && !clientDisconnected) {
+                        try {
+                            res.write(`data: ${JSON.stringify({ type: 'replacement', content: aiResponseText })}\n\n`);
+                        } catch (e) { /* client may have disconnected */ }
+                    }
+                }
+
+                if (hasScaffoldAdvance || hasModuleComplete) {
+                    const csDoc = await CourseSessionModel.findById(user.activeCourseSessionId);
+                    if (csDoc && csDoc.status === 'active') {
+                        const courseCtx = loadCourseContext(csDoc);
+                        const totalSteps = courseCtx?.scaffoldData?.scaffold?.length || 1;
+                        const currentIdx = csDoc.currentScaffoldIndex || 0;
+                        const mod = csDoc.modules.find(m => m.moduleId === csDoc.currentModuleId);
+
+                        if (hasModuleComplete && mod) {
+                            // MODULE COMPLETE: mark done, unlock next, reset scaffold
+                            mod.status = 'completed';
+                            mod.scaffoldProgress = 100;
+                            mod.completedAt = new Date();
+
+                            // Unlock and advance to next module
+                            const modIdx = csDoc.modules.findIndex(m => m.moduleId === csDoc.currentModuleId);
+                            if (modIdx >= 0 && modIdx < csDoc.modules.length - 1) {
+                                const nextMod = csDoc.modules[modIdx + 1];
+                                if (nextMod.status === 'locked') nextMod.status = 'available';
+                                nextMod.startedAt = new Date();
+                                csDoc.currentModuleId = nextMod.moduleId;
+                            }
+                            csDoc.currentScaffoldIndex = 0;
+
+                            // Recalculate overall progress
+                            const doneCount = csDoc.modules.filter(m => m.status === 'completed').length;
+                            csDoc.overallProgress = Math.round((doneCount / csDoc.modules.length) * 100);
+
+                            // Check for full course completion
+                            if (doneCount === csDoc.modules.length) {
+                                csDoc.status = 'completed';
+                                csDoc.completedAt = new Date();
+                            }
+
+                            csDoc.markModified('modules');
+                            await csDoc.save();
+
+                            // Award XP for module completion (fire-and-forget)
+                            const moduleXP = 150;
+                            try {
+                                const userService = require('../services/userService');
+                                await userService.awardXP(user._id, moduleXP, `Module complete: ${mod.moduleId}`);
+                            } catch (xpErr) {
+                                await User.findByIdAndUpdate(user._id, {
+                                    $inc: { xp: moduleXP },
+                                    $push: { xpHistory: { date: new Date(), amount: moduleXP, reason: `Module complete: ${mod.moduleId}` } }
+                                });
+                            }
+
+                            console.log(`🎓 [Course] ${user.firstName} completed module ${mod.moduleId} — progress: ${csDoc.overallProgress}%`);
+
+                            courseProgressUpdate = {
+                                event: 'module_complete',
+                                moduleId: mod.moduleId,
+                                overallProgress: csDoc.overallProgress,
+                                nextModuleId: csDoc.currentModuleId,
+                                xpAwarded: moduleXP,
+                                courseComplete: csDoc.status === 'completed'
+                            };
+
+                        } else if (hasScaffoldAdvance && mod) {
+                            // SCAFFOLD ADVANCE: move to next step in the current module
+                            const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
+                            csDoc.currentScaffoldIndex = newIdx;
+
+                            // Update module scaffoldProgress as percentage
+                            mod.scaffoldProgress = Math.round(((newIdx + 1) / totalSteps) * 100);
+                            if (mod.status === 'available') {
+                                mod.status = 'in_progress';
+                                mod.startedAt = mod.startedAt || new Date();
+                            }
+
+                            csDoc.markModified('modules');
+                            await csDoc.save();
+
+                            const nextStep = courseCtx?.scaffoldData?.scaffold?.[newIdx];
+                            console.log(`📈 [Course] ${user.firstName} advanced scaffold → step ${newIdx + 1}/${totalSteps}: ${nextStep?.title || '?'}`);
+
+                            courseProgressUpdate = {
+                                event: 'scaffold_advance',
+                                scaffoldIndex: newIdx,
+                                scaffoldTotal: totalSteps,
+                                scaffoldProgress: mod.scaffoldProgress,
+                                stepTitle: nextStep?.title || null
+                            };
+                        }
+                    }
+                }
+            } catch (courseProgressErr) {
+                console.error('[Course] Scaffold progression error:', courseProgressErr.message);
+            }
+        }
+
         // Smart auto-naming: Update session name if it's still generic
         // Fire-and-forget to not block the response
         const { smartAutoName } = require('../services/chatService');
@@ -1450,7 +1567,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             aiTimeUsed: aiProcessingSeconds,
             freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
                 ? Math.max(0, (20 * 60) - updatedWeeklyAI)
-                : null
+                : null,
+            // Course progress update (if student is in a course and progress changed)
+            courseProgress: courseProgressUpdate || null
         };
 
         if (useStreaming) {

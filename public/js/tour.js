@@ -1,267 +1,193 @@
-// tour.js - First-time user tour
+// tour.js - First-time user tour (chat.html)
+// Uses direct style manipulation to avoid CSS specificity issues.
 (function() {
   'use strict';
 
-  // Tour steps configuration
   const tourSteps = [
     {
-      title: 'Welcome to MathMatix AI! 🎉',
+      title: 'Welcome to MathMatix AI!',
+      icon: 'fa-graduation-cap',
       content: `
-        <div class="tour-icon"><i class="fas fa-graduation-cap"></i></div>
-        <p>We're excited to help you master math! Let's take a quick tour to show you around.</p>
-        <p>This will only take a minute, and you can skip it anytime.</p>
+        <p>Your personal AI math tutor is ready. Let's take a 30-second tour.</p>
       `
     },
     {
-      title: 'Chat with Your AI Tutor',
+      title: 'Ask Anything',
+      icon: 'fa-comments',
       content: `
-        <div class="tour-icon"><i class="fas fa-comments"></i></div>
-        <p>Ask your AI tutor anything about math! Type your questions in the chat box at the bottom of the screen.</p>
+        <p>Type a math question below and your tutor will walk you through it step by step.</p>
         <div class="tour-highlight">
-          <strong>Pro Tip:</strong> You can upload images, use the whiteboard, or even use voice chat!
+          <strong>Try it:</strong> "How do I solve 2x + 5 = 15?"
         </div>
+        <p>You can also <strong>upload a photo</strong> of a worksheet or use <strong>voice chat</strong>.</p>
       `
     },
     {
-      title: 'Explore Tools & Features',
+      title: 'Your Toolkit',
+      icon: 'fa-calculator',
       content: `
-        <div class="tour-icon"><i class="fas fa-tools"></i></div>
-        <p>Check out the powerful tools at your disposal:</p>
+        <p>Open the <strong>sidebar</strong> on the left for:</p>
         <ul>
-          <li><i class="fas fa-chalkboard"></i> <strong>Whiteboard</strong> - Draw, write, and visualize math problems</li>
-          <li><i class="fas fa-calculator"></i> <strong>Calculator</strong> - Scientific calculator and graphing tools</li>
-          <li><i class="fas fa-image"></i> <strong>Upload</strong> - Share worksheets, homework, or photos of your work</li>
-          <li><i class="fas fa-microphone"></i> <strong>Voice Chat</strong> - Talk to your tutor hands-free</li>
+          <li><i class="fas fa-calculator"></i> <strong>Calculator</strong> &mdash; scientific + graphing</li>
+          <li><i class="fas fa-camera-retro"></i> <strong>Upload</strong> &mdash; snap homework, worksheets, or notes</li>
+          <li><i class="fas fa-graduation-cap"></i> <strong>Courses</strong> &mdash; enroll in a self-paced course</li>
         </ul>
       `
     },
     {
-      title: 'Track Your Progress',
+      title: 'Level Up!',
+      icon: 'fa-bolt',
       content: `
-        <div class="tour-icon"><i class="fas fa-chart-line"></i></div>
-        <p>Monitor your learning journey with our progress tracking system.</p>
+        <p>Every problem you solve earns <strong>XP</strong>. Level up, earn badges, and climb the leaderboard.</p>
         <div class="tour-highlight">
-          <strong>Features:</strong><br>
-          • Earn XP and level up as you learn<br>
-          • Unlock badges by mastering skills<br>
-          • View your skill mastery and growth<br>
-          • Complete daily quests for rewards
-        </div>
-      `
-    },
-    {
-      title: 'You\'re All Set!',
-      content: `
-        <div class="tour-icon"><i class="fas fa-rocket"></i></div>
-        <p>You're ready to start your math learning adventure!</p>
-        <p>Remember: Your AI tutor is here to help you learn, not just give you answers. Don't be afraid to ask questions and explore!</p>
-        <div class="tour-highlight">
-          <strong>Quick Tips:</strong><br>
-          • Show your work to get better feedback<br>
-          • Ask "why" to understand concepts deeper<br>
-          • Use the tools to visualize problems<br>
-          • Practice regularly to build mastery
+          <strong>Tip:</strong> Show your work and explain your reasoning &mdash; you'll earn bonus XP for great math thinking!
         </div>
       `
     }
   ];
 
-  // Tour state
   let currentStep = 0;
-  let tourModal = null;
-  let tourCompleted = false;
+  let isOpen = false;
 
-  // DOM elements
-  const elements = {
-    modal: null,
-    stepContent: null,
-    currentStepSpan: null,
-    totalStepsSpan: null,
-    progressFill: null,
-    prevBtn: null,
-    nextBtn: null,
-    finishBtn: null,
-    skipBtn: null
-  };
+  // DOM refs (populated in initTour)
+  const el = {};
 
-  // Initialize tour
   function initTour() {
-    // Get DOM elements
-    elements.modal = document.getElementById('tour-modal');
-    elements.stepContent = document.getElementById('tour-step-content');
-    elements.currentStepSpan = document.getElementById('tour-current-step');
-    elements.totalStepsSpan = document.getElementById('tour-total-steps');
-    elements.progressFill = document.getElementById('tour-progress-fill');
-    elements.prevBtn = document.getElementById('tour-prev-btn');
-    elements.nextBtn = document.getElementById('tour-next-btn');
-    elements.finishBtn = document.getElementById('tour-finish-btn');
-    elements.skipBtn = document.getElementById('tour-skip-btn');
+    el.modal = document.getElementById('tour-modal');
+    el.stepContent = document.getElementById('tour-step-content');
+    el.currentStepSpan = document.getElementById('tour-current-step');
+    el.totalStepsSpan = document.getElementById('tour-total-steps');
+    el.progressFill = document.getElementById('tour-progress-fill');
+    el.prevBtn = document.getElementById('tour-prev-btn');
+    el.nextBtn = document.getElementById('tour-next-btn');
+    el.finishBtn = document.getElementById('tour-finish-btn');
+    el.skipBtn = document.getElementById('tour-skip-btn');
 
-    if (!elements.modal) {
-      console.warn('Tour modal not found in DOM');
+    if (!el.modal || !el.nextBtn) {
+      console.warn('[Tour] Modal elements not found');
       return;
     }
 
-    // Set total steps
-    elements.totalStepsSpan.textContent = tourSteps.length;
+    el.totalStepsSpan.textContent = tourSteps.length;
 
-    // Attach event listeners
-    elements.prevBtn.addEventListener('click', handlePrev);
-    elements.nextBtn.addEventListener('click', handleNext);
-    elements.finishBtn.addEventListener('click', handleFinish);
-    elements.skipBtn.addEventListener('click', handleSkip);
+    // Button handlers with stopPropagation to prevent overlay/parent interference
+    el.prevBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); goTo(currentStep - 1); });
+    el.nextBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); goTo(currentStep + 1); });
+    el.finishBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); finish(true); });
+    el.skipBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); finish(false); });
 
-    // Check if user should see tour
+    // Block overlay background click from closing (stop propagation at content level)
+    const tourContent = el.modal.querySelector('.tour-content');
+    if (tourContent) {
+      tourContent.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (!isOpen) return;
+      if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        e.preventDefault();
+        if (currentStep < tourSteps.length - 1) goTo(currentStep + 1);
+        else finish(true);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (currentStep > 0) goTo(currentStep - 1);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        finish(false);
+      }
+    });
+
     checkTourStatus();
   }
 
-  // Check if user needs to see the tour
   async function checkTourStatus() {
     try {
-      const response = await fetch('/api/user/tour-status');
-      if (!response.ok) {
-        console.error('Failed to fetch tour status');
-        return;
-      }
-
+      const response = await fetch('/api/user/tour-status', { credentials: 'include' });
+      if (!response.ok) return;
       const data = await response.json();
-
-      // Show tour if user hasn't completed or dismissed it
       if (!data.tourCompleted && !data.tourDismissed) {
-        // Wait a bit for the page to load fully
-        setTimeout(() => {
-          showTour();
-        }, 1000);
+        // Delay so the page fully initializes first
+        setTimeout(showTour, 1500);
       }
-    } catch (error) {
-      console.error('Error checking tour status:', error);
+    } catch (err) {
+      console.error('[Tour] Status check failed:', err);
     }
   }
 
-  // Show tour
   function showTour() {
-    if (!elements.modal) return;
-
+    if (!el.modal || isOpen) return;
     currentStep = 0;
     renderStep();
-    elements.modal.classList.add('is-visible');
+    // Use direct style to bypass any CSS specificity issues
+    el.modal.style.display = 'flex';
+    el.modal.classList.add('is-visible');
+    isOpen = true;
   }
 
-  // Render current step
+  function closeTour() {
+    if (!el.modal) return;
+    el.modal.style.display = 'none';
+    el.modal.classList.remove('is-visible');
+    isOpen = false;
+  }
+
+  function goTo(step) {
+    if (step < 0 || step >= tourSteps.length) return;
+    currentStep = step;
+    renderStep();
+  }
+
   function renderStep() {
     const step = tourSteps[currentStep];
 
-    // Update content
-    elements.stepContent.innerHTML = `
+    el.stepContent.innerHTML = `
+      <div class="tour-icon"><i class="fas ${step.icon}"></i></div>
       <h3>${step.title}</h3>
       ${step.content}
     `;
 
-    // Update step indicator
-    elements.currentStepSpan.textContent = currentStep + 1;
+    el.currentStepSpan.textContent = currentStep + 1;
+    el.progressFill.style.width = `${((currentStep + 1) / tourSteps.length) * 100}%`;
 
-    // Update progress bar
-    const progress = ((currentStep + 1) / tourSteps.length) * 100;
-    elements.progressFill.style.width = `${progress}%`;
-
-    // Update button visibility
-    elements.prevBtn.style.display = currentStep > 0 ? 'inline-flex' : 'none';
-    elements.nextBtn.style.display = currentStep < tourSteps.length - 1 ? 'inline-flex' : 'none';
-    elements.finishBtn.style.display = currentStep === tourSteps.length - 1 ? 'inline-flex' : 'none';
+    el.prevBtn.style.display = currentStep > 0 ? 'inline-flex' : 'none';
+    el.nextBtn.style.display = currentStep < tourSteps.length - 1 ? 'inline-flex' : 'none';
+    el.finishBtn.style.display = currentStep === tourSteps.length - 1 ? 'inline-flex' : 'none';
   }
 
-  // Handle previous button
-  function handlePrev() {
-    if (currentStep > 0) {
-      currentStep--;
-      renderStep();
-    }
-  }
-
-  // Handle next button
-  function handleNext() {
-    if (currentStep < tourSteps.length - 1) {
-      currentStep++;
-      renderStep();
-    }
-  }
-
-  // Handle finish button
-  async function handleFinish() {
-    tourCompleted = true;
-    await markTourCompleted(true);
+  async function finish(completed) {
     closeTour();
-    showWelcomeMessage();
-  }
-
-  // Handle skip button
-  async function handleSkip() {
-    tourCompleted = false;
-    await markTourCompleted(false);
-    closeTour();
-  }
-
-  // Close tour
-  function closeTour() {
-    if (elements.modal) {
-      elements.modal.classList.remove('is-visible');
-    }
-  }
-
-  // Mark tour as completed or dismissed
-  async function markTourCompleted(completed = true) {
     try {
-      const response = await csrfFetch('/api/user/tour-complete', {
+      await csrfFetch('/api/user/tour-complete', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          completed,
-          dismissed: !completed
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed, dismissed: !completed })
       });
-
-      if (!response.ok) {
-        console.error('Failed to mark tour as completed');
+    } catch (err) {
+      console.error('[Tour] Failed to save status:', err);
+    }
+    if (completed) {
+      // Confetti celebration
+      if (typeof confetti !== 'undefined') {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       }
-    } catch (error) {
-      console.error('Error marking tour completed:', error);
-    }
-  }
-
-  // Show welcome message after tour completion
-  function showWelcomeMessage() {
-    // You could show a toast notification or confetti here
-    if (typeof confetti !== 'undefined') {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-    }
-
-    // Focus on the input to encourage starting
-    const chatInput = document.getElementById('user-input');
-    if (chatInput) {
-      setTimeout(() => {
-        chatInput.focus();
-        chatInput.placeholder = "Ask me anything about math! For example: 'How do I solve 2x + 5 = 15?'";
-      }, 500);
+      const chatInput = document.getElementById('user-input');
+      if (chatInput) {
+        setTimeout(() => {
+          chatInput.focus();
+          chatInput.placeholder = "Ask me anything about math! Try: 'How do I solve 2x + 5 = 15?'";
+        }, 400);
+      }
     }
   }
 
   // Public API
-  window.MathMatixTour = {
-    show: showTour,
-    init: initTour
-  };
+  window.MathMatixTour = { show: showTour, init: initTour };
 
-  // Auto-initialize when DOM is ready
+  // Auto-initialize
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initTour);
   } else {
     initTour();
   }
-
 })();

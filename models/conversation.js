@@ -34,7 +34,7 @@ const conversationSchema = new Schema({
     },
     conversationType: {
         type: String,
-        enum: ['general', 'assessment', 'mastery', 'topic'],
+        enum: ['general', 'assessment', 'mastery', 'topic', 'course'],
         default: 'general'
     },
     startDate: {
