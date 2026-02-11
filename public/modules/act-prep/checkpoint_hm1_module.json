@@ -1,0 +1,236 @@
+{
+  "moduleId": "checkpoint_higher_math_1",
+  "course": "ACT Math Prep",
+  "unit": 3,
+  "title": "Checkpoint: Higher Math Part 1 (Number & Quantity, Algebra, Functions)",
+  "weeks": "4",
+  "estimatedDuration": 40,
+  "type": "assessment",
+  "diagnosticMode": false,
+  "description": "Assessment covering all skills from Units 1-3: Number & Quantity, Algebra, and Functions. Questions are in ACT format (5-choice multiple choice) with difficulty progressing from easy to hard.",
+
+  "skillsCovered": [
+    "act-real-complex-numbers",
+    "act-exponents-roots",
+    "act-ratios-proportions-percents",
+    "act-linear-equations",
+    "act-systems-of-equations",
+    "act-quadratic-equations",
+    "act-function-notation-evaluation",
+    "act-linear-functions",
+    "act-quadratic-functions"
+  ],
+
+  "passThreshold": 70,
+
+  "remediationStrategy": {
+    "approach": "targeted-reteach",
+    "description": "Students scoring below threshold receive focused reteaching on their weakest skill clusters before proceeding. ACT prep reteaching emphasizes both content gaps and strategic approaches.",
+    "clusters": [
+      {
+        "skillId": "act-real-complex-numbers",
+        "reteachFocus": "PEMDAS precision, fraction arithmetic, complex number cycle (i, -1, -i, 1)"
+      },
+      {
+        "skillId": "act-exponents-roots",
+        "reteachFocus": "Exponent rules (product, quotient, power, negative), simplifying radicals"
+      },
+      {
+        "skillId": "act-ratios-proportions-percents",
+        "reteachFocus": "Percent change formula, cross-multiplication, successive percent multipliers"
+      },
+      {
+        "skillId": "act-linear-equations",
+        "reteachFocus": "Solving with fractions (LCD), absolute value splitting, inequality sign flip"
+      },
+      {
+        "skillId": "act-systems-of-equations",
+        "reteachFocus": "Elimination vs. substitution decision, word problem setup"
+      },
+      {
+        "skillId": "act-quadratic-equations",
+        "reteachFocus": "Factoring fluency, quadratic formula, discriminant shortcut"
+      },
+      {
+        "skillId": "act-function-notation-evaluation",
+        "reteachFocus": "f(g(x)) inside-out evaluation, inverse function finding"
+      },
+      {
+        "skillId": "act-linear-functions",
+        "reteachFocus": "Slope from two points, parallel/perpendicular, equation writing"
+      },
+      {
+        "skillId": "act-quadratic-functions",
+        "reteachFocus": "Vertex formula x = -b/(2a), vertex form reading, max/min identification"
+      }
+    ]
+  },
+
+  "assessmentProblems": [
+    {
+      "id": "chm1-1",
+      "question": "What is the value of 3² + 4(5 − 2) ÷ 6?\n(A) 7  (B) 9  (C) 11  (D) 13  (E) 15",
+      "answer": "(C) 11. 3² = 9. 4(3) = 12. 12 ÷ 6 = 2. 9 + 2 = 11.",
+      "skill": "act-real-complex-numbers",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "chm1-2",
+      "question": "A shirt is 30% off, and the sale price is $42. What was the original price?\n(A) $12.60  (B) $54.60  (C) $55  (D) $60  (E) $72",
+      "answer": "(D) $60. 0.70 × original = $42 → original = $42/0.70 = $60.",
+      "skill": "act-ratios-proportions-percents",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "chm1-3",
+      "question": "Simplify: (x⁴y²)³ / (x⁶y³)\n(A) x⁶y³  (B) x²y  (C) x⁶y  (D) x¹²y⁶  (E) x²y³",
+      "answer": "(A) x⁶y³. Numerator: x¹²y⁶. Divide: x^(12-6) · y^(6-3) = x⁶y³.",
+      "skill": "act-exponents-roots",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "chm1-4",
+      "question": "Solve: 4(x − 2) = 3(x + 1)\n(A) 5  (B) 7  (C) 9  (D) 11  (E) 13",
+      "answer": "(D) 11. 4x − 8 = 3x + 3 → x = 11.",
+      "skill": "act-linear-equations",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "chm1-5",
+      "question": "What is f(−1) if f(x) = x³ − 2x² + 4?\n(A) −3  (B) 1  (C) 3  (D) 5  (E) 7",
+      "answer": "(B) 1. f(−1) = (−1)³ − 2(−1)² + 4 = −1 − 2 + 4 = 1.",
+      "skill": "act-function-notation-evaluation",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "chm1-6",
+      "question": "What is the slope of the line 3x − 4y = 12?\n(A) 3  (B) −3/4  (C) 3/4  (D) 4/3  (E) −3",
+      "answer": "(C) 3/4. Rearrange: −4y = −3x + 12 → y = (3/4)x − 3. Slope = 3/4.",
+      "skill": "act-linear-functions",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "chm1-7",
+      "question": "If 2x + y = 10 and x − y = 2, what is x?\n(A) 2  (B) 3  (C) 4  (D) 5  (E) 6",
+      "answer": "(C) 4. Add equations: 3x = 12 → x = 4.",
+      "skill": "act-systems-of-equations",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "chm1-8",
+      "question": "Factor completely: x² − x − 12\n(A) (x − 4)(x + 3)  (B) (x + 4)(x − 3)  (C) (x − 6)(x + 2)  (D) (x − 12)(x + 1)  (E) (x + 4)(x + 3)",
+      "answer": "(A) (x − 4)(x + 3). Need two numbers that multiply to −12 and add to −1: −4 and 3.",
+      "skill": "act-quadratic-equations",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "chm1-9",
+      "question": "What is the vertex of y = 2(x − 3)² + 5?\n(A) (3, 5)  (B) (−3, 5)  (C) (3, −5)  (D) (−3, −5)  (E) (2, 5)",
+      "answer": "(A) (3, 5). In vertex form y = a(x−h)² + k, vertex is (h, k) = (3, 5).",
+      "skill": "act-quadratic-functions",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "chm1-10",
+      "question": "The ratio of boys to girls in a school is 3:5. If there are 240 students total, how many are girls?\n(A) 90  (B) 120  (C) 150  (D) 160  (E) 200",
+      "answer": "(C) 150. Girls = (5/8) × 240 = 150.",
+      "skill": "act-ratios-proportions-percents",
+      "difficulty": 3,
+      "points": 5
+    },
+    {
+      "id": "chm1-11",
+      "question": "If f(x) = 2x + 1 and g(x) = x² − 3, what is f(g(−2))?\n(A) −5  (B) −1  (C) 1  (D) 3  (E) 5",
+      "answer": "(D) 3. g(−2) = 4 − 3 = 1. f(1) = 2(1) + 1 = 3.",
+      "skill": "act-function-notation-evaluation",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "chm1-12",
+      "question": "What values of x satisfy |3x − 6| = 12?\n(A) 2  (B) 6  (C) −2 and 6  (D) 2 and −6  (E) −2 and −6",
+      "answer": "(C) −2 and 6. Case 1: 3x − 6 = 12 → x = 6. Case 2: 3x − 6 = −12 → x = −2.",
+      "skill": "act-linear-equations",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "chm1-13",
+      "question": "What is (3 + 4i)(2 − i)?\n(A) 10 + 5i  (B) 6 − 4i  (C) 2 + 5i  (D) 10 − 5i  (E) 6 + 5i",
+      "answer": "(A) 10 + 5i. FOIL: 6 − 3i + 8i − 4i² = 6 + 5i + 4 = 10 + 5i.",
+      "skill": "act-real-complex-numbers",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "chm1-14",
+      "question": "A line perpendicular to y = (2/3)x + 1 passes through (4, −1). What is its equation?\n(A) y = −(3/2)x + 5  (B) y = (3/2)x − 7  (C) y = −(2/3)x + 5/3  (D) y = (2/3)x − 11/3  (E) y = −(3/2)x − 1",
+      "answer": "(A) y = −(3/2)x + 5. Perpendicular slope = −3/2. y − (−1) = −(3/2)(x − 4) → y = −(3/2)x + 6 − 1 = −(3/2)x + 5.",
+      "skill": "act-linear-functions",
+      "difficulty": 4,
+      "points": 5
+    },
+    {
+      "id": "chm1-15",
+      "question": "For what value of k does the system have no solution?\n2x + ky = 6\n4x + 6y = 10\n(A) 2  (B) 3  (C) 6  (D) −3  (E) 12",
+      "answer": "(B) 3. No solution when lines are parallel: same slope, different intercept. 2x + ky = 6 → slope = −2/k. 4x + 6y = 10 → slope = −4/6 = −2/3. So −2/k = −2/3 → k = 3. Check intercepts differ: 6/3 = 2 ≠ 10/6. ✓",
+      "skill": "act-systems-of-equations",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "chm1-16",
+      "question": "The quadratic equation 2x² + bx + 8 = 0 has exactly one real solution. What are the possible values of b?\n(A) ±4  (B) ±8  (C) ±16  (D) 4 only  (E) 8 only",
+      "answer": "(B) ±8. Discriminant = 0: b² − 4(2)(8) = 0 → b² = 64 → b = ±8.",
+      "skill": "act-quadratic-equations",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "chm1-17",
+      "question": "A $500 investment earns 10% interest per year. After a 10% increase the first year, the investment loses 10% the second year. What is the value after 2 years?\n(A) $490  (B) $495  (C) $500  (D) $505  (E) $510",
+      "answer": "(B) $495. Year 1: $500 × 1.10 = $550. Year 2: $550 × 0.90 = $495. (NOT back to $500!)",
+      "skill": "act-ratios-proportions-percents",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "chm1-18",
+      "question": "The graph of y = a(x − h)² + k has vertex (−2, 7) and passes through (0, 3). What is a?\n(A) −1  (B) −2  (C) 1  (D) 2  (E) −1/2",
+      "answer": "(A) −1. Vertex form: y = a(x + 2)² + 7. Plug in (0, 3): 3 = a(4) + 7 → 4a = −4 → a = −1.",
+      "skill": "act-quadratic-functions",
+      "difficulty": 5,
+      "points": 6
+    }
+  ],
+
+  "answerKeys": {
+    "chm1-1": "11",
+    "chm1-2": "$60",
+    "chm1-3": "x⁶y³",
+    "chm1-4": "11",
+    "chm1-5": "1",
+    "chm1-6": "3/4",
+    "chm1-7": "4",
+    "chm1-8": "(x−4)(x+3)",
+    "chm1-9": "(3, 5)",
+    "chm1-10": "150",
+    "chm1-11": "3",
+    "chm1-12": "−2 and 6",
+    "chm1-13": "10 + 5i",
+    "chm1-14": "y = −(3/2)x + 5",
+    "chm1-15": "3",
+    "chm1-16": "±8",
+    "chm1-17": "$495",
+    "chm1-18": "−1"
+  }
+}
