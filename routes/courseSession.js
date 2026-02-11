@@ -174,9 +174,10 @@ router.post('/enroll', async (req, res) => {
     });
     await session.save();
 
-    // Set as active course session on user
+    // Set as active course session on user AND switch to the course conversation
     await User.findByIdAndUpdate(req.user._id, {
-      activeCourseSessionId: session._id
+      activeCourseSessionId: session._id,
+      activeConversationId: conversation._id
     });
 
     // Build welcome data for the client splash screen
