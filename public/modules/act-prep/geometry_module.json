@@ -21,6 +21,7 @@
   "goals": [
     "Apply angle relationships: complementary, supplementary, vertical, transversal",
     "Solve triangle problems using angle sum, Pythagorean theorem, and special triangles",
+    "Recognize special right triangles hidden inside other shapes (equilateral + altitude, square + diagonal, hexagons)",
     "Calculate area, perimeter, circumference, and volume using memorized formulas",
     "Apply distance, midpoint, and circle equations in the coordinate plane",
     "Use SOH-CAH-TOA to solve right triangle problems",
@@ -32,7 +33,8 @@
     "AI uses scaffold array as scope and worked-example bank",
     "Formula memorization drills integrated into every section",
     "Emphasis on diagram drawing and labeling as a problem-solving tool",
-    "Special right triangles and Pythagorean triples highlighted as high-frequency ACT content"
+    "Special right triangles and Pythagorean triples highlighted as high-frequency ACT content",
+    "Dedicated 'Spot the Special Triangle' section teaches recognition of hidden 30-60-90 and 45-45-90 patterns in equilateral triangles, squares, hexagons, and rhombuses"
   ],
 
   "aiFlexLevel": "moderate",
@@ -73,6 +75,74 @@
         {
           "problem": "One leg of a 30-60-90 triangle is 5 (the shortest leg). What is the hypotenuse?\n(A) 5√2  (B) 5√3  (C) 10  (D) 10√3  (E) 15",
           "solution": "In a 30-60-90 triangle: x : x√3 : 2x.\nShortest leg (opposite 30°) = x = 5.\nHypotenuse = 2x = 10.\nAnswer: (C) 10\n\nThe longer leg = 5√3 ≈ 8.66."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Recognizing Special Right Triangles in Disguise",
+      "skill": "act-angles-lines-triangles",
+      "content": "The ACT rarely TELLS you it's a special right triangle. Instead, it hides them inside other shapes. Learning to SPOT these patterns instantly saves huge time and avoids messy calculations.",
+      "keyPoints": [
+        "EQUILATERAL TRIANGLE + ALTITUDE = 30-60-90. Cutting an equilateral triangle in half creates two 30-60-90 triangles. If the equilateral has side s, the altitude = (s√3)/2.",
+        "SQUARE + DIAGONAL = 45-45-90. A square's diagonal creates two 45-45-90 triangles. If side = s, diagonal = s√2.",
+        "REGULAR HEXAGON = SIX EQUILATERAL TRIANGLES. Drawing diagonals from center creates equilateral triangles, which means 30-60-90 patterns everywhere.",
+        "ISOSCELES RIGHT TRIANGLE = 45-45-90. Whenever you see 'isosceles right triangle,' immediately apply the x : x : x√2 ratio.",
+        "60° OR 120° ANGLES in a problem often signal 30-60-90 hiding nearby (120° = supplement of 60°).",
+        "RECOGNITION TRIGGERS: Look for these numbers/phrases: 'equilateral,' 'isosceles right,' '45°,' '30°,' '60°,' side ratios involving √2 or √3, or leg ratios of 1:√3.",
+        "PYTHAGOREAN TRIPLE SPOTTING: If two sides are from a known triple family (3-4-5, 5-12-13, 8-15-17, 7-24-25), the third side follows immediately — no calculation needed."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Recognizing Special Right Triangles — Worked Examples",
+      "skill": "act-angles-lines-triangles",
+      "examples": [
+        {
+          "problem": "An equilateral triangle has side length 8. What is the area of the triangle?\n(A) 16  (B) 16√3  (C) 32  (D) 32√3  (E) 64",
+          "solution": "RECOGNIZE: equilateral triangle → drop an altitude → two 30-60-90 triangles.\nThe altitude splits the base: half-base = 4.\n30-60-90 ratio: 4 : 4√3 : 8 → altitude = 4√3.\nArea = (1/2)(8)(4√3) = 16√3.\nAnswer: (B) 16√3\n\nWithout recognition, you'd need the Pythagorean theorem: h² + 4² = 8² → h² = 48 → h = 4√3. Same answer, but slower."
+        },
+        {
+          "problem": "A square has a diagonal of length 10. What is the area of the square?\n(A) 25  (B) 50  (C) 25√2  (D) 100  (E) 100√2",
+          "solution": "RECOGNIZE: square + diagonal = 45-45-90 triangle.\nDiagonal = s√2 = 10, so side s = 10/√2 = 5√2.\nArea = s² = (5√2)² = 50.\nAnswer: (B) 50\n\nShortcut: Area of square = (diagonal²)/2 = 100/2 = 50."
+        },
+        {
+          "problem": "A rhombus has side length 10 and one angle of 60°. What is the length of the shorter diagonal?\n(A) 5  (B) 5√3  (C) 10  (D) 10√3  (E) 20",
+          "solution": "RECOGNIZE: The 60° angle inside a rhombus creates a triangle with the diagonal. The diagonal bisects the 60° angle → 30° angle. This forms a 30-60-90 triangle.\nIn the 30-60-90: hypotenuse = side = 10, short leg (half of shorter diagonal) = 5.\nShorter diagonal = 2 × 5 = 10.\nAnswer: (C) 10\n\nThe 60° angle was the trigger: it signals 30-60-90."
+        },
+        {
+          "problem": "A ladder 26 feet long leans against a wall. The foot of the ladder is 10 feet from the base of the wall. How high up the wall does the ladder reach?\n(A) 16  (B) 20  (C) 24  (D) 25  (E) √576",
+          "solution": "RECOGNIZE PYTHAGOREAN TRIPLE: 10 and 26... is this a scaled triple?\n5-12-13 × 2 = 10-24-26. Yes!\nHeight = 24 feet.\nAnswer: (C) 24\n\nWithout recognition: h² + 10² = 26² → h² = 676 − 100 = 576 → h = 24. Correct but slower."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Spot the Special Triangle — Practice",
+      "skill": "act-angles-lines-triangles",
+      "problems": [
+        {
+          "problem": "A regular hexagon has side length 6. What is the distance from the center to a vertex?\n(A) 3  (B) 3√3  (C) 6  (D) 6√3  (E) 12",
+          "hints": ["A regular hexagon is made of 6 equilateral triangles radiating from the center", "Each equilateral triangle has all sides equal to the hexagon's side length"],
+          "answer": "(C) 6. A regular hexagon = 6 equilateral triangles. Each triangle has side = 6, so center-to-vertex = 6."
+        },
+        {
+          "problem": "An isosceles right triangle has a hypotenuse of 14. What is the length of each leg?\n(A) 7  (B) 7√2  (C) 7√3  (D) 14/√2  (E) Both A and D",
+          "hints": ["Isosceles right = 45-45-90. Ratio: x : x : x√2", "x√2 = 14 → x = 14/√2 = 14√2/2 = 7√2. Wait — check carefully!"],
+          "answer": "(B) 7√2. x√2 = 14 → x = 14/√2 = 7√2. Note: (D) 14/√2 = 7√2, so (B) and (D) are equal. But as written, (B) 7√2 is the simplified form."
+        },
+        {
+          "problem": "The altitude of an equilateral triangle is 9√3. What is the side length?\n(A) 9  (B) 12  (C) 15  (D) 18  (E) 9√2",
+          "hints": ["Equilateral + altitude = 30-60-90. Altitude = longer leg = x√3", "x√3 = 9√3 → x = 9. But x is HALF the side, so side = 2x"],
+          "answer": "(D) 18. altitude = (s/2)√3 = 9√3 → s/2 = 9 → s = 18."
+        },
+        {
+          "problem": "A right triangle has legs 15 and 36. What is the hypotenuse?\n(A) 37  (B) 39  (C) 40  (D) 41  (E) 51",
+          "hints": ["Check triple families: 3-4-5 → ×? 5-12-13 → ×? Try: 15 = 5×3, 36 = 12×3", "5-12-13 scaled by 3 = 15-36-39"],
+          "answer": "(B) 39. Recognize: 5-12-13 triple × 3 = 15-36-39. No calculation needed!"
         }
       ]
     },
