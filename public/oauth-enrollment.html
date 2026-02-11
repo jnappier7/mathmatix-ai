@@ -116,9 +116,12 @@
         document.getElementById('user-name').textContent = fullName;
         document.getElementById('user-email').textContent = data.email;
 
-        const providerIcon = data.provider === 'google' ? 'fab fa-google' : 'fab fa-microsoft';
+        const providerIcons = { google: 'fab fa-google', microsoft: 'fab fa-microsoft', clever: 'fas fa-graduation-cap' };
+        const providerColors = { google: '#4285F4', microsoft: '#00A4EF', clever: '#4274f6' };
+        const providerIcon = providerIcons[data.provider] || 'fas fa-user';
+        const providerColor = providerColors[data.provider] || '#667eea';
         document.getElementById('welcome-text').innerHTML =
-          `<i class="${providerIcon}" style="color: ${data.provider === 'google' ? '#4285F4' : '#00A4EF'};"></i> ` +
+          `<i class="${providerIcon}" style="color: ${providerColor};"></i> ` +
           `Welcome! Enter your class enrollment code to complete sign up.`;
 
       } catch (error) {

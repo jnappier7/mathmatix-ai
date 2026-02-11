@@ -223,7 +223,9 @@ app.use(helmet({
         "https://api.openai.com", // OpenAI API
         "https://api.mathpix.com", // Mathpix OCR
         "https://api.elevenlabs.io", // ElevenLabs TTS
-        "https://cdn.jsdelivr.net" // CDN resources and source maps
+        "https://cdn.jsdelivr.net", // CDN resources and source maps
+        "https://clever.com", // Clever SSO
+        "https://api.clever.com" // Clever API
       ],
       workerSrc: ["'self'", "blob:"], // Allow blob workers for confetti effects
       mediaSrc: ["'self'", "blob:", "data:"], // Audio/video
@@ -382,6 +384,44 @@ app.get('/auth/microsoft/callback', authLimiter, (req, res, next) => {
     })(req, res, next);
 });
 
+
+// --- Clever SSO Routes (conditional - only if Clever credentials are configured) ---
+if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
+    app.get('/auth/clever', authLimiter, passport.authenticate('clever'));
+
+    app.get('/auth/clever/callback', authLimiter, (req, res, next) => {
+        passport.authenticate('clever', (err, user, info) => {
+            if (err) { return next(err); }
+            if (!user) {
+                const errorMessage = info && info.message ? encodeURIComponent(info.message) : 'authentication_failed';
+                return res.redirect(`/login.html?error=${errorMessage}`);
+            }
+
+            // Check if this is a new user requiring enrollment code
+            if (user.isPendingEnrollment) {
+                req.session.pendingOAuthProfile = user.pendingProfile;
+                console.log('LOG: New Clever SSO user requires enrollment code');
+                return res.redirect('/oauth-enrollment.html');
+            }
+
+            req.logIn(user, async (err) => {
+                if (err) { return next(err); }
+                try {
+                    await User.findByIdAndUpdate(user._id, { lastLogin: new Date() });
+                } catch (updateErr) {
+                    console.error("ERROR: Failed to update lastLogin:", updateErr);
+                }
+                if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
+                if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
+                if (user.role === 'student' && !user.selectedAvatarId) return res.redirect('/pick-avatar.html');
+                const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
+                res.redirect(dashboardMap[user.role] || '/login.html');
+            });
+        })(req, res, next);
+    });
+
+    logger.info('✅ Clever SSO routes registered');
+}
 
 // API Routes
 app.use('/api/admin', isAuthenticated, isAdmin, adminRoutes);

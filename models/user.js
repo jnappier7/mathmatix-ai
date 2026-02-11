@@ -497,6 +497,7 @@ const userSchema = new Schema({
   passwordHash: { type: String },                       // populated only for local-strategy users
   googleId:     { type: String, unique: true, sparse: true },
   microsoftId:  { type: String, unique: true, sparse: true },
+  cleverId:     { type: String, unique: true, sparse: true },
 
   /* Password Reset */
   resetPasswordToken:   { type: String },
