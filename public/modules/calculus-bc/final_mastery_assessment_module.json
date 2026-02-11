@@ -1,0 +1,208 @@
+{
+  "moduleId": "final_mastery_assessment",
+  "course": "AP Calculus BC",
+  "title": "AP Calculus BC Final Mastery Assessment",
+  "weeks": "36",
+  "estimatedDuration": 60,
+  "type": "assessment",
+  "isFinal": true,
+  "description": "Comprehensive final assessment covering all AP Calculus BC content in AP exam format. Includes problems from every unit (limits, derivatives, integration, differential equations, applications, parametric/polar/vectors, and series) with a mix of difficulty levels. Tests both procedural fluency and conceptual understanding with AP-style justification requirements.",
+  "skillsCovered": [
+    "limits-algebraic", "limits-continuity", "derivative-definition", "basic-differentiation",
+    "product-quotient-rules", "chain-rule", "implicit-differentiation", "inverse-function-derivatives",
+    "related-rates", "motion-problems", "linearization-differentials", "lhopitals-rule",
+    "increasing-decreasing-extrema", "concavity-inflection", "evt-mvt", "optimization",
+    "riemann-sums", "ftc-part1", "ftc-part2", "u-substitution",
+    "integration-by-parts", "partial-fractions", "improper-integrals",
+    "slope-fields", "separation-of-variables", "eulers-method", "logistic-growth",
+    "area-between-curves", "volume-disk-washer", "volume-cross-sections", "average-value",
+    "parametric-derivatives", "parametric-arc-length", "polar-graphing-area", "vector-valued-functions",
+    "convergence-tests", "alternating-series-error", "taylor-maclaurin-polynomials",
+    "power-series-interval", "lagrange-error-bound"
+  ],
+  "passThreshold": 70,
+  "assessmentProblems": [
+    {
+      "id": "cbf-1",
+      "question": "Evaluate: lim_{x→3} (x² − 9)/(x² − 5x + 6).",
+      "answer": "Factor: (x−3)(x+3)/((x−3)(x−2)) = (x+3)/(x−2). At x=3: 6/1 = 6.",
+      "skill": "limits-algebraic",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbf-2",
+      "question": "Differentiate: f(x) = x²·ln(x) − x²/2.",
+      "answer": "f'(x) = 2x·ln(x) + x²·(1/x) − x = 2x·ln(x) + x − x = 2x·ln(x).",
+      "skill": "product-quotient-rules",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbf-3",
+      "question": "Find dy/dx by implicit differentiation: sin(xy) = x.",
+      "answer": "cos(xy)·(y + x·dy/dx) = 1. y·cos(xy) + x·cos(xy)·dy/dx = 1. dy/dx = (1 − y·cos(xy))/(x·cos(xy)).",
+      "skill": "implicit-differentiation",
+      "difficulty": 5,
+      "points": 6
+    },
+    {
+      "id": "cbf-4",
+      "question": "Evaluate: lim_{x→0} (x − sin x)/x³.",
+      "answer": "0/0. L'Hôpital: (1−cosx)/(3x²). Still 0/0. Again: sinx/(6x). Still 0/0. Again: cosx/6 → 1/6.",
+      "skill": "lhopitals-rule",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-5",
+      "question": "A conical tank (vertex down) has radius 3 m at the top and height 6 m. Water flows in at 2 m³/min. At what rate is the water level rising when the depth is 4 m?",
+      "answer": "By similar triangles: r = h/2. V = (1/3)πr²h = (1/3)π(h/2)²h = πh³/12. dV/dt = πh²/4 · dh/dt. At h=4: 2 = π(16)/4 · dh/dt = 4π · dh/dt. dh/dt = 1/(2π) m/min.",
+      "skill": "related-rates",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cbf-6",
+      "question": "Find the absolute maximum and minimum of f(x) = x⁴ − 8x² + 3 on [−3, 3].",
+      "answer": "f'(x) = 4x³ − 16x = 4x(x² − 4) = 4x(x−2)(x+2). Critical: x = 0, ±2. f(−3) = 81−72+3 = 12. f(−2) = 16−32+3 = −13. f(0) = 3. f(2) = 16−32+3 = −13. f(3) = 81−72+3 = 12. Abs max: 12 at x = ±3. Abs min: −13 at x = ±2.",
+      "skill": "evt-mvt",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-7",
+      "question": "Evaluate: ∫ x·e^(2x) dx.",
+      "answer": "By parts: u = x, dv = e^(2x)dx. du = dx, v = e^(2x)/2. ∫ = xe^(2x)/2 − ∫e^(2x)/2 dx = xe^(2x)/2 − e^(2x)/4 + C = (e^(2x)/4)(2x−1) + C.",
+      "skill": "integration-by-parts",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-8",
+      "question": "Evaluate: ∫₀¹ 1/(x²+1) dx.",
+      "answer": "∫₀¹ 1/(x²+1)dx = [arctan(x)]₀¹ = arctan(1) − arctan(0) = π/4.",
+      "skill": "ftc-part2",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbf-9",
+      "question": "Determine whether ∫₁^∞ 1/(x²+1) dx converges or diverges. If it converges, find its value.",
+      "answer": "∫₁^∞ 1/(x²+1)dx = lim_{b→∞}[arctan(x)]₁ᵇ = lim_{b→∞}(arctan(b)−arctan(1)) = π/2−π/4 = π/4. Converges to π/4.",
+      "skill": "improper-integrals",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-10",
+      "question": "Find the area between y = x³ and y = x on the interval where x ≥ 0 and x³ ≤ x.",
+      "answer": "x³ = x → x(x²−1) = 0 → x = 0, 1 (for x≥0). On [0,1]: x ≥ x³. A = ∫₀¹(x−x³)dx = [x²/2−x⁴/4]₀¹ = 1/2−1/4 = 1/4.",
+      "skill": "area-between-curves",
+      "difficulty": 3,
+      "points": 4
+    },
+    {
+      "id": "cbf-11",
+      "question": "Find the volume of the solid formed by revolving y = 1/x, x = 1, x = 4, and y = 0 about the x-axis.",
+      "answer": "Disk: V = π∫₁⁴(1/x)²dx = π∫₁⁴ x⁻² dx = π[−1/x]₁⁴ = π(−1/4+1) = 3π/4.",
+      "skill": "volume-disk-washer",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbf-12",
+      "question": "Solve the IVP: dy/dx = y·cos(x), y(0) = 2.",
+      "answer": "Separate: dy/y = cos(x)dx. Integrate: ln|y| = sin(x)+C. y = Ae^{sin(x)}. y(0)=2: A·e⁰=2→A=2. y = 2e^{sin(x)}.",
+      "skill": "separation-of-variables",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-13",
+      "question": "Use Euler's method with step size Δx = 0.5 to approximate y(1) given dy/dx = x + y and y(0) = 1.",
+      "answer": "Step 1: x₀=0, y₀=1. dy/dx=0+1=1. y₁ = 1+1(0.5) = 1.5. Step 2: x₁=0.5, y₁=1.5. dy/dx=0.5+1.5=2. y₂ = 1.5+2(0.5) = 2.5. y(1) ≈ 2.5.",
+      "skill": "eulers-method",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-14",
+      "question": "A parametric curve is given by x(t) = t² − t, y(t) = t³ − 3t. Find all values of t where the tangent line is horizontal.",
+      "answer": "Horizontal tangent: dy/dt = 0 (and dx/dt ≠ 0). dy/dt = 3t²−3 = 3(t−1)(t+1) = 0 → t = ±1. Check: dx/dt = 2t−1. At t=1: dx/dt = 1 ≠ 0 ✓. At t=−1: dx/dt = −3 ≠ 0 ✓. Horizontal tangent at t = 1 and t = −1.",
+      "skill": "parametric-derivatives",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-15",
+      "question": "Find the area enclosed by the cardioid r = 1 + sin(θ).",
+      "answer": "A = (1/2)∫₀^{2π}(1+sinθ)²dθ = (1/2)∫₀^{2π}(1+2sinθ+sin²θ)dθ. Using sin²θ=(1−cos2θ)/2: = (1/2)∫₀^{2π}(3/2+2sinθ−cos2θ/2)dθ = (1/2)[3θ/2−2cosθ−sin2θ/4]₀^{2π} = (1/2)[(3π−2−0)−(0−2−0)] = (1/2)(3π) = 3π/2.",
+      "skill": "polar-graphing-area",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbf-16",
+      "question": "A particle moves with velocity v(t) = ⟨2t, e^t⟩. Find the speed at t = 0 and the total distance traveled from t = 0 to t = 1.",
+      "answer": "Speed = |v(t)| = √(4t²+e^{2t}). At t=0: √(0+1) = 1. Distance = ∫₀¹√(4t²+e^{2t})dt (requires numerical evaluation; setup is sufficient for AP credit).",
+      "skill": "vector-valued-functions",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-17",
+      "question": "Determine whether each series converges or diverges: (a) Σ_{n=1}^∞ 3ⁿ/n!, (b) Σ_{n=1}^∞ n/(n²+1).",
+      "answer": "(a) Ratio test: a_{n+1}/aₙ = 3/(n+1) → 0 < 1. Converges. (b) lim n/(n²+1) = 0, but this alone doesn't prove convergence. Limit comparison with 1/n: lim [n/(n²+1)]/(1/n) = lim n²/(n²+1) = 1. Since Σ1/n diverges, so does Σn/(n²+1). Diverges.",
+      "skill": "convergence-tests",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbf-18",
+      "question": "Find the Maclaurin series for f(x) = e^(−x²) through the x⁶ term. Then write the series in sigma notation.",
+      "answer": "eᵘ = Σuⁿ/n!. Substitute u = −x²: e^(−x²) = Σ(−x²)ⁿ/n! = Σ(−1)ⁿx²ⁿ/n!. Through x⁶: 1 − x² + x⁴/2 − x⁶/6. Sigma: Σ_{n=0}^∞ (−1)ⁿx²ⁿ/n!.",
+      "skill": "taylor-series-known",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-19",
+      "question": "Find the interval of convergence for Σ_{n=0}^∞ (x−1)ⁿ/2ⁿ.",
+      "answer": "This is geometric with r = (x−1)/2. Converges when |(x−1)/2| < 1 → |x−1| < 2 → −1 < x < 3. At x=−1: Σ(−1)ⁿ diverges. At x=3: Σ1ⁿ diverges. IOC: (−1, 3). Sum = 1/(1−(x−1)/2) = 2/(3−x).",
+      "skill": "power-series-interval",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbf-20",
+      "question": "ANALYSIS: Let f(x) = Σ_{n=1}^∞ (−1)ⁿ⁺¹xⁿ/n for |x| ≤ 1. (a) Identify f(x) as a known function. (b) Use the first three nonzero terms to approximate f(1/2). (c) Use the Lagrange error bound to show the error is less than 1/32. (d) Find f'(x) as a power series and identify it.",
+      "answer": "(a) f(x) = ln(1+x) (Maclaurin series for ln(1+x) = Σ_{n=1}^∞ (−1)ⁿ⁺¹xⁿ/n). (b) f(1/2) ≈ 1/2 − 1/8 + 1/24 = 12/24 − 3/24 + 1/24 = 10/24 = 5/12. (c) Alternating series with decreasing terms: error ≤ |4th term| = (1/2)⁴/4 = 1/64. Since 1/64 < 1/32, error < 1/32. ✓ (d) f'(x) = Σ_{n=1}^∞ (−1)ⁿ⁺¹xⁿ⁻¹ = Σ_{n=0}^∞ (−1)ⁿxⁿ = 1/(1+x) for |x|<1. Consistent: d/dx[ln(1+x)] = 1/(1+x). ✓",
+      "skill": "taylor-maclaurin-polynomials",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "answerKeys": {
+    "cbf-1": "6.",
+    "cbf-2": "2x·ln(x).",
+    "cbf-3": "(1−y·cos(xy))/(x·cos(xy)).",
+    "cbf-4": "1/6.",
+    "cbf-5": "dh/dt = 1/(2π) m/min.",
+    "cbf-6": "Abs max: 12 at x=±3. Abs min: −13 at x=±2.",
+    "cbf-7": "(e^(2x)/4)(2x−1) + C.",
+    "cbf-8": "π/4.",
+    "cbf-9": "π/4.",
+    "cbf-10": "1/4.",
+    "cbf-11": "3π/4.",
+    "cbf-12": "y = 2e^(sin x).",
+    "cbf-13": "y(1) ≈ 2.5.",
+    "cbf-14": "t = 1 and t = −1.",
+    "cbf-15": "3π/2.",
+    "cbf-16": "Speed at t=0: 1. Distance = ∫₀¹√(4t²+e^(2t))dt.",
+    "cbf-17": "(a) Converges. (b) Diverges.",
+    "cbf-18": "1−x²+x⁴/2−x⁶/6. Σ(−1)ⁿx²ⁿ/n!.",
+    "cbf-19": "IOC: (−1, 3).",
+    "cbf-20": "(a) ln(1+x). (b) 5/12. (c) Error≤1/64<1/32. (d) 1/(1+x)."
+  }
+}
