@@ -19,6 +19,7 @@
 
 const { openai, anthropic, retryWithExponentialBackoff, callLLM, callLLMStream, generateEmbedding } = require('./openaiClient');
 const { generateSystemPrompt } = require('./prompt');
+const { createAnonymizationContext, anonymizeMessages, anonymizeSystemPrompt, rehydrateResponse, logAnonymizationEvent } = require('./piiAnonymizer');
 
 // ============================================================================
 // CONFIGURATION
@@ -80,13 +81,20 @@ async function chat(context, options = {}) {
     const temperature = options.temperature || 0.7;
     const maxTokens = options.maxTokens || 1500;
 
-    // Call LLM
-    const completion = await callLLM(model, messagesForAI, {
+    // PII Anonymization: Strip identifiable information before sending to AI provider
+    const anonContext = createAnonymizationContext(user);
+    const anonymizedMessages = anonymizeMessages(messagesForAI, anonContext);
+    logAnonymizationEvent(user?._id, 'anonymize', { messageCount: anonymizedMessages.length });
+
+    // Call LLM with anonymized messages
+    const completion = await callLLM(model, anonymizedMessages, {
         temperature,
         max_tokens: maxTokens
     });
 
-    return completion.choices[0].message.content;
+    // Rehydrate: Replace [Student] placeholders with real first name
+    const rawResponse = completion.choices[0].message.content;
+    return rehydrateResponse(rawResponse, user?.firstName);
 }
 
 /**
@@ -131,13 +139,19 @@ async function chatStream(context, options = {}) {
     const temperature = options.temperature || 0.7;
     const maxTokens = options.maxTokens || 1500;
 
-    // Call streaming LLM
-    const stream = await callLLMStream(model, messagesForAI, {
+    // PII Anonymization: Strip identifiable information before sending to AI provider
+    const anonContext = createAnonymizationContext(user);
+    const anonymizedMessages = anonymizeMessages(messagesForAI, anonContext);
+    logAnonymizationEvent(user?._id, 'anonymize-stream', { messageCount: anonymizedMessages.length });
+
+    // Call streaming LLM with anonymized messages
+    // Note: Stream rehydration happens at the route level where chunks are processed
+    const stream = await callLLMStream(model, anonymizedMessages, {
         temperature,
         max_tokens: maxTokens
     });
 
-    return stream;
+    return { stream, anonContext };
 }
 
 /**
@@ -150,7 +164,7 @@ async function chatStream(context, options = {}) {
  * @returns {Promise<string>} The grading response
  */
 async function gradeWithVision(context, options = {}) {
-    const { imageDataUrl, prompt } = context;
+    const { imageDataUrl, prompt, user } = context;
 
     if (!imageDataUrl || !prompt) {
         throw new Error('imageDataUrl and prompt are required for vision grading');
@@ -159,6 +173,10 @@ async function gradeWithVision(context, options = {}) {
     const model = options.model || DEFAULT_MODELS.grading;
     const maxTokens = options.maxTokens || 1500;
     const temperature = options.temperature || 0.7;
+
+    // PII Anonymization: Strip student info from grading prompts
+    const anonContext = createAnonymizationContext(user || null);
+    const anonymizedPrompt = anonymizeSystemPrompt(prompt, anonContext);
 
     console.log(`[LLMGateway] Calling vision model: ${model}`);
 
@@ -193,7 +211,7 @@ async function gradeWithVision(context, options = {}) {
                                 },
                                 {
                                     type: 'text',
-                                    text: prompt
+                                    text: anonymizedPrompt
                                 }
                             ]
                         }
@@ -201,7 +219,7 @@ async function gradeWithVision(context, options = {}) {
                 })
             );
 
-            return completion.content[0].text;
+            return rehydrateResponse(completion.content[0].text, user?.firstName);
 
         } else {
             // OpenAI vision API
@@ -219,7 +237,7 @@ async function gradeWithVision(context, options = {}) {
                             content: [
                                 {
                                     type: 'text',
-                                    text: prompt
+                                    text: anonymizedPrompt
                                 },
                                 {
                                     type: 'image_url',
@@ -236,7 +254,7 @@ async function gradeWithVision(context, options = {}) {
                 })
             );
 
-            return completion.choices[0].message.content;
+            return rehydrateResponse(completion.choices[0].message.content, user?.firstName);
         }
 
     } catch (error) {
@@ -256,8 +274,12 @@ async function reason(prompt, options = {}) {
     const temperature = options.temperature || 0.7;
     const maxTokens = options.maxTokens || 1000;
 
+    // PII Anonymization: Strip any PII from reasoning prompts
+    const anonContext = createAnonymizationContext(options.user || null);
+    const anonymizedPrompt = anonymizeSystemPrompt(prompt, anonContext);
+
     const messages = [
-        { role: 'user', content: prompt }
+        { role: 'user', content: anonymizedPrompt }
     ];
 
     const completion = await callLLM(model, messages, {
@@ -265,7 +287,7 @@ async function reason(prompt, options = {}) {
         max_tokens: maxTokens
     });
 
-    return completion.choices[0].message.content;
+    return rehydrateResponse(completion.choices[0].message.content, options.user?.firstName);
 }
 
 // ============================================================================
@@ -275,7 +297,7 @@ async function reason(prompt, options = {}) {
 module.exports = {
     // High-level gateway methods (recommended)
     chat,                   // Consistent chat with persona
-    chatStream,             // Streaming chat with persona
+    chatStream,             // Streaming chat with persona (returns { stream, anonContext })
     gradeWithVision,        // Vision-based grading
     reason,                 // Reasoning tasks
 
@@ -283,6 +305,11 @@ module.exports = {
     callLLM,                // Direct LLM call
     callLLMStream,          // Direct streaming call
     generateEmbedding,      // Vector embeddings
+
+    // PII Anonymization (for routes that call callLLM/callLLMStream directly)
+    createAnonymizationContext,
+    anonymizeMessages,
+    rehydrateResponse,
 
     // Configuration
     DEFAULT_MODELS
