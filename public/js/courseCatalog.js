@@ -139,8 +139,9 @@ class CourseManager {
             const statusColor = s.status === 'paused' ? '#aaa' : '#667eea';
 
             item.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s;"
-                     onmouseover="this.style.background='#f0f0ff'" onmouseout="this.style.background='transparent'">
+                <div class="course-sidebar-row" style="display:flex; align-items:center; gap:8px; padding:8px 6px; border-radius:8px; cursor:pointer; transition:background 0.15s;"
+                     onmouseover="this.style.background='#f0f0ff';this.querySelector('.course-drop-x').style.opacity='1';"
+                     onmouseout="this.style.background='transparent';this.querySelector('.course-drop-x').style.opacity='0';">
                     <i class="fas ${statusIcon}" style="color:${statusColor}; font-size:14px;"></i>
                     <div style="flex:1; min-width:0;">
                         <div style="font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -148,10 +149,24 @@ class CourseManager {
                         </div>
                         <div style="font-size:11px; color:#888;">${s.overallProgress || 0}% complete</div>
                     </div>
+                    <i class="fas fa-times course-drop-x" title="Drop course"
+                       style="color:#ccc; font-size:12px; opacity:0; transition:opacity 0.15s, color 0.15s; padding:4px;"
+                       onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#ccc'"></i>
                 </div>
             `;
 
-            item.addEventListener('click', () => this.activateCourse(s._id));
+            // Click row → activate course
+            item.querySelector('.course-sidebar-row').addEventListener('click', (e) => {
+                if (e.target.closest('.course-drop-x')) return; // Don't activate if clicking X
+                this.activateCourse(s._id);
+            });
+
+            // Click X → drop course
+            item.querySelector('.course-drop-x').addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.dropCourse(s._id);
+            });
+
             list.appendChild(item);
         });
     }
@@ -461,6 +476,27 @@ class CourseManager {
 
             list.appendChild(el);
         });
+
+        // Drop Course button at the bottom of the module list
+        const dropRow = document.createElement('div');
+        dropRow.style.cssText = 'padding:12px 4px 4px; border-top:1px solid #f0f0f0; margin-top:8px; text-align:center;';
+        dropRow.innerHTML = `
+            <button class="course-drop-btn" style="
+                background:none; border:1px solid #e2e8f0; border-radius:8px;
+                color:#999; font-size:12px; padding:6px 16px; cursor:pointer;
+                transition:all 0.15s;
+            " onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444';"
+               onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#999';">
+                <i class="fas fa-sign-out-alt" style="margin-right:4px;"></i>Drop Course
+            </button>
+        `;
+        dropRow.querySelector('.course-drop-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (this.activeCourseSessionId) {
+                this.dropCourse(this.activeCourseSessionId);
+            }
+        });
+        list.appendChild(dropRow);
     }
 
     // --------------------------------------------------
@@ -686,6 +722,47 @@ class CourseManager {
             this.showToast('Returned to general tutoring');
         } catch (err) {
             console.error('[CourseManager] Failed to exit course:', err);
+        }
+    }
+
+    // --------------------------------------------------
+    // Drop Course (unenroll — pauses the course session)
+    // --------------------------------------------------
+    async dropCourse(sessionId) {
+        const session = this.courseSessions.find(s => s._id === sessionId);
+        const name = session?.courseName || 'this course';
+
+        if (!confirm(`Drop "${name}"?\n\nYour progress will be saved and you can re-enroll later.`)) {
+            return;
+        }
+
+        try {
+            const res = await csrfFetch(`/api/course-sessions/${sessionId}/drop`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            const data = await res.json();
+            if (!data.success) {
+                alert(data.message || 'Failed to drop course');
+                return;
+            }
+
+            // If this was the active course, hide the progress bar
+            if (this.activeCourseSessionId === sessionId) {
+                const wrapper = document.getElementById('course-progress-wrapper');
+                if (wrapper) wrapper.style.display = 'none';
+                this.activeCourseSessionId = null;
+                this.closeProgressDropdown();
+            }
+
+            // Refresh sidebar courses
+            await this.loadMySessions();
+
+            this.showToast(`Dropped ${name}`);
+        } catch (err) {
+            console.error('[CourseManager] Failed to drop course:', err);
+            alert('Something went wrong. Please try again.');
         }
     }
 
