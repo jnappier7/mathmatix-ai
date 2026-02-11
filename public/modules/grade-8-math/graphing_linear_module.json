@@ -1,0 +1,273 @@
+{
+  "moduleId": "graphing_linear",
+  "course": "8th Grade Mathematics",
+  "unit": 3,
+  "title": "Graphing & Writing Linear Equations",
+  "weeks": "10-13",
+  "estimatedDuration": 50,
+  "description": "Develop fluency with slope as a rate of change, write equations in slope-intercept form from multiple representations (points, tables, graphs, contexts), and compare linear models side by side. This is the bridge between algebraic equations and visual/graphical reasoning.",
+  "skills": ["slope-rate-of-change", "slope-from-representations", "y-intercept-context", "write-linear-equations", "compare-linear-models"],
+  "standardsAlignment": ["8.EE.5", "8.EE.6", "8.F.3", "8.F.4"],
+  "goals": [
+    "Calculate slope from two points, a graph, or a table and interpret it as a rate of change.",
+    "Identify slope as positive, negative, zero, or undefined and connect each to a real-world context.",
+    "Write linear equations in slope-intercept form (y = mx + b) from various representations.",
+    "Compare two linear functions by their rates of change and initial values using equations, tables, and graphs."
+  ],
+  "instructionalStrategy": [
+    "Anchor slope in real contexts FIRST — speed, price per item, growth rate — before introducing the formula.",
+    "Use multiple representations constantly: every equation should also appear as a table, a graph, and a context.",
+    "Slope-intercept form: 'm is the motion (rate), b is the beginning (starting value)' as a memory hook.",
+    "Comparing functions: put two models side by side and ask 'Which grows faster? Which starts higher? When are they equal?'"
+  ],
+  "aiFlexLevel": 0.6,
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Slope as Rate of Change",
+      "skill": "slope-rate-of-change",
+      "content": "Slope measures how steep a line is — it's the rate of change between any two points.\n\n**Formula:** slope = m = (y₂ − y₁) / (x₂ − x₁) = rise / run.\n\n**Four types of slope:**\n• Positive slope: line goes UP from left to right (increasing).\n• Negative slope: line goes DOWN from left to right (decreasing).\n• Zero slope: horizontal line (no vertical change). y = constant.\n• Undefined slope: vertical line (no horizontal change). x = constant.\n\n**Real-world meaning:** Slope IS the rate of change. If a car travels 60 miles per hour, the slope of its distance-time graph is 60. If a pool drains 5 gallons per minute, the slope is −5.\n\n**Key insight:** Slope is the same between ANY two points on a line. That's what makes it linear.",
+      "keyPoints": [
+        "Slope = rise/run = (y₂ − y₁)/(x₂ − x₁)",
+        "Positive slope: line rises left to right; negative slope: line falls left to right",
+        "Zero slope: horizontal line; undefined slope: vertical line",
+        "Slope = rate of change in real-world contexts",
+        "Slope is constant between any two points on the same line"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Slope as Rate of Change: Worked Examples",
+      "skill": "slope-rate-of-change",
+      "examples": [
+        {
+          "problem": "Find the slope of the line through (2, 3) and (5, 9).",
+          "solution": "m = (y₂ − y₁)/(x₂ − x₁) = (9 − 3)/(5 − 2) = 6/3 = 2.\nThe line rises 2 units for every 1 unit to the right.\nAnswer: m = 2."
+        },
+        {
+          "problem": "Find the slope of the line through (−1, 4) and (3, −2).",
+          "solution": "m = (−2 − 4)/(3 − (−1)) = −6/4 = −3/2.\nThe line falls 3 units for every 2 units to the right.\nAnswer: m = −3/2."
+        },
+        {
+          "problem": "A car travels 180 miles in 3 hours. What is the rate of change? Also, what is the slope of the line y = 4 and the line x = −2?",
+          "solution": "Car: rate of change = 180/3 = 60 miles per hour.\ny = 4 is a horizontal line → slope = 0 (no rise, only run).\nx = −2 is a vertical line → slope is undefined (rise with no run; division by zero).\nAnswer: 60 mph; slope of y = 4 is 0; slope of x = −2 is undefined."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Slope-Intercept Form: y = mx + b",
+      "skill": "write-linear-equations",
+      "content": "The most useful form of a linear equation is slope-intercept form: y = mx + b.\n\n**m** = slope (rate of change).\n**b** = y-intercept (the value of y when x = 0; the starting point).\n\n**Writing equations from different starting information:**\n\n1. **Given slope and y-intercept:** Plug directly into y = mx + b.\n2. **Given two points:** Find slope first using m = (y₂ − y₁)/(x₂ − x₁), then substitute one point into y = mx + b to solve for b.\n3. **Given a table:** Use any two rows to find slope, and read b from the row where x = 0 (if available) or solve for it.\n4. **Given a graph:** Read the y-intercept where the line crosses the y-axis, and count rise/run between two clear grid points.\n\n**Memory hook:** m = motion (how fast it changes), b = beginning (where it starts).",
+      "keyPoints": [
+        "y = mx + b: m is slope, b is y-intercept",
+        "y-intercept = value of y when x = 0",
+        "From two points: find m first, then solve for b",
+        "From a table: any two rows give the slope; x = 0 row gives b",
+        "From a graph: read b where line crosses y-axis, count rise/run for m"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Writing Linear Equations: Worked Examples",
+      "skill": "write-linear-equations",
+      "examples": [
+        {
+          "problem": "Write the equation of a line with slope 3 and y-intercept −2.",
+          "solution": "Plug directly into y = mx + b:\nm = 3, b = −2.\ny = 3x − 2.\nAnswer: y = 3x − 2."
+        },
+        {
+          "problem": "Write the equation of the line through (1, 5) and (3, 11).",
+          "solution": "Step 1: Find slope: m = (11 − 5)/(3 − 1) = 6/2 = 3.\nStep 2: Use point (1, 5) in y = mx + b: 5 = 3(1) + b → 5 = 3 + b → b = 2.\nEquation: y = 3x + 2.\nCheck with (3, 11): y = 3(3) + 2 = 11 ✓\nAnswer: y = 3x + 2."
+        },
+        {
+          "problem": "A table shows: x: 0, 2, 4 and y: −1, 3, 7. Write the equation.",
+          "solution": "Step 1: Find slope using any two points: m = (3 − (−1))/(2 − 0) = 4/2 = 2.\nStep 2: Read b from x = 0: when x = 0, y = −1, so b = −1.\nEquation: y = 2x − 1.\nCheck with (4, 7): y = 2(4) − 1 = 7 ✓\nAnswer: y = 2x − 1."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Comparing Linear Models",
+      "skill": "compare-linear-models",
+      "content": "In real life, you often need to compare two linear relationships: Which cell plan is cheaper? Which car depreciates faster? Which investment grows more?\n\n**Two things to compare:**\n1. **Rate of change (slope):** Which function grows or decreases faster?\n2. **Initial value (y-intercept):** Which function starts higher?\n\n**Methods for comparison:**\n• Both in equation form → compare m and b directly.\n• One equation, one table → write the equation from the table, then compare.\n• One equation, one graph → read slope and intercept from the graph, then compare.\n\n**Finding the intersection:** Set the two equations equal: m₁x + b₁ = m₂x + b₂. The solution tells you WHEN the two models give the same output.\n\n**Parallel lines:** Same slope, different y-intercepts → they never intersect.",
+      "keyPoints": [
+        "Compare rate of change (slope) to see which grows/decreases faster",
+        "Compare initial value (y-intercept) to see which starts higher",
+        "Convert all representations to y = mx + b for easy comparison",
+        "Find intersection by setting the two equations equal",
+        "Same slope + different intercepts = parallel lines (never meet)"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Comparing Linear Models: Worked Examples",
+      "skill": "compare-linear-models",
+      "examples": [
+        {
+          "problem": "Compare f(x) = 2x + 3 with the function represented by the table: x: 0, 1, 2, 3; y: 1, 4, 7, 10.",
+          "solution": "f(x) = 2x + 3: slope = 2, y-intercept = 3.\nTable: slope = (4 − 1)/(1 − 0) = 3, y-intercept = 1 (when x = 0, y = 1).\nTable equation: y = 3x + 1.\nComparison: The table function grows faster (slope 3 > 2), but f(x) starts higher (y-int 3 > 1).\nAnswer: Table has greater rate of change; f(x) has greater initial value."
+        },
+        {
+          "problem": "Pool A fills at 15 gallons/minute starting with 50 gallons. Pool B is modeled by y = 20x + 10. When does Pool B have more water than Pool A?",
+          "solution": "Pool A: y = 15x + 50. Pool B: y = 20x + 10.\nSet equal: 15x + 50 = 20x + 10 → 40 = 5x → x = 8 minutes.\nBefore 8 minutes: Pool A has more (higher starting value).\nAfter 8 minutes: Pool B has more (faster fill rate).\nAnswer: Pool B exceeds Pool A after 8 minutes."
+        },
+        {
+          "problem": "Compare: Line A passes through (0, 6) and (4, 2). Line B: y = −x + 5.",
+          "solution": "Line A: m = (2 − 6)/(4 − 0) = −4/4 = −1, b = 6. Equation: y = −x + 6.\nLine B: m = −1, b = 5.\nBoth have slope −1 but different y-intercepts (6 vs 5).\nThese are parallel lines — same steepness, but Line A is always 1 unit above Line B.\nAnswer: Same rate of change; Line A starts 1 unit higher. Parallel lines, never intersect."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Slope Practice",
+      "skill": "slope-rate-of-change",
+      "problems": [
+        {
+          "id": "gl-wp1",
+          "question": "Find the slope of the line through (−2, 5) and (4, −1).",
+          "answer": "m = (−1 − 5)/(4 − (−2)) = −6/6 = −1.",
+          "hints": ["Use the formula: m = (y₂ − y₁)/(x₂ − x₁).", "Be careful with the double negative: 4 − (−2) = 4 + 2 = 6."]
+        },
+        {
+          "id": "gl-wp2",
+          "question": "A hiker starts at 200 feet elevation and climbs to 650 feet in 3 hours. What is the rate of change in elevation?",
+          "answer": "Rate of change = (650 − 200)/3 = 450/3 = 150 feet per hour.",
+          "hints": ["Rate of change = (change in output)/(change in input).", "The output is elevation, the input is time."]
+        },
+        {
+          "id": "gl-wp3",
+          "question": "Find the slope of the line through (3, 7) and (3, −2).",
+          "answer": "m = (−2 − 7)/(3 − 3) = −9/0 → undefined. This is a vertical line.",
+          "hints": ["What happens when the x-values are the same?", "Division by zero is undefined — this is a vertical line."]
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Writing Linear Equations Practice",
+      "skill": "write-linear-equations",
+      "problems": [
+        {
+          "id": "gl-wp4",
+          "question": "Write the equation of a line with slope −2 that passes through (0, 5).",
+          "answer": "m = −2, b = 5 (since the point is the y-intercept). y = −2x + 5.",
+          "hints": ["The point (0, 5) is the y-intercept. What is b?", "Plug m and b into y = mx + b."]
+        },
+        {
+          "id": "gl-wp5",
+          "question": "Write the equation of the line through (2, 1) and (6, 9).",
+          "answer": "m = (9 − 1)/(6 − 2) = 8/4 = 2. Using (2, 1): 1 = 2(2) + b → 1 = 4 + b → b = −3. Equation: y = 2x − 3.",
+          "hints": ["Find slope first: rise/run between the two points.", "Then substitute one point into y = mx + b to find b."]
+        },
+        {
+          "id": "gl-wp6",
+          "question": "Write the equation from this table: x: 0, 3, 6 and y: 4, 7, 10.",
+          "answer": "m = (7 − 4)/(3 − 0) = 3/3 = 1. b = 4 (from x = 0 row). Equation: y = x + 4.",
+          "hints": ["Pick any two rows to calculate slope.", "The y-value when x = 0 is your y-intercept."]
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Comparing Linear Models Practice",
+      "skill": "compare-linear-models",
+      "problems": [
+        {
+          "id": "gl-wp7",
+          "question": "Compare Function A: y = 4x − 1 and Function B that passes through (0, 3) and (2, 7). Which has the greater rate of change? Which has the greater y-intercept?",
+          "answer": "Function B: m = (7 − 3)/(2 − 0) = 4/2 = 2, b = 3 → y = 2x + 3. Function A: rate 4, y-int −1. Function B: rate 2, y-int 3. A has greater rate of change (4 > 2); B has greater y-intercept (3 > −1).",
+          "hints": ["Write Function B in y = mx + b form first.", "Then compare m-values and b-values directly."]
+        },
+        {
+          "id": "gl-wp8",
+          "question": "Function A has y-intercept 10 and rate of change 3. Function B: y = 5x + 2. When does B exceed A?",
+          "answer": "A: y = 3x + 10. B: y = 5x + 2. Set B > A: 5x + 2 > 3x + 10 → 2x > 8 → x > 4. B exceeds A when x > 4.",
+          "hints": ["Write Function A as an equation first.", "Set B > A and solve the inequality."]
+        },
+        {
+          "id": "gl-wp9",
+          "question": "A table shows x: 0, 1, 2, 3 and y: 5, 8, 11, 14. Is this function linear? If so, write the equation.",
+          "answer": "Check differences: 8 − 5 = 3, 11 − 8 = 3, 14 − 11 = 3. Constant difference of 3 → linear. m = 3, b = 5. Equation: y = 3x + 5.",
+          "hints": ["Check if the y-values increase by a constant amount.", "A constant first difference means the function is linear."]
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Graphing & Linear Equations Mixed Practice",
+      "skill": "slope-rate-of-change",
+      "problems": [
+        {
+          "id": "gl-yp1",
+          "question": "Find the slope of the line through (−3, 8) and (1, −4).",
+          "answer": "m = (−4 − 8)/(1 − (−3)) = −12/4 = −3.",
+          "skill": "slope-rate-of-change",
+          "hints": ["Use the slope formula carefully with the negative signs."]
+        },
+        {
+          "id": "gl-yp2",
+          "question": "Write the equation of the line through (−1, 2) and (3, 10).",
+          "answer": "m = (10 − 2)/(3 − (−1)) = 8/4 = 2. Using (−1, 2): 2 = 2(−1) + b → 2 = −2 + b → b = 4. Equation: y = 2x + 4.",
+          "skill": "write-linear-equations",
+          "hints": ["Find slope first, then solve for b using one of the points."]
+        },
+        {
+          "id": "gl-yp3",
+          "question": "Write the equation from this table: x: 0, 2, 4, 6 and y: −3, 1, 5, 9.",
+          "answer": "m = (1 − (−3))/(2 − 0) = 4/2 = 2. b = −3 (from x = 0). Equation: y = 2x − 3.",
+          "skill": "write-linear-equations",
+          "hints": ["Use the first two rows to find slope. Read b from the x = 0 row."]
+        },
+        {
+          "id": "gl-yp4",
+          "question": "A pool drains at 8 gallons per minute. It currently has 200 gallons. Write the equation and find when it will be empty.",
+          "answer": "y = −8x + 200. Set y = 0: −8x + 200 = 0 → 8x = 200 → x = 25 minutes.",
+          "skill": "y-intercept-context",
+          "hints": ["Draining means negative slope. The current amount is the y-intercept."]
+        },
+        {
+          "id": "gl-yp5",
+          "question": "Compare: y = 3x + 1 versus a function with slope 5 and y-intercept −4. Which has the greater rate of change? Which has the greater initial value?",
+          "answer": "First function: slope 3, y-intercept 1. Second function: slope 5, y-intercept −4. Second has greater rate of change (5 > 3). First has greater initial value (1 > −4).",
+          "skill": "compare-linear-models",
+          "hints": ["Compare the slopes for rate of change. Compare the y-intercepts for initial value."]
+        },
+        {
+          "id": "gl-yp6",
+          "question": "Find the slope of the line through (0, 6) and (5, 6).",
+          "answer": "m = (6 − 6)/(5 − 0) = 0/5 = 0. This is a horizontal line.",
+          "skill": "slope-rate-of-change",
+          "hints": ["What happens when both y-values are the same?"]
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "gl-wp1": "m = −1",
+    "gl-wp2": "150 feet per hour",
+    "gl-wp3": "Undefined (vertical line)",
+    "gl-wp4": "y = −2x + 5",
+    "gl-wp5": "y = 2x − 3",
+    "gl-wp6": "y = x + 4",
+    "gl-wp7": "A: greater rate (4 vs 2); B: greater y-intercept (3 vs −1)",
+    "gl-wp8": "B exceeds A when x > 4",
+    "gl-wp9": "y = 3x + 5",
+    "gl-yp1": "m = −3",
+    "gl-yp2": "y = 2x + 4",
+    "gl-yp3": "y = 2x − 3",
+    "gl-yp4": "y = −8x + 200; empty at x = 25 minutes",
+    "gl-yp5": "Second has greater rate (5 > 3); first has greater initial value (1 > −4)",
+    "gl-yp6": "m = 0 (horizontal line)"
+  }
+}

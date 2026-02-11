@@ -1,0 +1,274 @@
+{
+  "moduleId": "volume_similarity",
+  "course": "8th Grade Mathematics",
+  "unit": 7,
+  "title": "Volume of Cylinders, Cones & Spheres",
+  "weeks": "25-28",
+  "estimatedDuration": 50,
+  "description": "Build fluency with the three curved-surface volume formulas: cylinders (V = πr²h), cones (V = ⅓πr²h), and spheres (V = ⁴⁄₃πr³). Students connect each formula to its rectangular prism cousin, explore the 1/3 and 4/3 relationships, tackle composite figures, and discover the k³ scaling rule. Every problem is grounded in real-world objects — soup cans, ice cream cones, basketballs, water tanks — so students see volume as a practical measurement tool.",
+  "skills": ["volume-cylinders", "volume-cones", "volume-spheres", "volume-scaling", "volume-word-problems"],
+  "standardsAlignment": ["8.G.9"],
+  "goals": [
+    "Calculate the volume of cylinders using V = πr²h and connect the formula to rectangular prisms.",
+    "Calculate the volume of cones using V = ⅓πr²h and spheres using V = ⁴⁄₃πr³.",
+    "Solve real-world problems involving volume of cylinders, cones, and spheres.",
+    "Understand and apply the k³ scaling rule: when dimensions are multiplied by k, volume is multiplied by k³.",
+    "Find the volume of composite figures by adding or subtracting component volumes."
+  ],
+  "instructionalStrategy": [
+    "Start with cylinders — they're stacked circles, just like rectangular prisms are stacked rectangles. V = (area of base) × height works for both.",
+    "Show the 1/3 relationship concretely: a cone with the same base and height as a cylinder holds exactly 1/3 the volume. If you could pour three cone-fuls into the cylinder, it would be exactly full.",
+    "Spheres: the 4/3 coefficient is harder to visualize, but note that a sphere fits inside a cylinder with r = r and h = 2r, and fills exactly 2/3 of that cylinder.",
+    "Use real objects for every formula: cans for cylinders, party hats for cones, basketballs for spheres. This grounds abstract formulas in physical intuition."
+  ],
+  "aiFlexLevel": 0.6,
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Volume of Cylinders",
+      "skill": "volume-cylinders",
+      "content": "A cylinder is a 3D shape with two parallel circular bases connected by a curved surface. Think: a soup can.\n\n**Formula:** V = πr²h\nwhere r = radius of the circular base, h = height of the cylinder.\n\n**Why it works:** The volume of ANY prism is (area of base) × height. A cylinder is a circular prism. The base is a circle with area πr². Stack that circle h units high → V = πr²h.\n\n**Key details:**\n- If given diameter, divide by 2 to get radius first!\n- Leave answers in terms of π for exact answers, or multiply by π ≈ 3.14159 for decimal approximations.\n- Units are always cubic: cm³, ft³, m³, in³.\n\n**Real-world connection:** How much soup fits in a can? How much water fills a cylindrical tank? These are volume questions.",
+      "keyPoints": [
+        "V = πr²h — area of circular base times height",
+        "A cylinder is like a circular prism: (base area) × height",
+        "Always use RADIUS, not diameter — divide diameter by 2 if needed",
+        "Exact answers use π; approximate answers use π ≈ 3.14",
+        "Volume is measured in cubic units (cm³, in³, ft³, etc.)"
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Volume of Cones and Spheres",
+      "skill": "volume-cones",
+      "content": "**Cones:** A cone has one circular base and comes to a point (apex). Think: ice cream cone, party hat.\n\n**Formula:** V = ⅓πr²h\nwhere r = radius of the base, h = height (perpendicular from base to apex).\n\n**The 1/3 relationship:** A cone is exactly 1/3 the volume of a cylinder with the same base and height. Three cones fill one cylinder.\n\n**Spheres:** A sphere is a perfectly round 3D shape. Think: basketball, globe.\n\n**Formula:** V = ⁴⁄₃πr³\nwhere r = radius of the sphere.\n\n**Key insight:** Notice r³ not r² — the radius is CUBED because a sphere extends in all three dimensions equally.\n\n**Useful fact:** A sphere fits perfectly inside a cylinder with the same radius and height = 2r. The sphere fills exactly 2/3 of that cylinder: (4/3)πr³ = (2/3) × πr²(2r).",
+      "keyPoints": [
+        "Cone: V = ⅓πr²h — exactly 1/3 of the corresponding cylinder",
+        "Three cones (same base, same height) fill one cylinder exactly",
+        "Sphere: V = ⁴⁄₃πr³ — radius is cubed, not squared",
+        "Sphere fits inside a cylinder and fills exactly 2/3 of it",
+        "For spheres, if given diameter, halve it to get r before cubing"
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Volume Scaling & Composite Figures",
+      "skill": "volume-scaling",
+      "content": "**The k³ Scaling Rule:** If every dimension of a 3D figure is multiplied by a scale factor k, the volume is multiplied by k³.\n\nWhy? Volume = length × width × height. If each is multiplied by k:\nNew volume = (k × l)(k × w)(k × h) = k³ × lwh = k³ × original volume.\n\n**Examples:**\n- Double all dimensions (k = 2): volume × 2³ = × 8\n- Triple all dimensions (k = 3): volume × 3³ = × 27\n- Halve all dimensions (k = ½): volume × (½)³ = × ⅛\n\n**Composite Figures:** Many real objects combine basic shapes. A silo is a cylinder topped by a hemisphere. A sharpened pencil is a cylinder with a cone tip.\n\n**Strategy:** Break the composite figure into parts you know. Find each part's volume. Add (if parts are joined) or subtract (if one is removed from another).\n\n**Example:** Cylinder with a cone scooped out of the top: V_total = V_cylinder − V_cone.",
+      "keyPoints": [
+        "k³ rule: scale all dimensions by k → volume scales by k³",
+        "Double dimensions → 8× volume; triple → 27× volume; halve → ⅛ volume",
+        "Composite figures: break into cylinders, cones, spheres, hemispheres",
+        "Add volumes for joined parts; subtract for removed parts",
+        "Always use the same units for all parts before combining"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Volume of Cylinders: Worked Examples",
+      "skill": "volume-cylinders",
+      "examples": [
+        {
+          "problem": "Find the volume of a cylinder with radius 4 cm and height 10 cm.",
+          "solution": "V = πr²h\nV = π(4)²(10)\nV = π(16)(10)\nV = 160π\nV ≈ 502.65 cm³\n\nExact answer: 160π cm³. Approximate: ≈ 502.65 cm³."
+        },
+        {
+          "problem": "A soup can has a diameter of 7 cm and a height of 12 cm. How much soup does it hold?",
+          "solution": "Diameter = 7, so radius = 7/2 = 3.5 cm.\nV = πr²h\nV = π(3.5)²(12)\nV = π(12.25)(12)\nV = 147π\nV ≈ 461.81 cm³\n\nThe can holds approximately 461.81 cm³ (or about 462 mL, since 1 cm³ = 1 mL)."
+        },
+        {
+          "problem": "A cylindrical water tank has a diameter of 6 feet and a height of 8 feet. Find its volume.",
+          "solution": "Diameter = 6, so radius = 3 feet.\nV = πr²h\nV = π(3)²(8)\nV = π(9)(8)\nV = 72π\nV ≈ 226.19 ft³\n\nThe tank holds about 226.19 cubic feet of water."
+        }
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Volume of Cones and Spheres: Worked Examples",
+      "skill": "volume-cones",
+      "examples": [
+        {
+          "problem": "Find the volume of a cone with radius 5 cm and height 12 cm.",
+          "solution": "V = ⅓πr²h\nV = ⅓π(5)²(12)\nV = ⅓π(25)(12)\nV = ⅓π(300)\nV = 100π\nV ≈ 314.16 cm³\n\nNote: The matching cylinder (r = 5, h = 12) would have V = 300π. The cone is exactly 1/3 of that: 100π. ✓"
+        },
+        {
+          "problem": "An ice cream cone has a radius of 3 cm and a height of 10 cm. What volume of ice cream can it hold (just the cone, not the scoop on top)?",
+          "solution": "V = ⅓πr²h\nV = ⅓π(3)²(10)\nV = ⅓π(9)(10)\nV = ⅓(90π)\nV = 30π\nV ≈ 94.25 cm³\n\nThe cone holds about 94.25 cm³ of ice cream — roughly 94 mL."
+        },
+        {
+          "problem": "A basketball has a radius of 12 cm. Find its volume.",
+          "solution": "V = ⁴⁄₃πr³\nV = ⁴⁄₃π(12)³\nV = ⁴⁄₃π(1728)\nV = ⁴⁄₃ × 1728 × π\nV = 2304π\nV ≈ 7238.23 cm³\n\nStep-by-step on the fraction: (4 × 1728)/3 = 6912/3 = 2304. ✓"
+        }
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Volume Scaling & Composite Figures: Worked Examples",
+      "skill": "volume-scaling",
+      "examples": [
+        {
+          "problem": "A cylinder has radius 3 cm and height 5 cm. If all dimensions are doubled, what is the new volume?",
+          "solution": "Original: V = π(3)²(5) = 45π cm³.\n\nScale factor k = 2. New volume = k³ × original = 8 × 45π = 360π ≈ 1130.97 cm³.\n\nVerification: New dimensions: r = 6, h = 10. V = π(6)²(10) = π(36)(10) = 360π ✓.\n\nThe volume increased by a factor of 8 when dimensions doubled."
+        },
+        {
+          "problem": "A silo is shaped like a cylinder (radius 3 m, height 8 m) topped by a cone (radius 3 m, height 4 m). Find the total volume.",
+          "solution": "Cylinder: V = πr²h = π(3)²(8) = π(9)(8) = 72π m³.\nCone: V = ⅓πr²h = ⅓π(3)²(4) = ⅓π(9)(4) = 12π m³.\n\nTotal: 72π + 12π = 84π ≈ 263.89 m³.\n\nThe silo holds about 263.89 cubic meters."
+        },
+        {
+          "problem": "A sphere of radius 5 cm sits perfectly inside a cylinder (same radius, height = 10 cm). What volume of space is between the sphere and the cylinder?",
+          "solution": "Cylinder: V = πr²h = π(5)²(10) = 250π cm³.\nSphere: V = ⁴⁄₃πr³ = ⁴⁄₃π(5)³ = ⁴⁄₃π(125) = 500π/3 cm³.\n\nEmpty space = Cylinder − Sphere:\n250π − 500π/3\n= 750π/3 − 500π/3\n= 250π/3\n≈ 261.80 cm³.\n\nNote: The sphere fills 2/3 of the cylinder, and 1/3 is empty space. Check: (500π/3)/(250π) = 500/750 = 2/3 ✓."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Cylinder Volume Practice",
+      "skill": "volume-cylinders",
+      "problems": [
+        {
+          "id": "vs-wp1",
+          "question": "Find the volume of a cylinder with radius 7 inches and height 10 inches.",
+          "answer": "V = π(7)²(10) = π(49)(10) = 490π ≈ 1539.38 in³.",
+          "hints": ["Plug into V = πr²h. Square the radius first: 7² = 49.", "Multiply: 49 × 10 = 490. So V = 490π."]
+        },
+        {
+          "id": "vs-wp2",
+          "question": "A coffee mug is approximately a cylinder with diameter 8 cm and height 9 cm. How much coffee does it hold?",
+          "answer": "Radius = 8/2 = 4 cm. V = π(4)²(9) = π(16)(9) = 144π ≈ 452.39 cm³ (about 452 mL).",
+          "hints": ["Diameter is 8, so radius is 4. Don't forget to halve!", "V = π(4²)(9) = π(16)(9)."]
+        },
+        {
+          "id": "vs-wp3",
+          "question": "A hollow pipe has an outer radius of 5 cm, an inner radius of 3 cm, and a length of 20 cm. Find the volume of the material (the pipe wall).",
+          "answer": "Outer cylinder: π(5)²(20) = 500π. Inner cylinder: π(3)²(20) = 180π. Material = 500π − 180π = 320π ≈ 1005.31 cm³.",
+          "hints": ["Find the volume of the outer cylinder and the inner cylinder separately.", "Subtract the inner from the outer to get just the pipe material."]
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Cone & Sphere Volume Practice",
+      "skill": "volume-cones",
+      "problems": [
+        {
+          "id": "vs-wp4",
+          "question": "Find the volume of a cone with radius 6 m and height 9 m.",
+          "answer": "V = ⅓π(6)²(9) = ⅓π(36)(9) = ⅓(324π) = 108π ≈ 339.29 m³.",
+          "hints": ["V = ⅓πr²h. Compute r² = 36 first, then multiply by h = 9.", "36 × 9 = 324. Divide by 3: 324/3 = 108. So V = 108π."]
+        },
+        {
+          "id": "vs-wp5",
+          "question": "Find the volume of a sphere with radius 9 cm.",
+          "answer": "V = ⁴⁄₃π(9)³ = ⁴⁄₃π(729) = 2916π/3 = 972π ≈ 3053.63 cm³.",
+          "hints": ["First compute r³ = 9³ = 729.", "Then: (4 × 729)/3 = 2916/3 = 972. So V = 972π."]
+        },
+        {
+          "id": "vs-wp6",
+          "question": "A waffle cone has a radius of 4 cm and a height of 14 cm. What volume of frozen yogurt can it hold?",
+          "answer": "V = ⅓π(4)²(14) = ⅓π(16)(14) = ⅓(224π) = 224π/3 ≈ 234.57 cm³.",
+          "hints": ["V = ⅓πr²h. Compute 4² = 16, then 16 × 14 = 224.", "Divide by 3: 224/3 ≈ 74.67. So V ≈ 74.67π ≈ 234.57 cm³."]
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Scaling & Composite Volume Practice",
+      "skill": "volume-scaling",
+      "problems": [
+        {
+          "id": "vs-wp7",
+          "question": "A cylinder has radius 3 cm and height 5 cm. If all dimensions are tripled, what is the new volume? How many times larger is the new volume?",
+          "answer": "Original: V = π(9)(5) = 45π. Scale factor k = 3, so k³ = 27. New V = 27 × 45π = 1215π ≈ 3817.04 cm³. The new volume is 27 times larger.",
+          "hints": ["When all dimensions are multiplied by k, volume is multiplied by k³.", "k = 3, so k³ = 27. Multiply the original volume by 27."]
+        },
+        {
+          "id": "vs-wp8",
+          "question": "A grain silo is a cylinder (radius 5 m, height 12 m) topped by a hemisphere (radius 5 m). Find the total volume.",
+          "answer": "Cylinder: π(25)(12) = 300π. Hemisphere: ½ × ⁴⁄₃π(125) = ½ × 500π/3 = 250π/3. Total: 300π + 250π/3 = 900π/3 + 250π/3 = 1150π/3 ≈ 1204.28 m³.",
+          "hints": ["A hemisphere is half a sphere: V = ½ × ⁴⁄₃πr³.", "Add the cylinder volume and hemisphere volume. Use a common denominator of 3."]
+        },
+        {
+          "id": "vs-wp9",
+          "question": "A decorative candle is a cylinder (radius 3 cm, height 10 cm) with a cone-shaped hole scooped from the top (radius 3 cm, height 2 cm). Find the remaining volume.",
+          "answer": "Cylinder: π(9)(10) = 90π. Cone: ⅓π(9)(2) = 6π. Remaining: 90π − 6π = 84π ≈ 263.89 cm³.",
+          "hints": ["Find the full cylinder volume, then subtract the cone volume.", "Cone: ⅓π(3²)(2) = ⅓π(9)(2) = ⅓(18π) = 6π."]
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Volume: Independent Practice",
+      "skill": "volume-cylinders",
+      "problems": [
+        {
+          "id": "vs-yp1",
+          "question": "A cylindrical storage drum has a diameter of 14 cm and a height of 20 cm. Find its volume.",
+          "answer": "Radius = 14/2 = 7 cm. V = π(7)²(20) = π(49)(20) = 980π ≈ 3078.76 cm³.",
+          "skill": "volume-cylinders",
+          "hints": ["Remember: diameter = 14, so radius = 7. Use V = πr²h."]
+        },
+        {
+          "id": "vs-yp2",
+          "question": "A traffic cone has a radius of 8 inches and a height of 15 inches. Find its volume.",
+          "answer": "V = ⅓π(8)²(15) = ⅓π(64)(15) = ⅓(960π) = 320π ≈ 1005.31 in³.",
+          "skill": "volume-cones",
+          "hints": ["Use V = ⅓πr²h. Compute 8² = 64, then 64 × 15 = 960, then divide by 3."]
+        },
+        {
+          "id": "vs-yp3",
+          "question": "A soccer ball has a diameter of 18 cm. Find its volume.",
+          "answer": "Radius = 9 cm. V = ⁴⁄₃π(9)³ = ⁴⁄₃π(729) = 2916π/3 = 972π ≈ 3053.63 cm³.",
+          "skill": "volume-spheres",
+          "hints": ["Diameter = 18, so radius = 9. Use V = ⁴⁄₃πr³."]
+        },
+        {
+          "id": "vs-yp4",
+          "question": "A water bottle is shaped like a cylinder with radius 3 cm and height 20 cm. How many milliliters of water does it hold? (1 cm³ = 1 mL)",
+          "answer": "V = π(3)²(20) = π(9)(20) = 180π ≈ 565.49 cm³. Since 1 cm³ = 1 mL, the bottle holds approximately 565 mL.",
+          "skill": "volume-word-problems",
+          "hints": ["Find the volume in cm³ using V = πr²h, then convert using 1 cm³ = 1 mL."]
+        },
+        {
+          "id": "vs-yp5",
+          "question": "A grain silo is a cylinder (radius 4 m, height 10 m) topped by a cone (radius 4 m, height 3 m). Find the total volume.",
+          "answer": "Cylinder: π(16)(10) = 160π. Cone: ⅓π(16)(3) = 16π. Total: 160π + 16π = 176π ≈ 552.92 m³.",
+          "skill": "volume-word-problems",
+          "hints": ["Break it into two shapes. Find each volume, then add."]
+        },
+        {
+          "id": "vs-yp6",
+          "question": "A model sphere has a radius of 2 cm. A larger version has a radius of 6 cm (triple the original). How many times larger is the volume of the bigger sphere?",
+          "answer": "Scale factor k = 6/2 = 3. Volume scales by k³ = 3³ = 27. The larger sphere has 27 times the volume. Verification: Small V = ⁴⁄₃π(8) = 32π/3. Large V = ⁴⁄₃π(216) = 288π. Ratio: 288π ÷ (32π/3) = 288 × 3/32 = 864/32 = 27 ✓.",
+          "skill": "volume-scaling",
+          "hints": ["Find the scale factor k = new radius / old radius, then compute k³."]
+        }
+      ]
+    }
+  ],
+  "answerKeys": {
+    "vs-wp1": "490π ≈ 1539.38 in³",
+    "vs-wp2": "144π ≈ 452.39 cm³ (≈ 452 mL)",
+    "vs-wp3": "320π ≈ 1005.31 cm³",
+    "vs-wp4": "108π ≈ 339.29 m³",
+    "vs-wp5": "972π ≈ 3053.63 cm³",
+    "vs-wp6": "224π/3 ≈ 234.57 cm³",
+    "vs-wp7": "1215π ≈ 3817.04 cm³ (27 times larger)",
+    "vs-wp8": "1150π/3 ≈ 1204.28 m³",
+    "vs-wp9": "84π ≈ 263.89 cm³",
+    "vs-yp1": "980π ≈ 3078.76 cm³",
+    "vs-yp2": "320π ≈ 1005.31 in³",
+    "vs-yp3": "972π ≈ 3053.63 cm³",
+    "vs-yp4": "180π ≈ 565 mL",
+    "vs-yp5": "176π ≈ 552.92 m³",
+    "vs-yp6": "27 times larger"
+  }
+}

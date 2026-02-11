@@ -1,0 +1,112 @@
+{
+  "moduleId": "checkpoint_u0",
+  "course": "8th Grade Mathematics",
+  "unit": 0,
+  "title": "Unit 0 Checkpoint: Boot Camp Diagnostic",
+  "weeks": "2",
+  "estimatedDuration": 25,
+  "type": "assessment",
+  "description": "Diagnostic assessment of prerequisite skills: integer operations, fraction/decimal fluency, basic equations, and coordinate plane basics. Results drive targeted intervention grouping.",
+  "skillsCovered": ["integer-operations", "fraction-decimal-fluency", "basic-equations", "coordinate-plane-basics"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "integer-operations", "reteachFocus": "Sign rules for all four operations; rewrite subtraction as adding the opposite; exponent sign patterns (even→positive, odd→negative)", "resources": ["boot_camp_module.json - scaffold phases 1-2"] },
+    { "skillId": "fraction-decimal-fluency", "reteachFocus": "LCD for add/subtract; multiply straight across; divide = multiply by reciprocal; decimal point alignment", "resources": ["boot_camp_module.json - scaffold phases 3-4"] },
+    { "skillId": "basic-equations", "reteachFocus": "Inverse operations; 2-step: undo add/subtract FIRST; always check by substitution", "resources": ["boot_camp_module.json - scaffold phases 5-6"] },
+    { "skillId": "coordinate-plane-basics", "reteachFocus": "Quadrant numbering (counterclockwise from upper right); x is horizontal, y is vertical; signed coordinates in all quadrants", "resources": ["boot_camp_module.json - scaffold phase 9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "g8u0-1",
+      "question": "Evaluate: −6 + (−8) − (−3)",
+      "answer": "−6 + (−8) + 3 = −14 + 3 = −11.",
+      "skill": "integer-operations",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8u0-2",
+      "question": "Evaluate: (−5)(4) − (−3)(−2)",
+      "answer": "(−5)(4) = −20. (−3)(−2) = 6. −20 − 6 = −26.",
+      "skill": "integer-operations",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u0-3",
+      "question": "Evaluate: (−2)⁴ + (−3)²",
+      "answer": "(−2)⁴ = 16 (even exponent → positive). (−3)² = 9. 16 + 9 = 25.",
+      "skill": "integer-operations",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u0-4",
+      "question": "Evaluate: 2/3 + 1/4",
+      "answer": "LCD = 12. 8/12 + 3/12 = 11/12.",
+      "skill": "fraction-decimal-fluency",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8u0-5",
+      "question": "Evaluate: (3/5) ÷ (−9/10)",
+      "answer": "(3/5) × (−10/9) = −30/45 = −2/3.",
+      "skill": "fraction-decimal-fluency",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u0-6",
+      "question": "Solve: x − 8 = −15",
+      "answer": "x = −15 + 8 = −7. Check: −7 − 8 = −15 ✓",
+      "skill": "basic-equations",
+      "difficulty": 2,
+      "points": 4
+    },
+    {
+      "id": "g8u0-7",
+      "question": "Solve: 4x + 3 = −9",
+      "answer": "4x = −12. x = −3. Check: 4(−3) + 3 = −12 + 3 = −9 ✓",
+      "skill": "basic-equations",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u0-8",
+      "question": "Solve: −x/5 = 6",
+      "answer": "−x = 30. x = −30. Check: −(−30)/5 = 30/5 = 6 ✓",
+      "skill": "basic-equations",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "g8u0-9",
+      "question": "In which quadrant is each point? A(−3, 7), B(5, −1), C(−2, −4)",
+      "answer": "A(−3, 7): Quadrant II. B(5, −1): Quadrant IV. C(−2, −4): Quadrant III.",
+      "skill": "coordinate-plane-basics",
+      "difficulty": 2,
+      "points": 6
+    },
+    {
+      "id": "g8u0-10",
+      "question": "ANALYSIS: A student solved this equation and made an error. Find and fix the mistake.\n   −2x + 5 = 13\n   −2x = 8\n   x = 4",
+      "answer": "The student divided 8 by −2 incorrectly. 8 ÷ (−2) = −4, not 4. The correct answer is x = −4. Check: −2(−4) + 5 = 8 + 5 = 13 ✓",
+      "skill": "basic-equations",
+      "difficulty": 4,
+      "points": 8
+    }
+  ],
+  "answerKeys": {
+    "g8u0-1": "−11",
+    "g8u0-2": "−26",
+    "g8u0-3": "25",
+    "g8u0-4": "11/12",
+    "g8u0-5": "−2/3",
+    "g8u0-6": "x = −7",
+    "g8u0-7": "x = −3",
+    "g8u0-8": "x = −30",
+    "g8u0-9": "A: QII, B: QIV, C: QIII",
+    "g8u0-10": "Error: 8÷(−2)=−4, not 4. Correct answer: x=−4."
+  }
+}
