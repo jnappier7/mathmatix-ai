@@ -70,6 +70,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-microsoft": "^2.1.0",
+    "passport-oauth2": "^1.8.0",
     "pdfjs-dist": "^5.4.530",
     "puppeteer": "^24.10.2",
     "sharp": "^0.34.5",

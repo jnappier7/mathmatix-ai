@@ -194,7 +194,7 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
     const newUser = new User({
       username,
       email: pendingProfile.email,
-      [pendingProfile.provider === 'google' ? 'googleId' : 'microsoftId']: pendingProfile.providerId,
+      [pendingProfile.provider === 'google' ? 'googleId' : pendingProfile.provider === 'microsoft' ? 'microsoftId' : 'cleverId']: pendingProfile.providerId,
       role: 'student',
       firstName: pendingProfile.firstName,
       lastName: pendingProfile.lastName,
