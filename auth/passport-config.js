@@ -268,7 +268,7 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
         // Map Clever user type to Mathmatix role
         let mappedRole = "student";
         if (cleverType === "teacher") mappedRole = "teacher";
-        // district_admin / school_admin → admin (or teacher, depending on your preference)
+        if (cleverType === "district_admin" || cleverType === "school_admin") mappedRole = "admin";
 
         /* ---------- 1. Existing user by Clever ID --------------------- */
         let existingUser = await User.findOne({ cleverId });
