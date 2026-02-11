@@ -1,0 +1,273 @@
+{
+  "moduleId": "exponential_functions",
+  "course": "Algebra 1",
+  "unit": 8,
+  "quarter": 4,
+  "title": "Exponential Functions",
+  "weeks": "22-24",
+  "estimatedDuration": 45,
+  "description": "Explore exponential functions in the form f(x) = a·bˣ, distinguish between exponential growth and decay by analyzing the base, graph exponential functions by plotting key points and identifying asymptotes, apply growth and decay formulas A = P(1 + r)ᵗ and A = P(1 - r)ᵗ to real-world contexts including compound interest, depreciation, and population growth, and compare linear and exponential models by analyzing constant rate of change versus constant percent change. Students learn to recognize which model fits a data set and why exponential functions eventually overtake linear functions.",
+  "skills": ["exponential-functions-basics", "exponential-growth-decay", "comparing-linear-exponential"],
+  "standardsAlignment": ["F-LE.1", "F-LE.2", "F-LE.3", "F-IF.7e", "A-SSE.1b"],
+  "goals": [
+    "Identify and evaluate exponential functions in the form f(x) = a·bˣ, recognizing the roles of the initial value a and the base b, and determine whether the function models growth (b > 1) or decay (0 < b < 1)",
+    "Graph exponential functions by plotting key points, identifying the horizontal asymptote y = 0, the y-intercept (0, a), and describing the end behavior as x approaches positive or negative infinity",
+    "Apply the exponential growth formula A = P(1 + r)ᵗ and the exponential decay formula A = P(1 - r)ᵗ to solve real-world problems involving compound interest, depreciation, and population change",
+    "Interpret doubling time and half-life in context, and write exponential models of the form P = P₀·2^(t/d) or P = P₀·(1/2)^(t/h) to describe situations where a quantity doubles or halves at regular intervals",
+    "Compare linear and exponential models by analyzing tables, graphs, and equations, explaining why a constant rate of change indicates a linear model while a constant percent change indicates an exponential model, and recognizing that exponential growth eventually exceeds linear growth"
+  ],
+  "instructionalStrategy": [
+    "Open with a concrete doubling scenario — fold a piece of paper and track its thickness after each fold — so students viscerally experience how quickly exponential growth outpaces their intuition before any formulas are introduced.",
+    "Build understanding through side-by-side table comparisons of linear and exponential functions with the same starting value, asking students to compute both differences and ratios so they can see the constant-difference versus constant-ratio distinction for themselves.",
+    "Use graph analysis as a core sense-making tool: have students sketch exponential curves by hand from tables, label the y-intercept and asymptote, and describe the end behavior in their own words before introducing formal notation.",
+    "Ground every growth and decay formula in real-world contexts — compound interest for savings, depreciation for car value, population doubling for biology — so that P, r, and t always represent something tangible rather than abstract symbols.",
+    "Frame every real-world problem with a three-part template: (1) What is the initial amount P? (2) What is the rate r and is it growth or decay? (3) What is the time t and what are we solving for? This template gives students a consistent entry point for word problems."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "exponential-functions-basics",
+      "title": "Introduction to Exponential Functions",
+      "text": "An **exponential function** has the form **f(x) = a·bˣ**, where:\n- **a** is the **initial value** (the y-intercept when x = 0, since f(0) = a·b⁰ = a·1 = a)\n- **b** is the **base** (the constant multiplier)\n- **b > 0** and **b ≠ 1**\n\n**Growth vs. Decay:**\n- If **b > 1**, the function models **exponential growth** — the output increases as x increases. Example: f(x) = 2ˣ doubles each time x increases by 1.\n- If **0 < b < 1**, the function models **exponential decay** — the output decreases as x increases. Example: f(x) = (1/2)ˣ halves each time x increases by 1.\n\n**Key features of the graph:**\n- **Horizontal asymptote**: y = 0 (the x-axis). The graph approaches but never touches y = 0.\n- **y-intercept**: (0, a). When x = 0, f(0) = a.\n- **Domain**: all real numbers. **Range**: y > 0 (when a > 0).\n- The graph is always **curved** — it is not a straight line.\n\n**Constant ratio vs. constant difference:**\n- In a **linear** function, consecutive y-values have a **constant difference** (you add the same amount each step).\n- In an **exponential** function, consecutive y-values have a **constant ratio** (you multiply by the same factor each step).\n\nExample: For f(x) = 3·2ˣ, the outputs are 3, 6, 12, 24, 48, … Each output is **2 times** the previous one (constant ratio = 2).",
+      "initialPrompt": "Consider f(x) = 5·3ˣ. What is the initial value? What is the base? Does this function model growth or decay? What is f(0)?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "exponential-functions-basics",
+      "title": "I-Do: Identifying, Evaluating, and Graphing Exponential Functions",
+      "examples": [
+        {
+          "problem": "Identify whether each function represents exponential growth or decay and explain why:\n(a) f(x) = 3·(2)ˣ\n(b) g(x) = 100·(0.75)ˣ",
+          "solution": "**(a) f(x) = 3·(2)ˣ**\nInitial value a = 3, base b = 2.\nSince **b = 2 > 1**, this is **exponential growth**.\nInterpretation: starting at 3, the output doubles each time x increases by 1.\nVerify: f(0) = 3, f(1) = 6, f(2) = 12, f(3) = 24. Each output is 2× the previous.\n\n**(b) g(x) = 100·(0.75)ˣ**\nInitial value a = 100, base b = 0.75.\nSince **0 < b = 0.75 < 1**, this is **exponential decay**.\nInterpretation: starting at 100, the output retains 75% of its value each step (loses 25% per step).\nVerify: g(0) = 100, g(1) = 75, g(2) = 56.25, g(3) = 42.1875. Each output is 0.75× the previous.\n\n**Summary rule:**\n- b > 1 → growth (the multiplier exceeds 1, so values increase)\n- 0 < b < 1 → decay (the multiplier is less than 1, so values decrease)\n- The base b is NEVER negative and NEVER zero in an exponential function.",
+          "tip": "Convert the base to a decimal if it is a fraction. If the decimal is greater than 1, it is growth. If it is between 0 and 1, it is decay."
+        },
+        {
+          "problem": "Create a table for f(x) = 2ˣ using x = -2, -1, 0, 1, 2, 3. Describe the pattern you observe.",
+          "solution": "**Step 1: Evaluate f(x) = 2ˣ at each x-value.**\nf(-2) = 2⁻² = 1/2² = 1/4 = **0.25**\nf(-1) = 2⁻¹ = 1/2 = **0.5**\nf(0) = 2⁰ = **1**\nf(1) = 2¹ = **2**\nf(2) = 2² = **4**\nf(3) = 2³ = **8**\n\n**Step 2: Organize in a table.**\n| x | -2 | -1 | 0 | 1 | 2 | 3 |\n|---|----|----|---|---|---|---|\n| f(x) | 0.25 | 0.5 | 1 | 2 | 4 | 8 |\n\n**Step 3: Identify the pattern.**\nEach time x increases by 1, f(x) is **multiplied by 2**. The ratio between consecutive outputs is constant:\n0.5 / 0.25 = **2**\n1 / 0.5 = **2**\n2 / 1 = **2**\n4 / 2 = **2**\n8 / 4 = **2**\n\nThe **constant ratio is 2**, which equals the base b.\n\n**Step 4: Key observations.**\n- y-intercept: (0, 1)\n- As x → ∞, f(x) grows without bound.\n- As x → -∞, f(x) → 0 (approaches but never reaches 0).\n- The graph passes through (0, 1) and rises steeply to the right.",
+          "tip": "For negative exponents, remember: b⁻ⁿ = 1/bⁿ. So 2⁻³ = 1/8, not -8. A negative exponent means 'reciprocal,' not 'negative value.'"
+        },
+        {
+          "problem": "Graph y = 3·(1.5)ˣ. Identify the y-intercept, horizontal asymptote, and whether the graph is always increasing or always decreasing.",
+          "solution": "**Step 1: Identify key features from the equation.**\na = 3 (initial value), b = 1.5 (base).\nSince b = 1.5 > 1, this is **exponential growth** — the graph is **always increasing**.\ny-intercept: (0, 3), because f(0) = 3·(1.5)⁰ = 3·1 = **3**.\nHorizontal asymptote: **y = 0** (the x-axis).\n\n**Step 2: Build a table of values.**\n| x | -2 | -1 | 0 | 1 | 2 | 3 | 4 |\n|---|----|----|---|---|---|---|---|\n| y | 1.33 | 2 | 3 | 4.5 | 6.75 | 10.125 | 15.1875 |\n\nCalculations:\nf(-2) = 3·(1.5)⁻² = 3·(1/2.25) = 3·0.444 ≈ 1.33\nf(-1) = 3·(1.5)⁻¹ = 3·(1/1.5) = 3·0.667 = 2\nf(0) = 3·1 = 3\nf(1) = 3·1.5 = 4.5\nf(2) = 3·2.25 = 6.75\nf(3) = 3·3.375 = 10.125\nf(4) = 3·5.0625 = 15.1875\n\n**Step 3: Plot and describe.**\nPlot the points and connect with a smooth curve that rises from left to right, getting steeper as x increases.\n\n**Step 4: Key features summary.**\n- **y-intercept**: (0, 3) — the graph crosses the y-axis at 3.\n- **Horizontal asymptote**: y = 0 — the graph approaches but never touches the x-axis as x → -∞.\n- **Always increasing**: since b = 1.5 > 1, the curve rises continuously from left to right.\n- **Range**: y > 0 (all positive values).\n- **Domain**: all real numbers.",
+          "tip": "For growth graphs (b > 1), the curve starts low on the left (approaching y = 0), passes through (0, a), and rises steeply to the right. The larger the base b, the steeper the rise."
+        }
+      ],
+      "initialPrompt": "In the first example, f(x) = 3·2ˣ is growth because b = 2 > 1, and g(x) = 100·(0.75)ˣ is decay because b = 0.75 < 1. What would happen if the base were exactly 1? Why is b = 1 excluded from exponential functions?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "exponential-growth-decay",
+      "title": "Exponential Growth and Decay Applications",
+      "text": "Many real-world situations involve quantities that grow or shrink by a **fixed percentage** over equal time periods. We model these with:\n\n**Exponential Growth:** A = P(1 + r)ᵗ\n**Exponential Decay:** A = P(1 - r)ᵗ\n\nwhere:\n- **A** = the amount after time t\n- **P** = the initial (principal/starting) amount\n- **r** = the rate of growth or decay (as a decimal, e.g., 5% = 0.05)\n- **t** = time (number of periods)\n\n**Growth** (1 + r): the base is greater than 1 because you are adding to the original.\n**Decay** (1 - r): the base is between 0 and 1 because you are subtracting from the original.\n\n**Common applications:**\n- **Compound interest**: A = P(1 + r)ᵗ where r is the annual interest rate and t is years.\n- **Population growth**: P = P₀(1 + r)ᵗ where r is the growth rate per period.\n- **Doubling time**: the time it takes for a quantity to double. If a population doubles every d time units, the model is P = P₀ · 2^(t/d).\n- **Depreciation**: A = P(1 - r)ᵗ where r is the annual depreciation rate.\n- **Half-life**: the time it takes for a quantity to reduce to half. If a substance has a half-life of h time units, the model is A = A₀ · (1/2)^(t/h).\n\n**Tip:** Always identify three things from any word problem: (1) the initial amount P, (2) the rate r and whether it is growth or decay, and (3) the time t.",
+      "initialPrompt": "A savings account starts with $500 and earns 6% interest per year. What is P? What is r? Is this growth or decay? Write the formula for the amount after t years."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "exponential-growth-decay",
+      "title": "I-Do: Applying Growth and Decay Formulas",
+      "examples": [
+        {
+          "problem": "You invest $500 in a savings account that earns 6% interest compounded annually. Write the exponential model and find the amount after 5 years.",
+          "solution": "**Step 1: Identify the components.**\nP = $500 (initial investment)\nr = 6% = 0.06 (annual interest rate)\nt = 5 years\nThis is **growth** because the money is increasing.\n\n**Step 2: Write the formula.**\nA = P(1 + r)ᵗ\nA = 500(1 + 0.06)ᵗ\nA = 500(1.06)ᵗ\n\nThe base is 1.06, meaning each year the balance is multiplied by 1.06 (keeps 100% and adds 6%).\n\n**Step 3: Find the amount after 5 years.**\nA = 500(1.06)⁵\n1.06² = 1.1236\n1.06⁴ = 1.1236² = 1.26248\n1.06⁵ = 1.26248 × 1.06 = 1.33823\nA = 500 × 1.33823 = **$669.11**\n\n**Step 4: Interpret.**\nAfter 5 years, the $500 investment grows to approximately **$669.11**. The investment earned $169.11 in interest. Notice this is more than simple interest would give (simple interest: 500 × 0.06 × 5 = $150 in interest, total $650). Compound interest earns 'interest on interest,' which is why the exponential model gives a larger result.",
+          "tip": "The base 1.06 means 'keep 100% of what you have and add 6% more.' Each year, you multiply the current balance by 1.06, not just add $30."
+        },
+        {
+          "problem": "A bacteria colony starts with 1,000 organisms and doubles every 3 hours. Write an exponential model for the population and find the population after 12 hours.",
+          "solution": "**Step 1: Identify the components.**\nP₀ = 1,000 (initial population)\nThe population **doubles** every 3 hours.\n\n**Step 2: Write the doubling model.**\nSince the population doubles every d = 3 hours:\nP = P₀ · 2^(t/d)\nP = 1000 · 2^(t/3)\n\nwhere t is measured in hours.\n\n**Step 3: Verify the model makes sense.**\nt = 0: P = 1000 · 2⁰ = 1000 · 1 = 1,000 ✓ (initial population)\nt = 3: P = 1000 · 2¹ = 1000 · 2 = 2,000 ✓ (doubled after 3 hours)\nt = 6: P = 1000 · 2² = 1000 · 4 = 4,000 ✓ (doubled again)\nt = 9: P = 1000 · 2³ = 1000 · 8 = 8,000 ✓\n\n**Step 4: Find the population after 12 hours.**\nt = 12: P = 1000 · 2^(12/3) = 1000 · 2⁴ = 1000 · 16 = **16,000**\n\n**Step 5: Interpret.**\nAfter 12 hours, the colony has grown from 1,000 to **16,000 bacteria**. That is 4 doubling periods (12 ÷ 3 = 4), so the population doubled 4 times: 1,000 → 2,000 → 4,000 → 8,000 → 16,000.\n\n**Alternative form:** We can rewrite this using the growth formula. The hourly growth rate r satisfies (1 + r)³ = 2, so 1 + r = 2^(1/3) ≈ 1.26, meaning roughly a 26% increase per hour.",
+          "tip": "In the doubling model P = P₀ · 2^(t/d), the exponent t/d counts 'how many doubling periods have passed.' After 12 hours with a 3-hour doubling time, there are 12/3 = 4 doubling periods."
+        },
+        {
+          "problem": "A car is purchased for $25,000 and depreciates in value by 15% per year. Write the depreciation model and find the car's value after 4 years.",
+          "solution": "**Step 1: Identify the components.**\nP = $25,000 (purchase price)\nr = 15% = 0.15 (annual depreciation rate)\nThis is **decay** because the value is decreasing.\n\n**Step 2: Write the formula.**\nA = P(1 - r)ᵗ\nA = 25000(1 - 0.15)ᵗ\nA = 25000(0.85)ᵗ\n\nThe base is 0.85, which means the car retains 85% of its value each year (loses 15%).\n\n**Step 3: Find the value after 4 years.**\nA = 25000(0.85)⁴\n0.85² = 0.7225\n0.85⁴ = 0.7225² = 0.52200625\nA = 25000 × 0.52200625 = **$13,050.16**\n\n**Step 4: Interpret.**\nAfter 4 years, the car is worth approximately **$13,050.16**, which is about 52% of its original value. The car lost $25,000 - $13,050.16 = $11,949.84 in value over 4 years.\n\n**Note:** Each year the dollar amount lost decreases (Year 1: lose $3,750; Year 2: lose $3,187.50; Year 3: lose $2,709.38; Year 4: lose $2,302.97) because 15% of a smaller number is a smaller amount. This is a characteristic of exponential decay.",
+          "tip": "For decay, the base is (1 - r), which is less than 1. Here, 1 - 0.15 = 0.85. A common mistake is writing 25000(0.15)ᵗ — but 0.15 is the rate lost, not the rate retained."
+        }
+      ],
+      "initialPrompt": "In the compound interest example, we started with $500 and ended with $669.11 after 5 years at 6%. With simple interest at the same rate, the total would have been only $650. Why does compound interest produce more? What does 'interest on interest' mean?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "exponential-growth-decay",
+      "title": "We-Do: Exponential Growth, Decay, and Applications",
+      "problems": [
+        {
+          "id": "ef-wp1",
+          "question": "Evaluate f(x) = 4·(3)ˣ for x = -1, 0, 1, 2, 3. Is this growth or decay? What is the constant ratio between consecutive outputs?",
+          "answer": "f(-1) = 4·3⁻¹ = 4/3 ≈ 1.33. f(0) = 4·1 = 4. f(1) = 4·3 = 12. f(2) = 4·9 = 36. f(3) = 4·27 = 108. This is exponential growth (b = 3 > 1). Constant ratio: 12/4 = 3, 36/12 = 3, 108/36 = 3. Each output is 3 times the previous.",
+          "hints": [
+            "Remember that 3⁻¹ = 1/3, so f(-1) = 4 · (1/3) = 4/3.",
+            "Calculate each value: f(0) = 4, f(1) = 12, f(2) = 36, f(3) = 108.",
+            "To find the constant ratio, divide any output by the previous one: 12/4 = 3. Since b = 3 > 1, this is growth."
+          ]
+        },
+        {
+          "id": "ef-wp2",
+          "question": "You deposit $2,500 in an account earning 4% annual interest compounded annually. How much will be in the account after 8 years?",
+          "answer": "P = 2500, r = 0.04, t = 8. A = 2500(1.04)⁸. 1.04⁸ ≈ 1.3686. A = 2500 × 1.3686 = $3,421.42. The account grows from $2,500 to approximately $3,421.42.",
+          "hints": [
+            "Identify: P = $2,500 (starting amount), r = 4% = 0.04, t = 8 years. This is growth, so use A = P(1 + r)ᵗ.",
+            "Substitute: A = 2500(1 + 0.04)⁸ = 2500(1.04)⁸.",
+            "Calculate: 1.04⁸ ≈ 1.3686. Multiply: A = 2500 × 1.3686 ≈ $3,421.42."
+          ]
+        },
+        {
+          "id": "ef-wp3",
+          "question": "A laptop purchased for $1,200 depreciates by 20% per year. Write the depreciation model and find the laptop's value after 3 years.",
+          "answer": "P = 1200, r = 0.20. A = 1200(1 - 0.20)ᵗ = 1200(0.80)ᵗ. After 3 years: A = 1200(0.80)³ = 1200 × 0.512 = $614.40. The laptop is worth $614.40 after 3 years.",
+          "hints": [
+            "This is decay: the value decreases. Use A = P(1 - r)ᵗ with P = 1200 and r = 0.20.",
+            "The base is 1 - 0.20 = 0.80. The model is A = 1200(0.80)ᵗ.",
+            "For t = 3: 0.80³ = 0.80 × 0.80 × 0.80 = 0.512. A = 1200 × 0.512 = $614.40."
+          ]
+        },
+        {
+          "id": "ef-wp4",
+          "question": "A radioactive substance has a half-life of 6 years. If you start with 200 grams, how much remains after 18 years?",
+          "answer": "A₀ = 200, half-life h = 6. A = 200·(1/2)^(t/6). At t = 18: A = 200·(1/2)^(18/6) = 200·(1/2)³ = 200·(1/8) = 25 grams. After 18 years (3 half-lives), 25 grams remain.",
+          "hints": [
+            "Use the half-life model: A = A₀ · (1/2)^(t/h), where h = 6 years.",
+            "At t = 18: the exponent is 18/6 = 3. So A = 200 · (1/2)³.",
+            "(1/2)³ = 1/8. A = 200 × (1/8) = 25 grams. Three half-lives: 200 → 100 → 50 → 25."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's work through these together. For the first problem, you need to evaluate f(x) = 4·3ˣ at several x-values. Start with f(0) — what is 3⁰?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "comparing-linear-exponential",
+      "title": "Comparing Linear and Exponential Models",
+      "text": "How do you decide whether a situation is **linear** or **exponential**? Look at the pattern of change.\n\n**Linear functions** (y = mx + b):\n- Have a **constant rate of change** (constant difference).\n- When x increases by 1, y changes by the **same amount** (the slope m) every time.\n- In a table, the **differences** between consecutive y-values are equal.\n- Graph: a **straight line**.\n- Example: Earning $50 per week. After 1 week: $50, 2 weeks: $100, 3 weeks: $150. Difference is always +$50.\n\n**Exponential functions** (y = a·bˣ):\n- Have a **constant percent change** (constant ratio).\n- When x increases by 1, y is **multiplied by the same factor** (the base b) every time.\n- In a table, the **ratios** between consecutive y-values are equal.\n- Graph: a **curve** that either rises faster and faster (growth) or falls slower and slower (decay).\n- Example: Investment growing 10% per year. After 1 year: $110, 2 years: $121, 3 years: $133.10. Ratio is always ×1.10.\n\n**Key comparison:** For large x, exponential growth **always** eventually overtakes linear growth, no matter how steep the line or how slow the exponential base. A function growing by 1% per step will eventually surpass a function growing by adding 1,000,000 per step — it just takes a very long time.\n\n**How to identify from a table:**\n1. Check the **differences** between consecutive y-values. If constant → linear.\n2. Check the **ratios** between consecutive y-values. If constant → exponential.\n3. If neither is constant, the function may be neither linear nor exponential.",
+      "initialPrompt": "Consider two sequences: Sequence A: 5, 10, 15, 20, 25 and Sequence B: 5, 10, 20, 40, 80. Find the differences and ratios for each. Which is linear and which is exponential?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "comparing-linear-exponential",
+      "title": "I-Do: Identifying Linear vs. Exponential from Tables and Matching to Equations",
+      "examples": [
+        {
+          "problem": "A table shows the following data. Determine whether the relationship is linear or exponential, and write the equation.\n\n| x | 0 | 1 | 2 | 3 | 4 |\n|---|---|---|---|---|---|\n| y | 3 | 6 | 12 | 24 | 48 |",
+          "solution": "**Step 1: Check differences.**\n6 - 3 = 3\n12 - 6 = 6\n24 - 12 = 12\n48 - 24 = 24\nThe differences are 3, 6, 12, 24 — **not constant**. So this is **not linear**.\n\n**Step 2: Check ratios.**\n6/3 = 2\n12/6 = 2\n24/12 = 2\n48/24 = 2\nThe ratios are all **2** — **constant ratio**. This is **exponential**.\n\n**Step 3: Write the equation.**\nThe form is y = a·bˣ.\n- a = the y-value when x = 0: a = 3\n- b = the constant ratio: b = 2\n- Equation: **y = 3·2ˣ**\n\n**Step 4: Verify.**\nx = 0: 3·2⁰ = 3 ✓\nx = 1: 3·2¹ = 6 ✓\nx = 2: 3·2² = 12 ✓\nx = 3: 3·2³ = 24 ✓\nx = 4: 3·2⁴ = 48 ✓",
+          "tip": "Always check both differences AND ratios. If differences are constant, it is linear. If ratios are constant, it is exponential. Do not assume — calculate."
+        },
+        {
+          "problem": "A table shows the following data. Determine whether the relationship is linear or exponential, and write the equation.\n\n| x | 0 | 1 | 2 | 3 | 4 |\n|---|---|---|---|---|---|\n| y | 200 | 170 | 140 | 110 | 80 |",
+          "solution": "**Step 1: Check differences.**\n170 - 200 = -30\n140 - 170 = -30\n110 - 140 = -30\n80 - 110 = -30\nThe differences are all **-30** — **constant difference**. This is **linear**.\n\n**Step 2: Verify ratios are NOT constant (for completeness).**\n170/200 = 0.85\n140/170 ≈ 0.8235\n110/140 ≈ 0.7857\n80/110 ≈ 0.7273\nThe ratios are NOT constant, confirming this is not exponential.\n\n**Step 3: Write the equation.**\nThe form is y = mx + b.\n- m = constant difference = -30 (slope)\n- b = y-value when x = 0: b = 200 (y-intercept)\n- Equation: **y = -30x + 200**\n\n**Step 4: Verify.**\nx = 0: -30(0) + 200 = 200 ✓\nx = 1: -30(1) + 200 = 170 ✓\nx = 2: -30(2) + 200 = 140 ✓\nx = 3: -30(3) + 200 = 110 ✓\nx = 4: -30(4) + 200 = 80 ✓\n\n**Key insight:** Both this linear function and an exponential decay function start at 200 and decrease. But the linear function loses the same dollar amount each step ($30), while exponential decay loses the same percentage each step. Over time, linear decrease eventually goes negative, while exponential decay never reaches zero.",
+          "tip": "If the differences are constant, stop — it is linear. You do not need to check ratios. But checking both is a good habit to confirm your answer."
+        }
+      ],
+      "initialPrompt": "In the first example, the differences were 3, 6, 12, 24 — not constant. But the ratios were all 2 — constant. What would the differences look like if the data were linear instead?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "comparing-linear-exponential",
+      "title": "We-Do: Comparing Linear and Exponential Models with Applications",
+      "problems": [
+        {
+          "id": "ef-wp5",
+          "question": "Determine whether the data is linear or exponential, and write the equation.\n\n| x | 0 | 1 | 2 | 3 | 4 |\n|---|---|---|---|---|---|\n| y | 5 | 15 | 45 | 135 | 405 |",
+          "answer": "Differences: 10, 30, 90, 270 — not constant. Ratios: 15/5 = 3, 45/15 = 3, 135/45 = 3, 405/135 = 3. Constant ratio of 3. This is exponential. a = 5 (value at x = 0), b = 3. Equation: y = 5·3ˣ. Verify: x = 3: 5·3³ = 5·27 = 135 ✓.",
+          "hints": [
+            "Check differences first: 15-5 = 10, 45-15 = 30, 135-45 = 90. Not constant — so it is not linear.",
+            "Now check ratios: 15/5 = 3, 45/15 = 3, 135/45 = 3, 405/135 = 3. All ratios are 3 — constant.",
+            "This is exponential: y = a·bˣ with a = 5 (y-value at x = 0) and b = 3 (the constant ratio). Equation: y = 5·3ˣ."
+          ]
+        },
+        {
+          "id": "ef-wp6",
+          "question": "A town's population is 12,000 and is growing at 6% per year. Write an exponential model and predict the population after 5 years.",
+          "answer": "P₀ = 12000, r = 0.06. P = 12000(1.06)ᵗ. After 5 years: P = 12000(1.06)⁵. 1.06⁵ ≈ 1.3382. P ≈ 12000 × 1.3382 = 16,059. The population will be approximately 16,059 after 5 years.",
+          "hints": [
+            "This is growth: P = P₀(1 + r)ᵗ = 12000(1 + 0.06)ᵗ = 12000(1.06)ᵗ.",
+            "For t = 5: calculate 1.06⁵. Build up: 1.06² = 1.1236, 1.06⁴ = 1.1236² ≈ 1.2625, 1.06⁵ ≈ 1.2625 × 1.06 ≈ 1.3382.",
+            "P = 12000 × 1.3382 ≈ 16,059 people."
+          ]
+        },
+        {
+          "id": "ef-wp7",
+          "question": "Sarah gets a job offer with two pay options for a 10-day project:\nOption A: $100 per day (linear).\nOption B: $1 on day 1, doubling each day (exponential).\nWhich option pays more total over 10 days?",
+          "answer": "Option A: 100 × 10 = $1,000 total.\nOption B: Day 1: $1, Day 2: $2, Day 3: $4, Day 4: $8, Day 5: $16, Day 6: $32, Day 7: $64, Day 8: $128, Day 9: $256, Day 10: $512. Total: 1+2+4+8+16+32+64+128+256+512 = $1,023.\nOption B pays $1,023, which is more than Option A's $1,000. Even though Option B starts with only $1, the doubling effect makes it overtake Option A. If the project were 15 days, Option B would pay $32,767 vs. $1,500 — the gap grows dramatically.",
+          "hints": [
+            "Option A is straightforward: $100/day × 10 days = $1,000.",
+            "Option B doubles each day: $1, $2, $4, $8, $16, $32, $64, $128, $256, $512. Add them up.",
+            "Total for Option B: 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 = $1,023. Compare: $1,023 > $1,000."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, start by computing both differences and ratios between the consecutive y-values. What is 15 - 5? What is 15/5? Do you see a pattern in either set?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Independent Practice — All Exponential Function Skills",
+      "problems": [
+        {
+          "id": "ef-yp1",
+          "question": "Evaluate f(x) = 5·(2)ˣ for x = -2, -1, 0, 1, 2, 3. Identify the y-intercept and state whether this is growth or decay.",
+          "answer": "f(-2) = 5·2⁻² = 5/4 = 1.25. f(-1) = 5·2⁻¹ = 5/2 = 2.5. f(0) = 5·1 = 5. f(1) = 5·2 = 10. f(2) = 5·4 = 20. f(3) = 5·8 = 40. y-intercept: (0, 5). Base b = 2 > 1, so this is exponential growth. Constant ratio: 10/5 = 2.",
+          "skill": "exponential-functions-basics",
+          "hints": ["Recall that 2⁻² = 1/4, 2⁻¹ = 1/2, 2⁰ = 1. Multiply each result by 5. The y-intercept is where x = 0. Since b = 2 > 1, this is growth."]
+        },
+        {
+          "id": "ef-yp2",
+          "question": "Graph y = 6·(1/3)ˣ. Find the y-intercept, name the horizontal asymptote, and state whether it shows growth or decay.",
+          "answer": "y-intercept: f(0) = 6·1 = 6, so (0, 6). Horizontal asymptote: y = 0. Base b = 1/3, and 0 < 1/3 < 1, so this is exponential decay. Key points: f(-1) = 6·3 = 18, f(0) = 6, f(1) = 6·(1/3) = 2, f(2) = 6·(1/9) ≈ 0.67, f(3) = 6·(1/27) ≈ 0.22. Curve falls from left to right, approaching y = 0.",
+          "skill": "exponential-functions-basics",
+          "hints": ["At x = 0, y = 6. Since b = 1/3 < 1, this is decay. The horizontal asymptote is y = 0. For additional points, calculate f(1) = 2 and f(-1) = 18."]
+        },
+        {
+          "id": "ef-yp3",
+          "question": "You invest $3,000 at 6% annual interest compounded annually. How much will you have after 12 years?",
+          "answer": "P = 3000, r = 0.06, t = 12. A = 3000(1.06)¹² ≈ 3000 × 2.0122 = $6,036.56. After 12 years, the investment grows to approximately $6,036.56.",
+          "skill": "exponential-growth-decay",
+          "hints": ["Use A = P(1 + r)ᵗ = 3000(1.06)¹². Calculate 1.06¹² ≈ 2.0122. Multiply by 3000."]
+        },
+        {
+          "id": "ef-yp4",
+          "question": "A medication in the bloodstream decreases by 25% each hour. If the initial dose is 400 mg, how much remains after 6 hours?",
+          "answer": "P = 400, r = 0.25, decay. A = 400(1-0.25)ᵗ = 400(0.75)⁶. 0.75⁶ ≈ 0.1780. A = 400 × 0.1780 ≈ 71.19 mg. About 71.19 mg remains after 6 hours.",
+          "skill": "exponential-growth-decay",
+          "hints": ["This is decay: A = 400(0.75)ᵗ. For t = 6: 0.75⁶ = 0.75³ × 0.75³ = 0.4219 × 0.4219 ≈ 0.1780. A ≈ 71.19 mg."]
+        },
+        {
+          "id": "ef-yp5",
+          "question": "A sample of a radioactive isotope has a half-life of 4 days. Starting with 160 grams, how much remains after 20 days?",
+          "answer": "A₀ = 160, h = 4. A = 160·(1/2)^(t/4). At t = 20: A = 160·(1/2)^(20/4) = 160·(1/2)⁵ = 160·(1/32) = 5 grams. After 20 days (5 half-lives), 5 grams remain. Check: 160→80→40→20→10→5.",
+          "skill": "exponential-growth-decay",
+          "hints": ["Use A = 160·(1/2)^(t/4). At t = 20, the exponent is 20/4 = 5. So A = 160·(1/2)⁵ = 160/32 = 5 grams."]
+        },
+        {
+          "id": "ef-yp6",
+          "question": "Determine whether each data set is linear or exponential and write the equation.\n(a) x: 0, 1, 2, 3, 4 → y: 8, 12, 18, 27, 40.5\n(b) x: 0, 1, 2, 3, 4 → y: 8, 14, 20, 26, 32",
+          "answer": "(a) Differences: 4, 6, 9, 13.5 — not constant. Ratios: 12/8 = 1.5, 18/12 = 1.5, 27/18 = 1.5, 40.5/27 = 1.5. Constant ratio = 1.5. Exponential: y = 8·(1.5)ˣ.\n(b) Differences: 6, 6, 6, 6 — constant. Linear: slope = 6, y-int = 8. Equation: y = 6x + 8.",
+          "skill": "comparing-linear-exponential",
+          "hints": ["For each data set, compute the differences AND the ratios. (a) ratios are all 1.5 → exponential. (b) differences are all 6 → linear."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "ef-wp1": "f(-1) = 4/3, f(0) = 4, f(1) = 12, f(2) = 36, f(3) = 108. Growth (b = 3 > 1). Constant ratio = 3.",
+    "ef-wp2": "$3,421.42 after 8 years. A = 2500(1.04)⁸.",
+    "ef-wp3": "$614.40 after 3 years. A = 1200(0.80)³.",
+    "ef-wp4": "25 grams after 18 years (3 half-lives). A = 200·(1/2)³.",
+    "ef-wp5": "Exponential: constant ratio = 3. Equation: y = 5·3ˣ.",
+    "ef-wp6": "≈ 16,059 people after 5 years. P = 12000(1.06)⁵.",
+    "ef-wp7": "Option B ($1,023) pays more than Option A ($1,000) over 10 days. Doubling overtakes the constant rate.",
+    "ef-yp1": "f(-2) = 1.25, f(-1) = 2.5, f(0) = 5, f(1) = 10, f(2) = 20, f(3) = 40. y-int: (0, 5). Growth.",
+    "ef-yp2": "y-int: (0, 6). Asymptote: y = 0. Decay (b = 1/3). Key points: (-1, 18), (0, 6), (1, 2), (2, 0.67).",
+    "ef-yp3": "$6,036.56 after 12 years. A = 3000(1.06)¹².",
+    "ef-yp4": "≈ 71.19 mg after 6 hours. A = 400(0.75)⁶.",
+    "ef-yp5": "5 grams after 20 days (5 half-lives). A = 160·(1/2)⁵.",
+    "ef-yp6": "(a) Exponential: y = 8·(1.5)ˣ (constant ratio 1.5). (b) Linear: y = 6x + 8 (constant difference 6)."
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "moduleId": "checkpoint_u8",
+  "course": "Algebra 1",
+  "unit": 8,
+  "quarter": 4,
+  "title": "Unit 8 Checkpoint: Exponential Functions",
+  "weeks": "24",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of identifying and evaluating exponential functions, distinguishing growth from decay, applying growth and decay formulas to compound interest, depreciation, and population problems, interpreting doubling time and half-life, graphing exponential functions with asymptotes, and comparing linear versus exponential models using tables, graphs, and equations.",
+  "skillsCovered": [
+    "exponential-functions-basics",
+    "exponential-growth-decay",
+    "comparing-linear-exponential"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "exponential-functions-basics", "reteachFocus": "Identifying exponential functions in the form f(x) = a·bˣ, evaluating for given x-values including negative exponents, determining growth vs decay from the base, graphing with y-intercept and asymptote", "resources": ["exponential_functions_module.json - scaffold phases 1-2"] },
+    { "skillId": "exponential-growth-decay", "reteachFocus": "Applying A = P(1+r)ᵗ for growth and A = P(1-r)ᵗ for decay, identifying P, r, and t from word problems, computing doubling time and half-life models", "resources": ["exponential_functions_module.json - scaffold phases 3-5"] },
+    { "skillId": "comparing-linear-exponential", "reteachFocus": "Distinguishing constant difference (linear) from constant ratio (exponential) in tables, writing equations from data, understanding why exponential growth eventually overtakes linear growth", "resources": ["exponential_functions_module.json - scaffold phases 6-8"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a1u8-1",
+      "question": "Identify whether each function represents exponential growth, exponential decay, or neither:\n(a) f(x) = 7·(1.4)ˣ\n(b) g(x) = 3x + 10\n(c) h(x) = 200·(0.75)ˣ\n(d) k(x) = 12·(5/3)ˣ",
+      "answer": "(a) Exponential growth: base b = 1.4 > 1, so the function increases as x increases.\n(b) Neither — this is a linear function (y = mx + b form), not exponential.\n(c) Exponential decay: base b = 0.75, and 0 < 0.75 < 1, so the function decreases as x increases.\n(d) Exponential growth: base b = 5/3 ≈ 1.67 > 1, so the function increases as x increases.",
+      "skill": "exponential-functions-basics",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u8-2",
+      "question": "Evaluate f(x) = 3·(2)ˣ for x = -3, -1, 0, 2, and 5. Identify the y-intercept and the constant ratio between consecutive integer outputs.",
+      "answer": "f(-3) = 3·2⁻³ = 3/8 = 0.375. f(-1) = 3·2⁻¹ = 3/2 = 1.5. f(0) = 3·2⁰ = 3·1 = 3. f(2) = 3·2² = 3·4 = 12. f(5) = 3·2⁵ = 3·32 = 96. The y-intercept is (0, 3). The constant ratio between consecutive integer outputs is 2 (each time x increases by 1, the output doubles).",
+      "skill": "exponential-functions-basics",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u8-3",
+      "question": "Graph y = 4·(1/2)ˣ. State the y-intercept, horizontal asymptote, and whether the function shows growth or decay. Plot at least 5 points.",
+      "answer": "y-intercept: (0, 4). Horizontal asymptote: y = 0. Base b = 1/2, and 0 < 1/2 < 1, so this is exponential decay.\nKey points: f(-2) = 4·(1/2)⁻² = 4·4 = 16. f(-1) = 4·(1/2)⁻¹ = 4·2 = 8. f(0) = 4. f(1) = 4·(1/2) = 2. f(2) = 4·(1/4) = 1. f(3) = 4·(1/8) = 0.5.\nThe curve falls from left to right, approaching y = 0 but never touching it. As x → ∞, y → 0. As x → -∞, y → ∞.",
+      "skill": "exponential-functions-basics",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u8-4",
+      "question": "You invest $5,000 in an account that earns 4.5% annual interest compounded annually. How much will the investment be worth after 15 years?",
+      "answer": "P = 5000, r = 0.045, t = 15. A = P(1 + r)ᵗ = 5000(1.045)¹⁵. Calculating: 1.045¹⁵ ≈ 1.9353. A = 5000 × 1.9353 ≈ $9,676.41. After 15 years, the investment is worth approximately $9,676.41. The investment nearly doubled, earning $4,676.41 in interest.",
+      "skill": "exponential-growth-decay",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u8-5",
+      "question": "A new motorcycle is purchased for $18,000 and depreciates at 12% per year. Write the depreciation model and find the motorcycle's value after 7 years.",
+      "answer": "P = 18000, r = 0.12, decay. A = 18000(1 - 0.12)ᵗ = 18000(0.88)ᵗ. After 7 years: A = 18000(0.88)⁷. 0.88⁷ ≈ 0.4087. A = 18000 × 0.4087 ≈ $7,356.16. After 7 years the motorcycle is worth approximately $7,356.16, having lost $18,000 - $7,356.16 = $10,643.84 in value.",
+      "skill": "exponential-growth-decay",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u8-6",
+      "question": "A culture of bacteria starts with 800 organisms and doubles every 4 hours. Write an exponential model for the population. How many bacteria will there be after 24 hours?",
+      "answer": "P₀ = 800, doubling time d = 4 hours. Model: P = 800·2^(t/4). After 24 hours: P = 800·2^(24/4) = 800·2⁶ = 800·64 = 51,200 bacteria. Check: 6 doubling periods in 24 hours: 800→1,600→3,200→6,400→12,800→25,600→51,200 ✓.",
+      "skill": "exponential-growth-decay",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u8-7",
+      "question": "A scientist tracks the amount of a radioactive substance over time:\n\n| Hours | 0 | 5 | 10 | 15 | 20 |\n|---|---|---|---|---|---|\n| Grams | 320 | 160 | 80 | 40 | 20 |\n\nWhat is the half-life? Write an exponential decay model. How much will remain after 35 hours?",
+      "answer": "The substance halves every 5 hours (320→160→80→40→20). Half-life = 5 hours. Model: A = 320·(1/2)^(t/5). After 35 hours: A = 320·(1/2)^(35/5) = 320·(1/2)⁷ = 320·(1/128) = 2.5 grams. Verify: 320→160→80→40→20→10→5→2.5 (7 half-lives in 35 hours) ✓.",
+      "skill": "exponential-growth-decay",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a1u8-8",
+      "question": "Determine whether each data set represents a linear or exponential relationship. Write the equation for each.\n(a) x: 0, 1, 2, 3, 4 → y: 50, 40, 32, 25.6, 20.48\n(b) x: 0, 1, 2, 3, 4 → y: 50, 43, 36, 29, 22",
+      "answer": "(a) Differences: -10, -8, -6.4, -5.12 — not constant. Ratios: 40/50 = 0.8, 32/40 = 0.8, 25.6/32 = 0.8, 20.48/25.6 = 0.8. Constant ratio = 0.8. Exponential decay: y = 50·(0.8)ˣ.\n(b) Differences: -7, -7, -7, -7. Constant difference = -7. Linear: y = -7x + 50.\nVerify: (a) x = 3: 50·(0.8)³ = 50·0.512 = 25.6 ✓. (b) x = 3: -7(3) + 50 = 29 ✓.",
+      "skill": "comparing-linear-exponential",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u8-9",
+      "question": "Compare these two savings plans over 20 years:\nPlan A (linear): Start with $1,000 and add $500 every year.\nPlan B (exponential): Start with $1,000 and earn 8% compound interest annually.\nCalculate the amount in each plan after 10 years and after 20 years. When does Plan B overtake Plan A?",
+      "answer": "Plan A: A = 1000 + 500t.\nAt t = 10: 1000 + 500(10) = $6,000.\nAt t = 20: 1000 + 500(20) = $11,000.\n\nPlan B: A = 1000(1.08)ᵗ.\nAt t = 10: 1000(1.08)¹⁰ ≈ 1000 × 2.1589 = $2,158.92.\nAt t = 20: 1000(1.08)²⁰ ≈ 1000 × 4.6610 = $4,660.96.\n\nAfter 10 years: Plan A ($6,000) > Plan B ($2,158.92).\nAfter 20 years: Plan A ($11,000) > Plan B ($4,660.96).\n\nPlan B has not overtaken Plan A after 20 years. Finding when they intersect: 1000 + 500t = 1000(1.08)ᵗ. Testing t = 30: Plan A = $16,000, Plan B ≈ $10,062.66. Testing t = 40: Plan A = $21,000, Plan B ≈ $21,724.52. Plan B overtakes Plan A around t ≈ 40 years. This illustrates that exponential growth always eventually wins, but when the linear rate of addition is large relative to the exponential rate, the crossover can take a long time.",
+      "skill": "comparing-linear-exponential",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a1u8-10",
+      "question": "ANALYSIS: A student claims that y = 500·(0.95)ˣ will eventually reach zero and become negative. Is the student correct? Explain your reasoning using the properties of exponential functions, and describe what happens to the graph as x increases without bound.",
+      "answer": "The student is **incorrect**. The function y = 500·(0.95)ˣ will never reach zero and will never become negative.\n\n**Reasoning:**\n1. The base b = 0.95 is positive (0 < 0.95 < 1). Any positive number raised to any power is always positive: (0.95)ˣ > 0 for all x.\n2. Multiplying by 500 (a positive number) keeps the result positive: y = 500·(0.95)ˣ > 0 for all x.\n3. As x → ∞, (0.95)ˣ → 0 but never equals 0. The values get closer and closer to zero (e.g., at x = 100, y ≈ 500·0.00592 ≈ 2.96; at x = 200, y ≈ 500·0.0000351 ≈ 0.0176) but remain positive.\n4. The horizontal asymptote is **y = 0**. The graph approaches the x-axis but never touches or crosses it.\n5. The range of this function is y > 0 — all positive real numbers.\n\nThe student may have confused exponential decay with linear decrease. A linear function like y = 500 - 25x does eventually reach zero (at x = 20) and become negative. But exponential decay loses a percentage of what remains, and a percentage of a positive number is always positive, so the function can never reach zero.",
+      "skill": "exponential-functions-basics",
+      "difficulty": 5,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "a1u8-spiral-1",
+      "question": "SPIRAL (Quadratic Functions): Find the vertex and x-intercepts of y = x² - 2x - 15.",
+      "answer": "a = 1, b = -2, c = -15. Vertex: x = -(-2)/(2·1) = 1, y = 1 - 2 - 15 = -16. Vertex: (1, -16). x-intercepts: x² - 2x - 15 = 0 → (x - 5)(x + 3) = 0 → x = 5 or x = -3. Verify: 25 - 10 - 15 = 0 ✓ and 9 + 6 - 15 = 0 ✓.",
+      "skill": "quadratic-equations-graphing",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 6"
+    },
+    {
+      "id": "a1u8-spiral-2",
+      "question": "SPIRAL (Polynomials): Multiply and simplify: (2x + 3)(x² - 4x + 1).",
+      "answer": "Distribute each term: 2x(x² - 4x + 1) + 3(x² - 4x + 1) = 2x³ - 8x² + 2x + 3x² - 12x + 3 = 2x³ - 5x² - 10x + 3. Verify by checking the leading term (2x·x² = 2x³) and constant (3·1 = 3) ✓.",
+      "skill": "polynomial-operations",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 5"
+    }
+  ],
+  "answerKeys": {
+    "a1u8-1": "(a) Growth (b = 1.4 > 1). (b) Neither — linear. (c) Decay (b = 0.75 < 1). (d) Growth (b = 5/3 > 1).",
+    "a1u8-2": "f(-3) = 0.375, f(-1) = 1.5, f(0) = 3, f(2) = 12, f(5) = 96. y-int: (0, 3). Constant ratio = 2.",
+    "a1u8-3": "y-int: (0, 4). Asymptote: y = 0. Decay. Points: (-2, 16), (-1, 8), (0, 4), (1, 2), (2, 1), (3, 0.5).",
+    "a1u8-4": "$9,676.41 after 15 years. A = 5000(1.045)¹⁵.",
+    "a1u8-5": "$7,356.16 after 7 years. A = 18000(0.88)⁷.",
+    "a1u8-6": "51,200 bacteria after 24 hours. P = 800·2^(t/4), 6 doubling periods.",
+    "a1u8-7": "Half-life = 5 hours. A = 320·(1/2)^(t/5). After 35 hours: 2.5 grams.",
+    "a1u8-8": "(a) Exponential decay: y = 50·(0.8)ˣ (constant ratio 0.8). (b) Linear: y = -7x + 50 (constant difference -7).",
+    "a1u8-9": "Plan A after 20 yr: $11,000. Plan B after 20 yr: $4,660.96. Plan B overtakes around t ≈ 40 years.",
+    "a1u8-10": "Student is wrong. y = 500·(0.95)ˣ > 0 for all x. Asymptote y = 0; graph approaches but never reaches or crosses zero.",
+    "a1u8-spiral-1": "Vertex: (1, -16). x-intercepts: x = 5, x = -3. Factor: (x-5)(x+3) = 0.",
+    "a1u8-spiral-2": "2x³ - 5x² - 10x + 3."
+  }
+}
