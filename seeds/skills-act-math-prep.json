@@ -1,0 +1,686 @@
+[
+  {
+    "skillId": "act-real-complex-numbers",
+    "displayName": "Real & Complex Number Operations",
+    "description": "Perform operations with integers, fractions, decimals, and complex numbers in ACT contexts",
+    "category": "number-quantity",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Number & Quantity",
+    "prerequisites": [],
+    "enables": ["act-exponents-roots", "act-ratios-proportions-percents"],
+    "standardsAlignment": ["ACT N 201-205", "ACT N 301-305"],
+    "teachingGuidance": {
+      "coreConcepts": ["Order of operations (PEMDAS)", "Operations with fractions and mixed numbers", "Complex number arithmetic: i = sqrt(-1), i^2 = -1", "Powers of i cycle: i, -1, -i, 1"],
+      "commonMistakes": ["Misapplying order of operations with nested parentheses", "Sign errors with negative fractions", "Forgetting i^2 = -1 when multiplying complex numbers"],
+      "teachingTips": ["ACT places easy number-operation questions early — build confidence here", "Drill powers of i: divide exponent by 4 and use remainder", "Estimation eliminates 2-3 answer choices instantly"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 30, "fluencyType": "procedural", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "act-exponents-roots",
+    "displayName": "Exponents, Roots & Scientific Notation",
+    "description": "Apply exponent rules, simplify radicals, and work with scientific notation",
+    "category": "number-quantity",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Number & Quantity",
+    "prerequisites": ["act-real-complex-numbers"],
+    "enables": ["act-radical-rational-expressions", "act-polynomial-exponential-log"],
+    "standardsAlignment": ["ACT N 301-305", "ACT N 401-405"],
+    "teachingGuidance": {
+      "coreConcepts": ["Exponent rules: product, quotient, power, negative, zero", "Simplifying square and cube roots", "Rationalizing denominators", "Scientific notation conversions and arithmetic"],
+      "commonMistakes": ["Confusing x^a * x^b with x^(a*b) instead of x^(a+b)", "Forgetting negative exponent means reciprocal", "Not fully simplifying radicals"],
+      "teachingTips": ["Write out exponent rules on a reference card — drill until automatic", "For radicals: factor under the radical, pull out perfect squares", "Scientific notation shows up 1-2 times per ACT — quick points"]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-ratios-proportions-percents",
+    "displayName": "Ratios, Proportions & Percents",
+    "description": "Solve ratio, proportion, percent, and rate problems in real-world ACT contexts",
+    "category": "number-quantity",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Number & Quantity",
+    "prerequisites": ["act-real-complex-numbers"],
+    "enables": ["act-multi-step-rate-proportion", "act-percent-applications"],
+    "standardsAlignment": ["ACT N 201-205", "ACT IES 301-305"],
+    "teachingGuidance": {
+      "coreConcepts": ["Setting up and solving proportions", "Percent of / percent change / percent increase-decrease", "Unit rates and rate conversions", "Part-to-whole vs. part-to-part ratios"],
+      "commonMistakes": ["Using wrong base for percent change (always divide by original)", "Cross-multiplying incorrectly with complex fractions", "Mixing up part-to-whole and part-to-part ratios"],
+      "teachingTips": ["Percent change = (new - old)/old × 100 — memorize this", "Cross-multiply is reliable but estimation is often faster on ACT", "These appear in Integrating Essential Skills too — high-yield topic"]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "procedural", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "act-matrices-vectors",
+    "displayName": "Matrices & Vectors (Basic)",
+    "description": "Perform basic matrix operations and understand vector concepts tested on the ACT",
+    "category": "number-quantity",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Number & Quantity",
+    "prerequisites": ["act-real-complex-numbers"],
+    "enables": [],
+    "standardsAlignment": ["ACT N 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Matrix addition, subtraction, scalar multiplication", "Matrix dimensions and when multiplication is defined", "Determinant of a 2x2 matrix", "Basic vector addition and scalar multiplication"],
+      "commonMistakes": ["Multiplying matrices element-by-element instead of rows-by-columns", "Getting matrix dimensions wrong for multiplication", "Forgetting determinant formula: ad - bc"],
+      "teachingTips": ["Matrix questions are rare on ACT (0-1 per test) but easy points if you know the basics", "Focus on 2x2 operations — larger matrices almost never tested", "Skip if time is short; come back if time remains"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-linear-equations",
+    "displayName": "Linear Equations & Inequalities",
+    "description": "Solve linear equations, inequalities, and absolute value equations efficiently",
+    "category": "algebra",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Algebra",
+    "prerequisites": ["act-real-complex-numbers"],
+    "enables": ["act-systems-of-equations", "act-linear-functions"],
+    "standardsAlignment": ["ACT A 201-205", "ACT A 301-305"],
+    "teachingGuidance": {
+      "coreConcepts": ["Solving one- and two-step equations", "Equations with fractions and decimals", "Linear inequalities (flip sign when multiplying/dividing by negative)", "Absolute value equations: |x - a| = b gives two cases"],
+      "commonMistakes": ["Forgetting to flip inequality when multiplying by negative", "Only finding one solution for absolute value equations", "Distribution errors: a(b + c) ≠ ab + c"],
+      "teachingTips": ["These are early ACT questions — speed matters more than method", "Backsolving works great for messy linear equations", "Absolute value = 2 cases. Drill until automatic."]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 25, "fluencyType": "procedural", "toleranceFactor": 2.0}
+  },
+  {
+    "skillId": "act-systems-of-equations",
+    "displayName": "Systems of Equations",
+    "description": "Solve systems of two equations using substitution, elimination, and graphing",
+    "category": "algebra",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Algebra",
+    "prerequisites": ["act-linear-equations"],
+    "enables": ["act-algebraic-reasoning-context"],
+    "standardsAlignment": ["ACT A 401-405", "ACT A 501-505"],
+    "teachingGuidance": {
+      "coreConcepts": ["Substitution method", "Elimination (addition/subtraction) method", "Systems with no solution or infinitely many solutions", "Word problems leading to systems"],
+      "commonMistakes": ["Arithmetic errors during elimination (sign mistakes)", "Forgetting to solve for the second variable", "Not checking answer in both equations"],
+      "teachingTips": ["ACT systems usually have clean integer answers — elimination is often fastest", "If one variable has coefficient 1, substitution is fastest", "Appears 1-3 times per ACT — practice both methods"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-quadratic-equations",
+    "displayName": "Quadratic Equations",
+    "description": "Solve quadratics by factoring, completing the square, and the quadratic formula",
+    "category": "algebra",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Algebra",
+    "prerequisites": ["act-linear-equations"],
+    "enables": ["act-quadratic-functions", "act-polynomial-expressions"],
+    "standardsAlignment": ["ACT A 501-505", "ACT A 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Factoring: find two numbers that multiply to c and add to b", "Quadratic formula: x = (-b ± √(b²-4ac))/(2a)", "Completing the square", "Discriminant: b²-4ac determines number of real solutions"],
+      "commonMistakes": ["Sign errors in the quadratic formula", "Forgetting ±, giving only one solution", "Not setting equation equal to zero before factoring"],
+      "teachingTips": ["Always try factoring first — it's faster when it works", "Quadratic formula is the safety net — memorize it cold", "ACT loves 'how many real solutions' → just check the discriminant"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-polynomial-expressions",
+    "displayName": "Polynomial Expressions & Operations",
+    "description": "Add, subtract, multiply, factor polynomials and work with rational expressions",
+    "category": "algebra",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Algebra",
+    "prerequisites": ["act-quadratic-equations"],
+    "enables": ["act-polynomial-exponential-log"],
+    "standardsAlignment": ["ACT A 401-405", "ACT A 501-505"],
+    "teachingGuidance": {
+      "coreConcepts": ["Adding and subtracting polynomials (combine like terms)", "Multiplying polynomials (FOIL for binomials, distribution for larger)", "Factoring: GCF, grouping, difference of squares, sum/difference of cubes", "Polynomial long division and synthetic division basics"],
+      "commonMistakes": ["Sign errors when distributing negatives", "Forgetting the middle term in (a+b)² = a² + 2ab + b²", "Not factoring out GCF first"],
+      "teachingTips": ["FOIL is for binomials only — use distribution for larger products", "Difference of squares a²-b² = (a+b)(a-b) appears constantly on ACT", "Factor completely: always check for GCF first"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-radical-rational-expressions",
+    "displayName": "Radical & Rational Expressions",
+    "description": "Simplify and operate with radical and rational expressions",
+    "category": "algebra",
+    "course": "ACT Math Prep",
+    "quarter": 1,
+    "unit": "Algebra",
+    "prerequisites": ["act-exponents-roots", "act-polynomial-expressions"],
+    "enables": ["act-algebraic-reasoning-context"],
+    "standardsAlignment": ["ACT A 501-505", "ACT A 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Simplifying radical expressions", "Rationalizing denominators (monomial and binomial)", "Adding/subtracting/multiplying rational expressions", "Solving equations with radicals (isolate, square, check)"],
+      "commonMistakes": ["Squaring both sides without checking for extraneous solutions", "Not finding common denominator for rational expressions", "Canceling terms instead of factors in fractions"],
+      "teachingTips": ["Always check solutions in the original equation when radicals are involved", "For rational expressions: factor first, then simplify", "These tend to be mid-to-hard ACT questions — worth the practice"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "act-function-notation-evaluation",
+    "displayName": "Function Notation & Evaluation",
+    "description": "Interpret f(x) notation, evaluate functions, and work with composite and inverse functions",
+    "category": "functions",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Functions",
+    "prerequisites": ["act-linear-equations"],
+    "enables": ["act-linear-functions", "act-quadratic-functions", "act-function-transformations"],
+    "standardsAlignment": ["ACT F 301-305", "ACT F 401-405"],
+    "teachingGuidance": {
+      "coreConcepts": ["f(x) notation: input x, output f(x)", "Evaluating f(a) by substituting a for x", "Composite functions: f(g(x)) — do inside function first", "Inverse functions: f⁻¹(x) undoes f(x), reflect over y=x"],
+      "commonMistakes": ["Confusing f(x+2) with f(x)+2", "Getting composite function order backwards: f(g(x)) ≠ g(f(x))", "Thinking f⁻¹(x) means 1/f(x)"],
+      "teachingTips": ["f(g(x)) = 'f of g of x' — work inside out", "For inverses: swap x and y, then solve for y", "ACT tests function notation 2-4 times per test — high frequency"]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {"baseFluencyTime": 30, "fluencyType": "conceptual", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "act-linear-functions",
+    "displayName": "Linear Functions & Graphs",
+    "description": "Analyze slope, intercepts, and graphs of linear functions in various forms",
+    "category": "functions",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Functions",
+    "prerequisites": ["act-function-notation-evaluation", "act-linear-equations"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT F 201-205", "ACT F 301-305"],
+    "teachingGuidance": {
+      "coreConcepts": ["Slope: m = (y₂-y₁)/(x₂-x₁) = rise/run", "Slope-intercept form: y = mx + b", "Point-slope form: y - y₁ = m(x - x₁)", "Parallel lines: same slope. Perpendicular: negative reciprocal slopes"],
+      "commonMistakes": ["Subtracting coordinates in wrong order for slope", "Confusing x-intercept with y-intercept", "Forgetting perpendicular slopes are negative reciprocals (not just reciprocals)"],
+      "teachingTips": ["Slope formula is the single most tested concept on the ACT math section", "Know all three forms and when each is most useful", "Graph-based linear questions: read slope and y-intercept directly"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 25, "fluencyType": "conceptual", "toleranceFactor": 2.0}
+  },
+  {
+    "skillId": "act-quadratic-functions",
+    "displayName": "Quadratic Functions & Parabolas",
+    "description": "Analyze vertex, axis of symmetry, direction, and intercepts of quadratic functions",
+    "category": "functions",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Functions",
+    "prerequisites": ["act-function-notation-evaluation", "act-quadratic-equations"],
+    "enables": ["act-polynomial-exponential-log", "act-model-interpretation"],
+    "standardsAlignment": ["ACT F 401-405", "ACT F 501-505"],
+    "teachingGuidance": {
+      "coreConcepts": ["Standard form: y = ax² + bx + c → vertex at x = -b/(2a)", "Vertex form: y = a(x-h)² + k → vertex at (h,k)", "Direction: a > 0 opens up (min), a < 0 opens down (max)", "x-intercepts from factoring or quadratic formula, y-intercept = c"],
+      "commonMistakes": ["Sign errors reading vertex from vertex form: (x-h) means h, not -h", "Forgetting the axis of symmetry is x = -b/(2a), not -b/2a without parentheses", "Mixing up maximum and minimum based on direction"],
+      "teachingTips": ["Vertex formula x = -b/(2a) is tested very frequently", "If given vertex form, read vertex directly — don't expand", "ACT often asks 'what is the maximum value' — that's the y-coordinate of the vertex"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "conceptual", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-polynomial-exponential-log",
+    "displayName": "Polynomial, Exponential & Logarithmic Functions",
+    "description": "Analyze higher-degree polynomials, exponential growth/decay, and basic logarithms",
+    "category": "functions",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Functions",
+    "prerequisites": ["act-quadratic-functions", "act-exponents-roots"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT F 501-505", "ACT F 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["End behavior of polynomials based on degree and leading coefficient", "Exponential growth: y = a·b^x (b > 1) and decay (0 < b < 1)", "Logarithm basics: log_b(x) = y means b^y = x", "Logarithm properties: product, quotient, power rules"],
+      "commonMistakes": ["Confusing exponential growth with linear growth", "Misreading log notation — log_b(x) is not log(b·x)", "End behavior errors: even vs. odd degree"],
+      "teachingTips": ["ACT exponential questions often use real contexts (population, depreciation)", "Log questions are rare (0-1 per test) but usually straightforward conversions", "For end behavior: leading term tells you everything"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "act-trig-functions",
+    "displayName": "Trigonometric Functions",
+    "description": "Apply SOH-CAH-TOA, unit circle, trig identities, and graph trig functions",
+    "category": "functions",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Functions",
+    "prerequisites": ["act-function-notation-evaluation"],
+    "enables": ["act-right-triangle-trig"],
+    "standardsAlignment": ["ACT F 501-505", "ACT F 601-605", "ACT F 701-705"],
+    "teachingGuidance": {
+      "coreConcepts": ["SOH-CAH-TOA: sin = opp/hyp, cos = adj/hyp, tan = opp/adj", "Unit circle key angles: 0°, 30°, 45°, 60°, 90° and their radian equivalents", "Pythagorean identity: sin²θ + cos²θ = 1", "Graphing y = A·sin(Bx + C) + D: amplitude, period, phase shift, vertical shift"],
+      "commonMistakes": ["Mixing up sin and cos (adjacent vs. opposite)", "Forgetting quadrant signs: All Students Take Calculus", "Period formula: 2π/B, not 2π·B"],
+      "teachingTips": ["SOH-CAH-TOA is enough for most ACT trig questions", "4-7 trig questions per ACT — higher scorers need these", "Unit circle: memorize the first quadrant, derive the rest by symmetry"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "act-function-transformations",
+    "displayName": "Function Transformations",
+    "description": "Identify and apply translations, reflections, stretches, and compressions of function graphs",
+    "category": "functions",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Functions",
+    "prerequisites": ["act-function-notation-evaluation"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT F 501-505", "ACT F 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Vertical shift: f(x) + k (up) or f(x) - k (down)", "Horizontal shift: f(x - h) shifts RIGHT, f(x + h) shifts LEFT", "Reflection: -f(x) over x-axis, f(-x) over y-axis", "Vertical stretch/compress: a·f(x), |a| > 1 stretches, |a| < 1 compresses"],
+      "commonMistakes": ["Horizontal shifts go opposite to the sign: f(x-2) goes RIGHT", "Confusing vertical and horizontal transformations", "Order of transformations matters"],
+      "teachingTips": ["'Inside the function' = horizontal (opposite direction). 'Outside' = vertical (same direction)", "ACT tests this with specific function families — practice with linear, quadratic, and trig", "Can often be solved by testing one point from the graph"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "conceptual", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-angles-lines-triangles",
+    "displayName": "Angles, Lines & Triangles",
+    "description": "Apply angle relationships, parallel line theorems, and triangle properties",
+    "category": "geometry",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Geometry",
+    "prerequisites": [],
+    "enables": ["act-polygons-circles", "act-congruence-similarity", "act-right-triangle-trig"],
+    "standardsAlignment": ["ACT G 301-305", "ACT G 401-405"],
+    "teachingGuidance": {
+      "coreConcepts": ["Complementary (90°) and supplementary (180°) angles", "Vertical angles are equal", "Parallel lines + transversal: corresponding, alternate interior/exterior angles", "Triangle angle sum = 180°, exterior angle = sum of remote interior angles"],
+      "commonMistakes": ["Confusing corresponding and alternate interior angles", "Forgetting exterior angle theorem", "Assuming angles are equal without justification from parallel lines"],
+      "teachingTips": ["Draw parallel lines with transversal — label all 8 angles by pattern", "Triangle properties are foundational: every geometry section uses them", "These are often 'free points' early in the test — don't rush"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 25, "fluencyType": "conceptual", "toleranceFactor": 2.0}
+  },
+  {
+    "skillId": "act-polygons-circles",
+    "displayName": "Polygons & Circle Properties",
+    "description": "Apply properties of quadrilaterals, regular polygons, and circles including arcs and sectors",
+    "category": "geometry",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Geometry",
+    "prerequisites": ["act-angles-lines-triangles"],
+    "enables": ["act-area-volume-surface-area"],
+    "standardsAlignment": ["ACT G 401-405", "ACT G 501-505", "ACT G 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Interior angle sum of n-gon: (n-2)·180°", "Quadrilateral properties: parallelogram, rectangle, rhombus, trapezoid", "Circle: circumference = 2πr, area = πr²", "Arc length = (θ/360)·2πr, sector area = (θ/360)·πr²"],
+      "commonMistakes": ["Using diameter instead of radius (or vice versa) in formulas", "Interior angle formula: (n-2)·180° gives total, divide by n for each angle of regular polygon", "Confusing arc length with sector area"],
+      "teachingTips": ["Circle formulas appear on nearly every ACT — memorize them cold", "For polygons: interior angle sum formula handles almost every question", "Quadrilateral properties: draw each type and list what's equal/parallel"]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "conceptual", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "act-area-volume-surface-area",
+    "displayName": "Area, Volume & Surface Area",
+    "description": "Calculate area of 2D figures and volume/surface area of 3D solids",
+    "category": "geometry",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Geometry",
+    "prerequisites": ["act-polygons-circles"],
+    "enables": ["act-area-perimeter-composite"],
+    "standardsAlignment": ["ACT G 301-305", "ACT G 401-405", "ACT G 501-505"],
+    "teachingGuidance": {
+      "coreConcepts": ["Triangle: A = (1/2)bh. Rectangle: A = lw. Parallelogram: A = bh", "Trapezoid: A = (1/2)(b₁+b₂)h", "Prism/cylinder volume: V = Bh (base area × height)", "Sphere: V = (4/3)πr³, SA = 4πr². Cone: V = (1/3)πr²h"],
+      "commonMistakes": ["Using slant height instead of actual height", "Forgetting the 1/3 factor for cones and pyramids", "Not matching units (area is square, volume is cubic)"],
+      "teachingTips": ["ACT provides no formula sheet — you must memorize these", "For composite shapes: break into simpler pieces, add/subtract areas", "Volume questions are usually straightforward plug-and-chug if you know the formula"]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "procedural", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "act-coordinate-geometry",
+    "displayName": "Coordinate Geometry",
+    "description": "Apply distance, midpoint, slope, and circle equations in the coordinate plane",
+    "category": "geometry",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Geometry",
+    "prerequisites": ["act-linear-functions"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT G 401-405", "ACT G 501-505", "ACT G 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Distance formula: d = √[(x₂-x₁)² + (y₂-y₁)²]", "Midpoint: ((x₁+x₂)/2, (y₁+y₂)/2)", "Circle equation: (x-h)² + (y-k)² = r² with center (h,k)", "Transformations in the coordinate plane"],
+      "commonMistakes": ["Forgetting to square the differences in the distance formula", "Reading center from (x-h)² as -h instead of h", "Not completing the square to convert general circle form to standard"],
+      "teachingTips": ["Distance and midpoint are among the most tested coordinate geometry skills", "Circle equation: practice completing the square to find center and radius", "3-5 coordinate geometry questions per ACT — high-value practice"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-right-triangle-trig",
+    "displayName": "Right Triangle Trigonometry",
+    "description": "Apply SOH-CAH-TOA, special right triangles, and the Pythagorean theorem",
+    "category": "geometry",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Geometry",
+    "prerequisites": ["act-angles-lines-triangles", "act-trig-functions"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT G 501-505", "ACT G 601-605", "ACT G 701-705"],
+    "teachingGuidance": {
+      "coreConcepts": ["Pythagorean theorem: a² + b² = c²", "Common Pythagorean triples: 3-4-5, 5-12-13, 8-15-17, 7-24-25", "Special right triangles: 45-45-90 (x, x, x√2) and 30-60-90 (x, x√3, 2x)", "SOH-CAH-TOA applied to right triangle problems"],
+      "commonMistakes": ["Using the wrong side as the hypotenuse", "Mixing up the 30-60-90 ratios (which side is x√3?)", "Forgetting to check if a triple is a multiple of a common triple"],
+      "teachingTips": ["Special right triangles appear on EVERY ACT — memorize the ratios", "Look for 3-4-5 multiples (6-8-10, 9-12-15, etc.)", "When a right triangle appears, immediately think: Pythagorean theorem or SOH-CAH-TOA?"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-congruence-similarity",
+    "displayName": "Congruence & Similarity",
+    "description": "Apply congruence criteria and similarity ratios to solve geometric problems",
+    "category": "geometry",
+    "course": "ACT Math Prep",
+    "quarter": 2,
+    "unit": "Geometry",
+    "prerequisites": ["act-angles-lines-triangles"],
+    "enables": [],
+    "standardsAlignment": ["ACT G 501-505", "ACT G 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Congruence: SSS, SAS, ASA, AAS, HL", "Similar triangles: AA similarity (two equal angles is enough)", "Ratio of corresponding sides in similar triangles", "Scale factor: if sides scale by k, area scales by k², volume by k³"],
+      "commonMistakes": ["Setting up ratios with non-corresponding sides", "Confusing congruence (same size) with similarity (same shape)", "Forgetting that area scales by k² not k"],
+      "teachingTips": ["Similar triangles are tested more than congruent triangles on the ACT", "Look for similar triangles in complex figures — parallel lines create them", "Cross-multiply the proportion and solve — straightforward once set up correctly"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "conceptual", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-center-spread",
+    "displayName": "Measures of Center & Spread",
+    "description": "Calculate and interpret mean, median, mode, range, and standard deviation in context",
+    "category": "statistics-probability",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Statistics & Probability",
+    "prerequisites": ["act-real-complex-numbers"],
+    "enables": ["act-data-representations"],
+    "standardsAlignment": ["ACT S 301-305", "ACT S 401-405"],
+    "teachingGuidance": {
+      "coreConcepts": ["Mean = sum/count. Median = middle value. Mode = most frequent", "Weighted averages: total = Σ(value × weight)/Σ(weights)", "Range = max - min", "Standard deviation: what it measures (spread from mean), not how to calculate by hand"],
+      "commonMistakes": ["Finding median without sorting the data first", "Weighted average: using simple average when weights differ", "Confusing 'which has greater standard deviation' — more spread = larger SD"],
+      "teachingTips": ["ACT loves weighted average problems — master the formula", "For median: sort, then count. Even number of values → average the middle two", "Standard deviation questions are conceptual on the ACT, not computational"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 30, "fluencyType": "procedural", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "act-data-representations",
+    "displayName": "Data Representations & Interpretation",
+    "description": "Read and interpret bar graphs, line graphs, scatter plots, histograms, and box plots",
+    "category": "statistics-probability",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Statistics & Probability",
+    "prerequisites": ["act-center-spread"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT S 301-305", "ACT S 401-405", "ACT S 501-505"],
+    "teachingGuidance": {
+      "coreConcepts": ["Reading values from bar, line, and circle graphs", "Scatter plots: trend direction, outliers, line of best fit", "Histograms: frequency, relative frequency", "Box plots: median, quartiles, range, IQR"],
+      "commonMistakes": ["Misreading the scale or axis labels on graphs", "Confusing correlation with causation", "Not reading the question carefully (asks for 'approximately' vs. 'exactly')"],
+      "teachingTips": ["Always read axis labels and units first", "Scatter plot questions: look at overall trend, not individual points", "Box plot: median is the line inside the box, not the mean"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 30, "fluencyType": "conceptual", "toleranceFactor": 2.0}
+  },
+  {
+    "skillId": "act-two-way-tables",
+    "displayName": "Two-Way Tables & Conditional Probability",
+    "description": "Interpret two-way frequency tables and calculate conditional probabilities from them",
+    "category": "statistics-probability",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Statistics & Probability",
+    "prerequisites": ["act-data-representations"],
+    "enables": ["act-probability"],
+    "standardsAlignment": ["ACT S 401-405", "ACT S 501-505"],
+    "teachingGuidance": {
+      "coreConcepts": ["Reading row totals, column totals, and grand total", "Joint frequency vs. marginal frequency", "Conditional probability: P(A|B) = count(A and B)/count(B)", "Identifying the correct denominator for 'given that' questions"],
+      "commonMistakes": ["Using grand total instead of row/column total for conditional probability", "Confusing 'A and B' with 'A or B'", "Reading the wrong cell from the table"],
+      "teachingTips": ["Two-way tables appear on nearly every ACT — practice reading them quickly", "For 'given that' questions: the 'given' tells you which row or column to use as denominator", "Fill in missing cells first if the table is incomplete"]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "conceptual", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "act-probability",
+    "displayName": "Probability",
+    "description": "Calculate probabilities of simple, compound, and conditional events",
+    "category": "statistics-probability",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Statistics & Probability",
+    "prerequisites": ["act-two-way-tables"],
+    "enables": ["act-counting-techniques"],
+    "standardsAlignment": ["ACT S 401-405", "ACT S 501-505", "ACT S 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["P(event) = favorable outcomes / total outcomes", "P(A or B) = P(A) + P(B) - P(A and B)", "P(A and B) = P(A) × P(B) if independent", "Complementary probability: P(not A) = 1 - P(A)"],
+      "commonMistakes": ["Forgetting to subtract the overlap in P(A or B)", "Treating dependent events as independent", "Not using complementary probability when 'at least one' appears"],
+      "teachingTips": ["P(at least one) = 1 - P(none) is the most efficient approach", "For 'or' questions: always ask 'is there overlap?'", "ACT probability is usually straightforward — count carefully"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-counting-techniques",
+    "displayName": "Counting Techniques",
+    "description": "Apply fundamental counting principle, permutations, and combinations",
+    "category": "statistics-probability",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Statistics & Probability",
+    "prerequisites": ["act-probability"],
+    "enables": [],
+    "standardsAlignment": ["ACT S 501-505", "ACT S 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Fundamental counting principle: multiply choices at each stage", "Permutations: order matters. nPr = n!/(n-r)!", "Combinations: order doesn't matter. nCr = n!/[r!(n-r)!]", "When to use each: 'arrange' → permutation, 'choose/select' → combination"],
+      "commonMistakes": ["Confusing permutation and combination", "Forgetting to account for restrictions in counting problems", "Calculation errors with factorials"],
+      "teachingTips": ["Ask: 'Does order matter?' If yes → permutation. If no → combination", "Most ACT counting questions use fundamental counting principle, not formulas", "Appears 0-1 times per ACT but is a free point if you know the pattern"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 40, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-multi-step-rate-proportion",
+    "displayName": "Multi-Step Rate & Proportion Problems",
+    "description": "Solve complex rate, ratio, and proportion problems requiring multiple steps",
+    "category": "integrating-essential-skills",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Integrating Essential Skills",
+    "prerequisites": ["act-ratios-proportions-percents", "act-linear-equations"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT IES 401-405", "ACT IES 501-505"],
+    "teachingGuidance": {
+      "coreConcepts": ["Multi-step proportion chains (rate × time = amount)", "Combined work rate problems: 1/a + 1/b = 1/total", "Distance-rate-time problems with multiple legs", "Mixture and concentration problems"],
+      "commonMistakes": ["Setting up the proportion relationship backwards", "Adding rates directly instead of using reciprocals for work problems", "Not keeping units consistent across steps"],
+      "teachingTips": ["Break multi-step problems into single-step pieces", "Work rate problems: if A takes 3 hours and B takes 6 hours, together: 1/3 + 1/6 = 1/2 → 2 hours", "Label every quantity with units — this catches most errors"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "procedural", "toleranceFactor": 3.5}
+  },
+  {
+    "skillId": "act-area-perimeter-composite",
+    "displayName": "Composite Figure Problems",
+    "description": "Calculate area and perimeter of composite and shaded-region figures",
+    "category": "integrating-essential-skills",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Integrating Essential Skills",
+    "prerequisites": ["act-area-volume-surface-area"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT IES 401-405", "ACT IES 501-505"],
+    "teachingGuidance": {
+      "coreConcepts": ["Decomposing composite shapes into rectangles, triangles, circles", "Shaded region = total area - unshaded area", "Combining perimeter segments from multiple shapes", "Applying multiple formulas in sequence"],
+      "commonMistakes": ["Counting shared edges twice in perimeter", "Using full circle area when only a semicircle or quarter is needed", "Not accounting for all parts of a composite figure"],
+      "teachingTips": ["Always sketch and label dimensions before calculating", "Shaded area problems: figure out what to subtract", "These are worth 2-3 questions per ACT and are very predictable"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "procedural", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-algebraic-reasoning-context",
+    "displayName": "Algebraic Reasoning in Context",
+    "description": "Translate real-world scenarios into algebraic expressions and equations, then solve",
+    "category": "integrating-essential-skills",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Integrating Essential Skills",
+    "prerequisites": ["act-linear-equations", "act-systems-of-equations"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT IES 401-405", "ACT IES 501-505", "ACT IES 601-605"],
+    "teachingGuidance": {
+      "coreConcepts": ["Translating word problems: 'is' means '=', 'of' means '×'", "Setting up equations from contexts: cost, profit, distance, age", "Interpreting solutions in real-world terms", "Choosing which variable to solve for based on the question"],
+      "commonMistakes": ["Misidentifying what the variable represents", "Setting up the equation backwards", "Solving correctly but answering the wrong question (finds x when asked for x+3)"],
+      "teachingTips": ["Define variables FIRST, then translate sentence by sentence", "Backsolving is often faster than algebra for word problems", "Read the question twice: what are they actually asking for?"]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {"baseFluencyTime": 45, "fluencyType": "conceptual", "toleranceFactor": 3.0}
+  },
+  {
+    "skillId": "act-percent-applications",
+    "displayName": "Percent Applications",
+    "description": "Solve complex percent problems including tax, discount, interest, and successive percents",
+    "category": "integrating-essential-skills",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Integrating Essential Skills",
+    "prerequisites": ["act-ratios-proportions-percents"],
+    "enables": ["act-model-interpretation"],
+    "standardsAlignment": ["ACT IES 301-305", "ACT IES 401-405"],
+    "teachingGuidance": {
+      "coreConcepts": ["Tax/tip: total = price × (1 + rate)", "Discount: sale price = price × (1 - rate)", "Simple interest: I = Prt", "Successive percent changes: multiply the multipliers (1±r₁)(1±r₂)"],
+      "commonMistakes": ["Adding successive percents instead of multiplying", "Using the wrong base for percent change after the first change", "Confusing markup and discount formulas"],
+      "teachingTips": ["Successive percents: a 20% increase then 10% decrease is NOT a 10% increase", "Practice with real contexts: sales tax, tips, discounts — students relate to these", "These are 'essential skills' questions — they appear throughout the test, not just in one section"]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {"baseFluencyTime": 35, "fluencyType": "procedural", "toleranceFactor": 2.5}
+  },
+  {
+    "skillId": "act-measurement-unit-conversion",
+    "displayName": "Measurement & Unit Conversion",
+    "description": "Convert between units and apply dimensional analysis to solve problems",
+    "category": "integrating-essential-skills",
+    "course": "ACT Math Prep",
+    "quarter": 3,
+    "unit": "Integrating Essential Skills",
+    "prerequisites": ["act-ratios-proportions-percents"],
+    "enables": ["act-multi-step-rate-proportion"],
+    "standardsAlignment": ["ACT IES 201-205", "ACT IES 301-305"],
+    "teachingGuidance": {
+      "coreConcepts": ["Unit conversion using multiplication by conversion factors", "Dimensional analysis: units must cancel correctly", "Common conversions: inches/feet, feet/miles, ounces/pounds, minutes/hours", "Area and volume unit conversions: square and cube the linear conversion"],
+      "commonMistakes": ["Multiplying when should divide (or vice versa)", "Not squaring/cubing conversion factors for area/volume", "Mixing metric and imperial units"],
+      "teachingTips": ["Set up conversion factors as fractions so units cancel — this prevents errors", "Area: 1 ft² = 144 in² (12² = 144), NOT 12 in²", "ACT provides the conversion factors in the problem — just set up the chain"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 25, "fluencyType": "procedural", "toleranceFactor": 2.0}
+  },
+  {
+    "skillId": "act-backsolving",
+    "displayName": "Backsolving (Plugging In Answers)",
+    "description": "Solve problems efficiently by testing answer choices instead of solving algebraically",
+    "category": "test-strategy",
+    "course": "ACT Math Prep",
+    "quarter": 4,
+    "unit": "Test Strategies & Modeling",
+    "prerequisites": ["act-linear-equations"],
+    "enables": [],
+    "standardsAlignment": ["ACT Strategy"],
+    "teachingGuidance": {
+      "coreConcepts": ["Start with answer choice C (middle value) for efficiency", "If C is too big, try A or B. If too small, try D or E", "Works best for: word problems, equations with one variable, 'which value' questions", "When NOT to use: multiple variables, 'which is true' questions, proofs"],
+      "commonMistakes": ["Not starting in the middle (wastes time)", "Trying to backsolve when direct algebra is faster", "Substituting into the wrong place"],
+      "teachingTips": ["Backsolving is the #1 ACT-specific strategy — every student should know it", "Practice recognizing when backsolving is faster than algebra", "On average, backsolving takes 2 tries when starting from the middle"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 20, "fluencyType": "strategic", "toleranceFactor": 2.0}
+  },
+  {
+    "skillId": "act-picking-numbers",
+    "displayName": "Picking Numbers",
+    "description": "Replace variables with concrete numbers to test which expression or equation is correct",
+    "category": "test-strategy",
+    "course": "ACT Math Prep",
+    "quarter": 4,
+    "unit": "Test Strategies & Modeling",
+    "prerequisites": ["act-linear-equations"],
+    "enables": [],
+    "standardsAlignment": ["ACT Strategy"],
+    "teachingGuidance": {
+      "coreConcepts": ["Choose easy numbers: 2, 3, 5, 10 (avoid 0 and 1 — they're special)", "Substitute your numbers into the problem and each answer choice", "The answer that matches your calculated result is correct", "Best for: 'which expression equals', percent/fraction of unknowns, abstract questions"],
+      "commonMistakes": ["Using 0 or 1 (too many special properties)", "Using a number that appears in the problem", "Not checking all answer choices (more than one might work for bad number choices)"],
+      "teachingTips": ["This strategy turns abstract algebra into concrete arithmetic", "If two answers match with your first number, try a different number", "Picking numbers is slower than algebra but never gets stuck — great safety net"]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {"baseFluencyTime": 20, "fluencyType": "strategic", "toleranceFactor": 2.0}
+  },
+  {
+    "skillId": "act-estimation-elimination",
+    "displayName": "Estimation & Answer Elimination",
+    "description": "Use estimation, rounding, and logical reasoning to eliminate wrong answers quickly",
+    "category": "test-strategy",
+    "course": "ACT Math Prep",
+    "quarter": 4,
+    "unit": "Test Strategies & Modeling",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": ["ACT Strategy"],
+    "teachingGuidance": {
+      "coreConcepts": ["Round to friendly numbers: 3.14 → 3, √2 → 1.4, √3 → 1.7", "Eliminate answers that are clearly too large or too small", "Use sign reasoning: the answer must be positive/negative", "Approximate magnitudes: 'about 100' eliminates 5, 50, 5000"],
+      "commonMistakes": ["Over-estimating precision needed (ACT often has well-separated answer choices)", "Not estimating when exact calculation would take too long", "Eliminating the correct answer due to rounding too aggressively"],
+      "teachingTips": ["On the ACT, answer choices are usually spread apart — estimation works", "Even eliminating 2-3 choices improves guessing odds significantly", "Best combined with other strategies: estimate first, then calculate if needed"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {"baseFluencyTime": 15, "fluencyType": "strategic", "toleranceFactor": 1.5}
+  },
+  {
+    "skillId": "act-pacing-strategy",
+    "displayName": "Pacing & Time Management",
+    "description": "Manage time effectively across 60 questions in 60 minutes with strategic skipping",
+    "category": "test-strategy",
+    "course": "ACT Math Prep",
+    "quarter": 4,
+    "unit": "Test Strategies & Modeling",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": ["ACT Strategy"],
+    "teachingGuidance": {
+      "coreConcepts": ["60 questions in 60 minutes = 1 minute per question average", "Questions get harder: #1-20 easy, #21-40 medium, #41-60 hard", "Skip and return: never spend more than 90 seconds on one question", "Answer every question — no penalty for guessing on the ACT"],
+      "commonMistakes": ["Spending 3+ minutes on a hard question early", "Not returning to skipped questions", "Leaving questions blank (no guessing penalty!)"],
+      "teachingTips": ["Practice with a timer from day one — pacing is a learned skill", "Mark skipped questions clearly so you can find them on a return pass", "If running out of time, guess the same letter for remaining questions (better than random)"]
+    },
+    "difficultyLevel": 2,
+    "fluencyMetadata": {"baseFluencyTime": 15, "fluencyType": "strategic", "toleranceFactor": 1.5}
+  },
+  {
+    "skillId": "act-model-interpretation",
+    "displayName": "Modeling & Interpretation",
+    "description": "Produce, interpret, and evaluate mathematical models from real-world contexts",
+    "category": "modeling",
+    "course": "ACT Math Prep",
+    "quarter": 4,
+    "unit": "Test Strategies & Modeling",
+    "prerequisites": ["act-linear-functions", "act-quadratic-functions", "act-data-representations"],
+    "enables": [],
+    "standardsAlignment": ["ACT Modeling (cross-cutting)"],
+    "teachingGuidance": {
+      "coreConcepts": ["Choosing the right model type: linear vs. exponential vs. quadratic", "Interpreting slope and intercepts in context", "Using a model to predict: interpolation vs. extrapolation", "Evaluating whether a model is reasonable"],
+      "commonMistakes": ["Extrapolating far beyond the data range", "Misinterpreting what the slope or intercept represents in context", "Choosing the wrong model type for the data pattern"],
+      "teachingTips": ["Modeling questions span all content areas — they're about applying math to real situations", "Always ask: 'What does this number MEAN in the context of the problem?'", "Linear: constant rate of change. Exponential: constant percent change. Quadratic: changing rate of change"]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {"baseFluencyTime": 50, "fluencyType": "conceptual", "toleranceFactor": 3.5}
+  }
+]
