@@ -129,6 +129,7 @@ const billingRoutes = require('./routes/billing');  // Stripe subscription billi
 const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
 const courseSessionRoutes = require('./routes/courseSession');  // Pathway-based course sessions (self-paced)
 const waitlistRoutes = require('./routes/waitlist');  // Pre-launch email waitlist
+const { router: dataPrivacyRoutes } = require('./routes/dataPrivacy');  // FERPA/COPPA data deletion & export
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // Usage gate middleware for free tier enforcement
@@ -380,6 +381,7 @@ app.use('/api/parent', isAuthenticated, isParent, parentRoutes);
 app.use('/api/student', isAuthenticated, isStudent, studentRoutes.router);
 app.use('/api/leaderboard', isAuthenticated, isAuthorizedForLeaderboard, leaderboardRoutes);
 app.use('/api/billing', billingRoutes); // Stripe billing (webhook is pre-parsed with raw body above)
+app.use('/api/privacy', isAuthenticated, dataPrivacyRoutes); // FERPA/COPPA data deletion & export
 app.use('/api/chat', isAuthenticated, aiEndpointLimiter, usageGate, chatRoutes); // Usage-gated for free tier
 app.use('/api/conversations', isAuthenticated, conversationsRoutes); // Topic-based conversations & assessment
 app.use('/api/speak', isAuthenticated, speakRoutes);
