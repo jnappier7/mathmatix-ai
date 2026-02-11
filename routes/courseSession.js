@@ -40,7 +40,7 @@ router.get('/catalog', async (req, res) => {
         catalog.push({
           courseId: cid,
           pathwayId: file.replace('.json', ''),
-          title: pathway.courseName || pathway.title || cid,
+          title: pathway.track || pathway.courseName || pathway.title || cid,
           track: pathway.track || '',
           description: pathway.overview || pathway.description || '',
           tagline: meta.tagline || '',
@@ -152,8 +152,8 @@ router.post('/enroll', async (req, res) => {
     // Create a dedicated conversation for this course
     const conversation = new Conversation({
       userId: req.user._id,
-      conversationName: pathway.courseName || courseId,
-      topic: pathway.courseName || courseId,
+      conversationName: pathway.track || pathway.courseName || courseId,
+      topic: pathway.track || pathway.courseName || courseId,
       topicEmoji: '📚',
       conversationType: 'topic'
     });
@@ -163,7 +163,7 @@ router.post('/enroll', async (req, res) => {
     const session = new CourseSession({
       userId: req.user._id,
       courseId,
-      courseName: pathway.courseName || pathway.title || courseId,
+      courseName: pathway.track || pathway.courseName || pathway.title || courseId,
       pathwayId: `${courseId}-pathway`,
       currentModuleId: modules[0]?.moduleId || null,
       modules,

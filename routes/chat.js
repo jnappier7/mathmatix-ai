@@ -28,6 +28,7 @@ const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit 
 const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
+const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext } = require('../utils/coursePrompt');
 
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -714,7 +715,27 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         // Build grading context (only include if there are recent results)
         const gradingContext = recentGradingResults && recentGradingResults.length > 0 ? recentGradingResults : null;
 
-        const systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
+        // Use dedicated course prompt when in course mode, generic prompt otherwise
+        let systemPrompt;
+        if (conversationContextForPrompt?.courseSession && !masteryContext) {
+            // COURSE MODE: Use the dedicated instructor-led prompt
+            const courseSessionDoc = await require('../models/courseSession').findById(user.activeCourseSessionId);
+            const courseCtx = courseSessionDoc ? loadCourseContext(courseSessionDoc) : null;
+            if (courseCtx) {
+                systemPrompt = buildCourseSystemPrompt({
+                    userProfile: studentProfileForPrompt,
+                    tutorProfile: currentTutor,
+                    courseSession: courseSessionDoc,
+                    pathway: courseCtx.pathway,
+                    scaffoldData: courseCtx.scaffoldData,
+                    currentModule: courseCtx.currentModule
+                });
+            } else {
+                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
+            }
+        } else {
+            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns);
+        }
         const messagesForAI = [{ role: 'system', content: systemPrompt }, ...formattedMessagesForLLM];
 
         // Check if client wants streaming (via query parameter)
@@ -2033,20 +2054,66 @@ async function handleGreetingRequest(req, res, userId) {
 
         // Build messages for AI - the ghost message is the "user" message
         // but we add a system instruction to respond as if initiating
-        const systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
 
-        // Check if we should offer Starting Point in this greeting (only once, ever)
-        const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
+        // Check if user is in an active course session
+        let courseContext = null;
+        let isCourseGreeting = false;
+        if (user.activeCourseSessionId) {
+            try {
+                const CourseSession = require('../models/courseSession');
+                const courseSession = await CourseSession.findById(user.activeCourseSessionId);
+                if (courseSession && courseSession.conversationId?.toString() === activeConversation?._id?.toString()) {
+                    const ctx = loadCourseContext(courseSession);
+                    if (ctx) {
+                        courseContext = { courseSession, ...ctx };
+                        isCourseGreeting = true;
+                    }
+                }
+            } catch (courseErr) {
+                console.warn('[Greeting] Could not load course context:', courseErr.message);
+            }
+        }
 
-        let greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.`;
+        let systemPrompt;
+        let greetingInstruction;
+        let maxTokens = 150;
 
-        // Add Starting Point offer (only on first session, never again)
-        if (shouldOfferStartingPoint) {
-            greetingInstruction += `
+        if (isCourseGreeting && courseContext) {
+            // COURSE MODE: Use dedicated course prompt
+            systemPrompt = buildCourseSystemPrompt({
+                userProfile: user.toObject(),
+                tutorProfile: currentTutor,
+                courseSession: courseContext.courseSession,
+                pathway: courseContext.pathway,
+                scaffoldData: courseContext.scaffoldData,
+                currentModule: courseContext.currentModule
+            });
+            greetingInstruction = buildCourseGreetingInstruction({
+                userProfile: user.toObject(),
+                courseSession: courseContext.courseSession,
+                pathway: courseContext.pathway,
+                scaffoldData: courseContext.scaffoldData,
+                currentModule: courseContext.currentModule
+            });
+            maxTokens = 800; // Course greetings include teaching content
+            console.log(`[Greeting] Course mode: ${courseContext.courseSession.courseName}, module: ${courseContext.courseSession.currentModuleId}`);
+        } else {
+            // GENERAL TUTORING MODE: Original greeting behavior
+            systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
+
+            // Check if we should offer Starting Point in this greeting (only once, ever)
+            const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
+
+            greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.`;
+
+            // Add Starting Point offer (only on first session, never again)
+            if (shouldOfferStartingPoint) {
+                greetingInstruction += `
 
 IMPORTANT: This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar. Say something like: "Oh, and when you're ready, hit that glowing Starting Point button on the left - it's a quick quiz to figure out where you're at so I can help you better. No rush though!"
 
 Keep it casual and low-pressure. Don't make it sound like a test they need to take right now. Just let them know it's there when they're ready.`;
+            }
         }
 
         const messagesForAI = [
@@ -2070,7 +2137,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             res.flushHeaders();
 
             try {
-                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 150 });
+                const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: maxTokens });
                 let fullResponse = '';
 
                 for await (const chunk of stream) {
@@ -2100,7 +2167,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 await activeConversation.save();
 
                 // Mark Starting Point as offered (only do this once, ever)
-                if (shouldOfferStartingPoint) {
+                if (!isCourseGreeting && !user.startingPointOffered && !user.assessmentCompleted) {
                     await User.findByIdAndUpdate(userId, {
                         startingPointOffered: true,
                         startingPointOfferedAt: new Date()
@@ -2124,7 +2191,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
 
         } else {
             // NON-STREAMING MODE
-            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: 150 });
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.8, max_tokens: maxTokens });
             const greetingText = completion.choices[0].message.content.trim();
 
             // Track AI processing time
@@ -2143,7 +2210,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             await activeConversation.save();
 
             // Mark Starting Point as offered (only do this once, ever)
-            if (shouldOfferStartingPoint) {
+            if (!isCourseGreeting && !user.startingPointOffered && !user.assessmentCompleted) {
                 await User.findByIdAndUpdate(userId, {
                     startingPointOffered: true,
                     startingPointOfferedAt: new Date()
