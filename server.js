@@ -128,6 +128,7 @@ const adminEmailRoutes = require('./routes/adminEmail');  // Admin bulk email ca
 const billingRoutes = require('./routes/billing');  // Stripe subscription billing
 const courseRoutes = require('./routes/course');  // Course catalog, enrollment, and progression
 const courseSessionRoutes = require('./routes/courseSession');  // Pathway-based course sessions (self-paced)
+const waitlistRoutes = require('./routes/waitlist');  // Pre-launch email waitlist
 const TUTOR_CONFIG = require('./utils/tutorConfig');
 
 // Usage gate middleware for free tier enforcement
@@ -421,6 +422,9 @@ app.use('/api/announcements', isAuthenticated, announcementsRoutes); // Teacher-
 app.use('/api/admin/email', isAuthenticated, isAdmin, adminEmailRoutes); // Admin bulk email campaigns
 app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes); // IEP templates for teachers
 app.use('/api/impersonation', isAuthenticated, impersonationRoutes); // User impersonation (student view) for admins/teachers/parents
+
+// Pre-launch waitlist (public — no auth required)
+app.use('/api/waitlist', waitlistRoutes);
 
 // User Profile & Settings Routes
 app.get("/user", isAuthenticated, async (req, res) => {
