@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u10",
+  "course": "Algebra 1",
+  "unit": 10,
+  "quarter": 4,
+  "title": "Unit 10 Checkpoint: Radicals & Geometry Connections",
+  "weeks": "30",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of simplifying radical expressions using the product property of square roots, performing addition, subtraction, and multiplication of radical expressions, applying the Pythagorean theorem to find missing sides of right triangles and solve real-world problems, using the distance formula to calculate distances between coordinate points, applying the midpoint formula, and solving radical equations.",
+  "skillsCovered": [
+    "simplifying-radicals",
+    "operations-with-radicals",
+    "pythagorean-theorem",
+    "distance-formula"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "simplifying-radicals", "reteachFocus": "Identifying perfect square factors, applying the product property √(ab) = √a·√b, simplifying radicals with variables, expressing results in simplest radical form", "resources": ["radicals_geometry_module.json - scaffold phases 1-2"] },
+    { "skillId": "operations-with-radicals", "reteachFocus": "Simplifying each radical before combining, adding and subtracting like radicals (same radicand), multiplying radical expressions", "resources": ["radicals_geometry_module.json - scaffold phases 2-3"] },
+    { "skillId": "pythagorean-theorem", "reteachFocus": "Applying a² + b² = c² to find missing sides, recognizing Pythagorean triples, identifying the hypotenuse in word problems, solving real-world right triangle problems", "resources": ["radicals_geometry_module.json - scaffold phases 4-6"] },
+    { "skillId": "distance-formula", "reteachFocus": "Using d = √((x₂ − x₁)² + (y₂ − y₁)²) to find distances between points, applying the midpoint formula, connecting the distance formula to the Pythagorean theorem", "resources": ["radicals_geometry_module.json - scaffold phases 7-8"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a1u10-1",
+      "question": "Simplify each radical expression:\n(a) √128\n(b) √(45x⁶), assuming x ≥ 0",
+      "answer": "(a) 128 = 64 · 2. √128 = √(64·2) = √64 · √2 = 8√2.\n(b) 45 = 9 · 5. x⁶ = (x³)². √(45x⁶) = √(9·5·x⁶) = √9 · √5 · √(x⁶) = 3x³√5.",
+      "skill": "simplifying-radicals",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u10-2",
+      "question": "Simplify: 6√50 − 3√32.",
+      "answer": "√50 = √(25·2) = 5√2. √32 = √(16·2) = 4√2. So 6√50 − 3√32 = 6(5√2) − 3(4√2) = 30√2 − 12√2 = 18√2.",
+      "skill": "operations-with-radicals",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u10-3",
+      "question": "Simplify: √3 · √15.",
+      "answer": "√3 · √15 = √(3·15) = √45 = √(9·5) = 3√5.",
+      "skill": "operations-with-radicals",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u10-4",
+      "question": "A right triangle has legs of length 11 and 60. Find the hypotenuse.",
+      "answer": "a² + b² = c². 11² + 60² = c². 121 + 3600 = c². 3721 = c². c = √3721 = 61. The hypotenuse is 61. This is the Pythagorean triple 11-60-61. Verify: 121 + 3600 = 3721 = 61² ✓.",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u10-5",
+      "question": "A right triangle has a hypotenuse of 20 and one leg of 16. Find the other leg.",
+      "answer": "a² + b² = c². 16² + b² = 20². 256 + b² = 400. b² = 400 − 256 = 144. b = √144 = 12. The missing leg is 12. This is the 3-4-5 triple scaled by 4 (12-16-20). Verify: 256 + 144 = 400 = 20² ✓.",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u10-6",
+      "question": "Find the distance between the points (3, -2) and (-1, 1).",
+      "answer": "d = √((-1 − 3)² + (1 − (-2))²) = √((-4)² + (3)²) = √(16 + 9) = √25 = 5. The distance is 5 units.",
+      "skill": "distance-formula",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u10-7",
+      "question": "Find the midpoint and the distance between (-5, 2) and (3, -4).",
+      "answer": "Midpoint: M = ((-5+3)/2, (2+(-4))/2) = (-2/2, -2/2) = (-1, -1). Distance: d = √((3−(-5))² + (-4−2)²) = √(8² + (-6)²) = √(64 + 36) = √100 = 10. The midpoint is (-1, -1) and the distance is 10 units.",
+      "skill": "distance-formula",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u10-8",
+      "question": "Solve: √(2x + 3) = 7.",
+      "answer": "Square both sides: (√(2x + 3))² = 7². 2x + 3 = 49. 2x = 46. x = 23. Check: √(2(23) + 3) = √(46 + 3) = √49 = 7 ✓. The solution is x = 23.",
+      "skill": "simplifying-radicals",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u10-9",
+      "question": "A television screen is measured diagonally. If the screen is 48 inches wide and 36 inches tall, what is the diagonal measurement of the screen?",
+      "answer": "The screen is a rectangle, so the diagonal forms a right triangle with the width and height as legs. a = 48, b = 36. 48² + 36² = d². 2304 + 1296 = 3600. d = √3600 = 60 inches. The diagonal is 60 inches (a 60-inch TV). This is the 3-4-5 triple scaled by 12 (36-48-60). Verify: 2304 + 1296 = 3600 = 60² ✓.",
+      "skill": "pythagorean-theorem",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a1u10-10",
+      "question": "ANALYSIS: A student claims that √(a² + b²) = a + b for all positive values of a and b. Is the student correct? Use a specific numerical example to prove or disprove the claim, and explain why the correct relationship involves the Pythagorean theorem, not simple addition.",
+      "answer": "The student is **incorrect**. √(a² + b²) ≠ a + b in general.\n\n**Disproof by counterexample:** Let a = 3, b = 4.\nStudent's claim: √(3² + 4²) = 3 + 4 = 7.\nActual value: √(9 + 16) = √25 = 5.\nSince 5 ≠ 7, the claim is **false**.\n\n**Why it fails:** The square root does not distribute over addition. √(a² + b²) ≠ √(a²) + √(b²). The product property says √(ab) = √a · √b (roots distribute over multiplication), but there is NO equivalent property for addition: √(a + b) ≠ √a + √b.\n\n**Connection to the Pythagorean theorem:** √(a² + b²) is the length of the hypotenuse of a right triangle with legs a and b. The hypotenuse is always **shorter** than the sum of the two legs (a + b), because the straight-line path (hypotenuse) is shorter than going along two sides of the triangle. This is an instance of the **triangle inequality**: the sum of any two sides of a triangle must be greater than the third side, so a + b > c = √(a² + b²).\n\nThe only case where √(a² + b²) = a + b would be if one of the values were 0 (e.g., a = 0: √(0 + b²) = √(b²) = b = 0 + b).",
+      "skill": "simplifying-radicals",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "a1u10-spiral-1",
+      "question": "SPIRAL (Exponential Functions): A population starts at 5,000 and grows at 8% per year. Write the exponential model and find the population after 6 years.",
+      "answer": "P = 5000(1.08)ᵗ. At t = 6: P = 5000(1.08)⁶ ≈ 5000 × 1.5869 ≈ 7,934. The population is approximately 7,934 after 6 years.",
+      "skill": "exponential-growth-decay",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 8"
+    },
+    {
+      "id": "a1u10-spiral-2",
+      "question": "SPIRAL (Data Analysis): Find the mean and median of {14, 17, 19, 22, 25, 28, 85}. Which better represents the center? Explain.",
+      "answer": "Mean = (14+17+19+22+25+28+85)/7 = 210/7 = 30. Median = 22 (4th value). The median (22) better represents the center because the outlier 85 pulls the mean (30) above 6 of the 7 values.",
+      "skill": "measures-of-central-tendency",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 7"
+    }
+  ],
+  "answerKeys": {
+    "a1u10-1": "(a) 8√2. (b) 3x³√5.",
+    "a1u10-2": "18√2. Simplify: 6(5√2) − 3(4√2) = 30√2 − 12√2 = 18√2.",
+    "a1u10-3": "3√5. √3·√15 = √45 = 3√5.",
+    "a1u10-4": "61. Pythagorean triple 11-60-61. 121 + 3600 = 3721 = 61².",
+    "a1u10-5": "12. b² = 400 − 256 = 144. Triple: 12-16-20 (3-4-5 × 4).",
+    "a1u10-6": "5 units. d = √(16+9) = √25 = 5.",
+    "a1u10-7": "Midpoint: (-1, -1). Distance: 10 units. d = √(64+36) = √100 = 10.",
+    "a1u10-8": "x = 23. Square both sides: 2x + 3 = 49 → x = 23. Check: √49 = 7 ✓.",
+    "a1u10-9": "60 inches. 48² + 36² = 2304 + 1296 = 3600. √3600 = 60. Triple: 3-4-5 × 12.",
+    "a1u10-10": "Student is wrong. √(a² + b²) ≠ a + b. Counterexample: √(9+16) = √25 = 5 ≠ 3+4 = 7. The square root does not distribute over addition. The hypotenuse is always shorter than the sum of the legs (triangle inequality).",
+    "a1u10-spiral-1": "P ≈ 7,934 after 6 years. P = 5000(1.08)⁶.",
+    "a1u10-spiral-2": "Mean = 30, Median = 22. Median better represents center; outlier 85 inflates the mean."
+  }
+}

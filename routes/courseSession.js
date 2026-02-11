@@ -16,25 +16,12 @@ const User = require('../models/user');
    ============================================================ */
 // Catalog enrichment: difficulty levels, taglines, icons
 const CATALOG_META = {
-  'kindergarten':        { difficulty: 'Beginner', tagline: 'Build number sense through counting, shapes, and patterns', icon: '🧮' },
-  'grade-1':             { difficulty: 'Beginner', tagline: 'Addition, subtraction, and early problem-solving', icon: '🔢' },
-  'grade-2':             { difficulty: 'Beginner', tagline: 'Place value, measurement, and two-digit operations', icon: '📏' },
-  'grade-3':             { difficulty: 'Beginner', tagline: 'Multiplication, fractions, and area concepts', icon: '✖️' },
-  'grade-4':             { difficulty: 'Beginner', tagline: 'Multi-digit operations, decimals, and geometry basics', icon: '📐' },
-  'grade-5':             { difficulty: 'Beginner', tagline: 'Fraction mastery, volume, and coordinate planes', icon: '📊' },
-  'grade-6':             { difficulty: 'Intermediate', tagline: 'Ratios, expressions, and the bridge to algebra', icon: '⚖️' },
-  'grade-7':             { difficulty: 'Intermediate', tagline: 'Proportions, integers, and probability', icon: '🎲' },
-  'grade-8':             { difficulty: 'Intermediate', tagline: 'Linear equations, functions, and Pythagorean theorem', icon: '📈' },
-  'ready-for-algebra-1': { difficulty: 'Intermediate', tagline: 'Strengthen foundations before your first algebra course', icon: '🔧' },
   'algebra-1':           { difficulty: 'Intermediate', tagline: 'Equations, inequalities, and the language of algebra', icon: '🅰️' },
   'geometry':            { difficulty: 'Intermediate', tagline: 'Proofs, congruence, and spatial reasoning', icon: '📐' },
   'algebra-2':           { difficulty: 'Advanced', tagline: 'Polynomials, logarithms, and complex functions', icon: '📉' },
   'precalculus':         { difficulty: 'Advanced', tagline: 'Trigonometry, limits, and the gateway to calculus', icon: '🌊' },
   'ap-calculus-ab':      { difficulty: 'Advanced', tagline: 'Master derivatives, integrals, and ace the AP exam', icon: '🚀' },
-  'calculus-1':          { difficulty: 'Advanced', tagline: 'Limits, derivatives, and the foundations of calculus', icon: '♾️' },
-  'calculus-2':          { difficulty: 'Advanced', tagline: 'Integration techniques, series, and polar coordinates', icon: '∫' },
-  'calculus-3':          { difficulty: 'Advanced', tagline: 'Multivariable calculus and vector analysis', icon: '🌐' },
-  'act-prep':            { difficulty: 'Test Prep', tagline: 'Targeted practice for every ACT math question type', icon: '🎯' }
+  'calculus-bc':         { difficulty: 'Advanced', tagline: 'Full BC curriculum: series, parametrics, and polar', icon: '🚀' }
 };
 
 router.get('/catalog', async (req, res) => {
@@ -71,10 +58,8 @@ router.get('/catalog', async (req, res) => {
 
     // Sort roughly by difficulty (K first, Calc last)
     const order = [
-      'kindergarten', 'grade-1', 'grade-2', 'grade-3', 'grade-4', 'grade-5',
-      'grade-6', 'grade-7', 'grade-8', 'ready-for-algebra-1',
       'algebra-1', 'geometry', 'algebra-2', 'precalculus',
-      'ap-calculus-ab', 'calculus-1', 'calculus-2', 'calculus-3', 'act-prep'
+      'ap-calculus-ab', 'calculus-bc'
     ];
     catalog.sort((a, b) => {
       const ai = order.indexOf(a.courseId);

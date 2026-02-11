@@ -1,0 +1,222 @@
+{
+  "moduleId": "foundations_algebra",
+  "course": "Algebra 1",
+  "unit": 1,
+  "quarter": 1,
+  "title": "Foundations of Algebra",
+  "weeks": "1-2",
+  "estimatedDuration": 45,
+  "description": "Build the foundational language of algebra by introducing variables, translating verbal phrases into algebraic expressions, mastering the order of operations (PEMDAS), exploring the commutative, associative, and distributive properties, and developing fluency with combining like terms and distributing over grouped expressions.",
+  "skills": ["variable-expressions", "order-of-operations", "algebraic-properties", "combining-like-terms", "distributive-property"],
+  "standardsAlignment": ["A-SSE.1", "A-SSE.1a", "A-SSE.1b", "A-SSE.2"],
+  "goals": [
+    "Define variables and translate verbal phrases into algebraic expressions",
+    "Apply the order of operations (PEMDAS) to evaluate numerical and algebraic expressions accurately",
+    "Identify and apply the commutative, associative, and distributive properties of real numbers",
+    "Combine like terms to simplify algebraic expressions",
+    "Use the distributive property to expand and simplify expressions, including those with negative coefficients"
+  ],
+  "instructionalStrategy": [
+    "Anchor abstract variable concepts in real-world contexts—'x is the number of songs on your playlist' makes the idea of an unknown tangible.",
+    "Use PEMDAS mnemonics as a starting point but quickly transition to practice with nested grouping symbols to prevent the common mistake of treating multiplication and division (or addition and subtraction) as strictly left-to-right without equal precedence awareness.",
+    "Color-code like terms on the board so students can visually see which terms may be combined and which may not (e.g., 3x in blue, 5x in blue, 4x² in red).",
+    "Present the distributive property as 'opening the door'—everything inside the parentheses gets multiplied by what is outside, including signs.",
+    "Build from concrete numerical examples (3 + 5 = 5 + 3) to algebraic generalizations (a + b = b + a) to reinforce that properties hold for all real numbers."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "variable-expressions",
+      "title": "Variables and Algebraic Expressions",
+      "text": "Welcome to Algebra! In algebra, we use **variables**—letters like x, y, or n—to represent unknown or changing quantities. An **algebraic expression** combines numbers, variables, and operations (like +, -, x, /) without an equals sign.\n\nTranslating words into algebra is one of the most important skills you'll learn:\n- \"5 more than a number\" becomes **x + 5**\n- \"Twice a number\" becomes **2x**\n- \"A number decreased by 7\" becomes **x - 7**\n- \"The product of 4 and a number, increased by 3\" becomes **4x + 3**\n\nTo **evaluate** an expression means to substitute a given value for the variable and compute the result. For example, if we evaluate 3x + 2 when x = 4, we get 3(4) + 2 = 12 + 2 = 14.",
+      "initialPrompt": "Can you think of a real-life situation where you might use a variable to represent something unknown? Try translating this phrase into algebra: 'a number tripled, minus 8.'"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "order-of-operations",
+      "title": "Order of Operations (PEMDAS)",
+      "text": "When an expression contains more than one operation, we follow a specific order called **PEMDAS**:\n\n1. **P**arentheses (and other grouping symbols like brackets and fraction bars)\n2. **E**xponents\n3. **M**ultiplication and **D**ivision (left to right—they are equal in priority)\n4. **A**ddition and **S**ubtraction (left to right—they are equal in priority)\n\nA common mistake: in the expression 3 + 4 x 2, many students add first and get 14. But multiplication comes before addition, so the correct answer is 3 + 8 = **11**.\n\nWhen you see nested grouping symbols—like brackets around parentheses [2 + (3 x 4)]—always work from the **innermost** group outward. Inside first: 3 x 4 = 12. Then the bracket: 2 + 12 = 14.",
+      "initialPrompt": "Try this: What is the value of 8 - 2 x 3 + 1? Be careful—don't just go left to right!"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "variable-expressions",
+      "title": "I-Do: Evaluating Algebraic Expressions",
+      "examples": [
+        {
+          "problem": "Evaluate 5x - 3 when x = 6.",
+          "solution": "Substitute 6 for x:\n5(6) - 3\n= 30 - 3\n= **27**",
+          "tip": "Always write out the substitution step before computing. This helps avoid sign errors and makes your work easy to check."
+        },
+        {
+          "problem": "Evaluate 2x² + 3x - 1 when x = 4.",
+          "solution": "Substitute 4 for x (careful with the exponent!):\n2(4)² + 3(4) - 1\n= 2(16) + 12 - 1\n= 32 + 12 - 1\n= **43**",
+          "tip": "Apply the exponent to the variable first—2x² means 2 times (x squared), not (2x) squared."
+        },
+        {
+          "problem": "Evaluate 4(y + 3) - 2y when y = 5.",
+          "solution": "Substitute 5 for y:\n4(5 + 3) - 2(5)\n= 4(8) - 10\n= 32 - 10\n= **22**\n\nAlternatively, distribute first: 4y + 12 - 2y = 2y + 12. Then substitute: 2(5) + 12 = 10 + 12 = 22. Same answer!",
+          "tip": "You can either substitute first then simplify, or simplify first then substitute. Both paths should give the same result—this is a great way to check your work."
+        }
+      ],
+      "initialPrompt": "Notice how in the second example we had to be careful with the exponent. What would happen if we mistakenly squared 2x instead of just x?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "algebraic-properties",
+      "title": "Properties of Real Numbers",
+      "text": "Algebra relies on three key properties that let us rearrange and simplify expressions:\n\n**Commutative Property** — You can swap the order of addition or multiplication without changing the result.\n- Addition: 3 + 5 = 5 + 3 = 8\n- Multiplication: 4 x 7 = 7 x 4 = 28\n- Does NOT apply to subtraction or division (5 - 3 is not 3 - 5).\n\n**Associative Property** — You can regroup numbers in addition or multiplication without changing the result.\n- Addition: (2 + 3) + 4 = 2 + (3 + 4) = 9\n- Multiplication: (2 x 3) x 4 = 2 x (3 x 4) = 24\n\n**Distributive Property** — Multiplication distributes over addition (or subtraction) inside parentheses.\n- 3(x + 4) = 3x + 12\n- 5(2y - 3) = 10y - 15\n\nThese properties are the 'rules of the game' in algebra—they tell us what moves are legal when simplifying expressions.",
+      "initialPrompt": "Which property justifies rewriting 6 + x as x + 6? What about rewriting 3(x + 2) as 3x + 6?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "combining-like-terms",
+      "title": "I-Do: Combining Like Terms and the Distributive Property",
+      "examples": [
+        {
+          "problem": "Simplify: 3x + 5x - 2 + 7",
+          "solution": "Identify like terms:\n- Variable terms: 3x and 5x (both have the variable x to the first power)\n- Constant terms: -2 and 7\n\nCombine like terms:\n3x + 5x = 8x\n-2 + 7 = 5\n\nSimplified expression: **8x + 5**",
+          "tip": "Like terms must have the same variable raised to the same exponent. 3x and 5x are like terms, but 3x and 5x² are NOT—you cannot combine them."
+        },
+        {
+          "problem": "Simplify: -2(3x - 5) + 4x",
+          "solution": "Step 1 — Distribute the -2:\n-2(3x - 5) = (-2)(3x) + (-2)(-5) = -6x + 10\n\nStep 2 — Rewrite the full expression:\n-6x + 10 + 4x\n\nStep 3 — Combine like terms:\n-6x + 4x = -2x\n\nSimplified expression: **-2x + 10**",
+          "tip": "When distributing a negative number, pay close attention to signs. A negative times a negative is a positive: (-2)(-5) = +10."
+        },
+        {
+          "problem": "Simplify: 4(2a + 3) - 3(a - 5)",
+          "solution": "Step 1 — Distribute into both sets of parentheses:\n4(2a + 3) = 8a + 12\n-3(a - 5) = -3a + 15\n\nStep 2 — Combine all terms:\n8a + 12 - 3a + 15\n\nStep 3 — Combine like terms:\n8a - 3a = 5a\n12 + 15 = 27\n\nSimplified expression: **5a + 27**",
+          "tip": "When you see subtraction before parentheses, like - 3(a - 5), treat it as multiplying by -3. This is where most sign errors happen—slow down and be deliberate."
+        }
+      ],
+      "initialPrompt": "In the second example, why does -2 times -5 become +10? What sign rule is at work?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "combining-like-terms",
+      "title": "We-Do: Simplifying Expressions",
+      "problems": [
+        {
+          "id": "fa-wp1",
+          "question": "Translate into an algebraic expression and then evaluate when n = 3: 'Seven less than four times a number.'",
+          "answer": "4n - 7 = 5",
+          "hints": [
+            "'Four times a number' translates to 4n. 'Seven less than' means subtract 7.",
+            "The expression is 4n - 7. Now substitute n = 3: 4(3) - 7 = 12 - 7 = 5."
+          ]
+        },
+        {
+          "id": "fa-wp2",
+          "question": "Evaluate using the correct order of operations: 3 + 2(8 - 3)² - 10",
+          "answer": "43",
+          "hints": [
+            "Start with the parentheses: 8 - 3 = 5.",
+            "Next, apply the exponent: 5² = 25. Then multiply: 2(25) = 50.",
+            "Finally, add and subtract left to right: 3 + 50 - 10 = 43."
+          ]
+        },
+        {
+          "id": "fa-wp3",
+          "question": "Simplify: 7x + 3 - 2x + 9",
+          "answer": "5x + 12",
+          "hints": [
+            "First, identify the like terms. Which terms have the variable x?",
+            "Combine the x-terms: 7x - 2x = 5x. Combine the constants: 3 + 9 = 12.",
+            "The simplified expression is 5x + 12."
+          ]
+        },
+        {
+          "id": "fa-wp4",
+          "question": "Use the distributive property to simplify: 5(2x + 3) - 4x",
+          "answer": "6x + 15",
+          "hints": [
+            "Distribute the 5 to each term inside the parentheses: 5(2x) + 5(3).",
+            "That gives 10x + 15 - 4x. Now combine like terms: 10x - 4x = 6x.",
+            "The simplified expression is 6x + 15."
+          ]
+        },
+        {
+          "id": "fa-wp5",
+          "question": "Simplify: -3(2x - 4) + 5(x + 1)",
+          "answer": "-x + 17",
+          "hints": [
+            "Distribute -3 into the first set of parentheses: -3(2x) + (-3)(-4) = -6x + 12.",
+            "Distribute 5 into the second set: 5(x) + 5(1) = 5x + 5.",
+            "Combine all terms: -6x + 12 + 5x + 5. Like terms: -6x + 5x = -x, and 12 + 5 = 17. Answer: -x + 17."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice together! For the first problem, start by translating the English phrase into an algebraic expression. What does 'four times a number' look like in algebra?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Independent Practice",
+      "problems": [
+        {
+          "id": "fa-yp1",
+          "question": "Translate into an algebraic expression: 'The sum of three times a number and 11.'",
+          "answer": "3x + 11",
+          "skill": "variable-expressions",
+          "hints": ["'Three times a number' becomes 3x. 'The sum of ... and 11' means you add 11."]
+        },
+        {
+          "id": "fa-yp2",
+          "question": "Evaluate: 4 + 6 / 2 - 1",
+          "answer": "6",
+          "skill": "order-of-operations",
+          "hints": ["Division comes before addition and subtraction. Compute 6 / 2 = 3 first.", "Then go left to right: 4 + 3 - 1 = 6."]
+        },
+        {
+          "id": "fa-yp3",
+          "question": "Evaluate 2(x + 5) - x when x = 7.",
+          "answer": "17",
+          "skill": "variable-expressions",
+          "hints": ["Substitute x = 7: 2(7 + 5) - 7. Simplify inside the parentheses first: 7 + 5 = 12.", "Now compute: 2(12) - 7 = 24 - 7 = 17."]
+        },
+        {
+          "id": "fa-yp4",
+          "question": "Simplify: 6a + 4b - 2a + 3b",
+          "answer": "4a + 7b",
+          "skill": "combining-like-terms",
+          "hints": ["Combine the a-terms together and the b-terms together.", "6a - 2a = 4a and 4b + 3b = 7b. Simplified: 4a + 7b."]
+        },
+        {
+          "id": "fa-yp5",
+          "question": "Use the distributive property to expand and simplify: -4(3x - 2) + 7",
+          "answer": "-12x + 15",
+          "skill": "distributive-property",
+          "hints": ["Distribute -4: (-4)(3x) + (-4)(-2) = -12x + 8.", "Now add the constant: -12x + 8 + 7 = -12x + 15."]
+        },
+        {
+          "id": "fa-yp6",
+          "question": "Simplify completely: 3(x + 4) - 2(x - 5) + x",
+          "answer": "2x + 22",
+          "skill": "distributive-property",
+          "hints": ["Distribute: 3x + 12 - 2x + 10 + x.", "Combine like terms: (3x - 2x + x) + (12 + 10) = 2x + 22."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "fa-wp1": "4n - 7; evaluates to 5 when n = 3",
+    "fa-wp2": "43",
+    "fa-wp3": "5x + 12",
+    "fa-wp4": "6x + 15",
+    "fa-wp5": "-x + 17",
+    "fa-yp1": "3x + 11",
+    "fa-yp2": "6",
+    "fa-yp3": "17",
+    "fa-yp4": "4a + 7b",
+    "fa-yp5": "-12x + 15",
+    "fa-yp6": "2x + 22"
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "moduleId": "final_mastery_assessment",
+  "course": "Algebra 1",
+  "unit": 10,
+  "quarter": 4,
+  "title": "Algebra 1 Final Mastery Assessment",
+  "weeks": "31",
+  "estimatedDuration": 60,
+  "type": "assessment",
+  "isFinal": true,
+  "passThreshold": 70,
+  "description": "Comprehensive final assessment covering all 10 units of Algebra 1. This summative evaluation measures mastery across the full scope of the course: foundations of algebra and simplifying expressions (Unit 1), solving equations and inequalities (Unit 2), linear functions and graphing (Unit 3), systems of equations (Unit 4), polynomials and factoring (Unit 5), quadratic functions and the quadratic formula (Unit 6), data analysis and probability (Unit 7), exponential functions (Unit 8), rational expressions (Unit 9), and radicals and geometry connections (Unit 10). Students must demonstrate fluency with algebraic procedures, conceptual understanding of function families, and the ability to apply mathematical reasoning to real-world contexts.",
+  "skillsCovered": [
+    "combining-like-terms",
+    "distributive-property",
+    "solving-multi-step-equations",
+    "slope-from-points",
+    "writing-linear-equations-slope-intercept",
+    "systems-of-equations-elimination",
+    "systems-word-problems",
+    "factoring-trinomials",
+    "polynomial-multiplication-monomial",
+    "solving-quadratics-factoring",
+    "quadratic-formula",
+    "measures-of-central-tendency",
+    "exponential-growth-decay",
+    "simplifying-rational-expressions",
+    "pythagorean-theorem"
+  ],
+  "remediationResources": [
+    { "unit": 1, "moduleFile": "foundations_algebra_module.json", "focus": "Variable expressions, order of operations, combining like terms, distributive property" },
+    { "unit": 2, "moduleFile": "equations_inequalities_module.json", "focus": "Solving one-step through multi-step equations, equations with variables on both sides, inequalities" },
+    { "unit": 3, "moduleFile": "functions_graphs_module.json", "focus": "Slope, slope-intercept form, writing equations of lines, parallel and perpendicular lines" },
+    { "unit": 4, "moduleFile": "systems_equations_module.json", "focus": "Solving systems by graphing, substitution, and elimination; systems word problems" },
+    { "unit": 5, "moduleFile": "polynomials_module.json", "focus": "Exponent rules, polynomial operations, factoring GCF, trinomials, and difference of squares" },
+    { "unit": 6, "moduleFile": "quadratic_functions_module.json", "focus": "Graphing quadratics, solving by factoring and square roots, quadratic formula, discriminant" },
+    { "unit": 7, "moduleFile": "data_analysis_module.json", "focus": "Mean, median, mode, data displays, scatter plots, correlation vs causation, probability" },
+    { "unit": 8, "moduleFile": "exponential_functions_module.json", "focus": "Exponential growth and decay, compound interest, half-life, comparing linear vs exponential" },
+    { "unit": 9, "moduleFile": "rational_expressions_module.json", "focus": "Simplifying rational expressions, multiplying and dividing rationals, solving rational equations" },
+    { "unit": 10, "moduleFile": "radicals_geometry_module.json", "focus": "Simplifying radicals, radical operations, Pythagorean theorem, distance and midpoint formulas" }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a1final-1",
+      "question": "Simplify the expression: 3(2x − 5) − 4(x + 3) + 7.",
+      "answer": "Distribute: 6x − 15 − 4x − 12 + 7. Combine like terms: (6x − 4x) + (−15 − 12 + 7) = 2x − 20.\n\n**Final answer: 2x − 20**",
+      "skill": "combining-like-terms",
+      "difficulty": 2,
+      "points": 6,
+      "unitSource": 1
+    },
+    {
+      "id": "a1final-2",
+      "question": "Solve for x: 5(x − 3) + 2 = 3(x + 1) − 4.",
+      "answer": "Step 1: Distribute on both sides.\n5x − 15 + 2 = 3x + 3 − 4\n5x − 13 = 3x − 1\n\nStep 2: Collect variable terms on one side.\n5x − 3x = −1 + 13\n2x = 12\n\nStep 3: Divide.\nx = 6\n\nCheck: Left side: 5(6−3) + 2 = 5(3) + 2 = 17. Right side: 3(6+1) − 4 = 3(7) − 4 = 17. ✓\n\n**Final answer: x = 6**",
+      "skill": "solving-multi-step-equations",
+      "difficulty": 3,
+      "points": 6,
+      "unitSource": 2
+    },
+    {
+      "id": "a1final-3",
+      "question": "Find the slope of the line passing through the points (-3, 7) and (5, -1).",
+      "answer": "m = (y₂ − y₁) / (x₂ − x₁) = (−1 − 7) / (5 − (−3)) = −8 / 8 = −1.\n\n**Final answer: m = −1**\n\nThe line falls from left to right (negative slope), decreasing 1 unit vertically for every 1 unit increase horizontally.",
+      "skill": "slope-from-points",
+      "difficulty": 2,
+      "points": 6,
+      "unitSource": 3
+    },
+    {
+      "id": "a1final-4",
+      "question": "Write the equation of the line that passes through the point (4, -2) with a slope of 3/2. Express your answer in slope-intercept form.",
+      "answer": "Use point-slope form: y − y₁ = m(x − x₁)\ny − (−2) = (3/2)(x − 4)\ny + 2 = (3/2)x − 6\ny = (3/2)x − 8\n\nCheck: At x = 4: y = (3/2)(4) − 8 = 6 − 8 = −2 ✓\n\n**Final answer: y = (3/2)x − 8**",
+      "skill": "writing-linear-equations-slope-intercept",
+      "difficulty": 3,
+      "points": 6,
+      "unitSource": 3
+    },
+    {
+      "id": "a1final-5",
+      "question": "Solve the system of equations by elimination:\n3x + 2y = 16\n5x − 2y = 8",
+      "answer": "Step 1: Add the two equations (the y-terms have opposite coefficients and will cancel).\n(3x + 2y) + (5x − 2y) = 16 + 8\n8x = 24\nx = 3\n\nStep 2: Substitute x = 3 into the first equation.\n3(3) + 2y = 16\n9 + 2y = 16\n2y = 7\ny = 7/2 = 3.5\n\nStep 3: Verify in the second equation.\n5(3) − 2(3.5) = 15 − 7 = 8 ✓\n\n**Final answer: (3, 7/2) or (3, 3.5)**",
+      "skill": "systems-of-equations-elimination",
+      "difficulty": 3,
+      "points": 8,
+      "unitSource": 4
+    },
+    {
+      "id": "a1final-6",
+      "question": "A movie theater sells adult tickets for $12 and child tickets for $8. On Saturday, the theater sold 250 tickets and collected $2,600 in revenue. How many adult tickets and how many child tickets were sold?",
+      "answer": "Let a = adult tickets, c = child tickets.\n\nSystem of equations:\na + c = 250 (total tickets)\n12a + 8c = 2600 (total revenue)\n\nStep 1: From equation 1: a = 250 − c.\n\nStep 2: Substitute into equation 2:\n12(250 − c) + 8c = 2600\n3000 − 12c + 8c = 2600\n3000 − 4c = 2600\n−4c = −400\nc = 100\n\nStep 3: Find a: a = 250 − 100 = 150.\n\nCheck: 150 + 100 = 250 ✓. Revenue: 12(150) + 8(100) = 1800 + 800 = 2600 ✓.\n\n**Final answer: 150 adult tickets and 100 child tickets.**",
+      "skill": "systems-word-problems",
+      "difficulty": 4,
+      "points": 8,
+      "unitSource": 4
+    },
+    {
+      "id": "a1final-7",
+      "question": "Factor completely: x² + 5x − 24.",
+      "answer": "Find two numbers that multiply to −24 and add to +5.\nFactor pairs of −24: (1, −24), (−1, 24), (2, −12), (−2, 12), (3, −8), (−3, 8), (4, −6), (−4, 6).\nThe pair (−3, 8) works: (−3)(8) = −24 and −3 + 8 = 5.\n\nx² + 5x − 24 = (x − 3)(x + 8)\n\nCheck: (x − 3)(x + 8) = x² + 8x − 3x − 24 = x² + 5x − 24 ✓\n\n**Final answer: (x − 3)(x + 8)**",
+      "skill": "factoring-trinomials",
+      "difficulty": 3,
+      "points": 6,
+      "unitSource": 5
+    },
+    {
+      "id": "a1final-8",
+      "question": "Multiply and simplify: (2x + 5)(3x − 4).",
+      "answer": "Apply FOIL (or distributive property):\nFirst: 2x · 3x = 6x²\nOuter: 2x · (−4) = −8x\nInner: 5 · 3x = 15x\nLast: 5 · (−4) = −20\n\nCombine like terms: 6x² + (−8x + 15x) − 20 = 6x² + 7x − 20\n\n**Final answer: 6x² + 7x − 20**",
+      "skill": "polynomial-multiplication-monomial",
+      "difficulty": 3,
+      "points": 6,
+      "unitSource": 5
+    },
+    {
+      "id": "a1final-9",
+      "question": "Solve by factoring: x² − 3x − 28 = 0.",
+      "answer": "Step 1: Factor the trinomial.\nFind two numbers that multiply to −28 and add to −3.\nThe pair (4, −7) works: (4)(−7) = −28 and 4 + (−7) = −3.\nx² − 3x − 28 = (x + 4)(x − 7) = 0\n\nStep 2: Apply the zero-product property.\nx + 4 = 0  →  x = −4\nx − 7 = 0  →  x = 7\n\nCheck x = −4: (−4)² − 3(−4) − 28 = 16 + 12 − 28 = 0 ✓\nCheck x = 7: (7)² − 3(7) − 28 = 49 − 21 − 28 = 0 ✓\n\n**Final answer: x = −4 or x = 7**",
+      "skill": "solving-quadratics-factoring",
+      "difficulty": 3,
+      "points": 8,
+      "unitSource": 6
+    },
+    {
+      "id": "a1final-10",
+      "question": "Use the quadratic formula to solve: 2x² + 3x − 5 = 0.",
+      "answer": "Identify a = 2, b = 3, c = −5.\n\nStep 1: Calculate the discriminant.\nD = b² − 4ac = (3)² − 4(2)(−5) = 9 + 40 = 49\n\nStep 2: Apply the quadratic formula.\nx = (−b ± √D) / (2a) = (−3 ± √49) / (2·2) = (−3 ± 7) / 4\n\nStep 3: Find both solutions.\nx = (−3 + 7) / 4 = 4/4 = 1\nx = (−3 − 7) / 4 = −10/4 = −5/2\n\nCheck x = 1: 2(1)² + 3(1) − 5 = 2 + 3 − 5 = 0 ✓\nCheck x = −5/2: 2(25/4) + 3(−5/2) − 5 = 25/2 − 15/2 − 10/2 = 0 ✓\n\n**Final answer: x = 1 or x = −5/2**",
+      "skill": "quadratic-formula",
+      "difficulty": 4,
+      "points": 8,
+      "unitSource": 6
+    },
+    {
+      "id": "a1final-11",
+      "question": "A data set of quiz scores is: {68, 72, 75, 78, 80, 82, 85, 88, 92, 95}. Find the mean and the median. If a student who scored 35 is added to the data set, recalculate the mean and median. Which measure is more affected by the outlier?",
+      "answer": "**Original data (10 values, already ordered):**\nMean = (68+72+75+78+80+82+85+88+92+95) / 10 = 815 / 10 = 81.5\nMedian = average of 5th and 6th values = (80 + 82) / 2 = 81\n\n**With 35 added (11 values: 35, 68, 72, 75, 78, 80, 82, 85, 88, 92, 95):**\nMean = (815 + 35) / 11 = 850 / 11 ≈ 77.3\nMedian = 6th value = 80\n\n**Comparison:**\n| Measure | Original | With outlier | Change |\n|---------|----------|-------------|--------|\n| Mean | 81.5 | 77.3 | Decreased by 4.2 |\n| Median | 81 | 80 | Decreased by 1 |\n\nThe **mean** is much more affected by the outlier (dropped 4.2 points vs. only 1 point for the median). This demonstrates that the median is a **resistant** measure of center.\n\n**Final answer: Original: mean = 81.5, median = 81. With outlier: mean ≈ 77.3, median = 80. The mean is more affected.**",
+      "skill": "measures-of-central-tendency",
+      "difficulty": 4,
+      "points": 8,
+      "unitSource": 7
+    },
+    {
+      "id": "a1final-12",
+      "question": "You deposit $4,000 in a savings account that earns 5% annual interest compounded annually. How much will be in the account after 10 years? How much of that total is interest earned?",
+      "answer": "P = $4,000, r = 0.05, t = 10 years.\n\nA = P(1 + r)ᵗ = 4000(1.05)¹⁰\n\nCalculate: 1.05¹⁰ ≈ 1.6289\nA = 4000 × 1.6289 ≈ $6,515.58\n\nInterest earned = A − P = $6,515.58 − $4,000 = $2,515.58.\n\nComparison with simple interest: Simple interest would give 4000 × 0.05 × 10 = $2,000 in interest ($6,000 total). Compound interest earns $515.58 more because of 'interest on interest.'\n\n**Final answer: Account balance ≈ $6,515.58. Interest earned ≈ $2,515.58.**",
+      "skill": "exponential-growth-decay",
+      "difficulty": 3,
+      "points": 8,
+      "unitSource": 8
+    },
+    {
+      "id": "a1final-13",
+      "question": "Simplify the rational expression: (x² − 9) / (x² + 5x + 6). State any excluded values.",
+      "answer": "Step 1: Factor the numerator.\nx² − 9 = (x + 3)(x − 3) [difference of squares]\n\nStep 2: Factor the denominator.\nx² + 5x + 6 = (x + 2)(x + 3) [trinomial: 2 × 3 = 6, 2 + 3 = 5]\n\nStep 3: Cancel the common factor.\n(x + 3)(x − 3) / ((x + 2)(x + 3)) = (x − 3) / (x + 2)\n\nStep 4: State excluded values (values that make the original denominator zero).\nx + 2 = 0 → x = −2\nx + 3 = 0 → x = −3\n\n**Final answer: (x − 3) / (x + 2), where x ≠ −2 and x ≠ −3.**",
+      "skill": "simplifying-rational-expressions",
+      "difficulty": 4,
+      "points": 8,
+      "unitSource": 9
+    },
+    {
+      "id": "a1final-14",
+      "question": "A right triangle has one leg of length 20 and a hypotenuse of length 29. Find the length of the other leg. Is this a Pythagorean triple?",
+      "answer": "a² + b² = c²\n20² + b² = 29²\n400 + b² = 841\nb² = 841 − 400 = 441\nb = √441 = 21\n\nVerify: 20² + 21² = 400 + 441 = 841 = 29² ✓\n\nYes, 20-21-29 is a Pythagorean triple — all three side lengths are whole numbers that satisfy a² + b² = c².\n\n**Final answer: The other leg is 21. Yes, (20, 21, 29) is a Pythagorean triple.**",
+      "skill": "pythagorean-theorem",
+      "difficulty": 3,
+      "points": 8,
+      "unitSource": 10
+    },
+    {
+      "id": "a1final-15",
+      "question": "ANALYSIS: Three students each invest $1,000. Their account balances are modeled by the following functions, where x is the number of years:\n\n- Student A: f(x) = 1000 + 200x\n- Student B: g(x) = 1000(1.08)ˣ\n- Student C: h(x) = −50x² + 600x + 1000\n\n(a) Identify each function type (linear, quadratic, or exponential).\n(b) Find each student's balance after 5 years.\n(c) Find each student's balance after 15 years.\n(d) Which model is best for long-term savings? Explain why one of the three models is unrealistic for representing an account balance over a long period.",
+      "answer": "**(a) Function types:**\n- Student A: f(x) = 1000 + 200x — **Linear** (constant rate of change, $200/year)\n- Student B: g(x) = 1000(1.08)ˣ — **Exponential** (constant percent change, 8%/year)\n- Student C: h(x) = −50x² + 600x + 1000 — **Quadratic** (parabola with negative leading coefficient)\n\n**(b) Balances after 5 years (x = 5):**\n- Student A: f(5) = 1000 + 200(5) = 1000 + 1000 = **$2,000**\n- Student B: g(5) = 1000(1.08)⁵ ≈ 1000 × 1.4693 ≈ **$1,469.33**\n- Student C: h(5) = −50(25) + 600(5) + 1000 = −1250 + 3000 + 1000 = **$2,750**\n\nAfter 5 years: Student C > Student A > Student B.\n\n**(c) Balances after 15 years (x = 15):**\n- Student A: f(15) = 1000 + 200(15) = 1000 + 3000 = **$4,000**\n- Student B: g(15) = 1000(1.08)¹⁵ ≈ 1000 × 3.1722 ≈ **$3,172.17**\n- Student C: h(15) = −50(225) + 600(15) + 1000 = −11250 + 9000 + 1000 = **−$1,250**\n\nAfter 15 years: Student A > Student B > Student C.\n\n**(d) Best long-term model and unrealistic model:**\nThe **exponential model (Student B)** is the best model for long-term savings. Although it starts slower than both linear and quadratic, it will eventually surpass the linear model because exponential growth always overtakes linear growth given enough time. At 8% growth, Student B will overtake Student A around year 20.\n\nThe **quadratic model (Student C)** is **unrealistic** for long-term savings. Because the leading coefficient is negative (a = −50), the parabola opens downward and the balance eventually becomes negative (h(15) = −$1,250). An account balance cannot be negative in this context. The quadratic model reaches a maximum at x = −600/(2·(−50)) = 6 years, then decreases. While it performs well in the short term (best at 5 years), it fails completely over time. Real savings accounts do not behave this way.\n\n**Key takeaway:** Linear growth adds a fixed amount, exponential growth multiplies by a fixed factor, and quadratic growth rises then falls (when a < 0). For modeling money that grows over time, exponential functions are the most realistic because they capture the compounding effect of interest.",
+      "skill": "comparing-linear-exponential",
+      "difficulty": 6,
+      "points": 14,
+      "unitSource": "cumulative"
+    }
+  ],
+  "answerKeys": {
+    "a1final-1": "2x − 20. Distribute and combine like terms: 6x − 15 − 4x − 12 + 7 = 2x − 20.",
+    "a1final-2": "x = 6. Distribute: 5x − 13 = 3x − 1. Solve: 2x = 12, x = 6.",
+    "a1final-3": "m = −1. Slope = (−1 − 7)/(5 − (−3)) = −8/8 = −1.",
+    "a1final-4": "y = (3/2)x − 8. Point-slope: y + 2 = (3/2)(x − 4) → y = (3/2)x − 8.",
+    "a1final-5": "(3, 7/2). Add equations: 8x = 24 → x = 3. Substitute: 2y = 7 → y = 7/2.",
+    "a1final-6": "150 adult tickets, 100 child tickets. System: a + c = 250, 12a + 8c = 2600.",
+    "a1final-7": "(x − 3)(x + 8). Product = −24, sum = 5 → factors −3 and 8.",
+    "a1final-8": "6x² + 7x − 20. FOIL: 6x² − 8x + 15x − 20 = 6x² + 7x − 20.",
+    "a1final-9": "x = −4 or x = 7. Factor: (x + 4)(x − 7) = 0.",
+    "a1final-10": "x = 1 or x = −5/2. Discriminant = 49. x = (−3 ± 7)/4.",
+    "a1final-11": "Original: mean = 81.5, median = 81. With outlier 35: mean ≈ 77.3, median = 80. Mean is more affected by the outlier.",
+    "a1final-12": "≈ $6,515.58 after 10 years. Interest earned ≈ $2,515.58. A = 4000(1.05)¹⁰.",
+    "a1final-13": "(x − 3)/(x + 2), x ≠ −2, x ≠ −3. Factor and cancel (x + 3).",
+    "a1final-14": "21. b² = 841 − 400 = 441. √441 = 21. Pythagorean triple: 20-21-29.",
+    "a1final-15": "(a) Linear, exponential, quadratic. (b) A: $2,000; B: $1,469.33; C: $2,750. (c) A: $4,000; B: $3,172.17; C: −$1,250. (d) Exponential is best long-term. Quadratic is unrealistic — balance goes negative."
+  }
+}

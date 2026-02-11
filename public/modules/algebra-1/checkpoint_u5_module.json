@@ -1,0 +1,146 @@
+{
+  "moduleId": "checkpoint_u5",
+  "course": "Algebra 1",
+  "unit": 5,
+  "quarter": 3,
+  "title": "Unit 5 Checkpoint: Exponents, Polynomials & Factoring",
+  "weeks": "15",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of exponent rules (product, quotient, power, zero, and negative), adding and subtracting polynomials, multiplying polynomials (monomial-by-polynomial and FOIL), factoring using GCF, factoring trinomials of the form x² + bx + c, factoring difference of squares, and factoring completely by combining strategies.",
+  "skillsCovered": [
+    "exponent-rules-multiplication",
+    "exponent-rules-division",
+    "polynomial-addition-subtraction",
+    "polynomial-multiplication-monomial",
+    "factoring-gcf",
+    "factoring-trinomials",
+    "factoring-difference-of-squares"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "exponent-rules-multiplication", "reteachFocus": "Product rule (add exponents), power rule (multiply exponents), zero and negative exponent rules, raising a product to a power", "resources": ["polynomials_module.json - scaffold phases 1-2"] },
+    { "skillId": "exponent-rules-division", "reteachFocus": "Quotient rule (subtract exponents), simplifying fractions with exponents, negative exponent results", "resources": ["polynomials_module.json - scaffold phases 1-2"] },
+    { "skillId": "polynomial-addition-subtraction", "reteachFocus": "Identifying like terms, combining coefficients, distributing the negative sign when subtracting polynomials", "resources": ["polynomials_module.json - scaffold phases 3-4"] },
+    { "skillId": "polynomial-multiplication-monomial", "reteachFocus": "Distributing a monomial across a polynomial, FOIL for binomial multiplication, combining like terms in the product", "resources": ["polynomials_module.json - scaffold phases 4-5"] },
+    { "skillId": "factoring-gcf", "reteachFocus": "Finding the GCF of coefficients and variables, dividing each term by the GCF, verifying by distributing back", "resources": ["polynomials_module.json - scaffold phases 6-8"] },
+    { "skillId": "factoring-trinomials", "reteachFocus": "Finding two numbers that multiply to c and add to b, writing the factored form, checking by FOIL", "resources": ["polynomials_module.json - scaffold phases 7-8"] },
+    { "skillId": "factoring-difference-of-squares", "reteachFocus": "Recognizing a² - b² pattern, identifying a and b, writing (a + b)(a - b), distinguishing from sum of squares (not factorable)", "resources": ["polynomials_module.json - scaffold phases 7-8"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a1u5-1",
+      "question": "Simplify: (3x⁴)(5x²)",
+      "answer": "**Step 1: Multiply the coefficients.**\n3 × 5 = 15\n\n**Step 2: Apply the product rule (same base — add exponents).**\nx⁴ · x² = x⁴⁺² = x⁶\n\n**Answer: 15x⁶**\n\nVerification by expansion concept: 3x⁴ means 3 · (x·x·x·x) and 5x² means 5 · (x·x). Multiplying gives 15 · (x·x·x·x·x·x) = 15x⁶ ✓",
+      "skill": "exponent-rules-multiplication",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u5-2",
+      "question": "Simplify: (4x³)² / (2x)",
+      "answer": "**Step 1: Simplify the numerator using the power rule.**\n(4x³)² = 4² · (x³)² = 16 · x⁶ = 16x⁶\n\n**Step 2: Divide by 2x using the quotient rule.**\n16x⁶ / (2x) = (16/2) · (x⁶/x¹) = 8 · x⁶⁻¹ = 8x⁵\n\n**Answer: 8x⁵**\n\nVerification: 8x⁵ · 2x = 16x⁶ = (4x³)² ✓",
+      "skill": "exponent-rules-division",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u5-3",
+      "question": "Add: (6x² - 3x + 5) + (-2x² + 7x - 1)",
+      "answer": "**Step 1: Remove parentheses (addition — signs stay the same).**\n6x² - 3x + 5 - 2x² + 7x - 1\n\n**Step 2: Group and combine like terms.**\nx² terms: 6x² + (-2x²) = 4x²\nx terms: -3x + 7x = 4x\nconstant terms: 5 + (-1) = 4\n\n**Answer: 4x² + 4x + 4**\n\nVerification: Substitute x = 1. Original: (6 - 3 + 5) + (-2 + 7 - 1) = 8 + 4 = 12. Result: 4 + 4 + 4 = 12 ✓",
+      "skill": "polynomial-addition-subtraction",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u5-4",
+      "question": "Subtract: (7x³ + 4x² - x) - (3x³ - 2x² + 5x - 8)",
+      "answer": "**Step 1: Distribute the negative sign to every term in the second polynomial.**\n7x³ + 4x² - x - 3x³ + 2x² - 5x + 8\n\nNote: -(3x³) = -3x³, -(-2x²) = +2x², -(5x) = -5x, -(-8) = +8.\n\n**Step 2: Group and combine like terms.**\nx³ terms: 7x³ - 3x³ = 4x³\nx² terms: 4x² + 2x² = 6x²\nx terms: -x - 5x = -6x\nconstant terms: 0 + 8 = 8\n\n**Answer: 4x³ + 6x² - 6x + 8**\n\nVerification: Substitute x = 1. Original: (7 + 4 - 1) - (3 - 2 + 5 - 8) = 10 - (-2) = 12. Result: 4 + 6 - 6 + 8 = 12 ✓",
+      "skill": "polynomial-addition-subtraction",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u5-5",
+      "question": "Multiply using FOIL: (x + 6)(x - 3)",
+      "answer": "**Apply FOIL (First, Outer, Inner, Last):**\n\n**F**irst: x · x = x²\n**O**uter: x · (-3) = -3x\n**I**nner: 6 · x = 6x\n**L**ast: 6 · (-3) = -18\n\n**Combine all four terms:**\nx² - 3x + 6x - 18\n\n**Combine like terms:**\nx² + 3x - 18\n\n**Answer: x² + 3x - 18**\n\nVerification: Substitute x = 2. Original: (2 + 6)(2 - 3) = (8)(-1) = -8. Result: 4 + 6 - 18 = -8 ✓",
+      "skill": "polynomial-multiplication-monomial",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u5-6",
+      "question": "Factor: 12x⁴ - 18x³ + 6x²",
+      "answer": "**Step 1: Find the GCF of the coefficients.**\nGCF of 12, 18, and 6 = 6\n\n**Step 2: Find the GCF of the variables.**\nx⁴, x³, and x² → lowest power is x²\n\n**Step 3: The GCF is 6x². Factor it out.**\n12x⁴ ÷ 6x² = 2x²\n18x³ ÷ 6x² = 3x\n6x² ÷ 6x² = 1\n\n**Answer: 6x²(2x² - 3x + 1)**\n\nVerification: 6x²(2x²) - 6x²(3x) + 6x²(1) = 12x⁴ - 18x³ + 6x² ✓\n\nNote: The trinomial 2x² - 3x + 1 factors further as (2x - 1)(x - 1), so the fully factored form is 6x²(2x - 1)(x - 1). Full credit for 6x²(2x² - 3x + 1).",
+      "skill": "factoring-gcf",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u5-7",
+      "question": "Factor: x² + 2x - 15",
+      "answer": "**Step 1: Check for a GCF.** GCF of x², 2x, and -15 is 1 — no common factor.\n\n**Step 2: Find two numbers that multiply to -15 and add to 2.**\nFactor pairs of -15:\n-1 × 15 → sum = 14 ✗\n1 × (-15) → sum = -14 ✗\n-3 × 5 → sum = 2 ✓\n3 × (-5) → sum = -2 ✗\n\nThe numbers are -3 and 5.\n\n**Step 3: Write the factored form.**\nx² + 2x - 15 = (x - 3)(x + 5)\n\n**Answer: (x - 3)(x + 5)**\n\nVerification (FOIL): (x - 3)(x + 5) = x² + 5x - 3x - 15 = x² + 2x - 15 ✓",
+      "skill": "factoring-trinomials",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u5-8",
+      "question": "Factor: 16x² - 81",
+      "answer": "**Step 1: Check for a GCF.** GCF of 16x² and 81 is 1 — no common factor.\n\n**Step 2: Recognize the difference-of-squares pattern.**\na² - b² = (a + b)(a - b)\n\n16x² = (4x)²\n81 = (9)²\n\n**Step 3: Apply the formula.**\n16x² - 81 = (4x)² - (9)² = (4x + 9)(4x - 9)\n\n**Answer: (4x + 9)(4x - 9)**\n\nVerification (FOIL): (4x + 9)(4x - 9) = 16x² - 36x + 36x - 81 = 16x² - 81 ✓\n\nNote: The middle terms cancel, which is always the case with difference of squares.",
+      "skill": "factoring-difference-of-squares",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u5-9",
+      "question": "Factor completely: 5x² - 45",
+      "answer": "**Step 1: Check for a GCF.** GCF of 5 and 45 is 5.\n5x² - 45 = 5(x² - 9)\n\n**Step 2: Examine the expression inside the parentheses.**\nx² - 9 is a difference of two squares: x² - 3² = (x + 3)(x - 3)\n\n**Step 3: Write the fully factored form.**\n5x² - 45 = 5(x + 3)(x - 3)\n\n**Answer: 5(x + 3)(x - 3)**\n\nVerification: 5(x + 3)(x - 3) = 5(x² - 9) = 5x² - 45 ✓\n\nKey lesson: If you skip the GCF step, you would try to factor 5x² - 45 as a difference of squares directly. Since 5x² is not a perfect square, this would fail. Always pull out the GCF first!",
+      "skill": "factoring-difference-of-squares",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a1u5-10",
+      "question": "ANALYSIS: A student factors x² - 6x + 9 and gets (x - 3)(x + 3). Is this correct? If not, find the correct factoring and explain the student's error.",
+      "answer": "**The student is INCORRECT.**\n\n**Check the student's answer by FOIL:**\n(x - 3)(x + 3) = x² + 3x - 3x - 9 = x² - 9\n\nThis gives x² - 9, NOT x² - 6x + 9. The student confused two different patterns.\n\n**Correct factoring:**\nx² - 6x + 9 is a trinomial of the form x² + bx + c with b = -6 and c = 9.\n\nFind two numbers that multiply to 9 and add to -6:\n-3 × (-3) = 9 and -3 + (-3) = -6 ✓\n\nx² - 6x + 9 = (x - 3)(x - 3) = **(x - 3)²**\n\n**Verification (FOIL):** (x - 3)(x - 3) = x² - 3x - 3x + 9 = x² - 6x + 9 ✓\n\n**The student's error:** They applied the difference-of-squares formula a² - b² = (a + b)(a - b) to an expression that is NOT a difference of squares. x² - 6x + 9 has three terms (a trinomial), while a difference of squares has only two terms (a binomial). The expression x² - 6x + 9 is actually a **perfect square trinomial**: (x - 3)². The difference-of-squares pattern would apply to x² - 9, not x² - 6x + 9.",
+      "skill": "factoring-trinomials",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "a1u5-spiral-1",
+      "question": "SPIRAL (Systems): Solve by elimination:\n3x + 2y = 14\nx - 2y = -2",
+      "answer": "Add the equations: 4x = 12 → x = 3. Substitute: 3 - 2y = -2 → -2y = -5 → y = 5/2 = 2.5. Solution: (3, 2.5). Verify: 3(3) + 2(2.5) = 9 + 5 = 14 ✓ and 3 - 2(2.5) = 3 - 5 = -2 ✓.",
+      "skill": "systems-of-equations-elimination",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 4"
+    },
+    {
+      "id": "a1u5-spiral-2",
+      "question": "SPIRAL (Linear Equations): Write the equation of the line that passes through (2, 5) with slope -3 in slope-intercept form.",
+      "answer": "Point-slope: y - 5 = -3(x - 2). Distribute: y - 5 = -3x + 6. Add 5: y = -3x + 11.",
+      "skill": "writing-linear-equations-slope-intercept",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 3"
+    }
+  ],
+  "answerKeys": {
+    "a1u5-1": "15x⁶. Product rule: multiply coefficients (3×5=15), add exponents (4+2=6).",
+    "a1u5-2": "8x⁵. Power rule on numerator: (4x³)² = 16x⁶. Then quotient rule: 16x⁶ / 2x = 8x⁵.",
+    "a1u5-3": "4x² + 4x + 4. Combine like terms after removing parentheses.",
+    "a1u5-4": "4x³ + 6x² - 6x + 8. Distribute negative to all terms in second polynomial, then combine.",
+    "a1u5-5": "x² + 3x - 18. FOIL: x² - 3x + 6x - 18, combine middle terms.",
+    "a1u5-6": "6x²(2x² - 3x + 1). GCF = 6x², divide each term.",
+    "a1u5-7": "(x - 3)(x + 5). Multiply to -15, add to 2: numbers are -3 and 5.",
+    "a1u5-8": "(4x + 9)(4x - 9). Difference of squares: (4x)² - 9².",
+    "a1u5-9": "5(x + 3)(x - 3). GCF = 5 first, then difference of squares on x² - 9.",
+    "a1u5-10": "Student is wrong. Correct answer: (x - 3)². The expression is a perfect square trinomial, not a difference of squares.",
+    "a1u5-spiral-1": "(3, 2.5). Add equations to eliminate y: 4x = 12.",
+    "a1u5-spiral-2": "y = -3x + 11. Point-slope form with (2, 5) and m = -3."
+  }
+}

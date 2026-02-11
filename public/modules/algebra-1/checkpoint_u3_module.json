@@ -1,0 +1,118 @@
+{
+  "moduleId": "checkpoint_u3",
+  "course": "Algebra 1",
+  "unit": 3,
+  "quarter": 2,
+  "title": "Unit 3 Checkpoint: Functions and Linear Graphs",
+  "weeks": "8",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of function identification (domain, range, vertical line test), slope calculation from points and graphs, graphing and writing linear equations in slope-intercept, point-slope, and standard form, and determining parallel and perpendicular line relationships using slope.",
+  "skillsCovered": [
+    "graphing-linear-equations-slope-intercept",
+    "writing-linear-equations-slope-intercept",
+    "slope-from-points",
+    "parallel-perpendicular-lines"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "graphing-linear-equations-slope-intercept", "reteachFocus": "Identifying slope and y-intercept from y = mx + b, plotting the y-intercept, using slope triangles to find additional points, drawing the line with correct direction", "resources": ["functions_graphs_module.json - scaffold phases 1, 3"] },
+    { "skillId": "writing-linear-equations-slope-intercept", "reteachFocus": "Point-slope form y - y1 = m(x - x1), converting to slope-intercept form, converting between slope-intercept and standard form, finding intercepts from standard form", "resources": ["functions_graphs_module.json - scaffold phases 4, 5, 6"] },
+    { "skillId": "slope-from-points", "reteachFocus": "Slope formula m = (y2 - y1) / (x2 - x1), interpreting positive/negative/zero/undefined slope, slope as rate of change, reading slope from a graph", "resources": ["functions_graphs_module.json - scaffold phases 2, 3, 6"] },
+    { "skillId": "parallel-perpendicular-lines", "reteachFocus": "Parallel lines have equal slopes, perpendicular lines have negative reciprocal slopes, writing equations of parallel/perpendicular lines through a given point", "resources": ["functions_graphs_module.json - scaffold phases 7, 8"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a1u3-1",
+      "question": "Determine whether the relation {(1, 4), (2, 7), (3, 10), (4, 13)} is a function. If so, state the domain and range.",
+      "answer": "Yes, it is a function — each input (x-value) maps to exactly one output (y-value). No x-value is repeated. Domain: {1, 2, 3, 4}. Range: {4, 7, 10, 13}.",
+      "skill": "graphing-linear-equations-slope-intercept",
+      "difficulty": 2,
+      "points": 6
+    },
+    {
+      "id": "a1u3-2",
+      "question": "Find the slope of the line passing through the points (2, 3) and (5, 9).",
+      "answer": "m = (9 - 3) / (5 - 2) = 6 / 3 = 2. The slope is 2, meaning the line rises 2 units for every 1 unit it moves to the right.",
+      "skill": "slope-from-points",
+      "difficulty": 2,
+      "points": 6
+    },
+    {
+      "id": "a1u3-3",
+      "question": "Find the slope of the line passing through (-3, 8) and (1, -4).",
+      "answer": "m = (-4 - 8) / (1 - (-3)) = -12 / 4 = -3. The slope is -3, meaning the line falls 3 units for every 1 unit it moves to the right.",
+      "skill": "slope-from-points",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u3-4",
+      "question": "Graph the equation y = -2x + 5. State the y-intercept and describe how to use the slope to plot a second point.",
+      "answer": "The equation is in slope-intercept form with m = -2 and b = 5. The y-intercept is (0, 5). From (0, 5), use slope -2 = -2/1: move down 2 units and right 1 unit to reach (1, 3). A third point: from (1, 3), move down 2 and right 1 to reach (2, 1). Draw a line through these points.",
+      "skill": "graphing-linear-equations-slope-intercept",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u3-5",
+      "question": "Write the equation of the line with slope 2 that passes through the point (3, 7). Give your answer in slope-intercept form.",
+      "answer": "Start with point-slope form: y - 7 = 2(x - 3). Distribute: y - 7 = 2x - 6. Add 7 to both sides: y = 2x + 1. Check: when x = 3, y = 2(3) + 1 = 7. Correct.",
+      "skill": "writing-linear-equations-slope-intercept",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u3-6",
+      "question": "A line passes through the points (1, -2) and (4, 7). Write the equation of the line in slope-intercept form.",
+      "answer": "Step 1 — Find slope: m = (7 - (-2)) / (4 - 1) = 9 / 3 = 3. Step 2 — Use point-slope with (1, -2): y - (-2) = 3(x - 1) becomes y + 2 = 3x - 3. Step 3 — Solve for y: y = 3x - 5. Check: when x = 4, y = 3(4) - 5 = 7. Correct.",
+      "skill": "writing-linear-equations-slope-intercept",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u3-7",
+      "question": "Convert 3x + 2y = 12 to slope-intercept form. State the slope and y-intercept, then find the x-intercept.",
+      "answer": "Solve for y: 2y = -3x + 12, so y = (-3/2)x + 6. Slope = -3/2, y-intercept = (0, 6). For the x-intercept, set y = 0: 3x + 2(0) = 12, so 3x = 12, x = 4. The x-intercept is (4, 0).",
+      "skill": "writing-linear-equations-slope-intercept",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u3-8",
+      "question": "Write the equation of the line parallel to y = 3x + 1 that passes through the point (2, 4). Give your answer in slope-intercept form.",
+      "answer": "Parallel lines have the same slope: m = 3. Use point-slope form: y - 4 = 3(x - 2). Distribute: y - 4 = 3x - 6. Add 4: y = 3x - 2. Check: when x = 2, y = 3(2) - 2 = 4. Correct. The slopes are equal (both 3) confirming the lines are parallel.",
+      "skill": "parallel-perpendicular-lines",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u3-9",
+      "question": "Write the equation of the line perpendicular to y = 2x - 1 that passes through the point (4, 3). Give your answer in slope-intercept form.",
+      "answer": "The given line has slope 2. The negative reciprocal of 2 is -1/2. Use point-slope form: y - 3 = (-1/2)(x - 4). Distribute: y - 3 = (-1/2)x + 2. Add 3: y = (-1/2)x + 5. Check: when x = 4, y = (-1/2)(4) + 5 = -2 + 5 = 3. Correct. Slope check: 2 x (-1/2) = -1, confirming perpendicularity.",
+      "skill": "parallel-perpendicular-lines",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a1u3-10",
+      "question": "ANALYSIS: Line A passes through (0, 5) and (3, -1). Line B passes through (-2, 1) and (4, -11). Determine whether lines A and B are parallel, perpendicular, or neither. Then write the equation of a line perpendicular to Line A that passes through the point (6, 0).",
+      "answer": "Line A slope: m_A = (-1 - 5) / (3 - 0) = -6 / 3 = -2. Line B slope: m_B = (-11 - 1) / (4 - (-2)) = -12 / 6 = -2. Since m_A = m_B = -2, the lines are parallel. For a line perpendicular to Line A: the negative reciprocal of -2 is 1/2. Use point-slope with (6, 0): y - 0 = (1/2)(x - 6). Simplify: y = (1/2)x - 3. Check: when x = 6, y = (1/2)(6) - 3 = 3 - 3 = 0. Correct. Slope check: (-2) x (1/2) = -1, confirming perpendicularity to Line A.",
+      "skill": "parallel-perpendicular-lines",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "answerKeys": {
+    "a1u3-1": "Yes, it is a function. Domain: {1, 2, 3, 4}. Range: {4, 7, 10, 13}.",
+    "a1u3-2": "m = 2.",
+    "a1u3-3": "m = -3.",
+    "a1u3-4": "y-intercept (0, 5). Slope -2: down 2, right 1 to (1, 3), then to (2, 1).",
+    "a1u3-5": "y = 2x + 1.",
+    "a1u3-6": "y = 3x - 5.",
+    "a1u3-7": "y = (-3/2)x + 6. Slope = -3/2, y-intercept = (0, 6), x-intercept = (4, 0).",
+    "a1u3-8": "y = 3x - 2.",
+    "a1u3-9": "y = (-1/2)x + 5.",
+    "a1u3-10": "Lines A and B are parallel (both slope -2). Perpendicular to A through (6, 0): y = (1/2)x - 3."
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "moduleId": "checkpoint_u6",
+  "course": "Algebra 1",
+  "unit": 6,
+  "quarter": 3,
+  "title": "Unit 6 Checkpoint: Quadratic Functions",
+  "weeks": "18",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of graphing quadratic functions, identifying vertex and axis of symmetry, solving quadratic equations by factoring and by taking square roots, applying the quadratic formula, analyzing the discriminant to determine the number of real solutions, and modeling real-world situations with quadratic equations.",
+  "skillsCovered": [
+    "quadratic-equations-graphing",
+    "solving-quadratics-factoring",
+    "solving-quadratics-square-roots",
+    "quadratic-formula",
+    "discriminant"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "quadratic-equations-graphing", "reteachFocus": "Finding the vertex using x = -b/(2a), identifying axis of symmetry, determining direction of opening, plotting intercepts, and converting between standard and vertex form", "resources": ["quadratic_functions_module.json - scaffold phases 1-3"] },
+    { "skillId": "solving-quadratics-factoring", "reteachFocus": "Factoring trinomials with leading coefficient 1 and greater than 1, applying the zero product property, verifying solutions by substitution", "resources": ["quadratic_functions_module.json - scaffold phases 4-6"] },
+    { "skillId": "solving-quadratics-square-roots", "reteachFocus": "Isolating the squared term, taking square roots with \u00b1, solving by completing the square", "resources": ["quadratic_functions_module.json - scaffold phases 4-6"] },
+    { "skillId": "quadratic-formula", "reteachFocus": "Correctly identifying a, b, c, substituting into the formula, simplifying radicals, interpreting results in word problems", "resources": ["quadratic_functions_module.json - scaffold phases 7-9"] },
+    { "skillId": "discriminant", "reteachFocus": "Computing b\u00b2 - 4ac, connecting discriminant sign to number of x-intercepts, relating to the graph of the parabola", "resources": ["quadratic_functions_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a1u6-1",
+      "question": "Find the vertex, axis of symmetry, and direction of opening for y = x\u00b2 - 8x + 15. Then find the x-intercepts.",
+      "answer": "a = 1, b = -8, c = 15. Vertex: x = -(-8)/(2\u00b71) = 4, y = 16 - 32 + 15 = -1. Vertex: (4, -1). Axis of symmetry: x = 4. Opens upward (a = 1 > 0). x-intercepts: x\u00b2 - 8x + 15 = 0 \u2192 (x - 3)(x - 5) = 0 \u2192 x = 3 and x = 5. Verify: 9 - 24 + 15 = 0 \u2713 and 25 - 40 + 15 = 0 \u2713.",
+      "skill": "quadratic-equations-graphing",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u6-2",
+      "question": "A parabola has the equation y = -3(x + 2)\u00b2 + 12. Identify the vertex, axis of symmetry, direction of opening, and state whether the vertex is a maximum or minimum.",
+      "answer": "Vertex form: a = -3, h = -2, k = 12. Vertex: (-2, 12). Axis of symmetry: x = -2. Since a = -3 < 0, the parabola opens downward, so the vertex is a **maximum**. The maximum value of y is 12.",
+      "skill": "quadratic-equations-graphing",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u6-3",
+      "question": "Solve x\u00b2 + 3x - 18 = 0 by factoring.",
+      "answer": "Find two numbers that multiply to -18 and add to 3: that is 6 and -3 (6 \u00d7 -3 = -18, 6 + (-3) = 3). Factor: (x + 6)(x - 3) = 0. x + 6 = 0 \u2192 x = -6. x - 3 = 0 \u2192 x = 3. Verify: (-6)\u00b2 + 3(-6) - 18 = 36 - 18 - 18 = 0 \u2713 and (3)\u00b2 + 3(3) - 18 = 9 + 9 - 18 = 0 \u2713. Solutions: x = -6 or x = 3.",
+      "skill": "solving-quadratics-factoring",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u6-4",
+      "question": "Solve 3x\u00b2 - 11x + 6 = 0 by factoring.",
+      "answer": "We need factors of 3x\u00b2 and 6 that combine to give -11x. Try (3x - 2)(x - 3): 3x\u00b2 - 9x - 2x + 6 = 3x\u00b2 - 11x + 6 \u2713. So (3x - 2)(x - 3) = 0. 3x - 2 = 0 \u2192 x = 2/3. x - 3 = 0 \u2192 x = 3. Verify: 3(4/9) - 11(2/3) + 6 = 4/3 - 22/3 + 18/3 = 0 \u2713 and 3(9) - 11(3) + 6 = 27 - 33 + 6 = 0 \u2713. Solutions: x = 2/3 or x = 3.",
+      "skill": "solving-quadratics-factoring",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u6-5",
+      "question": "Solve 7x\u00b2 = 63 by taking square roots.",
+      "answer": "Divide both sides by 7: x\u00b2 = 9. Take the square root: x = \u00b1\u221a9 = \u00b13. Verify: 7(9) = 63 \u2713 and 7(9) = 63 \u2713. Solutions: x = 3 or x = -3.",
+      "skill": "solving-quadratics-square-roots",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u6-6",
+      "question": "Solve x\u00b2 - 4x - 1 = 0 using the quadratic formula. Give exact answers in simplified radical form.",
+      "answer": "a = 1, b = -4, c = -1. D = (-4)\u00b2 - 4(1)(-1) = 16 + 4 = 20. x = (4 \u00b1 \u221a20)/2 = (4 \u00b1 2\u221a5)/2 = 2 \u00b1 \u221a5. Exact solutions: x = 2 + \u221a5 \u2248 4.24 or x = 2 - \u221a5 \u2248 -0.24. Verify: (2+\u221a5)\u00b2 - 4(2+\u221a5) - 1 = 4 + 4\u221a5 + 5 - 8 - 4\u221a5 - 1 = 0 \u2713.",
+      "skill": "quadratic-formula",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u6-7",
+      "question": "Solve 4x\u00b2 + 4x - 3 = 0 using the quadratic formula.",
+      "answer": "a = 4, b = 4, c = -3. D = 16 - 4(4)(-3) = 16 + 48 = 64. x = (-4 \u00b1 \u221a64)/(2\u00b74) = (-4 \u00b1 8)/8. x = (-4+8)/8 = 4/8 = 1/2 or x = (-4-8)/8 = -12/8 = -3/2. Verify: 4(1/4) + 4(1/2) - 3 = 1 + 2 - 3 = 0 \u2713 and 4(9/4) + 4(-3/2) - 3 = 9 - 6 - 3 = 0 \u2713. Solutions: x = 1/2 or x = -3/2.",
+      "skill": "quadratic-formula",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "a1u6-8",
+      "question": "For each equation, compute the discriminant and state how many real solutions it has:\n(a) 2x\u00b2 + 5x + 3 = 0\n(b) x\u00b2 - 6x + 9 = 0\n(c) 3x\u00b2 + x + 4 = 0",
+      "answer": "(a) a = 2, b = 5, c = 3. D = 25 - 24 = 1. D > 0: **two distinct real solutions**. (Since D is a perfect square, the equation factors.)\n(b) a = 1, b = -6, c = 9. D = 36 - 36 = 0. D = 0: **one repeated real solution** (double root). The vertex sits on the x-axis at x = 3.\n(c) a = 3, b = 1, c = 4. D = 1 - 48 = -47. D < 0: **no real solutions**. The parabola y = 3x\u00b2 + x + 4 does not cross the x-axis.",
+      "skill": "discriminant",
+      "difficulty": 4,
+      "points": 12
+    },
+    {
+      "id": "a1u6-9",
+      "question": "A football is kicked from ground level with an initial upward velocity of 56 ft/s. Its height is modeled by h(t) = -16t\u00b2 + 56t. Find the maximum height and determine when the ball returns to the ground.",
+      "answer": "a = -16, b = 56, c = 0. Vertex: t = -56/(2\u00b7-16) = -56/(-32) = 1.75 seconds. Maximum height: h(1.75) = -16(3.0625) + 56(1.75) = -49 + 98 = 49 feet. Returns to ground: h(t) = 0 \u2192 -16t\u00b2 + 56t = 0 \u2192 -8t(2t - 7) = 0 \u2192 t = 0 (kick) or t = 3.5 seconds (landing). The ball reaches a maximum height of **49 feet** at t = 1.75 s and returns to the ground at **t = 3.5 seconds**.",
+      "skill": "quadratic-equations-graphing",
+      "difficulty": 5,
+      "points": 12
+    },
+    {
+      "id": "a1u6-10",
+      "question": "ANALYSIS: A student claims that the equation 2x\u00b2 - 4x + 5 = 0 has two real solutions because the coefficient of x\u00b2 is positive and the parabola opens upward. Is the student correct? Compute the discriminant, determine the number of real solutions, and explain what the graph of y = 2x\u00b2 - 4x + 5 looks like relative to the x-axis.",
+      "answer": "The student is **incorrect**. The direction of opening (determined by the sign of a) does NOT determine the number of real solutions \u2014 the discriminant does.\n\nCompute the discriminant: a = 2, b = -4, c = 5. D = (-4)\u00b2 - 4(2)(5) = 16 - 40 = **-24**.\n\nSince D < 0, the equation has **no real solutions**. The parabola y = 2x\u00b2 - 4x + 5 opens upward (a = 2 > 0), but its vertex is above the x-axis \u2014 the entire parabola sits above the x-axis and never crosses it.\n\nFinding the vertex confirms this: x = -(-4)/(2\u00b72) = 1, y = 2(1) - 4(1) + 5 = 3. The vertex is (1, 3), which is above the x-axis. Since the parabola opens upward from a vertex at y = 3, it never reaches y = 0.\n\nThe student confused the direction of opening with the existence of real roots. A parabola that opens upward can have 0, 1, or 2 x-intercepts depending on where its vertex is relative to the x-axis.",
+      "skill": "discriminant",
+      "difficulty": 6,
+      "points": 16
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "a1u6-spiral-1",
+      "question": "SPIRAL (Systems of Equations): Solve by elimination:\n3x + 2y = 14\nx - 2y = -6",
+      "answer": "Add the equations: 4x = 8 \u2192 x = 2. Then 2 - 2y = -6 \u2192 -2y = -8 \u2192 y = 4. Solution: (2, 4). Verify: 3(2)+2(4)=14 \u2713 and 2-2(4)=-6 \u2713.",
+      "skill": "systems-of-equations-elimination",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 4"
+    },
+    {
+      "id": "a1u6-spiral-2",
+      "question": "SPIRAL (Linear Functions): Write the equation of the line passing through (1, -2) and (4, 7) in slope-intercept form.",
+      "answer": "m = (7-(-2))/(4-1) = 9/3 = 3. Using point-slope: y-(-2) = 3(x-1) \u2192 y + 2 = 3x - 3 \u2192 y = 3x - 5. Verify: 3(4)-5 = 7 \u2713.",
+      "skill": "writing-linear-equations-slope-intercept",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 3"
+    }
+  ],
+  "answerKeys": {
+    "a1u6-1": "Vertex: (4, -1). Axis: x = 4. Opens upward. x-int: x = 3, x = 5.",
+    "a1u6-2": "Vertex: (-2, 12). Axis: x = -2. Opens downward. Maximum at y = 12.",
+    "a1u6-3": "x = -6 or x = 3. Factor: (x + 6)(x - 3) = 0.",
+    "a1u6-4": "x = 2/3 or x = 3. Factor: (3x - 2)(x - 3) = 0.",
+    "a1u6-5": "x = \u00b13. Divide by 7: x\u00b2 = 9, take square root.",
+    "a1u6-6": "x = 2 \u00b1 \u221a5. D = 20, simplify \u221a20 = 2\u221a5.",
+    "a1u6-7": "x = 1/2 or x = -3/2. D = 64, x = (-4 \u00b1 8)/8.",
+    "a1u6-8": "(a) D = 1, two real solutions. (b) D = 0, one repeated solution (x = 3). (c) D = -47, no real solutions.",
+    "a1u6-9": "Max height: 49 ft at t = 1.75 s. Returns to ground at t = 3.5 s.",
+    "a1u6-10": "Student is wrong. D = -24 < 0, no real solutions. Vertex (1, 3) is above x-axis; parabola never crosses it.",
+    "a1u6-spiral-1": "(2, 4). Add equations to eliminate y; x = 2, y = 4.",
+    "a1u6-spiral-2": "y = 3x - 5. Slope = 3, point-slope from (1, -2)."
+  }
+}
