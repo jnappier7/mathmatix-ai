@@ -676,31 +676,21 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             try {
                 const CourseSession = require('../models/courseSession');
                 const courseSession = await CourseSession.findById(user.activeCourseSessionId);
-                if (courseSession && courseSession.conversationId?.toString() === activeConversation?._id?.toString()) {
-                    const fs = require('fs');
-                    const pathwayFile = path.join(__dirname, '../public/resources', `${courseSession.courseId}-pathway.json`);
-                    if (fs.existsSync(pathwayFile)) {
-                        const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
-                        const currentModule = (pathway.modules || []).find(m => m.moduleId === courseSession.currentModuleId);
-                        const moduleFile = currentModule?.moduleFile
-                            ? path.join(__dirname, '../public/modules', courseSession.courseId, currentModule.moduleFile)
-                            : null;
-                        let scaffoldData = null;
-                        if (moduleFile && fs.existsSync(moduleFile)) {
-                            scaffoldData = JSON.parse(fs.readFileSync(moduleFile, 'utf8'));
-                        }
+                if (courseSession && courseSession.status === 'active') {
+                    const courseCtx = loadCourseContext(courseSession);
+                    if (courseCtx) {
                         conversationContextForPrompt = conversationContextForPrompt || {};
                         conversationContextForPrompt.courseSession = {
                             courseId: courseSession.courseId,
                             courseName: courseSession.courseName,
                             currentModuleId: courseSession.currentModuleId,
-                            currentModuleTitle: currentModule?.title || courseSession.currentModuleId,
+                            currentModuleTitle: courseCtx.currentModule?.title || courseSession.currentModuleId,
                             overallProgress: courseSession.overallProgress,
                             modules: courseSession.modules,
-                            scaffold: scaffoldData?.scaffold || null,
-                            skills: scaffoldData?.skills || currentModule?.skills || [],
-                            essentialQuestions: currentModule?.essentialQuestions || [],
-                            aiInstructionModel: pathway.aiInstructionModel || null
+                            scaffold: courseCtx.scaffoldData?.scaffold || null,
+                            skills: courseCtx.scaffoldData?.skills || courseCtx.currentModule?.skills || [],
+                            essentialQuestions: courseCtx.currentModule?.essentialQuestions || [],
+                            aiInstructionModel: courseCtx.pathway.aiInstructionModel || null
                         };
                     }
                 }
@@ -2062,11 +2052,23 @@ async function handleGreetingRequest(req, res, userId) {
             try {
                 const CourseSession = require('../models/courseSession');
                 const courseSession = await CourseSession.findById(user.activeCourseSessionId);
-                if (courseSession && courseSession.conversationId?.toString() === activeConversation?._id?.toString()) {
+                if (courseSession && courseSession.status === 'active') {
                     const ctx = loadCourseContext(courseSession);
                     if (ctx) {
                         courseContext = { courseSession, ...ctx };
                         isCourseGreeting = true;
+
+                        // Switch to the course's conversation so the greeting lands there
+                        if (courseSession.conversationId) {
+                            const courseConv = await Conversation.findById(courseSession.conversationId);
+                            if (courseConv) {
+                                activeConversation = courseConv;
+                                if (user.activeConversationId?.toString() !== courseConv._id.toString()) {
+                                    user.activeConversationId = courseConv._id;
+                                    await user.save();
+                                }
+                            }
+                        }
                     }
                 }
             } catch (courseErr) {
