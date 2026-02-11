@@ -1,0 +1,356 @@
+{
+  "moduleId": "prereq_patch",
+  "course": "AP Calculus BC",
+  "unit": 0,
+  "title": "Prerequisite Patch",
+  "weeks": "1-2",
+  "estimatedDuration": 50,
+  "description": "Diagnose and repair the algebra, trig, and function gaps that sabotage calculus performance. Composition/inverses feed the chain rule; exponent/log rules feed integration; unit circle values feed trig derivatives. Fix these now or pay for them all year.",
+  "skills": ["function-fluency", "algebra-cleanup", "trig-essentials", "graph-literacy"],
+  "standardsAlignment": ["F-BF.1", "F-BF.4", "F-IF.7", "F-TF.2"],
+  "goals": [
+    "Demonstrate fluency with function composition, inverses, and transformations",
+    "Apply factoring, exponent rules, log rules, and rational expression techniques accurately",
+    "Recall unit circle values and basic trig identities from memory",
+    "Read and interpret graphs for intercepts, asymptotes, end behavior, and piecewise definitions"
+  ],
+  "instructionalStrategy": [
+    "Diagnostic-first: assess before reteaching. Skip skills that are already secure.",
+    "Short, frequent repair sets (10-15 min) beat long reviews. Target the gap, fix it, move on.",
+    "Every algebra/trig skill here maps directly to a calculus technique. Make the connection explicit.",
+    "This is NOT a full Pre-Calc review. It's a targeted patch for the skills that wreck calculus."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "function-fluency",
+      "title": "Function Fluency: Composition & Inverses",
+      "text": "**Why This Matters for Calculus:**\n\nComposition feeds the **chain rule** — the most important differentiation technique. If you can't identify the outer and inner functions in f(g(x)), the chain rule will be a mystery.\n\nInverses feed **inverse function derivatives** and **logarithmic/exponential relationships**.\n\n**Key Ideas:**\n• (f ∘ g)(x) = f(g(x)) — apply g first, then f\n• Domain of f ∘ g: x must be in the domain of g, AND g(x) must be in the domain of f\n• f⁻¹ exists only if f is one-to-one (passes horizontal line test)\n• f(f⁻¹(x)) = x and f⁻¹(f(x)) = x\n• To find f⁻¹: swap x and y, solve for y\n• Graph of f⁻¹ is the reflection of f over y = x",
+      "initialPrompt": "If f(x) = 2x + 3 and g(x) = x², find f(g(x)) and g(f(x)). Are they the same? Why does order matter?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "function-fluency",
+      "title": "I-Do: Composition & Inverses",
+      "examples": [
+        {
+          "problem": "Given f(x) = √(x + 1) and g(x) = x² − 4, find f(g(x)) and state its domain.",
+          "solution": "**f(g(x)):** Replace every x in f with g(x):\nf(g(x)) = √(g(x) + 1) = √(x² − 4 + 1) = **√(x² − 3)**\n\n**Domain:** The expression under the radical must be ≥ 0:\nx² − 3 ≥ 0 → x² ≥ 3 → x ≤ −√3 or x ≥ √3\n\n**Domain:** (−∞, −√3] ∪ [√3, ∞)\n\n**Calculus preview:** When you see √(x² − 3) in calculus, the chain rule says: outer = √(□), inner = x² − 3. Derivative of outer = 1/(2√(□)), times derivative of inner = 2x."
+        },
+        {
+          "problem": "Find the inverse of f(x) = (2x + 5)/(x − 1).",
+          "solution": "**Step 1 — Swap x and y:**\ny = (2x + 5)/(x − 1) → x = (2y + 5)/(y − 1)\n\n**Step 2 — Solve for y:**\nx(y − 1) = 2y + 5\nxy − x = 2y + 5\nxy − 2y = x + 5\ny(x − 2) = x + 5\ny = (x + 5)/(x − 2)\n\n**f⁻¹(x) = (x + 5)/(x − 2)**\n\n**Verify:** f(f⁻¹(x)) = f((x+5)/(x−2)) = (2·(x+5)/(x−2) + 5) / ((x+5)/(x−2) − 1)\n= (2(x+5) + 5(x−2)) / ((x+5) − (x−2)) = (2x+10+5x−10)/(x+5−x+2) = 7x/7 = x ✓"
+        },
+        {
+          "problem": "If f(3) = 7 and f'(3) = 4, find (f⁻¹)'(7).",
+          "solution": "**Key formula:** (f⁻¹)'(a) = 1 / f'(f⁻¹(a))\n\nWe need (f⁻¹)'(7).\n\nSince f(3) = 7, we know f⁻¹(7) = 3.\n\nSo (f⁻¹)'(7) = 1 / f'(f⁻¹(7)) = 1 / f'(3) = **1/4**\n\n**This exact type of problem appears on nearly every AP Calc exam.**"
+        }
+      ],
+      "initialPrompt": "In example 3, why does knowing f(3) = 7 tell us f⁻¹(7) = 3? What's the relationship?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "function-fluency",
+      "title": "We-Do: Composition & Inverses",
+      "problems": [
+        {
+          "id": "pp-wp1",
+          "question": "Given f(x) = 3x − 2 and g(x) = x² + 1, find (f ∘ g)(x) and (g ∘ f)(x).",
+          "answer": "f(g(x)) = 3(x²+1) − 2 = 3x² + 1. g(f(x)) = (3x−2)² + 1 = 9x² − 12x + 5.",
+          "hints": [
+            "For f(g(x)): replace x in f with g(x) = x² + 1.",
+            "f(g(x)) = 3(x²+1) − 2 = 3x² + 3 − 2 = 3x² + 1. For g(f(x)): replace x in g with f(x) = 3x−2. g(f(x)) = (3x−2)² + 1 = 9x²−12x+4+1 = 9x²−12x+5."
+          ]
+        },
+        {
+          "id": "pp-wp2",
+          "question": "Find the inverse of f(x) = 3x − 7. Verify by showing f(f⁻¹(x)) = x.",
+          "answer": "f⁻¹(x) = (x + 7)/3. Verify: f((x+7)/3) = 3·(x+7)/3 − 7 = x+7−7 = x ✓.",
+          "hints": [
+            "Swap x and y: x = 3y − 7. Solve for y.",
+            "x + 7 = 3y → y = (x+7)/3. So f⁻¹(x) = (x+7)/3."
+          ]
+        },
+        {
+          "id": "pp-wp3",
+          "question": "Given the table: f(2)=5, f'(2)=3, f(5)=2. Find (f⁻¹)'(5).",
+          "answer": "1/3",
+          "hints": [
+            "Use (f⁻¹)'(a) = 1/f'(f⁻¹(a)). We need (f⁻¹)'(5).",
+            "Since f(2)=5, we know f⁻¹(5)=2. So (f⁻¹)'(5) = 1/f'(2) = 1/3."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, which composition do you compute first — f(g(x)) or g(f(x))? Start with the one where you replace x in f."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "algebra-cleanup",
+      "title": "Algebra Cleanup: The Skills That Kill Calculus Students",
+      "text": "**These algebra errors cause more calculus failures than actual calculus:**\n\n**Factoring:** Every limit, every simplification, every partial fraction depends on factoring.\n• GCF first, always\n• Trinomials: a=1 and a≠1\n• Difference of squares: a² − b² = (a+b)(a−b)\n• Sum/difference of cubes: a³ ± b³ = (a ± b)(a² ∓ ab + b²)\n\n**Exponent Rules:**\n• x^a · x^b = x^(a+b)\n• x^a / x^b = x^(a−b)\n• (x^a)^b = x^(ab)\n• x^(−n) = 1/x^n\n• x^(1/n) = ⁿ√x\n\n**Log Rules:**\n• log(ab) = log a + log b\n• log(a/b) = log a − log b\n• log(aⁿ) = n log a\n• ln(eˣ) = x, e^(ln x) = x\n\n**Rational Expressions:** Simplify BEFORE differentiating. Rewrite as negative exponents for the power rule:\n• 1/x² = x⁻², 1/√x = x^(−1/2), ³√x² = x^(2/3)",
+      "initialPrompt": "Rewrite these in a form ready for the power rule: 5/x³, √(x⁵), 1/(2√x). Can you see why exponent form is critical for calculus?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "algebra-cleanup",
+      "title": "I-Do: Algebra for Calculus",
+      "examples": [
+        {
+          "problem": "Factor completely: 2x³ − 16x² + 32x",
+          "solution": "**Step 1 — GCF first:**\n2x(x² − 8x + 16)\n\n**Step 2 — Factor the trinomial:**\nx² − 8x + 16 = (x − 4)²\n\n**Final:** 2x(x − 4)²\n\n**Calculus preview:** If f(x) = 2x³ − 16x² + 32x, the zeros of f (from the factored form) immediately give you the x-intercepts. Setting f'(x) = 0 gives critical points — factoring will be essential there too."
+        },
+        {
+          "problem": "Simplify and rewrite for the power rule: f(x) = (3x⁴ − x²)/(x²)",
+          "solution": "**Divide each term by x²:**\nf(x) = 3x⁴/x² − x²/x² = 3x² − 1\n\n**Now the power rule is trivial:**\nf'(x) = 6x\n\n**Key lesson:** Always simplify BEFORE differentiating. The quotient rule on the original form works but is 5× more work and error-prone."
+        },
+        {
+          "problem": "Solve: ln(x − 1) + ln(x + 3) = ln(5)",
+          "solution": "**Step 1 — Combine logs (product rule):**\nln((x − 1)(x + 3)) = ln(5)\n\n**Step 2 — Since ln is one-to-one:**\n(x − 1)(x + 3) = 5\nx² + 2x − 3 = 5\nx² + 2x − 8 = 0\n(x + 4)(x − 2) = 0\nx = −4 or x = 2\n\n**Step 3 — Check domain (arguments of ln must be > 0):**\nx = −4: ln(−5) is undefined ✗\nx = 2: ln(1) + ln(5) = 0 + ln(5) = ln(5) ✓\n\n**x = 2**"
+        }
+      ],
+      "initialPrompt": "In example 2, what would happen if you used the quotient rule on (3x⁴ − x²)/x² instead of simplifying first? Would you get the same answer?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "algebra-cleanup",
+      "title": "We-Do: Algebra Repair",
+      "problems": [
+        {
+          "id": "pp-wp4",
+          "question": "Factor completely: x³ − 27",
+          "answer": "(x − 3)(x² + 3x + 9)",
+          "hints": [
+            "This is a difference of cubes: a³ − b³ = (a − b)(a² + ab + b²). Here a = x, b = 3.",
+            "x³ − 27 = (x − 3)(x² + 3x + 9)."
+          ]
+        },
+        {
+          "id": "pp-wp5",
+          "question": "Rewrite for the power rule: f(x) = 4/√x + 3x⁵ − 7",
+          "answer": "f(x) = 4x^(−1/2) + 3x⁵ − 7",
+          "hints": [
+            "Rewrite 4/√x as 4 · x^(−1/2).",
+            "f(x) = 4x^(−1/2) + 3x⁵ − 7. Now f'(x) = 4·(−1/2)x^(−3/2) + 15x⁴ = −2x^(−3/2) + 15x⁴."
+          ]
+        },
+        {
+          "id": "pp-wp6",
+          "question": "Solve: e^(2x) = 5e^x",
+          "answer": "x = ln 5",
+          "hints": [
+            "Divide both sides by eˣ: e^(2x)/eˣ = 5 → eˣ = 5.",
+            "Take ln of both sides: x = ln 5."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, can you identify a and b in the pattern a³ − b³?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "trig-essentials",
+      "title": "Trig Essentials for Calculus",
+      "text": "**You need these values on autopilot — no calculator:**\n\n| θ | sin θ | cos θ | tan θ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| π/6 | 1/2 | √3/2 | √3/3 |\n| π/4 | √2/2 | √2/2 | 1 |\n| π/3 | √3/2 | 1/2 | √3 |\n| π/2 | 1 | 0 | undef |\n| π | 0 | −1 | 0 |\n\n**Key Identities:**\n• sin²θ + cos²θ = 1\n• 1 + tan²θ = sec²θ\n• 1 + cot²θ = csc²θ\n• sin(2θ) = 2 sin θ cos θ\n• cos(2θ) = cos²θ − sin²θ = 2cos²θ − 1 = 1 − 2sin²θ\n\n**Why this matters:**\nDerivatives of trig functions are trig functions. If you don't know that sin(π/4) = √2/2 instantly, evaluating f'(π/4) when f(x) = sin(x) will stall you.",
+      "initialPrompt": "Without a calculator: what is cos(5π/6)? Hint: 5π/6 is in the second quadrant."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "trig-essentials",
+      "title": "I-Do: Trig for Calculus",
+      "examples": [
+        {
+          "problem": "Evaluate without a calculator: sin(7π/6) + cos(4π/3)",
+          "solution": "**sin(7π/6):** Reference angle = 7π/6 − π = π/6. QII I → sin is negative.\nsin(7π/6) = −sin(π/6) = **−1/2**\n\n**cos(4π/3):** Reference angle = 4π/3 − π = π/3. QIII → cos is negative.\ncos(4π/3) = −cos(π/3) = **−1/2**\n\n**Sum:** −1/2 + (−1/2) = **−1**"
+        },
+        {
+          "problem": "Simplify: (1 − cos²θ)/sin θ",
+          "solution": "**Use the Pythagorean identity:** sin²θ + cos²θ = 1 → 1 − cos²θ = sin²θ\n\n(1 − cos²θ)/sin θ = sin²θ/sin θ = **sin θ**\n\n**Calculus preview:** Simplifications like this are essential when evaluating limits and simplifying derivatives of trig functions."
+        },
+        {
+          "problem": "Convert 225° to radians and find all six trig values.",
+          "solution": "**Convert:** 225° × (π/180°) = **5π/4**\n\n**Quadrant:** QIII (both sin and cos negative, tan positive)\n**Reference angle:** 225° − 180° = 45° = π/4\n\n| Function | Value |\n|---|---|\n| sin(5π/4) | −√2/2 |\n| cos(5π/4) | −√2/2 |\n| tan(5π/4) | 1 |\n| csc(5π/4) | −√2 |\n| sec(5π/4) | −√2 |\n| cot(5π/4) | 1 |"
+        }
+      ],
+      "initialPrompt": "For the first example, how do you decide whether sin is positive or negative in a given quadrant? What's the mnemonic?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "trig-essentials",
+      "title": "We-Do: Trig Repair",
+      "problems": [
+        {
+          "id": "pp-wp7",
+          "question": "Evaluate without a calculator: cos(2π/3) − sin(3π/2)",
+          "answer": "1/2",
+          "hints": [
+            "cos(2π/3): ref angle π/3, QII → cos neg → −1/2. sin(3π/2) = −1.",
+            "−1/2 − (−1) = −1/2 + 1 = 1/2."
+          ]
+        },
+        {
+          "id": "pp-wp8",
+          "question": "Simplify: sec²θ − 1",
+          "answer": "tan²θ",
+          "hints": [
+            "Use the Pythagorean identity: 1 + tan²θ = sec²θ.",
+            "So sec²θ − 1 = tan²θ."
+          ]
+        },
+        {
+          "id": "pp-wp9",
+          "question": "Solve on [0, 2π): 2sin²x − sinx − 1 = 0",
+          "answer": "x = π/2, 7π/6, 11π/6",
+          "hints": [
+            "Factor as a quadratic in sin x: (2sinx + 1)(sinx − 1) = 0.",
+            "sin x = −1/2 → x = 7π/6, 11π/6. sin x = 1 → x = π/2."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, start by finding cos(2π/3). What's the reference angle, and what quadrant is 2π/3 in?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "graph-literacy",
+      "title": "Graph Literacy for AP Calculus",
+      "text": "**AP Calculus is heavily graphical.** You must read graphs as fluently as equations.\n\n**What to identify from a graph:**\n• Intercepts (where the graph crosses the axes)\n• Asymptotes (vertical: function blows up; horizontal: end behavior)\n• End behavior (what happens as x → ±∞)\n• Piecewise definitions (different rules on different intervals)\n• Intervals of increase/decrease\n• Concavity (curves up like a cup = concave up)\n\n**From tables:**\n• Estimate rates of change: [f(b) − f(a)] / (b − a)\n• Identify patterns (increasing, decreasing, concavity)\n• Use symmetric difference quotient for better derivative estimates\n\n**Reading a piecewise graph:**\n• Open circles (○) = NOT included\n• Closed circles (●) = included\n• Check continuity: does the value from the left match the value from the right?",
+      "initialPrompt": "Look at a function where f(2) = 5 but lim_{x→2} f(x) = 3. What type of discontinuity is this? Is f continuous at x = 2?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "graph-literacy",
+      "title": "I-Do: Reading Graphs and Tables",
+      "examples": [
+        {
+          "problem": "A function f has vertical asymptote x = −2, horizontal asymptote y = 3, x-intercept at (1, 0), and y-intercept at (0, −3/2). Sketch a possible graph and identify the likely form of f.",
+          "solution": "**Analysis:**\n• VA at x = −2 → factor (x + 2) in the denominator\n• HA at y = 3 → degrees equal, ratio of leading coefficients = 3\n• x-int at (1, 0) → factor (x − 1) in the numerator\n• y-int at (0, −3/2) → f(0) = −3/2\n\n**Likely form:** f(x) = 3(x − 1)/(x + 2)\n\n**Verify y-int:** f(0) = 3(0−1)/(0+2) = −3/2 ✓\n**Verify HA:** As x → ∞, f(x) → 3x/x = 3 ✓\n\nThis type of analysis — connecting algebraic features to graphical features — is fundamental to AP Calculus."
+        },
+        {
+          "problem": "Given the table, estimate f'(3):\n| x | 1 | 2 | 3 | 4 | 5 |\n|---|---|---|---|---|---|\n| f(x) | 10 | 7 | 5 | 4 | 6 |",
+          "solution": "**Best estimate: symmetric difference quotient** (uses points on both sides of x = 3):\n\nf'(3) ≈ [f(4) − f(2)] / (4 − 2) = (4 − 7) / 2 = **−3/2**\n\nNote: We could also use the one-sided estimates:\n• Forward: [f(4)−f(3)]/(4−3) = (4−5)/1 = −1\n• Backward: [f(3)−f(2)]/(3−2) = (5−7)/1 = −2\n\nThe symmetric quotient (−3/2) averages these and is the AP-preferred method."
+        },
+        {
+          "problem": "Identify the end behavior and all asymptotes of f(x) = (2x² − 8)/(x² − x − 6).",
+          "solution": "**Step 1 — Factor:**\nNumerator: 2(x² − 4) = 2(x − 2)(x + 2)\nDenominator: (x − 3)(x + 2)\n\n**Step 2 — Simplify (note the hole):**\nf(x) = 2(x − 2)(x + 2) / [(x − 3)(x + 2)] = 2(x − 2)/(x − 3), x ≠ −2\n\n**Hole at x = −2:** f(−2) would be 2(−4)/(−5) = 8/5 → hole at (−2, 8/5)\n**VA at x = 3** (denominator = 0, numerator ≠ 0)\n**HA:** Degree of original num = degree of denom → y = 2/1 = **y = 2**\n\n**End behavior:** As x → ±∞, f(x) → 2"
+        }
+      ],
+      "initialPrompt": "In example 3, why is x = −2 a hole and not a vertical asymptote? What's the difference?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "graph-literacy",
+      "title": "We-Do: Graph & Table Interpretation",
+      "problems": [
+        {
+          "id": "pp-wp10",
+          "question": "Find all asymptotes of f(x) = (x + 1)/(x² − 4).",
+          "answer": "VA: x = 2 and x = −2. HA: y = 0.",
+          "hints": [
+            "Factor denominator: x² − 4 = (x−2)(x+2). No common factors with numerator.",
+            "VA where denominator = 0: x = 2, x = −2. HA: degree top (1) < degree bottom (2) → y = 0."
+          ]
+        },
+        {
+          "id": "pp-wp11",
+          "question": "Given: f(1) = 3, f(2) = 5, f(3) = 9, f(4) = 8, f(5) = 4. Estimate f'(3) using the symmetric difference quotient.",
+          "answer": "f'(3) ≈ 3/2",
+          "hints": [
+            "Symmetric difference quotient: f'(3) ≈ [f(4) − f(2)]/(4 − 2).",
+            "[8 − 5]/2 = 3/2."
+          ]
+        },
+        {
+          "id": "pp-wp12",
+          "question": "A function f is defined by f(x) = { x² if x < 1; 3x − 1 if x ≥ 1 }. Is f continuous at x = 1?",
+          "answer": "No. Left limit = 1² = 1. Right limit = 3(1)−1 = 2. Since 1 ≠ 2, the limit DNE, so f is NOT continuous at x = 1 (jump discontinuity).",
+          "hints": [
+            "Check: lim_{x→1⁻} f(x) = 1² = 1. lim_{x→1⁺} f(x) = 3(1) − 1 = 2.",
+            "Since left limit (1) ≠ right limit (2), the two-sided limit DNE, so f is NOT continuous at x = 1. This is a jump discontinuity."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, start by factoring the denominator. Does any factor cancel with the numerator?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Prerequisite Skills Mixed Practice",
+      "problems": [
+        {
+          "id": "pp-yp1",
+          "question": "Given f(x) = 2x + 1 and g(x) = x² − 3, find g(f(x)).",
+          "answer": "(2x+1)² − 3 = 4x² + 4x − 2",
+          "skill": "function-fluency",
+          "hints": ["g(f(x)) = (f(x))² − 3 = (2x+1)² − 3 = 4x²+4x+1−3 = 4x²+4x−2."]
+        },
+        {
+          "id": "pp-yp2",
+          "question": "Factor completely: 8x³ + 27",
+          "answer": "(2x + 3)(4x² − 6x + 9)",
+          "skill": "algebra-cleanup",
+          "hints": ["Sum of cubes: a³+b³=(a+b)(a²−ab+b²). Here a=2x, b=3. (2x+3)(4x²−6x+9)."]
+        },
+        {
+          "id": "pp-yp3",
+          "question": "Evaluate without a calculator: tan(5π/3)",
+          "answer": "−√3",
+          "skill": "trig-essentials",
+          "hints": ["5π/3 is in QIV. Reference angle = 2π − 5π/3 = π/3. tan(π/3) = √3. QIV: tan is neg → −√3."]
+        },
+        {
+          "id": "pp-yp4",
+          "question": "Rewrite for the power rule and differentiate: f(x) = 6/x³ − 2√x",
+          "answer": "f(x) = 6x⁻³ − 2x^(1/2). f'(x) = −18x⁻⁴ − x^(−1/2) = −18/x⁴ − 1/√x",
+          "skill": "algebra-cleanup",
+          "hints": ["6/x³ = 6x⁻³, 2√x = 2x^(1/2). Power rule: −18x⁻⁴ − 2·(1/2)x^(−1/2) = −18x⁻⁴ − x^(−1/2)."]
+        },
+        {
+          "id": "pp-yp5",
+          "question": "Find the inverse of f(x) = (x − 4)/3. Verify by computing f(f⁻¹(x)).",
+          "answer": "f⁻¹(x) = 3x + 4. f(f⁻¹(x)) = f(3x+4) = ((3x+4)−4)/3 = 3x/3 = x ✓",
+          "skill": "function-fluency",
+          "hints": ["Swap: x = (y−4)/3 → 3x = y−4 → y = 3x+4. So f⁻¹(x) = 3x+4."]
+        },
+        {
+          "id": "pp-yp6",
+          "question": "Find all asymptotes and holes of f(x) = (x² − 9)/(x² − x − 6).",
+          "answer": "Hole at x = 3 (y = 6/5). VA: x = −2. HA: y = 1.",
+          "skill": "graph-literacy",
+          "hints": ["Factor: (x−3)(x+3)/[(x−3)(x+2)]. Cancel (x−3) → hole at x=3. Reduced: (x+3)/(x+2). VA: x=−2. HA: y=1 (equal degrees)."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "pp-wp1": "f(g(x)) = 3x²+1; g(f(x)) = 9x²−12x+5.",
+    "pp-wp2": "f⁻¹(x) = (x+7)/3.",
+    "pp-wp3": "1/3.",
+    "pp-wp4": "(x−3)(x²+3x+9).",
+    "pp-wp5": "4x^(−1/2) + 3x⁵ − 7.",
+    "pp-wp6": "x = ln 5.",
+    "pp-wp7": "1/2.",
+    "pp-wp8": "tan²θ.",
+    "pp-wp9": "x = π/2, 7π/6, 11π/6.",
+    "pp-wp10": "VA: x=2, x=−2. HA: y=0.",
+    "pp-wp11": "3/2.",
+    "pp-wp12": "Not continuous (jump discontinuity).",
+    "pp-yp1": "4x²+4x−2.",
+    "pp-yp2": "(2x+3)(4x²−6x+9).",
+    "pp-yp3": "−√3.",
+    "pp-yp4": "f'(x) = −18x⁻⁴ − x^(−1/2).",
+    "pp-yp5": "f⁻¹(x) = 3x+4.",
+    "pp-yp6": "Hole at (3, 6/5). VA: x=−2. HA: y=1."
+  }
+}

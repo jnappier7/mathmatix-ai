@@ -1,0 +1,116 @@
+{
+  "moduleId": "checkpoint_u5",
+  "course": "AP Calculus BC",
+  "unit": 5,
+  "title": "Unit 5 Checkpoint: Analyzing Functions with Derivatives",
+  "weeks": "14",
+  "estimatedDuration": 35,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing first/second derivative analysis, curve sketching, EVT/MVT justification, and optimization. Heavily weighted toward AP-style justification and graphical interpretation.",
+  "skillsCovered": ["increasing-decreasing-extrema", "concavity-inflection", "curve-sketching", "evt-mvt", "optimization"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "increasing-decreasing-extrema", "reteachFocus": "Critical points where f'=0 or DNE; FDT: sign of f' changes → extremum; increasing where f'>0; justify with sign chart or interval analysis", "resources": ["function_analysis_module.json - scaffold phases 1-3"] },
+    { "skillId": "concavity-inflection", "reteachFocus": "f''>0 → concave up, f''<0 → concave down; inflection where f'' changes sign (not just f''=0); SDT: f''(c)>0 → local min, f''(c)<0 → local max", "resources": ["function_analysis_module.json - scaffold phases 4-6"] },
+    { "skillId": "evt-mvt", "reteachFocus": "EVT: continuous on [a,b] → absolute max/min exist, check endpoints + critical points; MVT: continuous on [a,b], differentiable on (a,b) → ∃c: f'(c)=[f(b)−f(a)]/(b−a)", "resources": ["function_analysis_module.json - scaffold phases 7-9"] },
+    { "skillId": "optimization", "reteachFocus": "Identify quantity to optimize, write as function of one variable using constraint, find critical points, verify with FDT/SDT or closed interval test", "resources": ["function_analysis_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu5-1",
+      "question": "Given f(x) = x³ − 12x + 5, find all critical points and classify each as local max, local min, or neither using the First Derivative Test.",
+      "answer": "f'(x) = 3x²−12 = 3(x²−4) = 3(x−2)(x+2). Critical points: x = −2, x = 2. Sign chart: f'(−3) = 27−12 > 0, f'(0) = −12 < 0, f'(3) = 27−12 > 0. f' changes +→− at x=−2 → local max. f' changes −→+ at x=2 → local min. f(−2) = −8+24+5 = 21 (local max). f(2) = 8−24+5 = −11 (local min).",
+      "skill": "increasing-decreasing-extrema",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "cbu5-2",
+      "question": "Find the intervals of concavity and inflection points for f(x) = x⁴ − 6x² + 8x + 1.",
+      "answer": "f'(x) = 4x³−12x+8. f''(x) = 12x²−12 = 12(x²−1) = 12(x−1)(x+1). f''=0 at x=−1, x=1. Sign chart: f''(−2) = 12(3) > 0, f''(0) = −12 < 0, f''(2) = 12(3) > 0. Concave up on (−∞,−1) and (1,∞). Concave down on (−1,1). Inflection at x=−1: f(−1) = 1−6−8+1 = −12, point (−1,−12). Inflection at x=1: f(1) = 1−6+8+1 = 4, point (1,4).",
+      "skill": "concavity-inflection",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "cbu5-3",
+      "question": "Find the absolute maximum and minimum of f(x) = 2x³ − 3x² − 12x + 5 on [−2, 4].",
+      "answer": "f'(x) = 6x²−6x−12 = 6(x²−x−2) = 6(x−2)(x+1). Critical points in [−2,4]: x=−1, x=2. Evaluate: f(−2) = −16−12+24+5 = 1. f(−1) = −2−3+12+5 = 12. f(2) = 16−12−24+5 = −15. f(4) = 128−48−48+5 = 37. Absolute max: 37 at x=4. Absolute min: −15 at x=2.",
+      "skill": "evt-mvt",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "cbu5-4",
+      "question": "Verify that f(x) = x² − 4x + 1 satisfies the hypotheses of the MVT on [1, 5], and find all values of c guaranteed by the theorem.",
+      "answer": "f is a polynomial → continuous on [1,5] and differentiable on (1,5). Hypotheses satisfied ✓. f(1) = 1−4+1 = −2. f(5) = 25−20+1 = 6. Slope = [6−(−2)]/(5−1) = 8/4 = 2. f'(x) = 2x−4. Set f'(c) = 2: 2c−4 = 2 → c = 3. Since 3 ∈ (1,5), c = 3 satisfies the MVT.",
+      "skill": "evt-mvt",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu5-5",
+      "question": "A farmer has 200 ft of fencing to enclose a rectangular field along a river (no fence needed on the river side). Find the dimensions that maximize the area.",
+      "answer": "Let x = side perpendicular to river (two of these), y = side parallel to river (one). Constraint: 2x + y = 200 → y = 200−2x. Maximize A = xy = x(200−2x) = 200x−2x². A'(x) = 200−4x = 0 → x = 50. y = 200−100 = 100. A''(x) = −4 < 0 → max ✓. Dimensions: 50 ft × 100 ft. Max area = 5000 ft².",
+      "skill": "optimization",
+      "difficulty": 4,
+      "points": 10
+    },
+    {
+      "id": "cbu5-6",
+      "question": "The graph of f' (NOT f) is given: f' is positive on (−∞, 1), zero at x = 1, negative on (1, 4), zero at x = 4, positive on (4, ∞). f' has a minimum at x = 2.5. Describe the behavior of f: (a) intervals of increase/decrease, (b) local extrema, (c) inflection point(s).",
+      "answer": "(a) f increasing where f' > 0: (−∞,1) and (4,∞). f decreasing where f' < 0: (1,4). (b) Local max at x=1 (f' changes +→−). Local min at x=4 (f' changes −→+). (c) Inflection point at x=2.5 (f' has a minimum → f'' changes sign from − to + → concavity of f changes from down to up).",
+      "skill": "curve-sketching",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu5-7",
+      "question": "Use the Second Derivative Test to classify the critical points of f(x) = xe^(−x).",
+      "answer": "f'(x) = e^(−x) + x(−e^(−x)) = e^(−x)(1−x). f'(x) = 0 → 1−x = 0 → x = 1. f''(x) = −e^(−x)(1−x) + e^(−x)(−1) = e^(−x)(−1+x−1) = e^(−x)(x−2). f''(1) = e^(−1)(1−2) = −e^(−1) < 0. By SDT, x = 1 is a local maximum. f(1) = e^(−1) = 1/e.",
+      "skill": "concavity-inflection",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu5-8",
+      "question": "ANALYSIS: A differentiable function f satisfies f(0) = 3, f(4) = 7. (a) What does the MVT guarantee? State the theorem precisely. (b) If f'(x) ≤ 2 for all x in (0,4), explain why this is consistent. (c) If additionally f'(x) ≥ 0 for all x, what can you say about f on [0,4]?",
+      "answer": "(a) Since f is differentiable on (0,4) and continuous on [0,4], by MVT there exists c in (0,4) such that f'(c) = [f(4)−f(0)]/(4−0) = (7−3)/4 = 1. (b) Consistent: MVT only guarantees f'(c)=1 for some c. Since 1 ≤ 2, having f'(x)≤2 everywhere does not contradict f'(c)=1. (c) f'(x)≥0 for all x → f is non-decreasing on [0,4]. Combined with f(0)=3 and f(4)=7, f increases (or stays flat) from 3 to 7.",
+      "skill": "evt-mvt",
+      "difficulty": 6,
+      "points": 14
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "cbu5-spiral-1",
+      "question": "SPIRAL (Related Rates): A cone-shaped tank (radius 3 m at top, height 6 m) is filling at 2 m³/min. How fast is the water level rising when the depth is 2 m? (Note: at depth h, radius = h/2 by similar triangles.)",
+      "answer": "r = h/2. V = (1/3)πr²h = (1/3)π(h/2)²h = πh³/12. dV/dt = πh²/4 · dh/dt. 2 = π(4)/4 · dh/dt = π · dh/dt → dh/dt = 2/π m/min.",
+      "skill": "related-rates",
+      "difficulty": 5,
+      "points": 0,
+      "note": "Spiral review from Unit 4"
+    },
+    {
+      "id": "cbu5-spiral-2",
+      "question": "SPIRAL (Implicit): Given x²y + xy² = 6, find dy/dx.",
+      "answer": "2xy + x²(dy/dx) + y² + 2xy(dy/dx) = 0. dy/dx(x² + 2xy) = −2xy − y². dy/dx = −(2xy + y²)/(x² + 2xy).",
+      "skill": "implicit-differentiation",
+      "difficulty": 4,
+      "points": 0,
+      "note": "Spiral review from Unit 3"
+    }
+  ],
+  "answerKeys": {
+    "cbu5-1": "x=−2: local max (21). x=2: local min (−11).",
+    "cbu5-2": "CU: (−∞,−1)∪(1,∞). CD: (−1,1). Inflection: (−1,−12) and (1,4).",
+    "cbu5-3": "Abs max: 37 at x=4. Abs min: −15 at x=2.",
+    "cbu5-4": "c = 3.",
+    "cbu5-5": "50 ft × 100 ft, area = 5000 ft².",
+    "cbu5-6": "Inc (−∞,1)∪(4,∞), dec (1,4), max x=1, min x=4, inflection x=2.5.",
+    "cbu5-7": "x=1: local max, f(1)=1/e.",
+    "cbu5-8": "(a) ∃c: f'(c)=1. (b) Consistent (1≤2). (c) f non-decreasing.",
+    "cbu5-spiral-1": "dh/dt = 2/π m/min.",
+    "cbu5-spiral-2": "−(2xy+y²)/(x²+2xy)."
+  }
+}

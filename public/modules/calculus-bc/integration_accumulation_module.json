@@ -1,0 +1,290 @@
+{
+  "moduleId": "integration_accumulation",
+  "course": "AP Calculus BC",
+  "unit": 6,
+  "title": "Integration & Accumulation of Change",
+  "weeks": "15-19",
+  "estimatedDuration": 120,
+  "description": "Master the definite integral from first principles through advanced techniques. Begin with Riemann sums and the concept of accumulation, then formalize with the Fundamental Theorem of Calculus (both parts). Build a toolkit of antidifferentiation methods: u-substitution for chain-rule reversal, integration by parts for products, partial fractions for rational functions, and improper integrals for unbounded domains or integrands. This heavyweight unit is the backbone of AP Calculus BC — nearly half of the exam's free-response questions require fluent integration skills.",
+  "skills": ["riemann-sums", "ftc-part1", "ftc-part2", "u-substitution", "integration-by-parts", "partial-fractions", "improper-integrals"],
+  "standardsAlignment": ["CED 6.1", "CED 6.2", "CED 6.3", "CED 6.4", "CED 6.5", "CED 6.6", "CED 6.7", "CED 6.8", "CED 6.9", "CED 6.11", "CED 6.12", "CED 6.13"],
+  "goals": [
+    "Approximate definite integrals using left, right, and midpoint Riemann sums and interpret the definite integral as the limit of a Riemann sum",
+    "Apply the Fundamental Theorem of Calculus Part 1 to differentiate accumulation functions, including those with variable upper limits via the chain rule",
+    "Evaluate definite integrals using the Fundamental Theorem of Calculus Part 2 and u-substitution",
+    "Integrate products using integration by parts, decompose rational functions using partial fractions, and determine convergence of improper integrals"
+  ],
+  "instructionalStrategy": [
+    "Ground the definite integral in area and accumulation before introducing the FTC — students need to see why the antiderivative connection is remarkable, not just memorize it.",
+    "Drill FTC Part 1 (derivative of an integral) separately from Part 2 (evaluating a definite integral). Many students confuse the two directions.",
+    "Teach u-substitution as 'reverse chain rule' immediately after FTC Part 2, while evaluation is fresh in students' minds.",
+    "For integration by parts, introduce LIATE (Logs-Inverse trig-Algebraic-Trig-Exponential) as a heuristic for choosing u. Drill tabular method for repeated applications.",
+    "Partial fractions require strong algebra — factor first, decompose second. Insist students check by recombining before integrating.",
+    "Improper integrals are conceptually challenging: stress that infinity is a limit process, not a number. Always write the limit notation."
+  ],
+  "aiFlexLevel": 0.6,
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "riemann-sums",
+      "title": "Riemann Sums & the Definite Integral as Accumulation",
+      "text": "**The Big Idea:**\n\nHow do we find the exact area under a curve? Start with rectangles and take a limit.\n\n**Riemann Sums:**\nPartition [a, b] into n equal subintervals of width Δx = (b − a)/n. Choose a sample point xᵢ* in each subinterval and form the sum:\n\nSₙ = Σᵢ₌₁ⁿ f(xᵢ*)Δx\n\n**Three common choices for xᵢ*:**\n• **Left Riemann sum:** xᵢ* = a + (i−1)Δx (use the left endpoint of each subinterval)\n• **Right Riemann sum:** xᵢ* = a + iΔx (use the right endpoint)\n• **Midpoint Riemann sum:** xᵢ* = a + (i − ½)Δx (use the midpoint)\n\n**Over- and Under-estimates:**\n• If f is increasing: left sum underestimates, right sum overestimates.\n• If f is decreasing: left sum overestimates, right sum underestimates.\n• Midpoint sums are generally more accurate than left or right.\n\n**The Definite Integral:**\nAs n → ∞, all three Riemann sums converge to the same value (for continuous f):\n\n∫ₐᵇ f(x) dx = lim_{n→∞} Σᵢ₌₁ⁿ f(xᵢ*)Δx\n\nThis limit — the definite integral — gives the exact signed area between f and the x-axis on [a, b].",
+      "initialPrompt": "If f(x) = x² on [0, 2] with n = 4, what is Δx? List the four right endpoints and compute the right Riemann sum."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "riemann-sums",
+      "title": "I-Do: Riemann Sums & Accumulation",
+      "examples": [
+        {
+          "problem": "Estimate ∫₀² x² dx using a right Riemann sum with n = 4.",
+          "solution": "**Setup:** Δx = (2 − 0)/4 = 0.5\nRight endpoints: x₁ = 0.5, x₂ = 1, x₃ = 1.5, x₄ = 2\n\n**Evaluate f at each:**\nf(0.5) = 0.25, f(1) = 1, f(1.5) = 2.25, f(2) = 4\n\n**Sum:** R₄ = Δx[f(0.5) + f(1) + f(1.5) + f(2)]\n= 0.5(0.25 + 1 + 2.25 + 4)\n= 0.5(7.5) = **3.75**\n\n**Check:** The exact value is [x³/3]₀² = 8/3 ≈ 2.667. Since x² is increasing on [0, 2], the right sum overestimates — and 3.75 > 2.667 ✓"
+        },
+        {
+          "problem": "Estimate ∫₁⁵ (1/x) dx using a left Riemann sum with n = 4.",
+          "solution": "**Setup:** Δx = (5 − 1)/4 = 1\nLeft endpoints: x₁ = 1, x₂ = 2, x₃ = 3, x₄ = 4\n\n**Evaluate f at each:**\nf(1) = 1, f(2) = 1/2, f(3) = 1/3, f(4) = 1/4\n\n**Sum:** L₄ = 1(1 + 1/2 + 1/3 + 1/4)\n= 1 + 1/2 + 1/3 + 1/4 = **25/12 ≈ 2.083**\n\n**Check:** The exact value is ln 5 ≈ 1.609. Since 1/x is decreasing on [1, 5], the left sum overestimates — and 25/12 > ln 5 ✓"
+        },
+        {
+          "problem": "Write ∫₀³ x² dx as a limit of a Riemann sum (right endpoints) and evaluate.",
+          "solution": "**Setup:** Δx = 3/n, xᵢ = 0 + i · (3/n) = 3i/n\n\n**Riemann sum:**\nΣᵢ₌₁ⁿ f(3i/n) · (3/n) = Σᵢ₌₁ⁿ (3i/n)² · (3/n) = Σᵢ₌₁ⁿ (9i²/n²)(3/n) = (27/n³) Σᵢ₌₁ⁿ i²\n\n**Use the formula:** Σᵢ₌₁ⁿ i² = n(n+1)(2n+1)/6\n\n= (27/n³) · n(n+1)(2n+1)/6 = 27(n+1)(2n+1)/(6n²)\n\n**Take the limit:**\nlim_{n→∞} 27(2n² + 3n + 1)/(6n²) = 27 · 2/6 = **9**\n\n**Verify:** [x³/3]₀³ = 27/3 = 9 ✓"
+        }
+      ],
+      "initialPrompt": "In example 1, the right sum gave 3.75 while the exact answer is 8/3 ≈ 2.667. If we used n = 100 subintervals instead of 4, would the right sum be closer to 8/3? Why?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "riemann-sums",
+      "title": "We-Do: Riemann Sums & Accumulation",
+      "problems": [
+        {
+          "id": "ia-wp1",
+          "question": "Estimate ∫₀⁴ √x dx using a right Riemann sum with n = 4.",
+          "answer": "3 + √2 + √3 ≈ 6.146",
+          "hints": [
+            "Δx = (4 − 0)/4 = 1. Right endpoints: 1, 2, 3, 4.",
+            "R₄ = 1 · [√1 + √2 + √3 + √4] = 1 + √2 + √3 + 2 = 3 + √2 + √3 ≈ 6.146. (Exact value is 16/3 ≈ 5.333, so the right sum overestimates since √x is increasing.)"
+          ]
+        },
+        {
+          "id": "ia-wp2",
+          "question": "Estimate ∫₀⁶ (x² + 1) dx using a midpoint Riemann sum with n = 3.",
+          "answer": "76",
+          "hints": [
+            "Δx = (6 − 0)/3 = 2. Midpoints: 1, 3, 5.",
+            "M₃ = 2[f(1) + f(3) + f(5)] = 2[2 + 10 + 26] = 2(38) = 76. (Exact value is [x³/3 + x]₀⁶ = 72 + 6 = 78.)"
+          ]
+        },
+        {
+          "id": "ia-wp3",
+          "question": "Write ∫₀² (3x + 1) dx as a limit of a Riemann sum (right endpoints) and evaluate.",
+          "answer": "8",
+          "hints": [
+            "Δx = 2/n, xᵢ = 2i/n. Sum = Σ f(2i/n)(2/n) = Σ (6i/n + 1)(2/n) = Σ (12i/n² + 2/n).",
+            "= (12/n²) · n(n+1)/2 + 2 = 6(n+1)/n + 2. As n→∞: 6 + 2 = 8. Check: [3x²/2 + x]₀² = 6 + 2 = 8 ✓"
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, start by finding Δx and listing the right endpoints. Then evaluate √x at each right endpoint."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "ftc-part2",
+      "title": "The Fundamental Theorem of Calculus (Parts 1 & 2) and u-Substitution",
+      "text": "**FTC Part 1 — Differentiating an Integral:**\n\nIf f is continuous on [a, b] and g(x) = ∫ₐˣ f(t) dt, then:\n\ng'(x) = f(x)\n\nIn words: the derivative of the accumulation function equals the integrand evaluated at the upper limit.\n\n**Chain rule extension:** If the upper limit is a function u(x):\nd/dx ∫ₐ^{u(x)} f(t) dt = f(u(x)) · u'(x)\n\n**FTC Part 2 — Evaluating a Definite Integral:**\n\nIf F is any antiderivative of f (i.e., F' = f), then:\n\n∫ₐᵇ f(x) dx = F(b) − F(a)\n\nThis connects the two main branches of calculus: differentiation and integration are inverse operations.\n\n**u-Substitution (Reverse Chain Rule):**\n\nWhen the integrand contains a composite function and its derivative:\n∫ f(g(x)) · g'(x) dx → let u = g(x), du = g'(x) dx → ∫ f(u) du\n\nFor definite integrals, convert the limits: when x = a, u = g(a); when x = b, u = g(b).\n\n**Common patterns to recognize:**\n• ∫ 2x · cos(x²) dx → u = x², du = 2x dx\n• ∫ eˣ/(1 + eˣ) dx → u = 1 + eˣ, du = eˣ dx\n• ∫ sin(x) cos(x) dx → u = sin(x), du = cos(x) dx",
+      "initialPrompt": "If g(x) = ∫₀ˣ cos(t²) dt, what is g'(x)? What if the upper limit were x³ instead of x?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "ftc-part2",
+      "title": "I-Do: FTC & u-Substitution",
+      "examples": [
+        {
+          "problem": "Find d/dx ∫₁ˣ (t³ + 2t) dt.",
+          "solution": "**Apply FTC Part 1 directly:** The upper limit is x, the integrand is f(t) = t³ + 2t.\n\nd/dx ∫₁ˣ (t³ + 2t) dt = f(x) = **x³ + 2x**\n\n**Key insight:** We never needed to find the antiderivative. FTC Part 1 gives the answer instantly by evaluating the integrand at the upper limit."
+        },
+        {
+          "problem": "Evaluate ∫₀³ (x² + 1) dx.",
+          "solution": "**Find an antiderivative:** F(x) = x³/3 + x\n\n**Apply FTC Part 2:**\n∫₀³ (x² + 1) dx = F(3) − F(0)\n= (27/3 + 3) − (0 + 0)\n= 9 + 3 = **12**\n\n**Verify with geometry (rough check):** The function ranges from f(0) = 1 to f(3) = 10 over an interval of length 3. Average value is somewhere around 4, so area ≈ 3 × 4 = 12. Checks out."
+        },
+        {
+          "problem": "Evaluate ∫ 2x cos(x²) dx.",
+          "solution": "**Recognize the pattern:** The integrand has cos(x²) (composite) and 2x (derivative of x²). This is a reverse chain rule situation.\n\n**Substitute:** Let u = x², then du = 2x dx.\n\n∫ 2x cos(x²) dx = ∫ cos(u) du = sin(u) + C = **sin(x²) + C**\n\n**Check by differentiating:** d/dx[sin(x²)] = cos(x²) · 2x ✓"
+        }
+      ],
+      "initialPrompt": "In example 3, what would change if the integral were ∫ x cos(x²) dx (missing the factor of 2)? How would you handle it?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "ftc-part2",
+      "title": "We-Do: FTC & u-Substitution",
+      "problems": [
+        {
+          "id": "ia-wp4",
+          "question": "Find d/dx ∫₂ˣ sin(t²) dt.",
+          "answer": "sin(x²)",
+          "hints": [
+            "FTC Part 1: d/dx ∫ₐˣ f(t) dt = f(x). Here f(t) = sin(t²).",
+            "So d/dx ∫₂ˣ sin(t²) dt = sin(x²). No need to antidifferentiate sin(t²) — that integral has no elementary closed form!"
+          ]
+        },
+        {
+          "id": "ia-wp5",
+          "question": "Evaluate ∫₁⁴ (3√x + 2) dx.",
+          "answer": "20",
+          "hints": [
+            "Rewrite √x as x^(1/2). Antiderivative: F(x) = 3 · (2/3)x^(3/2) + 2x = 2x^(3/2) + 2x.",
+            "F(4) − F(1) = [2(8) + 8] − [2(1) + 2] = 24 − 4 = 20. (Note: 4^(3/2) = (√4)³ = 8.)"
+          ]
+        },
+        {
+          "id": "ia-wp6",
+          "question": "Evaluate ∫₀^{π/2} sin(2x) dx using u-substitution.",
+          "answer": "1",
+          "hints": [
+            "Let u = 2x, du = 2 dx, so dx = du/2. Convert limits: x = 0 → u = 0, x = π/2 → u = π.",
+            "∫₀^π sin(u) · (du/2) = (1/2)[−cos(u)]₀^π = (1/2)(−cos π + cos 0) = (1/2)(1 + 1) = 1."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, what does FTC Part 1 say about d/dx ∫ₐˣ f(t) dt? Apply it directly — you do NOT need to find an antiderivative."
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "integration-by-parts",
+      "title": "Advanced Integration: By Parts, Partial Fractions & Improper Integrals",
+      "text": "**Integration by Parts (BC Topic):**\n\nUsed when the integrand is a product that doesn't yield to u-substitution.\n\n**Formula:** ∫ u dv = uv − ∫ v du\n\n**LIATE rule** for choosing u (in order of priority):\nL — Logarithmic (ln x)\nI — Inverse trig (arctan x, arcsin x)\nA — Algebraic (x², x, polynomials)\nT — Trigonometric (sin x, cos x)\nE — Exponential (eˣ)\n\nChoose u from highest priority. The rest is dv.\n\n**Partial Fractions (BC Topic):**\n\nDecompose a rational function into simpler fractions before integrating.\n\nFor distinct linear factors:\nP(x)/[(x − a)(x − b)] = A/(x − a) + B/(x − b)\n\nSolve for A and B by plugging in x = a and x = b (cover-up method).\n\n**Improper Integrals (BC Topic):**\n\nIntegrals with infinite bounds or discontinuous integrands.\n\n∫ₐ^∞ f(x) dx = lim_{b→∞} ∫ₐᵇ f(x) dx\n\nIf the limit exists and is finite, the integral **converges**. Otherwise, it **diverges**.\n\n**p-test:** ∫₁^∞ 1/xᵖ dx converges if p > 1, diverges if p ≤ 1.",
+      "initialPrompt": "For ∫ x eˣ dx, LIATE says choose u = x (algebraic) and dv = eˣ dx (exponential). Find du and v. What integral remains after applying the formula?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "integration-by-parts",
+      "title": "I-Do: Advanced Integration Techniques",
+      "examples": [
+        {
+          "problem": "Evaluate ∫ x eˣ dx using integration by parts.",
+          "solution": "**Choose u and dv (LIATE → u = algebraic, dv = exponential):**\nu = x → du = dx\ndv = eˣ dx → v = eˣ\n\n**Apply the formula:** ∫ u dv = uv − ∫ v du\n= x · eˣ − ∫ eˣ dx\n= xeˣ − eˣ + C\n\n**= eˣ(x − 1) + C**\n\n**Check:** d/dx[eˣ(x − 1)] = eˣ(x − 1) + eˣ = eˣ · x − eˣ + eˣ = xeˣ ✓"
+        },
+        {
+          "problem": "Evaluate ∫ (3x + 5)/[(x + 1)(x + 2)] dx using partial fractions.",
+          "solution": "**Decompose:**\n(3x + 5)/[(x + 1)(x + 2)] = A/(x + 1) + B/(x + 2)\n\nMultiply both sides by (x + 1)(x + 2):\n3x + 5 = A(x + 2) + B(x + 1)\n\n**Cover-up method:**\n• Set x = −1: 3(−1) + 5 = A(1) → A = 2\n• Set x = −2: 3(−2) + 5 = B(−1) → −1 = −B → B = 1\n\n**Integrate:**\n∫ [2/(x + 1) + 1/(x + 2)] dx = **2 ln|x + 1| + ln|x + 2| + C**\n\n**Check:** Differentiate: 2/(x + 1) + 1/(x + 2) = [2(x + 2) + (x + 1)]/[(x + 1)(x + 2)] = (3x + 5)/[(x + 1)(x + 2)] ✓"
+        },
+        {
+          "problem": "Evaluate ∫₁^∞ 1/x² dx.",
+          "solution": "**Rewrite as a limit:**\n∫₁^∞ x⁻² dx = lim_{b→∞} ∫₁ᵇ x⁻² dx\n\n**Antidifferentiate:**\n= lim_{b→∞} [−x⁻¹]₁ᵇ = lim_{b→∞} (−1/b + 1)\n\n**Evaluate the limit:**\nAs b → ∞, −1/b → 0, so the limit is 0 + 1 = **1**.\n\n**The integral converges to 1.** This also follows from the p-test: p = 2 > 1, so it converges.\n\n**Conceptual note:** Even though the region extends infinitely to the right, the area is finite because 1/x² shrinks fast enough."
+        }
+      ],
+      "initialPrompt": "In example 2, what would happen if the denominator were x² + 3x + 2 and you forgot to factor it first? Why is factoring the essential first step for partial fractions?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "integration-by-parts",
+      "title": "We-Do: Advanced Integration Techniques",
+      "problems": [
+        {
+          "id": "ia-wp7",
+          "question": "Evaluate ∫ x sin x dx using integration by parts.",
+          "answer": "−x cos x + sin x + C",
+          "hints": [
+            "LIATE: u = x (algebraic), dv = sin x dx. So du = dx, v = −cos x.",
+            "∫ x sin x dx = x(−cos x) − ∫ (−cos x) dx = −x cos x + ∫ cos x dx = −x cos x + sin x + C."
+          ]
+        },
+        {
+          "id": "ia-wp8",
+          "question": "Evaluate ∫ (5x + 1)/[(x − 1)(x + 2)] dx using partial fractions.",
+          "answer": "2 ln|x − 1| + 3 ln|x + 2| + C",
+          "hints": [
+            "Decompose: (5x + 1)/[(x−1)(x+2)] = A/(x−1) + B/(x+2). Multiply through: 5x+1 = A(x+2) + B(x−1). Set x=1: 6=3A, A=2. Set x=−2: −9=−3B, B=3.",
+            "∫ [2/(x−1) + 3/(x+2)] dx = 2 ln|x−1| + 3 ln|x+2| + C."
+          ]
+        },
+        {
+          "id": "ia-wp9",
+          "question": "Determine whether ∫₁^∞ 1/x³ dx converges or diverges. If it converges, find its value.",
+          "answer": "Converges to 1/2",
+          "hints": [
+            "p-test: p = 3 > 1, so it converges. Now compute: lim_{b→∞} ∫₁ᵇ x⁻³ dx = lim_{b→∞} [−1/(2x²)]₁ᵇ.",
+            "= lim_{b→∞} [−1/(2b²) + 1/2] = 0 + 1/2 = 1/2."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, identify u and dv using the LIATE rule. Then find du and v before applying the formula ∫ u dv = uv − ∫ v du."
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Integration & Accumulation Mixed Practice",
+      "problems": [
+        {
+          "id": "ia-yp1",
+          "question": "Estimate ∫₂⁶ x³ dx using a right Riemann sum with n = 4.",
+          "answer": "432",
+          "skill": "riemann-sums",
+          "hints": ["Δx = 1. Right endpoints: 3, 4, 5, 6. Sum = 1(27 + 64 + 125 + 216) = 432. (Exact value is [x⁴/4]₂⁶ = 324 − 4 = 320.)"]
+        },
+        {
+          "id": "ia-yp2",
+          "question": "Find d/dx ∫₀^{x²} sin(t) dt.",
+          "answer": "2x sin(x²)",
+          "skill": "ftc-part1",
+          "hints": ["FTC Part 1 with chain rule: d/dx ∫₀^{u} f(t) dt = f(u) · u'. Here u = x², u' = 2x, f(t) = sin(t). So the answer is sin(x²) · 2x = 2x sin(x²)."]
+        },
+        {
+          "id": "ia-yp3",
+          "question": "Evaluate ∫₀² (3x² − 2x + 1) dx.",
+          "answer": "6",
+          "skill": "ftc-part2",
+          "hints": ["Antiderivative: F(x) = x³ − x² + x. F(2) − F(0) = (8 − 4 + 2) − 0 = 6."]
+        },
+        {
+          "id": "ia-yp4",
+          "question": "Evaluate ∫ x² eˣ dx. (Hint: apply integration by parts twice.)",
+          "answer": "eˣ(x² − 2x + 2) + C",
+          "skill": "integration-by-parts",
+          "hints": ["First pass: u = x², dv = eˣ dx → x²eˣ − ∫ 2xeˣ dx. Second pass: u = 2x, dv = eˣ dx → 2xeˣ − 2eˣ. Combine: x²eˣ − 2xeˣ + 2eˣ + C = eˣ(x² − 2x + 2) + C."]
+        },
+        {
+          "id": "ia-yp5",
+          "question": "Evaluate ∫ (2x − 3)/[(x − 1)(x + 2)] dx using partial fractions.",
+          "answer": "−(1/3) ln|x − 1| + (7/3) ln|x + 2| + C",
+          "skill": "partial-fractions",
+          "hints": ["Decompose: A/(x−1) + B/(x+2). Set x=1: −1=3A, A=−1/3. Set x=−2: −7=−3B, B=7/3. Integrate: −(1/3) ln|x−1| + (7/3) ln|x+2| + C."]
+        },
+        {
+          "id": "ia-yp6",
+          "question": "Determine whether ∫₀^∞ e⁻ˣ dx converges or diverges. If it converges, find its value.",
+          "answer": "Converges to 1",
+          "skill": "improper-integrals",
+          "hints": ["lim_{b→∞} ∫₀ᵇ e⁻ˣ dx = lim_{b→∞} [−e⁻ˣ]₀ᵇ = lim_{b→∞} (−e⁻ᵇ + 1) = 0 + 1 = 1. Converges to 1."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "ia-wp1": "3 + √2 + √3 ≈ 6.146.",
+    "ia-wp2": "76.",
+    "ia-wp3": "8.",
+    "ia-wp4": "sin(x²).",
+    "ia-wp5": "20.",
+    "ia-wp6": "1.",
+    "ia-wp7": "−x cos x + sin x + C.",
+    "ia-wp8": "2 ln|x − 1| + 3 ln|x + 2| + C.",
+    "ia-wp9": "Converges to 1/2.",
+    "ia-yp1": "432.",
+    "ia-yp2": "2x sin(x²).",
+    "ia-yp3": "6.",
+    "ia-yp4": "eˣ(x² − 2x + 2) + C.",
+    "ia-yp5": "−(1/3) ln|x − 1| + (7/3) ln|x + 2| + C.",
+    "ia-yp6": "Converges to 1."
+  }
+}

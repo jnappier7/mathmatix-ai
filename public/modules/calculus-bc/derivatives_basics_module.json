@@ -1,0 +1,306 @@
+{
+  "moduleId": "derivatives_basics",
+  "course": "AP Calculus BC",
+  "unit": 2,
+  "title": "Derivatives: Definition & Basic Rules",
+  "weeks": "5-6",
+  "estimatedDuration": 50,
+  "description": "Cover derivative definition via difference quotient, derivative as slope and instantaneous rate of change, basic differentiation rules (power, constant, sum/difference), trig/exp/ln derivatives, and reading derivatives from graphs and tables.",
+  "skills": ["derivative-definition", "derivative-interpretation", "basic-differentiation-rules", "derivatives-from-graphs-tables"],
+  "standardsAlignment": ["CHA-2.A", "CHA-2.B", "FUN-3.A", "FUN-3.B"],
+  "goals": [
+    "Define the derivative using the limit of a difference quotient and compute derivatives from the definition",
+    "Interpret the derivative as the slope of a tangent line and as an instantaneous rate of change",
+    "Apply power, constant, sum/difference, trig, exponential, and logarithmic differentiation rules fluently",
+    "Estimate and analyze derivatives from graphs and tables, including identifying points of non-differentiability"
+  ],
+  "instructionalStrategy": [
+    "Emphasize the limit definition first: students must understand what the derivative IS before memorizing shortcut rules.",
+    "Use multiple representations — algebraic, graphical, numerical, and verbal — since AP exams test all four.",
+    "Connect every derivative technique to its AP exam application: free-response questions demand justification, not just computation.",
+    "Build toward chain rule readiness: every basic rule learned here will be composed with the chain rule in Unit 3."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "derivative-definition",
+      "title": "The Derivative — Rates of Change & Tangent Lines",
+      "text": "**The Big Idea:**\n\nThe derivative measures how fast a function is changing at a single instant. It transforms the average rate of change (slope of a secant line) into the instantaneous rate of change (slope of the tangent line) by taking a limit.\n\n**Formal Definition:**\n\nf'(x) = lim_{h→0} [f(x + h) − f(x)] / h\n\nThis is called the **difference quotient** form.\n\n**Alternate Form (at a point x = a):**\n\nf'(a) = lim_{x→a} [f(x) − f(a)] / (x − a)\n\n**Interpretations:**\n• **Geometric:** f'(a) is the slope of the tangent line to y = f(x) at x = a\n• **Physical:** If s(t) is position, then s'(t) is velocity — the instantaneous rate of change of position\n• **General:** f'(a) is the instantaneous rate of change of f with respect to x at x = a\n\n**Tangent Line Equation:**\nGiven the point (a, f(a)) and slope m = f'(a):\ny − f(a) = f'(a)(x − a)",
+      "initialPrompt": "What is the difference between the average rate of change of f on [a, b] and the instantaneous rate of change at x = a? How does the limit connect them?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "derivative-definition",
+      "title": "I-Do: Computing Derivatives from the Definition",
+      "examples": [
+        {
+          "problem": "Use the limit definition to find f'(x) for f(x) = x².",
+          "solution": "**Apply the definition:** f'(x) = lim_{h→0} [f(x+h) − f(x)] / h\n\n**Step 1 — Expand f(x+h):**\nf(x+h) = (x+h)² = x² + 2xh + h²\n\n**Step 2 — Compute the difference:**\nf(x+h) − f(x) = x² + 2xh + h² − x² = 2xh + h²\n\n**Step 3 — Form the quotient:**\n[f(x+h) − f(x)] / h = (2xh + h²) / h = 2x + h\n\n**Step 4 — Take the limit:**\nf'(x) = lim_{h→0} (2x + h) = **2x**\n\nSo d/dx[x²] = 2x. The slope of y = x² at any point x is twice the x-coordinate."
+        },
+        {
+          "problem": "Use the alternate form of the derivative to find f'(3) for f(x) = 1/x.",
+          "solution": "**Alternate form:** f'(a) = lim_{x→a} [f(x) − f(a)] / (x − a)\n\n**Step 1 — Set up with a = 3:**\nf'(3) = lim_{x→3} [1/x − 1/3] / (x − 3)\n\n**Step 2 — Combine the fraction in the numerator:**\n= lim_{x→3} [(3 − x) / (3x)] / (x − 3)\n\n**Step 3 — Simplify (note 3 − x = −(x − 3)):**\n= lim_{x→3} [−(x − 3) / (3x)] / (x − 3)\n= lim_{x→3} −1 / (3x)\n\n**Step 4 — Evaluate:**\nf'(3) = −1 / (3 · 3) = **−1/9**\n\n**Check:** The general derivative of 1/x is −1/x², so f'(3) = −1/9 ✓"
+        },
+        {
+          "problem": "Use the limit definition to find f'(x) for f(x) = √x.",
+          "solution": "**Apply the definition:** f'(x) = lim_{h→0} [√(x+h) − √x] / h\n\n**Step 1 — Rationalize the numerator** (multiply by conjugate):\n= lim_{h→0} [√(x+h) − √x] · [√(x+h) + √x] / [h · (√(x+h) + √x)]\n\n**Step 2 — Simplify the numerator** (difference of squares):\n= lim_{h→0} [(x+h) − x] / [h(√(x+h) + √x)]\n= lim_{h→0} h / [h(√(x+h) + √x)]\n\n**Step 3 — Cancel h:**\n= lim_{h→0} 1 / (√(x+h) + √x)\n\n**Step 4 — Evaluate:**\nf'(x) = 1 / (√x + √x) = **1 / (2√x)**\n\n**Key technique:** Rationalizing the numerator is the standard method for radical limits. You'll see this again in many AP problems."
+        }
+      ],
+      "initialPrompt": "In example 3, why did we multiply by the conjugate? What happens to the radical when you multiply (√a − √b)(√a + √b)?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "derivative-definition",
+      "title": "We-Do: Derivative Definition Practice",
+      "problems": [
+        {
+          "id": "db-wp1",
+          "question": "Use the limit definition to find f'(x) for f(x) = 3x² + 2x.",
+          "answer": "f'(x) = 6x + 2",
+          "hints": [
+            "Expand f(x+h) = 3(x+h)² + 2(x+h) = 3x² + 6xh + 3h² + 2x + 2h. Subtract f(x) = 3x² + 2x to get 6xh + 3h² + 2h.",
+            "Divide by h: (6xh + 3h² + 2h)/h = 6x + 3h + 2. Take the limit as h → 0: f'(x) = 6x + 2."
+          ]
+        },
+        {
+          "id": "db-wp2",
+          "question": "Use the alternate form of the derivative to find f'(4) for f(x) = √x.",
+          "answer": "f'(4) = 1/4",
+          "hints": [
+            "Set up: f'(4) = lim_{x→4} [√x − 2] / (x − 4). Rationalize the numerator by multiplying by (√x + 2)/(√x + 2).",
+            "After rationalizing: (x − 4) / [(x − 4)(√x + 2)] = 1/(√x + 2). As x → 4: 1/(√4 + 2) = 1/(2 + 2) = 1/4."
+          ]
+        },
+        {
+          "id": "db-wp3",
+          "question": "Use the limit definition to find f'(x) for f(x) = 1/(x + 1).",
+          "answer": "f'(x) = −1/(x + 1)²",
+          "hints": [
+            "Compute f(x+h) − f(x) = 1/(x+h+1) − 1/(x+1). Find a common denominator: [(x+1) − (x+h+1)] / [(x+h+1)(x+1)] = −h / [(x+h+1)(x+1)].",
+            "Divide by h: −1/[(x+h+1)(x+1)]. Take the limit as h → 0: f'(x) = −1/(x+1)²."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, start by expanding f(x+h) = 3(x+h)² + 2(x+h). What do you get?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "basic-differentiation-rules",
+      "title": "Basic Differentiation Rules",
+      "text": "**The limit definition works but is slow. These rules let you differentiate instantly:**\n\n**Constant Rule:** d/dx[c] = 0\n\n**Power Rule:** d/dx[x^n] = nx^(n−1) — works for ALL real exponents (integer, fractional, negative)\n\n**Constant Multiple:** d/dx[cf(x)] = c · f'(x)\n\n**Sum/Difference:** d/dx[f(x) ± g(x)] = f'(x) ± g'(x)\n\n**Trig Derivatives:**\n• d/dx[sin x] = cos x\n• d/dx[cos x] = −sin x\n• d/dx[tan x] = sec²x\n• d/dx[csc x] = −csc x · cot x\n• d/dx[sec x] = sec x · tan x\n• d/dx[cot x] = −csc²x\n\n**Exponential & Logarithmic:**\n• d/dx[e^x] = e^x\n• d/dx[ln x] = 1/x\n• d/dx[a^x] = a^x · ln a\n\n**Key Strategy:** Before differentiating, ALWAYS rewrite radicals and fractions as power expressions:\n• √x = x^(1/2), 1/x² = x^(−2), ³√x = x^(1/3), 5/x = 5x^(−1)",
+      "initialPrompt": "Rewrite f(x) = 4/x³ + 3√x − 2/√x using exponent notation so the power rule applies directly."
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "basic-differentiation-rules",
+      "title": "I-Do: Applying Differentiation Rules",
+      "examples": [
+        {
+          "problem": "Find f'(x) for f(x) = 5x³ − 2/x² + 3√x − 7.",
+          "solution": "**Step 1 — Rewrite using exponents:**\nf(x) = 5x³ − 2x⁻² + 3x^(1/2) − 7\n\n**Step 2 — Apply the power rule term by term:**\n• d/dx[5x³] = 5 · 3x² = 15x²\n• d/dx[−2x⁻²] = −2 · (−2)x⁻³ = 4x⁻³\n• d/dx[3x^(1/2)] = 3 · (1/2)x^(−1/2) = (3/2)x^(−1/2)\n• d/dx[−7] = 0\n\n**Step 3 — Combine:**\nf'(x) = 15x² + 4x⁻³ + (3/2)x^(−1/2)\n\n**Rewrite in standard form:**\nf'(x) = **15x² + 4/x³ + 3/(2√x)**\n\n**Key lesson:** Rewriting as power expressions first makes the power rule apply to every term — no quotient rule needed."
+        },
+        {
+          "problem": "Find f'(x) for f(x) = 3sin(x) − 4cos(x) + 2e^x − 5ln(x).",
+          "solution": "**Apply the rules term by term:**\n• d/dx[3sin x] = 3cos x\n• d/dx[−4cos x] = −4(−sin x) = 4sin x\n• d/dx[2e^x] = 2e^x\n• d/dx[−5ln x] = −5 · (1/x) = −5/x\n\n**Combine:**\nf'(x) = **3cos(x) + 4sin(x) + 2e^x − 5/x**\n\n**Notice:** Each trig/exp/ln rule is just a memorized fact. The sum/difference rule lets you differentiate term by term. These rules will combine with the chain rule in Unit 3 for compositions like sin(3x) or e^(2x)."
+        },
+        {
+          "problem": "Find the equation of the tangent line to f(x) = x³ − 2x + 1 at x = 2.",
+          "solution": "**Step 1 — Find the y-coordinate (the point):**\nf(2) = (2)³ − 2(2) + 1 = 8 − 4 + 1 = **5**\nPoint: (2, 5)\n\n**Step 2 — Find the slope (differentiate):**\nf'(x) = 3x² − 2\nf'(2) = 3(2)² − 2 = 12 − 2 = **10**\n\n**Step 3 — Write the tangent line (point-slope form):**\ny − 5 = 10(x − 2)\ny = 10x − 20 + 5\ny = **10x − 15**\n\n**AP exam note:** Tangent line questions appear constantly. The three-step process — find the point, find the slope, write the equation — is the standard approach."
+        }
+      ],
+      "initialPrompt": "In example 1, what would happen if you tried to differentiate 2/x² directly without rewriting as 2x⁻²? What rule would you need?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "basic-differentiation-rules",
+      "title": "We-Do: Differentiation Rules Practice",
+      "problems": [
+        {
+          "id": "db-wp4",
+          "question": "Find f'(x) for f(x) = 4x⁵ − 3/x + 7√x − 2.",
+          "answer": "f'(x) = 20x⁴ + 3/x² + 7/(2√x)",
+          "hints": [
+            "Rewrite: f(x) = 4x⁵ − 3x⁻¹ + 7x^(1/2) − 2. Apply the power rule to each term.",
+            "d/dx[4x⁵] = 20x⁴. d/dx[−3x⁻¹] = 3x⁻². d/dx[7x^(1/2)] = (7/2)x^(−1/2). d/dx[−2] = 0. So f'(x) = 20x⁴ + 3/x² + 7/(2√x)."
+          ]
+        },
+        {
+          "id": "db-wp5",
+          "question": "Find f'(x) for f(x) = 2sin(x) − 3e^x + 4ln(x) + tan(x).",
+          "answer": "f'(x) = 2cos(x) − 3e^x + 4/x + sec²(x)",
+          "hints": [
+            "Apply the rules term by term: d/dx[sin x] = cos x, d/dx[e^x] = e^x, d/dx[ln x] = 1/x, d/dx[tan x] = sec²x.",
+            "f'(x) = 2cos(x) − 3e^x + 4/x + sec²(x)."
+          ]
+        },
+        {
+          "id": "db-wp6",
+          "question": "Find the equation of the tangent line to f(x) = e^x + sin(x) at x = 0.",
+          "answer": "y = 2x + 1",
+          "hints": [
+            "Find f(0) = e⁰ + sin(0) = 1 + 0 = 1. Find f'(x) = e^x + cos(x), then f'(0) = 1 + 1 = 2.",
+            "Point: (0, 1). Slope: 2. Tangent: y − 1 = 2(x − 0), so y = 2x + 1."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, start by rewriting −3/x and 7√x using exponent notation. What power of x do you get for each?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "derivatives-from-graphs-tables",
+      "title": "Derivatives from Graphs & Tables",
+      "text": "**AP Calculus tests derivatives in ALL representations — not just algebraic.**\n\n**Estimating f'(a) from a Table:**\nIf you don't have a formula but have data points, use the **symmetric difference quotient**:\nf'(a) ≈ [f(a + h) − f(a − h)] / (2h)\nThis uses one point on each side of a and gives a better estimate than a one-sided quotient.\n\n**Reading f' from a Graph of f:**\n• Where f is increasing → f' > 0\n• Where f is decreasing → f' < 0\n• Where f has a horizontal tangent (local max/min) → f' = 0\n• Steeper slope on f → larger |f'|\n• If f is a line segment with slope m → f' = m (constant) on that interval\n\n**Differentiability:**\nf is differentiable at x = a if and only if f'(a) exists (the limit definition gives a finite value). Differentiability REQUIRES continuity, but continuity does NOT guarantee differentiability.\n\n**f is NOT differentiable at:**\n• **Corners** (sharp turns) — left and right slopes exist but differ\n• **Cusps** — slopes approach +∞ and −∞ from opposite sides\n• **Vertical tangents** — slope approaches ±∞\n• **Discontinuities** — function not continuous, so not differentiable",
+      "initialPrompt": "If a function f is continuous at x = 3 but has a corner there, does f'(3) exist? Why or why not?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "derivatives-from-graphs-tables",
+      "title": "I-Do: Graphical & Tabular Derivatives",
+      "examples": [
+        {
+          "problem": "The table shows selected values of a differentiable function f:\n| x | 1.0 | 1.5 | 2.0 | 2.5 | 3.0 |\n| f(x) | 3.0 | 4.1 | 5.4 | 6.9 | 8.6 |\nEstimate f'(2.0) using the symmetric difference quotient.",
+          "solution": "**Symmetric difference quotient:** Use the points on both sides of x = 2.0:\n\nf'(2.0) ≈ [f(2.5) − f(1.5)] / (2.5 − 1.5)\n= (6.9 − 4.1) / 1.0\n= **2.8**\n\n**Why symmetric?** Compare with one-sided estimates:\n• Forward: [f(2.5) − f(2.0)] / 0.5 = (6.9 − 5.4) / 0.5 = 3.0\n• Backward: [f(2.0) − f(1.5)] / 0.5 = (5.4 − 4.1) / 0.5 = 2.6\n\nThe symmetric quotient (2.8) averages these and is the **AP-preferred method** when data is available on both sides."
+        },
+        {
+          "problem": "A continuous function h is defined on [−2, 6]. From its graph: h is smooth on (−2, 1), has a sharp corner at x = 1, is smooth on (1, 3), has a cusp at x = 3, is smooth on (3, 5), has a vertical tangent at x = 5, and is smooth on (5, 6). At which points in (−2, 6) is h not differentiable?",
+          "solution": "**Check each candidate:**\n\n**x = 1 (corner):** The left-hand slope and right-hand slope both exist but are NOT equal. The limit definition gives two different one-sided limits → **h'(1) does not exist** ✗\n\n**x = 3 (cusp):** The slopes approach +∞ from one side and −∞ from the other. The limit is not finite → **h'(3) does not exist** ✗\n\n**x = 5 (vertical tangent):** The tangent line is vertical, meaning the slope approaches ±∞. The limit is not finite → **h'(5) does not exist** ✗\n\n**Answer: h is not differentiable at x = 1, x = 3, and x = 5.**\n\n**Key point:** h is continuous at all three points — continuity is necessary but NOT sufficient for differentiability."
+        },
+        {
+          "problem": "The graph of f on [−4, 4] consists of three line segments: from (−4, 2) to (−1, 5), from (−1, 5) to (1, 5), and from (1, 5) to (4, −1). Describe the graph of f'.",
+          "solution": "**Find the slope of each segment:**\n\n**Segment 1: (−4, 2) to (−1, 5)**\nSlope = (5 − 2) / (−1 − (−4)) = 3/3 = **1**\n\n**Segment 2: (−1, 5) to (1, 5)**\nSlope = (5 − 5) / (1 − (−1)) = 0/2 = **0**\n\n**Segment 3: (1, 5) to (4, −1)**\nSlope = (−1 − 5) / (4 − 1) = −6/3 = **−2**\n\n**f'(x) is a piecewise constant function:**\n• f'(x) = 1 for −4 < x < −1\n• f'(x) = 0 for −1 < x < 1\n• f'(x) = −2 for 1 < x < 4\n• f'(−1) and f'(1) do not exist (corners)\n\n**Pattern:** When f is made of line segments, f' is a step function. Where f is increasing → f' > 0. Where f is flat → f' = 0. Where f is decreasing → f' < 0."
+        }
+      ],
+      "initialPrompt": "In example 3, why does f' not exist at x = −1 and x = 1? What happens to the slope at those transition points?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "derivatives-from-graphs-tables",
+      "title": "We-Do: Graph & Table Practice",
+      "problems": [
+        {
+          "id": "db-wp7",
+          "question": "The table shows selected values of a differentiable function f:\n| x | 0 | 2 | 4 | 6 | 8 |\n| f(x) | 5 | 8 | 13 | 15 | 16 |\nEstimate f'(4) using the symmetric difference quotient.",
+          "answer": "f'(4) ≈ 7/4",
+          "hints": [
+            "Use the symmetric difference quotient with the points on both sides of x = 4: f'(4) ≈ [f(6) − f(2)] / (6 − 2).",
+            "(15 − 8) / 4 = 7/4."
+          ]
+        },
+        {
+          "id": "db-wp8",
+          "question": "A continuous function g has a sharp corner at x = 2 and a vertical tangent at x = 5. Everywhere else on [0, 7], g is smooth. At which x-values in (0, 7) is g not differentiable?",
+          "answer": "x = 2 and x = 5",
+          "hints": [
+            "Differentiability fails at corners, cusps, vertical tangents, and discontinuities.",
+            "g has a corner at x = 2 (left and right slopes differ) and a vertical tangent at x = 5 (slope approaches ±∞). So g is not differentiable at x = 2 and x = 5."
+          ]
+        },
+        {
+          "id": "db-wp9",
+          "question": "The graph of g on [−2, 6] consists of a line segment from (−2, 5) to (1, −1) and a line segment from (1, −1) to (6, 9). Describe g'(x) on (−2, 6).",
+          "answer": "g'(x) = −2 for −2 < x < 1, g'(x) = 2 for 1 < x < 6, g'(1) does not exist (corner).",
+          "hints": [
+            "Find the slope of each segment. From (−2, 5) to (1, −1): slope = (−1 − 5) / (1 − (−2)) = −6/3 = −2.",
+            "From (1, −1) to (6, 9): slope = (9 − (−1)) / (6 − 1) = 10/5 = 2. So g'(x) = −2 for −2 < x < 1 and g'(x) = 2 for 1 < x < 6. g'(1) DNE because the left slope (−2) ≠ right slope (2)."
+          ]
+        }
+      ],
+      "initialPrompt": "For the first problem, which two table values do you use for the symmetric difference quotient centered at x = 4?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Derivatives Mixed Practice",
+      "problems": [
+        {
+          "id": "db-yp1",
+          "question": "Use the limit definition to find f'(x) for f(x) = x² − 4x.",
+          "answer": "f'(x) = 2x − 4",
+          "skill": "derivative-definition",
+          "hints": [
+            "Expand: f(x+h) = (x+h)² − 4(x+h) = x² + 2xh + h² − 4x − 4h. Subtract f(x) = x² − 4x to get 2xh + h² − 4h.",
+            "Divide by h: 2x + h − 4. Take the limit as h → 0: f'(x) = 2x − 4."
+          ]
+        },
+        {
+          "id": "db-yp2",
+          "question": "Find f'(x) for f(x) = 6x^(2/3) − x⁴ + 5/x.",
+          "answer": "f'(x) = 4x^(−1/3) − 4x³ − 5x⁻²",
+          "skill": "basic-differentiation-rules",
+          "hints": [
+            "Rewrite 5/x as 5x⁻¹. Apply the power rule to each term: d/dx[6x^(2/3)] = 6·(2/3)x^(−1/3) = 4x^(−1/3).",
+            "d/dx[−x⁴] = −4x³. d/dx[5x⁻¹] = −5x⁻². Combine: f'(x) = 4x^(−1/3) − 4x³ − 5x⁻²."
+          ]
+        },
+        {
+          "id": "db-yp3",
+          "question": "Find f'(x) for f(x) = 3cos(x) + 5e^x − 2/x + tan(x).",
+          "answer": "f'(x) = −3sin(x) + 5e^x + 2/x² + sec²(x)",
+          "skill": "basic-differentiation-rules",
+          "hints": [
+            "Rewrite −2/x as −2x⁻¹. Apply rules term by term: d/dx[cos x] = −sin x, d/dx[e^x] = e^x, d/dx[x⁻¹] = −x⁻², d/dx[tan x] = sec²x.",
+            "f'(x) = −3sin(x) + 5e^x + 2x⁻² + sec²(x) = −3sin(x) + 5e^x + 2/x² + sec²(x)."
+          ]
+        },
+        {
+          "id": "db-yp4",
+          "question": "Find the equation of the tangent line to f(x) = ln(x) + x² at x = 1.",
+          "answer": "y = 3x − 2",
+          "skill": "derivative-interpretation",
+          "hints": [
+            "Find f(1) = ln(1) + 1² = 0 + 1 = 1. Then f'(x) = 1/x + 2x, so f'(1) = 1 + 2 = 3.",
+            "Point: (1, 1). Slope: 3. Tangent: y − 1 = 3(x − 1), so y = 3x − 2."
+          ]
+        },
+        {
+          "id": "db-yp5",
+          "question": "The table shows selected values of a differentiable function f:\n| x | 3 | 4 | 5 | 6 | 7 |\n| f(x) | 12 | 10 | 9 | 7 | 3 |\nEstimate f'(5) using the symmetric difference quotient.",
+          "answer": "f'(5) ≈ −3/2",
+          "skill": "derivatives-from-graphs-tables",
+          "hints": [
+            "Symmetric difference quotient: f'(5) ≈ [f(6) − f(4)] / (6 − 4).",
+            "(7 − 10) / 2 = −3/2."
+          ]
+        },
+        {
+          "id": "db-yp6",
+          "question": "The graph of f on [0, 6] consists of a line segment from (0, 3) to (2, 7) and a line segment from (2, 7) to (6, −1). Find f'(1), f'(4), and determine whether f'(2) exists.",
+          "answer": "f'(1) = 2, f'(4) = −2, f'(2) does not exist (corner).",
+          "skill": "derivatives-from-graphs-tables",
+          "hints": [
+            "Find the slope of each segment: (0, 3) to (2, 7) has slope (7−3)/(2−0) = 2. (2, 7) to (6, −1) has slope (−1−7)/(6−2) = −2.",
+            "f'(1) = 2 (on first segment). f'(4) = −2 (on second segment). At x = 2, left derivative = 2 ≠ right derivative = −2, so f'(2) does not exist (corner)."
+          ]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "db-wp1": "f'(x) = 6x + 2.",
+    "db-wp2": "f'(4) = 1/4.",
+    "db-wp3": "f'(x) = −1/(x + 1)².",
+    "db-wp4": "f'(x) = 20x⁴ + 3/x² + 7/(2√x).",
+    "db-wp5": "f'(x) = 2cos(x) − 3e^x + 4/x + sec²(x).",
+    "db-wp6": "y = 2x + 1.",
+    "db-wp7": "f'(4) ≈ 7/4.",
+    "db-wp8": "x = 2 and x = 5.",
+    "db-wp9": "g'(x) = −2 for −2 < x < 1, g'(x) = 2 for 1 < x < 6, g'(1) DNE.",
+    "db-yp1": "f'(x) = 2x − 4.",
+    "db-yp2": "f'(x) = 4x^(−1/3) − 4x³ − 5x⁻².",
+    "db-yp3": "f'(x) = −3sin(x) + 5e^x + 2/x² + sec²(x).",
+    "db-yp4": "y = 3x − 2.",
+    "db-yp5": "f'(5) ≈ −3/2.",
+    "db-yp6": "f'(1) = 2, f'(4) = −2, f'(2) DNE (corner)."
+  }
+}

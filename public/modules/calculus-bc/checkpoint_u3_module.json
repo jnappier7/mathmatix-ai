@@ -1,0 +1,134 @@
+{
+  "moduleId": "checkpoint_u3",
+  "course": "AP Calculus BC",
+  "unit": 3,
+  "title": "Unit 3 Checkpoint: Composite, Implicit, Inverse Derivatives",
+  "weeks": "8",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing product/quotient rules, chain rule (including nested), implicit differentiation (first and second derivatives), and derivatives of inverse functions and inverse trig functions.",
+  "skillsCovered": ["product-quotient-rules", "chain-rule", "implicit-differentiation", "inverse-function-derivatives"],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "product-quotient-rules", "reteachFocus": "Product: (fg)'=f'g+fg'; Quotient: (f/g)'=(f'g−fg')/g²; identify which to use before starting", "resources": ["advanced_derivatives_module.json - scaffold phases 1-3"] },
+    { "skillId": "chain-rule", "reteachFocus": "d/dx[f(g(x))]=f'(g(x))·g'(x); identify outer/inner; chain rule with trig, exp, ln; nested chains", "resources": ["advanced_derivatives_module.json - scaffold phases 4-6"] },
+    { "skillId": "implicit-differentiation", "reteachFocus": "Differentiate both sides w.r.t. x; every y-term gets dy/dx multiplied; solve for dy/dx; for d²y/dx² substitute dy/dx back in", "resources": ["advanced_derivatives_module.json - scaffold phases 7-9"] },
+    { "skillId": "inverse-function-derivatives", "reteachFocus": "(f⁻¹)'(a)=1/f'(f⁻¹(a)); d/dx[arcsin x]=1/√(1−x²); d/dx[arctan x]=1/(1+x²); table problems", "resources": ["advanced_derivatives_module.json - scaffold phases 7-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "cbu3-1",
+      "question": "Differentiate: f(x) = x³ · sin(x)",
+      "answer": "Product rule: f'(x) = 3x²sin(x) + x³cos(x).",
+      "skill": "product-quotient-rules",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu3-2",
+      "question": "Differentiate: g(x) = (2x + 1)/(x² − 3)",
+      "answer": "Quotient rule: g'(x) = [2(x²−3) − (2x+1)(2x)] / (x²−3)² = [2x²−6−4x²−2x]/(x²−3)² = (−2x²−2x−6)/(x²−3)² = −2(x²+x+3)/(x²−3)².",
+      "skill": "product-quotient-rules",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu3-3",
+      "question": "Differentiate: h(x) = (3x² − 1)⁵",
+      "answer": "Chain rule: h'(x) = 5(3x²−1)⁴ · 6x = 30x(3x²−1)⁴.",
+      "skill": "chain-rule",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu3-4",
+      "question": "Differentiate: f(x) = e^(sin x)",
+      "answer": "Chain rule: f'(x) = e^(sin x) · cos(x).",
+      "skill": "chain-rule",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbu3-5",
+      "question": "Differentiate: g(x) = ln(cos x)",
+      "answer": "Chain rule: g'(x) = (1/cos x)(−sin x) = −sin x/cos x = −tan x.",
+      "skill": "chain-rule",
+      "difficulty": 4,
+      "points": 6
+    },
+    {
+      "id": "cbu3-6",
+      "question": "Differentiate: f(x) = √(e^(2x) + 1)",
+      "answer": "f(x) = (e^(2x)+1)^(1/2). Chain (nested): f'(x) = (1/2)(e^(2x)+1)^(−1/2) · 2e^(2x) = e^(2x)/√(e^(2x)+1).",
+      "skill": "chain-rule",
+      "difficulty": 5,
+      "points": 8
+    },
+    {
+      "id": "cbu3-7",
+      "question": "Given x² + y² = 25, find dy/dx. Then find the slope of the tangent line at (3, 4).",
+      "answer": "2x + 2y(dy/dx) = 0 → dy/dx = −x/y. At (3,4): dy/dx = −3/4.",
+      "skill": "implicit-differentiation",
+      "difficulty": 3,
+      "points": 6
+    },
+    {
+      "id": "cbu3-8",
+      "question": "Given x³ + y³ = 6xy, find dy/dx.",
+      "answer": "3x² + 3y²(dy/dx) = 6y + 6x(dy/dx). Collect: 3y²(dy/dx) − 6x(dy/dx) = 6y − 3x². Factor: dy/dx(3y²−6x) = 6y−3x². dy/dx = (6y−3x²)/(3y²−6x) = (2y−x²)/(y²−2x).",
+      "skill": "implicit-differentiation",
+      "difficulty": 5,
+      "points": 10
+    },
+    {
+      "id": "cbu3-9",
+      "question": "The table gives values of a differentiable function f:\n| x | 1 | 2 | 3 | 4 |\n|---|---|---|---|---|\n| f(x) | 4 | 1 | 3 | 2 |\n| f'(x) | −3 | 5 | −1 | 2 |\nFind (f⁻¹)'(1).",
+      "answer": "Since f(2) = 1, we know f⁻¹(1) = 2. (f⁻¹)'(1) = 1/f'(f⁻¹(1)) = 1/f'(2) = 1/5.",
+      "skill": "inverse-function-derivatives",
+      "difficulty": 4,
+      "points": 8
+    },
+    {
+      "id": "cbu3-10",
+      "question": "ANALYSIS: Differentiate f(x) = x² · arctan(x). Find f'(0) and f'(1). Express f'(1) in exact form.",
+      "answer": "Product rule + inverse trig: f'(x) = 2x·arctan(x) + x²·(1/(1+x²)). f'(0) = 0·arctan(0) + 0 = 0. f'(1) = 2(1)·arctan(1) + 1·(1/2) = 2·(π/4) + 1/2 = π/2 + 1/2 = (π+1)/2.",
+      "skill": "inverse-function-derivatives",
+      "difficulty": 5,
+      "points": 12
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "cbu3-spiral-1",
+      "question": "SPIRAL (Limits): Evaluate lim_{x→∞} (5x² − 3)/(2x² + x + 1)",
+      "answer": "Equal degrees → ratio of leading coefficients = 5/2.",
+      "skill": "limits-at-infinity",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 1"
+    },
+    {
+      "id": "cbu3-spiral-2",
+      "question": "SPIRAL (Derivative Definition): Use the limit definition to find f'(1) for f(x) = x² + 3x.",
+      "answer": "f'(1) = lim_{h→0} [(1+h)²+3(1+h)−(1+3)]/h = lim_{h→0} [1+2h+h²+3+3h−4]/h = lim_{h→0} [5h+h²]/h = lim_{h→0}(5+h) = 5. (Or: f'(x)=2x+3, f'(1)=5.)",
+      "skill": "derivative-definition",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 2"
+    }
+  ],
+  "answerKeys": {
+    "cbu3-1": "3x²sin x + x³cos x.",
+    "cbu3-2": "−2(x²+x+3)/(x²−3)².",
+    "cbu3-3": "30x(3x²−1)⁴.",
+    "cbu3-4": "e^(sin x)·cos x.",
+    "cbu3-5": "−tan x.",
+    "cbu3-6": "e^(2x)/√(e^(2x)+1).",
+    "cbu3-7": "dy/dx = −x/y; at (3,4): −3/4.",
+    "cbu3-8": "(2y−x²)/(y²−2x).",
+    "cbu3-9": "1/5.",
+    "cbu3-10": "f'(x)=2x·arctan(x)+x²/(1+x²); f'(0)=0; f'(1)=(π+1)/2.",
+    "cbu3-spiral-1": "5/2.",
+    "cbu3-spiral-2": "5."
+  }
+}
