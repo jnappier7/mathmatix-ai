@@ -263,6 +263,92 @@
       display: none;
     }
 
+    /* ── Waitlist Forms ──────────────────────────────────── */
+    .lp-waitlist-form {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .lp-waitlist-input {
+      padding: 0.6rem 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 0.9rem;
+      min-width: 220px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .lp-waitlist-input::placeholder { color: rgba(255, 255, 255, 0.5); }
+    .lp-waitlist-input:focus { border-color: var(--clr-primary-teal); }
+
+    .lp-waitlist-btn {
+      white-space: nowrap;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .lp-waitlist-msg {
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+      font-weight: 500;
+    }
+
+    .lp-waitlist-msg.success { color: #22c55e; }
+    .lp-waitlist-msg.error { color: #ef4444; }
+
+    /* Hero variant */
+    .lp-waitlist-form--hero { flex-wrap: wrap; }
+    .lp-waitlist-form--hero .lp-waitlist-input {
+      background: rgba(0, 0, 0, 0.25);
+      border-color: rgba(255, 255, 255, 0.15);
+      min-width: 240px;
+    }
+
+    /* Inline mid-page variant */
+    .lp-waitlist-form--inline {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Final CTA variant */
+    .lp-waitlist-form--final {
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .lp-waitlist-form--final .lp-waitlist-input {
+      min-width: 260px;
+      padding: 0.75rem 1.2rem;
+      font-size: 1rem;
+    }
+
+    .lp-waitlist-form--final .lp-waitlist-btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+    }
+
+    /* Sticky bar variant */
+    .lp-waitlist-form--sticky {
+      gap: 0.4rem;
+    }
+
+    .lp-waitlist-form--sticky .lp-waitlist-input {
+      min-width: 160px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .lp-waitlist-form--sticky .lp-waitlist-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
     @media (max-width: 768px) {
       .lp-countdown-banner { padding: 1rem var(--page-horizontal-padding); }
       .lp-countdown-inner { flex-direction: column; gap: 0.6rem; }
@@ -271,6 +357,13 @@
       .lp-countdown-unit { min-width: 44px; }
       .lp-countdown-sep { font-size: 1.2rem; padding-bottom: 0.9rem; }
       .lp-countdown-text { font-size: 0.6rem; }
+
+      .lp-waitlist-form { flex-direction: column; width: 100%; }
+      .lp-waitlist-input { min-width: unset; width: 100%; }
+      .lp-waitlist-btn { width: 100%; }
+      .lp-waitlist-form--sticky { flex-direction: row; }
+      .lp-waitlist-form--sticky .lp-waitlist-input { min-width: 0; flex: 1; }
+      .lp-waitlist-form--sticky .lp-waitlist-btn { width: auto; }
     }
 
     @media (max-width: 375px) {
@@ -1242,7 +1335,7 @@
     </div>
     <nav class="landing-nav">
       <a href="/login.html" class="btn btn-primary-outline">Log In</a>
-      <a href="/signup.html" class="btn btn-primary">Sign Up</a>
+      <a href="#lp-waitlist-banner" class="btn btn-primary">Join Waitlist</a>
     </nav>
   </header>
 
@@ -1272,6 +1365,10 @@
             <span class="lp-countdown-text">Sec</span>
           </div>
         </div>
+        <form class="lp-waitlist-form" id="lp-waitlist-banner" autocomplete="off">
+          <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
+          <button type="submit" class="btn btn-primary lp-waitlist-btn">Notify Me</button>
+        </form>
       </div>
     </div>
 
@@ -1284,7 +1381,10 @@
             Personalized, AI-powered tutoring that remembers how your student learns, adapts to their level, and is available anytime &mdash; for a fraction of what a private tutor costs.
           </p>
           <div class="lp-hero-buttons">
-            <a href="/signup.html" class="btn btn-primary">Get Started</a>
+            <form class="lp-waitlist-form lp-waitlist-form--hero" autocomplete="off">
+              <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
+              <button type="submit" class="btn btn-primary lp-waitlist-btn">Get Early Access</button>
+            </form>
             <a href="#how-it-works" class="btn btn-primary-outline">See How It Works</a>
           </div>
         </div>
@@ -1371,7 +1471,10 @@
           </div>
         </div>
         <div class="lp-mid-cta">
-          <a href="/signup.html" class="lp-mid-cta-link">Try it free &rarr;</a>
+          <form class="lp-waitlist-form lp-waitlist-form--inline" autocomplete="off">
+            <input type="email" class="lp-waitlist-input" placeholder="Your email" required />
+            <button type="submit" class="btn btn-primary lp-waitlist-btn">Join the Waitlist</button>
+          </form>
         </div>
       </div>
     </section>
@@ -1509,7 +1612,10 @@
         </div>
 
         <div class="lp-mid-cta">
-          <a href="/signup.html" class="lp-mid-cta-link">Get started free &rarr;</a>
+          <form class="lp-waitlist-form lp-waitlist-form--inline" autocomplete="off">
+            <input type="email" class="lp-waitlist-input" placeholder="Your email" required />
+            <button type="submit" class="btn btn-primary lp-waitlist-btn">Join the Waitlist</button>
+          </form>
         </div>
       </div>
     </section>
@@ -1711,8 +1817,11 @@
       <div class="lp-inner">
         <h2>Every child deserves a great math tutor.</h2>
         <p>For less than the cost of a single tutoring session, give your student unlimited access to personalized math help.</p>
-        <a href="/signup.html" class="btn btn-primary">Create Your Account</a>
-        <p class="lp-cta-note">Used by students, parents, and teachers.</p>
+        <form class="lp-waitlist-form lp-waitlist-form--final" autocomplete="off">
+          <input type="email" class="lp-waitlist-input" placeholder="Enter your email" required />
+          <button type="submit" class="btn btn-primary lp-waitlist-btn">Join the Waitlist</button>
+        </form>
+        <p class="lp-cta-note">Be first to know when we launch. For students, parents, and teachers.</p>
       </div>
     </section>
   </main>
@@ -1720,7 +1829,10 @@
   <!-- Sticky CTA bar -->
   <div class="lp-sticky-cta" id="lp-sticky-cta">
     <p>Ready to get started?</p>
-    <a href="/signup.html" class="btn btn-primary">Sign Up Free</a>
+    <form class="lp-waitlist-form lp-waitlist-form--sticky" autocomplete="off">
+      <input type="email" class="lp-waitlist-input" placeholder="Your email" required />
+      <button type="submit" class="btn btn-primary lp-waitlist-btn">Join Waitlist</button>
+    </form>
   </div>
 
   <footer>
@@ -1776,6 +1888,53 @@
         updateCountdown();
         setInterval(updateCountdown, 1000);
       })();
+
+      /* ── Waitlist Form Handling ────────────────────────── */
+      var waitlistForms = document.querySelectorAll('.lp-waitlist-form');
+      waitlistForms.forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var input = form.querySelector('.lp-waitlist-input');
+          var btn = form.querySelector('.lp-waitlist-btn');
+          var email = input.value.trim();
+          if (!email) return;
+
+          // Remove any existing message
+          var existingMsg = form.querySelector('.lp-waitlist-msg');
+          if (existingMsg) existingMsg.remove();
+
+          btn.disabled = true;
+          btn.textContent = 'Sending...';
+
+          fetch('/api/waitlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+          })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            var msg = document.createElement('div');
+            msg.className = 'lp-waitlist-msg ' + (data.success ? 'success' : 'error');
+            msg.textContent = data.message;
+            form.appendChild(msg);
+            if (data.success) {
+              input.value = '';
+              btn.textContent = 'Signed Up!';
+            } else {
+              btn.disabled = false;
+              btn.textContent = 'Try Again';
+            }
+          })
+          .catch(function () {
+            var msg = document.createElement('div');
+            msg.className = 'lp-waitlist-msg error';
+            msg.textContent = 'Something went wrong. Please try again.';
+            form.appendChild(msg);
+            btn.disabled = false;
+            btn.textContent = 'Try Again';
+          });
+        });
+      });
 
       /* ── Scroll Reveal ─────────────────────────────────── */
       var revealEls = document.querySelectorAll('.lp-reveal');
