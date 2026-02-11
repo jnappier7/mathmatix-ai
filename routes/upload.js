@@ -3,6 +3,7 @@ const express = require("express");
 const multer = require("multer");
 const fs = require("fs").promises;
 const path = require("path");
+const sharp = require("sharp");
 const router = express.Router();
 const { generateSystemPrompt } = require("../utils/prompt");
 const User = require("../models/user");
@@ -78,7 +79,23 @@ router.post("/", upload.single("file"), validateUpload, async (req, res) => {
         let extracted;
         try {
             // Read file from disk into buffer for OCR processing
-            const fileBuffer = await fs.readFile(file.path);
+            let fileBuffer = await fs.readFile(file.path);
+
+            // COMPLIANCE: Strip EXIF metadata from images before sending to AI providers.
+            // Phone cameras embed GPS coordinates, device info, and timestamps in EXIF data.
+            // This prevents student location data from leaving our server.
+            if (file.mimetype !== 'application/pdf') {
+                try {
+                    fileBuffer = await sharp(fileBuffer)
+                        .rotate()          // Auto-rotate based on EXIF orientation before stripping
+                        .withMetadata({})  // Strip all EXIF/IPTC/XMP metadata
+                        .toBuffer();
+                    console.log('[Upload API] EXIF metadata stripped from image');
+                } catch (stripError) {
+                    // If sharp fails (corrupt image), continue with original buffer
+                    console.warn('[Upload API] EXIF strip failed, continuing with original:', stripError.message);
+                }
+            }
 
             if (file.mimetype === 'application/pdf') {
                 // Use Mathpix /v3/pdf endpoint for PDFs
