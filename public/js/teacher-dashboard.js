@@ -62,6 +62,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (targetContent) {
                 targetContent.classList.add('active');
             }
+
+            // Lazy-load classes data when tab is first opened
+            if (targetTab === 'classes' && !classesLoaded) {
+                fetchClasses();
+            }
         });
     });
 
@@ -1175,4 +1180,178 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
     });
+
+    // ============================================
+    // MY CLASSES TAB
+    // ============================================
+
+    let classesLoaded = false;
+    const classesListDiv = document.getElementById('classes-list');
+
+    async function fetchClasses() {
+        if (!classesListDiv) return;
+        classesListDiv.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Loading classes...</div>';
+        try {
+            const response = await fetch('/api/teacher/classes');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            classesLoaded = true;
+            renderClasses(data.classes || []);
+        } catch (err) {
+            console.error('Error fetching classes:', err);
+            classesListDiv.innerHTML = '<p style="padding: 20px; color: #e74c3c; text-align: center;">Error loading classes. Please refresh.</p>';
+        }
+    }
+
+    function renderClasses(classes) {
+        if (!classesListDiv) return;
+
+        if (classes.length === 0) {
+            classesListDiv.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #888;">
+                    <i class="fas fa-chalkboard-teacher" style="font-size: 48px; color: #ddd; margin-bottom: 16px; display: block;"></i>
+                    <h3 style="margin: 0 0 8px; color: #666;">No Classes Yet</h3>
+                    <p style="margin: 0; font-size: 14px;">Classes are created when an administrator generates an enrollment code for you.<br>Contact your school admin to get started.</p>
+                </div>
+            `;
+            return;
+        }
+
+        classesListDiv.innerHTML = '';
+        classes.forEach(cls => {
+            const card = document.createElement('div');
+            card.className = 'class-card';
+            card.style.cssText = 'border: 1px solid #e8ecf1; border-radius: 12px; margin-bottom: 14px; overflow: hidden; transition: box-shadow 0.2s;';
+            card.addEventListener('mouseenter', () => card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)');
+            card.addEventListener('mouseleave', () => card.style.boxShadow = 'none');
+
+            const statusBadge = cls.isActive
+                ? '<span style="background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">Active</span>'
+                : '<span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600;">Inactive</span>';
+
+            card.innerHTML = `
+                <div style="padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" class="class-card-header" data-code-id="${cls._id}">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-chalkboard-teacher" style="color: white; font-size: 18px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 16px; color: #2c3e50;">${escapeHtml(cls.className)} ${statusBadge}</div>
+                            <div style="font-size: 13px; color: #888; margin-top: 2px;">
+                                Code: <strong style="font-family: monospace; color: #667eea;">${escapeHtml(cls.code)}</strong>
+                                ${cls.gradeLevel ? ` · Grade ${escapeHtml(cls.gradeLevel)}` : ''}
+                                ${cls.mathCourse ? ` · ${escapeHtml(cls.mathCourse)}` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 22px; font-weight: 700; color: #2c3e50;">${cls.studentCount}</div>
+                            <div style="font-size: 11px; color: #888; text-transform: uppercase;">Students</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 22px; font-weight: 700; color: #27ae60;">${cls.activeCount}</div>
+                            <div style="font-size: 11px; color: #888; text-transform: uppercase;">Active</div>
+                        </div>
+                        <i class="fas fa-chevron-down class-expand-icon" style="color: #bbb; transition: transform 0.2s;"></i>
+                    </div>
+                </div>
+                <div class="class-students-panel" data-panel-for="${cls._id}" style="display: none; border-top: 1px solid #e8ecf1; padding: 16px 20px; background: #fafbfc;">
+                    <div style="text-align: center; color: #999; padding: 10px;"><i class="fas fa-spinner fa-spin"></i> Loading students...</div>
+                </div>
+            `;
+
+            // Click to expand/collapse student list
+            const header = card.querySelector('.class-card-header');
+            header.addEventListener('click', () => toggleClassStudents(cls._id, card));
+
+            classesListDiv.appendChild(card);
+        });
+    }
+
+    async function toggleClassStudents(codeId, card) {
+        const panel = card.querySelector(`[data-panel-for="${codeId}"]`);
+        const icon = card.querySelector('.class-expand-icon');
+        if (!panel) return;
+
+        const isOpen = panel.style.display !== 'none';
+        if (isOpen) {
+            panel.style.display = 'none';
+            if (icon) icon.style.transform = 'rotate(0deg)';
+            return;
+        }
+
+        panel.style.display = 'block';
+        if (icon) icon.style.transform = 'rotate(180deg)';
+
+        // Skip fetch if already loaded
+        if (panel.dataset.loaded === 'true') return;
+
+        try {
+            const response = await fetch(`/api/teacher/classes/${codeId}/students`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            panel.dataset.loaded = 'true';
+            renderClassStudents(panel, data.students || []);
+        } catch (err) {
+            console.error('Error fetching class students:', err);
+            panel.innerHTML = '<p style="color: #e74c3c; text-align: center;">Error loading students.</p>';
+        }
+    }
+
+    function renderClassStudents(panel, students) {
+        if (students.length === 0) {
+            panel.innerHTML = '<p style="color: #888; text-align: center; padding: 10px;">No students enrolled in this class yet.</p>';
+            return;
+        }
+
+        const now = new Date();
+        const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+
+        const rows = students.map(s => {
+            const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username;
+            const lastLogin = s.lastLogin ? new Date(s.lastLogin) : null;
+            const isActive = lastLogin && lastLogin > sevenDaysAgo;
+            const lastLoginText = lastLogin
+                ? lastLogin.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                : 'Never';
+            const statusDot = isActive
+                ? '<span style="width:8px;height:8px;border-radius:50%;background:#27ae60;display:inline-block;margin-right:6px;" title="Active"></span>'
+                : '<span style="width:8px;height:8px;border-radius:50%;background:#e0e0e0;display:inline-block;margin-right:6px;" title="Inactive"></span>';
+
+            return `
+                <tr style="border-bottom: 1px solid #f0f0f0;">
+                    <td style="padding: 10px 12px; font-size: 14px;">${statusDot}${escapeHtml(name)}</td>
+                    <td style="padding: 10px 12px; font-size: 13px; color: #888;">${escapeHtml(s.username || '')}</td>
+                    <td style="padding: 10px 12px; font-size: 13px; color: #888;">${s.gradeLevel || '—'}</td>
+                    <td style="padding: 10px 12px; font-size: 13px;">Lv ${s.level || 1}</td>
+                    <td style="padding: 10px 12px; font-size: 13px; color: #888;">${s.weeklyActiveTutoringMinutes || 0} min</td>
+                    <td style="padding: 10px 12px; font-size: 13px; color: #888;">${lastLoginText}</td>
+                </tr>
+            `;
+        }).join('');
+
+        panel.innerHTML = `
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #e8ecf1;">
+                        <th style="text-align: left; padding: 8px 12px; font-size: 12px; text-transform: uppercase; color: #888; font-weight: 600;">Name</th>
+                        <th style="text-align: left; padding: 8px 12px; font-size: 12px; text-transform: uppercase; color: #888; font-weight: 600;">Username</th>
+                        <th style="text-align: left; padding: 8px 12px; font-size: 12px; text-transform: uppercase; color: #888; font-weight: 600;">Grade</th>
+                        <th style="text-align: left; padding: 8px 12px; font-size: 12px; text-transform: uppercase; color: #888; font-weight: 600;">Level</th>
+                        <th style="text-align: left; padding: 8px 12px; font-size: 12px; text-transform: uppercase; color: #888; font-weight: 600;">This Week</th>
+                        <th style="text-align: left; padding: 8px 12px; font-size: 12px; text-transform: uppercase; color: #888; font-weight: 600;">Last Login</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+        `;
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
 });
