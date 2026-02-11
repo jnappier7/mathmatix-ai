@@ -1,0 +1,270 @@
+{
+  "moduleId": "test_strategies_modeling",
+  "course": "ACT Math Prep",
+  "unit": 7,
+  "title": "Test Strategies & Modeling",
+  "weeks": "8-9",
+  "estimatedDuration": 30,
+  "description": "Covers ACT-specific test-taking strategies (backsolving, picking numbers, estimation, pacing) and the cross-cutting Modeling category (~25% of the ACT). Learn WHEN to use each strategy and how to interpret, produce, and evaluate mathematical models.",
+
+  "skills": [
+    "act-backsolving",
+    "act-picking-numbers",
+    "act-estimation-elimination",
+    "act-pacing-strategy",
+    "act-model-interpretation"
+  ],
+
+  "standardsAlignment": ["ACT Strategy", "ACT Modeling (cross-cutting)"],
+
+  "goals": [
+    "Recognize when backsolving is faster than algebra and execute it efficiently",
+    "Use picking numbers to turn abstract problems into concrete arithmetic",
+    "Apply estimation and elimination to narrow down answer choices quickly",
+    "Develop a pacing strategy: 1 minute per question, skip-and-return, never leave blanks",
+    "Interpret slope, intercepts, and parameters of models in real-world context",
+    "Choose appropriate model types (linear, exponential, quadratic) for given data"
+  ],
+
+  "instructionalStrategy": [
+    "Gradual release: concept-intro → I Do → We Do → You Do → mastery-check",
+    "AI uses scaffold array as scope and worked-example bank",
+    "Each strategy taught with side-by-side comparison: strategy vs. algebra approach",
+    "Timed practice sets to build pacing instincts",
+    "Modeling taught as a lens that applies to ALL content areas, not a separate topic"
+  ],
+
+  "aiFlexLevel": "high",
+
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Backsolving: Plugging In Answer Choices",
+      "skill": "act-backsolving",
+      "content": "Backsolving is the #1 ACT-specific strategy. Instead of solving algebraically, you test the answer choices in the problem. It works best when the question asks for a specific value and the answer choices are numbers.",
+      "keyPoints": [
+        "Start with answer choice (C) — it's the middle value, so one test tells you which direction to go.",
+        "If (C) is too big, try (A) or (B). If too small, try (D) or (E).",
+        "Best for: single-variable equations, word problems asking 'what is the value of...', percent problems.",
+        "NOT for: 'which is equivalent to' questions, multi-variable problems, questions with non-numeric answers.",
+        "Backsolving typically takes 2 attempts on average when starting from the middle.",
+        "It turns a 'set up and solve' problem into a simpler 'check if this works' problem."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Backsolving — Worked Examples",
+      "skill": "act-backsolving",
+      "examples": [
+        {
+          "problem": "If 3x + 7 = 2x + 15, what is x?\n(A) 2  (B) 4  (C) 8  (D) 11  (E) 22",
+          "solution": "ALGEBRA: 3x + 7 = 2x + 15 → x = 8. Answer: (C).\n\nBACKSOLVE: Start with (C) x = 8.\nLeft: 3(8) + 7 = 31. Right: 2(8) + 15 = 31. ✓ Done in one try!\nAnswer: (C) 8"
+        },
+        {
+          "problem": "A number is doubled, then 5 is subtracted. The result is 23. What is the number?\n(A) 9  (B) 12  (C) 14  (D) 16  (E) 18",
+          "solution": "BACKSOLVE: Start with (C) 14.\nDouble: 28. Subtract 5: 23. ✓ That's the target!\nAnswer: (C) 14\n\nFaster than setting up 2x − 5 = 23 for many students."
+        },
+        {
+          "problem": "The sum of three consecutive even integers is 78. What is the largest?\n(A) 24  (B) 26  (C) 28  (D) 30  (E) 32",
+          "solution": "BACKSOLVE: The largest is (C) 28, so the three numbers are 24, 26, 28.\n24 + 26 + 28 = 78. ✓\nAnswer: (C) 28\n\nACT Tip: For consecutive integer problems, always backsolve — it's instant."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Picking Numbers & Estimation",
+      "skill": "act-picking-numbers",
+      "content": "Picking numbers turns abstract algebra into concrete arithmetic. Estimation eliminates wrong answers in seconds. Together, these strategies save time on questions that would otherwise require complex calculation.",
+      "keyPoints": [
+        "PICKING NUMBERS: Replace variables with easy concrete values (2, 3, 5, 10).",
+        "Avoid 0 and 1 — they have special properties that can make multiple answers 'work'.",
+        "Avoid numbers that appear in the problem — they can create false matches.",
+        "Evaluate the problem AND each answer choice with your chosen numbers. The one that matches is correct.",
+        "If two answers match, try a different number to break the tie.",
+        "ESTIMATION: Round to friendly numbers (π ≈ 3, √2 ≈ 1.4, √3 ≈ 1.7).",
+        "Eliminate answers that are clearly wrong by order of magnitude.",
+        "Combined strategy: estimate first to eliminate 2-3 choices, then backsolve or calculate among remaining."
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Picking Numbers & Estimation — Worked Examples",
+      "skill": "act-estimation-elimination",
+      "examples": [
+        {
+          "problem": "If x is a positive even integer, which expression is always odd?\n(A) x + 2  (B) 2x + 1  (C) x²  (D) x/2  (E) x + 4",
+          "solution": "PICK x = 2:\n(A) 2 + 2 = 4 (even) ✗\n(B) 2(2) + 1 = 5 (odd) ✓\n(C) 4 (even) ✗\n(D) 1 (odd) — could be a match\n(E) 6 (even) ✗\n\nTwo candidates: (B) and (D). Try x = 4:\n(B) 2(4) + 1 = 9 (odd) ✓\n(D) 4/2 = 2 (even) ✗\n\nAnswer: (B) 2x + 1"
+        },
+        {
+          "problem": "A circle has area 200π square inches. What is the approximate diameter?\n(A) 10 in  (B) 14 in  (C) 20 in  (D) 28 in  (E) 40 in",
+          "solution": "ESTIMATE: πr² = 200π → r² = 200 → r ≈ 14.1 → diameter ≈ 28.\n\nElimination: (A) gives area = 25π (way too small). (E) gives area = 400π (too big).\n(D) 28 → r = 14 → area = 196π ≈ 200π. ✓\nAnswer: (D) 28 in"
+        },
+        {
+          "problem": "For all x > 0, which is equivalent to (x³ · x⁵) / x²?\n(A) x⁶  (B) x⁸  (C) x¹⁰  (D) x⁶·⁵  (E) x⁸/²",
+          "solution": "ALGEBRA: x^(3+5-2) = x⁶. Answer: (A).\n\nPICK NUMBERS: Let x = 2.\nNumerator: 2³ · 2⁵ = 8 · 32 = 256.\nDenominator: 2² = 4.\n256/4 = 64.\nCheck: (A) 2⁶ = 64 ✓. Answer: (A) x⁶"
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Strategy Practice: Backsolving, Picking Numbers, Estimation",
+      "skills": ["act-backsolving", "act-picking-numbers", "act-estimation-elimination"],
+      "problems": [
+        {
+          "problem": "If 2^x = 32, what is x?\n(A) 3  (B) 4  (C) 5  (D) 6  (E) 16",
+          "hints": ["Backsolve: try (C) x = 5. 2⁵ = 32. ✓"],
+          "answer": "(C) 5. 2⁵ = 32."
+        },
+        {
+          "problem": "For all a ≠ 0, which is equivalent to (3a²)³ / a⁴?\n(A) 3a²  (B) 9a²  (C) 27a²  (D) 27a  (E) 9a⁶",
+          "hints": ["Pick a = 2: (3·4)³ / 16 = 12³/16 = 1728/16 = 108", "Check: (C) 27(4) = 108 ✓"],
+          "answer": "(C) 27a². (3a²)³ = 27a⁶. 27a⁶/a⁴ = 27a². Or pick a=2: 12³/16 = 108 = 27(4)."
+        },
+        {
+          "problem": "A rectangular field has area 2,400 square meters and length 80 meters. What is the perimeter?\n(A) 110 m  (B) 190 m  (C) 220 m  (D) 2,560 m  (E) 4,800 m",
+          "hints": ["Width = 2400/80 = 30 m", "Perimeter = 2(80 + 30). Estimate: should be around 200-ish."],
+          "answer": "(C) 220 m. Width = 30. Perimeter = 2(80+30) = 220."
+        },
+        {
+          "problem": "The volume of a sphere is approximately 904.8 cubic inches. What is the radius? (Use π ≈ 3.14)\n(A) 4  (B) 6  (C) 8  (D) 10  (E) 12",
+          "hints": ["Backsolve with (B) r=6: V = (4/3)(3.14)(216) = 904.3 ≈ 904.8 ✓"],
+          "answer": "(B) 6. V = (4/3)(3.14)(6³) = (4/3)(3.14)(216) ≈ 904.8."
+        }
+      ]
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "title": "Pacing Strategy & Mathematical Modeling",
+      "skill": "act-pacing-strategy",
+      "content": "The ACT Math section is 60 questions in 60 minutes. Pacing is a skill that must be practiced. Modeling (~25% of the test) is a cross-cutting category that appears in all content areas — it's about applying math to real situations.",
+      "keyPoints": [
+        "PACING: 1 minute per question on average. Questions get harder: #1-20 easy, #21-40 medium, #41-60 hard.",
+        "Never spend more than 90 seconds on a single question. Mark it and come back.",
+        "No penalty for guessing — ANSWER EVERY QUESTION even if you have to guess.",
+        "If time is running out, guess the same letter for all remaining — statistically better than random.",
+        "MODELING: Choosing the right function type for a situation.",
+        "Linear: constant rate of change (adding the same amount each time).",
+        "Exponential: constant PERCENT change (multiplying by the same factor each time).",
+        "Quadratic: changing rate of change, often involves area or projectile motion.",
+        "Interpreting slope in context: 'for each additional [x-unit], [y] changes by [slope] [y-units].'",
+        "Interpreting y-intercept in context: 'when [x] is 0, [y] is [intercept].'"
+      ]
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "title": "Modeling & Interpretation — Worked Examples",
+      "skill": "act-model-interpretation",
+      "examples": [
+        {
+          "problem": "The equation C = 0.15m + 45 models a cell phone plan where C is the monthly cost in dollars and m is the number of minutes used. What does the 0.15 represent?\n(A) The base cost per month  (B) The cost per minute  (C) The number of free minutes  (D) The total cost for 45 minutes  (E) The monthly data cost",
+          "solution": "In y = mx + b form, 0.15 is the slope (rate of change).\nInterpretation: for each additional minute used, the cost increases by $0.15.\nAnswer: (B) The cost per minute\n\nAnd 45 represents the base monthly cost when m = 0."
+        },
+        {
+          "problem": "A town's population was 10,000 in 2010 and has been growing by 3% per year. Which equation models the population t years after 2010?\n(A) P = 10000 + 300t  (B) P = 10000(1.03)^t  (C) P = 10000(0.97)^t  (D) P = 10000(3)^t  (E) P = 10000 + 0.03t",
+          "solution": "Growing by 3% per year = constant PERCENT increase = exponential.\nMultiplier: 1 + 0.03 = 1.03.\nP = 10000(1.03)^t\nAnswer: (B) P = 10000(1.03)^t\n\n(A) is linear growth (adding 300/year). (C) is decay. (D) triples each year."
+        },
+        {
+          "problem": "A scatter plot of (hours studied, test score) shows a roughly linear trend. The line of best fit is y = 4.5x + 62. What does the model predict for a student who studies 0 hours?\n(A) 0  (B) 4.5  (C) 62  (D) 66.5  (E) Cannot determine",
+          "solution": "When x = 0: y = 4.5(0) + 62 = 62.\nThe y-intercept represents the predicted score with 0 hours of studying.\nAnswer: (C) 62\n\nNote: This is the baseline score — probably reflecting what students learned in class."
+        }
+      ]
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "title": "Modeling & Strategy Practice",
+      "skills": ["act-model-interpretation", "act-pacing-strategy"],
+      "problems": [
+        {
+          "problem": "A car depreciates from $25,000 to $16,000 in 3 years. Which model type best fits this situation?\n(A) Linear  (B) Quadratic  (C) Exponential decay  (D) Exponential growth  (E) Logarithmic",
+          "hints": ["Depreciation is a percentage loss each year → multiplicative", "Check: is the amount lost the same each year (linear) or a percentage (exponential)?"],
+          "answer": "(C) Exponential decay. Depreciation is typically a constant percentage per year → exponential."
+        },
+        {
+          "problem": "The equation h = −16t² + 48t + 5 models the height (in feet) of a ball t seconds after being thrown. What is the maximum height?\n(A) 5 ft  (B) 41 ft  (C) 48 ft  (D) 53 ft  (E) 64 ft",
+          "hints": ["Maximum occurs at vertex: t = −b/(2a) = −48/(2(−16)) = 1.5", "h(1.5) = −16(2.25) + 48(1.5) + 5"],
+          "answer": "(B) 41 ft. t = 1.5. h = −16(2.25) + 72 + 5 = −36 + 72 + 5 = 41."
+        },
+        {
+          "problem": "A linear model predicts that a factory produces 200 widgets on day 1 and 215 widgets on day 2. According to this model, how many widgets will be produced on day 10?\n(A) 335  (B) 345  (C) 350  (D) 400  (E) 2,150",
+          "hints": ["Rate = 215 − 200 = 15 widgets/day", "Day 10: 200 + 15(10−1) = 200 + 135"],
+          "answer": "(A) 335. Rate = 15/day. Day 10: 200 + 15(9) = 200 + 135 = 335."
+        }
+      ]
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "Test Strategies & Modeling — ACT-Style Practice Set",
+      "skills": ["act-backsolving", "act-picking-numbers", "act-estimation-elimination", "act-pacing-strategy", "act-model-interpretation"],
+      "problems": [
+        {
+          "problem": "Three times a number, decreased by 7, is 29. What is the number? (Use backsolving)\n(A) 8  (B) 10  (C) 12  (D) 14  (E) 22",
+          "answer": "(C) 12. Backsolve: 3(12) − 7 = 36 − 7 = 29. ✓"
+        },
+        {
+          "problem": "For all x > 0, which expression equals (√x)³ · √x?\n(A) x  (B) x²  (C) x³  (D) x⁴  (E) x^(3/2)",
+          "answer": "(B) x². Pick x = 4: (√4)³ · √4 = 8 · 2 = 16. Check: (B) 4² = 16. ✓ Or algebraically: x^(3/2) · x^(1/2) = x²."
+        },
+        {
+          "problem": "π² is approximately:\n(A) 3.14  (B) 6.28  (C) 9.87  (D) 12.56  (E) 31.4",
+          "answer": "(C) 9.87. π ≈ 3.14. π² ≈ 3.14² ≈ 9.87. Estimation: 3² = 9, 3.2² = 10.24. π² is between 9 and 10."
+        },
+        {
+          "problem": "A company's revenue R (in thousands) is modeled by R = 2.5x + 10, where x is months since launch. After how many months will revenue reach $35,000?\n(A) 5  (B) 10  (C) 14  (D) 18  (E) 25",
+          "answer": "(B) 10. Set R = 35: 2.5x + 10 = 35 → 2.5x = 25 → x = 10 months."
+        },
+        {
+          "problem": "The number of bacteria doubles every 4 hours. Starting with 500, which expression gives the count after t hours?\n(A) 500 + 2t  (B) 500(2)^t  (C) 500(2)^(t/4)  (D) 1000^t  (E) 500(4)^t",
+          "answer": "(C) 500(2)^(t/4). Doubling every 4 hours: after t hours, there have been t/4 doubling periods."
+        },
+        {
+          "problem": "A graph shows data that starts low, increases rapidly, then levels off. Which function type best models this?\n(A) Linear  (B) Quadratic  (C) Exponential growth  (D) Logarithmic  (E) Cubic",
+          "answer": "(D) Logarithmic. Rapid initial growth that slows down is characteristic of logarithmic behavior (or logistic, but log is the ACT answer)."
+        },
+        {
+          "problem": "If a problem has answer choices $2.40, $12.00, $24.00, $120.00, $240.00, and you estimate the answer should be around $10-$15, which should you try first?\n(A) $2.40  (B) $12.00  (C) $24.00  (D) $120.00  (E) $240.00",
+          "answer": "(B) $12.00. Always start with the choice closest to your estimate."
+        },
+        {
+          "problem": "The equation T = −0.005a² + 0.4a + 50 models temperature T based on altitude a (in thousands of feet). At what altitude is the temperature highest?\n(A) 10,000 ft  (B) 20,000 ft  (C) 40,000 ft  (D) 50,000 ft  (E) 80,000 ft",
+          "answer": "(C) 40,000 ft. Vertex at a = −0.4/(2(−0.005)) = −0.4/(−0.01) = 40. Since a is in thousands, that's 40,000 ft."
+        }
+      ]
+    }
+  ],
+
+  "answerKeys": {
+    "backsolve-linear": "8",
+    "backsolve-double": "14",
+    "backsolve-consecutive": "28",
+    "picking-always-odd": "2x + 1",
+    "estimation-circle": "28",
+    "picking-exponents": "x⁶",
+    "backsolve-power": "5",
+    "picking-cubic": "27a²",
+    "estimation-perimeter": "220",
+    "backsolve-sphere": "6",
+    "model-cellphone": "cost per minute",
+    "model-population": "10000(1.03)^t",
+    "model-intercept": "62",
+    "model-depreciation": "Exponential decay",
+    "model-projectile": "41",
+    "model-factory": "335",
+    "backsolve-3x-7": "12",
+    "picking-sqrt-cube": "x²",
+    "estimation-pi-sq": "9.87",
+    "model-revenue": "10",
+    "model-bacteria": "500(2)^(t/4)",
+    "model-leveling": "Logarithmic",
+    "strategy-estimate-first": "$12.00",
+    "model-vertex-altitude": "40,000 ft"
+  }
+}
