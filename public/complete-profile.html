@@ -33,9 +33,10 @@
           <label for="dateOfBirth">Date of Birth</label>
           <input type="date" id="dateOfBirth" name="dateOfBirth" max="" />
           <p class="note" style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">
-            Required for COPPA compliance. Students under 13 require parental consent.
+            Required for compliance. Students under 18 need parental permission to use AI features.
           </p>
 
+          <!-- Under-13: Full parent invite code required (COPPA) -->
           <div id="parentConsentSection" style="display: none; background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 8px; margin: 15px 0;">
             <p style="margin: 0 0 10px 0; color: #856404; font-weight: bold;">Parental Consent Required</p>
             <p style="margin: 0 0 10px 0; color: #856404; font-size: 0.9rem;">
@@ -45,6 +46,23 @@
             <input type="text" id="parentInviteCode" name="parentInviteCode" placeholder="e.g. ABC123" style="margin-bottom: 10px;" />
             <button type="button" id="linkParentBtn" class="btn btn-secondary" style="width: 100%;">Link to Parent</button>
             <p id="linkParentMessage" style="margin-top: 10px; font-size: 0.9rem;"></p>
+          </div>
+
+          <!-- Ages 13-17: Parent email confirmation required (OpenAI/ElevenLabs terms) -->
+          <div id="teenConsentSection" style="display: none; background: #d1ecf1; border: 1px solid #bee5eb; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <p style="margin: 0 0 10px 0; color: #0c5460; font-weight: bold;">Parent/Guardian Verification</p>
+            <p style="margin: 0 0 10px 0; color: #0c5460; font-size: 0.9rem;">
+              Students under 18 need a parent or guardian's permission. Enter your parent's email and we'll send a confirmation.
+              You can also use a parent invite code if your parent already has an account.
+            </p>
+            <label for="teenParentEmail" style="color: #0c5460;">Parent/Guardian Email:</label>
+            <input type="email" id="teenParentEmail" name="teenParentEmail" placeholder="parent@email.com" style="margin-bottom: 10px;" />
+            <button type="button" id="sendParentConsentBtn" class="btn btn-secondary" style="width: 100%;">Send Verification Email</button>
+            <p style="margin: 8px 0 0 0; text-align: center; color: #0c5460; font-size: 0.85rem;">— or —</p>
+            <label for="teenParentInviteCode" style="color: #0c5460;">Parent's Invite Code (if they have an account):</label>
+            <input type="text" id="teenParentInviteCode" name="teenParentInviteCode" placeholder="e.g. ABC123" style="margin-bottom: 10px;" />
+            <button type="button" id="teenLinkParentBtn" class="btn btn-secondary" style="width: 100%;">Link to Parent</button>
+            <p id="teenConsentMessage" style="margin-top: 10px; font-size: 0.9rem;"></p>
           </div>
 
           <label for="grade">Grade Level</label>
