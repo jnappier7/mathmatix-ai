@@ -470,7 +470,7 @@ class CourseManager {
         const modal = document.getElementById('course-catalog-modal');
         if (!modal) return;
 
-        modal.style.display = 'flex';
+        modal.classList.add('is-visible');
 
         const grid = document.getElementById('catalog-grid');
         if (grid) grid.innerHTML = '<div style="text-align:center; padding:40px; color:#aaa;">Loading courses...</div>';
@@ -492,7 +492,7 @@ class CourseManager {
 
     closeCatalog() {
         const modal = document.getElementById('course-catalog-modal');
-        if (modal) modal.style.display = 'none';
+        if (modal) modal.classList.remove('is-visible');
     }
 
     renderCatalog(catalog, recommended) {
