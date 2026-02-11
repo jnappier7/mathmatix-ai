@@ -10,6 +10,7 @@ class CourseManager {
         this.courseSessions = [];
         this.activeCourseSessionId = null;
         this.dropdownOpen = false;
+        this._lastKnownModuleStatuses = {}; // moduleId → status, for detecting completions
         this.init();
     }
 
@@ -240,6 +241,77 @@ class CourseManager {
     }
 
     // --------------------------------------------------
+    // Module completion detection & celebration
+    // --------------------------------------------------
+    detectCompletions(modules) {
+        const newlyCompleted = [];
+
+        modules.forEach(m => {
+            const prev = this._lastKnownModuleStatuses[m.moduleId];
+            if (m.status === 'completed' && prev && prev !== 'completed') {
+                newlyCompleted.push(m);
+            }
+            this._lastKnownModuleStatuses[m.moduleId] = m.status;
+        });
+
+        // If this is the first load, just cache statuses — don't celebrate
+        if (!this._progressLoadedOnce) {
+            this._progressLoadedOnce = true;
+            return;
+        }
+
+        // Celebrate each newly completed module
+        newlyCompleted.forEach(m => this.celebrateModuleCompletion(m));
+    }
+
+    async celebrateModuleCompletion(mod) {
+        // Fire confetti
+        if (window.ensureConfetti) {
+            await window.ensureConfetti();
+        }
+        if (typeof confetti === 'function') {
+            const colors = ['#667eea', '#764ba2', '#22c55e', '#f59e0b', '#ffffff'];
+            confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors });
+            setTimeout(() => {
+                confetti({ particleCount: 40, spread: 50, origin: { x: 0.2, y: 0.5 }, colors });
+                confetti({ particleCount: 40, spread: 50, origin: { x: 0.8, y: 0.5 }, colors });
+            }, 300);
+        }
+
+        // Show celebration card in chat
+        const chatBox = document.getElementById('chat-messages-container');
+        if (!chatBox) return;
+
+        const card = document.createElement('div');
+        card.style.cssText = `
+            margin: 16px auto; max-width: 440px; border-radius: 14px; overflow: hidden;
+            box-shadow: 0 4px 16px rgba(34,197,94,0.2); animation: catalogSlideIn 0.4s ease;
+            border: 2px solid #22c55e;
+        `;
+
+        const skills = (mod.skills || []).slice(0, 4);
+        const skillsHtml = skills.length > 0
+            ? skills.map(s => `<span style="display:inline-block; background:#f0fdf4; color:#16a34a; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; margin:2px;">${this.escapeHtml(s)}</span>`).join('')
+            : '';
+
+        card.innerHTML = `
+            <div style="background: linear-gradient(135deg, #22c55e, #16a34a); padding: 20px; color: white; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 6px;">🏆</div>
+                <h3 style="margin: 0 0 2px; font-size: 17px; font-weight: 700;">Module Complete!</h3>
+                <p style="margin: 0; font-size: 14px; opacity: 0.95;">${this.escapeHtml(mod.title || mod.moduleId)}</p>
+            </div>
+            <div style="padding: 16px; background: white; text-align: center;">
+                ${skillsHtml ? `<div style="margin-bottom: 10px;">${skillsHtml}</div>` : ''}
+                ${mod.checkpointPassed ? '<div style="font-size: 13px; color: #f59e0b; font-weight: 600;"><i class="fas fa-medal"></i> Checkpoint Passed!</div>' : ''}
+                <div style="font-size: 12px; color: #888; margin-top: 8px;">Keep going — you're building real momentum!</div>
+            </div>
+        `;
+
+        chatBox.appendChild(card);
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // --------------------------------------------------
     // Progress dropdown
     // --------------------------------------------------
     toggleProgressDropdown() {
@@ -265,6 +337,9 @@ class CourseManager {
             });
             const data = await res.json();
             if (data.success) {
+                // Detect newly completed modules
+                this.detectCompletions(data.modules || []);
+
                 this.renderModuleList(data);
 
                 // Also update the bar title with the current module
@@ -272,6 +347,12 @@ class CourseManager {
                 if (mod && data.next) {
                     mod.textContent = data.next.title || '';
                 }
+
+                // Update progress bar with latest data
+                const fill = document.getElementById('course-progress-fill');
+                const pct = document.getElementById('course-progress-pct');
+                if (fill) fill.style.width = `${data.overallProgress || 0}%`;
+                if (pct) pct.textContent = `${data.overallProgress || 0}%`;
             }
         } catch (err) {
             console.warn('[CourseManager] Failed to load progress:', err);
