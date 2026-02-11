@@ -19,6 +19,17 @@ const crypto = require('crypto');
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
+/**
+ * Check if user is under 13 based on dateOfBirth.
+ * ElevenLabs terms prohibit use by children under 13.
+ * Under-13 users get a flag to use browser-native WebSpeech API instead.
+ */
+function isUnder13(user) {
+    if (!user || !user.dateOfBirth) return false; // If no DOB, can't enforce — defaults to allowing
+    const age = (Date.now() - new Date(user.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+    return age < 13;
+}
+
 // ============================================
 // VOICE PROCESSING ENDPOINT
 // ============================================
@@ -42,6 +53,16 @@ router.post('/process', isAuthenticated, async (req, res) => {
     if (!audio) {
         console.error('❌ [Voice] No audio data provided');
         return res.status(400).json({ error: 'Audio data is required' });
+    }
+
+    // COMPLIANCE: ElevenLabs terms prohibit use by children under 13.
+    // Under-13 users must use browser-native WebSpeech API instead.
+    if (isUnder13(req.user)) {
+        return res.status(403).json({
+            error: 'Voice chat unavailable',
+            message: 'Voice chat uses a third-party service that requires users to be 13 or older. Please use the text chat instead.',
+            useWebSpeech: true  // Frontend flag: fall back to browser TTS
+        });
     }
 
     // Check API keys early

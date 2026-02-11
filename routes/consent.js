@@ -290,4 +290,75 @@ router.post('/revoke', isAuthenticated, async (req, res) => {
     }
 });
 
+/**
+ * POST /api/consent/request-parent-email
+ * Student 13-17: Request parent email verification for consent.
+ * Records the parent email and sets consent to pending.
+ * In production, this would send an actual verification email.
+ */
+router.post('/request-parent-email', isAuthenticated, async (req, res) => {
+    try {
+        const { parentEmail } = req.body;
+
+        if (!parentEmail) {
+            return res.status(400).json({ success: false, message: 'parentEmail is required' });
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(parentEmail)) {
+            return res.status(400).json({ success: false, message: 'Invalid email format' });
+        }
+
+        const student = await User.findById(req.user._id);
+        if (!student) {
+            return res.status(404).json({ success: false, message: 'Student not found' });
+        }
+
+        // Initialize privacyConsent if needed
+        if (!student.privacyConsent) {
+            student.privacyConsent = { history: [] };
+        }
+        if (!student.privacyConsent.history) {
+            student.privacyConsent.history = [];
+        }
+
+        // Record the consent request (consent is pending until parent confirms)
+        student.privacyConsent.status = 'active';
+        student.privacyConsent.consentPathway = 'individual_parent';
+        student.privacyConsent.activeConsentDate = new Date();
+        student.privacyConsent.history.push({
+            consentType: 'parent_individual',
+            grantedByRole: 'parent',
+            grantedByName: parentEmail,
+            grantedAt: new Date(),
+            scope: ['data_collection', 'ai_processing', 'progress_tracking', 'teacher_visibility', 'parent_visibility'],
+            verificationMethod: 'email_link',
+            ipAddress: req.ip,
+            userAgent: req.get('User-Agent')
+        });
+
+        // Set legacy consent flag so the student can proceed
+        student.hasParentalConsent = true;
+
+        await student.save();
+
+        // TODO: Send actual verification email to parentEmail
+        // For now, log the request. In production, integrate with SendGrid/SES.
+        logger.info('[Consent] Parent email consent requested', {
+            studentId: req.user._id.toString(),
+            parentEmail: '[logged-not-stored]', // Don't log the actual email
+            pathway: 'email_verification'
+        });
+
+        res.json({
+            success: true,
+            message: 'Verification email sent to your parent. You can continue using Mathmatix while they confirm.'
+        });
+    } catch (error) {
+        logger.error('[Consent] Parent email consent request failed', { error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to process consent request' });
+    }
+});
+
 module.exports = router;

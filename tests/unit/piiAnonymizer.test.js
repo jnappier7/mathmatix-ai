@@ -9,7 +9,9 @@ const {
     anonymizeMessages,
     anonymizeSystemPrompt,
     rehydrateResponse,
+    sanitizeEducationalData,
     PII_PATTERNS,
+    EDUCATIONAL_DATA_PATTERNS,
     PLACEHOLDERS
 } = require('../../utils/piiAnonymizer');
 
@@ -302,6 +304,155 @@ Sarah Chen's IEP requires extended time.`;
             // Numbers that look like phone numbers but aren't
             expect('3x + 5 = 20').not.toMatch(PII_PATTERNS.phone);
             expect('f(x) = 2x^2').not.toMatch(PII_PATTERNS.phone);
+        });
+    });
+
+    // ========================================================================
+    // Educational Data Sanitization
+    // ========================================================================
+    describe('sanitizeEducationalData', () => {
+        test('strips z-score values from processing speed context', () => {
+            const text = "Student's processing speed: **SLOW** (z-score: -1.23)";
+            const result = sanitizeEducationalData(text);
+            expect(result).not.toContain('-1.23');
+            expect(result).not.toContain('z-score:');
+            expect(result).toContain('SLOW'); // Speed level preserved
+        });
+
+        test('strips inline z-score references', () => {
+            const text = "z-score: 0.87 indicates above average";
+            const result = sanitizeEducationalData(text);
+            expect(result).not.toContain('0.87');
+            expect(result).toContain('assessed speed level');
+        });
+
+        test('strips read speed modifier', () => {
+            const text = "Read speed modifier: 1.50x";
+            const result = sanitizeEducationalData(text);
+            expect(result).not.toContain('1.50x');
+            expect(result).toContain('adjusted');
+        });
+
+        test('replaces exact IEP progress percentages with ranges', () => {
+            expect(sanitizeEducationalData('Progress: [██░░░░░░░░] 20%')).toContain('early stage');
+            expect(sanitizeEducationalData('Progress: [████░░░░░░] 40%')).toContain('developing');
+            expect(sanitizeEducationalData('Progress: [██████░░░░] 60%')).toContain('approaching target');
+            expect(sanitizeEducationalData('Progress: [█████████░] 90%')).toContain('near mastery');
+        });
+
+        test('replaces IEP target dates with generic timeline', () => {
+            const text = "Target: 5/15/2026";
+            const result = sanitizeEducationalData(text);
+            expect(result).not.toContain('5/15/2026');
+            expect(result).toContain('current school year');
+        });
+
+        test('replaces written-out target dates', () => {
+            const text = "Target: May 15, 2026";
+            const result = sanitizeEducationalData(text);
+            expect(result).not.toContain('May 15, 2026');
+            expect(result).toContain('current school year');
+        });
+
+        test('replaces "No target date" consistently', () => {
+            const result = sanitizeEducationalData("Target: No target date");
+            expect(result).toContain('current school year');
+        });
+
+        test('replaces measurement methods', () => {
+            const text = "Measurement: Weekly quiz scores averaging 80%+";
+            const result = sanitizeEducationalData(text);
+            expect(result).not.toContain('Weekly quiz scores');
+            expect(result).toContain('per IEP plan');
+        });
+
+        test('handles null/undefined input', () => {
+            expect(sanitizeEducationalData(null)).toBeNull();
+            expect(sanitizeEducationalData(undefined)).toBeUndefined();
+            expect(sanitizeEducationalData('')).toBe('');
+        });
+
+        test('preserves accommodation type instructions', () => {
+            const text = `✓ **Extended Time (1.5x):**
+  - Give the student 1.5x the normal time on all timed activities
+  - Never rush them or imply they're taking too long`;
+            const result = sanitizeEducationalData(text);
+            expect(result).toContain('Extended Time');
+            expect(result).toContain('1.5x the normal time');
+        });
+
+        test('preserves teaching strategy instructions', () => {
+            const text = "Generate problems at **LOWER DIFFICULTY** (DOK 1: Recall, Basic Facts)";
+            const result = sanitizeEducationalData(text);
+            expect(result).toContain('LOWER DIFFICULTY');
+            expect(result).toContain('DOK 1');
+        });
+    });
+
+    // ========================================================================
+    // Integration: anonymizeText now includes educational data sanitization
+    // ========================================================================
+    describe('anonymizeText with educational data', () => {
+        test('strips z-scores AND names in a single pass', () => {
+            const nameMap = new Map([['sarah', '[Student]']]);
+            const text = "Sarah's processing speed: **SLOW** (z-score: -1.23)";
+            const result = anonymizeText(text, nameMap);
+            expect(result).not.toContain('Sarah');
+            expect(result).not.toContain('-1.23');
+            expect(result).toContain('[Student]');
+            expect(result).toContain('SLOW');
+        });
+
+        test('strips IEP progress and target dates alongside names', () => {
+            const nameMap = new Map([['sarah chen', '[Student]'], ['sarah', '[Student]']]);
+            const text = `Sarah Chen has 2 active IEP goals:
+1. **Solve multi-step equations**
+   Progress: [████░░░░░░] 40%
+   Target: 5/15/2026
+   Measurement: Weekly quiz scores`;
+            const result = anonymizeText(text, nameMap);
+            expect(result).not.toContain('Sarah Chen');
+            expect(result).not.toContain('40%');
+            expect(result).not.toContain('5/15/2026');
+            expect(result).not.toContain('Weekly quiz scores');
+            expect(result).toContain('[Student]');
+            expect(result).toContain('developing');
+            expect(result).toContain('current school year');
+        });
+
+        test('full system prompt anonymization preserves teaching context', () => {
+            const nameMap = new Map([['sarah', '[Student]']]);
+            const systemPrompt = `--- IEP ACCOMMODATIONS (LEGALLY REQUIRED) ---
+Sarah has an IEP. You MUST respect these accommodations:
+
+✓ **Extended Time (1.5x):**
+  - Give Sarah 1.5x the normal time
+  - Never rush them
+
+✓ **Calculator Allowed:**
+  - NEVER restrict calculator use
+
+--- ADAPTIVE DIFFICULTY ---
+Sarah's processing speed: **FAST** (z-score: 1.45)
+Read speed modifier: 1.25x
+
+Generate problems at **HIGHER DIFFICULTY** (DOK 3)`;
+
+            const result = anonymizeText(systemPrompt, nameMap);
+
+            // Names gone
+            expect(result).not.toContain('Sarah');
+            // z-score gone
+            expect(result).not.toContain('1.45');
+            expect(result).not.toContain('z-score:');
+            // Read speed modifier gone
+            expect(result).not.toContain('1.25x');
+            // But teaching instructions preserved
+            expect(result).toContain('Extended Time');
+            expect(result).toContain('Calculator Allowed');
+            expect(result).toContain('HIGHER DIFFICULTY');
+            expect(result).toContain('DOK 3');
+            expect(result).toContain('[Student]');
         });
     });
 

@@ -145,6 +145,83 @@ function createAnonymizationContext(userProfile, options = {}) {
 }
 
 // ============================================================================
+// EDUCATIONAL DATA SANITIZATION
+// ============================================================================
+
+/**
+ * Patterns for educational data that should be abstracted before sending to
+ * AI providers. IEP goal descriptions, z-scores, and progress percentages
+ * can identify students when combined with other context.
+ *
+ * The AI still gets the accommodation TYPES (extended time, calculator, etc.)
+ * and the instruction on how to teach — it just doesn't get the specific
+ * goal descriptions, measurement methods, or exact progress numbers.
+ */
+const EDUCATIONAL_DATA_PATTERNS = {
+    // IEP goal descriptions: "1. **Solve multi-step equations with 80% accuracy**"
+    // Replaces the specific goal text with a generic placeholder, keeps the numbering
+    iepGoalDescription: /(\d+\.\s*\*\*)(.*?)(\*\*)/g,
+
+    // Progress percentages in IEP context: "Progress: [████░░░░░░] 45%"
+    // Replace exact percentage with a range
+    iepProgressBar: /Progress:\s*\[(?:█|░)+\]\s*\d+%/g,
+
+    // z-score values: "(z-score: -1.23)" or "(z-score: 0.45)"
+    zScore: /\(z-score:\s*-?\d+\.?\d*\)/gi,
+
+    // Processing speed z-score inline: "z-score: -1.23"
+    zScoreInline: /z-score:\s*-?\d+\.?\d*/gi,
+
+    // Read speed modifier: "Read speed modifier: 1.50x"
+    readSpeedModifier: /Read speed modifier:\s*\d+\.\d+x/gi,
+
+    // Target dates in IEP goals: "Target: 5/15/2026" or "Target: May 15, 2026"
+    iepTargetDate: /Target:\s*(?:\d{1,2}\/\d{1,2}\/\d{2,4}|(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s*\d{4}|No target date)/gi,
+
+    // Measurement methods: "Measurement: Weekly quiz scores averaging 80%+"
+    iepMeasurement: /Measurement:\s*.+/gi,
+};
+
+/**
+ * Sanitize educational record data in text.
+ * Abstracts IEP specifics to categories while preserving teaching instructions.
+ *
+ * @param {string} text - Text potentially containing educational data
+ * @returns {string} Sanitized text
+ */
+function sanitizeEducationalData(text) {
+    if (!text || typeof text !== 'string') return text;
+
+    let result = text;
+
+    // Replace z-scores with speed category (the speedLevel text remains)
+    result = result.replace(EDUCATIONAL_DATA_PATTERNS.zScore, '');
+    result = result.replace(EDUCATIONAL_DATA_PATTERNS.zScoreInline, 'assessed speed level');
+    result = result.replace(EDUCATIONAL_DATA_PATTERNS.readSpeedModifier, 'Read speed: adjusted');
+
+    // Replace exact IEP progress with ranges
+    result = result.replace(EDUCATIONAL_DATA_PATTERNS.iepProgressBar, (match) => {
+        const pctMatch = match.match(/(\d+)%/);
+        if (pctMatch) {
+            const pct = parseInt(pctMatch[1]);
+            if (pct < 25) return 'Progress: early stage';
+            if (pct < 50) return 'Progress: developing';
+            if (pct < 75) return 'Progress: approaching target';
+            return 'Progress: near mastery';
+        }
+        return 'Progress: in progress';
+    });
+
+    // Replace IEP target dates with generic timeline
+    result = result.replace(EDUCATIONAL_DATA_PATTERNS.iepTargetDate, 'Target: current school year');
+
+    // Replace measurement methods with generic
+    result = result.replace(EDUCATIONAL_DATA_PATTERNS.iepMeasurement, 'Measurement: per IEP plan');
+
+    return result;
+}
+
+// ============================================================================
 // CORE ANONYMIZATION
 // ============================================================================
 
@@ -168,7 +245,10 @@ function anonymizeText(text, nameMap = new Map()) {
         result = result.replace(regex, placeholder);
     }
 
-    // Step 2: Replace known names (case-insensitive, whole word)
+    // Step 2: Sanitize educational record data (IEP goals, z-scores, progress)
+    result = sanitizeEducationalData(result);
+
+    // Step 3: Replace known names (case-insensitive, whole word)
     // Sort by length descending to replace longer names first (e.g., "Sarah Chen" before "Sarah")
     const sortedNames = [...nameMap.entries()].sort((a, b) => b[0].length - a[0].length);
 
@@ -323,11 +403,15 @@ module.exports = {
     anonymizeSystemPrompt,
     rehydrateResponse,
 
+    // Educational data sanitization
+    sanitizeEducationalData,
+
     // Helpers
     buildAnonymizationContextFromRequest,
     logAnonymizationEvent,
 
     // Constants (for testing)
     PII_PATTERNS,
+    EDUCATIONAL_DATA_PATTERNS,
     PLACEHOLDERS,
 };
