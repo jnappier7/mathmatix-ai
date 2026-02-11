@@ -1736,6 +1736,47 @@
     (function () {
       'use strict';
 
+      /* ── Pi Day Countdown Timer ─────────────────────────── */
+      (function initCountdown() {
+        var banner = document.getElementById('lp-countdown');
+        var daysEl = document.getElementById('lp-cd-days');
+        var hoursEl = document.getElementById('lp-cd-hours');
+        var minsEl = document.getElementById('lp-cd-mins');
+        var secsEl = document.getElementById('lp-cd-secs');
+
+        if (!banner || !daysEl || !hoursEl || !minsEl || !secsEl) return;
+
+        // Target: March 14, 2026 at midnight local time
+        var target = new Date(2026, 2, 14, 0, 0, 0);
+
+        function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+        function updateCountdown() {
+          var now = new Date();
+          var diff = target - now;
+
+          // If Pi Day has passed, hide the banner
+          if (diff <= 0) {
+            banner.classList.add('lp-countdown-launched');
+            return;
+          }
+
+          var days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+          var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          var mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          var secs  = Math.floor((diff % (1000 * 60)) / 1000);
+
+          daysEl.textContent  = pad(days);
+          hoursEl.textContent = pad(hours);
+          minsEl.textContent  = pad(mins);
+          secsEl.textContent  = pad(secs);
+        }
+
+        // Run immediately, then every second
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+      })();
+
       /* ── Scroll Reveal ─────────────────────────────────── */
       var revealEls = document.querySelectorAll('.lp-reveal');
       if ('IntersectionObserver' in window) {

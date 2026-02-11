@@ -534,6 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!currentUser) throw new Error('User not found');
             if (currentUser.needsProfileCompletion) return window.location.href = "/complete-profile.html";
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
+            if (!currentUser.selectedAvatarId && currentUser.role === 'student') return window.location.href = '/pick-avatar.html';
 
             // Initialize session time tracking
             initSessionTracking();

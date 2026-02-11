@@ -52,6 +52,8 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
                 redirectUrl = "/parent-dashboard.html";
             } else if (user.role === "student" && !user.selectedTutorId) {
                 redirectUrl = "/pick-tutor.html";
+            } else if (user.role === "student" && !user.selectedAvatarId) {
+                redirectUrl = "/pick-avatar.html";
             }
 
             // Send success response with redirect URL (frontend will handle redirect)
