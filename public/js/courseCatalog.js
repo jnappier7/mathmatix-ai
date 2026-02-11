@@ -69,6 +69,20 @@ class CourseManager {
             }
         });
 
+        // Nudge banner buttons
+        const nudgeContinue = document.getElementById('nudge-continue-btn');
+        if (nudgeContinue) {
+            nudgeContinue.addEventListener('click', () => {
+                const sessionId = nudgeContinue.dataset.sessionId;
+                if (sessionId) this.activateCourse(sessionId);
+                this.hideNudge();
+            });
+        }
+        const nudgeDismiss = document.getElementById('nudge-dismiss-btn');
+        if (nudgeDismiss) {
+            nudgeDismiss.addEventListener('click', () => this.hideNudge());
+        }
+
         // Load enrolled courses on startup
         this.loadMySessions();
 
@@ -94,8 +108,9 @@ class CourseManager {
             this.renderSidebarCourses();
 
             // If there is an active course session tied to the current conversation,
-            // show the progress bar
+            // show the progress bar — otherwise show the resume nudge
             this.checkActiveProgressBar();
+            this.checkResumeNudge();
         } catch (err) {
             console.warn('[CourseManager] Failed to load sessions:', err);
         }
@@ -178,6 +193,50 @@ class CourseManager {
         // Find current module name
         const current = (session.modules || []).find(m => m.moduleId === session.currentModuleId);
         if (mod) mod.textContent = current ? `Module: ${session.currentModuleId}` : '';
+    }
+
+    // --------------------------------------------------
+    // Resume nudge (shown when user has course but is in general chat)
+    // --------------------------------------------------
+    checkResumeNudge() {
+        const nudge = document.getElementById('course-resume-nudge');
+        if (!nudge) return;
+
+        // Don't show if already dismissed this page load
+        if (this._nudgeDismissed) {
+            nudge.style.display = 'none';
+            return;
+        }
+
+        // Don't show if progress bar is already visible (user IS in their course)
+        if (this.activeCourseSessionId) {
+            nudge.style.display = 'none';
+            return;
+        }
+
+        // Find an active course to nudge about
+        const activeCourse = this.courseSessions.find(s => s.status === 'active');
+        if (!activeCourse) {
+            nudge.style.display = 'none';
+            return;
+        }
+
+        // Show the nudge
+        const nameEl = document.getElementById('nudge-course-name');
+        const progressEl = document.getElementById('nudge-course-progress');
+        const continueBtn = document.getElementById('nudge-continue-btn');
+
+        if (nameEl) nameEl.textContent = activeCourse.courseName;
+        if (progressEl) progressEl.textContent = `${activeCourse.overallProgress || 0}% complete`;
+        if (continueBtn) continueBtn.dataset.sessionId = activeCourse._id;
+
+        nudge.style.display = 'block';
+    }
+
+    hideNudge() {
+        const nudge = document.getElementById('course-resume-nudge');
+        if (nudge) nudge.style.display = 'none';
+        this._nudgeDismissed = true;
     }
 
     // --------------------------------------------------
