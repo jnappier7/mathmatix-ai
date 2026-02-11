@@ -474,8 +474,15 @@ class CourseManager {
             const wrapper = document.getElementById('course-progress-wrapper');
             if (wrapper) wrapper.style.display = 'block';
 
-            // Show a brief welcome toast
-            this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
+            // Hide nudge if showing
+            this.hideNudge();
+
+            // Show welcome splash in the chat
+            if (data.welcomeData) {
+                this.showWelcomeSplash(data.welcomeData);
+            } else {
+                this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
+            }
 
         } catch (err) {
             console.error('[CourseManager] Enrollment error:', err);
@@ -556,6 +563,52 @@ class CourseManager {
             if (sendBtn) sendBtn.click();
         }
         this.closeProgressDropdown();
+    }
+
+    // --------------------------------------------------
+    // Welcome splash (shown in chat after enrollment)
+    // --------------------------------------------------
+    showWelcomeSplash(welcome) {
+        const chatBox = document.getElementById('chat-messages-container');
+        if (!chatBox) return;
+
+        const splash = document.createElement('div');
+        splash.className = 'course-welcome-splash';
+        splash.style.cssText = `
+            margin: 20px auto; max-width: 520px; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(102,126,234,0.15); animation: catalogSlideIn 0.4s ease;
+        `;
+
+        // Build unit list (first 6)
+        const units = (welcome.units || []);
+        const unitListHtml = units.map((u, i) =>
+            `<div style="display:flex; align-items:center; gap:8px; padding:6px 0;">
+                <div style="width:24px; height:24px; border-radius:50%; background:${i === 0 ? 'linear-gradient(135deg, #667eea, #764ba2)' : '#e2e8f0'}; color:${i === 0 ? 'white' : '#888'}; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">${i + 1}</div>
+                <span style="font-size:13px; color:${i === 0 ? '#333' : '#666'}; font-weight:${i === 0 ? '600' : '400'};">${this.escapeHtml(u)}</span>
+            </div>`
+        ).join('');
+
+        splash.innerHTML = `
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 24px; color: white; text-align: center;">
+                <div style="font-size: 36px; margin-bottom: 8px;">🎓</div>
+                <h2 style="margin: 0 0 4px; font-size: 20px; font-weight: 700;">Welcome to ${this.escapeHtml(welcome.courseName)}</h2>
+                <p style="margin: 0; opacity: 0.9; font-size: 13px;">${welcome.moduleCount} modules · Self-paced · AI-guided</p>
+            </div>
+            <div style="padding: 20px; background: white;">
+                ${welcome.overview ? `<p style="font-size: 13px; color: #555; margin: 0 0 16px; line-height: 1.5;">${this.escapeHtml(welcome.overview)}</p>` : ''}
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; letter-spacing: 0.05em; margin-bottom: 8px;">Your Learning Path</div>
+                ${unitListHtml}
+                ${units.length < welcome.moduleCount ? `<div style="font-size: 12px; color: #aaa; padding: 4px 0 0 32px;">+${welcome.moduleCount - units.length} more modules</div>` : ''}
+                <button onclick="this.closest('.course-welcome-splash').remove()" style="
+                    margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 10px;
+                    background: linear-gradient(135deg, #667eea, #764ba2); color: white;
+                    font-weight: 700; font-size: 14px; cursor: pointer;
+                "><i class="fas fa-play" style="margin-right: 6px;"></i>Start ${this.escapeHtml(welcome.firstModuleTitle)}</button>
+            </div>
+        `;
+
+        chatBox.appendChild(splash);
+        splash.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     // --------------------------------------------------

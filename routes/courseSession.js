@@ -156,11 +156,23 @@ router.post('/enroll', async (req, res) => {
       activeCourseSessionId: session._id
     });
 
+    // Build welcome data for the client splash screen
+    const pathwayModules = pathway.modules || [];
+    const welcomeData = {
+      courseName: session.courseName,
+      overview: pathway.overview || '',
+      moduleCount: pathwayModules.length,
+      units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
+      prerequisites: pathway.prerequisites || [],
+      firstModuleTitle: pathwayModules[0]?.title || 'Getting Started'
+    };
+
     res.json({
       success: true,
       message: `Enrolled in ${session.courseName}`,
       session,
-      conversationId: conversation._id
+      conversationId: conversation._id,
+      welcomeData
     });
   } catch (err) {
     console.error('[CourseSession] Error enrolling:', err);
