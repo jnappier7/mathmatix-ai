@@ -323,6 +323,110 @@ router.get('/:id/progress', async (req, res) => {
 });
 
 /* ============================================================
+   POST /api/course-sessions/:id/complete-module
+   Mark a module as completed, unlock next, award XP
+   ============================================================ */
+const MODULE_COMPLETE_XP = 150;
+const CHECKPOINT_BONUS_XP = 250;
+const COURSE_COMPLETE_XP = 1000;
+
+router.post('/:id/complete-module', async (req, res) => {
+  try {
+    const { moduleId, checkpointPassed } = req.body;
+    if (!moduleId) {
+      return res.status(400).json({ success: false, message: 'moduleId is required' });
+    }
+
+    const session = await CourseSession.findOne({
+      _id: req.params.id,
+      userId: req.user._id,
+      status: 'active'
+    });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Active course session not found' });
+    }
+
+    // Find the module in the session
+    const mod = session.modules.find(m => m.moduleId === moduleId);
+    if (!mod) {
+      return res.status(404).json({ success: false, message: 'Module not found in course session' });
+    }
+    if (mod.status === 'completed') {
+      return res.json({ success: true, message: 'Module already completed', xpAwarded: 0 });
+    }
+
+    // Mark completed
+    mod.status = 'completed';
+    mod.scaffoldProgress = 100;
+    if (checkpointPassed) mod.checkpointPassed = true;
+    mod.completedAt = new Date();
+
+    // Unlock the next module
+    const modIndex = session.modules.findIndex(m => m.moduleId === moduleId);
+    if (modIndex >= 0 && modIndex < session.modules.length - 1) {
+      const nextMod = session.modules[modIndex + 1];
+      if (nextMod.status === 'locked') {
+        nextMod.status = 'available';
+      }
+      session.currentModuleId = nextMod.moduleId;
+    }
+
+    // Calculate overall progress
+    const completedCount = session.modules.filter(m => m.status === 'completed').length;
+    session.overallProgress = Math.round((completedCount / session.modules.length) * 100);
+
+    // Check if course is fully completed
+    const courseComplete = completedCount === session.modules.length;
+    if (courseComplete) {
+      session.status = 'completed';
+      session.completedAt = new Date();
+    }
+
+    session.markModified('modules');
+    await session.save();
+
+    // Award XP
+    let totalXpAwarded = MODULE_COMPLETE_XP;
+    let xpReasons = [`Module complete: ${moduleId}`];
+
+    if (checkpointPassed) {
+      totalXpAwarded += CHECKPOINT_BONUS_XP;
+      xpReasons.push('Checkpoint passed');
+    }
+    if (courseComplete) {
+      totalXpAwarded += COURSE_COMPLETE_XP;
+      xpReasons.push(`Course completed: ${session.courseName}`);
+    }
+
+    // Use userService.awardXP if available, otherwise direct update
+    try {
+      const userService = require('../services/userService');
+      await userService.awardXP(req.user._id, totalXpAwarded, xpReasons.join(' + '));
+    } catch (xpErr) {
+      // Fallback: direct XP update
+      console.warn('[CourseSession] userService.awardXP failed, using direct update:', xpErr.message);
+      await User.findByIdAndUpdate(req.user._id, {
+        $inc: { xp: totalXpAwarded },
+        $push: { xpHistory: { date: new Date(), amount: totalXpAwarded, reason: xpReasons.join(' + ') } }
+      });
+    }
+
+    console.log(`🎓 [CourseSession] ${req.user.firstName} completed module ${moduleId}: +${totalXpAwarded} XP${courseComplete ? ' (COURSE COMPLETE!)' : ''}`);
+
+    res.json({
+      success: true,
+      xpAwarded: totalXpAwarded,
+      courseComplete,
+      overallProgress: session.overallProgress,
+      nextModuleId: session.currentModuleId
+    });
+  } catch (err) {
+    console.error('[CourseSession] Error completing module:', err);
+    res.status(500).json({ success: false, message: 'Failed to complete module' });
+  }
+});
+
+/* ============================================================
    POST /api/course-sessions/:id/drop
    Drop a course session
    ============================================================ */

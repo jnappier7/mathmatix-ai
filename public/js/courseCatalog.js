@@ -265,6 +265,30 @@ class CourseManager {
     }
 
     async celebrateModuleCompletion(mod) {
+        // Call the complete-module endpoint to award XP and unlock next
+        let xpAwarded = 0;
+        let courseComplete = false;
+        if (this.activeCourseSessionId) {
+            try {
+                const res = await csrfFetch(`/api/course-sessions/${this.activeCourseSessionId}/complete-module`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        moduleId: mod.moduleId,
+                        checkpointPassed: mod.checkpointPassed || false
+                    }),
+                    credentials: 'include'
+                });
+                const data = await res.json();
+                if (data.success) {
+                    xpAwarded = data.xpAwarded || 0;
+                    courseComplete = data.courseComplete || false;
+                }
+            } catch (err) {
+                console.warn('[CourseManager] Failed to record module completion:', err);
+            }
+        }
+
         // Fire confetti
         if (window.ensureConfetti) {
             await window.ensureConfetti();
@@ -286,7 +310,7 @@ class CourseManager {
         card.style.cssText = `
             margin: 16px auto; max-width: 440px; border-radius: 14px; overflow: hidden;
             box-shadow: 0 4px 16px rgba(34,197,94,0.2); animation: catalogSlideIn 0.4s ease;
-            border: 2px solid #22c55e;
+            border: 2px solid ${courseComplete ? '#f59e0b' : '#22c55e'};
         `;
 
         const skills = (mod.skills || []).slice(0, 4);
@@ -294,21 +318,39 @@ class CourseManager {
             ? skills.map(s => `<span style="display:inline-block; background:#f0fdf4; color:#16a34a; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; margin:2px;">${this.escapeHtml(s)}</span>`).join('')
             : '';
 
+        const headerBg = courseComplete
+            ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+            : 'linear-gradient(135deg, #22c55e, #16a34a)';
+        const headerEmoji = courseComplete ? '🎓' : '🏆';
+        const headerTitle = courseComplete ? 'Course Complete!' : 'Module Complete!';
+
         card.innerHTML = `
-            <div style="background: linear-gradient(135deg, #22c55e, #16a34a); padding: 20px; color: white; text-align: center;">
-                <div style="font-size: 32px; margin-bottom: 6px;">🏆</div>
-                <h3 style="margin: 0 0 2px; font-size: 17px; font-weight: 700;">Module Complete!</h3>
+            <div style="background: ${headerBg}; padding: 20px; color: white; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 6px;">${headerEmoji}</div>
+                <h3 style="margin: 0 0 2px; font-size: 17px; font-weight: 700;">${headerTitle}</h3>
                 <p style="margin: 0; font-size: 14px; opacity: 0.95;">${this.escapeHtml(mod.title || mod.moduleId)}</p>
             </div>
             <div style="padding: 16px; background: white; text-align: center;">
+                ${xpAwarded > 0 ? `<div style="font-size: 20px; font-weight: 800; color: #667eea; margin-bottom: 8px;">+${xpAwarded} XP</div>` : ''}
                 ${skillsHtml ? `<div style="margin-bottom: 10px;">${skillsHtml}</div>` : ''}
-                ${mod.checkpointPassed ? '<div style="font-size: 13px; color: #f59e0b; font-weight: 600;"><i class="fas fa-medal"></i> Checkpoint Passed!</div>' : ''}
-                <div style="font-size: 12px; color: #888; margin-top: 8px;">Keep going — you're building real momentum!</div>
+                ${mod.checkpointPassed ? '<div style="font-size: 13px; color: #f59e0b; font-weight: 600; margin-bottom: 6px;"><i class="fas fa-medal"></i> Checkpoint Passed!</div>' : ''}
+                <div style="font-size: 12px; color: #888; margin-top: 8px;">${courseComplete ? 'You did it! Time to celebrate.' : 'Keep going — you\'re building real momentum!'}</div>
             </div>
         `;
 
         chatBox.appendChild(card);
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Extra confetti burst for course completion
+        if (courseComplete && typeof confetti === 'function') {
+            setTimeout(() => {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        confetti({ particleCount: 60, spread: 100, origin: { x: Math.random(), y: 0.3 }, colors: ['#f59e0b', '#667eea', '#22c55e'] });
+                    }, i * 200);
+                }
+            }, 500);
+        }
     }
 
     // --------------------------------------------------
