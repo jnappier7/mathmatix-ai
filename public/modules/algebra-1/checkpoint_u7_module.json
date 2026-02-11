@@ -1,0 +1,140 @@
+{
+  "moduleId": "checkpoint_u7",
+  "course": "Algebra 1",
+  "unit": 7,
+  "quarter": 4,
+  "title": "Unit 7 Checkpoint: Data Analysis & Probability",
+  "weeks": "21",
+  "estimatedDuration": 30,
+  "type": "assessment",
+  "description": "Summative checkpoint assessing mastery of measures of central tendency (mean, median, mode, range), understanding the effect of outliers on each measure, reading and interpreting data displays including box plots and histograms, analyzing scatter plots to identify correlation type and strength, distinguishing correlation from causation, estimating and using lines of best fit for predictions, and calculating basic probabilities of simple events.",
+  "skillsCovered": [
+    "measures-of-central-tendency",
+    "data-displays",
+    "scatter-plots-correlation",
+    "intro-probability"
+  ],
+  "passThreshold": 70,
+  "remediationResources": [
+    { "skillId": "measures-of-central-tendency", "reteachFocus": "Calculating mean, median, mode, and range, understanding when each measure is appropriate, analyzing how outliers pull the mean toward extreme values while the median remains resistant", "resources": ["data_analysis_module.json - scaffold phases 1-2"] },
+    { "skillId": "data-displays", "reteachFocus": "Reading and constructing box plots using the five-number summary (min, Q1, median, Q3, max), calculating IQR, interpreting histograms to describe shape and estimate center, comparing distributions", "resources": ["data_analysis_module.json - scaffold phases 3-5"] },
+    { "skillId": "scatter-plots-correlation", "reteachFocus": "Identifying positive, negative, or no correlation from scatter plots, distinguishing correlation from causation, identifying lurking variables, estimating lines of best fit, making predictions via interpolation and extrapolation", "resources": ["data_analysis_module.json - scaffold phases 6-8"] },
+    { "skillId": "intro-probability", "reteachFocus": "Calculating probability as favorable outcomes over total outcomes, expressing probability as fractions, decimals, and percentages, using the complement rule P(not A) = 1 − P(A), understanding independent events with replacement", "resources": ["data_analysis_module.json - scaffold phases 8-9"] }
+  ],
+  "assessmentProblems": [
+    {
+      "id": "a1u7-1",
+      "question": "Find the mean, median, and mode of the data set {10, 14, 14, 18, 20, 25, 31}. Which measure of central tendency best represents the typical value? Explain.",
+      "answer": "Data in order: 10, 14, 14, 18, 20, 25, 31. Sum = 10 + 14 + 14 + 18 + 20 + 25 + 31 = 132. Mean = 132/7 ≈ 18.9. Median = 4th value = 18. Mode = 14 (appears twice). Range = 31 − 10 = 21. The mean (18.9) and median (18) are close, indicating the data is roughly symmetric without extreme outliers. Either the mean or median is appropriate here, though the median (18) is slightly more representative since the value 31 pulls the mean slightly above center.",
+      "skill": "measures-of-central-tendency",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u7-2",
+      "question": "The test scores for a class are: {68, 72, 75, 78, 80, 82, 84, 88, 92, 95}. Now a student who scored 15 is added to the class. Calculate the mean and median before and after adding this score. Explain the effect of this outlier.",
+      "answer": "Before (10 values): Sum = 68+72+75+78+80+82+84+88+92+95 = 814. Mean = 814/10 = 81.4. Median = (80+82)/2 = 81. After adding 15 (11 values): 15, 68, 72, 75, 78, 80, 82, 84, 88, 92, 95. Sum = 829. Mean = 829/11 ≈ 75.4. Median = 6th value = 80. The outlier 15 dropped the mean by 6.0 points (from 81.4 to 75.4) but only dropped the median by 1.0 point (from 81 to 80). This shows the mean is sensitive to outliers while the median is resistant. The median (80) better represents the typical student's score after including the outlier.",
+      "skill": "measures-of-central-tendency",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u7-3",
+      "question": "A box plot has the following five-number summary: min = 42, Q1 = 55, median = 63, Q3 = 74, max = 90. (a) Find the IQR. (b) What percentage of data falls between 55 and 74? (c) Would a value of 25 be considered an outlier using the 1.5 × IQR rule?",
+      "answer": "(a) IQR = Q3 − Q1 = 74 − 55 = 19. (b) The box spans from Q1 to Q3, which contains the middle 50% of the data. So 50% of the data falls between 55 and 74. (c) Lower fence = Q1 − 1.5(IQR) = 55 − 1.5(19) = 55 − 28.5 = 26.5. Since 25 < 26.5, yes, a value of 25 would be considered an outlier. Upper fence = Q3 + 1.5(IQR) = 74 + 28.5 = 102.5 (for reference).",
+      "skill": "data-displays",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u7-4",
+      "question": "Two basketball teams' scoring data have the following five-number summaries:\nTeam A: {45, 58, 67, 76, 88}\nTeam B: {52, 64, 70, 75, 82}\nCompare the two teams' scoring using their box plots. Which team scores higher on average? Which team is more consistent?",
+      "answer": "Team A: median = 67, IQR = 76 − 58 = 18, range = 88 − 45 = 43. Team B: median = 70, IQR = 75 − 64 = 11, range = 82 − 52 = 30. Team B has a higher median (70 vs. 67), so Team B scores higher on average. Team B is also more consistent: its IQR (11) is smaller than Team A's (18), and its range (30) is smaller than Team A's (43). Team A has higher potential (max 88 vs. 82) but also lower lows (min 45 vs. 52). Team B is the more reliable scoring team overall.",
+      "skill": "data-displays",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u7-5",
+      "question": "Identify the type of correlation (positive, negative, or none) for each pair of variables and briefly explain:\n(a) Number of hours practicing piano vs. skill level\n(b) A person's height vs. their favorite color\n(c) Distance driven vs. amount of gas remaining in the tank",
+      "answer": "(a) **Positive correlation** — more practice hours are associated with higher skill levels. As practice increases, skill tends to increase. (b) **No correlation** — height has no predictable relationship with color preference. These variables are unrelated. (c) **Negative correlation** — as distance driven increases, the amount of gas remaining decreases. More driving uses more fuel.",
+      "skill": "scatter-plots-correlation",
+      "difficulty": 2,
+      "points": 8
+    },
+    {
+      "id": "a1u7-6",
+      "question": "A scatter plot shows data on the number of absences and final exam scores for 7 students: (0, 95), (1, 90), (2, 82), (3, 78), (4, 70), (5, 65), (7, 50). Identify the type and strength of correlation. Is this likely correlation or causation? Explain.",
+      "answer": "As absences increase (0→7), exam scores decrease (95→50). This is a **strong negative correlation** — the points closely follow a downward trend. This likely reflects a **causal** relationship: missing class means missing instruction, practice, and review, which directly leads to lower exam performance. However, lurking variables may also contribute — students who miss more class may also be less motivated, have health issues, or face other barriers. While the causal link between attendance and learning is well-supported by research, a controlled experiment would be needed to fully establish causation.",
+      "skill": "scatter-plots-correlation",
+      "difficulty": 3,
+      "points": 10
+    },
+    {
+      "id": "a1u7-7",
+      "question": "Using the absences vs. exam scores data from the previous problem, estimate a line of best fit using the points (0, 95) and (7, 50). Write the equation of the line and predict the exam score for a student with 3 absences. Is this interpolation or extrapolation?",
+      "answer": "Slope: m = (50 − 95)/(7 − 0) = −45/7 ≈ −6.43. Using (0, 95): 95 = −6.43(0) + b → b = 95. Equation: **y = −6.43x + 95**. Prediction at x = 3: y = −6.43(3) + 95 = −19.29 + 95 = **75.71 ≈ 76**. The actual data point at x = 3 is 78, so our prediction is close (off by about 2 points). This is **interpolation** because 3 is within the data range (0 to 7), making the prediction reliable. The slope of −6.43 means that each additional absence is associated with approximately a 6.4-point decrease in the exam score.",
+      "skill": "scatter-plots-correlation",
+      "difficulty": 4,
+      "points": 12
+    },
+    {
+      "id": "a1u7-8",
+      "question": "A study finds that towns with more ice cream trucks have higher rates of sunburn. A reporter writes: 'Ice cream trucks cause sunburn!' Explain the error in this conclusion and identify the lurking variable.",
+      "answer": "The reporter is confusing **correlation with causation**. Ice cream trucks do not cause sunburn. The **lurking variable** is **hot, sunny weather**. During summer and on hot days, more ice cream trucks operate (because demand for ice cream rises), and more people spend time outdoors in the sun (leading to more sunburns). Both variables — ice cream truck activity and sunburn rates — increase due to the same underlying cause (sunny, hot weather), creating a positive correlation. But one does not cause the other. To establish causation, you would need a controlled experiment, which is clearly impractical here. This is a classic example of why **correlation does not imply causation**.",
+      "skill": "scatter-plots-correlation",
+      "difficulty": 3,
+      "points": 8
+    },
+    {
+      "id": "a1u7-9",
+      "question": "A bag contains 3 red marbles, 4 blue marbles, and 3 green marbles. (a) What is P(red)? (b) What is P(not green)? (c) You draw a marble, note its color, replace it, then draw again. What is the probability of drawing a blue marble followed by a green marble?",
+      "answer": "Total marbles = 3 + 4 + 3 = 10. (a) P(red) = 3/10 = 0.3 = 30%. (b) P(not green) = 1 − P(green) = 1 − 3/10 = 7/10 = 0.7 = 70%. Alternatively, non-green = 3 + 4 = 7, so P(not green) = 7/10. (c) With replacement, the draws are independent. P(blue then green) = P(blue) × P(green) = (4/10) × (3/10) = 12/100 = 3/25 = 0.12 = 12%.",
+      "skill": "intro-probability",
+      "difficulty": 4,
+      "points": 12
+    },
+    {
+      "id": "a1u7-10",
+      "question": "ANALYSIS: A student collects data on hours of sleep and quiz scores for 6 classmates: (5, 60), (6, 68), (7, 75), (8, 85), (9, 88), (10, 92). The student uses points (5, 60) and (10, 92) to write the line of best fit y = 6.4x + 28. The student then predicts that a person who sleeps 20 hours will score 156 on the quiz. Explain why this prediction is flawed, calculate what the line predicts for someone who sleeps 7.5 hours, and state whether that prediction is more trustworthy.",
+      "answer": "**Why the 20-hour prediction is flawed:**\nThe prediction y = 6.4(20) + 28 = 156 is **extrapolation** far beyond the data range (5 to 10 hours). It is unreliable for two reasons: (1) It is physically impossible to sleep 20 hours and take a quiz in the same day. (2) A score of 156 exceeds the maximum possible quiz score (typically 100). The linear trend does not hold indefinitely — there are diminishing returns, and both sleep and scores have natural limits.\n\n**Prediction for 7.5 hours:**\ny = 6.4(7.5) + 28 = 48 + 28 = **76**.\nChecking against the data: at x = 7, score = 75 and at x = 8, score = 85. The prediction of 76 for 7.5 hours falls between these values and is reasonable.\n\n**Is it more trustworthy?**\nYes, this is **interpolation** (7.5 is within the data range of 5 to 10), so the prediction is much more reliable than extrapolating to 20 hours. The data supports a linear trend in this region, and the predicted score of 76 is plausible and consistent with surrounding data points.\n\n**Key lesson:** Lines of best fit are useful tools for prediction, but only within or near the range of the original data. Extrapolating far beyond the data can produce absurd or impossible results.",
+      "skill": "scatter-plots-correlation",
+      "difficulty": 5,
+      "points": 12
+    }
+  ],
+  "spiralReview": [
+    {
+      "id": "a1u7-spiral-1",
+      "question": "SPIRAL (Exponential Functions): A bacteria population starts at 800 and doubles every 4 hours. Write the model and find the population after 12 hours.",
+      "answer": "P = 800 · 2^(t/4). At t = 12: P = 800 · 2^(12/4) = 800 · 2³ = 800 · 8 = 6,400 bacteria. Check: 800 → 1600 → 3200 → 6400 (three doublings in 12 hours).",
+      "skill": "exponential-growth-decay",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 8"
+    },
+    {
+      "id": "a1u7-spiral-2",
+      "question": "SPIRAL (Quadratic Functions): Find the vertex of y = x² − 6x + 5 and determine whether it is a maximum or minimum.",
+      "answer": "a = 1, b = −6, c = 5. x = −(−6)/(2·1) = 3. y = (3)² − 6(3) + 5 = 9 − 18 + 5 = −4. Vertex: (3, −4). Since a = 1 > 0, the parabola opens upward, so the vertex is a **minimum**. The minimum value of y is −4.",
+      "skill": "quadratic-equations-graphing",
+      "difficulty": 3,
+      "points": 0,
+      "note": "Spiral review from Unit 6"
+    }
+  ],
+  "answerKeys": {
+    "a1u7-1": "Mean ≈ 18.9, Median = 18, Mode = 14, Range = 21. Mean or median both appropriate; data roughly symmetric.",
+    "a1u7-2": "Before: mean = 81.4, median = 81. After adding 15: mean ≈ 75.4, median = 80. Outlier drops mean by 6.0 but median by only 1.0.",
+    "a1u7-3": "(a) IQR = 19. (b) 50% of data between Q1 and Q3. (c) Yes, 25 < lower fence of 26.5, so it is an outlier.",
+    "a1u7-4": "Team B scores higher (median 70 vs. 67) and is more consistent (IQR 11 vs. 18, range 30 vs. 43).",
+    "a1u7-5": "(a) Positive. (b) None. (c) Negative.",
+    "a1u7-6": "Strong negative correlation. Likely causal (missing class → lower scores), though lurking variables may contribute.",
+    "a1u7-7": "y = −6.43x + 95. At 3 absences: predicted score ≈ 76 (actual 78). Interpolation — reliable.",
+    "a1u7-8": "Correlation ≠ causation. Lurking variable: hot sunny weather increases both ice cream truck activity and sunburns.",
+    "a1u7-9": "(a) P(red) = 3/10 = 30%. (b) P(not green) = 7/10 = 70%. (c) P(blue then green) = 12/100 = 12%.",
+    "a1u7-10": "20-hour prediction is extrapolation (impossible score of 156). At 7.5 hours: score ≈ 76 (interpolation — trustworthy).",
+    "a1u7-spiral-1": "6,400 bacteria after 12 hours. P = 800 · 2³ = 6400.",
+    "a1u7-spiral-2": "Vertex: (3, −4). Minimum (a > 0, opens upward)."
+  }
+}
