@@ -231,6 +231,9 @@ passport.use(
 
 /* ----------------------------  CLEVER STRATEGY ----------------------------- */
 if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
+  const cleverApi  = require("../services/cleverApi");
+  const { syncOnLogin } = require("../services/cleverSync");
+
   const cleverStrategy = new OAuth2Strategy(
     {
       authorizationURL: "https://clever.com/oauth/authorize",
@@ -243,25 +246,8 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
     },
     async (accessToken, refreshToken, params, profile, done) => {
       try {
-        // Clever doesn't populate profile via passport-oauth2 by default.
-        // We fetch user info from the /me endpoint using the access token.
-        const https = require("https");
-
-        const meData = await new Promise((resolve, reject) => {
-          const req = https.get(
-            "https://api.clever.com/v3.0/me",
-            { headers: { Authorization: `Bearer ${accessToken}` } },
-            (res) => {
-              let body = "";
-              res.on("data", (chunk) => (body += chunk));
-              res.on("end", () => {
-                try { resolve(JSON.parse(body)); }
-                catch (e) { reject(e); }
-              });
-            }
-          );
-          req.on("error", reject);
-        });
+        // Fetch identity via centralised Clever API client
+        const meData = await cleverApi.getMe(accessToken);
 
         const cleverType = meData.type;   // 'student', 'teacher', 'district_admin', 'school_admin'
         const cleverId   = meData.data?.id;
@@ -270,22 +256,8 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
           return done(null, false, { message: "Could not retrieve Clever user ID." });
         }
 
-        // Fetch full user data from the type-specific endpoint
-        const userData = await new Promise((resolve, reject) => {
-          const req = https.get(
-            `https://api.clever.com/v3.0/${cleverType}s/${cleverId}`,
-            { headers: { Authorization: `Bearer ${accessToken}` } },
-            (res) => {
-              let body = "";
-              res.on("data", (chunk) => (body += chunk));
-              res.on("end", () => {
-                try { resolve(JSON.parse(body)); }
-                catch (e) { reject(e); }
-              });
-            }
-          );
-          req.on("error", reject);
-        });
+        // Fetch full user data
+        const userData = await cleverApi.getUserData(cleverType, cleverId, accessToken);
 
         const userInfo = userData.data || {};
         const userEmail   = userInfo.email || null;
@@ -301,6 +273,16 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
         /* ---------- 1. Existing user by Clever ID --------------------- */
         let existingUser = await User.findOne({ cleverId });
         if (existingUser) {
+          // Full data refresh + roster/section sync on every login
+          try {
+            const syncResult = await syncOnLogin(accessToken, existingUser);
+            existingUser = syncResult.user;
+            if (syncResult.stats.profileUpdated || syncResult.stats.sectionsProcessed > 0) {
+              console.log(`LOG: Clever login sync for ${existingUser.username}: profile=${syncResult.stats.profileUpdated}, sections=${syncResult.stats.sectionsProcessed}, +${syncResult.stats.studentsAdded}/-${syncResult.stats.studentsRemoved} students`);
+            }
+          } catch (syncErr) {
+            console.error("WARN: Clever sync failed (non-fatal):", syncErr.message);
+          }
           return done(null, existingUser);
         }
 
@@ -318,6 +300,14 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
               }
               await existingUser.save();
             }
+            // Sync sections for newly-linked user too
+            try {
+              const syncResult = await syncOnLogin(accessToken, existingUser);
+              existingUser = syncResult.user;
+              console.log(`LOG: Clever login sync (email-linked) for ${existingUser.username}: sections=${syncResult.stats.sectionsProcessed}`);
+            } catch (syncErr) {
+              console.error("WARN: Clever sync failed (non-fatal):", syncErr.message);
+            }
             return done(null, existingUser);
           }
         }
@@ -334,7 +324,8 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
           lastName,
           needsFix,
           role:        mappedRole,
-          avatar:      null
+          avatar:      null,
+          accessToken  // Preserve token so sync can run after enrollment completes
         };
 
         return done(null, {
