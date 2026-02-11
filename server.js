@@ -285,8 +285,16 @@ app.use(logger.requestLogger);
 
 
 // --- 7. DATABASE CONNECTION ---
+const { startRetentionSchedule } = require('./utils/dataRetention');
+
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => logger.info("✅ Connected to MongoDB", { database: 'MongoDB' }))
+  .then(() => {
+    logger.info("✅ Connected to MongoDB", { database: 'MongoDB' });
+    // Start data retention sweep (daily cleanup of expired data)
+    if (process.env.NODE_ENV !== 'test') {
+      startRetentionSchedule();
+    }
+  })
   .catch(err => {
     logger.error("❌ MongoDB connection error", err);
     process.exit(1); // Exit if database connection fails
