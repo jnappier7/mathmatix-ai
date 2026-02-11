@@ -119,6 +119,45 @@ async function sendParentalConsentRequest(parentEmail, studentName, consentToken
 }
 
 /**
+ * Send parental consent request email for teen students (13-17)
+ * Unlike under-13, this is a lighter-touch flow — the email explains what
+ * the student wants to use, sells the benefits, and clearly describes
+ * what the parent is agreeing to.
+ * @param {String} parentEmail - Parent's email address
+ * @param {String} studentName - Student's first name
+ * @param {String} consentToken - Unique token for consent verification
+ * @param {String} studentId - Student's database ID
+ */
+async function sendTeenConsentRequest(parentEmail, studentName, consentToken, studentId) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping teen consent request');
+    return { success: false, error: 'Email not configured' };
+  }
+
+  try {
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const consentUrl = `${baseUrl}/parental-consent.html?token=${consentToken}&student=${studentId}`;
+    const emailConfig = getEmailConfig();
+
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: parentEmail,
+      subject: `${studentName} wants to use MATHMATIX AI — your approval needed`,
+      html: getTeenConsentTemplate(studentName, consentUrl)
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Teen consent email sent to ${parentEmail}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending teen consent email:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Send password reset email
  * @param {String} email - User's email address
  * @param {String} resetToken - Password reset token
@@ -492,41 +531,62 @@ function getParentalConsentTemplate(studentName, consentUrl) {
 
     <!-- Content -->
     <div style="padding: 30px 20px;">
-      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">Your Child Needs Your Permission</h2>
+      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">${studentName} wants to use Mathmatix AI for math help</h2>
 
       <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
-        <strong>${studentName}</strong> has created a MATHMATIX AI account and needs your consent to activate it.
+        Your child has signed up for Mathmatix AI. Because they're under 13, federal law (COPPA) requires
+        your consent before we can activate their account.
       </p>
 
+      <!-- What they get -->
       <div style="background: #f0fdf4; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0; border-radius: 4px;">
-        <h3 style="margin: 0 0 10px 0; color: #27ae60; font-size: 18px;">What is MATHMATIX AI?</h3>
-        <p style="margin: 0; color: #555; line-height: 1.6;">
-          An AI-powered math tutor that provides personalized, adaptive learning for K-12 students.
-        </p>
+        <h3 style="margin: 0 0 10px 0; color: #27ae60; font-size: 18px;">What ${studentName} gets</h3>
+        <ul style="margin: 0; padding-left: 20px; color: #555; line-height: 1.8;">
+          <li><strong>A personal math tutor</strong> — AI that meets them at their level and walks them through problems step-by-step</li>
+          <li><strong>Homework help anytime</strong> — they can photograph a problem and get guidance, not just answers</li>
+          <li><strong>Adaptive practice</strong> — the tutor adjusts difficulty so they're always challenged but not overwhelmed</li>
+          <li><strong>IEP/accommodation support</strong> — if applicable, instruction adapts to their learning plan</li>
+        </ul>
       </div>
 
+      <!-- What you're agreeing to -->
       <div style="background: #ebf5fb; border-left: 4px solid #3498db; padding: 15px; margin: 20px 0; border-radius: 4px;">
-        <h3 style="margin: 0 0 10px 0; color: #3498db; font-size: 18px;">What data do we collect?</h3>
-        <ul style="margin: 0; padding-left: 20px; color: #555; line-height: 1.8;">
-          <li>Student name and learning progress</li>
-          <li>Homework photos (auto-deleted after 30 days)</li>
-          <li>Math problem attempts and solutions</li>
-        </ul>
-        <p style="margin: 15px 0 0 0; color: #555; font-weight: 600;">
-          We DO NOT collect SSN, physical address, or sell data to advertisers.
+        <h3 style="margin: 0 0 10px 0; color: #3498db; font-size: 18px;">What you're agreeing to</h3>
+        <p style="margin: 0 0 10px 0; color: #555; line-height: 1.6;">
+          By giving consent, you're allowing Mathmatix AI to:
         </p>
+        <ul style="margin: 0; padding-left: 20px; color: #555; line-height: 1.8;">
+          <li><strong>Process math questions</strong> using AI services (OpenAI, Anthropic) to generate tutoring responses</li>
+          <li><strong>Store learning progress</strong> — problem attempts, scores, and skill levels — to personalize instruction</li>
+          <li><strong>Keep homework photos</strong> for up to 30 days (then auto-deleted) so they can review past work</li>
+          <li><strong>Share progress data</strong> with their teacher if they're enrolled in a class</li>
+        </ul>
+      </div>
+
+      <!-- How we protect their data -->
+      <div style="background: #fef9e7; border-left: 4px solid #f39c12; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <h3 style="margin: 0 0 10px 0; color: #e67e22; font-size: 18px;">How we protect their data</h3>
+        <ul style="margin: 0; padding-left: 20px; color: #555; line-height: 1.8;">
+          <li>Personal details (name, school, IEP specifics) are <strong>stripped before reaching AI providers</strong></li>
+          <li>GPS and location data are <strong>removed from uploaded photos</strong> before processing</li>
+          <li>We <strong>never sell data</strong> or use it for advertising</li>
+          <li>AI providers <strong>do not train on your child's data</strong></li>
+          <li>Voice features use the device's built-in speech engine — <strong>no audio is sent to third parties</strong></li>
+          <li>You can <strong>request data export or deletion</strong> at any time</li>
+        </ul>
       </div>
 
       <!-- CTA Button -->
       <div style="text-align: center; margin: 30px 0;">
         <a href="${consentUrl}"
            style="display: inline-block; background: linear-gradient(135deg, #27ae60, #16a085); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
-          Review Privacy Policy & Give Consent
+          Review Full Policy &amp; Give Consent
         </a>
       </div>
 
       <p style="margin: 20px 0 0 0; color: #666; font-size: 14px; text-align: center;">
-        This link expires in 7 days. If you have questions, contact us at
+        This link expires in 7 days. You can revoke consent at any time from your parent dashboard.<br>
+        Questions? Email us at
         <a href="mailto:support@mathmatix.ai" style="color: #667eea; text-decoration: none;">support@mathmatix.ai</a>
       </p>
     </div>
@@ -534,7 +594,104 @@ function getParentalConsentTemplate(studentName, consentUrl) {
     <!-- Footer -->
     <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
       <p style="margin: 0; font-size: 12px; color: #999;">
-        © ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
+        You're receiving this because ${studentName} listed you as their parent or guardian.
+      </p>
+      <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">
+        &copy; ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
+
+function getTeenConsentTemplate(studentName, consentUrl) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; margin-bottom: 20px;">
+
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">MATHMATIX AI</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.95; font-size: 14px;">Your approval is needed</p>
+    </div>
+
+    <!-- Content -->
+    <div style="padding: 30px 20px;">
+      <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 22px;">${studentName} wants to use Mathmatix AI for math help</h2>
+
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
+        Your child signed up for Mathmatix AI, an AI-powered math tutor for K-12 students.
+        Because they're under 18, we need your permission before they can use the AI features.
+      </p>
+
+      <!-- What it does -->
+      <div style="background: #f0fdf4; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <h3 style="margin: 0 0 10px 0; color: #27ae60; font-size: 18px;">What ${studentName} gets</h3>
+        <ul style="margin: 0; padding-left: 20px; color: #555; line-height: 1.8;">
+          <li><strong>Personalized math tutoring</strong> — AI adapts to their skill level and learning pace</li>
+          <li><strong>Homework help on demand</strong> — they can photograph a problem and get step-by-step guidance</li>
+          <li><strong>Progress tracking</strong> — you can see what they're working on and where they're improving</li>
+          <li><strong>IEP/accommodation support</strong> — if applicable, the tutor adjusts to their learning plan</li>
+        </ul>
+      </div>
+
+      <!-- What you're agreeing to -->
+      <div style="background: #ebf5fb; border-left: 4px solid #3498db; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <h3 style="margin: 0 0 10px 0; color: #3498db; font-size: 18px;">What you're agreeing to</h3>
+        <p style="margin: 0 0 10px 0; color: #555; line-height: 1.6;">
+          By giving consent, you're allowing Mathmatix AI to:
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #555; line-height: 1.8;">
+          <li><strong>Process math questions</strong> using AI services (OpenAI, Anthropic) to generate tutoring responses</li>
+          <li><strong>Store learning progress</strong> — problem attempts, scores, and skill levels — to personalize instruction</li>
+          <li><strong>Keep homework photos</strong> for up to 30 days (then auto-deleted) so they can review past work</li>
+          <li><strong>Share progress data</strong> with their teacher if they're enrolled in a class</li>
+        </ul>
+      </div>
+
+      <!-- How we protect their data -->
+      <div style="background: #fef9e7; border-left: 4px solid #f39c12; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <h3 style="margin: 0 0 10px 0; color: #e67e22; font-size: 18px;">How we protect their data</h3>
+        <ul style="margin: 0; padding-left: 20px; color: #555; line-height: 1.8;">
+          <li>Personal details (name, school, IEP specifics) are <strong>stripped before reaching AI providers</strong></li>
+          <li>GPS and location data are <strong>removed from uploaded photos</strong> before processing</li>
+          <li>We <strong>never sell data</strong> or use it for advertising</li>
+          <li>AI providers <strong>do not train on your child's data</strong></li>
+          <li>You can <strong>request data export or deletion</strong> at any time</li>
+        </ul>
+      </div>
+
+      <!-- CTA Button -->
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${consentUrl}"
+           style="display: inline-block; background: linear-gradient(135deg, #27ae60, #16a085); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+          Review Full Policy &amp; Approve
+        </a>
+      </div>
+
+      <p style="margin: 20px 0 0 0; color: #666; font-size: 14px; text-align: center;">
+        This link expires in 7 days. You can revoke consent at any time from your parent dashboard.<br>
+        Questions? Email us at
+        <a href="mailto:support@mathmatix.ai" style="color: #667eea; text-decoration: none;">support@mathmatix.ai</a>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding: 20px; text-align: center; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
+      <p style="margin: 0; font-size: 12px; color: #999;">
+        You're receiving this because ${studentName} listed you as their parent or guardian.
+      </p>
+      <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">
+        &copy; ${new Date().getFullYear()} MATHMATIX AI. All rights reserved.
       </p>
     </div>
 
@@ -942,6 +1099,7 @@ function getWelcomeEmailTemplate({ firstName, lastName, username, email, roles, 
 module.exports = {
   sendParentWeeklyReport,
   sendParentalConsentRequest,
+  sendTeenConsentRequest,
   sendPasswordResetEmail,
   sendEmailVerification,
   sendTestEmail,

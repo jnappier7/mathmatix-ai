@@ -24,9 +24,11 @@ const {
     checkConsent,
     grantBatchSchoolConsent
 } = require('../utils/consentManager');
+const crypto = require('crypto');
 const User = require('../models/user');
 const EnrollmentCode = require('../models/enrollmentCode');
 const logger = require('../utils/logger');
+const { sendTeenConsentRequest } = require('../utils/emailService');
 
 // ============================================================================
 // CONSENT STATUS
@@ -323,10 +325,15 @@ router.post('/request-parent-email', isAuthenticated, async (req, res) => {
             student.privacyConsent.history = [];
         }
 
-        // Record the consent request (consent is pending until parent confirms)
-        student.privacyConsent.status = 'active';
+        // Generate a consent verification token
+        const consentToken = crypto.randomBytes(32).toString('hex');
+        const hashedToken = crypto.createHash('sha256').update(consentToken).digest('hex');
+
+        // Record the consent request — status is pending until parent clicks through
+        student.privacyConsent.status = 'pending';
         student.privacyConsent.consentPathway = 'individual_parent';
-        student.privacyConsent.activeConsentDate = new Date();
+        student.privacyConsent.consentToken = hashedToken;
+        student.privacyConsent.consentTokenExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
         student.privacyConsent.history.push({
             consentType: 'parent_individual',
             grantedByRole: 'parent',
@@ -338,22 +345,31 @@ router.post('/request-parent-email', isAuthenticated, async (req, res) => {
             userAgent: req.get('User-Agent')
         });
 
-        // Set legacy consent flag so the student can proceed
+        // Set legacy consent flag so the student can proceed while parent confirms
         student.hasParentalConsent = true;
 
         await student.save();
 
-        // TODO: Send actual verification email to parentEmail
-        // For now, log the request. In production, integrate with SendGrid/SES.
+        // Send the consent email to the parent
+        const studentName = student.firstName || student.name || 'Your child';
+        const emailResult = await sendTeenConsentRequest(
+            parentEmail,
+            studentName,
+            consentToken,
+            student._id.toString()
+        );
+
         logger.info('[Consent] Parent email consent requested', {
             studentId: req.user._id.toString(),
-            parentEmail: '[logged-not-stored]', // Don't log the actual email
+            emailSent: emailResult.success,
             pathway: 'email_verification'
         });
 
         res.json({
             success: true,
-            message: 'Verification email sent to your parent. You can continue using Mathmatix while they confirm.'
+            message: emailResult.success
+                ? 'Verification email sent to your parent. You can continue using Mathmatix while they confirm.'
+                : 'Your consent request has been recorded. If your parent didn\'t receive the email, they can approve from their parent dashboard.'
         });
     } catch (error) {
         logger.error('[Consent] Parent email consent request failed', { error: error.message });
