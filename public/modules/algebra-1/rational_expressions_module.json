@@ -1,0 +1,236 @@
+{
+  "moduleId": "rational_expressions",
+  "course": "Algebra 1",
+  "unit": 9,
+  "quarter": 4,
+  "title": "Rational Expressions & Equations",
+  "weeks": "25-27",
+  "estimatedDuration": 45,
+  "description": "Simplify rational expressions by factoring numerators and denominators and cancelling common factors, identify excluded values that make denominators zero, perform multiplication, division, addition, and subtraction of rational expressions using factoring and least common denominators, and solve rational equations by multiplying both sides by the LCD and checking for extraneous solutions. Students connect rational expression work to their prior knowledge of fraction arithmetic and polynomial factoring, building toward fluency with algebraic fractions and the critical habit of verifying that solutions do not produce division by zero.",
+  "skills": ["simplifying-rational-expressions", "multiplying-dividing-rationals", "solving-rational-equations"],
+  "standardsAlignment": ["A-APR.6", "A-APR.7", "A-REI.2"],
+  "goals": [
+    "Simplify rational expressions by factoring the numerator and denominator completely, cancelling common factors, and stating the result in lowest terms with all excluded values identified",
+    "Determine the excluded values (restrictions on the variable) of a rational expression by setting each factor of the denominator equal to zero and solving",
+    "Multiply and divide rational expressions by factoring, cancelling common factors across numerators and denominators, and expressing the quotient or product in simplified form",
+    "Add and subtract rational expressions by finding the least common denominator (LCD), rewriting each fraction with the LCD, combining numerators, and simplifying the result",
+    "Solve rational equations by multiplying every term by the LCD to clear fractions, solving the resulting polynomial equation, and checking each candidate solution against the original denominators to identify and reject extraneous solutions"
+  ],
+  "instructionalStrategy": [
+    "Connect rational expressions to fraction arithmetic from earlier grades: just as 6/8 simplifies to 3/4 by cancelling the common factor 2, (x²−9)/(x²+5x+6) simplifies by cancelling the common factor (x+3). Start every lesson with a numeric fraction example before moving to the algebraic version so students see the parallel.",
+    "Adopt a factor-first approach for every problem: before any simplification, multiplication, division, or addition, the first step is always to factor every numerator and every denominator completely. Make this a non-negotiable habit so students never attempt to cancel terms that are not factors.",
+    "Teach addition and subtraction of rational expressions through an LCD strategy that mirrors the numeric process: find the LCD by taking each distinct factor at its highest power, build each fraction up to the LCD, combine numerators over the common denominator, then simplify.",
+    "Emphasize extraneous solution checking as a critical final step whenever solving rational equations. After clearing denominators and solving the resulting equation, students must substitute every candidate solution back into the original equation to verify it does not make any denominator zero.",
+    "Use side-by-side valid/invalid cancellation examples to inoculate against the most common error: cancelling terms instead of factors. Show that (x+3)/(x+5) cannot be simplified by 'cancelling the x,' while x(x+3)/(x(x+5)) can cancel the common factor x. Reinforce the rule: you can only cancel factors, never terms."
+  ],
+  "aiFlexLevel": "moderate",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "simplifying-rational-expressions",
+      "title": "Introduction to Rational Expressions",
+      "text": "A **rational expression** is a fraction whose numerator and denominator are **polynomials**. Examples: (x + 3)/(x − 1), (2x² + 5x)/(x² − 4), 7/(x + 2).\n\nJust as numeric fractions can be simplified (e.g., 12/18 = 2/3), rational expressions can be simplified by **factoring and cancelling common factors**.\n\n**Excluded values (restrictions):**\nA rational expression is **undefined** whenever its denominator equals zero. The values of the variable that make the denominator zero are called **excluded values**.\n- For 5/(x − 3): the denominator is zero when x = 3, so x ≠ 3.\n- For (x + 1)/(x² − 4): factor the denominator as (x − 2)(x + 2). The expression is undefined when x = 2 or x = −2.\n\n**You must always state excluded values**, even after simplifying. If a factor cancels, the original restriction still applies.\n\n**Simplifying rational expressions — the process:**\n1. **Factor** the numerator and denominator completely.\n2. **Identify excluded values** from the factored denominator (set each factor = 0).\n3. **Cancel common factors** that appear in both the numerator and denominator.\n4. **Write the simplified expression** and list all excluded values.\n\n**Critical rule:** You can only cancel **factors** (expressions connected by multiplication), never **terms** (expressions connected by addition or subtraction). For example, in (x + 5)/(x + 3), the x's are terms, not factors — you cannot cancel them.\n\nExample: Simplify (x² − 9)/(x² + 5x + 6).\nFactor: (x − 3)(x + 3) / (x + 2)(x + 3).\nCancel (x + 3): (x − 3)/(x + 2).\nExcluded values: x ≠ −3, x ≠ −2 (from original denominator factors).",
+      "initialPrompt": "Consider the expression (x² − 4)/(x² − 4x + 4). Can you factor both the numerator and the denominator? What factor, if any, is common to both? What are the excluded values?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "simplifying-rational-expressions",
+      "title": "I-Do: Simplifying Rational Expressions and Identifying Excluded Values",
+      "examples": [
+        {
+          "problem": "Simplify (x² − 9)/(x² + 5x + 6). State all excluded values.",
+          "solution": "**Step 1: Factor the numerator.**\nx² − 9 is a difference of squares: (x − 3)(x + 3).\n\n**Step 2: Factor the denominator.**\nx² + 5x + 6: find two numbers that multiply to 6 and add to 5 → 2 and 3.\nx² + 5x + 6 = (x + 2)(x + 3).\n\n**Step 3: Identify excluded values from the factored denominator.**\n(x + 2)(x + 3) = 0 when x = −2 or x = −3.\nSo **x ≠ −2** and **x ≠ −3**.\n\n**Step 4: Cancel common factors.**\n(x − 3)(x + 3) / (x + 2)(x + 3) — the factor (x + 3) appears in both.\nCancel (x + 3): **(x − 3)/(x + 2)**.\n\n**Step 5: Write the final answer.**\n**(x − 3)/(x + 2), where x ≠ −3 and x ≠ −2.**\n\nNote: Even though (x + 3) was cancelled, x = −3 remains an excluded value because it made the original denominator zero. The simplified form and the original are equivalent for all values except x = −3 (where the original is undefined but the simplified form gives a finite value).",
+          "tip": "Always factor completely BEFORE attempting to cancel. Never cancel individual terms like x's or numbers — only entire factors."
+        },
+        {
+          "problem": "Simplify (2x² + 6x)/(4x). State all excluded values.",
+          "solution": "**Step 1: Factor the numerator.**\n2x² + 6x: factor out the GCF of 2x.\n2x² + 6x = 2x(x + 3).\n\n**Step 2: Factor the denominator.**\n4x is already in factored form: 4 · x (or equivalently, 4x).\n\n**Step 3: Identify excluded values.**\n4x = 0 when x = 0.\nSo **x ≠ 0**.\n\n**Step 4: Cancel common factors.**\n2x(x + 3) / (4x)\nCancel x from numerator and denominator: 2(x + 3)/4.\nSimplify the coefficient: 2/4 = 1/2.\nResult: **(x + 3)/2**.\n\n**Step 5: Write the final answer.**\n**(x + 3)/2, where x ≠ 0.**\n\nVerification: Plug in x = 2. Original: (2·4 + 12)/(8) = 20/8 = 5/2. Simplified: (2 + 3)/2 = 5/2. ✓",
+          "tip": "When a monomial appears in the numerator or denominator, factor out the GCF. Here, 2x is the GCF of 2x² + 6x, and x is the common factor with 4x."
+        },
+        {
+          "problem": "Identify the excluded values for the expression 5/(x² − 4).",
+          "solution": "**Step 1: Factor the denominator.**\nx² − 4 is a difference of squares: (x − 2)(x + 2).\n\n**Step 2: Set each factor equal to zero.**\nx − 2 = 0 → x = 2.\nx + 2 = 0 → x = −2.\n\n**Step 3: State the excluded values.**\n**x ≠ 2 and x ≠ −2.**\n\nThe expression 5/(x² − 4) is undefined at x = 2 and x = −2 because substituting either value makes the denominator zero:\n- At x = 2: 5/(4 − 4) = 5/0 — undefined.\n- At x = −2: 5/(4 − 4) = 5/0 — undefined.\n\nThe expression cannot be simplified further since the numerator (5) and denominator (x − 2)(x + 2) share no common factors.",
+          "tip": "Always factor the denominator completely to find ALL excluded values. A quadratic denominator can produce up to two excluded values. Don't forget to check for differences of squares."
+        }
+      ],
+      "initialPrompt": "In the first example, we factored x² − 9 as (x − 3)(x + 3) and x² + 5x + 6 as (x + 2)(x + 3). The common factor (x + 3) cancelled, but x = −3 is still excluded. Why must we keep x = −3 as a restriction even after simplifying?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "multiplying-dividing-rationals",
+      "title": "Multiplying, Dividing, Adding, and Subtracting Rational Expressions",
+      "text": "Operations with rational expressions follow the **same rules as operations with numeric fractions**.\n\n**Multiplying rational expressions:**\n1. Factor all numerators and denominators completely.\n2. Cancel any common factors between any numerator and any denominator.\n3. Multiply remaining numerators together and remaining denominators together.\n\nRule: (a/b) · (c/d) = (a·c)/(b·d), then simplify.\n\n**Dividing rational expressions:**\nTo divide, **multiply by the reciprocal** of the divisor.\n(a/b) ÷ (c/d) = (a/b) · (d/c)\nThen proceed as with multiplication: factor, cancel, multiply.\n\n**Adding and subtracting rational expressions:**\nJust like numeric fractions, you need a **common denominator** before combining.\n1. Factor all denominators.\n2. Find the **Least Common Denominator (LCD)** — the product of all distinct factors, each raised to its highest power.\n3. Rewrite each fraction as an equivalent fraction with the LCD.\n4. Combine the numerators (add or subtract) over the LCD.\n5. Simplify the resulting expression if possible.\n\nExample of finding the LCD:\nFor 3/x and 5/(x + 2), the denominators are x and (x + 2). These share no common factors, so the LCD = x(x + 2).\n\n**Common mistake:** Students try to add fractions by adding numerators and denominators separately: 3/x + 5/(x+2) ≠ 8/(2x+2). This is wrong for the same reason 1/2 + 1/3 ≠ 2/5. You must use a common denominator.",
+      "initialPrompt": "When you add 1/4 + 1/6 with numbers, you find the LCD (12), rewrite as 3/12 + 2/12 = 5/12. How would you apply the same idea to add 1/x + 1/(x + 1)?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "multiplying-dividing-rationals",
+      "title": "I-Do: Operations with Rational Expressions",
+      "examples": [
+        {
+          "problem": "Multiply: (x + 2)/(x − 1) · (x − 1)/(x² − 4). Simplify completely and state excluded values.",
+          "solution": "**Step 1: Factor everything.**\nNumerators: (x + 2) and (x − 1) — already factored.\nDenominators: (x − 1) and (x² − 4).\nx² − 4 = (x − 2)(x + 2) (difference of squares).\n\nSo the expression becomes:\n(x + 2)/(x − 1) · (x − 1)/((x − 2)(x + 2))\n\n**Step 2: Identify excluded values.**\nDenominator factors: (x − 1), (x − 2), (x + 2).\nx ≠ 1, x ≠ 2, x ≠ −2.\n\n**Step 3: Cancel common factors.**\n(x + 2) cancels with (x + 2).\n(x − 1) cancels with (x − 1).\n\nRemaining: 1/(x − 2).\n\n**Step 4: Write the final answer.**\n**1/(x − 2), where x ≠ −2, x ≠ 1, and x ≠ 2.**\n\nVerification: Let x = 3.\nOriginal: (5)/(2) · (2)/(9 − 4) = (5/2) · (2/5) = 10/10 = 1.\nSimplified: 1/(3 − 2) = 1/1 = 1. ✓",
+          "tip": "When multiplying, you can cancel any factor in ANY numerator with any factor in ANY denominator. You are not limited to cancelling within the same fraction."
+        },
+        {
+          "problem": "Divide: (x² − 1)/(x + 3) ÷ (x − 1)/2. Simplify completely and state excluded values.",
+          "solution": "**Step 1: Rewrite as multiplication by the reciprocal.**\n(x² − 1)/(x + 3) ÷ (x − 1)/2 = (x² − 1)/(x + 3) · 2/(x − 1)\n\n**Step 2: Factor everything.**\nx² − 1 = (x − 1)(x + 1) (difference of squares).\nThe expression becomes:\n(x − 1)(x + 1)/(x + 3) · 2/(x − 1)\n\n**Step 3: Identify excluded values.**\nDenominator factors across both the original dividend and divisor: (x + 3) and (x − 1).\nNote: (x − 1) was in the denominator of the divisor, so x ≠ 1. Also x ≠ −3.\n**x ≠ 1, x ≠ −3.**\n\n**Step 4: Cancel common factors.**\n(x − 1) in the numerator cancels with (x − 1) in the denominator.\n\nRemaining: (x + 1) · 2/(x + 3) = 2(x + 1)/(x + 3).\n\n**Step 5: Write the final answer.**\n**2(x + 1)/(x + 3), where x ≠ 1 and x ≠ −3.**\n\nVerification: Let x = 2.\nOriginal: (4 − 1)/(2 + 3) ÷ (2 − 1)/2 = (3/5) ÷ (1/2) = (3/5) · (2/1) = 6/5.\nSimplified: 2(3)/(5) = 6/5. ✓",
+          "tip": "For division, the key step is flipping the second fraction. After that, it becomes a multiplication problem. Remember: 'dividing by a fraction is the same as multiplying by its reciprocal.'"
+        },
+        {
+          "problem": "Add: 3/x + 5/(x + 2). Express with a common denominator and simplify.",
+          "solution": "**Step 1: Identify the denominators and find the LCD.**\nDenominators: x and (x + 2).\nThese share no common factors, so LCD = x(x + 2).\n\n**Step 2: Rewrite each fraction with the LCD.**\n3/x = 3(x + 2) / (x(x + 2)) — multiply numerator and denominator by (x + 2).\n5/(x + 2) = 5x / (x(x + 2)) — multiply numerator and denominator by x.\n\n**Step 3: Add the numerators over the common denominator.**\n3(x + 2)/(x(x + 2)) + 5x/(x(x + 2))\n= (3(x + 2) + 5x) / (x(x + 2))\n= (3x + 6 + 5x) / (x(x + 2))\n= (8x + 6) / (x(x + 2))\n\n**Step 4: Simplify if possible.**\nCheck if the numerator factors share anything with the denominator.\n8x + 6 = 2(4x + 3). The denominator is x(x + 2).\nNo common factors, so the expression is fully simplified.\n\n**Step 5: Write the final answer.**\n**(8x + 6)/(x(x + 2)), where x ≠ 0 and x ≠ −2.**\n\nThis can also be written as **2(4x + 3)/(x(x + 2))**.\n\nVerification: Let x = 1.\nOriginal: 3/1 + 5/3 = 3 + 5/3 = 9/3 + 5/3 = 14/3.\nSimplified: (8 + 6)/(1 · 3) = 14/3. ✓",
+          "tip": "Finding the LCD for rational expressions works exactly like finding the LCD for numeric fractions. If the denominators share no common factors, the LCD is simply their product."
+        }
+      ],
+      "initialPrompt": "In the multiplication example, (x + 2) and (x − 1) both cancelled because each appeared in a numerator and a denominator. What would happen if (x + 2) appeared in both numerators instead? Could you still cancel it?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "multiplying-dividing-rationals",
+      "title": "We-Do: Simplifying and Operating with Rational Expressions",
+      "problems": [
+        {
+          "id": "re-wp1",
+          "question": "Simplify (x² − 4x)/(x² − 16). State all excluded values.",
+          "answer": "Factor numerator: x(x − 4). Factor denominator: (x − 4)(x + 4). Cancel (x − 4). Result: x/(x + 4), where x ≠ 4 and x ≠ −4.",
+          "hints": [
+            "Factor the numerator: x² − 4x = x(x − 4). Factor the denominator: x² − 16 is a difference of squares = (x − 4)(x + 4).",
+            "The common factor is (x − 4). Cancel it from numerator and denominator.",
+            "Result: x/(x + 4). Excluded values come from the original denominator: x ≠ 4 (from x − 4 = 0) and x ≠ −4 (from x + 4 = 0)."
+          ]
+        },
+        {
+          "id": "re-wp2",
+          "question": "Multiply: (x² − 1)/(x + 2) · (x + 2)/(x + 1). Simplify completely.",
+          "answer": "Factor x² − 1 = (x − 1)(x + 1). Expression: (x − 1)(x + 1)/(x + 2) · (x + 2)/(x + 1). Cancel (x + 2) and (x + 1). Result: x − 1, where x ≠ −2 and x ≠ −1.",
+          "hints": [
+            "Factor: x² − 1 = (x − 1)(x + 1). The other factors are already in simplest form.",
+            "Set up: (x − 1)(x + 1)/(x + 2) · (x + 2)/(x + 1). Cancel (x + 2) and (x + 1).",
+            "Result: x − 1. Excluded values: x ≠ −2 and x ≠ −1."
+          ]
+        },
+        {
+          "id": "re-wp3",
+          "question": "Subtract: 7/(x + 3) − 2/(x − 1). Express with a common denominator and simplify.",
+          "answer": "LCD = (x + 3)(x − 1). Rewrite: 7(x − 1)/((x + 3)(x − 1)) − 2(x + 3)/((x + 3)(x − 1)). Numerator: 7(x − 1) − 2(x + 3) = 7x − 7 − 2x − 6 = 5x − 13. Result: (5x − 13)/((x + 3)(x − 1)), where x ≠ −3 and x ≠ 1.",
+          "hints": [
+            "The denominators are (x + 3) and (x − 1). They share no common factors, so LCD = (x + 3)(x − 1).",
+            "Rewrite: 7(x − 1)/LCD − 2(x + 3)/LCD. Combine: (7(x − 1) − 2(x + 3))/LCD.",
+            "Expand: 7x − 7 − 2x − 6 = 5x − 13. Final answer: (5x − 13)/((x + 3)(x − 1)), x ≠ −3, x ≠ 1."
+          ]
+        },
+        {
+          "id": "re-wp4",
+          "question": "Divide: (x² + 2x)/(x − 5) ÷ (x + 2)/3. Simplify completely.",
+          "answer": "Multiply by reciprocal: (x² + 2x)/(x − 5) · 3/(x + 2). Factor: x(x + 2)/(x − 5) · 3/(x + 2). Cancel (x + 2). Result: 3x/(x − 5), where x ≠ 5 and x ≠ −2.",
+          "hints": [
+            "Rewrite as multiplication: (x² + 2x)/(x − 5) · 3/(x + 2).",
+            "Factor: x² + 2x = x(x + 2). So: x(x + 2)/(x − 5) · 3/(x + 2).",
+            "Cancel (x + 2). Result: 3x/(x − 5), where x ≠ 5 and x ≠ −2."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's work through these together. For the first problem, you need to simplify (x² − 4x)/(x² − 16). Start by factoring both the numerator and denominator. What is the GCF of x² − 4x? And what factoring pattern does x² − 16 follow?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "solving-rational-equations",
+      "title": "Solving Rational Equations",
+      "text": "A **rational equation** is an equation that contains one or more rational expressions (fractions with variables in the denominator).\n\nExamples: 3/x + 1/4 = 5/x, or x/(x − 3) = 3/(x − 3) + 2.\n\n**Strategy for solving rational equations:**\n1. **Identify the LCD** of all fractions in the equation.\n2. **Multiply every term** on both sides of the equation by the LCD. This clears all denominators.\n3. **Solve** the resulting equation (which should have no fractions).\n4. **Check for extraneous solutions.** A solution is **extraneous** if it makes any denominator in the original equation equal to zero. Extraneous solutions must be rejected.\n\n**Why extraneous solutions occur:**\nWhen we multiply both sides by the LCD, we may introduce values that were not in the domain of the original equation. The LCD contains the variable, so multiplying by it can create solutions that make the original denominators zero. These are not true solutions — they are artifacts of the solving process.\n\n**Critical step:** After solving, you MUST substitute every candidate solution back into the original equation's denominators. If any denominator becomes zero, that solution is extraneous and must be rejected.\n\n**Possible outcomes:**\n- All candidate solutions are valid → report them as the solution set.\n- Some candidate solutions are extraneous → reject the extraneous ones, keep the valid ones.\n- ALL candidate solutions are extraneous → the equation has **no solution**.",
+      "initialPrompt": "Consider the equation 1/x = 1/(x − 2). If you multiply both sides by x(x − 2), what equation do you get? What values of x would be excluded from the start?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "solving-rational-equations",
+      "title": "I-Do: Solving Rational Equations and Checking for Extraneous Solutions",
+      "examples": [
+        {
+          "problem": "Solve: 3/x + 1/4 = 5/x.",
+          "solution": "**Step 1: Identify the LCD.**\nDenominators: x, 4, x. The LCD = 4x.\nExcluded values: x ≠ 0.\n\n**Step 2: Multiply every term by 4x.**\n4x · (3/x) + 4x · (1/4) = 4x · (5/x)\n4 · 3 + x · 1 = 4 · 5\n12 + x = 20\n\n**Step 3: Solve the resulting equation.**\n12 + x = 20\nx = 20 − 12\nx = 8\n\n**Step 4: Check for extraneous solutions.**\nx = 8: Does it make any original denominator zero?\nDenominators: x = 8 ≠ 0 ✓ and 4 ≠ 0 ✓.\nSubstitute into original: 3/8 + 1/4 = 5/8.\n3/8 + 2/8 = 5/8.\n5/8 = 5/8. ✓\n\n**Solution: x = 8.**",
+          "tip": "When multiplying by the LCD, distribute carefully to every term on both sides. A common error is forgetting to multiply one of the terms."
+        },
+        {
+          "problem": "Solve: x/(x − 3) = 3/(x − 3) + 2.",
+          "solution": "**Step 1: Identify the LCD.**\nDenominators: (x − 3), (x − 3), and 1 (the term 2 has denominator 1).\nLCD = (x − 3).\nExcluded values: x ≠ 3.\n\n**Step 2: Multiply every term by (x − 3).**\n(x − 3) · x/(x − 3) = (x − 3) · 3/(x − 3) + (x − 3) · 2\nx = 3 + 2(x − 3)\n\n**Step 3: Solve the resulting equation.**\nx = 3 + 2x − 6\nx = 2x − 3\nx − 2x = −3\n−x = −3\nx = 3\n\n**Step 4: Check for extraneous solutions.**\nx = 3: Does it make any original denominator zero?\nDenominator (x − 3) = 3 − 3 = 0. **YES — the denominator is zero!**\n\nTherefore x = 3 is **EXTRANEOUS**. It is not a valid solution.\n\n**Solution: No solution.**\n\nThe equation has no solution because the only candidate makes the original equation undefined. This is a case where the clearing-denominators process introduced a false solution.",
+          "tip": "This is the classic extraneous solution scenario. The algebra gives x = 3, but x = 3 was excluded from the start. ALWAYS check your answers in the original equation."
+        },
+        {
+          "problem": "Solve: 2/(x + 1) + 1/(x − 1) = 4/(x² − 1).",
+          "solution": "**Step 1: Factor and identify the LCD.**\nx² − 1 = (x + 1)(x − 1).\nDenominators: (x + 1), (x − 1), (x + 1)(x − 1).\nLCD = (x + 1)(x − 1).\nExcluded values: x ≠ −1, x ≠ 1.\n\n**Step 2: Multiply every term by (x + 1)(x − 1).**\n(x + 1)(x − 1) · 2/(x + 1) + (x + 1)(x − 1) · 1/(x − 1) = (x + 1)(x − 1) · 4/((x + 1)(x − 1))\n\nSimplify each term:\n2(x − 1) + 1(x + 1) = 4\n\n**Step 3: Solve the resulting equation.**\n2(x − 1) + (x + 1) = 4\n2x − 2 + x + 1 = 4\n3x − 1 = 4\n3x = 5\nx = 5/3\n\n**Step 4: Check for extraneous solutions.**\nx = 5/3: Does it make any original denominator zero?\n(x + 1) = 5/3 + 1 = 8/3 ≠ 0 ✓\n(x − 1) = 5/3 − 1 = 2/3 ≠ 0 ✓\n(x² − 1) = 25/9 − 1 = 16/9 ≠ 0 ✓\n\nVerify in the original equation:\n2/(8/3) + 1/(2/3) = 4/(16/9)\n6/8 + 3/2 = 36/16\n3/4 + 3/2 = 9/4\n3/4 + 6/4 = 9/4\n9/4 = 9/4 ✓\n\n**Solution: x = 5/3.**",
+          "tip": "When a denominator is already factored as the product of the other denominators (as x² − 1 = (x+1)(x−1) here), the LCD is simply that factored form. Recognizing this pattern saves time."
+        }
+      ],
+      "initialPrompt": "In the second example, the algebra produced x = 3, but we had to reject it because x = 3 makes the denominator (x − 3) equal to zero. Why can't we just 'plug in' x = 3 and say the answer is infinity or some large number? What does 'undefined' really mean here?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Independent Practice — All Rational Expression Skills",
+      "problems": [
+        {
+          "id": "re-yp1",
+          "question": "Simplify (x² + 3x − 10)/(x² − 4). State all excluded values.",
+          "answer": "Factor numerator: (x + 5)(x − 2). Factor denominator: (x − 2)(x + 2). Cancel (x − 2). Result: (x + 5)/(x + 2), where x ≠ 2 and x ≠ −2.",
+          "skill": "simplifying-rational-expressions",
+          "hints": ["Factor the numerator: find two numbers that multiply to −10 and add to 3 → 5 and −2. So x² + 3x − 10 = (x + 5)(x − 2). Factor the denominator as a difference of squares: x² − 4 = (x − 2)(x + 2). Cancel the common factor (x − 2)."]
+        },
+        {
+          "id": "re-yp2",
+          "question": "Multiply: (x + 4)/(x² − 9) · (x − 3)/(x + 4). Simplify completely and state excluded values.",
+          "answer": "Factor x² − 9 = (x − 3)(x + 3). Expression: (x + 4)/((x − 3)(x + 3)) · (x − 3)/(x + 4). Cancel (x + 4) and (x − 3). Result: 1/(x + 3), where x ≠ 3, x ≠ −3, and x ≠ −4.",
+          "skill": "multiplying-dividing-rationals",
+          "hints": ["Factor x² − 9 = (x − 3)(x + 3). Then the full expression is (x + 4)/((x − 3)(x + 3)) · (x − 3)/(x + 4). Cancel (x + 4) and (x − 3) to get 1/(x + 3). Excluded values: x ≠ 3, x ≠ −3, x ≠ −4."]
+        },
+        {
+          "id": "re-yp3",
+          "question": "Add: 2/(x − 1) + 3/(x + 4). Express with a common denominator and simplify.",
+          "answer": "LCD = (x − 1)(x + 4). Rewrite: 2(x + 4)/((x − 1)(x + 4)) + 3(x − 1)/((x − 1)(x + 4)). Numerator: 2x + 8 + 3x − 3 = 5x + 5 = 5(x + 1). Result: 5(x + 1)/((x − 1)(x + 4)), where x ≠ 1 and x ≠ −4.",
+          "skill": "multiplying-dividing-rationals",
+          "hints": ["LCD = (x − 1)(x + 4). Multiply: 2(x + 4) + 3(x − 1) = 2x + 8 + 3x − 3 = 5x + 5 = 5(x + 1). The numerator and denominator share no common factors, so the answer is 5(x + 1)/((x − 1)(x + 4))."]
+        },
+        {
+          "id": "re-yp4",
+          "question": "Solve: 5/x − 1/3 = 2/x. Check your solution.",
+          "answer": "LCD = 3x. Multiply: 3x(5/x) − 3x(1/3) = 3x(2/x) → 15 − x = 6 → x = 9. Check: 5/9 − 1/3 = 5/9 − 3/9 = 2/9. And 2/9 = 2/9 ✓. Solution: x = 9.",
+          "skill": "solving-rational-equations",
+          "hints": ["LCD = 3x. Multiply every term by 3x: 15 − x = 6. Solve: x = 9. Check: 5/9 − 1/3 = 5/9 − 3/9 = 2/9, and 2/x = 2/9. ✓"]
+        },
+        {
+          "id": "re-yp5",
+          "question": "Solve: (x + 1)/(x − 2) = 3/(x − 2). Check for extraneous solutions.",
+          "answer": "LCD = (x − 2). Multiply: x + 1 = 3 → x = 2. Check: x = 2 makes denominator (x − 2) = 0. Extraneous! No solution.",
+          "skill": "solving-rational-equations",
+          "hints": ["Multiply both sides by (x − 2): x + 1 = 3, so x = 2. But check: x = 2 makes the denominator x − 2 = 0. This is extraneous. The equation has no solution."]
+        },
+        {
+          "id": "re-yp6",
+          "question": "Solve: 3/(x + 2) + 1/(x − 2) = 12/(x² − 4). Check your solution.",
+          "answer": "Factor: x² − 4 = (x + 2)(x − 2). LCD = (x + 2)(x − 2). Multiply: 3(x − 2) + 1(x + 2) = 12. Expand: 3x − 6 + x + 2 = 12 → 4x − 4 = 12 → 4x = 16 → x = 4. Check: 3/6 + 1/2 = 12/12 → 1/2 + 1/2 = 1 → 1 = 1 ✓. Solution: x = 4.",
+          "skill": "solving-rational-equations",
+          "hints": ["Factor x² − 4 = (x + 2)(x − 2), so LCD = (x + 2)(x − 2). Multiply each term: 3(x − 2) + (x + 2) = 12. Simplify: 4x − 4 = 12, so x = 4. Check: 3/6 + 1/2 = 1/2 + 1/2 = 1, and 12/12 = 1. ✓"]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "re-wp1": "x/(x + 4), where x ≠ 4 and x ≠ −4. Factor: x(x − 4)/((x − 4)(x + 4)), cancel (x − 4).",
+    "re-wp2": "x − 1, where x ≠ −2 and x ≠ −1. Factor: (x − 1)(x + 1)/(x + 2) · (x + 2)/(x + 1), cancel (x + 2) and (x + 1).",
+    "re-wp3": "(5x − 13)/((x + 3)(x − 1)), where x ≠ −3 and x ≠ 1. LCD = (x + 3)(x − 1). Numerator: 7(x − 1) − 2(x + 3) = 5x − 13.",
+    "re-wp4": "3x/(x − 5), where x ≠ 5 and x ≠ −2. Flip and multiply: x(x + 2)/(x − 5) · 3/(x + 2), cancel (x + 2).",
+    "re-yp1": "(x + 5)/(x + 2), where x ≠ 2 and x ≠ −2. Factor: (x + 5)(x − 2)/((x − 2)(x + 2)), cancel (x − 2).",
+    "re-yp2": "1/(x + 3), where x ≠ 3, x ≠ −3, x ≠ −4. Cancel (x + 4) and (x − 3).",
+    "re-yp3": "5(x + 1)/((x − 1)(x + 4)), where x ≠ 1 and x ≠ −4. LCD = (x − 1)(x + 4). Numerator: 2(x + 4) + 3(x − 1) = 5x + 5.",
+    "re-yp4": "x = 9. LCD = 3x. Equation: 15 − x = 6. Check: 5/9 − 1/3 = 2/9 ✓.",
+    "re-yp5": "No solution. x = 2 is extraneous (makes denominator zero).",
+    "re-yp6": "x = 4. LCD = (x + 2)(x − 2). Equation: 3(x − 2) + (x + 2) = 12 → 4x = 16. Check: 3/6 + 1/2 = 1, 12/12 = 1 ✓."
+  }
+}
