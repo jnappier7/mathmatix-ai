@@ -6533,6 +6533,17 @@ body.landing-page-body:has(.login-container) main {
     overflow: visible;
 }
 
+/* Allow content pages (privacy, terms, etc.) to scroll */
+body.landing-page-body:has(.content-page-wrapper) {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+body.landing-page-body:has(.content-page-wrapper) main {
+    overflow: visible;
+}
+
 /* ============================================
    MOBILE UTILITY CLASSES
    ============================================ */
