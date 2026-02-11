@@ -665,9 +665,9 @@ class CourseManager {
             // Hide nudge if showing
             this.hideNudge();
 
-            // Show welcome splash in the chat
+            // Show welcome splash in the chat (with course tips for first-time, resume for returning)
             if (data.welcomeData) {
-                this.showWelcomeSplash(data.welcomeData);
+                this.showWelcomeSplash(data.welcomeData, data.resumed || false);
             } else {
                 this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
             }
@@ -797,7 +797,7 @@ class CourseManager {
     // --------------------------------------------------
     // Welcome splash (shown in chat after enrollment)
     // --------------------------------------------------
-    showWelcomeSplash(welcome) {
+    showWelcomeSplash(welcome, isResume = false) {
         const chatBox = document.getElementById('chat-messages-container');
         if (!chatBox) return;
 
@@ -817,10 +817,42 @@ class CourseManager {
             </div>`
         ).join('');
 
+        // Course mini-tour tips (shown below the learning path for first-time enrollees)
+        const courseTipsHtml = isResume ? '' : `
+            <div class="course-tips" style="margin-top:16px; border-top:1px solid #f0f0f0; padding-top:14px;">
+                <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:#667eea; letter-spacing:0.05em; margin-bottom:10px;">
+                    <i class="fas fa-lightbulb" style="margin-right:4px;"></i> How Courses Work
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #667eea, #764ba2); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">1</div>
+                        <div>
+                            <div style="font-size:13px; font-weight:600; color:#333;">Your tutor leads the lesson</div>
+                            <div style="font-size:12px; color:#777;">No need to pick a topic &mdash; your AI tutor teaches concepts, walks through examples, then gives you practice problems.</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #667eea, #764ba2); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">2</div>
+                        <div>
+                            <div style="font-size:13px; font-weight:600; color:#333;">Progress bar tracks your journey</div>
+                            <div style="font-size:12px; color:#777;">The bar at the top shows your current module and step. Click it to see all modules and your overall progress.</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #667eea, #764ba2); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">3</div>
+                        <div>
+                            <div style="font-size:13px; font-weight:600; color:#333;">You advance by showing mastery</div>
+                            <div style="font-size:12px; color:#777;">Solve practice problems correctly and your tutor will move you to the next step automatically. No rushing &mdash; go at your own pace.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
         splash.innerHTML = `
             <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 24px; color: white; text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 8px;">🎓</div>
-                <h2 style="margin: 0 0 4px; font-size: 20px; font-weight: 700;">Welcome to ${this.escapeHtml(welcome.courseName)}</h2>
+                <div style="font-size: 36px; margin-bottom: 8px;">${isResume ? '👋' : '🎓'}</div>
+                <h2 style="margin: 0 0 4px; font-size: 20px; font-weight: 700;">${isResume ? 'Welcome Back!' : 'Welcome to'} ${this.escapeHtml(welcome.courseName)}</h2>
                 <p style="margin: 0; opacity: 0.9; font-size: 13px;">${welcome.moduleCount} modules · Self-paced · AI-guided</p>
             </div>
             <div style="padding: 20px; background: white;">
@@ -828,11 +860,12 @@ class CourseManager {
                 <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; letter-spacing: 0.05em; margin-bottom: 8px;">Your Learning Path</div>
                 ${unitListHtml}
                 ${units.length < welcome.moduleCount ? `<div style="font-size: 12px; color: #aaa; padding: 4px 0 0 32px;">+${welcome.moduleCount - units.length} more modules</div>` : ''}
+                ${courseTipsHtml}
                 <button onclick="this.closest('.course-welcome-splash').remove()" style="
                     margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 10px;
                     background: linear-gradient(135deg, #667eea, #764ba2); color: white;
                     font-weight: 700; font-size: 14px; cursor: pointer;
-                "><i class="fas fa-play" style="margin-right: 6px;"></i>Start ${this.escapeHtml(welcome.firstModuleTitle)}</button>
+                "><i class="fas fa-play" style="margin-right: 6px;"></i>${isResume ? 'Continue Learning' : `Start ${this.escapeHtml(welcome.firstModuleTitle)}`}</button>
             </div>
         `;
 
