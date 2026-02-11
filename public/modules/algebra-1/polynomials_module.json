@@ -1,0 +1,316 @@
+{
+  "moduleId": "polynomials",
+  "course": "Algebra 1",
+  "unit": 5,
+  "quarter": 3,
+  "title": "Exponents, Polynomials & Factoring",
+  "weeks": "12-15",
+  "estimatedDuration": 45,
+  "description": "Master the laws of exponents (product, quotient, power, zero, and negative rules), then build on that foundation to add, subtract, and multiply polynomials. Conclude by learning to factor polynomials—starting with greatest common factor, progressing to factoring trinomials, and finishing with the difference-of-squares pattern—so that students can rewrite expressions in equivalent forms and begin solving polynomial equations.",
+  "skills": [
+    "exponent-rules-multiplication",
+    "exponent-rules-division",
+    "polynomial-addition-subtraction",
+    "polynomial-multiplication-monomial",
+    "factoring-gcf",
+    "factoring-trinomials",
+    "factoring-difference-of-squares"
+  ],
+  "standardsAlignment": ["A-SSE.2", "A-SSE.3c", "A-APR.1", "N-RN.1"],
+  "goals": [
+    "Apply the product, quotient, power, zero-exponent, and negative-exponent rules to simplify expressions with integer exponents",
+    "Add, subtract, and classify polynomials by degree and number of terms, writing results in standard form",
+    "Multiply polynomials, including monomial-by-polynomial and binomial-by-binomial (FOIL), and verify results",
+    "Factor polynomials by extracting the greatest common factor (GCF) and recognize when GCF factoring should always be performed first",
+    "Factor trinomials of the form x² + bx + c and recognize and factor difference-of-squares expressions a² − b²"
+  ],
+  "instructionalStrategy": [
+    "Teach exponent rules through pattern recognition—have students expand expressions like x³·x⁴ into (x·x·x)(x·x·x·x) so they discover the product rule themselves before stating the shortcut aᵐ·aⁿ = aᵐ⁺ⁿ.",
+    "Use algebra tiles or area-model diagrams for polynomial multiplication so students can see that (x+3)(x−5) produces four partial products before combining like terms.",
+    "Frame factoring as 'un-multiplying'—always start by asking 'What is the GCF of every term?' before attempting any other factoring strategy, building the habit of GCF-first.",
+    "Connect factoring trinomials back to FOIL: if (x+a)(x+b) = x² + (a+b)x + ab, then factoring means finding two numbers that multiply to c and add to b.",
+    "Use the 'diamond method' or factor-pair tables for trinomial factoring so students have a systematic search strategy rather than guessing, and always verify by multiplying back out."
+  ],
+  "aiFlexLevel": "high",
+  "scaffold": [
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "exponent-rules-multiplication",
+      "title": "Laws of Exponents",
+      "text": "An **exponent** tells you how many times a base is used as a factor: x⁴ = x·x·x·x.\n\nHere are the five core exponent rules you need:\n\n**1. Product Rule:** aᵐ · aⁿ = aᵐ⁺ⁿ\nWhen you multiply powers with the **same base**, ADD the exponents.\nWhy? x³ · x⁴ = (x·x·x)(x·x·x·x) = x⁷ — that is 3 + 4 = 7 factors of x.\n\n**2. Quotient Rule:** aᵐ / aⁿ = aᵐ⁻ⁿ (a ≠ 0)\nWhen you divide powers with the **same base**, SUBTRACT the exponents.\nWhy? x⁵ / x² = (x·x·x·x·x) / (x·x) — two factors cancel, leaving x³ = x⁵⁻².\n\n**3. Power Rule:** (aᵐ)ⁿ = aᵐⁿ\nWhen you raise a power to another power, MULTIPLY the exponents.\nWhy? (x²)³ = x² · x² · x² = x⁶ = x²ˣ³.\n\n**4. Zero Exponent Rule:** a⁰ = 1 (a ≠ 0)\nAny nonzero base raised to the zero power equals 1.\nWhy? aⁿ / aⁿ = aⁿ⁻ⁿ = a⁰, but aⁿ / aⁿ is also 1, so a⁰ = 1.\n\n**5. Negative Exponent Rule:** a⁻ⁿ = 1/aⁿ (a ≠ 0)\nA negative exponent means 'take the reciprocal.'\nWhy? a⁻ⁿ = a⁰⁻ⁿ = a⁰ / aⁿ = 1/aⁿ.\n\n**Important:** These rules only apply when the bases are the **same**. You cannot use the product rule to simplify x³ · y² because the bases (x and y) are different.",
+      "initialPrompt": "Expand x³ · x⁴ by writing all the factors of x out. How many total factors of x do you get? How does that connect to the product rule?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "exponent-rules-multiplication",
+      "title": "I-Do: Applying Exponent Rules",
+      "examples": [
+        {
+          "problem": "Simplify: x³ · x⁴",
+          "solution": "**Product Rule:** When multiplying powers with the same base, add the exponents.\n\nx³ · x⁴ = x³⁺⁴ = **x⁷**\n\nVerification by expansion:\nx³ · x⁴ = (x·x·x)(x·x·x·x) = x·x·x·x·x·x·x = x⁷ ✓"
+        },
+        {
+          "problem": "Simplify: (2x³)⁴",
+          "solution": "**Power Rule + Coefficient:** Raise every factor inside the parentheses to the 4th power.\n\n(2x³)⁴ = 2⁴ · (x³)⁴\n\nStep 1: 2⁴ = 16\nStep 2: (x³)⁴ = x³ˣ⁴ = x¹²  (power rule: multiply exponents)\n\n(2x³)⁴ = **16x¹²**\n\nCommon mistake: forgetting to raise the coefficient 2 to the 4th power. The exponent applies to EVERYTHING inside the parentheses."
+        },
+        {
+          "problem": "Simplify: 12x⁵ / 3x²",
+          "solution": "**Quotient Rule:** Divide the coefficients and subtract the exponents.\n\nStep 1: Divide the coefficients: 12 / 3 = 4\nStep 2: Subtract the exponents (same base x): x⁵ / x² = x⁵⁻² = x³\n\n12x⁵ / 3x² = **4x³**\n\nVerification: 4x³ · 3x² = 12x⁵ ✓  (multiplying back should give the original numerator)"
+        }
+      ],
+      "initialPrompt": "In the second example, why did we need to raise the 2 to the 4th power as well? What would happen if we only applied the exponent to x³?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "polynomial-addition-subtraction",
+      "title": "Polynomial Vocabulary and Classification",
+      "text": "A **polynomial** is an expression made up of one or more **terms**, where each term is a product of a number (coefficient) and a variable raised to a whole-number exponent.\n\nKey vocabulary:\n- **Term:** A single piece of a polynomial, such as 5x³ or -2x or 7.\n- **Coefficient:** The number in front of the variable (in 5x³, the coefficient is 5).\n- **Degree of a term:** The exponent on the variable (5x³ has degree 3; a constant like 7 has degree 0).\n- **Degree of a polynomial:** The highest degree among all its terms. Example: 4x³ + 2x - 7 has degree 3.\n- **Leading coefficient:** The coefficient of the term with the highest degree.\n- **Standard form:** Terms written in order from highest degree to lowest degree.\n\n**Classification by number of terms:**\n- **Monomial:** 1 term (e.g., 5x²)\n- **Binomial:** 2 terms (e.g., 3x + 7)\n- **Trinomial:** 3 terms (e.g., x² + 4x - 1)\n- **Polynomial:** general name for any number of terms\n\n**Adding polynomials:** Combine like terms (same variable and same exponent).\n**Subtracting polynomials:** Distribute the negative sign to every term in the second polynomial, then combine like terms.\n\nAlways write your final answer in **standard form** (highest degree first).",
+      "initialPrompt": "What is the degree of the polynomial 2x⁴ - 7x² + 3x - 1? How many terms does it have, and what would you call it?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "polynomial-multiplication-monomial",
+      "title": "I-Do: Adding, Subtracting, and Multiplying Polynomials",
+      "examples": [
+        {
+          "problem": "Add: (3x² + 5x - 2) + (x² - 3x + 7)",
+          "solution": "**Step 1: Remove parentheses.** When adding, the signs stay the same.\n3x² + 5x - 2 + x² - 3x + 7\n\n**Step 2: Group like terms.**\n(3x² + x²) + (5x - 3x) + (-2 + 7)\n\n**Step 3: Combine.**\n4x² + 2x + 5\n\n**Answer: 4x² + 2x + 5** (already in standard form — degree 2, trinomial)"
+        },
+        {
+          "problem": "Subtract: (4x³ + 2x - 9) - (x³ - 5x + 3)",
+          "solution": "**Step 1: Distribute the negative sign to EVERY term in the second polynomial.**\n4x³ + 2x - 9 - x³ + 5x - 3\n\nNotice: -(x³) = -x³, -(-5x) = +5x, -(3) = -3. The negative flips ALL signs.\n\n**Step 2: Group like terms.**\n(4x³ - x³) + (2x + 5x) + (-9 - 3)\n\n**Step 3: Combine.**\n3x³ + 7x - 12\n\n**Answer: 3x³ + 7x - 12** (degree 3, trinomial)\n\nCommon mistake: only distributing the negative to the first term of the second polynomial. The subtraction sign applies to the ENTIRE polynomial inside the parentheses."
+        },
+        {
+          "problem": "Multiply using FOIL: (x + 3)(x - 5)",
+          "solution": "**FOIL** stands for First, Outer, Inner, Last — it is a method for multiplying two binomials.\n\n**F**irst: x · x = x²\n**O**uter: x · (-5) = -5x\n**I**nner: 3 · x = 3x\n**L**ast: 3 · (-5) = -15\n\nCombine all four terms:\nx² - 5x + 3x - 15\n\nCombine like terms (-5x + 3x = -2x):\n**x² - 2x - 15**\n\nVerification: We can check by substituting x = 1.\n(1 + 3)(1 - 5) = (4)(-4) = -16\n1² - 2(1) - 15 = 1 - 2 - 15 = -16 ✓"
+        }
+      ],
+      "initialPrompt": "In the subtraction example, what happens to each sign in the second polynomial when we distribute the negative? Why is this the most common source of errors?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "exponent-rules-multiplication",
+      "title": "We-Do: Exponent Rules and Polynomial Operations",
+      "problems": [
+        {
+          "id": "po-wp1",
+          "question": "Simplify: x⁵ · x³",
+          "answer": "x⁸",
+          "hints": [
+            "The bases are the same (both x). Use the product rule: add the exponents.",
+            "x⁵ · x³ = x⁵⁺³ = x⁸."
+          ]
+        },
+        {
+          "id": "po-wp2",
+          "question": "Simplify: (3x²)³",
+          "answer": "27x⁶",
+          "hints": [
+            "The exponent 3 applies to everything inside the parentheses — both the 3 and the x².",
+            "3³ = 27 and (x²)³ = x²ˣ³ = x⁶. So (3x²)³ = 27x⁶."
+          ]
+        },
+        {
+          "id": "po-wp3",
+          "question": "Simplify: 20x⁷ / (4x³)",
+          "answer": "5x⁴",
+          "hints": [
+            "Divide the coefficients: 20 / 4 = 5. Subtract the exponents: x⁷ / x³ = x⁷⁻³.",
+            "20x⁷ / (4x³) = 5x⁴."
+          ]
+        },
+        {
+          "id": "po-wp4",
+          "question": "Add: (2x² + 7x - 3) + (5x² - 4x + 8)",
+          "answer": "7x² + 3x + 5",
+          "hints": [
+            "Combine like terms: x² terms, x terms, and constant terms separately.",
+            "(2x² + 5x²) + (7x - 4x) + (-3 + 8) = 7x² + 3x + 5."
+          ]
+        },
+        {
+          "id": "po-wp5",
+          "question": "Multiply using FOIL: (x + 4)(x - 6)",
+          "answer": "x² - 2x - 24",
+          "hints": [
+            "F: x·x = x². O: x·(-6) = -6x. I: 4·x = 4x. L: 4·(-6) = -24.",
+            "Combine: x² - 6x + 4x - 24 = x² - 2x - 24."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice exponent rules and polynomial operations together. For the first problem, what rule do you use when multiplying two powers with the same base?"
+    },
+    {
+      "type": "explanation",
+      "lessonPhase": "concept-intro",
+      "skill": "factoring-gcf",
+      "title": "Introduction to Factoring",
+      "text": "**Factoring** is the reverse of multiplication. When we multiply, we go from factors to a product. When we factor, we go from a product back to its factors.\n\nMultiplication: 3x(2x + 3) = 6x² + 9x\nFactoring: 6x² + 9x = 3x(2x + 3)\n\n**Why factor?** Factoring lets us solve equations (the Zero Product Property says if ab = 0, then a = 0 or b = 0), simplify expressions, and find key features of parabolas.\n\n**Rule #1 — ALWAYS check for a GCF first!**\n\nThe **Greatest Common Factor (GCF)** is the largest factor that divides evenly into every term of the polynomial.\n\nTo find the GCF:\n1. Find the GCF of the **coefficients** (the largest number that divides all of them).\n2. Find the GCF of the **variables** (take the lowest exponent of each variable that appears in every term).\n3. Multiply these together.\n\nAfter pulling out the GCF, look inside the parentheses to see if the remaining expression can be factored further.\n\n**Three main factoring strategies for this unit:**\n1. **GCF factoring** — always try this first\n2. **Trinomial factoring** — for expressions of the form x² + bx + c\n3. **Difference of squares** — for expressions of the form a² - b²",
+      "initialPrompt": "In the expression 6x² + 9x, what is the largest number that divides both 6 and 9? What is the lowest power of x that appears in both terms?"
+    },
+    {
+      "type": "model",
+      "lessonPhase": "i-do",
+      "skill": "factoring-gcf",
+      "title": "I-Do: GCF Factoring, Trinomials, and Difference of Squares",
+      "examples": [
+        {
+          "problem": "Factor: 6x² + 9x",
+          "solution": "**Step 1: Find the GCF of the coefficients.**\nGCF of 6 and 9 = 3\n\n**Step 2: Find the GCF of the variables.**\nx² and x → the lowest power is x¹ = x\n\n**Step 3: The GCF is 3x.** Factor it out by dividing each term:\n6x² ÷ 3x = 2x\n9x ÷ 3x = 3\n\n**Answer: 6x² + 9x = 3x(2x + 3)**\n\nVerification: 3x(2x + 3) = 3x · 2x + 3x · 3 = 6x² + 9x ✓"
+        },
+        {
+          "problem": "Factor: x² + 7x + 12",
+          "solution": "**Step 1: Check for a GCF.** The GCF of x², 7x, and 12 is 1 — no common factor to pull out.\n\n**Step 2: This is a trinomial of the form x² + bx + c.** We need two numbers that:\n- **Multiply** to c = 12\n- **Add** to b = 7\n\n**Step 3: List factor pairs of 12:**\n1 × 12 → sum = 13 ✗\n2 × 6 → sum = 8 ✗\n3 × 4 → sum = 7 ✓\n\n**Step 4: Write the factored form.**\nx² + 7x + 12 = **(x + 3)(x + 4)**\n\nVerification (FOIL): (x + 3)(x + 4) = x² + 4x + 3x + 12 = x² + 7x + 12 ✓"
+        },
+        {
+          "problem": "Factor: 4x² - 25",
+          "solution": "**Step 1: Check for a GCF.** The GCF of 4x² and 25 is 1 — no common factor.\n\n**Step 2: Recognize the pattern.** This is a **difference of two squares**:\na² - b² = (a + b)(a - b)\n\nRewrite each term as a perfect square:\n4x² = (2x)²\n25 = (5)²\n\nSo 4x² - 25 = (2x)² - (5)²\n\n**Step 3: Apply the formula.**\n4x² - 25 = **(2x + 5)(2x - 5)**\n\nVerification (FOIL): (2x + 5)(2x - 5) = 4x² - 10x + 10x - 25 = 4x² - 25 ✓\n\nNote: The middle terms always cancel in a difference of squares, which is why the original expression has no x-term."
+        }
+      ],
+      "initialPrompt": "In the trinomial factoring example, we needed two numbers that multiply to 12 and add to 7. Why do those two conditions come from the FOIL pattern?"
+    },
+    {
+      "type": "guided_practice",
+      "lessonPhase": "we-do",
+      "skill": "factoring-gcf",
+      "title": "We-Do: Factoring Practice",
+      "problems": [
+        {
+          "id": "po-wp6",
+          "question": "Factor: 8x³ + 12x²",
+          "answer": "4x²(2x + 3)",
+          "hints": [
+            "Find the GCF of the coefficients: GCF of 8 and 12 is 4. Find the GCF of the variables: the lowest power of x is x².",
+            "GCF = 4x². Divide each term: 8x³ ÷ 4x² = 2x and 12x² ÷ 4x² = 3. So 8x³ + 12x² = 4x²(2x + 3)."
+          ]
+        },
+        {
+          "id": "po-wp7",
+          "question": "Factor: x² + 5x + 6",
+          "answer": "(x + 2)(x + 3)",
+          "hints": [
+            "Find two numbers that multiply to 6 and add to 5.",
+            "2 × 3 = 6 and 2 + 3 = 5. So x² + 5x + 6 = (x + 2)(x + 3)."
+          ]
+        },
+        {
+          "id": "po-wp8",
+          "question": "Factor: x² - 4x - 21",
+          "answer": "(x - 7)(x + 3)",
+          "hints": [
+            "Find two numbers that multiply to -21 and add to -4. Since the product is negative, the numbers have different signs.",
+            "-7 × 3 = -21 and -7 + 3 = -4. So x² - 4x - 21 = (x - 7)(x + 3)."
+          ]
+        },
+        {
+          "id": "po-wp9",
+          "question": "Factor: 9x² - 16",
+          "answer": "(3x + 4)(3x - 4)",
+          "hints": [
+            "This is a difference of two squares: 9x² = (3x)² and 16 = (4)².",
+            "Apply a² - b² = (a + b)(a - b): 9x² - 16 = (3x + 4)(3x - 4)."
+          ]
+        },
+        {
+          "id": "po-wp10",
+          "question": "Factor completely: 2x² + 10x + 12",
+          "answer": "2(x + 2)(x + 3)",
+          "hints": [
+            "Always check for a GCF first! The GCF of 2, 10, and 12 is 2. Factor it out: 2(x² + 5x + 6).",
+            "Now factor the trinomial inside: find two numbers that multiply to 6 and add to 5 → 2 and 3. Final answer: 2(x + 2)(x + 3)."
+          ]
+        }
+      ],
+      "initialPrompt": "Let's practice factoring together. Remember the golden rule: always check for a GCF first! For the first problem, what is the largest number that divides both 8 and 12? What is the lowest power of x?"
+    },
+    {
+      "type": "independent_practice",
+      "lessonPhase": "you-do",
+      "title": "You-Do: Independent Practice — All Skills",
+      "problems": [
+        {
+          "id": "po-yp1",
+          "question": "Simplify: (5x⁴)(2x³)",
+          "answer": "10x⁷",
+          "skill": "exponent-rules-multiplication",
+          "hints": ["Multiply the coefficients: 5 × 2 = 10. Add the exponents: x⁴ · x³ = x⁷."]
+        },
+        {
+          "id": "po-yp2",
+          "question": "Simplify: 18x⁶ / (6x²)",
+          "answer": "3x⁴",
+          "skill": "exponent-rules-division",
+          "hints": ["Divide the coefficients: 18 ÷ 6 = 3. Subtract the exponents: x⁶⁻² = x⁴."]
+        },
+        {
+          "id": "po-yp3",
+          "question": "Subtract: (5x² + 3x - 8) - (2x² - x + 4)",
+          "answer": "3x² + 4x - 12",
+          "skill": "polynomial-addition-subtraction",
+          "hints": ["Distribute the negative to every term in the second polynomial: -2x² + x - 4. Then combine like terms: (5x² - 2x²) + (3x + x) + (-8 - 4)."]
+        },
+        {
+          "id": "po-yp4",
+          "question": "Multiply using FOIL: (x - 4)(x + 7)",
+          "answer": "x² + 3x - 28",
+          "skill": "polynomial-multiplication-monomial",
+          "hints": ["F: x². O: 7x. I: -4x. L: -28. Combine: x² + 7x - 4x - 28 = x² + 3x - 28."]
+        },
+        {
+          "id": "po-yp5",
+          "question": "Factor: 10x³ - 15x²",
+          "answer": "5x²(2x - 3)",
+          "skill": "factoring-gcf",
+          "hints": ["GCF of 10 and 15 is 5. GCF of x³ and x² is x². Factor out 5x²: 10x³ ÷ 5x² = 2x, and 15x² ÷ 5x² = 3."]
+        },
+        {
+          "id": "po-yp6",
+          "question": "Factor: x² - 3x - 18",
+          "answer": "(x - 6)(x + 3)",
+          "skill": "factoring-trinomials",
+          "hints": ["Find two numbers that multiply to -18 and add to -3. Since the product is negative, the numbers have different signs. -6 × 3 = -18 and -6 + 3 = -3."]
+        },
+        {
+          "id": "po-yp7",
+          "question": "Factor: 25x² - 49",
+          "answer": "(5x + 7)(5x - 7)",
+          "skill": "factoring-difference-of-squares",
+          "hints": ["Recognize the pattern: 25x² = (5x)² and 49 = 7². Apply a² - b² = (a + b)(a - b)."]
+        },
+        {
+          "id": "po-yp8",
+          "question": "Factor completely: 3x² - 27",
+          "answer": "3(x + 3)(x - 3)",
+          "skill": "factoring-difference-of-squares",
+          "hints": ["First pull out the GCF: 3(x² - 9). Then recognize x² - 9 as a difference of squares: x² - 3² = (x + 3)(x - 3). Final answer: 3(x + 3)(x - 3)."]
+        }
+      ],
+      "attemptsRequired": 3
+    }
+  ],
+  "answerKeys": {
+    "po-wp1": "x⁸. Product rule: x⁵⁺³ = x⁸.",
+    "po-wp2": "27x⁶. Power rule: 3³ = 27, (x²)³ = x⁶.",
+    "po-wp3": "5x⁴. Quotient rule: 20/4 = 5, x⁷⁻³ = x⁴.",
+    "po-wp4": "7x² + 3x + 5. Combine like terms.",
+    "po-wp5": "x² - 2x - 24. FOIL: x² - 6x + 4x - 24.",
+    "po-wp6": "4x²(2x + 3). GCF = 4x².",
+    "po-wp7": "(x + 2)(x + 3). Multiply to 6, add to 5.",
+    "po-wp8": "(x - 7)(x + 3). Multiply to -21, add to -4.",
+    "po-wp9": "(3x + 4)(3x - 4). Difference of squares: (3x)² - 4².",
+    "po-wp10": "2(x + 2)(x + 3). GCF = 2 first, then factor x² + 5x + 6.",
+    "po-yp1": "10x⁷. Multiply coefficients, add exponents.",
+    "po-yp2": "3x⁴. Divide coefficients, subtract exponents.",
+    "po-yp3": "3x² + 4x - 12. Distribute negative, combine like terms.",
+    "po-yp4": "x² + 3x - 28. FOIL: x² + 7x - 4x - 28.",
+    "po-yp5": "5x²(2x - 3). GCF = 5x².",
+    "po-yp6": "(x - 6)(x + 3). Multiply to -18, add to -3.",
+    "po-yp7": "(5x + 7)(5x - 7). Difference of squares: (5x)² - 7².",
+    "po-yp8": "3(x + 3)(x - 3). GCF = 3 first, then difference of squares."
+  }
+}
